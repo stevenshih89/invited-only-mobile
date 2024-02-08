@@ -8,6 +8,8 @@ const transparentWhite30Color = 'rgba(255, 255, 255, 0.3)';
 const transparentGray60Color = 'rgba(37, 37, 37, 0.6)';
 const lightGrayColor = '#252525';
 const grayColor = '#5B5B5B';
+const lightGray2Color = '#212121';
+const toggleColor = '#4CD964';
 
 export {
   whiteColor,
@@ -19,5 +21,7 @@ export {
   transparentWhite30Color,
   transparentGray60Color,
   lightGrayColor,
+  lightGray2Color,
   grayColor,
+  toggleColor,
 };

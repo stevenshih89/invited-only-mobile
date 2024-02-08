@@ -1,7 +1,7 @@
 import type {FC} from 'react';
 import {StatusBar, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import Onboard from 'screens/Auth/Onboard';
+import Main from 'src';
 
 const App: FC = (): JSX.Element => {
   return (
@@ -10,8 +10,9 @@ const App: FC = (): JSX.Element => {
       <View
         style={{
           flex: 1,
+          backgroundColor: 'transparent',
         }}>
-        <Onboard />
+        <Main />
       </View>
     </SafeAreaProvider>
   );
