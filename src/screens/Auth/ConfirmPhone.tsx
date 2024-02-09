@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useState} from 'react';
+import {FC, RefObject, useState} from 'react';
 import {
   ImageBackground,
   Keyboard,
@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -19,9 +20,10 @@ import {lightGray2Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
+import {turnNotificationsPath} from 'constants/pathLocations';
 
 const ConfirmPhone: FC = (): JSX.Element => {
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState<string>('');
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: code,
     setValue: setCode,
@@ -29,8 +31,8 @@ const ConfirmPhone: FC = (): JSX.Element => {
 
   const navigation = useAppNavigation();
 
-  const CELL_COUNT = 4;
-  const ref = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
+  const CELL_COUNT: number = 4;
+  const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
 
   return (
     <ImageBackground
@@ -130,7 +132,7 @@ const ConfirmPhone: FC = (): JSX.Element => {
               </View>
               <View style={{paddingHorizontal: 38, marginBottom: 4}}>
                 <Button variant="transparent" title="Change phone number" onPress={() => navigation.goBack()} />
-                <Button title="Next" />
+                <Button title="Next" onPress={() => navigation.navigate(turnNotificationsPath)} />
               </View>
             </View>
           </SafeAreaView>

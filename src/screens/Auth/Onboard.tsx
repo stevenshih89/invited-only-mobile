@@ -26,7 +26,6 @@ const Onboard: FC = (): JSX.Element => {
           <View
             style={{
               marginTop: 'auto',
-              // marginBottom: Dimensions.get('window').height / 18
               alignItems: 'center',
               paddingHorizontal: 42,
             }}>

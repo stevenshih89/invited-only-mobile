@@ -1,6 +1,6 @@
 import {isIos, screenHeight} from 'constants/common';
 import {FC, useState} from 'react';
-import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
+import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View, ViewStyle} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
 import FlagAE from 'assets/images/flags/ae.svg';
@@ -15,11 +15,11 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {confirmPhonePath} from 'constants/pathLocations';
 
 const SignUp: FC = (): JSX.Element => {
-  const [mobilePhone, setMobilePhone] = useState('');
+  const [mobilePhone, setMobilePhone] = useState<string>('');
 
   const navigation = useAppNavigation();
-  const [activeItem, setActiveItem] = useState('ae');
-  const [isOpenDropdown, setIsOpenDropdown] = useState(false);
+  const [activeItem, setActiveItem] = useState<string>('ae');
+  const [isOpenDropdown, setIsOpenDropdown] = useState<boolean>(false);
 
   const items = [
     {
@@ -49,7 +49,7 @@ const SignUp: FC = (): JSX.Element => {
     },
   ];
 
-  const dropdownContainerStyle = isOpenDropdown
+  const dropdownContainerStyle: ViewStyle = isOpenDropdown
     ? {
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,

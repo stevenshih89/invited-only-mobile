@@ -1,27 +1,44 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
 import {grayColor, toggleColor, whiteColor} from 'constants/colors';
+import Geolocation from '@react-native-community/geolocation';
 import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {confirmPhonePath} from 'constants/pathLocations';
+import {chooseAccountTypePath} from 'constants/pathLocations';
 import {Switch} from '@ant-design/react-native';
 
 const TurnNotifications: FC = (): JSX.Element => {
   const [notifications, setNotifications] = useState<boolean>(false);
   const [location, setLocation] = useState<boolean>(false);
 
+  const getCurrentLocation = (): void => {
+    Geolocation.setRNConfiguration({
+      skipPermissionRequests: false,
+    });
+    Geolocation.getCurrentPosition(
+      position => position,
+      error => console.error(error),
+    );
+  };
+
+  useEffect(() => {
+    if (location) {
+      getCurrentLocation();
+    }
+  }, [location]);
+
   const navigation = useAppNavigation();
 
-  const handleNotificationsChange = (value: boolean) => {
+  const handleNotificationsChange = (value: boolean): void => {
     setNotifications(value);
   };
 
-  const handleLocationChange = (value: boolean) => {
+  const handleLocationChange = (value: boolean): void => {
     setLocation(value);
   };
 
@@ -102,7 +119,7 @@ const TurnNotifications: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(confirmPhonePath)} title="Next" />
+                <Button onPress={() => navigation.navigate(chooseAccountTypePath)} title="Next" />
               </View>
             </View>
           </SafeAreaView>

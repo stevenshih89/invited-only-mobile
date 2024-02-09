@@ -1,6 +1,11 @@
-const onboardPath = '/onboard';
-const signUpPath = '/sign-up';
-const confirmPhonePath = '/confirm-phone';
-const turnNotificationsPath = '/turn-notifications';
+import {RootStackParamList} from 'typescript/types';
 
-export {onboardPath, signUpPath, confirmPhonePath, turnNotificationsPath};
+const onboardPath: keyof RootStackParamList = '/onboard';
+const signUpPath: keyof RootStackParamList = '/sign-up';
+const confirmPhonePath: keyof RootStackParamList = '/confirm-phone';
+const turnNotificationsPath: keyof RootStackParamList = '/turn-notifications';
+const chooseAccountTypePath: keyof RootStackParamList = '/choose-account-type';
+const enterNamePath: keyof RootStackParamList = '/enter-name';
+const addPhotosPath: keyof RootStackParamList = '/add-photos';
+
+export {onboardPath, signUpPath, confirmPhonePath, turnNotificationsPath, chooseAccountTypePath, enterNamePath, addPhotosPath};
