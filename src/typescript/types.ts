@@ -8,4 +8,11 @@ export type RootStackParamList = {
   '/choose-account-type': undefined;
   '/enter-name': undefined;
   '/add-photos': undefined;
+  '/enter-birthday': undefined;
+  '/gender': undefined;
+  '/gender-preferences': undefined;
+  '/my-interests': undefined;
+  '/my-email': undefined;
+  '/connect-social-media': undefined;
+  '/privacy': undefined;
 };

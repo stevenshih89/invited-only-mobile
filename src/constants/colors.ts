@@ -3,6 +3,7 @@ const blackColor: string = 'rgba(0, 0, 0, 1)';
 const darkRedColor: string = '#891936';
 const darkRed2Color: string = '#9B314C';
 const lightRedColor: string = '#FA0232';
+const errorColor = 'rgba(238, 78, 78, 1)';
 const transparent60Color: string = 'rgba(0, 0, 0, 0.6)';
 const transparentWhite30Color: string = 'rgba(255, 255, 255, 0.3)';
 const transparentWhite16Color: string = 'rgba(255, 255, 255, 0.16)';
@@ -12,6 +13,7 @@ const lightGrayColor: string = '#252525';
 const grayColor: string = '#5B5B5B';
 const lightGray2Color: string = '#212121';
 const lightGray3Color: string = '#1A1A1A';
+const lightGray4Color: string = 'rgba(175, 175, 175, 1)';
 const toggleColor: string = '#4CD964';
 
 export {
@@ -20,6 +22,7 @@ export {
   darkRedColor,
   darkRed2Color,
   lightRedColor,
+  errorColor,
   transparent60Color,
   transparentWhite30Color,
   transparentWhite16Color,
@@ -28,6 +31,7 @@ export {
   lightGrayColor,
   lightGray2Color,
   lightGray3Color,
+  lightGray4Color,
   grayColor,
   toggleColor,
 };

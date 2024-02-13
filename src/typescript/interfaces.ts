@@ -15,7 +15,7 @@ export interface InputProps {
   value: string;
   label?: string;
   placeholder?: string;
-  isWarning?: boolean;
+  isError?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
   buttonInputStyle?: StyleProp<ViewStyle>;
   labelStyle?: ViewStyle;

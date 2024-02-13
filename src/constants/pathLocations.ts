@@ -7,5 +7,27 @@ const turnNotificationsPath: keyof RootStackParamList = '/turn-notifications';
 const chooseAccountTypePath: keyof RootStackParamList = '/choose-account-type';
 const enterNamePath: keyof RootStackParamList = '/enter-name';
 const addPhotosPath: keyof RootStackParamList = '/add-photos';
+const enterBirthdayPath: keyof RootStackParamList = '/enter-birthday';
+const genderPath: keyof RootStackParamList = '/gender';
+const genderPreferencesPath: keyof RootStackParamList = '/gender-preferences';
+const myInterestsPath: keyof RootStackParamList = '/my-interests';
+const myEmailPath: keyof RootStackParamList = '/my-email';
+const connectSocialMediaPath: keyof RootStackParamList = '/connect-social-media';
+const privacyPath: keyof RootStackParamList = '/privacy';
 
-export {onboardPath, signUpPath, confirmPhonePath, turnNotificationsPath, chooseAccountTypePath, enterNamePath, addPhotosPath};
+export {
+  onboardPath,
+  signUpPath,
+  confirmPhonePath,
+  turnNotificationsPath,
+  chooseAccountTypePath,
+  enterNamePath,
+  addPhotosPath,
+  enterBirthdayPath,
+  genderPath,
+  genderPreferencesPath,
+  myInterestsPath,
+  myEmailPath,
+  connectSocialMediaPath,
+  privacyPath,
+};

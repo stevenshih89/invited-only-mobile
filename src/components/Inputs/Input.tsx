@@ -1,6 +1,6 @@
 import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {FC, useRef} from 'react';
-import {lightGray2Color, lightRedColor, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {errorColor, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {InputProps} from 'typescript/interfaces';
@@ -13,7 +13,7 @@ const Input: FC<InputProps> = ({
   containerStyle,
   buttonInputStyle,
   labelStyle,
-  isWarning,
+  isError = false,
   placeholder,
   value,
   label,
@@ -53,14 +53,13 @@ const Input: FC<InputProps> = ({
       paddingLeft: 12,
       paddingTop: 8,
       paddingBottom: 0,
-      color: whiteColor,
+      color: isError ? errorColor : whiteColor,
       fontSize: RFValue(18, 812),
     },
     errorText: {
       fontSize: RFValue(14, 812),
-      fontWeight: '400',
       fontFamily: Satoshi500,
-      color: lightRedColor,
+      color: errorColor,
     },
     wrapperErrorText: {
       height: 22,
@@ -74,15 +73,7 @@ const Input: FC<InputProps> = ({
   return (
     <View style={[containerStyle]}>
       {label && <Text style={styles.titleText}>{label}</Text>}
-      <TouchableOpacity
-        activeOpacity={1}
-        onPress={onPress}
-        style={[
-          styles.container,
-          {
-            borderColor: isWarning ? lightRedColor : 'transparent',
-          },
-        ]}>
+      <TouchableOpacity activeOpacity={1} onPress={onPress} style={styles.container}>
         <TextInput
           ref={inputRef}
           onFocus={onPress}
@@ -104,7 +95,7 @@ const Input: FC<InputProps> = ({
         />
       </TouchableOpacity>
       <View style={styles.wrapperErrorText}>
-        <Text style={styles.errorText}>{isWarning ? errorText : ' '}</Text>
+        <Text style={styles.errorText}>{isError ? errorText : ' '}</Text>
       </View>
     </View>
   );

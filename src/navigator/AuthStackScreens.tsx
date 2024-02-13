@@ -4,8 +4,15 @@ import {
   addPhotosPath,
   chooseAccountTypePath,
   confirmPhonePath,
+  connectSocialMediaPath,
+  enterBirthdayPath,
   enterNamePath,
+  genderPath,
+  genderPreferencesPath,
+  myEmailPath,
+  myInterestsPath,
   onboardPath,
+  privacyPath,
   signUpPath,
   turnNotificationsPath,
 } from 'constants/pathLocations';
@@ -17,6 +24,13 @@ import TurnNotifications from 'screens/Auth/TurnNotifications';
 import ChooseAccountType from 'screens/Auth/ChooseAccountType';
 import EnterName from 'screens/Auth/EnterName';
 import AddPhotos from 'screens/Auth/AddPhotos';
+import EnterBirthday from 'screens/Auth/EnterBirthday';
+import Gender from 'screens/Auth/Gender';
+import GenderPreferences from 'screens/Auth/GenderPreferences';
+import MyInterests from 'screens/Auth/MyInterests';
+import MyEmail from 'screens/Auth/MyEmail';
+import ConnectSocialMedia from 'screens/Auth/ConnectSocialMedia';
+import Privacy from 'screens/Auth/Privacy';
 
 const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
@@ -31,6 +45,13 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={chooseAccountTypePath} name={chooseAccountTypePath} component={ChooseAccountType} />
         <AuthStack.Screen key={enterNamePath} name={enterNamePath} component={EnterName} />
         <AuthStack.Screen key={addPhotosPath} name={addPhotosPath} component={AddPhotos} />
+        <AuthStack.Screen key={enterBirthdayPath} name={enterBirthdayPath} component={EnterBirthday} />
+        <AuthStack.Screen key={genderPath} name={genderPath} component={Gender} />
+        <AuthStack.Screen key={genderPreferencesPath} name={genderPreferencesPath} component={GenderPreferences} />
+        <AuthStack.Screen key={myInterestsPath} name={myInterestsPath} component={MyInterests} />
+        <AuthStack.Screen key={myEmailPath} name={myEmailPath} component={MyEmail} />
+        <AuthStack.Screen key={connectSocialMediaPath} name={connectSocialMediaPath} component={ConnectSocialMedia} />
+        <AuthStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
       </AuthStack.Navigator>
     </NavigationContainer>
   );
