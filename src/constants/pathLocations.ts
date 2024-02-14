@@ -14,6 +14,9 @@ const myInterestsPath: keyof RootStackParamList = '/my-interests';
 const myEmailPath: keyof RootStackParamList = '/my-email';
 const connectSocialMediaPath: keyof RootStackParamList = '/connect-social-media';
 const privacyPath: keyof RootStackParamList = '/privacy';
+const verifyFirstStepPath: keyof RootStackParamList = '/verify-first-step';
+const verifySecondStepPath: keyof RootStackParamList = '/verify-second-step';
+const invitationCodePath: keyof RootStackParamList = '/invitation-code';
 
 export {
   onboardPath,
@@ -30,4 +33,7 @@ export {
   myEmailPath,
   connectSocialMediaPath,
   privacyPath,
+  verifyFirstStepPath,
+  verifySecondStepPath,
+  invitationCodePath,
 };
