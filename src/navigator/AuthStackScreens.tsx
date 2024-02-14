@@ -9,6 +9,7 @@ import {
   enterNamePath,
   genderPath,
   genderPreferencesPath,
+  pendingScreenPath,
   invitationCodePath,
   myEmailPath,
   myInterestsPath,
@@ -16,6 +17,8 @@ import {
   privacyPath,
   signUpPath,
   turnNotificationsPath,
+  accountRejectedPath,
+  codeVerifiedPath,
   verifyFirstStepPath,
   verifySecondStepPath,
 } from 'constants/pathLocations';
@@ -34,6 +37,9 @@ import MyInterests from 'screens/Auth/MyInterests';
 import MyEmail from 'screens/Auth/MyEmail';
 import ConnectSocialMedia from 'screens/Auth/ConnectSocialMedia';
 import Privacy from 'screens/Auth/Privacy';
+import PendingScreen from 'screens/Auth/AcceptedScreen/PendingScreen/PendingScreen.tsx';
+import AccountRejected from 'screens/Auth/AcceptedScreen/AccountRejected/AccountRejected.tsx';
+import CodeVerified from 'screens/Auth/AcceptedScreen/CodeVerified/CodeVerified.tsx';
 import VerifyFirstStep from 'screens/Auth/VerifyFirstStep';
 import VerifySecondStep from 'screens/Auth/VerifySecondStep';
 import InvitationCode from 'screens/Auth/InvitationCode';
@@ -58,6 +64,9 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={myEmailPath} name={myEmailPath} component={MyEmail} />
         <AuthStack.Screen key={connectSocialMediaPath} name={connectSocialMediaPath} component={ConnectSocialMedia} />
         <AuthStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
+        <AuthStack.Screen key={pendingScreenPath} name={pendingScreenPath} component={PendingScreen} />
+        <AuthStack.Screen key={accountRejectedPath} name={accountRejectedPath} component={AccountRejected} />
+        <AuthStack.Screen key={codeVerifiedPath} name={codeVerifiedPath} component={CodeVerified} />
         <AuthStack.Screen key={verifyFirstStepPath} name={verifyFirstStepPath} component={VerifyFirstStep} />
         <AuthStack.Screen key={verifySecondStepPath} name={verifySecondStepPath} component={VerifySecondStep} />
         <AuthStack.Screen key={invitationCodePath} name={invitationCodePath} component={InvitationCode} />

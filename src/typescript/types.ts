@@ -15,6 +15,9 @@ export type RootStackParamList = {
   '/my-email': undefined;
   '/connect-social-media': undefined;
   '/privacy': undefined;
+  '/pending-screen': undefined;
+  '/account-rejected': undefined;
+  '/code-verified': undefined;
   '/verify-first-step': undefined;
   '/verify-second-step': undefined;
   '/invitation-code': undefined;
