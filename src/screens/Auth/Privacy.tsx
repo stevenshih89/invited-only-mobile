@@ -9,7 +9,7 @@ import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {connectSocialMediaPath} from 'constants/pathLocations';
+import {verifyFirstStepPath} from 'constants/pathLocations';
 
 const Privacy: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -92,7 +92,7 @@ const Privacy: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(connectSocialMediaPath)} title="I agree, continue" />
+                <Button onPress={() => navigation.navigate(verifyFirstStepPath)} title="I agree, continue" />
               </View>
             </View>
           </SafeAreaView>

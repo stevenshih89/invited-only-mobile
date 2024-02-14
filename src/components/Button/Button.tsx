@@ -26,6 +26,7 @@ const Button: FC<ButtonProps> = ({
       defaultRawText: {
         color: blackColor,
         fontFamily: Satoshi500,
+        textAlign: 'center',
         fontSize: 18,
         ...buttonTitleStyle,
       },
@@ -48,6 +49,7 @@ const Button: FC<ButtonProps> = ({
       defaultRawText: {
         color: whiteColor,
         fontFamily: Satoshi500,
+        textAlign: 'center',
         fontSize: 18,
         ...buttonTitleStyle,
       },
@@ -61,7 +63,8 @@ const Button: FC<ButtonProps> = ({
   };
 
   return (
-    <ButtonAntd style={buttonStyle} onPress={onPress} disabled={disabled || loading} styles={styles[variant]}>
+    // @ts-ignore
+    <ButtonAntd style={[buttonStyle]} onPress={onPress} disabled={disabled || loading} styles={styles[variant]}>
       {loading ? <ActivityIndicator color={blackColor} size="small" /> : title}
     </ButtonAntd>
   );

@@ -18,4 +18,7 @@ export type RootStackParamList = {
   '/pending-screen': undefined;
   '/account-rejected': undefined;
   '/code-verified': undefined;
+  '/verify-first-step': undefined;
+  '/verify-second-step': undefined;
+  '/invitation-code': undefined;
 };

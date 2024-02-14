@@ -17,6 +17,9 @@ const privacyPath: keyof RootStackParamList = '/privacy';
 const pendingScreenPath: keyof RootStackParamList = '/pending-screen';
 const accountRejectedPath: keyof RootStackParamList = '/account-rejected';
 const codeVerifiedPath: keyof RootStackParamList = '/code-verified';
+const verifyFirstStepPath: keyof RootStackParamList = '/verify-first-step';
+const verifySecondStepPath: keyof RootStackParamList = '/verify-second-step';
+const invitationCodePath: keyof RootStackParamList = '/invitation-code';
 
 export {
   onboardPath,
@@ -36,4 +39,7 @@ export {
   pendingScreenPath,
   accountRejectedPath,
   codeVerifiedPath,
+  verifyFirstStepPath,
+  verifySecondStepPath,
+  invitationCodePath,
 };
