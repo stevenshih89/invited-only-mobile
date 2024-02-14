@@ -14,6 +14,8 @@ const grayColor: string = '#5B5B5B';
 const lightGray2Color: string = '#212121';
 const lightGray3Color: string = '#1A1A1A';
 const lightGray4Color: string = 'rgba(175, 175, 175, 1)';
+const lightGray5Color: string = '#1B1B1B';
+const lightGray6Color: string = '#111111';
 const toggleColor: string = '#4CD964';
 
 export {
@@ -32,6 +34,8 @@ export {
   lightGray2Color,
   lightGray3Color,
   lightGray4Color,
+  lightGray5Color,
+  lightGray6Color,
   grayColor,
   toggleColor,
 };

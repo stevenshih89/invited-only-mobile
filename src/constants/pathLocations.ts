@@ -14,6 +14,9 @@ const myInterestsPath: keyof RootStackParamList = '/my-interests';
 const myEmailPath: keyof RootStackParamList = '/my-email';
 const connectSocialMediaPath: keyof RootStackParamList = '/connect-social-media';
 const privacyPath: keyof RootStackParamList = '/privacy';
+const pendingScreenPath: keyof RootStackParamList = '/pending-screen';
+const accountRejectedPath: keyof RootStackParamList = '/account-rejected';
+const codeVerifiedPath: keyof RootStackParamList = '/code-verified';
 
 export {
   onboardPath,
@@ -30,4 +33,7 @@ export {
   myEmailPath,
   connectSocialMediaPath,
   privacyPath,
+  pendingScreenPath,
+  accountRejectedPath,
+  codeVerifiedPath,
 };

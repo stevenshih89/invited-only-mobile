@@ -9,12 +9,15 @@ import {
   enterNamePath,
   genderPath,
   genderPreferencesPath,
+  pendingScreenPath,
   myEmailPath,
   myInterestsPath,
   onboardPath,
   privacyPath,
   signUpPath,
   turnNotificationsPath,
+  accountRejectedPath,
+  codeVerifiedPath,
 } from 'constants/pathLocations';
 import {NavigationContainer} from '@react-navigation/native';
 import Onboard from 'screens/Auth/Onboard';
@@ -31,6 +34,9 @@ import MyInterests from 'screens/Auth/MyInterests';
 import MyEmail from 'screens/Auth/MyEmail';
 import ConnectSocialMedia from 'screens/Auth/ConnectSocialMedia';
 import Privacy from 'screens/Auth/Privacy';
+import PendingScreen from 'screens/Auth/AcceptedScreen/PendingScreen/PendingScreen.tsx';
+import AccountRejected from 'screens/Auth/AcceptedScreen/AccountRejected/AccountRejected.tsx';
+import CodeVerified from 'screens/Auth/AcceptedScreen/CodeVerified/CodeVerified.tsx';
 
 const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
@@ -52,6 +58,9 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={myEmailPath} name={myEmailPath} component={MyEmail} />
         <AuthStack.Screen key={connectSocialMediaPath} name={connectSocialMediaPath} component={ConnectSocialMedia} />
         <AuthStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
+        <AuthStack.Screen key={pendingScreenPath} name={pendingScreenPath} component={PendingScreen} />
+        <AuthStack.Screen key={accountRejectedPath} name={accountRejectedPath} component={AccountRejected} />
+        <AuthStack.Screen key={codeVerifiedPath} name={codeVerifiedPath} component={CodeVerified} />
       </AuthStack.Navigator>
     </NavigationContainer>
   );
