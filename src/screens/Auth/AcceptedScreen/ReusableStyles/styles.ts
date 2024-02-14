@@ -38,17 +38,20 @@ const useStyles = () => {
       left: 65,
       bottom: 42,
     },
+    wrapperIconVerifyFilledAccepted: {
+      backgroundColor: whiteColor,
+      padding: 8.8,
+      position: 'relative',
+      left: 65,
+      bottom: 42,
+      borderRadius: 7,
+    },
     textInReview: {
       color: whiteColor,
       fontFamily: Satoshi400,
       fontSize: RFValue(34, 812),
       marginBottom: dimensionsHeight / 44.5,
       textAlign: 'center',
-    },
-    iconVerifyFilledAccepted: {
-      position: 'relative',
-      left: 65,
-      bottom: 42,
     },
     textYourAccount: {
       color: whiteColor,

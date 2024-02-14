@@ -1,15 +1,15 @@
 import React, {FC} from 'react';
-import {Dimensions, SafeAreaView, Text, View} from 'react-native';
+import {Dimensions, SafeAreaView, Text, View, Image} from 'react-native';
 
 //import components
 import useStyles from 'screens/Auth/AcceptedScreen/AccountRejected/styles.ts';
 import Button from 'components/Button/Button.tsx';
-import {privacyPath} from 'constants/pathLocations.ts';
+import {onboardPath} from 'constants/pathLocations.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 
 //import images
 import InfoCircle from 'assets/images/auth/info-circle.svg';
-import Avatar from 'assets/images/auth/avatar.svg';
+import Avatar from 'assets/images/auth/man.png';
 import IoIcon from 'assets/images/auth/io-icon.svg';
 
 const PendingScreen: FC = (): JSX.Element => {
@@ -22,7 +22,7 @@ const PendingScreen: FC = (): JSX.Element => {
       <View style={styles.container}>
         <View style={styles.avatarWrapper}>
           <View style={styles.avatarStyle}>
-            <Avatar width={60} height={60} />
+            <Image source={Avatar} style={styles.imageAvatar} />
           </View>
           <InfoCircle style={styles.infoCircleIcon} />
         </View>
@@ -41,7 +41,7 @@ const PendingScreen: FC = (): JSX.Element => {
             <Text style={styles.textSupport}>Support@invitedonly.com</Text>
           </View>
         </View>
-        <Button onPress={() => navigation.navigate(privacyPath)} title="Logout" variant="transparent" buttonStyle={styles.buttonLogout} />
+        <Button onPress={() => navigation.navigate(onboardPath)} title="Logout" variant="transparent" buttonStyle={styles.buttonLogout} />
       </View>
     </SafeAreaView>
   );

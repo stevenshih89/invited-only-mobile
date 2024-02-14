@@ -29,6 +29,10 @@ const useStyles = () => {
       borderRadius: 50,
       zIndex: 100,
     },
+    imageAvatar: {
+      width: 60,
+      height: 60,
+    },
     infoCircleIcon: {
       position: 'absolute',
       zIndex: 999,

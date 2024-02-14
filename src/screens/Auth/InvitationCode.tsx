@@ -9,9 +9,12 @@ import {whiteColor} from 'constants/colors';
 import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Input from 'components/Inputs/Input';
+import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {codeVerifiedPath} from 'constants/pathLocations.ts';
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
+  const navigation = useAppNavigation();
 
   return (
     <ImageBackground source={HalfBackground} resizeMode="cover" style={{flex: 1}}>
@@ -61,7 +64,7 @@ const InvitationCode: FC = (): JSX.Element => {
               </View>
               <View style={{marginBottom: 4, flexDirection: 'row', alignItems: 'center'}}>
                 <Button title="I don't have a code" buttonStyle={{flex: 1, marginRight: 2}} variant="transparent" />
-                <Button title="Continue" buttonStyle={{flex: 1, marginLeft: 2}} />
+                <Button onPress={() => navigation.navigate(codeVerifiedPath)} title="Continue" buttonStyle={{flex: 1, marginLeft: 2}} />
               </View>
             </View>
           </SafeAreaView>
