@@ -21,4 +21,5 @@ export type RootStackParamList = {
   '/verify-first-step': undefined;
   '/verify-second-step': undefined;
   '/invitation-code': undefined;
+  '/payment': undefined;
 };

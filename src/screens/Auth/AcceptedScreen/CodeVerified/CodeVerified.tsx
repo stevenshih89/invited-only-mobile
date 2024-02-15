@@ -5,7 +5,7 @@ import {ImageBackground, SafeAreaView, View, Text, Image} from 'react-native';
 import useStyles from 'screens/Auth/AcceptedScreen/ReusableStyles/styles.ts';
 import Button from 'components/Button/Button.tsx';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {privacyPath} from 'constants/pathLocations.ts';
+import {paymentPath} from 'constants/pathLocations.ts';
 
 //import images
 import IconVerifyFilledAccepted from 'assets/images/icons/check-star.svg';
@@ -32,7 +32,7 @@ const CodeVerified: FC = (): JSX.Element => {
           </View>
           <Text style={styles.textInReview}>Verified</Text>
           <Text style={styles.textYourAccount}>Join Invitation Accepted!</Text>
-          <Button onPress={() => navigation.navigate(privacyPath)} title="Continue" buttonStyle={styles.buttonContinue} />
+          <Button onPress={() => navigation.navigate(paymentPath)} title="Continue" buttonStyle={styles.buttonContinue} />
         </View>
       </SafeAreaView>
     </ImageBackground>
