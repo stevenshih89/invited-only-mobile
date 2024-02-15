@@ -93,7 +93,7 @@ const useStyles = () => {
       alignItems: 'center',
       borderBottomColor: '#353535',
       borderBottomWidth: 1,
-      paddingVertical: 13.5,
+      paddingVertical: dimensionsHeight / 63,
     },
     textFromTheList: {
       color: whiteColor,
@@ -106,7 +106,7 @@ const useStyles = () => {
       alignItems: 'center',
     },
     buttonSkip: {
-      marginTop: 34,
+      marginTop: dimensionsHeight / 25,
       height: 27,
     },
     tooltipWrapper: {
