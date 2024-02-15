@@ -7,10 +7,10 @@ import {Tooltip, TooltipProps} from '@rneui/themed';
 import useStyles from 'screens/Auth/Payment/styles.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import Button from 'components/Button/Button.tsx';
+import {paymentPath} from 'constants/pathLocations.ts';
 
 //import images
 import HalfBackground from 'assets/images/auth/half-background.png';
-import {paymentPath} from 'constants/pathLocations.ts';
 
 //import icons
 import CheckIcon from 'assets/images/icons/check.svg';
