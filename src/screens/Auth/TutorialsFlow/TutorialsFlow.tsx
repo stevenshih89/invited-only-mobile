@@ -28,7 +28,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
     setActive(p => p + 1);
   };
 
-  const handleCloseQuestionnaire = () => {
+  const handleCloseTutorialFlow = () => {
     navigation.goBack();
   };
 
@@ -36,7 +36,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
     <SafeAreaView style={styles.safeAreaView}>
       <Stepper active={active} content={content} wrapperStyle={styles.wrapperStyle} />
       <View style={styles.wrapperButtons}>
-        <Button buttonStyle={styles.buttonSkip} onPress={handleCloseQuestionnaire} title="Skip" variant="transparent" />
+        <Button buttonStyle={styles.buttonSkip} onPress={handleCloseTutorialFlow} title="Skip" variant="transparent" />
         <Button buttonStyle={styles.buttonNext} onPress={handleNext} title="Next" />
       </View>
       <View style={styles.wrapperBar}>
