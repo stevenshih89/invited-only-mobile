@@ -11,11 +11,14 @@ const transparentGray60Color: string = 'rgba(37, 37, 37, 0.6)';
 const transparentWhite56Color: string = 'rgba(255, 255, 255, 0.56)';
 const lightGrayColor: string = '#252525';
 const grayColor: string = '#5B5B5B';
+const gray1Color: string = 'rgba(255, 255, 255, 0.26)';
 const lightGray2Color: string = '#212121';
 const lightGray3Color: string = '#1A1A1A';
 const lightGray4Color: string = 'rgba(175, 175, 175, 1)';
 const lightGray5Color: string = '#1B1B1B';
 const lightGray6Color: string = '#111111';
+const lightGray7Color: string = '#353535';
+
 const toggleColor: string = '#4CD964';
 
 export {
@@ -36,6 +39,8 @@ export {
   lightGray4Color,
   lightGray5Color,
   lightGray6Color,
+  lightGray7Color,
   grayColor,
+  gray1Color,
   toggleColor,
 };

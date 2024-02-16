@@ -1,5 +1,5 @@
 import {Dimensions, StyleSheet} from 'react-native';
-import {blackColor, whiteColor} from 'constants/colors.ts';
+import {blackColor, lightGray5Color, lightGray7Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi400, Satoshi700, Satoshi500} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 
@@ -91,7 +91,7 @@ const useStyles = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      borderBottomColor: '#353535',
+      borderBottomColor: lightGray7Color,
       borderBottomWidth: 1,
       paddingVertical: dimensionsHeight / 63,
     },
@@ -110,7 +110,7 @@ const useStyles = () => {
       height: 27,
     },
     tooltipWrapper: {
-      backgroundColor: '#1B1B1B',
+      backgroundColor: lightGray5Color,
     },
     textUnlimitedEventsCreation: {
       color: whiteColor,
