@@ -7,7 +7,8 @@ import {Tooltip, TooltipProps} from '@rneui/themed';
 import useStyles from 'screens/Auth/Payment/styles.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import Button from 'components/Button/Button.tsx';
-import {paymentPath} from 'constants/pathLocations.ts';
+import {tutorialFlowPath} from 'constants/pathLocations.ts';
+import {lightGray5Color} from 'constants/colors.ts';
 
 //import images
 import HalfBackground from 'assets/images/auth/half-background.png';
@@ -49,7 +50,7 @@ const Payment: FC = (): JSX.Element => {
               <Text style={styles.textGetAccess}>Get Access & Unlock all of our features. Secure your spot. Host Access is limited.</Text>
               <View style={styles.buttonWrapper}>
                 <Button
-                  onPress={() => navigation.navigate(paymentPath)}
+                  onPress={() => navigation.navigate(tutorialFlowPath)}
                   title="Upgrade $99/m"
                   buttonTitleStyle={styles.textButtonTitleStyle}
                   buttonStyle={styles.buttonUpgrade}
@@ -67,7 +68,7 @@ const Payment: FC = (): JSX.Element => {
                 <ControlledTooltip
                   width={300}
                   height={100}
-                  backgroundColor={'#1B1B1B'}
+                  backgroundColor={lightGray5Color}
                   withOverlay={false}
                   popover={
                     <View style={styles.tooltipWrapper}>
@@ -89,7 +90,7 @@ const Payment: FC = (): JSX.Element => {
                 <ControlledTooltip
                   width={300}
                   height={100}
-                  backgroundColor={'#1B1B1B'}
+                  backgroundColor={lightGray5Color}
                   withOverlay={false}
                   popover={
                     <View style={styles.tooltipWrapper}>
@@ -111,7 +112,7 @@ const Payment: FC = (): JSX.Element => {
                 <ControlledTooltip
                   width={300}
                   height={100}
-                  backgroundColor={'#1B1B1B'}
+                  backgroundColor={lightGray5Color}
                   withOverlay={false}
                   popover={
                     <View style={styles.tooltipWrapper}>
@@ -133,7 +134,7 @@ const Payment: FC = (): JSX.Element => {
                 <ControlledTooltip
                   width={300}
                   height={100}
-                  backgroundColor={'#1B1B1B'}
+                  backgroundColor={lightGray5Color}
                   withOverlay={false}
                   popover={
                     <View style={styles.tooltipWrapper}>
@@ -155,7 +156,7 @@ const Payment: FC = (): JSX.Element => {
                 <ControlledTooltip
                   width={300}
                   height={100}
-                  backgroundColor={'#1B1B1B'}
+                  backgroundColor={lightGray5Color}
                   withOverlay={false}
                   popover={
                     <View style={styles.tooltipWrapper}>
@@ -177,7 +178,7 @@ const Payment: FC = (): JSX.Element => {
                 <ControlledTooltip
                   width={300}
                   height={100}
-                  backgroundColor={'#1B1B1B'}
+                  backgroundColor={lightGray5Color}
                   withOverlay={false}
                   popover={
                     <View style={styles.tooltipWrapper}>
@@ -193,7 +194,7 @@ const Payment: FC = (): JSX.Element => {
               </View>
               <CheckIcon />
             </View>
-            <Button onPress={() => navigation.navigate(paymentPath)} title="Skip" variant="transparent" buttonStyle={styles.buttonSkip} />
+            <Button onPress={() => navigation.goBack()} title="Skip" variant="transparent" buttonStyle={styles.buttonSkip} />
           </View>
         </ScrollView>
       </SafeAreaView>

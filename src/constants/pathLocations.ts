@@ -21,6 +21,7 @@ const verifyFirstStepPath: keyof RootStackParamList = '/verify-first-step';
 const verifySecondStepPath: keyof RootStackParamList = '/verify-second-step';
 const invitationCodePath: keyof RootStackParamList = '/invitation-code';
 const paymentPath: keyof RootStackParamList = '/payment';
+const tutorialFlowPath: keyof RootStackParamList = '/tutorial-flow';
 
 export {
   onboardPath,
@@ -44,4 +45,5 @@ export {
   verifySecondStepPath,
   invitationCodePath,
   paymentPath,
+  tutorialFlowPath,
 };

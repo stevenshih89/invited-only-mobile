@@ -22,6 +22,7 @@ import {
   verifyFirstStepPath,
   verifySecondStepPath,
   paymentPath,
+  tutorialFlowPath,
 } from 'constants/pathLocations';
 import {NavigationContainer} from '@react-navigation/native';
 import Onboard from 'screens/Auth/Onboard';
@@ -45,6 +46,7 @@ import VerifyFirstStep from 'screens/Auth/VerifyFirstStep';
 import VerifySecondStep from 'screens/Auth/VerifySecondStep';
 import InvitationCode from 'screens/Auth/InvitationCode';
 import Payment from 'screens/Auth/Payment/Payment.tsx';
+import TutorialsFlow from 'screens/Auth/TutorialsFlow/TutorialsFlow.tsx';
 
 const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
@@ -73,6 +75,7 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={verifySecondStepPath} name={verifySecondStepPath} component={VerifySecondStep} />
         <AuthStack.Screen key={invitationCodePath} name={invitationCodePath} component={InvitationCode} />
         <AuthStack.Screen key={paymentPath} name={paymentPath} component={Payment} />
+        <AuthStack.Screen key={tutorialFlowPath} name={tutorialFlowPath} component={TutorialsFlow} />
       </AuthStack.Navigator>
     </NavigationContainer>
   );
