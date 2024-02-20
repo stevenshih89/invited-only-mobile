@@ -1,10 +1,30 @@
-import {createContext} from 'react';
+import React, {createContext, Dispatch, ReactNode, SetStateAction, useState} from 'react';
 
 interface AuthContextData {
   user: any;
-  setUser: any;
+  setUser: Dispatch<SetStateAction<any>>;
 }
 
-const AuthContext = createContext({} as AuthContextData);
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
-export default AuthContext;
+const initialAuthContext: AuthContextData = {
+  user: true,
+  setUser: () => {},
+};
+
+const AuthContext = createContext<AuthContextData>(initialAuthContext);
+
+const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
+  const [user, setUser] = useState<any>(initialAuthContext.user);
+
+  const value = {
+    user,
+    setUser,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export {AuthProvider, AuthContext};

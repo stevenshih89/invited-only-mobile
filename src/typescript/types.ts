@@ -23,4 +23,5 @@ export type RootStackParamList = {
   '/invitation-code': undefined;
   '/payment': undefined;
   '/tutorial-flow': undefined;
+  '/io': undefined;
 };
