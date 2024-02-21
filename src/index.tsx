@@ -8,6 +8,7 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {AuthProvider, AuthContext} from './contexts/AuthContext.tsx';
 import AuthStackScreens from 'navigator/AuthStackScreens';
 import AppStackScreens from 'navigator/AppStackScreens.tsx';
+import LocalNotification from 'components/LocalNotification/LocalNotification.tsx';
 
 const Main = () => {
   const {user} = useContext(AuthContext);
@@ -18,6 +19,7 @@ const Main = () => {
           <NavigationContainer>
             <SafeAreaProvider>{user ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
           </NavigationContainer>
+          <LocalNotification />
         </AuthProvider>
       </View>
     </GestureHandlerRootView>

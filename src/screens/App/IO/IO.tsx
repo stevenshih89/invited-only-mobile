@@ -7,6 +7,7 @@ import {TinderCard} from 'rn-tinder-card';
 import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import {screenHeight, screenWidth} from 'constants/common.ts';
+import {showToast} from 'helpers/helpers.ts';
 
 //import images
 import FakeGirlOne from 'assets/images/app/fake-girl-1.png';
@@ -37,7 +38,7 @@ const IO: FC = (): JSX.Element => {
       <View style={styles.wrapperCreateEventCard}>
         <Text style={styles.textYouNeedToCreate}>You need to create an event to start inviting</Text>
         <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
-        <Button title="Create event" />
+        <Button onPress={() => showToast('success', 'Go to my events')} title="Create event" />
         <View style={styles.rowText}>
           <Text style={styles.textDontHaveAnEvent}>Don't have an event?</Text>
           <Text style={styles.textJoinOne}>Join one!</Text>
