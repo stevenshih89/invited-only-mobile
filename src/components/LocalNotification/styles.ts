@@ -34,7 +34,6 @@ const useStyles = () => {
     warning: {
       borderLeftColor: lightGray3Color,
       borderWidth: 1,
-      borderColor: '#515151',
     },
     customToast: {
       height: 60,
