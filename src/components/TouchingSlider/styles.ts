@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
-import {whiteColor} from 'constants/colors.ts';
-import {Satoshi500, Satoshi400} from 'constants/fonts.ts';
+import {transparentGray60Color, whiteColor} from 'constants/colors.ts';
+import {Satoshi500, Satoshi400, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 
@@ -96,6 +96,62 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       opacity: 0.8,
+    },
+    lockedWrapper: {
+      position: 'absolute',
+      top: 120,
+      left: 0,
+      right: 0,
+      zIndex: 1000,
+    },
+    lockIconWr: {
+      alignSelf: 'center',
+      borderRadius: 60,
+      backgroundColor: transparentGray60Color,
+      width: 62,
+      height: 62,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    lockDescWr: {
+      marginTop: 8,
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      borderRadius: 30,
+      backgroundColor: transparentGray60Color,
+      alignSelf: 'center',
+    },
+    lockedTitle: {
+      color: whiteColor,
+      textAlign: 'center',
+      marginBottom: 10,
+      fontFamily: Satoshi700,
+      fontSize: RFValue(20, 812),
+    },
+    lockedSubtitle: {
+      color: whiteColor,
+      textAlign: 'center',
+      marginBottom: 10,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(16, 812),
+    },
+    lockedHaveCodeWr: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    lockedHaveCodeTitle: {
+      color: whiteColor,
+      textAlign: 'center',
+      fontFamily: Satoshi500,
+      fontSize: RFValue(12, 812),
+    },
+    lockedHaveCodePressableText: {
+      textDecorationLine: 'underline',
+      marginLeft: 4,
+      color: whiteColor,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(12, 812),
     },
   });
 };

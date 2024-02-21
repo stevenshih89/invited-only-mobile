@@ -1,4 +1,11 @@
 export type RootStackParamList = {
+  '/bottom-tabs-stack': undefined;
+  '/notifications-stack'?: {
+    screen?: string;
+  };
+  '/common-stack'?: {
+    screen?: string;
+  };
   '/onboard': undefined;
   '/sign-up': undefined;
   '/confirm-phone'?: {
@@ -24,4 +31,5 @@ export type RootStackParamList = {
   '/payment': undefined;
   '/tutorial-flow': undefined;
   '/io': undefined;
+  '/notifications': undefined;
 };

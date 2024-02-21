@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import {FC, ReactElement, useState} from 'react';
 import {View, ImageBackground, TouchableOpacity, Text} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -9,7 +9,10 @@ import HomeIcon from 'assets/images/icons/home.svg';
 import LocationIcon from 'assets/images/icons/location.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
+import Lock from 'assets/images/icons/lock.svg';
 import {screenHeight} from 'constants/common.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
 
 interface Photo {
   url: string;
@@ -19,10 +22,16 @@ interface TouchingSliderProps {
   photos: Photo[];
 }
 
-const TouchingSlider: FC<TouchingSliderProps> = ({photos}) => {
+const TouchingSlider: FC<TouchingSliderProps> = ({photos}): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
+  const navigation = useAppNavigation();
+  const isLocked = true;
+
+  const goToCodeConfirmation = (): void => {
+    navigation.navigate(commonStackPath, {screen: invitationCodePath});
+  };
 
   const handleNext = () => {
     if (active === numberPhotos - 1) {
@@ -53,11 +62,27 @@ const TouchingSlider: FC<TouchingSliderProps> = ({photos}) => {
           ))}
         </View>
       </LinearGradient>
+      {isLocked && (
+        <View style={styles.lockedWrapper}>
+          <View style={styles.lockIconWr}>
+            <Lock width={24} height={24} />
+          </View>
+          <View style={styles.lockDescWr}>
+            <Text style={styles.lockedTitle}>Locked</Text>
+            <Text style={styles.lockedSubtitle}>Your account on review</Text>
+            <View style={styles.lockedHaveCodeWr}>
+              <Text style={styles.lockedHaveCodeTitle}>Have a code?</Text>
+              <TouchableOpacity activeOpacity={0.7} onPress={goToCodeConfirmation}>
+                <Text style={styles.lockedHaveCodePressableText}>Click here</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
       <View style={styles.wrapperButtons}>
         <TouchableOpacity onPress={handleBack} style={styles.button} />
         <TouchableOpacity onPress={handleNext} style={styles.button} />
       </View>
-
       <LinearGradient
         colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
         style={styles.linearGradientFooter}
