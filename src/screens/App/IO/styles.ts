@@ -148,6 +148,8 @@ const useStyles = () => {
       flex: 1,
       flexDirection: 'row',
       flexWrap: 'wrap',
+      position: 'relative',
+      right: 18,
     },
     ml18: {
       marginLeft: screenWidth / 22,

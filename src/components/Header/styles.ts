@@ -18,8 +18,7 @@ const useStyles = () => {
       width: '100%',
     },
     eventView: {
-      paddingVertical: screenWidth / 26,
-      paddingHorizontal: screenHeight / 55,
+      padding: 14,
       borderWidth: 1,
       borderColor: 'lightgrey',
       borderRadius: 50,

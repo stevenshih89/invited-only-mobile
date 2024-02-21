@@ -55,7 +55,7 @@ const IO: FC = (): JSX.Element => {
           </Text>
           <Text style={[styles.titleSection, styles.mt31]}>About me</Text>
           <View style={styles.wrapperTextTags}>
-            <Text style={styles.textTagsAboutMe}>
+            <Text style={[styles.textTagsAboutMe, styles.ml18]}>
               <PersonIcon />
               Guest
             </Text>
@@ -65,7 +65,7 @@ const IO: FC = (): JSX.Element => {
             <Text style={[styles.textTagsAboutMe, styles.ml18]}>
               <LocationIcon /> Dubai
             </Text>
-            <Text style={styles.textTagsAboutMe}>
+            <Text style={[styles.textTagsAboutMe, styles.ml18]}>
               <HomeIcon /> Odessa
             </Text>
             <Text style={[styles.textTagsAboutMe, styles.ml18]}>
