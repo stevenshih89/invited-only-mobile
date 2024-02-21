@@ -11,7 +11,15 @@ import FlashIcon from 'assets/images/icons/flash.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
 import {screenHeight} from 'constants/common.ts';
 
-const TouchingSlider: FC<any> = ({photos}: any) => {
+interface Photo {
+  url: string;
+}
+
+interface TouchingSliderProps {
+  photos: Photo[];
+}
+
+const TouchingSlider: FC<TouchingSliderProps> = ({photos}) => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
@@ -32,6 +40,7 @@ const TouchingSlider: FC<any> = ({photos}: any) => {
   };
 
   return (
+    // @ts-ignore
     <ImageBackground source={photos[active]} resizeMode="cover" imageStyle={styles.imageStyle} style={styles.container}>
       <LinearGradient
         colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
