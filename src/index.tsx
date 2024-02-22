@@ -12,6 +12,7 @@ import LocalNotification from 'components/LocalNotification/LocalNotification.ts
 
 const Main = () => {
   const {user} = useContext(AuthContext);
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <View style={{flex: 1, backgroundColor: 'transparent'}}>
