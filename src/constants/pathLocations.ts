@@ -2,6 +2,7 @@ import {RootStackParamList} from 'typescript/types';
 // Stacks paths
 const bottomTabsStackPath: keyof RootStackParamList = '/bottom-tabs-stack';
 const notificationsStackPath: keyof RootStackParamList = '/notifications-stack';
+const eventCreatingStackPath: keyof RootStackParamList = '/event-creating-stack';
 const commonStackPath: keyof RootStackParamList = '/common-stack';
 
 // Screen paths
@@ -58,4 +59,5 @@ export {
   tutorialFlowPath,
   IOPath,
   notificationsPath,
+  eventCreatingStackPath,
 };

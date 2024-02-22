@@ -33,7 +33,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({photos}): ReactElement => {
     navigation.navigate(commonStackPath, {screen: invitationCodePath});
   };
 
-  const handleNext = () => {
+  const handleNext = (): void => {
     if (active === numberPhotos - 1) {
       return setActive(0);
     } else {
@@ -41,7 +41,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({photos}): ReactElement => {
     }
   };
 
-  const handleBack = () => {
+  const handleBack = (): void => {
     if (active === 0) {
       return;
     }
@@ -105,7 +105,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({photos}): ReactElement => {
                 <Text style={styles.textInfoTags}>2 kilometers away</Text>
               </View>
             </View>
-            <View>
+            <View style={styles.wrapperRightButton}>
               <TouchableOpacity style={styles.buttonFlash}>
                 <IOIcon />
               </TouchableOpacity>

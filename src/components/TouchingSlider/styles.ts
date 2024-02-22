@@ -74,6 +74,10 @@ const useStyles = () => {
       justifyContent: 'space-between',
       width: '95%',
     },
+    wrapperRightButton: {
+      position: 'relative',
+      bottom: screenHeight * 0.04,
+    },
     infoTags: {
       flexDirection: 'row',
       backgroundColor: 'rgba(37, 37, 37, 0.60)',
