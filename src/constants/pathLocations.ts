@@ -1,5 +1,10 @@
 import {RootStackParamList} from 'typescript/types';
+// Stacks paths
+const bottomTabsStackPath: keyof RootStackParamList = '/bottom-tabs-stack';
+const notificationsStackPath: keyof RootStackParamList = '/notifications-stack';
+const commonStackPath: keyof RootStackParamList = '/common-stack';
 
+// Screen paths
 const onboardPath: keyof RootStackParamList = '/onboard';
 const signUpPath: keyof RootStackParamList = '/sign-up';
 const confirmPhonePath: keyof RootStackParamList = '/confirm-phone';
@@ -23,8 +28,12 @@ const invitationCodePath: keyof RootStackParamList = '/invitation-code';
 const paymentPath: keyof RootStackParamList = '/payment';
 const tutorialFlowPath: keyof RootStackParamList = '/tutorial-flow';
 const IOPath: keyof RootStackParamList = '/io';
+const notificationsPath: keyof RootStackParamList = '/notifications';
 
 export {
+  bottomTabsStackPath,
+  notificationsStackPath,
+  commonStackPath,
   onboardPath,
   signUpPath,
   confirmPhonePath,
@@ -48,4 +57,5 @@ export {
   paymentPath,
   tutorialFlowPath,
   IOPath,
+  notificationsPath,
 };
