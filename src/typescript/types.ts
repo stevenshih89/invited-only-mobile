@@ -35,4 +35,8 @@ export type RootStackParamList = {
   '/tutorial-flow': undefined;
   '/io': undefined;
   '/notifications': undefined;
+  '/requests': undefined;
+  '/profile': undefined;
+  '/my-events': undefined;
+  '/chat': undefined;
 };

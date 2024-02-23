@@ -1,9 +1,9 @@
 import {RootStackParamList} from 'typescript/types';
 // Stacks paths
-const bottomTabsStackPath: keyof RootStackParamList = '/bottom-tabs-stack';
-const notificationsStackPath: keyof RootStackParamList = '/notifications-stack';
-const eventCreatingStackPath: keyof RootStackParamList = '/event-creating-stack';
-const commonStackPath: keyof RootStackParamList = '/common-stack';
+const bottomTabsStackPath = '/bottom-tabs-stack';
+const notificationsStackPath = '/notifications-stack';
+const eventCreatingStackPath = '/event-creating-stack';
+const commonStackPath = '/common-stack';
 
 // Screen paths
 const onboardPath: keyof RootStackParamList = '/onboard';
@@ -30,6 +30,10 @@ const paymentPath: keyof RootStackParamList = '/payment';
 const tutorialFlowPath: keyof RootStackParamList = '/tutorial-flow';
 const IOPath: keyof RootStackParamList = '/io';
 const notificationsPath: keyof RootStackParamList = '/notifications';
+const requestsPath: keyof RootStackParamList = '/requests';
+const profilePath: keyof RootStackParamList = '/profile';
+const myEventsPath: keyof RootStackParamList = '/my-events';
+const chatPath: keyof RootStackParamList = '/chat';
 
 export {
   bottomTabsStackPath,
@@ -60,4 +64,8 @@ export {
   IOPath,
   notificationsPath,
   eventCreatingStackPath,
+  profilePath,
+  requestsPath,
+  myEventsPath,
+  chatPath,
 };

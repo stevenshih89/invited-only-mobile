@@ -2,13 +2,14 @@ import {View, TouchableOpacity, Text} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 //import components
-import useStyles from 'components/Header/styles.ts';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
 import NotificationIcon from 'assets/images/icons/notification.svg';
 import AddIcon from 'assets/images/icons/add.svg';
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {notificationsPath, notificationsStackPath} from 'constants/pathLocations';
+import {Badge} from '@rneui/themed';
+import useStyles from 'components/Header/styles.ts';
 
 const Header = () => {
   const styles = useStyles();
@@ -30,6 +31,7 @@ const Header = () => {
         <LogoPrimary width={157} height={32} />
         <TouchableOpacity onPress={goToNotifications}>
           <NotificationIcon width={32} height={32} />
+          <Badge value={22} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
         </TouchableOpacity>
       </View>
       <View style={styles.wrapperHeaderButton}>

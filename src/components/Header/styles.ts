@@ -1,13 +1,11 @@
-import {Dimensions, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {lightGray6Color, whiteColor} from 'constants/colors.ts';
-import {Satoshi500} from 'constants/fonts.ts';
+import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import {screenHeight, screenWidth} from 'constants/common';
 
-const screenWidth: number = Dimensions.get('window').width;
-const screenHeight: number = Dimensions.get('window').height;
-
-const useStyles = () => {
-  return StyleSheet.create({
+const useStyles = () =>
+  StyleSheet.create({
     container: {
       backgroundColor: lightGray6Color,
       paddingHorizontal: screenWidth / 15.5,
@@ -39,7 +37,16 @@ const useStyles = () => {
       fontSize: RFValue(13, 812),
       marginTop: screenHeight / 190,
     },
+    badgeStyle: {
+      position: 'absolute',
+      bottom: -4,
+      right: 0,
+      backgroundColor: 'red',
+    },
+    badgeText: {
+      color: whiteColor,
+      fontFamily: Satoshi700,
+    },
   });
-};
 
 export default useStyles;

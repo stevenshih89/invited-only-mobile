@@ -23,14 +23,7 @@ const InvitedOnly: FC = () => {
           <View style={styles.rowFemale}>
             <Text style={styles.textPersonGender}>Female</Text>
             <View style={styles.rowButtons}>
-              <TouchableOpacity
-                onPress={() => {
-                  if (female === 0) {
-                    return;
-                  }
-                  setFemale(female - 1);
-                }}
-                style={styles.buttonPress}>
+              <TouchableOpacity onPress={() => female !== 0 && setFemale(female - 1)} style={styles.buttonPress}>
                 <Text style={styles.textButton}>-</Text>
               </TouchableOpacity>
               <Text style={styles.textCount}>{female}</Text>
@@ -42,14 +35,7 @@ const InvitedOnly: FC = () => {
           <View style={styles.rowMale}>
             <Text style={styles.textPersonGender}>Male</Text>
             <View style={styles.rowButtons}>
-              <TouchableOpacity
-                onPress={() => {
-                  if (male === 0) {
-                    return;
-                  }
-                  setMale(male - 1);
-                }}
-                style={styles.buttonPress}>
+              <TouchableOpacity onPress={() => male !== 0 && setMale(male - 1)} style={styles.buttonPress}>
                 <Text style={styles.textButton}>-</Text>
               </TouchableOpacity>
               <Text style={styles.textCount}>{male}</Text>
@@ -65,14 +51,7 @@ const InvitedOnly: FC = () => {
         <View>
           <Text style={styles.textPersonGenderFriends}>Male</Text>
           <View style={styles.rowButtonsOtherFriends}>
-            <TouchableOpacity
-              onPress={() => {
-                if (maleFriend === 0) {
-                  return;
-                }
-                setMaleFriend(maleFriend - 1);
-              }}
-              style={styles.buttonPressOtherFriends}>
+            <TouchableOpacity onPress={() => maleFriend !== 0 && setMaleFriend(maleFriend - 1)} style={styles.buttonPressOtherFriends}>
               <Text style={styles.textButton}>-</Text>
             </TouchableOpacity>
             <Text style={styles.textCountFriends}>{maleFriend}</Text>
@@ -84,14 +63,7 @@ const InvitedOnly: FC = () => {
         <View>
           <Text style={[styles.textPersonGenderFriends, {marginTop: screenHeight / 35}]}>Female</Text>
           <View style={styles.rowButtonsOtherFriends}>
-            <TouchableOpacity
-              onPress={() => {
-                if (femaleFriend === 0) {
-                  return;
-                }
-                setFemaleFriend(femaleFriend - 1);
-              }}
-              style={styles.buttonPressOtherFriends}>
+            <TouchableOpacity onPress={() => femaleFriend !== 0 && setFemaleFriend(femaleFriend - 1)} style={styles.buttonPressOtherFriends}>
               <Text style={styles.textButton}>-</Text>
             </TouchableOpacity>
             <Text style={styles.textCountFriends}>{femaleFriend}</Text>

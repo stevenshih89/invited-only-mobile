@@ -8,7 +8,10 @@ import InvitedOnly from 'screens/App/IO/screens/EventCreating/components/Invited
 import EventDetails from 'screens/App/IO/screens/EventCreating/components/EventDetails/EventDetails.tsx';
 
 const EventCreating: FC = () => {
-  const [tabState, setTabState] = useState<string>('invitedOnly');
+  const INVITED_ONLY = 'invitedOnly';
+  const EVENT_DETAILS = 'eventDetails';
+
+  const [tabState, setTabState] = useState<string>(INVITED_ONLY);
   const styles = useStyles();
 
   const handleSetTabState = (type: string): void => {
@@ -19,18 +22,18 @@ const EventCreating: FC = () => {
     <View style={styles.container}>
       <View style={styles.wrapperTabSelections}>
         <TouchableOpacity
-          style={[styles.buttonInvitedOnly, tabState === 'invitedOnly' && {backgroundColor: whiteColor}]}
-          onPress={() => handleSetTabState('invitedOnly')}>
-          <Text style={[styles.textInvitedOnly, tabState !== 'invitedOnly' && {color: whiteColor}]}>Invited only</Text>
+          style={[styles.buttonInvitedOnly, tabState === INVITED_ONLY && {backgroundColor: whiteColor}]}
+          onPress={() => handleSetTabState(INVITED_ONLY)}>
+          <Text style={[styles.textInvitedOnly, tabState !== INVITED_ONLY && {color: whiteColor}]}>Invited only</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.buttonEventDetails, tabState === 'eventDetails' && {backgroundColor: whiteColor}]}
-          onPress={() => handleSetTabState('eventDetails')}>
-          <Text style={[styles.textEventDetails, tabState !== 'eventDetails' && {color: whiteColor}]}>Event details</Text>
+          style={[styles.buttonEventDetails, tabState === EVENT_DETAILS && {backgroundColor: whiteColor}]}
+          onPress={() => handleSetTabState(EVENT_DETAILS)}>
+          <Text style={[styles.textEventDetails, tabState !== EVENT_DETAILS && {color: whiteColor}]}>Event details</Text>
         </TouchableOpacity>
       </View>
-      {tabState === 'invitedOnly' && <InvitedOnly />}
-      {tabState === 'eventDetails' && <EventDetails />}
+      {tabState === INVITED_ONLY && <InvitedOnly />}
+      {tabState === EVENT_DETAILS && <EventDetails />}
     </View>
   );
 };
