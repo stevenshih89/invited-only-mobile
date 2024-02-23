@@ -17,12 +17,14 @@ export interface InputProps {
   placeholder?: string;
   isError?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
-  buttonInputStyle?: StyleProp<ViewStyle>;
-  labelStyle?: ViewStyle;
+  inputStyle?: StyleProp<ViewStyle>;
+  labelStyle?: TextStyle;
+  containerInnerStyle?: StyleProp<ViewStyle>;
   onChange: (val: string) => void;
   onBlur?: () => void;
   onPressFocus?: () => void;
   errorText?: string;
   disableFastClear?: boolean;
   keyboardType?: KeyboardType;
+  InputIcon?: any;
 }
