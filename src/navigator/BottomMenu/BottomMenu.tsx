@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 //import components
 import useStyles from 'navigator/BottomMenu/styles.ts';
-import {IOStackNavigation} from 'navigator/AppStackScreens.tsx';
+import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens.tsx';
 import {whiteColor} from 'constants/colors.ts';
 
 const Tab = createBottomTabNavigator();

@@ -11,13 +11,15 @@ const Input: FC<InputProps> = ({
   onBlur,
   onPressFocus,
   containerStyle,
-  buttonInputStyle,
+  inputStyle,
+  containerInnerStyle,
   labelStyle,
   isError = false,
   placeholder,
   value,
   label,
   keyboardType = 'default',
+  InputIcon,
 }) => {
   const inputRef = useRef<TextInput>(null);
 
@@ -40,6 +42,7 @@ const Input: FC<InputProps> = ({
       flexDirection: 'row',
       paddingRight: 8,
       paddingBottom: 8,
+      justifyContent: 'space-between',
     },
     titleText: {
       marginBottom: 12,
@@ -49,6 +52,7 @@ const Input: FC<InputProps> = ({
       ...labelStyle,
     },
     input: {
+      width: InputIcon ? '90%' : '100%',
       minWidth: 200,
       paddingLeft: 12,
       paddingTop: 8,
@@ -73,14 +77,14 @@ const Input: FC<InputProps> = ({
   return (
     <View style={[containerStyle]}>
       {label && <Text style={styles.titleText}>{label}</Text>}
-      <TouchableOpacity activeOpacity={1} onPress={onPress} style={styles.container}>
+      <TouchableOpacity activeOpacity={1} onPress={onPress} style={[styles.container, containerInnerStyle]}>
         <TextInput
           ref={inputRef}
           onFocus={onPress}
           keyboardType={keyboardType}
           onBlur={onBlur}
           placeholder={placeholder}
-          style={[styles.input, buttonInputStyle]}
+          style={[styles.input, inputStyle]}
           placeholderTextColor={transparentWhite30Color}
           keyboardAppearance="dark"
           value={value}
@@ -93,6 +97,11 @@ const Input: FC<InputProps> = ({
           autoCapitalize={'none'}
           textAlignVertical={'center'}
         />
+        {InputIcon && (
+          <View style={{height: '100%', alignItems: 'center', justifyContent: 'center', paddingTop: 8, width: 20}}>
+            {<InputIcon width={20} height={20} />}
+          </View>
+        )}
       </TouchableOpacity>
       <View style={styles.wrapperErrorText}>
         <Text style={styles.errorText}>{isError ? errorText : ' '}</Text>

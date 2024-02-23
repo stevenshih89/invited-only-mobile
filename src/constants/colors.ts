@@ -21,6 +21,9 @@ const lightGray5Color: string = '#1B1B1B';
 const lightGray6Color: string = '#111111';
 const lightGray7Color: string = '#353535';
 const lightGray8Color: string = '#111';
+const lightGray9Color: string = '#1D1D1D';
+const lightGray10Color: string = '#151515';
+const goldColor: string = '#977B4A';
 
 const toggleColor: string = '#4CD964';
 const backgroundColor: string = '#121212';
@@ -47,6 +50,9 @@ export {
   lightGray6Color,
   lightGray7Color,
   lightGray8Color,
+  lightGray9Color,
+  lightGray10Color,
+  goldColor,
   grayColor,
   gray1Color,
   toggleColor,

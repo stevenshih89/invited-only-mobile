@@ -86,6 +86,10 @@ const useStyles = () => {
       color: whiteColor,
       textAlign: 'center',
     },
+    rowJoinOne: {
+      borderBottomWidth: 1,
+      borderBottomColor: whiteColor,
+    },
     rowText: {
       flexDirection: 'row',
       alignItems: 'center',

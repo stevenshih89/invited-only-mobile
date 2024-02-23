@@ -3,6 +3,9 @@ export type RootStackParamList = {
   '/notifications-stack'?: {
     screen?: string;
   };
+  '/event-creating-stack'?: {
+    screen?: string;
+  };
   '/common-stack'?: {
     screen?: string;
   };

@@ -1,6 +1,16 @@
 import {isIos, screenHeight, screenWidth} from 'constants/common';
 import {FC, useState} from 'react';
-import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {
+  Alert,
+  ImageBackground,
+  Keyboard,
+  KeyboardAvoidingView,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -13,6 +23,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {enterBirthdayPath} from 'constants/pathLocations';
+import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
 
 const AddPhotos: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -31,7 +42,30 @@ const AddPhotos: FC = (): JSX.Element => {
     },
   ]);
 
-  const openLibrary = (imageId: number): void => {
+  const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
+    const result = await check(permission);
+    switch (result) {
+      case RESULTS.DENIED:
+        const requestResult = await request(permission);
+        if (requestResult === RESULTS.BLOCKED) {
+          Alert.alert('Permission not granted');
+        }
+        return requestResult;
+      case RESULTS.BLOCKED:
+        Alert.alert('Permission not granted');
+        break;
+    }
+
+    return result;
+  };
+
+  const openLibrary = async (imageId: number): Promise<void> => {
+    const photoLibraryPermission = await makePermissionsRequest(isIos ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES);
+
+    if (photoLibraryPermission !== RESULTS.GRANTED && photoLibraryPermission !== RESULTS.LIMITED) {
+      return;
+    }
+
     launchImageLibrary(
       {
         mediaType: 'photo',
