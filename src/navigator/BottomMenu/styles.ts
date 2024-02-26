@@ -3,8 +3,8 @@ import {black1Color} from 'constants/colors.ts';
 
 //import components
 
-const useStyles = () => {
-  return StyleSheet.create({
+const useStyles = () =>
+  StyleSheet.create({
     tabNavigator: {
       backgroundColor: black1Color,
       borderTopWidth: 0,
@@ -17,6 +17,5 @@ const useStyles = () => {
       },
     },
   });
-};
 
 export default useStyles;

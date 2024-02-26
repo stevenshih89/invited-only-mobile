@@ -7,9 +7,10 @@ import {
   lightRedColor,
   whiteColor
 } from 'constants/colors.ts';
-import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
+import {Satoshi500, Satoshi700, Satoshi400} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {screenWidth, screenHeight} from 'constants/common.ts';
+import {screenHeight, screenWidth} from 'constants/common';
+
 
 const useStyles = () =>
   StyleSheet.create({
@@ -94,6 +95,16 @@ const useStyles = () =>
       fontFamily: Satoshi500,
       fontSize: RFValue(13, 812),
       marginTop: screenHeight / 190,
+    },
+    badgeStyle: {
+      position: 'absolute',
+      bottom: -4,
+      right: 0,
+      backgroundColor: 'red',
+    },
+    badgeText: {
+      color: whiteColor,
+      fontFamily: Satoshi700,
     },
   });
 
