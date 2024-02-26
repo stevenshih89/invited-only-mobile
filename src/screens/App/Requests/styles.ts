@@ -31,12 +31,12 @@ const useStyles = () =>
     superLikeContainer: {
       backgroundColor: darkRedColor,
       borderRadius: 10,
-      width: '100%',
+      margin: 10,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      paddingHorizontal: 4,
-      height: 36,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
     },
     superLikeRow: {
       flex: 1,
@@ -55,6 +55,9 @@ const useStyles = () =>
     },
     itemContentContainer: {
       flex: 1,
+    },
+    linearGradient: {
+      height: 100,
       padding: 7,
     },
     buttonContainer: {
