@@ -29,7 +29,7 @@ const MyEvents: FC = () => {
         date={'10.12.2024'}
         textCityName="Amazonico Dubai"
         estimeTime="2h"
-        numberOfGirlsInvited=""
+        numberOfGirlsInvited="2"
         invitingPeople={invitingPeople}
       />
     </View>
