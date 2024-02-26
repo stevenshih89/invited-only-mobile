@@ -13,7 +13,7 @@ import {Badge} from '@rneui/themed';
 import useStyles from 'components/Header/styles.ts';
 
 interface HeaderTypeProps {
-  headerType: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat';
+  headerType?: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat';
 }
 
 const Header: FC<HeaderTypeProps> = ({headerType}) => {
@@ -31,7 +31,7 @@ const Header: FC<HeaderTypeProps> = ({headerType}) => {
     paddingTop: insets.top,
   };
 
-  const handleCheckType = (type: string) => {
+  const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | undefined) => {
     switch (type) {
       case 'IO':
         return (
@@ -72,7 +72,22 @@ const Header: FC<HeaderTypeProps> = ({headerType}) => {
       case 'profile':
         return null;
       case 'request':
-        return null;
+        return (
+          <View style={styles.wrapperHeaderButton}>
+            <TouchableOpacity style={styles.eventButton}>
+              <View style={styles.eventView}>
+                <AddIcon width={26} height={26} />
+              </View>
+              <Text style={styles.textButton}>Create event</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.eventButton}>
+              <View style={styles.eventView}>
+                <CalendarSearchIcon width={26} height={26} />
+              </View>
+              <Text style={styles.textButton}>Join events</Text>
+            </TouchableOpacity>
+          </View>
+        );
       case 'chat':
         return null;
 

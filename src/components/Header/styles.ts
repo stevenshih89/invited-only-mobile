@@ -98,9 +98,10 @@ const useStyles = () =>
     },
     badgeStyle: {
       position: 'absolute',
+      borderColor: lightRedColor,
       bottom: -4,
       right: 0,
-      backgroundColor: 'red',
+      backgroundColor: lightRedColor,
     },
     badgeText: {
       color: whiteColor,
