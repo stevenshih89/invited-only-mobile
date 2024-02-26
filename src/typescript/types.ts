@@ -1,5 +1,8 @@
 export type RootStackParamList = {
   '/bottom-tabs-stack': undefined;
+  '/my-events'?: {
+    screen?: string;
+  };
   '/notifications-stack'?: {
     screen?: string;
   };

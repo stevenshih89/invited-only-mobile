@@ -32,8 +32,8 @@ const EventCreating: FC = () => {
           <Text style={[styles.textEventDetails, tabState !== EVENT_DETAILS && {color: whiteColor}]}>Event details</Text>
         </TouchableOpacity>
       </View>
-      {tabState === INVITED_ONLY && <InvitedOnly />}
-      {tabState === EVENT_DETAILS && <EventDetails />}
+      {tabState === 'invitedOnly' && <InvitedOnly setTabState={setTabState} />}
+      {tabState === 'eventDetails' && <EventDetails />}
     </View>
   );
 };

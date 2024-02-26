@@ -30,6 +30,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({photos}): ReactElement => {
   const isLocked = true;
 
   const goToCodeConfirmation = (): void => {
+    // @ts-ignore
     navigation.navigate(commonStackPath, {screen: invitationCodePath});
   };
 
