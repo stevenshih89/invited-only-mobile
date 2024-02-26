@@ -22,7 +22,7 @@ const RequestsStackScreen = () => {
         component={Requests}
         options={{
           headerShown: true,
-          header: () => <Header />,
+          header: () => <Header headerType="request" />,
         }}
       />
     </RequestsStack.Navigator>
@@ -47,7 +47,7 @@ const BottomMenu: FC = (): JSX.Element => {
       <Tab.Screen name={profilePath} component={IOStackNavigation} />
       <Tab.Screen name={requestsPath} component={RequestsStackScreen} />
       <Tab.Screen name={IOPath} component={IOStackNavigation} />
-      <Tab.Screen name={myEventsPath} component={IOStackNavigation} />
+      <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation} />
       <Tab.Screen name={chatPath} component={IOStackNavigation} />
     </Tab.Navigator>
   );

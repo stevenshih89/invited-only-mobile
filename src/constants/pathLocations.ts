@@ -29,7 +29,6 @@ const invitationCodePath: keyof RootStackParamList = '/invitation-code';
 const paymentPath: keyof RootStackParamList = '/payment';
 const tutorialFlowPath: keyof RootStackParamList = '/tutorial-flow';
 const IOPath: keyof RootStackParamList = '/io';
-const myEventsPath: keyof RootStackParamList = '/my-events';
 const notificationsPath: keyof RootStackParamList = '/notifications';
 const requestsPath: keyof RootStackParamList = '/requests';
 const profilePath: keyof RootStackParamList = '/profile';
