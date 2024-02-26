@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 //import components
 import useStyles from 'navigator/BottomMenu/styles.ts';
-import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens.tsx';
+import {IOStackNavigation, MyEventsStackNavigation} from 'navigator/AppStackScreens/AppStackScreens.tsx';
 import {whiteColor} from 'constants/colors.ts';
 
 const Tab = createBottomTabNavigator();
@@ -54,7 +54,7 @@ const BottomMenu: FC = (): JSX.Element => {
           // tabBarIcon: ({focused, color}) => <Icon name={focused ? 'IconHomeFill' : 'IconHome'} />,
         }}
         name="My events"
-        component={IOStackNavigation}
+        component={MyEventsStackNavigation}
       />
       <Tab.Screen
         options={{

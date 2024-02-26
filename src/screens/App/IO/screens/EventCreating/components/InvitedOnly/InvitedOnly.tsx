@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useState, Dispatch, SetStateAction} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 
 //import components
@@ -6,7 +6,11 @@ import useStyles from 'screens/App/IO/screens/EventCreating/components/InvitedOn
 import Button from 'components/Button/Button.tsx';
 import {screenHeight} from 'constants/common.ts';
 
-const InvitedOnly: FC = () => {
+interface InvitedOnlyProps {
+  setTabState: Dispatch<SetStateAction<string>>;
+}
+
+const InvitedOnly: FC<InvitedOnlyProps> = ({setTabState}) => {
   const [female, setFemale] = useState<number>(0);
   const [male, setMale] = useState<number>(0);
 
@@ -101,7 +105,7 @@ const InvitedOnly: FC = () => {
           </View>
         </View>
       </View>
-      <Button title="Continue to the event details" />
+      <Button onPress={() => setTabState('eventDetails')} title="Continue to the event details" />
     </View>
   );
 };

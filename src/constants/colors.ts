@@ -4,6 +4,7 @@ const black1Color: string = '#0B0B0B';
 const darkRedColor: string = '#891936';
 const darkRed2Color: string = '#9B314C';
 const lightRedColor: string = '#FA0232';
+const lightGreenColor: string = '#2EB263';
 const lightRed1Color: string = '#FF4E40';
 const errorColor = 'rgba(238, 78, 78, 1)';
 const transparent60Color: string = 'rgba(0, 0, 0, 0.6)';
@@ -52,6 +53,7 @@ export {
   lightGray8Color,
   lightGray9Color,
   lightGray10Color,
+  lightGreenColor,
   goldColor,
   grayColor,
   gray1Color,

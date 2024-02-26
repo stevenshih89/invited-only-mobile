@@ -16,6 +16,7 @@ import {
   notificationsStackPath,
   pendingScreenPath,
   eventCreatingStackPath,
+   myEventsPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -25,6 +26,7 @@ import AccountRejected from 'screens/Auth/AcceptedScreen/AccountRejected/Account
 import CodeVerified from 'screens/Auth/AcceptedScreen/CodeVerified/CodeVerified';
 import useStyles from 'navigator/AppStackScreens/styles.ts';
 import EventCreating from 'screens/App/IO/screens/EventCreating/EventCreating.tsx';
+import MyEvents from 'screens/App/MyEvents/MyEvents.tsx';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -46,11 +48,34 @@ export const IOStackNavigation: FC = () => {
       <Stack.Screen
         options={{
           headerShown: true,
-          header: () => <Header />,
+          header: () => <Header headerType="IO" />,
         }}
         name={IOPath}
         key={IOPath}
         component={IO}
+      />
+    </Stack.Navigator>
+  );
+};
+
+export const MyEventsStackNavigation: FC = () => {
+  const styles = useStyles();
+  return (
+    <Stack.Navigator
+      initialRouteName={myEventsPath}
+      screenOptions={{
+        headerShown: true,
+        headerTransparent: false,
+        headerStyle: styles.headerStyle,
+      }}>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          header: () => <Header headerType="myEvents" />,
+        }}
+        name={myEventsPath}
+        key={myEventsPath}
+        component={MyEvents}
       />
     </Stack.Navigator>
   );
