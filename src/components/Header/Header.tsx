@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import {View, TouchableOpacity, Text, Image, ScrollView} from 'react-native';
+import {View, TouchableOpacity, Text, Image, FlatList} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
 
@@ -25,13 +25,64 @@ interface HeaderTypeProps {
   showHeaderTop?: boolean;
 }
 
+type ItemProps = {
+  title: string;
+  allPeople: number;
+  filledTo: number;
+  image: any;
+  numberBadge: number;
+};
+
 const Header: FC<HeaderTypeProps> = ({headerType, showHeaderTop = true}) => {
   const styles = useStyles();
 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
 
-  const t = false;
+  const DATA = [
+    {
+      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+      title: 'First Item',
+      allPeople: 4,
+      filledTo: 3,
+      image: EventBG,
+      numberBadge: 22,
+    },
+    {
+      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+      title: 'Second Item',
+      allPeople: 0,
+      filledTo: 0,
+      image: EventBG,
+      numberBadge: 12,
+    },
+    {
+      id: '58694a0f-3da1-471f-bd96-145571e29d72',
+      title: 'Third Item',
+      allPeople: 4,
+      filledTo: 2,
+      image: EventBG,
+      numberBadge: 0,
+    },
+  ];
+
+  const Item = ({title, filledTo, numberBadge, image, allPeople}: ItemProps) => (
+    <TouchableOpacity style={styles.eventButton}>
+      <View style={[styles.eventView, {borderColor: numberBadge !== 0 ? whiteColor : lightGray5Color}]}>
+        <Image source={image} style={styles.imageEvent} />
+        {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
+      </View>
+      <Text style={styles.textButton}>{title}</Text>
+      {allPeople > 0 && (
+        <View style={styles.numberPeopleOnEvent}>
+          <PeopleIcon />
+          <Text style={styles.textNumberPeopleOnEvent}>
+            {filledTo}/{allPeople}
+          </Text>
+        </View>
+      )}
+    </TouchableOpacity>
+  );
 
   const goToNotifications = (): void => {
     // @ts-ignore
@@ -114,25 +165,14 @@ const Header: FC<HeaderTypeProps> = ({headerType, showHeaderTop = true}) => {
               </TouchableOpacity>
             </View>
             <View style={[styles.rowButtonsChat, {marginTop: screenHeight / 34}]}>
-              <ScrollView horizontal={true}>
-                <TouchableOpacity style={styles.eventButton}>
-                  <View style={[styles.eventView, {borderColor: t ? lightGray5Color : whiteColor}]}>
-                    <Image source={EventBG} style={styles.imageEvent} />
-                    <Badge value={22} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />
-                  </View>
-                  <Text style={styles.textButton}>Amazonico</Text>
-                  <View style={styles.numberPeopleOnEvent}>
-                    <PeopleIcon />
-                    <Text style={styles.textNumberPeopleOnEvent}>2/4</Text>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.eventButton}>
-                  <View style={[styles.eventView, {borderColor: lightGray5Color}]}>
-                    <Image source={EventBG} style={styles.imageEvent} />
-                  </View>
-                  <Text style={styles.textButton}>Iris</Text>
-                </TouchableOpacity>
-              </ScrollView>
+              <FlatList
+                data={DATA}
+                horizontal={true}
+                renderItem={({item}) => (
+                  <Item filledTo={item.filledTo} allPeople={item.allPeople} image={item.image} numberBadge={item.numberBadge} title={item.title} />
+                )}
+                keyExtractor={item => item.id}
+              />
             </View>
           </View>
         );
