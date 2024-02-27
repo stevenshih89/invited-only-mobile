@@ -1,16 +1,8 @@
 import {StyleSheet} from 'react-native';
-import {
-  blackColor,
-  lightGray2Color,
-  lightGray5Color,
-  lightGray6Color,
-  lightRedColor,
-  whiteColor
-} from 'constants/colors.ts';
+import {blackColor, lightGray2Color, lightGray5Color, lightGray6Color, lightRedColor, whiteColor} from 'constants/colors.ts';
 import {Satoshi500, Satoshi700, Satoshi400} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common';
-
 
 const useStyles = () =>
   StyleSheet.create({
@@ -24,7 +16,7 @@ const useStyles = () =>
       width: '100%',
     },
     eventView: {
-      padding: 14,
+      padding: 3,
       borderWidth: 1,
       borderColor: lightGray5Color,
       borderRadius: 50,
@@ -32,6 +24,11 @@ const useStyles = () =>
     eventButton: {
       alignItems: 'center',
       marginRight: screenWidth / 27,
+    },
+    imageEvent: {
+      width: 50,
+      height: 50,
+      borderRadius: 50,
     },
     addEventButton: {
       alignItems: 'center',
@@ -55,6 +52,16 @@ const useStyles = () =>
       justifyContent: 'flex-start',
       alignItems: 'center',
       flexDirection: 'row',
+    },
+    wrapperHeaderButtonsChat: {
+      marginTop: screenHeight / 43,
+      marginBottom: screenHeight / 30,
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+    },
+    rowButtonsChat: {
+      flexDirection: 'row',
+      width: '100%',
     },
     buttonMyEvents: {
       backgroundColor: whiteColor,
@@ -96,9 +103,32 @@ const useStyles = () =>
       fontSize: RFValue(13, 812),
       marginTop: screenHeight / 190,
     },
+    numberPeopleOnEvent: {
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      backgroundColor: lightGray2Color,
+      borderRadius: 10,
+      marginTop: screenHeight / 100,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    textNumberPeopleOnEvent: {
+      color: whiteColor,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(12, 812),
+      marginLeft: 4,
+    },
     badgeStyle: {
       position: 'absolute',
       borderColor: lightRedColor,
+      bottom: -4,
+      right: 0,
+      backgroundColor: lightRedColor,
+    },
+    badgeStyleEvent: {
+      position: 'absolute',
+      borderColor: blackColor,
+      borderWidth: 1,
       bottom: -4,
       right: 0,
       backgroundColor: lightRedColor,
