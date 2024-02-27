@@ -1,26 +1,37 @@
-import {View, TouchableOpacity, Text} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FC} from 'react';
+import {View, TouchableOpacity, Text, Image, ScrollView} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {Badge} from '@rneui/themed';
 
 //import components
+import useStyles from 'components/Header/styles.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {notificationsPath, notificationsStackPath} from 'constants/pathLocations';
+import {screenHeight} from 'constants/common.ts';
+import {lightGray5Color, whiteColor} from 'constants/colors.ts';
+
+//import icons
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
 import NotificationIcon from 'assets/images/icons/notification.svg';
 import AddIcon from 'assets/images/icons/add.svg';
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {notificationsPath, notificationsStackPath} from 'constants/pathLocations';
-import {Badge} from '@rneui/themed';
-import useStyles from 'components/Header/styles.ts';
+import PeopleIcon from 'assets/images/icons/profile-2user.svg';
+
+//import images
+import EventBG from 'assets/images/app/card-event-bg.png';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat';
+  showHeaderTop?: boolean;
 }
 
-const Header: FC<HeaderTypeProps> = ({headerType}) => {
+const Header: FC<HeaderTypeProps> = ({headerType, showHeaderTop = true}) => {
   const styles = useStyles();
-  const insets = useSafeAreaInsets();
 
+  const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
+
+  const t = false;
 
   const goToNotifications = (): void => {
     // @ts-ignore
@@ -89,7 +100,42 @@ const Header: FC<HeaderTypeProps> = ({headerType}) => {
           </View>
         );
       case 'chat':
-        return null;
+        return (
+          <View style={styles.wrapperHeaderButtonsChat}>
+            <View style={styles.rowButtonsChat}>
+              <TouchableOpacity style={styles.buttonMyEvents}>
+                <Text style={styles.textMyEvents}>My events</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.buttonEventsJoining}>
+                <Text style={styles.textEventsJoining}>Events I'm Joining</Text>
+                <View style={styles.rowTextCountEvents}>
+                  <Text style={styles.textCountEvents}>21</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View style={[styles.rowButtonsChat, {marginTop: screenHeight / 34}]}>
+              <ScrollView horizontal={true}>
+                <TouchableOpacity style={styles.eventButton}>
+                  <View style={[styles.eventView, {borderColor: t ? lightGray5Color : whiteColor}]}>
+                    <Image source={EventBG} style={styles.imageEvent} />
+                    <Badge value={22} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />
+                  </View>
+                  <Text style={styles.textButton}>Amazonico</Text>
+                  <View style={styles.numberPeopleOnEvent}>
+                    <PeopleIcon />
+                    <Text style={styles.textNumberPeopleOnEvent}>2/4</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.eventButton}>
+                  <View style={[styles.eventView, {borderColor: lightGray5Color}]}>
+                    <Image source={EventBG} style={styles.imageEvent} />
+                  </View>
+                  <Text style={styles.textButton}>Iris</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
+          </View>
+        );
 
       default:
         return null;
@@ -98,13 +144,15 @@ const Header: FC<HeaderTypeProps> = ({headerType}) => {
 
   return (
     <View style={[styles.container, headerInsets]}>
-      <View style={styles.wrapperHeader}>
-        <LogoPrimary width={157} height={32} />
-        <TouchableOpacity onPress={goToNotifications}>
-          <NotificationIcon width={32} height={32} />
-          <Badge value={22} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
-        </TouchableOpacity>
-      </View>
+      {showHeaderTop && (
+        <View style={styles.wrapperHeader}>
+          <LogoPrimary width={157} height={32} />
+          <TouchableOpacity onPress={goToNotifications}>
+            <NotificationIcon width={32} height={32} />
+            <Badge value={22} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
+          </TouchableOpacity>
+        </View>
+      )}
       {handleCheckType(headerType)}
     </View>
   );

@@ -16,7 +16,8 @@ import {
   notificationsStackPath,
   pendingScreenPath,
   eventCreatingStackPath,
-   myEventsPath,
+  myEventsPath,
+  chatPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -27,6 +28,7 @@ import CodeVerified from 'screens/Auth/AcceptedScreen/CodeVerified/CodeVerified'
 import useStyles from 'navigator/AppStackScreens/styles.ts';
 import EventCreating from 'screens/App/IO/screens/EventCreating/EventCreating.tsx';
 import MyEvents from 'screens/App/MyEvents/MyEvents.tsx';
+import Chat from 'screens/App/Chat/Chat.tsx';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -111,6 +113,28 @@ const NotificationsStackScreen = () => {
   );
 };
 
+export const ChatStackNavigation: FC = () => {
+  const styles = useStyles();
+  return (
+    <Stack.Navigator
+      initialRouteName={myEventsPath}
+      screenOptions={{
+        headerShown: true,
+        headerTransparent: false,
+        headerStyle: styles.headerStyle,
+      }}>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          header: () => <Header headerType="chat" showHeaderTop={false} />,
+        }}
+        name={chatPath}
+        key={chatPath}
+        component={Chat}
+      />
+    </Stack.Navigator>
+  );
+};
 const EventCreatingStackScreen = () => {
   const styles = useStyles();
 
