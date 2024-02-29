@@ -6,7 +6,7 @@ import {Badge} from '@rneui/themed';
 //import components
 import useStyles from 'components/Header/styles.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {notificationsPath, notificationsStackPath} from 'constants/pathLocations';
+import {eventCreatingStackPath, notificationsPath, notificationsStackPath} from 'constants/pathLocations';
 import {screenHeight} from 'constants/common.ts';
 import {lightGray5Color, whiteColor} from 'constants/colors.ts';
 
@@ -38,6 +38,10 @@ const Header: FC<HeaderTypeProps> = ({headerType, showHeaderTop = true}) => {
 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
+
+  const goToCreateEvent = (): void => {
+    navigation.navigate(eventCreatingStackPath);
+  };
 
   const DATA = [
     {
@@ -98,7 +102,7 @@ const Header: FC<HeaderTypeProps> = ({headerType, showHeaderTop = true}) => {
       case 'IO':
         return (
           <View style={styles.wrapperHeaderButton}>
-            <TouchableOpacity style={styles.eventButton}>
+            <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
               <View style={styles.eventView}>
                 <AddIcon width={26} height={26} />
               </View>
@@ -136,7 +140,7 @@ const Header: FC<HeaderTypeProps> = ({headerType, showHeaderTop = true}) => {
       case 'request':
         return (
           <View style={styles.wrapperHeaderButton}>
-            <TouchableOpacity style={styles.eventButton}>
+            <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
               <View style={styles.eventView}>
                 <AddIcon width={26} height={26} />
               </View>
