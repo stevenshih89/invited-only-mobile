@@ -1,9 +1,11 @@
 import React, {FC} from 'react';
 import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
+import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 
 //import components
 import useStyles from 'screens/App/Chat/styles.ts';
 import {Badge} from '@rneui/themed';
+import {chatCorrespondencePath} from 'constants/pathLocations.ts';
 
 //import images
 import FakeGirl1 from 'assets/images/app/fake-girl-1.png';
@@ -25,6 +27,7 @@ type ItemProps = {
 
 const Chat: FC = () => {
   const styles = useStyles();
+  const navigation = useAppNavigation();
 
   const DATA = [
     {
@@ -58,7 +61,15 @@ const Chat: FC = () => {
 
   const Item = ({title, message, image, online, story, inviteStatus}: ItemProps) => (
     <View style={styles.item}>
-      <TouchableOpacity style={styles.wrapperItem}>
+      <TouchableOpacity
+        onPress={() => {
+          // @ts-ignore
+          navigation.navigate(chatCorrespondencePath, {
+            screen: chatCorrespondencePath,
+            params: {image: image, title: title, online: online},
+          });
+        }}
+        style={styles.wrapperItem}>
         <View>
           <Image resizeMode="cover" style={[styles.imageUser, story && styles.story]} source={image} />
           {online && <View style={styles.greenCircle} />}

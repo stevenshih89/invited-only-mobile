@@ -12,6 +12,7 @@ import {lightGray5Color, whiteColor} from 'constants/colors.ts';
 
 //import icons
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
+import Logo from 'assets/images/icons/logo.svg';
 import NotificationIcon from 'assets/images/icons/notification.svg';
 import AddIcon from 'assets/images/icons/add.svg';
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
@@ -23,6 +24,8 @@ import EventBG from 'assets/images/app/card-event-bg.png';
 interface HeaderTypeProps {
   headerType?: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat';
   showHeaderTop?: boolean;
+  logoType?: string;
+  badge?: boolean;
 }
 
 type ItemProps = {
@@ -33,7 +36,7 @@ type ItemProps = {
   numberBadge: number;
 };
 
-const Header: FC<HeaderTypeProps> = ({headerType, showHeaderTop = true}) => {
+const Header: FC<HeaderTypeProps> = ({badge, logoType, headerType, showHeaderTop = true}) => {
   const styles = useStyles();
 
   const insets = useSafeAreaInsets();
@@ -68,7 +71,7 @@ const Header: FC<HeaderTypeProps> = ({headerType, showHeaderTop = true}) => {
 
   const Item = ({title, filledTo, numberBadge, image, allPeople}: ItemProps) => (
     <TouchableOpacity style={styles.eventButton}>
-      <View style={[styles.eventView, {borderColor: numberBadge !== 0 ? whiteColor : lightGray5Color}]}>
+      <View style={[styles.eventViewFlatList, {borderColor: numberBadge !== 0 ? whiteColor : lightGray5Color}]}>
         <Image source={image} style={styles.imageEvent} />
         {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
       </View>
@@ -186,11 +189,13 @@ const Header: FC<HeaderTypeProps> = ({headerType, showHeaderTop = true}) => {
     <View style={[styles.container, headerInsets]}>
       {showHeaderTop && (
         <View style={styles.wrapperHeader}>
-          <LogoPrimary width={157} height={32} />
-          <TouchableOpacity onPress={goToNotifications}>
-            <NotificationIcon width={32} height={32} />
-            <Badge value={22} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
-          </TouchableOpacity>
+          {logoType === 'logo' ? <Logo width={157} height={32} /> : <LogoPrimary width={157} height={32} />}
+          {badge && (
+            <TouchableOpacity onPress={goToNotifications}>
+              <NotificationIcon width={32} height={32} />
+              <Badge value={22} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
+            </TouchableOpacity>
+          )}
         </View>
       )}
       {handleCheckType(headerType)}

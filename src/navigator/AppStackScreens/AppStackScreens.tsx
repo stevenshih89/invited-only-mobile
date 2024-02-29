@@ -18,6 +18,7 @@ import {
   eventCreatingStackPath,
   myEventsPath,
   chatPath,
+  chatCorrespondencePath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -29,6 +30,7 @@ import useStyles from 'navigator/AppStackScreens/styles.ts';
 import EventCreating from 'screens/App/IO/screens/EventCreating/EventCreating.tsx';
 import MyEvents from 'screens/App/MyEvents/MyEvents.tsx';
 import Chat from 'screens/App/Chat/Chat.tsx';
+import ChatCorrespondence from 'screens/App/Chat/screens/ChatCorrespondence/ChatCorrespondence.tsx';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -50,7 +52,7 @@ export const IOStackNavigation: FC = () => {
       <Stack.Screen
         options={{
           headerShown: true,
-          header: () => <Header headerType="IO" />,
+          header: () => <Header badge={true} logoType="logo" headerType="IO" />,
         }}
         name={IOPath}
         key={IOPath}
@@ -73,7 +75,7 @@ export const MyEventsStackNavigation: FC = () => {
       <Stack.Screen
         options={{
           headerShown: true,
-          header: () => <Header headerType="myEvents" />,
+          header: () => <Header logoType="logo" headerType="myEvents" />,
         }}
         name={myEventsPath}
         key={myEventsPath}
@@ -113,7 +115,7 @@ const NotificationsStackScreen = () => {
   );
 };
 
-export const ChatStackNavigation: FC = () => {
+export const ChatStackScreen = () => {
   const styles = useStyles();
   return (
     <Stack.Navigator
@@ -135,6 +137,7 @@ export const ChatStackNavigation: FC = () => {
     </Stack.Navigator>
   );
 };
+
 const EventCreatingStackScreen = () => {
   const styles = useStyles();
 
@@ -154,12 +157,25 @@ const EventCreatingStackScreen = () => {
   );
 };
 
+const ChatCorrespondenceStackScreen = () => {
+  return (
+    <EventCreatingStack.Navigator
+      initialRouteName={chatCorrespondencePath}
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <EventCreatingStack.Screen key={chatCorrespondencePath} name={chatCorrespondencePath} component={ChatCorrespondence} />
+    </EventCreatingStack.Navigator>
+  );
+};
+
 const AppStackScreen = () => {
   return (
     <AppStack.Navigator initialRouteName={bottomTabsStackPath} screenOptions={{headerShown: false}}>
       <AppStack.Screen key={bottomTabsStackPath} name={bottomTabsStackPath} component={BottomTabsStackScreen} />
       <AppStack.Screen key={notificationsStackPath} name={notificationsStackPath} component={NotificationsStackScreen} />
       <AppStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={EventCreatingStackScreen} />
+      <AppStack.Screen key={chatCorrespondencePath} name={chatCorrespondencePath} component={ChatCorrespondenceStackScreen} />
       <AppStack.Screen key={commonStackPath} name={commonStackPath} component={CommonStackScreen} />
     </AppStack.Navigator>
   );
