@@ -16,6 +16,13 @@ const useStyles = () =>
       width: '100%',
     },
     eventView: {
+      paddingVertical: screenHeight / 60,
+      paddingHorizontal: screenWidth / 28,
+      borderWidth: 1,
+      borderColor: lightGray5Color,
+      borderRadius: 50,
+    },
+    eventViewFlatList: {
       padding: 3,
       borderWidth: 1,
       borderColor: lightGray5Color,

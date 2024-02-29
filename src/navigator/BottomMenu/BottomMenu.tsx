@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 //import components
 import useStyles from 'navigator/BottomMenu/styles.ts';
-import {IOStackNavigation, MyEventsStackNavigation, ChatStackNavigation} from 'navigator/AppStackScreens/AppStackScreens.tsx';
+import {IOStackNavigation, MyEventsStackNavigation, ChatStackScreen} from 'navigator/AppStackScreens/AppStackScreens.tsx';
 import {whiteColor} from 'constants/colors.ts';
 import {createStackNavigator} from '@react-navigation/stack';
 import {IOPath, chatPath, myEventsPath, profilePath, requestsPath} from 'constants/pathLocations';
@@ -22,7 +22,7 @@ const RequestsStackScreen = () => {
         component={Requests}
         options={{
           headerShown: true,
-          header: () => <Header headerType="request" />,
+          header: () => <Header badge={true} logoType="logo" headerType="request" />,
         }}
       />
     </RequestsStack.Navigator>
@@ -48,7 +48,7 @@ const BottomMenu: FC = (): JSX.Element => {
       <Tab.Screen name={requestsPath} component={RequestsStackScreen} />
       <Tab.Screen name={IOPath} component={IOStackNavigation} />
       <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation} />
-      <Tab.Screen name={chatPath} component={ChatStackNavigation} />
+      <Tab.Screen name={chatPath} component={ChatStackScreen} />
     </Tab.Navigator>
   );
 };
