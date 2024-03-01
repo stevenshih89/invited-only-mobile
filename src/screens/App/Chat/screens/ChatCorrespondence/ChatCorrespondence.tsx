@@ -7,6 +7,7 @@ import {NavigationProp} from '@react-navigation/native';
 import useStyles from 'screens/App/Chat/screens/ChatCorrespondence/styles.ts';
 import {blackColor, lightGray6Color} from 'constants/colors.ts';
 import {isIos} from 'constants/common.ts';
+import ModalComponent from 'components/Modal/Modal.tsx';
 
 //import icons
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -32,6 +33,7 @@ interface NavigationParams {
 
 const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [messageUser, setMessageUser] = useState<string>('');
+  const [isModalVisible, setModalVisible] = useState<boolean>(false);
   const {image, title, online} = route?.params;
 
   const styles = useStyles();
@@ -134,7 +136,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                 </View>
               </View>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
               <ThreeDots />
             </TouchableOpacity>
           </View>
@@ -159,6 +161,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             <Microfon />
           </TouchableOpacity>
         </View>
+        <ModalComponent image={image} title={title} approve={false} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
       </SafeAreaProvider>
     </KeyboardAvoidingView>
   );
