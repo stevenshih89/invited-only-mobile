@@ -36,7 +36,7 @@
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Required access to geolocation</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library.</string>
 	<key>UIAppFonts</key>
@@ -44,6 +44,7 @@
 		<string>Satoshi-Bold.ttf</string>
 		<string>Satoshi-Medium.ttf</string>
 		<string>Satoshi-Regular.ttf</string>
+		<string>Satoshi-BoldItalic.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
