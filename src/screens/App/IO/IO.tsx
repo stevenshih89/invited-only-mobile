@@ -1,5 +1,5 @@
 import {SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity} from 'react-native';
-import React, {FC} from 'react';
+import React, {FC, useState} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card';
 
@@ -28,12 +28,35 @@ import CloseIcon from 'assets/images/icons/close.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import Button from 'components/Button/Button.tsx';
+import InstagramSLider from 'components/InstagramSlider/InstagramSlider';
+import SuperInvite from './screens/SuperInvite/SuperInvite';
+import Match from './screens/Match/Match';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
   const navigation = useAppNavigation();
+  const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
+  const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
+
+  const name = 'Alexa';
 
   const fakeGirlPhotos = [FakeGirlOne, FakeGirlTwo, FakeGirlThere];
+
+  const handleOpenSuperInvite = () => {
+    setIsVisibleSuperInvite(true);
+  };
+
+  const handleCloseSuperInvite = () => {
+    setIsVisibleSuperInvite(false);
+  };
+
+  const handleCloseMatch = () => {
+    setIsVisibleMatch(false);
+  };
+
+  const handleOpenMatch = () => {
+    setIsVisibleMatch(true);
+  };
 
   const data = [
     <>
@@ -51,7 +74,7 @@ const IO: FC = (): JSX.Element => {
     </>,
     <>
       <View style={styles.wrapperFakeCard}>
-        <TouchingSlider photos={fakeGirlPhotos} />
+        <TouchingSlider handleOpenSuperInvite={handleOpenSuperInvite} handleOpenMatch={handleOpenMatch} photos={fakeGirlPhotos} />
         <View style={styles.bioWrapper}>
           <Text style={styles.titleSection}>Bio</Text>
           <Text style={styles.textDescription}>
@@ -109,11 +132,12 @@ const IO: FC = (): JSX.Element => {
             <Image style={styles.imageFaceGirl} source={FakeGirlThere} />
             <Image style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={FakeGirlFour} />
           </View>
+          <InstagramSLider />
           <View style={styles.wrapperButtonsFooter}>
             <TouchableOpacity style={styles.buttonCloseOrCheck}>
               <CloseIcon />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonFlash}>
+            <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenSuperInvite}>
               <FlashIcon />
             </TouchableOpacity>
             <TouchableOpacity style={styles.buttonCloseOrCheck}>
@@ -164,6 +188,8 @@ const IO: FC = (): JSX.Element => {
             </View>
           );
         })}
+        <SuperInvite isVisibleSuperInvite={isVisibleSuperInvite} onCloseSuperInvite={handleCloseSuperInvite} />
+        <Match isVisibleMatch={isVisibleMatch} onCloseMatch={handleCloseMatch} name={name} />
       </View>
     </SafeAreaView>
   );
