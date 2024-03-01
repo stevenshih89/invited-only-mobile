@@ -38,6 +38,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-mask-input": "^1.2.3",
+    "react-native-modal": "^13.0.1",
     "react-native-modalize": "^2.1.1",
     "react-native-permissions": "^4.1.1",
     "react-native-push-notification": "^8.1.1",

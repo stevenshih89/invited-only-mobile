@@ -1,6 +1,7 @@
 const whiteColor: string = 'rgba(255, 255, 255, 1)';
 const blackColor: string = 'rgba(0, 0, 0, 1)';
 const black1Color: string = '#0B0B0B';
+const black2Color: string = 'rgba(17, 17, 17, 1)';
 const darkRedColor: string = '#891936';
 const darkRed2Color: string = '#9B314C';
 const lightRedColor: string = '#FA0232';
@@ -35,6 +36,7 @@ export {
   whiteColor,
   blackColor,
   black1Color,
+  black2Color,
   darkRedColor,
   darkRed2Color,
   lightRedColor,
