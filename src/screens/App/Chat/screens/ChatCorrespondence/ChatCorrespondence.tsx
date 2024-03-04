@@ -7,7 +7,7 @@ import {NavigationProp} from '@react-navigation/native';
 import useStyles from 'screens/App/Chat/screens/ChatCorrespondence/styles.ts';
 import {blackColor, lightGray6Color} from 'constants/colors.ts';
 import {isIos} from 'constants/common.ts';
-import ModalComponent from 'components/Modal/Modal.tsx';
+import ModalUserMenu from 'components/Modal/ModalUserMenu/ModalUserMenu.tsx';
 
 //import icons
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -154,14 +154,14 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               value={messageUser}
               onChangeText={setMessageUser}
               style={styles.textInput}
-              placeholder="White your message"
+              placeholder="Write your message"
             />
           </View>
           <TouchableOpacity>
             <Microfon />
           </TouchableOpacity>
         </View>
-        <ModalComponent image={image} title={title} approve={false} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
+        <ModalUserMenu image={image} title={title} approve={false} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
       </SafeAreaProvider>
     </KeyboardAvoidingView>
   );

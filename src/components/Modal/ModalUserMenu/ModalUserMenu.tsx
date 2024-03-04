@@ -4,20 +4,19 @@ import Modal from 'react-native-modal';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 //import components
-import useStyles from 'components/Modal/styles.ts';
+import useStyles from 'components/Modal/ModalUserMenu/styles.ts';
 import {screenHeight} from 'constants/common.ts';
 import Button from 'components/Button/Button.tsx';
 import {gray1Color, lightGray12Color} from 'constants/colors.ts';
 import {showToast} from 'helpers/helpers.ts';
 
 //import icons
-import ProfileDelete from 'assets/images/icons/profile-delete.svg';
 import CloseIcon from 'assets/images/icons/close-circle.svg';
 import InfoCircle from 'assets/images/icons/info-circle-fill.svg';
 import Arrow from 'assets/images/icons/arrow-3.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 
-interface ModalComponentProps {
+interface ModalUserMenuProps {
   isModalVisible: boolean;
   setModalVisible: boolean | any;
   title: string;
@@ -25,7 +24,7 @@ interface ModalComponentProps {
   image: any;
 }
 
-const ModalComponent: FC<ModalComponentProps> = ({isModalVisible, setModalVisible, title, approve, image}) => {
+const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible, title, approve, image}) => {
   const [removingState, setRemovingState] = useState<boolean>(false);
   const [blockAndReportState, setBlockAndReportState] = useState<boolean>(false);
   const [cancelInvitationState, setCancelInvitationState] = useState<boolean>(false);
@@ -301,4 +300,4 @@ const ModalComponent: FC<ModalComponentProps> = ({isModalVisible, setModalVisibl
   );
 };
 
-export default ModalComponent;
+export default ModalUserMenu;

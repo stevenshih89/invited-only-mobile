@@ -1,7 +1,7 @@
 import {FlatList, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import Invitations from './Invitations/Invitations';
-import SafetyAndWellbeing from './SafetyAndWellbeing/SafetyAndWellbeing';
-import MyPlan from './MyPlan/MyPlan';
+import Invitations from './screens/Invitations/Invitations';
+import SafetyAndWellbeing from './screens/SafetyAndWellbeing/SafetyAndWellbeing';
+import MyPlan from './screens/MyPlan/MyPlan';
 import Man from 'assets/images/auth/man.png';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import {useState} from 'react';
@@ -39,6 +39,7 @@ const Profile = () => {
   };
 
   const goToMyProfileView = () => {
+    // @ts-ignore
     navigation.navigate(myProfileViewPath);
   };
 
