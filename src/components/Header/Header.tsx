@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import {FC, useState} from 'react';
 import {View, TouchableOpacity, Text, Image, FlatList} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
@@ -9,6 +9,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {eventCreatingStackPath, notificationsPath, notificationsStackPath} from 'constants/pathLocations';
 import {screenHeight} from 'constants/common.ts';
 import {lightGray5Color, whiteColor} from 'constants/colors.ts';
+import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 
 //import icons
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
@@ -37,6 +38,8 @@ type ItemProps = {
 };
 
 const Header: FC<HeaderTypeProps> = ({badge, logoType, headerType, showHeaderTop = true}) => {
+  const [eventStarting, setEventStarting] = useState<boolean>(false);
+
   const styles = useStyles();
 
   const insets = useSafeAreaInsets();
@@ -74,7 +77,7 @@ const Header: FC<HeaderTypeProps> = ({badge, logoType, headerType, showHeaderTop
   ];
 
   const Item = ({title, filledTo, numberBadge, image, allPeople}: ItemProps) => (
-    <TouchableOpacity style={styles.eventButton}>
+    <TouchableOpacity onPress={() => setEventStarting(true)} style={styles.eventButton}>
       <View style={[styles.eventViewFlatList, {borderColor: numberBadge !== 0 ? whiteColor : lightGray5Color}]}>
         <Image source={image} style={styles.imageEvent} />
         {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
@@ -88,6 +91,7 @@ const Header: FC<HeaderTypeProps> = ({badge, logoType, headerType, showHeaderTop
           </Text>
         </View>
       )}
+      <ModalEventRemindes eventStarting={eventStarting} setEventStarting={setEventStarting} time="24h" image={image} city={title} date="12.11.2024" />
     </TouchableOpacity>
   );
 
