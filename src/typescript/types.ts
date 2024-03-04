@@ -40,6 +40,7 @@ export type RootStackParamList = {
   '/notifications': undefined;
   '/requests': undefined;
   '/profile': undefined;
+  '/my-profile-view': undefined;
   '/chat': undefined;
   '/chat-correspondence': undefined;
 };

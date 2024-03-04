@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {transparentGray60Color, whiteColor} from 'constants/colors.ts';
+import {blackColor, darkRed2Color, darkRedColor, transparentGray60Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi500, Satoshi400, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common.ts';
@@ -22,7 +22,7 @@ const useStyles = () => {
       marginTop: screenHeight / 30,
     },
     bar: {
-      width: screenWidth * 0.25,
+      flex: 1,
       height: 3,
       marginHorizontal: screenWidth / 130,
       borderRadius: 30,
@@ -156,6 +156,62 @@ const useStyles = () => {
       color: whiteColor,
       fontFamily: Satoshi500,
       fontSize: RFValue(12, 812),
+    },
+    wantToJoinWr: {
+      borderBottomLeftRadius: 10,
+      borderBottomRightRadius: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: darkRedColor,
+      paddingVertical: 5,
+      paddingHorizontal: 5,
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      left: 0,
+      flex: 1,
+    },
+    wantToJoinImage: {
+      borderRadius: 30,
+      backgroundColor: darkRed2Color,
+      width: 29,
+      height: 29,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 10,
+    },
+    wantToJoinText: {
+      color: whiteColor,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(14, 812),
+    },
+    inviteTooltipWr: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: whiteColor,
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      borderRadius: 10,
+      position: 'absolute',
+      right: 30,
+      top: screenHeight / 2.1,
+    },
+    inviteTooltipText: {
+      color: blackColor,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(14, 812),
+      marginLeft: 10,
+    },
+    inviteBottomCircleFigure: {
+      backgroundColor: whiteColor,
+      width: 6,
+      height: 6,
+      borderRadius: 10,
+      position: 'absolute',
+      bottom: -3,
+      right: 10,
+      transform: [{rotate: '180deg'}],
     },
   });
 };
