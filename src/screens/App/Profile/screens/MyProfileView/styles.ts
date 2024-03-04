@@ -119,7 +119,6 @@ const useStyles = () => {
     },
     wrapperFakeCard: {
       backgroundColor: lightGray6Color,
-      paddingHorizontal: 20,
       flex: 1,
     },
     bioWrapper: {

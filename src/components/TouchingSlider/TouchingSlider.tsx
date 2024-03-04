@@ -12,9 +12,11 @@ import FlashBlackIcon from 'assets/images/icons/flash-black.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
 import Lock from 'assets/images/icons/lock.svg';
 import Heart from 'assets/images/icons/heart.svg';
+import CardEvent from 'assets/images/app/card-event-bg.png';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
+import EventPreview from './EventPreview';
 
 interface Photo {
   url: string;
@@ -22,8 +24,8 @@ interface Photo {
 
 interface TouchingSliderProps {
   photos: Photo[];
-  handleOpenSuperInvite: () => void;
-  handleOpenMatch: () => void;
+  handleOpenSuperInvite?: () => void;
+  handleOpenMatch?: () => void;
   isShowCardButtons?: boolean;
   isShowWantsJoin?: boolean;
   isShowInvitesTooltip?: boolean;
@@ -43,6 +45,9 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   const navigation = useAppNavigation();
   const isLocked = false;
   const name = 'Alexa';
+  const isShowEventPreview = false;
+
+  const eventPhotos = [CardEvent, CardEvent];
 
   const goToCodeConfirmation = (): void => {
     // @ts-ignore
@@ -59,7 +64,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   const handleBack = (): void => {
     if (active === 0) {
-      return;
+      return setActive(numberPhotos - 1);
     }
     setActive(p => p - 1);
   };
@@ -95,44 +100,51 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
         </View>
       )}
+
+      {isShowEventPreview ? (
+        <View style={styles.eventPreviewWr}>
+          <EventPreview photos={eventPhotos} />
+        </View>
+      ) : (
+        <LinearGradient
+          colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
+          style={[styles.linearGradientFooter, {height: isShowEventPreview ? 'auto' : 201}]}
+          start={{x: 0, y: 0}}
+          end={{x: 0, y: 1}}>
+          <View style={styles.wrapperBio}>
+            <View style={styles.rowBioInfo}>
+              <Text style={styles.textName}>{name}</Text>
+              <Text style={styles.textYears}>29</Text>
+            </View>
+            <View style={styles.wrapperFooterCard}>
+              <View>
+                <View style={[styles.infoTags, {marginTop: screenHeight / 37, width: 130}]}>
+                  <HomeIcon />
+                  <Text style={styles.textInfoTags}>From Miami</Text>
+                </View>
+                <View style={[styles.infoTags, {marginTop: screenHeight / 190}]}>
+                  <LocationIcon />
+                  <Text style={styles.textInfoTags}>2 kilometers away</Text>
+                </View>
+              </View>
+              {isShowCardButtons && (
+                <View style={styles.wrapperRightButton}>
+                  <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenMatch}>
+                    <IOIcon />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.buttonFlash, {marginTop: screenHeight / 70}]} onPress={handleOpenSuperInvite}>
+                    <FlashIcon />
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          </View>
+        </LinearGradient>
+      )}
       <View style={styles.wrapperButtons}>
         <TouchableOpacity onPress={handleBack} style={styles.button} />
         <TouchableOpacity onPress={handleNext} style={styles.button} />
       </View>
-      <LinearGradient
-        colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
-        style={styles.linearGradientFooter}
-        start={{x: 0, y: 0}}
-        end={{x: 0, y: 1}}>
-        <View style={styles.wrapperBio}>
-          <View style={styles.rowBioInfo}>
-            <Text style={styles.textName}>{name}</Text>
-            <Text style={styles.textYears}>29</Text>
-          </View>
-          <View style={styles.wrapperFooterCard}>
-            <View>
-              <View style={[styles.infoTags, {marginTop: screenHeight / 37, width: 130}]}>
-                <HomeIcon />
-                <Text style={styles.textInfoTags}>From Miami</Text>
-              </View>
-              <View style={[styles.infoTags, {marginTop: screenHeight / 190}]}>
-                <LocationIcon />
-                <Text style={styles.textInfoTags}>2 kilometers away</Text>
-              </View>
-            </View>
-            {isShowCardButtons && (
-              <View style={styles.wrapperRightButton}>
-                <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenMatch}>
-                  <IOIcon />
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.buttonFlash, {marginTop: screenHeight / 70}]} onPress={handleOpenSuperInvite}>
-                  <FlashIcon />
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        </View>
-      </LinearGradient>
       {isShowWantsJoin && (
         <View style={styles.wantToJoinWr}>
           <View style={styles.wantToJoinImage}>

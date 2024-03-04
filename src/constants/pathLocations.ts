@@ -33,6 +33,7 @@ const notificationsPath: keyof RootStackParamList = '/notifications';
 const requestsPath: keyof RootStackParamList = '/requests';
 const profilePath: keyof RootStackParamList = '/profile';
 const myProfileViewPath: keyof RootStackParamList = '/my-profile-view';
+const profileEditingPath: keyof RootStackParamList = '/profile-editing';
 const myEventsPath: keyof RootStackParamList = '/my-events';
 const chatPath: keyof RootStackParamList = '/chat';
 const chatCorrespondencePath: keyof RootStackParamList = '/chat-correspondence';
@@ -68,6 +69,7 @@ export {
   eventCreatingStackPath,
   profilePath,
   myProfileViewPath,
+  profileEditingPath,
   requestsPath,
   myEventsPath,
   chatPath,
