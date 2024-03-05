@@ -7,7 +7,7 @@ import {IOStackNavigation, MyEventsStackNavigation, ChatStackScreen} from 'navig
 import {whiteColor} from 'constants/colors.ts';
 import {createStackNavigator} from '@react-navigation/stack';
 import {IOPath, chatPath, myEventsPath, myProfileViewPath, profileEditingPath, profilePath, requestsPath} from 'constants/pathLocations';
-import Requests from 'screens/App/Requests/Requests';
+import Requests from 'screens/App/Requests/Host/Requests';
 import Header from 'components/Header/Header';
 import {tabBarName, tabIcon} from 'navigator/TabBar/TabBar';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
