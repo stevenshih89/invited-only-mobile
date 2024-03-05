@@ -37,6 +37,7 @@ export type RootStackParamList = {
   '/payment': undefined;
   '/tutorial-flow': undefined;
   '/io': undefined;
+  '/join-events': undefined;
   '/notifications': undefined;
   '/requests': undefined;
   '/profile': undefined;
@@ -44,4 +45,5 @@ export type RootStackParamList = {
   '/profile-editing': undefined;
   '/chat': undefined;
   '/chat-correspondence': undefined;
+  '/user-profile': undefined;
 };

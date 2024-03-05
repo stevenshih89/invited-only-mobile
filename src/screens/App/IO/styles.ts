@@ -202,7 +202,6 @@ const useStyles = () => {
       fontSize: RFValue(17, 812),
     },
     buttonCloseOrCheck: {
-      // padding: 11,
       paddingVertical: screenHeight / 80,
       paddingHorizontal: screenWidth / 35,
       backgroundColor: 'black',

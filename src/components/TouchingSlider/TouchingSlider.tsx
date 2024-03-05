@@ -29,6 +29,8 @@ interface TouchingSliderProps {
   isShowCardButtons?: boolean;
   isShowWantsJoin?: boolean;
   isShowInvitesTooltip?: boolean;
+  isShowEventPreview?: boolean;
+  isLocked?: boolean;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
@@ -38,14 +40,14 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   isShowCardButtons = true,
   isShowWantsJoin = true,
   isShowInvitesTooltip = true,
+  isLocked = false,
+  isShowEventPreview = false,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const isLocked = false;
   const name = 'Alexa';
-  const isShowEventPreview = false;
 
   const eventPhotos = [CardEvent, CardEvent];
 
