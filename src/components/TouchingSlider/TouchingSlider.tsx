@@ -22,11 +22,12 @@ interface Photo {
 
 interface TouchingSliderProps {
   photos: Photo[];
-  handleOpenSuperInvite: () => void;
-  handleOpenMatch: () => void;
+  handleOpenSuperInvite?: () => void;
+  handleOpenMatch?: () => void;
   isShowCardButtons?: boolean;
   isShowWantsJoin?: boolean;
   isShowInvitesTooltip?: boolean;
+  isLocked?: boolean;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
@@ -36,12 +37,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   isShowCardButtons = true,
   isShowWantsJoin = true,
   isShowInvitesTooltip = true,
+  isLocked = false,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const isLocked = false;
   const name = 'Alexa';
 
   const goToCodeConfirmation = (): void => {

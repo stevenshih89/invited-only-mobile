@@ -29,6 +29,7 @@ const invitationCodePath: keyof RootStackParamList = '/invitation-code';
 const paymentPath: keyof RootStackParamList = '/payment';
 const tutorialFlowPath: keyof RootStackParamList = '/tutorial-flow';
 const IOPath: keyof RootStackParamList = '/io';
+const joinEventsPath: keyof RootStackParamList = '/join-events';
 const notificationsPath: keyof RootStackParamList = '/notifications';
 const requestsPath: keyof RootStackParamList = '/requests';
 const profilePath: keyof RootStackParamList = '/profile';
@@ -42,6 +43,7 @@ export {
   notificationsStackPath,
   commonStackPath,
   onboardPath,
+  joinEventsPath,
   signUpPath,
   confirmPhonePath,
   turnNotificationsPath,

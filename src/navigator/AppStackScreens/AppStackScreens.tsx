@@ -6,19 +6,19 @@ import IO from 'screens/App/IO/IO.tsx';
 import BottomMenu from 'navigator/BottomMenu/BottomMenu.tsx';
 import Header from 'components/Header/Header.tsx';
 import {
-  IOPath,
-  accountRejectedPath,
-  bottomTabsStackPath,
-  codeVerifiedPath,
-  commonStackPath,
-  invitationCodePath,
-  notificationsPath,
-  notificationsStackPath,
-  pendingScreenPath,
-  eventCreatingStackPath,
-  myEventsPath,
-  chatPath,
-  chatCorrespondencePath,
+    IOPath,
+    accountRejectedPath,
+    bottomTabsStackPath,
+    codeVerifiedPath,
+    commonStackPath,
+    invitationCodePath,
+    notificationsPath,
+    notificationsStackPath,
+    pendingScreenPath,
+    eventCreatingStackPath,
+    myEventsPath,
+    chatPath,
+    chatCorrespondencePath, joinEventsPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -31,6 +31,7 @@ import EventCreating from 'screens/App/IO/screens/EventCreating/EventCreating.ts
 import MyEvents from 'screens/App/MyEvents/MyEvents.tsx';
 import Chat from 'screens/App/Chat/Chat.tsx';
 import ChatCorrespondence from 'screens/App/Chat/screens/ChatCorrespondence/ChatCorrespondence.tsx';
+import JoinEvents from "screens/App/IO/screens/JoinEvents/JoinEvents.tsx";
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -57,6 +58,15 @@ export const IOStackNavigation: FC = () => {
         name={IOPath}
         key={IOPath}
         component={IO}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          header: () => <Header badge={true} logoType="logo" headerType="IO" />,
+        }}
+        name={joinEventsPath}
+        key={joinEventsPath}
+        component={JoinEvents}
       />
     </Stack.Navigator>
   );

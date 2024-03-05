@@ -6,7 +6,12 @@ import {Badge} from '@rneui/themed';
 //import components
 import useStyles from 'components/Header/styles.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {eventCreatingStackPath, notificationsPath, notificationsStackPath} from 'constants/pathLocations';
+import {
+  eventCreatingStackPath,
+  joinEventsPath,
+  notificationsPath,
+  notificationsStackPath
+} from 'constants/pathLocations';
 import {screenHeight} from 'constants/common.ts';
 import {lightGray5Color, whiteColor} from 'constants/colors.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
@@ -115,7 +120,8 @@ const Header: FC<HeaderTypeProps> = ({badge, logoType, headerType, showHeaderTop
               </View>
               <Text style={styles.textButton}>Create event</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.eventButton}>
+            {/*@ts-ignore*/}
+            <TouchableOpacity onPress={() => navigation.navigate(joinEventsPath)} style={styles.eventButton}>
               <View style={styles.eventView}>
                 <CalendarSearchIcon width={26} height={26} />
               </View>
