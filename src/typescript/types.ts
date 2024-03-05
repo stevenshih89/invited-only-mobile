@@ -41,6 +41,7 @@ export type RootStackParamList = {
   '/requests': undefined;
   '/profile': undefined;
   '/my-profile-view': undefined;
+  '/profile-editing': undefined;
   '/chat': undefined;
   '/chat-correspondence': undefined;
 };

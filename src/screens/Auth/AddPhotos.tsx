@@ -308,7 +308,7 @@ const AddPhotos: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(enterBirthdayPath)} title="Next" />
+                <Button onPress={() => navigation.navigate(enterBirthdayPath as never)} title="Next" />
               </View>
             </View>
           </SafeAreaView>

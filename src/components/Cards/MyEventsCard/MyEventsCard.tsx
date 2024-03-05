@@ -8,7 +8,7 @@ import imageBg from 'assets/images/app/card-event-bg.png';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import IconPending from 'assets/images/icons/pending-clock.svg';
 import IconAccepted from 'assets/images/icons/tick-circle.svg';
-import IconEdit from 'assets/images/icons/edit-2 (1).svg';
+import IconEdit from 'assets/images/icons/edit.svg';
 import IconMore from 'assets/images/icons/more.svg';
 import CalendarBlank from 'assets/images/icons/CalendarBlank.svg';
 import ProfileTwoUser from 'assets/images/icons/profile-2user.svg';
