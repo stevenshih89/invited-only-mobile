@@ -1,3 +1,4 @@
+import {Dispatch, FC, SetStateAction} from 'react';
 import InstagramSLider from 'components/InstagramSlider/InstagramSlider';
 import {lightGray6Color, transparentWhite16Color} from 'constants/colors';
 import {screenHeight, screenWidth} from 'constants/common';
@@ -19,8 +20,16 @@ import useStyles from './styles';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {profileEditingPath} from 'constants/pathLocations';
+import ModalUserProfile from 'components/Modal/ModalUserProfile/ModalUserProfile.tsx';
 
-const MyProfileView = () => {
+interface MyProfileViewProps {
+  isShowEditButton?: boolean;
+  isShowInstagramPhotos?: boolean;
+  isModalVisible?: boolean;
+  setModalVisible?: Dispatch<SetStateAction<boolean>>;
+}
+
+const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible, isShowEditButton = true, isShowInstagramPhotos = true}) => {
   const fakeGirlPhotos = [Man, FakeGirlOne, FakeGirlTwo, FakeGirlThere, FakeGirlFour];
 
   const styles = useStyles();
@@ -40,7 +49,7 @@ const MyProfileView = () => {
           style={{flex: 1, borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
           <View style={styles.wrapperFakeCard}>
             <TouchingSlider photos={fakeGirlPhotos} isShowCardButtons={false} isShowWantsJoin={false} isShowInvitesTooltip={false} />
-            <Button title="Edit" buttonStyle={{marginTop: 20}} onPress={goToProfileEditing} />
+            {isShowEditButton && <Button title="Edit" buttonStyle={{marginTop: 20}} onPress={goToProfileEditing} />}
             <View style={styles.bioWrapper}>
               <Text style={styles.titleSection}>Bio</Text>
               <Text style={styles.textDescription}>
@@ -97,9 +106,10 @@ const MyProfileView = () => {
                 <Image style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={Man} />
                 <Image style={styles.imageFaceGirl} source={Man} />
               </View>
-              <InstagramSLider />
+              {isShowInstagramPhotos && <InstagramSLider />}
             </View>
           </View>
+          <ModalUserProfile title={'Alex'} image={Man} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
         </ScrollView>
       </View>
     </SafeAreaView>

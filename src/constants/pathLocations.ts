@@ -38,10 +38,12 @@ const profileEditingPath: keyof RootStackParamList = '/profile-editing';
 const myEventsPath: keyof RootStackParamList = '/my-events';
 const chatPath: keyof RootStackParamList = '/chat';
 const chatCorrespondencePath: keyof RootStackParamList = '/chat-correspondence';
+const userProfilePath: keyof RootStackParamList = '/user-profile';
 
 export {
   bottomTabsStackPath,
   notificationsStackPath,
+  userProfilePath,
   commonStackPath,
   onboardPath,
   joinEventsPath,

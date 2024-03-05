@@ -6,7 +6,7 @@ import {TinderCard} from 'rn-tinder-card';
 import useStyles from 'screens/App/IO/screens/JoinEvents/styles.ts';
 import {screenHeight} from 'constants/common.ts';
 import Button from 'components/Button/Button.tsx';
-import {eventCreatingStackPath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, userProfilePath} from 'constants/pathLocations.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 
 //import icons
@@ -45,7 +45,13 @@ const JoinEvents = ({navigation}: any) => {
     </>,
     <>
       <View style={styles.wrapperFakeCard}>
-        <TouchingSlider isShowWantsJoin={false} isShowInvitesTooltip={false} isShowCardButtons={false} photos={fakePhotos} />
+        <TouchingSlider
+          isShowEventPreview={true}
+          isShowWantsJoin={false}
+          isShowInvitesTooltip={false}
+          isShowCardButtons={false}
+          photos={fakePhotos}
+        />
 
         <View style={styles.bioWrapper}>
           <Text style={styles.titleSection}>Event Details</Text>
@@ -130,7 +136,7 @@ const JoinEvents = ({navigation}: any) => {
                 <Text style={styles.textOnline}>Online</Text>
               </View>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate(userProfilePath)}>
               <Text style={styles.textSeeProfile}>
                 See profile <ArrowRightIcon width={14} height={14} />
               </Text>

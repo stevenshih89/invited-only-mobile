@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import React, {FC, useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
 //import components
@@ -6,19 +6,22 @@ import IO from 'screens/App/IO/IO.tsx';
 import BottomMenu from 'navigator/BottomMenu/BottomMenu.tsx';
 import Header from 'components/Header/Header.tsx';
 import {
-    IOPath,
-    accountRejectedPath,
-    bottomTabsStackPath,
-    codeVerifiedPath,
-    commonStackPath,
-    invitationCodePath,
-    notificationsPath,
-    notificationsStackPath,
-    pendingScreenPath,
-    eventCreatingStackPath,
-    myEventsPath,
-    chatPath,
-    chatCorrespondencePath, joinEventsPath,
+  IOPath,
+  accountRejectedPath,
+  bottomTabsStackPath,
+  codeVerifiedPath,
+  commonStackPath,
+  invitationCodePath,
+  notificationsPath,
+  notificationsStackPath,
+  pendingScreenPath,
+  eventCreatingStackPath,
+  myEventsPath,
+  chatPath,
+  chatCorrespondencePath,
+  joinEventsPath,
+  myProfileViewPath,
+  userProfilePath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -31,7 +34,10 @@ import EventCreating from 'screens/App/IO/screens/EventCreating/EventCreating.ts
 import MyEvents from 'screens/App/MyEvents/MyEvents.tsx';
 import Chat from 'screens/App/Chat/Chat.tsx';
 import ChatCorrespondence from 'screens/App/Chat/screens/ChatCorrespondence/ChatCorrespondence.tsx';
-import JoinEvents from "screens/App/IO/screens/JoinEvents/JoinEvents.tsx";
+import JoinEvents from 'screens/App/IO/screens/JoinEvents/JoinEvents.tsx';
+import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView.tsx';
+import {TouchableOpacity} from 'react-native';
+import ThreeDotsIcon from 'assets/images/icons/more-white.svg';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -179,6 +185,39 @@ const ChatCorrespondenceStackScreen = () => {
   );
 };
 
+const UserProfileStackScreen = () => {
+  const styles = useStyles();
+  const [isModalVisible, setModalVisible] = useState<boolean>(false);
+  return (
+    <EventCreatingStack.Navigator
+      initialRouteName={chatCorrespondencePath}
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <Stack.Screen
+        key={myProfileViewPath}
+        name={myProfileViewPath}
+        component={() => (
+          <MyProfileView setModalVisible={setModalVisible} isModalVisible={isModalVisible} isShowEditButton={false} isShowInstagramPhotos={false} />
+        )}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerRight: () => (
+            <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.7}>
+              <ThreeDotsIcon style={{marginHorizontal: 20, marginVertical: 10}} />
+            </TouchableOpacity>
+          ),
+          headerTitle: 'User profile',
+          headerShown: true,
+        }}
+      />
+    </EventCreatingStack.Navigator>
+  );
+};
+
 const AppStackScreen = () => {
   return (
     <AppStack.Navigator initialRouteName={bottomTabsStackPath} screenOptions={{headerShown: false}}>
@@ -186,6 +225,7 @@ const AppStackScreen = () => {
       <AppStack.Screen key={notificationsStackPath} name={notificationsStackPath} component={NotificationsStackScreen} />
       <AppStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={EventCreatingStackScreen} />
       <AppStack.Screen key={chatCorrespondencePath} name={chatCorrespondencePath} component={ChatCorrespondenceStackScreen} />
+      <AppStack.Screen key={userProfilePath} name={userProfilePath} component={UserProfileStackScreen} />
       <AppStack.Screen key={commonStackPath} name={commonStackPath} component={CommonStackScreen} />
     </AppStack.Navigator>
   );
