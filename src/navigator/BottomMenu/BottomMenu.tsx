@@ -6,12 +6,17 @@ import useStyles from 'navigator/BottomMenu/styles.ts';
 import {IOStackNavigation, MyEventsStackNavigation, ChatStackScreen} from 'navigator/AppStackScreens/AppStackScreens.tsx';
 import {whiteColor} from 'constants/colors.ts';
 import {createStackNavigator} from '@react-navigation/stack';
-import {IOPath, chatPath, myEventsPath, myProfileViewPath, profilePath, requestsPath} from 'constants/pathLocations';
+import {IOPath, chatPath, myEventsPath, myProfileViewPath, profileEditingPath, profilePath, requestsPath} from 'constants/pathLocations';
 import Requests from 'screens/App/Requests/Requests';
 import Header from 'components/Header/Header';
 import {tabBarName, tabIcon} from 'navigator/TabBar/TabBar';
+import ArrowLeft from 'assets/images/icons/arrow-left.svg';
+import Edit from 'assets/images/icons/edit.svg';
 import Profile from 'screens/App/Profile/Profile';
 import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView';
+import ProfileEditing from 'screens/App/Profile/screens/ProfileEditing/ProfileEditing';
+import {TouchableOpacity} from 'react-native';
+import {useAppNavigation} from 'hooks/useAppNavigation';
 
 const RequestsStackScreen = () => {
   const RequestsStack = createStackNavigator();
@@ -33,6 +38,13 @@ const RequestsStackScreen = () => {
 
 const ProfileStackScreen = () => {
   const ProfileStack = createStackNavigator();
+  const styles = useStyles();
+
+  const navigation = useAppNavigation();
+
+  const goToProfileEditing = (): void => {
+    navigation.navigate(profileEditingPath as never);
+  };
 
   return (
     <ProfileStack.Navigator initialRouteName={profilePath}>
@@ -50,8 +62,30 @@ const ProfileStackScreen = () => {
         name={myProfileViewPath}
         component={MyProfileView}
         options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerRight: () => (
+            <TouchableOpacity activeOpacity={0.7} onPress={goToProfileEditing}>
+              <Edit style={{marginHorizontal: 12, marginVertical: 10}} />
+            </TouchableOpacity>
+          ),
+          headerTitle: 'User profile',
           headerShown: true,
-          // header: () => <Header badge={true} logoType="logo" headerType="profile" />,
+        }}
+      />
+      <ProfileStack.Screen
+        key={profileEditingPath}
+        name={profileEditingPath}
+        component={ProfileEditing}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerTitle: 'Profile editing',
+          headerShown: true,
         }}
       />
     </ProfileStack.Navigator>

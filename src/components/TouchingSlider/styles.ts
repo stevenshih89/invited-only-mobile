@@ -20,6 +20,7 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       marginTop: screenHeight / 30,
+      marginHorizontal: 10,
     },
     bar: {
       flex: 1,
@@ -212,6 +213,14 @@ const useStyles = () => {
       bottom: -3,
       right: 10,
       transform: [{rotate: '180deg'}],
+    },
+    eventPreviewWr: {
+      padding: 10,
+      zIndex: 1000,
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      left: 0,
     },
   });
 };

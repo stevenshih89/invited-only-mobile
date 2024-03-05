@@ -1,5 +1,7 @@
 import {StyleSheet} from 'react-native';
-import {black1Color} from 'constants/colors.ts';
+import {backgroundColor, black1Color, whiteColor} from 'constants/colors.ts';
+import {Satoshi400} from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 //import components
 
@@ -15,6 +17,18 @@ const useStyles = () =>
         height: 0,
         width: 0,
       },
+    },
+    headerStyle: {
+      backgroundColor: backgroundColor,
+      shadowOffset: {
+        height: 0,
+        width: 0,
+      },
+    },
+    headerTitleStyle: {
+      fontFamily: Satoshi400,
+      fontSize: RFValue(24, 812),
+      color: whiteColor,
     },
   });
 
