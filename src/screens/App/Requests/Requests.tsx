@@ -11,8 +11,6 @@ import FakeGirlFour from 'assets/images/app/fake-girl-4.png';
 import ManFace from 'assets/images/auth/man-face.png';
 import RequestPlace1 from 'assets/images/app/requst-place-1.png';
 import RequestPlace2 from 'assets/images/app/requst-place-2.png';
-import RequestPlace3 from 'assets/images/app/requst-place-3.png';
-import RequestPlace4 from 'assets/images/app/requst-place-4.png';
 import ManFace2 from 'assets/images/app/request-man.png';
 import Home from 'assets/images/icons/home.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
@@ -27,9 +25,17 @@ import {whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {commonStackPath, eventInfoPath} from 'constants/pathLocations';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
+
+  const navigation = useAppNavigation();
+
+  const goToEventInfo = () => {
+    navigation.navigate(commonStackPath, {screen: eventInfoPath});
+  };
 
   const listOfHosts = [
     {id: 0, name: 'Simon', image: ManFace},
@@ -155,7 +161,7 @@ const Requests: FC = (): ReactElement => {
                 </View>
               </View>
             )}
-            <TouchableOpacity activeOpacity={0.7} style={[styles.buttonContainer, {margin: 7}]}>
+            <TouchableOpacity activeOpacity={0.7} style={[styles.buttonContainer, {margin: 7}]} onPress={goToEventInfo}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
                 <Image source={item.host?.image} style={{width: 25, height: 25, borderRadius: 20}} />
                 <View style={{marginLeft: 8}}>
@@ -202,6 +208,7 @@ const Requests: FC = (): ReactElement => {
     <View style={styles.container}>
       {list.length ? (
         <FlatList
+          // @ts-ignore
           data={list}
           numColumns={2}
           keyExtractor={item => item.id.toString()}
