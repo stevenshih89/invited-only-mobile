@@ -191,7 +191,7 @@ const EnterBirthday: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(genderPath)} title="Next" />
+                <Button onPress={() => navigation.navigate(genderPath as never)} title="Next" />
               </View>
             </View>
           </SafeAreaView>

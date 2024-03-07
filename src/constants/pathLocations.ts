@@ -39,6 +39,7 @@ const myEventsPath: keyof RootStackParamList = '/my-events';
 const chatPath: keyof RootStackParamList = '/chat';
 const chatCorrespondencePath: keyof RootStackParamList = '/chat-correspondence';
 const userProfilePath: keyof RootStackParamList = '/user-profile';
+const eventInfoPath: keyof RootStackParamList = '/event-info';
 
 export {
   bottomTabsStackPath,
@@ -78,4 +79,5 @@ export {
   myEventsPath,
   chatPath,
   chatCorrespondencePath,
+  eventInfoPath,
 };

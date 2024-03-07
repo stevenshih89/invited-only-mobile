@@ -119,7 +119,7 @@ const TurnNotifications: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(chooseAccountTypePath)} title="Next" />
+                <Button onPress={() => navigation.navigate(chooseAccountTypePath as never)} title="Next" />
               </View>
             </View>
           </SafeAreaView>

@@ -22,6 +22,7 @@ import {
   joinEventsPath,
   myProfileViewPath,
   userProfilePath,
+  eventInfoPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -38,6 +39,7 @@ import JoinEvents from 'screens/App/IO/screens/JoinEvents/JoinEvents.tsx';
 import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView.tsx';
 import {TouchableOpacity} from 'react-native';
 import ThreeDotsIcon from 'assets/images/icons/more-white.svg';
+import EventInfo from 'screens/App/Requests/EventInfo/EventInfo';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -103,14 +105,35 @@ export const MyEventsStackNavigation: FC = () => {
 
 const BottomTabsStackScreen = () => <BottomMenu />;
 
-const CommonStackScreen = () => (
-  <CommonStack.Navigator>
-    <CommonStack.Screen key={invitationCodePath} name={invitationCodePath} options={{headerShown: false}} component={InvitationCode} />
-    <CommonStack.Screen key={pendingScreenPath} name={pendingScreenPath} options={{headerShown: false}} component={PendingScreen} />
-    <CommonStack.Screen key={accountRejectedPath} name={accountRejectedPath} options={{headerShown: false}} component={AccountRejected} />
-    <CommonStack.Screen key={codeVerifiedPath} name={codeVerifiedPath} options={{headerShown: false}} component={CodeVerified} />
-  </CommonStack.Navigator>
-);
+const CommonStackScreen = () => {
+  const styles = useStyles();
+  return (
+    <CommonStack.Navigator>
+      <CommonStack.Screen key={invitationCodePath} name={invitationCodePath} options={{headerShown: false}} component={InvitationCode} />
+      <CommonStack.Screen key={pendingScreenPath} name={pendingScreenPath} options={{headerShown: false}} component={PendingScreen} />
+      <CommonStack.Screen key={accountRejectedPath} name={accountRejectedPath} options={{headerShown: false}} component={AccountRejected} />
+      <CommonStack.Screen key={codeVerifiedPath} name={codeVerifiedPath} options={{headerShown: false}} component={CodeVerified} />
+      <CommonStack.Screen
+        key={eventInfoPath}
+        name={eventInfoPath}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerTitle: 'Event info',
+          headerShown: true,
+          headerRight: () => (
+            <TouchableOpacity activeOpacity={0.7}>
+              <ThreeDotsIcon style={{marginHorizontal: 20, marginVertical: 10}} />
+            </TouchableOpacity>
+          ),
+        }}
+        component={EventInfo}
+      />
+    </CommonStack.Navigator>
+  );
+};
 
 const NotificationsStackScreen = () => {
   const styles = useStyles();

@@ -1,6 +1,5 @@
 import {lightGray5Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
-import Person from 'assets/images/icons/person.svg';
 import Book from 'assets/images/icons/book.svg';
 import BiGender from 'assets/images/icons/tabler_gender-bigender.svg';
 import Location from 'assets/images/icons/location.svg';
@@ -15,21 +14,27 @@ import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {FC, ReactElement} from 'react';
 
-const MyBasics: FC = (): ReactElement => {
+const MyBasics: FC<{
+  setIsVisibleSmokeModal: (val: boolean) => void;
+  setIsVisibleGenderModal: (val: boolean) => void;
+  setIsVisibleHeightModal: (val: boolean) => void;
+  setIsVisibleWorkModal: (val: boolean) => void;
+  setIsVisibleAlcoholModal: (val: boolean) => void;
+  setIsVisibleBirthdayModal: (val: boolean) => void;
+  setIsVisibleLocationModal: (val: boolean) => void;
+}> = ({
+  setIsVisibleSmokeModal,
+  setIsVisibleGenderModal,
+  setIsVisibleHeightModal,
+  setIsVisibleWorkModal,
+  setIsVisibleAlcoholModal,
+  setIsVisibleBirthdayModal,
+  setIsVisibleLocationModal,
+}): ReactElement => {
   return (
     <View style={styles.container}>
       <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>My basics</Text>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
-        <View style={styles.iconContainer}>
-          <Person />
-          <Text style={styles.text}>My role</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Text style={styles.subText}>Host</Text>
-          <ArrowRight />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleWorkModal(true)}>
         <View style={styles.iconContainer}>
           <Book />
           <Text style={styles.text}>Work</Text>
@@ -39,7 +44,7 @@ const MyBasics: FC = (): ReactElement => {
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleGenderModal(true)}>
         <View style={styles.iconContainer}>
           <BiGender />
           <Text style={styles.text}>Gender</Text>
@@ -49,7 +54,7 @@ const MyBasics: FC = (): ReactElement => {
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleLocationModal(true)}>
         <View style={styles.iconContainer}>
           <Location />
           <Text style={styles.text}>Location</Text>
@@ -69,7 +74,7 @@ const MyBasics: FC = (): ReactElement => {
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleBirthdayModal(true)}>
         <View style={styles.iconContainer}>
           <Cake />
           <Text style={styles.text}>Date of birthday</Text>
@@ -79,7 +84,7 @@ const MyBasics: FC = (): ReactElement => {
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleHeightModal(true)}>
         <View style={styles.iconContainer}>
           <Arrows />
           <Text style={styles.text}>Height</Text>
@@ -99,7 +104,7 @@ const MyBasics: FC = (): ReactElement => {
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleAlcoholModal(true)}>
         <View style={styles.iconContainer}>
           <Wine />
           <Text style={styles.text}>Drinking</Text>
@@ -109,7 +114,7 @@ const MyBasics: FC = (): ReactElement => {
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleSmokeModal(true)}>
         <View style={styles.iconContainer}>
           <Smoke />
           <Text style={styles.text}>Smoking</Text>
