@@ -18,11 +18,23 @@ const MyBasics: FC<{
   setIsVisibleSmokeModal: (val: boolean) => void;
   setIsVisibleGenderModal: (val: boolean) => void;
   setIsVisibleHeightModal: (val: boolean) => void;
-}> = ({setIsVisibleSmokeModal, setIsVisibleGenderModal, setIsVisibleHeightModal}): ReactElement => {
+  setIsVisibleWorkModal: (val: boolean) => void;
+  setIsVisibleAlcoholModal: (val: boolean) => void;
+  setIsVisibleBirthdayModal: (val: boolean) => void;
+  setIsVisibleLocationModal: (val: boolean) => void;
+}> = ({
+  setIsVisibleSmokeModal,
+  setIsVisibleGenderModal,
+  setIsVisibleHeightModal,
+  setIsVisibleWorkModal,
+  setIsVisibleAlcoholModal,
+  setIsVisibleBirthdayModal,
+  setIsVisibleLocationModal,
+}): ReactElement => {
   return (
     <View style={styles.container}>
       <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>My basics</Text>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleWorkModal(true)}>
         <View style={styles.iconContainer}>
           <Book />
           <Text style={styles.text}>Work</Text>
@@ -42,7 +54,7 @@ const MyBasics: FC<{
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleLocationModal(true)}>
         <View style={styles.iconContainer}>
           <Location />
           <Text style={styles.text}>Location</Text>
@@ -62,7 +74,7 @@ const MyBasics: FC<{
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleBirthdayModal(true)}>
         <View style={styles.iconContainer}>
           <Cake />
           <Text style={styles.text}>Date of birthday</Text>
@@ -92,7 +104,7 @@ const MyBasics: FC<{
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleAlcoholModal(true)}>
         <View style={styles.iconContainer}>
           <Wine />
           <Text style={styles.text}>Drinking</Text>

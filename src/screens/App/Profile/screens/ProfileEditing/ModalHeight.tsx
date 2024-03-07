@@ -14,7 +14,7 @@ const ModalHeight: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
   const heightsList = Array.from({length: 61}, (_, i) => ({id: i.toString(), value: i + 150, label: `${i + 150} cm`}));
 
   const [height, setHeight] = useState(heightsList[0].value);
-
+  2;
   return (
     <Modal
       isVisible={isVisible}

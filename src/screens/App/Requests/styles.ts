@@ -1,4 +1,5 @@
 import {darkRedColor, lightGray6Color, transparent60Color, whiteColor} from 'constants/colors';
+import {screenHeight} from 'constants/common';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {StyleSheet} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -27,6 +28,7 @@ const useStyles = () =>
     },
     listContentContainer: {
       paddingHorizontal: 13,
+      paddingBottom: screenHeight / 7,
     },
     superLikeContainer: {
       backgroundColor: darkRedColor,

@@ -11,11 +11,19 @@ import MyBasics from './MyBasics';
 import ModalSmoke from './ModalSmoke';
 import ModalGender from './ModalGender';
 import ModalHeight from './ModalHeight';
+import ModalWork from './ModalWork';
+import ModalAlcohol from './ModalAlcohol';
+import ModalBirthday from './ModalBirthday';
+import ModalLocation from './ModalLocation';
 
 const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleSmokeModal, setIsVisibleSmokeModal] = useState<boolean>(false);
   const [isVisibleGenderModal, setIsVisibleGenderModal] = useState<boolean>(false);
   const [isVisibleHeightModal, setIsVisibleHeightModal] = useState<boolean>(false);
+  const [isVisibleWorkModal, setIsVisibleWorkModal] = useState<boolean>(false);
+  const [isVisibleAlcoholModal, setIsVisibleAlcoholModal] = useState<boolean>(false);
+  const [isVisibleBirthdayModal, setIsVisibleBirthdayModal] = useState<boolean>(false);
+  const [isVisibleLocationModal, setIsVisibleLocationModal] = useState<boolean>(false);
 
   return (
     <>
@@ -33,6 +41,10 @@ const ProfileEditing: FC = (): ReactElement => {
               setIsVisibleSmokeModal={setIsVisibleSmokeModal}
               setIsVisibleGenderModal={setIsVisibleGenderModal}
               setIsVisibleHeightModal={setIsVisibleHeightModal}
+              setIsVisibleWorkModal={setIsVisibleWorkModal}
+              setIsVisibleAlcoholModal={setIsVisibleAlcoholModal}
+              setIsVisibleBirthdayModal={setIsVisibleBirthdayModal}
+              setIsVisibleLocationModal={setIsVisibleLocationModal}
             />
             <LanguagesKnow />
             <Button title="Save" buttonStyle={{marginTop: 34}} />
@@ -42,6 +54,10 @@ const ProfileEditing: FC = (): ReactElement => {
       <ModalSmoke isVisible={isVisibleSmokeModal} onClose={() => setIsVisibleSmokeModal(false)} />
       <ModalGender isVisible={isVisibleGenderModal} onClose={() => setIsVisibleGenderModal(false)} />
       <ModalHeight isVisible={isVisibleHeightModal} onClose={() => setIsVisibleHeightModal(false)} />
+      <ModalWork isVisible={isVisibleWorkModal} onClose={() => setIsVisibleWorkModal(false)} />
+      <ModalAlcohol isVisible={isVisibleAlcoholModal} onClose={() => setIsVisibleAlcoholModal(false)} />
+      <ModalBirthday isVisible={isVisibleBirthdayModal} onClose={() => setIsVisibleBirthdayModal(false)} />
+      <ModalLocation isVisible={isVisibleLocationModal} onClose={() => setIsVisibleLocationModal(false)} />
     </>
   );
 };
