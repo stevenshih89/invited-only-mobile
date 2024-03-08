@@ -8,7 +8,7 @@ import {
   lightGreenColor,
   whiteColor
 } from 'constants/colors.ts';
-import {Satoshi400, Satoshi700} from 'constants/fonts.ts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 
@@ -63,6 +63,26 @@ const useStyles = () => {
       marginBottom: screenHeight / 71,
       fontFamily: Satoshi700,
       fontSize: RFValue(18, 812),
+    },
+    textInvitationApproved: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(14, 812),
+    },
+    wrapperInvitationApproved: {
+      backgroundColor: lightGray5Color,
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginHorizontal: 24,
+      borderRadius: 10,
+      paddingHorizontal: 17,
+      paddingVertical: 15,
+      marginBottom: 7,
+    },
+    buttonTitleStyle: {
+      color: blackColor,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(14, 812),
     },
     isSenderTrue: {
       backgroundColor: lightGray12Color,

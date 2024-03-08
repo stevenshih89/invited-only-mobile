@@ -31,9 +31,23 @@ const useStyles = () => {
       left: 13.5,
       top: 13.5,
     },
+    iconCancel: {
+      position: 'absolute',
+      left: 10.5,
+      top: 10.5,
+    },
     warning: {
       borderLeftColor: lightGray3Color,
       borderWidth: 1,
+    },
+    cancel: {
+      borderWidth: 1,
+      borderLeftColor: lightGray3Color,
+      backgroundColor: lightGray3Color,
+      alignSelf: 'center',
+      marginRight: 0,
+      height: 84,
+      opacity: 0.94,
     },
     customToast: {
       height: 60,
