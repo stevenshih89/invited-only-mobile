@@ -19,8 +19,11 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import ItemRequestGuest from './ItemRequestGuest';
 import ItemRequestHost from './ItemRequestHost';
+import Toast from 'react-native-toast-message';
 
 const Requests: FC = (): ReactElement => {
+  const POSITIVE = 'positive';
+  const NEGATIVE = 'negative';
   const styles = useStyles();
 
   const listOfHosts = [
@@ -134,7 +137,12 @@ const Requests: FC = (): ReactElement => {
 
   const isHost = false;
 
-  const handleSwipeGuestCard = (id: number) => {
+  const handleSwipeGuestCard = (id: number, status: typeof POSITIVE | typeof NEGATIVE) => {
+    const toastText = status === POSITIVE ? 'You accepted invitation' : 'You rejected invitation';
+    Toast.show({
+      type: 'success',
+      text1: toastText,
+    });
     const newData = dataForGuest.filter(item => item.id !== id);
     setDataForGuest(newData);
   };
