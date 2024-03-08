@@ -125,24 +125,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     </TouchableOpacity>
   );
 
-  const ItemEventsJoining = ({title, filledTo, numberBadge, image, allPeople}: ItemProps) => (
+  const ItemEventsJoining = ({title, numberBadge, image}: ItemProps) => (
     <TouchableOpacity style={styles.eventButton}>
       <View style={[styles.eventViewFlatList, {borderColor: numberBadge !== 0 ? whiteColor : lightGray5Color}]}>
-        {/*<Image source={image} style={styles.imageEvent} />*/}
         <View style={styles.imageEventsJoining}>
           <CalendarIcon width={26} height={26} />
         </View>
-        {/*{numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}*/}
       </View>
       <Text style={styles.textButton}>{title}</Text>
-      {/*{allPeople > 0 && (*/}
-      {/*  <View style={styles.numberPeopleOnEvent}>*/}
-      {/*    <PeopleIcon />*/}
-      {/*    <Text style={styles.textNumberPeopleOnEvent}>*/}
-      {/*      {filledTo}/{allPeople}*/}
-      {/*    </Text>*/}
-      {/*  </View>*/}
-      {/*)}*/}
       <ModalEventRemindes eventStarting={eventStarting} setEventStarting={setEventStarting} time="24h" image={image} city={title} date="12.11.2024" />
     </TouchableOpacity>
   );
