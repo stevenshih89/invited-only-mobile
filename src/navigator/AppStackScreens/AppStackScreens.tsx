@@ -155,6 +155,8 @@ const NotificationsStackScreen = () => {
 };
 
 export const ChatStackScreen = () => {
+  const [typeEvents, setTypeEvents] = useState<boolean>(false);
+
   const styles = useStyles();
   return (
     <Stack.Navigator
@@ -167,12 +169,12 @@ export const ChatStackScreen = () => {
       <Stack.Screen
         options={{
           headerShown: true,
-          header: () => <Header headerType="chat" showHeaderTop={false} />,
+          header: () => <Header typeEvents={typeEvents} setTypeEvents={setTypeEvents} headerType="chat" showHeaderTop={false} />,
         }}
         name={chatPath}
-        key={chatPath}
-        component={Chat}
-      />
+        key={chatPath}>
+        {() => <Chat typeEvents={typeEvents} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };

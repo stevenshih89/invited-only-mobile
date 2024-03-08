@@ -9,6 +9,7 @@ import useStyles from 'components/LocalNotification/styles.ts';
 import TickCircleIcon from 'assets/images/icons/tick-circle.svg';
 import PendingClockIcon from 'assets/images/icons/pending-clock.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
+import XIcon from 'assets/images/icons/X.svg';
 
 //import images
 import IconBackground from 'assets/images/app/bcon-background.png';
@@ -40,6 +41,20 @@ const LocalNotification = () => {
           <View style={styles.wrapperIcon}>
             <Image source={IconBackground} />
             <PendingClockIcon style={styles.iconPending} />
+          </View>
+        )}
+      />
+    ),
+    cancel: props => (
+      <BaseToast
+        {...props}
+        style={styles.cancel}
+        text1Style={styles.text1}
+        text2Style={styles.text2}
+        renderLeadingIcon={() => (
+          <View style={styles.wrapperIcon}>
+            <Image source={IconBackground} />
+            <XIcon style={styles.iconCancel} />
           </View>
         )}
       />

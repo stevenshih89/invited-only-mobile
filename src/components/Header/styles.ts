@@ -37,6 +37,15 @@ const useStyles = () =>
       height: 50,
       borderRadius: 50,
     },
+    imageEventsJoining: {
+      width: 50,
+      height: 50,
+      borderRadius: 50,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: lightGray5Color,
+      opacity: 0.5,
+    },
     addEventButton: {
       alignItems: 'center',
     },

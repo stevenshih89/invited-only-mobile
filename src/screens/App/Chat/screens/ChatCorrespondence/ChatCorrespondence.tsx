@@ -8,12 +8,17 @@ import useStyles from 'screens/App/Chat/screens/ChatCorrespondence/styles.ts';
 import {blackColor, lightGray6Color} from 'constants/colors.ts';
 import {isIos} from 'constants/common.ts';
 import ModalUserMenu from 'components/Modal/ModalUserMenu/ModalUserMenu.tsx';
+import ModalCancelOrConfirmInvitation from 'components/Modal/ModalCancelOrConfirmInvitation/ModalCancelOrConfirmInvitation.tsx';
+import Button from 'components/Button/Button.tsx';
 
 //import icons
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import ThreeDots from 'assets/images/icons/more-white.svg';
 import FlashField from 'assets/images/icons/flash.svg';
 import Microfon from 'assets/images/icons/microfon.svg';
+
+//import images
+import ImageBg from 'assets/images/app/join-event-bg.png'
 
 interface messageProps {
   message: {
@@ -34,10 +39,18 @@ interface NavigationParams {
 const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [messageUser, setMessageUser] = useState<string>('');
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
+  const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
   const {image, title, online} = route?.params;
 
   const styles = useStyles();
   const insets = useSafeAreaInsets();
+
+  const handleInvitationApproved = () => (
+    <View style={styles.wrapperInvitationApproved}>
+      <Text style={styles.textInvitationApproved}>Invitation approved!</Text>
+      <Button onPress={() => setCancelInvitation(true)} buttonTitleStyle={styles.buttonTitleStyle} buttonStyle={{height: 36, borderRadius: 10, marginLeft: 34}} title="Click to confirm >" />
+    </View>
+  );
 
   const headerInsets = {
     paddingTop: insets.top,
@@ -147,6 +160,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             keyExtractor={item => item.id}
           />
         </View>
+        {handleInvitationApproved()}
         <View style={styles.footer}>
           <View style={styles.inputContainer}>
             <TextInput
@@ -161,6 +175,16 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             <Microfon />
           </TouchableOpacity>
         </View>
+        <ModalCancelOrConfirmInvitation
+          cancelInvitation={cancelInvitation}
+          setCancelInvitation={setCancelInvitation}
+          typeModal="confirm"
+          title={'Namos Dubai'}
+          name={title}
+          imageBg={ImageBg}
+          data="12.11.2023"
+          girlInvitation={2}
+        />
         <ModalUserMenu image={image} title={title} approve={false} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
       </SafeAreaProvider>
     </KeyboardAvoidingView>
