@@ -1,6 +1,6 @@
 import Toast from 'react-native-toast-message';
 import {screenWidth} from 'constants/common.ts';
-export type UseToastType = 'success' | 'pending' | 'warning';
+export type UseToastType = 'success' | 'pending' | 'warning' | 'cancel';
 
 export const showToast = (type: UseToastType, message: string, title?: string) => {
   if (!title) {
@@ -9,6 +9,9 @@ export const showToast = (type: UseToastType, message: string, title?: string) =
     }
     if (type === 'pending') {
       title = 'Your event in review.';
+    }
+    if (type === 'cancel') {
+      title = '';
     }
     if (type === 'warning') {
       title = 'Warning!';

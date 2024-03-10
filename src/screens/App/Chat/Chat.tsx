@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useState} from 'react';
 import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 
@@ -6,15 +6,22 @@ import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import useStyles from 'screens/App/Chat/styles.ts';
 import {Badge} from '@rneui/themed';
 import {chatCorrespondencePath} from 'constants/pathLocations.ts';
+import ModalHostMenu from 'components/Modal/ModalHostMenu/ModalHostMenu.tsx';
 
 //import images
 import FakeGirl1 from 'assets/images/app/fake-girl-1.png';
 import FakeGirl2 from 'assets/images/app/fake-girl-2.png';
 import FakeGirl3 from 'assets/images/app/fake-girl-3.png';
+import FakePhoto from 'assets/images/app/fake-photo.png';
+import FakeBg from 'assets/images/app/join-event-bg.png';
 
 //import icons
 import FlashField from 'assets/images/icons/flash.svg';
 import ThreeDoths from 'assets/images/icons/more-white.svg';
+import PersonIcon from 'assets/images/icons/profile-2user.svg';
+import CalendarIcon from 'assets/images/icons/calendar.svg';
+import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
+import Button from 'components/Button/Button.tsx';
 
 type ItemProps = {
   title: string;
@@ -25,7 +32,21 @@ type ItemProps = {
   inviteStatus: string;
 };
 
-const Chat: FC = () => {
+type ItemEventsJoiningProps = {
+  chats: [{id: string; image: any; name: string; lastMessage: string}] | any;
+  girlInvitation: number;
+  data: string;
+  status: string;
+  image: any;
+  title: string;
+};
+
+interface ChatProps {
+  typeEvents?: boolean;
+}
+
+const Chat: FC<ChatProps> = ({typeEvents}) => {
+  const [hostMenu, setHostMenu] = useState<boolean>(false);
   const styles = useStyles();
   const navigation = useAppNavigation();
 
@@ -58,6 +79,81 @@ const Chat: FC = () => {
       inviteStatus: 'newInvited',
     },
   ];
+
+  const DATAEventsJoining = [
+    {
+      id: '1',
+      chats: [
+        {
+          id: '2',
+          image: FakePhoto,
+          name: 'Simon',
+          lastMessage: 'Hello ! Nazrul How are you?',
+        },
+        {
+          id: '3',
+          image: FakePhoto,
+          name: 'Alex',
+          lastMessage: 'Hello! Nazrul How are you?',
+        },
+      ],
+      girlInvitation: 2,
+      data: '12.11.2023',
+      status: 'Active',
+      image: FakeBg,
+      title: 'Nammos Dubai',
+    },
+    {
+      id: '4',
+      chats: [
+        {
+          id: '3',
+          image: FakeGirl3,
+          name: 'Alex',
+          lastMessage: 'Hello ! Nazrul How are you?',
+        },
+      ],
+      girlInvitation: 2,
+      data: '12.11.2023',
+      status: 'Full',
+      image: FakeBg,
+      title: 'Nammos Dubai',
+    },
+    {
+      id: '5',
+      chats: [
+        {
+          id: '4',
+          image: FakePhoto,
+          name: 'Simon',
+          lastMessage: 'Hello ! Nazrul How are you?',
+        },
+      ],
+      girlInvitation: 2,
+      data: '12.11.2023',
+      status: 'Cancelled',
+      image: FakeBg,
+      title: 'Nammos Dubai',
+    },
+    {
+      id: '6',
+      chats: [
+        {
+          id: '5',
+          image: FakePhoto,
+          name: 'Simon',
+          lastMessage: 'Hello ! Nazrul How are you?',
+        },
+      ],
+      girlInvitation: 2,
+      data: '12.11.2023',
+      status: 'Starts',
+      image: FakeBg,
+      title: 'Nammos Dubai',
+    },
+  ];
+
+  const t = []
 
   const Item = ({title, message, image, online, story, inviteStatus}: ItemProps) => (
     <View style={styles.item}>
@@ -95,6 +191,73 @@ const Chat: FC = () => {
     </View>
   );
 
+  const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data}: ItemEventsJoiningProps) => {
+    const statusColor = handleCheckStatusStyles(status);
+    return (
+      <View style={styles.itemEventsJoining}>
+        <View style={styles.wrapperItemEventsJoining}>
+          <TouchableOpacity style={styles.fdrAiC}>
+            <Image resizeMode="contain" source={image} style={{width: 50, height: 50, borderRadius: 50}} />
+            <View style={{marginLeft: 15}}>
+              <View style={styles.fdrAiC}>
+                <Text style={styles.title}>{title}</Text>
+                <View style={{backgroundColor: statusColor, borderRadius: 4}}>
+                  <Text style={[styles.textStatus]}>{status}</Text>
+                </View>
+              </View>
+              <View style={{flexDirection: 'row', marginTop: 10}}>
+                <View style={styles.fdrAiC}>
+                  <PersonIcon width={14} height={14} />
+                  <Text style={styles.textDescriptionUnderTitle}>{girlInvitation} x Girl invitation </Text>
+                </View>
+                <View style={styles.fdrAiC}>
+                  <CalendarIcon style={{marginLeft: 10}} width={14} height={14} />
+                  <Text style={styles.textDescriptionUnderTitle}>{data}</Text>
+                </View>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setHostMenu(true)}>
+            <ThreeDoths />
+          </TouchableOpacity>
+        </View>
+        <ModalHostMenu
+          girlInvitation={girlInvitation}
+          data={data}
+          image={FakePhoto}
+          imageBg={image}
+          name={title}
+          setHostMenu={setHostMenu}
+          hostMenu={hostMenu}
+        />
+        {chats?.map((i: any) => (
+          <TouchableOpacity
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate(chatCorrespondencePath, {
+                screen: chatCorrespondencePath,
+                params: {image: i?.image, title: i?.name, online: true},
+              });
+            }}
+            key={i?.id}
+            style={styles.chatItem}>
+            <View style={{flexDirection: 'row'}}>
+              <View>
+                <Image source={i?.image} style={{width: 50, height: 50, borderRadius: 50}} />
+                <View style={styles.greenCircleChat} />
+              </View>
+              <View style={{marginLeft: 15}}>
+                <Text style={styles.textNameChat}>{i?.name}</Text>
+                <Text style={styles.textDescription}>{i?.lastMessage}</Text>
+              </View>
+            </View>
+            <ChatIcon width={18} height={18} />
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
+
   const handleCheckTypeInvitedText = (type: string) => {
     switch (type) {
       case 'pending':
@@ -123,22 +286,65 @@ const Chat: FC = () => {
     }
   };
 
+  const handleCheckStatusStyles = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return '#2EB263';
+      case 'Full':
+        return '#212727';
+      case 'Cancelled':
+        return '#676767';
+      case 'Starts':
+        return '#2E5BB2';
+
+      default:
+        return '';
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <FlatList
-        data={DATA}
-        renderItem={({item}) => (
-          <Item
-            inviteStatus={item.inviteStatus}
-            story={item.story}
-            online={item.online}
-            title={item.title}
-            message={item.message}
-            image={item.image}
-          />
-        )}
-        keyExtractor={item => item.id}
-      />
+      {!typeEvents ? (
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={DATA}
+          renderItem={({item}) => (
+            <Item
+              inviteStatus={item.inviteStatus}
+              story={item.story}
+              online={item.online}
+              title={item.title}
+              message={item.message}
+              image={item.image}
+            />
+          )}
+          keyExtractor={item => item.id}
+        />
+      ) : (
+        <FlatList
+          data={DATAEventsJoining}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{marginBottom: 20}}
+          ListEmptyComponent={() => (
+            <View style={{height: '100%', marginTop: 104}}>
+              <Text style={styles.textYouNeedToJoin}>You need to join an event</Text>
+              <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
+              <Button buttonStyle={{marginTop: 34}} title="Join event" />
+            </View>
+          )}
+          renderItem={({item}) => (
+            <ItemEventsJoining
+              image={item.image}
+              title={item.title}
+              chats={item.chats}
+              data={item.data}
+              girlInvitation={item.girlInvitation}
+              status={item.status}
+            />
+          )}
+          keyExtractor={item => item.id}
+        />
+      )}
     </View>
   );
 };
