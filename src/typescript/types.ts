@@ -47,4 +47,6 @@ export type RootStackParamList = {
   '/chat-correspondence': undefined;
   '/user-profile': undefined;
   '/event-info': undefined;
+  '/event-active-info': undefined;
+  '/settings': undefined;
 };

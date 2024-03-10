@@ -16,6 +16,8 @@ import Users from 'assets/images/icons/Users.svg';
 import LoadingLoop from 'assets/images/icons/loading-loop.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
 import {lightGray2Color, lightGreenColor} from 'constants/colors.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
 
 interface MyEventsCard {
   estimeTime?: string;
@@ -30,6 +32,9 @@ interface MyEventsCard {
 const MyEventsCard: FC<MyEventsCard> = props => {
   const {activeState, estimeTime, date, invitingPeople, numberOfGirlsInvited, allPeople, textCityName} = props;
   const styles = useStyles();
+
+  const navigation = useAppNavigation();
+
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
       <LoadingLoop />
@@ -50,7 +55,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
           end={{x: 0, y: 0}}
           style={styles.linearGradientCard}>
           {activeState ? (
-            <TouchableOpacity style={styles.header}>
+            <TouchableOpacity style={styles.header} onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath} as never)}>
               <View style={styles.userWrapper}>
                 {invitingPeople?.map((i: any | boolean, index: number) => (
                   <View style={[styles.userItemWrapper, index !== 0 && styles.anotherUsers]}>
