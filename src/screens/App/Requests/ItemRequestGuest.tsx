@@ -22,12 +22,12 @@ const ItemRequestGuest: FC = ({item, handleSwipeGuestCard}: any): ReactElement =
   const goToEventInfo = () => {
     navigation.navigate(commonStackPath, {screen: eventInfoPath});
   };
-  const handleRemove = (id: number) => {
+  const handleRemove = (id: number, status: string) => {
     Animated.timing(heightAnim, {
       toValue: 0,
       duration: 300,
       useNativeDriver: false,
-    }).start(() => handleSwipeGuestCard(id));
+    }).start(() => handleSwipeGuestCard(id, status));
   };
 
   const OverlayRight = () => {
@@ -73,8 +73,8 @@ const ItemRequestGuest: FC = ({item, handleSwipeGuestCard}: any): ReactElement =
         cardWidth="100%"
         // @ts-ignore
         cardHeight="100%"
-        onSwipedRight={() => handleRemove(item.id)}
-        onSwipedLeft={() => handleRemove(item.id)}
+        onSwipedRight={() => handleRemove(item.id, 'positive')}
+        onSwipedLeft={() => handleRemove(item.id, 'negative')}
         OverlayLabelRight={OverlayRight}
         OverlayLabelLeft={OverlayLeft}
         disableBottomSwipe={true}

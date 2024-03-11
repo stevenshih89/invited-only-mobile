@@ -6,7 +6,14 @@ import {Badge} from '@rneui/themed';
 //import components
 import useStyles from 'components/Header/styles.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {eventCreatingStackPath, joinEventsPath, notificationsPath, notificationsStackPath} from 'constants/pathLocations';
+import {
+  commonStackPath,
+  eventCreatingStackPath,
+  joinEventsPath,
+  notificationsPath,
+  notificationsStackPath,
+  settingsPath,
+} from 'constants/pathLocations';
 import {screenHeight} from 'constants/common.ts';
 import {blackColor, lightGray2Color, lightGray5Color, whiteColor} from 'constants/colors.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
@@ -18,6 +25,7 @@ import NotificationIcon from 'assets/images/icons/notification.svg';
 import AddIcon from 'assets/images/icons/add.svg';
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 import PeopleIcon from 'assets/images/icons/profile-2user.svg';
+import SettingsIcon from 'assets/images/icons/settings.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 
 //import images
@@ -264,12 +272,23 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       {showHeaderTop && (
         <View style={styles.wrapperHeader}>
           {logoType === 'logo' ? <Logo width={157} height={32} /> : <LogoPrimary width={157} height={32} />}
-          {badge && (
-            <TouchableOpacity onPress={goToNotifications}>
-              <NotificationIcon width={32} height={32} />
-              <Badge value={22} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
-            </TouchableOpacity>
-          )}
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {badge && (
+              <TouchableOpacity onPress={goToNotifications} activeOpacity={0.7} style={{paddingRight: 6}}>
+                <NotificationIcon width={32} height={32} />
+                <Badge value={22} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
+              </TouchableOpacity>
+            )}
+            {headerType === 'profile' && (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={{marginLeft: 10}}
+                hitSlop={{right: 10}}
+                onPress={() => navigation.navigate(commonStackPath, {screen: settingsPath} as never)}>
+                <SettingsIcon width={32} height={32} />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       )}
       {handleCheckType(headerType)}

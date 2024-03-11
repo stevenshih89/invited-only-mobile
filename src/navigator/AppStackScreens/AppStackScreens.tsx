@@ -23,6 +23,8 @@ import {
   myProfileViewPath,
   userProfilePath,
   eventInfoPath,
+  eventActiveInfoPath,
+  settingsPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -38,8 +40,11 @@ import ChatCorrespondence from 'screens/App/Chat/screens/ChatCorrespondence/Chat
 import JoinEvents from 'screens/App/IO/screens/JoinEvents/JoinEvents.tsx';
 import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView.tsx';
 import {TouchableOpacity} from 'react-native';
+import TrashCanIcon from 'assets/images/icons/trash.svg';
 import ThreeDotsIcon from 'assets/images/icons/more-white.svg';
 import EventInfo from 'screens/App/Requests/EventInfo/EventInfo';
+import EventActiveInfo from 'screens/App/Requests/EventActiveInfo/EventActiveInfo';
+import Settings from 'screens/App/Profile/screens/Settings/Settings';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -130,6 +135,37 @@ const CommonStackScreen = () => {
           ),
         }}
         component={EventInfo}
+      />
+      <CommonStack.Screen
+        key={eventActiveInfoPath}
+        name={eventActiveInfoPath}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerTitle: 'Event info',
+          headerShown: true,
+          headerRight: () => (
+            <TouchableOpacity activeOpacity={0.7}>
+              <TrashCanIcon style={{marginHorizontal: 20, marginVertical: 10}} />
+            </TouchableOpacity>
+          ),
+        }}
+        component={EventActiveInfo}
+      />
+      <CommonStack.Screen
+        key={settingsPath}
+        name={settingsPath}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerTitle: 'Settings',
+          headerShown: true,
+        }}
+        component={Settings}
       />
     </CommonStack.Navigator>
   );
