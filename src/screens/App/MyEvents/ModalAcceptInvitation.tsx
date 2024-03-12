@@ -64,9 +64,7 @@ const ModalAcceptInvitation: FC<{
             <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(13, 812), marginLeft: 6}}>{eventInfo.date}</Text>
           </View>
         </View>
-        <Text
-          style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 812), marginBottom: screenHeight / 18, textAlign: 'center'}}
-          onPress={() => handleAcceptInvitation()}>
+        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 812), marginBottom: screenHeight / 18, textAlign: 'center'}}>
           {`${eventInfo?.host.name} has approved your invitation! Confirm?`}
         </Text>
         <Button title="Yes, confirm invitation" onPress={handleAcceptInvitation} />
