@@ -52,7 +52,7 @@ const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
 
   return (
-    <NavigationContainer>
+    <NavigationContainer independent={true}>
       <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{headerShown: false}}>
         <AuthStack.Screen key={onboardPath} name={onboardPath} component={Onboard} />
         <AuthStack.Screen key={signUpPath} name={signUpPath} component={SignUp} />

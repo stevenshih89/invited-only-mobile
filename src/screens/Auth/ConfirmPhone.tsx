@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, RefObject, useState} from 'react';
+import {FC, RefObject, useState, useEffect} from 'react';
 import {
   ImageBackground,
   Keyboard,
@@ -19,20 +19,42 @@ import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {lightGray2Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
-import {useAppNavigation} from 'hooks/useAppNavigation';
 import {turnNotificationsPath} from 'constants/pathLocations';
+import auth from '@react-native-firebase/auth';
 
-const ConfirmPhone: FC = (): JSX.Element => {
+const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
+  console.log('route?.params', route?.params);
+  const confirm = route?.params?.confirm;
+  const mobilePhone = route?.params?.mobilePhone;
   const [code, setCode] = useState<string>('');
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: code,
     setValue: setCode,
   });
 
-  const navigation = useAppNavigation();
-
-  const CELL_COUNT: number = 4;
+  const CELL_COUNT: number = 6;
   const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
+
+  function onAuthStateChanged(user: any) {
+    if (user) {
+      console.log('user123: ', user);
+    }
+  }
+
+  const handleConfirmPhoneNumber = async () => {
+    try {
+      console.log(code);
+      await confirm.confirm(code);
+      navigation.navigate(turnNotificationsPath);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
+  }, []);
 
   return (
     <ImageBackground
@@ -76,7 +98,7 @@ const ConfirmPhone: FC = (): JSX.Element => {
                         fontFamily: Satoshi700,
                         fontSize: RFValue(18, 812),
                       }}>
-                      111
+                      {mobilePhone}
                     </Text>
                   </Text>
                 </View>
@@ -132,7 +154,7 @@ const ConfirmPhone: FC = (): JSX.Element => {
               </View>
               <View style={{paddingHorizontal: 38, marginBottom: 4}}>
                 <Button variant="transparent" title="Change phone number" onPress={() => navigation.goBack()} />
-                <Button title="Next" onPress={() => navigation.navigate(turnNotificationsPath)} />
+                <Button title="Next" onPress={() => handleConfirmPhoneNumber()} />
               </View>
             </View>
           </SafeAreaView>
