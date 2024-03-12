@@ -8,8 +8,8 @@ import Modal from 'react-native-modal';
 import useStyles from 'components/Modal/ModalCancelOrConfirmInvitation/styles.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/helpers.ts';
-import {useAppNavigation} from "hooks/useAppNavigation.ts";
-import {requestsPath} from "constants/pathLocations.ts";
+import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {requestsPath} from 'constants/pathLocations.ts';
 
 interface ModalCancelInvitationProps {
   cancelInvitation?: boolean;

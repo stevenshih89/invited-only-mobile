@@ -1,4 +1,4 @@
-import React, {FC, useState, Dispatch, SetStateAction} from 'react';
+import React, {FC, useState, Dispatch, SetStateAction, useEffect} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 
 //import components
@@ -8,14 +8,37 @@ import {screenHeight} from 'constants/common.ts';
 
 interface InvitedOnlyProps {
   setTabState: Dispatch<SetStateAction<string>>;
+  setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
+  isEditing?: boolean;
+  prevFemale?: number;
+  prevMale?: number;
+  prevFemaleFriend?: number;
+  prevMaleFriend?: number;
 }
 
-const InvitedOnly: FC<InvitedOnlyProps> = ({setTabState}) => {
+const InvitedOnly: FC<InvitedOnlyProps> = ({
+  setTabState,
+  setIsVisibleSaveModal,
+  isEditing,
+  prevFemale,
+  prevMale,
+  prevFemaleFriend,
+  prevMaleFriend,
+}) => {
   const [female, setFemale] = useState<number>(0);
   const [male, setMale] = useState<number>(0);
 
   const [femaleFriend, setFemaleFriend] = useState<number>(0);
   const [maleFriend, setMaleFriend] = useState<number>(0);
+
+  useEffect(() => {
+    if (isEditing) {
+      setFemale(prevFemale ?? 0);
+      setMale(prevMale ?? 0);
+      setFemaleFriend(prevFemaleFriend ?? 0);
+      setMaleFriend(prevMaleFriend ?? 0);
+    }
+  }, []);
 
   const styles = useStyles();
 
@@ -77,7 +100,10 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({setTabState}) => {
           </View>
         </View>
       </View>
-      <Button onPress={() => setTabState('eventDetails')} title="Continue to the event details" />
+      <Button
+        onPress={() => (isEditing ? setIsVisibleSaveModal(true) : setTabState('eventDetails'))}
+        title={isEditing ? 'Save changes' : 'Continue to the event details'}
+      />
     </View>
   );
 };

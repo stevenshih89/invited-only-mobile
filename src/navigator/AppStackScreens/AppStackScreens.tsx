@@ -25,6 +25,7 @@ import {
   eventInfoPath,
   eventActiveInfoPath,
   settingsPath,
+  eventEditingPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -40,7 +41,6 @@ import ChatCorrespondence from 'screens/App/Chat/screens/ChatCorrespondence/Chat
 import JoinEvents from 'screens/App/IO/screens/JoinEvents/JoinEvents.tsx';
 import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView.tsx';
 import {TouchableOpacity} from 'react-native';
-import TrashCanIcon from 'assets/images/icons/trash.svg';
 import ThreeDotsIcon from 'assets/images/icons/more-white.svg';
 import EventInfo from 'screens/App/Requests/EventInfo/EventInfo';
 import EventActiveInfo from 'screens/App/Requests/EventActiveInfo/EventActiveInfo';
@@ -146,11 +146,6 @@ const CommonStackScreen = () => {
           headerBackTitleVisible: false,
           headerTitle: 'Event info',
           headerShown: true,
-          headerRight: () => (
-            <TouchableOpacity activeOpacity={0.7}>
-              <TrashCanIcon style={{marginHorizontal: 20, marginVertical: 10}} />
-            </TouchableOpacity>
-          ),
         }}
         component={EventActiveInfo}
       />
@@ -166,6 +161,19 @@ const CommonStackScreen = () => {
           headerShown: true,
         }}
         component={Settings}
+      />
+      <CommonStack.Screen
+        key={eventEditingPath}
+        name={eventEditingPath}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerTitle: 'Event editing',
+          headerShown: true,
+        }}
+        component={EventCreating}
       />
     </CommonStack.Navigator>
   );
