@@ -10,7 +10,7 @@ interface AuthProviderProps {
 }
 
 const initialAuthContext: AuthContextData = {
-  user: true,
+  user: [],
   setUser: () => {},
 };
 

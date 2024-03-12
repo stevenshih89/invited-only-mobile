@@ -13,9 +13,12 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {confirmPhonePath} from 'constants/pathLocations';
+import auth from '@react-native-firebase/auth';
 
 const SignUp: FC = (): JSX.Element => {
   const [mobilePhone, setMobilePhone] = useState<string>('');
+  const [confirm, setConfirm] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const navigation = useAppNavigation();
   const [activeItem, setActiveItem] = useState<string>('ae');
@@ -27,8 +30,13 @@ const SignUp: FC = (): JSX.Element => {
       value: 'ua',
       icon: <FlagAE />,
     },
+    // {
+    //   label: '+971',
+    //   value: 'ae',
+    //   icon: <FlagAE />,
+    // },
     {
-      label: '+971',
+      label: '+972',
       value: 'ae',
       icon: <FlagAE />,
     },
@@ -48,6 +56,24 @@ const SignUp: FC = (): JSX.Element => {
       icon: <FlagAE />,
     },
   ];
+
+  async function signInWithPhoneNumber() {
+    try {
+      if (!mobilePhone) return;
+      setLoading(true);
+      const searchCode = items?.filter(i => i?.value === activeItem);
+      const phone = `${searchCode[0]?.label}${mobilePhone}`;
+      const confirmation = await auth().signInWithPhoneNumber(phone);
+      // @ts-ignore
+      setConfirm(confirmation);
+      setLoading(false);
+      // @ts-ignore
+      navigation.navigate(confirmPhonePath, {confirm: confirmation, mobilePhone: phone});
+    } catch (e) {
+      setLoading(false);
+      console.log(e);
+    }
+  }
 
   const dropdownContainerStyle: ViewStyle = isOpenDropdown
     ? {
@@ -195,10 +221,11 @@ const SignUp: FC = (): JSX.Element => {
                 <Button
                   variant="transparent"
                   title="Login by phone number"
-                  onPress={() => navigation.navigate(confirmPhonePath)}
+                  // disabled={!mobilePhone && !loading && !confirm}
+                  onPress={() => signInWithPhoneNumber()}
                   buttonContatinerStyle={{marginBottom: 12}}
                 />
-                <Button onPress={() => navigation.navigate(confirmPhonePath)} title="Sign up by phone number" />
+                <Button disabled={!mobilePhone && !loading && !confirm} onPress={() => signInWithPhoneNumber()} title="Sign up by phone number" />
               </View>
             </View>
           </SafeAreaView>

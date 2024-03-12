@@ -20,6 +20,20 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.996985328099-v61ajb8pj7s0sm06jt96ri5kbac47lbd</string>
+			</array>
+			<key>REVERSED_CLIENT_ID</key>
+			<string>996985328099-v61ajb8pj7s0sm06jt96ri5kbac47lbd.apps.googleusercontent.com</string>
+		</dict>
+		<dict/>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -36,7 +50,7 @@
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Required access to geolocation</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library.</string>
 	<key>UIAppFonts</key>
