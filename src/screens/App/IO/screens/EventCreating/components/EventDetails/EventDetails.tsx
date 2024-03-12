@@ -1,4 +1,4 @@
-import {FC, ReactElement, useState} from 'react';
+import {Dispatch, FC, ReactElement, SetStateAction, useEffect, useState} from 'react';
 import {Alert, FlatList, Image, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -20,11 +20,38 @@ import Location from 'assets/images/icons/location.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
 
-const EventDetails: FC = (): ReactElement => {
+interface EventDetailsProps {
+  isEditing?: boolean;
+  setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
+  prevImages: {image: null | string; id: number}[];
+  prevActiveType: number;
+  prevPlaceName?: string;
+  prevName?: string;
+  prevDescription?: string;
+  prevDate?: string;
+  prevHour?: string;
+  prevAddress?: string;
+  prevMeetingSpot?: string;
+}
+
+const EventDetails: FC<EventDetailsProps> = ({
+  isEditing,
+  setIsVisibleSaveModal,
+  prevImages,
+  prevActiveType,
+  prevPlaceName,
+  prevName,
+  prevDescription,
+  prevDate,
+  prevHour,
+  prevAddress,
+  prevMeetingSpot,
+}): ReactElement => {
   const eventTypes = [
     {id: 0, label: 'Custom'},
-    {id: 1, label: 'Club'},
-    {id: 2, label: 'Restaurant'},
+    {id: 1, label: 'Table'},
+    {id: 2, label: 'Club'},
+    {id: 3, label: 'Restaurant'},
   ];
 
   const [images, setImages] = useState<{image: null | string; id: number}[]>([
@@ -58,6 +85,20 @@ const EventDetails: FC = (): ReactElement => {
   const [hour, setHour] = useState('');
   const [address, setAddress] = useState('');
   const [meetingSpot, setMeetingSpot] = useState('');
+
+  useEffect(() => {
+    if (isEditing) {
+      setImages(prevImages);
+      setActiveType(prevActiveType);
+      setPlaceName(prevPlaceName ?? '');
+      setName(prevName ?? '');
+      setDescription(prevDescription ?? '');
+      setDate(prevDate ?? '');
+      setHour(prevHour ?? '');
+      setAddress(prevAddress ?? '');
+      setMeetingSpot(prevMeetingSpot ?? '');
+    }
+  }, []);
 
   const styles = useStyles();
 
@@ -125,7 +166,8 @@ const EventDetails: FC = (): ReactElement => {
           <FlatList
             data={eventTypes}
             horizontal
-            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
             ItemSeparatorComponent={() => <View style={styles.eventTypeSeparator} />}
             renderItem={({item}: any) => (
               <TouchableOpacity
@@ -277,7 +319,11 @@ const EventDetails: FC = (): ReactElement => {
             InputIcon={Location}
           />
         </View>
-        <Button title="Create event" buttonStyle={styles.button} />
+        <Button
+          title={isEditing ? 'Save changes' : '"Create event"'}
+          buttonStyle={styles.button}
+          onPress={() => (isEditing ? setIsVisibleSaveModal(true) : null)}
+        />
       </KeyboardAwareScrollView>
     </View>
   );

@@ -175,24 +175,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           </View>
         );
       case 'myEvents':
-        return (
-          <View style={styles.wrapperHeaderButtonMyEvents}>
-            <TouchableOpacity style={styles.buttonMyEvents}>
-              <Text style={styles.textMyEvents}>My events</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonEventsJoining}>
-              <Text style={styles.textEventsJoining}>Events I'm Joining</Text>
-              <View style={styles.rowTextCountEvents}>
-                <Text style={styles.textCountEvents}>21</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.addEventButton}>
-              <View style={styles.addEventView}>
-                <AddIcon width={19} height={19} />
-              </View>
-            </TouchableOpacity>
-          </View>
-        );
+        return null;
       case 'profile':
         return null;
       case 'request':

@@ -11,6 +11,7 @@ export type RootStackParamList = {
   };
   '/common-stack'?: {
     screen?: string;
+    params?: any;
   };
   '/onboard': undefined;
   '/sign-up': undefined;
@@ -48,5 +49,8 @@ export type RootStackParamList = {
   '/user-profile': undefined;
   '/event-info': undefined;
   '/event-active-info': undefined;
+  '/event-editing': {
+    isEditing?: boolean;
+  };
   '/settings': undefined;
 };
