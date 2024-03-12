@@ -8,10 +8,12 @@ const useStyles = () =>
   StyleSheet.create({
     container: {
       borderRadius: 14,
+      backgroundColor: 'transparent',
     },
     imageBackground: {
       height: 185,
       borderRadius: 14,
+      overflow: 'hidden',
     },
     linearGradientCard: {
       height: '100%',
