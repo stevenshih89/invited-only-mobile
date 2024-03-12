@@ -18,7 +18,7 @@ import FlashField from 'assets/images/icons/flash.svg';
 import Microfon from 'assets/images/icons/microfon.svg';
 
 //import images
-import ImageBg from 'assets/images/app/join-event-bg.png'
+import ImageBg from 'assets/images/app/join-event-bg.png';
 
 interface messageProps {
   message: {
@@ -48,7 +48,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const handleInvitationApproved = () => (
     <View style={styles.wrapperInvitationApproved}>
       <Text style={styles.textInvitationApproved}>Invitation approved!</Text>
-      <Button onPress={() => setCancelInvitation(true)} buttonTitleStyle={styles.buttonTitleStyle} buttonStyle={{height: 36, borderRadius: 10, marginLeft: 34}} title="Click to confirm >" />
+      <Button
+        onPress={() => setCancelInvitation(true)}
+        buttonTitleStyle={styles.buttonTitleStyle}
+        buttonStyle={{height: 36, borderRadius: 10, marginLeft: 34}}
+        title="Click to confirm >"
+      />
     </View>
   );
 

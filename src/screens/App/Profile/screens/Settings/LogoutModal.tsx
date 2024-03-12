@@ -3,12 +3,24 @@ import Modal from 'react-native-modal';
 import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import Man from 'assets/images/app/man-rectangle.png';
 import LogoutIcon from 'assets/images/icons/logout.svg';
-import {FC} from 'react';
+import {FC, useContext} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import auth from '@react-native-firebase/auth';
+import {AuthContext} from '../../../../../contexts/AuthContext.tsx';
 
 const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
+  const {setUser} = useContext(AuthContext);
+
+  const handleLogout = () => {
+    onClose();
+    auth()
+      .signOut()
+      .then(() => {
+        setUser([]);
+      });
+  };
   return (
     <Modal
       isVisible={isVisible}
@@ -59,7 +71,7 @@ const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), marginBottom: 40, textAlign: 'center'}}>
           Are you sure you want to log out?
         </Text>
-        <Button title="Yes, log out" onPress={onClose} />
+        <Button title="Yes, log out" onPress={() => handleLogout()} />
         <Button title="Cancel" variant="transparent" onPress={onClose} />
       </View>
     </Modal>
