@@ -1,9 +1,8 @@
-import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {FC, useRef} from 'react';
-import {errorColor, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {errorColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {InputProps} from 'typescript/interfaces';
+import useStyles from 'components/Inputs/styles.ts';
 
 const Input: FC<InputProps> = ({
   errorText,
@@ -23,6 +22,7 @@ const Input: FC<InputProps> = ({
 }) => {
   const inputRef = useRef<TextInput>(null);
 
+  const styles = useStyles();
   const handleOnChange = (text: string): void => {
     onChange(text);
   };
@@ -32,51 +32,9 @@ const Input: FC<InputProps> = ({
     inputRef.current?.focus();
   };
 
-  const styles = StyleSheet.create({
-    container: {
-      width: '100%',
-      height: 56,
-      borderRadius: 10,
-      borderWidth: 0,
-      backgroundColor: lightGray2Color,
-      flexDirection: 'row',
-      paddingRight: 8,
-      paddingBottom: 8,
-      justifyContent: 'space-between',
-    },
-    titleText: {
-      marginBottom: 12,
-      color: whiteColor,
-      fontFamily: Satoshi400,
-      fontSize: RFValue(18, 812),
-      ...labelStyle,
-    },
-    input: {
-      width: InputIcon ? '90%' : '100%',
-      minWidth: 200,
-      paddingLeft: 12,
-      paddingTop: 8,
-      paddingBottom: 0,
-      color: isError ? errorColor : whiteColor,
-      fontSize: RFValue(18, 812),
-    },
-    errorText: {
-      fontSize: RFValue(14, 812),
-      fontFamily: Satoshi500,
-      color: errorColor,
-    },
-    wrapperErrorText: {
-      height: 22,
-      marginTop: 2,
-      marginBottom: 4,
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-  });
-
   return (
     <View style={[containerStyle]}>
-      {label && <Text style={styles.titleText}>{label}</Text>}
+      {label && <Text style={[styles.titleText, {...labelStyle}]}>{label}</Text>}
       <TouchableOpacity activeOpacity={1} onPress={onPress} style={[styles.container, containerInnerStyle]}>
         <TextInput
           ref={inputRef}
@@ -84,7 +42,7 @@ const Input: FC<InputProps> = ({
           keyboardType={keyboardType}
           onBlur={onBlur}
           placeholder={placeholder}
-          style={[styles.input, inputStyle]}
+          style={[styles.input, inputStyle, {width: InputIcon ? '90%' : '100%', color: isError ? errorColor : whiteColor}]}
           placeholderTextColor={transparentWhite30Color}
           keyboardAppearance="dark"
           value={value}
@@ -97,11 +55,7 @@ const Input: FC<InputProps> = ({
           autoCapitalize={'none'}
           textAlignVertical={'center'}
         />
-        {InputIcon && (
-          <View style={{height: '100%', alignItems: 'center', justifyContent: 'center', paddingTop: 8, width: 20}}>
-            {<InputIcon width={20} height={20} />}
-          </View>
-        )}
+        {InputIcon && <View style={styles.wrapperInputIcon}>{<InputIcon width={20} height={20} />}</View>}
       </TouchableOpacity>
       <View style={styles.wrapperErrorText}>
         <Text style={styles.errorText}>{isError ? errorText : ' '}</Text>

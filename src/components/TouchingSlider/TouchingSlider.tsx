@@ -5,6 +5,12 @@ import LinearGradient from 'react-native-linear-gradient';
 //import components
 import useStyles from 'components/TouchingSlider/styles.ts';
 import {gray1Color, whiteColor} from 'constants/colors.ts';
+import {screenHeight} from 'constants/common.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
+import EventPreview from './components/EventPreview.tsx';
+
+//import icons
 import HomeIcon from 'assets/images/icons/home.svg';
 import LocationIcon from 'assets/images/icons/location.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
@@ -12,11 +18,9 @@ import FlashBlackIcon from 'assets/images/icons/flash-black.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
 import Lock from 'assets/images/icons/lock.svg';
 import Heart from 'assets/images/icons/heart.svg';
+
+//import images
 import CardEvent from 'assets/images/app/card-event-bg.png';
-import {screenHeight} from 'constants/common.ts';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
-import EventPreview from './EventPreview';
 
 interface Photo {
   url: string;
