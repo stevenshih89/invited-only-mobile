@@ -1,9 +1,12 @@
-import {ActivityIndicator, Button as ButtonAntd} from '@ant-design/react-native';
-import {blackColor, whiteColor} from 'constants/colors';
-import {screenHeight} from 'constants/common';
-import {Satoshi500} from 'constants/fonts';
 import {FC, ReactElement} from 'react';
+import {ActivityIndicator, Button as ButtonAntd} from '@ant-design/react-native';
+
+//import components
 import {ButtonProps} from 'typescript/interfaces';
+import {Satoshi500} from 'constants/fonts';
+import {screenHeight} from 'constants/common';
+import {blackColor, whiteColor} from 'constants/colors';
+
 const Button: FC<ButtonProps> = ({
   title,
   onPress,
