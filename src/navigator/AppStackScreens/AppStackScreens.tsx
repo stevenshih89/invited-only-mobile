@@ -26,6 +26,8 @@ import {
   eventActiveInfoPath,
   settingsPath,
   eventEditingPath,
+  accountSettingPath,
+  phoneChangePath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -45,6 +47,8 @@ import ThreeDotsIcon from 'assets/images/icons/more-white.svg';
 import EventInfo from 'screens/App/Requests/EventInfo/EventInfo';
 import EventActiveInfo from 'screens/App/Requests/EventActiveInfo/EventActiveInfo';
 import Settings from 'screens/App/Profile/screens/Settings/Settings';
+import AccountSetting from 'screens/App/Profile/screens/Settings/AccountSetting';
+import PhoneChange from 'screens/App/Profile/screens/Settings/PhoneChange';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -174,6 +178,32 @@ const CommonStackScreen = () => {
           headerShown: true,
         }}
         component={EventCreating}
+      />
+      <CommonStack.Screen
+        key={accountSettingPath}
+        name={accountSettingPath}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerTitle: 'Account setting',
+          headerShown: true,
+        }}
+        component={AccountSetting}
+      />
+      <CommonStack.Screen
+        key={phoneChangePath}
+        name={phoneChangePath}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerTitle: 'Phone number',
+          headerShown: true,
+        }}
+        component={PhoneChange}
       />
     </CommonStack.Navigator>
   );

@@ -6,7 +6,7 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
 
 //import components
-import {AuthProvider, AuthContext} from './contexts/AuthContext.tsx';
+import {AuthProvider, AuthContext} from 'contexts/AuthContext.tsx';
 import AuthStackScreens from 'navigator/AuthStackScreens/AuthStackScreens.tsx';
 import AppStackScreens from 'navigator/AppStackScreens/AppStackScreens.tsx';
 import LocalNotification from 'components/LocalNotification/LocalNotification.tsx';
@@ -40,7 +40,7 @@ const Main = () => {
       <View style={{flex: 1, backgroundColor: 'transparent'}}>
         <AuthProvider>
           <NavigationContainer>
-            <SafeAreaProvider>{authState ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
+            <SafeAreaProvider>{true ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
           </NavigationContainer>
           <LocalNotification />
         </AuthProvider>

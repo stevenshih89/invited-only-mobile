@@ -2,20 +2,35 @@ import {blackColor, lightGray5Color, lightGray6Color, transparentWhite16Color, w
 import {useState} from 'react';
 import {FlatList, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import LogoutIcon from 'assets/images/icons/logout.svg';
+import UserEdit from 'assets/images/icons/user-edit.svg';
 import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import ModalLogout from './LogoutModal';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {accountSettingPath} from 'constants/pathLocations';
 
 const Settings = () => {
   const [isVisibleLogoutModal, setIsVisibleLogoutModal] = useState(false);
+
+  const navigation = useAppNavigation();
 
   const openLogoutModal = () => {
     setIsVisibleLogoutModal(true);
   };
 
+  const goToAccountSetting = () => {
+    navigation.navigate(accountSettingPath as never);
+  };
+
   const settingsList = [
     {
       id: 0,
+      title: 'Account setting',
+      icon: UserEdit,
+      onPress: goToAccountSetting,
+    },
+    {
+      id: 1,
       title: 'Log out',
       icon: LogoutIcon,
       onPress: openLogoutModal,
@@ -33,6 +48,7 @@ const Settings = () => {
             data={settingsList}
             keyExtractor={item => item.id.toString()}
             scrollEnabled={false}
+            ItemSeparatorComponent={() => <View style={{height: 24}} />}
             renderItem={({item}) => {
               const Icon = item.icon;
               return (
