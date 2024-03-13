@@ -63,9 +63,7 @@ const ModalCancelAttending: FC<{
             <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(13, 812), marginLeft: 6}}>{eventInfo.date}</Text>
           </View>
         </View>
-        <Text
-          style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 812), marginBottom: 10, textAlign: 'center'}}
-          onPress={() => handleCancelAttending()}>
+        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 812), marginBottom: 10, textAlign: 'center'}}>
           Cancel attending?
         </Text>
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 40, textAlign: 'center'}}>

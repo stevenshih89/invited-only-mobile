@@ -62,7 +62,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
 
   return (
     <View style={styles.container}>
-      <ImageBackground borderRadius={14} source={{uri: image}} style={styles.imageBackground}>
+      <ImageBackground borderRadius={14} imageStyle={{borderRadius: 14, overflow: 'hidden'}} source={{uri: image}} style={styles.imageBackground}>
         <LinearGradient
           colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
           start={{x: 0, y: 1}}

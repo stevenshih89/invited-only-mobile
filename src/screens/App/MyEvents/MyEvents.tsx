@@ -163,6 +163,7 @@ const MyEvents: FC = () => {
           ) : (
             <FlatList
               data={eventsJoiningData}
+              style={{flex: 1, backgroundColor: 'transparent'}}
               renderItem={({item}) => (
                 <JoiningEventsCard
                   activeState={item.activeState}
