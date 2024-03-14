@@ -16,7 +16,7 @@ const ConnectSocialMedia: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const [isConnectedInstagram, setIsConnectedInstagram] = useState<boolean>(false);
 
-    return (
+  return (
     <ImageBackground source={HalfBackground} resizeMode="cover" style={{flex: 1}}>
       <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -102,10 +102,10 @@ const ConnectSocialMedia: FC = (): JSX.Element => {
                 <Button
                   title="Skip"
                   buttonStyle={{flex: 0.5, marginRight: 2}}
-                  onPress={() => navigation.navigate(myEmailPath)}
+                  onPress={() => navigation.navigate(myEmailPath as never)}
                   variant="transparent"
                 />
-                <Button title="Next" buttonStyle={{flex: 1.5, marginLeft: 2}} onPress={() => navigation.navigate(privacyPath)} />
+                <Button title="Next" buttonStyle={{flex: 1.5, marginLeft: 2}} onPress={() => navigation.navigate(privacyPath as never)} />
               </View>
             </View>
           </SafeAreaView>

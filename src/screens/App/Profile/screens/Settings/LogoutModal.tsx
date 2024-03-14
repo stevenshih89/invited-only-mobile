@@ -8,7 +8,7 @@ import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
-import {AuthContext} from '../../../../../contexts/AuthContext.tsx';
+import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
   const {setUser} = useContext(AuthContext);

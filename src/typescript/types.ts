@@ -53,4 +53,8 @@ export type RootStackParamList = {
     isEditing?: boolean;
   };
   '/settings': undefined;
+  '/account-setting': undefined;
+  '/phone-change': undefined;
+  '/notification-setting': undefined;
+  '/contact-and-faq': undefined;
 };

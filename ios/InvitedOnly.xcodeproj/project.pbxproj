@@ -36,6 +36,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* InvitedOnlyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InvitedOnlyTests.m; sourceTree = "<group>"; };
 		0421667BECB24F4D9A549725 /* Satoshi-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Medium.ttf"; path = "../src/assets/fonts/Satoshi-Medium.ttf"; sourceTree = "<group>"; };
+		088E9962D9ECF5CCA41F825F /* libPods-InvitedOnly-InvitedOnlyTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-InvitedOnly-InvitedOnlyTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* InvitedOnly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InvitedOnly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = InvitedOnly/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = InvitedOnly/AppDelegate.mm; sourceTree = "<group>"; };
@@ -48,7 +49,6 @@
 		55B466214DD4DB7BA5D1E49F /* Pods-InvitedOnly-InvitedOnlyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InvitedOnly-InvitedOnlyTests.release.xcconfig"; path = "Target Support Files/Pods-InvitedOnly-InvitedOnlyTests/Pods-InvitedOnly-InvitedOnlyTests.release.xcconfig"; sourceTree = "<group>"; };
 		572B4C384400CEC2353EBAB3 /* Pods-InvitedOnly-InvitedOnlyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InvitedOnly-InvitedOnlyTests.debug.xcconfig"; path = "Target Support Files/Pods-InvitedOnly-InvitedOnlyTests/Pods-InvitedOnly-InvitedOnlyTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5CE822A92B7547C600A20632 /* InvitedOnly.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = InvitedOnly.entitlements; path = InvitedOnly/InvitedOnly.entitlements; sourceTree = "<group>"; };
-		5D18EF702B9F493C00CACE0D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5E3661FDAE824C2DBB70B6D2 /* Satoshi-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Regular.ttf"; path = "../src/assets/fonts/Satoshi-Regular.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = InvitedOnly/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BCF481005E2AA27D2E72F8D7 /* Pods_InvitedOnly.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InvitedOnly.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -128,7 +128,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				5D18EF702B9F493C00CACE0D /* GoogleService-Info.plist */,
+				5C16BD852BA09A8400A55132 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* InvitedOnly */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* InvitedOnlyTests */,
@@ -273,7 +273,7 @@
 				BED8147761A24931BC4532E2 /* Satoshi-Medium.ttf in Resources */,
 				BCCC8BC0B5054E7BA00B93E5 /* Satoshi-Regular.ttf in Resources */,
 				50A9F8E1C4E84A9C8272D7CB /* Satoshi-BoldItalic.ttf in Resources */,
-				5D18EF712B9F493C00CACE0D /* GoogleService-Info.plist in Resources */,
+				5C16BD862BA09A8400A55132 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
