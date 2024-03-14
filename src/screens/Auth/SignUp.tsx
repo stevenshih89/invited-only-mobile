@@ -30,11 +30,6 @@ const SignUp: FC = (): JSX.Element => {
       value: 'ua',
       icon: <FlagAE />,
     },
-    // {
-    //   label: '+971',
-    //   value: 'ae',
-    //   icon: <FlagAE />,
-    // },
     {
       label: '+972',
       value: 'ae',
@@ -59,7 +54,9 @@ const SignUp: FC = (): JSX.Element => {
 
   async function signInWithPhoneNumber() {
     try {
-      if (!mobilePhone) return;
+      if (!mobilePhone) {
+        return;
+      }
       setLoading(true);
       const searchCode = items?.filter(i => i?.value === activeItem);
       const phone = `${searchCode[0]?.label}${mobilePhone}`;

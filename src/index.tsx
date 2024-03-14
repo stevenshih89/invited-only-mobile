@@ -40,7 +40,7 @@ const Main = () => {
       <View style={{flex: 1, backgroundColor: 'transparent'}}>
         <AuthProvider>
           <NavigationContainer>
-            <SafeAreaProvider>{true ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
+            <SafeAreaProvider>{authState ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
           </NavigationContainer>
           <LocalNotification />
         </AuthProvider>

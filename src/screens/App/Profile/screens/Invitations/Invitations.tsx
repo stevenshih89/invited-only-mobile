@@ -3,15 +3,15 @@ import Copy from 'assets/images/icons/copy.svg';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Button from 'components/Button/Button';
 import useStyles from './styles';
+import {FC} from 'react';
 
-const Invitations = () => {
+const Invitations: FC<any> = ({invitationCode}) => {
   const handleCopy = (val: string) => {
     Clipboard.setString(val);
   };
 
   const styles = useStyles();
 
-  const inviteCode = 'asd2ghla';
   const inviteLink = 'ioinvitlenk/1s1';
 
   return (
@@ -19,8 +19,8 @@ const Invitations = () => {
       <Text style={styles.title}>You have 5 codes/links</Text>
       <View style={styles.inviteContainer}>
         <Text style={styles.label}>Invite code</Text>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => handleCopy(inviteCode)} style={styles.inviteButton}>
-          <Text style={styles.inviteText}>{inviteCode}</Text>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => handleCopy(invitationCode)} style={styles.inviteButton}>
+          <Text style={styles.inviteText}>{invitationCode}</Text>
           <Copy />
         </TouchableOpacity>
       </View>

@@ -130,7 +130,6 @@ const ChooseAccountType: FC = (): JSX.Element => {
                   <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>Are you a bussiness?</Text>
                   <TouchableOpacity activeOpacity={0.7}>
                     <Text style={{color: toggleColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812), textDecorationLine: 'underline'}}>
-                      {' '}
                       Click here to join
                     </Text>
                   </TouchableOpacity>
