@@ -11,11 +11,11 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1BD28777C7EE0F8274D21BD3 /* Pods_InvitedOnly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCF481005E2AA27D2E72F8D7 /* Pods_InvitedOnly.framework */; };
 		50A9F8E1C4E84A9C8272D7CB /* Satoshi-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F357F377E84610A1B93819 /* Satoshi-BoldItalic.ttf */; };
-		563040DFD2A6150D1BE97551 /* libPods-InvitedOnly-InvitedOnlyTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C73D2E983EB973FC1BE89442 /* libPods-InvitedOnly-InvitedOnlyTests.a */; };
 		5D18EF712B9F493C00CACE0D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D18EF702B9F493C00CACE0D /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		B23B97DFB201DBBDDD5CDD88 /* libPods-InvitedOnly.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B21626276289897EA8548192 /* libPods-InvitedOnly.a */; };
+		9CC9FA29394D18680759CB1F /* Pods_InvitedOnly_InvitedOnlyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20B0A8B7E2419FB7EEE295EA /* Pods_InvitedOnly_InvitedOnlyTests.framework */; };
 		BCCC8BC0B5054E7BA00B93E5 /* Satoshi-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5E3661FDAE824C2DBB70B6D2 /* Satoshi-Regular.ttf */; };
 		BED8147761A24931BC4532E2 /* Satoshi-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0421667BECB24F4D9A549725 /* Satoshi-Medium.ttf */; };
 		C2F6AB32764C4167BFC25FDB /* Satoshi-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 37A7BA376F934C74A1B3CC1B /* Satoshi-Bold.ttf */; };
@@ -42,6 +42,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = InvitedOnly/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = InvitedOnly/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = InvitedOnly/main.m; sourceTree = "<group>"; };
+		20B0A8B7E2419FB7EEE295EA /* Pods_InvitedOnly_InvitedOnlyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InvitedOnly_InvitedOnlyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		27F357F377E84610A1B93819 /* Satoshi-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-BoldItalic.ttf"; path = "../src/assets/fonts/Satoshi-BoldItalic.ttf"; sourceTree = "<group>"; };
 		37A7BA376F934C74A1B3CC1B /* Satoshi-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Bold.ttf"; path = "../src/assets/fonts/Satoshi-Bold.ttf"; sourceTree = "<group>"; };
 		55B466214DD4DB7BA5D1E49F /* Pods-InvitedOnly-InvitedOnlyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InvitedOnly-InvitedOnlyTests.release.xcconfig"; path = "Target Support Files/Pods-InvitedOnly-InvitedOnlyTests/Pods-InvitedOnly-InvitedOnlyTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -50,8 +51,7 @@
 		5D18EF702B9F493C00CACE0D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5E3661FDAE824C2DBB70B6D2 /* Satoshi-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Regular.ttf"; path = "../src/assets/fonts/Satoshi-Regular.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = InvitedOnly/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		B21626276289897EA8548192 /* libPods-InvitedOnly.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-InvitedOnly.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		C73D2E983EB973FC1BE89442 /* libPods-InvitedOnly-InvitedOnlyTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-InvitedOnly-InvitedOnlyTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BCF481005E2AA27D2E72F8D7 /* Pods_InvitedOnly.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InvitedOnly.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2B8F401F6BFCE5322AC8598 /* Pods-InvitedOnly.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InvitedOnly.debug.xcconfig"; path = "Target Support Files/Pods-InvitedOnly/Pods-InvitedOnly.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F6D41E7DA403C68D12D2B9FC /* Pods-InvitedOnly.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InvitedOnly.release.xcconfig"; path = "Target Support Files/Pods-InvitedOnly/Pods-InvitedOnly.release.xcconfig"; sourceTree = "<group>"; };
@@ -62,7 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				563040DFD2A6150D1BE97551 /* libPods-InvitedOnly-InvitedOnlyTests.a in Frameworks */,
+				9CC9FA29394D18680759CB1F /* Pods_InvitedOnly_InvitedOnlyTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,7 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B23B97DFB201DBBDDD5CDD88 /* libPods-InvitedOnly.a in Frameworks */,
+				1BD28777C7EE0F8274D21BD3 /* Pods_InvitedOnly.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,8 +112,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				B21626276289897EA8548192 /* libPods-InvitedOnly.a */,
-				C73D2E983EB973FC1BE89442 /* libPods-InvitedOnly-InvitedOnlyTests.a */,
+				BCF481005E2AA27D2E72F8D7 /* Pods_InvitedOnly.framework */,
+				20B0A8B7E2419FB7EEE295EA /* Pods_InvitedOnly_InvitedOnlyTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
