@@ -45,6 +45,8 @@ const eventEditingPath: keyof RootStackParamList = '/event-editing';
 const settingsPath: keyof RootStackParamList = '/settings';
 const accountSettingPath: keyof RootStackParamList = '/account-setting';
 const phoneChangePath: keyof RootStackParamList = '/phone-change';
+const notificationSettingPath: keyof RootStackParamList = '/notification-setting';
+const contactAndFAQPath: keyof RootStackParamList = '/contact-and-faq';
 
 export {
   bottomTabsStackPath,
@@ -90,4 +92,6 @@ export {
   settingsPath,
   accountSettingPath,
   phoneChangePath,
+  notificationSettingPath,
+  contactAndFAQPath,
 };

@@ -28,6 +28,8 @@ import {
   eventEditingPath,
   accountSettingPath,
   phoneChangePath,
+  notificationSettingPath,
+  contactAndFAQPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -49,6 +51,8 @@ import EventActiveInfo from 'screens/App/Requests/EventActiveInfo/EventActiveInf
 import Settings from 'screens/App/Profile/screens/Settings/Settings';
 import AccountSetting from 'screens/App/Profile/screens/Settings/AccountSetting';
 import PhoneChange from 'screens/App/Profile/screens/Settings/PhoneChange';
+import NotificationSetting from 'screens/App/Profile/screens/Settings/NotificationSetting';
+import ContactAndFAQ from 'screens/App/Profile/screens/Settings/ContactAndFAQ';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -204,6 +208,32 @@ const CommonStackScreen = () => {
           headerShown: true,
         }}
         component={PhoneChange}
+      />
+      <CommonStack.Screen
+        key={notificationSettingPath}
+        name={notificationSettingPath}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerTitle: 'Notification setting',
+          headerShown: true,
+        }}
+        component={NotificationSetting}
+      />
+      <CommonStack.Screen
+        key={contactAndFAQPath}
+        name={contactAndFAQPath}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerTitle: 'Contact & FAQ',
+          headerShown: true,
+        }}
+        component={ContactAndFAQ}
       />
     </CommonStack.Navigator>
   );

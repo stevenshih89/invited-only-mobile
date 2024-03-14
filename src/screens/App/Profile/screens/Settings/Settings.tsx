@@ -3,11 +3,13 @@ import {useState} from 'react';
 import {FlatList, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import LogoutIcon from 'assets/images/icons/logout.svg';
 import UserEdit from 'assets/images/icons/user-edit.svg';
+import Notification from 'assets/images/icons/notification.svg';
+import Messages from 'assets/images/icons/messages.svg';
 import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import ModalLogout from './LogoutModal';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {accountSettingPath} from 'constants/pathLocations';
+import {accountSettingPath, contactAndFAQPath, notificationSettingPath} from 'constants/pathLocations';
 
 const Settings = () => {
   const [isVisibleLogoutModal, setIsVisibleLogoutModal] = useState(false);
@@ -22,6 +24,14 @@ const Settings = () => {
     navigation.navigate(accountSettingPath as never);
   };
 
+  const goToNotificationSetting = () => {
+    navigation.navigate(notificationSettingPath as never);
+  };
+
+  const goToContactAndFAQ = () => {
+    navigation.navigate(contactAndFAQPath as never);
+  };
+
   const settingsList = [
     {
       id: 0,
@@ -31,6 +41,18 @@ const Settings = () => {
     },
     {
       id: 1,
+      title: 'Notification setting',
+      icon: Notification,
+      onPress: goToNotificationSetting,
+    },
+    {
+      id: 2,
+      title: 'Contact & FAQ',
+      icon: Messages,
+      onPress: goToContactAndFAQ,
+    },
+    {
+      id: 3,
       title: 'Log out',
       icon: LogoutIcon,
       onPress: openLogoutModal,
