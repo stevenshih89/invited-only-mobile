@@ -35,6 +35,8 @@ interface TouchingSliderProps {
   isShowInvitesTooltip?: boolean;
   isShowEventPreview?: boolean;
   isLocked?: boolean;
+  name?: string;
+  age?: string;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
@@ -46,12 +48,13 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   isShowInvitesTooltip = true,
   isLocked = false,
   isShowEventPreview = false,
+  name = '',
+  age = '',
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const name = 'Alexa';
 
   const eventPhotos = [CardEvent, CardEvent];
 
@@ -120,7 +123,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           <View style={styles.wrapperBio}>
             <View style={styles.rowBioInfo}>
               <Text style={styles.textName}>{name}</Text>
-              <Text style={styles.textYears}>29</Text>
+              <Text style={styles.textYears}>{age}</Text>
             </View>
             <View style={styles.wrapperFooterCard}>
               <View>

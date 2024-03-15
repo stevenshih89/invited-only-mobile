@@ -1,6 +1,7 @@
 import {isIos, screenHeight} from 'constants/common';
 import {FC, RefObject, useState, useEffect} from 'react';
 import {
+  Alert,
   ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
@@ -21,6 +22,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {turnNotificationsPath} from 'constants/pathLocations';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   console.log('route?.params', route?.params);
@@ -37,7 +39,31 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
 
   function onAuthStateChanged(user: any) {
     if (user) {
-      console.log('user123: ', user);
+      const uid = user.uid;
+
+      const userInfo = {
+        uid,
+        accountApproved: true,
+        birthday: '12.12.1980',
+        chooseYourGuests: 'any',
+        email: 'rodion.kuliaiev@bndigital.co',
+        facePhoto: '',
+        gender: 'Man',
+        interests: [''],
+        invitationCode: 'SD21fssag',
+        location: true,
+        name: 'Rodion',
+        notification: true,
+        photos: [''],
+        showAgeOnMyProfile: true,
+        typeUser: 'Host',
+      };
+
+      firestore()
+        .collection('userInfo')
+        .doc(uid)
+        .set(userInfo, {merge: true})
+        .catch(error => Alert.alert('Error', error.message || 'Something went wrong'));
     }
   }
 
