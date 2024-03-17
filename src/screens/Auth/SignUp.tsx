@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useState} from 'react';
+import React, {FC, useContext, useState} from 'react';
 import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View, ViewStyle} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
@@ -14,6 +14,9 @@ import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {confirmPhonePath} from 'constants/pathLocations';
 import auth from '@react-native-firebase/auth';
+import {showToast} from 'helpers/showToast.ts';
+import {AuthContext} from 'contexts/AuthContext.tsx';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignUp: FC = (): JSX.Element => {
   const [mobilePhone, setMobilePhone] = useState<string>('');
@@ -59,7 +62,9 @@ const SignUp: FC = (): JSX.Element => {
 
   async function signInWithPhoneNumber() {
     try {
-      if (!mobilePhone) return;
+      if (!mobilePhone) {
+        return;
+      }
       setLoading(true);
       const searchCode = items?.filter(i => i?.value === activeItem);
       const phone = `${searchCode[0]?.label}${mobilePhone}`;
@@ -69,8 +74,9 @@ const SignUp: FC = (): JSX.Element => {
       setLoading(false);
       // @ts-ignore
       navigation.navigate(confirmPhonePath, {confirm: confirmation, mobilePhone: phone});
-    } catch (e) {
+    } catch (e: any) {
       setLoading(false);
+      showToast('cancel', `${e?.Error}`);
       console.log(e);
     }
   }

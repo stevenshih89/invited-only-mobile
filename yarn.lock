@@ -1776,6 +1776,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-19.0.1.tgz#e2672f717225ee55b1f84e90b0e1bd7194c7abbd"
   integrity sha512-e/lI2onUuFM5zFVMzEt4e4FFbok/CgACD8jiwPZamtRRDXOaL6xnFeJY4CWvREEp5c8rRDGc4O5OsOU9Gpi/7A==
 
+"@react-native-firebase/storage@^19.0.1":
+  version "19.0.1"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-19.0.1.tgz#d40fddcb2d122ea057f49641c9ec62d995519228"
+  integrity sha512-b1k1iN1bp8oLnSMctJ4dj32eTsBNVZUKYGAeKiFECZwebJyMKfsHLilI3LSlmRagfqzMEc0uQAcEKHLMl2E18Q==
+
 "@react-native-picker/picker@^2.6.1":
   version "2.6.1"
   resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.6.1.tgz"

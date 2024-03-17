@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useState} from 'react';
+import React, {FC, useContext, useState} from 'react';
 import {Alert, Image, ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
@@ -8,22 +8,25 @@ import ManFace from 'assets/images/auth/man-face.png';
 import {whiteColor} from 'constants/colors';
 import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {request, PERMISSIONS} from 'react-native-permissions';
+import {PERMISSIONS, request} from 'react-native-permissions';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {invitationCodePath} from 'constants/pathLocations';
 import {launchCamera} from 'react-native-image-picker';
+import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
-  const [imageUri, setImageUri] = useState<string | undefined>(ManFace);
+  const [imageUri, setImageUri] = useState<string | undefined>('');
+
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const openCamera = async () => {
     if (isIos) {
       const cameraPermission = await request(PERMISSIONS.IOS.CAMERA);
 
       if (cameraPermission === 'granted') {
-        launchCamera(
+        await launchCamera(
           {
             mediaType: 'photo',
             includeBase64: false,
@@ -49,6 +52,19 @@ const VerifySecondStep: FC = (): JSX.Element => {
     }
   };
 
+  const handleNext = () => {
+    if (!imageUri) {
+      return;
+    }
+    setOnBoarding([
+      ...onBoarding,
+      {
+        imageUser: imageUri,
+      },
+    ]);
+    navigation.navigate(invitationCodePath as never);
+  };
+
   return (
     <ImageBackground source={HalfBackground} resizeMode="cover" style={{flex: 1}}>
       <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
@@ -69,7 +85,17 @@ const VerifySecondStep: FC = (): JSX.Element => {
                   <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(34, 812), marginBottom: screenHeight / 30}}>
                     {imageUri ? 'Your photo' : 'Copy this position'}
                   </Text>
-                  <Image source={imageUri || ExampleSelfie} style={{width: 200, height: 200, borderRadius: 8, marginBottom: screenHeight / 20}} />
+                  {imageUri ? (
+                    <Image
+                      source={{
+                        uri: imageUri,
+                      }}
+                      style={{width: 200, height: 200, borderRadius: 8, marginBottom: screenHeight / 20}}
+                    />
+                  ) : (
+                    <Image source={ExampleSelfie} style={{width: 200, height: 200, borderRadius: 8, marginBottom: screenHeight / 20}} />
+                  )}
+
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400, marginLeft: 6, textAlign: 'center'}}>
                       • Your face must be clearly visible
@@ -84,8 +110,16 @@ const VerifySecondStep: FC = (): JSX.Element => {
               </View>
               {imageUri ? (
                 <View style={{marginBottom: 4, flexDirection: 'row', alignItems: 'center'}}>
-                  <Button title="Retake photo" buttonStyle={{flex: 1, marginRight: 2}} variant="transparent" />
-                  <Button title="Confirm" onPress={() => navigation.navigate(invitationCodePath)} buttonStyle={{flex: 1, marginLeft: 2}} />
+                  <Button
+                    onPress={async () => {
+                      setImageUri('');
+                      await openCamera();
+                    }}
+                    title="Retake photo"
+                    buttonStyle={{flex: 1, marginRight: 2}}
+                    variant="transparent"
+                  />
+                  <Button title="Confirm" onPress={() => handleNext()} buttonStyle={{flex: 1, marginLeft: 2}} />
                 </View>
               ) : (
                 <View style={{marginBottom: 4}}>

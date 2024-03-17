@@ -4,6 +4,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {NavigationContainer} from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //import components
 import {AuthProvider, AuthContext} from 'contexts/AuthContext.tsx';
@@ -14,22 +15,37 @@ import LocalNotification from 'components/LocalNotification/LocalNotification.ts
 const Main = () => {
   const [initializing, setInitializing] = useState<boolean>(true);
   const [authState, setAuthState] = useState(false);
-  const {user, setUser} = useContext(AuthContext);
+  const [onBoardingState, setOnboarding] = useState(false);
+  const {onBoarding, user, setUser} = useContext(AuthContext);
 
-  function onAuthStateChanged(user: any) {
-    setUser(user);
+  const onAuthStateChanged = async (user: any) => {
+    setUser([user?._user?.uid]);
+    // console.log('user?._user?.uid', user?._user?.uid);
+    await AsyncStorage.setItem('uid', `${user?._user?.uid}`);
     setAuthState(!!user);
+    await getOnbordingState();
     if (initializing) {
+      setUser([`${user?._user?.uid}`]);
       setInitializing(false);
-      setUser(user);
       setAuthState(!!user);
     }
-  }
+  };
+
+  const getOnbordingState = async () => {
+    const onbording = await AsyncStorage.getItem('onBoarding');
+    const uid = await AsyncStorage.getItem('uid');
+    console.log('uid', uid);
+    onbording ? setOnboarding(true) : setOnboarding(false);
+  };
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    getOnbordingState();
+    if (onBoarding?.onBoarding) {
+      setOnboarding(true);
+    }
     return subscriber;
-  }, [initializing, user]);
+  }, [initializing, user, onBoarding, onBoardingState, setUser]);
 
   if (initializing) {
     return null;
@@ -40,7 +56,7 @@ const Main = () => {
       <View style={{flex: 1, backgroundColor: 'transparent'}}>
         <AuthProvider>
           <NavigationContainer>
-            <SafeAreaProvider>{true ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
+            <SafeAreaProvider>{authState && onBoardingState ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
           </NavigationContainer>
           <LocalNotification />
         </AuthProvider>

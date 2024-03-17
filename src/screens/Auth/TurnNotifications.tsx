@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useEffect, useState} from 'react';
+import {FC, useContext, useEffect, useState} from 'react';
 import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
@@ -11,10 +11,12 @@ import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {chooseAccountTypePath} from 'constants/pathLocations';
 import {Switch} from '@ant-design/react-native';
+import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const TurnNotifications: FC = (): JSX.Element => {
   const [notifications, setNotifications] = useState<boolean>(false);
   const [location, setLocation] = useState<boolean>(false);
+  const {setOnBoarding} = useContext(AuthContext);
 
   const getCurrentLocation = (): void => {
     Geolocation.setRNConfiguration({
@@ -33,6 +35,16 @@ const TurnNotifications: FC = (): JSX.Element => {
   }, [location]);
 
   const navigation = useAppNavigation();
+
+  const handleNext = async () => {
+    setOnBoarding([
+      {
+        notifications: notifications,
+        location: location,
+      },
+    ]);
+    navigation.navigate(chooseAccountTypePath as never);
+  };
 
   const handleNotificationsChange = (value: boolean): void => {
     setNotifications(value);
@@ -119,7 +131,7 @@ const TurnNotifications: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(chooseAccountTypePath as never)} title="Next" />
+                <Button onPress={() => handleNext()} title="Next" />
               </View>
             </View>
           </SafeAreaView>

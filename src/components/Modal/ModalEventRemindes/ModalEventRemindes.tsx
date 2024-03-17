@@ -5,7 +5,7 @@ import Modal from 'react-native-modal';
 //import components
 import useStyles from 'components/Modal/ModalEventRemindes/styles.ts';
 import Button from 'components/Button/Button.tsx';
-import {showToast} from 'helpers/helpers.ts';
+import {showToast} from 'helpers/showToast.ts';
 
 //import icons
 import CalendarIcon from 'assets/images/icons/calendar.svg';

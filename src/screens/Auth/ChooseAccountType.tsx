@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useState} from 'react';
+import {FC, useContext, useState} from 'react';
 import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
@@ -12,13 +12,21 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {enterNamePath} from 'constants/pathLocations';
+import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const ChooseAccountType: FC = (): JSX.Element => {
   const HOST = 'host';
   const GUEST = 'guest';
   const [accountType, setAccountType] = useState<string>(HOST);
 
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);
+
   const navigation = useAppNavigation();
+
+  const handleNext = async () => {
+    setOnBoarding([...onBoarding, {accountType: accountType}]);
+    navigation.navigate(enterNamePath as never);
+  };
 
   return (
     <ImageBackground source={HalfBackground} resizeMode="cover" style={{flex: 1}}>
@@ -137,7 +145,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(enterNamePath)} title="Next" />
+                <Button onPress={() => handleNext()} title="Next" />
               </View>
             </View>
           </SafeAreaView>

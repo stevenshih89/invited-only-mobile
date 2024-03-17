@@ -12,6 +12,7 @@ import {signUpPath} from 'constants/pathLocations';
 const Onboard: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
+  // @ts-ignore
   return (
     <View style={{flex: 1}}>
       <ImageBackground source={Background} style={{flex: 1}} resizeMode="cover">

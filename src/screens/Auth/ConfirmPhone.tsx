@@ -21,6 +21,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {turnNotificationsPath} from 'constants/pathLocations';
 import auth from '@react-native-firebase/auth';
+import {showToast} from 'helpers/showToast.ts';
 
 const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   console.log('route?.params', route?.params);
@@ -37,7 +38,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
 
   function onAuthStateChanged(user: any) {
     if (user) {
-      console.log('user123: ', user);
+      console.log('user: ', user);
     }
   }
 
@@ -46,8 +47,9 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
       console.log(code);
       await confirm.confirm(code);
       navigation.navigate(turnNotificationsPath);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      showToast('cancel', ``, `${e}`);
     }
   };
 

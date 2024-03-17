@@ -38,6 +38,10 @@ const Payment: FC = (): JSX.Element => {
   const styles = useStyles();
   const navigation = useAppNavigation();
 
+  const handleNext = () => {
+    navigation.navigate(tutorialFlowPath as never);
+  };
+
   return (
     <ImageBackground resizeMode="cover" source={HalfBackground} style={styles.imageBackground}>
       <SafeAreaView>
@@ -50,7 +54,7 @@ const Payment: FC = (): JSX.Element => {
               <Text style={styles.textGetAccess}>Get Access & Unlock all of our features. Secure your spot. Host Access is limited.</Text>
               <View style={styles.buttonWrapper}>
                 <Button
-                  onPress={() => navigation.navigate(tutorialFlowPath)}
+                  onPress={() => handleNext()}
                   title="Upgrade $99/m"
                   buttonTitleStyle={styles.textButtonTitleStyle}
                   buttonStyle={styles.buttonUpgrade}
@@ -194,7 +198,7 @@ const Payment: FC = (): JSX.Element => {
               </View>
               <CheckIcon />
             </View>
-            <Button onPress={() => navigation.goBack()} title="Skip" variant="transparent" buttonStyle={styles.buttonSkip} />
+            <Button onPress={() => handleNext()} title="Skip" variant="transparent" buttonStyle={styles.buttonSkip} />
           </View>
         </ScrollView>
       </SafeAreaView>
