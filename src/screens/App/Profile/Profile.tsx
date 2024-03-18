@@ -1,26 +1,56 @@
-import {FlatList, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, FlatList, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Invitations from './screens/Invitations/Invitations';
 import SafetyAndWellbeing from './screens/SafetyAndWellbeing/SafetyAndWellbeing';
 import MyPlan from './screens/MyPlan/MyPlan';
-import Man from 'assets/images/auth/man.png';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
-import {useState} from 'react';
+import {useCallback, useState} from 'react';
 import Button from 'components/Button/Button';
 import useStyles from './styles';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {myProfileViewPath} from 'constants/pathLocations';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {Alert} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
+import {whiteColor} from 'constants/colors';
+import useCalculateAge from 'hooks/useCalculateAge';
 
 const Profile = () => {
   const [activeTabId, setActiveTabId] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [userInfo, setUserInfo] = useState({} as any);
   const percentage = 10;
-  const name = 'Jameson';
-  const age = 22;
-  const isConfirmed = true;
+
   const tabList = [
     {id: 0, title: 'My Plan'},
     {id: 1, title: 'Safety & Wellbeing'},
     {id: 2, title: 'Invitations'},
   ];
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUserInfo = async () => {
+        setLoading(true);
+        const user = auth().currentUser;
+        if (user) {
+          try {
+            const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+
+            if (userInfoDoc.exists) {
+              setUserInfo(userInfoDoc.data());
+            } else {
+              Alert.alert('Error', 'No user data found in Firestore');
+            }
+          } catch (error: any) {
+            Alert.alert('Error', error.message || 'Something went wrong');
+          }
+          setLoading(false);
+        }
+      };
+
+      fetchUserInfo();
+    }, []),
+  );
 
   const styles = useStyles();
   const navigation = useAppNavigation();
@@ -32,7 +62,7 @@ const Profile = () => {
       case 1:
         return <SafetyAndWellbeing />;
       case 2:
-        return <Invitations />;
+        return <Invitations invitationCode={userInfo?.invitationCode} />;
       default:
         return <MyPlan />;
     }
@@ -42,6 +72,12 @@ const Profile = () => {
     // @ts-ignore
     navigation.navigate(myProfileViewPath);
   };
+
+  const userAge = useCalculateAge(userInfo?.birthday);
+
+  if (loading || !userInfo) {
+    return <ActivityIndicator style={styles.scrollView} />;
+  }
 
   return (
     <View style={styles.container}>
@@ -53,11 +89,15 @@ const Profile = () => {
                 <Text style={styles.percentageText}>{percentage}%</Text>
               </View>
             </View>
-            <Image source={Man} style={styles.profileImage} />
+            {userInfo?.photos?.[0] ? (
+              <Image source={{uri: userInfo?.photos[0]}} style={styles.profileImage} />
+            ) : (
+              <View style={[styles.profileImage, {backgroundColor: whiteColor}]} />
+            )}
           </View>
           <View style={styles.nameContainer}>
-            <Text style={styles.nameText}>{`${name}, ${age}`}</Text>
-            {isConfirmed && <CheckStarWhite style={styles.checkStarIcon} />}
+            <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.showAgeOnMyProfile ? `, ${userAge}` : ''}`}</Text>
+            {userInfo?.accountApproved && <CheckStarWhite style={styles.checkStarIcon} />}
           </View>
           <View style={styles.buttonContainer}>
             <Button title="Complete profile" buttonStyle={styles.button} buttonTitleStyle={styles.buttonTitle} onPress={goToMyProfileView} />

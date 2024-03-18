@@ -1,8 +1,8 @@
 import {grayColor, lightGray2Color, lightGray5Color, lightGray6Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {isIos, screenHeight} from 'constants/common';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
-import {RefObject, useState} from 'react';
-import {SafeAreaView, StyleSheet, ViewStyle} from 'react-native';
+import {RefObject, useEffect, useState} from 'react';
+import {Alert, SafeAreaView, StyleSheet, ViewStyle} from 'react-native';
 import {TouchableWithoutFeedback} from 'react-native';
 import {Keyboard, KeyboardAvoidingView, View} from 'react-native';
 import FlagAE from 'assets/images/flags/ae.svg';
@@ -16,6 +16,8 @@ import Button from 'components/Button/Button';
 import {TouchableOpacity} from 'react-native';
 import {CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell} from 'react-native-confirmation-code-field';
 import {TextInput} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 const PhoneChange = () => {
   const [mobilePhone, setMobilePhone] = useState<string>('');
@@ -24,6 +26,9 @@ const PhoneChange = () => {
   const [isOpenDropdown, setIsOpenDropdown] = useState<boolean>(false);
   const [isSecondStep, setIsSecondStep] = useState<boolean>(false);
   const [code, setCode] = useState<string>('');
+  const [confirm, setConfirm] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [currentUserUid, setCurrentUserUid] = useState<string | undefined>('');
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: code,
     setValue: setCode,
@@ -31,6 +36,11 @@ const PhoneChange = () => {
 
   const CELL_COUNT: number = 6;
   const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
+
+  useEffect(() => {
+    const userUid = auth().currentUser?.uid;
+    setCurrentUserUid(userUid);
+  }, []);
 
   const items = [
     {
@@ -59,6 +69,49 @@ const PhoneChange = () => {
       icon: <FlagAE />,
     },
   ];
+
+  const handleSendOTPOnPhone = async () => {
+    try {
+      if (!mobilePhone) {
+        return;
+      }
+      setLoading(true);
+      const searchCodeId = items?.findIndex(i => i?.value === activeItem);
+      const phone = `${items[searchCodeId]?.label}${mobilePhone}`;
+      const confirmation = await auth().signInWithPhoneNumber(phone);
+      setConfirm(confirmation);
+      setLoading(false);
+      setIsSecondStep(true);
+    } catch (error) {
+      console.log('error', error);
+      setLoading(false);
+    }
+  };
+
+  const handleSendConfirmationCode = async () => {
+    const searchCodeId = items?.findIndex(i => i?.value === activeItem);
+    const phone = `${items[searchCodeId]?.label}${mobilePhone}`;
+    try {
+      setLoading(true);
+      await confirm.confirm(code);
+      firestore()
+        .collection('users')
+        .doc(currentUserUid)
+        .update({
+          phoneNumber: phone,
+        })
+        .then(() => {
+          console.warn('User phone number updated in Firestore');
+        })
+        .catch(error => {
+          console.error('Error updating user phone number: ', error);
+        });
+      setLoading(false);
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong');
+      setLoading(false);
+    }
+  };
 
   const dropdownContainerStyle: ViewStyle = isOpenDropdown
     ? {
@@ -169,7 +222,7 @@ const PhoneChange = () => {
                       />
                     </View>
                   </View>
-                  <Button title="Send OTP" onPress={() => setIsSecondStep(true)} disabled={mobilePhone.length < 11} />
+                  <Button title="Send OTP" loading={loading} onPress={handleSendOTPOnPhone} disabled={mobilePhone.length < 11} />
                 </>
               ) : (
                 <>
@@ -256,7 +309,7 @@ const PhoneChange = () => {
                       </TouchableOpacity>
                     </View>
                   </View>
-                  <Button title="Save" />
+                  <Button title="Save" disabled={code.length !== CELL_COUNT} onPress={handleSendConfirmationCode} />
                 </>
               )}
             </View>

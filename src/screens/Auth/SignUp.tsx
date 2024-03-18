@@ -33,11 +33,6 @@ const SignUp: FC = (): JSX.Element => {
       value: 'ua',
       icon: <FlagAE />,
     },
-    // {
-    //   label: '+971',
-    //   value: 'ae',
-    //   icon: <FlagAE />,
-    // },
     {
       label: '+972',
       value: 'ae',

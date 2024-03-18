@@ -38,7 +38,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
 
   function onAuthStateChanged(user: any) {
     if (user) {
-      console.log('user: ', user);
+      console.log('user123: ', user);
     }
   }
 
