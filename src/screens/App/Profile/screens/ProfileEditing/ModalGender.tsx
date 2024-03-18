@@ -3,30 +3,19 @@ import Modal from 'react-native-modal';
 import Gender from 'assets/images/icons/tabler_gender-bigender.svg';
 import {blackColor, grayColor, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
-import {FC, useState} from 'react';
+import {FC} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
 
-const ModalGender: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
-  const [isChechked, setIsChechked] = useState(false);
-
-  const [activeItemId, setActiveItemId] = useState(0);
-
-  const listOfItems = [
-    {
-      id: 0,
-      title: 'Male',
-    },
-    {
-      id: 1,
-      title: 'Female',
-    },
-    {
-      id: 2,
-      title: 'Other',
-    },
-  ];
-
+const ModalGender: FC<{isVisible: boolean; onClose: () => void}> = ({
+  isVisible,
+  onClose,
+  showGenderOnMyProfile,
+  setShowGenderOnMyProfile,
+  activeGenderItem,
+  setActiveGenderItem,
+  listOfGenders,
+}) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -71,18 +60,22 @@ const ModalGender: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
         </Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={isChechked} onChange={val => setIsChechked(val)} />
+          <Switch
+            trackColor={{false: grayColor, true: toggleColor}}
+            checked={showGenderOnMyProfile}
+            onChange={val => setShowGenderOnMyProfile(val)}
+          />
         </View>
         <FlatList
-          data={listOfItems}
+          data={listOfGenders}
           scrollEnabled={false}
           keyExtractor={item => item.id.toString()}
           renderItem={({item}) => {
-            const isActive = activeItemId === item.id;
+            const isActive = activeGenderItem.id === item.id;
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => setActiveItemId(item.id)}
+                onPress={() => setActiveGenderItem(item)}
                 style={{
                   borderBottomWidth: 1,
                   borderStyle: 'solid',

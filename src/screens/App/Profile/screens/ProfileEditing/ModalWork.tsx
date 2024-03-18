@@ -3,99 +3,20 @@ import Modal from 'react-native-modal';
 import Bookmark from 'assets/images/icons/bookmark.svg';
 import {blackColor, grayColor, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
-import {FC, useState} from 'react';
+import {FC} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
 import {screenHeight} from 'constants/common';
 
-const ModalWork: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
-  const [isChechked, setIsChechked] = useState(false);
-
-  const [activeItemId, setActiveItemId] = useState(0);
-
-  const listOfItems = [
-    {
-      id: 0,
-      title: 'Hospitality and Tourism',
-    },
-    {
-      id: 1,
-      title: 'Real Estate & Property Management',
-    },
-    {
-      id: 2,
-      title: 'Financial Services',
-    },
-    {
-      id: 3,
-      title: 'Retail & E-commerce',
-    },
-    {
-      id: 4,
-      title: 'Construction & Engineering',
-    },
-    {
-      id: 5,
-      title: 'Information Technology',
-    },
-    {
-      id: 6,
-      title: 'Healthcare & Medical Services',
-    },
-    {
-      id: 7,
-      title: 'Education & Training',
-    },
-    {
-      id: 8,
-      title: 'Oil & Gas Industry',
-    },
-    {
-      id: 9,
-      title: 'Media & Entertainment',
-    },
-    {
-      id: 10,
-      title: 'Logistics & Transportation',
-    },
-    {
-      id: 11,
-      title: 'Legal Services',
-    },
-    {
-      id: 12,
-      title: 'Fashion & Luxury Goods',
-    },
-    {
-      id: 13,
-      title: 'Advertising & Marketing',
-    },
-    {
-      id: 14,
-      title: 'Renewable Energy & Sustainability',
-    },
-    {
-      id: 15,
-      title: 'Consulting and Advisory Services',
-    },
-    {
-      id: 16,
-      title: 'Telecommunications',
-    },
-    {
-      id: 17,
-      title: 'Aerospace & Aviation',
-    },
-    {
-      id: 18,
-      title: 'Food & Beverage Industry',
-    },
-    {
-      id: 19,
-      title: 'Government & Public Sector',
-    },
-  ];
-
+const ModalWork: FC<{isVisible: boolean; onClose: () => void; listOfWorks: any[]}> = ({
+  isVisible,
+  onClose,
+  listOfWorks,
+  showWorkOnMyProfile,
+  setShowWorkOnMyProfile,
+  activeWorkItem,
+  setActiveWorkItem,
+}) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -141,18 +62,18 @@ const ModalWork: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, on
         </Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={isChechked} onChange={val => setIsChechked(val)} />
+          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showWorkOnMyProfile} onChange={val => setShowWorkOnMyProfile(val)} />
         </View>
         <FlatList
-          data={listOfItems}
+          data={listOfWorks}
           keyExtractor={item => item.id.toString()}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) => {
-            const isActive = activeItemId === item.id;
+            const isActive = activeWorkItem?.id === item.id;
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => setActiveItemId(item.id)}
+                onPress={() => setActiveWorkItem(item)}
                 style={{
                   borderBottomWidth: 1,
                   borderStyle: 'solid',

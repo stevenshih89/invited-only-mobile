@@ -1,13 +1,16 @@
 import {TextareaItem} from '@ant-design/react-native';
 import {lightGray2Color, lightGray5Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Satoshi500} from 'constants/fonts';
-import {useState} from 'react';
+import {Dispatch, FC, SetStateAction} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
-const MyBio = () => {
-  const [bio, setBio] = useState<string>('');
+interface MyBioProps {
+  bio: string;
+  setBio: Dispatch<SetStateAction<string>>;
+}
 
+const MyBio: FC<MyBioProps> = ({bio, setBio}) => {
   return (
     <View style={styles.view}>
       <Text style={styles.text}>My bio</Text>
