@@ -3,7 +3,7 @@ const useCalculateAge = (birthdate: string) => {
     return '';
   }
   const parts = birthdate.split('.');
-  const formattedBirthdate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+  const formattedBirthdate = `${parts[2]}-${parts[0]}-${parts[1]}`;
 
   const today = new Date();
   const birthDate = new Date(formattedBirthdate);

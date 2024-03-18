@@ -144,10 +144,10 @@ const MyInterests: FC = (): JSX.Element => {
                 <Button
                   title="Skip"
                   buttonStyle={{flex: 0.5, marginRight: 2}}
-                  onPress={() => navigation.navigate(myEmailPath)}
+                  onPress={() => navigation.navigate(myEmailPath as never)}
                   variant="transparent"
                 />
-                <Button title="Next" buttonStyle={{flex: 1.5, marginLeft: 2}} onPress={() => navigation.navigate(myEmailPath)} />
+                <Button title="Next" buttonStyle={{flex: 1.5, marginLeft: 2}} onPress={() => navigation.navigate(myEmailPath as never)} />
               </View>
             </View>
           </SafeAreaView>

@@ -30,6 +30,7 @@ const MyBasics: FC<{
   setIsVisibleAlcoholModal,
   setIsVisibleBirthdayModal,
   setIsVisibleLocationModal,
+  activeWorkItem,
 }): ReactElement => {
   return (
     <View style={styles.container}>
@@ -40,7 +41,7 @@ const MyBasics: FC<{
           <Text style={styles.text}>Work</Text>
         </View>
         <View style={styles.iconContainer}>
-          <Text style={styles.subText}>Add</Text>
+          <Text style={styles.subText}>{activeWorkItem?.title || 'Add'}</Text>
           <ArrowRight />
         </View>
       </TouchableOpacity>

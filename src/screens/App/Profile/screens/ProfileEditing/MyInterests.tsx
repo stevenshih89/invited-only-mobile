@@ -2,36 +2,25 @@ import {blackColor, lightGray2Color, lightGray5Color, whiteColor} from 'constant
 import {screenWidth} from 'constants/common';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import ArrowDown from 'assets/images/icons/arrow-down.svg';
-import {useState} from 'react';
-import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {Dispatch, FC, SetStateAction} from 'react';
+import {ActivityIndicator, FlatList, Text, TouchableOpacity, View} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
-const MyInterests = () => {
-  const [listOfInterests, setListOfInterests] = useState([
-    {id: 0, title: 'Bussiness', isSelected: true},
-    {id: 1, title: 'Technology', isSelected: false},
-    {id: 2, title: 'Science', isSelected: false},
-    {id: 3, title: 'Art', isSelected: false},
-    {id: 4, title: 'Music', isSelected: false},
-    {id: 5, title: 'Fashion', isSelected: false},
-    {id: 6, title: 'Health', isSelected: false},
-    {id: 7, title: 'Sport', isSelected: false},
-    {id: 8, title: 'Travel', isSelected: false},
-    {id: 9, title: 'Food', isSelected: false},
-    {id: 10, title: 'Education', isSelected: false},
-    {id: 11, title: 'Politics', isSelected: false},
-    {id: 12, title: 'Lifestyle', isSelected: false},
-    {id: 13, title: 'Entertainment', isSelected: false},
-    {id: 14, title: 'Environment', isSelected: false},
-    {id: 15, title: 'Culture', isSelected: false},
-  ]);
+interface MyInterestsProps {
+  listOfInterests: {id: number; title: string; isSelected: boolean}[];
+  setListOfInterests: Dispatch<SetStateAction<{id: number; title: string; isSelected: boolean}[]>>;
+  loading: boolean;
+}
 
+const MyInterests: FC<MyInterestsProps> = ({listOfInterests, setListOfInterests, loading}) => {
   const handleSelectInterest = (id: number) => {
-    const updatedInterests = listOfInterests.map(interest => {
-      return interest.id === id ? {...interest, isSelected: !interest.isSelected} : interest;
-    });
+    const updatedInterests = listOfInterests.map(interest => (interest.id === id ? {...interest, isSelected: !interest.isSelected} : interest));
     setListOfInterests(updatedInterests);
   };
+
+  if (loading) {
+    return <ActivityIndicator style={{backgroundColor: lightGray5Color, borderRadius: 10, marginTop: 24, padding: 20}} />;
+  }
 
   return (
     <View style={{backgroundColor: lightGray5Color, borderRadius: 10, marginTop: 24, padding: 20}}>
