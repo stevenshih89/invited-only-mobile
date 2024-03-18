@@ -1,29 +1,15 @@
 import {FlatList, Image, Text, View} from 'react-native';
 import Swiper from 'react-native-swiper';
-import FakeSmallGirlOne from 'assets/images/app/fake-small-girl-1.png';
-import FakeSmallGirlTwo from 'assets/images/app/fake-small-girl-2.png';
-import FakeSmallGirlThree from 'assets/images/app/fake-small-girl-3.png';
-import FakeSmallGirlFour from 'assets/images/app/fake-small-girl-4.png';
-import FakeSmallGirlFive from 'assets/images/app/fake-small-girl-5.png';
-import FakeSmallGirlSix from 'assets/images/app/fake-small-girl-6.png';
 import {gray1Color, whiteColor} from 'constants/colors';
 import useStyles from './styles';
+import {FC} from 'react';
 
-const InstagramSLider = () => {
-  const fakeSmallGirlPhotos = [
-    FakeSmallGirlOne,
-    FakeSmallGirlTwo,
-    FakeSmallGirlThree,
-    FakeSmallGirlFour,
-    FakeSmallGirlFive,
-    FakeSmallGirlSix,
-    FakeSmallGirlFive,
-    FakeSmallGirlSix,
-    FakeSmallGirlThree,
-  ];
+interface InstagramSliderProps {
+  fakeSmallGirlPhotos: any[];
+}
 
+const InstagramSlider: FC<InstagramSliderProps> = ({fakeSmallGirlPhotos}) => {
   const styles = useStyles();
-
   return (
     <View style={styles.container}>
       <View style={styles.titleWr}>
@@ -39,7 +25,7 @@ const InstagramSLider = () => {
               ItemSeparatorComponent={() => <View style={styles.separator} />}
               renderItem={({item}) => (
                 <View style={styles.imageWr}>
-                  <Image source={item} style={styles.image} />
+                  <Image source={{uri: item}} style={styles.image} />
                 </View>
               )}
             />
@@ -80,4 +66,4 @@ const InstagramSLider = () => {
   );
 };
 
-export default InstagramSLider;
+export default InstagramSlider;
