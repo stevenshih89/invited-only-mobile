@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useState} from 'react';
+import {FC, useContext, useState} from 'react';
 import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
@@ -12,12 +12,20 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {genderPreferencesPath} from 'constants/pathLocations';
+import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const Gender: FC = (): JSX.Element => {
   const MAN = 'man';
   const WOMAN = 'woman';
   const NONBINARY = 'nonbinary';
   const [gender, setGender] = useState<string>(MAN);
+
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);
+
+  const handleNext = () => {
+    setOnBoarding([...onBoarding, {gender: gender}]);
+    navigation.navigate(genderPreferencesPath as never);
+  };
 
   const navigation = useAppNavigation();
 
@@ -135,7 +143,7 @@ const Gender: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(genderPreferencesPath)} title="Next" />
+                <Button onPress={() => handleNext()} title="Next" />
               </View>
             </View>
           </SafeAreaView>

@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useState} from 'react';
+import {FC, useContext, useState} from 'react';
 import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
@@ -12,18 +12,34 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {connectSocialMediaPath} from 'constants/pathLocations';
 import Input from 'components/Inputs/Input';
 import {isEmailValid} from 'helpers/regExpValidators';
+import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const MyEmail: FC = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
 
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);
   const handleEmailChange = (value: string) => {
     const truncatedText = value.slice(0, 40);
     setEmail(truncatedText);
+    checkIsValidEmail();
   };
 
   const checkIsValidEmail = () => {
     setIsValidEmail(isEmailValid(email));
+  };
+
+  const handleNext = () => {
+    if (!email || !isValidEmail) {
+      return;
+    }
+    setOnBoarding([
+      ...onBoarding,
+      {
+        email: email,
+      },
+    ]);
+    navigation.navigate(connectSocialMediaPath as never);
   };
 
   const navigation = useAppNavigation();
@@ -100,7 +116,7 @@ const MyEmail: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(connectSocialMediaPath)} title="Next" />
+                <Button onPress={() => handleNext()} title="Next" />
               </View>
             </View>
           </SafeAreaView>

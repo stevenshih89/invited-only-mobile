@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useState} from 'react';
+import React, {FC, useContext, useState} from 'react';
 import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
@@ -9,11 +9,13 @@ import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {addPhotosPath} from 'constants/pathLocations';
+import {addPhotosPath, chooseAccountTypePath} from 'constants/pathLocations';
 import Input from 'components/Inputs/Input';
+import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const EnterName: FC = (): JSX.Element => {
   const [name, setName] = useState<string>('');
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const handleNameChange = (value: string) => {
     const truncatedText = value.slice(0, 40);
@@ -21,6 +23,17 @@ const EnterName: FC = (): JSX.Element => {
   };
 
   const navigation = useAppNavigation();
+
+  const handleNext = async () => {
+    if (!name) return;
+    setOnBoarding([
+      ...onBoarding,
+      {
+        name: name,
+      },
+    ]);
+    navigation.navigate(addPhotosPath as never);
+  };
 
   return (
     <ImageBackground source={HalfBackground} resizeMode="cover" style={{flex: 1}}>
@@ -86,7 +99,7 @@ const EnterName: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(addPhotosPath)} title="Next" />
+                <Button onPress={() => handleNext()} title="Next" />
               </View>
             </View>
           </SafeAreaView>

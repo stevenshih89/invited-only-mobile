@@ -1,5 +1,5 @@
 import {isIos, screenHeight, screenWidth} from 'constants/common';
-import {FC, useState} from 'react';
+import {FC, useState, useEffect, useContext} from 'react';
 import {
   Alert,
   ImageBackground,
@@ -24,6 +24,7 @@ import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {enterBirthdayPath} from 'constants/pathLocations';
 import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
+import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const AddPhotos: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -41,6 +42,7 @@ const AddPhotos: FC = (): JSX.Element => {
       image: null,
     },
   ]);
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
     const result = await check(permission);
@@ -103,6 +105,25 @@ const AddPhotos: FC = (): JSX.Element => {
     });
     setImages(newImages);
   };
+
+  function hasPhoto(array: {image: null | string; id: number}[]) {
+    for (let i = 0; i < array.length; i++) {
+      if (array[i].image !== null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  const handleNext = async () => {
+    if (!hasPhoto(images)) return;
+    setOnBoarding([...onBoarding, {images: images}]);
+    navigation.navigate(enterBirthdayPath as never);
+  };
+
+  useEffect(() => {
+    console.log(onBoarding);
+  }, []);
 
   return (
     <ImageBackground resizeMode="cover" source={HalfBackground} style={{flex: 1}}>
@@ -308,7 +329,7 @@ const AddPhotos: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(enterBirthdayPath as never)} title="Next" />
+                <Button onPress={() => handleNext()} title="Next" />
               </View>
             </View>
           </SafeAreaView>

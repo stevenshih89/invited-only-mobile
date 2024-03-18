@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useState} from 'react';
+import {FC, useContext, useState} from 'react';
 import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
@@ -11,10 +11,23 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import Input from 'components/Inputs/Input';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {codeVerifiedPath} from 'constants/pathLocations.ts';
+import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
   const navigation = useAppNavigation();
+
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);
+
+  const handleNext = () => {
+    setOnBoarding([
+      ...onBoarding,
+      {
+        invitationСode: code,
+      },
+    ]);
+    navigation.navigate(codeVerifiedPath as never);
+  };
 
   return (
     <ImageBackground source={HalfBackground} resizeMode="cover" style={{flex: 1}}>
@@ -63,8 +76,8 @@ const InvitationCode: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4, flexDirection: 'row', alignItems: 'center'}}>
-                <Button title="I don't have a code" buttonStyle={{flex: 1, marginRight: 2}} variant="transparent" />
-                <Button onPress={() => navigation.navigate(codeVerifiedPath)} title="Continue" buttonStyle={{flex: 1, marginLeft: 2}} />
+                <Button onPress={() => handleNext()} title="I don't have a code" buttonStyle={{flex: 1, marginRight: 2}} variant="transparent" />
+                <Button onPress={() => handleNext()} title="Continue" buttonStyle={{flex: 1, marginLeft: 2}} />
               </View>
             </View>
           </SafeAreaView>
