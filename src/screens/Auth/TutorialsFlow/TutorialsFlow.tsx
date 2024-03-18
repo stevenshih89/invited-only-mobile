@@ -24,7 +24,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
   const styles = useStyles();
 
   const content: ReactNode[] = [<CreateEvent />, <SwipeToInvite />, <SeeHoWantsToJoinYou />, <ApproveGuest />, <MeetEnjoy />, <JoinEvents />]; // all components for stepper
-  const {onBoarding, setOnBoarding} = useContext(AuthContext);
+  const {onBoarding} = useContext(AuthContext);
 
   const handleNext = () => {
     if (active === 5) {
@@ -78,6 +78,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
   const handleCloseTutorialFlow = async () => {
     try {
       const mergedObject = {};
+      await AsyncStorage.setItem('onBoarding', 'true');
 
       onBoarding?.forEach(obj => {
         Object.keys(obj)?.forEach(key => {
@@ -113,10 +114,6 @@ const TutorialsFlow: FC = (): JSX.Element => {
             await updateUserProfileImage(userId, image);
           });
         });
-
-      await AsyncStorage.setItem('onBoarding', 'true');
-      const data = Object.assign({}, [...onBoarding, {onBoarding: true}]);
-      setOnBoarding(data);
     } catch (e) {
       console.log(e);
       showToast('cancel', '', `${e}`);

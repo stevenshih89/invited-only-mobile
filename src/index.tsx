@@ -20,7 +20,6 @@ const Main = () => {
 
   const onAuthStateChanged = async (user: any) => {
     setUser([user?._user?.uid]);
-    // console.log('user?._user?.uid', user?._user?.uid);
     await AsyncStorage.setItem('uid', `${user?._user?.uid}`);
     setAuthState(!!user);
     await getOnbordingState();
@@ -35,15 +34,13 @@ const Main = () => {
     const onbording = await AsyncStorage.getItem('onBoarding');
     const uid = await AsyncStorage.getItem('uid');
     console.log('uid', uid);
+    console.log('onbording', onbording);
     onbording ? setOnboarding(true) : setOnboarding(false);
   };
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     getOnbordingState();
-    if (onBoarding?.onBoarding) {
-      setOnboarding(true);
-    }
     return subscriber;
   }, [initializing, user, onBoarding, onBoardingState, setUser]);
 
