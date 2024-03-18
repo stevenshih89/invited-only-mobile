@@ -8,7 +8,7 @@ import useStyles from 'components/Modal/ModalUserMenu/styles.ts';
 import {screenHeight} from 'constants/common.ts';
 import Button from 'components/Button/Button.tsx';
 import {gray1Color, lightGray12Color} from 'constants/colors.ts';
-import {showToast} from 'helpers/helpers.ts';
+import {showToast} from 'helpers/showToast.ts';
 
 //import icons
 import CloseIcon from 'assets/images/icons/close-circle.svg';

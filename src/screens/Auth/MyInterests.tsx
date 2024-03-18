@@ -1,5 +1,5 @@
 import {isIos, screenHeight, screenWidth} from 'constants/common';
-import {FC, useState} from 'react';
+import {FC, useContext, useState} from 'react';
 import {
   FlatList,
   ImageBackground,
@@ -20,10 +20,13 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {myEmailPath} from 'constants/pathLocations';
+import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const MyInterests: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const [selectedInterests, setSelectedInterests] = useState<{id: number}[]>([]);
+
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const listOfInterests = [
     {id: 0, title: 'Bussiness'},
@@ -43,6 +46,16 @@ const MyInterests: FC = (): JSX.Element => {
     {id: 14, title: 'Environment'},
     {id: 15, title: 'Culture'},
   ];
+
+  const handleNext = () => {
+    setOnBoarding([
+      ...onBoarding,
+      {
+        interests: selectedInterests,
+      },
+    ]);
+    navigation.navigate(myEmailPath as never);
+  };
 
   return (
     <ImageBackground source={HalfBackground} resizeMode="cover" style={{flex: 1}}>
@@ -141,13 +154,8 @@ const MyInterests: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4, flexDirection: 'row', alignItems: 'center'}}>
-                <Button
-                  title="Skip"
-                  buttonStyle={{flex: 0.5, marginRight: 2}}
-                  onPress={() => navigation.navigate(myEmailPath as never)}
-                  variant="transparent"
-                />
-                <Button title="Next" buttonStyle={{flex: 1.5, marginLeft: 2}} onPress={() => navigation.navigate(myEmailPath as never)} />
+                <Button title="Skip" buttonStyle={{flex: 0.5, marginRight: 2}} onPress={() => handleNext()} variant="transparent" />
+                <Button title="Next" buttonStyle={{flex: 1.5, marginLeft: 2}} onPress={() => handleNext()} />
               </View>
             </View>
           </SafeAreaView>

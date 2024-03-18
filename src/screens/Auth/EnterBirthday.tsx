@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useState} from 'react';
+import {FC, useContext, useState} from 'react';
 import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
@@ -12,12 +12,15 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {genderPath} from 'constants/pathLocations';
 import {Switch} from '@ant-design/react-native';
 import MaskInput from 'react-native-mask-input';
+import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const EnterBirthday: FC = (): JSX.Element => {
   const [month, setMonth] = useState<string>('');
   const [day, setDay] = useState<string>('');
   const [year, setYear] = useState<string>('');
   const [showAge, setShowAge] = useState<boolean>(false);
+
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const handleShowAge = (value: boolean): void => {
     setShowAge(value);
@@ -57,6 +60,12 @@ const EnterBirthday: FC = (): JSX.Element => {
     }
 
     setYear(trimmedInput);
+  };
+
+  const handleNext = () => {
+    if (!day || !month || !year) return;
+    setOnBoarding([...onBoarding, {showAge: showAge, date: `${month}.${day}.${year}`}]);
+    navigation.navigate(genderPath as never);
   };
 
   const navigation = useAppNavigation();
@@ -191,7 +200,7 @@ const EnterBirthday: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(genderPath as never)} title="Next" />
+                <Button onPress={() => handleNext()} title="Next" />
               </View>
             </View>
           </SafeAreaView>

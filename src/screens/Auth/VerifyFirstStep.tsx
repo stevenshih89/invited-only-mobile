@@ -59,7 +59,7 @@ const VerifyFirstStep: FC = (): JSX.Element => {
               </View>
 
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(verifySecondStepPath)} title="I agree, continue" />
+                <Button onPress={() => navigation.navigate(verifySecondStepPath as never)} title="I agree, continue" />
               </View>
             </View>
           </SafeAreaView>

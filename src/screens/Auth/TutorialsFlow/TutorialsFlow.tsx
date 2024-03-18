@@ -1,11 +1,13 @@
-import React, {FC, ReactNode, useState} from 'react';
-import {View, SafeAreaView} from 'react-native';
+import React, {FC, ReactNode, useContext, useState} from 'react';
+import {View, SafeAreaView, Platform} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
 //import components
 import {gray1Color, whiteColor} from 'constants/colors.ts';
 import useStyles from 'screens/Auth/TutorialsFlow/styles.ts';
 import Stepper from 'components/Stepper/Stepper.tsx';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import CreateEvent from 'screens/Auth/TutorialsFlow/components/CreateEvent/CreateEvent.tsx';
 import SwipeToInvite from 'screens/Auth/TutorialsFlow/components/SwipeToInvite/SwipeToInvite.tsx';
 import SeeHoWantsToJoinYou from 'screens/Auth/TutorialsFlow/components/SeeHoWantsToJoinYou/SeeHoWantsToJoinYou.tsx';
@@ -13,23 +15,109 @@ import ApproveGuest from 'screens/Auth/TutorialsFlow/components/ApproveGuest/App
 import MeetEnjoy from 'screens/Auth/TutorialsFlow/components/MeetEnjoy/MeetEnjoy.tsx';
 import JoinEvents from 'screens/Auth/TutorialsFlow/components/JoinEvents /JoinEvents.tsx';
 import Button from 'components/Button/Button.tsx';
+import {AuthContext} from 'contexts/AuthContext.tsx';
+import {showToast} from 'helpers/showToast.ts';
 
 const TutorialsFlow: FC = (): JSX.Element => {
   const [active, setActive] = useState<number>(0);
 
   const styles = useStyles();
-  const navigation = useAppNavigation();
 
   const content: ReactNode[] = [<CreateEvent />, <SwipeToInvite />, <SeeHoWantsToJoinYou />, <ApproveGuest />, <MeetEnjoy />, <JoinEvents />]; // all components for stepper
+  const {onBoarding} = useContext(AuthContext);
 
   const handleNext = () => {
-    if (active === 5) return;
+    if (active === 5) {
+      return handleCloseTutorialFlow();
+    }
 
     setActive(p => p + 1);
   };
 
-  const handleCloseTutorialFlow = () => {
-    navigation.goBack();
+  const uploadImage = async (imagePath: string, userId: string | null) => {
+    const uploadUri = Platform.OS === 'ios' ? imagePath.replace('file://', '') : imagePath;
+    const filename = `${userId}_${new Date().getTime()}`; // or another unique naming convention
+    const storageRef = storage().ref(`images/${filename}`);
+    const task = storageRef.putFile(uploadUri);
+    try {
+      await task;
+      // Get the URL to the uploaded image
+      const url = await storageRef.getDownloadURL();
+      return url;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  };
+
+  const updateUserProfileImage = async (userId: string | null, imageUrl: string) => {
+    try {
+      await firestore().collection('userInfo').doc(userId).update({
+        facePhoto: imageUrl,
+      });
+      console.log('User profile image updated successfully.');
+    } catch (e) {
+      console.error('Error updating user profile image: ', e);
+    }
+  };
+
+  const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
+    try {
+      await firestore()
+        .collection('userInfo')
+        .doc(userId)
+        .update({
+          photos: [imageUrl],
+        });
+      console.log('User profile image updated successfully.');
+    } catch (e) {
+      console.error('Error updating user profile image: ', e);
+    }
+  };
+
+  const handleCloseTutorialFlow = async () => {
+    try {
+      const mergedObject = {};
+      await AsyncStorage.setItem('onBoarding', 'true');
+
+      onBoarding?.forEach(obj => {
+        Object.keys(obj)?.forEach(key => {
+          // @ts-ignore
+          mergedObject[key] = obj[key];
+        });
+      });
+
+      const userId = await AsyncStorage.getItem('uid');
+      const imageUri = mergedObject?.imageUser;
+
+      const photos = mergedObject?.images?.map(i => i?.image);
+
+      let allImageUrl: any = [];
+
+      await firestore()
+        .collection('userInfo')
+        .doc(`${userId}`)
+        .set({
+          ...mergedObject,
+          uid: userId,
+        })
+        .then(async () => {
+          console.log('User added!');
+
+          photos?.map(async i => {
+            await uploadImage(i, userId).then(async image => {
+              allImageUrl.push(image);
+            });
+            await updatePhotosImage(userId, allImageUrl);
+          });
+          await uploadImage(imageUri, userId).then(async image => {
+            await updateUserProfileImage(userId, image);
+          });
+        });
+    } catch (e) {
+      console.log(e);
+      showToast('cancel', '', `${e}`);
+    }
   };
 
   return (

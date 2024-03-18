@@ -13,7 +13,7 @@ import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsC
 import {FlatList} from 'react-native';
 import {blackColor, lightGray2Color, whiteColor} from 'constants/colors';
 import ModalCancelAttending from './ModalCancelAttending';
-import {showToast} from 'helpers/helpers';
+import {showToast} from 'helpers/showToast.ts';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
 
 const MyEvents: FC = () => {
