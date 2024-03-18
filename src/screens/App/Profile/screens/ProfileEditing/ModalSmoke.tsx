@@ -3,30 +3,21 @@ import Modal from 'react-native-modal';
 import Smoke from 'assets/images/icons/smoke.svg';
 import {blackColor, grayColor, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
-import {FC, useState} from 'react';
+import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
 
-const ModalSmoke: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
-  const [isChechked, setIsChechked] = useState(false);
+interface ModalSmokeProps {
+  isVisible: boolean;
+  onClose: () => void;
+  showSmoke: boolean;
+  setShowSmoke: Dispatch<SetStateAction<boolean>>;
+  activeSmokeItem: {id: number; title: string} | null;
+  setActiveSmokeItem: Dispatch<SetStateAction<{id: number; title: string} | null>>;
+  listOfSmokes: {id: number; title: string}[];
+}
 
-  const [activeItemId, setActiveItemId] = useState(0);
-
-  const listOfItems = [
-    {
-      id: 0,
-      title: 'Socialy',
-    },
-    {
-      id: 1,
-      title: 'Requlary',
-    },
-    {
-      id: 2,
-      title: 'Never',
-    },
-  ];
-
+const ModalSmoke: FC<ModalSmokeProps> = ({isVisible, onClose, showSmoke, setShowSmoke, activeSmokeItem, setActiveSmokeItem, listOfSmokes}) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -71,18 +62,18 @@ const ModalSmoke: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, o
         </Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={isChechked} onChange={val => setIsChechked(val)} />
+          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showSmoke} onChange={val => setShowSmoke(val)} />
         </View>
         <FlatList
-          data={listOfItems}
+          data={listOfSmokes}
           keyExtractor={item => item.id.toString()}
           scrollEnabled={false}
           renderItem={({item}) => {
-            const isActive = activeItemId === item.id;
+            const isActive = activeSmokeItem?.id === item.id;
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => setActiveItemId(item.id)}
+                onPress={() => setActiveSmokeItem(item)}
                 style={{
                   borderBottomWidth: 1,
                   borderStyle: 'solid',

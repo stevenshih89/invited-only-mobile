@@ -3,19 +3,21 @@ import Modal from 'react-native-modal';
 import Gender from 'assets/images/icons/tabler_gender-bigender.svg';
 import {blackColor, grayColor, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
-import {FC} from 'react';
+import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
 
-const ModalGender: FC<{isVisible: boolean; onClose: () => void}> = ({
-  isVisible,
-  onClose,
-  showGenderOnMyProfile,
-  setShowGenderOnMyProfile,
-  activeGenderItem,
-  setActiveGenderItem,
-  listOfGenders,
-}) => {
+interface ModalGenderProps {
+  isVisible: boolean;
+  onClose: () => void;
+  showGender: boolean;
+  setShowGender: Dispatch<SetStateAction<boolean>>;
+  activeGenderItem: {id: number; title: string} | null;
+  setActiveGenderItem: Dispatch<SetStateAction<{id: number; title: string} | null>>;
+  listOfGenders: any[];
+}
+
+const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setShowGender, activeGenderItem, setActiveGenderItem, listOfGenders}) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -60,18 +62,14 @@ const ModalGender: FC<{isVisible: boolean; onClose: () => void}> = ({
         </Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-          <Switch
-            trackColor={{false: grayColor, true: toggleColor}}
-            checked={showGenderOnMyProfile}
-            onChange={val => setShowGenderOnMyProfile(val)}
-          />
+          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showGender} onChange={val => setShowGender(val)} />
         </View>
         <FlatList
           data={listOfGenders}
           scrollEnabled={false}
           keyExtractor={item => item.id.toString()}
           renderItem={({item}) => {
-            const isActive = activeGenderItem.id === item.id;
+            const isActive = activeGenderItem?.id === item.id;
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
@@ -85,7 +83,15 @@ const ModalGender: FC<{isVisible: boolean; onClose: () => void}> = ({
                   paddingVertical: 18,
                   alignItems: 'center',
                 }}>
-                <Text style={{color: isActive ? blackColor : whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>{item.title}</Text>
+                <Text
+                  style={{
+                    color: isActive ? blackColor : whiteColor,
+                    fontSize: RFValue(18, 812),
+                    fontFamily: Satoshi400,
+                    textTransform: 'capitalize',
+                  }}>
+                  {item.title}
+                </Text>
               </TouchableOpacity>
             );
           }}

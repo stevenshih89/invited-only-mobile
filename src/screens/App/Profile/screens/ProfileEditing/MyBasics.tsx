@@ -2,11 +2,8 @@ import {lightGray5Color, transparentWhite16Color, whiteColor} from 'constants/co
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import Book from 'assets/images/icons/book.svg';
 import BiGender from 'assets/images/icons/tabler_gender-bigender.svg';
-import Location from 'assets/images/icons/location.svg';
-import Home from 'assets/images/icons/home.svg';
 import Cake from 'assets/images/icons/cake.svg';
 import Arrows from 'assets/images/icons/arrow-3.svg';
-import Bookmark from 'assets/images/icons/bookmark.svg';
 import Wine from 'assets/images/icons/milk.svg';
 import Smoke from 'assets/images/icons/smoke.svg';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
@@ -21,7 +18,11 @@ const MyBasics: FC<{
   setIsVisibleWorkModal: (val: boolean) => void;
   setIsVisibleAlcoholModal: (val: boolean) => void;
   setIsVisibleBirthdayModal: (val: boolean) => void;
-  setIsVisibleLocationModal: (val: boolean) => void;
+  activeWorkItem: {id: number; title: string} | null;
+  activeAlcoholItem: {id: number; title: string} | null;
+  activeSmokeItem: {id: number; title: string} | null;
+  height: string | null;
+  date: string;
 }> = ({
   setIsVisibleSmokeModal,
   setIsVisibleGenderModal,
@@ -29,8 +30,11 @@ const MyBasics: FC<{
   setIsVisibleWorkModal,
   setIsVisibleAlcoholModal,
   setIsVisibleBirthdayModal,
-  setIsVisibleLocationModal,
   activeWorkItem,
+  activeAlcoholItem,
+  activeSmokeItem,
+  height,
+  date,
 }): ReactElement => {
   return (
     <View style={styles.container}>
@@ -55,7 +59,7 @@ const MyBasics: FC<{
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleLocationModal(true)}>
+      {/* <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleLocationModal(true)}>
         <View style={styles.iconContainer}>
           <Location />
           <Text style={styles.text}>Location</Text>
@@ -74,14 +78,14 @@ const MyBasics: FC<{
           <Text style={styles.subText}>Odessa</Text>
           <ArrowRight />
         </View>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleBirthdayModal(true)}>
         <View style={styles.iconContainer}>
           <Cake />
           <Text style={styles.text}>Date of birthday</Text>
         </View>
         <View style={styles.iconContainer}>
-          <Text style={styles.subText}>Add</Text>
+          <Text style={styles.subText}>{date || 'Add'}</Text>
           <ArrowRight />
         </View>
       </TouchableOpacity>
@@ -91,11 +95,11 @@ const MyBasics: FC<{
           <Text style={styles.text}>Height</Text>
         </View>
         <View style={styles.iconContainer}>
-          <Text style={styles.subText}>184cm</Text>
+          <Text style={styles.subText}>{height ? `${height}cm` : 'Add'}</Text>
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      {/* <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
         <View style={styles.iconContainer}>
           <Bookmark />
           <Text style={styles.text}>Exercise</Text>
@@ -104,14 +108,14 @@ const MyBasics: FC<{
           <Text style={styles.subText}>Add</Text>
           <ArrowRight />
         </View>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleAlcoholModal(true)}>
         <View style={styles.iconContainer}>
           <Wine />
           <Text style={styles.text}>Drinking</Text>
         </View>
         <View style={styles.iconContainer}>
-          <Text style={styles.subText}>Wine</Text>
+          <Text style={styles.subText}>{activeAlcoholItem?.title || 'Add'}</Text>
           <ArrowRight />
         </View>
       </TouchableOpacity>
@@ -121,7 +125,7 @@ const MyBasics: FC<{
           <Text style={styles.text}>Smoking</Text>
         </View>
         <View style={styles.iconContainer}>
-          <Text style={styles.subText}>Add</Text>
+          <Text style={styles.subText}>{activeSmokeItem?.title || 'Add'}</Text>
           <ArrowRight />
         </View>
       </TouchableOpacity>

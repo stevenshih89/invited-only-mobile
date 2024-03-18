@@ -73,7 +73,8 @@ const Profile = () => {
     navigation.navigate(myProfileViewPath);
   };
 
-  const userAge = useCalculateAge(userInfo?.birthday);
+  const userAge = useCalculateAge(userInfo?.date);
+  const mainImage = userInfo?.photos[userInfo?.photos.findIndex((item: {id: number; image: string}) => item.id === 0)];
 
   if (loading || !userInfo) {
     return <ActivityIndicator style={styles.scrollView} />;
@@ -89,14 +90,14 @@ const Profile = () => {
                 <Text style={styles.percentageText}>{percentage}%</Text>
               </View>
             </View>
-            {userInfo?.photos?.[0] ? (
-              <Image source={{uri: userInfo?.photos[0]}} style={styles.profileImage} />
+            {mainImage?.image ? (
+              <Image source={{uri: mainImage.image}} style={styles.profileImage} />
             ) : (
               <View style={[styles.profileImage, {backgroundColor: whiteColor}]} />
             )}
           </View>
           <View style={styles.nameContainer}>
-            <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.showAgeOnMyProfile ? `, ${userAge}` : ''}`}</Text>
+            <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.showAge ? `, ${userAge}` : ''}`}</Text>
             {userInfo?.accountApproved && <CheckStarWhite style={styles.checkStarIcon} />}
           </View>
           <View style={styles.buttonContainer}>

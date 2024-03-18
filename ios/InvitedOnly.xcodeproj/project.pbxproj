@@ -12,7 +12,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		50A9F8E1C4E84A9C8272D7CB /* Satoshi-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F357F377E84610A1B93819 /* Satoshi-BoldItalic.ttf */; };
-		5D18EF712B9F493C00CACE0D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D18EF702B9F493C00CACE0D /* GoogleService-Info.plist */; };
+		5CA8BFB22BA86FC3008404E0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5CA8BFB12BA86FC3008404E0 /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		BCCC8BC0B5054E7BA00B93E5 /* Satoshi-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5E3661FDAE824C2DBB70B6D2 /* Satoshi-Regular.ttf */; };
 		BED8147761A24931BC4532E2 /* Satoshi-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0421667BECB24F4D9A549725 /* Satoshi-Medium.ttf */; };
@@ -48,10 +48,8 @@
 		31FA6EF8C4D16C37CA78AC46 /* Pods-InvitedOnly.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InvitedOnly.release.xcconfig"; path = "Target Support Files/Pods-InvitedOnly/Pods-InvitedOnly.release.xcconfig"; sourceTree = "<group>"; };
 		363CD7DD7A362160229A84C8 /* Pods_InvitedOnly_InvitedOnlyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InvitedOnly_InvitedOnlyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		37A7BA376F934C74A1B3CC1B /* Satoshi-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Bold.ttf"; path = "../src/assets/fonts/Satoshi-Bold.ttf"; sourceTree = "<group>"; };
-		55B466214DD4DB7BA5D1E49F /* Pods-InvitedOnly-InvitedOnlyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InvitedOnly-InvitedOnlyTests.release.xcconfig"; path = "Target Support Files/Pods-InvitedOnly-InvitedOnlyTests/Pods-InvitedOnly-InvitedOnlyTests.release.xcconfig"; sourceTree = "<group>"; };
-		572B4C384400CEC2353EBAB3 /* Pods-InvitedOnly-InvitedOnlyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InvitedOnly-InvitedOnlyTests.debug.xcconfig"; path = "Target Support Files/Pods-InvitedOnly-InvitedOnlyTests/Pods-InvitedOnly-InvitedOnlyTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5CA8BFB12BA86FC3008404E0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5CE822A92B7547C600A20632 /* InvitedOnly.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = InvitedOnly.entitlements; path = InvitedOnly/InvitedOnly.entitlements; sourceTree = "<group>"; };
-		5DAD92402BA32B290091839E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5E3661FDAE824C2DBB70B6D2 /* Satoshi-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Regular.ttf"; path = "../src/assets/fonts/Satoshi-Regular.ttf"; sourceTree = "<group>"; };
 		78F7A8877818EE62B17A6E2A /* Pods_InvitedOnly.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InvitedOnly.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = InvitedOnly/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -130,7 +128,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				5C16BD852BA09A8400A55132 /* GoogleService-Info.plist */,
+				5CA8BFB12BA86FC3008404E0 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* InvitedOnly */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* InvitedOnlyTests */,
@@ -275,7 +273,7 @@
 				BED8147761A24931BC4532E2 /* Satoshi-Medium.ttf in Resources */,
 				BCCC8BC0B5054E7BA00B93E5 /* Satoshi-Regular.ttf in Resources */,
 				50A9F8E1C4E84A9C8272D7CB /* Satoshi-BoldItalic.ttf in Resources */,
-				5C16BD862BA09A8400A55132 /* GoogleService-Info.plist in Resources */,
+				5CA8BFB22BA86FC3008404E0 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

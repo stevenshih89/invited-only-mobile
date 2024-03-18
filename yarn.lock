@@ -1778,7 +1778,7 @@
 
 "@react-native-firebase/storage@^19.0.1":
   version "19.0.1"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-19.0.1.tgz#d40fddcb2d122ea057f49641c9ec62d995519228"
+  resolved "https://registry.npmjs.org/@react-native-firebase/storage/-/storage-19.0.1.tgz"
   integrity sha512-b1k1iN1bp8oLnSMctJ4dj32eTsBNVZUKYGAeKiFECZwebJyMKfsHLilI3LSlmRagfqzMEc0uQAcEKHLMl2E18Q==
 
 "@react-native-picker/picker@^2.6.1":
