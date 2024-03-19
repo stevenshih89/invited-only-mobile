@@ -36,7 +36,8 @@ interface TouchingSliderProps {
   isShowEventPreview?: boolean;
   isLocked?: boolean;
   name?: string;
-  age?: string;
+  age?: string | number;
+  homeAddress?: string;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
@@ -50,6 +51,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   isShowEventPreview = false,
   name = '',
   age = '',
+  homeAddress = '',
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
@@ -80,7 +82,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   return (
     // @ts-ignore
-    <ImageBackground source={photos[active]} resizeMode="cover" imageStyle={styles.imageStyle} style={styles.container}>
+    <ImageBackground source={{uri: photos[active]}} resizeMode="cover" imageStyle={styles.imageStyle} style={styles.container}>
       <LinearGradient
         colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
         start={{x: 0, y: 1}}
@@ -129,7 +131,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               <View>
                 <View style={[styles.infoTags, {marginTop: screenHeight / 37, width: 130}]}>
                   <HomeIcon />
-                  <Text style={styles.textInfoTags}>From Miami</Text>
+                  <Text style={styles.textInfoTags}>From {homeAddress}</Text>
                 </View>
                 <View style={[styles.infoTags, {marginTop: screenHeight / 190}]}>
                   <LocationIcon />
