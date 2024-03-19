@@ -36,7 +36,7 @@ interface TouchingSliderProps {
   isShowEventPreview?: boolean;
   isLocked?: boolean;
   name?: string;
-  age?: string;
+  age?: string | number;
   homeAddress?: string;
 }
 
