@@ -3,46 +3,29 @@ import Modal from 'react-native-modal';
 import Bookmark from 'assets/images/icons/bookmark.svg';
 import {blackColor, grayColor, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
-import {FC, useState} from 'react';
+import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
 
-const ModalAlcohol: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
-  const [isChechked, setIsChechked] = useState(false);
+interface ModalAlcoholProps {
+  isVisible: boolean;
+  onClose: () => void;
+  showAlcohol: boolean;
+  setShowAlcohol: Dispatch<SetStateAction<boolean>>;
+  activeAlcoholItem: {id: number; title: string} | null;
+  setActiveAlcoholItem: Dispatch<SetStateAction<{id: number; title: string} | null>>;
+  listOfAlcohols: any[];
+}
 
-  const [activeItemId, setActiveItemId] = useState(0);
-
-  const listOfItems = [
-    {
-      id: 0,
-      title: 'Beer',
-    },
-    {
-      id: 1,
-      title: 'Wine',
-    },
-    {
-      id: 2,
-      title: 'Spirits (vodka, rum, whiskey, gin)',
-    },
-    {
-      id: 3,
-      title: 'Liqueurs (Baileys, Amaretto)',
-    },
-    {
-      id: 4,
-      title: 'Cider',
-    },
-    {
-      id: 5,
-      title: 'Other',
-    },
-    {
-      id: 6,
-      title: "I don't drink alcohol",
-    },
-  ];
-
+const ModalAlcohol: FC<ModalAlcoholProps> = ({
+  isVisible,
+  onClose,
+  showAlcohol,
+  setShowAlcohol,
+  activeAlcoholItem,
+  setActiveAlcoholItem,
+  listOfAlcohols,
+}) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -83,23 +66,23 @@ const ModalAlcohol: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible,
           <Bookmark />
         </View>
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), textAlign: 'center', marginBottom: 10}}>
-          What is your work?
+          Do you drink alcohol?
         </Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={isChechked} onChange={val => setIsChechked(val)} />
+          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showAlcohol} onChange={val => setShowAlcohol(val)} />
         </View>
         <FlatList
-          data={listOfItems}
+          data={listOfAlcohols}
           keyExtractor={item => item.id.toString()}
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) => {
-            const isActive = activeItemId === item.id;
+            const isActive = activeAlcoholItem?.id === item.id;
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => setActiveItemId(item.id)}
+                onPress={() => setActiveAlcoholItem(item)}
                 style={{
                   borderBottomWidth: 1,
                   borderStyle: 'solid',

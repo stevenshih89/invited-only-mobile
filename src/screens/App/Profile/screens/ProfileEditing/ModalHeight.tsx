@@ -2,18 +2,23 @@ import {Switch} from '@ant-design/react-native';
 import {blackColor, grayColor, lightGray2Color, toggleColor, transparentGray90Color, whiteColor} from 'constants/colors';
 import {Satoshi400} from 'constants/fonts';
 import Height from 'assets/images/icons/arrow-3.svg';
-import {FC, useState} from 'react';
+import {Dispatch, FC, SetStateAction} from 'react';
 import {Text, View} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import Modal from 'react-native-modal';
 import {RFValue} from 'react-native-responsive-fontsize';
 
-const ModalHeight: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
-  const [isChechked, setIsChechked] = useState(false);
+interface ModalHeightProps {
+  isVisible: boolean;
+  onClose: () => void;
+  showHeight: boolean;
+  setShowHeight: Dispatch<SetStateAction<boolean>>;
+  height: string | null;
+  setHeight: Dispatch<SetStateAction<string | null>>;
+  heightsList: {id: number; value: number; label: string}[];
+}
 
-  const heightsList = Array.from({length: 61}, (_, i) => ({id: i.toString(), value: i + 150, label: `${i + 150} cm`}));
-
-  const [height, setHeight] = useState(heightsList[0].value);
+const ModalHeight: FC<ModalHeightProps> = ({isVisible, onClose, showHeight, setShowHeight, height, setHeight, heightsList}) => {
   2;
   return (
     <Modal
@@ -56,7 +61,7 @@ const ModalHeight: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
         </Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={isChechked} onChange={val => setIsChechked(val)} />
+          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showHeight} onChange={val => setShowHeight(val)} />
         </View>
         <View style={{paddingVertical: 16, paddingHorizontal: 20, backgroundColor: lightGray2Color, borderRadius: 10, alignItems: 'center'}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{height} cm</Text>

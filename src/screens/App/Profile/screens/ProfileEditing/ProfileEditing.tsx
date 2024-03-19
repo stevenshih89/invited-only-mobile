@@ -1,9 +1,9 @@
 import {lightGray6Color, transparentWhite16Color} from 'constants/colors';
-import {FC, ReactElement, useEffect, useState} from 'react';
+import {FC, ReactElement, useEffect, useMemo, useState} from 'react';
 import {Alert, SafeAreaView, ScrollView, View} from 'react-native';
 import MyPhotos from './MyPhotos';
 import MyInterests from './MyInterests';
-import {screenHeight} from 'constants/common';
+import {isIos, screenHeight} from 'constants/common';
 import MyBio from './MyBio';
 import LanguagesKnow from './LanguagesKnow';
 import Button from 'components/Button/Button';
@@ -14,9 +14,9 @@ import ModalHeight from './ModalHeight';
 import ModalWork from './ModalWork';
 import ModalAlcohol from './ModalAlcohol';
 import ModalBirthday from './ModalBirthday';
-import ModalLocation from './ModalLocation';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
 const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleSmokeModal, setIsVisibleSmokeModal] = useState<boolean>(false);
@@ -25,31 +25,101 @@ const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleWorkModal, setIsVisibleWorkModal] = useState<boolean>(false);
   const [isVisibleAlcoholModal, setIsVisibleAlcoholModal] = useState<boolean>(false);
   const [isVisibleBirthdayModal, setIsVisibleBirthdayModal] = useState<boolean>(false);
-  const [isVisibleLocationModal, setIsVisibleLocationModal] = useState<boolean>(false);
   const [loadingSave, setLoadingSave] = useState<boolean>(false);
   const [interestsLoading, setInterestsLoading] = useState<boolean>(false);
 
-  const [showWorkOnMyProfile, setShowWorkOnMyProfile] = useState(false);
+  const [month, setMonth] = useState<string>('');
+  const [day, setDay] = useState<string>('');
+  const [year, setYear] = useState<string>('');
+  const [showWork, setShowWork] = useState(false);
+  const [showAge, setShowAge] = useState(false);
   const [activeWorkItem, setActiveWorkItem] = useState(null);
-
   const [bio, setBio] = useState<string>('');
+  const [showGender, setShowGender] = useState(false);
+  const [activeGenderItem, setActiveGenderItem] = useState<{id: number; title: string} | null>(null);
+  const [showAlcohol, setShowAlcohol] = useState(false);
+  const [activeAlcoholItem, setActiveAlcoholItem] = useState<{id: number; title: string} | null>(null);
+  const [showSmoke, setShowSmoke] = useState(false);
+  const [activeSmokeItem, setActiveSmokeItem] = useState<{id: number; title: string} | null>(null);
+  const [showHeight, setShowHeight] = useState(false);
+  const [height, setHeight] = useState<string | null>(null);
 
-  const [showGenderOnMyProfile, setShowGenderOnMyProfile] = useState(false);
+  const bithdate = useMemo(() => `${month.length ? `${month}.` : ''}${day.length ? `${day}.` : ''}${year}`, [isVisibleBirthdayModal, year]);
+  const heightsList = useMemo(() => Array.from({length: 61}, (_, i) => ({id: i, value: i + 150, label: `${i + 150} cm`})), []);
 
-  const [activeGenderItem, setActiveGenderItem] = useState(null);
+  const [listOfSmokes] = useState([
+    {
+      id: 0,
+      title: 'Socialy',
+    },
+    {
+      id: 1,
+      title: 'Requlary',
+    },
+    {
+      id: 2,
+      title: 'Never',
+    },
+  ]);
+
+  const [listOfAlcohols] = useState([
+    {
+      id: 0,
+      title: 'Beer',
+    },
+    {
+      id: 1,
+      title: 'Wine',
+    },
+    {
+      id: 2,
+      title: 'Spirits (vodka, rum, whiskey, gin)',
+    },
+    {
+      id: 3,
+      title: 'Liqueurs (Baileys, Amaretto)',
+    },
+    {
+      id: 4,
+      title: 'Cider',
+    },
+    {
+      id: 5,
+      title: 'Other',
+    },
+    {
+      id: 6,
+      title: "I don't drink alcohol",
+    },
+  ]);
+
+  const [images, setImages] = useState<{image: null | string; id: number}[]>([
+    {
+      id: 0,
+      image: null,
+    },
+    {
+      id: 1,
+      image: null,
+    },
+    {
+      id: 2,
+      image: null,
+    },
+  ]);
 
   const [listOfGenders] = useState([
     {
       id: 0,
-      title: 'Male',
+      title: 'man',
     },
     {
       id: 1,
-      title: 'Female',
+      title: 'woman',
     },
     {
       id: 2,
-      title: 'Other',
+      title: 'other',
     },
   ]);
 
@@ -159,9 +229,41 @@ const ProfileEditing: FC = (): ReactElement => {
     },
   ]);
 
-  const setDefaultInterests = (userInterests: string[]) => {
+  const uploadImage = async (imagePath: string | null, userId: string | null) => {
+    if (imagePath === null) {
+      return null;
+    }
+    if (imagePath.includes('firebasestorage') || imagePath.includes('http')) {
+      return imagePath;
+    }
+    const uploadUri = isIos ? imagePath.replace('file://', '') : imagePath;
+    const filename = `${userId}_${new Date().getTime()}`;
+    const storageRef = storage().ref(`images/${filename}`);
+    const task = storageRef.putFile(uploadUri);
+    try {
+      await task;
+      const url = await storageRef.getDownloadURL();
+      return url;
+    } catch (e: any) {
+      Alert.alert('Error', e.message || 'Something went wrong');
+      return null;
+    }
+  };
+
+  const updatePhotosImage = async (userId: string, imageUrl: any[]) => {
+    try {
+      await firestore().collection('userInfo').doc(userId).update({
+        photos: imageUrl,
+      });
+    } catch (e: any) {
+      Alert.alert('Error', e.message || 'Something went wrong');
+      console.error('Error updating user profile image: ', e);
+    }
+  };
+
+  const setDefaultInterests = (userInterests: any[]) => {
     const newListOfInterests = listOfInterests.map(interest => {
-      const isSelected = userInterests.includes(interest.title);
+      const isSelected = userInterests.some(item => item.id === interest.id);
       return {...interest, isSelected};
     });
     setListOfInterests(newListOfInterests);
@@ -171,40 +273,89 @@ const ProfileEditing: FC = (): ReactElement => {
     setBio(userBio);
   };
 
-  useEffect(() => {
-    const fetchUserInterests = async () => {
-      setInterestsLoading(true);
-      const user = auth().currentUser;
-      if (user) {
-        try {
-          const documentSnapshot = await firestore().collection('userInfo').doc(user.uid).get();
+  const fetchUserInfo = async () => {
+    setInterestsLoading(true);
+    const user = auth().currentUser;
+    if (user) {
+      try {
+        const documentSnapshot = await firestore().collection('userInfo').doc(user.uid).get();
 
-          if (documentSnapshot.data()?.interests) {
-            setDefaultInterests(documentSnapshot.data()?.interests);
-          }
-          if (documentSnapshot.data()?.bio) {
-            setDefaultBio(documentSnapshot.data()?.bio);
-          }
-          if (documentSnapshot.data()?.work) {
-            setActiveWorkItem(documentSnapshot.data()?.work);
-          }
-          if (documentSnapshot.data()?.showWorkOnMyProfile) {
-            setShowWorkOnMyProfile(documentSnapshot.data()?.showWorkOnMyProfile);
-          }
-          if (documentSnapshot.data()?.gender) {
-            setActiveGenderItem(documentSnapshot.data()?.gender);
-          }
-          if (documentSnapshot.data()?.showGenderOnMyProfile) {
-            setShowGenderOnMyProfile(documentSnapshot.data()?.showGenderOnMyProfile);
-          }
-        } catch (error: any) {
-          Alert.alert('Error', error.message || 'Something went wrong');
+        if (documentSnapshot.data()?.interests) {
+          setDefaultInterests(documentSnapshot.data()?.interests);
         }
-        setInterestsLoading(false);
+        if (documentSnapshot.data()?.bio) {
+          setDefaultBio(documentSnapshot.data()?.bio);
+        }
+        if (documentSnapshot.data()?.work) {
+          setActiveWorkItem(documentSnapshot.data()?.work);
+        }
+        if (documentSnapshot.data()?.showWork) {
+          setShowWork(documentSnapshot.data()?.showWork);
+        }
+        if (documentSnapshot.data()?.gender) {
+          setActiveGenderItem(documentSnapshot.data()?.gender);
+        }
+        if (documentSnapshot.data()?.showGender) {
+          setShowGender(documentSnapshot.data()?.showGender);
+        }
+        if (documentSnapshot.data()?.photos) {
+          setImages(documentSnapshot.data()?.photos);
+        }
+        if (documentSnapshot.data()?.date) {
+          setMonth(documentSnapshot.data()?.date.split('.')[0]);
+          setDay(documentSnapshot.data()?.date.split('.')[1]);
+          setYear(documentSnapshot.data()?.date.split('.')[2]);
+        }
+        if (documentSnapshot.data()?.showAge) {
+          setShowAge(documentSnapshot.data()?.showAge);
+        }
+        if (documentSnapshot.data()?.alcohol) {
+          setActiveAlcoholItem(documentSnapshot.data()?.alcohol);
+        }
+        if (documentSnapshot.data()?.showAlcohol) {
+          setShowAlcohol(documentSnapshot.data()?.showAlcohol);
+        }
+        if (documentSnapshot.data()?.height) {
+          setHeight(documentSnapshot.data()?.height);
+        }
+        if (documentSnapshot.data()?.showHeigth) {
+          setShowHeight(documentSnapshot.data()?.showHeigth);
+        }
+        if (documentSnapshot.data()?.smoke) {
+          setActiveSmokeItem(documentSnapshot.data()?.smoke);
+        }
+        if (documentSnapshot.data()?.showSmoke) {
+          setShowSmoke(documentSnapshot.data()?.showSmoke);
+        }
+      } catch (error: any) {
+        Alert.alert('Error', error.message || 'Something went wrong');
       }
-    };
-    fetchUserInterests();
+      setInterestsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserInfo();
   }, []);
+
+  const fetchImages = async (user: any) => {
+    const allImagesUrl: any = [];
+
+    const mainImgId = images.findIndex(({id}) => id === 0);
+    const secondImgId = images.findIndex(({id}) => id === 1);
+    const thirdImgId = images.findIndex(({id}) => id === 2);
+
+    await uploadImage(images[mainImgId].image, user.uid).then(async image => {
+      allImagesUrl.push({id: images[mainImgId].id, image});
+    });
+    await uploadImage(images[secondImgId].image, user.uid).then(async image => {
+      allImagesUrl.push({id: images[secondImgId].id, image});
+    });
+    await uploadImage(images[thirdImgId].image, user.uid).then(async image => {
+      allImagesUrl.push({id: images[thirdImgId].id, image});
+    });
+    await updatePhotosImage(user.uid, allImagesUrl);
+  };
 
   const saveUserInfo = async () => {
     setLoadingSave(true);
@@ -216,21 +367,35 @@ const ProfileEditing: FC = (): ReactElement => {
         }
         return acc;
       }, []);
+
       try {
-        await firestore().collection('userInfo').doc(user.uid).update({
-          interests: reqInterests,
-          bio: bio,
-          work: activeWorkItem,
-          showWorkOnMyProfile,
-          gender: activeGenderItem.title,
-          showGenderOnMyProfile,
-        });
+        await firestore()
+          .collection('userInfo')
+          .doc(user.uid)
+          .update({
+            interests: reqInterests,
+            bio: bio,
+            work: activeWorkItem,
+            showWork,
+            date: bithdate,
+            showGender,
+            showAge,
+            alcohol: activeAlcoholItem,
+            showAlcohol,
+            smoke: activeSmokeItem,
+            showSmoke,
+            height,
+            showHeight,
+          })
+          .then(async () => {
+            await fetchImages(user);
+          });
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
         setLoadingSave(false);
       }
+      setLoadingSave(false);
     }
-    setLoadingSave(false);
   };
 
   return (
@@ -242,47 +407,84 @@ const ProfileEditing: FC = (): ReactElement => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{paddingTop: 20, paddingBottom: 80}}
             style={{flex: 1, borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
-            <MyPhotos />
+            <MyPhotos images={images} setImages={setImages} />
             <MyInterests listOfInterests={listOfInterests} setListOfInterests={setListOfInterests} loading={interestsLoading} />
             <MyBio bio={bio} setBio={setBio} />
             <MyBasics
               activeWorkItem={activeWorkItem}
+              activeAlcoholItem={activeAlcoholItem}
+              activeSmokeItem={activeSmokeItem}
+              height={height}
+              date={bithdate}
               setIsVisibleSmokeModal={setIsVisibleSmokeModal}
               setIsVisibleGenderModal={setIsVisibleGenderModal}
               setIsVisibleHeightModal={setIsVisibleHeightModal}
               setIsVisibleWorkModal={setIsVisibleWorkModal}
               setIsVisibleAlcoholModal={setIsVisibleAlcoholModal}
               setIsVisibleBirthdayModal={setIsVisibleBirthdayModal}
-              setIsVisibleLocationModal={setIsVisibleLocationModal}
             />
             <LanguagesKnow />
             <Button title="Save" buttonStyle={{marginTop: 34}} onPress={saveUserInfo} loading={loadingSave} />
           </ScrollView>
         </View>
       </SafeAreaView>
-      <ModalSmoke isVisible={isVisibleSmokeModal} onClose={() => setIsVisibleSmokeModal(false)} />
+      <ModalSmoke
+        showSmoke={showSmoke}
+        setShowSmoke={setShowSmoke}
+        activeSmokeItem={activeSmokeItem}
+        setActiveSmokeItem={setActiveSmokeItem}
+        listOfSmokes={listOfSmokes}
+        isVisible={isVisibleSmokeModal}
+        onClose={() => setIsVisibleSmokeModal(false)}
+      />
       <ModalGender
-        showGenderOnMyProfile={showGenderOnMyProfile}
-        setShowGenderOnMyProfile={setShowGenderOnMyProfile}
+        showGender={showGender}
+        setShowGender={setShowGender}
         activeGenderItem={activeGenderItem}
         setActiveGenderItem={setActiveGenderItem}
         listOfGenders={listOfGenders}
         isVisible={isVisibleGenderModal}
         onClose={() => setIsVisibleGenderModal(false)}
       />
-      <ModalHeight isVisible={isVisibleHeightModal} onClose={() => setIsVisibleHeightModal(false)} />
+      <ModalHeight
+        showHeight={showHeight}
+        setShowHeight={setShowHeight}
+        heightsList={heightsList}
+        height={height}
+        setHeight={setHeight}
+        isVisible={isVisibleHeightModal}
+        onClose={() => setIsVisibleHeightModal(false)}
+      />
       <ModalWork
-        showWorkOnMyProfile={showWorkOnMyProfile}
-        setShowWorkOnMyProfile={setShowWorkOnMyProfile}
+        showWork={showWork}
+        setShowWork={setShowWork}
         activeWorkItem={activeWorkItem}
         setActiveWorkItem={setActiveWorkItem}
         listOfWorks={listOfWorks}
         isVisible={isVisibleWorkModal}
         onClose={() => setIsVisibleWorkModal(false)}
       />
-      <ModalAlcohol isVisible={isVisibleAlcoholModal} onClose={() => setIsVisibleAlcoholModal(false)} />
-      <ModalBirthday isVisible={isVisibleBirthdayModal} onClose={() => setIsVisibleBirthdayModal(false)} />
-      <ModalLocation isVisible={isVisibleLocationModal} onClose={() => setIsVisibleLocationModal(false)} />
+      <ModalAlcohol
+        showAlcohol={showAlcohol}
+        setShowAlcohol={setShowAlcohol}
+        activeAlcoholItem={activeAlcoholItem}
+        setActiveAlcoholItem={setActiveAlcoholItem}
+        listOfAlcohols={listOfAlcohols}
+        isVisible={isVisibleAlcoholModal}
+        onClose={() => setIsVisibleAlcoholModal(false)}
+      />
+      <ModalBirthday
+        day={day}
+        setDay={setDay}
+        month={month}
+        setMonth={setMonth}
+        year={year}
+        setYear={setYear}
+        setShowAge={setShowAge}
+        showAge={showAge}
+        isVisible={isVisibleBirthdayModal}
+        onClose={() => setIsVisibleBirthdayModal(false)}
+      />
     </>
   );
 };

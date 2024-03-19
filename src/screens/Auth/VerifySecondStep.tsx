@@ -4,7 +4,6 @@ import {Alert, Image, ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaV
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
 import ExampleSelfie from 'assets/images/auth/example-selfie.png';
-import ManFace from 'assets/images/auth/man-face.png';
 import {whiteColor} from 'constants/colors';
 import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';

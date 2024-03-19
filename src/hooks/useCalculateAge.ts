@@ -1,7 +1,8 @@
 const useCalculateAge = (birthdate: string) => {
-  if (!birthdate) {
+  if (!birthdate || !/^\d{2}\.\d{2}\.\d{4}$/.test(birthdate)) {
     return '';
   }
+
   const parts = birthdate.split('.');
   const formattedBirthdate = `${parts[2]}-${parts[0]}-${parts[1]}`;
 
@@ -13,7 +14,6 @@ const useCalculateAge = (birthdate: string) => {
   if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-
   return age.toString();
 };
 

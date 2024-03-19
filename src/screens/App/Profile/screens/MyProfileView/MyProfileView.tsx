@@ -67,7 +67,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
     fetchUserInfo();
   }, []);
 
-  const userAge = useCalculateAge(userInfo?.birthday);
+  const userAge = useCalculateAge(userInfo?.date);
 
   if (loading || !userInfo) {
     return <ActivityIndicator style={{flex: 1, backgroundColor: lightGray6Color}} />;
@@ -88,7 +88,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
               isShowWantsJoin={false}
               isShowInvitesTooltip={false}
               name={userInfo?.name}
-              age={userInfo?.showAgeOnMyProfile ? userAge : ''}
+              age={userInfo?.showAge ? userAge : ''}
             />
             {isShowEditButton && <Button title="Edit" buttonStyle={{marginTop: 20}} onPress={goToProfileEditing} />}
             <View style={styles.bioWrapper}>
@@ -103,11 +103,11 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
               )}
               <Text style={[styles.titleSection, styles.mt31]}>About me</Text>
               <View style={styles.wrapperTextTags}>
-                <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
                   <PersonIcon />
                   {` ${userInfo?.typeUser}`}
                 </Text>
-                <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
                   <TablerGenderIcon />
                   {` ${userInfo?.gender}`}
                 </Text>
@@ -119,15 +119,17 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 </Text>
                 {!!userInfo?.height && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <ArrowIcon /> {` ${userInfo?.height}`}
+                    <ArrowIcon /> {`${userInfo?.height}cm`}
                   </Text>
                 )}
-                <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                  <WineIcon /> Wine
-                </Text>
+                {!!userInfo?.alcohol && (
+                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                    <WineIcon /> {userInfo?.alcohol.title}
+                  </Text>
+                )}
                 {userInfo?.smoke && (
                   <Text style={[styles.textTagsAboutMe, {marginLeft: screenWidth / 33}]}>
-                    <SmokeIcon /> {` ${userInfo?.smoke}`}
+                    <SmokeIcon /> {`${userInfo?.smoke.title}`}
                   </Text>
                 )}
               </View>
@@ -135,9 +137,9 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 <>
                   <Text style={[styles.titleSection, styles.mt31]}>Interests</Text>
                   <View style={styles.wrapperInterestsTags}>
-                    {userInfo?.interests?.map((item: string) => (
-                      <View style={styles.interestsTags}>
-                        <Text style={styles.textTagsInterests}>{item}</Text>
+                    {userInfo?.interests?.map((item: {id: number; title: string}) => (
+                      <View key={item.id.toString()} style={styles.interestsTags}>
+                        <Text style={styles.textTagsInterests}>{item.title}</Text>
                       </View>
                     ))}
                   </View>

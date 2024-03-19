@@ -3,20 +3,22 @@ import Modal from 'react-native-modal';
 import Bookmark from 'assets/images/icons/bookmark.svg';
 import {blackColor, grayColor, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
-import {FC} from 'react';
+import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
 import {screenHeight} from 'constants/common';
 
-const ModalWork: FC<{isVisible: boolean; onClose: () => void; listOfWorks: any[]}> = ({
-  isVisible,
-  onClose,
-  listOfWorks,
-  showWorkOnMyProfile,
-  setShowWorkOnMyProfile,
-  activeWorkItem,
-  setActiveWorkItem,
-}) => {
+interface ModalWorkProps {
+  isVisible: boolean;
+  onClose: () => void;
+  showWork: boolean;
+  setShowWork: Dispatch<SetStateAction<boolean>>;
+  activeWorkItem: {id: number; title: string} | null;
+  setActiveWorkItem: (val: any) => void;
+  listOfWorks: any[];
+}
+
+const ModalWork: FC<ModalWorkProps> = ({isVisible, onClose, listOfWorks, showWork, setShowWork, activeWorkItem, setActiveWorkItem}) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -62,7 +64,7 @@ const ModalWork: FC<{isVisible: boolean; onClose: () => void; listOfWorks: any[]
         </Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showWorkOnMyProfile} onChange={val => setShowWorkOnMyProfile(val)} />
+          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showWork} onChange={val => setShowWork(val)} />
         </View>
         <FlatList
           data={listOfWorks}

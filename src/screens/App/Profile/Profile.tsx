@@ -3,7 +3,7 @@ import Invitations from './screens/Invitations/Invitations';
 import SafetyAndWellbeing from './screens/SafetyAndWellbeing/SafetyAndWellbeing';
 import MyPlan from './screens/MyPlan/MyPlan';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
-import {useCallback, useState} from 'react';
+import {FC, useCallback, useState} from 'react';
 import Button from 'components/Button/Button';
 import useStyles from './styles';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -15,10 +15,11 @@ import {useFocusEffect} from '@react-navigation/native';
 import {whiteColor} from 'constants/colors';
 import useCalculateAge from 'hooks/useCalculateAge';
 
-const Profile = () => {
+const Profile: FC = () => {
   const [activeTabId, setActiveTabId] = useState(0);
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({} as any);
+  const [mainImage, setMainImage] = useState({id: 0, image: ''} as any);
   const percentage = 10;
 
   const tabList = [
@@ -38,6 +39,10 @@ const Profile = () => {
 
             if (userInfoDoc.exists) {
               setUserInfo(userInfoDoc.data());
+              const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
+              if (userImage) {
+                setMainImage(userImage);
+              }
             } else {
               Alert.alert('Error', 'No user data found in Firestore');
             }
@@ -73,7 +78,7 @@ const Profile = () => {
     navigation.navigate(myProfileViewPath);
   };
 
-  const userAge = useCalculateAge(userInfo?.birthday);
+  const userAge = useCalculateAge(userInfo?.date);
 
   if (loading || !userInfo) {
     return <ActivityIndicator style={styles.scrollView} />;
@@ -89,14 +94,14 @@ const Profile = () => {
                 <Text style={styles.percentageText}>{percentage}%</Text>
               </View>
             </View>
-            {userInfo?.photos?.[0] ? (
-              <Image source={{uri: userInfo?.photos[0]}} style={styles.profileImage} />
+            {mainImage?.image ? (
+              <Image source={{uri: mainImage?.image}} style={styles.profileImage} />
             ) : (
               <View style={[styles.profileImage, {backgroundColor: whiteColor}]} />
             )}
           </View>
           <View style={styles.nameContainer}>
-            <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.showAgeOnMyProfile ? `, ${userAge}` : ''}`}</Text>
+            <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.showAge ? `, ${userAge}` : ''}`}</Text>
             {userInfo?.accountApproved && <CheckStarWhite style={styles.checkStarIcon} />}
           </View>
           <View style={styles.buttonContainer}>
