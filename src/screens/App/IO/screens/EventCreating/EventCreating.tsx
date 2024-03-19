@@ -21,6 +21,11 @@ const EventCreating: FC = () => {
   const [isVisibleCancelModal, setIsVisibleCancelModal] = useState<boolean>(false);
   const styles = useStyles();
 
+  const [female, setFemale] = useState<number>(0);
+  const [male, setMale] = useState<number>(0);
+  const [femaleFriend, setFemaleFriend] = useState<number>(0);
+  const [maleFriend, setMaleFriend] = useState<number>(0);
+
   const navitation = useAppNavigation();
 
   const handleSetTabState = (type: string): void => {
@@ -96,9 +101,32 @@ const EventCreating: FC = () => {
           </TouchableOpacity>
         </View>
         {tabState === 'invitedOnly' && (
-          <InvitedOnly setTabState={setTabState} isEditing={isEditing} {...editingItems} setIsVisibleSaveModal={setIsVisibleSaveModal} />
+          <InvitedOnly
+            setMaleFriend={setMaleFriend}
+            setFemaleFriend={setFemaleFriend}
+            female={female}
+            femaleFriend={femaleFriend}
+            male={male}
+            maleFriend={maleFriend}
+            setMale={setMale}
+            setFemale={setFemale}
+            setTabState={setTabState}
+            isEditing={isEditing}
+            {...editingItems}
+            setIsVisibleSaveModal={setIsVisibleSaveModal}
+          />
         )}
-        {tabState === 'eventDetails' && <EventDetails isEditing={isEditing} {...editingItems} setIsVisibleSaveModal={setIsVisibleSaveModal} />}
+        {tabState === 'eventDetails' && (
+          <EventDetails
+            female={female}
+            femaleFriend={femaleFriend}
+            male={male}
+            maleFriend={maleFriend}
+            isEditing={isEditing}
+            {...editingItems}
+            setIsVisibleSaveModal={setIsVisibleSaveModal}
+          />
+        )}
       </View>
       <ModalSaveEventChanges isVisible={isVisibleSaveModal} onClose={() => setIsVisibleSaveModal(false)} />
       <ModalCancelEvent isVisible={isVisibleCancelModal} onClose={() => setIsVisibleCancelModal(false)} />
