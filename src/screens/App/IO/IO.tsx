@@ -84,7 +84,7 @@ const IO: FC = (): JSX.Element => {
         </View>,
       ];
 
-      await eventsData?._docs?.map((item: any): void => {
+      await eventsData?._docs?.map((item: any, index: number): void => {
         const {name, bio, accountType, gender, address, homeAddress, height, typeOfAlcohol, age} = item?._data;
 
         setNameUser(name);
@@ -93,7 +93,7 @@ const IO: FC = (): JSX.Element => {
         const smoking: 'Yes' | 'No' = item?._data?.smoking ? 'Yes' : 'No';
 
         data.push(
-          <View style={styles.wrapperFakeCard}>
+          <View key={index} style={styles.wrapperFakeCard}>
             <TouchingSlider
               name={name}
               age={age}
@@ -145,15 +145,15 @@ const IO: FC = (): JSX.Element => {
               </View>
               <Text style={[styles.titleSection, styles.mt31]}>Interests</Text>
               <View style={styles.wrapperInterestsTags}>
-                {interests?.map((interests: any) => (
-                  <View style={styles.interestsTags}>
+                {interests?.map((interests: any, index: number) => (
+                  <View key={index} style={styles.interestsTags}>
                     <Text style={styles.textTagsInterests}>{interests}</Text>
                   </View>
                 ))}
               </View>
               <View style={styles.wrapperImageSectionFaceGirl}>
-                {girlPhotos?.map((photo: any) => (
-                  <Image style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
+                {girlPhotos?.map((photo: any, index: number) => (
+                  <Image key={index} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
                 ))}
               </View>
               <InstagramSlider fakeSmallGirlPhotos={girlPhotos} />
@@ -187,27 +187,26 @@ const IO: FC = (): JSX.Element => {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <View style={styles.container}>
-        {events?.length > 0 &&
-          events?.map((item, index) => {
-            return (
-              <View style={styles.cardContainer} pointerEvents="box-none" key={index}>
-                <TinderCard
-                  // @ts-ignore
-                  cardWidth="100%"
-                  // @ts-ignore
-                  cardHeight="100%"
-                  OverlayLabelRight={OverlayRight}
-                  OverlayLabelLeft={OverlayLeft}
-                  disableBottomSwipe={true}
-                  disableTopSwipe={true}
-                  cardStyle={styles.card}>
-                  <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
-                    {item}
-                  </ScrollView>
-                </TinderCard>
-              </View>
-            );
-          })}
+        {events?.map((item, index) => {
+          return (
+            <View style={styles.cardContainer} pointerEvents="box-none" key={index}>
+              <TinderCard
+                // @ts-ignore
+                cardWidth="100%"
+                // @ts-ignore
+                cardHeight="100%"
+                OverlayLabelRight={OverlayRight}
+                OverlayLabelLeft={OverlayLeft}
+                disableBottomSwipe={true}
+                disableTopSwipe={true}
+                cardStyle={styles.card}>
+                <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
+                  {item}
+                </ScrollView>
+              </TinderCard>
+            </View>
+          );
+        })}
         <SuperInvite isVisibleSuperInvite={isVisibleSuperInvite} onCloseSuperInvite={handleCloseSuperInvite} />
         <Match isVisibleMatch={isVisibleMatch} onCloseMatch={handleCloseMatch} name={nameUser} />
       </View>
