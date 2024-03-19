@@ -338,13 +338,23 @@ const ProfileEditing: FC = (): ReactElement => {
     fetchUserInfo();
   }, []);
 
-  const fetchImages = async (allImagesUrl: any[], user: any) => {
-    images.map(async img => {
-      await uploadImage(img.image, user.uid).then(async image => {
-        allImagesUrl.push({id: img.id, image});
-      });
-      await updatePhotosImage(user.uid, allImagesUrl);
+  const fetchImages = async (user: any) => {
+    const allImagesUrl: any = [];
+
+    const mainImgId = images.findIndex(({id}) => id === 0);
+    const secondImgId = images.findIndex(({id}) => id === 1);
+    const thirdImgId = images.findIndex(({id}) => id === 2);
+
+    await uploadImage(images[mainImgId].image, user.uid).then(async image => {
+      allImagesUrl.push({id: images[mainImgId].id, image});
     });
+    await uploadImage(images[secondImgId].image, user.uid).then(async image => {
+      allImagesUrl.push({id: images[secondImgId].id, image});
+    });
+    await uploadImage(images[thirdImgId].image, user.uid).then(async image => {
+      allImagesUrl.push({id: images[thirdImgId].id, image});
+    });
+    await updatePhotosImage(user.uid, allImagesUrl);
   };
 
   const saveUserInfo = async () => {
@@ -359,8 +369,6 @@ const ProfileEditing: FC = (): ReactElement => {
       }, []);
 
       try {
-        let allImagesUrl: any = [];
-
         await firestore()
           .collection('userInfo')
           .doc(user.uid)
@@ -380,7 +388,7 @@ const ProfileEditing: FC = (): ReactElement => {
             showHeight,
           })
           .then(async () => {
-            await fetchImages(allImagesUrl, user);
+            await fetchImages(user);
           });
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
