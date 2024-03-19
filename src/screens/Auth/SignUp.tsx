@@ -15,8 +15,6 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {confirmPhonePath} from 'constants/pathLocations';
 import auth from '@react-native-firebase/auth';
 import {showToast} from 'helpers/showToast.ts';
-import {AuthContext} from 'contexts/AuthContext.tsx';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignUp: FC = (): JSX.Element => {
   const [mobilePhone, setMobilePhone] = useState<string>('');

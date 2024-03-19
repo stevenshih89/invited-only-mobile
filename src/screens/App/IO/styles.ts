@@ -183,6 +183,7 @@ const useStyles = () => {
     },
     imageFaceGirl: {
       width: '100%',
+      height: 410,
       borderRadius: 22,
     },
     wrapperImageSectionFaceGirl: {
