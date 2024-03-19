@@ -67,9 +67,30 @@ const IO: FC = (): JSX.Element => {
     );
   };
 
+  const calculateAge = (birthDate: string) => {
+    let parts: string[] = birthDate.split('.');
+
+    let birthMonth: number = parseInt(parts[0]);
+    let birthDay: number = parseInt(parts[1]);
+    let birthYear: number = parseInt(parts[2]);
+
+    const currentDate: Date = new Date();
+    const currentYear: number = currentDate.getFullYear();
+    const currentMonth: number = currentDate.getMonth() + 1;
+    const currentDay: number = currentDate.getDate();
+
+    let age: number = currentYear - birthYear;
+
+    if (currentMonth < birthMonth || (currentMonth === birthMonth && currentDay < birthDay)) {
+      age--;
+    }
+
+    return age;
+  };
+
   const getEventsData = async () => {
     try {
-      const eventsData: FirebaseFirestoreTypes.DocumentData = await firestore().collection('Events').limit(10).get();
+      const userInfo: FirebaseFirestoreTypes.DocumentData = await firestore().collection('userInfo').limit(20).get();
       let data: any[] = [
         <View style={styles.wrapperCreateEventCard}>
           <Text style={styles.textYouNeedToCreate}>You need to create an event to start inviting</Text>
@@ -84,13 +105,15 @@ const IO: FC = (): JSX.Element => {
         </View>,
       ];
 
-      await eventsData?._docs?.map((item: any, index: number): void => {
-        const {name, bio, accountType, gender, address, homeAddress, height, typeOfAlcohol, age} = item?._data;
+      await userInfo?._docs?.map((item: any, index: number): void => {
+        const {name, bio, typeUser, gender, address, homeAddress, height, alcohol, date} = item?._data;
 
         setNameUser(name);
-        const girlPhotos = item?._data?.images?.map((image: any): void => image?.images);
+        const girlPhotos = item?._data?.photos?.map((image: any): void => image?.image);
         const interests = item?._data?.interests?.map((i: any): void => i?.title);
-        const smoking: 'Yes' | 'No' = item?._data?.smoking ? 'Yes' : 'No';
+        const smoking = item?._data?.smoke?.title;
+
+        const age: number = calculateAge(date);
 
         data.push(
           <View key={index} style={styles.wrapperFakeCard}>
@@ -110,7 +133,7 @@ const IO: FC = (): JSX.Element => {
               <View style={styles.wrapperTextTags}>
                 <Text style={[styles.textTagsAboutMe, styles.ml18]}>
                   <PersonIcon />
-                  {accountType}
+                  {typeUser}
                 </Text>
                 {gender && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
@@ -132,9 +155,9 @@ const IO: FC = (): JSX.Element => {
                     <ArrowIcon /> {height} см
                   </Text>
                 )}
-                {typeOfAlcohol && (
+                {alcohol && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <WineIcon /> {typeOfAlcohol}
+                    <WineIcon /> {alcohol?.title}
                   </Text>
                 )}
                 {smoking && (

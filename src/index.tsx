@@ -32,9 +32,6 @@ const Main = () => {
 
   const getOnbordingState = async () => {
     const onbording = await AsyncStorage.getItem('onBoarding');
-    const uid = await AsyncStorage.getItem('uid');
-    console.log('uid', uid);
-    console.log('onbording', onbording);
     onbording ? setOnboarding(true) : setOnboarding(false);
   };
 
