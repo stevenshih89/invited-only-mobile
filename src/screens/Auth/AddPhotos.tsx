@@ -1,5 +1,5 @@
 import {isIos, screenHeight, screenWidth} from 'constants/common';
-import {FC, useState, useEffect, useContext} from 'react';
+import {FC, useState, useContext} from 'react';
 import {
   Alert,
   ImageBackground,
@@ -28,7 +28,7 @@ import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const AddPhotos: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
-  const [images, setImages] = useState<{image: null | string; id: number}[]>([
+  const [photos, setImages] = useState<{image: null | string; id: number}[]>([
     {
       id: 0,
       image: null,
@@ -84,7 +84,7 @@ const AddPhotos: FC = (): JSX.Element => {
             type: response.assets[0].type,
             name: response.assets[0].fileName,
           };
-          const newImages = images.map(img => {
+          const newImages = photos.map(img => {
             if (img.id === imageId) {
               return {...img, image: image.uri};
             }
@@ -97,7 +97,7 @@ const AddPhotos: FC = (): JSX.Element => {
   };
 
   const deleteImage = (imageId: number): void => {
-    const newImages = images.map(img => {
+    const newImages = photos.map(img => {
       if (img.id === imageId) {
         return {...img, image: null};
       }
@@ -116,10 +116,10 @@ const AddPhotos: FC = (): JSX.Element => {
   }
 
   const handleNext = async () => {
-    if (!hasPhoto(images)) {
+    if (!hasPhoto(photos)) {
       return;
     }
-    setOnBoarding([...onBoarding, {images: images}]);
+    setOnBoarding([...onBoarding, {photos: photos}]);
     navigation.navigate(enterBirthdayPath as never);
   };
 
@@ -184,16 +184,16 @@ const AddPhotos: FC = (): JSX.Element => {
                 </View>
                 <View style={{width: '100%', flexDirection: 'row'}}>
                   <View style={{width: '60%', height: screenWidth / 1.3, marginRight: 6}}>
-                    {images[0].image ? (
+                    {photos[0].image ? (
                       <View style={{position: 'relative', flex: 1, borderRadius: 10, overflow: 'hidden'}}>
                         <ImageBackground
                           resizeMode="cover"
-                          source={{uri: images[0].image}}
+                          source={{uri: photos[0].image}}
                           style={{width: '100%', height: '100%', justifyContent: 'space-between'}}>
                           <TouchableOpacity
                             activeOpacity={0.7}
                             hitSlop={{left: 15, bottom: 10}}
-                            onPress={() => deleteImage(images[0].id)}
+                            onPress={() => deleteImage(photos[0].id)}
                             style={{
                               width: 26,
                               height: 26,
@@ -225,7 +225,7 @@ const AddPhotos: FC = (): JSX.Element => {
                     ) : (
                       <TouchableOpacity
                         activeOpacity={0.7}
-                        onPress={() => openLibrary(images[0].id)}
+                        onPress={() => openLibrary(photos[0].id)}
                         style={{
                           flex: 1,
                           backgroundColor: lightGray2Color,
@@ -240,16 +240,16 @@ const AddPhotos: FC = (): JSX.Element => {
                   </View>
                   <View style={{flex: 1, marginLeft: 6}}>
                     <View style={{flex: 1, marginBottom: 6}}>
-                      {images[1].image ? (
+                      {photos[1].image ? (
                         <View style={{position: 'relative', flex: 1, borderRadius: 10, overflow: 'hidden'}}>
                           <ImageBackground
                             resizeMode="cover"
-                            source={{uri: images[1].image}}
+                            source={{uri: photos[1].image}}
                             style={{width: '100%', height: '100%', justifyContent: 'space-between'}}>
                             <TouchableOpacity
                               activeOpacity={0.7}
                               hitSlop={{left: 15, bottom: 10}}
-                              onPress={() => deleteImage(images[1].id)}
+                              onPress={() => deleteImage(photos[1].id)}
                               style={{
                                 width: 26,
                                 height: 26,
@@ -268,7 +268,7 @@ const AddPhotos: FC = (): JSX.Element => {
                       ) : (
                         <TouchableOpacity
                           activeOpacity={0.7}
-                          onPress={() => openLibrary(images[1].id)}
+                          onPress={() => openLibrary(photos[1].id)}
                           style={{
                             backgroundColor: lightGray2Color,
                             borderRadius: 10,
@@ -282,16 +282,16 @@ const AddPhotos: FC = (): JSX.Element => {
                       )}
                     </View>
                     <View style={{flex: 1, marginTop: 6}}>
-                      {images[2].image ? (
+                      {photos[2].image ? (
                         <View style={{position: 'relative', flex: 1, borderRadius: 10, overflow: 'hidden'}}>
                           <ImageBackground
                             resizeMode="cover"
-                            source={{uri: images[2].image}}
+                            source={{uri: photos[2].image}}
                             style={{width: '100%', height: '100%', justifyContent: 'space-between'}}>
                             <TouchableOpacity
                               activeOpacity={0.7}
                               hitSlop={{left: 15, bottom: 10}}
-                              onPress={() => deleteImage(images[2].id)}
+                              onPress={() => deleteImage(photos[2].id)}
                               style={{
                                 width: 26,
                                 height: 26,
@@ -310,7 +310,7 @@ const AddPhotos: FC = (): JSX.Element => {
                       ) : (
                         <TouchableOpacity
                           activeOpacity={0.7}
-                          onPress={() => openLibrary(images[2].id)}
+                          onPress={() => openLibrary(photos[2].id)}
                           style={{
                             flex: 1,
                             backgroundColor: lightGray2Color,
