@@ -5,21 +5,21 @@ import useStyles from './styles';
 import {FC} from 'react';
 
 interface InstagramSliderProps {
-  fakeSmallGirlPhotos: any[];
+  photosList: any[];
 }
 
-const InstagramSlider: FC<InstagramSliderProps> = ({fakeSmallGirlPhotos}) => {
+const InstagramSlider: FC<InstagramSliderProps> = ({photosList}) => {
   const styles = useStyles();
   return (
     <View style={styles.container}>
       <View style={styles.titleWr}>
-        <Text style={styles.title}>{fakeSmallGirlPhotos.length} instagram photos</Text>
+        <Text style={styles.title}>{photosList?.length} instagram photos</Text>
       </View>
       <Swiper showsButtons={false} paginationStyle={styles.pagination} activeDotColor={whiteColor} dotColor={gray1Color}>
-        {fakeSmallGirlPhotos.length >= 1 && (
+        {photosList?.length >= 1 && (
           <View>
             <FlatList
-              data={fakeSmallGirlPhotos.slice(0, 6)}
+              data={photosList?.slice(0, 6)}
               scrollEnabled={false}
               numColumns={3}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -31,10 +31,10 @@ const InstagramSlider: FC<InstagramSliderProps> = ({fakeSmallGirlPhotos}) => {
             />
           </View>
         )}
-        {fakeSmallGirlPhotos.length > 6 && (
+        {photosList?.length > 6 && (
           <View>
             <FlatList
-              data={fakeSmallGirlPhotos.slice(6, 12)}
+              data={photosList?.slice(6, 12)}
               scrollEnabled={false}
               numColumns={3}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -46,10 +46,10 @@ const InstagramSlider: FC<InstagramSliderProps> = ({fakeSmallGirlPhotos}) => {
             />
           </View>
         )}
-        {fakeSmallGirlPhotos.length > 12 && (
+        {photosList?.length > 12 && (
           <View>
             <FlatList
-              data={fakeSmallGirlPhotos.slice(12, 18)}
+              data={photosList?.slice(12, 18)}
               scrollEnabled={false}
               numColumns={3}
               ItemSeparatorComponent={() => <View style={styles.separator} />}

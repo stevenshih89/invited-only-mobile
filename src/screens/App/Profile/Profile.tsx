@@ -13,7 +13,7 @@ import firestore from '@react-native-firebase/firestore';
 import {Alert} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {whiteColor} from 'constants/colors';
-import useCalculateAge from 'hooks/useCalculateAge';
+import {calculateAge} from 'helpers/calculateAge';
 
 const Profile: FC = () => {
   const [activeTabId, setActiveTabId] = useState(0);
@@ -78,7 +78,7 @@ const Profile: FC = () => {
     navigation.navigate(myProfileViewPath);
   };
 
-  const userAge = useCalculateAge(userInfo?.date);
+  const userAge = calculateAge(userInfo?.date);
 
   if (loading || !userInfo) {
     return <ActivityIndicator style={styles.scrollView} />;
