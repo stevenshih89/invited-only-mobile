@@ -4,8 +4,9 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ImagePickerResponse, launchImageLibrary} from 'react-native-image-picker';
 import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
-
 import MaskInput from 'react-native-mask-input';
+import firestore from '@react-native-firebase/firestore';
+import uuid from 'react-native-uuid';
 
 //import components
 import useStyles from './styles.ts';
@@ -13,12 +14,16 @@ import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
 import {isIos} from 'constants/common';
 import {gray1Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {showToast} from 'helpers/showToast.ts';
+import {uploadImage} from 'helpers/uploadImage.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 
 //import icons
 import Plus from 'assets/images/icons/plus.svg';
 import Location from 'assets/images/icons/location.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
+import {IOPath} from "constants/pathLocations.ts";
 
 interface EventDetailsProps {
   isEditing?: boolean;
@@ -32,6 +37,10 @@ interface EventDetailsProps {
   prevHour?: string;
   prevAddress?: string;
   prevMeetingSpot?: string;
+  female?: number;
+  male?: number;
+  femaleFriend?: number;
+  maleFriend?: number;
 }
 
 const EventDetails: FC<EventDetailsProps> = ({
@@ -46,6 +55,10 @@ const EventDetails: FC<EventDetailsProps> = ({
   prevHour,
   prevAddress,
   prevMeetingSpot,
+  female,
+  male,
+  femaleFriend,
+  maleFriend,
 }): ReactElement => {
   const eventTypes = [
     {id: 0, label: 'Custom'},
@@ -85,6 +98,9 @@ const EventDetails: FC<EventDetailsProps> = ({
   const [hour, setHour] = useState('');
   const [address, setAddress] = useState('');
   const [meetingSpot, setMeetingSpot] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const navigation = useAppNavigation();
 
   useEffect(() => {
     if (isEditing) {
@@ -152,6 +168,63 @@ const EventDetails: FC<EventDetailsProps> = ({
         }
       },
     );
+  };
+
+  const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
+    try {
+      await firestore().collection('Events').doc(userId).update({
+        images: imageUrl,
+      });
+      console.log('Events image updated successfully.');
+    } catch (e) {
+      console.error('Error updating events image: ', e);
+    }
+  };
+
+  const handleCreateEvent = async () => {
+    try {
+      setLoading(true);
+      const uid: string | number[] = uuid.v4();
+
+      let imagesUri: any[] = [];
+
+      console.log('imagesUri', imagesUri);
+      console.log('images', images);
+      // @ts-ignore
+      await firestore()
+        .collection('Events')
+        .doc(uid)
+        .set({
+          activeType: activeType,
+          female: female,
+          name: name,
+          description: description,
+          date: date,
+          hour: hour,
+          address: address,
+          meetingSpot: meetingSpot,
+          male: male,
+          femaleFriend: femaleFriend,
+          maleFriend: maleFriend,
+          placeName: placeName,
+        })
+        .then(() => {
+          images?.map(async (imagePath, index) => {
+            await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
+            await updatePhotosImage(uid, imagesUri).then(() => {
+              showToast('success', 'Go to my events >', 'Event successfully created ');
+              showToast('pending', 'Your event in review.', 'Estimate time review 2h');
+              (isEditing ? setIsVisibleSaveModal(true) : null);
+              setLoading(false);
+              navigation.navigate(IOPath);
+            });
+          });
+        });
+    } catch (e) {
+      setLoading(false);
+      console.log(e);
+      showToast('cancel', '', `${e}`);
+    }
   };
 
   return (
@@ -319,11 +392,7 @@ const EventDetails: FC<EventDetailsProps> = ({
             InputIcon={Location}
           />
         </View>
-        <Button
-          title={isEditing ? 'Save changes' : '"Create event"'}
-          buttonStyle={styles.button}
-          onPress={() => (isEditing ? setIsVisibleSaveModal(true) : null)}
-        />
+        <Button loading={loading} title={isEditing ? 'Save changes' : 'Create event'} buttonStyle={styles.button} onPress={() => handleCreateEvent()} />
       </KeyboardAwareScrollView>
     </View>
   );

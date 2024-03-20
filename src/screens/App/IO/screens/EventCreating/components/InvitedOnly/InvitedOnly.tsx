@@ -14,6 +14,14 @@ interface InvitedOnlyProps {
   prevMale?: number;
   prevFemaleFriend?: number;
   prevMaleFriend?: number;
+  female?: number;
+  setFemale?: () => void;
+  male?: number;
+  setMale?: () => void;
+  femaleFriend?: number;
+  setFemaleFriend?: () => void;
+  maleFriend?: number;
+  setMaleFriend?: () => void;
 }
 
 const InvitedOnly: FC<InvitedOnlyProps> = ({
@@ -24,13 +32,15 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
   prevMale,
   prevFemaleFriend,
   prevMaleFriend,
+  female,
+  setFemale,
+  male,
+  setMale,
+  femaleFriend,
+  setFemaleFriend,
+  maleFriend,
+  setMaleFriend,
 }) => {
-  const [female, setFemale] = useState<number>(0);
-  const [male, setMale] = useState<number>(0);
-
-  const [femaleFriend, setFemaleFriend] = useState<number>(0);
-  const [maleFriend, setMaleFriend] = useState<number>(0);
-
   useEffect(() => {
     if (isEditing) {
       setFemale(prevFemale ?? 0);
