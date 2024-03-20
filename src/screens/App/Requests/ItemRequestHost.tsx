@@ -10,6 +10,7 @@ import useStyles from './styles';
 import {Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {lightRed1Color, whiteColor} from 'constants/colors';
+import {calculateAge} from 'helpers/calculateAge';
 
 const ItemRequestHost = ({item, handleSwipeHostCard}: any) => {
   const styles = useStyles();
@@ -50,6 +51,8 @@ const ItemRequestHost = ({item, handleSwipeHostCard}: any) => {
     );
   };
 
+  const age = calculateAge(item?.date);
+
   return (
     <View style={styles.itemContainer}>
       <TinderCard
@@ -67,9 +70,9 @@ const ItemRequestHost = ({item, handleSwipeHostCard}: any) => {
         translateXRange={[-70, 0, 70]}
         disableTopSwipe={true}
         cardStyle={{height: '100%', borderRadius: 22, zIndex: 999}}>
-        <ImageBackground style={styles.imageBackground} resizeMode="cover" source={item?.image}>
-          <View style={[styles.itemContentContainer, {justifyContent: item?.isSuperLike ? 'space-between' : 'flex-end'}]}>
-            {item?.isSuperLike && (
+        <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: item?.photoUrl}}>
+          <View style={[styles.itemContentContainer, {justifyContent: item?.superWantToJoin ? 'space-between' : 'flex-end'}]}>
+            {item?.superWantToJoin && (
               <View style={styles.superLikeContainer}>
                 <View style={styles.superLikeRow}>
                   <FlashFilled style={styles.superLikeIcon} />
@@ -85,7 +88,7 @@ const ItemRequestHost = ({item, handleSwipeHostCard}: any) => {
               <TouchableOpacity activeOpacity={0.7} style={styles.buttonContainer}>
                 <View style={styles.nameContainer}>
                   <Text style={styles.nameText}>{item?.name}</Text>
-                  <Text style={styles.ageText}>{item?.age}</Text>
+                  <Text style={styles.ageText}>{age}</Text>
                 </View>
                 <View style={styles.locationContainer}>
                   <View style={styles.locationRow}>

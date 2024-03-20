@@ -1,4 +1,4 @@
-const useCalculateAge = (birthdate: string) => {
+export const calculateAge = (birthdate: string) => {
   if (!birthdate || !/^\d{2}\.\d{2}\.\d{4}$/.test(birthdate)) {
     return '';
   }
@@ -16,5 +16,3 @@ const useCalculateAge = (birthdate: string) => {
   }
   return age.toString();
 };
-
-export default useCalculateAge;

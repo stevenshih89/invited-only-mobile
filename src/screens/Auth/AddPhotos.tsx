@@ -116,14 +116,12 @@ const AddPhotos: FC = (): JSX.Element => {
   }
 
   const handleNext = async () => {
-    if (!hasPhoto(images)) return;
+    if (!hasPhoto(images)) {
+      return;
+    }
     setOnBoarding([...onBoarding, {images: images}]);
     navigation.navigate(enterBirthdayPath as never);
   };
-
-  useEffect(() => {
-    console.log(onBoarding);
-  }, []);
 
   return (
     <ImageBackground resizeMode="cover" source={HalfBackground} style={{flex: 1}}>
