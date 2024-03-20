@@ -3,19 +3,26 @@ import Modal from 'react-native-modal';
 import Bookmark from 'assets/images/icons/bookmark.svg';
 import {blackColor, grayColor, lightGray2Color, toggleColor, transparentGray90Color, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
-import {FC, useState} from 'react';
+import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import MaskInput from 'react-native-mask-input';
 import {isIos} from 'constants/common';
 
-const ModalBirthday: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
-  const [isChechked, setIsChechked] = useState(false);
+interface ModalBirthdayProps {
+  isVisible: boolean;
+  onClose: () => void;
+  month: string;
+  setMonth: Dispatch<SetStateAction<string>>;
+  day: string;
+  setDay: Dispatch<SetStateAction<string>>;
+  year: string;
+  setYear: Dispatch<SetStateAction<string>>;
+  showAge: boolean;
+  setShowAge: Dispatch<SetStateAction<boolean>>;
+}
 
-  const [month, setMonth] = useState<string>('');
-  const [day, setDay] = useState<string>('');
-  const [year, setYear] = useState<string>('');
-
+const ModalBirthday: FC<ModalBirthdayProps> = ({isVisible, onClose, month, setMonth, day, setDay, year, setYear, showAge, setShowAge}) => {
   const handleMonthChange = (input: string): void => {
     const numericInput = input.replace(/[^0-9]/g, '');
     const trimmedInput = numericInput.slice(0, 2);
@@ -97,7 +104,7 @@ const ModalBirthday: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible
           </Text>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
             <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-            <Switch trackColor={{false: grayColor, true: toggleColor}} checked={isChechked} onChange={val => setIsChechked(val)} />
+            <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showAge} onChange={val => setShowAge(val)} />
           </View>
           <View style={{width: '100%', flexDirection: 'row'}}>
             <View style={{flex: 1, marginRight: 6}}>

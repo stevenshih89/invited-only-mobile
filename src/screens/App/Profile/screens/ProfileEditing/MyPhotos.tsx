@@ -1,5 +1,5 @@
 import {isIos, screenWidth} from 'constants/common';
-import {FC, useState} from 'react';
+import {FC} from 'react';
 import {Alert, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Close from 'assets/images/icons/close.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
@@ -10,22 +10,12 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
 
-const MyPhotos: FC = (): JSX.Element => {
-  const [images, setImages] = useState<{image: null | string; id: number}[]>([
-    {
-      id: 0,
-      image: null,
-    },
-    {
-      id: 1,
-      image: null,
-    },
-    {
-      id: 2,
-      image: null,
-    },
-  ]);
+interface MyPhotosProps {
+  images: {id: number; image: string | null}[];
+  setImages: (images: {id: number; image: string | null}[]) => void;
+}
 
+const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
   const isConfirmed = true;
 
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
@@ -90,18 +80,22 @@ const MyPhotos: FC = (): JSX.Element => {
     setImages(newImages);
   };
 
+  const mainImage = images[images.findIndex(item => item.id === 0)];
+  const secondImage = images[images.findIndex(item => item.id === 1)];
+  const thirdImage = images[images.findIndex(item => item.id === 2)];
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>My photos</Text>
       <View style={styles.photosContainer}>
         <View style={styles.photoContainer}>
-          {images[0].image ? (
+          {mainImage?.image ? (
             <View style={styles.imageContainer}>
-              <ImageBackground resizeMode="cover" source={{uri: images[0].image}} style={styles.imageBackground}>
+              <ImageBackground resizeMode="cover" source={{uri: mainImage.image}} style={styles.imageBackground}>
                 <TouchableOpacity
                   activeOpacity={0.7}
                   hitSlop={{left: 15, bottom: 10}}
-                  onPress={() => deleteImage(images[0].id)}
+                  onPress={() => deleteImage(mainImage.id)}
                   style={styles.closeButton}>
                   <Close />
                 </TouchableOpacity>
@@ -111,46 +105,46 @@ const MyPhotos: FC = (): JSX.Element => {
               </ImageBackground>
             </View>
           ) : (
-            <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(images[0].id)} style={styles.plusButton}>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(mainImage?.id)} style={styles.plusButton}>
               <Plus />
             </TouchableOpacity>
           )}
         </View>
         <View style={{flex: 1}}>
           <View style={[styles.imageContainer, {marginBottom: 6}]}>
-            {images[1].image ? (
+            {secondImage?.image ? (
               <View style={styles.imageContainer}>
-                <ImageBackground resizeMode="cover" source={{uri: images[1].image}} style={styles.imageBackground}>
+                <ImageBackground resizeMode="cover" source={{uri: secondImage.image}} style={styles.imageBackground}>
                   <TouchableOpacity
                     activeOpacity={0.7}
                     hitSlop={{left: 15, bottom: 10}}
-                    onPress={() => deleteImage(images[1].id)}
+                    onPress={() => deleteImage(secondImage.id)}
                     style={styles.closeButton}>
                     <Close />
                   </TouchableOpacity>
                 </ImageBackground>
               </View>
             ) : (
-              <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(images[1].id)} style={styles.plusButton}>
+              <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(secondImage?.id)} style={styles.plusButton}>
                 <Plus />
               </TouchableOpacity>
             )}
           </View>
           <View style={[styles.imageContainer, {marginTop: 6}]}>
-            {images[2].image ? (
+            {thirdImage?.image ? (
               <View style={styles.imageContainer}>
-                <ImageBackground resizeMode="cover" source={{uri: images[2].image}} style={styles.imageBackground}>
+                <ImageBackground resizeMode="cover" source={{uri: thirdImage.image}} style={styles.imageBackground}>
                   <TouchableOpacity
                     activeOpacity={0.7}
                     hitSlop={{left: 15, bottom: 10}}
-                    onPress={() => deleteImage(images[2].id)}
+                    onPress={() => deleteImage(thirdImage.id)}
                     style={styles.closeButton}>
                     <Close />
                   </TouchableOpacity>
                 </ImageBackground>
               </View>
             ) : (
-              <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(images[2].id)} style={styles.plusButton}>
+              <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(thirdImage?.id)} style={styles.plusButton}>
                 <Plus />
               </TouchableOpacity>
             )}

@@ -3,8 +3,9 @@ import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import {lightGray5Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import {FC} from 'react';
 
-const LanguagesKnow = () => {
+const LanguagesKnow: FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Languages I know</Text>

@@ -1,13 +1,9 @@
 import {Dispatch, FC, SetStateAction, useEffect, useState} from 'react';
 import InstagramSLider from 'components/InstagramSlider/InstagramSlider';
-import {lightGray6Color, transparentWhite16Color} from 'constants/colors';
+import {lightGray6Color, lightGrayColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {screenHeight, screenWidth} from 'constants/common';
 import Man from 'assets/images/app/man-rectangle.png';
-import FakeGirlOne from 'assets/images/app/fake-girl-1.png';
-import FakeGirlTwo from 'assets/images/app/fake-girl-2.png';
-import FakeGirlThere from 'assets/images/app/fake-girl-3.png';
-import FakeGirlFour from 'assets/images/app/fake-girl-4.png';
-import {Alert, Image, SafeAreaView, ScrollView, Text, View} from 'react-native';
+import {Alert, FlatList, Image, SafeAreaView, ScrollView, Text, View} from 'react-native';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider';
 import PersonIcon from 'assets/images/icons/person.svg';
 import LocationIcon from 'assets/images/icons/location.svg';
@@ -24,7 +20,9 @@ import ModalUserProfile from 'components/Modal/ModalUserProfile/ModalUserProfile
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {ActivityIndicator} from 'react-native';
-import useCalculateAge from 'hooks/useCalculateAge';
+import {calculateAge} from 'helpers/calculateAge';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {Satoshi400} from 'constants/fonts';
 
 interface MyProfileViewProps {
   isShowEditButton?: boolean;
@@ -36,7 +34,7 @@ interface MyProfileViewProps {
 const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible, isShowEditButton = true, isShowInstagramPhotos = true}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>({});
-  const fakeGirlPhotos = [Man, FakeGirlOne, FakeGirlTwo, FakeGirlThere, FakeGirlFour];
+  const [photosList, setPhotosList] = useState<[]>([]);
 
   const styles = useStyles();
   const navigation = useAppNavigation();
@@ -55,6 +53,11 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
 
           if (userInfoDoc.exists) {
             setUserInfo(userInfoDoc.data());
+            const userPhotos = userInfoDoc.data()?.photos;
+            if (userPhotos?.length) {
+              const mappedPhotos = userPhotos.map((img: {id: number; image: string}) => img.image);
+              setPhotosList(mappedPhotos);
+            }
           } else {
             Alert.alert('Error', 'No user data found in Firestore');
           }
@@ -67,7 +70,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
     fetchUserInfo();
   }, []);
 
-  const userAge = useCalculateAge(userInfo?.birthday);
+  const userAge = calculateAge(userInfo?.date);
 
   if (loading || !userInfo) {
     return <ActivityIndicator style={{flex: 1, backgroundColor: lightGray6Color}} />;
@@ -79,35 +82,32 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
         <ScrollView
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{paddingTop: 20}}
+          contentContainerStyle={{paddingTop: 20, paddingBottom: 70}}
           style={{flex: 1, borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
           <View style={styles.wrapperFakeCard}>
             <TouchingSlider
-              photos={fakeGirlPhotos}
+              photos={photosList}
               isShowCardButtons={false}
               isShowWantsJoin={false}
               isShowInvitesTooltip={false}
               name={userInfo?.name}
-              age={userInfo?.showAgeOnMyProfile ? userAge : ''}
+              age={userInfo?.showAge ? userAge : ''}
             />
             {isShowEditButton && <Button title="Edit" buttonStyle={{marginTop: 20}} onPress={goToProfileEditing} />}
             <View style={styles.bioWrapper}>
               {userInfo?.bio && (
                 <>
                   <Text style={styles.titleSection}>Bio</Text>
-                  <Text style={styles.textDescription}>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text
-                    ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has
-                  </Text>
+                  <Text style={styles.textDescription}>{userInfo?.bio}</Text>
                 </>
               )}
               <Text style={[styles.titleSection, styles.mt31]}>About me</Text>
               <View style={styles.wrapperTextTags}>
-                <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
                   <PersonIcon />
-                  {` ${userInfo?.typeUser}`}
+                  {` ${userInfo?.accountType}`}
                 </Text>
-                <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
                   <TablerGenderIcon />
                   {` ${userInfo?.gender}`}
                 </Text>
@@ -119,35 +119,56 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 </Text>
                 {!!userInfo?.height && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <ArrowIcon /> {` ${userInfo?.height}`}
+                    <ArrowIcon /> {`${userInfo?.height}cm`}
                   </Text>
                 )}
-                <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                  <WineIcon /> Wine
-                </Text>
+                {!!userInfo?.alcohol && (
+                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                    <WineIcon /> {userInfo?.alcohol.title}
+                  </Text>
+                )}
                 {userInfo?.smoke && (
                   <Text style={[styles.textTagsAboutMe, {marginLeft: screenWidth / 33}]}>
-                    <SmokeIcon /> {` ${userInfo?.smoke}`}
+                    <SmokeIcon /> {`${userInfo?.smoke.title}`}
                   </Text>
                 )}
               </View>
               {!!userInfo?.interests?.length && (
                 <>
                   <Text style={[styles.titleSection, styles.mt31]}>Interests</Text>
-                  <View style={styles.wrapperInterestsTags}>
-                    {userInfo?.interests?.map((item: string) => (
-                      <View style={styles.interestsTags}>
-                        <Text style={styles.textTagsInterests}>{item}</Text>
-                      </View>
-                    ))}
+                  <View style={{width: '100%'}}>
+                    <FlatList
+                      data={userInfo?.interests}
+                      numColumns={3}
+                      keyExtractor={({id}) => id.toString()}
+                      scrollEnabled={false}
+                      contentContainerStyle={{width: '100%'}}
+                      ItemSeparatorComponent={() => <View style={{height: 10, width: 10}} />}
+                      renderItem={({item: {title}}) => (
+                        <View style={{paddingHorizontal: 5, maxWidth: screenWidth / 2 - 40, flex: 1}}>
+                          <View
+                            style={{
+                              flex: 1,
+                              borderRadius: 30,
+                              paddingVertical: 8,
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              backgroundColor: lightGrayColor,
+                            }}>
+                            <Text style={{color: whiteColor, fontSize: RFValue(13, 812), fontFamily: Satoshi400}}>{title}</Text>
+                          </View>
+                        </View>
+                      )}
+                    />
                   </View>
                 </>
               )}
               <View style={styles.wrapperImageSectionFaceGirl}>
-                <Image style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={Man} />
-                <Image style={styles.imageFaceGirl} source={Man} />
+                {photosList.map((photo: any, index: number) => {
+                  return <Image key={index.toString()} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />;
+                })}
               </View>
-              {isShowInstagramPhotos && <InstagramSLider />}
+              {isShowInstagramPhotos && <InstagramSLider photosList={photosList} />}
             </View>
           </View>
           <ModalUserProfile title={'Alex'} image={Man} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />

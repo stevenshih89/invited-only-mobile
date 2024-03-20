@@ -1,5 +1,5 @@
-import {FlatList, Text, View} from 'react-native';
-import {FC, ReactElement, useState} from 'react';
+import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
+import {FC, ReactElement, useEffect, useState} from 'react';
 
 //import images
 import FakeGirlOne from 'assets/images/app/fake-girl-1.png';
@@ -20,6 +20,8 @@ import Button from 'components/Button/Button';
 import ItemRequestGuest from './ItemRequestGuest';
 import ItemRequestHost from './ItemRequestHost';
 import Toast from 'react-native-toast-message';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 const Requests: FC = (): ReactElement => {
   const POSITIVE = 'positive';
@@ -30,6 +32,51 @@ const Requests: FC = (): ReactElement => {
     {id: 0, name: 'Simon', image: ManFace},
     {id: 1, name: 'Frank', image: ManFace2},
   ];
+
+  const [requestsForHost, setRequestsForHost] = useState<any>([]);
+  const [userInfo, setUserInfo] = useState<any>({});
+
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const fetchRequests = async () => {
+    const user = auth().currentUser;
+    try {
+      const querySnapshot = await firestore().collection('requestsForHost').where('userUid', '==', user?.uid).get();
+
+      const requests = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setRequestsForHost(requests);
+      return requests;
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Something went wrong');
+    }
+  };
+
+  const fetchUserInfo = async () => {
+    setLoading(true);
+    const user = auth().currentUser;
+
+    if (user) {
+      try {
+        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+
+        if (userInfoDoc.exists) {
+          setUserInfo(userInfoDoc.data());
+        }
+      } catch (error: any) {
+        Alert.alert('Error', error.message || 'Something went wrong');
+      }
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchUserInfo();
+    fetchRequests();
+  }, []);
 
   const [dataForGuest, setDataForGuest] = useState([
     {
@@ -135,7 +182,7 @@ const Requests: FC = (): ReactElement => {
     },
   ]);
 
-  const isHost = false;
+  const isHost = userInfo?.accountType?.toLowerCase() === 'host';
 
   const handleSwipeGuestCard = (id: number, status: typeof POSITIVE | typeof NEGATIVE) => {
     const toastText = status === POSITIVE ? 'You accepted invitation' : 'You rejected invitation';
@@ -152,7 +199,11 @@ const Requests: FC = (): ReactElement => {
     setDataForHost(newData);
   };
 
-  const list = isHost ? dataForHost : dataForGuest;
+  const list = isHost ? requestsForHost : dataForGuest;
+
+  if (loading) {
+    return <ActivityIndicator style={styles.container} />;
+  }
 
   return (
     <View style={styles.container}>

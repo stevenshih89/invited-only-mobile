@@ -106,7 +106,7 @@ const IO: FC = (): JSX.Element => {
       ];
 
       await userInfo?._docs?.map((item: any, index: number): void => {
-        const {name, bio, typeUser, gender, address, homeAddress, height, alcohol, date} = item?._data;
+        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date} = item?._data;
 
         setNameUser(name);
         const girlPhotos = item?._data?.photos?.map((image: any): void => image?.image);
@@ -133,7 +133,7 @@ const IO: FC = (): JSX.Element => {
               <View style={styles.wrapperTextTags}>
                 <Text style={[styles.textTagsAboutMe, styles.ml18]}>
                   <PersonIcon />
-                  {typeUser}
+                  {accountType}
                 </Text>
                 {gender && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
@@ -179,7 +179,7 @@ const IO: FC = (): JSX.Element => {
                   <Image key={index} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
                 ))}
               </View>
-              <InstagramSlider fakeSmallGirlPhotos={girlPhotos} />
+              <InstagramSlider photosList={girlPhotos} />
               <View style={styles.wrapperButtonsFooter}>
                 <TouchableOpacity style={styles.buttonCloseOrCheck}>
                   <CloseIcon />

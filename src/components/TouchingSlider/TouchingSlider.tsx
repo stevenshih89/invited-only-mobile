@@ -82,7 +82,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   return (
     // @ts-ignore
-    <ImageBackground source={{uri: photos && photos[active]}} resizeMode="cover" imageStyle={styles.imageStyle} style={styles.container}>
+    <ImageBackground source={{uri: photos?.[active]}} resizeMode="cover" imageStyle={styles.imageStyle} style={styles.container}>
       <LinearGradient
         colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
         start={{x: 0, y: 1}}
