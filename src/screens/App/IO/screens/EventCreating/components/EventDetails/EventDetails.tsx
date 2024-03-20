@@ -23,6 +23,7 @@ import Plus from 'assets/images/icons/plus.svg';
 import Location from 'assets/images/icons/location.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
+import {IOPath} from "constants/pathLocations.ts";
 
 interface EventDetailsProps {
   isEditing?: boolean;
@@ -97,6 +98,7 @@ const EventDetails: FC<EventDetailsProps> = ({
   const [hour, setHour] = useState('');
   const [address, setAddress] = useState('');
   const [meetingSpot, setMeetingSpot] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const navigation = useAppNavigation();
 
@@ -181,6 +183,7 @@ const EventDetails: FC<EventDetailsProps> = ({
 
   const handleCreateEvent = async () => {
     try {
+      setLoading(true);
       const uid: string | number[] = uuid.v4();
 
       let imagesUri: any[] = [];
@@ -209,14 +212,16 @@ const EventDetails: FC<EventDetailsProps> = ({
           images?.map(async (imagePath, index) => {
             await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
             await updatePhotosImage(uid, imagesUri).then(() => {
-              showToast('success', 'Event successfully created', 'Go to my events >');
+              showToast('success', 'Go to my events >', 'Event successfully created ');
               showToast('pending', 'Your event in review.', 'Estimate time review 2h');
               (isEditing ? setIsVisibleSaveModal(true) : null);
-              navigation.goBack();
+              setLoading(false);
+              navigation.navigate(IOPath);
             });
           });
         });
     } catch (e) {
+      setLoading(false);
       console.log(e);
       showToast('cancel', '', `${e}`);
     }
@@ -387,7 +392,7 @@ const EventDetails: FC<EventDetailsProps> = ({
             InputIcon={Location}
           />
         </View>
-        <Button title={isEditing ? 'Save changes' : 'Create event'} buttonStyle={styles.button} onPress={() => handleCreateEvent()} />
+        <Button loading={loading} title={isEditing ? 'Save changes' : 'Create event'} buttonStyle={styles.button} onPress={() => handleCreateEvent()} />
       </KeyboardAwareScrollView>
     </View>
   );
