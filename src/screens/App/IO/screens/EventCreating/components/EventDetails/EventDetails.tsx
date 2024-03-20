@@ -173,7 +173,7 @@ const EventDetails: FC<EventDetailsProps> = ({
   const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
     try {
       await firestore().collection('Events').doc(userId).update({
-        images: imageUrl,
+        photos: imageUrl,
       });
       console.log('Events image updated successfully.');
     } catch (e) {

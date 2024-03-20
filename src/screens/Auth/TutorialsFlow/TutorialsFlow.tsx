@@ -67,8 +67,8 @@ const TutorialsFlow: FC = (): JSX.Element => {
         .collection('userInfo')
         .doc(userId)
         .update({
-          photos: [imageUrl],
-        });
+        photos: imageUrl,
+      });
       console.log('User profile image updated successfully.');
     } catch (e) {
       console.error('Error updating user profile image: ', e);
@@ -90,7 +90,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
       const userId = await AsyncStorage.getItem('uid');
       const imageUri = mergedObject?.imageUser;
 
-      const photos = mergedObject?.images?.map(i => i?.image);
+      const photos = mergedObject?.photos?.map(i => i?.image);
 
       let allImageUrl: any = [];
 
@@ -104,9 +104,9 @@ const TutorialsFlow: FC = (): JSX.Element => {
         .then(async () => {
           console.log('User added!');
 
-          photos?.map(async i => {
+          photos?.map(async (i: any, index: number) => {
             await uploadImage(i, userId).then(async image => {
-              allImageUrl.push(image);
+              allImageUrl.push({image: image, id: index});
             });
             await updatePhotosImage(userId, allImageUrl);
           });
