@@ -3,6 +3,7 @@ import React, {FC, useState, useEffect} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card';
 import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
@@ -27,6 +28,7 @@ import SmokeIcon from 'assets/images/icons/smoke.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
+import {fcmHelper} from "helpers/fcmHelper.ts";
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -203,8 +205,19 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+      fcmHelper().then(t => console.log('token', t));
+    }
+  };
+
   useEffect(() => {
     getEventsData();
+    requestUserPermission();
   }, []);
 
   return (

@@ -41,7 +41,7 @@ const Requests: FC = (): ReactElement => {
   const fetchRequests = async () => {
     const user = auth().currentUser;
     try {
-      const querySnapshot = await firestore().collection('requestsForHost').where('userUid', '==', user?.uid).get();
+      const querySnapshot = await firestore().collection('requestsForHost').where('fromUserUid', '==', user?.uid).get();
 
       const requests = querySnapshot.docs.map(doc => ({
         id: doc.id,

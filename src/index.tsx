@@ -1,16 +1,18 @@
 import {useContext, useState, useEffect} from 'react';
-import {View} from 'react-native';
+import {Alert, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {NavigationContainer} from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
 
 //import components
 import {AuthProvider, AuthContext} from 'contexts/AuthContext.tsx';
 import AuthStackScreens from 'navigator/AuthStackScreens/AuthStackScreens.tsx';
 import AppStackScreens from 'navigator/AppStackScreens/AppStackScreens.tsx';
 import LocalNotification from 'components/LocalNotification/LocalNotification.tsx';
+import {getFcmToken, registerListenerWithFCM} from "helpers/fcmHelper.ts";
 
 const Main = () => {
   const [initializing, setInitializing] = useState<boolean>(true);
@@ -38,6 +40,8 @@ const Main = () => {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     getOnbordingState();
+    getFcmToken();
+    registerListenerWithFCM();
     return subscriber;
   }, [initializing, user, onBoarding, onBoardingState, setUser]);
 
