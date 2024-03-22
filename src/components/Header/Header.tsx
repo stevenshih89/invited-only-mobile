@@ -53,7 +53,6 @@ type ItemProps = {
 
 const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
   const [eventStarting, setEventStarting] = useState<boolean>(false);
-
   const styles = useStyles();
 
   const insets = useSafeAreaInsets();

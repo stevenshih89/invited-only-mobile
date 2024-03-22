@@ -3,6 +3,7 @@ import React, {FC, useState, useEffect, useContext, useCallback} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card';
 import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 import uuid from 'react-native-uuid';
 
 //import components
@@ -32,6 +33,7 @@ import {calculateAge} from 'helpers/calculateAge';
 import auth from '@react-native-firebase/auth';
 import {EventContext} from 'contexts/EventContext';
 import {useFocusEffect} from '@react-navigation/native';
+import {fcmHelper} from 'helpers/fcmHelper.ts';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -275,10 +277,21 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+      fcmHelper().then(t => console.log('token', t));
+    }
+  };
+
   useEffect(() => {
     fetchUserInfo();
     fetchMyEvents(true);
     getListForHost();
+    requestUserPermission();
   }, []);
 
   useFocusEffect(

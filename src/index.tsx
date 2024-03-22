@@ -11,6 +11,7 @@ import {AuthProvider, AuthContext} from 'contexts/AuthContext.tsx';
 import AuthStackScreens from 'navigator/AuthStackScreens/AuthStackScreens.tsx';
 import AppStackScreens from 'navigator/AppStackScreens/AppStackScreens.tsx';
 import LocalNotification from 'components/LocalNotification/LocalNotification.tsx';
+import {getFcmToken, registerListenerWithFCM} from 'helpers/fcmHelper.ts';
 import {EventProvider} from 'contexts/EventContext';
 
 const Main = () => {
@@ -39,6 +40,8 @@ const Main = () => {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     getOnbordingState();
+    getFcmToken();
+    registerListenerWithFCM();
     return subscriber;
   }, [initializing, user, onBoarding, onBoardingState, setUser]);
 
@@ -52,7 +55,7 @@ const Main = () => {
         <AuthProvider>
           <EventProvider>
             <NavigationContainer>
-              <SafeAreaProvider>{true ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
+              <SafeAreaProvider>{authState && onBoardingState ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
             </NavigationContainer>
             <LocalNotification />
           </EventProvider>

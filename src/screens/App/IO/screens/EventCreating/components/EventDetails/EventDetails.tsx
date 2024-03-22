@@ -7,6 +7,7 @@ import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from
 import MaskInput from 'react-native-mask-input';
 import firestore from '@react-native-firebase/firestore';
 import uuid from 'react-native-uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //import components
 import useStyles from './styles.ts';
@@ -68,7 +69,7 @@ const EventDetails: FC<EventDetailsProps> = ({
     {id: 3, label: 'Restaurant'},
   ];
 
-  const [images, setImages] = useState<{image: null | string; id: number}[]>([
+  const [photos, setImages] = useState<{image: null | string; id: number}[]>([
     {
       id: 0,
       image: null,
@@ -159,7 +160,7 @@ const EventDetails: FC<EventDetailsProps> = ({
             type: response.assets[0].type,
             name: response.assets[0].fileName,
           };
-          const newImages = images.map(img => {
+          const newImages = photos.map(img => {
             if (img.id === imageId) {
               return {...img, image: image.uri};
             }
@@ -191,7 +192,7 @@ const EventDetails: FC<EventDetailsProps> = ({
       let imagesUri: any[] = [];
 
       console.log('imagesUri', imagesUri);
-      console.log('images', images);
+      console.log('images', photos);
       // @ts-ignore
       await firestore()
         .collection('Events')
@@ -209,11 +210,12 @@ const EventDetails: FC<EventDetailsProps> = ({
           femaleFriend: femaleFriend,
           maleFriend: maleFriend,
           placeName: placeName,
+          id: uid,
           uid: user?.uid,
           id: uid,
         })
         .then(async () => {
-          images?.map(async (imagePath, index) => {
+          photos?.map(async (imagePath, index) => {
             await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
             await updatePhotosImage(uid, imagesUri).then(() => {
               showToast('success', 'Go to my events >', 'Event successfully created ');
@@ -278,9 +280,9 @@ const EventDetails: FC<EventDetailsProps> = ({
           <Text style={styles.eventPhotosText}>Event photos</Text>
           <View style={styles.flex}>
             <View style={styles.eventPhotoLargeWr}>
-              <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(images[0].id)} style={styles.touchableImage}>
-                {images[0].image ? (
-                  <Image resizeMode="cover" source={{uri: images[0].image}} style={styles.eventPhotoSmallImage} />
+              <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[0].id)} style={styles.touchableImage}>
+                {photos[0].image ? (
+                  <Image resizeMode="cover" source={{uri: photos[0].image}} style={styles.eventPhotoSmallImage} />
                 ) : (
                   <Plus width={40} height={40} />
                 )}
@@ -291,9 +293,9 @@ const EventDetails: FC<EventDetailsProps> = ({
             </View>
             <View style={[styles.eventPhotoRow, {marginBottom: 8}]}>
               <View style={styles.eventPhotoSmallLeftWr}>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(images[1].id)} style={styles.touchableImage}>
-                  {images[1].image ? (
-                    <Image resizeMode="cover" source={{uri: images[1].image}} style={styles.eventPhotoSmallImage} />
+                <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[1].id)} style={styles.touchableImage}>
+                  {photos[1].image ? (
+                    <Image resizeMode="cover" source={{uri: photos[1].image}} style={styles.eventPhotoSmallImage} />
                   ) : (
                     <Plus width={40} height={40} />
                   )}
@@ -303,9 +305,9 @@ const EventDetails: FC<EventDetailsProps> = ({
                 </View>
               </View>
               <View style={styles.eventPhotoSmallRightWr}>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(images[2].id)} style={styles.touchableImage}>
-                  {images[2].image ? (
-                    <Image resizeMode="cover" source={{uri: images[2].image}} style={styles.eventPhotoSmallImage} />
+                <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[2].id)} style={styles.touchableImage}>
+                  {photos[2].image ? (
+                    <Image resizeMode="cover" source={{uri: photos[2].image}} style={styles.eventPhotoSmallImage} />
                   ) : (
                     <Plus width={40} height={40} />
                   )}
@@ -317,9 +319,9 @@ const EventDetails: FC<EventDetailsProps> = ({
             </View>
             <View style={styles.eventPhotoRow}>
               <View style={styles.eventPhotoSmallLeftWr}>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(images[3].id)} style={styles.touchableImage}>
-                  {images[3].image ? (
-                    <Image resizeMode="cover" source={{uri: images[3].image}} style={styles.eventPhotoSmallImage} />
+                <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[3].id)} style={styles.touchableImage}>
+                  {photos[3].image ? (
+                    <Image resizeMode="cover" source={{uri: photos[3].image}} style={styles.eventPhotoSmallImage} />
                   ) : (
                     <Plus width={40} height={40} />
                   )}
@@ -329,9 +331,9 @@ const EventDetails: FC<EventDetailsProps> = ({
                 </View>
               </View>
               <View style={styles.eventPhotoSmallRightWr}>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(images[4].id)} style={styles.touchableImage}>
-                  {images[4].image ? (
-                    <Image resizeMode="cover" source={{uri: images[4].image}} style={styles.eventPhotoSmallImage} />
+                <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[4].id)} style={styles.touchableImage}>
+                  {photos[4].image ? (
+                    <Image resizeMode="cover" source={{uri: photos[4].image}} style={styles.eventPhotoSmallImage} />
                   ) : (
                     <Plus width={40} height={40} />
                   )}
