@@ -23,7 +23,8 @@ import Plus from 'assets/images/icons/plus.svg';
 import Location from 'assets/images/icons/location.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
-import {IOPath} from "constants/pathLocations.ts";
+import {IOPath} from 'constants/pathLocations.ts';
+import auth from '@react-native-firebase/auth';
 
 interface EventDetailsProps {
   isEditing?: boolean;
@@ -185,6 +186,7 @@ const EventDetails: FC<EventDetailsProps> = ({
     try {
       setLoading(true);
       const uid: string | number[] = uuid.v4();
+      const user = auth().currentUser;
 
       let imagesUri: any[] = [];
 
@@ -207,18 +209,26 @@ const EventDetails: FC<EventDetailsProps> = ({
           femaleFriend: femaleFriend,
           maleFriend: maleFriend,
           placeName: placeName,
+          uid: user?.uid,
+          id: uid,
         })
-        .then(() => {
+        .then(async () => {
           images?.map(async (imagePath, index) => {
             await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
             await updatePhotosImage(uid, imagesUri).then(() => {
               showToast('success', 'Go to my events >', 'Event successfully created ');
               showToast('pending', 'Your event in review.', 'Estimate time review 2h');
-              (isEditing ? setIsVisibleSaveModal(true) : null);
+              isEditing ? setIsVisibleSaveModal(true) : null;
               setLoading(false);
-              navigation.navigate(IOPath);
+              navigation.navigate(IOPath as never);
             });
           });
+          await firestore()
+            .collection('userInfo')
+            .doc(user?.uid)
+            .update({
+              eventsList: firestore.FieldValue.arrayUnion(uid),
+            });
         });
     } catch (e) {
       setLoading(false);
@@ -392,7 +402,12 @@ const EventDetails: FC<EventDetailsProps> = ({
             InputIcon={Location}
           />
         </View>
-        <Button loading={loading} title={isEditing ? 'Save changes' : 'Create event'} buttonStyle={styles.button} onPress={() => handleCreateEvent()} />
+        <Button
+          loading={loading}
+          title={isEditing ? 'Save changes' : 'Create event'}
+          buttonStyle={styles.button}
+          onPress={() => handleCreateEvent()}
+        />
       </KeyboardAwareScrollView>
     </View>
   );

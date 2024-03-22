@@ -16,8 +16,10 @@ const useStyles = () =>
       width: '100%',
     },
     eventView: {
-      paddingVertical: screenHeight / 60,
-      paddingHorizontal: screenWidth / 28,
+      width: 55,
+      height: 55,
+      justifyContent: 'center',
+      alignItems: 'center',
       borderWidth: 1,
       borderColor: lightGray5Color,
       borderRadius: 50,
