@@ -1,4 +1,4 @@
-import React, {createContext, Dispatch, ReactNode, SetStateAction, useState, useEffect} from 'react';
+import React, {createContext, Dispatch, ReactNode, SetStateAction, useState} from 'react';
 
 interface AuthContextData {
   user: any;

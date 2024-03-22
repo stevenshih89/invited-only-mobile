@@ -11,6 +11,7 @@ import {AuthProvider, AuthContext} from 'contexts/AuthContext.tsx';
 import AuthStackScreens from 'navigator/AuthStackScreens/AuthStackScreens.tsx';
 import AppStackScreens from 'navigator/AppStackScreens/AppStackScreens.tsx';
 import LocalNotification from 'components/LocalNotification/LocalNotification.tsx';
+import {EventProvider} from 'contexts/EventContext';
 
 const Main = () => {
   const [initializing, setInitializing] = useState<boolean>(true);
@@ -49,10 +50,12 @@ const Main = () => {
     <GestureHandlerRootView style={{flex: 1}}>
       <View style={{flex: 1, backgroundColor: 'transparent'}}>
         <AuthProvider>
-          <NavigationContainer>
-            <SafeAreaProvider>{authState && onBoardingState ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
-          </NavigationContainer>
-          <LocalNotification />
+          <EventProvider>
+            <NavigationContainer>
+              <SafeAreaProvider>{true ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
+            </NavigationContainer>
+            <LocalNotification />
+          </EventProvider>
         </AuthProvider>
       </View>
     </GestureHandlerRootView>

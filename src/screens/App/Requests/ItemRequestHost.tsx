@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {TinderCard} from 'rn-tinder-card';
 import Home from 'assets/images/icons/home.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
-import Location from 'assets/images/icons/location.svg';
+// import Location from 'assets/images/icons/location.svg';
 import FlashFilled from 'assets/images/icons/flash-filled.svg';
 import useStyles from './styles';
 import {Satoshi700} from 'constants/fonts';
@@ -45,7 +45,7 @@ const ItemRequestHost = ({item, handleSwipeHostCard}: any) => {
           alignItems: 'center',
         }}>
         <View style={{borderRadius: 5, paddingHorizontal: 13, paddingVertical: 6, borderWidth: 2, borderColor: lightRed1Color}}>
-          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: lightRed1Color}}>NOPE</Text>
+          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: lightRed1Color}}>REJECT</Text>
         </View>
       </View>
     );
@@ -70,9 +70,9 @@ const ItemRequestHost = ({item, handleSwipeHostCard}: any) => {
         translateXRange={[-70, 0, 70]}
         disableTopSwipe={true}
         cardStyle={{height: '100%', borderRadius: 22, zIndex: 999}}>
-        <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: item?.photoUrl}}>
-          <View style={[styles.itemContentContainer, {justifyContent: item?.superWantToJoin ? 'space-between' : 'flex-end'}]}>
-            {item?.superWantToJoin && (
+        <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: item?.userPhoto}}>
+          <View style={[styles.itemContentContainer, {justifyContent: item?.superInvite ? 'space-between' : 'flex-end'}]}>
+            {item?.superInvite && (
               <View style={styles.superLikeContainer}>
                 <View style={styles.superLikeRow}>
                   <FlashFilled style={styles.superLikeIcon} />
@@ -93,14 +93,14 @@ const ItemRequestHost = ({item, handleSwipeHostCard}: any) => {
                 <View style={styles.locationContainer}>
                   <View style={styles.locationRow}>
                     <Home height={12} />
-                    <Text style={styles.locationText}>{item?.location}</Text>
+                    <Text style={styles.locationText}>{item?.address}</Text>
                   </View>
                   <ArrowRight height={12} />
                 </View>
-                <View style={styles.distanceContainer}>
+                {/* <View style={styles.distanceContainer}>
                   <Location height={12} />
-                  <Text style={styles.distanceText}>{`${item?.distance} kilometers away`}</Text>
-                </View>
+                  <Text style={styles.distanceText}>{`${item?.distance}`}</Text>
+                </View> */}
               </TouchableOpacity>
             </LinearGradient>
           </View>
