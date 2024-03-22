@@ -1,5 +1,5 @@
-import {FC, useEffect, useState} from 'react';
-import {View, TouchableOpacity, Text, Image, FlatList, Alert, ScrollView} from 'react-native';
+import {FC, useState} from 'react';
+import {View, TouchableOpacity, Text, Image, FlatList, ScrollView} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
 
@@ -30,7 +30,6 @@ import CalendarIcon from 'assets/images/icons/calendar.svg';
 
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
-import firestore from '@react-native-firebase/firestore';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -51,8 +50,6 @@ type ItemProps = {
 
 const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
   const [eventStarting, setEventStarting] = useState<boolean>(false);
-  const [eventsData, setEventsData] = useState<any>([]);
-
   const styles = useStyles();
 
   const insets = useSafeAreaInsets();
@@ -156,17 +153,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     paddingTop: insets.top,
   };
 
-  const handleGetEventsData = async () => {
-    try {
-      const userInfoDoc = await firestore().collection('Events').get();
-
-      const data = userInfoDoc._docs?.map(i => i?._data);
-      setEventsData([...data]);
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Something went wrong');
-    }
-  };
-
   const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | undefined) => {
     switch (type) {
       case 'IO':
@@ -186,14 +172,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 </View>
                 <Text style={styles.textButton}>Join events</Text>
               </TouchableOpacity>
-              {eventsData?.map((item: any) => (
-                <TouchableOpacity style={styles.eventButton}>
-                  <View style={{borderWidth: 1, borderColor: whiteColor, borderRadius: 50, marginBottom: 4}}>
-                    <Image resizeMode={'cover'} style={{width: 50, height: 50, borderRadius: 50}} source={{uri: item?.photos[0]?.image}} />
-                  </View>
-                  <Text style={styles.textButton}>{item?.name}</Text>
-                </TouchableOpacity>
-              ))}
             </ScrollView>
           </View>
         );
@@ -217,14 +195,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 </View>
                 <Text style={styles.textButton}>Join events</Text>
               </TouchableOpacity>
-              {eventsData?.map((item: any) => (
-                <TouchableOpacity style={styles.eventButton}>
-                  <View style={{borderWidth: 1, borderColor: whiteColor, borderRadius: 50, marginBottom: 4}}>
-                    <Image resizeMode={'cover'} style={{width: 50, height: 50, borderRadius: 50}} source={{uri: item?.photos[0]?.image}} />
-                  </View>
-                  <Text style={styles.textButton}>{item?.name}</Text>
-                </TouchableOpacity>
-              ))}
             </ScrollView>
           </View>
         );
@@ -282,10 +252,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         return null;
     }
   };
-
-  useEffect(() => {
-    handleGetEventsData();
-  }, []);
 
   return (
     <View style={[styles.container, headerInsets]}>
