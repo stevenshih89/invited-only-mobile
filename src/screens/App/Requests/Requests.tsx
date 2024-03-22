@@ -1,11 +1,7 @@
 import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
-import {FC, ReactElement, useEffect, useState} from 'react';
+import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
 
 //import images
-import FakeGirlOne from 'assets/images/app/fake-girl-1.png';
-import FakeGirlTwo from 'assets/images/app/fake-girl-2.png';
-import FakeGirlThere from 'assets/images/app/fake-girl-3.png';
-import FakeGirlFour from 'assets/images/app/fake-girl-4.png';
 import ManFace from 'assets/images/auth/man-face.png';
 import RequestPlace1 from 'assets/images/app/requst-place-1.png';
 import RequestPlace2 from 'assets/images/app/requst-place-2.png';
@@ -22,11 +18,19 @@ import ItemRequestHost from './ItemRequestHost';
 import Toast from 'react-native-toast-message';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import {useFocusEffect} from '@react-navigation/native';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {profilePath} from 'constants/pathLocations';
+import {EventContext} from 'contexts/EventContext';
 
 const Requests: FC = (): ReactElement => {
   const POSITIVE = 'positive';
   const NEGATIVE = 'negative';
   const styles = useStyles();
+
+  const navigation = useAppNavigation();
+
+  const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
   const listOfHosts = [
     {id: 0, name: 'Simon', image: ManFace},
@@ -38,20 +42,36 @@ const Requests: FC = (): ReactElement => {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const fetchRequests = async () => {
+  // const fetchRequests = async () => {
+  //   const user = auth().currentUser;
+  //   try {
+  //     const querySnapshot = await firestore().collection('requestsForHost').where('forUserUid', '==', user?.uid).get();
+
+  //     const requests = querySnapshot.docs.map(doc => ({
+  //       id: doc.id,
+  //       ...doc.data(),
+  //     }));
+
+  //     setRequestsForHost(requests);
+  //     return requests;
+  //   } catch (error: any) {
+  //     Alert.alert('Error', error.message || 'Something went wrong');
+  //   }
+  // };
+
+  const fetchHostRequests = async () => {
     const user = auth().currentUser;
-    try {
-      const querySnapshot = await firestore().collection('requestsForHost').where('fromUserUid', '==', user?.uid).get();
-
-      const requests = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      setRequestsForHost(requests);
-      return requests;
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Something went wrong');
+    if (user && activeEvent) {
+      try {
+        const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
+        if (querySnapshot.exists) {
+          setRequestsForHost(querySnapshot.data()?.requestsList);
+        } else {
+          setRequestsForHost([]);
+        }
+      } catch (error: any) {
+        Alert.alert('Error', error.message || 'Something went wrong');
+      }
     }
   };
 
@@ -62,7 +82,6 @@ const Requests: FC = (): ReactElement => {
     if (user) {
       try {
         const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
-
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
@@ -75,8 +94,13 @@ const Requests: FC = (): ReactElement => {
 
   useEffect(() => {
     fetchUserInfo();
-    fetchRequests();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchHostRequests();
+    }, [activeEvent]),
+  );
 
   const [dataForGuest, setDataForGuest] = useState([
     {
@@ -89,6 +113,7 @@ const Requests: FC = (): ReactElement => {
         count: 3,
       },
       isSuperInvite: true,
+      name: 'Simon1',
       image: RequestPlace1,
     },
     {
@@ -100,6 +125,7 @@ const Requests: FC = (): ReactElement => {
         gender: 'Girl',
         count: 2,
       },
+      name: 'Simon2',
       image: RequestPlace2,
     },
     {
@@ -112,6 +138,7 @@ const Requests: FC = (): ReactElement => {
         count: 3,
       },
       isSuperInvite: true,
+      name: 'Simon3',
       image: RequestPlace1,
     },
     {
@@ -123,6 +150,7 @@ const Requests: FC = (): ReactElement => {
         gender: 'Girl',
         count: 2,
       },
+      name: 'Simon4',
       image: RequestPlace2,
     },
     {
@@ -134,51 +162,8 @@ const Requests: FC = (): ReactElement => {
         gender: 'Girl',
         count: 2,
       },
+      name: 'Simon5',
       image: RequestPlace2,
-    },
-  ]);
-
-  const [dataForHost, setDataForHost] = useState([
-    {
-      id: 0,
-      name: 'Carla',
-      age: 29,
-      location: 'From in Bairro Alto',
-      distance: 2,
-      image: FakeGirlOne,
-    },
-    {
-      id: 1,
-      name: 'Carla',
-      age: 29,
-      location: 'From in Bairro Alto',
-      distance: 2,
-      image: FakeGirlTwo,
-      isSuperLike: true,
-    },
-    {
-      id: 2,
-      name: 'Carla',
-      age: 29,
-      location: 'From in Bairro Alto',
-      distance: 2,
-      image: FakeGirlThere,
-    },
-    {
-      id: 3,
-      name: 'Carla',
-      age: 29,
-      location: 'From in Bairro Alto',
-      distance: 2,
-      image: FakeGirlFour,
-    },
-    {
-      id: 4,
-      name: 'Carla',
-      age: 29,
-      location: 'From in Bairro Alto',
-      distance: 2,
-      image: FakeGirlOne,
     },
   ]);
 
@@ -194,32 +179,27 @@ const Requests: FC = (): ReactElement => {
     setDataForGuest(newData);
   };
 
-  const handleSwipeHostCard = (id: number) => {
-    const newData = dataForHost.filter(item => item.id !== id);
-    setDataForHost(newData);
-  };
-
   const list = isHost ? requestsForHost : dataForGuest;
 
-  if (loading) {
+  if (loading && !list.length) {
     return <ActivityIndicator style={styles.container} />;
   }
 
   return (
     <View style={styles.container}>
-      {list.length ? (
+      {list?.length ? (
         <FlatList
           // @ts-ignore
           data={list}
           numColumns={2}
           showsVerticalScrollIndicator={false}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={({uid, name}) => `${uid}${name}`}
           contentContainerStyle={styles.listContentContainer}
           extraData={list}
           ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
           renderItem={({item}) =>
             isHost ? (
-              <ItemRequestHost item={item} handleSwipeHostCard={handleSwipeHostCard} />
+              <ItemRequestHost item={item} handleSwipeHostCard={() => {}} />
             ) : (
               // @ts-ignore
               <ItemRequestGuest item={item} handleSwipeGuestCard={handleSwipeGuestCard} />
@@ -234,7 +214,7 @@ const Requests: FC = (): ReactElement => {
           <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
             Add more information for yourself
           </Text>
-          <Button title="See my profile" />
+          <Button title="See my profile" onPress={() => navigation.navigate(profilePath as never)} />
         </View>
       )}
     </View>

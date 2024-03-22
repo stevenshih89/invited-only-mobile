@@ -1,18 +1,18 @@
 import {useContext, useState, useEffect} from 'react';
-import {Alert, View} from 'react-native';
+import {View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {NavigationContainer} from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import messaging from '@react-native-firebase/messaging';
 
 //import components
 import {AuthProvider, AuthContext} from 'contexts/AuthContext.tsx';
 import AuthStackScreens from 'navigator/AuthStackScreens/AuthStackScreens.tsx';
 import AppStackScreens from 'navigator/AppStackScreens/AppStackScreens.tsx';
 import LocalNotification from 'components/LocalNotification/LocalNotification.tsx';
-import {getFcmToken, registerListenerWithFCM} from "helpers/fcmHelper.ts";
+import {getFcmToken, registerListenerWithFCM} from 'helpers/fcmHelper.ts';
+import {EventProvider} from 'contexts/EventContext';
 
 const Main = () => {
   const [initializing, setInitializing] = useState<boolean>(true);
@@ -53,10 +53,12 @@ const Main = () => {
     <GestureHandlerRootView style={{flex: 1}}>
       <View style={{flex: 1, backgroundColor: 'transparent'}}>
         <AuthProvider>
-          <NavigationContainer>
-            <SafeAreaProvider>{authState && onBoardingState ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
-          </NavigationContainer>
-          <LocalNotification />
+          <EventProvider>
+            <NavigationContainer>
+              <SafeAreaProvider>{authState && onBoardingState ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
+            </NavigationContainer>
+            <LocalNotification />
+          </EventProvider>
         </AuthProvider>
       </View>
     </GestureHandlerRootView>

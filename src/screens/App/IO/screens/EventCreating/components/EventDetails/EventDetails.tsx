@@ -25,6 +25,7 @@ import Location from 'assets/images/icons/location.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
 import {IOPath} from 'constants/pathLocations.ts';
+import auth from '@react-native-firebase/auth';
 
 interface EventDetailsProps {
   isEditing?: boolean;
@@ -186,7 +187,7 @@ const EventDetails: FC<EventDetailsProps> = ({
     try {
       setLoading(true);
       const uid: string | number[] = uuid.v4();
-      const uidUser: string | null = await AsyncStorage.getItem('uid');
+      const user = auth().currentUser;
 
       let imagesUri: any[] = [];
 
@@ -210,19 +211,26 @@ const EventDetails: FC<EventDetailsProps> = ({
           maleFriend: maleFriend,
           placeName: placeName,
           id: uid,
-          uid: uidUser,
+          uid: user?.uid,
+          id: uid,
         })
-        .then(() => {
+        .then(async () => {
           photos?.map(async (imagePath, index) => {
             await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
             await updatePhotosImage(uid, imagesUri).then(() => {
               showToast('success', 'Go to my events >', 'Event successfully created ');
               showToast('pending', 'Your event in review.', 'Estimate time review 2h');
-              (isEditing ? setIsVisibleSaveModal(true) : null);
+              isEditing ? setIsVisibleSaveModal(true) : null;
               setLoading(false);
-              navigation.navigate(IOPath);
+              navigation.navigate(IOPath as never);
             });
           });
+          await firestore()
+            .collection('userInfo')
+            .doc(user?.uid)
+            .update({
+              eventsList: firestore.FieldValue.arrayUnion(uid),
+            });
         });
     } catch (e) {
       setLoading(false);

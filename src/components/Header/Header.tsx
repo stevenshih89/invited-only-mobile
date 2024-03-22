@@ -1,4 +1,4 @@
-import {FC, useState} from 'react';
+import {FC, useContext, useState} from 'react';
 import {View, TouchableOpacity, Text, Image, FlatList, ScrollView} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
@@ -30,6 +30,9 @@ import CalendarIcon from 'assets/images/icons/calendar.svg';
 
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
+import {EventContext} from 'contexts/EventContext';
+import {Satoshi500} from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -54,6 +57,8 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
+
+  const {myEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
   const goToCreateEvent = (): void => {
     navigation.navigate(eventCreatingStackPath);
@@ -157,23 +162,53 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     switch (type) {
       case 'IO':
         return (
-          <View style={styles.wrapperHeaderButton}>
-            <ScrollView horizontal={true}>
-              <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
-                <View style={styles.eventView}>
-                  <AddIcon width={26} height={26} />
-                </View>
-                <Text style={styles.textButton}>Create event</Text>
-              </TouchableOpacity>
-              {/*@ts-ignore*/}
-              <TouchableOpacity onPress={() => navigation.navigate(joinEventsPath)} style={styles.eventButton}>
-                <View style={styles.eventView}>
-                  <CalendarSearchIcon width={26} height={26} />
-                </View>
-                <Text style={styles.textButton}>Join events</Text>
-              </TouchableOpacity>
-            </ScrollView>
-          </View>
+          <ScrollView horizontal scrollEnabled={!!myEvents?.length} contentContainerStyle={{marginVertical: screenHeight / 50}}>
+            <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
+              <View style={styles.eventView}>
+                <AddIcon width={26} height={26} />
+              </View>
+              <Text style={styles.textButton}>Create event</Text>
+            </TouchableOpacity>
+            {/*@ts-ignore*/}
+            <TouchableOpacity onPress={() => navigation.navigate(joinEventsPath)} style={styles.eventButton}>
+              <View style={styles.eventView}>
+                <CalendarSearchIcon width={26} height={26} />
+              </View>
+              <Text style={styles.textButton}>Join events</Text>
+            </TouchableOpacity>
+            {myEvents.map((event: any) => {
+              const isActive = activeEvent?.id === event.id;
+              return (
+                <TouchableOpacity style={styles.eventButton} activeOpacity={0.7} onPress={() => setActiveEvent(event)}>
+                  <View
+                    style={{
+                      borderRadius: 50,
+                      borderWidth: 1,
+                      borderColor: isActive ? whiteColor : lightGray5Color,
+                      borderStyle: 'solid',
+                      padding: 3,
+                      width: 55,
+                      height: 55,
+                    }}>
+                    <Image
+                      source={{uri: event?.photos?.find(({id}: {id: number}) => id === 0).image}}
+                      style={{width: '100%', height: '100%', borderRadius: 50}}
+                    />
+                  </View>
+                  <Text
+                    style={{
+                      marginTop: screenHeight / 190,
+                      color: whiteColor,
+                      fontFamily: Satoshi500,
+                      fontSize: RFValue(13, 812),
+                      textAlign: 'center',
+                    }}>
+                    {event?.placeName}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
         );
       case 'myEvents':
         return null;
@@ -181,22 +216,53 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         return null;
       case 'request':
         return (
-          <View style={styles.wrapperHeaderButton}>
-            <ScrollView horizontal={true}>
-              <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
-                <View style={styles.eventView}>
-                  <AddIcon width={26} height={26} />
-                </View>
-                <Text style={styles.textButton}>Create event</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.eventButton}>
-                <View style={styles.eventView}>
-                  <CalendarSearchIcon width={26} height={26} />
-                </View>
-                <Text style={styles.textButton}>Join events</Text>
-              </TouchableOpacity>
-            </ScrollView>
-          </View>
+          <ScrollView horizontal scrollEnabled={!!myEvents?.length} contentContainerStyle={{marginVertical: screenHeight / 50}}>
+            <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
+              <View style={styles.eventView}>
+                <AddIcon width={26} height={26} />
+              </View>
+              <Text style={styles.textButton}>Create event</Text>
+            </TouchableOpacity>
+            {/*@ts-ignore*/}
+            <TouchableOpacity onPress={() => navigation.navigate(joinEventsPath)} style={styles.eventButton}>
+              <View style={styles.eventView}>
+                <CalendarSearchIcon width={26} height={26} />
+              </View>
+              <Text style={styles.textButton}>Join events</Text>
+            </TouchableOpacity>
+            {myEvents.map((event: any) => {
+              const isActive = activeEvent?.id === event.id;
+              return (
+                <TouchableOpacity style={styles.eventButton} activeOpacity={0.7} onPress={() => setActiveEvent(event)}>
+                  <View
+                    style={{
+                      borderRadius: 50,
+                      borderWidth: 1,
+                      borderColor: isActive ? whiteColor : lightGray5Color,
+                      borderStyle: 'solid',
+                      padding: 3,
+                      width: 55,
+                      height: 55,
+                    }}>
+                    <Image
+                      source={{uri: event?.photos?.find(({id}: {id: number}) => id === 0).image}}
+                      style={{width: '100%', height: '100%', borderRadius: 50}}
+                    />
+                  </View>
+                  <Text
+                    style={{
+                      marginTop: screenHeight / 190,
+                      color: whiteColor,
+                      fontFamily: Satoshi500,
+                      fontSize: RFValue(13, 812),
+                      textAlign: 'center',
+                    }}>
+                    {event?.placeName}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
         );
       case 'chat':
         return (

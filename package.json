@@ -6,6 +6,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "iphone14Pro": "react-native run-ios --simulator=\"iPhone 14 Pro\"",
+    "iphone15Pro": "react-native run-ios --simulator=\"iPhone 15 Pro\"",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest"
