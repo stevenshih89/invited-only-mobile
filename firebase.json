@@ -1,18 +1,8 @@
 {
-  "react-native": {
-    "analytics_auto_collection_enabled": false,
-    "messaging_auto_init_enabled": false,
-    "messaging_ios_auto_register_for_remote_messages": true
-  },
   "functions": [
     {
-      "predeploy": "npm --prefix functions run build",
       "source": "functions",
-      "codebase": "default"
-    },
-    {
-      "source": "io-functions",
-      "codebase": "io-functions",
+      "codebase": "default",
       "ignore": [
         "node_modules",
         ".git",
@@ -20,7 +10,7 @@
         "firebase-debug.*.log"
       ],
       "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run build"
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
       ]
     }
   ]
