@@ -1,0 +1,26 @@
+import {createContext, Dispatch, FC, ReactNode, SetStateAction, useState} from 'react';
+
+type ActiveEventDate = 'any_day' | 'today' | 'this_weekend';
+
+interface EventsDateType {
+  activeEventDate: ActiveEventDate;
+  setActiveEventDate: Dispatch<SetStateAction<ActiveEventDate>>;
+}
+interface EventProviderProps {
+  children: ReactNode;
+}
+// @ts-ignore
+const EventsDate = createContext<EventsDateType>({});
+
+const EventsDateProvider: FC<EventProviderProps> = ({children}) => {
+  const [activeEventDate, setActiveEventDate] = useState<ActiveEventDate>('any_day');
+
+  const value = {
+    activeEventDate,
+    setActiveEventDate,
+  };
+
+  return <EventsDate.Provider value={value}>{children}</EventsDate.Provider>;
+};
+
+export {EventsDateProvider, EventsDate};

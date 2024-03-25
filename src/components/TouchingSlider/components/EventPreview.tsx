@@ -33,7 +33,7 @@ const EventPreview: FC<{photos: any}> = ({photos}): ReactElement => {
   return (
     // @ts-ignore
     <View style={styles.container}>
-      <ImageBackground source={photos[active]} style={styles.imageBackground} imageStyle={styles.imageStyle} resizeMode="cover">
+      <ImageBackground source={{uri: photos?.[active]}} style={styles.imageBackground} imageStyle={styles.imageStyle} resizeMode="cover">
         <View style={styles.wrapperBar}>
           {[...Array(numberPhotos)].map((_, index) => (
             <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
