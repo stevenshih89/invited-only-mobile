@@ -13,6 +13,7 @@ import AppStackScreens from 'navigator/AppStackScreens/AppStackScreens.tsx';
 import LocalNotification from 'components/LocalNotification/LocalNotification.tsx';
 import {getFcmToken, registerListenerWithFCM} from 'helpers/fcmHelper.ts';
 import {EventProvider} from 'contexts/EventContext';
+import {EventsDateProvider} from 'contexts/EventsDate';
 
 const Main = () => {
   const [initializing, setInitializing] = useState<boolean>(true);
@@ -54,10 +55,12 @@ const Main = () => {
       <View style={{flex: 1, backgroundColor: 'transparent'}}>
         <AuthProvider>
           <EventProvider>
-            <NavigationContainer>
-              <SafeAreaProvider>{authState && onBoardingState ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
-            </NavigationContainer>
-            <LocalNotification />
+            <EventsDateProvider>
+              <NavigationContainer>
+                <SafeAreaProvider>{authState && onBoardingState ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
+              </NavigationContainer>
+              <LocalNotification />
+            </EventsDateProvider>
           </EventProvider>
         </AuthProvider>
       </View>
