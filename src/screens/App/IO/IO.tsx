@@ -38,7 +38,7 @@ import {calculateAge} from 'helpers/calculateAge';
 import auth from '@react-native-firebase/auth';
 import {EventContext} from 'contexts/EventContext';
 import {useFocusEffect} from '@react-navigation/native';
-import {fcmHelper} from 'helpers/fcmHelper.ts';
+import {fcmHelper, getFcmToken} from 'helpers/fcmHelper.ts';
 import {whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
@@ -67,8 +67,23 @@ const IO: FC = (): JSX.Element => {
     setIsVisibleMatch(false);
   };
 
-  const handleOpenMatch = () => {
-    setIsVisibleMatch(true);
+  const handleOpenMatch = async (recipientUid: string, name: string, girlsPhoto: string) => {
+    const user = auth().currentUser?.uid;
+    const token = await getFcmToken();
+
+    try {
+      await firestore().collection('CollectionOfMatches').doc(`${user}`).set({
+        notificationTokenSender: token,
+        recipientUid: recipientUid,
+        senderUid: user,
+        name: name,
+        girlsPhoto: girlsPhoto,
+      });
+      showToast('pending', 'Chat with Alexa >', 'Invitation approved! Waiting for Alexa to accept your invitation.');
+      // setIsVisibleMatch(true);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const OverlayRight = () => {
@@ -337,7 +352,7 @@ const IO: FC = (): JSX.Element => {
       ];
 
       await userInfo?._docs?.map((item: any, index: number): void => {
-        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date} = item?._data;
+        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, uid} = item?._data;
 
         setNameUser(name);
         const girlPhotos = item?._data?.photos?.map((image: any): void => image?.image);
@@ -355,7 +370,7 @@ const IO: FC = (): JSX.Element => {
                 homeAddress={homeAddress}
                 isShowInvitesTooltip={false}
                 handleOpenSuperInvite={handleOpenSuperInvite}
-                handleOpenMatch={handleOpenMatch}
+                handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}
               />
               <View style={styles.bioWrapper}>
