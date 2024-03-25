@@ -7,7 +7,6 @@ import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from
 import MaskInput from 'react-native-mask-input';
 import firestore from '@react-native-firebase/firestore';
 import uuid from 'react-native-uuid';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //import components
 import useStyles from './styles.ts';
@@ -189,6 +188,10 @@ const EventDetails: FC<EventDetailsProps> = ({
       const uid: string | number[] = uuid.v4();
       const user = auth().currentUser;
 
+      if (photos[0] === null) {
+        Alert.alert('Please add the main picture');
+      }
+
       let imagesUri: any[] = [];
 
       console.log('imagesUri', imagesUri);
@@ -212,7 +215,6 @@ const EventDetails: FC<EventDetailsProps> = ({
           placeName: placeName,
           id: uid,
           uid: user?.uid,
-          id: uid,
         })
         .then(async () => {
           photos?.map(async (imagePath, index) => {
