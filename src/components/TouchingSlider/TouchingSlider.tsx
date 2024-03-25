@@ -19,9 +19,6 @@ import IOIcon from 'assets/images/icons/io-logo.svg';
 import Lock from 'assets/images/icons/lock.svg';
 import Heart from 'assets/images/icons/heart.svg';
 
-//import images
-import CardEvent from 'assets/images/app/card-event-bg.png';
-
 interface Photo {
   url: string;
 }
@@ -38,6 +35,7 @@ interface TouchingSliderProps {
   name?: string;
   age?: string | number;
   homeAddress?: string;
+  eventPhotos?: any[];
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
@@ -52,13 +50,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   name = '',
   age = '',
   homeAddress = '',
+  eventPhotos,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
   const navigation = useAppNavigation();
-
-  const eventPhotos = [CardEvent, CardEvent];
 
   const goToCodeConfirmation = (): void => {
     // @ts-ignore

@@ -1,5 +1,5 @@
-import {FC, useContext, useState} from 'react';
-import {View, TouchableOpacity, Text, Image, FlatList, ScrollView} from 'react-native';
+import {FC, useContext, useEffect, useState} from 'react';
+import {View, TouchableOpacity, Text, Image, FlatList, ScrollView, Alert} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
 
@@ -14,8 +14,8 @@ import {
   notificationsStackPath,
   settingsPath,
 } from 'constants/pathLocations';
-import {screenHeight} from 'constants/common.ts';
-import {blackColor, lightGray2Color, lightGray5Color, whiteColor} from 'constants/colors.ts';
+import {ANY_DAY, screenHeight, THIS_WEEKEND, TODAY} from 'constants/common.ts';
+import {blackColor, grayColor, lightGray2Color, lightGray5Color, whiteColor} from 'constants/colors.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 
 //import icons
@@ -33,6 +33,9 @@ import EventBG from 'assets/images/app/card-event-bg.png';
 import {EventContext} from 'contexts/EventContext';
 import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {EventsDate} from 'contexts/EventsDate';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -53,16 +56,38 @@ type ItemProps = {
 
 const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
   const [eventStarting, setEventStarting] = useState<boolean>(false);
+  const [userInfo, setUserInfo] = useState<any>(null);
   const styles = useStyles();
 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
 
   const {myEvents, setActiveEvent, activeEvent} = useContext(EventContext);
+  const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
   const goToCreateEvent = (): void => {
     navigation.navigate(eventCreatingStackPath);
   };
+
+  const fetcUserInfo = async () => {
+    const user = auth().currentUser;
+
+    if (user) {
+      try {
+        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+
+        if (userInfoDoc.exists) {
+          setUserInfo(userInfoDoc.data());
+        }
+      } catch (error: any) {
+        Alert.alert('Error', error.message || 'Something went wrong');
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetcUserInfo();
+  }, []);
 
   const DATA = [
     {
@@ -159,42 +184,83 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   };
 
   const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | undefined) => {
+    const isHost = userInfo?.accountType.toLowerCase() === 'host';
+
     switch (type) {
       case 'IO':
         return (
-          <ScrollView horizontal scrollEnabled={!!myEvents?.length} contentContainerStyle={{marginVertical: screenHeight / 50}}>
-            <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
-              <View style={styles.eventView}>
-                <AddIcon width={26} height={26} />
-              </View>
-              <Text style={styles.textButton}>Create event</Text>
-            </TouchableOpacity>
-            {/*@ts-ignore*/}
-            <TouchableOpacity onPress={() => navigation.navigate(joinEventsPath)} style={styles.eventButton}>
-              <View style={styles.eventView}>
-                <CalendarSearchIcon width={26} height={26} />
-              </View>
-              <Text style={styles.textButton}>Join events</Text>
-            </TouchableOpacity>
-            {myEvents.map((event: any) => {
-              const isActive = activeEvent?.id === event.id;
-              return (
-                <TouchableOpacity style={styles.eventButton} activeOpacity={0.7} onPress={() => setActiveEvent(event)}>
+          <>
+            {isHost ? (
+              <ScrollView horizontal scrollEnabled={!!myEvents?.length} contentContainerStyle={{marginVertical: screenHeight / 50}}>
+                <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
+                  <View style={styles.eventView}>
+                    <AddIcon width={26} height={26} />
+                  </View>
+                  <Text style={styles.textButton}>Create event</Text>
+                </TouchableOpacity>
+                {/*@ts-ignore*/}
+                <TouchableOpacity onPress={() => navigation.navigate(joinEventsPath)} style={styles.eventButton}>
+                  <View style={styles.eventView}>
+                    <CalendarSearchIcon width={26} height={26} />
+                  </View>
+                  <Text style={styles.textButton}>Join events</Text>
+                </TouchableOpacity>
+                {myEvents.map((event: any) => {
+                  const isActive = activeEvent?.id === event.id;
+                  return (
+                    <TouchableOpacity style={styles.eventButton} activeOpacity={0.7} onPress={() => setActiveEvent(event)}>
+                      <View
+                        style={{
+                          borderRadius: 50,
+                          borderWidth: 1,
+                          borderColor: isActive ? whiteColor : lightGray5Color,
+                          borderStyle: 'solid',
+                          padding: 3,
+                          width: 55,
+                          height: 55,
+                        }}>
+                        <Image
+                          source={{uri: event?.photos?.find(({id}: {id: number}) => id === 0).image}}
+                          style={{width: '100%', height: '100%', borderRadius: 50}}
+                        />
+                      </View>
+                      <Text
+                        style={{
+                          marginTop: screenHeight / 190,
+                          color: whiteColor,
+                          fontFamily: Satoshi500,
+                          fontSize: RFValue(13, 812),
+                          textAlign: 'center',
+                        }}>
+                        {event?.placeName}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            ) : (
+              <ScrollView horizontal scrollEnabled={false} contentContainerStyle={{marginVertical: screenHeight / 50}}>
+                <TouchableOpacity
+                  style={styles.eventButton}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    setActiveEventDate(ANY_DAY);
+                  }}>
                   <View
                     style={{
                       borderRadius: 50,
                       borderWidth: 1,
-                      borderColor: isActive ? whiteColor : lightGray5Color,
+                      borderColor: activeEventDate === ANY_DAY ? whiteColor : lightGray5Color,
                       borderStyle: 'solid',
                       padding: 3,
                       width: 55,
                       height: 55,
+                      backgroundColor: lightGray5Color,
+                      justifyContent: 'center',
+                      alignItems: 'center',
                     }}>
-                    <Image
-                      // source={{uri: event?.photos?.find(({id}: {id: number}) => id === 0).image}}
-                      source={{uri: event?.photos[0]?.image}}
-                      style={{width: '100%', height: '100%', borderRadius: 50}}
-                    />
+                    <CalendarSearchIcon width={26} height={26} />
+                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === ANY_DAY ? whiteColor : grayColor}}>Any day</Text>
                   </View>
                   <Text
                     style={{
@@ -204,12 +270,78 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       fontSize: RFValue(13, 812),
                       textAlign: 'center',
                     }}>
-                    {event?.placeName}
+                    Any day
                   </Text>
                 </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+                <TouchableOpacity
+                  style={styles.eventButton}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    setActiveEventDate(TODAY);
+                  }}>
+                  <View
+                    style={{
+                      borderRadius: 50,
+                      borderWidth: 1,
+                      borderColor: activeEventDate === TODAY ? whiteColor : lightGray5Color,
+                      borderStyle: 'solid',
+                      padding: 3,
+                      width: 55,
+                      height: 55,
+                      backgroundColor: lightGray5Color,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <CalendarSearchIcon width={26} height={26} />
+                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === TODAY ? whiteColor : grayColor}}>Today</Text>
+                  </View>
+                  <Text
+                    style={{
+                      marginTop: screenHeight / 190,
+                      color: whiteColor,
+                      fontFamily: Satoshi500,
+                      fontSize: RFValue(13, 812),
+                      textAlign: 'center',
+                    }}>
+                    Today
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.eventButton}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    setActiveEventDate(THIS_WEEKEND);
+                  }}>
+                  <View
+                    style={{
+                      borderRadius: 50,
+                      borderWidth: 1,
+                      borderColor: activeEventDate === THIS_WEEKEND ? whiteColor : lightGray5Color,
+                      borderStyle: 'solid',
+                      padding: 3,
+                      width: 55,
+                      height: 55,
+                      backgroundColor: lightGray5Color,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <CalendarSearchIcon width={26} height={26} />
+                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>This weekend</Text>
+                  </View>
+                  <Text
+                    style={{
+                      marginTop: screenHeight / 190,
+                      color: whiteColor,
+                      fontFamily: Satoshi500,
+                      fontSize: RFValue(13, 812),
+                      textAlign: 'center',
+                    }}>
+                    This weekend
+                  </Text>
+                </TouchableOpacity>
+              </ScrollView>
+            )}
+          </>
         );
       case 'myEvents':
         return null;

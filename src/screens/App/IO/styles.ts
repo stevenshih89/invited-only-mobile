@@ -2,7 +2,7 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
 //import components
-import {lightGray5Color, lightGray6Color, lightGrayColor, lightRed1Color, whiteColor} from 'constants/colors.ts';
+import {blackColor, lightGray5Color, lightGray6Color, lightGrayColor, lightGreenColor, lightRed1Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi400, Satoshi700, Satoshi500} from 'constants/fonts.ts';
 
 const screenHeight: number = Dimensions.get('window').height;
@@ -219,6 +219,97 @@ const useStyles = () => {
       borderRadius: 50,
       alignItems: 'center',
       justifyContent: 'center',
+    },
+    wrapperHostProfile: {
+      marginTop: 14,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    wrapperNumberPeople: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    rowNumberPeople: {
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: '#2B2B2B',
+    },
+    greenCircle: {
+      borderWidth: 1,
+      borderColor: blackColor,
+      width: 9,
+      height: 9,
+      backgroundColor: lightGreenColor,
+      borderRadius: 50,
+      position: 'absolute',
+      bottom: 5,
+      right: -3,
+    },
+    textSimon: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(16, 812),
+    },
+    textSeeProfile: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(16, 812),
+    },
+    textOnline: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(10, 812),
+      marginTop: 5,
+      opacity: 0.8,
+    },
+    wrapperPersonIcon: {
+      backgroundColor: lightGray6Color,
+      width: 30,
+      height: 30,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    subTitle: {
+      marginTop: 14,
+      color: whiteColor,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(12, 812),
+    },
+    textUnderSubTitle: {
+      marginTop: 6,
+      color: whiteColor,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(14, 812),
+    },
+    textNumberInvitedPeople: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(16, 812),
+      paddingVertical: 7,
+      paddingHorizontal: 13,
+    },
+    rowPersonIcon: {
+      flexDirection: 'row',
+      marginTop: 12,
+    },
+    fdrAlc: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    textInfo: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(14, 812),
+      marginLeft: 6,
+    },
+    imageBg: {
+      height: 178,
+      borderRadius: 20,
+      marginBottom: 28,
     },
   });
 };
