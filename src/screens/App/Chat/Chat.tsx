@@ -1,6 +1,7 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useState, useEffect} from 'react';
 import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from 'screens/App/Chat/styles.ts';
@@ -22,7 +23,6 @@ import PersonIcon from 'assets/images/icons/profile-2user.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
 import Button from 'components/Button/Button.tsx';
-
 type ItemProps = {
   title: string;
   message: string;
@@ -47,6 +47,8 @@ interface ChatProps {
 
 const Chat: FC<ChatProps> = ({typeEvents}) => {
   const [hostMenu, setHostMenu] = useState<boolean>(false);
+  const [messages, setMessages] = useState([]);
+  const [activeEvent, setActiveEvent] = useState<string>('h3xsZpHqcPVMTSW9dsL9');
   const styles = useStyles();
   const navigation = useAppNavigation();
 
@@ -152,8 +154,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       title: 'Nammos Dubai',
     },
   ];
-
-  const t = []
 
   const Item = ({title, message, image, online, story, inviteStatus}: ItemProps) => (
     <View style={styles.item}>
@@ -301,6 +301,18 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
         return '';
     }
   };
+
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('messages')
+      .doc(activeEvent)
+      .onSnapshot(documentSnapshot => {
+        console.log('messages: ', documentSnapshot.data());
+        setMessages(documentSnapshot.data());
+      });
+
+    return () => subscriber();
+  }, [activeEvent]);
 
   return (
     <View style={styles.container}>

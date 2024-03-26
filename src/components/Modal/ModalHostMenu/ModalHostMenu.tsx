@@ -16,7 +16,7 @@ import InfoIcon from 'assets/images/icons/info-circle-fill.svg';
 import CloseIcon from 'assets/images/icons/close-circle.svg';
 import {chatCorrespondencePath} from 'constants/pathLocations.ts';
 import {gray1Color} from 'constants/colors.ts';
-import ModalReport from "components/Modal/ModalReport/ModalReport.tsx";
+import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 
 interface HostMenu {
   hostMenu?: boolean;

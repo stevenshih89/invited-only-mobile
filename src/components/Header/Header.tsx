@@ -69,7 +69,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     navigation.navigate(eventCreatingStackPath);
   };
 
-  const fetcUserInfo = async () => {
+  const fetchUserInfo = async () => {
     const user = auth().currentUser;
 
     if (user) {
@@ -86,7 +86,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   };
 
   useEffect(() => {
-    fetcUserInfo();
+    fetchUserInfo();
   }, []);
 
   const DATA = [
@@ -219,10 +219,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                           width: 55,
                           height: 55,
                         }}>
-                        <Image
-                          source={{uri: event?.photos?.find(({id}: {id: number}) => id === 0).image}}
-                          style={{width: '100%', height: '100%', borderRadius: 50}}
-                        />
+                        <Image source={{uri: event?.photos[0]}} style={{width: '100%', height: '100%', borderRadius: 50}} />
                       </View>
                       <Text
                         style={{
