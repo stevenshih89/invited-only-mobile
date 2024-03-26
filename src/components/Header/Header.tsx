@@ -219,7 +219,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                           width: 55,
                           height: 55,
                         }}>
-                        <Image source={{uri: event?.photos[0]}} style={{width: '100%', height: '100%', borderRadius: 50}} />
+                        <Image source={{uri: event?.photos[0]?.image}} style={{width: '100%', height: '100%', borderRadius: 50}} />
                       </View>
                       <Text
                         style={{
