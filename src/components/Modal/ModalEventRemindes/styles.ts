@@ -122,6 +122,9 @@ const useStyles = () => {
     },
     eventImage: {
       marginTop: 5,
+      width: 301,
+      height: 165,
+      borderRadius: 12,
     },
     fdr: {
       flexDirection: 'row',

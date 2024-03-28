@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {View, Text, Image, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView} from 'react-native';
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NavigationProp} from '@react-navigation/native';
@@ -15,12 +15,14 @@ import Button from 'components/Button/Button.tsx';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import ThreeDots from 'assets/images/icons/more-white.svg';
 import FlashField from 'assets/images/icons/flash.svg';
-import Microfon from 'assets/images/icons/microfon.svg';
+import SendIcon from 'assets/images/icons/send.svg';
 
 //import images
 import ImageBg from 'assets/images/app/join-event-bg.png';
+import moment from 'moment';
+import firestore from '@react-native-firebase/firestore';
 
-interface messageProps {
+interface messageUserProps {
   message: {
     time: string;
     text: string;
@@ -38,9 +40,13 @@ interface NavigationParams {
 
 const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [messageUser, setMessageUser] = useState<string>('');
+  const [messages, setMessages] = useState<string>([]);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
   const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
-  const {image, title, online} = route?.params;
+  let {image, title, online, activeEvent, id, superInvite, invitedStatus} = route?.params;
+
+  console.log('messages', messages);
+  console.log('route?.params', route?.params);
 
   const styles = useStyles();
   const insets = useSafeAreaInsets();
@@ -64,72 +70,69 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     paddingBottom: 0,
   };
 
-  const messages = [
-    {
-      id: '3',
-      text: 'Hello! John abraham',
-      user: {
-        id: 'user2',
-        name: 'Пользователь 2',
-        avatar: image,
-      },
-      time: '10:05 AM',
-      isSender: false,
-    },
-    {
-      id: '1',
-      text: 'Hello ! Nazrul How are you?',
-      user: {
-        id: 'user1',
-        name: title,
-        avatar: image,
-      },
-      time: '10:00 AM',
-      isSender: true,
-    },
-    {
-      id: '2',
-      text: 'You did your job well!',
-      user: {
-        id: 'user2',
-        name: 'Пользователь 2',
-        avatar: image,
-      },
-      time: '09:25 AM',
-      isSender: false,
-    },
-    {
-      id: '5',
-      text: 'Have a great working week!!',
-      user: {
-        id: 'user1',
-        name: title,
-        avatar: image,
-      },
-      time: '09:25 AM',
-      isSender: true,
-    },
-  ];
+  const handleSendMessage = async () => {
+    try {
+      if (!messageUser) {
+        return;
+      }
+      await firestore()
+        .collection('messages')
+        .doc(`${activeEvent}`)
+        .update({
+          chats: {
+            id: id,
+            invitedStatus: invitedStatus,
+            name: title,
+            superInvite: superInvite,
+            messages: [
+              ...messages,
+              {
+                id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
+                message: messageUser,
+                timestamp: new Date().toDateString(),
+                userType: 'host',
+              },
+            ],
+          },
+        });
 
-  const ChatMessage = ({message}: messageProps) => {
-    const {text, user, time, isSender} = message;
-    const containerStyle = isSender ? styles.senderContainer : styles.receiverContainer;
-    const textStyle = isSender ? styles.senderText : styles.receiverText;
+      setMessageUser('');
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const ChatMessage = ({messageUser, userAvatar}: messageUserProps) => {
+    const {message, userType, timestamp} = messageUser;
+    const containerStyle = userType === 'host' ? styles.senderContainer : styles.receiverContainer;
+    const textStyle = userType === 'host' ? styles.senderText : styles.receiverText;
     return (
       <View style={[styles.messageContainer, containerStyle]}>
-        {isSender && <Image source={user.avatar} style={styles.avatar} />}
+        {userType === 'host' && <Image source={{uri: userAvatar}} style={styles.avatar} />}
         <View>
-          {isSender && <Text style={styles.textNameUserMessage}>{title}</Text>}
-          <View style={[{flexDirection: 'column'}, !isSender && {alignItems: 'flex-end'}]}>
-            <View style={[styles.messageContent, isSender ? styles.isSenderTrue : styles.isSenderFalse]}>
-              <Text style={textStyle}>{text}</Text>
+          {userType === 'host' && <Text style={styles.textNameUserMessage}>{title}</Text>}
+          <View style={[{flexDirection: 'column'}, userType === 'host' && {alignItems: 'flex-end'}]}>
+            <View style={[styles.messageContent, userType === 'host' ? styles.isSenderTrue : styles.isSenderFalse]}>
+              <Text style={textStyle}>{message}</Text>
             </View>
-            <Text style={[isSender && {marginLeft: 10}, styles.timeText]}>{time}</Text>
+            <Text style={[userType === 'host' && {marginLeft: 10}, styles.timeText]}>{moment(timestamp).format('h:mm A')}</Text>
           </View>
         </View>
       </View>
     );
   };
+
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('messages')
+      .doc(activeEvent)
+      .onSnapshot(documentSnapshot => {
+        const data = documentSnapshot.data()?.chats?.messages;
+        setMessages(data);
+      });
+
+    return () => subscriber();
+  }, [activeEvent]);
 
   return (
     <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={styles.keyboardAvoid}>
@@ -142,13 +145,13 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               </TouchableOpacity>
               <View style={[styles.fdrAlc, {marginLeft: 16}]}>
                 <View>
-                  <Image source={image} style={styles.userPhoto} />
+                  <Image source={{uri: image}} style={styles.userPhoto} />
                   {online && <View style={styles.greenCircle} />}
                 </View>
                 <View style={styles.wrapperTitleOnline}>
                   <View style={styles.fdrAlc}>
                     <Text style={styles.textNameUser}>{title}</Text>
-                    <FlashField width={14} height={14} />
+                    {superInvite && <FlashField width={14} height={14} />}
                   </View>
                   {online && <Text style={styles.textOnline}>Online</Text>}
                 </View>
@@ -159,13 +162,14 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             </TouchableOpacity>
           </View>
           <FlatList
-            contentContainerStyle={{height: '100%'}}
+            contentContainerStyle={{paddingBottom: 20}}
             data={messages}
-            renderItem={({item}) => <ChatMessage message={item} />}
-            keyExtractor={item => item.id}
+            showsVerticalScrollIndicator={false}
+            renderItem={({item}) => <ChatMessage userAvatar={image} messageUser={item} />}
+            keyExtractor={(item, index) => index.toString()}
           />
         </View>
-        {handleInvitationApproved()}
+        {/*{handleInvitationApproved()}*/}
         <View style={styles.footer}>
           <View style={styles.inputContainer}>
             <TextInput
@@ -176,8 +180,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               placeholder="Write your message"
             />
           </View>
-          <TouchableOpacity>
-            <Microfon />
+          <TouchableOpacity style={styles.buttonSend} onPress={() => handleSendMessage()}>
+            <SendIcon />
           </TouchableOpacity>
         </View>
         <ModalCancelOrConfirmInvitation
@@ -186,11 +190,17 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
           typeModal="confirm"
           title={'Namos Dubai'}
           name={title}
-          imageBg={ImageBg}
+          imageBg={image}
           data="12.11.2023"
           girlInvitation={2}
         />
-        <ModalUserMenu image={image} title={title} approve={false} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
+        <ModalUserMenu
+          image={image}
+          title={title}
+          approve={invitedStatus === 'accepted'}
+          isModalVisible={isModalVisible}
+          setModalVisible={setModalVisible}
+        />
       </SafeAreaProvider>
     </KeyboardAvoidingView>
   );

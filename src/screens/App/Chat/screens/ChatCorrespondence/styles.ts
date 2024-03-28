@@ -160,6 +160,12 @@ const useStyles = () => {
       borderRadius: 12,
       paddingHorizontal: screenWidth / 23,
     },
+    buttonSend: {
+      backgroundColor: lightGray5Color,
+      padding: 15,
+      marginLeft: screenWidth / 30,
+      borderRadius: 12,
+    },
     keyboardAvoid: {
       flex: 1,
       backgroundColor: blackColor,

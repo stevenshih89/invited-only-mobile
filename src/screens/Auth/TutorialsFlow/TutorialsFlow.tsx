@@ -100,6 +100,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
         .set({
           ...mergedObject,
           uid: userId,
+          accountConfirmed: false,
         })
         .then(async () => {
           console.log('User added!');

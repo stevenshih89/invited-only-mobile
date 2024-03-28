@@ -36,6 +36,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {EventsDate} from 'contexts/EventsDate';
+import {useChat} from '../../store/chatStore';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -52,6 +53,9 @@ type ItemProps = {
   filledTo: number;
   image: any;
   numberBadge: number;
+  date?: string;
+  hour?: string;
+  girlInvitation?: number | string;
 };
 
 const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
@@ -61,6 +65,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
+
+  const selectedChat = useChat((i: any) => i?.selectedChat);
+  const setChat = useChat((i: any) => i.setChat);
 
   const {myEvents, setActiveEvent, activeEvent} = useContext(EventContext);
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
@@ -75,7 +82,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     if (user) {
       try {
         const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        // const events = await firestore().collection('Events').get();
 
+        // console.log('events', events.docs);
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
@@ -88,6 +97,84 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   useEffect(() => {
     fetchUserInfo();
   }, []);
+
+  const DATAEventsJoining = [
+    {
+      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+      title: 'All',
+      allPeople: 4,
+      filledTo: 3,
+      image: CalendarIcon,
+      numberBadge: 22,
+      date: '12.12.12',
+    },
+    {
+      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+      title: 'This weekend',
+      allPeople: 0,
+      filledTo: 0,
+      image: EventBG,
+      numberBadge: 0,
+      date: '12.12.12',
+    },
+    {
+      id: '58694a0f-3da1-471f-bd96-145571e29d72',
+      title: 'This month',
+      allPeople: 4,
+      filledTo: 2,
+      image: EventBG,
+      numberBadge: 0,
+      date: '12.12.12',
+    },
+  ];
+
+  const Item = ({title, filledTo, numberBadge, image, allPeople, date, hour, girlInvitation}: ItemProps) => (
+    <TouchableOpacity onPress={() => setEventStarting(true)} style={styles.eventButton}>
+      <View style={[styles.eventViewFlatList, {borderColor: numberBadge !== 0 ? whiteColor : lightGray5Color}]}>
+        <Image source={{uri: image}} style={styles.imageEvent} />
+        {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
+      </View>
+      <Text style={styles.textButton}>{title}</Text>
+      {allPeople > 0 && (
+        <View style={styles.numberPeopleOnEvent}>
+          <PeopleIcon />
+          <Text style={styles.textNumberPeopleOnEvent}>
+            {filledTo}/{allPeople}
+          </Text>
+        </View>
+      )}
+      <ModalEventRemindes
+        girlInvitation={girlInvitation}
+        eventStarting={eventStarting}
+        setEventStarting={setEventStarting}
+        time={hour}
+        image={image}
+        city={title}
+        date={date}
+      />
+    </TouchableOpacity>
+  );
+
+  const ItemEventsJoining = ({title, numberBadge, image, date}: ItemProps) => (
+    <TouchableOpacity style={styles.eventButton}>
+      <View style={[styles.eventViewFlatList, {borderColor: numberBadge !== 0 ? whiteColor : lightGray5Color}]}>
+        <View style={styles.imageEventsJoining}>
+          <CalendarIcon width={26} height={26} />
+        </View>
+      </View>
+      <Text style={styles.textButton}>{title}</Text>
+      <ModalEventRemindes eventStarting={eventStarting} setEventStarting={setEventStarting} time="24h" image={image} city={title} date={date} />
+    </TouchableOpacity>
+  );
+
+  const goToNotifications = (): void => {
+    // @ts-ignore
+    navigation.navigate(notificationsStackPath, {screen: notificationsPath});
+  };
+
+  const headerInsets = {
+    paddingTop: insets.top,
+  };
 
   const DATA = [
     {
@@ -115,73 +202,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       numberBadge: 0,
     },
   ];
-
-  const DATAEventsJoining = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'All',
-      allPeople: 4,
-      filledTo: 3,
-      image: CalendarIcon,
-      numberBadge: 22,
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'This weekend',
-      allPeople: 0,
-      filledTo: 0,
-      image: EventBG,
-      numberBadge: 0,
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      title: 'This month',
-      allPeople: 4,
-      filledTo: 2,
-      image: EventBG,
-      numberBadge: 0,
-    },
-  ];
-
-  const Item = ({title, filledTo, numberBadge, image, allPeople}: ItemProps) => (
-    <TouchableOpacity onPress={() => setEventStarting(true)} style={styles.eventButton}>
-      <View style={[styles.eventViewFlatList, {borderColor: numberBadge !== 0 ? whiteColor : lightGray5Color}]}>
-        <Image source={image} style={styles.imageEvent} />
-        {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
-      </View>
-      <Text style={styles.textButton}>{title}</Text>
-      {allPeople > 0 && (
-        <View style={styles.numberPeopleOnEvent}>
-          <PeopleIcon />
-          <Text style={styles.textNumberPeopleOnEvent}>
-            {filledTo}/{allPeople}
-          </Text>
-        </View>
-      )}
-      <ModalEventRemindes eventStarting={eventStarting} setEventStarting={setEventStarting} time="24h" image={image} city={title} date="12.11.2024" />
-    </TouchableOpacity>
-  );
-
-  const ItemEventsJoining = ({title, numberBadge, image}: ItemProps) => (
-    <TouchableOpacity style={styles.eventButton}>
-      <View style={[styles.eventViewFlatList, {borderColor: numberBadge !== 0 ? whiteColor : lightGray5Color}]}>
-        <View style={styles.imageEventsJoining}>
-          <CalendarIcon width={26} height={26} />
-        </View>
-      </View>
-      <Text style={styles.textButton}>{title}</Text>
-      <ModalEventRemindes eventStarting={eventStarting} setEventStarting={setEventStarting} time="24h" image={image} city={title} date="12.11.2024" />
-    </TouchableOpacity>
-  );
-
-  const goToNotifications = (): void => {
-    // @ts-ignore
-    navigation.navigate(notificationsStackPath, {screen: notificationsPath});
-  };
-
-  const headerInsets = {
-    paddingTop: insets.top,
-  };
 
   const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | undefined) => {
     const isHost = userInfo?.accountType.toLowerCase() === 'host';
@@ -416,10 +436,19 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
             {!typeEvents ? (
               <View style={[styles.rowButtonsChat, {marginTop: screenHeight / 34}]}>
                 <FlatList
-                  data={DATA}
+                  data={myEvents}
                   horizontal={true}
                   renderItem={({item}) => (
-                    <Item filledTo={item.filledTo} allPeople={item.allPeople} image={item.image} numberBadge={item.numberBadge} title={item.title} />
+                    <Item
+                      filledTo={item.female}
+                      allPeople={item.female + item.femaleFriend + item.male + item.maleFriend}
+                      image={item.photos[0]?.image}
+                      girlInvitation={item.male + item.maleFriend}
+                      numberBadge={item.numberBadge}
+                      title={item.name}
+                      date={item.date}
+                      hour={item.hour}
+                    />
                   )}
                   keyExtractor={item => item.id}
                 />
@@ -436,6 +465,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       image={item.image}
                       numberBadge={item.numberBadge}
                       title={item.title}
+                      date={item.date}
                     />
                   )}
                   keyExtractor={item => item.id}

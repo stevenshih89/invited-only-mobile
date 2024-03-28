@@ -50,7 +50,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
           <View style={styles.whiteLine} />
 
           <View>
-            <Image source={image} style={styles.userPhoto} />
+            <Image source={{uri: image}} style={styles.userPhoto} />
             {/*{online && <View style={styles.greenCircle} />}*/}
             <View style={styles.greenCircle} />
           </View>
@@ -101,7 +101,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
           <View style={styles.whiteLine} />
 
           <View>
-            <Image source={image} style={styles.userPhoto} />
+            <Image source={{uri: image}} style={styles.userPhoto} />
             {/*{online && <View style={styles.greenCircle} />}*/}
             <View style={styles.greenCircle} />
           </View>
@@ -249,8 +249,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
             <View style={styles.whiteLine} />
 
             <View>
-              <Image source={image} style={styles.userPhoto} />
-              {/*{online && <View style={styles.greenCircle} />}*/}
+              <Image source={{uri: image}} style={styles.userPhoto} />
+              {/*{online && <View style={styles.sgreenCircle} />}*/}
               <View style={styles.greenCircle} />
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center', marginTop: screenHeight / 80}}>

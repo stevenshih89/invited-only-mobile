@@ -19,9 +19,10 @@ interface ModalEventRemindeProps {
   image: any;
   city: string;
   date: string;
+  girlInvitation: number | string;
 }
 
-const ModalEventRemindes: FC<ModalEventRemindeProps> = ({date, city, setEventStarting, eventStarting, time, image}) => {
+const ModalEventRemindes: FC<ModalEventRemindeProps> = ({girlInvitation,date, city, setEventStarting, eventStarting, time, image}) => {
   const [chahModal, setChatModal] = useState<boolean>(false);
   const [onTheWayState, setOnTheWayState] = useState<boolean>(false);
   const styles = useStyles();
@@ -41,13 +42,13 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({date, city, setEventSta
         <View style={styles.wrapperCancelEvent}>
           <View style={styles.whiteLine} />
           <View>
-            <Image resizeMode="contain" source={image} style={styles.eventImage} />
+            <Image resizeMode="contain" source={{uri: image}} style={styles.eventImage} />
           </View>
           <View style={styles.main}>
             <Text style={styles.textCity}>{city}</Text>
             <View style={styles.fdr}>
               <PeopleIcon />
-              <Text style={styles.textGirlInvitation}>2 x Girl invitation </Text>
+              <Text style={styles.textGirlInvitation}>{girlInvitation} x Girl invitation </Text>
             </View>
             <View style={styles.fdr}>
               <CalendarIcon width={19} height={19} />
@@ -94,7 +95,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({date, city, setEventSta
         <View style={styles.wrapperOnTheWay}>
           <View style={styles.whiteLine} />
           <View>
-            <Image source={image} style={styles.userPhoto} />
+            <Image source={{uri: image}} style={styles.userPhoto} />
             {/*{online && <View style={styles.greenCircle} />}*/}
             <View style={styles.greenCircle} />
           </View>
@@ -140,13 +141,13 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({date, city, setEventSta
       <View style={styles.wrapper}>
         <View style={styles.whiteLine} />
         <View>
-          <Image resizeMode="contain" source={image} style={styles.eventImage} />
+          <Image resizeMode="cover" source={{uri: image}} style={styles.eventImage} />
         </View>
         <View style={styles.main}>
           <Text style={styles.textCity}>{city}</Text>
           <View style={styles.fdr}>
             <PeopleIcon />
-            <Text style={styles.textGirlInvitation}>2 x Girl invitation </Text>
+            <Text style={styles.textGirlInvitation}>{girlInvitation} x Girl invitation </Text>
           </View>
           <View style={styles.fdr}>
             <CalendarIcon width={19} height={19} />
