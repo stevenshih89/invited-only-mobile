@@ -55,7 +55,7 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
       <View style={styles.wrapper}>
         <View style={styles.whiteLine} />
         <View style={{width: '100%'}}>
-          <Image resizeMode="contain" source={imageBg} style={{width: '100%'}} />
+          <Image resizeMode="contain" source={{uri: imageBg}} style={{width: '100%'}} />
           <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, marginBottom: 21}}>
             <Text style={{color: 'white'}}>{title}</Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>

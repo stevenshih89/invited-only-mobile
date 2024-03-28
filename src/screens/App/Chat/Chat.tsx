@@ -1,6 +1,7 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useState, useEffect} from 'react';
 import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from 'screens/App/Chat/styles.ts';
@@ -22,14 +23,18 @@ import PersonIcon from 'assets/images/icons/profile-2user.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
 import Button from 'components/Button/Button.tsx';
-
+import {useChat} from "../../../store/chatStore";
 type ItemProps = {
   title: string;
+  id: string | number;
   message: string;
+  messages: any;
   image: any;
   online: boolean;
   story: boolean;
   inviteStatus: string;
+  superInvite: boolean;
+  invitedStatus: string;
 };
 
 type ItemEventsJoiningProps = {
@@ -47,6 +52,9 @@ interface ChatProps {
 
 const Chat: FC<ChatProps> = ({typeEvents}) => {
   const [hostMenu, setHostMenu] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [messages, setMessages] = useState([]);
+  const [activeEvent, setActiveEvent] = useState<string>('h3xsZpHqcPVMTSW9dsL9');
   const styles = useStyles();
   const navigation = useAppNavigation();
 
@@ -153,27 +161,34 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     },
   ];
 
-  const t = []
-
-  const Item = ({title, message, image, online, story, inviteStatus}: ItemProps) => (
+  const Item = ({title, message, image, online, story, inviteStatus, messages, id, superInvite, invitedStatus}: ItemProps) => (
     <View style={styles.item}>
       <TouchableOpacity
         onPress={() => {
           // @ts-ignore
           navigation.navigate(chatCorrespondencePath, {
             screen: chatCorrespondencePath,
-            params: {image: image, title: title, online: online},
+            params: {
+              image: image,
+              title: title,
+              online: online,
+              messages: messages,
+              activeEvent: activeEvent,
+              id: id,
+              superInvite: superInvite,
+              invitedStatus: invitedStatus,
+            },
           });
         }}
         style={styles.wrapperItem}>
         <View>
-          <Image resizeMode="cover" style={[styles.imageUser, story && styles.story]} source={image} />
+          <Image resizeMode="cover" style={[styles.imageUser, story && styles.story]} source={{uri: image}} />
           {online && <View style={styles.greenCircle} />}
         </View>
         <View style={styles.wrapperItemElements}>
           <View style={styles.rowTextNameAndStatus}>
             <Text style={styles.textName}>
-              {title} <FlashField width={13} height={13} />
+              {title} {superInvite && <FlashField width={13} height={13} />}
             </Text>
             <View style={[handleCheckTypeInvitedStyles(inviteStatus)]}>
               <Text style={styles.textStatusInvite}>{handleCheckTypeInvitedText(inviteStatus)}</Text>
@@ -186,7 +201,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
         <TouchableOpacity>
           <ThreeDoths />
         </TouchableOpacity>
-        <Badge value={22} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />
+        {/*<Badge value={22} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />*/}
       </View>
     </View>
   );
@@ -302,23 +317,47 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     }
   };
 
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('messages')
+      .doc(activeEvent)
+      .onSnapshot(documentSnapshot => {
+        setMessages(documentSnapshot.data());
+        setLoading(false);
+      });
+
+    return () => subscriber();
+  }, [activeEvent, loading]);
+
+  if (loading) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       {!typeEvents ? (
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={DATA}
-          renderItem={({item}) => (
-            <Item
-              inviteStatus={item.inviteStatus}
-              story={item.story}
-              online={item.online}
-              title={item.title}
-              message={item.message}
-              image={item.image}
-            />
-          )}
-          keyExtractor={item => item.id}
+          data={[messages?.chats]}
+          renderItem={({item}) => {
+            console.log(item);
+            console.log(item?.messages[item?.messages?.length - 1]?.message);
+            return (
+              <Item
+                inviteStatus={item?.invitedStatus}
+                story={item?.story}
+                online={item?.online}
+                title={item?.name}
+                message={item?.messages[item?.messages?.length - 1]?.message}
+                messages={item?.messages}
+                image={messages?.avatarGuest}
+                superInvite={item?.superInvite}
+                invitedStatus={item?.invitedStatus}
+                id={item?.id}
+              />
+            );
+          }}
+          keyExtractor={(item, index) => index.toString()}
         />
       ) : (
         <FlatList

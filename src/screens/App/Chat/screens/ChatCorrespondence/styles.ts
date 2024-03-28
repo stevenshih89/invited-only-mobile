@@ -106,9 +106,11 @@ const useStyles = () => {
     senderContainer: {
       justifyContent: 'flex-start',
       alignItems: 'flex-start',
+      width: '85%',
     },
     receiverContainer: {
       justifyContent: 'flex-end',
+      width: '100%',
     },
     messageContent: {
       maxWidth: '100%',
@@ -159,6 +161,12 @@ const useStyles = () => {
       height: '100%',
       borderRadius: 12,
       paddingHorizontal: screenWidth / 23,
+    },
+    buttonSend: {
+      backgroundColor: lightGray5Color,
+      padding: 15,
+      marginLeft: screenWidth / 30,
+      borderRadius: 12,
     },
     keyboardAvoid: {
       flex: 1,
