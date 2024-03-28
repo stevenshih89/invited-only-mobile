@@ -106,9 +106,11 @@ const useStyles = () => {
     senderContainer: {
       justifyContent: 'flex-start',
       alignItems: 'flex-start',
+      width: '85%',
     },
     receiverContainer: {
       justifyContent: 'flex-end',
+      width: '100%',
     },
     messageContent: {
       maxWidth: '100%',

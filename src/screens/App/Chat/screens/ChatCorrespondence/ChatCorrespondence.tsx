@@ -51,6 +51,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
 
+  console.log('new Date()', new Date().toDateString())
+
   const handleInvitationApproved = () => (
     <View style={styles.wrapperInvitationApproved}>
       <Text style={styles.textInvitationApproved}>Invitation approved!</Text>
@@ -104,18 +106,18 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
   const ChatMessage = ({messageUser, userAvatar}: messageUserProps) => {
     const {message, userType, timestamp} = messageUser;
-    const containerStyle = userType === 'host' ? styles.senderContainer : styles.receiverContainer;
-    const textStyle = userType === 'host' ? styles.senderText : styles.receiverText;
+    const containerStyle = userType !== 'host' ? styles.senderContainer : styles.receiverContainer;
+    const textStyle = userType !== 'host' ? styles.senderText : styles.receiverText;
     return (
       <View style={[styles.messageContainer, containerStyle]}>
-        {userType === 'host' && <Image source={{uri: userAvatar}} style={styles.avatar} />}
+        {userType !== 'host' && <Image source={{uri: userAvatar}} style={styles.avatar} />}
         <View>
-          {userType === 'host' && <Text style={styles.textNameUserMessage}>{title}</Text>}
-          <View style={[{flexDirection: 'column'}, userType === 'host' && {alignItems: 'flex-end'}]}>
-            <View style={[styles.messageContent, userType === 'host' ? styles.isSenderTrue : styles.isSenderFalse]}>
+          {userType !== 'host' && <Text style={styles.textNameUserMessage}>{title}</Text>}
+          <View style={[{flexDirection: 'column'}, userType !== 'host' && {alignItems: 'flex-end'}]}>
+            <View style={[styles.messageContent, userType !== 'host' ? styles.isSenderTrue : styles.isSenderFalse]}>
               <Text style={textStyle}>{message}</Text>
             </View>
-            <Text style={[userType === 'host' && {marginLeft: 10}, styles.timeText]}>{moment(timestamp).format('h:mm A')}</Text>
+            <Text style={[userType !== 'host' && {marginLeft: 10}, styles.timeText]}>{moment(timestamp).format('h:mm A')}</Text>
           </View>
         </View>
       </View>
