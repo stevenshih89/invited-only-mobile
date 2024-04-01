@@ -54,6 +54,7 @@ type ItemProps = {
   image: any;
   numberBadge: number;
   date?: string;
+  activeEvent?: string;
   hour?: string;
   girlInvitation?: number | string;
 };
@@ -66,8 +67,8 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
 
-  const selectedChat = useChat((i: any) => i?.selectedChat);
-  const setChat = useChat((i: any) => i.setChat);
+  const selectedChat = useChat((i: any) => i?.activeEvent);
+  const setChat = useChat((i: any) => i.setActiveEvent);
 
   const {myEvents, setActiveEvent, activeEvent} = useContext(EventContext);
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
@@ -128,9 +129,15 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     },
   ];
 
-  const Item = ({title, filledTo, numberBadge, image, allPeople, date, hour, girlInvitation}: ItemProps) => (
-    <TouchableOpacity onPress={() => setEventStarting(true)} style={styles.eventButton}>
-      <View style={[styles.eventViewFlatList, {borderColor: numberBadge !== 0 ? whiteColor : lightGray5Color}]}>
+  const Item = ({title, filledTo, numberBadge, image, allPeople, date, hour, girlInvitation, activeEvent}: ItemProps) => (
+    <TouchableOpacity
+      onPress={() => {
+        setChat(`${activeEvent}`);
+        console.log('activeEvent header', activeEvent);
+        // setEventStarting(true);
+      }}
+      style={styles.eventButton}>
+      <View style={[styles.eventViewFlatList, {borderColor: activeEvent === selectedChat ? whiteColor : lightGray5Color}]}>
         <Image source={{uri: image}} style={styles.imageEvent} />
         {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
       </View>
@@ -175,33 +182,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const headerInsets = {
     paddingTop: insets.top,
   };
-
-  const DATA = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'Amazonico',
-      allPeople: 4,
-      filledTo: 3,
-      image: EventBG,
-      numberBadge: 22,
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Amazonico',
-      allPeople: 0,
-      filledTo: 0,
-      image: EventBG,
-      numberBadge: 12,
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      title: 'Iris',
-      allPeople: 4,
-      filledTo: 2,
-      image: EventBG,
-      numberBadge: 0,
-    },
-  ];
 
   const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | undefined) => {
     const isHost = userInfo?.accountType.toLowerCase() === 'host';
@@ -440,6 +420,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   horizontal={true}
                   renderItem={({item}) => (
                     <Item
+                      activeEvent={item.id}
                       filledTo={item.female}
                       allPeople={item.female + item.femaleFriend + item.male + item.maleFriend}
                       image={item.photos[0]?.image}

@@ -18,7 +18,6 @@ import FlashField from 'assets/images/icons/flash.svg';
 import SendIcon from 'assets/images/icons/send.svg';
 
 //import images
-import ImageBg from 'assets/images/app/join-event-bg.png';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 
@@ -51,8 +50,6 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
 
-  console.log('new Date()', new Date().toDateString())
-
   const handleInvitationApproved = () => (
     <View style={styles.wrapperInvitationApproved}>
       <Text style={styles.textInvitationApproved}>Invitation approved!</Text>
@@ -83,6 +80,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         .update({
           chats: {
             id: id,
+            avatar: image,
             invitedStatus: invitedStatus,
             name: title,
             superInvite: superInvite,
@@ -91,8 +89,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               {
                 id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
                 message: messageUser,
-                timestamp: new Date().toDateString(),
-                userType: 'host',
+                timestamp: new Date().getTime(),
+                userType: 'host', // change type user
               },
             ],
           },
