@@ -5,6 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import firestore from "@react-native-firebase/firestore";
 
 //import components
 import {AuthProvider, AuthContext} from 'contexts/AuthContext.tsx';
@@ -14,6 +15,7 @@ import LocalNotification from 'components/LocalNotification/LocalNotification.ts
 import {getFcmToken, registerListenerWithFCM} from 'helpers/fcmHelper.ts';
 import {EventProvider} from 'contexts/EventContext';
 import {EventsDateProvider} from 'contexts/EventsDate';
+import {useUser} from './store/userStore';
 
 const Main = () => {
   const [initializing, setInitializing] = useState<boolean>(true);
@@ -21,13 +23,24 @@ const Main = () => {
   const [onBoardingState, setOnboarding] = useState(false);
   const {onBoarding, user, setUser} = useContext(AuthContext);
 
+  const setUserData = useUser((i: any) => i?.setUser);
+
   const onAuthStateChanged = async (user: any) => {
-    setUser([user?._user?.uid]);
-    await AsyncStorage.setItem('uid', `${user?._user?.uid}`);
+    const uid = user?._user?.uid;
+    setUser([uid]);
+    await AsyncStorage.setItem('uid', `${uid}`);
     setAuthState(!!user);
     await getOnbordingState();
+    await firestore()
+      .collection('userInfo')
+      .doc(uid)
+      .get()
+      .then(res => {
+        console.log('user', res.data());
+        setUserData(res.data());
+      });
     if (initializing) {
-      setUser([`${user?._user?.uid}`]);
+      setUser([`${uid}`]);
       setInitializing(false);
       setAuthState(!!user);
     }

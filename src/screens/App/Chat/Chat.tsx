@@ -9,9 +9,6 @@ import {Badge} from '@rneui/themed';
 import {chatCorrespondencePath} from 'constants/pathLocations.ts';
 import ModalHostMenu from 'components/Modal/ModalHostMenu/ModalHostMenu.tsx';
 
-//import images
-import FakePhoto from 'assets/images/app/fake-photo.png';
-
 //import icons
 import FlashField from 'assets/images/icons/flash.svg';
 import ThreeDoths from 'assets/images/icons/more-white.svg';
@@ -41,6 +38,7 @@ type ItemEventsJoiningProps = {
   status: string;
   image: any;
   title: string;
+  activeEvent: string;
 };
 
 interface ChatProps {
@@ -60,25 +58,17 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const activeEvent = useChat((i: any) => i?.activeEvent);
 
   const handleBuildEventsData = () => {
-    let data: any[] = [];
-
     firestore()
       .collection('messages')
       .get()
       .then(i => {
         const chats = i?.docs?.map(j => j?.data());
-        console.log('all chats', chats);
-        console.log('myEvents', myEvents);
 
         myEvents?.map((events: any): void => {
-          console.log('events', events);
           chats?.map((chat: FirebaseFirestoreTypes.DocumentData, index: number): void => {
-            console.log('chat', chat);
-            console.log('chat?.activeEvent === events?.id', chat?.activeEvent === events?.id);
             if (chat?.activeEvent === events?.id) {
               // @ts-ignore
-              setDATAEventsJoining((prevState: never[]): void => [
-                ...prevState,
+              setDATAEventsJoining((): void => [
                 {
                   id: index,
                   chats: chat?.activeEvent === events?.id ? chat?.chats : [],
@@ -86,89 +76,15 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   data: events?.date,
                   status: events?.activeType,
                   image: events?.photos[0]?.image,
-                  title: events?.placeName,
+                  title: events?.name,
+                  activeEvent: chat?.activeEvent,
                 },
               ]);
             }
           });
         });
       });
-
-    console.log('data', data);
   };
-
-  // const DATAEventsJoining = [
-  //   {
-  //     id: '1',
-  //     chats: [
-  //       {
-  //         id: '2',
-  //         image: FakePhoto,
-  //         name: 'Simon',
-  //         lastMessage: 'Hello ! Nazrul How are you?',
-  //       },
-  //       {
-  //         id: '3',
-  //         image: FakePhoto,
-  //         name: 'Alex',
-  //         lastMessage: 'Hello! Nazrul How are you?',
-  //       },
-  //     ],
-  //     girlInvitation: 2,
-  //     data: '12.11.2023',
-  //     status: 'Active',
-  //     image: FakeBg,
-  //     title: 'Nammos Dubai',
-  //   },
-  //   {
-  //     id: '4',
-  //     chats: [
-  //       {
-  //         id: '3',
-  //         image: FakeGirl3,
-  //         name: 'Alex',
-  //         lastMessage: 'Hello ! Nazrul How are you?',
-  //       },
-  //     ],
-  //     girlInvitation: 2,
-  //     data: '12.11.2023',
-  //     status: 'Full',
-  //     image: FakeBg,
-  //     title: 'Nammos Dubai',
-  //   },
-  //   {
-  //     id: '5',
-  //     chats: [
-  //       {
-  //         id: '4',
-  //         image: FakePhoto,
-  //         name: 'Simon',
-  //         lastMessage: 'Hello ! Nazrul How are you?',
-  //       },
-  //     ],
-  //     girlInvitation: 2,
-  //     data: '12.11.2023',
-  //     status: 'Cancelled',
-  //     image: FakeBg,
-  //     title: 'Nammos Dubai',
-  //   },
-  //   {
-  //     id: '6',
-  //     chats: [
-  //       {
-  //         id: '5',
-  //         image: FakePhoto,
-  //         name: 'Simon',
-  //         lastMessage: 'Hello ! Nazrul How are you?',
-  //       },
-  //     ],
-  //     girlInvitation: 2,
-  //     data: '12.11.2023',
-  //     status: 'Starts',
-  //     image: FakeBg,
-  //     title: 'Nammos Dubai',
-  //   },
-  // ];
 
   const Item = ({title, message, image, online, story, inviteStatus, messages, id, superInvite, invitedStatus}: ItemProps) => (
     <View style={styles.item}>
@@ -215,7 +131,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     </View>
   );
 
-  const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data}: ItemEventsJoiningProps) => {
+  const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data, activeEvent}: ItemEventsJoiningProps) => {
     const statusColor = handleCheckStatusStyles(status);
     return (
       <View style={styles.itemEventsJoining}>
@@ -226,7 +142,10 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               <View style={styles.fdrAiC}>
                 <Text style={styles.title}>{title}</Text>
                 <View style={{backgroundColor: statusColor, borderRadius: 4}}>
-                  <Text style={[styles.textStatus]}>{status}</Text>
+                  <View style={[handleCheckTypeInvitedStyles(status)]}>
+                    <Text style={styles.textStatusInvite}>{handleCheckTypeInvitedText(status)}</Text>
+                  </View>
+                  {/*<Text style={[styles.textStatus]}>{status}</Text>*/}
                 </View>
               </View>
               <View style={{flexDirection: 'row', marginTop: 10}}>
@@ -248,7 +167,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
         <ModalHostMenu
           girlInvitation={girlInvitation}
           data={data}
-          image={FakePhoto}
+          image={image}
           imageBg={image}
           name={title}
           setHostMenu={setHostMenu}
@@ -260,7 +179,16 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               // @ts-ignore
               navigation.navigate(chatCorrespondencePath, {
                 screen: chatCorrespondencePath,
-                params: {image: i?.image, title: i?.name, online: false},
+                params: {
+                  image: i?.avatar,
+                  title: i?.name,
+                  online: false,
+                  messages: i?.messages,
+                  activeEvent: activeEvent,
+                  id: i?.id,
+                  superInvite: false,
+                  invitedStatus: i?.invitedStatus,
+                },
               });
             }}
             key={i?.id}
@@ -272,7 +200,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               </View>
               <View style={{marginLeft: 15}}>
                 <Text style={styles.textNameChat}>{i?.name}</Text>
-                <Text style={styles.textDescription}>{i?.lastMessage}</Text>
+                <Text style={styles.textDescription}>{i?.messages[0] && i?.messages[0]?.message}</Text>
               </View>
             </View>
             <ChatIcon width={18} height={18} />
@@ -346,6 +274,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   return (
     <View style={styles.container}>
+      {console.log('messages', messages?.chats?.messages)}
       {!loading ? (
         !typeEvents ? (
           <FlatList
@@ -370,36 +299,30 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             keyExtractor={(item, index) => index.toString()}
           />
         ) : (
-          <>
-            {console.log('DATAEventsJoining', DATAEventsJoining)}
-            <FlatList
-              data={DATAEventsJoining}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{marginBottom: 20}}
-              ListEmptyComponent={() => (
-                <View style={{height: '100%', marginTop: 104}}>
-                  <Text style={styles.textYouNeedToJoin}>You need to join an event</Text>
-                  <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
-                  <Button buttonStyle={{marginTop: 34}} title="Join event" />
-                </View>
-              )}
-              renderItem={({item}) => (
-                  <>
-                    {console.log('ItemEventsJoining', item)}
-                    <ItemEventsJoining
-                        image={item.image}
-                        title={item.title}
-                        chats={item.chats}
-                        data={item.data}
-                        girlInvitation={item.girlInvitation}
-                        status={item.status}
-                    />
-                  </>
-
-              )}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </>
+          <FlatList
+            data={DATAEventsJoining}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{marginBottom: 20}}
+            ListEmptyComponent={() => (
+              <View style={{height: '100%', marginTop: 104}}>
+                <Text style={styles.textYouNeedToJoin}>You need to join an event</Text>
+                <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
+                <Button buttonStyle={{marginTop: 34}} title="Join event" />
+              </View>
+            )}
+            renderItem={({item}) => (
+              <ItemEventsJoining
+                image={item.image}
+                title={item.title}
+                chats={item.chats}
+                data={item.data}
+                activeEvent={item.activeEvent}
+                girlInvitation={item.girlInvitation}
+                status={item.status}
+              />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
         )
       ) : null}
     </View>

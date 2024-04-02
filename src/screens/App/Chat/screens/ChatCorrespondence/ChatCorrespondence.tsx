@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {View, Text, Image, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView} from 'react-native';
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NavigationProp} from '@react-navigation/native';
@@ -20,6 +20,8 @@ import SendIcon from 'assets/images/icons/send.svg';
 //import images
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
+import {AuthContext} from 'contexts/AuthContext.tsx';
+import {useUser} from '../../../../../store/userStore';
 
 interface messageUserProps {
   message: {
@@ -39,13 +41,13 @@ interface NavigationParams {
 
 const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [messageUser, setMessageUser] = useState<string>('');
-  const [messages, setMessages] = useState<string>([]);
+  const [messages, setMessages] = useState([]);
+  const [allChats, setAllChats] = useState([]);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
   const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
   let {image, title, online, activeEvent, id, superInvite, invitedStatus} = route?.params;
 
-  console.log('messages', messages);
-  console.log('route?.params', route?.params);
+  const userData = useUser((i: any) => i?.user);
 
   const styles = useStyles();
   const insets = useSafeAreaInsets();
@@ -74,26 +76,22 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       if (!messageUser) {
         return;
       }
+
+      let updateData = {
+        id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
+        message: messageUser,
+        timestamp: new Date().getTime(),
+        userType: `${userData?.accountType}`,
+      };
+
+      const findChat = allChats?.filter(i => i?.id === id);
+      findChat[0]?.messages.push(updateData);
+
       await firestore()
         .collection('messages')
         .doc(`${activeEvent}`)
         .update({
-          chats: {
-            id: id,
-            avatar: image,
-            invitedStatus: invitedStatus,
-            name: title,
-            superInvite: superInvite,
-            messages: [
-              ...messages,
-              {
-                id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
-                message: messageUser,
-                timestamp: new Date().getTime(),
-                userType: 'host', // change type user
-              },
-            ],
-          },
+          chats: [...allChats],
         });
 
       setMessageUser('');
@@ -127,8 +125,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       .collection('messages')
       .doc(activeEvent)
       .onSnapshot(documentSnapshot => {
-        const data = documentSnapshot.data()?.chats?.messages;
-        setMessages(data);
+        const data = documentSnapshot.data()?.chats;
+        const findChat = data?.filter(j => j?.id === id);
+        console.log('findChat', findChat);
+        console.log('data', data);
+        setAllChats(data);
+        setMessages(findChat[0]?.messages);
       });
 
     return () => subscriber();

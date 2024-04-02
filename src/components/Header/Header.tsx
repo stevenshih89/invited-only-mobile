@@ -69,6 +69,8 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 
   const selectedChat = useChat((i: any) => i?.activeEvent);
   const setChat = useChat((i: any) => i.setActiveEvent);
+  const eventFilter = useChat((i: any) => i?.eventFilter);
+  const setEventFilter = useChat((i: any) => i?.setEventFilter);
 
   const {myEvents, setActiveEvent, activeEvent} = useContext(EventContext);
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
@@ -83,9 +85,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     if (user) {
       try {
         const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
-        // const events = await firestore().collection('Events').get();
 
-        // console.log('events', events.docs);
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
@@ -163,8 +163,8 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   );
 
   const ItemEventsJoining = ({title, numberBadge, image, date}: ItemProps) => (
-    <TouchableOpacity style={styles.eventButton}>
-      <View style={[styles.eventViewFlatList, {borderColor: numberBadge !== 0 ? whiteColor : lightGray5Color}]}>
+    <TouchableOpacity onPress={() => setEventFilter(title)} style={styles.eventButton}>
+      <View style={[styles.eventViewFlatList, {borderColor: eventFilter === title ? whiteColor : lightGray5Color}]}>
         <View style={styles.imageEventsJoining}>
           <CalendarIcon width={26} height={26} />
         </View>
