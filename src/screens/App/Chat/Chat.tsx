@@ -76,7 +76,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   data: events?.date,
                   status: events?.activeType,
                   image: events?.photos[0]?.image,
-                  title: events?.name,
+                  title: events?.placeName,
                   activeEvent: chat?.activeEvent,
                 },
               ]);

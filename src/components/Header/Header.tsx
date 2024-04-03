@@ -426,7 +426,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       image={item.photos[0]?.image}
                       girlInvitation={item.male + item.maleFriend}
                       numberBadge={item.numberBadge}
-                      title={item.name}
+                      title={item.placeName}
                       date={item.date}
                       hour={item.hour}
                     />

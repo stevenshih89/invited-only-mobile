@@ -79,7 +79,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   return (
     // @ts-ignore
-    <ImageBackground source={{uri: photos?.[active]}} resizeMode="cover" imageStyle={styles.imageStyle} style={styles.container}>
+    <ImageBackground
+      source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
+      resizeMode="cover"
+      imageStyle={styles.imageStyle}
+      style={styles.container}>
       <LinearGradient
         colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
         start={{x: 0, y: 1}}
@@ -130,10 +134,10 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   <HomeIcon />
                   <Text style={styles.textInfoTags}>From {homeAddress}</Text>
                 </View>
-                <View style={[styles.infoTags, {marginTop: screenHeight / 190}]}>
-                  <LocationIcon />
-                  <Text style={styles.textInfoTags}>2 kilometers away</Text>
-                </View>
+                {/*<View style={[styles.infoTags, {marginTop: screenHeight / 190}]}>*/}
+                {/*  <LocationIcon />*/}
+                {/*  <Text style={styles.textInfoTags}>2 kilometers away</Text>*/}
+                {/*</View>*/}
               </View>
               {isShowCardButtons && (
                 <View style={styles.wrapperRightButton}>

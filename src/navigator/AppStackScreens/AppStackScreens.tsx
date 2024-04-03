@@ -158,6 +158,19 @@ const CommonStackScreen = () => {
         component={EventActiveInfo}
       />
       <CommonStack.Screen
+        key={myProfileViewPath}
+        name={myProfileViewPath}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerTitle: 'User profile',
+          headerShown: true,
+        }}
+        component={MyProfileView}
+      />
+      <CommonStack.Screen
         key={settingsPath}
         name={settingsPath}
         options={{

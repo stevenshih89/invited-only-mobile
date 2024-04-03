@@ -22,6 +22,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {profilePath} from 'constants/pathLocations';
 import {EventContext} from 'contexts/EventContext';
+import {useUser} from '../../../store/userStore';
 
 const Requests: FC = (): ReactElement => {
   const POSITIVE = 'positive';
@@ -29,6 +30,7 @@ const Requests: FC = (): ReactElement => {
   const styles = useStyles();
 
   const navigation = useAppNavigation();
+  const user = useUser((i: any) => i?.user);
 
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
@@ -39,69 +41,6 @@ const Requests: FC = (): ReactElement => {
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
   const [userInfo, setUserInfo] = useState<any>({});
-
-  const [loading, setLoading] = useState<boolean>(false);
-
-  // const fetchRequests = async () => {
-  //   const user = auth().currentUser;
-  //   try {
-  //     const querySnapshot = await firestore().collection('requestsForHost').where('forUserUid', '==', user?.uid).get();
-
-  //     const requests = querySnapshot.docs.map(doc => ({
-  //       id: doc.id,
-  //       ...doc.data(),
-  //     }));
-
-  //     setRequestsForHost(requests);
-  //     return requests;
-  //   } catch (error: any) {
-  //     Alert.alert('Error', error.message || 'Something went wrong');
-  //   }
-  // };
-
-  const fetchHostRequests = async () => {
-    const user = auth().currentUser;
-    if (user && activeEvent) {
-      try {
-        const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
-        if (querySnapshot.exists) {
-          setRequestsForHost(querySnapshot.data()?.requestsList);
-        } else {
-          setRequestsForHost([]);
-        }
-      } catch (error: any) {
-        Alert.alert('Error', error.message || 'Something went wrong');
-      }
-    }
-  };
-
-  const fetchUserInfo = async () => {
-    setLoading(true);
-    const user = auth().currentUser;
-
-    if (user) {
-      try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
-        if (userInfoDoc.exists) {
-          setUserInfo(userInfoDoc.data());
-        }
-      } catch (error: any) {
-        Alert.alert('Error', error.message || 'Something went wrong');
-      }
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchHostRequests();
-    }, [activeEvent]),
-  );
-
   const [dataForGuest, setDataForGuest] = useState([
     {
       id: 0,
@@ -167,6 +106,70 @@ const Requests: FC = (): ReactElement => {
     },
   ]);
 
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // const fetchRequests = async () => {
+  //   const user = auth().currentUser;
+  //   try {
+  //     const querySnapshot = await firestore().collection('requestsForHost').where('forUserUid', '==', user?.uid).get();
+
+  //     const requests = querySnapshot.docs.map(doc => ({
+  //       id: doc.id,
+  //       ...doc.data(),
+  //     }));
+
+  //     setRequestsForHost(requests);
+  //     return requests;
+  //   } catch (error: any) {
+  //     Alert.alert('Error', error.message || 'Something went wrong');
+  //   }
+  // };
+
+  const fetchHostRequests = async () => {
+    const user = auth().currentUser;
+    if (user && activeEvent) {
+      try {
+        const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
+        console.log('querySnapshot', querySnapshot.data());
+        if (querySnapshot.exists) {
+          setRequestsForHost(querySnapshot.data());
+        } else {
+          setRequestsForHost([]);
+        }
+      } catch (error: any) {
+        Alert.alert('Error', error.message || 'Something went wrong');
+      }
+    }
+  };
+
+  const fetchUserInfo = async () => {
+    setLoading(true);
+    const user = auth().currentUser;
+
+    if (user) {
+      try {
+        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        if (userInfoDoc.exists) {
+          setUserInfo(userInfoDoc.data());
+        }
+      } catch (error: any) {
+        Alert.alert('Error', error.message || 'Something went wrong');
+      }
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchHostRequests();
+    }, [activeEvent]),
+  );
+
+
   const isHost = userInfo?.accountType?.toLowerCase() === 'host';
 
   const handleSwipeGuestCard = (id: number, status: typeof POSITIVE | typeof NEGATIVE) => {
@@ -181,25 +184,26 @@ const Requests: FC = (): ReactElement => {
 
   const list = isHost ? requestsForHost : dataForGuest;
 
+  console.log('list', list);
   if (loading && !list?.length) {
     return <ActivityIndicator style={styles.container} />;
   }
 
   return (
     <View style={styles.container}>
-      {list?.length ? (
+      {list?.requestsList?.length ? (
         <FlatList
           // @ts-ignore
-          data={list}
+          data={list?.requestsList}
           numColumns={2}
           showsVerticalScrollIndicator={false}
           keyExtractor={({uid, name}) => `${uid}${name}`}
           contentContainerStyle={styles.listContentContainer}
-          extraData={list}
+          extraData={list?.requestsList}
           ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
           renderItem={({item}) =>
             isHost ? (
-              <ItemRequestHost item={item} handleSwipeHostCard={() => {}} />
+              <ItemRequestHost list={list} item={item} />
             ) : (
               // @ts-ignore
               <ItemRequestGuest item={item} handleSwipeGuestCard={handleSwipeGuestCard} />

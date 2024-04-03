@@ -21,22 +21,22 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventEditingPath} from 'constants/pathLocations';
 import {useEffect, useState} from 'react';
 import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
+import {useUser} from '../../../../store/userStore';
 
-const EventActiveInfo = () => {
-  const maxGuests = 10;
-  const currentGuests = 5;
-  const invitedGuests = [
-    {id: 0, name: 'Simon', image: FakePhoto},
-    {id: 1, name: 'Frank', image: FakePhoto},
-    {id: 2, name: 'Lola', image: FakePhoto},
-  ];
-  const acceptedGuests = [
-    {id: 0, name: 'Simon', image: FakePhoto},
-    {id: 1, name: 'Frank', image: FakePhoto},
-  ];
-  const rejectedGuests = [{id: 1, name: 'Frank', image: FakePhoto}];
+const EventActiveInfo = ({navigation, route}) => {
+  const {list} = route?.params;
+  const {usersList, photos, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name} = list;
+
+  console.log('list event info', list);
+
+  const invitedGuests = usersList?.filter(i => i?.status === 'invited');
+  const acceptedGuests = usersList?.filter(i => i?.status === 'accepted');
+  const rejectedGuests = usersList?.filter(i => i?.status === 'notAccepted');
+
+  const maxGuests = invitedGuests?.length + acceptedGuests?.length + rejectedGuests?.length;
+  const currentGuests = acceptedGuests?.length;
+
   const [isVisibleCancelModal, setIsVisibleCancelModal] = useState(false);
-  const navigation = useAppNavigation();
 
   useEffect(() => {
     navigation.setOptions({
@@ -94,7 +94,7 @@ const EventActiveInfo = () => {
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <ImageBackground
-                          source={item.image}
+                          source={{uri: item.userPhoto}}
                           style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
                           imageStyle={{width: 50, height: 50, borderRadius: 200}}
                           resizeMode="cover">
@@ -131,7 +131,7 @@ const EventActiveInfo = () => {
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <ImageBackground
-                          source={item.image}
+                          source={{uri: item.userPhoto}}
                           style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
                           imageStyle={{width: 50, height: 50, borderRadius: 200}}
                           resizeMode="cover">
@@ -167,7 +167,7 @@ const EventActiveInfo = () => {
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <ImageBackground
-                          source={item.image}
+                          source={{uri: item.userPhoto}}
                           style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
                           imageStyle={{width: 50, height: 50, borderRadius: 200}}
                           resizeMode="cover">
@@ -198,41 +198,42 @@ const EventActiveInfo = () => {
               </Text>
               <View style={{flex: 1, marginBottom: 20}}>
                 <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812), marginBottom: 6}}>Place name</Text>
-                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>Amazonio</Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{placeName}</Text>
               </View>
               <View style={{flex: 1, marginBottom: 20}}>
                 <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812), marginBottom: 6}}>Event name</Text>
-                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>Dubai state</Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{name}</Text>
               </View>
               <View style={{flex: 1, marginBottom: 20}}>
                 <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812), marginBottom: 6}}>Event description</Text>
-                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text
-                  ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has
-                </Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{description}</Text>
               </View>
               <View>
                 <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                   <CalendarIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>12.11.2023</Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{date}</Text>
                 </View>
                 <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                   <ClockIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>12:00</Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{hour}</Text>
                 </View>
                 <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                   <MapIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>123 ASd12vfsdf</Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{address}</Text>
                 </View>
                 <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                   <PeopleIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>2x Girl</Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
+                    {female + femaleFriend}x Girl
+                  </Text>
                 </View>
               </View>
-              <Image source={EventBcg} style={{width: '100%', borderRadius: 20, marginBottom: 34}} resizeMode="cover" />
-              <Image source={EventBcg} style={{width: '100%', borderRadius: 20}} resizeMode="cover" />
+              {photos?.map((i, index) => (
+                <Image source={{uri: i?.image}} style={{width: '100%', height: 178, borderRadius: 20, marginBottom: 34}} resizeMode="cover" />
+              ))}
             </View>
             <TouchableOpacity
+              onPress={() => setIsVisibleCancelModal(true)}
               activeOpacity={0.7}
               style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%', paddingTop: 34}}
               hitSlop={{bottom: 15}}>

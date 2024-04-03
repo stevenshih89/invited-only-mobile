@@ -11,9 +11,17 @@ import {Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {lightRed1Color, whiteColor} from 'constants/colors';
 import {calculateAge} from 'helpers/calculateAge';
+import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
+import {useUser} from '../../../store/userStore';
+import {showToast} from 'helpers/showToast.ts';
+import firestore from '@react-native-firebase/firestore';
 
-const ItemRequestHost = ({item, handleSwipeHostCard}: any) => {
+const ItemRequestHost = ({item, list}: any) => {
   const styles = useStyles();
+  const navigation = useAppNavigation();
+
+  const userData = useUser((i: any) => i?.user);
 
   const OverlayRight = () => {
     return (
@@ -51,6 +59,54 @@ const ItemRequestHost = ({item, handleSwipeHostCard}: any) => {
     );
   };
 
+  const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
+    const userAccepted = {
+      gender: item?.gender,
+      name: item?.name,
+      status: 'accepted',
+      superInvite: false,
+      uid: item?.uid,
+      userPhoto: item?.userPhoto,
+    };
+
+    try {
+      const updateUsersList: any = [...list?.usersList, userAccepted];
+      const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
+
+      await firestore().collection('Events').doc(list?.id).update({
+        usersList: updateUsersList,
+        requestsList: updateRequestsList,
+      });
+      showToast('success', '', 'The request has been confirmed');
+    } catch (e) {
+      console.log(e);
+      showToast('cancel', '', "There's been an error");
+    }
+  };
+
+  const handleSwipeHostCardReject = async (item: any): Promise<void> => {
+    try {
+      const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
+      await firestore().collection('Events').doc(list?.id).update({
+        requestsList: updateRequestsList,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const goToEventInfo = () => {
+    //eventActiveInfoPath
+    //eventInfoPath
+    //myProfileViewPath
+    navigation.navigate(commonStackPath, {
+      screen: myProfileViewPath,
+      params: {
+        uid: item?.uid,
+      },
+    });
+  };
+
   const age = calculateAge(item?.date);
 
   return (
@@ -60,8 +116,8 @@ const ItemRequestHost = ({item, handleSwipeHostCard}: any) => {
         cardWidth="100%"
         // @ts-ignore
         cardHeight="100%"
-        onSwipedRight={() => handleSwipeHostCard(item.id)}
-        onSwipedLeft={() => handleSwipeHostCard(item.id)}
+        onSwipedRight={() => handleSwipeHostCardInvite(item)}
+        onSwipedLeft={() => handleSwipeHostCardReject(item)}
         OverlayLabelRight={OverlayRight}
         OverlayLabelLeft={OverlayLeft}
         disableBottomSwipe={true}
@@ -85,7 +141,7 @@ const ItemRequestHost = ({item, handleSwipeHostCard}: any) => {
               style={styles.linearGradient}
               start={{x: 0, y: 0}}
               end={{x: 0, y: 1}}>
-              <TouchableOpacity activeOpacity={0.7} style={styles.buttonContainer}>
+              <TouchableOpacity onPress={() => goToEventInfo()} activeOpacity={0.7} style={styles.buttonContainer}>
                 <View style={styles.nameContainer}>
                   <Text style={styles.nameText}>{item?.name}</Text>
                   <Text style={styles.ageText}>{age}</Text>
@@ -93,14 +149,14 @@ const ItemRequestHost = ({item, handleSwipeHostCard}: any) => {
                 <View style={styles.locationContainer}>
                   <View style={styles.locationRow}>
                     <Home height={12} />
-                    <Text style={styles.locationText}>{item?.address}</Text>
+                    <Text style={styles.locationText}>From {item?.address}</Text>
                   </View>
                   <ArrowRight height={12} />
                 </View>
-                {/* <View style={styles.distanceContainer}>
-                  <Location height={12} />
-                  <Text style={styles.distanceText}>{`${item?.distance}`}</Text>
-                </View> */}
+                {/* <View style={styles.distanceContainer}>*/}
+                {/*  <Location height={12} />*/}
+                {/*  <Text style={styles.distanceText}>{`${item?.distance}`}</Text>*/}
+                {/*</View>*/}
               </TouchableOpacity>
             </LinearGradient>
           </View>

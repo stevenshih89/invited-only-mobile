@@ -31,7 +31,7 @@ interface MyProfileViewProps {
   setModalVisible?: Dispatch<SetStateAction<boolean>>;
 }
 
-const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible, isShowEditButton = true, isShowInstagramPhotos = true}) => {
+const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible, isShowEditButton = true, isShowInstagramPhotos = true, route}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>({});
   const [photosList, setPhotosList] = useState<[]>([]);
@@ -47,9 +47,12 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
     const fetchUserInfo = async () => {
       setLoading(true);
       const user = auth().currentUser;
+      const uid = route?.params?.uid;
       if (user) {
         try {
-          const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+          const userUid = uid !== undefined ? uid : user.uid;
+          console.log('userUid', userUid);
+          const userInfoDoc = await firestore().collection('userInfo').doc(userUid).get();
 
           if (userInfoDoc.exists) {
             setUserInfo(userInfoDoc.data());
@@ -91,6 +94,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
               isShowWantsJoin={false}
               isShowInvitesTooltip={false}
               name={userInfo?.name}
+              homeAddress={userInfo?.homeAddress}
               age={userInfo?.showAge ? userAge : ''}
             />
             {isShowEditButton && <Button title="Edit" buttonStyle={{marginTop: 20}} onPress={goToProfileEditing} />}
