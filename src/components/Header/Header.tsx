@@ -37,6 +37,8 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {EventsDate} from 'contexts/EventsDate';
 import {useChat} from '../../store/chatStore';
+import {useUser} from '../../store/userStore';
+import {useRequest} from '../../store/requestsStore';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -70,7 +72,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const selectedChat = useChat((i: any) => i?.activeEvent);
   const setChat = useChat((i: any) => i.setActiveEvent);
   const eventFilter = useChat((i: any) => i?.eventFilter);
+  const requestFilter = useRequest((i: any) => i?.requestFilter);
   const setEventFilter = useChat((i: any) => i?.setEventFilter);
+  const setRequestFilter = useRequest((i: any) => i?.setRequestFilter);
 
   const {myEvents, setActiveEvent, activeEvent} = useContext(EventContext);
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
@@ -129,6 +133,27 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     },
   ];
 
+  const DATARequestGuest = [
+    {
+      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+      title: 'All',
+      allPeople: 4,
+      filledTo: 3,
+      image: CalendarIcon,
+      numberBadge: 22,
+      date: '12.12.12',
+    },
+    {
+      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+      title: 'New',
+      allPeople: 0,
+      filledTo: 0,
+      image: EventBG,
+      numberBadge: 0,
+      date: '12.12.12',
+    },
+  ];
+
   const Item = ({title, filledTo, numberBadge, image, allPeople, date, hour, girlInvitation, activeEvent}: ItemProps) => (
     <TouchableOpacity
       onPress={() => {
@@ -165,6 +190,18 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const ItemEventsJoining = ({title, numberBadge, image, date}: ItemProps) => (
     <TouchableOpacity onPress={() => setEventFilter(title)} style={styles.eventButton}>
       <View style={[styles.eventViewFlatList, {borderColor: eventFilter === title ? whiteColor : lightGray5Color}]}>
+        <View style={styles.imageEventsJoining}>
+          <CalendarIcon width={26} height={26} />
+        </View>
+      </View>
+      <Text style={styles.textButton}>{title}</Text>
+      <ModalEventRemindes eventStarting={eventStarting} setEventStarting={setEventStarting} time="24h" image={image} city={title} date={date} />
+    </TouchableOpacity>
+  );
+
+  const ItemRequests = ({title, numberBadge, image, date}: ItemProps) => (
+    <TouchableOpacity onPress={() => setRequestFilter(title)} style={styles.eventButton}>
+      <View style={[styles.eventViewFlatList, {borderColor: requestFilter === title ? whiteColor : lightGray5Color}]}>
         <View style={styles.imageEventsJoining}>
           <CalendarIcon width={26} height={26} />
         </View>
@@ -345,7 +382,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       case 'profile':
         return null;
       case 'request':
-        return (
+        return isHost ? (
           <ScrollView horizontal scrollEnabled={!!myEvents?.length} contentContainerStyle={{marginVertical: screenHeight / 50}}>
             <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
               <View style={styles.eventView}>
@@ -394,6 +431,23 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               );
             })}
           </ScrollView>
+        ) : (
+          <FlatList
+            data={DATARequestGuest}
+            horizontal={true}
+            style={{marginTop: 17, marginBottom: 25}}
+            renderItem={({item}) => (
+              <ItemRequests
+                filledTo={item.filledTo}
+                allPeople={item.allPeople}
+                image={item.image}
+                numberBadge={item.numberBadge}
+                title={item.title}
+                date={item.date}
+              />
+            )}
+            keyExtractor={item => item.id}
+          />
         );
       case 'chat':
         return (

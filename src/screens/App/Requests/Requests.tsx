@@ -1,12 +1,6 @@
 import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
 import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
 
-//import images
-import ManFace from 'assets/images/auth/man-face.png';
-import RequestPlace1 from 'assets/images/app/requst-place-1.png';
-import RequestPlace2 from 'assets/images/app/requst-place-2.png';
-import ManFace2 from 'assets/images/app/request-man.png';
-
 //import components
 import useStyles from './styles';
 import {whiteColor} from 'constants/colors';
@@ -15,7 +9,6 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import ItemRequestGuest from './ItemRequestGuest';
 import ItemRequestHost from './ItemRequestHost';
-import Toast from 'react-native-toast-message';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
@@ -23,107 +16,22 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {profilePath} from 'constants/pathLocations';
 import {EventContext} from 'contexts/EventContext';
 import {useUser} from '../../../store/userStore';
+import {useRequest} from '../../../store/requestsStore';
 
 const Requests: FC = (): ReactElement => {
-  const POSITIVE = 'positive';
-  const NEGATIVE = 'negative';
   const styles = useStyles();
 
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
+  const requestFilter = useRequest((i: any) => i?.requestFilter);
 
-  const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
-
-  const listOfHosts = [
-    {id: 0, name: 'Simon', image: ManFace},
-    {id: 1, name: 'Frank', image: ManFace2},
-  ];
+  const {activeEvent} = useContext(EventContext);
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
   const [userInfo, setUserInfo] = useState<any>({});
-  const [dataForGuest, setDataForGuest] = useState([
-    {
-      id: 0,
-      host: listOfHosts[0],
-      location: 'Nammos Dubai',
-      date: 2007000000012,
-      invitations: {
-        gender: 'Girl',
-        count: 3,
-      },
-      isSuperInvite: true,
-      name: 'Simon1',
-      image: RequestPlace1,
-    },
-    {
-      id: 1,
-      host: listOfHosts[1],
-      location: 'Test text',
-      date: 2007000000012,
-      invitations: {
-        gender: 'Girl',
-        count: 2,
-      },
-      name: 'Simon2',
-      image: RequestPlace2,
-    },
-    {
-      id: 2,
-      host: listOfHosts[0],
-      location: 'Nammos Dubai',
-      date: 2007000000012,
-      invitations: {
-        gender: 'Girl',
-        count: 3,
-      },
-      isSuperInvite: true,
-      name: 'Simon3',
-      image: RequestPlace1,
-    },
-    {
-      id: 3,
-      host: listOfHosts[1],
-      location: 'Test text',
-      date: 2007000000012,
-      invitations: {
-        gender: 'Girl',
-        count: 2,
-      },
-      name: 'Simon4',
-      image: RequestPlace2,
-    },
-    {
-      id: 4,
-      host: listOfHosts[1],
-      location: 'Test text',
-      date: 2007000000012,
-      invitations: {
-        gender: 'Girl',
-        count: 2,
-      },
-      name: 'Simon5',
-      image: RequestPlace2,
-    },
-  ]);
+  const [dataForGuest, setDataForGuest] = useState([]);
 
   const [loading, setLoading] = useState<boolean>(false);
-
-  // const fetchRequests = async () => {
-  //   const user = auth().currentUser;
-  //   try {
-  //     const querySnapshot = await firestore().collection('requestsForHost').where('forUserUid', '==', user?.uid).get();
-
-  //     const requests = querySnapshot.docs.map(doc => ({
-  //       id: doc.id,
-  //       ...doc.data(),
-  //     }));
-
-  //     setRequestsForHost(requests);
-  //     return requests;
-  //   } catch (error: any) {
-  //     Alert.alert('Error', error.message || 'Something went wrong');
-  //   }
-  // };
 
   const fetchHostRequests = async () => {
     const user = auth().currentUser;
@@ -136,6 +44,32 @@ const Requests: FC = (): ReactElement => {
         } else {
           setRequestsForHost([]);
         }
+      } catch (error: any) {
+        Alert.alert('Error', error.message || 'Something went wrong');
+      }
+    }
+  };
+
+  const filterByUid = (array, uid) => {
+    return array?.filter(item => {
+      if (Array?.isArray(item?.requestsList)) {
+        return item?.requestsList?.some(request => request?.uid === uid);
+      } else {
+        return false;
+      }
+    });
+  };
+
+  const fetchGuestRequests = async () => {
+    const user = auth().currentUser;
+    if (user && activeEvent) {
+      try {
+        const querySnapshot = await firestore().collection('Events').get();
+        const data = querySnapshot?.docs?.map(i => i?.data());
+        console.log('filter', filterByUid(data, user?.uid));
+        const filterUid = filterByUid(data, user?.uid);
+        console.log('filterUid', filterUid);
+        setDataForGuest(filterUid);
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
@@ -159,54 +93,42 @@ const Requests: FC = (): ReactElement => {
     setLoading(false);
   };
 
+  const isHost = userInfo?.accountType?.toLowerCase() === 'host';
+
   useEffect(() => {
     fetchUserInfo();
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      fetchHostRequests();
-    }, [activeEvent]),
+      isHost ? fetchHostRequests() : fetchGuestRequests();
+    }, [activeEvent, requestFilter]),
   );
-
-
-  const isHost = userInfo?.accountType?.toLowerCase() === 'host';
-
-  const handleSwipeGuestCard = (id: number, status: typeof POSITIVE | typeof NEGATIVE) => {
-    const toastText = status === POSITIVE ? 'You accepted invitation' : 'You rejected invitation';
-    Toast.show({
-      type: 'success',
-      text1: toastText,
-    });
-    const newData = dataForGuest.filter(item => item.id !== id);
-    setDataForGuest(newData);
-  };
 
   const list = isHost ? requestsForHost : dataForGuest;
 
-  console.log('list', list);
-  if (loading && !list?.length) {
+  if (loading && !list) {
     return <ActivityIndicator style={styles.container} />;
   }
 
   return (
     <View style={styles.container}>
-      {list?.requestsList?.length ? (
+      {list ? (
         <FlatList
           // @ts-ignore
-          data={list?.requestsList}
+          data={isHost ? list?.requestsList : list}
           numColumns={2}
           showsVerticalScrollIndicator={false}
           keyExtractor={({uid, name}) => `${uid}${name}`}
           contentContainerStyle={styles.listContentContainer}
-          extraData={list?.requestsList}
+          extraData={isHost ? list?.requestsList : list}
           ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
           renderItem={({item}) =>
             isHost ? (
               <ItemRequestHost list={list} item={item} />
             ) : (
               // @ts-ignore
-              <ItemRequestGuest item={item} handleSwipeGuestCard={handleSwipeGuestCard} />
+              <ItemRequestGuest list={item} item={item?.requestsList?.filter(i => i?.uid === user?.uid)} />
             )
           }
         />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, ScrollView, Image, TouchableOpacity} from 'react-native';
 
 //import components
@@ -18,20 +18,36 @@ import CheckIcon from 'assets/images/icons/check.svg';
 import MapIcon from 'assets/images/icons/location.svg';
 
 //import images
-import FakePhoto from 'assets/images/app/fake-photo.png';
-import ImageBg from 'assets/images/app/join-event-bg.png';
-import {transparentWhite16Color} from 'constants/colors';
+import {transparentWhite16Color, whiteColor} from 'constants/colors';
+import firestore from '@react-native-firebase/firestore';
+import {ActivityIndicator} from '@ant-design/react-native';
 
 const EventInfo = ({navigation, route}: any) => {
   const styles = useStyles();
+  const [hostInfo, setHostInfo] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const {list} = route?.params;
-  const {photos, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name} = list;
+  const {photos, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name, uid} = list;
 
   const iconsArrayMale = Array.from({length: male}, (_, index) => index);
   const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
 
-  console.log('list on event info', list);
+  const getHostInfo = async uid => {
+    try {
+      const host = await firestore().collection('userInfo').doc(uid).get();
+      setHostInfo(host.data());
+      setLoading(false);
+      console.log('host data', host.data());
+    } catch (e) {
+      setLoading(false);
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getHostInfo(uid);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -40,7 +56,14 @@ const EventInfo = ({navigation, route}: any) => {
         contentContainerStyle={{paddingTop: 20, paddingBottom: 50}}
         style={{flex: 1, borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
         <View style={styles.wrapperFakeCard}>
-          <TouchingSlider isShowEventPreview={true} isShowWantsJoin={false} isShowInvitesTooltip={false} isShowCardButtons={false} photos={photos} />
+          <TouchingSlider
+            eventPhotos={photos}
+            isShowEventPreview={true}
+            isShowWantsJoin={false}
+            isShowInvitesTooltip={false}
+            isShowCardButtons={false}
+            photos={photos}
+          />
 
           <View style={styles.bioWrapper}>
             <Text style={styles.titleSection}>Event Details</Text>
@@ -102,24 +125,30 @@ const EventInfo = ({navigation, route}: any) => {
                 ))}
               </View>
             </View>
-            <Text style={styles.titleSection}>Host profile</Text>
-            <View style={styles.wrapperHostProfile}>
-              <View style={{flexDirection: 'row'}}>
-                <View style={{flexDirection: 'row'}}>
-                  <Image source={FakePhoto} style={{width: 40, height: 40, borderRadius: 50}} />
-                  {/*<View style={styles.greenCircle} />*/}
+            {loading ? (
+              <ActivityIndicator color={whiteColor} size="small" />
+            ) : (
+              <>
+                <Text style={styles.titleSection}>Host profile</Text>
+                <View style={styles.wrapperHostProfile}>
+                  <View style={{flexDirection: 'row'}}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Image source={{uri: hostInfo?.photos[0]?.image}} style={{width: 40, height: 40, borderRadius: 50}} />
+                      {/*<View style={styles.greenCircle} />*/}
+                    </View>
+                    <View style={{marginLeft: 13}}>
+                      <Text style={styles.textSimon}>{hostInfo?.name}</Text>
+                      {/*<Text style={styles.textOnline}>Online</Text>*/}
+                    </View>
+                  </View>
+                  <TouchableOpacity onPress={() => navigation.navigate(userProfilePath)}>
+                    <Text style={styles.textSeeProfile}>
+                      See profile <ArrowRightIcon width={14} height={14} />
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-                <View style={{marginLeft: 13}}>
-                  <Text style={styles.textSimon}>{name}</Text>
-                  {/*<Text style={styles.textOnline}>Online</Text>*/}
-                </View>
-              </View>
-              <TouchableOpacity onPress={() => navigation.navigate(userProfilePath)}>
-                <Text style={styles.textSeeProfile}>
-                  See profile <ArrowRightIcon width={14} height={14} />
-                </Text>
-              </TouchableOpacity>
-            </View>
+              </>
+            )}
             <View style={styles.wrapperButtonsFooter}>
               <TouchableOpacity style={styles.buttonCloseOrCheck}>
                 <CloseIcon />
