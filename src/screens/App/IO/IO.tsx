@@ -53,7 +53,7 @@ const IO: FC = (): JSX.Element => {
   const [userInfo, setUserInfo] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
 
-  const {setMyEvents, setActiveEvent} = useContext(EventContext);
+  const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
   const handleOpenSuperInvite = () => {
     setIsVisibleSuperInvite(true);
@@ -142,24 +142,24 @@ const IO: FC = (): JSX.Element => {
   };
 
   const onInvite = async (forUserUid: string) => {
-    const user = auth().currentUser;
-    const collectionName = userInfo?.accountType?.toLowerCase() === 'host' ? 'requestsForGuest' : 'requestsForHost';
-    if (user) {
-      const data = {
-        id: uuid.v4(),
-        fromUserUid: user?.uid,
-        forUserUid,
-        date: userInfo?.date,
-        name: userInfo?.name,
-        photoUrl: userInfo?.photos?.find((item: any) => item.id === 0)?.image,
-        address: userInfo?.address,
-      };
+    try {
+      const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
-      try {
-        await firestore().collection(collectionName).doc().set(data);
-      } catch (error: any) {
-        Alert.alert('Error', error.message || 'Something went wrong');
-      }
+      const userInvited = {
+        gender: guest.data()?.gender,
+        name: guest.data()?.name,
+        status: 'invited',
+        superInvite: false,
+        uid: guest.data()?.uid,
+        userPhoto: guest.data()?.photos[0]?.image,
+      };
+      const updateUsersList: any = [...activeEvent?.usersList, userInvited];
+
+      await firestore().collection('Events').doc(activeEvent?.id).update({
+        usersList: updateUsersList,
+      });
+    } catch (e) {
+      console.log(e);
     }
   };
 

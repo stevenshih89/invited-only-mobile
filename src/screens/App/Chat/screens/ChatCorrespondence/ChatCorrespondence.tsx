@@ -1,4 +1,4 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {View, Text, Image, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView} from 'react-native';
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NavigationProp} from '@react-navigation/native';
@@ -20,7 +20,6 @@ import SendIcon from 'assets/images/icons/send.svg';
 //import images
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from 'contexts/AuthContext.tsx';
 import {useUser} from '../../../../../store/userStore';
 
 interface messageUserProps {
@@ -127,8 +126,6 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       .onSnapshot(documentSnapshot => {
         const data = documentSnapshot.data()?.chats;
         const findChat = data?.filter(j => j?.id === id);
-        console.log('findChat', findChat);
-        console.log('data', data);
         setAllChats(data);
         setMessages(findChat[0]?.messages);
       });
