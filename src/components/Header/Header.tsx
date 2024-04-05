@@ -242,10 +242,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   </View>
                   <Text style={styles.textButton}>Join events</Text>
                 </TouchableOpacity>
-                {myEvents.map((event: any) => {
+                {myEvents.map((event: any, index: number) => {
                   const isActive = activeEvent?.id === event.id;
                   return (
-                    <TouchableOpacity style={styles.eventButton} activeOpacity={0.7} onPress={() => setActiveEvent(event)}>
+                    <TouchableOpacity key={index} style={styles.eventButton} activeOpacity={0.7} onPress={() => setActiveEvent(event)}>
                       <View
                         style={{
                           borderRadius: 50,
@@ -397,10 +397,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               </View>
               <Text style={styles.textButton}>Join events</Text>
             </TouchableOpacity>
-            {myEvents.map((event: any) => {
+            {myEvents.map((event: any, index: number) => {
               const isActive = activeEvent?.id === event.id;
               return (
-                <TouchableOpacity style={styles.eventButton} activeOpacity={0.7} onPress={() => setActiveEvent(event)}>
+                <TouchableOpacity key={index} style={styles.eventButton} activeOpacity={0.7} onPress={() => setActiveEvent(event)}>
                   <View
                     style={{
                       borderRadius: 50,
