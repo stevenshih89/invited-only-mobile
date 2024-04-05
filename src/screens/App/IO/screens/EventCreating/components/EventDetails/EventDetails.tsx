@@ -215,6 +215,9 @@ const EventDetails: FC<EventDetailsProps> = ({
           placeName: placeName,
           id: uid,
           uid: user?.uid,
+          requestsList: [],
+          usersList: [],
+          statusEvent: false,
         })
         .then(async () => {
           photos?.map(async (imagePath, index) => {

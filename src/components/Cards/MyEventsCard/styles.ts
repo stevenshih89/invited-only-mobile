@@ -8,15 +8,18 @@ const useStyles = () =>
   StyleSheet.create({
     container: {
       borderRadius: 14,
+      marginBottom: screenHeight / 50,
     },
     imageBackground: {
       height: 185,
+      borderRadius: 14,
     },
     linearGradientCard: {
       height: '100%',
       justifyContent: 'space-between',
       paddingVertical: screenHeight / 70,
       paddingHorizontal: screenWidth / 35,
+      borderRadius: 14,
     },
     wrapperEventInReviewView: {
       width: '100%',
@@ -124,7 +127,6 @@ const useStyles = () =>
       paddingVertical: screenHeight / 105,
       paddingHorizontal: screenWidth / 45,
       borderRadius: 50,
-      marginRight: screenWidth / 40,
     },
     buttonMore: {
       backgroundColor: whiteColor,

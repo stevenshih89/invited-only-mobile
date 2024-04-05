@@ -274,7 +274,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   return (
     <View style={styles.container}>
-      {console.log('messages', messages?.chats?.messages)}
       {!loading ? (
         !typeEvents ? (
           <FlatList
