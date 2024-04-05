@@ -13,15 +13,12 @@ import {lightRed1Color, whiteColor} from 'constants/colors';
 import {calculateAge} from 'helpers/calculateAge';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
-import {useUser} from '../../../store/userStore';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
 
 const ItemRequestHost = ({item, list}: any) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
-
-  const userData = useUser((i: any) => i?.user);
 
   const OverlayRight = () => {
     return (
@@ -96,9 +93,6 @@ const ItemRequestHost = ({item, list}: any) => {
   };
 
   const goToEventInfo = () => {
-    //eventActiveInfoPath
-    //eventInfoPath
-    //myProfileViewPath
     navigation.navigate(commonStackPath, {
       screen: myProfileViewPath,
       params: {
