@@ -4,7 +4,6 @@ import LinearGradient from 'react-native-linear-gradient';
 
 //import components
 import useStyles from 'components/Cards/MyEventsCard/styles.ts';
-import imageBg from 'assets/images/app/card-event-bg.png';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import IconPending from 'assets/images/icons/pending-clock.svg';
 import IconAccepted from 'assets/images/icons/tick-circle.svg';
@@ -15,9 +14,11 @@ import ProfileTwoUser from 'assets/images/icons/profile-2user.svg';
 import Users from 'assets/images/icons/Users.svg';
 import LoadingLoop from 'assets/images/icons/loading-loop.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
-import {lightGray2Color, lightGreenColor} from 'constants/colors.ts';
+import {lightGray2Color, lightGreenColor, whiteColor} from 'constants/colors.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
+import moment from 'moment/moment';
+import {screenWidth} from "constants/common.ts";
 
 interface MyEventsCard {
   estimeTime?: string;
@@ -27,10 +28,11 @@ interface MyEventsCard {
   textCityName?: string;
   numberOfGirlsInvited?: string;
   date?: string;
+  imageBg?: string;
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
-  const {activeState, estimeTime, date, invitingPeople, numberOfGirlsInvited, allPeople, textCityName} = props;
+  const {imageBg, activeState, estimeTime, date, invitingPeople, numberOfGirlsInvited, allPeople, textCityName} = props;
   const styles = useStyles();
 
   const navigation = useAppNavigation();
@@ -48,7 +50,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
 
   return (
     <View style={styles.container}>
-      <ImageBackground borderRadius={14} source={imageBg} style={styles.imageBackground}>
+      <ImageBackground borderRadius={14} source={{uri: imageBg}} style={styles.imageBackground}>
         <LinearGradient
           colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
           start={{x: 0, y: 1}}
@@ -59,8 +61,8 @@ const MyEventsCard: FC<MyEventsCard> = props => {
               <View style={styles.userWrapper}>
                 {invitingPeople?.map((i: any | boolean, index: number) => (
                   <View style={[styles.userItemWrapper, index !== 0 && styles.anotherUsers]}>
-                    <Image style={styles.imageFakeGirl} source={i?.image} />
-                    {i?.state ? (
+                    <Image style={styles.imageFakeGirl} source={{uri: i?.userPhoto}} />
+                    {i?.status === 'accepted' ? (
                       <IconAccepted style={styles.iconStatus} width={21} height={21} />
                     ) : (
                       <IconPending style={styles.iconStatus} width={21} height={21} />
@@ -69,7 +71,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                 ))}
               </View>
               <View style={styles.wrapperTextStartInviting}>
-                <Text style={styles.textStartInviting}>Start inviting</Text>
+                <Text style={styles.textStartInviting}>{allPeople === invitingPeople?.length ? 'Guest list is full' : 'Start inviting'}</Text>
                 <ArrowRight style={styles.arrowRightIcon} width={14} height={14} />
               </View>
             </TouchableOpacity>
@@ -91,12 +93,14 @@ const MyEventsCard: FC<MyEventsCard> = props => {
               </View>
             </View>
             <View style={styles.wrapperFooterButtons}>
-              <TouchableOpacity style={styles.buttonEdit}>
+              <TouchableOpacity style={[styles.buttonEdit, activeState && {marginRight: screenWidth / 40}]}>
                 <IconEdit width={16} height={16} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonMore}>
-                <IconMore />
-              </TouchableOpacity>
+              {activeState && (
+                <TouchableOpacity style={styles.buttonMore}>
+                  <IconMore />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </LinearGradient>
@@ -109,7 +113,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
         </View>
         <View style={styles.rowTextUnderFooter}>
           <CalendarBlank />
-          <Text style={styles.textUnderFooter}>{date}</Text>
+          <Text style={styles.textUnderFooter}>{moment(date).format('DD.MM.YYYY')}</Text>
         </View>
       </View>
     </View>

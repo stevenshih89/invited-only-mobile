@@ -1,5 +1,6 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useCallback, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from 'screens/App/MyEvents/styles.ts';
@@ -7,14 +8,15 @@ import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard.tsx';
 
 //import images
 import AddIcon from 'assets/images/icons/add.svg';
-import FakeGirl1 from 'assets/images/app/fake-girl-1.png';
-import FakeGirl2 from 'assets/images/app/fake-girl-2.png';
 import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsCard';
 import {FlatList} from 'react-native';
 import {blackColor, lightGray2Color, whiteColor} from 'constants/colors';
 import ModalCancelAttending from './ModalCancelAttending';
 import {showToast} from 'helpers/showToast.ts';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
+import {useUser} from '../../../store/userStore';
+import {useFocusEffect} from '@react-navigation/native';
+import {screenHeight} from 'constants/common.ts';
 
 const MyEvents: FC = () => {
   const styles = useStyles();
@@ -35,6 +37,9 @@ const MyEvents: FC = () => {
       image: '',
     },
   });
+  const [myEventsData, setMyEventsData] = useState([]);
+
+  const user = useUser((i: any) => i?.user);
 
   const handleOpenCancelAttendingModal = (eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string}) => {
     setActiveModalEvent(eventInfo);
@@ -58,28 +63,6 @@ const MyEvents: FC = () => {
     setIsVisibleCancelAttendingModal(false);
     showToast('cancel', 'Go to my events', `You canceled ${activeModalEvent.textCityName} event`);
   };
-
-  const myEventsData = [
-    {
-      id: 0,
-      activeState: true,
-      allPeople: 10,
-      date: '10.12.2024',
-      textCityName: 'Amazonico Dubai',
-      estimeTime: '2h',
-      numberOfGirlsInvited: '2',
-      invitingPeople: [
-        {
-          image: FakeGirl1,
-          state: true,
-        },
-        {
-          image: FakeGirl2,
-          state: false,
-        },
-      ],
-    },
-  ];
 
   const eventsJoiningData = [
     {
@@ -118,6 +101,25 @@ const MyEvents: FC = () => {
     },
   ];
 
+  const getMyEvents = async () => {
+    try {
+      if (user) {
+        const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
+        const data = querySnapshot?.docs?.map(i => i?.data());
+        console.log('querySnapshot my events', data);
+        setMyEventsData(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getMyEvents();
+    }, []),
+  );
+
   return (
     <>
       <View style={styles.container}>
@@ -141,22 +143,23 @@ const MyEvents: FC = () => {
             </View>
           </TouchableOpacity>
         </View>
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, height: '100%'}}>
           {activeTab === MY_EVENTS ? (
             <FlatList
-              style={{flex: 1}}
+              style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
               showsVerticalScrollIndicator={false}
               data={myEventsData}
               keyExtractor={item => item.id.toString()}
               renderItem={({item}) => (
                 <MyEventsCard
-                  activeState={item.activeState}
-                  allPeople={item.allPeople}
-                  date={item.date}
-                  textCityName={item.textCityName}
-                  estimeTime={item.estimeTime}
-                  numberOfGirlsInvited={item.numberOfGirlsInvited}
-                  invitingPeople={item.invitingPeople}
+                  imageBg={item?.photos[0]?.image}
+                  activeState={item?.statusEvent}
+                  allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
+                  date={item?.date}
+                  textCityName={item?.address}
+                  estimeTime={item?.hour}
+                  numberOfGirlsInvited={item?.female + item?.femaleFriend}
+                  invitingPeople={item?.usersList?.filter(i => i?.status !== 'notAccepted')}
                 />
               )}
             />
