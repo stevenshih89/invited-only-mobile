@@ -8,7 +8,6 @@ import EventBcg from 'assets/images/app/join-event-bg.png';
 import TickCircleIcon from 'assets/images/icons/tick-circle.svg';
 import InfoCircleGray from 'assets/images/icons/info-circle-gray.svg';
 import PeopleIcon from 'assets/images/icons/Users.svg';
-import FakePhoto from 'assets/images/app/fake-photo.png';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import MoreIcon from 'assets/images/icons/more-white.svg';
 import PendingClockIcon from 'assets/images/icons/pending-clock.svg';
@@ -17,17 +16,18 @@ import {ScrollView, View} from 'react-native';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
-import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventEditingPath} from 'constants/pathLocations';
-import {useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
-import {useUser} from '../../../../store/userStore';
+import ModalUserProfileEvent from 'components/Modal/ModalUserProfileEvent/ModalUserProfileEvent.tsx';
 
-const EventActiveInfo = ({navigation, route}) => {
+const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const {list} = route?.params;
   const {usersList, photos, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name} = list;
 
-  console.log('list event info', list);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [user, setUser] = useState(null);
+  const [modalReport, setModalReport] = useState(false);
 
   const invitedGuests = usersList?.filter(i => i?.status === 'invited');
   const acceptedGuests = usersList?.filter(i => i?.status === 'accepted');
@@ -94,7 +94,7 @@ const EventActiveInfo = ({navigation, route}) => {
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <ImageBackground
-                          source={{uri: item.userPhoto}}
+                          source={{uri: item?.userPhoto}}
                           style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
                           imageStyle={{width: 50, height: 50, borderRadius: 200}}
                           resizeMode="cover">
@@ -102,13 +102,17 @@ const EventActiveInfo = ({navigation, route}) => {
                         </ImageBackground>
 
                         <Text style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
-                          {item.name}
+                          {item?.name}
                         </Text>
                         <FlashIcon width={13} height={13} />
                       </View>
-                      <View>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setModalVisible(true);
+                          setUser(item);
+                        }}>
                         <MoreIcon />
-                      </View>
+                      </TouchableOpacity>
                     </View>
                   )}
                 />
@@ -131,18 +135,22 @@ const EventActiveInfo = ({navigation, route}) => {
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <ImageBackground
-                          source={{uri: item.userPhoto}}
+                          source={{uri: item?.userPhoto}}
                           style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
                           imageStyle={{width: 50, height: 50, borderRadius: 200}}
                           resizeMode="cover">
                           <TickCircleIcon width={20} height={20} />
                         </ImageBackground>
                         <Text style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
-                          {item.name}
+                          {item?.name}
                         </Text>
                         <FlashIcon width={13} height={13} />
                       </View>
-                      <TouchableOpacity activeOpacity={0.7}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setModalVisible(true);
+                          setUser(item);
+                        }}>
                         <MoreIcon />
                       </TouchableOpacity>
                     </View>
@@ -167,18 +175,22 @@ const EventActiveInfo = ({navigation, route}) => {
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <ImageBackground
-                          source={{uri: item.userPhoto}}
+                          source={{uri: item?.userPhoto}}
                           style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
                           imageStyle={{width: 50, height: 50, borderRadius: 200}}
                           resizeMode="cover">
                           <InfoCircleGray width={20} height={20} />
                         </ImageBackground>
                         <Text style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
-                          {item.name}
+                          {item?.name}
                         </Text>
                         <FlashIcon width={13} height={13} />
                       </View>
-                      <TouchableOpacity activeOpacity={0.7}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setModalVisible(true);
+                          setUser(item);
+                        }}>
                         <MoreIcon />
                       </TouchableOpacity>
                     </View>
@@ -229,7 +241,12 @@ const EventActiveInfo = ({navigation, route}) => {
                 </View>
               </View>
               {photos?.map((i, index) => (
-                <Image source={{uri: i?.image}} style={{width: '100%', height: 178, borderRadius: 20, marginBottom: 34}} resizeMode="cover" />
+                <Image
+                  key={index}
+                  source={{uri: i?.image}}
+                  style={{width: '100%', height: 178, borderRadius: 20, marginBottom: 34}}
+                  resizeMode="cover"
+                />
               ))}
             </View>
             <TouchableOpacity
@@ -243,7 +260,16 @@ const EventActiveInfo = ({navigation, route}) => {
           </View>
         </ScrollView>
       </View>
-      <ModalCancelEvent isVisible={isVisibleCancelModal} onClose={() => setIsVisibleCancelModal(false)} />
+      <ModalUserProfileEvent
+        uid={user?.uid}
+        title={user?.name}
+        image={user?.userPhoto}
+        isModalVisible={isModalVisible}
+        setModalVisible={setModalVisible}
+        modalReport={modalReport}
+        setModalReport={setModalReport}
+      />
+      <ModalCancelEvent image={photos[0]?.image} isVisible={isVisibleCancelModal} onClose={() => setIsVisibleCancelModal(false)} />
     </>
   );
 };

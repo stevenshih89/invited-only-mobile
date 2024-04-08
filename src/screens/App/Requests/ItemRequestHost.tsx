@@ -92,7 +92,7 @@ const ItemRequestHost = ({item, list}: any) => {
     }
   };
 
-  const goToEventInfo = () => {
+  const goToProfileView = () => {
     navigation.navigate(commonStackPath, {
       screen: myProfileViewPath,
       params: {
@@ -135,7 +135,7 @@ const ItemRequestHost = ({item, list}: any) => {
               style={styles.linearGradient}
               start={{x: 0, y: 0}}
               end={{x: 0, y: 1}}>
-              <TouchableOpacity onPress={() => goToEventInfo()} activeOpacity={0.7} style={styles.buttonContainer}>
+              <TouchableOpacity onPress={() => goToProfileView()} activeOpacity={0.7} style={styles.buttonContainer}>
                 <View style={styles.nameContainer}>
                   <Text style={styles.nameText}>{item?.name}</Text>
                   <Text style={styles.ageText}>{age}</Text>

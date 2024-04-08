@@ -37,7 +37,7 @@ const ModalUserProfile: FC<ModalUserProfileProps> = ({title, image, isModalVisib
           <View style={styles.wrapper}>
             <View style={styles.whiteLine} />
             <View>
-              <Image source={image} style={styles.userPhoto} />
+              <Image source={{uri: image}} style={styles.userPhoto} />
               {/*{online && <View style={styles.greenCircle} />}*/}
               <View style={styles.greenCircle} />
             </View>

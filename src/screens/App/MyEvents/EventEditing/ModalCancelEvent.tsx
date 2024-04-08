@@ -8,7 +8,7 @@ import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 
-const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
+const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any}> = ({isVisible, onClose, image}) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -36,7 +36,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void}> = ({isVisi
         }}>
         <View style={{backgroundColor: whiteColor, height: 2, borderRadius: 10, width: 40, alignSelf: 'center', marginBottom: 22}} />
         <ImageBackground
-          source={Place}
+          source={{uri: image}}
           style={{width: 84, height: 84, alignSelf: 'center', marginBottom: 10}}
           imageStyle={{borderRadius: 160}}
           resizeMode="cover">
