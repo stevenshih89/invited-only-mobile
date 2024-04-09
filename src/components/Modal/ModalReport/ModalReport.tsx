@@ -14,14 +14,33 @@ import IndentityBasedIcon from 'assets/images/icons/identity-based.svg';
 import MoreCircle from 'assets/images/icons/more-circle.svg';
 import EightPlusIcon from 'assets/images/icons/18+.svg';
 import EmojiSadIcon from 'assets/images/icons/emoji-sad.svg';
+import {showToast} from "helpers/showToast.ts";
+import firestore from "@react-native-firebase/firestore";
 
 interface ModalReportProps {
   modalReport?: boolean;
   setModalReport?: any;
+  uidSender?: string;
+  uid?: string;
 }
 
-const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport}) => {
+const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid}) => {
   const styles = useStyles();
+
+  const handleSendReport = async (typeReport: string): Promise<void> => {
+    try {
+      await firestore().collection('report').add({
+        typeReport: typeReport,
+        uid: uid,
+        uidSender: uidSender,
+      });
+      showToast('success', '', 'Success send report!');
+      setModalReport(false);
+    } catch (e) {
+      showToast('cancel', '', 'Error!');
+    }
+  };
+
   return (
     <Modal
       isVisible={modalReport}
@@ -40,35 +59,35 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport}) => {
       <View style={styles.wrapper}>
         <View style={styles.whiteLine} />
         <Text style={styles.textReport}>Report</Text>
-        <TouchableOpacity style={styles.firstButton}>
+        <TouchableOpacity onPress={() => handleSendReport('Fake profile')} style={styles.firstButton}>
           <ProfileDeleteIcon style={styles.icon} />
           <Text style={styles.textFirstInReportButton}>Fake profile</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={() => handleSendReport('Rude or abusive behaviator')} style={styles.button}>
           <BulyIcon style={styles.icon} />
           <Text style={styles.textInReportButton}>Rude or abusive behaviator</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={() => handleSendReport('Inappropriate content')} style={styles.button}>
           <SaveMinus style={styles.icon} />
           <Text style={styles.textInReportButton}>Inappropriate content</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={() => handleSendReport('Scam or commercial')} style={styles.button}>
           <ScamIcon style={styles.icon} />
           <Text style={styles.textInReportButton}>Scam or commercial</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={() => handleSendReport('Identity-based hate')} style={styles.button}>
           <IndentityBasedIcon style={styles.icon} />
           <Text style={styles.textInReportButton}>Identity-based hate</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={() => handleSendReport('Off IO behaviator')} style={styles.button}>
           <MoreCircle style={styles.icon} />
           <Text style={styles.textInReportButton}>Off IO behaviator</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={() => handleSendReport('Underage')} style={styles.button}>
           <EightPlusIcon style={styles.icon} />
           <Text style={styles.textInReportButton}>Underage</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={() => handleSendReport('I`m just not interested')} style={styles.button}>
           <EmojiSadIcon style={styles.icon} />
           <Text style={styles.textInReportButton}>I`m just not interested</Text>
         </TouchableOpacity>

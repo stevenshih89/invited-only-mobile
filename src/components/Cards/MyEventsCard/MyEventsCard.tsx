@@ -1,6 +1,7 @@
 import React, {FC} from 'react';
 import {View, Text, ImageBackground, TouchableOpacity, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment/moment';
 
 //import components
 import useStyles from 'components/Cards/MyEventsCard/styles.ts';
@@ -14,16 +15,16 @@ import ProfileTwoUser from 'assets/images/icons/profile-2user.svg';
 import Users from 'assets/images/icons/Users.svg';
 import LoadingLoop from 'assets/images/icons/loading-loop.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
-import {lightGray2Color, lightGreenColor, whiteColor} from 'constants/colors.ts';
+import {lightGray2Color, lightGreenColor} from 'constants/colors.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
-import moment from 'moment/moment';
-import {screenWidth} from "constants/common.ts";
+import {screenWidth} from 'constants/common.ts';
 
 interface MyEventsCard {
   estimeTime?: string;
   activeState: boolean;
   invitingPeople?: any[];
+  list?: any;
   allPeople?: number;
   textCityName?: string;
   numberOfGirlsInvited?: string;
@@ -32,7 +33,7 @@ interface MyEventsCard {
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
-  const {imageBg, activeState, estimeTime, date, invitingPeople, numberOfGirlsInvited, allPeople, textCityName} = props;
+  const {list, imageBg, activeState, estimeTime, date, invitingPeople, numberOfGirlsInvited, allPeople, textCityName} = props;
   const styles = useStyles();
 
   const navigation = useAppNavigation();
@@ -57,7 +58,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
           end={{x: 0, y: 0}}
           style={styles.linearGradientCard}>
           {activeState ? (
-            <TouchableOpacity style={styles.header} onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath} as never)}>
+            <TouchableOpacity style={styles.header} onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: list}} as never)}>
               <View style={styles.userWrapper}>
                 {invitingPeople?.map((i: any | boolean, index: number) => (
                   <View style={[styles.userItemWrapper, index !== 0 && styles.anotherUsers]}>

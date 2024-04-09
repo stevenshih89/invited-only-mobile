@@ -153,6 +153,7 @@ const MyEvents: FC = () => {
               renderItem={({item}) => (
                 <MyEventsCard
                   imageBg={item?.photos[0]?.image}
+                  list={item}
                   activeState={item?.statusEvent}
                   allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
                   date={item?.date}
