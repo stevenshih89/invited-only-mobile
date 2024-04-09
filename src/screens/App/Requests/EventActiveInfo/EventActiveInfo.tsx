@@ -24,14 +24,15 @@ import ModalUserProfileEvent from 'components/Modal/ModalUserProfileEvent/ModalU
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const {list} = route?.params;
   const {usersList, photos, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name} = list;
+  const [usersListData, setUsersListsData] = useState<any>(usersList);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [user, setUser] = useState(null);
   const [modalReport, setModalReport] = useState(false);
 
-  const invitedGuests = usersList?.filter(i => i?.status === 'invited');
-  const acceptedGuests = usersList?.filter(i => i?.status === 'accepted');
-  const rejectedGuests = usersList?.filter(i => i?.status === 'notAccepted');
+  const invitedGuests = usersListData?.filter(i => i?.status === 'invited');
+  const acceptedGuests = usersListData?.filter(i => i?.status === 'accepted');
+  const rejectedGuests = usersListData?.filter(i => i?.status === 'notAccepted');
 
   const maxGuests = invitedGuests?.length + acceptedGuests?.length + rejectedGuests?.length;
   const currentGuests = acceptedGuests?.length;
@@ -201,7 +202,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
             <Button
               title="Edit"
               buttonStyle={{marginVertical: 34}}
-              onPress={() => navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditing: true}})}
+              onPress={() => navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})}
             />
             <View style={{borderTopColor: transparentWhite16Color, borderStyle: 'solid', borderTopWidth: 1, paddingTop: 34}}>
               <Image source={EventBcg} style={{width: '100%', borderRadius: 20}} resizeMode="cover" />
@@ -262,14 +263,17 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
       </View>
       <ModalUserProfileEvent
         uid={user?.uid}
+        list={list}
+        usersList={usersList}
         title={user?.name}
         image={user?.userPhoto}
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
+        setUsersListsData={setUsersListsData}
         modalReport={modalReport}
         setModalReport={setModalReport}
       />
-      <ModalCancelEvent image={photos[0]?.image} isVisible={isVisibleCancelModal} onClose={() => setIsVisibleCancelModal(false)} />
+      <ModalCancelEvent id={list?.id} image={photos[0]?.image} isVisible={isVisibleCancelModal} onClose={() => setIsVisibleCancelModal(false)} />
     </>
   );
 };

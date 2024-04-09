@@ -7,8 +7,26 @@ import {FC} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import firestore from '@react-native-firebase/firestore';
+import {showToast} from 'helpers/showToast.ts';
 
-const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any}> = ({isVisible, onClose, image}) => {
+const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined}> = ({
+  id,
+  isVisible,
+  onClose,
+  image,
+}) => {
+  const handleCancelEvent = async () => {
+    try {
+      await firestore().collection('Events').doc(id).delete();
+      showToast('success', '', 'Event successfully deleted!');
+      onClose();
+    } catch (e) {
+      showToast('cancel', '', 'Error!');
+      console.log(e);
+    }
+  };
+
   return (
     <Modal
       isVisible={isVisible}
@@ -59,7 +77,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any}
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), marginBottom: 40, textAlign: 'center'}}>
           Are you sure you want to cancel?
         </Text>
-        <Button title="Yes, cancel event" onPress={onClose} />
+        <Button title="Yes, cancel event" onPress={() => handleCancelEvent()} />
         <Button title="Cancel" variant="transparent" onPress={onClose} />
       </View>
     </Modal>

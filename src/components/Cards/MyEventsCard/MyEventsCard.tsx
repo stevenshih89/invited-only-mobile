@@ -9,6 +9,7 @@ import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import IconPending from 'assets/images/icons/pending-clock.svg';
 import IconAccepted from 'assets/images/icons/tick-circle.svg';
 import IconEdit from 'assets/images/icons/edit.svg';
+import IconEditBlack from 'assets/images/icons/edit-black.svg';
 import IconMore from 'assets/images/icons/more.svg';
 import CalendarBlank from 'assets/images/icons/CalendarBlank.svg';
 import ProfileTwoUser from 'assets/images/icons/profile-2user.svg';
@@ -17,7 +18,7 @@ import LoadingLoop from 'assets/images/icons/loading-loop.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
 import {lightGray2Color, lightGreenColor} from 'constants/colors.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
+import {commonStackPath, eventActiveInfoPath, eventEditingPath} from 'constants/pathLocations';
 import {screenWidth} from 'constants/common.ts';
 
 interface MyEventsCard {
@@ -58,18 +59,24 @@ const MyEventsCard: FC<MyEventsCard> = props => {
           end={{x: 0, y: 0}}
           style={styles.linearGradientCard}>
           {activeState ? (
-            <TouchableOpacity style={styles.header} onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: list}} as never)}>
+            <TouchableOpacity
+              style={styles.header}
+              onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: list}} as never)}>
               <View style={styles.userWrapper}>
-                {invitingPeople?.map((i: any | boolean, index: number) => (
-                  <View style={[styles.userItemWrapper, index !== 0 && styles.anotherUsers]}>
-                    <Image style={styles.imageFakeGirl} source={{uri: i?.userPhoto}} />
-                    {i?.status === 'accepted' ? (
-                      <IconAccepted style={styles.iconStatus} width={21} height={21} />
-                    ) : (
-                      <IconPending style={styles.iconStatus} width={21} height={21} />
-                    )}
-                  </View>
-                ))}
+                {invitingPeople?.map((i: any | boolean, index: number) => {
+                  const indexRight: number = 18 * (index + 1);
+                  if (index >= 3) return;
+                  return (
+                    <View style={[styles.userItemWrapper, {position: 'relative', right: indexRight}]}>
+                      <Image style={styles.imageFakeGirl} source={{uri: i?.userPhoto}} />
+                      {i?.status === 'accepted' ? (
+                        <IconAccepted style={styles.iconStatus} width={21} height={21} />
+                      ) : (
+                        <IconPending style={styles.iconStatus} width={21} height={21} />
+                      )}
+                    </View>
+                  );
+                })}
               </View>
               <View style={styles.wrapperTextStartInviting}>
                 <Text style={styles.textStartInviting}>{allPeople === invitingPeople?.length ? 'Guest list is full' : 'Start inviting'}</Text>
@@ -94,14 +101,16 @@ const MyEventsCard: FC<MyEventsCard> = props => {
               </View>
             </View>
             <View style={styles.wrapperFooterButtons}>
-              <TouchableOpacity style={[styles.buttonEdit, activeState && {marginRight: screenWidth / 40}]}>
-                <IconEdit width={16} height={16} />
+              <TouchableOpacity
+                onPress={() => navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})}
+                style={[styles.buttonEdit, activeState && {marginRight: screenWidth / 40}]}>
+                <IconEditBlack width={16} height={16} />
               </TouchableOpacity>
-              {activeState && (
-                <TouchableOpacity style={styles.buttonMore}>
-                  <IconMore />
-                </TouchableOpacity>
-              )}
+              {/*{activeState && (*/}
+              {/*  <TouchableOpacity style={styles.buttonMore}>*/}
+              {/*    <IconMore />*/}
+              {/*  </TouchableOpacity>*/}
+              {/*)}*/}
             </View>
           </View>
         </LinearGradient>

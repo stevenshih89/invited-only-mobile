@@ -12,10 +12,12 @@ import ReportIcon from 'assets/images/icons/info-circle.svg';
 import CloseIcon from 'assets/images/icons/close-circle.svg';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {gray1Color} from 'constants/colors.ts';
-import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
+import {chatCorrespondencePath, commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 import {useUser} from '../../../store/userStore';
+import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import {showToast} from 'helpers/showToast.ts';
 
 interface ModalUserProfileEventProps {
   isModalVisible?: boolean;
@@ -25,13 +27,27 @@ interface ModalUserProfileEventProps {
   image?: any;
   title?: string;
   uid?: string;
+  list?: any;
+  usersList?: any;
+  setUsersListsData?: Dispatch<SetStateAction<boolean>>;
 }
 
-const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({uid, title, image, isModalVisible, setModalVisible, modalReport, setModalReport}) => {
+const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
+  usersList,
+  list,
+  uid,
+  title,
+  image,
+  isModalVisible,
+  setModalVisible,
+  modalReport,
+  setModalReport,
+  setUsersListsData,
+}) => {
   const styles = useStyles();
 
   const navigation = useAppNavigation();
-  const user = useUser((i: any) => i?.user);
+  const userHost = useUser((i: any) => i?.user);
 
   const goToProfileView = () => {
     if (setModalVisible) {
@@ -42,6 +58,135 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({uid, title, imag
           uid: uid,
         },
       });
+    }
+  };
+
+  const handleCancelInvitation = async () => {
+    try {
+      const updateUsersList: any = list?.usersList ? list?.usersList?.filter((i: any) => i?.uid !== uid) : [];
+      const updateRequestsList: any = list?.requestsList ? list?.requestsList?.filter((i: any) => i?.uid !== uid) : [];
+      const filterUsersList = usersList?.filter((i: any) => i?.uid !== uid);
+      setUsersListsData && setUsersListsData(filterUsersList);
+
+      await firestore().collection('Events').doc(list?.id).update({
+        usersList: updateUsersList,
+        requestsList: updateRequestsList,
+      });
+      showToast('success', '', 'The invitation has been successfully withdrawn!');
+      setModalVisible && setModalVisible(false);
+    } catch (e) {
+      showToast('cancel', '', 'Error!');
+      console.log(e);
+    }
+  };
+
+  const handleCreateChat = async () => {
+    try {
+      const user = usersList?.filter((i: any) => i?.uid === uid)[0];
+      const messageCollection = await firestore().collection('messages').doc(list?.id).get();
+      const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === uid)[0];
+      const activeEvent = messageCollection?.data()?.activeEvent;
+
+      if (chatCheck) {
+        await navigation.navigate(commonStackPath, {
+          screen: chatCorrespondencePath,
+          params: {
+            image: chatCheck?.avatar,
+            title: chatCheck?.name,
+            online: false,
+            messages: chatCheck?.messages,
+            activeEvent: activeEvent,
+            id: chatCheck?.id,
+            superInvite: chatCheck?.superInvite,
+            invitedStatus: chatCheck?.invitedStatus,
+          },
+        });
+        setModalVisible && setModalVisible(false);
+      } else {
+        if (messageCollection?.data()) {
+          const prevChats = messageCollection?.data()?.chats;
+          const newChats = {
+            avatar: user?.userPhoto,
+            id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
+            invitedStatus: user?.status,
+            messages: [],
+            name: user?.name,
+            superInvite: user?.superInvite,
+            uid: user?.uid,
+          };
+          await firestore()
+            .collection('messages')
+            .doc(list?.id)
+            .update({
+              chats: [...prevChats, newChats],
+            });
+
+          await navigation.navigate(commonStackPath, {
+            screen: chatCorrespondencePath,
+            params: {
+              image: newChats?.avatar,
+              title: newChats?.name,
+              online: false,
+              messages: [],
+              activeEvent: activeEvent,
+              id: newChats?.id,
+              superInvite: newChats?.superInvite,
+              invitedStatus: newChats?.invitedStatus,
+            },
+          });
+
+          setModalVisible && setModalVisible(false);
+        } else {
+          const id = list?.id;
+
+          await firestore().collection('messages').doc(id).set({
+            activeEvent: id,
+            avatarGuest: user?.userPhoto,
+            avatarHost: userHost?.photos[0]?.image,
+            chats: [],
+            inviteStatus: user?.status,
+            nameGuest: user?.name,
+            uidGuest: user?.uid,
+            uidHost: userHost?.uid,
+          });
+
+          const newChats = {
+            avatar: user?.userPhoto,
+            id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
+            invitedStatus: user?.status,
+            messages: [],
+            name: user?.name,
+            superInvite: user?.superInvite,
+            uid: user?.uid,
+          };
+
+          await firestore()
+            .collection('messages')
+            .doc(id)
+            .update({
+              chats: [newChats],
+            });
+
+          await navigation.navigate(commonStackPath, {
+            screen: chatCorrespondencePath,
+            params: {
+              image: newChats?.avatar,
+              title: newChats?.name,
+              online: false,
+              messages: [],
+              activeEvent: id,
+              id: newChats?.id,
+              superInvite: newChats?.superInvite,
+              invitedStatus: newChats?.invitedStatus,
+            },
+          });
+
+          setModalVisible && setModalVisible(false);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+      showToast('cancel', '', 'Error!');
     }
   };
 
@@ -76,24 +221,24 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({uid, title, imag
               <UserIcon width={14} height={14} />
               <Text style={styles.textButton}>Profile</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setModalVisible && setModalVisible(false)} style={styles.buttonFooter}>
+            <TouchableOpacity onPress={() => handleCreateChat()} style={styles.buttonFooter}>
               <ChatIcon width={14} height={14} />
               <Text style={styles.textButton}>Chat</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                setModalReport(true);
+                setModalReport && setModalReport(true);
               }}
               style={styles.buttonFooter}>
               <ReportIcon width={14} height={14} />
               <Text style={styles.textButton}>Report</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setModalVisible && setModalVisible(false)} style={styles.buttonFooter}>
+            <TouchableOpacity onPress={() => handleCancelInvitation()} style={styles.buttonFooter}>
               <CloseIcon width={14} height={14} />
               <Text style={styles.textButton}>Cancel invitation</Text>
             </TouchableOpacity>
           </View>
-          <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={user?.uid} uid={uid} />
+          <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uid} />
         </Modal>
       </SafeAreaProvider>
     </View>

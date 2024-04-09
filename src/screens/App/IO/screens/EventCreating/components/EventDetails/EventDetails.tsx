@@ -91,6 +91,9 @@ const EventDetails: FC<EventDetailsProps> = ({
     },
   ]);
 
+  console.log('isEditing', isEditing);
+  console.log('photos', photos);
+  console.log('prevImages', prevImages);
   const [activeType, setActiveType] = useState(eventTypes[0].id);
   const [placeName, setPlaceName] = useState('');
   const [name, setName] = useState('');
@@ -115,7 +118,7 @@ const EventDetails: FC<EventDetailsProps> = ({
       setAddress(prevAddress ?? '');
       setMeetingSpot(prevMeetingSpot ?? '');
     }
-  }, []);
+  }, [prevImages]);
 
   const styles = useStyles();
 
@@ -286,7 +289,7 @@ const EventDetails: FC<EventDetailsProps> = ({
           <View style={styles.flex}>
             <View style={styles.eventPhotoLargeWr}>
               <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[0].id)} style={styles.touchableImage}>
-                {photos[0].image ? (
+                {photos[0]?.image ? (
                   <Image resizeMode="cover" source={{uri: photos[0].image}} style={styles.eventPhotoSmallImage} />
                 ) : (
                   <Plus width={40} height={40} />
@@ -299,7 +302,7 @@ const EventDetails: FC<EventDetailsProps> = ({
             <View style={[styles.eventPhotoRow, {marginBottom: 8}]}>
               <View style={styles.eventPhotoSmallLeftWr}>
                 <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[1].id)} style={styles.touchableImage}>
-                  {photos[1].image ? (
+                  {photos[1]?.image ? (
                     <Image resizeMode="cover" source={{uri: photos[1].image}} style={styles.eventPhotoSmallImage} />
                   ) : (
                     <Plus width={40} height={40} />
@@ -311,7 +314,7 @@ const EventDetails: FC<EventDetailsProps> = ({
               </View>
               <View style={styles.eventPhotoSmallRightWr}>
                 <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[2].id)} style={styles.touchableImage}>
-                  {photos[2].image ? (
+                  {photos[2]?.image ? (
                     <Image resizeMode="cover" source={{uri: photos[2].image}} style={styles.eventPhotoSmallImage} />
                   ) : (
                     <Plus width={40} height={40} />
@@ -325,7 +328,7 @@ const EventDetails: FC<EventDetailsProps> = ({
             <View style={styles.eventPhotoRow}>
               <View style={styles.eventPhotoSmallLeftWr}>
                 <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[3].id)} style={styles.touchableImage}>
-                  {photos[3].image ? (
+                  {photos[3]?.image ? (
                     <Image resizeMode="cover" source={{uri: photos[3].image}} style={styles.eventPhotoSmallImage} />
                   ) : (
                     <Plus width={40} height={40} />
@@ -337,7 +340,7 @@ const EventDetails: FC<EventDetailsProps> = ({
               </View>
               <View style={styles.eventPhotoSmallRightWr}>
                 <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[4].id)} style={styles.touchableImage}>
-                  {photos[4].image ? (
+                  {photos[4]?.image ? (
                     <Image resizeMode="cover" source={{uri: photos[4].image}} style={styles.eventPhotoSmallImage} />
                   ) : (
                     <Plus width={40} height={40} />
