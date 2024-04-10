@@ -9,6 +9,7 @@ const useStyles = () =>
     container: {
       borderRadius: 14,
       backgroundColor: 'transparent',
+      marginBottom: screenHeight / 60,
     },
     imageBackground: {
       height: 185,

@@ -27,9 +27,10 @@ const EventInfo = ({navigation, route}: any) => {
   const [hostInfo, setHostInfo] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const {list} = route?.params;
+  const {list, isAcceptedInvitation} = route?.params;
   const {photos, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name, uid} = list;
 
+  console.log('list event info active', list);
   const iconsArrayMale = Array.from({length: male}, (_, index) => index);
   const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
 
@@ -92,7 +93,7 @@ const EventInfo = ({navigation, route}: any) => {
               </View>
             </View>
             {photos?.map((i, index) => (
-              <Image source={{uri: i?.image}} style={[styles.imageBg, {marginTop: index === 0 ? 0 : 8}]} />
+              <Image key={index} source={{uri: i?.image}} style={[styles.imageBg, {marginTop: index === 0 ? 0 : 8}]} />
             ))}
             <Text style={styles.titleSection}>Already joined</Text>
             <View>
@@ -149,17 +150,19 @@ const EventInfo = ({navigation, route}: any) => {
                 </View>
               </>
             )}
-            <View style={styles.wrapperButtonsFooter}>
-              <TouchableOpacity style={styles.buttonCloseOrCheck}>
-                <CloseIcon />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonFlash}>
-                <FlashIcon />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonCloseOrCheck}>
-                <CheckIcon />
-              </TouchableOpacity>
-            </View>
+            {isAcceptedInvitation && (
+              <View style={styles.wrapperButtonsFooter}>
+                <TouchableOpacity style={styles.buttonCloseOrCheck}>
+                  <CloseIcon />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonFlash}>
+                  <FlashIcon />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonCloseOrCheck}>
+                  <CheckIcon />
+                </TouchableOpacity>
+              </View>
+            )}
             <Text style={styles.textHideNadSendReport}>Reject and send report</Text>
           </View>
         </View>
