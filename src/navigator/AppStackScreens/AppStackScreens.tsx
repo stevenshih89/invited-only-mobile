@@ -126,6 +126,7 @@ const CommonStackScreen = () => {
       <CommonStack.Screen key={pendingScreenPath} name={pendingScreenPath} options={{headerShown: false}} component={PendingScreen} />
       <CommonStack.Screen key={accountRejectedPath} name={accountRejectedPath} options={{headerShown: false}} component={AccountRejected} />
       <CommonStack.Screen key={codeVerifiedPath} name={codeVerifiedPath} options={{headerShown: false}} component={CodeVerified} />
+      <CommonStack.Screen key={chatCorrespondencePath} name={chatCorrespondencePath} options={{headerShown: false}} component={ChatCorrespondence} />
       <CommonStack.Screen
         key={eventInfoPath}
         name={eventInfoPath}

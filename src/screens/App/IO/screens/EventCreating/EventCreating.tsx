@@ -35,6 +35,7 @@ const EventCreating: FC = () => {
   const route = useRoute();
 
   const isEditing = (route?.params as {isEditing?: boolean})?.isEditing;
+  const isEditingItem = (route?.params as {isEditingItems?: any})?.isEditingItems;
 
   useEffect(() => {
     if (isEditing) {
@@ -49,40 +50,19 @@ const EventCreating: FC = () => {
   }, []);
 
   const editingItems = {
-    prevImages: [
-      {
-        id: 0,
-        image: 'https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png',
-      },
-      {
-        id: 1,
-        image: null,
-      },
-      {
-        id: 2,
-        image: null,
-      },
-      {
-        id: 3,
-        image: null,
-      },
-      {
-        id: 4,
-        image: null,
-      },
-    ],
-    prevActiveType: 2,
-    prevPlaceName: 'Place name',
-    prevName: 'Event name',
-    prevDescription: 'Description',
-    prevDate: '20.12.2021',
-    prevHour: '12:00',
-    prevAddress: 'Address',
-    prevMeetingSpot: 'Meeting spot',
-    prevFemale: 4,
-    prevMale: 6,
-    prevFemaleFriend: 2,
-    prevMaleFriend: 0,
+    prevImages: isEditingItem?.photos ? [...isEditingItem?.photos] : [],
+    prevActiveType: isEditingItem?.activeType,
+    prevPlaceName: isEditingItem?.placeName,
+    prevName: isEditingItem?.name,
+    prevDescription: isEditingItem?.description,
+    prevDate: isEditingItem?.date,
+    prevHour: isEditingItem?.hour,
+    prevAddress: isEditingItem?.address,
+    prevMeetingSpot: isEditingItem?.meetingSpot,
+    prevFemale: isEditingItem?.female,
+    prevMale: isEditingItem?.male,
+    prevFemaleFriend: isEditingItem?.femaleFriend,
+    prevMaleFriend: isEditingItem?.maleFriend,
   };
 
   return (
@@ -129,7 +109,12 @@ const EventCreating: FC = () => {
         )}
       </View>
       <ModalSaveEventChanges isVisible={isVisibleSaveModal} onClose={() => setIsVisibleSaveModal(false)} />
-      <ModalCancelEvent isVisible={isVisibleCancelModal} onClose={() => setIsVisibleCancelModal(false)} />
+      <ModalCancelEvent
+        id={isEditingItem?.id}
+        image={isEditingItem?.photos[0]?.image}
+        isVisible={isVisibleCancelModal}
+        onClose={() => setIsVisibleCancelModal(false)}
+      />
     </>
   );
 };

@@ -17,8 +17,9 @@ import ModalAcceptInvitation from './ModalAcceptInvitation';
 import {useUser} from '../../../store/userStore';
 import {useFocusEffect} from '@react-navigation/native';
 import {screenHeight} from 'constants/common.ts';
+import {eventCreatingStackPath} from 'constants/pathLocations.ts';
 
-const MyEvents: FC = () => {
+const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
   const MY_EVENTS = 'my_events';
   const EVENTS_JOINING = 'events_joining';
@@ -137,7 +138,7 @@ const MyEvents: FC = () => {
               <Text style={styles.textCountEvents}>21</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.addEventButton}>
+          <TouchableOpacity onPress={() => navigation.navigate(eventCreatingStackPath)} style={styles.addEventButton}>
             <View style={styles.addEventView}>
               <AddIcon width={19} height={19} />
             </View>

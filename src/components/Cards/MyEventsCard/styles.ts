@@ -60,12 +60,9 @@ const useStyles = () =>
       borderRadius: 50,
       borderColor: whiteColor,
     },
-    anotherUsers: {
-      position: 'relative',
-      right: 18,
-    },
     userWrapper: {
       flexDirection: 'row',
+      marginLeft: 12,
     },
     imageFakeGirl: {
       width: 40,
@@ -84,6 +81,7 @@ const useStyles = () =>
       fontFamily: Satoshi500,
       fontSize: RFValue(16, 812),
       paddingRight: screenWidth / 55,
+      // paddingLeft: screenWidth / 55,
     },
     arrowRightIcon: {
       marginTop: 5,
@@ -123,7 +121,7 @@ const useStyles = () =>
       flexDirection: 'row',
     },
     buttonEdit: {
-      backgroundColor: lightGray2Color,
+      backgroundColor: whiteColor,
       paddingVertical: screenHeight / 105,
       paddingHorizontal: screenWidth / 45,
       borderRadius: 50,
