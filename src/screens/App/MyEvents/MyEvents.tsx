@@ -60,11 +60,12 @@ const MyEvents: FC<any> = ({navigation}) => {
 
       changeStatus(list?.usersList, uid, 'accepted');
 
+      console.log('accepted', list?.usersList);
       await firestore().collection('Events').doc(list?.id).update({
         usersList: list?.usersList,
       });
       setIsVisibleAcceptInvitationModal(false);
-      showToast('cancel', '', `You accepted ${activeModalEvent.textCityName} event`);
+      showToast('success', '', `You accepted ${activeModalEvent.textCityName} event`);
     } catch (e) {
       showToast('cancel', '', 'Error!');
       console.log(e);
@@ -141,7 +142,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       if (user) {
         const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
         const data = querySnapshot?.docs?.map(i => i?.data());
-        // console.log('querySnapshot my events', data);
+        console.log('querySnapshot my events', data);
         setMyEventsData(data);
       }
     } catch (e) {
@@ -205,21 +206,25 @@ const MyEvents: FC<any> = ({navigation}) => {
               data={eventsJoiningData}
               style={{flex: 1, backgroundColor: 'transparent'}}
               renderItem={({item}) => (
-                <JoiningEventsCard
-                  activeState={item.statusEvent}
-                  allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
-                  date={item.date}
-                  list={item}
-                  image={item?.photos[0]?.image}
-                  textCityName={item.address}
-                  estimeTime={item.hour}
-                  numberOfGirlsInvited={item?.female + item?.femaleFriend}
-                  host={{name: item?.name, image: item?.hostImage}}
-                  joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
-                  isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
-                  handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
-                  handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
-                />
+                  <>
+                    {console.log('item',item)}
+                    <JoiningEventsCard
+                        activeState={item.statusEvent}
+                        allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
+                        date={item.date}
+                        list={item}
+                        image={item?.photos[0]?.image}
+                        textCityName={item.address}
+                        estimeTime={item.hour}
+                        numberOfGirlsInvited={item?.female + item?.femaleFriend}
+                        host={{name: item?.name, image: item?.hostImage}}
+                        joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
+                        isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
+                        handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
+                        handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
+                    />
+                  </>
+
               )}
             />
           )}

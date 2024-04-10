@@ -50,7 +50,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
 }) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
-
+  console.log('isAcceptedInvitation', isAcceptedInvitation)
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
       <LoadingLoop />
@@ -105,7 +105,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
               </View>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              {isAcceptedInvitation ? (
+              {!isAcceptedInvitation ? (
                 <>
                   <TouchableOpacity
                     activeOpacity={0.7}
