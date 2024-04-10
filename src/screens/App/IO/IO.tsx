@@ -4,7 +4,9 @@ import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card';
 import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
-import uuid from 'react-native-uuid';
+import {useFocusEffect} from '@react-navigation/native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import auth from '@react-native-firebase/auth';
 
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
@@ -17,6 +19,12 @@ import SuperInvite from './screens/SuperInvite/SuperInvite';
 import Match from './screens/Match/Match';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
+import {calculateAge} from 'helpers/calculateAge';
+import {useUser} from '../../../store/userStore';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {fcmHelper, getFcmToken} from 'helpers/fcmHelper.ts';
+import {whiteColor} from 'constants/colors';
+import {EventContext} from 'contexts/EventContext';
 
 //import icons
 import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
@@ -34,14 +42,6 @@ import PeopleIcon from 'assets/images/icons/profile-2user.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import MapIcon from 'assets/images/icons/location.svg';
-import {calculateAge} from 'helpers/calculateAge';
-import auth from '@react-native-firebase/auth';
-import {EventContext} from 'contexts/EventContext';
-import {useFocusEffect} from '@react-navigation/native';
-import {fcmHelper, getFcmToken} from 'helpers/fcmHelper.ts';
-import {whiteColor} from 'constants/colors';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -54,6 +54,7 @@ const IO: FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
+  const userHost = useUser((i: any) => i?.user);
 
   const handleOpenSuperInvite = () => {
     setIsVisibleSuperInvite(true);
@@ -463,7 +464,7 @@ const IO: FC = (): JSX.Element => {
   };
 
   useEffect(() => {
-    userInfo?.accountType?.toLowerCase() === 'host' ? getListForHost() : getListForGuest();
+    userHost?.accountType === 'host' ? getListForHost() : getListForGuest();
   }, [userInfo]);
 
   useEffect(() => {

@@ -12,7 +12,7 @@ import LoadingLoop from 'assets/images/icons/loading-loop.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
 import {blackColor, lightGray2Color, lightGreenColor, whiteColor} from 'constants/colors.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
+import {commonStackPath, eventActiveInfoPath, eventInfoPath} from 'constants/pathLocations';
 import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight} from 'constants/common';
@@ -20,16 +20,17 @@ import {screenHeight} from 'constants/common';
 interface JoiningEventsCard {
   estimeTime: string;
   activeState: boolean;
-  host: {id: number; image: string; name: string};
+  host: {image: string; name: string};
   image: string;
+  list: any;
   allPeople: number;
   textCityName: string;
   numberOfGirlsInvited: string;
   date: string;
   joinedPeopleCount: number;
   isAcceptedInvitation: boolean;
-  handleOpenCancelAttendingModal: (eventInfo: {host: any; image: string; textCityName: string; date: string; numberOfGirlsInvited: string}) => void;
-  handleOpenAcceptInvitationModal: (eventInfo: {host: any; image: string; textCityName: string; date: string; numberOfGirlsInvited: string}) => void;
+  handleOpenCancelAttendingModal: (eventInfo: {list: any; host: any; image: string; textCityName: string; date: string; numberOfGirlsInvited: string}) => void;
+  handleOpenAcceptInvitationModal: (eventInfo: {list: any; host: any; image: string; textCityName: string; date: string; numberOfGirlsInvited: string}) => void;
 }
 
 const JoiningEventsCard: FC<JoiningEventsCard> = ({
@@ -37,6 +38,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
   estimeTime,
   date,
   image,
+  list,
   host,
   numberOfGirlsInvited,
   allPeople,
@@ -69,7 +71,14 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
           end={{x: 0, y: 0}}
           style={styles.linearGradientCard}>
           {activeState ? (
-            <TouchableOpacity style={styles.header} onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath} as never)}>
+            <TouchableOpacity
+              style={styles.header}
+              onPress={() =>
+                navigation.navigate(commonStackPath, {
+                  screen: eventInfoPath,
+                  params: {list: list, isAcceptedInvitation: isAcceptedInvitation},
+                } as never)
+              }>
               {host?.image && <Image style={{borderRadius: 100, width: 40, height: 40}} source={{uri: host.image}} />}
               <View style={styles.wrapperTextStartInviting}>
                 <Text style={styles.textStartInviting}>{host?.name}</Text>
@@ -101,12 +110,13 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() =>
-                      handleOpenAcceptInvitationModal({
+                      handleOpenCancelAttendingModal({
                         image,
                         textCityName,
                         date,
                         numberOfGirlsInvited,
                         host,
+                        list,
                       })
                     }
                     style={{
@@ -131,6 +141,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
                         date,
                         numberOfGirlsInvited,
                         host,
+                        list,
                       })
                     }
                     style={{
@@ -157,6 +168,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
                       date,
                       numberOfGirlsInvited,
                       host,
+                      list,
                     })
                   }
                   style={{

@@ -25,6 +25,7 @@ import Calendar from 'assets/images/icons/calendar.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
 import {IOPath} from 'constants/pathLocations.ts';
 import auth from '@react-native-firebase/auth';
+import {useUser} from "../../../../../../../store/userStore";
 
 interface EventDetailsProps {
   isEditing?: boolean;
@@ -105,6 +106,7 @@ const EventDetails: FC<EventDetailsProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   const navigation = useAppNavigation();
+  const userHost = useUser((i: any) => i?.user);
 
   useEffect(() => {
     if (isEditing) {
@@ -221,6 +223,7 @@ const EventDetails: FC<EventDetailsProps> = ({
           requestsList: [],
           usersList: [],
           statusEvent: false,
+          hostImage: userHost?.photos[0]?.image,
         })
         .then(async () => {
           photos?.map(async (imagePath, index) => {

@@ -16,6 +16,7 @@ const ModalCancelAttending: FC<{
   handleCancelAttending: () => void;
   eventInfo: {id: number; image: string; textCityName: string; numberOfGirlsInvited: number; date: string};
 }> = ({isVisible, onClose, eventInfo, handleCancelAttending}) => {
+  console.log('eventInfo modal cancel', eventInfo);
   return (
     <Modal
       isVisible={isVisible}
