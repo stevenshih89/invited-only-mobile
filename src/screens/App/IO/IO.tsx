@@ -13,7 +13,7 @@ import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, userProfilePath} from 'constants/pathLocations.ts';
 import InstagramSlider from 'components/InstagramSlider/InstagramSlider';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
 import Match from './screens/Match/Match';
@@ -179,6 +179,7 @@ const IO: FC = (): JSX.Element => {
         }))
         .filter(event => !event.requestsList || !event.requestsList.some((request: any) => request.uid === user.uid));
 
+      console.log('filteredEvents', filteredEvents);
       async function enrichElementsWithPhotos(elements) {
         const promises = elements.map(async element => {
           const docRef = firestore().collection('userInfo').doc(element.uid);
@@ -199,11 +200,30 @@ const IO: FC = (): JSX.Element => {
 
       const data: any[] = [];
 
-      enrichedEvents.map(async (event: any) => {
-        const {address, date, description, hour, name, placeName, meetingSpot, uid, id, photos, userPhotos} = event;
+      enrichedEvents.map((event: any) => {
+        const {
+          address,
+          date,
+          description,
+          hour,
+          name,
+          placeName,
+          male,
+          hostImage,
+          hostName,
+          meetingSpot,
+          uid,
+          id,
+          photos,
+          userPhotos,
+          female,
+          femaleFriend,
+        } = event;
 
         const currUserPhotos = userPhotos.map((photo: any) => photo?.image);
         const eventPhotos = photos.map((photo: any) => photo?.image);
+        const iconsArrayMale = Array.from({length: male}, (_, index) => index);
+        const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
 
         data.push({
           component: (
@@ -219,36 +239,33 @@ const IO: FC = (): JSX.Element => {
               <View style={styles.bioWrapper}>
                 <Text style={styles.titleSection}>Event Details</Text>
                 <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>Place name</Text>
-                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812)}}>Nammos Dubai</Text>
+                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812)}}>{placeName}</Text>
                 <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}, {marginTop: 20}]}>
                   Event name
                 </Text>
-                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812)}}>Dubai state</Text>
+                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812)}}>{name}</Text>
                 <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}, {marginTop: 20}]}>
                   Event description
                 </Text>
-                <Text style={styles.textDescription}>
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text
-                  ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has
-                </Text>
+                <Text style={styles.textDescription}>{description}</Text>
                 <View style={{marginTop: 28}}>
                   <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                     <CalendarIcon width={16} height={16} />
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>12.11.2023</Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{date}</Text>
                   </View>
                   <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                     <ClockIcon width={16} height={16} />
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>12.11.2023</Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{hour}</Text>
                   </View>
                   <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                     <MapIcon width={16} height={16} />
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
-                      34 NE 11th St, Miami, FL 33132, EE, UU
-                    </Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{address}</Text>
                   </View>
                   <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                     <PeopleIcon width={16} height={16} />
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>2x girl</Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
+                      {female + femaleFriend}x girl
+                    </Text>
                   </View>
                 </View>
                 {/* <Image source={ImageBg} style={[styles.imageBg, {marginTop: 8}]} />
@@ -258,53 +275,45 @@ const IO: FC = (): JSX.Element => {
                   <View style={styles.wrapperNumberPeople}>
                     <Text style={styles.textUnderSubTitle}>Female</Text>
                     <View style={styles.rowNumberPeople}>
-                      <Text style={styles.textNumberInvitedPeople}>4</Text>
+                      <Text style={styles.textNumberInvitedPeople}>{female}</Text>
                     </View>
                   </View>
                   <View style={styles.rowPersonIcon}>
-                    <View style={styles.wrapperPersonIcon}>
-                      <PersonIcon width={18} height={18} />
-                    </View>
-                    <View style={[styles.wrapperPersonIcon, {marginLeft: 10}]}>
-                      <PersonIcon width={18} height={18} />
-                    </View>
-                    <View style={[styles.wrapperPersonIcon, {marginLeft: 10}]}>
-                      <PersonIcon width={18} height={18} />
-                    </View>
-                    <View style={[styles.wrapperPersonIcon, {marginLeft: 10}]}>
-                      <PersonIcon width={18} height={18} />
-                    </View>
+                    {iconsArrayFemale?.map(index => (
+                      <View key={index} style={[styles.wrapperPersonIcon, {marginLeft: index === 0 ? 0 : 10}]}>
+                        <PersonIcon width={18} height={18} />
+                      </View>
+                    ))}
                   </View>
                 </View>
                 <View>
                   <View style={[styles.wrapperNumberPeople, {marginTop: 12}]}>
                     <Text style={styles.textUnderSubTitle}>Male</Text>
                     <View style={styles.rowNumberPeople}>
-                      <Text style={styles.textNumberInvitedPeople}>2</Text>
+                      <Text style={styles.textNumberInvitedPeople}>{male}</Text>
                     </View>
                   </View>
                   <View style={{flexDirection: 'row', marginTop: 12, marginBottom: 28}}>
-                    <View style={styles.wrapperPersonIcon}>
-                      <PersonIcon width={18} height={18} />
-                    </View>
-                    <View style={[styles.wrapperPersonIcon, {marginLeft: 10}]}>
-                      <PersonIcon width={18} height={18} />
-                    </View>
+                    {iconsArrayMale?.map(index => (
+                      <View key={index} style={[styles.wrapperPersonIcon, {marginLeft: index === 0 ? 0 : 10}]}>
+                        <PersonIcon width={18} height={18} />
+                      </View>
+                    ))}
                   </View>
                 </View>
                 <Text style={styles.titleSection}>Host profile</Text>
                 <View style={styles.wrapperHostProfile}>
                   <View style={{flexDirection: 'row'}}>
                     <View style={{flexDirection: 'row'}}>
-                      {/* <Image source={FakePhoto} style={{width: 40, height: 40, borderRadius: 50}} /> */}
-                      <View style={styles.greenCircle} />
+                      <Image source={{uri: hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
+                      {/*<View style={styles.greenCircle} />*/}
                     </View>
                     <View style={{marginLeft: 13}}>
-                      <Text style={styles.textSimon}>Simon</Text>
-                      <Text style={styles.textOnline}>Online</Text>
+                      <Text style={styles.textSimon}>{hostName}</Text>
+                      {/*<Text style={styles.textOnline}>Online</Text>*/}
                     </View>
                   </View>
-                  <TouchableOpacity onPress={() => {}}>
+                  <TouchableOpacity onPress={() => navigation.navigate(userProfilePath, {params: {uid: uid}})}>
                     <Text style={styles.textSeeProfile}>
                       See profile <ArrowRightIcon width={14} height={14} />
                     </Text>

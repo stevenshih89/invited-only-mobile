@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert} from 'react-native';
 import {TinderCard} from 'rn-tinder-card';
 
 //import components
@@ -23,141 +23,17 @@ import MapIcon from 'assets/images/icons/location.svg';
 //import images
 import FakePhoto from 'assets/images/app/fake-photo.png';
 import ImageBg from 'assets/images/app/join-event-bg.png';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {whiteColor} from 'constants/colors.ts';
+import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {ActivityIndicator} from '@ant-design/react-native';
 
 const JoinEvents = ({navigation}: any) => {
+  const [events, setEvents] = useState<any[]>([]);
+
   const styles = useStyles();
-
-  const fakePhotos = [FakePhoto, FakePhoto, FakePhoto];
-
-  const data = [
-    <>
-      <View style={styles.wrapperCreateEventCard}>
-        <Text style={styles.textYouNeedToCreate}>You need to create an event to start inviting</Text>
-        <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
-        <Button onPress={() => navigation.navigate(eventCreatingStackPath)} title="Create event" />
-        <View style={styles.rowText}>
-          <Text style={styles.textDontHaveAnEvent}>Don't have an event?</Text>
-          <View style={styles.rowJoinOne}>
-            <Text style={styles.textJoinOne}>Join one!</Text>
-          </View>
-        </View>
-      </View>
-    </>,
-    <>
-      <View style={styles.wrapperFakeCard}>
-        <TouchingSlider
-          isShowEventPreview={true}
-          isShowWantsJoin={false}
-          isShowInvitesTooltip={false}
-          isShowCardButtons={false}
-          photos={fakePhotos}
-        />
-
-        <View style={styles.bioWrapper}>
-          <Text style={styles.titleSection}>Event Details</Text>
-          <Text style={styles.subTitle}>Place name</Text>
-          <Text style={styles.textUnderSubTitle}>Nammos Dubai</Text>
-          <Text style={[styles.subTitle, {marginTop: 20}]}>Event name</Text>
-          <Text style={styles.textUnderSubTitle}>Dubai state</Text>
-          <Text style={[styles.subTitle, {marginTop: 20}]}>Event description</Text>
-          <Text style={styles.textDescription}>
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever
-            since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has
-          </Text>
-          <View style={{marginTop: 28}}>
-            <View style={styles.fdrAlc}>
-              <CalendarIcon width={16} height={16} />
-              <Text style={styles.textInfo}>12.11.2023</Text>
-            </View>
-            <View style={styles.fdrAlc}>
-              <ClockIcon width={16} height={16} />
-              <Text style={styles.textInfo}>12.11.2023</Text>
-            </View>
-            <View style={styles.fdrAlc}>
-              <MapIcon width={16} height={16} />
-              <Text style={styles.textInfo}>34 NE 11th St, Miami, FL 33132, EE, UU</Text>
-            </View>
-            <View style={styles.fdrAlc}>
-              <PeopleIcon width={16} height={16} />
-              <Text style={styles.textInfo}>2x girl</Text>
-            </View>
-          </View>
-          <Image source={ImageBg} style={[styles.imageBg, {marginTop: 8}]} />
-          <Image source={ImageBg} style={styles.imageBg} />
-
-          <Text style={styles.titleSection}>Already joined</Text>
-          <View>
-            <View style={styles.wrapperNumberPeople}>
-              <Text style={styles.textUnderSubTitle}>Female</Text>
-              <View style={styles.rowNumberPeople}>
-                <Text style={styles.textNumberInvitedPeople}>4</Text>
-              </View>
-            </View>
-            <View style={styles.rowPersonIcon}>
-              <View style={styles.wrapperPersonIcon}>
-                <PersonIcon width={18} height={18} />
-              </View>
-              <View style={[styles.wrapperPersonIcon, {marginLeft: 10}]}>
-                <PersonIcon width={18} height={18} />
-              </View>
-              <View style={[styles.wrapperPersonIcon, {marginLeft: 10}]}>
-                <PersonIcon width={18} height={18} />
-              </View>
-              <View style={[styles.wrapperPersonIcon, {marginLeft: 10}]}>
-                <PersonIcon width={18} height={18} />
-              </View>
-            </View>
-          </View>
-          <View>
-            <View style={[styles.wrapperNumberPeople, {marginTop: 12}]}>
-              <Text style={styles.textUnderSubTitle}>Male</Text>
-              <View style={styles.rowNumberPeople}>
-                <Text style={styles.textNumberInvitedPeople}>2</Text>
-              </View>
-            </View>
-            <View style={{flexDirection: 'row', marginTop: 12, marginBottom: 28}}>
-              <View style={styles.wrapperPersonIcon}>
-                <PersonIcon width={18} height={18} />
-              </View>
-              <View style={[styles.wrapperPersonIcon, {marginLeft: 10}]}>
-                <PersonIcon width={18} height={18} />
-              </View>
-            </View>
-          </View>
-          <Text style={styles.titleSection}>Host profile</Text>
-          <View style={styles.wrapperHostProfile}>
-            <View style={{flexDirection: 'row'}}>
-              <View style={{flexDirection: 'row'}}>
-                <Image source={FakePhoto} style={{width: 40, height: 40, borderRadius: 50}} />
-                <View style={styles.greenCircle} />
-              </View>
-              <View style={{marginLeft: 13}}>
-                <Text style={styles.textSimon}>Simon</Text>
-                <Text style={styles.textOnline}>Online</Text>
-              </View>
-            </View>
-            <TouchableOpacity onPress={() => navigation.navigate(userProfilePath)}>
-              <Text style={styles.textSeeProfile}>
-                See profile <ArrowRightIcon width={14} height={14} />
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.wrapperButtonsFooter}>
-            <TouchableOpacity style={styles.buttonCloseOrCheck}>
-              <CloseIcon />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonFlash}>
-              <FlashIcon />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonCloseOrCheck}>
-              <CheckIcon />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.textHideNadSendReport}>Reject and send report</Text>
-        </View>
-      </View>
-    </>,
-  ];
 
   const OverlayRight = () => {
     return (
@@ -174,10 +50,240 @@ const JoinEvents = ({navigation}: any) => {
     );
   };
 
+  const getListForGuest = async () => {
+    const user = auth().currentUser;
+    if (!user) {
+      return;
+    }
+    try {
+      const querySnapshot = await firestore().collection('Events').limit(20).get();
+
+      console.log('querySnapshot.docs', querySnapshot.docs);
+      const filteredEvents = querySnapshot.docs
+        .map((doc: any) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter(event => !event.requestsList || !event.requestsList.some((request: any) => request.uid === user.uid));
+
+      console.log('filteredEvents', filteredEvents);
+      async function enrichElementsWithPhotos(elements) {
+        const promises = elements.map(async element => {
+          const docRef = firestore().collection('userInfo').doc(element.uid);
+          const doc = await docRef.get();
+
+          if (!doc.exists) {
+            return null;
+          } else {
+            const userInfo = doc.data();
+            return {...element, userPhotos: userInfo?.photos};
+          }
+        });
+
+        return Promise.all(promises);
+      }
+
+      const enrichedEvents = await enrichElementsWithPhotos(filteredEvents);
+
+      const data: any[] = [];
+
+      enrichedEvents.map((event: any) => {
+        console.log('event in enrichedEvents', enrichedEvents);
+        const {
+          address,
+          date,
+          description,
+          hour,
+          name,
+          placeName,
+          male,
+          hostImage,
+          hostName,
+          meetingSpot,
+          uid,
+          id,
+          photos,
+          userPhotos,
+          female,
+          femaleFriend,
+        } = event;
+
+        const currUserPhotos = userPhotos.map((photo: any) => photo?.image);
+        const eventPhotos = photos.map((photo: any) => photo?.image);
+        const iconsArrayMale = Array.from({length: male}, (_, index) => index);
+        const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
+
+        data.push({
+          component: (
+            <View style={styles.wrapperFakeCard}>
+              <TouchingSlider
+                isShowEventPreview={true}
+                isShowWantsJoin={false}
+                isShowInvitesTooltip={false}
+                isShowCardButtons={false}
+                eventPhotos={eventPhotos}
+                photos={currUserPhotos}
+              />
+              <View style={styles.bioWrapper}>
+                <Text style={styles.titleSection}>Event Details</Text>
+                <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>Place name</Text>
+                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812)}}>{placeName}</Text>
+                <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}, {marginTop: 20}]}>
+                  Event name
+                </Text>
+                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812)}}>{name}</Text>
+                <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}, {marginTop: 20}]}>
+                  Event description
+                </Text>
+                <Text style={styles.textDescription}>{description}</Text>
+                <View style={{marginTop: 28}}>
+                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                    <CalendarIcon width={16} height={16} />
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{date}</Text>
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                    <ClockIcon width={16} height={16} />
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{hour}</Text>
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                    <MapIcon width={16} height={16} />
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{address}</Text>
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                    <PeopleIcon width={16} height={16} />
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
+                      {female + femaleFriend}x girl
+                    </Text>
+                  </View>
+                </View>
+                {/* <Image source={ImageBg} style={[styles.imageBg, {marginTop: 8}]} />
+                <Image source={ImageBg} style={styles.imageBg} /> */}
+                <Text style={styles.titleSection}>Already joined</Text>
+                <View>
+                  <View style={styles.wrapperNumberPeople}>
+                    <Text style={styles.textUnderSubTitle}>Female</Text>
+                    <View style={styles.rowNumberPeople}>
+                      <Text style={styles.textNumberInvitedPeople}>{female}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.rowPersonIcon}>
+                    {iconsArrayFemale?.map(index => (
+                      <View key={index} style={[styles.wrapperPersonIcon, {marginLeft: index === 0 ? 0 : 10}]}>
+                        <PersonIcon width={18} height={18} />
+                      </View>
+                    ))}
+                  </View>
+                </View>
+                <View>
+                  <View style={[styles.wrapperNumberPeople, {marginTop: 12}]}>
+                    <Text style={styles.textUnderSubTitle}>Male</Text>
+                    <View style={styles.rowNumberPeople}>
+                      <Text style={styles.textNumberInvitedPeople}>{male}</Text>
+                    </View>
+                  </View>
+                  <View style={{flexDirection: 'row', marginTop: 12, marginBottom: 28}}>
+                    {iconsArrayMale?.map(index => (
+                      <View key={index} style={[styles.wrapperPersonIcon, {marginLeft: index === 0 ? 0 : 10}]}>
+                        <PersonIcon width={18} height={18} />
+                      </View>
+                    ))}
+                  </View>
+                </View>
+                <Text style={styles.titleSection}>Host profile</Text>
+                <View style={styles.wrapperHostProfile}>
+                  <View style={{flexDirection: 'row'}}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Image source={{uri: hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
+                      {/*<View style={styles.greenCircle} />*/}
+                    </View>
+                    <View style={{marginLeft: 13}}>
+                      <Text style={styles.textSimon}>{hostName}</Text>
+                      {/*<Text style={styles.textOnline}>Online</Text>*/}
+                    </View>
+                  </View>
+                  <TouchableOpacity onPress={() => navigation.navigate(userProfilePath, {params: {uid: uid}})}>
+                    <Text style={styles.textSeeProfile}>
+                      See profile <ArrowRightIcon width={14} height={14} />
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.wrapperButtonsFooter}>
+                  <TouchableOpacity style={styles.buttonCloseOrCheck}>
+                    <CloseIcon />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.buttonFlash}>
+                    <FlashIcon />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.buttonCloseOrCheck}>
+                    <CheckIcon />
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.textHideNadSendReport}>Reject and send report</Text>
+              </View>
+            </View>
+          ),
+          info: event,
+        });
+      });
+
+      setEvents([...data]);
+    } catch (e: any) {
+      Alert.alert('Error', e.message || 'Something went wrong');
+    }
+  };
+
+  const onInvite = async (forUserUid: string) => {
+    try {
+      const guest = await firestore().collection('userInfo').doc(forUserUid).get();
+
+      const userInvited = {
+        gender: guest.data()?.gender,
+        name: guest.data()?.name,
+        status: 'accepted',
+        superInvite: false,
+        uid: guest.data()?.uid,
+        userPhoto: guest.data()?.photos[0]?.image,
+      };
+      // const updateUsersList: any = [...activeEvent?.usersList, userInvited];
+
+      // await firestore().collection('Events').doc(activeEvent?.id).update({
+      //   usersList: updateUsersList,
+      // });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const onRejected = async (forUserUid: string) => {
+    try {
+      const guest = await firestore().collection('userInfo').doc(forUserUid).get();
+
+      const userRejected = {
+        gender: guest.data()?.gender,
+        name: guest.data()?.name,
+        status: 'notAccepted',
+        superInvite: false,
+        uid: guest.data()?.uid,
+        userPhoto: guest.data()?.photos[0]?.image,
+      };
+      // const updateUsersList: any = [...activeEvent?.usersList, userRejected];
+
+      // await firestore().collection('Events').doc(activeEvent?.id).update({
+      //   usersList: updateUsersList,
+      // });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getListForGuest();
+  }, []);
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1, justifyContent: 'space-between'}}>
-        {data.map((item, index) => {
+        {events?.map((item, index) => {
           return (
             <View style={styles.cardContainer} pointerEvents="box-none" key={index}>
               <TinderCard
@@ -186,12 +292,14 @@ const JoinEvents = ({navigation}: any) => {
                 // @ts-ignore
                 cardHeight="100%"
                 OverlayLabelRight={OverlayRight}
+                onSwipedRight={() => onInvite(item.info?.uid)}
+                onSwipedLeft={() => onRejected(item.info?.uid)}
                 OverlayLabelLeft={OverlayLeft}
                 disableBottomSwipe={true}
                 disableTopSwipe={true}
                 cardStyle={styles.card}>
                 <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
-                  {item}
+                  {item?.component}
                 </ScrollView>
               </TinderCard>
             </View>
