@@ -409,13 +409,13 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               <Text style={styles.textButton}>Create event</Text>
             </TouchableOpacity>
             {/*@ts-ignore*/}
-            <TouchableOpacity onPress={() => navigation.navigate(joinEventsPath)} style={styles.eventButton}>
-              <View style={styles.eventView}>
+            <TouchableOpacity onPress={() => setActiveEvent('host')} style={styles.eventButton}>
+              <View style={[styles.joinEventActive, {borderColor: activeEvent === 'host' ? whiteColor : lightGray5Color}]}>
                 <CalendarSearchIcon width={26} height={26} />
               </View>
               <Text style={styles.textButton}>Join events</Text>
             </TouchableOpacity>
-            {myEvents.map((event: any, index: number) => {
+            {myEvents?.map((event: any, index: number) => {
               const isActive = activeEvent?.id === event.id;
               return (
                 <TouchableOpacity key={index} style={styles.eventButton} activeOpacity={0.7} onPress={() => setActiveEvent(event)}>

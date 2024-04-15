@@ -24,6 +24,16 @@ const useStyles = () =>
       borderColor: lightGray5Color,
       borderRadius: 50,
     },
+    joinEventActive: {
+      borderRadius: 50,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 3,
+      width: 55,
+      height: 55,
+    },
     joinEventView: {
       width: 55,
       height: 55,
