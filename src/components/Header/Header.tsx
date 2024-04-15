@@ -41,7 +41,7 @@ import {useUser} from '../../store/userStore';
 import {useRequest} from '../../store/requestsStore';
 
 interface HeaderTypeProps {
-  headerType?: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat';
+  headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
   showHeaderTop?: boolean;
   logoType?: string;
   badge?: boolean;
@@ -220,7 +220,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     paddingTop: insets.top,
   };
 
-  const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | undefined) => {
+  const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | 'IO-JE' | undefined) => {
     const isHost = userInfo?.accountType.toLowerCase() === 'host';
 
     switch (type) {
@@ -376,6 +376,24 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               </ScrollView>
             )}
           </>
+        );
+      case 'IO-JE':
+        return (
+          <View style={{flexDirection: 'row', marginVertical: screenHeight / 50}}>
+            <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
+              <View style={styles.eventView}>
+                <AddIcon width={26} height={26} />
+              </View>
+              <Text style={styles.textButton}>Create event</Text>
+            </TouchableOpacity>
+            {/*@ts-ignore*/}
+            <TouchableOpacity style={styles.joinEventButton}>
+              <View style={styles.joinEventView}>
+                <CalendarSearchIcon width={26} height={26} />
+              </View>
+              <Text style={styles.textButton}>Join events</Text>
+            </TouchableOpacity>
+          </View>
         );
       case 'myEvents':
         return null;

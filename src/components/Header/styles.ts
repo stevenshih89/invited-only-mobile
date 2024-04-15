@@ -24,6 +24,15 @@ const useStyles = () =>
       borderColor: lightGray5Color,
       borderRadius: 50,
     },
+    joinEventView: {
+      width: 55,
+      height: 55,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: whiteColor,
+      borderRadius: 50,
+    },
     eventViewFlatList: {
       padding: 3,
       borderWidth: 1,
@@ -31,6 +40,10 @@ const useStyles = () =>
       borderRadius: 50,
     },
     eventButton: {
+      alignItems: 'center',
+      marginRight: screenWidth / 27,
+    },
+    joinEventButton: {
       alignItems: 'center',
       marginRight: screenWidth / 27,
     },

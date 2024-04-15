@@ -35,6 +35,9 @@ interface TouchingSliderProps {
   name?: string;
   age?: string | number;
   homeAddress?: string;
+  date?: string;
+  girls?: string;
+  placeName?: string;
   eventPhotos?: any[];
 }
 
@@ -50,6 +53,9 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   name = '',
   age = '',
   homeAddress = '',
+    date = '',
+    girls = '',
+    placeName = '',
   eventPhotos,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
@@ -115,7 +121,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
       {isShowEventPreview ? (
         <View style={styles.eventPreviewWr}>
-          <EventPreview photos={eventPhotos} />
+          <EventPreview placeName={placeName} date={date} girls={girls} photos={eventPhotos} />
         </View>
       ) : (
         <LinearGradient

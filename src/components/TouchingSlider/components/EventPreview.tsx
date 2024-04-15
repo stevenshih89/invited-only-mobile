@@ -9,8 +9,9 @@ import IOIcon from 'assets/images/icons/io-logo.svg';
 import {screenWidth} from 'constants/common.ts';
 import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import moment from "moment/moment";
 
-const EventPreview: FC<{photos: any}> = ({photos}): ReactElement => {
+const EventPreview: FC<{photos: any; date: string; girls: string; placeName: string}> = ({photos, date, girls, placeName}): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
@@ -45,15 +46,15 @@ const EventPreview: FC<{photos: any}> = ({photos}): ReactElement => {
         </View>
       </ImageBackground>
       <View style={styles.textContainer}>
-        <Text style={styles.text}>Nammos Dubai</Text>
+        <Text style={styles.text}>{placeName}</Text>
         <View style={styles.rowContainer}>
           <View style={styles.row}>
             <User />
-            <Text style={styles.subText}>2 x Girl invitation</Text>
+            <Text style={styles.subText}>{girls} x Girl invitation</Text>
           </View>
           <View style={[styles.row, styles.marginLeft]}>
             <Calendar />
-            <Text style={styles.subText}>7 August 2024</Text>
+            <Text style={styles.subText}>{moment(date).format('D MMMM YYYY')}</Text>
           </View>
         </View>
       </View>
