@@ -83,7 +83,7 @@ export const IOStackNavigation: FC = () => {
       <Stack.Screen
         options={{
           headerShown: true,
-          header: () => <Header badge={true} logoType="logo" headerType="IO" />,
+          header: () => <Header badge={true} logoType="logo" headerType="IO-JE" />,
         }}
         name={joinEventsPath}
         key={joinEventsPath}

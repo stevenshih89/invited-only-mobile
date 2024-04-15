@@ -107,7 +107,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
 
   const handleSwipeGuestCardReject = async (item: any): Promise<void> => {
     try {
-      const userAccepted = {
+      const userNotAccepted = {
         gender: item?.gender,
         name: item?.name,
         status: 'notAccepted',
@@ -116,7 +116,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
         userPhoto: item?.userPhoto,
       };
 
-      const updateUsersList: any = [...list?.usersList, userAccepted];
+      const updateUsersList: any = [...list?.usersList, userNotAccepted];
       const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
 
       await firestore().collection('Events').doc(list?.id).update({

@@ -21,24 +21,24 @@ import CheckIcon from 'assets/images/icons/check.svg';
 import MapIcon from 'assets/images/icons/location.svg';
 
 //import images
-import FakePhoto from 'assets/images/app/fake-photo.png';
-import ImageBg from 'assets/images/app/join-event-bg.png';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {whiteColor} from 'constants/colors.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {ActivityIndicator} from '@ant-design/react-native';
+import {useUser} from '../../../../../store/userStore';
+import {showToast} from 'helpers/showToast.ts';
 
 const JoinEvents = ({navigation}: any) => {
   const [events, setEvents] = useState<any[]>([]);
 
   const styles = useStyles();
+  const userHost = useUser((i: any) => i?.user);
 
   const OverlayRight = () => {
     return (
       <View style={[styles.overlayLabelContainerInvite]}>
-        <Text style={styles.overlayLabelTextInvite}>INVITE</Text>
+        <Text style={styles.overlayLabelTextInvite}>Join</Text>
       </View>
     );
   };
@@ -58,7 +58,6 @@ const JoinEvents = ({navigation}: any) => {
     try {
       const querySnapshot = await firestore().collection('Events').limit(20).get();
 
-      console.log('querySnapshot.docs', querySnapshot.docs);
       const filteredEvents = querySnapshot.docs
         .map((doc: any) => ({
           id: doc.id,
@@ -66,7 +65,6 @@ const JoinEvents = ({navigation}: any) => {
         }))
         .filter(event => !event.requestsList || !event.requestsList.some((request: any) => request.uid === user.uid));
 
-      console.log('filteredEvents', filteredEvents);
       async function enrichElementsWithPhotos(elements) {
         const promises = elements.map(async element => {
           const docRef = firestore().collection('userInfo').doc(element.uid);
@@ -88,7 +86,6 @@ const JoinEvents = ({navigation}: any) => {
       const data: any[] = [];
 
       enrichedEvents.map((event: any) => {
-        console.log('event in enrichedEvents', enrichedEvents);
         const {
           address,
           date,
@@ -117,6 +114,9 @@ const JoinEvents = ({navigation}: any) => {
           component: (
             <View style={styles.wrapperFakeCard}>
               <TouchingSlider
+                placeName={placeName}
+                girls={female + femaleFriend}
+                date={date}
                 isShowEventPreview={true}
                 isShowWantsJoin={false}
                 isShowInvitesTooltip={false}
@@ -208,13 +208,13 @@ const JoinEvents = ({navigation}: any) => {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.wrapperButtonsFooter}>
-                  <TouchableOpacity style={styles.buttonCloseOrCheck}>
+                  <TouchableOpacity onPress={() => onRejected(event)} style={styles.buttonCloseOrCheck}>
                     <CloseIcon />
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.buttonFlash}>
                     <FlashIcon />
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.buttonCloseOrCheck}>
+                  <TouchableOpacity onPress={() => onInvite(event)} style={styles.buttonCloseOrCheck}>
                     <CheckIcon />
                   </TouchableOpacity>
                 </View>
@@ -226,51 +226,45 @@ const JoinEvents = ({navigation}: any) => {
         });
       });
 
+      console.log('data events', data);
       setEvents([...data]);
     } catch (e: any) {
       Alert.alert('Error', e.message || 'Something went wrong');
     }
   };
 
-  const onInvite = async (forUserUid: string) => {
+  const onInvite = async (list: any) => {
     try {
-      const guest = await firestore().collection('userInfo').doc(forUserUid).get();
+      const activeEvent = list?.id;
+      const checkUser = list?.requestsList?.some(i => i?.uid === userHost?.uid);
 
-      const userInvited = {
-        gender: guest.data()?.gender,
-        name: guest.data()?.name,
-        status: 'accepted',
+      if (checkUser) {
+        return showToast('success', '', 'The invitation has been successfully withdrawn!');
+      }
+
+      const userAccepted = {
+        gender: userHost?.gender,
+        name: userHost?.name,
         superInvite: false,
-        uid: guest.data()?.uid,
-        userPhoto: guest.data()?.photos[0]?.image,
+        uid: userHost?.uid,
+        userPhoto: userHost?.photos[0]?.image,
       };
-      // const updateUsersList: any = [...activeEvent?.usersList, userInvited];
 
-      // await firestore().collection('Events').doc(activeEvent?.id).update({
-      //   usersList: updateUsersList,
-      // });
+      const updateRequestsList: any = [...list?.requestsList, userAccepted];
+
+      await firestore().collection('Events').doc(activeEvent).update({
+        requestsList: updateRequestsList,
+      });
+      await showToast('success', '', 'The invitation has been successfully withdrawn!');
     } catch (e) {
       console.log(e);
     }
   };
 
-  const onRejected = async (forUserUid: string) => {
+  const onRejected = async (list: any) => {
     try {
-      const guest = await firestore().collection('userInfo').doc(forUserUid).get();
-
-      const userRejected = {
-        gender: guest.data()?.gender,
-        name: guest.data()?.name,
-        status: 'notAccepted',
-        superInvite: false,
-        uid: guest.data()?.uid,
-        userPhoto: guest.data()?.photos[0]?.image,
-      };
-      // const updateUsersList: any = [...activeEvent?.usersList, userRejected];
-
-      // await firestore().collection('Events').doc(activeEvent?.id).update({
-      //   usersList: updateUsersList,
-      // });
+      const filterEvents = events?.filter(i => i?.info?.id !== list?.id);
+      setEvents(filterEvents);
     } catch (e) {
       console.log(e);
     }
@@ -292,7 +286,7 @@ const JoinEvents = ({navigation}: any) => {
                 // @ts-ignore
                 cardHeight="100%"
                 OverlayLabelRight={OverlayRight}
-                onSwipedRight={() => onInvite(item.info?.uid)}
+                onSwipedRight={() => onInvite(item?.info)}
                 onSwipedLeft={() => onRejected(item.info?.uid)}
                 OverlayLabelLeft={OverlayLeft}
                 disableBottomSwipe={true}
