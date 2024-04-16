@@ -121,11 +121,6 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
 
   useEffect(() => {
     const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
-    console.log('hour', hour);
-    console.log('new date', currentTime);
-    console.log('calculateTimeDifference', calculateTimeDifference('09:13', hour));
-
-    console.log('09:13 > hour', calculateTimeDifference('09:13', hour) < 2);
 
     if (
       (calculateTimeDifference(currentTime, hour) >= 2 && !isAcceptedInvitation) ||
