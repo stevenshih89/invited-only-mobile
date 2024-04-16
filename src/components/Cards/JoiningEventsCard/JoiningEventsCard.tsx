@@ -1,6 +1,7 @@
-import React, {FC} from 'react';
+import React, {FC, useState, useEffect} from 'react';
 import {View, Text, ImageBackground, TouchableOpacity, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
 
 //import components
 import useStyles from 'components/Cards/JoiningEventsCard/styles.ts';
@@ -12,10 +13,11 @@ import LoadingLoop from 'assets/images/icons/loading-loop.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
 import {blackColor, lightGray2Color, lightGreenColor, whiteColor} from 'constants/colors.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {commonStackPath, eventActiveInfoPath, eventInfoPath} from 'constants/pathLocations';
+import {commonStackPath, eventInfoPath} from 'constants/pathLocations';
 import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight} from 'constants/common';
+import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 
 interface JoiningEventsCard {
   estimeTime: string;
@@ -26,11 +28,29 @@ interface JoiningEventsCard {
   allPeople: number;
   textCityName: string;
   numberOfGirlsInvited: string;
+  placeName: string;
   date: string;
+  hour: string;
   joinedPeopleCount: number;
   isAcceptedInvitation: boolean;
-  handleOpenCancelAttendingModal: (eventInfo: {list: any; host: any; image: string; textCityName: string; date: string; numberOfGirlsInvited: string}) => void;
-  handleOpenAcceptInvitationModal: (eventInfo: {list: any; host: any; image: string; textCityName: string; date: string; numberOfGirlsInvited: string}) => void;
+  handleAcceptInvitation: any;
+  handleGetEventsIJoining: any;
+  handleOpenCancelAttendingModal: (eventInfo: {
+    list: any;
+    host: any;
+    image: string;
+    textCityName: string;
+    date: string;
+    numberOfGirlsInvited: string;
+  }) => void;
+  handleOpenAcceptInvitationModal: (eventInfo: {
+    list: any;
+    host: any;
+    image: string;
+    textCityName: string;
+    date: string;
+    numberOfGirlsInvited: string;
+  }) => void;
 }
 
 const JoiningEventsCard: FC<JoiningEventsCard> = ({
@@ -39,18 +59,30 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
   date,
   image,
   list,
+  hour,
   host,
   numberOfGirlsInvited,
   allPeople,
   textCityName,
+  placeName,
   joinedPeopleCount,
   isAcceptedInvitation,
   handleOpenCancelAttendingModal,
   handleOpenAcceptInvitationModal,
+  handleAcceptInvitation,
+  handleGetEventsIJoining,
 }) => {
+  const [eventStarting, setEventStarting] = useState<boolean>(false);
+  const [eventData, setEventData] = useState({
+    time: '',
+    image: '',
+    city: '',
+    placeName: '',
+    date: '',
+    girlInvitatio: '',
+  });
   const styles = useStyles();
   const navigation = useAppNavigation();
-  console.log('isAcceptedInvitation', isAcceptedInvitation)
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
       <LoadingLoop />
@@ -61,6 +93,56 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
       </View>
     </View>
   );
+
+  const calculateTimeDifference = (start: string, end: string) => {
+    let startTime = start.split(':');
+    let endTime = end.split(':');
+
+    let startHour = parseInt(startTime[0], 10);
+    let startMinute = parseInt(startTime[1], 10);
+    let endHour = parseInt(endTime[0], 10);
+    let endMinute = parseInt(endTime[1], 10);
+
+    let startTotalMinutes = startHour * 60 + startMinute;
+    let endTotalMinutes = endHour * 60 + endMinute;
+
+    if (endTotalMinutes < startTotalMinutes) {
+      endTotalMinutes += 24 * 60;
+    }
+
+    let differenceInMinutes = endTotalMinutes - startTotalMinutes;
+
+    let hours = Math.floor(differenceInMinutes / 60);
+    let minutes = differenceInMinutes % 60;
+
+    return hours;
+    // return hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+  };
+
+  useEffect(() => {
+    const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
+    console.log('hour', hour);
+    console.log('new date', currentTime);
+    console.log('calculateTimeDifference', calculateTimeDifference('09:13', hour));
+
+    console.log('09:13 > hour', calculateTimeDifference('09:13', hour) < 2);
+
+    if (
+      (calculateTimeDifference(currentTime, hour) >= 2 && !isAcceptedInvitation) ||
+      (calculateTimeDifference(currentTime, hour) >= 12 && !isAcceptedInvitation) ||
+      (calculateTimeDifference(currentTime, hour) >= 24 && !isAcceptedInvitation)
+    ) {
+      setEventData({
+        time: calculateTimeDifference(currentTime, hour).toString(),
+        image: image,
+        city: textCityName,
+        date: moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY'),
+        girlInvitatio: numberOfGirlsInvited,
+        placeName: placeName,
+      });
+      setEventStarting(true);
+    }
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -197,9 +279,21 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
         </View>
         <View style={styles.rowTextUnderFooter}>
           <CalendarBlank />
-          <Text style={styles.textUnderFooter}>{date}</Text>
+          <Text style={styles.textUnderFooter}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
         </View>
       </View>
+      <ModalEventRemindes
+        eventStarting={eventStarting}
+        setEventStarting={setEventStarting}
+        time={eventData.time}
+        image={eventData.image}
+        placeName={eventData.placeName}
+        city={eventData.city}
+        date={eventData.date}
+        girlInvitation={eventData.girlInvitatio}
+        handleAcceptInvitation={handleAcceptInvitation}
+        handleGetEventsIJoining={handleGetEventsIJoining}
+      />
     </View>
   );
 };

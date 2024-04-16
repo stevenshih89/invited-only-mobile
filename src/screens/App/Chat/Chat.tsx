@@ -18,6 +18,7 @@ import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
 import Button from 'components/Button/Button.tsx';
 import {useChat} from '../../../store/chatStore';
 import {EventContext} from 'contexts/EventContext.tsx';
+import moment from "moment/moment";
 type ItemProps = {
   title: string;
   id: string | number;
@@ -155,7 +156,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                 </View>
                 <View style={styles.fdrAiC}>
                   <CalendarIcon style={{marginLeft: 10}} width={14} height={14} />
-                  <Text style={styles.textDescriptionUnderTitle}>{data}</Text>
+                  <Text style={styles.textDescriptionUnderTitle}>{moment(`${data}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
                 </View>
               </View>
             </View>

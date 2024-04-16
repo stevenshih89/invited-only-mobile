@@ -123,7 +123,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
         </View>
         <View style={styles.rowTextUnderFooter}>
           <CalendarBlank />
-          <Text style={styles.textUnderFooter}>{moment(date).format('DD.MM.YYYY')}</Text>
+          <Text style={styles.textUnderFooter}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
         </View>
       </View>
     </View>

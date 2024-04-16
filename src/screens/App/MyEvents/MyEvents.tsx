@@ -130,6 +130,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         });
       });
 
+      console.log('setEventsJoiningData filterData', filterData);
       setEventsJoiningData(filterData);
     } catch (e) {
       console.log(e);
@@ -206,25 +207,25 @@ const MyEvents: FC<any> = ({navigation}) => {
               data={eventsJoiningData}
               style={{flex: 1, backgroundColor: 'transparent'}}
               renderItem={({item}) => (
-                  <>
-                    {console.log('item',item)}
-                    <JoiningEventsCard
-                        activeState={item.statusEvent}
-                        allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
-                        date={item.date}
-                        list={item}
-                        image={item?.photos[0]?.image}
-                        textCityName={item.address}
-                        estimeTime={item.hour}
-                        numberOfGirlsInvited={item?.female + item?.femaleFriend}
-                        host={{name: item?.name, image: item?.hostImage}}
-                        joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
-                        isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
-                        handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
-                        handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
-                    />
-                  </>
-
+                <JoiningEventsCard
+                  activeState={item.statusEvent}
+                  allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
+                  date={item.date}
+                  hour={item?.hour}
+                  placeName={item?.placeName}
+                  list={item}
+                  image={item?.photos[0]?.image}
+                  textCityName={item.address}
+                  estimeTime={item.hour}
+                  numberOfGirlsInvited={item?.female + item?.femaleFriend}
+                  host={{name: item?.name, image: item?.hostImage}}
+                  joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
+                  isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
+                  handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
+                  handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
+                  handleAcceptInvitation={handleAcceptInvitation}
+                  handleGetEventsIJoining={handleGetEventsIJoining}
+                />
               )}
             />
           )}
