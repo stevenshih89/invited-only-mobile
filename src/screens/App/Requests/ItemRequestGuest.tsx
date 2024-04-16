@@ -104,6 +104,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
           usersList: updateUsersList,
           requestsList: updateRequestsList,
         });
+        await showToast('success', '', 'You accept invitation');
       } catch (e) {
         console.log(e);
         showToast('cancel', '', "There's been an error");
@@ -129,6 +130,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
         usersList: updateUsersList,
         requestsList: updateRequestsList,
       });
+      await showToast('success', '', 'You reject invitation');
     } catch (e) {
       console.log(e);
       showToast('cancel', '', "There's been an error");
