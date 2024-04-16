@@ -35,12 +35,26 @@ const Requests: FC = (): ReactElement => {
 
   const fetchHostRequests = async () => {
     const user = auth().currentUser;
-    if (user && activeEvent) {
+    if (user && activeEvent !== 'host') {
       try {
         const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
         console.log('querySnapshot', querySnapshot.data());
         if (querySnapshot.exists) {
           setRequestsForHost(querySnapshot.data());
+        } else {
+          setRequestsForHost([]);
+        }
+      } catch (error: any) {
+        Alert.alert('Error', error.message || 'Something went wrong');
+      }
+    } else if (user && activeEvent === 'host') {
+      try {
+        const querySnapshot = await firestore().collection('Events').get();
+        const data = querySnapshot?.docs?.map(i => i?.data());
+        console.log('activeEvent host', data);
+
+        if (data) {
+          setRequestsForHost(data);
         } else {
           setRequestsForHost([]);
         }
@@ -93,7 +107,7 @@ const Requests: FC = (): ReactElement => {
     setLoading(false);
   };
 
-  const isHost = userInfo?.accountType?.toLowerCase() === 'host';
+  const isHost = activeEvent === 'host' ? false : userInfo?.accountType?.toLowerCase() === 'host';
 
   useEffect(() => {
     fetchUserInfo();
@@ -113,6 +127,7 @@ const Requests: FC = (): ReactElement => {
 
   return (
     <View style={styles.container}>
+      {console.log('list request', list)}
       {list ? (
         <FlatList
           // @ts-ignore

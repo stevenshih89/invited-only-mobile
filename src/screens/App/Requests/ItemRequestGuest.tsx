@@ -57,7 +57,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
           alignItems: 'center',
         }}>
         <View style={{borderRadius: 5, paddingHorizontal: 13, paddingVertical: 6, borderWidth: 2, borderColor: whiteColor}}>
-          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>INVITE</Text>
+          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>ACCEPT</Text>
         </View>
       </View>
     );
@@ -75,34 +75,40 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
           alignItems: 'center',
         }}>
         <View style={{borderRadius: 5, paddingHorizontal: 13, paddingVertical: 6, borderWidth: 2, borderColor: lightRed1Color}}>
-          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: lightRed1Color}}>NOPE</Text>
+          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: lightRed1Color}}>REJECT</Text>
         </View>
       </View>
     );
   };
 
-  const handleSwipeGuestCardInvite = async (item): Promise<void> => {
-    const userAccepted = {
-      gender: item?.gender,
-      name: item?.name,
-      status: 'accepted',
-      superInvite: false,
-      uid: item?.uid,
-      userPhoto: item?.userPhoto,
-    };
+  const handleSwipeGuestCardInvite = async (item: any): Promise<void> => {
+    Animated.timing(heightAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: false,
+    }).start(async () => {
+      const userAccepted = {
+        gender: item?.gender,
+        name: item?.name,
+        status: 'accepted',
+        superInvite: false,
+        uid: item?.uid,
+        userPhoto: item?.userPhoto,
+      };
 
-    try {
-      const updateUsersList: any = [...list?.usersList, userAccepted];
-      const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
+      try {
+        const updateUsersList: any = [...list?.usersList, userAccepted];
+        const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
 
-      await firestore().collection('Events').doc(list?.id).update({
-        usersList: updateUsersList,
-        requestsList: updateRequestsList,
-      });
-    } catch (e) {
-      console.log(e);
-      showToast('cancel', '', "There's been an error");
-    }
+        await firestore().collection('Events').doc(list?.id).update({
+          usersList: updateUsersList,
+          requestsList: updateRequestsList,
+        });
+      } catch (e) {
+        console.log(e);
+        showToast('cancel', '', "There's been an error");
+      }
+    });
   };
 
   const handleSwipeGuestCardReject = async (item: any): Promise<void> => {
