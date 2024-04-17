@@ -40,7 +40,6 @@ const EventInfo = ({navigation, route}: any) => {
       const host = await firestore().collection('userInfo').doc(uid).get();
       setHostInfo(host.data());
       setLoading(false);
-      console.log('host data', host.data());
     } catch (e) {
       setLoading(false);
       console.log(e);
@@ -59,6 +58,9 @@ const EventInfo = ({navigation, route}: any) => {
         style={{flex: 1, borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
         <View style={styles.wrapperFakeCard}>
           <TouchingSlider
+            date={date}
+            placeName={placeName}
+            girls={female + femaleFriend}
             eventPhotos={photos}
             isShowEventPreview={true}
             isShowWantsJoin={false}

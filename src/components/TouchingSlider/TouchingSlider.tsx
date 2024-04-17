@@ -53,9 +53,9 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   name = '',
   age = '',
   homeAddress = '',
-    date = '',
-    girls = '',
-    placeName = '',
+  date = '',
+  girls = '',
+  placeName = '',
   eventPhotos,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);

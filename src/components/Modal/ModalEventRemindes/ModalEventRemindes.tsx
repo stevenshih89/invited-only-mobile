@@ -11,6 +11,7 @@ import {showToast} from 'helpers/showToast.ts';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import PeopleIcon from 'assets/images/icons/person.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
+import moment from "moment/moment";
 
 interface ModalEventRemindeProps {
   eventStarting: boolean;
@@ -19,10 +20,24 @@ interface ModalEventRemindeProps {
   image: any;
   city: string;
   date: string;
+  placeName: string;
   girlInvitation: number | string;
+  handleAcceptInvitation: any;
+  handleGetEventsIJoining: any;
 }
 
-const ModalEventRemindes: FC<ModalEventRemindeProps> = ({girlInvitation,date, city, setEventStarting, eventStarting, time, image}) => {
+const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
+  handleAcceptInvitation,
+  handleGetEventsIJoining,
+  placeName,
+  girlInvitation,
+  date,
+  city,
+  setEventStarting,
+  eventStarting,
+  time,
+  image,
+}) => {
   const [chahModal, setChatModal] = useState<boolean>(false);
   const [onTheWayState, setOnTheWayState] = useState<boolean>(false);
   const styles = useStyles();
@@ -151,23 +166,30 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({girlInvitation,date, ci
           </View>
           <View style={styles.fdr}>
             <CalendarIcon width={19} height={19} />
-            <Text style={styles.textDate}>{date}</Text>
+            <Text style={styles.textDate}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
           </View>
         </View>
-        <Text style={styles.textAreYouSure}>Event starting in {time}!</Text>
+        <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : `Event starting in ${time}h!`}</Text>
         <Button
-          onPress={() => {
-            showToast('success', 'By Alexa');
-            setEventStarting(false);
-            // setModalVisible(false);
+          onPress={async () => {
+            if (time === '0') {
+              setEventStarting(false);
+            } else {
+              await handleAcceptInvitation();
+              await handleGetEventsIJoining();
+              showToast('success', 'Go to my events', `You confirmed ${placeName} event`);
+              setEventStarting(false);
+              // setModalVisible(false);
+            }
           }}
-          title="Confirm"
+          title={time === '0' ? 'Im on my way' : 'Confirm'}
           buttonStyle={styles.button}
         />
         <Button
           variant="transparent"
           onPress={() => {
-            setChatModal(true);
+            setEventStarting(false);
+            // setChatModal(true);
             // setOnTheWayState(true);
           }}
           title="Go to my event"

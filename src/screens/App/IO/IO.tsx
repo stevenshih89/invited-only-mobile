@@ -56,6 +56,7 @@ const IO: FC = (): JSX.Element => {
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
   const userHost = useUser((i: any) => i?.user);
 
+  console.log('userHost io', userHost);
   const handleOpenSuperInvite = () => {
     setIsVisibleSuperInvite(true);
   };
@@ -379,6 +380,7 @@ const IO: FC = (): JSX.Element => {
                 age={age}
                 homeAddress={homeAddress}
                 isShowInvitesTooltip={false}
+                isLocked={!userHost?.accountConfirmed}
                 handleOpenSuperInvite={handleOpenSuperInvite}
                 handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}

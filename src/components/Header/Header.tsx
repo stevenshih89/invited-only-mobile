@@ -75,11 +75,15 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const requestFilter = useRequest((i: any) => i?.requestFilter);
   const setEventFilter = useChat((i: any) => i?.setEventFilter);
   const setRequestFilter = useRequest((i: any) => i?.setRequestFilter);
+  const userHost = useUser((i: any) => i?.user);
 
   const {myEvents, setActiveEvent, activeEvent} = useContext(EventContext);
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
   const goToCreateEvent = (): void => {
+    if (!userHost?.accountConfirmed) {
+      return;
+    }
     navigation.navigate(eventCreatingStackPath);
   };
 
@@ -236,7 +240,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   <Text style={styles.textButton}>Create event</Text>
                 </TouchableOpacity>
                 {/*@ts-ignore*/}
-                <TouchableOpacity onPress={() => navigation.navigate(joinEventsPath)} style={styles.eventButton}>
+                <TouchableOpacity
+                  onPress={() => {
+                    if (!userHost?.accountConfirmed) {
+                      return;
+                    }
+                    navigation.navigate(joinEventsPath);
+                  }}
+                  style={styles.eventButton}>
                   <View style={styles.eventView}>
                     <CalendarSearchIcon width={26} height={26} />
                   </View>
@@ -245,7 +256,16 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 {myEvents.map((event: any, index: number) => {
                   const isActive = activeEvent?.id === event.id;
                   return (
-                    <TouchableOpacity key={index} style={styles.eventButton} activeOpacity={0.7} onPress={() => setActiveEvent(event)}>
+                    <TouchableOpacity
+                      key={index}
+                      style={styles.eventButton}
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        if (!userHost?.accountConfirmed) {
+                          return;
+                        }
+                        setActiveEvent(event);
+                      }}>
                       <View
                         style={{
                           borderRadius: 50,
@@ -278,6 +298,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   style={styles.eventButton}
                   activeOpacity={0.7}
                   onPress={() => {
+                    if (!userHost?.accountConfirmed) {
+                      return;
+                    }
                     setActiveEventDate(ANY_DAY);
                   }}>
                   <View
@@ -311,6 +334,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   style={styles.eventButton}
                   activeOpacity={0.7}
                   onPress={() => {
+                    if (!userHost?.accountConfirmed) {
+                      return;
+                    }
                     setActiveEventDate(TODAY);
                   }}>
                   <View
@@ -344,6 +370,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   style={styles.eventButton}
                   activeOpacity={0.7}
                   onPress={() => {
+                    if (!userHost?.accountConfirmed) {
+                      return;
+                    }
                     setActiveEventDate(THIS_WEEKEND);
                   }}>
                   <View
@@ -409,7 +438,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               <Text style={styles.textButton}>Create event</Text>
             </TouchableOpacity>
             {/*@ts-ignore*/}
-            <TouchableOpacity onPress={() => setActiveEvent('host')} style={styles.eventButton}>
+            <TouchableOpacity
+              onPress={() => {
+                if (!userHost?.accountConfirmed) {
+                  return;
+                }
+                setActiveEvent('host');
+              }}
+              style={styles.eventButton}>
               <View style={[styles.joinEventActive, {borderColor: activeEvent === 'host' ? whiteColor : lightGray5Color}]}>
                 <CalendarSearchIcon width={26} height={26} />
               </View>
@@ -418,7 +454,16 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
             {myEvents?.map((event: any, index: number) => {
               const isActive = activeEvent?.id === event.id;
               return (
-                <TouchableOpacity key={index} style={styles.eventButton} activeOpacity={0.7} onPress={() => setActiveEvent(event)}>
+                <TouchableOpacity
+                  key={index}
+                  style={styles.eventButton}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    if (!userHost?.accountConfirmed) {
+                      return;
+                    }
+                    setActiveEvent(event);
+                  }}>
                   <View
                     style={{
                       borderRadius: 50,

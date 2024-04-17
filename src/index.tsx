@@ -5,7 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firestore from "@react-native-firebase/firestore";
+import firestore from '@react-native-firebase/firestore';
 
 //import components
 import {AuthProvider, AuthContext} from 'contexts/AuthContext.tsx';
@@ -20,10 +20,11 @@ import {useUser} from './store/userStore';
 const Main = () => {
   const [initializing, setInitializing] = useState<boolean>(true);
   const [authState, setAuthState] = useState(false);
-  const [onBoardingState, setOnboarding] = useState(false);
-  const {onBoarding, user, setUser} = useContext(AuthContext);
+  const {user, setUser} = useContext(AuthContext);
 
   const setUserData = useUser((i: any) => i?.setUser);
+  const onBoarding = useUser((i: any) => i?.onBoarding);
+  const setOnBoarding = useUser((i: any) => i?.setOnBoarding);
 
   const onAuthStateChanged = async (user: any) => {
     const uid = user?._user?.uid;
@@ -48,7 +49,7 @@ const Main = () => {
 
   const getOnbordingState = async () => {
     const onbording = await AsyncStorage.getItem('onBoarding');
-    onbording ? setOnboarding(true) : setOnboarding(false);
+    onbording ? setOnBoarding(true) : setOnBoarding(false);
   };
 
   useEffect(() => {
@@ -57,7 +58,7 @@ const Main = () => {
     getFcmToken();
     registerListenerWithFCM();
     return subscriber;
-  }, [initializing, user, onBoarding, onBoardingState, setUser]);
+  }, [initializing, user, onBoarding, onBoarding, setUser]);
 
   if (initializing) {
     return null;
@@ -70,7 +71,7 @@ const Main = () => {
           <EventProvider>
             <EventsDateProvider>
               <NavigationContainer>
-                <SafeAreaProvider>{authState && onBoardingState ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
+                <SafeAreaProvider>{authState && onBoarding ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
               </NavigationContainer>
               <LocalNotification />
             </EventsDateProvider>
