@@ -59,6 +59,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       const uid = user?.uid;
 
       changeStatus(list?.usersList, uid, 'accepted');
+      console.log('handleAcceptInvitation');
 
       console.log('accepted', list?.usersList);
       await firestore().collection('Events').doc(list?.id).update({
@@ -70,7 +71,6 @@ const MyEvents: FC<any> = ({navigation}) => {
       showToast('cancel', '', 'Error!');
       console.log(e);
     }
-    console.log('handleAcceptInvitation');
   };
 
   const handleRejectInvitation = async () => {

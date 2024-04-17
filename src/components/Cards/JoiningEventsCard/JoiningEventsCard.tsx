@@ -83,6 +83,11 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
   });
   const styles = useStyles();
   const navigation = useAppNavigation();
+
+  const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
+  // const currentTime = `00:50`;
+
+  console.log('currentTime', currentTime);
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
       <LoadingLoop />
@@ -120,9 +125,8 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
   };
 
   useEffect(() => {
-    const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
-
     if (
+      (calculateTimeDifference(currentTime, hour) === 0 && !isAcceptedInvitation) ||
       (calculateTimeDifference(currentTime, hour) >= 2 && !isAcceptedInvitation) ||
       (calculateTimeDifference(currentTime, hour) >= 12 && !isAcceptedInvitation) ||
       (calculateTimeDifference(currentTime, hour) >= 24 && !isAcceptedInvitation)

@@ -169,16 +169,20 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             <Text style={styles.textDate}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
           </View>
         </View>
-        <Text style={styles.textAreYouSure}>Event starting in {time}h!</Text>
+        <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : `Event starting in ${time}h!`}</Text>
         <Button
           onPress={async () => {
-            await handleAcceptInvitation();
-            await handleGetEventsIJoining();
-            showToast('success', 'Go to my events', `You confirmed ${placeName} event`);
-            setEventStarting(false);
-            // setModalVisible(false);
+            if (time === '0') {
+              setEventStarting(false);
+            } else {
+              await handleAcceptInvitation();
+              await handleGetEventsIJoining();
+              showToast('success', 'Go to my events', `You confirmed ${placeName} event`);
+              setEventStarting(false);
+              // setModalVisible(false);
+            }
           }}
-          title="Confirm"
+          title={time === '0' ? 'Im on my way' : 'Confirm'}
           buttonStyle={styles.button}
         />
         <Button
