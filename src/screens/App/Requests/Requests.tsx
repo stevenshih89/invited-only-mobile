@@ -127,7 +127,6 @@ const Requests: FC = (): ReactElement => {
 
   return (
     <View style={styles.container}>
-      {console.log('list request', list)}
       {list ? (
         <FlatList
           // @ts-ignore

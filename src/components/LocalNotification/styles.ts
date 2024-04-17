@@ -37,8 +37,13 @@ const useStyles = () => {
       top: 10.5,
     },
     warning: {
-      borderLeftColor: lightGray3Color,
       borderWidth: 1,
+      borderLeftColor: lightGray3Color,
+      backgroundColor: lightGray3Color,
+      alignSelf: 'center',
+      marginRight: 0,
+      height: 84,
+      opacity: 0.94,
     },
     cancel: {
       borderWidth: 1,
