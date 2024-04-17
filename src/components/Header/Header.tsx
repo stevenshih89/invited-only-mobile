@@ -83,9 +83,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const {myEvents, setActiveEvent, activeEvent} = useContext(EventContext);
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
-  const currentDate = `${new Date().getDate()}.${new Date().getMonth()}.${new Date().getFullYear()}`;
-  // const currentDate = `${new Date().toLocaleDateString()}`;
-
   const goToCreateEvent = (): void => {
     if (!userHost?.accountConfirmed) {
       return;
@@ -232,9 +229,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     const currentDate = new Date();
 
     if (inputDate < currentDate) {
-      return true; // Если принимаемая дата уже прошла
+      return true;
     } else {
-      return false; // Если принимаемая дата еще не наступила
+      return false;
     }
   };
 
@@ -249,7 +246,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 
   const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | 'IO-JE' | undefined) => {
     const isHost = userInfo?.accountType.toLowerCase() === 'host';
-    const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
 
     switch (type) {
       case 'IO':
