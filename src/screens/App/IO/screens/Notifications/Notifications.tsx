@@ -6,11 +6,13 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
 import useStyles from './styles';
 import {FC, ReactElement} from 'react';
+import {useUser} from "../../../../../store/userStore";
 
 const Notifications: FC = (): ReactElement => {
   const navigation = useAppNavigation();
 
   const styles = useStyles();
+  const user = useUser((i: any) => i?.user);
 
   const goToCodeVerification = (): void => {
     navigation.navigate(commonStackPath, {screen: invitationCodePath});
@@ -45,7 +47,7 @@ const Notifications: FC = (): ReactElement => {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{paddingTop: 20}}
         style={styles.containerScroll}>
-        <NotificationItem />
+        {!user?.accountConfirmed && <NotificationItem />}
       </ScrollView>
     </View>
   );

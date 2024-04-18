@@ -19,11 +19,34 @@ const InvitationCode: FC = (): JSX.Element => {
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
+  const generateInviteCode = () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const length = 12;
+    let inviteCode = '';
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      inviteCode += characters.charAt(randomIndex);
+    }
+
+    return inviteCode;
+  };
+
   const handleNext = () => {
     setOnBoarding([
       ...onBoarding,
       {
         invitationСode: code,
+        codeForInvitingOtherUsers: generateInviteCode(),
+        notificationSettings: {
+          joinedEvent: false,
+          myEvents: false,
+          requests: false,
+          chat: false,
+          superInvite: false,
+          superJoin: false,
+          match: false,
+        },
       },
     ]);
     navigation.navigate(codeVerifiedPath as never);

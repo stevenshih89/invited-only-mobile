@@ -10,22 +10,28 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import ModalLogout from './LogoutModal';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {accountSettingPath, contactAndFAQPath, notificationSettingPath} from 'constants/pathLocations';
+import {useUser} from "../../../../../store/userStore";
 
 const Settings = () => {
   const [isVisibleLogoutModal, setIsVisibleLogoutModal] = useState(false);
 
   const navigation = useAppNavigation();
+  const user = useUser((i: any) => i?.user);
 
   const openLogoutModal = () => {
     setIsVisibleLogoutModal(true);
   };
 
   const goToAccountSetting = () => {
-    navigation.navigate(accountSettingPath as never);
+    const locationState = user?.location;
+    // @ts-ignore
+    navigation.navigate(accountSettingPath, {params: {locationState: locationState}});
   };
 
-  const goToNotificationSetting = () => {
-    navigation.navigate(notificationSettingPath as never);
+  const goToNotificationSetting = async () => {
+    const notificationSettings = user?.notificationSettings;
+    // @ts-ignore
+    navigation.navigate(notificationSettingPath, {params: {notificationSettings: notificationSettings}});
   };
 
   const goToContactAndFAQ = () => {

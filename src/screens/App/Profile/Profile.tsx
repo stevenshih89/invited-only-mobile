@@ -14,6 +14,7 @@ import {Alert} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {whiteColor} from 'constants/colors';
 import {calculateAge} from 'helpers/calculateAge';
+import {useUser} from "../../../store/userStore";
 
 const Profile: FC = () => {
   const [activeTabId, setActiveTabId] = useState(0);
@@ -22,6 +23,7 @@ const Profile: FC = () => {
   const [mainImage, setMainImage] = useState({id: 0, image: ''} as any);
   const percentage = 10;
 
+  const userHost = useUser((i: any) => i?.user);
   const tabList = [
     {id: 0, title: 'My Plan'},
     {id: 1, title: 'Safety & Wellbeing'},
@@ -67,7 +69,7 @@ const Profile: FC = () => {
       case 1:
         return <SafetyAndWellbeing />;
       case 2:
-        return <Invitations invitationCode={userInfo?.invitationCode} />;
+        return <Invitations invitationCode={userHost?.invitationСode} />;
       default:
         return <MyPlan />;
     }

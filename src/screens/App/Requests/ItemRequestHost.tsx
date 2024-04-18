@@ -61,7 +61,7 @@ const ItemRequestHost = ({item, list}: any) => {
     const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
 
     if (eventIsFull) {
-      return showToast('cancel', 'Go to my events', `Event Full: ${eventIsFull}/${eventIsFull} guests invited`);
+      return showToast('cancel', 'Go to my events', `Event Full: ${allPeople}/${allPeople} guests invited`);
     }
 
     const userAccepted = {

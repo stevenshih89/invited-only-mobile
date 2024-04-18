@@ -9,7 +9,7 @@ import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {addPhotosPath, chooseAccountTypePath} from 'constants/pathLocations';
+import {addPhotosPath} from 'constants/pathLocations';
 import Input from 'components/Inputs/Input';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 

@@ -1,23 +1,31 @@
 import {Switch} from '@rneui/themed';
 import {grayColor, lightGray5Color, lightGray6Color, toggleColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {useEffect, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {SafeAreaView, Text, View} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import ModalTurnOffNotifications from './ModalTurnOffNotifications';
+import firestore from '@react-native-firebase/firestore';
+import {useUser} from '../../../../../store/userStore';
 
-const NotificationSetting = () => {
+const NotificationSetting: FC = ({navigation, route}: any) => {
+  const notificationSettings = route?.params?.params?.notificationSettings;
+
   const [allNotification, setAllNotification] = useState(false);
-  const [joinedEvent, setJoinedEvent] = useState(false);
-  const [myEvents, setMyEvents] = useState(false);
-  const [requests, setRequests] = useState(false);
-  const [chat, setChat] = useState(false);
-  const [superInvite, setSuperInvite] = useState(false);
-  const [superJoin, setSuperJoin] = useState(false);
-  const [match, setMatch] = useState(false);
+  const [joinedEvent, setJoinedEvent] = useState(notificationSettings?.joinedEvent);
+  const [myEvents, setMyEvents] = useState(notificationSettings?.myEvents);
+  const [requests, setRequests] = useState(notificationSettings?.requests);
+  const [chat, setChat] = useState(notificationSettings?.chat);
+  const [superInvite, setSuperInvite] = useState(notificationSettings?.superInvite);
+  const [superJoin, setSuperJoin] = useState(notificationSettings?.superJoin);
+  const [match, setMatch] = useState(notificationSettings?.match);
   const [isVisibleTurnOffNotificationsModal, setIsVisibleTurnOffNotificationsModal] = useState(false);
 
-  const handleChangeAllNotification = (val: boolean) => {
+  const user = useUser((i: any) => i?.user);
+  const setUser = useUser((i: any) => i?.setUser);
+  const uid = user?.uid;
+
+  const handleChangeAllNotification = async (val: boolean) => {
     if (val) {
       setJoinedEvent(val);
       setAllNotification(val);
@@ -27,12 +35,36 @@ const NotificationSetting = () => {
       setSuperInvite(val);
       setSuperJoin(val);
       setMatch(val);
+
+      await firestore()
+        .collection('userInfo')
+        .doc(uid)
+        .update({
+          notificationSettings: {
+            chat: true,
+            joinedEvent: true,
+            match: true,
+            myEvents: true,
+            requests: true,
+            superInvite: true,
+            superJoin: true,
+          },
+        })
+        .then(async () => {
+          await firestore()
+            .collection('userInfo')
+            .doc(uid)
+            .get()
+            .then(res => {
+              setUser(res.data());
+            });
+        });
     } else {
       setIsVisibleTurnOffNotificationsModal(true);
     }
   };
 
-  const handleConfirmTurnOffNotifications = () => {
+  const handleConfirmTurnOffNotifications = async () => {
     setAllNotification(false);
     setJoinedEvent(false);
     setMyEvents(false);
@@ -42,14 +74,70 @@ const NotificationSetting = () => {
     setSuperJoin(false);
     setMatch(false);
     setIsVisibleTurnOffNotificationsModal(false);
+
+    await firestore()
+      .collection('userInfo')
+      .doc(uid)
+      .update({
+        notificationSettings: {
+          chat: false,
+          joinedEvent: false,
+          match: false,
+          myEvents: false,
+          requests: false,
+          superInvite: false,
+          superJoin: false,
+        },
+      })
+      .then(async () => {
+        await firestore()
+          .collection('userInfo')
+          .doc(uid)
+          .get()
+          .then(res => {
+            setUser(res.data());
+          });
+      });
+  };
+
+  const handleChangeStatus = async () => {
+    try {
+      await firestore()
+        .collection('userInfo')
+        .doc(uid)
+        .update({
+          notificationSettings: {
+            chat: chat,
+            joinedEvent: joinedEvent,
+            match: match,
+            myEvents: myEvents,
+            requests: requests,
+            superInvite: superInvite,
+            superJoin: superJoin,
+          },
+        })
+        .then(async () => {
+          await firestore()
+            .collection('userInfo')
+            .doc(uid)
+            .get()
+            .then(res => {
+              setUser(res.data());
+            });
+        });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {
     const list = [joinedEvent, myEvents, requests, chat, superInvite, superJoin, match];
     if (list.every(item => item)) {
       setAllNotification(true);
+      handleChangeStatus();
     } else if (list.some(item => !item) || list.every(item => !item)) {
       setAllNotification(false);
+      handleChangeStatus();
     }
   }, [allNotification, joinedEvent, myEvents, requests, chat, superInvite, superJoin, match]);
 
