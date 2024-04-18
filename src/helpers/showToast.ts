@@ -1,6 +1,6 @@
 import Toast from 'react-native-toast-message';
 import {screenWidth} from 'constants/common.ts';
-export type UseToastType = 'success' | 'pending' | 'warning' | 'cancel' | 'customToast';
+export type UseToastType = 'success' | 'pending' | 'warning' | 'cancel' | 'customToast' | 'warningGrey';
 
 export const showToast = (type: UseToastType, message: string, title?: string) => {
   if (!title) {
@@ -14,7 +14,10 @@ export const showToast = (type: UseToastType, message: string, title?: string) =
       title = '';
     }
     if (type === 'warning') {
-      title = 'Warning!';
+      title = '';
+    }
+    if (type === 'warningGrey') {
+      title = '';
     }
   }
 

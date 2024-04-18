@@ -67,7 +67,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                   const indexRight: number = 18 * (index + 1);
                   if (index >= 3) return;
                   return (
-                    <View style={[styles.userItemWrapper, {position: 'relative', right: indexRight}]}>
+                    <View key={index} style={[styles.userItemWrapper, {position: 'relative', right: indexRight}]}>
                       <Image style={styles.imageFakeGirl} source={{uri: i?.userPhoto}} />
                       {i?.status === 'accepted' ? (
                         <IconAccepted style={styles.iconStatus} width={21} height={21} />

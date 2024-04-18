@@ -8,6 +8,8 @@ import useStyles from 'components/LocalNotification/styles.ts';
 //import icons
 import TickCircleIcon from 'assets/images/icons/tick-circle.svg';
 import PendingClockIcon from 'assets/images/icons/pending-clock.svg';
+import InfoCircleOrange from 'assets/images/icons/info-circle-orange.svg';
+import InfoCircleGrey from 'assets/images/icons/info-circle-gray.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import XIcon from 'assets/images/icons/X.svg';
 
@@ -59,7 +61,34 @@ const LocalNotification = () => {
         )}
       />
     ),
-    warning: props => <BaseToast {...props} style={styles.warning} text1Style={styles.text1} text2Style={styles.text2} />,
+    warning: props => (
+      <BaseToast
+        {...props}
+        renderLeadingIcon={() => (
+          <View style={styles.wrapperIcon}>
+            <Image source={IconBackground} />
+            <InfoCircleOrange style={styles.iconCancel} />
+          </View>
+        )}
+        style={styles.warning}
+        text1Style={styles.text1}
+        text2Style={styles.text2}
+      />
+    ),
+    warningGrey: props => (
+      <BaseToast
+        {...props}
+        renderLeadingIcon={() => (
+          <View style={styles.wrapperIcon}>
+            <Image source={IconBackground} />
+            <InfoCircleGrey style={styles.iconCancel} />
+          </View>
+        )}
+        style={styles.warning}
+        text1Style={styles.text1}
+        text2Style={styles.text2}
+      />
+    ),
     customToast: ({text1, props}: ToastConfigParams<any>) => (
       <View style={styles.customToast}>
         <Text>{text1}</Text>

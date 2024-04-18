@@ -15,7 +15,7 @@ import {
   settingsPath,
 } from 'constants/pathLocations';
 import {ANY_DAY, screenHeight, THIS_WEEKEND, TODAY} from 'constants/common.ts';
-import {blackColor, grayColor, lightGray2Color, lightGray5Color, whiteColor} from 'constants/colors.ts';
+import {blackColor, grayColor, lightGray2Color, lightGray5Color, orangeColor, whiteColor} from 'constants/colors.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 
 //import icons
@@ -27,6 +27,8 @@ import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 import PeopleIcon from 'assets/images/icons/profile-2user.svg';
 import SettingsIcon from 'assets/images/icons/settings.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
+import InfoCircleGrayIcon from 'assets/images/icons/info-circle-gray.svg';
+import InfoCircleOrangeIcon from 'assets/images/icons/info-circle-orange.svg';
 
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
@@ -39,6 +41,7 @@ import {EventsDate} from 'contexts/EventsDate';
 import {useChat} from '../../store/chatStore';
 import {useUser} from '../../store/userStore';
 import {useRequest} from '../../store/requestsStore';
+import {showToast} from "helpers/showToast.ts";
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -162,7 +165,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     <TouchableOpacity
       onPress={() => {
         setChat(`${activeEvent}`);
-        console.log('activeEvent header', activeEvent);
         // setEventStarting(true);
       }}
       style={styles.eventButton}>
@@ -215,6 +217,24 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     </TouchableOpacity>
   );
 
+  const isEventFinished = (eventDate: string) => {
+    const parts = eventDate.split('.');
+
+    const day = parseInt(parts[0]);
+    const month = parseInt(parts[1]) - 1;
+    const year = parseInt(parts[2]);
+
+    const inputDate = new Date(year, month, day);
+
+    const currentDate = new Date();
+
+    if (inputDate < currentDate) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const goToNotifications = (): void => {
     // @ts-ignore
     navigation.navigate(notificationsStackPath, {screen: notificationsPath});
@@ -255,6 +275,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 </TouchableOpacity>
                 {myEvents.map((event: any, index: number) => {
                   const isActive = activeEvent?.id === event.id;
+                  const eventIsFinished = isEventFinished(event?.date);
+                  const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
+                  const eventIsFull = event?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+
                   return (
                     <TouchableOpacity
                       key={index}
@@ -270,12 +294,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                         style={{
                           borderRadius: 50,
                           borderWidth: 1,
-                          borderColor: isActive ? whiteColor : lightGray5Color,
+                          borderColor: eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color,
                           borderStyle: 'solid',
                           padding: 3,
                           width: 55,
                           height: 55,
                         }}>
+                        {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
+                        {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                         <Image source={{uri: event?.photos[0]?.image}} style={{width: '100%', height: '100%', borderRadius: 50}} />
                       </View>
                       <Text
@@ -453,6 +479,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
             </TouchableOpacity>
             {myEvents?.map((event: any, index: number) => {
               const isActive = activeEvent?.id === event.id;
+              const eventIsFinished = isEventFinished(event?.date);
+              const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
+              const eventIsFull = event?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+
               return (
                 <TouchableOpacity
                   key={index}
@@ -462,18 +492,22 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                     if (!userHost?.accountConfirmed) {
                       return;
                     }
+
+                    if (eventIsFinished) showToast('warningGrey', 'Create new event', `Event is ended: ${event?.date}`);
                     setActiveEvent(event);
                   }}>
                   <View
                     style={{
                       borderRadius: 50,
                       borderWidth: 1,
-                      borderColor: isActive ? whiteColor : lightGray5Color,
+                      borderColor: eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color,
                       borderStyle: 'solid',
                       padding: 3,
                       width: 55,
                       height: 55,
                     }}>
+                    {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
+                    {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                     <Image
                       // source={{uri: event?.photos?.find(({id}: {id: number}) => id === 0).image}}
                       source={{uri: event?.photos[0]?.image}}
@@ -538,7 +572,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   renderItem={({item}) => (
                     <Item
                       activeEvent={item.id}
-                      filledTo={item.female}
+                      filledTo={item?.usersList?.filter((i) => i?.status === 'accepted')?.length}
                       allPeople={item.female + item.femaleFriend + item.male + item.maleFriend}
                       image={item.photos[0]?.image}
                       girlInvitation={item.male + item.maleFriend}

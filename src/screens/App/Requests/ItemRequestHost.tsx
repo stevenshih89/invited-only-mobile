@@ -57,6 +57,13 @@ const ItemRequestHost = ({item, list}: any) => {
   };
 
   const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
+    const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
+    const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+
+    if (eventIsFull) {
+      return showToast('cancel', 'Go to my events', `Event Full: ${eventIsFull}/${eventIsFull} guests invited`);
+    }
+
     const userAccepted = {
       gender: item?.gender,
       name: item?.name,
@@ -83,6 +90,13 @@ const ItemRequestHost = ({item, list}: any) => {
 
   const handleSwipeHostCardReject = async (item: any): Promise<void> => {
     try {
+      const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
+      const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+
+      if (eventIsFull) {
+        return showToast('warning', 'Go to my events', `Event Full: ${eventIsFull}/${eventIsFull} guests invited`);
+      }
+
       const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
       await firestore().collection('Events').doc(list?.id).update({
         requestsList: updateRequestsList,

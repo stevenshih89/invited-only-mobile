@@ -30,6 +30,8 @@ const lightGray11Color: string = 'rgba(255, 255, 255, 0.06)';
 const lightGray12Color: string = '#212727';
 const goldColor: string = '#977B4A';
 
+const orangeColor: string = '#FA9601';
+
 const toggleColor: string = '#4CD964';
 const backgroundColor: string = '#121212';
 
@@ -42,6 +44,7 @@ export {
   darkRed2Color,
   lightRedColor,
   lightRed1Color,
+  orangeColor,
   errorColor,
   transparent60Color,
   transparentWhite30Color,
