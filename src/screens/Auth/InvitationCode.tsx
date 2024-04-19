@@ -12,6 +12,8 @@ import Input from 'components/Inputs/Input';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {codeVerifiedPath} from 'constants/pathLocations.ts';
 import {AuthContext} from 'contexts/AuthContext.tsx';
+import firestore from '@react-native-firebase/firestore';
+import {showToast} from 'helpers/showToast.ts';
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
@@ -19,11 +21,42 @@ const InvitationCode: FC = (): JSX.Element => {
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
-  const handleNext = () => {
+  const generateInviteCode = () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const length = 12;
+    let inviteCode = '';
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      inviteCode += characters.charAt(randomIndex);
+    }
+
+    return inviteCode;
+  };
+
+  const handleNext = async () => {
+    const findInvitationСodes = await firestore().collection('userInfo').where('invitationСode', '==', userHost.codeForInvitingOtherUsers).get();
+    const data = findInvitationСodes?.docs?.map(i => i?.data());
+    const culculate = data?.length - 5;
+
+    if (culculate >= 5) {
+      return showToast('cancel', '', 'The maximum amount has been used');
+    }
+
     setOnBoarding([
       ...onBoarding,
       {
         invitationСode: code,
+        codeForInvitingOtherUsers: generateInviteCode(),
+        notificationSettings: {
+          joinedEvent: false,
+          myEvents: false,
+          requests: false,
+          chat: false,
+          superInvite: false,
+          superJoin: false,
+          match: false,
+        },
       },
     ]);
     navigation.navigate(codeVerifiedPath as never);

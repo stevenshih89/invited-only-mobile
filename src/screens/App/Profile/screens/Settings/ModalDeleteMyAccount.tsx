@@ -7,8 +7,21 @@ import type {FC} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import auth from '@react-native-firebase/auth';
 
 const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
+  const handleDeleteAccount = async () => {
+    try {
+      await auth()
+        .currentUser?.delete()
+        .then(async () => {
+          await auth().signOut();
+        });
+    } catch (e) {
+      console.log('e', e);
+    }
+  };
+
   return (
     <Modal
       isVisible={isVisible}
@@ -62,7 +75,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void}> = ({is
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 40, textAlign: 'center', opacity: 0.8}}>
           You can register a new account. Your events and purchases will not be restored
         </Text>
-        <Button title="Yes, delete" onPress={onClose} />
+        <Button title="Yes, delete" onPress={handleDeleteAccount} />
         <Button title="Cancel" variant="transparent" onPress={onClose} />
       </View>
     </Modal>

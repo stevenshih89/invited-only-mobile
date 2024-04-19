@@ -7,19 +7,81 @@ import InstagramIcon from 'assets/images/auth/instagram.svg';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Switch} from '@ant-design/react-native';
-import {useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import ModalDeleteMyAccount from './ModalDeleteMyAccount';
-import {useAppNavigation} from 'hooks/useAppNavigation';
 import {phoneChangePath} from 'constants/pathLocations';
+import {useUser} from '../../../../../store/userStore';
+import auth from '@react-native-firebase/auth';
+import Geolocation from '@react-native-community/geolocation';
+import firestore from '@react-native-firebase/firestore';
+import chat from "screens/App/Chat/Chat.tsx";
 
-const AccountSetting = () => {
+const AccountSetting: FC = ({navigation, route}: any) => {
+  const locationState = route?.params?.params?.locationState;
   const [isChechked, setIsChechked] = useState(false);
   const [isConnectedInstagram, setIsConnectedInstagram] = useState(false);
   const [isVisibleDeleteAccountModal, setIsVisibleDeleteAccountModal] = useState(false);
+  const [location, setLocation] = useState<boolean>(locationState);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const navigation = useAppNavigation();
+  const user = useUser((i: any) => i?.user);
+  const setUser = useUser((i: any) => i?.setUser);
+  const userPhone = auth()?.currentUser?.phoneNumber;
+  const uid = user?.uid;
 
   const isPremium = false;
+
+  const handleChangeLocation = async (state: boolean): Promise<void> => {
+    try {
+      await firestore()
+        .collection('userInfo')
+        .doc(uid)
+        .update({
+          location: state,
+        })
+        .then(async () => {
+          await firestore()
+            .collection('userInfo')
+            .doc(uid)
+            .get()
+            .then(res => {
+              setUser(res.data());
+            });
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getCurrentLocation = (): void => {
+    Geolocation.setRNConfiguration({
+      skipPermissionRequests: false,
+    });
+    Geolocation.getCurrentPosition(
+      position => {
+        console.log('Granted', position);
+        setLocation(true);
+        handleChangeLocation(true);
+        setIsChechked(true);
+        setLoading(false);
+      },
+      error => {
+        console.log('Denied', error);
+        setLocation(false);
+        setIsChechked(false);
+        setLoading(false);
+        handleChangeLocation(false);
+      },
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+    );
+  };
+
+  useEffect(() => {
+    if (isChechked) {
+      getCurrentLocation();
+    }
+    setLoading(false);
+  }, [location, isChechked]);
 
   return (
     <>
@@ -34,7 +96,8 @@ const AccountSetting = () => {
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <AEFlag />
                 <Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi700, marginLeft: 4}}>
-                  +971<Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi400}}> 011 417 757 21</Text>
+                  {userPhone?.slice(0, 4)}
+                  <Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi400}}> {userPhone?.slice(4, -1)}</Text>
                 </Text>
               </View>
               <TouchableOpacity
@@ -81,7 +144,16 @@ const AccountSetting = () => {
               marginTop: 24,
             }}>
             <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>Location</Text>
-            <Switch trackColor={{false: grayColor, true: toggleColor}} checked={isChechked} onChange={val => setIsChechked(val)} />
+            <Switch
+              trackColor={{false: grayColor, true: toggleColor}}
+              checked={location}
+              loading={loading}
+              onChange={value => {
+                setIsChechked(value);
+                handleChangeLocation(value);
+                // setLocation(!location);
+              }}
+            />
           </View>
           <TouchableOpacity
             activeOpacity={0.7}
@@ -99,7 +171,7 @@ const AccountSetting = () => {
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <InstagramIcon width={28} height={28} />
               <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi400, marginLeft: 6}}>
-                {isConnectedInstagram ? 'john.doe' : 'Connect Instagram'}
+                {isConnectedInstagram ? user?.name : 'Connect Instagram'}
               </Text>
             </View>
             <Text style={{color: isConnectedInstagram ? lightRedColor : whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi700}}>
