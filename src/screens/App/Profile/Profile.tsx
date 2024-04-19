@@ -76,8 +76,8 @@ const Profile: FC = () => {
 
             if (userInfoDoc.exists) {
               setUserInfo(userInfoDoc.data());
-              console.log('userInfoDoc.data()', userInfoDoc.data());
-              console.log('calculateCompleteness(userInfoDoc.data());', calculateCompleteness(userInfoDoc.data()))
+              const calculate = Math.floor(calculateCompleteness(userInfoDoc.data()));
+              setPercentage(calculate);
               const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
               if (userImage) {
                 setMainImage(userImage);
