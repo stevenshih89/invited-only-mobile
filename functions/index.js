@@ -61,3 +61,18 @@ const sendNotification = async userId => {
     },
   });
 };
+
+exports.processCollectionOfMatches = functions.firestore.onDocumentCreated('CollectionOfMatches', async event => {
+  const {notificationTokenSender, name, girlsPhoto, recipientUid, senderUid} = event.data;
+
+  await admin.messaging().send({
+    token: notificationTokenSender,
+    notification: {
+      type: 'match',
+      name,
+      imageUri: girlsPhoto,
+      senderUid,
+      recipientUid,
+    },
+  });
+});

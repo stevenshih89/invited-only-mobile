@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import messaging from '@react-native-firebase/messaging';
+import messaging, {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
 import notifee, {EventType} from '@notifee/react-native';
 import {PERMISSIONS, request} from 'react-native-permissions';
 
@@ -152,5 +152,19 @@ async function onDisplayNotification(title, body, data) {
         id: 'default',
       },
     },
+  });
+}
+
+// it would be called when the app in foreground state
+export function onMatchNotificationSubscription(handler: (message: FirebaseMessagingTypes.RemoteMessage) => void) {
+  return messaging().onMessage(async remoteMessage => {
+    if (remoteMessage.data?.type !== 'match') return;
+
+    // Request permissions for iOS
+    await notifee.requestPermission();
+
+    // DEVNOTE: Just for debugging, remove log in release.
+    console.log('onMatchNotificationSubscription Received Match', JSON.stringify(remoteMessage));
+    handler(remoteMessage);
   });
 }
