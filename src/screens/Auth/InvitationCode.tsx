@@ -12,6 +12,8 @@ import Input from 'components/Inputs/Input';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {codeVerifiedPath} from 'constants/pathLocations.ts';
 import {AuthContext} from 'contexts/AuthContext.tsx';
+import firestore from '@react-native-firebase/firestore';
+import {showToast} from 'helpers/showToast.ts';
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
@@ -32,7 +34,15 @@ const InvitationCode: FC = (): JSX.Element => {
     return inviteCode;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    const findInvitationСodes = await firestore().collection('userInfo').where('invitationСode', '==', userHost.codeForInvitingOtherUsers).get();
+    const data = findInvitationСodes?.docs?.map(i => i?.data());
+    const culculate = data?.length - 5;
+
+    if (culculate >= 5) {
+      return showToast('cancel', '', 'The maximum amount has been used');
+    }
+
     setOnBoarding([
       ...onBoarding,
       {

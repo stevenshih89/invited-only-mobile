@@ -14,21 +14,56 @@ import {Alert} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {whiteColor} from 'constants/colors';
 import {calculateAge} from 'helpers/calculateAge';
-import {useUser} from "../../../store/userStore";
+import {useUser} from '../../../store/userStore';
 
 const Profile: FC = () => {
   const [activeTabId, setActiveTabId] = useState(0);
+  const [percentage, setPercentage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({} as any);
   const [mainImage, setMainImage] = useState({id: 0, image: ''} as any);
-  const percentage = 10;
 
-  const userHost = useUser((i: any) => i?.user);
   const tabList = [
     {id: 0, title: 'My Plan'},
     {id: 1, title: 'Safety & Wellbeing'},
     {id: 2, title: 'Invitations'},
   ];
+
+  const calculateCompleteness = (profile) => {
+    const requiredFields = [
+      'accountConfirmed',
+      'chooseGuest',
+      'date',
+      'email',
+      'facePhoto',
+      'gender',
+      'homeAddress',
+      'imageUser',
+      'location',
+      'name',
+      'notifications',
+      'photos',
+      'showAge',
+    ];
+    let presentFields = 0;
+
+    for (const field of requiredFields) {
+      if (profile.hasOwnProperty(field) && profile[field] !== null && profile[field] !== undefined) {
+        presentFields++;
+      }
+    }
+
+    const completenessPercentage = (presentFields / requiredFields.length) * 100;
+
+    // Если все поля заполнены, вернуть 100%, иначе отнять проценты за отсутствующие поля
+    if (completenessPercentage === 100) {
+      return 100;
+    } else {
+      const missingFields = requiredFields.length - presentFields;
+      const deductionPercentage = (missingFields / requiredFields.length) * 100;
+      return completenessPercentage - deductionPercentage;
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -41,6 +76,8 @@ const Profile: FC = () => {
 
             if (userInfoDoc.exists) {
               setUserInfo(userInfoDoc.data());
+              console.log('userInfoDoc.data()', userInfoDoc.data());
+              console.log('calculateCompleteness(userInfoDoc.data());', calculateCompleteness(userInfoDoc.data()))
               const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
               if (userImage) {
                 setMainImage(userImage);
@@ -69,7 +106,7 @@ const Profile: FC = () => {
       case 1:
         return <SafetyAndWellbeing />;
       case 2:
-        return <Invitations invitationCode={userHost?.invitationСode} />;
+        return <Invitations />;
       default:
         return <MyPlan />;
     }
@@ -104,7 +141,7 @@ const Profile: FC = () => {
           </View>
           <View style={styles.nameContainer}>
             <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.showAge ? `, ${userAge}` : ''}`}</Text>
-            {userInfo?.accountApproved && <CheckStarWhite style={styles.checkStarIcon} />}
+            {userInfo?.accountConfirmed && <CheckStarWhite style={styles.checkStarIcon} />}
           </View>
           <View style={styles.buttonContainer}>
             <Button title="Complete profile" buttonStyle={styles.button} buttonTitleStyle={styles.buttonTitle} onPress={goToMyProfileView} />
