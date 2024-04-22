@@ -14,6 +14,7 @@ import {codeVerifiedPath} from 'constants/pathLocations.ts';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
+import {useUser} from "../../store/userStore";
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
@@ -21,6 +22,7 @@ const InvitationCode: FC = (): JSX.Element => {
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
+  const userHost = useUser((i: any) => i?.user);
   const generateInviteCode = () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const length = 12;
