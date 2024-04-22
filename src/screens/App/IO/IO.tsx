@@ -22,7 +22,7 @@ import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
 import {useUser} from '../../../store/userStore';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {fcmHelper, getFcmToken} from 'helpers/fcmHelper.ts';
+import {fcmHelper, getFcmToken, onMatchNotificationSubscription} from 'helpers/fcmHelper.ts';
 import {whiteColor} from 'constants/colors';
 import {EventContext} from 'contexts/EventContext';
 
@@ -55,6 +55,15 @@ const IO: FC = (): JSX.Element => {
 
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
   const userHost = useUser((i: any) => i?.user);
+
+  useEffect(() => {
+    const unsubscribe = onMatchNotificationSubscription(message => {
+      // DEVNOTE: Add posibility to show internal data from match notification.
+      setIsVisibleMatch(true);
+    });
+
+    return () => unsubscribe();
+  });
 
   const handleOpenSuperInvite = () => {
     setIsVisibleSuperInvite(true);
