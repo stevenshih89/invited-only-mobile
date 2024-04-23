@@ -42,6 +42,7 @@ import PeopleIcon from 'assets/images/icons/profile-2user.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import MapIcon from 'assets/images/icons/location.svg';
+import moment from "moment";
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -99,7 +100,7 @@ const IO: FC = (): JSX.Element => {
   const OverlayRight = () => {
     return (
       <View style={[styles.overlayLabelContainerInvite]}>
-        <Text style={styles.overlayLabelTextInvite}>INVITE</Text>
+        <Text style={styles.overlayLabelTextInvite}>{userHost?.accountType === 'host' ? 'INVITE' : 'Join'}</Text>
       </View>
     );
   };
@@ -179,7 +180,7 @@ const IO: FC = (): JSX.Element => {
       return;
     }
     try {
-      const querySnapshot = await firestore().collection('Events').limit(20).get();
+      const querySnapshot = await firestore().collection('Events').get();
 
       const filteredEvents = querySnapshot.docs
         .map((doc: any) => ({
@@ -190,15 +191,15 @@ const IO: FC = (): JSX.Element => {
 
       console.log('filteredEvents', filteredEvents);
       async function enrichElementsWithPhotos(elements) {
-        const promises = elements.map(async element => {
+        const promises = elements?.map(async element => {
           const docRef = firestore().collection('userInfo').doc(element.uid);
           const doc = await docRef.get();
 
           if (!doc.exists) {
             return null;
           } else {
-            const userInfo = doc.data();
-            return {...element, userPhotos: userInfo?.photos};
+            const userInfo = doc?.data();
+            return {...element, userPhotos: userInfo?.photos, hostInfo: userInfo};
           }
         });
 
@@ -238,6 +239,9 @@ const IO: FC = (): JSX.Element => {
           component: (
             <View style={styles.wrapperFakeCard}>
               <TouchingSlider
+                placeName={placeName}
+                girls={female + femaleFriend}
+                date={date}
                 isShowEventPreview={true}
                 isShowWantsJoin={false}
                 isShowInvitesTooltip={false}
@@ -347,7 +351,16 @@ const IO: FC = (): JSX.Element => {
         });
       });
 
-      setEvents([...data]);
+      // По ближайшей дате +
+      // Интересы и хобби +
+      // Демография (возраст/пол) -
+      // Посещение прошлых мероприятий -
+      // Взаимные связи (чаты/посещения мероприятий) -
+
+      console.log('data guest', enrichedEvents);
+      const recommendedData = sortByInterests(sortByDate(data)?.reverse(), userHost);
+      console.log('recommendedData', recommendedData);
+      setEvents([...recommendedData]);
     } catch (e: any) {
       Alert.alert('Error', e.message || 'Something went wrong');
     }
@@ -477,13 +490,49 @@ const IO: FC = (): JSX.Element => {
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
     if (enabled) {
-      console.log('Authorization status:', authStatus);
-      fcmHelper().then(t => console.log('token', t));
+      // console.log('Authorization status:', authStatus);
+      fcmHelper().then();
     }
   };
 
+  const sortByDate = (events: any) => {
+    events?.sort((a, b) => {
+      let dateA: Date | any = new Date(a?.info?.date.split('.').reverse().join('-'));
+      let dateB: Date | any = new Date(b?.info?.date.split('.').reverse().join('-'));
+
+      return dateA - dateB;
+    });
+
+    return events;
+  };
+
+  const sortByInterests = (dataGuest, userHost) => {
+    // Фильтрация по ключу hostInfo
+    const filteredGuests = dataGuest.filter(guest => guest?.info?.hostInfo);
+
+    // Если userHost не содержит интересов, возвращаем пустой массив
+    if (!userHost?.interests || userHost?.interests.length === 0) {
+      return [];
+    }
+
+    // Извлечение интересов пользователя host
+    const userInterests = userHost?.interests?.map(interest => interest?.title);
+
+    // Фильтрация гостей по интересам пользователя host
+    const matchedGuests = filteredGuests?.filter(guest => {
+      // Если у гостя нет интересов, пропускаем его
+      if (!guest?.info?.hostInfo?.interests || guest?.info?.hostInfo?.interests?.length === 0) {
+        return false;
+      }
+      // Проверка наличия совпадений интересов
+      return guest?.info?.hostInfo.interests?.some(interest => userInterests?.includes(interest.title));
+    });
+
+    return matchedGuests;
+  };
+
   useEffect(() => {
-    userHost?.accountType === 'host' ? getListForHost() : getListForGuest();
+    userHost?.accountType !== 'host' ? getListForHost() : getListForGuest();
   }, [userInfo]);
 
   useEffect(() => {

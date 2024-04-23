@@ -122,7 +122,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     try {
       const uid = user?.uid;
       const events = await firestore().collection('Events').get();
-      const data = events.docs?.map(i => i?.data());
+      const data = events?.docs?.map(i => i?.data());
 
       const filterData = data?.filter(obj => {
         return obj?.usersList?.some(user => {
@@ -130,11 +130,10 @@ const MyEvents: FC<any> = ({navigation}) => {
         });
       });
 
-      console.log('setEventsJoiningData filterData', filterData);
       setEventsJoiningData(filterData);
     } catch (e) {
-      console.log(e);
-      showToast('cancel', 'Error!');
+      console.log('error events im joining', e);
+      // showToast('cancel', 'Error!');
     }
   };
 
@@ -143,11 +142,10 @@ const MyEvents: FC<any> = ({navigation}) => {
       if (user) {
         const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
         const data = querySnapshot?.docs?.map(i => i?.data());
-        console.log('querySnapshot my events', data);
         setMyEventsData(data);
       }
     } catch (e) {
-      console.log(e);
+      console.log('error my events', e);
     }
   };
 
