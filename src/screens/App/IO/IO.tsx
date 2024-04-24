@@ -517,7 +517,7 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     userHost?.accountType === 'host' ? getListForHost() : getListForGuest();
-  }, [userInfo]);
+  }, [userInfo, userHost]);
 
   useEffect(() => {
     fetchUserInfo();

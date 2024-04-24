@@ -17,6 +17,7 @@ import JoinEvents from 'screens/Auth/TutorialsFlow/components/JoinEvents /JoinEv
 import Button from 'components/Button/Button.tsx';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import {showToast} from 'helpers/showToast.ts';
+import {useUser} from "../../../store/userStore";
 
 const TutorialsFlow: FC = (): JSX.Element => {
   const [active, setActive] = useState<number>(0);
@@ -25,6 +26,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
 
   const content: ReactNode[] = [<CreateEvent />, <SwipeToInvite />, <SeeHoWantsToJoinYou />, <ApproveGuest />, <MeetEnjoy />, <JoinEvents />]; // all components for stepper
   const {onBoarding} = useContext(AuthContext);
+  const setOnBoarding = useUser((i: any) => i?.setOnBoarding);
 
   const handleNext = () => {
     if (active === 5) {
@@ -114,6 +116,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
           await uploadImage(imageUri, userId).then(async image => {
             await updateUserProfileImage(userId, image);
           });
+          setOnBoarding(true);
         });
     } catch (e) {
       console.log(e);
