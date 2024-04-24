@@ -20,11 +20,11 @@ import Match from './screens/Match/Match';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
-import {useUser} from '../../../store/userStore';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {fcmHelper, getFcmToken, onMatchNotificationSubscription} from 'helpers/fcmHelper.ts';
-import {whiteColor} from 'constants/colors';
 import {EventContext} from 'contexts/EventContext';
+import {whiteColor} from 'constants/colors';
+import {fcmHelper, getFcmToken, onMatchNotificationSubscription} from 'helpers/fcmHelper.ts';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {useUser} from '../../../store/userStore';
 
 //import icons
 import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
@@ -99,7 +99,7 @@ const IO: FC = (): JSX.Element => {
   const OverlayRight = () => {
     return (
       <View style={[styles.overlayLabelContainerInvite]}>
-        <Text style={styles.overlayLabelTextInvite}>INVITE</Text>
+        <Text style={styles.overlayLabelTextInvite}>{userHost?.accountType === 'host' ? 'INVITE' : 'Join'}</Text>
       </View>
     );
   };
@@ -179,7 +179,7 @@ const IO: FC = (): JSX.Element => {
       return;
     }
     try {
-      const querySnapshot = await firestore().collection('Events').limit(20).get();
+      const querySnapshot = await firestore().collection('Events').get();
 
       const filteredEvents = querySnapshot.docs
         .map((doc: any) => ({
@@ -188,17 +188,16 @@ const IO: FC = (): JSX.Element => {
         }))
         .filter(event => !event.requestsList || !event.requestsList.some((request: any) => request.uid === user.uid));
 
-      console.log('filteredEvents', filteredEvents);
       async function enrichElementsWithPhotos(elements) {
-        const promises = elements.map(async element => {
+        const promises = elements?.map(async element => {
           const docRef = firestore().collection('userInfo').doc(element.uid);
           const doc = await docRef.get();
 
           if (!doc.exists) {
             return null;
           } else {
-            const userInfo = doc.data();
-            return {...element, userPhotos: userInfo?.photos};
+            const userInfo = doc?.data();
+            return {...element, userPhotos: userInfo?.photos, hostInfo: userInfo};
           }
         });
 
@@ -238,6 +237,9 @@ const IO: FC = (): JSX.Element => {
           component: (
             <View style={styles.wrapperFakeCard}>
               <TouchingSlider
+                placeName={placeName}
+                girls={female + femaleFriend}
+                date={date}
                 isShowEventPreview={true}
                 isShowWantsJoin={false}
                 isShowInvitesTooltip={false}
@@ -347,7 +349,8 @@ const IO: FC = (): JSX.Element => {
         });
       });
 
-      setEvents([...data]);
+      const recommendedData = sortByInterests(sortByDate(data)?.reverse(), userHost);
+      setEvents([...recommendedData]);
     } catch (e: any) {
       Alert.alert('Error', e.message || 'Something went wrong');
     }
@@ -477,9 +480,39 @@ const IO: FC = (): JSX.Element => {
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
     if (enabled) {
-      console.log('Authorization status:', authStatus);
-      fcmHelper().then(t => console.log('token', t));
+      // console.log('Authorization status:', authStatus);
+      fcmHelper().then();
     }
+  };
+
+  const sortByDate = (events: any) => {
+    events?.sort((a, b) => {
+      let dateA: Date | any = new Date(a?.info?.date.split('.').reverse().join('-'));
+      let dateB: Date | any = new Date(b?.info?.date.split('.').reverse().join('-'));
+
+      return dateA - dateB;
+    });
+
+    return events;
+  };
+
+  const sortByInterests = (dataGuest: any, userHost: any) => {
+    const filteredGuests = dataGuest.filter(guest => guest?.info?.hostInfo);
+
+    if (!userHost?.interests || userHost?.interests.length === 0) {
+      return [];
+    }
+
+    const userInterests = userHost?.interests?.map(interest => interest?.title);
+
+    const matchedGuests = filteredGuests?.filter(guest => {
+      if (!guest?.info?.hostInfo?.interests || guest?.info?.hostInfo?.interests?.length === 0) {
+        return false;
+      }
+      return guest?.info?.hostInfo.interests?.some(interest => userInterests?.includes(interest.title));
+    });
+
+    return matchedGuests;
   };
 
   useEffect(() => {

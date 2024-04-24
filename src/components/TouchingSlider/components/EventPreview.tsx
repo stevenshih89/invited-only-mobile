@@ -54,7 +54,7 @@ const EventPreview: FC<{photos: any; date: string; girls: string; placeName: str
           </View>
           <View style={[styles.row, styles.marginLeft]}>
             <Calendar />
-            <Text style={styles.subText}>{moment(date).format('D MMMM YYYY')}</Text>
+            <Text style={styles.subText}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
           </View>
         </View>
       </View>

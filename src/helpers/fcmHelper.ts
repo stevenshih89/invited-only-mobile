@@ -13,7 +13,7 @@ export const fcmHelper = async () => {
     } else {
       await AsyncStorage.setItem('fcmToken', JSON.stringify(newToken));
     }
-    console.log('frc token', newToken);
+    // console.log('frc token', newToken);
     return newToken;
     // const fcmToken = await messaging().getToken();
     // await AsyncStorage.setItem('fcmToken', JSON.stringify(fcmToken));
@@ -30,7 +30,7 @@ export const getFcmToken = async () => {
   await registerAppWithFCM();
   try {
     token = await messaging().getToken();
-    console.log('getFcmToken-->', token);
+    // console.log('getFcmToken-->', token);
   } catch (error) {
     console.log('getFcmToken Device Token error ', error);
   }
