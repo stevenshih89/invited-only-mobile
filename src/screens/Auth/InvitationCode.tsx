@@ -111,7 +111,12 @@ const InvitationCode: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4, flexDirection: 'row', alignItems: 'center'}}>
-                <Button onPress={() => handleNext()} title="I don't have a code" buttonStyle={{flex: 1, marginRight: 2}} variant="transparent" />
+                <Button
+                  onPress={() => navigation.navigate(codeVerifiedPath as never)}
+                  title="I don't have a code"
+                  buttonStyle={{flex: 1, marginRight: 2}}
+                  variant="transparent"
+                />
                 <Button onPress={() => handleNext()} title="Continue" buttonStyle={{flex: 1, marginLeft: 2}} />
               </View>
             </View>
