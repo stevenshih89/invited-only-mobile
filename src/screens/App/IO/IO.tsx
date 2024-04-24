@@ -505,7 +505,7 @@ const IO: FC = (): JSX.Element => {
 
     const userInterests = userHost?.interests?.map(interest => interest?.title);
 
-    const matchedGuests = filteredGuests?.filter(guest => {
+    const matchedGuests = filteredGuests?.sort(guest => {
       if (!guest?.info?.hostInfo?.interests || guest?.info?.hostInfo?.interests?.length === 0) {
         return false;
       }
