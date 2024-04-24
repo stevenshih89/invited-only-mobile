@@ -205,7 +205,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
                         fontSize: RFValue(10, 812),
                         marginLeft: 4,
                       }}>
-                      {moment(date).format('D MMMM YYYY')}
+                      {moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}
                     </Text>
                   </View>
                 </TouchableOpacity>
