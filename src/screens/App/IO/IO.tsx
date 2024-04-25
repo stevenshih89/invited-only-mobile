@@ -190,14 +190,22 @@ const IO: FC = (): JSX.Element => {
 
       async function enrichElementsWithPhotos(elements) {
         const promises = elements?.map(async element => {
-          const docRef = firestore().collection('userInfo').doc(element.uid);
+          const docRef = firestore().collection('userInfo').doc(element?.uid);
+          const docRefMessage = firestore().collection('messages').where('uidHost', '==', element?.uid);
           const doc = await docRef.get();
+          const docMessages = await docRefMessage?.get();
 
           if (!doc.exists) {
             return null;
           } else {
             const userInfo = doc?.data();
-            return {...element, userPhotos: userInfo?.photos, hostInfo: userInfo};
+            const messages = docMessages?.docs;
+            const findChat = messages
+              ?.map(i => i?._data?.chats)
+              .flatMap(array => array)
+              .concat();
+            const checkChat = findChat?.some(j => j?.uid === userHost?.uid);
+            return {...element, userPhotos: userInfo?.photos, hostInfo: userInfo, availabilityOfChats: checkChat};
           }
         });
 
@@ -506,7 +514,7 @@ const IO: FC = (): JSX.Element => {
     const userInterests = userHost?.interests?.map(interest => interest?.title);
 
     const matchedGuests = filteredGuests?.sort(guest => {
-      if (!guest?.info?.hostInfo?.interests || guest?.info?.hostInfo?.interests?.length === 0) {
+      if (!guest?.info?.hostInfo?.interests || guest?.info?.hostInfo?.interests?.length === 0 || !guest?.info?.availabilityOfChats) {
         return false;
       }
       return guest?.info?.hostInfo.interests?.some(interest => userInterests?.includes(interest.title));
@@ -516,7 +524,7 @@ const IO: FC = (): JSX.Element => {
   };
 
   useEffect(() => {
-    userHost?.accountType === 'host' ? getListForHost() : getListForGuest();
+    userHost?.accountType !== 'host' ? getListForHost() : getListForGuest();
   }, [userInfo, userHost]);
 
   useEffect(() => {
