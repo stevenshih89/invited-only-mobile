@@ -46,7 +46,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   handleOpenSuperInvite,
   handleOpenMatch,
   isShowCardButtons = true,
-  isShowWantsJoin = true,
+  isShowWantsJoin = false,
   isShowInvitesTooltip = true,
   isLocked = false,
   isShowEventPreview = false,
