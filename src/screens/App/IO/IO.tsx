@@ -514,7 +514,12 @@ const IO: FC = (): JSX.Element => {
     const userInterests = userHost?.interests?.map(interest => interest?.title);
 
     const matchedGuests = filteredGuests?.sort(guest => {
-      if (!guest?.info?.hostInfo?.interests || guest?.info?.hostInfo?.interests?.length === 0 || !guest?.info?.availabilityOfChats) {
+      if (
+        !guest?.info?.hostInfo?.interests ||
+        guest?.info?.hostInfo?.interests?.length === 0 ||
+        !guest?.info?.availabilityOfChats ||
+        guest?.info?.hostInfo?.chooseGuest !== userHost?.chooseGuest
+      ) {
         return false;
       }
       return guest?.info?.hostInfo.interests?.some(interest => userInterests?.includes(interest.title));
