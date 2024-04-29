@@ -17,7 +17,7 @@ import JoinEvents from 'screens/Auth/TutorialsFlow/components/JoinEvents /JoinEv
 import Button from 'components/Button/Button.tsx';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import {showToast} from 'helpers/showToast.ts';
-import {useUser} from "../../../store/userStore";
+import {useUser} from '../../../store/userStore';
 
 const TutorialsFlow: FC = (): JSX.Element => {
   const [active, setActive] = useState<number>(0);
@@ -26,6 +26,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
 
   const content: ReactNode[] = [<CreateEvent />, <SwipeToInvite />, <SeeHoWantsToJoinYou />, <ApproveGuest />, <MeetEnjoy />, <JoinEvents />]; // all components for stepper
   const {onBoarding} = useContext(AuthContext);
+  const accountType = onBoarding[0]?.accountType === 'guest';
   const setOnBoarding = useUser((i: any) => i?.setOnBoarding);
 
   const handleNext = () => {
@@ -132,7 +133,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
         <Button buttonStyle={styles.buttonNext} onPress={handleNext} title="Next" />
       </View>
       <View style={styles.wrapperBar}>
-        {[...Array(6)].map((_, index) => (
+        {[...Array(accountType ? 5 : 6)].map((_, index) => (
           <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
         ))}
       </View>
