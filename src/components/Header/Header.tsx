@@ -2,6 +2,9 @@ import {FC, useContext, useEffect, useState} from 'react';
 import {View, TouchableOpacity, Text, Image, FlatList, ScrollView, Alert} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
+import {RFValue} from 'react-native-responsive-fontsize';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from 'components/Header/styles.ts';
@@ -17,6 +20,11 @@ import {
 import {ANY_DAY, screenHeight, THIS_WEEKEND, TODAY} from 'constants/common.ts';
 import {blackColor, grayColor, lightGray2Color, lightGray5Color, orangeColor, whiteColor} from 'constants/colors.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
+import {EventsDate} from 'contexts/EventsDate';
+import {useChat} from '../../store/chatStore';
+import {useUser} from '../../store/userStore';
+import {useRequest} from '../../store/requestsStore';
+import {showToast} from 'helpers/showToast.ts';
 
 //import icons
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
@@ -34,14 +42,6 @@ import InfoCircleOrangeIcon from 'assets/images/icons/info-circle-orange.svg';
 import EventBG from 'assets/images/app/card-event-bg.png';
 import {EventContext} from 'contexts/EventContext';
 import {Satoshi500} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import {EventsDate} from 'contexts/EventsDate';
-import {useChat} from '../../store/chatStore';
-import {useUser} from '../../store/userStore';
-import {useRequest} from '../../store/requestsStore';
-import {showToast} from "helpers/showToast.ts";
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -343,7 +343,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       alignItems: 'center',
                     }}>
                     <CalendarSearchIcon width={26} height={26} />
-                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === ANY_DAY ? whiteColor : grayColor}}>Any day</Text>
+                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === ANY_DAY ? whiteColor : grayColor}}>Today</Text>
                   </View>
                   <Text
                     style={{
@@ -353,7 +353,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       fontSize: RFValue(13, 812),
                       textAlign: 'center',
                     }}>
-                    Any day
+                    All
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -379,7 +379,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       alignItems: 'center',
                     }}>
                     <CalendarSearchIcon width={26} height={26} />
-                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === TODAY ? whiteColor : grayColor}}>Today</Text>
+                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === TODAY ? whiteColor : grayColor}}>Weekend</Text>
                   </View>
                   <Text
                     style={{
@@ -389,7 +389,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       fontSize: RFValue(13, 812),
                       textAlign: 'center',
                     }}>
-                    Today
+                    This weekend
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -415,7 +415,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       alignItems: 'center',
                     }}>
                     <CalendarSearchIcon width={26} height={26} />
-                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>This weekend</Text>
+                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>Month</Text>
                   </View>
                   <Text
                     style={{
@@ -425,7 +425,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       fontSize: RFValue(13, 812),
                       textAlign: 'center',
                     }}>
-                    This weekend
+                    This month
                   </Text>
                 </TouchableOpacity>
               </ScrollView>
