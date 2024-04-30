@@ -17,7 +17,7 @@ const useStyles = () => {
     },
     image: {
       width: '100%',
-      marginLeft: dimensionsWidth / 10,
+      // marginLeft: dimensionsWidth / 10,
     },
     textSeeWhoWantsToJoinYoy: {
       color: whiteColor,
