@@ -12,7 +12,6 @@ const useStyles = () => {
       flex: 1,
     },
     imageWrapper: {
-      // backgroundColor: 'red',
       alignItems: 'flex-start',
       marginLeft: dimensionsWidth / 14,
       height: 401,
