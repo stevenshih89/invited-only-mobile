@@ -17,7 +17,7 @@ import {
   notificationsStackPath,
   settingsPath,
 } from 'constants/pathLocations';
-import {ANY_DAY, screenHeight, THIS_WEEKEND, TODAY} from 'constants/common.ts';
+import {ANY_DAY, screenHeight, THIS_WEEKEND, TODAY, ALL, THIS_MONTH} from 'constants/common.ts';
 import {blackColor, grayColor, lightGray2Color, lightGray5Color, orangeColor, whiteColor} from 'constants/colors.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
@@ -327,13 +327,13 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                     if (!userHost?.accountConfirmed) {
                       return;
                     }
-                    setActiveEventDate(ANY_DAY);
+                    setActiveEventDate(ALL);
                   }}>
                   <View
                     style={{
                       borderRadius: 50,
                       borderWidth: 1,
-                      borderColor: activeEventDate === ANY_DAY ? whiteColor : lightGray5Color,
+                      borderColor: activeEventDate === ALL ? whiteColor : lightGray5Color,
                       borderStyle: 'solid',
                       padding: 3,
                       width: 55,
@@ -343,7 +343,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       alignItems: 'center',
                     }}>
                     <CalendarSearchIcon width={26} height={26} />
-                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === ANY_DAY ? whiteColor : grayColor}}>Today</Text>
+                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === ALL ? whiteColor : grayColor}}>Today</Text>
                   </View>
                   <Text
                     style={{
@@ -354,42 +354,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       textAlign: 'center',
                     }}>
                     All
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.eventButton}
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    if (!userHost?.accountConfirmed) {
-                      return;
-                    }
-                    setActiveEventDate(TODAY);
-                  }}>
-                  <View
-                    style={{
-                      borderRadius: 50,
-                      borderWidth: 1,
-                      borderColor: activeEventDate === TODAY ? whiteColor : lightGray5Color,
-                      borderStyle: 'solid',
-                      padding: 3,
-                      width: 55,
-                      height: 55,
-                      backgroundColor: lightGray5Color,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <CalendarSearchIcon width={26} height={26} />
-                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === TODAY ? whiteColor : grayColor}}>Weekend</Text>
-                  </View>
-                  <Text
-                    style={{
-                      marginTop: screenHeight / 190,
-                      color: whiteColor,
-                      fontFamily: Satoshi500,
-                      fontSize: RFValue(13, 812),
-                      textAlign: 'center',
-                    }}>
-                    This weekend
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -415,7 +379,43 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       alignItems: 'center',
                     }}>
                     <CalendarSearchIcon width={26} height={26} />
-                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>Month</Text>
+                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>Weekend</Text>
+                  </View>
+                  <Text
+                    style={{
+                      marginTop: screenHeight / 190,
+                      color: whiteColor,
+                      fontFamily: Satoshi500,
+                      fontSize: RFValue(13, 812),
+                      textAlign: 'center',
+                    }}>
+                    This weekend
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.eventButton}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    if (!userHost?.accountConfirmed) {
+                      return;
+                    }
+                    setActiveEventDate(THIS_MONTH);
+                  }}>
+                  <View
+                    style={{
+                      borderRadius: 50,
+                      borderWidth: 1,
+                      borderColor: activeEventDate === THIS_MONTH ? whiteColor : lightGray5Color,
+                      borderStyle: 'solid',
+                      padding: 3,
+                      width: 55,
+                      height: 55,
+                      backgroundColor: lightGray5Color,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <CalendarSearchIcon width={26} height={26} />
+                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_MONTH ? whiteColor : grayColor}}>Month</Text>
                   </View>
                   <Text
                     style={{

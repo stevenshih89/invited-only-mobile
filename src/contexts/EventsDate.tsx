@@ -1,6 +1,6 @@
 import {createContext, Dispatch, FC, ReactNode, SetStateAction, useState} from 'react';
 
-type ActiveEventDate = 'any_day' | 'today' | 'this_weekend';
+type ActiveEventDate = 'all' | 'this_weekend' | 'this_month';
 
 interface EventsDateType {
   activeEventDate: ActiveEventDate;
