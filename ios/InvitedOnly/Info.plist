@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -27,10 +31,8 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.996985328099-v61ajb8pj7s0sm06jt96ri5kbac47lbd</string>
+                <string>app-1-996985328099-ios-e2fd2fe9470120057490d6</string>
 			</array>
-			<key>REVERSED_CLIENT_ID</key>
-			<string>996985328099-v61ajb8pj7s0sm06jt96ri5kbac47lbd.apps.googleusercontent.com</string>
 		</dict>
 		<dict/>
 	</array>
@@ -62,6 +64,7 @@
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>fetch</string>
 		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
