@@ -54,6 +54,7 @@ export type RootStackParamList = {
   };
   '/settings': undefined;
   '/account-setting': undefined;
+  '/secure-privacy': undefined;
   '/phone-change': undefined;
   '/notification-setting': undefined;
   '/contact-and-faq': undefined;

@@ -30,6 +30,7 @@ import {
   phoneChangePath,
   notificationSettingPath,
   contactAndFAQPath,
+  securePrivacyPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -53,6 +54,7 @@ import AccountSetting from 'screens/App/Profile/screens/Settings/AccountSetting'
 import PhoneChange from 'screens/App/Profile/screens/Settings/PhoneChange';
 import NotificationSetting from 'screens/App/Profile/screens/Settings/NotificationSetting';
 import ContactAndFAQ from 'screens/App/Profile/screens/Settings/ContactAndFAQ';
+import SecurePrivacy from 'screens/App/Profile/screens/SecurePrivacy/SecurePrivacy.tsx';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -209,6 +211,19 @@ const CommonStackScreen = () => {
           headerShown: true,
         }}
         component={AccountSetting}
+      />
+      <CommonStack.Screen
+        key={securePrivacyPath}
+        name={securePrivacyPath}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerTitle: 'Secure & Privacy',
+          headerShown: true,
+        }}
+        component={SecurePrivacy}
       />
       <CommonStack.Screen
         key={phoneChangePath}

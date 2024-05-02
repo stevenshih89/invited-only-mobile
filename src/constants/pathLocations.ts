@@ -1,4 +1,5 @@
 import {RootStackParamList} from 'typescript/types';
+import SecurePrivacy from "screens/App/Profile/screens/SecurePrivacy/SecurePrivacy.tsx";
 // Stacks paths
 const bottomTabsStackPath = '/bottom-tabs-stack';
 const notificationsStackPath = '/notifications-stack';
@@ -44,6 +45,7 @@ const eventActiveInfoPath: keyof RootStackParamList = '/event-active-info';
 const eventEditingPath: keyof RootStackParamList = '/event-editing';
 const settingsPath: keyof RootStackParamList = '/settings';
 const accountSettingPath: keyof RootStackParamList = '/account-setting';
+const securePrivacyPath: keyof RootStackParamList = '/secure-privacy';
 const phoneChangePath: keyof RootStackParamList = '/phone-change';
 const notificationSettingPath: keyof RootStackParamList = '/notification-setting';
 const contactAndFAQPath: keyof RootStackParamList = '/contact-and-faq';
@@ -58,6 +60,7 @@ export {
   signUpPath,
   confirmPhonePath,
   turnNotificationsPath,
+  securePrivacyPath,
   chooseAccountTypePath,
   enterNamePath,
   addPhotosPath,

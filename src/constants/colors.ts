@@ -18,6 +18,7 @@ const lightGrayColor: string = '#252525';
 const grayColor: string = '#5B5B5B';
 const gray1Color: string = 'rgba(255, 255, 255, 0.26)';
 const lightGray2Color: string = '#212121';
+const lightGray13Color: string = '#1B1B1B';
 const lightGray3Color: string = '#1A1A1A';
 const lightGray4Color: string = 'rgba(175, 175, 175, 1)';
 const lightGray5Color: string = '#1B1B1B';
@@ -65,6 +66,7 @@ export {
   lightGreenColor,
   lightGray11Color,
   lightGray12Color,
+  lightGray13Color,
   goldColor,
   grayColor,
   gray1Color,
