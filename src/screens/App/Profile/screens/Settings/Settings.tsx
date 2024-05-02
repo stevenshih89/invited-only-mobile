@@ -3,14 +3,17 @@ import {useState} from 'react';
 import {FlatList, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import LogoutIcon from 'assets/images/icons/logout.svg';
 import UserEdit from 'assets/images/icons/user-edit.svg';
+import SecurePrivacy from 'assets/images/icons/secure-privacy.svg';
 import Notification from 'assets/images/icons/notification.svg';
 import Messages from 'assets/images/icons/messages.svg';
+import RestorePurchase from 'assets/images/icons/restore-purchase.svg';
+import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import ModalLogout from './LogoutModal';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {accountSettingPath, contactAndFAQPath, notificationSettingPath} from 'constants/pathLocations';
-import {useUser} from "../../../../../store/userStore";
+import {accountSettingPath, contactAndFAQPath, notificationSettingPath, securePrivacyPath} from 'constants/pathLocations';
+import {useUser} from '../../../../../store/userStore';
 
 const Settings = () => {
   const [isVisibleLogoutModal, setIsVisibleLogoutModal] = useState(false);
@@ -38,6 +41,14 @@ const Settings = () => {
     navigation.navigate(contactAndFAQPath as never);
   };
 
+  const goToCRestorePurchase = () => {
+    // navigation.navigate(contactAndFAQPath as never);
+  };
+
+  const goToSecurePrivacy = () => {
+    navigation.navigate(securePrivacyPath as never);
+  };
+
   const settingsList = [
     {
       id: 0,
@@ -53,12 +64,24 @@ const Settings = () => {
     },
     {
       id: 2,
+      title: 'Secure & Privacy',
+      icon: SecurePrivacy,
+      onPress: goToSecurePrivacy,
+    },
+    {
+      id: 3,
       title: 'Contact & FAQ',
       icon: Messages,
       onPress: goToContactAndFAQ,
     },
     {
-      id: 3,
+      id: 4,
+      title: 'Restore purchase',
+      icon: RestorePurchase,
+      onPress: goToCRestorePurchase,
+    },
+    {
+      id: 5,
       title: 'Log out',
       icon: LogoutIcon,
       onPress: openLogoutModal,
@@ -84,12 +107,22 @@ const Settings = () => {
                   onPress={item.onPress}
                   activeOpacity={0.7}
                   style={{padding: 20, backgroundColor: lightGray5Color, borderRadius: 10}}>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <View
-                      style={{width: 32, height: 32, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor, borderRadius: 100}}>
-                      <Icon width={16} height={16} />
+                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <View
+                        style={{
+                          width: 32,
+                          height: 32,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          backgroundColor: blackColor,
+                          borderRadius: 100,
+                        }}>
+                        <Icon width={16} height={16} />
+                      </View>
+                      <Text style={{color: whiteColor, marginLeft: 10, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>{item.title}</Text>
                     </View>
-                    <Text style={{color: whiteColor, marginLeft: 10, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>{item.title}</Text>
+                    {item.title !== 'Log out' && <ArrowRight />}
                   </View>
                 </TouchableOpacity>
               );
