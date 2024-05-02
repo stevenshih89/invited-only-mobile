@@ -42,6 +42,7 @@ import PeopleIcon from 'assets/images/icons/profile-2user.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import MapIcon from 'assets/images/icons/location.svg';
+import {EventsDate} from "contexts/EventsDate.tsx";
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -54,7 +55,11 @@ const IO: FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
+  const {activeEventDate} = useContext(EventsDate);
+
   const userHost = useUser((i: any) => i?.user);
+
+  let currentDate = new Date();
 
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
@@ -65,16 +70,46 @@ const IO: FC = (): JSX.Element => {
     return () => unsubscribe();
   });
 
-  const handleOpenSuperInvite = () => {
+  const handleOpenSuperInvite = (): void => {
     setIsVisibleSuperInvite(true);
   };
 
-  const handleCloseSuperInvite = () => {
+  const handleCloseSuperInvite = (): void => {
     setIsVisibleSuperInvite(false);
   };
 
-  const handleCloseMatch = () => {
+  const handleCloseMatch = (): void => {
     setIsVisibleMatch(false);
+  };
+
+  const getWeekNumber = (date) => {
+    let firstDayOfYear: Date = new Date(date.getFullYear(), 0, 1);
+    let pastDaysOfYear: number = (date - firstDayOfYear) / 86400000;
+    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+  };
+
+  const filterDataByWeekAndMonth = (data, week, month) => {
+    const weekNumber: number = parseInt(week);
+    const monthNumber: number = parseInt(month);
+
+    const isInWeek = (dateString, weekNumber): boolean => {
+      const date: Date = new Date(dateString);
+      const targetWeek: 1 | 0 = new Date(date.getFullYear(), 0, 1).getDay() === 0 ? 0 : 1;
+      const currentWeek: number = Math.floor(((date - new Date(date.getFullYear(), 0, 1)) / 86400000 + new Date(date.getFullYear(), 0, 1).getDay() + 1) / 7);
+      return currentWeek === weekNumber - targetWeek;
+    };
+
+    const isInMonth = (dateString, monthNumber): boolean => {
+      const date: Date = new Date(dateString);
+      return date.getMonth() + 1 === monthNumber;
+    };
+
+    const filteredData = data?.filter(event => {
+      const eventDate = event?.date?.split('.').reverse().join('-');
+      return isInWeek(eventDate, weekNumber) && isInMonth(eventDate, monthNumber);
+    });
+
+    return filteredData;
   };
 
   const handleOpenMatch = async (recipientUid: string, name: string, girlsPhoto: string) => {
@@ -216,7 +251,12 @@ const IO: FC = (): JSX.Element => {
 
       const data: any[] = [];
 
-      enrichedEvents.map((event: any) => {
+      const currentMonth = new Date().getMonth() + 1;
+      const currentWeek = getWeekNumber(currentDate);
+
+      const filterDataWM = activeEventDate === 'all' ? enrichedEvents : filterDataByWeekAndMonth(enrichedEvents, currentWeek, currentMonth);
+
+      filterDataWM.map((event: any) => {
         const {
           address,
           date,
@@ -530,7 +570,7 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     userHost?.accountType === 'host' ? getListForHost() : getListForGuest();
-  }, [userInfo, userHost]);
+  }, [userInfo, userHost, activeEventDate]);
 
   useEffect(() => {
     fetchUserInfo();
