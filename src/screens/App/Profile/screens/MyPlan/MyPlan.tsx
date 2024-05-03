@@ -1,15 +1,20 @@
-import Button from 'components/Button/Button';
 import {Text, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import {FC, useState} from 'react';
+import {Tooltip, TooltipProps} from '@rneui/themed';
+import {RFValue} from 'react-native-responsive-fontsize';
+
+//import components
+import useStyles from './styles';
+import {useUser} from '../../../../../store/userStore';
+import {Satoshi700} from 'constants/fonts';
+import Button from 'components/Button/Button';
+import {blackColor, lightGray5Color} from 'constants/colors';
+
+//import images
 import CheckIcon from 'assets/images/icons/check.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import CloseIcon from 'assets/images/icons/close-circle.svg';
-import {FC, useState} from 'react';
-import {Tooltip, TooltipProps} from '@rneui/themed';
-import useStyles from './styles';
-import {blackColor, lightGray5Color} from 'constants/colors';
-import {Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 
 const ControlledTooltip: FC<TooltipProps | any> = props => {
   const [open, setOpen] = useState(false);
@@ -27,10 +32,9 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
   );
 };
 
-const isPremium = true;
-
 const MyPlan = () => {
   const styles = useStyles();
+  const isPremium = useUser((i: any) => i?.premium);
   return (
     <View>
       <LinearGradient colors={['#977B4A', '#E5D291', '#A28453']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linearGradient}>
