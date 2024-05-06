@@ -1,5 +1,5 @@
-import React, {FC, useCallback, useState} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import React, {FC, useCallback, useContext, useState} from 'react';
+import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 //import components
@@ -10,14 +10,18 @@ import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard.tsx';
 import AddIcon from 'assets/images/icons/add.svg';
 import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsCard';
 import {FlatList} from 'react-native';
-import {blackColor, lightGray2Color, whiteColor} from 'constants/colors';
+import {blackColor, grayColor, lightGray2Color, lightGray5Color, whiteColor} from 'constants/colors';
 import ModalCancelAttending from './ModalCancelAttending';
 import {showToast} from 'helpers/showToast.ts';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
 import {useUser} from '../../../store/userStore';
 import {useFocusEffect} from '@react-navigation/native';
-import {screenHeight} from 'constants/common.ts';
+import {ALL, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
 import {eventCreatingStackPath} from 'constants/pathLocations.ts';
+import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {Satoshi500} from 'constants/fonts.ts';
+import {EventsDate} from 'contexts/EventsDate.tsx';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
@@ -42,6 +46,8 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [eventsJoiningData, setEventsJoiningData] = useState([]);
 
   const user = useUser((i: any) => i?.user);
+  const isHost = user?.accountType === 'host';
+  const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
   const handleOpenCancelAttendingModal = (eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string}) => {
     setActiveModalEvent(eventInfo);
@@ -159,26 +165,139 @@ const MyEvents: FC<any> = ({navigation}) => {
   return (
     <>
       <View style={styles.container}>
-        <View style={styles.wrapperHeaderButtonMyEvents}>
-          <TouchableOpacity
-            style={[styles.buttonMyEvents, {backgroundColor: activeTab === MY_EVENTS ? whiteColor : lightGray2Color}]}
-            onPress={() => setActiveTab(MY_EVENTS)}>
-            <Text style={[styles.textMyEvents, {color: activeTab === MY_EVENTS ? blackColor : whiteColor}]}>My events</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.buttonEventsJoining, {backgroundColor: activeTab === EVENTS_JOINING ? whiteColor : lightGray2Color}]}
-            onPress={() => setActiveTab(EVENTS_JOINING)}>
-            <Text style={[styles.textEventsJoining, {color: activeTab === EVENTS_JOINING ? blackColor : whiteColor}]}>Events I'm Joining</Text>
-            <View style={styles.rowTextCountEvents}>
-              <Text style={styles.textCountEvents}>21</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate(eventCreatingStackPath)} style={styles.addEventButton}>
-            <View style={styles.addEventView}>
-              <AddIcon width={19} height={19} />
-            </View>
-          </TouchableOpacity>
-        </View>
+        {isHost ? (
+          <View style={styles.wrapperHeaderButtonMyEvents}>
+            <TouchableOpacity
+              style={[styles.buttonMyEvents, {backgroundColor: activeTab === MY_EVENTS ? whiteColor : lightGray2Color}]}
+              onPress={() => setActiveTab(MY_EVENTS)}>
+              <Text style={[styles.textMyEvents, {color: activeTab === MY_EVENTS ? blackColor : whiteColor}]}>My events</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.buttonEventsJoining, {backgroundColor: activeTab === EVENTS_JOINING ? whiteColor : lightGray2Color}]}
+              onPress={() => setActiveTab(EVENTS_JOINING)}>
+              <Text style={[styles.textEventsJoining, {color: activeTab === EVENTS_JOINING ? blackColor : whiteColor}]}>Events I'm Joining</Text>
+              <View style={styles.rowTextCountEvents}>
+                <Text style={styles.textCountEvents}>21</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate(eventCreatingStackPath)} style={styles.addEventButton}>
+              <View style={styles.addEventView}>
+                <AddIcon width={19} height={19} />
+              </View>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <ScrollView horizontal scrollEnabled={false} contentContainerStyle={{marginVertical: screenHeight / 50}}>
+            <TouchableOpacity
+              style={styles.eventButton}
+              activeOpacity={0.7}
+              onPress={() => {
+                if (!user?.accountConfirmed) {
+                  return;
+                }
+                setActiveEventDate(ALL);
+              }}>
+              <View
+                style={{
+                  borderRadius: 50,
+                  borderWidth: 1,
+                  borderColor: activeEventDate === ALL ? whiteColor : lightGray5Color,
+                  borderStyle: 'solid',
+                  padding: 3,
+                  width: 55,
+                  height: 55,
+                  backgroundColor: lightGray5Color,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <CalendarSearchIcon width={26} height={26} />
+                <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === ALL ? whiteColor : grayColor}}>Today</Text>
+              </View>
+              <Text
+                style={{
+                  marginTop: screenHeight / 190,
+                  color: whiteColor,
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(13, 812),
+                  textAlign: 'center',
+                }}>
+                All
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.eventButton}
+              activeOpacity={0.7}
+              onPress={() => {
+                if (!user?.accountConfirmed) {
+                  return;
+                }
+                setActiveEventDate(THIS_WEEKEND);
+              }}>
+              <View
+                style={{
+                  borderRadius: 50,
+                  borderWidth: 1,
+                  borderColor: activeEventDate === THIS_WEEKEND ? whiteColor : lightGray5Color,
+                  borderStyle: 'solid',
+                  padding: 3,
+                  width: 55,
+                  height: 55,
+                  backgroundColor: lightGray5Color,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <CalendarSearchIcon width={26} height={26} />
+                <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>Weekend</Text>
+              </View>
+              <Text
+                style={{
+                  marginTop: screenHeight / 190,
+                  color: whiteColor,
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(13, 812),
+                  textAlign: 'center',
+                }}>
+                This weekend
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.eventButton}
+              activeOpacity={0.7}
+              onPress={() => {
+                if (!user?.accountConfirmed) {
+                  return;
+                }
+                setActiveEventDate(THIS_MONTH);
+              }}>
+              <View
+                style={{
+                  borderRadius: 50,
+                  borderWidth: 1,
+                  borderColor: activeEventDate === THIS_MONTH ? whiteColor : lightGray5Color,
+                  borderStyle: 'solid',
+                  padding: 3,
+                  width: 55,
+                  height: 55,
+                  backgroundColor: lightGray5Color,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <CalendarSearchIcon width={26} height={26} />
+                <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_MONTH ? whiteColor : grayColor}}>Month</Text>
+              </View>
+              <Text
+                style={{
+                  marginTop: screenHeight / 190,
+                  color: whiteColor,
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(13, 812),
+                  textAlign: 'center',
+                }}>
+                This month
+              </Text>
+            </TouchableOpacity>
+          </ScrollView>
+        )}
         <View style={{flex: 1, height: '100%'}}>
           {activeTab === MY_EVENTS ? (
             <FlatList
