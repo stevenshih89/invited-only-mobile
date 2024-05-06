@@ -18,6 +18,10 @@ const useStyles = () =>
       alignItems: 'center',
       flexDirection: 'row',
     },
+    eventButton: {
+      alignItems: 'center',
+      marginRight: screenWidth / 27,
+    },
     textMyEvents: {
       color: blackColor,
       fontFamily: Satoshi500,
