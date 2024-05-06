@@ -185,9 +185,62 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
                 </View>
               </View>
             </View>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              {!isAcceptedInvitation ? (
-                <>
+            {activeState && (
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                {!isAcceptedInvitation ? (
+                  <>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() =>
+                        handleOpenCancelAttendingModal({
+                          image,
+                          textCityName,
+                          date,
+                          numberOfGirlsInvited,
+                          host,
+                          list,
+                        })
+                      }
+                      style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: 10,
+                        paddingVertical: screenHeight / 150,
+                        marginRight: 6,
+                        borderColor: whiteColor,
+                        borderStyle: 'solid',
+                        borderWidth: 1,
+                      }}>
+                      <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>Cancel invitation</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() =>
+                        handleOpenAcceptInvitationModal({
+                          image,
+                          textCityName,
+                          date,
+                          numberOfGirlsInvited,
+                          host,
+                          list,
+                        })
+                      }
+                      style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: 10,
+                        paddingVertical: screenHeight / 150,
+                        marginLeft: 6,
+                        backgroundColor: whiteColor,
+                        borderWidth: 1,
+                        borderColor: whiteColor,
+                      }}>
+                      <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: blackColor}}>Accept invitation</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() =>
@@ -211,62 +264,11 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
                       borderStyle: 'solid',
                       borderWidth: 1,
                     }}>
-                    <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>Cancel invitation</Text>
+                    <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>Cancel attending</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() =>
-                      handleOpenAcceptInvitationModal({
-                        image,
-                        textCityName,
-                        date,
-                        numberOfGirlsInvited,
-                        host,
-                        list,
-                      })
-                    }
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderRadius: 10,
-                      paddingVertical: screenHeight / 150,
-                      marginLeft: 6,
-                      backgroundColor: whiteColor,
-                      borderWidth: 1,
-                      borderColor: whiteColor,
-                    }}>
-                    <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: blackColor}}>Accept invitation</Text>
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={() =>
-                    handleOpenCancelAttendingModal({
-                      image,
-                      textCityName,
-                      date,
-                      numberOfGirlsInvited,
-                      host,
-                      list,
-                    })
-                  }
-                  style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: 10,
-                    paddingVertical: screenHeight / 150,
-                    marginRight: 6,
-                    borderColor: whiteColor,
-                    borderStyle: 'solid',
-                    borderWidth: 1,
-                  }}>
-                  <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>Cancel attending</Text>
-                </TouchableOpacity>
-              )}
-            </View>
+                )}
+              </View>
+            )}
           </View>
         </LinearGradient>
       </ImageBackground>

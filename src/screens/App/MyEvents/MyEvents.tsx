@@ -1,5 +1,5 @@
 import React, {FC, useCallback, useContext, useState} from 'react';
-import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 //import components
@@ -130,12 +130,14 @@ const MyEvents: FC<any> = ({navigation}) => {
       const events = await firestore().collection('Events').get();
       const data = events?.docs?.map(i => i?.data());
 
+      console.log('data', data);
       const filterData = data?.filter(obj => {
         return obj?.usersList?.some(user => {
           return user?.uid === uid && (user?.status === 'invited' || user?.status === 'accepted');
         });
       });
 
+      console.log('filterData', filterData);
       setEventsJoiningData(filterData);
     } catch (e) {
       console.log('error events im joining', e);
@@ -187,7 +189,7 @@ const MyEvents: FC<any> = ({navigation}) => {
             </TouchableOpacity>
           </View>
         ) : (
-          <ScrollView horizontal scrollEnabled={false} contentContainerStyle={{marginVertical: screenHeight / 50}}>
+          <View style={{marginVertical: screenHeight / 50, height: 77, flexDirection: 'row'}}>
             <TouchableOpacity
               style={styles.eventButton}
               activeOpacity={0.7}
@@ -296,55 +298,85 @@ const MyEvents: FC<any> = ({navigation}) => {
                 This month
               </Text>
             </TouchableOpacity>
-          </ScrollView>
+          </View>
         )}
         <View style={{flex: 1, height: '100%'}}>
-          {activeTab === MY_EVENTS ? (
-            <FlatList
-              style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
-              showsVerticalScrollIndicator={false}
-              data={myEventsData}
-              keyExtractor={item => item.id.toString()}
-              renderItem={({item}) => (
-                <MyEventsCard
-                  imageBg={item?.photos[0]?.image}
-                  list={item}
-                  activeState={item?.statusEvent}
-                  allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
-                  date={item?.date}
-                  textCityName={item?.address}
-                  estimeTime={item?.hour}
-                  numberOfGirlsInvited={item?.female + item?.femaleFriend}
-                  invitingPeople={item?.usersList?.filter(i => i?.status !== 'notAccepted')}
-                />
-              )}
-            />
+          {isHost ? (
+            activeTab === MY_EVENTS ? (
+              <FlatList
+                style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
+                showsVerticalScrollIndicator={false}
+                data={myEventsData}
+                keyExtractor={item => item.id.toString()}
+                renderItem={({item}) => (
+                  <MyEventsCard
+                    imageBg={item?.photos[0]?.image}
+                    list={item}
+                    activeState={item?.statusEvent}
+                    allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
+                    date={item?.date}
+                    textCityName={item?.address}
+                    estimeTime={item?.hour}
+                    numberOfGirlsInvited={item?.female + item?.femaleFriend}
+                    invitingPeople={item?.usersList?.filter(i => i?.status !== 'notAccepted')}
+                  />
+                )}
+              />
+            ) : (
+              <FlatList
+                data={eventsJoiningData}
+                style={{flex: 1, backgroundColor: 'transparent'}}
+                renderItem={({item}) => (
+                  <JoiningEventsCard
+                    activeState={item.statusEvent}
+                    allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
+                    date={item.date}
+                    hour={item?.hour}
+                    placeName={item?.placeName}
+                    list={item}
+                    image={item?.photos[0]?.image}
+                    textCityName={item.address}
+                    estimeTime={item.hour}
+                    numberOfGirlsInvited={item?.female + item?.femaleFriend}
+                    host={{name: item?.name, image: item?.hostImage}}
+                    joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
+                    isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
+                    handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
+                    handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
+                    handleAcceptInvitation={handleAcceptInvitation}
+                    handleGetEventsIJoining={handleGetEventsIJoining}
+                  />
+                )}
+              />
+            )
           ) : (
-            <FlatList
-              data={eventsJoiningData}
-              style={{flex: 1, backgroundColor: 'transparent'}}
-              renderItem={({item}) => (
-                <JoiningEventsCard
-                  activeState={item.statusEvent}
-                  allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
-                  date={item.date}
-                  hour={item?.hour}
-                  placeName={item?.placeName}
-                  list={item}
-                  image={item?.photos[0]?.image}
-                  textCityName={item.address}
-                  estimeTime={item.hour}
-                  numberOfGirlsInvited={item?.female + item?.femaleFriend}
-                  host={{name: item?.name, image: item?.hostImage}}
-                  joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
-                  isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
-                  handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
-                  handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
-                  handleAcceptInvitation={handleAcceptInvitation}
-                  handleGetEventsIJoining={handleGetEventsIJoining}
-                />
-              )}
-            />
+            <View style={{flex: 1}}>
+              <FlatList
+                data={eventsJoiningData}
+                style={{flex: 1, backgroundColor: 'transparent'}}
+                renderItem={({item}) => (
+                  <JoiningEventsCard
+                    activeState={item.statusEvent}
+                    allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
+                    date={item.date}
+                    hour={item?.hour}
+                    placeName={item?.placeName}
+                    list={item}
+                    image={item?.photos[0]?.image}
+                    textCityName={item.address}
+                    estimeTime={item.hour}
+                    numberOfGirlsInvited={item?.female + item?.femaleFriend}
+                    host={{name: item?.name, image: item?.hostImage}}
+                    joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
+                    isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
+                    handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
+                    handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
+                    handleAcceptInvitation={handleAcceptInvitation}
+                    handleGetEventsIJoining={handleGetEventsIJoining}
+                  />
+                )}
+              />
+            </View>
           )}
         </View>
       </View>
