@@ -23,18 +23,6 @@ const InvitationCode: FC = (): JSX.Element => {
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const userHost = useUser((i: any) => i?.user);
-  const generateInviteCode = () => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const length = 12;
-    let inviteCode = '';
-
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      inviteCode += characters.charAt(randomIndex);
-    }
-
-    return inviteCode;
-  };
 
   const handleNext = async () => {
     const findInvitationСodes = await firestore().collection('userInfo').where('invitationСode', '==', userHost.codeForInvitingOtherUsers).get();
@@ -49,7 +37,6 @@ const InvitationCode: FC = (): JSX.Element => {
       ...onBoarding,
       {
         invitationСode: code,
-        codeForInvitingOtherUsers: generateInviteCode(),
         notificationSettings: {
           joinedEvent: false,
           myEvents: false,
