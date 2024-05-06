@@ -117,7 +117,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       allPeople: 4,
       filledTo: 3,
       image: CalendarIcon,
-      numberBadge: 22,
+      numberBadge: 0,
       date: '12.12.12',
     },
     {
@@ -147,7 +147,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       allPeople: 4,
       filledTo: 3,
       image: CalendarIcon,
-      numberBadge: 22,
+      numberBadge: 0,
       date: '12.12.12',
     },
     {
@@ -621,7 +621,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
             {badge && (
               <TouchableOpacity onPress={goToNotifications} activeOpacity={0.7} style={{paddingRight: 6}}>
                 <NotificationIcon width={32} height={32} />
-                <Badge value={22} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
+                <Badge value={0} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
               </TouchableOpacity>
             )}
             {headerType === 'profile' && (
