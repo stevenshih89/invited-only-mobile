@@ -78,6 +78,19 @@ const TutorialsFlow: FC = (): JSX.Element => {
     }
   };
 
+  const generateInviteCode = () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const length = 12;
+    let inviteCode = '';
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      inviteCode += characters.charAt(randomIndex);
+    }
+
+    return inviteCode;
+  };
+
   const handleCloseTutorialFlow = async () => {
     try {
       const mergedObject = {};
@@ -103,6 +116,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
         .set({
           ...mergedObject,
           uid: userId,
+          codeForInvitingOtherUsers: generateInviteCode(),
           accountConfirmed: false,
         })
         .then(async () => {

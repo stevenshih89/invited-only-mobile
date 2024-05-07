@@ -42,7 +42,8 @@ import PeopleIcon from 'assets/images/icons/profile-2user.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import MapIcon from 'assets/images/icons/location.svg';
-import {EventsDate} from "contexts/EventsDate.tsx";
+import {EventsDate} from 'contexts/EventsDate.tsx';
+import {it} from '@jest/globals';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -82,7 +83,7 @@ const IO: FC = (): JSX.Element => {
     setIsVisibleMatch(false);
   };
 
-  const getWeekNumber = (date) => {
+  const getWeekNumber = date => {
     let firstDayOfYear: Date = new Date(date.getFullYear(), 0, 1);
     let pastDaysOfYear: number = (date - firstDayOfYear) / 86400000;
     return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
@@ -95,7 +96,9 @@ const IO: FC = (): JSX.Element => {
     const isInWeek = (dateString, weekNumber): boolean => {
       const date: Date = new Date(dateString);
       const targetWeek: 1 | 0 = new Date(date.getFullYear(), 0, 1).getDay() === 0 ? 0 : 1;
-      const currentWeek: number = Math.floor(((date - new Date(date.getFullYear(), 0, 1)) / 86400000 + new Date(date.getFullYear(), 0, 1).getDay() + 1) / 7);
+      const currentWeek: number = Math.floor(
+        ((date - new Date(date.getFullYear(), 0, 1)) / 86400000 + new Date(date.getFullYear(), 0, 1).getDay() + 1) / 7,
+      );
       return currentWeek === weekNumber - targetWeek;
     };
 
@@ -186,23 +189,57 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const onInvite = async (forUserUid: string) => {
+  const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {
     try {
+      console.log('onInvite');
+      console.log('eventId', eventId);
+      console.log('requestsList', requestsList);
+      console.log('usersList', usersList);
+
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
+      console.log('guest', guest);
+      const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
+
+      console.log('activeEventId', activeEventId);
+
+      const host = userHost?.accountType === 'host';
+
       const userInvited = {
-        gender: guest.data()?.gender,
-        name: guest.data()?.name,
+        gender: host ? guest.data()?.gender : userHost?.gender,
+        name: host ? guest.data()?.name : userHost?.name,
         status: 'invited',
         superInvite: false,
-        uid: guest.data()?.uid,
-        userPhoto: guest.data()?.photos[0]?.image,
+        uid: host ? guest.data()?.uid : userHost?.uid,
+        userPhoto: host ? guest.data()?.photos[0]?.image : userHost?.photos[0]?.image,
       };
-      const updateUsersList: any = [...activeEvent?.usersList, userInvited];
 
-      await firestore().collection('Events').doc(activeEvent?.id).update({
-        usersList: updateUsersList,
-      });
+      const usersListCheck = activeEvent?.usersList ? activeEvent?.usersList : usersList;
+
+      console.log('userInvited', userInvited);
+      console.log('usersListCheck', usersListCheck);
+
+      let updateUsersList: any = [userInvited];
+      usersListCheck !== undefined && updateUsersList?.push(...usersListCheck);
+
+      console.log('updateUsersList', updateUsersList);
+      if (userHost?.accountType === 'host') {
+        await firestore().collection('Events').doc(activeEventId).update({
+          usersList: updateUsersList,
+        });
+        console.log('host');
+      } else {
+        const updateRequestsList: any = [...requestsList, userInvited];
+
+        await firestore()
+          .collection('Events')
+          .doc(activeEventId)
+          .update({
+            usersList: updateUsersList ? updateUsersList : usersList,
+            requestsList: updateRequestsList,
+          });
+        console.log('guset');
+      }
     } catch (e) {
       console.log(e);
     }
@@ -599,7 +636,7 @@ const IO: FC = (): JSX.Element => {
                 cardWidth="100%"
                 // @ts-ignore
                 cardHeight="100%"
-                onSwipedRight={() => onInvite(item.info?.uid)}
+                onSwipedRight={() => onInvite(item?.info?.uid, item?.info?.id, item?.info?.requestsList, item?.info?.usersList)}
                 OverlayLabelRight={OverlayRight}
                 OverlayLabelLeft={OverlayLeft}
                 disableBottomSwipe={true}
