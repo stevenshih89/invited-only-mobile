@@ -91,8 +91,19 @@ const TutorialsFlow: FC = (): JSX.Element => {
     return inviteCode;
   };
 
+  const formatDate = (date: any) => {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const day = date.getDate()
+    const month = months[date.getMonth()]
+    const year = date.getFullYear()
+    return `${day} ${month} ${year}`
+  }
+
   const handleCloseTutorialFlow = async () => {
     try {
+      const registrationDate = new Date()
+      const formattedDate = formatDate(registrationDate)
+      
       const mergedObject = {};
       await AsyncStorage.setItem('onBoarding', 'true');
 
@@ -117,6 +128,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
           ...mergedObject,
           uid: userId,
           codeForInvitingOtherUsers: generateInviteCode(),
+          registrationDate: formattedDate,
           accountConfirmed: false,
         })
         .then(async () => {
