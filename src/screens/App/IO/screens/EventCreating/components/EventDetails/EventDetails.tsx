@@ -223,6 +223,7 @@ const EventDetails: FC<EventDetailsProps> = ({
           requestsList: [],
           usersList: [],
           statusEvent: false,
+          eventReviewed: false,
           hostImage: userHost?.photos[0]?.image,
           hostName: userHost?.name,
         })
