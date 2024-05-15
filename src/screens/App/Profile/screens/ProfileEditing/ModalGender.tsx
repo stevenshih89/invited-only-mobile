@@ -6,18 +6,56 @@ import {Switch} from '@ant-design/react-native';
 import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
+import firestore from '@react-native-firebase/firestore';
+import {useUser} from '../../../../../store/userStore';
 
 interface ModalGenderProps {
   isVisible: boolean;
   onClose: () => void;
   showGender: boolean;
   setShowGender: Dispatch<SetStateAction<boolean>>;
-  activeGenderItem: {id: number; title: string} | null;
-  setActiveGenderItem: Dispatch<SetStateAction<{id: number; title: string} | null>>;
+  activeGenderItem: {title: string} | null;
+  setActiveGenderItem: Dispatch<SetStateAction<{title: string} | null>>;
   listOfGenders: any[];
 }
 
 const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setShowGender, activeGenderItem, setActiveGenderItem, listOfGenders}) => {
+  const userHost = useUser((i: any) => i?.user);
+  const setUserInfo = useUser((i: any) => i?.setUser);
+
+  const handleUpdateShowInMyProfile = async (state: string): Promise<void> => {
+    try {
+      const uid = userHost?.uid;
+      setShowGender(state);
+      await firestore().collection('userInfo').doc(uid).update({
+        showGender: state,
+      });
+      const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+
+      if (userInfoDoc?.exists) {
+        setUserInfo(userInfoDoc.data());
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleUpdateGender = async (gender: string): Promise<void> => {
+    try {
+      const uid = userHost?.uid;
+      setActiveGenderItem(gender);
+      await firestore().collection('userInfo').doc(uid).update({
+        gender: gender,
+      });
+      const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+
+      if (userInfoDoc?.exists) {
+        setUserInfo(userInfoDoc.data());
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <Modal
       isVisible={isVisible}
@@ -62,18 +100,24 @@ const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setS
         </Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showGender} onChange={val => setShowGender(val)} />
+          <Switch
+            trackColor={{false: grayColor, true: toggleColor}}
+            checked={showGender}
+            onChange={val => {
+              handleUpdateShowInMyProfile(val);
+            }}
+          />
         </View>
         <FlatList
           data={listOfGenders}
           scrollEnabled={false}
           keyExtractor={item => item.id.toString()}
           renderItem={({item}) => {
-            const isActive = activeGenderItem?.id === item.id;
+            const isActive = activeGenderItem === item.title;
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => setActiveGenderItem(item)}
+                onPress={() => handleUpdateGender(item?.title)}
                 style={{
                   borderBottomWidth: 1,
                   borderStyle: 'solid',
@@ -90,7 +134,7 @@ const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setS
                     fontFamily: Satoshi400,
                     textTransform: 'capitalize',
                   }}>
-                  {item.title}
+                  {item?.title}
                 </Text>
               </TouchableOpacity>
             );

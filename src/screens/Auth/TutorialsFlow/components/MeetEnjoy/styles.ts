@@ -14,6 +14,10 @@ const useStyles = () => {
       alignItems: 'center',
       height: 401,
     },
+    image: {
+      width: '100%',
+      height: 372,
+    },
     textMeetEnjoy: {
       color: whiteColor,
       fontFamily: Satoshi400,

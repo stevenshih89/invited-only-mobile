@@ -10,7 +10,7 @@ const JoinEvents = () => {
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
-        <Image source={JoinEventsImage} />
+        <Image style={styles.image} resizeMode='contain' source={JoinEventsImage} />
       </View>
       <View style={styles.textWrapper}>
         <Text style={styles.textJoinEvents}>Join events</Text>

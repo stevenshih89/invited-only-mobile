@@ -115,12 +115,16 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                   <TablerGenderIcon />
                   {` ${userInfo?.gender}`}
                 </Text>
-                <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                  <LocationIcon /> Dubai
-                </Text>
-                <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                  <HomeIcon /> Odessa
-                </Text>
+                {userInfo?.address && (
+                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                    <LocationIcon /> {userInfo?.address}
+                  </Text>
+                )}
+                {userInfo?.homeAddress && (
+                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                    <HomeIcon /> {userInfo?.homeAddress}
+                  </Text>
+                )}
                 {!!userInfo?.height && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
                     <ArrowIcon /> {`${userInfo?.height}cm`}

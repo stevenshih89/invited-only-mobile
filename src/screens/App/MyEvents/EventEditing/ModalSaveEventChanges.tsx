@@ -7,8 +7,13 @@ import {FC} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import firestore from '@react-native-firebase/firestore';
 
-const ModalSaveEventChanges: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
+const ModalSaveEventChanges: FC<{isVisible: boolean; onClose: () => void; handleSaveChanges: () => void}> = ({
+  isVisible,
+  onClose,
+  handleSaveChanges,
+}) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -60,7 +65,13 @@ const ModalSaveEventChanges: FC<{isVisible: boolean; onClose: () => void}> = ({i
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), marginBottom: 40, textAlign: 'center'}}>
           All joined users will be updated automatically.
         </Text>
-        <Button title="Yes, save changes" onPress={onClose} />
+        <Button
+          title="Yes, save changes"
+          onPress={() => {
+            handleSaveChanges();
+            onClose();
+          }}
+        />
         <Button title="Cancel" variant="transparent" onPress={onClose} />
       </View>
     </Modal>

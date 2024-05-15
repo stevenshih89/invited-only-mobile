@@ -14,11 +14,13 @@ const MeetEnjoy = () => {
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
-        <Image source={accountType ? MeetEnjoyGuestImage : MeetEnjoyImage} />
+        <Image style={styles.image} resizeMode="contain" source={accountType ? MeetEnjoyGuestImage : MeetEnjoyImage} />
       </View>
       <View style={styles.textWrapper}>
         <Text style={styles.textMeetEnjoy}>Meet & Enjoy!</Text>
-        <Text style={styles.textMeetNewPeople}>{accountType ? 'Have a great time together with new acquaintances!' : 'Meet new people, make new connections, and have fun together!'}</Text>
+        <Text style={styles.textMeetNewPeople}>
+          {accountType ? 'Have a great time together with new acquaintances!' : 'Meet new people, make new connections, and have fun together!'}
+        </Text>
       </View>
     </View>
   );

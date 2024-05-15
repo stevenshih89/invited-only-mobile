@@ -42,6 +42,7 @@ import InfoCircleOrangeIcon from 'assets/images/icons/info-circle-orange.svg';
 import EventBG from 'assets/images/app/card-event-bg.png';
 import {EventContext} from 'contexts/EventContext';
 import {Satoshi500} from 'constants/fonts';
+import {useMyEvents} from "../../store/myEvents";
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -75,6 +76,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const selectedChat = useChat((i: any) => i?.activeEvent);
   const setChat = useChat((i: any) => i.setActiveEvent);
   const eventFilter = useChat((i: any) => i?.eventFilter);
+  const eventsImJoining = useMyEvents((i: any) => i?.eventsImJoining);
   const requestFilter = useRequest((i: any) => i?.requestFilter);
   const setEventFilter = useChat((i: any) => i?.setEventFilter);
   const setRequestFilter = useRequest((i: any) => i?.setRequestFilter);
@@ -312,7 +314,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                           fontSize: RFValue(13, 812),
                           textAlign: 'center',
                         }}>
-                        {event?.placeName}
+                        {event?.name}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -522,7 +524,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       fontSize: RFValue(13, 812),
                       textAlign: 'center',
                     }}>
-                    {event?.placeName}
+                    {event?.name}
                   </Text>
                 </TouchableOpacity>
               );
@@ -560,7 +562,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 style={[styles.buttonEventsJoining, {backgroundColor: !typeEvents ? lightGray2Color : whiteColor}]}>
                 <Text style={[styles.textEventsJoining, {color: !typeEvents ? whiteColor : blackColor}]}>Events I'm Joining</Text>
                 <View style={styles.rowTextCountEvents}>
-                  <Text style={styles.textCountEvents}>21</Text>
+                  <Text style={styles.textCountEvents}>{eventsImJoining?.length}</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -573,11 +575,11 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                     <Item
                       activeEvent={item.id}
                       filledTo={item?.usersList?.filter((i) => i?.status === 'accepted')?.length}
-                      allPeople={item.female + item.femaleFriend + item.male + item.maleFriend}
+                      allPeople={item.female + item.male}
                       image={item.photos[0]?.image}
                       girlInvitation={item.male + item.maleFriend}
                       numberBadge={item.numberBadge}
-                      title={item.placeName}
+                      title={item.name}
                       date={item.date}
                       hour={item.hour}
                     />

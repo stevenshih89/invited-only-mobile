@@ -17,6 +17,7 @@ const useStyles = () => {
     },
     image: {
       width: '100%',
+      height: 396,
     },
     textSwipeToInvite: {
       color: whiteColor,

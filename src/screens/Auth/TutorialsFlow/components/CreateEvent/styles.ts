@@ -4,7 +4,6 @@ import {Satoshi400} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 
 const dimensionsHeight = Dimensions.get('window').height;
-const dimensionsWidth = Dimensions.get('window').width;
 
 const useStyles = () => {
   return StyleSheet.create({
@@ -13,8 +12,11 @@ const useStyles = () => {
     },
     imageWrapper: {
       alignItems: 'flex-start',
-      marginLeft: dimensionsWidth / 14,
       height: 401,
+    },
+    image: {
+      width: '100%',
+      height: 438,
     },
     textCreateEvent: {
       color: whiteColor,

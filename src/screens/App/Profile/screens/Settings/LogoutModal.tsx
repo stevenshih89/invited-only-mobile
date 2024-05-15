@@ -1,7 +1,6 @@
 import {ImageBackground, Text, View} from 'react-native';
 import Modal from 'react-native-modal';
 import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
-import Man from 'assets/images/app/man-rectangle.png';
 import LogoutIcon from 'assets/images/icons/logout.svg';
 import {FC, useContext} from 'react';
 import Button from 'components/Button/Button';
@@ -9,9 +8,14 @@ import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
 import {AuthContext} from 'contexts/AuthContext.tsx';
+import {useUser} from '../../../../../store/userStore';
+import {calculateAge} from 'helpers/calculateAge.ts';
 
 const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
   const {setUser} = useContext(AuthContext);
+  const userHost = useUser((i: any) => i?.user);
+
+  const userAge = calculateAge(userHost?.date);
 
   const handleLogout = () => {
     onClose();
@@ -48,7 +52,7 @@ const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
         }}>
         <View style={{backgroundColor: whiteColor, height: 2, borderRadius: 10, width: 40, alignSelf: 'center', marginBottom: 22}} />
         <ImageBackground
-          source={Man}
+          source={{uri: userHost?.photos[0]?.image}}
           style={{width: 84, height: 84, alignSelf: 'center', marginBottom: 10}}
           imageStyle={{borderRadius: 160}}
           resizeMode="cover">
@@ -66,7 +70,7 @@ const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
           </View>
         </ImageBackground>
         <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 812), marginBottom: 30, textAlign: 'center'}}>
-          Jameson, 29
+          {userHost?.name}, {userAge}
         </Text>
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), marginBottom: 40, textAlign: 'center'}}>
           Are you sure you want to log out?

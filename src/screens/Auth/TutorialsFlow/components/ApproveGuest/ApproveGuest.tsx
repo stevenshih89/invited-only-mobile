@@ -14,7 +14,7 @@ const ApproveGuest = () => {
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
-        <Image source={accountType ? ApproveInvitationImage : ApproveGuestImage} />
+        <Image resizeMode="contain" style={styles.image} source={accountType ? ApproveInvitationImage : ApproveGuestImage} />
       </View>
       <View style={styles.textWrapper}>
         <Text style={styles.textApproveGuest}>{accountType ? 'Approve invitation' : 'Approve Guest'}</Text>

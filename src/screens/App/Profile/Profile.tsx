@@ -14,7 +14,6 @@ import {Alert} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {whiteColor} from 'constants/colors';
 import {calculateAge} from 'helpers/calculateAge';
-import {useUser} from '../../../store/userStore';
 
 const Profile: FC = () => {
   const [activeTabId, setActiveTabId] = useState(0);
