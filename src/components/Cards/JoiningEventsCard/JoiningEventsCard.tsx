@@ -85,9 +85,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
   const navigation = useAppNavigation();
 
   const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
-  // const currentTime = `00:50`;
 
-  console.log('currentTime', currentTime);
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
       <LoadingLoop />

@@ -1,5 +1,6 @@
 import React, {FC, useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 
 import TrashCanIcon from 'assets/images/icons/trash.svg';
 //import components
@@ -65,6 +66,20 @@ const EventCreating: FC = () => {
     prevMaleFriend: isEditingItem?.maleFriend,
   };
 
+  const handleSaveChanges = async () => {
+    try {
+      const id = isEditingItem?.id;
+      await firestore().collection('Events').doc(id).update({
+        female,
+        male,
+        femaleFriend,
+        maleFriend,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <>
       <View style={styles.container}>
@@ -103,12 +118,13 @@ const EventCreating: FC = () => {
             male={male}
             maleFriend={maleFriend}
             isEditing={isEditing}
+            id={isEditingItem?.id}
             {...editingItems}
             setIsVisibleSaveModal={setIsVisibleSaveModal}
           />
         )}
       </View>
-      <ModalSaveEventChanges isVisible={isVisibleSaveModal} onClose={() => setIsVisibleSaveModal(false)} />
+      <ModalSaveEventChanges handleSaveChanges={handleSaveChanges} isVisible={isVisibleSaveModal} onClose={() => setIsVisibleSaveModal(false)} />
       <ModalCancelEvent
         id={isEditingItem?.id}
         image={isEditingItem?.photos[0]?.image}

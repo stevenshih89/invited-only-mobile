@@ -14,7 +14,7 @@ const CreateEvent = () => {
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
-        <Image resizeMode="contain" source={accountType ? SelectEventImage : CreateEventImage} />
+        <Image style={styles.image} resizeMode="contain" source={accountType ? SelectEventImage : CreateEventImage} />
       </View>
       <View style={styles.textWrapper}>
         <Text style={styles.textCreateEvent}>{accountType ? 'Select event' : 'Create event'}</Text>

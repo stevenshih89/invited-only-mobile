@@ -1,27 +1,28 @@
 import React, {FC, useCallback, useContext, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import {FlatList} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 //import components
 import useStyles from 'screens/App/MyEvents/styles.ts';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard.tsx';
+import {useMyEvents} from '../../../store/myEvents';
+import {showToast} from 'helpers/showToast.ts';
+import {blackColor, grayColor, lightGray2Color, lightGray5Color, whiteColor} from 'constants/colors';
+import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsCard';
+import ModalCancelAttending from './ModalCancelAttending';
+import ModalAcceptInvitation from './ModalAcceptInvitation';
+import {useUser} from '../../../store/userStore';
+import {ALL, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
+import {eventCreatingStackPath} from 'constants/pathLocations.ts';
+import {Satoshi500} from 'constants/fonts.ts';
+import {EventsDate} from 'contexts/EventsDate.tsx';
 
 //import images
 import AddIcon from 'assets/images/icons/add.svg';
-import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsCard';
-import {FlatList} from 'react-native';
-import {blackColor, grayColor, lightGray2Color, lightGray5Color, whiteColor} from 'constants/colors';
-import ModalCancelAttending from './ModalCancelAttending';
-import {showToast} from 'helpers/showToast.ts';
-import ModalAcceptInvitation from './ModalAcceptInvitation';
-import {useUser} from '../../../store/userStore';
-import {useFocusEffect} from '@react-navigation/native';
-import {ALL, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
-import {eventCreatingStackPath} from 'constants/pathLocations.ts';
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi500} from 'constants/fonts.ts';
-import {EventsDate} from 'contexts/EventsDate.tsx';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
@@ -46,6 +47,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [eventsJoiningData, setEventsJoiningData] = useState([]);
 
   const user = useUser((i: any) => i?.user);
+  const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
   const isHost = user?.accountType === 'host';
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
@@ -139,6 +141,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
       console.log('filterData', filterData);
       setEventsJoiningData(filterData);
+      setEventsImJoining(filterData);
     } catch (e) {
       console.log('error events im joining', e);
       // showToast('cancel', 'Error!');
@@ -179,7 +182,7 @@ const MyEvents: FC<any> = ({navigation}) => {
               onPress={() => setActiveTab(EVENTS_JOINING)}>
               <Text style={[styles.textEventsJoining, {color: activeTab === EVENTS_JOINING ? blackColor : whiteColor}]}>Events I'm Joining</Text>
               <View style={styles.rowTextCountEvents}>
-                <Text style={styles.textCountEvents}>21</Text>
+                <Text style={styles.textCountEvents}>{eventsJoiningData?.length}</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate(eventCreatingStackPath)} style={styles.addEventButton}>

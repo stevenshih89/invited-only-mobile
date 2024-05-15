@@ -14,7 +14,7 @@ const SwipeToInvite = () => {
   return (
     <View style={styles.container}>
       <View style={styles.wrapperImage}>
-        <Image style={accountType ? null : styles.image} source={accountType ? SwipeToJoinImage : SwipeToInviteImage} />
+        <Image resizeMode="contain" style={styles.image} source={accountType ? SwipeToJoinImage : SwipeToInviteImage} />
       </View>
       <View style={styles.textWrapper}>
         <Text style={styles.textSwipeToInvite}>{accountType ? 'Swipe to join' : 'Swipe to Invite'}</Text>

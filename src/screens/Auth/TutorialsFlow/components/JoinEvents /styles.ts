@@ -16,6 +16,10 @@ const useStyles = () => {
       marginLeft: dimensionsWidth / 30,
       height: 401,
     },
+    image: {
+      width: '100%',
+      height: 364,
+    },
     textJoinEvents: {
       color: whiteColor,
       fontFamily: Satoshi400,

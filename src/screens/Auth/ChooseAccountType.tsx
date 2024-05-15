@@ -75,7 +75,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
                       marginBottom: 18,
                       textAlign: 'center',
                     }}>
-                    Are you Host or guest?
+                    Are you Host or Guest?
                   </Text>
                   <Text
                     style={{

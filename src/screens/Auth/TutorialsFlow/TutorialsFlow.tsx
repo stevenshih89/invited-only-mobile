@@ -67,10 +67,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
 
   const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
     try {
-      await firestore()
-        .collection('userInfo')
-        .doc(userId)
-        .update({
+      await firestore().collection('userInfo').doc(userId).update({
         photos: imageUrl,
       });
       console.log('User profile image updated successfully.');
@@ -93,17 +90,17 @@ const TutorialsFlow: FC = (): JSX.Element => {
   };
 
   const formatDate = (date: any) => {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    const day = date.getDate()
-    const month = months[date.getMonth()]
-    const year = date.getFullYear()
-    return `${day} ${month} ${year}`
-  }
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+  };
 
   const handleCloseTutorialFlow = async () => {
     try {
-      const registrationDate = new Date()
-      const formattedDate = formatDate(registrationDate)
+      const registrationDate = new Date();
+      const formattedDate = formatDate(registrationDate);
       const user = auth().currentUser;
       const phoneNumber = user?.phoneNumber;
 

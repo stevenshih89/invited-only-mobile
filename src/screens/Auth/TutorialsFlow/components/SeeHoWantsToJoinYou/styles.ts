@@ -12,12 +12,11 @@ const useStyles = () => {
       flex: 1,
     },
     wrapperImage: {
-      height: 401,
-      justifyContent: 'center',
+      alignItems: 'center',
     },
     image: {
       width: '100%',
-      // marginLeft: dimensionsWidth / 10,
+      height: 396,
     },
     textSeeWhoWantsToJoinYoy: {
       color: whiteColor,

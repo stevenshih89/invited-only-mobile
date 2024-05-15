@@ -41,6 +41,7 @@ interface EventDetailsProps {
   prevMeetingSpot?: string;
   female?: number;
   male?: number;
+  id?: string;
   femaleFriend?: number;
   maleFriend?: number;
 }
@@ -61,6 +62,7 @@ const EventDetails: FC<EventDetailsProps> = ({
   male,
   femaleFriend,
   maleFriend,
+  id,
 }): ReactElement => {
   const eventTypes = [
     {id: 0, label: 'Custom'},
@@ -184,6 +186,42 @@ const EventDetails: FC<EventDetailsProps> = ({
       console.log('Events image updated successfully.');
     } catch (e) {
       console.error('Error updating events image: ', e);
+    }
+  };
+
+  const compareArrays = (arr1, arr2) => {
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+
+    for (let i = 0; i < arr1.length; i++) {
+      for (let key in arr1[i]) {
+        if (arr1[i][key] !== arr2[i][key]) {
+          return false;
+        }
+      }
+    }
+
+    // Если все объекты одинаковы, возвращаем true
+    return true;
+  };
+  const handleSaveChanges = async () => {
+    try {
+      console.log('photos', photos);
+      console.log('compareArrays', compareArrays(photos, photos));
+
+      // await firestore().collection('Events').doc(id).update({
+      //   eventTypes,
+      //   placeName,
+      //   name,
+      //   description,
+      //   date,
+      //   hour,
+      //   address,
+      //   meetingSpot,
+      // });
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -421,7 +459,7 @@ const EventDetails: FC<EventDetailsProps> = ({
           loading={loading}
           title={isEditing ? 'Save changes' : 'Create event'}
           buttonStyle={styles.button}
-          onPress={() => handleCreateEvent()}
+          onPress={() => (isEditing ? handleSaveChanges() : handleCreateEvent())}
         />
       </KeyboardAwareScrollView>
     </View>

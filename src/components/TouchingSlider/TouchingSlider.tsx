@@ -136,10 +136,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             </View>
             <View style={styles.wrapperFooterCard}>
               <View>
-                <View style={[styles.infoTags, {marginTop: screenHeight / 37, width: 130}]}>
-                  <HomeIcon />
-                  <Text style={styles.textInfoTags}>From {homeAddress}</Text>
-                </View>
+                {homeAddress && (
+                  <View style={[styles.infoTags, {marginTop: screenHeight / 37, width: 130}]}>
+                    <HomeIcon />
+                    <Text style={styles.textInfoTags}>From {homeAddress}</Text>
+                  </View>
+                )}
                 {/*<View style={[styles.infoTags, {marginTop: screenHeight / 190}]}>*/}
                 {/*  <LocationIcon />*/}
                 {/*  <Text style={styles.textInfoTags}>2 kilometers away</Text>*/}

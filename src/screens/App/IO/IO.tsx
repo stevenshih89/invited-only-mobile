@@ -43,7 +43,6 @@ import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import MapIcon from 'assets/images/icons/location.svg';
 import {EventsDate} from 'contexts/EventsDate.tsx';
-import {it} from '@jest/globals';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -482,9 +481,13 @@ const IO: FC = (): JSX.Element => {
                 photos={girlPhotos}
               />
               <View style={styles.bioWrapper}>
-                <Text style={styles.titleSection}>Bio</Text>
-                <Text style={styles.textDescription}>{bio}</Text>
-                <Text style={[styles.titleSection, styles.mt31]}>About me</Text>
+                {bio && (
+                  <>
+                    <Text style={styles.titleSection}>Bio</Text>
+                    <Text style={styles.textDescription}>{bio}</Text>
+                  </>
+                )}
+                <Text style={[styles.titleSection, bio && styles.mt31]}>About me</Text>
                 <View style={styles.wrapperTextTags}>
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
                     <PersonIcon />
