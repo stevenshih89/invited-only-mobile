@@ -575,11 +575,11 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                     <Item
                       activeEvent={item.id}
                       filledTo={item?.usersList?.filter((i) => i?.status === 'accepted')?.length}
-                      allPeople={item.female + item.femaleFriend + item.male + item.maleFriend}
+                      allPeople={item.female + item.male}
                       image={item.photos[0]?.image}
                       girlInvitation={item.male + item.maleFriend}
                       numberBadge={item.numberBadge}
-                      title={item.placeName}
+                      title={item.name}
                       date={item.date}
                       hour={item.hour}
                     />

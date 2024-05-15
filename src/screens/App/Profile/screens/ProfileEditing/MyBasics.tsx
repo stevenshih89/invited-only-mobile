@@ -10,6 +10,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {FC, ReactElement} from 'react';
+import {useUser} from "../../../../../store/userStore";
 
 const MyBasics: FC<{
   setIsVisibleSmokeModal: (val: boolean) => void;
@@ -36,6 +37,8 @@ const MyBasics: FC<{
   height,
   date,
 }): ReactElement => {
+  const userHost = useUser((i: any) => i?.user);
+  const gender = userHost?.gender?.charAt(0).toUpperCase() + userHost?.gender.slice(1);
   return (
     <View style={styles.container}>
       <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>My basics</Text>
@@ -55,7 +58,7 @@ const MyBasics: FC<{
           <Text style={styles.text}>Gender</Text>
         </View>
         <View style={styles.iconContainer}>
-          <Text style={styles.subText}>Man</Text>
+          <Text style={styles.subText}>{gender}</Text>
           <ArrowRight />
         </View>
       </TouchableOpacity>

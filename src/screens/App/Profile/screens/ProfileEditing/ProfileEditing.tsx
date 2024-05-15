@@ -36,7 +36,7 @@ const ProfileEditing: FC = (): ReactElement => {
   const [activeWorkItem, setActiveWorkItem] = useState(null);
   const [bio, setBio] = useState<string>('');
   const [showGender, setShowGender] = useState(false);
-  const [activeGenderItem, setActiveGenderItem] = useState<{id: number; title: string} | null>(null);
+  const [activeGenderItem, setActiveGenderItem] = useState<{title: string} | null>(null);
   const [showAlcohol, setShowAlcohol] = useState(false);
   const [activeAlcoholItem, setActiveAlcoholItem] = useState<{id: number; title: string} | null>(null);
   const [showSmoke, setShowSmoke] = useState(false);
@@ -336,7 +336,8 @@ const ProfileEditing: FC = (): ReactElement => {
 
   useEffect(() => {
     fetchUserInfo();
-  }, []);
+    console.log('fetchUserInfo');
+  }, [setShowGender, setActiveGenderItem]);
 
   const fetchImages = async (user: any) => {
     const allImagesUrl: any = [];
