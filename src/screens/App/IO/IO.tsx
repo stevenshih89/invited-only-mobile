@@ -252,21 +252,21 @@ const IO: FC = (): JSX.Element => {
     try {
       const querySnapshot = await firestore().collection('Events').get();
 
-      const filteredEvents = querySnapshot.docs
-        .map((doc: any) => ({
+      const filteredEvents = querySnapshot?.docs
+        ?.map((doc: any) => ({
           id: doc.id,
           ...doc.data(),
         }))
-        .filter(event => !event.requestsList || !event.requestsList.some((request: any) => request.uid === user.uid));
+        ?.filter(event => !event.requestsList || !event.requestsList.some((request: any) => request.uid === user.uid));
 
       async function enrichElementsWithPhotos(elements) {
         const promises = elements?.map(async element => {
           const docRef = firestore().collection('userInfo').doc(element?.uid);
           const docRefMessage = firestore().collection('messages').where('uidHost', '==', element?.uid);
-          const doc = await docRef.get();
+          const doc = await docRef?.get();
           const docMessages = await docRefMessage?.get();
 
-          if (!doc.exists) {
+          if (!doc?.exists) {
             return null;
           } else {
             const userInfo = doc?.data();
@@ -292,7 +292,7 @@ const IO: FC = (): JSX.Element => {
 
       const filterDataWM = activeEventDate === 'all' ? enrichedEvents : filterDataByWeekAndMonth(enrichedEvents, currentWeek, currentMonth);
 
-      filterDataWM.map((event: any) => {
+      filterDataWM?.map((event: any) => {
         const {
           address,
           date,
@@ -312,10 +312,10 @@ const IO: FC = (): JSX.Element => {
           femaleFriend,
         } = event;
 
-        const currUserPhotos = userPhotos.map((photo: any) => photo?.image);
-        const eventPhotos = photos.map((photo: any) => photo?.image);
-        const iconsArrayMale = Array.from({length: male}, (_, index) => index);
-        const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
+        const currUserPhotos = userPhotos?.map((photo: any) => photo?.image);
+        const eventPhotos = photos?.map((photo: any) => photo?.image);
+        const iconsArrayMale = Array?.from({length: male}, (_, index) => index);
+        const iconsArrayFemale = Array?.from({length: female}, (_, index) => index);
 
         data.push({
           component: (
