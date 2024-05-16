@@ -85,7 +85,7 @@ const JoinEvents = ({navigation}: any) => {
 
       const data: any[] = [];
 
-      enrichedEvents.map((event: any) => {
+      enrichedEvents?.map((event: any) => {
         const {
           address,
           date,
@@ -105,12 +105,12 @@ const JoinEvents = ({navigation}: any) => {
           femaleFriend,
         } = event;
 
-        const currUserPhotos = userPhotos.map((photo: any) => photo?.image);
-        const eventPhotos = photos.map((photo: any) => photo?.image);
-        const iconsArrayMale = Array.from({length: male}, (_, index) => index);
-        const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
+        const currUserPhotos = userPhotos?.map((photo: any) => photo?.image);
+        const eventPhotos = photos?.map((photo: any) => photo?.image);
+        const iconsArrayMale = Array?.from({length: male}, (_, index) => index);
+        const iconsArrayFemale = Array?.from({length: female}, (_, index) => index);
 
-        data.push({
+        data?.push({
           component: (
             <View style={styles.wrapperFakeCard}>
               <TouchingSlider
@@ -226,7 +226,6 @@ const JoinEvents = ({navigation}: any) => {
         });
       });
 
-      console.log('data events', data);
       setEvents([...data]);
     } catch (e: any) {
       Alert.alert('Error', e.message || 'Something went wrong');

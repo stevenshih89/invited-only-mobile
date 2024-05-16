@@ -13,7 +13,7 @@ interface EventProviderProps {
 const EventsDate = createContext<EventsDateType>({});
 
 const EventsDateProvider: FC<EventProviderProps> = ({children}) => {
-  const [activeEventDate, setActiveEventDate] = useState<ActiveEventDate>('any_day');
+  const [activeEventDate, setActiveEventDate] = useState<ActiveEventDate>('all');
 
   const value = {
     activeEventDate,
