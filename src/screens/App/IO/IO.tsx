@@ -624,7 +624,7 @@ const IO: FC = (): JSX.Element => {
     }, []),
   );
 
-  if (loading || !userInfo) {
+  if (loading || !userHost) {
     return <ActivityIndicator style={styles.safeAreaView} />;
   }
 
