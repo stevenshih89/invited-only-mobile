@@ -18,6 +18,10 @@ const useStyles = () => {
       paddingHorizontal: dimensionsHeight / 38,
       opacity: 0.4,
     },
+    wrapperContainerVerified: {
+      flex: 1,
+      justifyContent: 'center',
+    },
     safeAreaView: {
       flex: 1,
       paddingBottom: 0,

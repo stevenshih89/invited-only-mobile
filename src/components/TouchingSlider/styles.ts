@@ -54,11 +54,6 @@ const useStyles = () => {
       borderTopRightRadius: 22,
       borderTopLeftRadius: 22,
     },
-    rowBioInfo: {
-      flexDirection: 'row',
-      alignItems: 'flex-end',
-      justifyContent: 'flex-start',
-    },
     textName: {
       color: whiteColor,
       fontFamily: Satoshi500,
@@ -75,9 +70,24 @@ const useStyles = () => {
       justifyContent: 'space-between',
       width: '95%',
     },
+    rowBioInfo: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'flex-start',
+    },
     wrapperRightButton: {
       position: 'relative',
       bottom: screenHeight * 0.04,
+      zIndex: 999,
+    },
+    buttonFlash: {
+      backgroundColor: 'black',
+      borderRadius: 50,
+      width: 61,
+      height: 61,
+      alignItems: 'center',
+      justifyContent: 'center',
+      opacity: 0.8,
     },
     infoTags: {
       flexDirection: 'row',
@@ -92,15 +102,6 @@ const useStyles = () => {
       fontFamily: Satoshi400,
       fontSize: RFValue(14, 812),
       marginLeft: screenWidth / 43,
-    },
-    buttonFlash: {
-      backgroundColor: 'black',
-      borderRadius: 50,
-      width: 61,
-      height: 61,
-      alignItems: 'center',
-      justifyContent: 'center',
-      opacity: 0.8,
     },
     lockedWrapper: {
       position: 'absolute',

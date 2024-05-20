@@ -24,15 +24,17 @@ const CodeVerified: FC = (): JSX.Element => {
         <View style={styles.logoSecondaryWrapper}>
           <LogoSecondary height={84} />
         </View>
-        <View style={styles.container}>
-          <LogoPrimary height={22} style={styles.logoPrimary} />
-          <Image source={Avatar} />
-          <View style={styles.wrapperIconVerifyFilledAccepted}>
-            <IconVerifyFilledAccepted />
+        <View style={styles.wrapperContainerVerified}>
+          <View style={styles.container}>
+            <LogoPrimary height={22} style={styles.logoPrimary} />
+            <Image source={Avatar} />
+            <View style={styles.wrapperIconVerifyFilledAccepted}>
+              <IconVerifyFilledAccepted />
+            </View>
+            <Text style={styles.textInReview}>Verified</Text>
+            <Text style={styles.textYourAccount}>Join Invitation Accepted!</Text>
+            <Button onPress={() => navigation.navigate(paymentPath)} title="Continue" buttonStyle={styles.buttonContinue} />
           </View>
-          <Text style={styles.textInReview}>Verified</Text>
-          <Text style={styles.textYourAccount}>Join Invitation Accepted!</Text>
-          <Button onPress={() => navigation.navigate(paymentPath)} title="Continue" buttonStyle={styles.buttonContinue} />
         </View>
       </SafeAreaView>
     </ImageBackground>

@@ -94,7 +94,7 @@ const AccountSetting: FC = ({navigation, route}: any) => {
             <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>Phone number</Text>
             <View style={{marginTop: 26, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <AEFlag />
+                {/*<AEFlag />*/}
                 <Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi700, marginLeft: 4}}>
                   {userPhone?.slice(0, 4)}
                   <Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi400}}> {userPhone?.slice(4, -1)}</Text>

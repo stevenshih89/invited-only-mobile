@@ -94,9 +94,6 @@ const EventDetails: FC<EventDetailsProps> = ({
     },
   ]);
 
-  console.log('isEditing', isEditing);
-  console.log('photos', photos);
-  console.log('prevImages', prevImages);
   const [activeType, setActiveType] = useState(eventTypes[0].id);
   const [placeName, setPlaceName] = useState('');
   const [name, setName] = useState('');
@@ -202,7 +199,6 @@ const EventDetails: FC<EventDetailsProps> = ({
       }
     }
 
-    // Если все объекты одинаковы, возвращаем true
     return true;
   };
   const handleSaveChanges = async () => {
@@ -210,16 +206,16 @@ const EventDetails: FC<EventDetailsProps> = ({
       console.log('photos', photos);
       console.log('compareArrays', compareArrays(photos, photos));
 
-      // await firestore().collection('Events').doc(id).update({
-      //   eventTypes,
-      //   placeName,
-      //   name,
-      //   description,
-      //   date,
-      //   hour,
-      //   address,
-      //   meetingSpot,
-      // });
+      await firestore().collection('Events').doc(id).update({
+        eventTypes,
+        placeName,
+        name,
+        description,
+        date,
+        hour,
+        address,
+        meetingSpot,
+      });
     } catch (e) {
       console.log(e);
     }

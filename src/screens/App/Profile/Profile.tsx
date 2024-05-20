@@ -29,21 +29,7 @@ const Profile: FC = () => {
   ];
 
   const calculateCompleteness = (profile) => {
-    const requiredFields = [
-      'accountConfirmed',
-      'chooseGuest',
-      'date',
-      'email',
-      'facePhoto',
-      'gender',
-      'homeAddress',
-      'imageUser',
-      'location',
-      'name',
-      'notifications',
-      'photos',
-      'showAge',
-    ];
+    const requiredFields = ['chooseGuest', 'date', 'email', 'gender', 'homeAddress', 'interests', 'work', 'imageUser', 'bio', 'photos'];
     let presentFields = 0;
 
     for (const field of requiredFields) {
