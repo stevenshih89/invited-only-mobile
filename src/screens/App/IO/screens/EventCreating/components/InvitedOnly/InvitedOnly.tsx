@@ -58,7 +58,9 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
         <Text style={styles.textSelectYourDesiredCompany}>Select your desired company</Text>
         <View>
           <View style={styles.rowFemale}>
-            <Text style={styles.textPersonGender}>Female</Text>
+            <>
+              <Text style={styles.textPersonGender}>Female</Text>
+            </>
             <View style={styles.rowButtons}>
               <TouchableOpacity onPress={() => female !== 0 && setFemale(female - 1)} style={styles.buttonPress}>
                 <Text style={styles.textButton}>-</Text>
@@ -70,7 +72,9 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
             </View>
           </View>
           <View style={styles.rowMale}>
-            <Text style={styles.textPersonGender}>Male</Text>
+            <>
+              <Text style={styles.textPersonGender}>Male</Text>
+            </>
             <View style={styles.rowButtons}>
               <TouchableOpacity onPress={() => male !== 0 && setMale(male - 1)} style={styles.buttonPress}>
                 <Text style={styles.textButton}>-</Text>
