@@ -126,7 +126,7 @@ const IO: FC = (): JSX.Element => {
         name: name,
         girlsPhoto: girlsPhoto,
       });
-      showToast('pending', 'Chat with Alexa >', 'Invitation approved! Waiting for Alexa to accept your invitation.');
+      showToast('pending', `Chat with ${name} >`, 'Invitation approved! Waiting for Alexa to accept your invitation.');
       // setIsVisibleMatch(true);
     } catch (e) {
       console.log(e);
@@ -257,7 +257,7 @@ const IO: FC = (): JSX.Element => {
           id: doc.id,
           ...doc.data(),
         }))
-        ?.filter(event => !event.requestsList || !event.requestsList.some((request: any) => request.uid === user.uid));
+        ?.filter(event => !event.requestsList || !event.requestsList.some((request: any) => request.uid === user.uid) && event?.uid !== userHost?.uid);
 
       async function enrichElementsWithPhotos(elements) {
         const promises = elements?.map(async element => {
@@ -457,7 +457,11 @@ const IO: FC = (): JSX.Element => {
         </View>,
       ];
 
-      await userInfo?._docs?.map((item: any, index: number): void => {
+      console.log('my uid', userHost?.uid)
+      console.log('userInfo?._docs', userInfo?._docs)
+      await userInfo?._docs
+          ?.filter(i => i?._data?.uid !== userHost?.uid)
+          ?.map((item: any, index: number): void => {
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, uid} = item?._data;
 
         setNameUser(name);
@@ -624,7 +628,7 @@ const IO: FC = (): JSX.Element => {
     }, []),
   );
 
-  if (loading || !userInfo) {
+  if (loading || !userHost) {
     return <ActivityIndicator style={styles.safeAreaView} />;
   }
 

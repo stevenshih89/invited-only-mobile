@@ -12,6 +12,7 @@ import {useRoute} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import ModalSaveEventChanges from 'screens/App/MyEvents/EventEditing/ModalSaveEventChanges';
 import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
+import {showToast} from "helpers/showToast.ts";
 
 const EventCreating: FC = () => {
   const INVITED_ONLY = 'invitedOnly';
@@ -27,7 +28,7 @@ const EventCreating: FC = () => {
   const [femaleFriend, setFemaleFriend] = useState<number>(0);
   const [maleFriend, setMaleFriend] = useState<number>(0);
 
-  const navitation = useAppNavigation();
+  const navigation = useAppNavigation();
 
   const handleSetTabState = (type: string): void => {
     setTabState(type);
@@ -40,7 +41,7 @@ const EventCreating: FC = () => {
 
   useEffect(() => {
     if (isEditing) {
-      navitation.setOptions({
+      navigation.setOptions({
         headerRight: () => (
           <TouchableOpacity activeOpacity={0.7} onPress={() => setIsVisibleCancelModal(true)}>
             <TrashCanIcon style={{marginHorizontal: 20, marginVertical: 10}} />
@@ -75,6 +76,7 @@ const EventCreating: FC = () => {
         femaleFriend,
         maleFriend,
       });
+      showToast('success', '', 'Event successfully changes!');
     } catch (e) {
       console.log(e);
     }

@@ -1,7 +1,6 @@
 import {ImageBackground, Text, View} from 'react-native';
 import Modal from 'react-native-modal';
 import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
-import Place from 'assets/images/app/requst-place-1.png';
 import TrashRed from 'assets/images/icons/trash-red.svg';
 import {FC} from 'react';
 import Button from 'components/Button/Button';
@@ -9,6 +8,7 @@ import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 
 const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined}> = ({
   id,
@@ -16,11 +16,13 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
   onClose,
   image,
 }) => {
+  const navigation = useAppNavigation();
   const handleCancelEvent = async () => {
     try {
       await firestore().collection('Events').doc(id).delete();
       showToast('success', '', 'Event successfully deleted!');
       onClose();
+      navigation?.goBack();
     } catch (e) {
       showToast('cancel', '', 'Error!');
       console.log(e);
