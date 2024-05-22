@@ -7,6 +7,7 @@ import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from
 import MaskInput from 'react-native-mask-input';
 import firestore from '@react-native-firebase/firestore';
 import uuid from 'react-native-uuid';
+import DatePicker from 'react-native-date-picker';
 
 //import components
 import useStyles from './styles.ts';
@@ -25,7 +26,8 @@ import Calendar from 'assets/images/icons/calendar.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
 import {IOPath} from 'constants/pathLocations.ts';
 import auth from '@react-native-firebase/auth';
-import {useUser} from "../../../../../../../store/userStore";
+import {useUser} from '../../../../../../../store/userStore';
+import moment from "moment";
 
 interface EventDetailsProps {
   isEditing?: boolean;
@@ -98,12 +100,15 @@ const EventDetails: FC<EventDetailsProps> = ({
   const [placeName, setPlaceName] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [datePicker, setDatePicker] = useState(new Date());
+  const [hourPicker, setHourPicker] = useState(new Date());
   const [date, setDate] = useState('');
   const [hour, setHour] = useState('');
   const [address, setAddress] = useState('');
   const [meetingSpot, setMeetingSpot] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [open, setOpen] = useState(false);
+  const [openHour, setOpenHour] = useState(false);
   const navigation = useAppNavigation();
   const userHost = useUser((i: any) => i?.user);
 
@@ -403,37 +408,45 @@ const EventDetails: FC<EventDetailsProps> = ({
             labelStyle={styles.inputLabel}
           />
           <Text style={styles.maskInputLabel}>Date</Text>
-          <View style={styles.maskInputWr}>
-            <MaskInput
-              style={styles.maskInput}
-              keyboardAppearance="dark"
-              value={date}
-              keyboardType="number-pad"
-              onChangeText={(masked: any) => setDate(masked)}
-              placeholder="12.10.2024"
-              placeholderTextColor={gray1Color}
-              mask={[/\d/, /\d/, '.', /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/]}
+          <TouchableOpacity onPress={() => setOpen(true)} style={styles.maskInputWr}>
+            <DatePicker
+              modal
+              mode="date"
+              open={open}
+              date={datePicker}
+              onConfirm={date => {
+                const data = moment(date).format('DD.MM.YYYY');
+                setOpen(false);
+                setDate(data);
+                setDatePicker(date);
+              }}
+              onCancel={() => {
+                setOpen(false);
+              }}
             />
-            <View style={styles.inputIcon}>
-              <Calendar />
-            </View>
-          </View>
+            <Text style={styles.maskInput}>{date ? date : '12.10.2024'}</Text>
+            <Calendar />
+          </TouchableOpacity>
           <Text style={styles.maskInputLabel}>Hour</Text>
-          <View style={styles.maskInputWr}>
-            <MaskInput
-              style={styles.maskInput}
-              keyboardAppearance="dark"
-              value={hour}
-              keyboardType="number-pad"
-              onChangeText={(masked: any) => setHour(masked)}
-              placeholder="00:30"
-              placeholderTextColor={gray1Color}
-              mask={[/\d/, /\d/, ':', /\d/, /\d/]}
+          <TouchableOpacity onPress={() => setOpenHour(true)} style={styles.maskInputWr}>
+            <DatePicker
+              modal
+              mode="time"
+              open={openHour}
+              date={hourPicker}
+              onConfirm={date => {
+                setOpenHour(false);
+                const time = moment(date).format('HH:mm');
+                setHour(time);
+                setHourPicker(date);
+              }}
+              onCancel={() => {
+                setOpenHour(false);
+              }}
             />
-            <View style={styles.inputIcon}>
-              <Clock />
-            </View>
-          </View>
+            <Text style={styles.maskInput}>{hour ? hour : '00:30'}</Text>
+            <Clock />
+          </TouchableOpacity>
           <Input
             value={address}
             onChange={val => setAddress(val)}
