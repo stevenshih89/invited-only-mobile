@@ -193,17 +193,9 @@ const IO: FC = (): JSX.Element => {
 
   const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {
     try {
-      console.log('onInvite');
-      console.log('eventId', eventId);
-      console.log('requestsList', requestsList);
-      console.log('usersList', usersList);
-
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
-      console.log('guest', guest);
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
-
-      console.log('activeEventId', activeEventId);
 
       const host = userHost?.accountType === 'host';
 
@@ -218,18 +210,13 @@ const IO: FC = (): JSX.Element => {
 
       const usersListCheck = activeEvent?.usersList ? activeEvent?.usersList : usersList;
 
-      console.log('userInvited', userInvited);
-      console.log('usersListCheck', usersListCheck);
-
       let updateUsersList: any = [userInvited];
       usersListCheck !== undefined && updateUsersList?.push(...usersListCheck);
 
-      console.log('updateUsersList', updateUsersList);
       if (userHost?.accountType === 'host') {
         await firestore().collection('Events').doc(activeEventId).update({
           usersList: updateUsersList,
         });
-        console.log('host');
       } else {
         const updateRequestsList: any = [...requestsList, userInvited];
 
@@ -240,7 +227,6 @@ const IO: FC = (): JSX.Element => {
             usersList: updateUsersList ? updateUsersList : usersList,
             requestsList: updateRequestsList,
           });
-        console.log('guset');
       }
     } catch (e) {
       console.log(e);
