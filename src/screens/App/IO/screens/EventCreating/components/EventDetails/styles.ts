@@ -48,14 +48,8 @@ const useStyles = () =>
     maskInput: {
       color: whiteColor,
       borderTopLeftRadius: 10,
-      borderBottomLeftRadius: 10,
-      borderTopRightRadius: 0,
-      borderBottomRightRadius: 0,
-      backgroundColor: lightGray2Color,
-      flex: 1,
-      height: 56,
-      fontSize: 18,
-      paddingHorizontal: 20,
+      opacity: 0.35,
+      fontSize: RFValue(18, 812),
     },
     eventTypeWr: {
       borderRadius: 8,
@@ -143,7 +137,11 @@ const useStyles = () =>
       fontSize: RFValue(14, 812),
     },
     maskInputWr: {
+      padding: 20,
+      backgroundColor: lightGray2Color,
+      borderRadius: 10,
       flexDirection: 'row',
+      justifyContent: 'space-between',
       alignItems: 'center',
       marginBottom: 26,
     },

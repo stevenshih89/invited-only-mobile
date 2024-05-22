@@ -132,7 +132,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 )}
                 {!!userInfo?.alcohol && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <WineIcon /> {userInfo?.alcohol.title}
+                    <WineIcon /> {userInfo?.alcohol}
                   </Text>
                 )}
                 {userInfo?.smoke && (

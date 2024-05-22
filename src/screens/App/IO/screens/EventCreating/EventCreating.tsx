@@ -2,7 +2,9 @@ import React, {FC, useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
+//import icons
 import TrashCanIcon from 'assets/images/icons/trash.svg';
+
 //import components
 import useStyles from 'screens/App/IO/screens/EventCreating/styles.ts';
 import {whiteColor} from 'constants/colors.ts';
@@ -12,7 +14,7 @@ import {useRoute} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import ModalSaveEventChanges from 'screens/App/MyEvents/EventEditing/ModalSaveEventChanges';
 import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
-import {showToast} from "helpers/showToast.ts";
+import {showToast} from 'helpers/showToast.ts';
 
 const EventCreating: FC = () => {
   const INVITED_ONLY = 'invitedOnly';
@@ -76,6 +78,7 @@ const EventCreating: FC = () => {
         femaleFriend,
         maleFriend,
       });
+      navigation?.goBack();
       showToast('success', '', 'Event successfully changes!');
     } catch (e) {
       console.log(e);

@@ -6,14 +6,16 @@ import {Switch} from '@ant-design/react-native';
 import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
+import firestore from '@react-native-firebase/firestore';
+import {useUser} from '../../../../../store/userStore';
 
 interface ModalAlcoholProps {
   isVisible: boolean;
   onClose: () => void;
   showAlcohol: boolean;
   setShowAlcohol: Dispatch<SetStateAction<boolean>>;
-  activeAlcoholItem: {id: number; title: string} | null;
-  setActiveAlcoholItem: Dispatch<SetStateAction<{id: number; title: string} | null>>;
+  activeAlcoholItem: {title: string} | null;
+  setActiveAlcoholItem: Dispatch<SetStateAction<{title: string} | null>>;
   listOfAlcohols: any[];
 }
 
@@ -26,6 +28,41 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
   setActiveAlcoholItem,
   listOfAlcohols,
 }) => {
+  const userHost = useUser((i: any) => i?.user);
+  const setUserInfo = useUser((i: any) => i?.setUser);
+
+  const handleUpdateShowInMyProfile = async (state: string): Promise<void> => {
+    try {
+      const uid = userHost?.uid;
+      setShowAlcohol(state);
+      await firestore().collection('userInfo').doc(uid).update({
+        showAlcohol: state,
+      });
+      const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+
+      if (userInfoDoc?.exists) {
+        setUserInfo(userInfoDoc.data());
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const handleUpdateAlcohol = async (gender: string): Promise<void> => {
+    try {
+      const uid = userHost?.uid;
+      setActiveAlcoholItem(gender);
+      await firestore().collection('userInfo').doc(uid).update({
+        alcohol: gender,
+      });
+      const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+
+      if (userInfoDoc?.exists) {
+        setUserInfo(userInfoDoc.data());
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <Modal
       isVisible={isVisible}
@@ -70,7 +107,7 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
         </Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showAlcohol} onChange={val => setShowAlcohol(val)} />
+          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showAlcohol} onChange={val => handleUpdateShowInMyProfile(val)} />
         </View>
         <FlatList
           data={listOfAlcohols}
@@ -78,11 +115,14 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) => {
-            const isActive = activeAlcoholItem?.id === item.id;
+            console.log('item', item);
+            console.log('activeAlcoholItem', activeAlcoholItem);
+            const isActive = activeAlcoholItem === item.title;
+            console.log('active', isActive);
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => setActiveAlcoholItem(item)}
+                onPress={() => handleUpdateAlcohol(item?.title)}
                 style={{
                   borderBottomWidth: 1,
                   borderStyle: 'solid',

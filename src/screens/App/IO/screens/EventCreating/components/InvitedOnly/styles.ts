@@ -1,7 +1,14 @@
 import {StyleSheet} from 'react-native';
 import {Satoshi500, Satoshi400} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {goldColor, lightGray10Color, lightGray9Color, whiteColor} from 'constants/colors.ts';
+import {
+  goldColor,
+  lightGray10Color,
+  lightGray5Color,
+  lightGray6Color,
+  lightGray9Color,
+  whiteColor
+} from 'constants/colors.ts';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 
 const useStyles = () => {
@@ -26,6 +33,14 @@ const useStyles = () => {
       fontFamily: Satoshi500,
       fontSize: RFValue(18, 812),
       color: whiteColor,
+    },
+    wrapperPersonIcon: {
+      backgroundColor: lightGray5Color,
+      width: 30,
+      height: 30,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     textOtherFriend: {
       fontFamily: Satoshi500,

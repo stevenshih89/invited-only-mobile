@@ -5,6 +5,7 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import useStyles from 'screens/App/IO/screens/EventCreating/components/InvitedOnly/styles.ts';
 import Button from 'components/Button/Button.tsx';
 import {screenHeight} from 'constants/common.ts';
+import PersonIcon from 'assets/images/icons/person.svg';
 
 interface InvitedOnlyProps {
   setTabState: Dispatch<SetStateAction<string>>;
@@ -41,6 +42,8 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
   maleFriend,
   setMaleFriend,
 }) => {
+  const iconsArrayMale = Array.from({length: male}, (_, index) => index);
+  const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
   useEffect(() => {
     if (isEditing) {
       setFemale(prevFemale ?? 0);
@@ -51,6 +54,62 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
   }, []);
 
   const styles = useStyles();
+
+  const renderIconsArrayFemale = () => {
+    const index = iconsArrayFemale?.length;
+    if (index >= 7) {
+      return (
+        <>
+          {Array.from({length: 7}, (_, index) => index)?.map(index => {
+            return (
+              <View key={index} style={[styles.wrapperPersonIcon, {marginLeft: index === 0 ? 0 : 10}]}>
+                <PersonIcon width={18} height={18} />
+              </View>
+            );
+          })}
+          <View key={index} style={[styles.wrapperPersonIcon, {marginLeft: index === 0 ? 0 : 10}]}>
+            <Text style={styles.textButton}>+{index - 7}</Text>
+          </View>
+        </>
+      );
+    } else {
+      return iconsArrayFemale?.map(index => {
+        return (
+          <View key={index} style={[styles.wrapperPersonIcon, {marginLeft: index === 0 ? 0 : 10}]}>
+            <PersonIcon width={18} height={18} />
+          </View>
+        );
+      });
+    }
+  };
+
+  const renderIconsArrayMale = () => {
+    const index = iconsArrayMale?.length;
+    if (index >= 7) {
+      return (
+        <>
+          {Array.from({length: 7}, (_, index) => index)?.map(index => {
+            return (
+              <View key={index} style={[styles.wrapperPersonIcon, {marginLeft: index === 0 ? 0 : 10}]}>
+                <PersonIcon width={18} height={18} />
+              </View>
+            );
+          })}
+          <View key={index} style={[styles.wrapperPersonIcon, {marginLeft: index === 0 ? 0 : 10}]}>
+            <Text style={styles.textButton}>+{index - 7}</Text>
+          </View>
+        </>
+      );
+    } else {
+      return iconsArrayMale?.map(index => {
+        return (
+          <View key={index} style={[styles.wrapperPersonIcon, {marginLeft: index === 0 ? 0 : 10}]}>
+            <PersonIcon width={18} height={18} />
+          </View>
+        );
+      });
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -69,6 +128,7 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
               </TouchableOpacity>
             </View>
           </View>
+          {iconsArrayFemale?.length > 0 && <View style={{flexDirection: 'row', marginTop: 20}}>{renderIconsArrayFemale()}</View>}
           <View style={styles.rowMale}>
             <Text style={styles.textPersonGender}>Male</Text>
             <View style={styles.rowButtons}>
@@ -81,6 +141,7 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
               </TouchableOpacity>
             </View>
           </View>
+          {iconsArrayMale?.length > 0 && <View style={{flexDirection: 'row', marginTop: 20}}>{renderIconsArrayMale()}</View>}
         </View>
       </View>
       <View style={styles.wrapperOtherFriends}>

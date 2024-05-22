@@ -318,7 +318,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     activeState={item?.statusEvent}
                     allPeople={item?.female + item?.male}
                     date={item?.date}
-                    textCityName={item?.address}
+                    textCityName={item?.name}
                     estimeTime={item?.hour}
                     numberOfGirlsInvited={item?.female}
                     invitingPeople={item?.usersList?.filter(i => i?.status !== 'notAccepted')}
@@ -338,7 +338,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     placeName={item?.placeName}
                     list={item}
                     image={item?.photos[0]?.image}
-                    textCityName={item.address}
+                    textCityName={item.name}
                     estimeTime={item.hour}
                     numberOfGirlsInvited={item?.female + item?.femaleFriend}
                     host={{name: item?.name, image: item?.hostImage}}

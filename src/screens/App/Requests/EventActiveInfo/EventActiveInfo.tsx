@@ -34,8 +34,8 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const acceptedGuests = usersListData?.filter(i => i?.status === 'accepted');
   const rejectedGuests = usersListData?.filter(i => i?.status === 'notAccepted');
 
-  const maxGuests = invitedGuests?.length + acceptedGuests?.length + rejectedGuests?.length;
-  const currentGuests = acceptedGuests?.length;
+  const maxGuests = female + male;
+  const currentGuests = invitedGuests?.length;
 
   const [isVisibleCancelModal, setIsVisibleCancelModal] = useState(false);
 

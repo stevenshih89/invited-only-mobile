@@ -25,6 +25,7 @@ import {whiteColor} from 'constants/colors';
 import {fcmHelper, getFcmToken, onMatchNotificationSubscription} from 'helpers/fcmHelper.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {useUser} from '../../../store/userStore';
+import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 
 //import icons
 import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
@@ -51,8 +52,10 @@ const IO: FC = (): JSX.Element => {
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [events, setEvents] = useState<any[]>([]);
   const [nameUser, setNameUser] = useState<string>('');
+  const [uidScamUser, setUidScamUser] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
+  const [modalReport, setModalReport] = useState<boolean>(false);
 
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
   const {activeEventDate} = useContext(EventsDate);
@@ -244,6 +247,21 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
+  const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {
+    if (type === 'accept') {
+      const item = events?.filter(j => j?.info?.uid === uid)[0];
+      const filter: any[] = events?.filter(i => i?.info?.uid !== uid);
+      console.log('filter', filter);
+      await onInvite(item?.info?.uid, item?.info?.id, item?.info?.requestsList, item?.info?.usersList);
+      setEvents([...filter]);
+    } else {
+      console.log('reject', events);
+      console.log('uid', uid);
+      const filter: any[] = events?.filter(i => i?.info?.uid !== uid);
+      console.log('filter events', filter);
+      setEvents(filter);
+    }
+  };
   const getListForGuest = async () => {
     const user = auth().currentUser;
     if (!user) {
@@ -257,7 +275,9 @@ const IO: FC = (): JSX.Element => {
           id: doc.id,
           ...doc.data(),
         }))
-        ?.filter(event => !event.requestsList || !event.requestsList.some((request: any) => request.uid === user.uid) && event?.uid !== userHost?.uid);
+        ?.filter(
+          event => !event.requestsList || (!event.requestsList.some((request: any) => request.uid === user.uid) && event?.uid !== userHost?.uid),
+        );
 
       async function enrichElementsWithPhotos(elements) {
         const promises = elements?.map(async element => {
@@ -457,110 +477,114 @@ const IO: FC = (): JSX.Element => {
         </View>,
       ];
 
-      console.log('my uid', userHost?.uid)
-      console.log('userInfo?._docs', userInfo?._docs)
       await userInfo?._docs
-          ?.filter(i => i?._data?.uid !== userHost?.uid)
-          ?.map((item: any, index: number): void => {
-        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, uid} = item?._data;
+        ?.filter(i => i?._data?.uid !== userHost?.uid)
+        ?.map((item: any, index: number): void => {
+          const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, uid} = item?._data;
 
-        setNameUser(name);
-        const girlPhotos = item?._data?.photos?.map((image: any): void => image?.image);
-        const interests = item?._data?.interests?.map((i: any): void => i?.title);
-        const smoking = item?._data?.smoke?.title;
+          setNameUser(name);
+          const girlPhotos = item?._data?.photos?.map((image: any): void => image?.image);
+          const interests = item?._data?.interests?.map((i: any): void => i?.title);
+          const smoking = item?._data?.smoke?.title;
 
-        const age: string = calculateAge(date);
+          const age: string = calculateAge(date);
 
-        data.push({
-          component: (
-            <View key={index} style={styles.wrapperFakeCard}>
-              <TouchingSlider
-                name={name}
-                age={age}
-                homeAddress={homeAddress}
-                isShowInvitesTooltip={false}
-                isLocked={!userHost?.accountConfirmed}
-                handleOpenSuperInvite={handleOpenSuperInvite}
-                handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
-                photos={girlPhotos}
-              />
-              <View style={styles.bioWrapper}>
-                {bio && (
-                  <>
-                    <Text style={styles.titleSection}>Bio</Text>
-                    <Text style={styles.textDescription}>{bio}</Text>
-                  </>
-                )}
-                <Text style={[styles.titleSection, bio && styles.mt31]}>About me</Text>
-                <View style={styles.wrapperTextTags}>
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <PersonIcon />
-                    {accountType}
-                  </Text>
-                  {gender && (
+          data.push({
+            component: (
+              <View key={index} style={styles.wrapperFakeCard}>
+                <TouchingSlider
+                  name={name}
+                  age={age}
+                  homeAddress={homeAddress}
+                  isShowInvitesTooltip={false}
+                  isLocked={!userHost?.accountConfirmed}
+                  handleOpenSuperInvite={handleOpenSuperInvite}
+                  handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
+                  photos={girlPhotos}
+                />
+                <View style={styles.bioWrapper}>
+                  {bio && (
+                    <>
+                      <Text style={styles.titleSection}>Bio</Text>
+                      <Text style={styles.textDescription}>{bio}</Text>
+                    </>
+                  )}
+                  <Text style={[styles.titleSection, bio && styles.mt31]}>About me</Text>
+                  <View style={styles.wrapperTextTags}>
                     <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                      <TablerGenderIcon /> {gender}
+                      <PersonIcon />
+                      {accountType}
                     </Text>
-                  )}
-                  {address && (
-                    <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                      <LocationIcon /> {address}
-                    </Text>
-                  )}
-                  {homeAddress && (
-                    <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                      <HomeIcon /> {homeAddress}
-                    </Text>
-                  )}
-                  {height && (
-                    <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                      <ArrowIcon /> {height} см
-                    </Text>
-                  )}
-                  {alcohol && (
-                    <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                      <WineIcon /> {alcohol?.title}
-                    </Text>
-                  )}
-                  {smoking && (
-                    <Text style={[styles.textTagsAboutMe, {marginLeft: screenWidth / 33}]}>
-                      <SmokeIcon /> {smoking}
-                    </Text>
-                  )}
-                </View>
-                <Text style={[styles.titleSection, styles.mt31]}>Interests</Text>
-                <View style={styles.wrapperInterestsTags}>
-                  {interests?.map((interests: any, index: number) => (
-                    <View key={index} style={styles.interestsTags}>
-                      <Text style={styles.textTagsInterests}>{interests}</Text>
-                    </View>
-                  ))}
-                </View>
-                <View style={styles.wrapperImageSectionFaceGirl}>
-                  {girlPhotos?.map((photo: any, index: number) => (
-                    <Image key={index} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
-                  ))}
-                </View>
-                <InstagramSlider photosList={girlPhotos} />
-                <View style={styles.wrapperButtonsFooter}>
-                  <TouchableOpacity style={styles.buttonCloseOrCheck}>
-                    <CloseIcon />
+                    {gender && (
+                      <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                        <TablerGenderIcon /> {gender}
+                      </Text>
+                    )}
+                    {address && (
+                      <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                        <LocationIcon /> {address}
+                      </Text>
+                    )}
+                    {homeAddress && (
+                      <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                        <HomeIcon /> {homeAddress}
+                      </Text>
+                    )}
+                    {height && (
+                      <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                        <ArrowIcon /> {height} см
+                      </Text>
+                    )}
+                    {alcohol && (
+                      <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                        <WineIcon /> {alcohol?.title}
+                      </Text>
+                    )}
+                    {smoking && (
+                      <Text style={[styles.textTagsAboutMe, {marginLeft: screenWidth / 33}]}>
+                        <SmokeIcon /> {smoking}
+                      </Text>
+                    )}
+                  </View>
+                  <Text style={[styles.titleSection, styles.mt31]}>Interests</Text>
+                  <View style={styles.wrapperInterestsTags}>
+                    {interests?.map((interests: any, index: number) => (
+                      <View key={index} style={styles.interestsTags}>
+                        <Text style={styles.textTagsInterests}>{interests}</Text>
+                      </View>
+                    ))}
+                  </View>
+                  <View style={styles.wrapperImageSectionFaceGirl}>
+                    {girlPhotos?.map((photo: any, index: number) => (
+                      <Image key={index} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
+                    ))}
+                  </View>
+                  <InstagramSlider photosList={girlPhotos} />
+                  <View style={styles.wrapperButtonsFooter}>
+                    <TouchableOpacity onPress={() => handleChangeListsEvents(uid, 'reject')} style={styles.buttonCloseOrCheck}>
+                      <CloseIcon />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenSuperInvite}>
+                      <FlashIcon />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleChangeListsEvents(uid, 'accept')} style={styles.buttonCloseOrCheck}>
+                      <CheckIcon />
+                    </TouchableOpacity>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setUidScamUser(uid);
+                      setModalReport(true);
+                    }}>
+                    <Text style={styles.textHideNadSendReport}>Hide and send report</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenSuperInvite}>
-                    <FlashIcon />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.buttonCloseOrCheck}>
-                    <CheckIcon />
-                  </TouchableOpacity>
                 </View>
-                <Text style={styles.textHideNadSendReport}>Hide and send report</Text>
               </View>
-            </View>
-          ),
-          info: item?._data,
+            ),
+            info: item?._data,
+          });
+          setEvents([...data]);
         });
-        setEvents([...data]);
-      });
     } catch (e) {
       console.log(e);
       showToast('cancel', '', `${e}`);
@@ -656,6 +680,7 @@ const IO: FC = (): JSX.Element => {
             </View>
           );
         })}
+        <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
         <SuperInvite isVisibleSuperInvite={isVisibleSuperInvite} onCloseSuperInvite={handleCloseSuperInvite} />
         <Match isVisibleMatch={isVisibleMatch} onCloseMatch={handleCloseMatch} name={nameUser} />
       </View>

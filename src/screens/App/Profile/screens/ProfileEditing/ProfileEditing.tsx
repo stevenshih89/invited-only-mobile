@@ -38,7 +38,7 @@ const ProfileEditing: FC = (): ReactElement => {
   const [showGender, setShowGender] = useState(false);
   const [activeGenderItem, setActiveGenderItem] = useState<{title: string} | null>(null);
   const [showAlcohol, setShowAlcohol] = useState(false);
-  const [activeAlcoholItem, setActiveAlcoholItem] = useState<{id: number; title: string} | null>(null);
+  const [activeAlcoholItem, setActiveAlcoholItem] = useState<{title: string} | null>(null);
   const [showSmoke, setShowSmoke] = useState(false);
   const [activeSmokeItem, setActiveSmokeItem] = useState<{id: number; title: string} | null>(null);
   const [showHeight, setShowHeight] = useState(false);
