@@ -118,7 +118,7 @@ const MyBasics: FC<{
           <Text style={styles.text}>Drinking</Text>
         </View>
         <View style={styles.iconContainer}>
-          <Text style={styles.subText}>{activeAlcoholItem?.title || 'Add'}</Text>
+          <Text style={styles.subText}>{activeAlcoholItem ? activeAlcoholItem : 'Add'}</Text>
           <ArrowRight />
         </View>
       </TouchableOpacity>

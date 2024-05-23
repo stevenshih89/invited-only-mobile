@@ -23,6 +23,7 @@ import {ActivityIndicator} from 'react-native';
 import {calculateAge} from 'helpers/calculateAge';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
+import {useUser} from "../../../../../store/userStore";
 
 interface MyProfileViewProps {
   isShowEditButton?: boolean;
@@ -31,13 +32,15 @@ interface MyProfileViewProps {
   setModalVisible?: Dispatch<SetStateAction<boolean>>;
 }
 
-const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible, isShowEditButton = true, isShowInstagramPhotos = true, route}) => {
+const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible, isShowInstagramPhotos = true, route}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>({});
   const [photosList, setPhotosList] = useState<[]>([]);
 
+  const isShowEditButton = route?.params?.isShowEditButton;
   const styles = useStyles();
   const navigation = useAppNavigation();
+  const userHost = useUser((i: any) => i?.user);
 
   const goToProfileEditing = (): void => {
     navigation.navigate(profileEditingPath as never);
@@ -46,19 +49,18 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
   useEffect(() => {
     const fetchUserInfo = async () => {
       setLoading(true);
-      const user = auth().currentUser;
+      const user = userHost?.uid;
       const uid = route?.params?.uid;
       if (user) {
         try {
-          const userUid = uid !== undefined ? uid : user.uid;
-          console.log('userUid', userUid);
+          const userUid = uid !== undefined ? uid : user;
           const userInfoDoc = await firestore().collection('userInfo').doc(userUid).get();
 
-          if (userInfoDoc.exists) {
-            setUserInfo(userInfoDoc.data());
-            const userPhotos = userInfoDoc.data()?.photos;
+          if (userInfoDoc?.exists) {
+            setUserInfo(userInfoDoc?.data());
+            const userPhotos = userInfoDoc?.data()?.photos;
             if (userPhotos?.length) {
-              const mappedPhotos = userPhotos.map((img: {id: number; image: string}) => img.image);
+              const mappedPhotos = userPhotos?.map((img: {id: number; image: string}) => img?.image);
               setPhotosList(mappedPhotos);
             }
           } else {
@@ -125,19 +127,19 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                     <HomeIcon /> {userInfo?.homeAddress}
                   </Text>
                 )}
-                {!!userInfo?.height && (
+                {userInfo?.height && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
                     <ArrowIcon /> {`${userInfo?.height}cm`}
                   </Text>
                 )}
-                {!!userInfo?.alcohol && (
+                {userInfo?.alcohol?.title && userInfo?.showAlcohol && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <WineIcon /> {userInfo?.alcohol}
+                    <WineIcon /> {userInfo?.alcohol?.title}
                   </Text>
                 )}
-                {userInfo?.smoke && (
+                {userInfo?.smoke?.title && (
                   <Text style={[styles.textTagsAboutMe, {marginLeft: screenWidth / 33}]}>
-                    <SmokeIcon /> {`${userInfo?.smoke.title}`}
+                    <SmokeIcon /> {`${userInfo?.smoke?.title}`}
                   </Text>
                 )}
               </View>
@@ -172,7 +174,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 </>
               )}
               <View style={styles.wrapperImageSectionFaceGirl}>
-                {photosList.map((photo: any, index: number) => {
+                {photosList?.map((photo: any, index: number) => {
                   return <Image key={index.toString()} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />;
                 })}
               </View>

@@ -56,6 +56,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         screen: myProfileViewPath,
         params: {
           uid: uid,
+          isShowEditButton: false,
         },
       });
     }

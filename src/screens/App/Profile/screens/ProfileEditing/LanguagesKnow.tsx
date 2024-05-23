@@ -1,18 +1,31 @@
 import {Text, TouchableOpacity, View, StyleSheet} from 'react-native';
-import ArrowRight from 'assets/images/icons/arrow-right.svg';
-import {lightGray5Color, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {FC} from 'react';
+import {FC, useState} from 'react';
+
+//import components
+import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {lightGray5Color, whiteColor} from 'constants/colors';
+import ModalSelectLanguages from 'components/Modal/ModalSelectLanguages/ModalSelectLanguages.tsx';
+
+//import icons
+import ArrowRight from 'assets/images/icons/arrow-right.svg';
 
 const LanguagesKnow: FC = () => {
+  const [modalLanguages, setModalLanguages] = useState<boolean>(false)
+  const [showLanguages, setShowLanguages] = useState<boolean>(false)
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Languages I know</Text>
-      <TouchableOpacity style={styles.rowContainer}>
+      <TouchableOpacity onPress={() => setModalLanguages(true)} style={styles.rowContainer}>
         <Text style={styles.labelText}>Choose the languages you know</Text>
         <ArrowRight />
       </TouchableOpacity>
+      <ModalSelectLanguages
+        showLanguages={showLanguages}
+        setShowLanguages={setShowLanguages}
+        modalLanguages={modalLanguages}
+        setModalLanguages={setModalLanguages}
+      />
     </View>
   );
 };
