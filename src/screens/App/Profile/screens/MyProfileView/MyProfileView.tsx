@@ -23,19 +23,23 @@ import {ActivityIndicator} from 'react-native';
 import {calculateAge} from 'helpers/calculateAge';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
-import {useUser} from "../../../../../store/userStore";
+import {useUser} from '../../../../../store/userStore';
+import {useRoute} from "@react-navigation/native";
 
 interface MyProfileViewProps {
   isShowEditButton?: boolean;
   isShowInstagramPhotos?: boolean;
   isModalVisible?: boolean;
   setModalVisible?: Dispatch<SetStateAction<boolean>>;
+  route: any;
 }
 
-const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible, isShowInstagramPhotos = true, route}) => {
+const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible, isShowInstagramPhotos = true}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>({});
   const [photosList, setPhotosList] = useState<[]>([]);
+
+  const route = useRoute();
 
   const isShowEditButton = route?.params?.isShowEditButton;
   const styles = useStyles();
@@ -51,6 +55,9 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
       setLoading(true);
       const user = userHost?.uid;
       const uid = route?.params?.uid;
+      console.log('route', route);
+      console.log('uid', uid);
+      console.log('userHost uid', user);
       if (user) {
         try {
           const userUid = uid !== undefined ? uid : user;

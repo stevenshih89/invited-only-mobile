@@ -13,7 +13,7 @@ import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, userProfilePath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations.ts';
 import InstagramSlider from 'components/InstagramSlider/InstagramSlider';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
 import Match from './screens/Match/Match';
@@ -402,7 +402,7 @@ const IO: FC = (): JSX.Element => {
                     ))}
                   </View>
                 </View>
-                <Text style={styles.titleSection}>Host profile</Text>
+                <Text style={styles.titleSection}>1Host profile</Text>
                 <View style={styles.wrapperHostProfile}>
                   <View style={{flexDirection: 'row'}}>
                     <View style={{flexDirection: 'row'}}>
@@ -414,7 +414,7 @@ const IO: FC = (): JSX.Element => {
                       {/*<Text style={styles.textOnline}>Online</Text>*/}
                     </View>
                   </View>
-                  <TouchableOpacity onPress={() => navigation.navigate(userProfilePath, {params: {uid: uid}})}>
+                  <TouchableOpacity onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: uid}})}>
                     <Text style={styles.textSeeProfile}>
                       See profile <ArrowRightIcon width={14} height={14} />
                     </Text>
