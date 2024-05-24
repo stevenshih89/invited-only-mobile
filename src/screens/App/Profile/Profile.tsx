@@ -28,7 +28,7 @@ const Profile: FC = () => {
     {id: 2, title: 'Invitations'},
   ];
 
-  const calculateCompleteness = (profile) => {
+  const calculateCompleteness = profile => {
     const requiredFields = ['chooseGuest', 'date', 'email', 'gender', 'homeAddress', 'interests', 'work', 'imageUser', 'bio', 'photos'];
     let presentFields = 0;
 
@@ -99,7 +99,9 @@ const Profile: FC = () => {
 
   const goToMyProfileView = () => {
     // @ts-ignore
-    navigation.navigate(myProfileViewPath);
+    navigation.navigate(myProfileViewPath, {
+      isShowEditButton: true,
+    });
   };
 
   const userAge = calculateAge(userInfo?.date);

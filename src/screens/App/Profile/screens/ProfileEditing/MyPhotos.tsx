@@ -9,6 +9,7 @@ import {blackColor, lightGray2Color, lightGray5Color, whiteColor} from 'constant
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
+import {useUser} from "../../../../../store/userStore";
 
 interface MyPhotosProps {
   images: {id: number; image: string | null}[];
@@ -16,7 +17,8 @@ interface MyPhotosProps {
 }
 
 const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
-  const isConfirmed = true;
+  const userHost = useUser((i: any) => i?.user);
+  const isConfirmed = userHost?.accountConfirmed;
 
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
     const result = await check(permission);

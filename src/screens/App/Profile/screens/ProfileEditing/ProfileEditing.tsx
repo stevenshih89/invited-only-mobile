@@ -392,7 +392,8 @@ const ProfileEditing: FC = (): ReactElement => {
             await fetchImages(user);
           });
       } catch (error: any) {
-        Alert.alert('Error', error.message || 'Something went wrong');
+        console.log(error?.message);
+        // Alert.alert('Error', error.message || 'Something went wrong');
         setLoadingSave(false);
       }
       setLoadingSave(false);

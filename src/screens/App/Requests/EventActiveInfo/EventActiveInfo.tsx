@@ -205,7 +205,17 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
               onPress={() => navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})}
             />
             <View style={{borderTopColor: transparentWhite16Color, borderStyle: 'solid', borderTopWidth: 1, paddingTop: 34}}>
-              <Image source={EventBcg} style={{width: '100%', borderRadius: 20}} resizeMode="cover" />
+              <View>
+                {photos?.map((i: any, index: number) => (
+                  <Image
+                    source={{
+                      uri: i?.image,
+                    }}
+                    style={{width: '100%', height: 178, marginTop: index !== 0 ? 28 : 0, borderRadius: 20}}
+                    resizeMode="cover"
+                  />
+                ))}
+              </View>
               <Text style={{fontFamily: Satoshi400, fontSize: RFValue(24, 812), color: whiteColor, marginBottom: 14, marginTop: 34}}>
                 Event details
               </Text>
