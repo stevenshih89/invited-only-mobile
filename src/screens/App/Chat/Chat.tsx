@@ -18,7 +18,7 @@ import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
 import Button from 'components/Button/Button.tsx';
 import {useChat} from '../../../store/chatStore';
 import {EventContext} from 'contexts/EventContext.tsx';
-import moment from "moment/moment";
+import moment from 'moment/moment';
 type ItemProps = {
   title: string;
   id: string | number;

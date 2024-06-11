@@ -69,7 +69,7 @@ const SignUp: FC = (): JSX.Element => {
       navigation.navigate(confirmPhonePath, {confirm: confirmation, mobilePhone: phone});
     } catch (e: any) {
       setLoading(false);
-      showToast('cancel', `${e?.Error}`);
+      showToast('cancel', `${e?.message}`);
       console.log(e);
     }
   }
