@@ -1,6 +1,15 @@
 import {isIos, screenHeight} from 'constants/common';
 import {FC, useState} from 'react';
-import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {
+  ImageBackground,
+  Keyboard,
+  KeyboardAvoidingView,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -10,7 +19,7 @@ import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {myEmailPath, privacyPath} from 'constants/pathLocations';
+import {privacyPath} from 'constants/pathLocations';
 
 const ConnectSocialMedia: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -93,7 +102,8 @@ const ConnectSocialMedia: FC = (): JSX.Element => {
                       {isConnectedInstagram ? 'john.doe' : 'Connect Instagram'}
                     </Text>
                   </View>
-                  <Text style={{color: isConnectedInstagram ? toggleColor : whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi700}}>
+                  <Text
+                    style={{color: isConnectedInstagram ? toggleColor : whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi700}}>
                     {isConnectedInstagram ? 'Connected' : 'Connect'}
                   </Text>
                 </TouchableOpacity>

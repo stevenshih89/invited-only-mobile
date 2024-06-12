@@ -29,12 +29,22 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.invitedonly.shai</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>app-1-996985328099-ios-403f74a76adfe7897490d6</string>
 			</array>
 		</dict>
 		<dict/>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string/>
+			<key>CFBundleURLSchemes</key>
+			<array/>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
@@ -52,7 +62,7 @@
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Required access to geolocation</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library.</string>
 	<key>UIAppFonts</key>
@@ -61,6 +71,7 @@
 		<string>Satoshi-Medium.ttf</string>
 		<string>Satoshi-Regular.ttf</string>
 		<string>Satoshi-BoldItalic.ttf</string>
+		<string>Outfit-Medium.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

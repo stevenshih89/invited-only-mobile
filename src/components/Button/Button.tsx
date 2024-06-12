@@ -5,7 +5,8 @@ import {ActivityIndicator, Button as ButtonAntd} from '@ant-design/react-native'
 import {ButtonProps} from 'typescript/interfaces';
 import {Satoshi500} from 'constants/fonts';
 import {screenHeight} from 'constants/common';
-import {blackColor, whiteColor} from 'constants/colors';
+import {blackColor, grayColor, whiteColor} from 'constants/colors';
+import {TextStyle, ViewStyle} from 'react-native';
 
 const Button: FC<ButtonProps> = ({
   title,
@@ -25,20 +26,24 @@ const Button: FC<ButtonProps> = ({
         backgroundColor: whiteColor,
         maxHeight: 56,
         height: screenHeight / 15,
-      },
+      } as ViewStyle,
       defaultRawText: {
         color: blackColor,
         fontFamily: Satoshi500,
         textAlign: 'center',
         fontSize: 18,
         ...buttonTitleStyle,
+      } as TextStyle,
+      defaultDisabledRaw: {
+        backgroundColor: grayColor,
+        borderColor: 'transparent',
       },
       defaultHighlight: {
-        backgroundColor: whiteColor,
+        backgroundColor: 'rgba(255, 255,255, 0.8)',
       },
       defaultHighlightText: {
         color: blackColor,
-      },
+      } as TextStyle,
     },
     ['transparent']: {
       container: buttonContatinerStyle,

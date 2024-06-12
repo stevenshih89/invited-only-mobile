@@ -2,6 +2,10 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "src/assets/fonts/Outfit-Medium.ttf",
+      "sha1": "accdc4a94720336a48bb6fd31759bbfa268f902e"
+    },
+    {
       "path": "src/assets/fonts/Satoshi-Bold.ttf",
       "sha1": "25fb42a4eead3ebcf43ec56985f3d2556201936d"
     },

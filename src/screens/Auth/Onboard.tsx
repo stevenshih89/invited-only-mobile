@@ -1,10 +1,10 @@
-import {FC} from 'react';
+import React, {FC} from 'react';
 import {Dimensions, ImageBackground, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import Background from 'assets/images/auth/background.png';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
-import ArrowRight from 'assets/images/icons/arrow-right.svg';
-import {transparentWhite30Color, whiteColor} from 'constants/colors';
-import {Satoshi400} from 'constants/fonts';
+import ArrowRightBalck from 'assets/images/icons/arrow-right-balck.svg';
+import {black1Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {Outfit500, Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {signUpPath} from 'constants/pathLocations';
@@ -33,10 +33,11 @@ const Onboard: FC = (): JSX.Element => {
             <Text
               style={{
                 color: whiteColor,
-                fontFamily: Satoshi400,
-                fontSize: RFValue(48, 812),
+                fontFamily: Satoshi700,
+                letterSpacing: 26,
+                fontSize: RFValue(22, 812),
               }}>
-              Welcome
+              WELCOME
             </Text>
             <View
               style={{
@@ -46,18 +47,19 @@ const Onboard: FC = (): JSX.Element => {
               <Text
                 style={{
                   color: whiteColor,
-                  fontFamily: Satoshi400,
-                  fontSize: RFValue(18, 812),
+                  fontFamily: Outfit500,
+                  fontSize: RFValue(14, 812),
                 }}>
-                Acess is limited.
+                ACCESS IS LIMITED.
               </Text>
               <Text
                 style={{
                   color: whiteColor,
-                  fontFamily: Satoshi400,
-                  fontSize: RFValue(18, 812),
+                  fontFamily: Outfit500,
+                  fontSize: RFValue(14, 812),
+                  marginTop: 8,
                 }}>
-                This App os for invited only.
+                THIS APP IS FOR INVTED ONLY.
               </Text>
             </View>
             <View
@@ -66,29 +68,46 @@ const Onboard: FC = (): JSX.Element => {
                 backgroundColor: transparentWhite30Color,
                 width: '100%',
                 marginTop: Dimensions.get('window').height / 30,
+                marginBottom: 10,
               }}
             />
             <TouchableOpacity
               activeOpacity={0.7}
               hitSlop={{top: 26, bottom: 20}}
-              onPress={() => navigation.navigate(signUpPath)}
+              onPress={() => navigation.navigate(signUpPath as never)}
               style={{
+                backgroundColor: whiteColor,
+                borderRadius: 8,
+                paddingVertical: 16,
                 width: '100%',
                 flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: 'space-between',
+                justifyContent: 'center',
                 marginVertical: Dimensions.get('window').height / 30,
               }}>
               <Text
                 style={{
-                  color: whiteColor,
-                  fontFamily: Satoshi400,
+                  color: black1Color,
+                  fontFamily: Satoshi500,
                   fontSize: RFValue(20, 812),
+                  marginRight: 4,
                 }}>
-                JOIN THE APP
+                Get access
               </Text>
-              <ArrowRight />
+              <ArrowRightBalck />
             </TouchableOpacity>
+            <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center'}}>
+              <Text style={{fontFamily: Satoshi400, fontSize: RFValue(14, 812), color: whiteColor}}>
+                By creating account in you accept our
+              </Text>
+              <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}} onPress={() => {}}>
+                Terms of Use
+              </Text>
+              <Text style={{fontFamily: Satoshi400, fontSize: RFValue(14, 812), color: whiteColor}}> and </Text>
+              <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}} onPress={() => {}}>
+                Privacy Policy
+              </Text>
+            </View>
           </View>
         </SafeAreaView>
       </ImageBackground>
