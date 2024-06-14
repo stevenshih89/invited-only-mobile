@@ -28,7 +28,7 @@ const Onboard: FC = (): JSX.Element => {
             style={{
               marginTop: 'auto',
               alignItems: 'center',
-              paddingHorizontal: 42,
+              paddingHorizontal: 24,
             }}>
             <Text
               style={{
@@ -98,7 +98,7 @@ const Onboard: FC = (): JSX.Element => {
             </TouchableOpacity>
             <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center'}}>
               <Text style={{fontFamily: Satoshi400, fontSize: RFValue(14, 812), color: whiteColor}}>
-                By creating account in you accept our
+                By creating account in you accept our{' '}
               </Text>
               <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}} onPress={() => {}}>
                 Terms of Use

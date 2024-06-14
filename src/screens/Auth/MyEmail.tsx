@@ -1,10 +1,10 @@
 import {isIos, screenHeight} from 'constants/common';
 import {FC, useContext, useState} from 'react';
-import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
-import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
-import HalfBackground from 'assets/images/auth/half-background.png';
+import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
+import NinetyIcon from 'assets/images/auth/progress/ninety.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import {transparentWhite30Color, whiteColor} from 'constants/colors';
+import {black1Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
@@ -45,84 +45,81 @@ const MyEmail: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
   return (
-    <ImageBackground source={HalfBackground} resizeMode="cover" style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'space-between',
-                paddingBottom: 0,
-                paddingHorizontal: 38,
-              }}>
-              <View style={{alignItems: 'center'}}>
-                <View style={{flexDirection: 'row', width: '100%', justifyContent: 'space-between'}}>
-                  <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    activeOpacity={0.7}
-                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
-                    style={{
-                      borderRadius: 50,
-                      width: 40,
-                      height: 40,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: transparentWhite30Color,
-                    }}>
-                    <ArrowLeft />
-                  </TouchableOpacity>
-                  <LogoSecondary />
-                  <View style={{height: 40, justifyContent: 'center'}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>8/9</Text>
-                  </View>
-                </View>
-                <View
+    <KeyboardAvoidingView
+      behavior={isIos ? 'padding' : 'height'}
+      keyboardVerticalOffset={15}
+      style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'space-between',
+              paddingBottom: 0,
+              paddingHorizontal: 24,
+            }}>
+            <View style={{alignItems: 'center'}}>
+              <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  activeOpacity={0.7}
+                  hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
                   style={{
+                    borderRadius: 50,
+                    width: 40,
+                    height: 40,
+                    justifyContent: 'center',
                     alignItems: 'center',
-                    marginBottom: screenHeight / 30,
-                    marginTop: screenHeight / 80,
+                    backgroundColor: transparentWhite30Color,
                   }}>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi400,
-                      fontSize: RFValue(34, 812),
-                      marginBottom: 18,
-                      textAlign: 'center',
-                    }}>
-                    My email
-                  </Text>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi400,
-                      fontSize: RFValue(18, 812),
-                      textAlign: 'center',
-                    }}>
-                    Don’t lose access to your account, verify your email
-                  </Text>
-                </View>
-                <View style={{width: '100%'}}>
-                  <Input
-                    value={email}
-                    onChange={handleEmailChange}
-                    onBlur={checkIsValidEmail}
-                    isError={!isValidEmail}
-                    errorText="Email is not valid"
-                    containerStyle={{width: '100%'}}
-                    placeholder="Enter your email"
-                  />
-                </View>
+                  <ArrowLeft />
+                </TouchableOpacity>
+                <LogoPrimary2 />
+                <NinetyIcon height={40} />
               </View>
-              <View style={{marginBottom: 4}}>
-                <Button onPress={() => handleNext()} title="Next" />
+              <View
+                style={{
+                  width: '100%',
+                  marginBottom: screenHeight / 30,
+                  marginTop: screenHeight / 14,
+                }}>
+                <Text
+                  style={{
+                    color: whiteColor,
+                    fontFamily: Satoshi400,
+                    fontSize: RFValue(34, 812),
+                    marginBottom: 18,
+                  }}>
+                  Your email
+                </Text>
+                <Text
+                  style={{
+                    color: whiteColor,
+                    fontFamily: Satoshi400,
+                    fontSize: RFValue(17, 812),
+                  }}>
+                  Don’t lose access to your account, verify your email
+                </Text>
+              </View>
+              <View style={{width: '100%'}}>
+                <Input
+                  value={email}
+                  onChange={handleEmailChange}
+                  onBlur={checkIsValidEmail}
+                  isError={!isValidEmail}
+                  errorText="Email is not valid"
+                  containerStyle={{width: '100%'}}
+                  placeholder="Enter your email"
+                />
               </View>
             </View>
-          </SafeAreaView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </ImageBackground>
+            <View style={{marginBottom: 4}}>
+              <Button onPress={() => handleNext()} disabled={email.length < 5 || !isValidEmail} title="Continue" />
+            </View>
+          </View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

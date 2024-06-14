@@ -1,10 +1,9 @@
 import {isIos, screenHeight} from 'constants/common';
 import React, {FC, useState} from 'react';
-import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
-import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
-import HalfBackground from 'assets/images/auth/half-background.png';
-import {whiteColor} from 'constants/colors';
-import {Satoshi400} from 'constants/fonts';
+import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
+import LogoPrimary from 'assets/images/auth/logo-primary-2.svg';
+import {black1Color, whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -32,9 +31,9 @@ const SignUp: FC = (): JSX.Element => {
       const confirmation = await auth().signInWithPhoneNumber(phone);
       // @ts-ignore
       setConfirm(confirmation);
-      setLoading(false);
       // @ts-ignore
       navigation.navigate(confirmPhonePath, {confirm: confirmation, mobilePhone: phone});
+      setLoading(false);
     } catch (e: any) {
       setLoading(false);
       showToast('cancel', `${e?.message.split(']')[1]}`);
@@ -43,54 +42,57 @@ const SignUp: FC = (): JSX.Element => {
   }
 
   return (
-    <ImageBackground source={HalfBackground} resizeMode="cover" style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'space-between',
-                paddingBottom: 0,
-              }}>
+    <KeyboardAvoidingView
+      behavior={isIos ? 'padding' : 'height'}
+      keyboardVerticalOffset={15}
+      style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+          <View
+            style={{
+              paddingTop: 20,
+              flex: 1,
+              justifyContent: 'space-between',
+              paddingBottom: 0,
+            }}>
+            <View style={{paddingHorizontal: 24, width: '100%'}}>
               <View style={{alignItems: 'center'}}>
-                <LogoSecondary />
-                <View
+                <LogoPrimary />
+              </View>
+              <View
+                style={{
+                  marginBottom: screenHeight / 30,
+                  marginTop: screenHeight / 14,
+                }}>
+                <Text
                   style={{
-                    alignItems: 'center',
-                    paddingHorizontal: 38,
-                    marginBottom: screenHeight / 30,
-                    marginTop: screenHeight / 80,
+                    color: whiteColor,
+                    fontFamily: Satoshi500,
+                    fontSize: RFValue(48, 812),
+                    marginBottom: 18,
                   }}>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi400,
-                      fontSize: RFValue(34, 812),
-                      marginBottom: 18,
-                    }}>
-                    My phone
-                  </Text>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi400,
-                      fontSize: RFValue(18, 812),
-                      textAlign: 'center',
-                    }}>
-                    We protect our community by ensuring the authenticity of everyone in IO.
-                  </Text>
-                </View>
+                  Your phone
+                </Text>
+                <Text
+                  style={{
+                    color: whiteColor,
+                    fontFamily: Satoshi400,
+                    fontSize: RFValue(16, 812),
+                  }}>
+                  We protect our community by ensuring the authenticity of everyone in IO.
+                </Text>
+              </View>
+              <View style={{width: '100%'}}>
                 <InputPhoneView value={mobilePhone} setIsValid={setIsValidPhone} onChangeFormattedText={val => setMobilePhone(val)} />
               </View>
-              <View style={{paddingHorizontal: 38, marginBottom: 4}}>
-                <Button disabled={!isValidPhone && !loading && !confirm} onPress={() => signInWithPhoneNumber()} title="Continue" />
-              </View>
             </View>
-          </SafeAreaView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </ImageBackground>
+            <View style={{paddingHorizontal: 24, marginBottom: 4}}>
+              <Button disabled={!isValidPhone && !loading && !confirm} onPress={() => signInWithPhoneNumber()} title="Continue" />
+            </View>
+          </View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

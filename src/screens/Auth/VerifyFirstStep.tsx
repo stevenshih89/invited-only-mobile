@@ -50,8 +50,11 @@ const VerifyFirstStep: FC = (): JSX.Element => {
                     </View>
                   </View>
                   <View style={{alignItems: 'center'}}>
-                    <Text style={{color: whiteColor, fontSize: RFValue(34, 812), fontFamily: Satoshi400, textAlign: 'center'}}>Verify yourself</Text>
-                    <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400, marginTop: 18, textAlign: 'center'}}>
+                    <Text style={{color: whiteColor, fontSize: RFValue(34, 812), fontFamily: Satoshi400, textAlign: 'center'}}>
+                      Verify yourself
+                    </Text>
+                    <Text
+                      style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400, marginTop: 18, textAlign: 'center'}}>
                       Copy the pose in the photo below. If it matches, your profile will be verified, and you can keep using the IO app
                     </Text>
                   </View>

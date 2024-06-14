@@ -83,16 +83,20 @@ const Privacy: FC = (): JSX.Element => {
                       <View style={{width: '100%', padding: 20, backgroundColor: lightGray3Color, borderRadius: 10}}>
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
                           <CheckIcon />
-                          <Text style={{color: whiteColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 8}}>{title}</Text>
+                          <Text style={{color: whiteColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 8}}>
+                            {title}
+                          </Text>
                         </View>
-                        <Text style={{color: lightGray4Color, fontSize: RFValue(14, 812), fontFamily: Satoshi400, marginTop: 10}}>{subtitle}</Text>
+                        <Text style={{color: lightGray4Color, fontSize: RFValue(14, 812), fontFamily: Satoshi400, marginTop: 10}}>
+                          {subtitle}
+                        </Text>
                       </View>
                     )}
                   />
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => navigation.navigate(verifyFirstStepPath)} title="I agree, continue" />
+                <Button onPress={() => navigation.navigate(verifyFirstStepPath as never)} title="I agree, continue" />
               </View>
             </View>
           </SafeAreaView>

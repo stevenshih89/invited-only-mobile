@@ -22,7 +22,7 @@ import {
   verifyFirstStepPath,
   verifySecondStepPath,
   paymentPath,
-  tutorialFlowPath, notificationsStackPath,
+  tutorialFlowPath,
 } from 'constants/pathLocations';
 import {NavigationContainer} from '@react-navigation/native';
 import Onboard from 'screens/Auth/Onboard';

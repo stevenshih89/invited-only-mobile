@@ -1,6 +1,16 @@
 import {isIos, screenHeight} from 'constants/common';
 import React, {FC, useContext, useState} from 'react';
-import {Alert, Image, ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
+import {
+  Alert,
+  Image,
+  ImageBackground,
+  Keyboard,
+  KeyboardAvoidingView,
+  SafeAreaView,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
 import ExampleSelfie from 'assets/images/auth/example-selfie.png';
@@ -96,12 +106,14 @@ const VerifySecondStep: FC = (): JSX.Element => {
                   )}
 
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400, marginLeft: 6, textAlign: 'center'}}>
+                    <Text
+                      style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400, marginLeft: 6, textAlign: 'center'}}>
                       • Your face must be clearly visible
                     </Text>
                   </View>
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400, marginLeft: 6, textAlign: 'center'}}>
+                    <Text
+                      style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400, marginLeft: 6, textAlign: 'center'}}>
                       • You must be copying the pose exactly!
                     </Text>
                   </View>

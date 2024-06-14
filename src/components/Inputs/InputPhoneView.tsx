@@ -46,11 +46,11 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
     props.setIsValid && props.setIsValid(validPhoneNumber);
   };
 
-  const _isValidPhoneNumber = (phoneNumber: string) => {
-    const googlePhoneValid = isValidPhoneNumber(phoneNumber);
+  const _isValidPhoneNumber = (mobileNumber: string) => {
+    const googlePhoneValid = isValidPhoneNumber(mobileNumber);
     const countryCode = getDefaultCountryCode();
     if (countryCode === 'IL') {
-      const fistSymbolAfterCode = phoneNumber[4];
+      const fistSymbolAfterCode = mobileNumber[4];
       if (fistSymbolAfterCode === '0') {
         return false;
       }
@@ -98,7 +98,7 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
   return (
     <View style={[props.containerStyle, {marginBottom: 16, flexDirection: 'column'}]}>
       <TouchableOpacity activeOpacity={1} onPress={onPress} style={[styles.container]}>
-        <View>
+        <View style={{width: '100%'}}>
           <PhoneInput
             ref={phoneRef}
             autoFocus
@@ -124,6 +124,7 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
               styles.containerInput,
               props.containerStyle,
               {
+                width: '100%',
                 backgroundColor: lightGray2Color,
                 paddingTop: 0,
                 paddingRight: 0,

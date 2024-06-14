@@ -1,15 +1,16 @@
 import {isIos, screenHeight} from 'constants/common';
 import {FC, useContext, useEffect, useState} from 'react';
-import {ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
-import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
-import HalfBackground from 'assets/images/auth/half-background.png';
-import {grayColor, toggleColor, whiteColor} from 'constants/colors';
+import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
+import ThirtyIcon from 'assets/images/auth/progress/thirty.svg';
+import ArrowLeft from 'assets/images/icons/arrow-left.svg';
+import {black1Color, grayColor, lightGray2Color, toggleColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import Geolocation from '@react-native-community/geolocation';
-import {Satoshi400} from 'constants/fonts';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {chooseAccountTypePath} from 'constants/pathLocations';
+import {addPhotosPath} from 'constants/pathLocations';
 import {Switch} from '@ant-design/react-native';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 
@@ -43,7 +44,7 @@ const TurnNotifications: FC = (): JSX.Element => {
         location: location,
       },
     ]);
-    navigation.navigate(chooseAccountTypePath as never);
+    navigation.navigate(addPhotosPath as never);
   };
 
   const handleNotificationsChange = (value: boolean): void => {
@@ -55,89 +56,117 @@ const TurnNotifications: FC = (): JSX.Element => {
   };
 
   return (
-    <ImageBackground source={HalfBackground} resizeMode="cover" style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'space-between',
-                paddingBottom: 0,
-                paddingHorizontal: 38,
-              }}>
-              <View style={{alignItems: 'center'}}>
-                <LogoSecondary />
+    <KeyboardAvoidingView
+      behavior={isIos ? 'padding' : 'height'}
+      keyboardVerticalOffset={15}
+      style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'space-between',
+              paddingBottom: 0,
+              paddingHorizontal: 24,
+            }}>
+            <View style={{alignItems: 'center'}}>
+              <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  activeOpacity={0.7}
+                  hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                  style={{
+                    borderRadius: 50,
+                    width: 40,
+                    height: 40,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: transparentWhite30Color,
+                  }}>
+                  <ArrowLeft />
+                </TouchableOpacity>
+                <LogoPrimary2 />
+                <ThirtyIcon height={40} />
+              </View>
+              <View
+                style={{
+                  marginBottom: screenHeight / 30,
+                  marginTop: screenHeight / 14,
+                }}>
+                <Text
+                  style={{
+                    color: whiteColor,
+                    fontFamily: Satoshi500,
+                    fontSize: RFValue(34, 812),
+                    marginBottom: 18,
+                  }}>
+                  Confirm access
+                </Text>
+                <Text
+                  style={{
+                    color: whiteColor,
+                    fontFamily: Satoshi400,
+                    fontSize: RFValue(18, 812),
+                    opacity: 0.8,
+                  }}>
+                  You’ll need to enable your location in order to use invited only.
+                </Text>
+              </View>
+              <View style={{width: '100%'}}>
                 <View
                   style={{
+                    flexDirection: 'row',
                     alignItems: 'center',
-
-                    marginBottom: screenHeight / 30,
-                    marginTop: screenHeight / 80,
+                    justifyContent: 'space-between',
+                    backgroundColor: lightGray2Color,
+                    padding: 16,
+                    borderRadius: 10,
                   }}>
                   <Text
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi400,
-                      fontSize: RFValue(34, 812),
-                      marginBottom: 18,
+                      fontSize: RFValue(20, 812),
                     }}>
-                    Confirm access
+                    Notifications
                   </Text>
+                  <Switch trackColor={{false: grayColor, true: toggleColor}} checked={notifications} onChange={handleNotificationsChange} />
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginTop: screenHeight / 90,
+                    backgroundColor: lightGray2Color,
+                    padding: 16,
+                    borderRadius: 10,
+                  }}>
                   <Text
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi400,
-                      fontSize: RFValue(18, 812),
-                      textAlign: 'center',
+                      fontSize: RFValue(20, 812),
                     }}>
-                    You’ll need to enable your location in order to use invited only.
+                    Location
                   </Text>
+                  <Switch trackColor={{false: grayColor, true: toggleColor}} checked={location} onChange={handleLocationChange} />
                 </View>
-                <View style={{width: '100%'}}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Text
-                      style={{
-                        color: whiteColor,
-                        fontFamily: Satoshi400,
-                        fontSize: RFValue(20, 812),
-                      }}>
-                      Notifications
-                    </Text>
-                    <Switch trackColor={{false: grayColor, true: toggleColor}} checked={notifications} onChange={handleNotificationsChange} />
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginTop: screenHeight / 30,
-                    }}>
-                    <Text
-                      style={{
-                        color: whiteColor,
-                        fontFamily: Satoshi400,
-                        fontSize: RFValue(20, 812),
-                      }}>
-                      Location
-                    </Text>
-                    <Switch trackColor={{false: grayColor, true: toggleColor}} checked={location} onChange={handleLocationChange} />
-                  </View>
-                </View>
-              </View>
-              <View style={{marginBottom: 4}}>
-                <Button onPress={() => handleNext()} title="Next" />
               </View>
             </View>
-          </SafeAreaView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </ImageBackground>
+            <View style={{marginBottom: 4}}>
+              <Button onPress={() => handleNext()} title="Continue" />
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={{paddingVertical: 16, alignItems: 'center', marginTop: 4}}
+                onPress={() => navigation.navigate(addPhotosPath as never)}>
+                <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontWeight: '500'}}>Skip</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

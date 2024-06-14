@@ -12,12 +12,13 @@ import {
   View,
 } from 'react-native';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
+import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import {CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell} from 'react-native-confirmation-code-field';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {black1Color, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
-import {turnNotificationsPath} from 'constants/pathLocations';
+import {chooseAccountTypePath} from 'constants/pathLocations';
 import auth from '@react-native-firebase/auth';
 import {showToast} from 'helpers/showToast.ts';
 
@@ -44,7 +45,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
     try {
       setLoadingConfirmation(true);
       await confirm.confirm(code);
-      navigation.navigate(turnNotificationsPath);
+      navigation.navigate(chooseAccountTypePath);
       setLoadingConfirmation(false);
     } catch (e: any) {
       console.log(e);
@@ -66,8 +67,8 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <SafeAreaView style={{flex: 1}}>
           <View style={{flex: 1, justifyContent: 'space-between'}}>
-            <View style={{alignItems: 'center', paddingHorizontal: 38}}>
-              <View style={{flexDirection: 'row', width: '100%', justifyContent: 'space-between'}}>
+            <View style={{alignItems: 'center', paddingHorizontal: 24}}>
+              <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
                 <TouchableOpacity
                   onPress={() => navigation.goBack()}
                   activeOpacity={0.7}
@@ -82,9 +83,12 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
                   }}>
                   <ArrowLeft />
                 </TouchableOpacity>
+                <LogoPrimary2 />
+                <View />
               </View>
               <View
                 style={{
+                  width: '100%',
                   marginBottom: screenHeight / 30,
                   marginTop: screenHeight / 14,
                 }}>

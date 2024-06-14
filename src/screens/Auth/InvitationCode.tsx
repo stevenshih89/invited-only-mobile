@@ -14,7 +14,7 @@ import {codeVerifiedPath} from 'constants/pathLocations.ts';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
-import {useUser} from "../../store/userStore";
+import {useUser} from '../../store/userStore';
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
@@ -25,7 +25,10 @@ const InvitationCode: FC = (): JSX.Element => {
   const userHost = useUser((i: any) => i?.user);
 
   const handleNext = async () => {
-    const findInvitationСodes = await firestore().collection('userInfo').where('invitationСode', '==', userHost.codeForInvitingOtherUsers).get();
+    const findInvitationСodes = await firestore()
+      .collection('userInfo')
+      .where('invitationСode', '==', userHost.codeForInvitingOtherUsers)
+      .get();
     const data = findInvitationСodes?.docs?.map(i => i?.data());
     const culculate = data?.length - 5;
 
