@@ -20,9 +20,10 @@ import {
   accountRejectedPath,
   codeVerifiedPath,
   verifyFirstStepPath,
-  verifySecondStepPath,
   paymentPath,
   tutorialFlowPath,
+  photoVerifiedPath,
+  summaryInfoPath,
 } from 'constants/pathLocations';
 import {NavigationContainer} from '@react-navigation/native';
 import Onboard from 'screens/Auth/Onboard';
@@ -43,10 +44,11 @@ import PendingScreen from 'screens/Auth/AcceptedScreen/PendingScreen/PendingScre
 import AccountRejected from 'screens/Auth/AcceptedScreen/AccountRejected/AccountRejected.tsx';
 import CodeVerified from 'screens/Auth/AcceptedScreen/CodeVerified/CodeVerified.tsx';
 import VerifyFirstStep from 'screens/Auth/VerifyFirstStep';
-import VerifySecondStep from 'screens/Auth/VerifySecondStep';
 import InvitationCode from 'screens/Auth/InvitationCode';
 import Payment from 'screens/Auth/Payment/Payment.tsx';
 import TutorialsFlow from 'screens/Auth/TutorialsFlow/TutorialsFlow.tsx';
+import PhotoVerified from 'screens/Auth/PhotoVerified';
+import SummaryInfo from 'screens/Auth/SummaryInfo';
 
 const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
@@ -72,10 +74,11 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={accountRejectedPath} name={accountRejectedPath} component={AccountRejected} />
         <AuthStack.Screen key={codeVerifiedPath} name={codeVerifiedPath} component={CodeVerified} />
         <AuthStack.Screen key={verifyFirstStepPath} name={verifyFirstStepPath} component={VerifyFirstStep} />
-        <AuthStack.Screen key={verifySecondStepPath} name={verifySecondStepPath} component={VerifySecondStep} />
         <AuthStack.Screen key={invitationCodePath} name={invitationCodePath} component={InvitationCode} />
         <AuthStack.Screen key={paymentPath} name={paymentPath} component={Payment} />
         <AuthStack.Screen key={tutorialFlowPath} name={tutorialFlowPath} component={TutorialsFlow} />
+        <AuthStack.Screen key={photoVerifiedPath} name={photoVerifiedPath} component={PhotoVerified} />
+        <AuthStack.Screen key={summaryInfoPath} name={summaryInfoPath} component={SummaryInfo} />
       </AuthStack.Navigator>
     </NavigationContainer>
   );

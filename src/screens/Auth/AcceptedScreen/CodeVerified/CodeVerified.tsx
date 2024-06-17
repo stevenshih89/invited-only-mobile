@@ -1,5 +1,5 @@
-import React, {FC} from 'react';
-import {ImageBackground, SafeAreaView, View, Text, Image} from 'react-native';
+import React, {FC, useContext} from 'react';
+import {SafeAreaView, View, Text, Image} from 'react-native';
 
 //import components
 import useStyles from 'screens/Auth/AcceptedScreen/ReusableStyles/styles.ts';
@@ -9,35 +9,67 @@ import {paymentPath} from 'constants/pathLocations.ts';
 
 //import images
 import IconVerifyFilledAccepted from 'assets/images/icons/check-star.svg';
-import HalfBackground from 'assets/images/auth/half-background.png';
-import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
-import LogoPrimary from 'assets/images/auth/logo-primary.svg';
-import Avatar from 'assets/images/auth/man.png';
+import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
+import {black1Color, blackColor, whiteColor} from 'constants/colors';
+import {AuthContext} from 'contexts/AuthContext';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 const CodeVerified: FC = (): JSX.Element => {
   const styles = useStyles();
   const navigation = useAppNavigation();
 
+  const {onBoarding} = useContext(AuthContext);
+
+  const handleNext = () => {
+    navigation.navigate(paymentPath as never);
+  };
+  const imageUser = onBoarding.find((item: {imageUser: string}) => item.imageUser)?.imageUser;
+  const name = onBoarding.find((item: {name: string}) => item.name)?.name;
+
   return (
-    <ImageBackground source={HalfBackground} resizeMode="cover" style={styles.imageBackground}>
-      <SafeAreaView style={styles.safeAreaView}>
-        <View style={styles.logoSecondaryWrapper}>
-          <LogoSecondary height={84} />
-        </View>
-        <View style={styles.wrapperContainerVerified}>
-          <View style={styles.container}>
-            <LogoPrimary height={22} style={styles.logoPrimary} />
-            <Image source={Avatar} />
-            <View style={styles.wrapperIconVerifyFilledAccepted}>
+    <SafeAreaView style={[styles.safeAreaView, {backgroundColor: black1Color}]}>
+      <View style={{flex: 1, paddingHorizontal: 24, justifyContent: 'space-between'}}>
+        <View>
+          <View style={{alignItems: 'center'}}>
+            <LogoPrimary2 />
+          </View>
+          <View style={{alignItems: 'center', marginTop: 20}}>
+            <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(46, 812)}}>Accepted!</Text>
+          </View>
+          <View style={{marginTop: 20, alignSelf: 'center', alignItems: 'center', width: '90%'}}>
+            <View style={{borderColor: whiteColor, borderWidth: 64, borderRadius: 500, alignSelf: 'center'}}>
+              <Image source={{uri: imageUser}} style={{width: 190, height: 190}} />
+            </View>
+            <View style={{width: 20, height: 23, backgroundColor: whiteColor, marginTop: -3}} />
+            <View
+              style={{
+                backgroundColor: whiteColor,
+                borderRadius: 16,
+                width: '100%',
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text style={{color: blackColor, fontFamily: Satoshi500, fontSize: RFValue(24, 812), textAlign: 'center', marginRight: 8}}>
+                {name.split(' ')[0]}
+              </Text>
               <IconVerifyFilledAccepted />
             </View>
-            <Text style={styles.textInReview}>Verified</Text>
-            <Text style={styles.textYourAccount}>Join Invitation Accepted!</Text>
-            <Button onPress={() => navigation.navigate(paymentPath)} title="Continue" buttonStyle={styles.buttonContinue} />
+          </View>
+          <View style={{marginTop: 10}}>
+            <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), textAlign: 'center'}}>
+              Congratulations! Join invitation accepted. Welcome aboard!
+            </Text>
           </View>
         </View>
-      </SafeAreaView>
-    </ImageBackground>
+        <View>
+          <Button title="Continue" onPress={handleNext} />
+        </View>
+      </View>
+    </SafeAreaView>
   );
 };
 

@@ -28,12 +28,14 @@ const EnterName: FC = (): JSX.Element => {
     if (!name) {
       return;
     }
-    setOnBoarding([
+    const data = [
       ...onBoarding,
       {
         name: name,
       },
-    ]);
+    ];
+
+    setOnBoarding(data);
     navigation.navigate(turnNotificationsPath as never);
   };
 

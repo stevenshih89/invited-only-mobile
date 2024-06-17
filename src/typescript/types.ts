@@ -58,4 +58,6 @@ export type RootStackParamList = {
   '/phone-change': undefined;
   '/notification-setting': undefined;
   '/contact-and-faq': undefined;
+  '/photo-verified': undefined;
+  '/summary-info': undefined;
 };

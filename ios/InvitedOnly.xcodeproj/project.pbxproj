@@ -53,7 +53,7 @@
 		72F04D6A822D9F2379D286D4 /* Pods-InvitedOnly-InvitedOnlyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InvitedOnly-InvitedOnlyTests.release.xcconfig"; path = "Target Support Files/Pods-InvitedOnly-InvitedOnlyTests/Pods-InvitedOnly-InvitedOnlyTests.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = InvitedOnly/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B18D938971F5FD2F5D68C52F /* Pods-InvitedOnly.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InvitedOnly.release.xcconfig"; path = "Target Support Files/Pods-InvitedOnly/Pods-InvitedOnly.release.xcconfig"; sourceTree = "<group>"; };
-		B97FDA800D28499988137382 /* Outfit-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Outfit-Medium.ttf"; path = "../src/assets/fonts/Outfit-Medium.ttf"; sourceTree = "<group>"; };
+		B97FDA800D28499988137382 /* Outfit-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Outfit-Medium.ttf"; path = "../src/assets/fonts/Outfit-Medium.ttf"; sourceTree = "<group>"; };
 		D8322A5EEA3011B7769DAFB9 /* Pods_InvitedOnly.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InvitedOnly.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCE91967811DAC37B59D232B /* Pods_InvitedOnly_InvitedOnlyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InvitedOnly_InvitedOnlyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -524,7 +524,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -555,7 +555,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

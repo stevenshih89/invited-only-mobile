@@ -25,7 +25,14 @@ const TutorialsFlow: FC = (): JSX.Element => {
 
   const styles = useStyles();
 
-  const content: ReactNode[] = [<CreateEvent />, <SwipeToInvite />, <SeeHoWantsToJoinYou />, <ApproveGuest />, <MeetEnjoy />, <JoinEvents />]; // all components for stepper
+  const content: ReactNode[] = [
+    <CreateEvent />,
+    <SwipeToInvite />,
+    <SeeHoWantsToJoinYou />,
+    <ApproveGuest />,
+    <MeetEnjoy />,
+    <JoinEvents />,
+  ]; // all components for stepper
   const {onBoarding} = useContext(AuthContext);
   const accountType = onBoarding[0]?.accountType === 'guest';
   const setOnBoarding = useUser((i: any) => i?.setOnBoarding);

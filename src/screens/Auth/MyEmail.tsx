@@ -9,7 +9,7 @@ import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {connectSocialMediaPath} from 'constants/pathLocations';
+import {privacyPath} from 'constants/pathLocations';
 import Input from 'components/Inputs/Input';
 import {isEmailValid} from 'helpers/regExpValidators';
 import {AuthContext} from 'contexts/AuthContext.tsx';
@@ -39,7 +39,7 @@ const MyEmail: FC = (): JSX.Element => {
         email: email,
       },
     ]);
-    navigation.navigate(connectSocialMediaPath as never);
+    navigation.navigate(privacyPath as never);
   };
 
   const navigation = useAppNavigation();

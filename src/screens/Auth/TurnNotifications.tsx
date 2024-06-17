@@ -17,7 +17,7 @@ import {AuthContext} from 'contexts/AuthContext.tsx';
 const TurnNotifications: FC = (): JSX.Element => {
   const [notifications, setNotifications] = useState<boolean>(false);
   const [location, setLocation] = useState<boolean>(false);
-  const {setOnBoarding} = useContext(AuthContext);
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const getCurrentLocation = (): void => {
     Geolocation.setRNConfiguration({
@@ -39,6 +39,7 @@ const TurnNotifications: FC = (): JSX.Element => {
 
   const handleNext = async () => {
     setOnBoarding([
+      ...onBoarding,
       {
         notifications: notifications,
         location: location,

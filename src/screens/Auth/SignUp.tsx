@@ -87,7 +87,12 @@ const SignUp: FC = (): JSX.Element => {
               </View>
             </View>
             <View style={{paddingHorizontal: 24, marginBottom: 4}}>
-              <Button disabled={!isValidPhone && !loading && !confirm} onPress={() => signInWithPhoneNumber()} title="Continue" />
+              <Button
+                disabled={!isValidPhone && !loading && !confirm}
+                loading={loading}
+                onPress={() => signInWithPhoneNumber()}
+                title="Continue"
+              />
             </View>
           </View>
         </SafeAreaView>
