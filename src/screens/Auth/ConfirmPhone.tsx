@@ -68,7 +68,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
         <SafeAreaView style={{flex: 1}}>
           <View style={{flex: 1, justifyContent: 'space-between'}}>
             <View style={{alignItems: 'center', paddingHorizontal: 24}}>
-              <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+              <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: 10}}>
                 <TouchableOpacity
                   onPress={() => navigation.goBack()}
                   activeOpacity={0.7}

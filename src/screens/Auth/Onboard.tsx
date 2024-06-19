@@ -30,13 +30,7 @@ const Onboard: FC = (): JSX.Element => {
               alignItems: 'center',
               paddingHorizontal: 24,
             }}>
-            <Text
-              style={{
-                color: whiteColor,
-                fontFamily: Satoshi700,
-                letterSpacing: 26,
-                fontSize: RFValue(22, 812),
-              }}>
+            <Text style={{marginRight: -34, color: whiteColor, fontFamily: Satoshi700, letterSpacing: 26, fontSize: RFValue(22, 812)}}>
               WELCOME
             </Text>
             <View
@@ -48,7 +42,8 @@ const Onboard: FC = (): JSX.Element => {
                 style={{
                   color: whiteColor,
                   fontFamily: Outfit500,
-                  fontSize: RFValue(14, 812),
+                  fontSize: RFValue(13, 812),
+                  letterSpacing: 2,
                 }}>
                 ACCESS IS LIMITED.
               </Text>
@@ -56,8 +51,9 @@ const Onboard: FC = (): JSX.Element => {
                 style={{
                   color: whiteColor,
                   fontFamily: Outfit500,
-                  fontSize: RFValue(14, 812),
-                  marginTop: 8,
+                  fontSize: RFValue(13, 812),
+                  letterSpacing: 2,
+                  marginTop: 12,
                 }}>
                 THIS APP IS FOR INVTED ONLY.
               </Text>

@@ -16,7 +16,8 @@ const SummaryInfo = () => {
 
   const {onBoarding} = useContext(AuthContext);
 
-  const imageUser = onBoarding.find((item: {imageUser: string}) => item.imageUser)?.imageUser;
+  const flattenedPhotos = onBoarding.filter((item: {photos: []}) => item.photos)[0]?.photos;
+  const imageUser = flattenedPhotos?.find((photo: {id: number}) => photo.id === 0)?.image;
   const name: string = onBoarding.find((item: {name: string}) => item.name)?.name;
   const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
 
@@ -48,7 +49,7 @@ const SummaryInfo = () => {
             <View style={{backgroundColor: whiteColor, height: '100%', width: 26}} />
             <View style={{alignItems: 'flex-end', flexDirection: 'column', flex: 1}}>
               <Text style={{fontFamily: Outfit500, fontSize: RFValue(58, 812), color: whiteColor, lineHeight: 60}}>
-                {name.split(' ')[0]}
+                {name?.split(' ')[0]}
               </Text>
               <Text style={{textTransform: 'capitalize', color: whiteColor, fontFamily: Outfit500, fontSize: RFValue(14, 812)}}>
                 {accountType}

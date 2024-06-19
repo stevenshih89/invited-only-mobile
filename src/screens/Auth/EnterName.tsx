@@ -74,8 +74,9 @@ const EnterName: FC = (): JSX.Element => {
               </View>
               <View
                 style={{
+                  width: '100%',
                   marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 16,
+                  marginTop: screenHeight / 10,
                 }}>
                 <Text
                   style={{
@@ -92,11 +93,14 @@ const EnterName: FC = (): JSX.Element => {
                     fontFamily: Satoshi400,
                     fontSize: RFValue(18, 812),
                   }}>
-                  You won’t be able to change this later. It will be shown on your profile.
+                  You won’t be able to change this later.
+                </Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>
+                  It will be shown on your profile.
                 </Text>
               </View>
               <View style={{width: '100%'}}>
-                <Input value={name} onChange={handleNameChange} containerStyle={{width: '100%'}} placeholder="Jameson Jackson" />
+                <Input value={name} onChange={handleNameChange} containerStyle={{width: '100%'}} placeholder="Enter your name" />
               </View>
             </View>
             <View style={{marginBottom: 4}}>

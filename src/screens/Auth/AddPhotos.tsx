@@ -230,11 +230,25 @@ const AddPhotos: FC = (): JSX.Element => {
                         flex: 1,
                         backgroundColor: lightGray2Color,
                         borderRadius: 10,
-                        justifyContent: 'flex-end',
+                        justifyContent: 'space-between',
                         alignItems: 'center',
                         paddingBottom: 10,
                       }}>
+                      <View />
                       <Plus />
+                      <View
+                        style={{
+                          backgroundColor: blackColor,
+                          borderRadius: 42,
+                          paddingHorizontal: 10,
+                          alignSelf: 'center',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          paddingVertical: 5,
+                          marginBottom: 10,
+                        }}>
+                        <Text style={{fontFamily: Satoshi700, fontSize: RFValue(12, 812), color: whiteColor}}>Main</Text>
+                      </View>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -273,7 +287,7 @@ const AddPhotos: FC = (): JSX.Element => {
                           backgroundColor: lightGray2Color,
                           borderRadius: 10,
                           flex: 1,
-                          justifyContent: 'flex-end',
+                          justifyContent: 'center',
                           alignItems: 'center',
                           paddingBottom: 10,
                         }}>
@@ -315,7 +329,7 @@ const AddPhotos: FC = (): JSX.Element => {
                           flex: 1,
                           backgroundColor: lightGray2Color,
                           borderRadius: 10,
-                          justifyContent: 'flex-end',
+                          justifyContent: 'center',
                           alignItems: 'center',
                           paddingBottom: 10,
                         }}>

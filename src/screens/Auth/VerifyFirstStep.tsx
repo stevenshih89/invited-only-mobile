@@ -65,15 +65,15 @@ const VerifySecondStep: FC = (): JSX.Element => {
   };
 
   const handleNext = () => {
-    // if (!imageUri) {
-    //   return;
-    // }
-    // setOnBoarding([
-    //   ...onBoarding,
-    //   {
-    //     imageUser: imageUri,
-    //   },
-    // ]);
+    if (!imageUri) {
+      return;
+    }
+    setOnBoarding([
+      ...onBoarding,
+      {
+        imageUser: imageUri,
+      },
+    ]);
     navigation.navigate(photoVerifiedPath as never);
   };
 
@@ -224,7 +224,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                 )}
               </View>
             </View>
-            {true ? (
+            {imageUri ? (
               <View style={{marginBottom: 4}}>
                 <Button title="Submit" onPress={() => handleNext()} />
                 <Button

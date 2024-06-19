@@ -60,4 +60,5 @@ export type RootStackParamList = {
   '/contact-and-faq': undefined;
   '/photo-verified': undefined;
   '/summary-info': undefined;
+  '/verify-social-profile': undefined;
 };

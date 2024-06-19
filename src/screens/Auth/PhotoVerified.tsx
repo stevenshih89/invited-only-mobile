@@ -44,7 +44,8 @@ const PhotoVerified = () => {
     };
   });
 
-  const imageUri = onBoarding.find((item: {imageUser: string}) => item.imageUser)?.imageUser;
+  const flattenedPhotos = onBoarding.filter((item: {photos: []}) => item.photos)[0]?.photos;
+  const imageUri = flattenedPhotos?.find((photo: {id: number}) => photo.id === 0)?.image;
 
   return (
     <SafeAreaView style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>

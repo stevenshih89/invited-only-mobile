@@ -54,7 +54,7 @@ const CodeVerified: FC = (): JSX.Element => {
                 justifyContent: 'center',
               }}>
               <Text style={{color: blackColor, fontFamily: Satoshi500, fontSize: RFValue(24, 812), textAlign: 'center', marginRight: 8}}>
-                {name.split(' ')[0]}
+                {name?.split(' ')[0]}
               </Text>
               <IconVerifyFilledAccepted />
             </View>

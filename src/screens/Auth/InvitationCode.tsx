@@ -5,7 +5,7 @@ import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {codeVerifiedPath} from 'constants/pathLocations.ts';
+import {codeVerifiedPath, verifySocialProfilePath} from 'constants/pathLocations.ts';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
@@ -74,6 +74,8 @@ const InvitationCode: FC = (): JSX.Element => {
               <View style={{marginTop: screenHeight / 20}}>
                 <View
                   style={{
+                    paddingHorizontal: 36,
+                    paddingTop: 30,
                     borderColor: '#D9D9D9',
                     borderRadius: 30,
                     borderBottomLeftRadius: 8,
@@ -81,13 +83,15 @@ const InvitationCode: FC = (): JSX.Element => {
                     borderBottomWidth: 0,
                     borderWidth: 1,
                   }}>
-                  <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi500, fontSize: RFValue(38, 812)}}>
-                    Do you have an invitation code?
-                  </Text>
+                  <View style={{width: '100%'}}>
+                    <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi500, fontSize: RFValue(34, 812)}}>
+                      Do you have an invitation code?
+                    </Text>
+                  </View>
                   <View
                     style={{
                       alignSelf: 'center',
-                      width: '80%',
+                      width: '95%',
                       height: 1,
                       borderWidth: 1,
                       borderColor: 'rgba(255, 255, 255, 0.50)',
@@ -95,7 +99,7 @@ const InvitationCode: FC = (): JSX.Element => {
                       marginVertical: 20,
                     }}
                   />
-                  <View style={{width: '100%', paddingHorizontal: 30, marginBottom: 10}}>
+                  <View style={{width: '100%', marginBottom: 10}}>
                     <Input value={code} onChange={setCode} containerStyle={{width: '100%'}} placeholder="Enter your invitation code" />
                   </View>
                 </View>
@@ -107,7 +111,7 @@ const InvitationCode: FC = (): JSX.Element => {
                     borderTopRightRadius: 8,
                     borderTopWidth: 0,
                     borderWidth: 1,
-                    paddingVertical: 20,
+                    paddingVertical: 26,
                     position: 'relative',
                   }}>
                   <View
@@ -131,7 +135,7 @@ const InvitationCode: FC = (): JSX.Element => {
             <View style={{marginBottom: 4}}>
               <Button onPress={() => handleNext()} disabled={!code.length} title="Apply code" />
               <Button
-                onPress={() => navigation.navigate(codeVerifiedPath as never)}
+                onPress={() => navigation.navigate(verifySocialProfilePath as never)}
                 buttonTitleStyle={{textDecorationLine: 'underline'}}
                 title="I don't have a code"
                 variant="transparent"

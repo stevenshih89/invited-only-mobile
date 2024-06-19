@@ -1,5 +1,4 @@
 import {RootStackParamList} from 'typescript/types';
-import SecurePrivacy from 'screens/App/Profile/screens/SecurePrivacy/SecurePrivacy.tsx';
 // Stacks paths
 const bottomTabsStackPath = '/bottom-tabs-stack';
 const notificationsStackPath = '/notifications-stack';
@@ -51,6 +50,7 @@ const notificationSettingPath: keyof RootStackParamList = '/notification-setting
 const contactAndFAQPath: keyof RootStackParamList = '/contact-and-faq';
 const photoVerifiedPath: keyof RootStackParamList = '/photo-verified';
 const summaryInfoPath: keyof RootStackParamList = '/summary-info';
+const verifySocialProfilePath: keyof RootStackParamList = '/verify-social-profile';
 
 export {
   bottomTabsStackPath,
@@ -101,4 +101,5 @@ export {
   contactAndFAQPath,
   photoVerifiedPath,
   summaryInfoPath,
+  verifySocialProfilePath,
 };

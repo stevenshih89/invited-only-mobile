@@ -8,7 +8,7 @@ import {onboardPath} from 'constants/pathLocations.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 
 //import images
-import InfoCircle from 'assets/images/auth/info-circle.svg';
+import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Avatar from 'assets/images/auth/man.png';
 import IoIcon from 'assets/images/auth/io-icon.svg';
 
@@ -20,28 +20,37 @@ const PendingScreen: FC = (): JSX.Element => {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <View style={styles.container}>
-        <View style={styles.avatarWrapper}>
-          <View style={styles.avatarStyle}>
-            <Image source={Avatar} style={styles.imageAvatar} />
+        <View>
+          <View style={{alignItems: 'center', marginTop: 20}}>
+            <LogoPrimary2 />
           </View>
-          <InfoCircle style={styles.infoCircleIcon} />
-        </View>
-        <Text style={styles.textYourAccount}>Your Account is Not Approved</Text>
-        <Text style={[styles.textDescriptionNotApproved, {marginTop: dimensionsHeight / 25}]}>
-          We're sorry, but it seems your account has not been approved for use at the moment. Our team is working diligently to review all accounts,
-          and yours will be evaluated shortly.
-        </Text>
-        <Text style={styles.textDescriptionNotApproved}>
-          If you believe this is an error or have any questions, please feel free to contact our support team.
-        </Text>
-        <View style={styles.infoContainer}>
-          <Text style={styles.textNeedAHelp}>Need a help?</Text>
-          <View style={styles.wrapperSupportInfo}>
-            <IoIcon />
-            <Text style={styles.textSupport}>Support@invitedonly.com</Text>
+          <View style={styles.avatarWrapper}>
+            <View style={styles.avatarStyle}>
+              <Image source={Avatar} style={styles.imageAvatar} />
+            </View>
+          </View>
+          <Text style={styles.textYourAccount}>Your Account is Not Approved</Text>
+          <Text style={[styles.textDescriptionNotApproved, {marginTop: dimensionsHeight / 25}]}>
+            We're sorry, but it seems your account has not been approved for use at the moment. Our team is working diligently to review all
+            accounts, and yours will be evaluated shortly.
+          </Text>
+          <Text style={styles.textDescriptionNotApproved}>
+            If you believe this is an error or have any questions, please feel free to contact our support team.
+          </Text>
+          <View style={styles.infoContainer}>
+            <Text style={styles.textNeedAHelp}>Need a help?</Text>
+            <View style={styles.wrapperSupportInfo}>
+              <IoIcon />
+              <Text style={styles.textSupport}>Support@invitedonly.com</Text>
+            </View>
           </View>
         </View>
-        <Button onPress={() => navigation.navigate(onboardPath)} title="Logout" variant="transparent" buttonStyle={styles.buttonLogout} />
+        <Button
+          onPress={() => navigation.navigate(onboardPath as never)}
+          title="Logout"
+          variant="transparent"
+          buttonStyle={styles.buttonLogout}
+        />
       </View>
     </SafeAreaView>
   );
