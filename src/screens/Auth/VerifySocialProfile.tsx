@@ -28,8 +28,9 @@ const VerifySocialProfile = () => {
   const [openedSocial, setOpenedSocial] = useState<Social | null>(null);
   const [socialNickname, setSocialNickname] = useState<any>({});
   const navigation = useAppNavigation();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const {onBoarding, setOnBoarding} = useContext(AuthContext);
+  const {onBoarding} = useContext(AuthContext);
 
   const handleSocialNicknameChange = (value: string, social: string) => {
     setSocialNickname({...socialNickname, [social]: value});
@@ -117,8 +118,9 @@ const VerifySocialProfile = () => {
     return `${day} ${month} ${year}`;
   };
 
-  const handleCloseTutorialFlow = async () => {
+  const handleRegisterUser = async onBoarding => {
     try {
+      setLoading(true);
       const registrationDate = new Date();
       const formattedDate = formatDate(registrationDate);
       const user = auth().currentUser;
@@ -154,7 +156,7 @@ const VerifySocialProfile = () => {
           accountReviewed: false,
         })
         .then(async () => {
-          console.log('User added!');
+          console.warn('User added!');
 
           photos?.map(async (i: any, index: number) => {
             await uploadImage(i, userId).then(async image => {
@@ -165,15 +167,17 @@ const VerifySocialProfile = () => {
           await uploadImage(imageUri, userId).then(async image => {
             await updateUserProfileImage(userId, image);
           });
-          setOnBoarding(true);
         });
+      setLoading(false);
     } catch (e) {
       console.log(e);
       showToast('cancel', '', `${e}`);
+      setLoading(false);
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    await handleRegisterUser(onBoarding);
     navigation.navigate(pendingScreenPath as never);
   };
 
@@ -239,7 +243,7 @@ const VerifySocialProfile = () => {
           <FlatList data={socials} ItemSeparatorComponent={() => <View style={{height: 8}} />} renderItem={renderItem} />
         </View>
         <View style={{marginVertical: 4}}>
-          <Button title="Continue" disabled={!socialNickname[openedSocial?.name]?.length} onPress={handleNext} />
+          <Button title="Continue" loading={loading} disabled={!socialNickname[openedSocial?.name]?.length} onPress={handleNext} />
         </View>
       </View>
     </SafeAreaView>

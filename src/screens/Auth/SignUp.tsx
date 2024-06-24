@@ -17,6 +17,7 @@ const SignUp: FC = (): JSX.Element => {
   const [confirm, setConfirm] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isValidPhone, setIsValidPhone] = useState<boolean>(false);
+  const [isDisabledValidation, setIsDisabledValidation] = useState<boolean>(true);
 
   const navigation = useAppNavigation();
 
@@ -40,6 +41,13 @@ const SignUp: FC = (): JSX.Element => {
       console.warn(e);
     }
   }
+
+  const handleSignUp = () => {
+    setIsDisabledValidation(false);
+    if (isValidPhone) {
+      signInWithPhoneNumber();
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -83,16 +91,16 @@ const SignUp: FC = (): JSX.Element => {
                 </Text>
               </View>
               <View style={{width: '100%'}}>
-                <InputPhoneView value={mobilePhone} setIsValid={setIsValidPhone} onChangeFormattedText={val => setMobilePhone(val)} />
+                <InputPhoneView
+                  value={mobilePhone}
+                  setIsValid={setIsValidPhone}
+                  validationDisabled={isDisabledValidation}
+                  onChangeFormattedText={val => setMobilePhone(val)}
+                />
               </View>
             </View>
             <View style={{paddingHorizontal: 24, marginBottom: 4}}>
-              <Button
-                disabled={!isValidPhone && !loading && !confirm}
-                loading={loading}
-                onPress={() => signInWithPhoneNumber()}
-                title="Continue"
-              />
+              <Button disabled={!isValidPhone && !loading && !confirm} loading={loading} onPress={handleSignUp} title="Continue" />
             </View>
           </View>
         </SafeAreaView>

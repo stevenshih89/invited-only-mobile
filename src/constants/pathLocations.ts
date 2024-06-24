@@ -51,6 +51,7 @@ const contactAndFAQPath: keyof RootStackParamList = '/contact-and-faq';
 const photoVerifiedPath: keyof RootStackParamList = '/photo-verified';
 const summaryInfoPath: keyof RootStackParamList = '/summary-info';
 const verifySocialProfilePath: keyof RootStackParamList = '/verify-social-profile';
+const checkingSpots: keyof RootStackParamList = '/checking-spots';
 
 export {
   bottomTabsStackPath,
@@ -102,4 +103,5 @@ export {
   photoVerifiedPath,
   summaryInfoPath,
   verifySocialProfilePath,
+  checkingSpots,
 };

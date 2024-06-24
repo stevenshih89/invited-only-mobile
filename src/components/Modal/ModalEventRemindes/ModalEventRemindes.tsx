@@ -11,7 +11,7 @@ import {showToast} from 'helpers/showToast.ts';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import PeopleIcon from 'assets/images/icons/person.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
-import moment from "moment/moment";
+import moment from 'moment/moment';
 
 interface ModalEventRemindeProps {
   eventStarting: boolean;

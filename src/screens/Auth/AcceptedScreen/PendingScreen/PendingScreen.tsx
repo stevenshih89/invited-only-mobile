@@ -24,7 +24,8 @@ const PendingScreen: FC = (): JSX.Element => {
   const handleNext = () => {
     navigation.navigate(paymentPath as never);
   };
-  const imageUser = onBoarding.find((item: {imageUser: string}) => item.imageUser)?.imageUser;
+  const flattenedPhotos = onBoarding.filter((item: {photos: []}) => item.photos)[0]?.photos;
+  const imageUser = flattenedPhotos?.find((photo: {id: number}) => photo.id === 0)?.image;
   const name = onBoarding.find((item: {name: string}) => item.name)?.name;
 
   return (
@@ -39,7 +40,7 @@ const PendingScreen: FC = (): JSX.Element => {
           </View>
           <View style={{marginTop: 20, alignSelf: 'center', alignItems: 'center', width: '90%'}}>
             <View style={{borderColor: whiteColor, borderWidth: 64, borderRadius: 500, alignSelf: 'center'}}>
-              <Image source={{uri: imageUser}} style={{width: 190, height: 190}} />
+              <Image source={{uri: imageUser}} style={{width: 190, height: 190, borderRadius: 200}} />
             </View>
             <View style={{width: 20, height: 23, backgroundColor: whiteColor, marginTop: -3}} />
             <View

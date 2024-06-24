@@ -1,6 +1,6 @@
 import {isIos, screenHeight} from 'constants/common';
 import {FC, useContext, useState} from 'react';
-import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
+import {Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
@@ -13,14 +13,135 @@ import {useUser} from '../../store/userStore';
 import {black1Color, whiteColor} from 'constants/colors';
 import {Outfit500, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import storage from '@react-native-firebase/storage';
+import auth from '@react-native-firebase/auth';
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
   const navigation = useAppNavigation();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const userHost = useUser((i: any) => i?.user);
+
+  const uploadImage = async (imagePath: string, userId: string | null) => {
+    const uploadUri = Platform.OS === 'ios' ? imagePath.replace('file://', '') : imagePath;
+    const filename = `${userId}_${new Date().getTime()}`; // or another unique naming convention
+    const storageRef = storage().ref(`images/${filename}`);
+    const task = storageRef.putFile(uploadUri);
+    try {
+      await task;
+      // Get the URL to the uploaded image
+      const url = await storageRef.getDownloadURL();
+      return url;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  };
+
+  const updateUserProfileImage = async (userId: string | null, imageUrl: string) => {
+    try {
+      await firestore().collection('userInfo').doc(userId).update({
+        facePhoto: imageUrl,
+      });
+      console.log('User profile image updated successfully.');
+    } catch (e) {
+      console.error('Error updating user profile image: ', e);
+    }
+  };
+
+  const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
+    try {
+      await firestore().collection('userInfo').doc(userId).update({
+        photos: imageUrl,
+      });
+      console.log('User profile image updated successfully.');
+    } catch (e) {
+      console.error('Error updating user profile image: ', e);
+    }
+  };
+
+  const generateInviteCode = () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const length = 12;
+    let inviteCode = '';
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      inviteCode += characters.charAt(randomIndex);
+    }
+
+    return inviteCode;
+  };
+
+  const formatDate = (date: any) => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+  };
+
+  const handleRegisterUser = async onBoarding => {
+    try {
+      setLoading(true);
+      const registrationDate = new Date();
+      const formattedDate = formatDate(registrationDate);
+      const user = auth().currentUser;
+      const phoneNumber = user?.phoneNumber;
+
+      const mergedObject = {};
+      await AsyncStorage.setItem('onBoarding', 'true');
+
+      onBoarding?.forEach(obj => {
+        Object.keys(obj)?.forEach(key => {
+          // @ts-ignore
+          mergedObject[key] = obj[key];
+        });
+      });
+
+      const userId = await AsyncStorage.getItem('uid');
+      const imageUri = mergedObject?.imageUser;
+
+      const photos = mergedObject?.photos?.map(i => i?.image);
+
+      let allImageUrl: any = [];
+
+      await firestore()
+        .collection('userInfo')
+        .doc(`${userId}`)
+        .set({
+          ...mergedObject,
+          uid: userId,
+          codeForInvitingOtherUsers: generateInviteCode(),
+          registrationDate: formattedDate,
+          phoneNumber: phoneNumber,
+          accountConfirmed: false,
+          accountReviewed: false,
+        })
+        .then(async () => {
+          console.log('User added!');
+
+          photos?.map(async (i: any, index: number) => {
+            await uploadImage(i, userId).then(async image => {
+              allImageUrl.push({image: image, id: index});
+            });
+            await updatePhotosImage(userId, allImageUrl);
+          });
+          await uploadImage(imageUri, userId).then(async image => {
+            await updateUserProfileImage(userId, image);
+          });
+        });
+      setLoading(false);
+    } catch (e) {
+      console.log(e);
+      showToast('cancel', '', `${e}`);
+      setLoading(false);
+    }
+  };
 
   const handleNext = async () => {
     const findInvitationСodes = await firestore()
@@ -34,7 +155,7 @@ const InvitationCode: FC = (): JSX.Element => {
       return showToast('cancel', '', 'The maximum amount has been used');
     }
 
-    setOnBoarding([
+    const onboardingData = [
       ...onBoarding,
       {
         invitationСode: code,
@@ -48,7 +169,10 @@ const InvitationCode: FC = (): JSX.Element => {
           match: false,
         },
       },
-    ]);
+    ];
+
+    setOnBoarding(onboardingData);
+    await handleRegisterUser(onboardingData);
     navigation.navigate(codeVerifiedPath as never);
   };
 
@@ -133,7 +257,7 @@ const InvitationCode: FC = (): JSX.Element => {
               </View>
             </View>
             <View style={{marginBottom: 4}}>
-              <Button onPress={() => handleNext()} disabled={!code.length} title="Apply code" />
+              <Button onPress={() => handleNext()} loading={loading} disabled={!code.length} title="Apply code" />
               <Button
                 onPress={() => navigation.navigate(verifySocialProfilePath as never)}
                 buttonTitleStyle={{textDecorationLine: 'underline'}}

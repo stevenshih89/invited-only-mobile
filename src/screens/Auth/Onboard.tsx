@@ -55,7 +55,7 @@ const Onboard: FC = (): JSX.Element => {
                   letterSpacing: 2,
                   marginTop: 12,
                 }}>
-                THIS APP IS FOR INVTED ONLY.
+                THIS APP IS FOR INVITED ONLY.
               </Text>
             </View>
             <View

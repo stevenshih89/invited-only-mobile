@@ -25,6 +25,7 @@ import {
   photoVerifiedPath,
   summaryInfoPath,
   verifySocialProfilePath,
+  checkingSpots,
 } from 'constants/pathLocations';
 import {NavigationContainer} from '@react-navigation/native';
 import Onboard from 'screens/Auth/Onboard';
@@ -51,6 +52,7 @@ import TutorialsFlow from 'screens/Auth/TutorialsFlow/TutorialsFlow.tsx';
 import PhotoVerified from 'screens/Auth/PhotoVerified';
 import SummaryInfo from 'screens/Auth/SummaryInfo';
 import VerifySocialProfile from 'screens/Auth/VerifySocialProfile';
+import {CheckingSpots} from 'screens/Auth/Payment/CheckingSpots';
 
 const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
@@ -82,6 +84,7 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={photoVerifiedPath} name={photoVerifiedPath} component={PhotoVerified} />
         <AuthStack.Screen key={summaryInfoPath} name={summaryInfoPath} component={SummaryInfo} />
         <AuthStack.Screen key={verifySocialProfilePath} name={verifySocialProfilePath} component={VerifySocialProfile} />
+        <AuthStack.Screen key={checkingSpots} name={checkingSpots} component={CheckingSpots} />
       </AuthStack.Navigator>
     </NavigationContainer>
   );

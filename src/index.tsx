@@ -16,6 +16,7 @@ import {getFcmToken, registerListenerWithFCM} from 'helpers/fcmHelper.ts';
 import {EventProvider} from 'contexts/EventContext';
 import {EventsDateProvider} from 'contexts/EventsDate';
 import {useUser} from './store/userStore';
+import SplashScreen from 'react-native-splash-screen';
 
 const Main = () => {
   const [initializing, setInitializing] = useState<boolean>(true);
@@ -51,6 +52,10 @@ const Main = () => {
     const onbording = await AsyncStorage.getItem('onBoarding');
     onbording ? setOnBoarding(true) : setOnBoarding(false);
   };
+
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);

@@ -8,9 +8,10 @@ const useStyles = () => {
   return StyleSheet.create({
     textGetASpot: {
       color: whiteColor,
-      fontFamily: Satoshi400,
+      fontFamily: Satoshi500,
       fontSize: RFValue(34, 812),
-      marginTop: screenHeight / 15,
+      marginTop: screenHeight / 40,
+      marginBottom: 30,
       textAlign: 'center',
     },
     textHostAccess: {
@@ -60,7 +61,7 @@ const useStyles = () => {
       flex: 1,
     },
     container: {
-      marginHorizontal: screenWidth / 10.5,
+      marginHorizontal: 24,
     },
     textYearlySpot: {
       color: whiteColor,

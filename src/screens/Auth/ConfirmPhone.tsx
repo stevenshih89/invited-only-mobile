@@ -23,7 +23,6 @@ import auth from '@react-native-firebase/auth';
 import {showToast} from 'helpers/showToast.ts';
 
 const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
-  const confirm = route?.params?.confirm;
   const mobilePhone = route?.params?.mobilePhone;
   const [code, setCode] = useState<string>('');
   const [loadingConfirmation, setLoadingConfirmation] = useState<boolean>(false);
@@ -31,6 +30,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
     value: code,
     setValue: setCode,
   });
+  const [confirm, setConfirm] = useState<any>(route?.params?.confirm);
 
   const CELL_COUNT: number = 6;
   const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
@@ -38,6 +38,21 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   function onAuthStateChanged(user: any) {
     if (user) {
       console.log('user123: ', user);
+    }
+  }
+
+  async function signInWithPhoneNumber() {
+    try {
+      if (!mobilePhone) {
+        return;
+      }
+      const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
+
+      const confirmation = await auth().signInWithPhoneNumber(phone);
+      setConfirm(confirmation);
+    } catch (e: any) {
+      showToast('cancel', `${e?.message.split(']')[1]}`);
+      console.warn(e);
     }
   }
 
@@ -165,7 +180,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
                   }}>
                   Didn't receive the code?{' '}
                 </Text>
-                <TouchableOpacity activeOpacity={0.7} hitSlop={{bottom: 10, right: 20}}>
+                <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{bottom: 10, right: 20}}>
                   <Text
                     style={{
                       color: whiteColor,

@@ -64,7 +64,7 @@ const Privacy: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                <View />
+                <View style={{width: 40}} />
               </View>
               <View
                 style={{

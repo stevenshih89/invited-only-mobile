@@ -1,8 +1,9 @@
-import type {FC} from 'react';
+import {FC} from 'react';
 import {StatusBar, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Main from 'src';
 import 'react-native-gesture-handler';
+import {black1Color} from 'constants/colors';
 
 const App: FC = (): JSX.Element => {
   return (
@@ -11,7 +12,7 @@ const App: FC = (): JSX.Element => {
       <View
         style={{
           flex: 1,
-          backgroundColor: 'transparent',
+          backgroundColor: black1Color,
         }}>
         <Main />
       </View>

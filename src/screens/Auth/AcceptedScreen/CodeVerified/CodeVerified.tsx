@@ -24,7 +24,8 @@ const CodeVerified: FC = (): JSX.Element => {
   const handleNext = () => {
     navigation.navigate(paymentPath as never);
   };
-  const imageUser = onBoarding.find((item: {imageUser: string}) => item.imageUser)?.imageUser;
+  const flattenedPhotos = onBoarding.filter((item: {photos: []}) => item.photos)[0]?.photos;
+  const imageUser = flattenedPhotos?.find((photo: {id: number}) => photo.id === 0)?.image;
   const name = onBoarding.find((item: {name: string}) => item.name)?.name;
 
   return (

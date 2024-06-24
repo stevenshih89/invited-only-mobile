@@ -2,6 +2,7 @@
 #import <Firebase.h>
 
 #import <React/RCTBundleURLProvider.h>
+#import "RNSplashScreen.h"
 
 @implementation AppDelegate
 
@@ -10,10 +11,17 @@
   self.moduleName = @"InvitedOnly";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
-  [FIRApp configure];
   self.initialProps = @{};
+  [FIRApp configure];
 
-  return [super application:application didFinishLaunchingWithOptions:launchOptions];
+  bool didLaunched = [super application:application didFinishLaunchingWithOptions:launchOptions];
+
+
+  if (didLaunched == YES) {
+    [RNSplashScreen show];
+  }
+
+   return didLaunched;
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

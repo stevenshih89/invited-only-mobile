@@ -108,7 +108,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                <View />
+                <View style={{width: 40}} />
               </View>
               <View style={{alignItems: 'center', width: '100%', marginTop: screenHeight / 16, marginBottom: screenHeight / 20}}>
                 {imageUri ? (
@@ -224,7 +224,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                 )}
               </View>
             </View>
-            {imageUri ? (
+            {true ? (
               <View style={{marginBottom: 4}}>
                 <Button title="Submit" onPress={() => handleNext()} />
                 <Button
