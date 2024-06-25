@@ -224,7 +224,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                 )}
               </View>
             </View>
-            {true ? (
+            {imageUri ? (
               <View style={{marginBottom: 4}}>
                 <Button title="Submit" onPress={() => handleNext()} />
                 <Button

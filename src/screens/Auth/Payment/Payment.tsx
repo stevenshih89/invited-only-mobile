@@ -254,10 +254,7 @@ const Payment: FC = (): JSX.Element => {
               borderColor={black1Color}
             />
           </View>
-          <Button
-            buttonStyle={{marginTop: 20}}
-            title={`Purchase ${activePayment.fullPrice} for ${activePayment.duration} ${activePayment.durationName}`}
-          />
+          <Button buttonStyle={{marginTop: 20}} title={'Get access'} />
           <View style={{marginTop: 8}}>
             <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
               By tapping Continue, your App Store will be charged, your subscription will auto-renew for the same price and package lenght

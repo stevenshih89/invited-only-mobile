@@ -4,17 +4,17 @@ import React, {useContext} from 'react';
 //import components
 import useStyles from 'screens/Auth/TutorialsFlow/components/ApproveGuest/styles.ts';
 import ApproveGuestImage from 'assets/images/auth/tutorial-start-4.png';
-import ApproveInvitationImage from 'assets/images/auth/tutorial-start-4-guest.png';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const ApproveGuest = () => {
   const {onBoarding} = useContext(AuthContext);
   const accountType = onBoarding[0]?.accountType === 'guest';
   const styles = useStyles();
+
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
-        <Image resizeMode="contain" style={styles.image} source={accountType ? ApproveInvitationImage : ApproveGuestImage} />
+        <Image resizeMode="stretch" style={styles.image} source={ApproveGuestImage} />
       </View>
       <View style={styles.textWrapper}>
         <Text style={styles.textApproveGuest}>{accountType ? 'Approve invitation' : 'Approve Guest'}</Text>

@@ -7,7 +7,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import Animated, {Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {paymentPath} from 'constants/pathLocations';
-import {Satoshi500} from 'constants/fonts';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight} from 'constants/common';
 
@@ -45,14 +45,12 @@ export const CheckingSpots = () => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: black1Color}}>
       <View style={{flex: 1, paddingHorizontal: 24}}>
-        <View style={{marginTop: screenHeight / 5, marginBottom: screenHeight / 30}}>
-          <Text style={{fontFamily: Satoshi500, fontSize: RFValue(42, 812), color: whiteColor}}>Checking</Text>
-          <Text style={{fontFamily: Satoshi500, fontSize: RFValue(42, 812), color: whiteColor}}>For</Text>
-          <Text style={{fontFamily: Satoshi500, fontSize: RFValue(42, 812), color: whiteColor}}>Available Spots...</Text>
-        </View>
         <Animated.View style={[animatedStyle, {width: 90, height: 90, alignSelf: 'center', marginTop: 40}]}>
           <LoaderIcon width={90} height={90} />
         </Animated.View>
+        <Text style={{fontFamily: Satoshi400, fontSize: RFValue(18, 812), color: whiteColor, marginTop: 20}}>
+          Checking for available spots...{' '}
+        </Text>
       </View>
     </SafeAreaView>
   );

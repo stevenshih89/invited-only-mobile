@@ -8,15 +8,17 @@ const useStyles = () => {
   return StyleSheet.create({
     safeAreaView: {
       flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'space-between',
       backgroundColor: blackColor,
     },
     wrapperStyle: {
-      height: '81%',
+      height: '75%',
     },
     wrapperButtons: {
       flexDirection: 'row',
-      paddingTop: dimensionsHeight / 20,
-      paddingHorizontal: dimensionsHeight / 21.5,
+      paddingTop: 30,
+      paddingHorizontal: 24,
     },
     wrapperBar: {
       flexDirection: 'row',
@@ -25,16 +27,16 @@ const useStyles = () => {
       marginTop: dimensionsHeight / 30,
     },
     bar: {
-      width: 41,
-      height: 3,
-      marginHorizontal: dimensionsWidth / 80,
+      width: 6,
+      height: 6,
+      marginHorizontal: dimensionsWidth / 150,
       borderRadius: 30,
     },
     buttonSkip: {
-      marginRight: dimensionsWidth / 32,
+      width: '30%',
     },
     buttonNext: {
-      width: 225,
+      width: '70%',
     },
   });
 };

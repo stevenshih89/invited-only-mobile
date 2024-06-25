@@ -1,10 +1,10 @@
 import {Dimensions, StyleSheet} from 'react-native';
 import {whiteColor} from 'constants/colors.ts';
-import {Satoshi400} from 'constants/fonts.ts';
+import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import {screenHeight} from 'constants/common';
 
 const dimensionsHeight = Dimensions.get('window').height;
-const dimensionsWidth = Dimensions.get('window').width;
 
 const useStyles = () => {
   return StyleSheet.create({
@@ -13,22 +13,23 @@ const useStyles = () => {
     },
     wrapperImage: {
       alignItems: 'center',
+      width: '100%',
     },
     image: {
       width: '100%',
-      height: 396,
+      height: screenHeight / 1.8,
     },
     textSeeWhoWantsToJoinYoy: {
       color: whiteColor,
-      fontFamily: Satoshi400,
-      fontSize: RFValue(34, 812),
+      fontFamily: Satoshi500,
+      fontSize: RFValue(28, 812),
       marginTop: dimensionsHeight / 44,
       textAlign: 'center',
     },
     textFindOut: {
       color: whiteColor,
       fontFamily: Satoshi400,
-      fontSize: RFValue(18, 812),
+      fontSize: RFValue(14, 812),
       textAlign: 'center',
       marginTop: dimensionsHeight / 44,
     },
