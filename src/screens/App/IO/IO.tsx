@@ -1,7 +1,7 @@
 import {SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
 import React, {FC, useState, useEffect, useContext, useCallback} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
-import {TinderCard} from 'rn-tinder-card';
+import {TinderCard} from 'rn-tinder-card-bn-digital';
 import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect} from '@react-navigation/native';
