@@ -21,7 +21,7 @@ function resetPosition(
   y.value = withSpring(0, userConfig);
 }
 
-const inOut = Easing.inOut(Easing.quad);
+// const inOut = Easing.inOut(Easing.quad);
 
 function updatePosition(
   destX: number,
@@ -36,17 +36,16 @@ function updatePosition(
 ) {
   'worklet';
 
-  // const targetWidth = cardWidth ?? windowWidth;
   if (Math.sign(destX) === 1 && !disableRightSwipe) {
     translateX.value = withTiming(Number(windowWidth + windowWidth), {
-      duration: 500,
-      easing: inOut,
+      duration: 1200,
+      easing: Easing.inOut(Easing.circle),
     });
     onSwipedRight && runOnJS(onSwipedRight)();
   } else if (Math.sign(destX) === -1 && !disableLeftSwipe) {
     translateX.value = withTiming(-windowWidth - windowWidth, {
-      duration: 500,
-      easing: inOut,
+      duration: 1200,
+      easing: Easing.inOut(Easing.circle),
     });
     onSwipedLeft && runOnJS(onSwipedLeft)();
   } else {
@@ -74,3 +73,4 @@ export {
   windowWidth,
   windowHeight,
 };
+
