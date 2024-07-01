@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert} from 'react-native';
-import {TinderCard} from 'rn-tinder-card';
+import {TinderCard} from 'rn-tinder-card-bn-digital';
 
 //import components
 import useStyles from 'screens/App/IO/screens/JoinEvents/styles.ts';

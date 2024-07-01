@@ -1,7 +1,7 @@
 import {ImageBackground, TouchableOpacity, View} from 'react-native';
 import {Text} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {TinderCard} from 'rn-tinder-card';
+import {TinderCard} from 'rn-tinder-card-bn-digital';
 import Home from 'assets/images/icons/home.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 // import Location from 'assets/images/icons/location.svg';
