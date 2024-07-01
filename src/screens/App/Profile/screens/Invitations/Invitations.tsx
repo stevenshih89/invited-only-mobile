@@ -24,8 +24,11 @@ const Invitations: FC = () => {
 
   const handleCheckInviteCode = async () => {
     try {
-      const findInvitationСodes = await firestore().collection('userInfo').where('invitationСode', '==', userHost.codeForInvitingOtherUsers).get();
-      const data = findInvitationСodes?.docs?.map(i => i?.data());
+      const findInvitationCodes = await firestore()
+        .collection('userInfo')
+        .where('invitationCode', '==', userHost.codeForInvitingOtherUsers)
+        .get();
+      const data = findInvitationCodes?.docs?.map(i => i?.data());
       setNumberCodes(5 - data?.length);
     } catch (e) {
       console.log(e);

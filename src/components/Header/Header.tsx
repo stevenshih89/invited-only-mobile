@@ -41,8 +41,8 @@ import InfoCircleOrangeIcon from 'assets/images/icons/info-circle-orange.svg';
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
 import {EventContext} from 'contexts/EventContext';
-import {Satoshi500} from 'constants/fonts';
-import {useMyEvents} from "../../store/myEvents";
+import {Satoshi500, Satoshi700} from 'constants/fonts';
+import {useMyEvents} from '../../store/myEvents';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -203,7 +203,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         </View>
       </View>
       <Text style={styles.textButton}>{title}</Text>
-      <ModalEventRemindes eventStarting={eventStarting} setEventStarting={setEventStarting} time="24h" image={image} city={title} date={date} />
+      <ModalEventRemindes
+        eventStarting={eventStarting}
+        setEventStarting={setEventStarting}
+        time="24h"
+        image={image}
+        city={title}
+        date={date}
+      />
     </TouchableOpacity>
   );
 
@@ -215,7 +222,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         </View>
       </View>
       <Text style={styles.textButton}>{title}</Text>
-      <ModalEventRemindes eventStarting={eventStarting} setEventStarting={setEventStarting} time="24h" image={image} city={title} date={date} />
+      <ModalEventRemindes
+        eventStarting={eventStarting}
+        setEventStarting={setEventStarting}
+        time="24h"
+        image={image}
+        city={title}
+        date={date}
+      />
     </TouchableOpacity>
   );
 
@@ -271,7 +285,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   }}
                   style={styles.eventButton}>
                   <View style={styles.eventView}>
-                    <CalendarSearchIcon width={26} height={26} />
+                    <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: 24}}>J</Text>
                   </View>
                   <Text style={styles.textButton}>Join events</Text>
                 </TouchableOpacity>
@@ -381,7 +395,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       alignItems: 'center',
                     }}>
                     <CalendarSearchIcon width={26} height={26} />
-                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>Weekend</Text>
+                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>
+                      Weekend
+                    </Text>
                   </View>
                   <Text
                     style={{
@@ -495,7 +511,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       return;
                     }
 
-                    if (eventIsFinished) showToast('warningGrey', 'Create new event', `Event is ended: ${event?.date}`);
+                    if (eventIsFinished) {
+                      showToast('warningGrey', 'Create new event', `Event is ended: ${event?.date}`);
+                    }
                     setActiveEvent(event);
                   }}>
                   <View
@@ -574,7 +592,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   renderItem={({item}) => (
                     <Item
                       activeEvent={item.id}
-                      filledTo={item?.usersList?.filter((i) => i?.status === 'accepted')?.length}
+                      filledTo={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
                       allPeople={item.female + item.male}
                       image={item.photos[0]?.image}
                       girlInvitation={item.male + item.maleFriend}

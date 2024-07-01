@@ -65,9 +65,9 @@ const VerifySecondStep: FC = (): JSX.Element => {
   };
 
   const handleNext = () => {
-    if (!imageUri) {
-      return;
-    }
+    // if (!imageUri) {
+    //   return;
+    // }
     setOnBoarding([
       ...onBoarding,
       {
@@ -224,7 +224,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                 )}
               </View>
             </View>
-            {imageUri ? (
+            {true ? (
               <View style={{marginBottom: 4}}>
                 <Button title="Submit" onPress={() => handleNext()} />
                 <Button

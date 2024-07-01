@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {backgroundColor, black1Color, whiteColor} from 'constants/colors.ts';
+import {backgroundColor, blackColor, whiteColor} from 'constants/colors.ts';
 import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 
@@ -8,7 +8,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 const useStyles = () =>
   StyleSheet.create({
     tabNavigator: {
-      backgroundColor: black1Color,
+      backgroundColor: blackColor,
       borderTopWidth: 0,
       position: 'absolute',
       borderTopLeftRadius: 33,

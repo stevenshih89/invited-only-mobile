@@ -7,7 +7,7 @@ import {screenHeight, screenWidth} from 'constants/common';
 const useStyles = () =>
   StyleSheet.create({
     container: {
-      backgroundColor: lightGray6Color,
+      backgroundColor: blackColor,
       paddingHorizontal: screenWidth / 15.5,
     },
     wrapperHeader: {

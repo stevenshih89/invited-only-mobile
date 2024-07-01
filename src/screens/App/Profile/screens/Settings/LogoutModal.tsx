@@ -10,20 +10,21 @@ import auth from '@react-native-firebase/auth';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import {useUser} from '../../../../../store/userStore';
 import {calculateAge} from 'helpers/calculateAge.ts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
   const {setUser} = useContext(AuthContext);
   const userHost = useUser((i: any) => i?.user);
+  const setHookUser = useUser((i: any) => i?.setUser);
 
   const userAge = calculateAge(userHost?.date);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await auth().signOut();
+    setUser([]);
+    setHookUser([]);
+    await AsyncStorage.removeItem('uid');
     onClose();
-    auth()
-      .signOut()
-      .then(() => {
-        setUser([]);
-      });
   };
   return (
     <Modal

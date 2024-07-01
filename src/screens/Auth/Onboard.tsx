@@ -8,9 +8,24 @@ import {Outfit500, Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {signUpPath} from 'constants/pathLocations';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Onboard: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
+
+  const getId = async () => {
+    try {
+      const value = await AsyncStorage.getItem('uid');
+      if (value !== null) {
+        console.warn('value', value);
+        return value;
+      }
+    } catch (e) {
+      console.warn('error', e);
+    }
+  };
+
+  getId();
 
   // @ts-ignore
   return (

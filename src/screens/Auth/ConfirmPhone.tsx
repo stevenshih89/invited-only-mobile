@@ -21,10 +21,13 @@ import Button from 'components/Button/Button';
 import {chooseAccountTypePath} from 'constants/pathLocations';
 import auth from '@react-native-firebase/auth';
 import {showToast} from 'helpers/showToast.ts';
+import firebase from '@react-native-firebase/firestore';
 
 const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   const mobilePhone = route?.params?.mobilePhone;
   const [code, setCode] = useState<string>('');
+  const [isUserExist, setIsUserExist] = useState<boolean>(false);
+  const [nextRoute, setNextRoute] = useState<string>(chooseAccountTypePath);
   const [loadingConfirmation, setLoadingConfirmation] = useState<boolean>(false);
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: code,
@@ -35,11 +38,21 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   const CELL_COUNT: number = 6;
   const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
 
-  function onAuthStateChanged(user: any) {
+  const onAuthStateChanged = async (user: any) => {
     if (user) {
-      console.log('user123: ', user);
+      const userData = await firebase().collection('userInfo').doc(user.uid).get();
+
+      if (userData.exists) {
+        setIsUserExist(true);
+        console.warn('user: ', user);
+      } else {
+        setNextRoute(chooseAccountTypePath);
+      }
+      console.warn('user123: ', user);
+    } else {
+      setNextRoute(chooseAccountTypePath);
     }
-  }
+  };
 
   async function signInWithPhoneNumber() {
     try {
@@ -47,7 +60,6 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
         return;
       }
       const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
-
       const confirmation = await auth().signInWithPhoneNumber(phone);
       setConfirm(confirmation);
     } catch (e: any) {
@@ -59,8 +71,15 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   const handleConfirmPhoneNumber = async () => {
     try {
       setLoadingConfirmation(true);
+      console.warn(isUserExist);
       await confirm.confirm(code);
-      navigation.navigate(chooseAccountTypePath);
+
+      // if (isUserExist) {
+      //   setOnBoarding(true);
+      //   setAuthState(true);
+      // } else {
+      navigation.navigate(nextRoute);
+      // }
       setLoadingConfirmation(false);
     } catch (e: any) {
       console.log(e);

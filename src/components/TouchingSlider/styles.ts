@@ -56,12 +56,12 @@ const useStyles = () => {
     },
     textName: {
       color: whiteColor,
-      fontFamily: Satoshi500,
-      fontSize: RFValue(37, 812),
+      fontFamily: Satoshi700,
+      fontSize: RFValue(31, 812),
     },
     textYears: {
       color: whiteColor,
-      fontFamily: Satoshi400,
+      fontFamily: Satoshi700,
       fontSize: RFValue(26, 812),
       marginLeft: 12,
     },
@@ -72,7 +72,7 @@ const useStyles = () => {
     },
     rowBioInfo: {
       flexDirection: 'row',
-      alignItems: 'flex-end',
+      alignItems: 'center',
       justifyContent: 'flex-start',
     },
     wrapperRightButton: {

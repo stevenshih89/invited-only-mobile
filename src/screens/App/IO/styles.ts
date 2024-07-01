@@ -2,7 +2,7 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
 //import components
-import {blackColor, lightGray5Color, lightGray6Color, lightGrayColor, lightGreenColor, lightRed1Color, whiteColor} from 'constants/colors.ts';
+import {black2Color, blackColor, lightGray6Color, lightGreenColor, lightRed1Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi400, Satoshi700, Satoshi500} from 'constants/fonts.ts';
 
 const screenHeight: number = Dimensions.get('window').height;
@@ -12,7 +12,7 @@ const useStyles = () => {
   return StyleSheet.create({
     safeAreaView: {
       flex: 1,
-      backgroundColor: lightGray6Color,
+      backgroundColor: blackColor,
     },
     container: {
       paddingHorizontal: screenWidth / 15.5,
@@ -118,24 +118,22 @@ const useStyles = () => {
       flexGrow: 1,
     },
     wrapperFakeCard: {
-      backgroundColor: lightGray6Color,
+      backgroundColor: blackColor,
     },
     bioWrapper: {
-      backgroundColor: lightGray5Color,
       marginTop: screenHeight / 27,
       borderRadius: 11,
       paddingVertical: screenHeight / 38,
-      paddingHorizontal: screenWidth / 17,
     },
     titleSection: {
       color: whiteColor,
-      fontFamily: Satoshi400,
-      fontSize: RFValue(26, 812),
+      fontFamily: Satoshi700,
+      fontSize: RFValue(17, 812),
     },
     textDescription: {
       color: whiteColor,
       fontFamily: Satoshi400,
-      fontSize: RFValue(15, 812),
+      fontSize: RFValue(16, 812),
       marginTop: screenHeight / 55,
     },
     textTagsAboutMe: {
@@ -148,8 +146,6 @@ const useStyles = () => {
     },
     wrapperTextTags: {
       flex: 1,
-      flexDirection: 'row',
-      flexWrap: 'wrap',
       position: 'relative',
       right: 18,
     },
@@ -168,9 +164,12 @@ const useStyles = () => {
     },
     interestsTags: {
       borderRadius: 50,
-      backgroundColor: lightGrayColor,
+      backgroundColor: 'transparent',
       height: 43,
       width: 96,
+      borderColor: lightGray6Color,
+      borderWidth: 1,
+      borderStyle: 'solid',
       marginTop: screenHeight / 50,
       textAlign: 'center',
       justifyContent: 'center',
@@ -203,14 +202,13 @@ const useStyles = () => {
       fontSize: RFValue(17, 812),
     },
     buttonCloseOrCheck: {
-      paddingVertical: screenHeight / 80,
-      paddingHorizontal: screenWidth / 35,
       backgroundColor: 'black',
       borderRadius: 50,
       width: 48,
       height: 48,
       alignItems: 'center',
       justifyContent: 'center',
+      position: 'relative',
     },
     buttonFlash: {
       width: 61,

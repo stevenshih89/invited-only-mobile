@@ -28,7 +28,7 @@ const InvitationCode: FC = (): JSX.Element => {
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
     const uploadUri = Platform.OS === 'ios' ? imagePath.replace('file://', '') : imagePath;
-    const filename = `${userId}_${new Date().getTime()}`; // or another unique naming convention
+    const filename = `${userId}_${new Date().getTime()}`;
     const storageRef = storage().ref(`images/${filename}`);
     const task = storageRef.putFile(uploadUri);
     try {
@@ -119,8 +119,8 @@ const InvitationCode: FC = (): JSX.Element => {
           codeForInvitingOtherUsers: generateInviteCode(),
           registrationDate: formattedDate,
           phoneNumber: phoneNumber,
-          accountConfirmed: false,
-          accountReviewed: false,
+          accountConfirmed: true,
+          accountReviewed: true,
         })
         .then(async () => {
           console.log('User added!');
@@ -144,11 +144,11 @@ const InvitationCode: FC = (): JSX.Element => {
   };
 
   const handleNext = async () => {
-    const findInvitationСodes = await firestore()
+    const findInvitationCodes = await firestore()
       .collection('userInfo')
-      .where('invitationСode', '==', userHost.codeForInvitingOtherUsers)
+      .where('codeForInvitingOtherUsers', '==', userHost.codeForInvitingOtherUsers)
       .get();
-    const data = findInvitationСodes?.docs?.map(i => i?.data());
+    const data = findInvitationCodes?.docs?.map(i => i?.data());
     const culculate = data?.length - 5;
 
     if (culculate >= 5) {
@@ -158,7 +158,7 @@ const InvitationCode: FC = (): JSX.Element => {
     const onboardingData = [
       ...onBoarding,
       {
-        invitationСode: code,
+        invitationCode: code,
         notificationSettings: {
           joinedEvent: false,
           myEvents: false,
