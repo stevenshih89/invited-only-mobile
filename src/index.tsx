@@ -27,24 +27,20 @@ const Main = () => {
   const onBoarding = useUser((i: any) => i?.onBoarding);
   const setOnBoarding = useUser((i: any) => i?.setOnBoarding);
 
-  const onAuthStateChanged = async (user: any) => {
-    const uid = user?._user?.uid;
+  const onAuthStateChanged = async (userState: any) => {
+    const uid = userState?._user?.uid;
     setUser([uid]);
     await AsyncStorage.setItem('uid', `${uid}`);
-    setAuthState(!!user);
     await getOnbordingState();
-    await firestore()
-      .collection('userInfo')
-      .doc(uid)
-      .get()
-      .then(res => {
-        console.log('user', res.data());
-        setUserData(res.data());
-      });
+    const userData = await firestore().collection('userInfo').doc(uid).get();
+    if (userData.exists) {
+      console.warn('user', userData.data());
+      setAuthState(!!userState);
+      setUserData(userData.data());
+    }
     if (initializing) {
       setUser([`${uid}`]);
       setInitializing(false);
-      setAuthState(!!user);
     }
   };
 
@@ -63,7 +59,7 @@ const Main = () => {
     getFcmToken();
     registerListenerWithFCM();
     return subscriber;
-  }, [initializing, user, onBoarding, onBoarding, setUser]);
+  }, [initializing, user, onBoarding, setUser]);
 
   if (initializing) {
     return null;
@@ -76,7 +72,7 @@ const Main = () => {
           <EventProvider>
             <EventsDateProvider>
               <NavigationContainer>
-                <SafeAreaProvider>{authState && onBoarding ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
+                <SafeAreaProvider>{authState ? <AppStackScreens /> : <AuthStackScreens />}</SafeAreaProvider>
               </NavigationContainer>
               <LocalNotification />
             </EventsDateProvider>

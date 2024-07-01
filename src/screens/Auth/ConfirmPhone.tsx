@@ -73,13 +73,10 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
       setLoadingConfirmation(true);
       console.warn(isUserExist);
       await confirm.confirm(code);
+      setTimeout(() => {
+        navigation.navigate(nextRoute);
+      }, 1000);
 
-      // if (isUserExist) {
-      //   setOnBoarding(true);
-      //   setAuthState(true);
-      // } else {
-      navigation.navigate(nextRoute);
-      // }
       setLoadingConfirmation(false);
     } catch (e: any) {
       console.log(e);
