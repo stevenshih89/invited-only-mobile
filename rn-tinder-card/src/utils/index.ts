@@ -38,13 +38,13 @@ function updatePosition(
 
   if (Math.sign(destX) === 1 && !disableRightSwipe) {
     translateX.value = withTiming(Number(windowWidth + windowWidth), {
-      duration: 1500,
+      duration: 1000,
       easing: Easing.inOut(Easing.linear),
     });
     onSwipedRight && runOnJS(onSwipedRight)();
   } else if (Math.sign(destX) === -1 && !disableLeftSwipe) {
     translateX.value = withTiming(-windowWidth - windowWidth, {
-      duration: 1500,
+      duration: 1000,
       easing: Easing.inOut(Easing.linear),
     });
     onSwipedLeft && runOnJS(onSwipedLeft)();

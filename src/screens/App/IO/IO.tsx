@@ -638,6 +638,12 @@ const IO: FC = (): JSX.Element => {
     }, []),
   );
 
+  useEffect(() => {
+    setTimeout(() => {
+      setIsVisibleMatch(true)
+    },7000)
+  },[])
+
   if (loading || !userHost) {
     return <ActivityIndicator style={styles.safeAreaView} />;
   }
