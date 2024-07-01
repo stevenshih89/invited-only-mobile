@@ -3,7 +3,7 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import moment from 'moment';
 import {Animated, Image, ImageBackground, Text, TouchableOpacity, View} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {TinderCard} from 'rn-tinder-card';
+import {TinderCard} from 'rn-tinder-card-bn-digital';
 import useStyles from './styles';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import FlashFilled from 'assets/images/icons/flash-filled.svg';
