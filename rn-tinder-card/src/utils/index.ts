@@ -38,14 +38,14 @@ function updatePosition(
 
   if (Math.sign(destX) === 1 && !disableRightSwipe) {
     translateX.value = withTiming(Number(windowWidth + windowWidth), {
-      duration: 1200,
-      easing: Easing.inOut(Easing.circle),
+      duration: 1500,
+      easing: Easing.inOut(Easing.linear),
     });
     onSwipedRight && runOnJS(onSwipedRight)();
   } else if (Math.sign(destX) === -1 && !disableLeftSwipe) {
     translateX.value = withTiming(-windowWidth - windowWidth, {
-      duration: 1200,
-      easing: Easing.inOut(Easing.circle),
+      duration: 1500,
+      easing: Easing.inOut(Easing.linear),
     });
     onSwipedLeft && runOnJS(onSwipedLeft)();
   } else {
