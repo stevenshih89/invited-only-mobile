@@ -58,6 +58,7 @@ const IO: FC = (): JSX.Element => {
   const [modalReport, setModalReport] = useState<boolean>(false);
 
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
+  
   const {activeEventDate} = useContext(EventsDate);
 
   const userHost = useUser((i: any) => i?.user);
@@ -191,7 +192,8 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {
+  const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {    
+
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
@@ -208,8 +210,11 @@ const IO: FC = (): JSX.Element => {
         userPhoto: host ? guest.data()?.photos[0]?.image : userHost?.photos[0]?.image,
       };
 
-      const usersListCheck = activeEvent?.usersList ? activeEvent?.usersList : usersList;
+      console.log(userInvited);
+      
 
+      const usersListCheck = activeEvent?.usersList ? activeEvent?.usersList : usersList; 
+      
       let updateUsersList: any = [userInvited];
       usersListCheck !== undefined && updateUsersList?.push(...usersListCheck);
 
@@ -228,8 +233,8 @@ const IO: FC = (): JSX.Element => {
             requestsList: updateRequestsList,
           });
       }
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log('eror invite', error);
     }
   };
 
@@ -638,11 +643,11 @@ const IO: FC = (): JSX.Element => {
     }, []),
   );
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsVisibleMatch(true)
-    },7000)
-  },[])
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setIsVisibleMatch(true)
+  //   },7000)
+  // },[])
 
   if (loading || !userHost) {
     return <ActivityIndicator style={styles.safeAreaView} />;
