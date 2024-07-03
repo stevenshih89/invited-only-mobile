@@ -13,6 +13,7 @@
     "build": "npm run lint && tsc"
   },
   "dependencies": {
+    "@ant-design/icons-react-native": "^2.3.2",
     "@ant-design/react-native": "^5.0.5",
     "@notifee/react-native": "^7.8.2",
     "@react-native-async-storage/async-storage": "^1.21.0",
@@ -91,5 +92,6 @@
   },
   "engines": {
     "node": ">=18"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
