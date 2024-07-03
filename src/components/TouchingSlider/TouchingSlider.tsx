@@ -19,6 +19,8 @@ import IOIcon from 'assets/images/icons/io-logo.svg';
 import Lock from 'assets/images/icons/lock.svg';
 import Heart from 'assets/images/icons/heart.svg';
 import {Satoshi700} from 'constants/fonts.ts';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing} from 'react-native-reanimated';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 interface Photo {
   url: string;
@@ -87,6 +89,36 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
     }
     setActive(p => p - 1);
   };
+
+  //animation
+  const rotation = useSharedValue(0);
+  const [flipped, setFlipped] = useState(false);
+
+  const flipCoin = () => {
+    rotation.value = withTiming(flipped ? 0 : 180, {
+      duration: 600,
+      easing: Easing.inOut(Easing.ease),
+    });
+    setFlipped(!flipped);
+  };
+
+  const frontAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { rotateY: `${rotation.value}deg` },
+      ],
+      opacity: rotation.value >= 90 && rotation.value <= 270 ? 0 : 1,
+    };
+  });
+
+  const backAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { rotateY: `${rotation.value}deg` },
+      ],
+      opacity: rotation.value >= 90 && rotation.value <= 270 ? 1 : 0,
+    };
+  });
 
   return (
     // @ts-ignore
@@ -190,7 +222,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                       <IOIcon />
                     </View>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.buttonFlash, {marginTop: screenHeight / 70}]} onPress={handleOpenSuperInvite}>
+                  <TouchableWithoutFeedback style={[styles.buttonFlash, {marginTop: screenHeight / 70}]} onPress={flipCoin}>
                     <View
                       style={{
                         backgroundColor: transparentGray60Color,
@@ -213,19 +245,37 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                         bottom: -1,
                       }}
                     />
-                    <View
-                      style={{
+                    <Animated.View
+                      style={[{
                         width: '100%',
                         height: '100%',
                         backgroundColor: blackColor,
                         borderRadius: 50,
                         zIndex: 10,
                         justifyContent: 'center',
+                        position: 'absolute',
                         alignItems: 'center',
-                      }}>
+                      },
+                      frontAnimatedStyle
+                      ]}>
                       <FlashIcon />
-                    </View>
-                  </TouchableOpacity>
+                    </Animated.View>
+                    <Animated.View
+                      style={[{
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: blackColor,
+                        borderRadius: 50,
+                        zIndex: 10,
+                        position: 'absolute',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      },
+                      backAnimatedStyle
+                      ]}>
+                      <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>4</Text>
+                    </Animated.View>
+                  </TouchableWithoutFeedback>
                 </View>
               )}
             </View>
