@@ -1,11 +1,12 @@
-import {Image, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 import FlashIcon from 'assets/images/icons/flash-filled.svg';
 import {blackColor, lightGray10Color, whiteColor} from 'constants/colors';
 import Modal from 'react-native-modal';
 import {Outfit500, Satoshi700Italic} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {FC} from 'react';
+import {FC, useEffect} from 'react';
 import {screenHeight} from 'constants/common';
+import Animated, { useSharedValue, withTiming, Easing, useAnimatedStyle} from 'react-native-reanimated';
 
 const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => void; activeSuperInviteUser: any}> = ({
   isVisibleSuperInvite,
@@ -15,10 +16,44 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
   const imageIndex = activeSuperInviteUser?.photos?.findIndex((photo: {id: number; image: string}) => photo.id === 0);
   const image = activeSuperInviteUser?.photos?.[imageIndex]?.image;
 
+  // animation
+  const figureTopPosition = useSharedValue(-screenHeight / 4.2);
+  const figureBottomPosition = useSharedValue(screenHeight / 4.2);
+
+  const animateFigure = () => {
+    figureTopPosition.value = withTiming(0, {
+      duration: 800,
+      easing: Easing.out(Easing.cubic)
+    });
+    figureBottomPosition.value = withTiming(0, {
+      duration: 800,
+      easing: Easing.out(Easing.cubic)
+    });
+  };
+
+  const figureTopStyle = useAnimatedStyle(() => ({
+    transform: [{
+      translateY: figureTopPosition.value
+    }]
+  }));
+
+  const figureBottomStyle = useAnimatedStyle(() => ({
+    transform: [{
+      translateY: figureBottomPosition.value
+    }]
+  }));
+
+  useEffect(() => {
+    if (isVisibleSuperInvite) {
+      animateFigure();
+    }
+  }, [isVisibleSuperInvite]);
+
   return (
     <Modal
       isVisible={isVisibleSuperInvite}
       coverScreen
+      animationInTiming={1}
       backdropColor={lightGray10Color}
       backdropOpacity={1}
       style={{margin: 0}}
@@ -27,8 +62,8 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
         activeOpacity={1}
         onPress={onCloseSuperInvite}
         style={{backgroundColor: blackColor, width: '100%', height: '100%', justifyContent: 'space-between'}}>
-        <View
-          style={{
+        <Animated.View
+          style={[{
             backgroundColor: whiteColor,
             height: screenHeight / 4.2,
             width: 140,
@@ -38,9 +73,9 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
             justifyContent: 'flex-end',
             alignItems: 'center',
             paddingBottom: 30,
-          }}>
+          }, figureTopStyle]}>
           <View style={{backgroundColor: blackColor, width: 100, height: 100, borderRadius: 100}} />
-        </View>
+        </Animated.View>
         <View style={{alignItems: 'center'}}>
           <View style={{alignItems: 'flex-end'}}>
             <Text style={{color: whiteColor, fontFamily: Outfit500, fontSize: RFValue(54, 812)}}>{activeSuperInviteUser?.name}</Text>
@@ -68,8 +103,8 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
             <Text style={{color: whiteColor, fontFamily: Satoshi700Italic, fontSize: RFValue(30, 812)}}>Super Invite</Text>
           </View>
         </View>
-        <View
-          style={{
+        <Animated.View
+          style={[{
             backgroundColor: whiteColor,
             height: screenHeight / 4.2,
             width: 140,
@@ -80,12 +115,13 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
             justifyContent: 'flex-end',
             alignItems: 'center',
             paddingBottom: 30,
-          }}>
+          }, figureBottomStyle]}>
           <View style={{backgroundColor: blackColor, width: 100, height: 100, borderRadius: 100}} />
-        </View>
+        </Animated.View>
       </TouchableOpacity>
     </Modal>
   );
 };
 
 export default SuperInvite;
+
