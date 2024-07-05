@@ -6,6 +6,7 @@ import User from 'assets/images/icons/user.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
+import CheckStar from 'assets/images/icons/check-star-white.svg';
 import { screenWidth } from 'constants/common.ts';
 import { Satoshi500 } from 'constants/fonts';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -28,18 +29,35 @@ const EventPreview: FC<{
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
   const [imagesUser, setImagesUser] = useState()
+  const [nameUser, setNameUser] = useState('')
+  const [userAge, setUserAge] = useState('')
   const numberPhotos = imagesUser?.length;
+
+  function calculateAge(birthDateString) {
+    const parts = birthDateString.split('.');
+    const birthDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`); 
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    if (today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+}
 
   useFocusEffect(useCallback(() => {
     const getUserPhotos = async () => {
       try {
         const user = auth().currentUser;
-      const userInfoDoc = await firestore().collection('userInfo').doc(user?.uid).get();
-    const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
+        const userInfoDoc = await firestore().collection('userInfo').doc(user?.uid).get();
+        const nameUser = userInfoDoc.data()?.name;
+        const userAge = userInfoDoc.data()?.date;
+        setNameUser(nameUser);
+        const resultAge = calculateAge(userAge);
+        setUserAge(resultAge);
+        const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
               if (userImage) {
                 setImagesUser(userImage);
                 console.log('userImage', userImage  );
-                
               }
       } catch (error) {
         console.log('errorGetUserPhotos', error);
@@ -80,6 +98,10 @@ const EventPreview: FC<{
         <View style={styles.wrapperButtons}>
             <TouchableOpacity onPress={handleBack} style={styles.button} />
             <TouchableOpacity onPress={handleNext} style={styles.button} />
+        </View>
+        <View style={{width: 100, height: 50, flexDirection: 'row', marginLeft: 14, marginTop: 20, alignItems: 'center'}}>
+          <Text style={{fontSize: RFValue(14, 812), color: whiteColor, fontWeight: 'bold', fontFamily: Satoshi500, marginRight: 7}}>{nameUser}, {userAge}</Text>
+          <CheckStar />
         </View>
         <View style={{width: '100%', position: 'absolute', padding: 12, bottom: 0}}>
         <View style={styles.containerInfo}>
