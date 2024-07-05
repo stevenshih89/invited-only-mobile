@@ -16,6 +16,7 @@ const transparentWhite56Color: string = 'rgba(255, 255, 255, 0.56)';
 const transparentGray90Color: string = 'rgba(15, 15, 15, 0.9)';
 const lightGrayColor: string = '#252525';
 const grayColor: string = '#5B5B5B';
+const grayScale700: string = '#484848';
 const gray1Color: string = 'rgba(255, 255, 255, 0.26)';
 const lightGray2Color: string = '#212121';
 const lightGray13Color: string = '#1B1B1B';
@@ -34,6 +35,7 @@ const lightGray15Color: string = '#313131';
 const goldColor: string = '#977B4A';
 
 const orangeColor: string = '#FA9601';
+const orangeClose: string = '#F75555';
 
 const toggleColor: string = '#4CD964';
 const backgroundColor: string = '#121212';
@@ -76,4 +78,6 @@ export {
   gray1Color,
   toggleColor,
   backgroundColor,
+  grayScale700,
+  orangeClose
 };
