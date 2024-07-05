@@ -121,13 +121,14 @@ const Requests: FC = (): ReactElement => {
 
   const list = isHost ? requestsForHost : dataForGuest;
 
+
   if (loading && !list) {
     return <ActivityIndicator style={styles.container} />;
   }
 
   return (
     <View style={styles.container}>
-      {list ? (
+      {list.lenght ? (
         <FlatList
           // @ts-ignore
           data={isHost ? list?.requestsList : list}
@@ -149,12 +150,12 @@ const Requests: FC = (): ReactElement => {
       ) : (
         <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
           <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi400, fontSize: RFValue(30, 812), marginBottom: 18}}>
-            You don't have any requests
+            You don't have any events
           </Text>
           <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
-            Add more information for yourself
+            You don't have any active event.
           </Text>
-          <Button title="See my profile" onPress={() => navigation.navigate(profilePath as never)} />
+          <Button title="Create event" onPress={() => navigation.navigate(profilePath as never)} />
         </View>
       )}
     </View>
@@ -162,3 +163,4 @@ const Requests: FC = (): ReactElement => {
 };
 
 export default Requests;
+
