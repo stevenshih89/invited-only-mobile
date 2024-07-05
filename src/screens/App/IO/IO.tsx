@@ -42,6 +42,7 @@ import PeopleIcon from 'assets/images/icons/profile-2user.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import {EventsDate} from 'contexts/EventsDate.tsx';
+import Loading from 'components/Loading/Loading';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -49,12 +50,14 @@ const IO: FC = (): JSX.Element => {
   const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [events, setEvents] = useState<any[]>([]);
+  const [myEvents, setMyEventsList] = useState();
   const [nameUser, setNameUser] = useState<string>('');
   const [uidScamUser, setUidScamUser] = useState<string>('');
-  const [userInfo, setUserInfo] = useState<any>({});
+  const [userInfo, setUserInfo] = useState<any>({});  
   const [loading, setLoading] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
+  const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
 
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
   
@@ -176,6 +179,7 @@ const IO: FC = (): JSX.Element => {
     if (user) {
       try {
         const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).get();
+        
         if (querySnapshot.empty) {
           setMyEvents([]);
           return;
@@ -184,6 +188,7 @@ const IO: FC = (): JSX.Element => {
           id: doc.id,
           ...doc.data(),
         }));
+        setMyEventsList([]);
         setMyEvents(data);
         isFirstRender && setActiveEvent(data[0]);
       } catch (error: any) {
@@ -539,7 +544,9 @@ const IO: FC = (): JSX.Element => {
 
     const recommendedData = sortByInterests(sortByDate(data)?.reverse(), userHost);
 
-    setEvents([...recommendedData]);
+    setTimeout(() => {
+      setEvents([...recommendedData]);
+    }, 2000);
   };
 
   const getListForHost = async () => {
@@ -853,12 +860,54 @@ const IO: FC = (): JSX.Element => {
   //   },7000)
   // },[])
 
+
+  const goToCreateEvent = (): void => {
+    if (!userHost?.accountConfirmed) {
+      return;
+    }
+    navigation.navigate(eventCreatingStackPath);
+  };
+
   if (loading || !userHost) {
-    return <ActivityIndicator style={styles.safeAreaView} />;
+    return <Loading text='Finding people near you...' userInfo={userInfo}/>;
+  }
+
+  if(currentEventCardPosition > events.length && events.length > 1) {
+    return <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
+  }
+
+  if(currentEventCardPosition > 20 && events.length > 1) {
+    return (
+        <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
+        <View style={{height: 370}}>
+          <Loading  userInfo={userInfo} topPosition={true}/>
+        </View>
+        <View>
+          <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>
+          You don't have any active event.
+          Get started by creating an event to begin inviting guests.
+          </Text>
+        </View>
+        <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 40, marginBottom: 30}}/>
+        <View style={{width: '100%', height: 1, backgroundColor: '#282828', marginBottom: 20, alignItems: 'center'}}>
+          <View style={{width: 30, height: 30, backgroundColor: blackColor, borderRadius: 15, transform:[{translateY: -15}], justifyContent: 'center'}}>
+            <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(14,812), fontFamily: Satoshi400}}>or</Text>
+          </View>
+        </View>
+        <View style={{width: '100%', alignItems: 'center'}}>
+          <TouchableOpacity>
+            <Text style={{color: whiteColor, fontSize: RFValue(18, 812)}}>
+              Start joining!
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    )
   }
 
   return (
-    <SafeAreaView style={styles.safeAreaView}>
+    <>
+      <SafeAreaView style={styles.safeAreaView}>
       <View style={styles.container}>
         {events?.map((item, index) => {
           return (
@@ -868,7 +917,10 @@ const IO: FC = (): JSX.Element => {
                 cardWidth="100%"
                 // @ts-ignore
                 cardHeight="100%"
-                onSwipedRight={() => onInvite(item?.info?.uid, item?.info?.id, item?.info?.requestsList, item?.info?.usersList)}
+                onSwipedRight={() => {
+                  onInvite(item?.info?.uid, item?.info?.id, item?.info?.requestsList, item?.info?.usersList);
+                  setCurrentEventCardPosition(prev => prev + 1);
+                }}
                 OverlayLabelRight={OverlayRight}
                 OverlayLabelLeft={OverlayLeft}
                 disableBottomSwipe={true}
@@ -880,7 +932,10 @@ const IO: FC = (): JSX.Element => {
               </TinderCard>
             </View>
           );
-        })}
+        })
+        // :
+        // <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
+        }
         <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
         <SuperInvite
           isVisibleSuperInvite={isVisibleSuperInvite}
@@ -890,7 +945,10 @@ const IO: FC = (): JSX.Element => {
         <Match isVisibleMatch={isVisibleMatch} onCloseMatch={handleCloseMatch} name={nameUser} />
       </View>
     </SafeAreaView>
+    </>
+    
   );
 };
 
 export default gestureHandlerRootHOC(IO);
+

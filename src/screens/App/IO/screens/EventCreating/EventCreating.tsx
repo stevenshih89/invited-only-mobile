@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
@@ -10,11 +10,12 @@ import useStyles from 'screens/App/IO/screens/EventCreating/styles.ts';
 import {whiteColor} from 'constants/colors.ts';
 import InvitedOnly from 'screens/App/IO/screens/EventCreating/components/InvitedOnly/InvitedOnly.tsx';
 import EventDetails from 'screens/App/IO/screens/EventCreating/components/EventDetails/EventDetails.tsx';
-import {useRoute} from '@react-navigation/native';
+import {useFocusEffect, useRoute} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import ModalSaveEventChanges from 'screens/App/MyEvents/EventEditing/ModalSaveEventChanges';
 import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
 import {showToast} from 'helpers/showToast.ts';
+import auth from '@react-native-firebase/auth';
 
 const EventCreating: FC = () => {
   const INVITED_ONLY = 'invitedOnly';
@@ -29,6 +30,7 @@ const EventCreating: FC = () => {
   const [male, setMale] = useState<number>(0);
   const [femaleFriend, setFemaleFriend] = useState<number>(0);
   const [maleFriend, setMaleFriend] = useState<number>(0);
+  const [myEvents, setMyEvents] = useState()
 
   const navigation = useAppNavigation();
 
@@ -84,6 +86,30 @@ const EventCreating: FC = () => {
       console.log(e);
     }
   };
+
+  useFocusEffect(useCallback(() => {
+    const fetchMyEvents = async () => {
+      const user = auth().currentUser;
+      if (user) {
+        try {
+          const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).get();
+          
+          if (querySnapshot.empty) {
+            setMyEvents([]);
+            return;
+          }
+          const data = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setMyEvents(data);
+        } catch (error: any) {
+          Alert.alert('Error', error.message || 'Something went wrong');
+        }
+      }
+    };
+    fetchMyEvents()
+  },[]))
 
   return (
     <>
