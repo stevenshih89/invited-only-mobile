@@ -1,25 +1,21 @@
-import React, { FC, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import React, {FC, useCallback, useEffect, useState} from 'react';
+import {View, Text, TouchableOpacity, Alert} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-
-// import icons
 import TrashCanIcon from 'assets/images/icons/trash.svg';
-
-// import components
 import useStyles from 'screens/App/IO/screens/EventCreating/styles.ts';
-import { black1Color, gray1Color, grayScale700, lightGray2Color, whiteColor } from 'constants/colors.ts';
+import { grayScale700, lightGray2Color, whiteColor } from 'constants/colors.ts';
 import InvitedOnly from 'screens/App/IO/screens/EventCreating/components/InvitedOnly/InvitedOnly.tsx';
 import EventDetails from 'screens/App/IO/screens/EventCreating/components/EventDetails/EventDetails.tsx';
-import { useRoute } from '@react-navigation/native';
-import { useAppNavigation } from 'hooks/useAppNavigation';
+import {useFocusEffect, useRoute} from '@react-navigation/native';
+import {useAppNavigation} from 'hooks/useAppNavigation';
 import ModalSaveEventChanges from 'screens/App/MyEvents/EventEditing/ModalSaveEventChanges';
 import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
-import { showToast } from 'helpers/showToast.ts';
+import {showToast} from 'helpers/showToast.ts';
+import auth from '@react-native-firebase/auth';
 import { screenWidth } from 'constants/common';
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
 import EventPreview from 'components/TouchingSlider/components/EventPreview';
 import Check from 'src/assets/images/icons/Check-black.svg'
-import auth from '@react-native-firebase/auth';
 import uuid from 'react-native-uuid';
 import { useUser } from 'src/store/userStore';
 import {uploadImage} from 'helpers/uploadImage.ts';
@@ -45,6 +41,9 @@ const EventCreating: FC = () => {
   const [male, setMale] = useState<number>(0);
   const [femaleFriend, setFemaleFriend] = useState<number>(0);
   const [maleFriend, setMaleFriend] = useState<number>(0);
+
+  const [myEvents, setMyEvents] = useState()
+
   const [mainImage, setMainImage] = useState<any>();
   const [currentCreateStep, setCurrentCreateStap] = useState<number>(1)
 
@@ -141,6 +140,30 @@ const EventCreating: FC = () => {
       console.log(e);
     }
   };
+
+  useFocusEffect(useCallback(() => {
+    const fetchMyEvents = async () => {
+      const user = auth().currentUser;
+      if (user) {
+        try {
+          const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).get();
+          
+          if (querySnapshot.empty) {
+            setMyEvents([]);
+            return;
+          }
+          const data = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setMyEvents(data);
+        } catch (error: any) {
+          Alert.alert('Error', error.message || 'Something went wrong');
+        }
+      }
+    };
+    fetchMyEvents()
+  },[]))
 
   const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
     try {
