@@ -19,8 +19,10 @@ import IOIcon from 'assets/images/icons/io-logo.svg';
 import Lock from 'assets/images/icons/lock.svg';
 import Heart from 'assets/images/icons/heart.svg';
 import {Satoshi700} from 'constants/fonts.ts';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing} from 'react-native-reanimated';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import Animated, {useAnimatedStyle, useSharedValue, withTiming, Easing} from 'react-native-reanimated';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import {calculateAge} from 'helpers/calculateAge.ts';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 interface Photo {
   url: string;
@@ -30,11 +32,13 @@ interface TouchingSliderProps {
   photos: Photo[];
   handleOpenSuperInvite?: () => void;
   handleOpenMatch?: () => void;
+  onInvite?: () => void;
   isShowCardButtons?: boolean;
   isShowWantsJoin?: boolean;
   isShowInvitesTooltip?: boolean;
   isShowEventPreview?: boolean;
   isLocked?: boolean;
+  hostInfo?: any;
   name?: string;
   age?: string | number;
   homeAddress?: string;
@@ -49,6 +53,7 @@ interface TouchingSliderProps {
 const TouchingSlider: FC<TouchingSliderProps> = ({
   photos,
   handleOpenSuperInvite,
+  onInvite,
   handleOpenMatch,
   isShowCardButtons = true,
   isShowWantsJoin = false,
@@ -64,6 +69,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   eventPhotos,
   confirmedAccount = false,
   accountType,
+  hostInfo,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
@@ -100,22 +106,19 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       easing: Easing.inOut(Easing.ease),
     });
     setFlipped(!flipped);
+    handleOpenSuperInvite && handleOpenSuperInvite();
   };
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { rotateY: `${rotation.value}deg` },
-      ],
+      transform: [{rotateY: `${rotation.value}deg`}],
       opacity: rotation.value >= 90 && rotation.value <= 270 ? 0 : 1,
     };
   });
 
   const backAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { rotateY: `${rotation.value}deg` },
-      ],
+      transform: [{rotateY: `${rotation.value}deg`}],
       opacity: rotation.value >= 90 && rotation.value <= 270 ? 1 : 0,
     };
   });
@@ -138,6 +141,17 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           ))}
         </View>
       </LinearGradient>
+      {hostInfo?.name && (
+        <View style={{flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 60, left: 16}}>
+          <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>{hostInfo.name}</Text>
+          {hostInfo?.date && (
+            <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 10}}>
+              , {calculateAge(hostInfo?.date)}
+            </Text>
+          )}
+          {hostInfo?.accountConfirmed && <CheckStarWhite width={18} height={18} />}
+        </View>
+      )}
       {isLocked && (
         <View style={styles.lockedWrapper}>
           <View style={styles.lockIconWr}>
@@ -186,7 +200,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               </View>
               {isShowCardButtons && (
                 <View style={styles.wrapperRightButton}>
-                  <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenMatch}>
+                  <TouchableOpacity style={styles.buttonFlash} onPress={onInvite}>
                     <View
                       style={{
                         backgroundColor: transparentGray60Color,
@@ -246,32 +260,34 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                       }}
                     />
                     <Animated.View
-                      style={[{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        position: 'absolute',
-                        alignItems: 'center',
-                      },
-                      frontAnimatedStyle
+                      style={[
+                        {
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: blackColor,
+                          borderRadius: 50,
+                          zIndex: 10,
+                          justifyContent: 'center',
+                          position: 'absolute',
+                          alignItems: 'center',
+                        },
+                        frontAnimatedStyle,
                       ]}>
                       <FlashIcon />
                     </Animated.View>
                     <Animated.View
-                      style={[{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        position: 'absolute',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      },
-                      backAnimatedStyle
+                      style={[
+                        {
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: blackColor,
+                          borderRadius: 50,
+                          zIndex: 10,
+                          position: 'absolute',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        },
+                        backAnimatedStyle,
                       ]}>
                       <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>4</Text>
                     </Animated.View>

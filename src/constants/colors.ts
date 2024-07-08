@@ -9,6 +9,7 @@ const lightGreenColor: string = '#2EB263';
 const lightRed1Color: string = '#FF4E40';
 const errorColor = 'rgba(238, 78, 78, 1)';
 const transparent60Color: string = 'rgba(0, 0, 0, 0.6)';
+const transparent80Color: string = 'rgba(0, 0, 0, 0.8)';
 const transparentWhite30Color: string = 'rgba(255, 255, 255, 0.3)';
 const transparentWhite16Color: string = 'rgba(255, 255, 255, 0.16)';
 const transparentGray60Color: string = 'rgba(37, 37, 37, 0.6)';
@@ -57,6 +58,7 @@ export {
   transparentGray60Color,
   transparentWhite56Color,
   transparentGray90Color,
+  transparent80Color,
   lightGrayColor,
   lightGray2Color,
   lightGray3Color,
