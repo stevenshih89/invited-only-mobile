@@ -49,8 +49,8 @@ const IO: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
-  const [events, setEvents] = useState<any[]>([]);
-  const [myEvents, setMyEventsList] = useState();
+  const [events, setEvents] = useState<any[]>([]);  
+  const [myEvents, setMyEventsList] = useState([]);
   const [nameUser, setNameUser] = useState<string>('');
   const [uidScamUser, setUidScamUser] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});  
@@ -188,7 +188,7 @@ const IO: FC = (): JSX.Element => {
           id: doc.id,
           ...doc.data(),
         }));
-        setMyEventsList([]);
+        setMyEventsList(data);
         setMyEvents(data);
         isFirstRender && setActiveEvent(data[0]);
       } catch (error: any) {
@@ -876,7 +876,7 @@ const IO: FC = (): JSX.Element => {
     return <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
   }
 
-  if(currentEventCardPosition > 20 && events.length > 1) {
+  if(currentEventCardPosition > 1 && myEvents.length < 1) {
     return (
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
         <View style={{height: 370}}>

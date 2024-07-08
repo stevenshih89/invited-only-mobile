@@ -6,10 +6,12 @@ import useStyles from 'screens/App/IO/screens/EventCreating/components/InvitedOn
 import Button from 'components/Button/Button.tsx';
 import {screenHeight} from 'constants/common.ts';
 import PersonIcon from 'assets/images/icons/person.svg';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface InvitedOnlyProps {
   setTabState: Dispatch<SetStateAction<string>>;
   setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
+  setCurrentCreateStap: Dispatch<SetStateAction<number>>;
   isEditing?: boolean;
   prevFemale?: number;
   prevMale?: number;
@@ -28,6 +30,7 @@ interface InvitedOnlyProps {
 const InvitedOnly: FC<InvitedOnlyProps> = ({
   setTabState,
   setIsVisibleSaveModal,
+  setCurrentCreateStap,
   isEditing,
   prevFemale,
   prevMale,
@@ -112,24 +115,41 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView>
+      <View style={styles.container}>
       <View style={styles.wrapperSelectYourDesiredCompany}>
-        <Text style={styles.textSelectYourDesiredCompany}>Select your desired company</Text>
+        <Text style={styles.textSelectYourDesiredCompany}>How many Guests would you like to invite</Text>
         <View>
           <View style={styles.rowFemale}>
-            <Text style={styles.textPersonGender}>Female</Text>
-            <View style={styles.rowButtons}>
-              <TouchableOpacity onPress={() => female !== 0 && setFemale(female - 1)} style={styles.buttonPress}>
-                <Text style={styles.textButton}>-</Text>
-              </TouchableOpacity>
-              <Text style={styles.textCount}>{female}</Text>
-              <TouchableOpacity onPress={() => setFemale(female + 1)} style={styles.buttonPress}>
-                <Text style={styles.textButton}>+</Text>
-              </TouchableOpacity>
-            </View>
+              <Text style={styles.textPersonGender}>Female</Text>
+              <View style={styles.rowButtons}>
+                <TouchableOpacity onPress={() => female !== 0 && setFemale(female - 1)} style={styles.buttonPress}>
+                  <Text style={styles.textButton}>-</Text>
+                </TouchableOpacity>
+                <View style={styles.wrapperTextCount}>
+                  <Text style={styles.textCount}>{female}</Text>
+                </View>
+                <TouchableOpacity onPress={() => setFemale(female + 1)} style={styles.buttonPress}>
+                  <Text style={styles.textButton}>+</Text>
+                </TouchableOpacity>
+              </View>
           </View>
           {iconsArrayFemale?.length > 0 && <View style={{flexDirection: 'row', marginTop: 20}}>{renderIconsArrayFemale()}</View>}
           <View style={styles.rowMale}>
+              <Text style={styles.textPersonGender}>Male</Text>
+              <View style={styles.rowButtons}>
+                <TouchableOpacity onPress={() => male !== 0 && setMale(male - 1)} style={styles.buttonPress}>
+                  <Text style={styles.textButton}>-</Text>
+                </TouchableOpacity>
+                <View style={styles.wrapperTextCount}>
+                  <Text style={styles.textCount}>{female}</Text>
+                </View>
+                <TouchableOpacity onPress={() => setMale(male + 1)} style={styles.buttonPress}>
+                  <Text style={styles.textButton}>+</Text>
+                </TouchableOpacity>
+              </View>
+          </View>
+          {/* <View style={styles.rowMale}>
             <Text style={styles.textPersonGender}>Male</Text>
             <View style={styles.rowButtons}>
               <TouchableOpacity onPress={() => male !== 0 && setMale(male - 1)} style={styles.buttonPress}>
@@ -140,13 +160,41 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
                 <Text style={styles.textButton}>+</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </View> */}
           {iconsArrayMale?.length > 0 && <View style={{flexDirection: 'row', marginTop: 20}}>{renderIconsArrayMale()}</View>}
         </View>
       </View>
       <View style={styles.wrapperOtherFriends}>
         <Text style={styles.textOtherFriend}>Do you have any other friends with you?</Text>
-        <View>
+        <View style={styles.rowFemale}>
+              <Text style={styles.textPersonGender}>Female</Text>
+              <View style={styles.rowButtons}>
+                <TouchableOpacity onPress={() => femaleFriend !== 0 && setFemaleFriend(femaleFriend - 1)} style={styles.buttonPress}>
+                  <Text style={styles.textButton}>-</Text>
+                </TouchableOpacity>
+                <View style={styles.wrapperTextCount}>
+                  <Text style={styles.textCount}>{femaleFriend}</Text>
+                </View>
+                <TouchableOpacity onPress={() => setFemaleFriend(femaleFriend + 1)} style={styles.buttonPress}>
+                  <Text style={styles.textButton}>+</Text>
+                </TouchableOpacity>
+              </View>
+          </View>
+        <View style={styles.rowMale}>
+          <Text style={styles.textPersonGender}>Male</Text>
+          <View style={styles.rowButtons}>
+            <TouchableOpacity onPress={() => maleFriend !== 0 && setMaleFriend(maleFriend - 1)} style={styles.buttonPress}>
+              <Text style={styles.textButton}>-</Text>
+            </TouchableOpacity>
+            <View style={styles.wrapperTextCount}>
+              <Text style={styles.textCount}>{maleFriend}</Text>
+            </View>
+            <TouchableOpacity onPress={() => setMaleFriend(maleFriend + 1)} style={styles.buttonPress}>
+              <Text style={styles.textButton}>+</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        {/* <View>
           <Text style={styles.textPersonGenderFriends}>Male</Text>
           <View style={styles.rowButtonsOtherFriends}>
             <TouchableOpacity onPress={() => maleFriend !== 0 && setMaleFriend(maleFriend - 1)} style={styles.buttonPressOtherFriends}>
@@ -157,8 +205,8 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
               <Text style={styles.textButton}>+</Text>
             </TouchableOpacity>
           </View>
-        </View>
-        <View>
+        </View> */}
+        {/* <View>
           <Text style={[styles.textPersonGenderFriends, {marginTop: screenHeight / 35}]}>Female</Text>
           <View style={styles.rowButtonsOtherFriends}>
             <TouchableOpacity onPress={() => femaleFriend !== 0 && setFemaleFriend(femaleFriend - 1)} style={styles.buttonPressOtherFriends}>
@@ -169,13 +217,17 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
               <Text style={styles.textButton}>+</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
       </View>
       <Button
-        onPress={() => (isEditing ? setIsVisibleSaveModal(true) : setTabState('eventDetails'))}
-        title={isEditing ? 'Save changes' : 'Continue to the event details'}
+        onPress={() => {
+          isEditing ? setIsVisibleSaveModal(true) : setTabState('eventDetails')
+          setCurrentCreateStap(2);
+        }}
+        title={isEditing ? 'Save changes' : 'Continue'}
       />
     </View>
+    </ScrollView>
   );
 };
 

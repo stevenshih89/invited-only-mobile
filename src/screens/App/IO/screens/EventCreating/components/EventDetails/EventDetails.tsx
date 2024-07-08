@@ -14,7 +14,7 @@ import useStyles from './styles.ts';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
 import {isIos} from 'constants/common';
-import {gray1Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {black1Color, gray1Color, orangeClose, toggleColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {showToast} from 'helpers/showToast.ts';
 import {uploadImage} from 'helpers/uploadImage.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
@@ -22,16 +22,30 @@ import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 //import icons
 import Plus from 'assets/images/icons/plus.svg';
 import Location from 'assets/images/icons/location.svg';
-import Calendar from 'assets/images/icons/calendar.svg';
-import Clock from 'assets/images/icons/clock-white.svg';
+import Calendar from 'assets/images/icons/calendar-new.svg';
+import Clock from 'assets/images/icons/clock-grey.svg';
+import Close from 'assets/images/icons/close.svg';
 import {IOPath} from 'constants/pathLocations.ts';
 import auth from '@react-native-firebase/auth';
 import {useUser} from '../../../../../../../store/userStore';
 import moment from "moment";
+import { RFValue } from 'react-native-responsive-fontsize';
+import { Satoshi500 } from 'constants/fonts.ts';
+import { Switch } from '@ant-design/react-native';
+import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
+import InstagramSlider from 'components/InstagramSlider/InstagramSlider.tsx';
+
+interface ImageType {
+  image: null | string;
+  id: number;
+}
 
 interface EventDetailsProps {
   isEditing?: boolean;
+  setTabState: Dispatch<SetStateAction<string>>;
+  setMainImage: Dispatch<SetStateAction<any>>;
   setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
+  setCurrentCreateStap: Dispatch<SetStateAction<number>>;
   prevImages: {image: null | string; id: number}[];
   prevActiveType: number;
   prevPlaceName?: string;
@@ -46,11 +60,43 @@ interface EventDetailsProps {
   id?: string;
   femaleFriend?: number;
   maleFriend?: number;
+  activeType: number;
+  setActiveType: Dispatch<SetStateAction<number>>;
+  photos: ImageType[];
+  setImages: Dispatch<SetStateAction<ImageType[]>>;
+  placeName: string;
+  setPlaceName: Dispatch<SetStateAction<string>>;
+  name: string;
+  setName: Dispatch<SetStateAction<string>>;
+  description: string;
+  setDescription: Dispatch<SetStateAction<string>>;
+  datePicker: Date;
+  setDatePicker: Dispatch<SetStateAction<Date>>;
+  hourPicker: Date;
+  setHourPicker: Dispatch<SetStateAction<Date>>;
+  date: string;
+  setDate: Dispatch<SetStateAction<string>>;
+  hour: string;
+  setHour: Dispatch<SetStateAction<string>>;
+  address: string
+  setAddress: Dispatch<SetStateAction<string>>;
+  meetingSpot: string;
+  setMeetingSpot: Dispatch<SetStateAction<string>>;
+  loading: boolean;
+  setLoading: Dispatch<SetStateAction<boolean>>;
+  open: boolean; 
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  openHour: boolean; 
+  setOpenHour: Dispatch<SetStateAction<boolean>>;
+  userHost: any;
 }
 
 const EventDetails: FC<EventDetailsProps> = ({
   isEditing,
   setIsVisibleSaveModal,
+  setCurrentCreateStap,
+  setTabState,
+  setMainImage,
   prevImages,
   prevActiveType,
   prevPlaceName,
@@ -65,6 +111,35 @@ const EventDetails: FC<EventDetailsProps> = ({
   femaleFriend,
   maleFriend,
   id,
+  photos,
+  setImages,
+  activeType,
+  setActiveType,
+  placeName,
+  setPlaceName,
+  name,
+  setName,
+  description,
+  setDescription,
+  datePicker,
+  setDatePicker,
+  hourPicker, 
+  setHourPicker,
+  date, 
+  setDate,
+  hour,
+  setHour,
+  address,
+  setAddress,
+  meetingSpot, 
+  setMeetingSpot,
+  loading, 
+  setLoading,
+  open, 
+  setOpen,
+  openHour, 
+  setOpenHour,
+  userHost,
 }): ReactElement => {
   const eventTypes = [
     {id: 0, label: 'Custom'},
@@ -72,46 +147,7 @@ const EventDetails: FC<EventDetailsProps> = ({
     {id: 2, label: 'Club'},
     {id: 3, label: 'Restaurant'},
   ];
-
-  const [photos, setImages] = useState<{image: null | string; id: number}[]>([
-    {
-      id: 0,
-      image: null,
-    },
-    {
-      id: 1,
-      image: null,
-    },
-    {
-      id: 2,
-      image: null,
-    },
-    {
-      id: 3,
-      image: null,
-    },
-    {
-      id: 4,
-      image: null,
-    },
-  ]);
-
-  const [activeType, setActiveType] = useState(eventTypes[0].id);
-  const [placeName, setPlaceName] = useState('');
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [datePicker, setDatePicker] = useState(new Date());
-  const [hourPicker, setHourPicker] = useState(new Date());
-  const [date, setDate] = useState('');
-  const [hour, setHour] = useState('');
-  const [address, setAddress] = useState('');
-  const [meetingSpot, setMeetingSpot] = useState('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [open, setOpen] = useState(false);
-  const [openHour, setOpenHour] = useState(false);
-  const navigation = useAppNavigation();
-  const userHost = useUser((i: any) => i?.user);
-
+  
   useEffect(() => {
     if (isEditing) {
       setImages(prevImages);
@@ -170,6 +206,9 @@ const EventDetails: FC<EventDetailsProps> = ({
           };
           const newImages = photos.map(img => {
             if (img.id === imageId) {
+              if(img.id === 0) {
+                setMainImage(image.uri)
+              }
               return {...img, image: image.uri};
             }
             return img;
@@ -178,6 +217,17 @@ const EventDetails: FC<EventDetailsProps> = ({
         }
       },
     );
+  };
+
+  const deleteImage = (id: number) => {
+    const newPhotos = photos.map(img => {
+      if (img.id === id) {
+        return { ...img, image: null };
+      }
+      return img;
+    });
+  
+    setImages(newPhotos);
   };
 
   const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
@@ -226,71 +276,6 @@ const EventDetails: FC<EventDetailsProps> = ({
     }
   };
 
-  const handleCreateEvent = async () => {
-    try {
-      setLoading(true);
-      const uid: string | number[] = uuid.v4();
-      const user = auth().currentUser;
-
-      if (photos[0] === null) {
-        Alert.alert('Please add the main picture');
-      }
-
-      let imagesUri: any[] = [];
-
-      console.log('imagesUri', imagesUri);
-      console.log('images', photos);
-      // @ts-ignore
-      await firestore()
-        .collection('Events')
-        .doc(uid)
-        .set({
-          activeType: activeType,
-          female: female,
-          name: name,
-          description: description,
-          date: date,
-          hour: hour,
-          address: address,
-          meetingSpot: meetingSpot,
-          male: male,
-          femaleFriend: femaleFriend,
-          maleFriend: maleFriend,
-          placeName: placeName,
-          id: uid,
-          uid: user?.uid,
-          requestsList: [],
-          usersList: [],
-          statusEvent: false,
-          eventReviewed: false,
-          hostImage: userHost?.photos[0]?.image,
-          hostName: userHost?.name,
-        })
-        .then(async () => {
-          photos?.map(async (imagePath, index) => {
-            await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
-            await updatePhotosImage(uid, imagesUri).then(() => {
-              showToast('success', 'Go to my events >', 'Event successfully created ');
-              showToast('pending', 'Your event in review.', 'Estimate time review 2h');
-              isEditing ? setIsVisibleSaveModal(true) : null;
-              setLoading(false);
-              navigation.navigate(IOPath as never);
-            });
-          });
-          await firestore()
-            .collection('userInfo')
-            .doc(user?.uid)
-            .update({
-              eventsList: firestore.FieldValue.arrayUnion(uid),
-            });
-        });
-    } catch (e) {
-      setLoading(false);
-      console.log(e);
-      showToast('cancel', '', `${e}`);
-    }
-  };
-
   return (
     <View style={styles.root}>
       <KeyboardAwareScrollView
@@ -313,10 +298,10 @@ const EventDetails: FC<EventDetailsProps> = ({
                 style={[
                   styles.eventTypeItem,
                   {
-                    borderColor: activeType === item.id ? whiteColor : transparentWhite16Color,
+                    backgroundColor: activeType === item.id ? whiteColor : transparentWhite16Color,
                   },
                 ]}>
-                <Text style={styles.eventTypeItemText}>{item.label}</Text>
+                <Text style={[styles.eventTypeItemText, {color: activeType === item.id ? black1Color : whiteColor,}]}>{item.label}</Text>
               </TouchableOpacity>
             )}
           />
@@ -327,71 +312,88 @@ const EventDetails: FC<EventDetailsProps> = ({
             labelStyle={styles.inputLabel}
             value={placeName}
             onChange={val => setPlaceName(val)}
-            placeholder="Jameson Jackson"
+            placeholder="Enter place name"
+          />
+          <Input
+            value={address}
+            onChange={val => setAddress(val)}
+            placeholder="Enter adress"
+            label="Address"
+            // InputIcon={Location}
+            labelStyle={styles.inputLabel}
           />
           <Text style={styles.eventPhotosText}>Event photos</Text>
           <View style={styles.flex}>
             <View style={styles.eventPhotoLargeWr}>
               <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[0].id)} style={styles.touchableImage}>
                 {photos[0]?.image ? (
-                  <Image resizeMode="cover" source={{uri: photos[0].image}} style={styles.eventPhotoSmallImage} />
+                  <>
+                    <Image resizeMode="cover" source={{uri: photos[0].image}} style={styles.eventPhotoSmallImage} />
+                    
+                      <View style={{position: 'absolute', top: 12, right: 12}}>
+                        <TouchableOpacity 
+                        onPress={() => deleteImage(0)}
+                        style={{justifyContent: 'center', alignItems: 'center', width: 26, height: 26, borderRadius: 13, backgroundColor: orangeClose}}>
+                          <Close/>
+                        </TouchableOpacity>
+                      </View>
+                    
+                  </>
                 ) : (
                   <Plus width={40} height={40} />
                 )}
               </TouchableOpacity>
+              <View style={{position: 'absolute', bottom: 18, width: '100%', alignItems: 'center'}}>
               <View style={styles.imageNumber}>
-                <Text style={styles.eventPhotoNumberText}>1</Text>
+                <Text style={styles.eventPhotoNumberText}>Main</Text>
+              </View>
               </View>
             </View>
             <View style={[styles.eventPhotoRow, {marginBottom: 8}]}>
               <View style={styles.eventPhotoSmallLeftWr}>
                 <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[1].id)} style={styles.touchableImage}>
                   {photos[1]?.image ? (
-                    <Image resizeMode="cover" source={{uri: photos[1].image}} style={styles.eventPhotoSmallImage} />
+                    <>
+                      <Image resizeMode="cover" source={{uri: photos[1].image}} style={styles.eventPhotoSmallImage} />
+                    <View style={{position: 'absolute', top: 12, right: 12}}>
+                        <TouchableOpacity 
+                        onPress={() => deleteImage(1)}
+                        style={{justifyContent: 'center', alignItems: 'center', width: 26, height: 26, borderRadius: 13, backgroundColor: orangeClose}}>
+                          <Close/>
+                        </TouchableOpacity>
+                      </View>
+                    </>
                   ) : (
                     <Plus width={40} height={40} />
                   )}
                 </TouchableOpacity>
+                <View style={{position: 'absolute', bottom: 18, width: '100%', alignItems: 'center'}}>
                 <View style={styles.imageNumber}>
                   <Text style={styles.eventPhotoNumberText}>2</Text>
+                </View>
                 </View>
               </View>
               <View style={styles.eventPhotoSmallRightWr}>
                 <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[2].id)} style={styles.touchableImage}>
                   {photos[2]?.image ? (
-                    <Image resizeMode="cover" source={{uri: photos[2].image}} style={styles.eventPhotoSmallImage} />
+                    <>
+                      <Image resizeMode="cover" source={{uri: photos[2].image}} style={styles.eventPhotoSmallImage} />
+                    <View style={{position: 'absolute', top: 12, right: 12}}>
+                        <TouchableOpacity 
+                        onPress={() => deleteImage(2)}
+                        style={{justifyContent: 'center', alignItems: 'center', width: 26, height: 26, borderRadius: 13, backgroundColor: orangeClose}}>
+                          <Close/>
+                        </TouchableOpacity>
+                      </View>
+                    </>
                   ) : (
                     <Plus width={40} height={40} />
                   )}
                 </TouchableOpacity>
+                <View style={{position: 'absolute', bottom: 18, width: '100%', alignItems: 'center'}}>
                 <View style={styles.imageNumber}>
                   <Text style={styles.eventPhotoNumberText}>3</Text>
                 </View>
-              </View>
-            </View>
-            <View style={styles.eventPhotoRow}>
-              <View style={styles.eventPhotoSmallLeftWr}>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[3].id)} style={styles.touchableImage}>
-                  {photos[3]?.image ? (
-                    <Image resizeMode="cover" source={{uri: photos[3].image}} style={styles.eventPhotoSmallImage} />
-                  ) : (
-                    <Plus width={40} height={40} />
-                  )}
-                </TouchableOpacity>
-                <View style={styles.imageNumber}>
-                  <Text style={styles.eventPhotoNumberText}>4</Text>
-                </View>
-              </View>
-              <View style={styles.eventPhotoSmallRightWr}>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[4].id)} style={styles.touchableImage}>
-                  {photos[4]?.image ? (
-                    <Image resizeMode="cover" source={{uri: photos[4].image}} style={styles.eventPhotoSmallImage} />
-                  ) : (
-                    <Plus width={40} height={40} />
-                  )}
-                </TouchableOpacity>
-                <View style={styles.imageNumber}>
-                  <Text style={styles.eventPhotoNumberText}>5</Text>
                 </View>
               </View>
             </View>
@@ -399,14 +401,16 @@ const EventDetails: FC<EventDetailsProps> = ({
         </View>
         <View style={styles.eventDetailsWr}>
           <Text style={styles.eventDetailsTitle}>Event details</Text>
-          <Input value={name} onChange={val => setName(val)} placeholder="Jameson Birthday party" label="Name" labelStyle={styles.inputLabel} />
+          <Input value={name} onChange={val => setName(val)} placeholder="Enter event name" label="Event name" labelStyle={styles.inputLabel} />
           <Input
             value={description}
             onChange={val => setDescription(val)}
-            placeholder="Jameson Jackson"
+            placeholder="Enter description"
             label="Description"
             labelStyle={styles.inputLabel}
           />
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View style={{flexDirection: 'column', flex: 1, marginRight: 10}}>
           <Text style={styles.maskInputLabel}>Date</Text>
           <TouchableOpacity onPress={() => setOpen(true)} style={styles.maskInputWr}>
             <DatePicker
@@ -424,9 +428,12 @@ const EventDetails: FC<EventDetailsProps> = ({
                 setOpen(false);
               }}
             />
-            <Text style={styles.maskInput}>{date ? date : '12.10.2024'}</Text>
             <Calendar />
+            <Text style={styles.maskInput}>{date ? date : 'MM/DD/YY'}</Text>
+            
           </TouchableOpacity>
+          </View>
+          <View style={{flexDirection: 'column', flex: 1}}>
           <Text style={styles.maskInputLabel}>Hour</Text>
           <TouchableOpacity onPress={() => setOpenHour(true)} style={styles.maskInputWr}>
             <DatePicker
@@ -444,32 +451,42 @@ const EventDetails: FC<EventDetailsProps> = ({
                 setOpenHour(false);
               }}
             />
-            <Text style={styles.maskInput}>{hour ? hour : '00:30'}</Text>
             <Clock />
+            <Text style={styles.maskInput}>{hour ? hour : '00:30'}</Text>
+            
           </TouchableOpacity>
-          <Input
-            value={address}
-            onChange={val => setAddress(val)}
-            placeholder="Dubai"
-            label="Address"
-            InputIcon={Location}
-            labelStyle={styles.inputLabel}
-          />
+          </View>
+          </View>
           <Input
             value={meetingSpot}
             onChange={val => setMeetingSpot(val)}
-            placeholder="Bar entrance"
+            placeholder="Enter meeting spot"
             labelStyle={styles.inputLabel}
             label="Meeting spot"
-            InputIcon={Location}
+            // InputIcon={Location}
           />
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+            <Text style={{fontSize: RFValue(14, 812), fontFamily: Satoshi500, color: whiteColor}}>Are you responsible for the pick up?</Text>
+            <Switch trackColor={{false: gray1Color, true: toggleColor}} />
+          </View>
         </View>
         <Button
           loading={loading}
-          title={isEditing ? 'Save changes' : 'Create event'}
+          title={isEditing ? 'Save changes' : 'Continue'}
           buttonStyle={styles.button}
-          onPress={() => (isEditing ? handleSaveChanges() : handleCreateEvent())}
+          onPress={() => {
+            isEditing ? handleSaveChanges() : setTabState('eventPreview')
+            setCurrentCreateStap(3);
+          }}
         />
+        <View style={{width: '100%', alignItems: 'center', marginTop: 20}}>
+          <TouchableOpacity onPress={() => {
+            setTabState('invitedOnly')
+            setCurrentCreateStap(1);
+          }}>
+            <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Previous step</Text>
+          </TouchableOpacity>
+        </View>
       </KeyboardAwareScrollView>
     </View>
   );
