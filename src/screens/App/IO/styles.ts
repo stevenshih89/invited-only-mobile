@@ -128,7 +128,7 @@ const useStyles = () => {
     titleSection: {
       color: whiteColor,
       fontFamily: Satoshi700,
-      fontSize: RFValue(17, 812),
+      fontSize: RFValue(16, 812),
     },
     textDescription: {
       color: whiteColor,
@@ -199,7 +199,7 @@ const useStyles = () => {
       textAlign: 'center',
       color: whiteColor,
       fontFamily: Satoshi700,
-      fontSize: RFValue(17, 812),
+      fontSize: RFValue(14, 812),
     },
     buttonCloseOrCheck: {
       backgroundColor: 'black',

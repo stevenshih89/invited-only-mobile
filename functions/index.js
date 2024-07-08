@@ -1,48 +1,45 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
-const {onRequest} = require('firebase-functions/v2/https');
-const logger = require('firebase-functions/logger');
 const functions = require('firebase-functions/v2');
 const admin = require('firebase-admin');
 
-// Инициализируйте приложение Firebase
 const firebaseConfig = {
-  // Ваши настройки конфигурации Firebase здесь
+  apiKey: 'AIzaSyB4lUbkFiqrOGLsfjcvUFmVdmdI21p1J6w',
+  projectId: 'invited-only-app',
+  authDomain: 'invited-only-app.firebaseapp.com',
+  storageBucket: 'invited-only-app.appspot.com',
+  messagingSenderId: '996985328099',
+  appId: '1:996985328099:ios:403f74a76adfe7897490d6',
 };
 
 admin.initializeApp(firebaseConfig);
 
-exports.processDocumentCreated = functions.firestore.onDocumentCreated('CollectionOfMatches', async event => {
-  const newData = event.params; // Данные нового документа
-  const uid = newData.uid; // Получение UID пользователя из нового документа
+const sendNotification = async userId => {
+  await admin.messaging().send({
+    token: userId,
+    notification: {
+      title: 'New message',
+      body: 'Description',
+    },
+  });
+};
 
-  // logger.info(`${newData}: ${uid}`, {structuredData: true});
+exports.processDocumentCreated = functions.firestore.onDocumentCreated('CollectionOfMatches', async event => {
+  const newData = event.params;
+  const uid = newData.uid;
 
   try {
-    // Поиск пользователя по UID
     const userQuerySnapshot = await admin.firestore().collection('users').where('uid', '==', uid).get();
 
     if (userQuerySnapshot.empty) {
-      console.log('Пользователь с UID', uid, 'не найден');
+      console.warn('Пользователь с UID', uid, 'не найден');
       return null;
     }
 
-    // Пользователь найден
     userQuerySnapshot.forEach(async userDoc => {
-      // Получение ID пользователя
       const userId = userDoc.id;
 
-      // Отправка уведомления пользователю
       await sendNotification(userId);
 
-      console.log('Уведомление отправлено пользователю с ID', userId);
+      console.warn('Уведомление отправлено пользователю с ID', userId);
     });
 
     return null;
@@ -51,16 +48,6 @@ exports.processDocumentCreated = functions.firestore.onDocumentCreated('Collecti
     return null;
   }
 });
-
-const sendNotification = async userId => {
-  await admin.messaging().send({
-    token: userId, // Токен устройства получателя
-    notification: {
-      title: 'New message',
-      body: 'Description',
-    },
-  });
-};
 
 exports.processCollectionOfMatches = functions.firestore.onDocumentCreated('CollectionOfMatches', async event => {
   const {notificationTokenSender, name, girlsPhoto, recipientUid, senderUid} = event.data;
