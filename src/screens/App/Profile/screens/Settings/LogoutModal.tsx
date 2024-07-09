@@ -52,24 +52,27 @@ const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
           paddingHorizontal: 30,
         }}>
         <View style={{backgroundColor: whiteColor, height: 2, borderRadius: 10, width: 40, alignSelf: 'center', marginBottom: 22}} />
-        <ImageBackground
-          source={{uri: userHost?.photos[0]?.image}}
-          style={{width: 84, height: 84, alignSelf: 'center', marginBottom: 10}}
-          imageStyle={{borderRadius: 160}}
-          resizeMode="cover">
-          <View
-            style={{
-              width: '100%',
-              height: '100%',
-              backgroundColor: transparentWhite16Color,
-              borderRadius: 160,
-              zIndex: 1000,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <LogoutIcon width={22} height={22} />
-          </View>
-        </ImageBackground>
+        {!!userHost?.photos.length && (
+          <ImageBackground
+            source={{uri: userHost?.photos?.[0]?.image}}
+            style={{width: 84, height: 84, alignSelf: 'center', marginBottom: 10}}
+            imageStyle={{borderRadius: 160}}
+            resizeMode="cover">
+            <View
+              style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: transparentWhite16Color,
+                borderRadius: 160,
+                zIndex: 1000,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <LogoutIcon width={22} height={22} />
+            </View>
+          </ImageBackground>
+        )}
+
         <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 812), marginBottom: 30, textAlign: 'center'}}>
           {userHost?.name}, {userAge}
         </Text>
