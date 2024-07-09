@@ -10,6 +10,7 @@ const lightRed1Color: string = '#FF4E40';
 const errorColor = 'rgba(238, 78, 78, 1)';
 const transparent60Color: string = 'rgba(0, 0, 0, 0.6)';
 const transparentWhite30Color: string = 'rgba(255, 255, 255, 0.3)';
+const transparentWhite40Color: string = 'rgba(255, 255, 255, 0.4)';
 const transparentWhite16Color: string = 'rgba(255, 255, 255, 0.16)';
 const transparentGray60Color: string = 'rgba(37, 37, 37, 0.6)';
 const transparentWhite56Color: string = 'rgba(255, 255, 255, 0.56)';
@@ -53,6 +54,7 @@ export {
   errorColor,
   transparent60Color,
   transparentWhite30Color,
+  transparentWhite40Color,
   transparentWhite16Color,
   transparentGray60Color,
   transparentWhite56Color,

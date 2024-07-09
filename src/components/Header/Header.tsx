@@ -18,7 +18,7 @@ import {
   settingsPath,
 } from 'constants/pathLocations';
 import {ANY_DAY, screenHeight, THIS_WEEKEND, TODAY, ALL, THIS_MONTH} from 'constants/common.ts';
-import {blackColor, grayColor, lightGray2Color, lightGray5Color, orangeColor, whiteColor} from 'constants/colors.ts';
+import {blackColor, grayColor, grayScale700, lightGray2Color, lightGray5Color, orangeColor, whiteColor} from 'constants/colors.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
 import {useChat} from '../../store/chatStore';
@@ -35,6 +35,9 @@ import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 import PeopleIcon from 'assets/images/icons/profile-2user.svg';
 import SettingsIcon from 'assets/images/icons/settings.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
+import CheckBlack from 'assets/images/icons/Check-black.svg';
+import ClockBlack from 'assets/images/icons/clock-black.svg';
+import Users from 'assets/images/icons/Users.svg';
 import InfoCircleGrayIcon from 'assets/images/icons/info-circle-gray.svg';
 import InfoCircleOrangeIcon from 'assets/images/icons/info-circle-orange.svg';
 
@@ -606,7 +609,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 />
               </View>
             ) : (
-              <View style={[styles.rowButtonsChat, {marginTop: screenHeight / 34}]}>
+              <View style={[styles.rowButtonsChat]}>
                 <FlatList
                   data={DATAEventsJoining}
                   horizontal={true}
@@ -624,6 +627,26 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 />
               </View>
             )}
+            <View style={{flexDirection: 'row', backgroundColor: lightGray2Color, width: '100%', paddingVertical: 6, paddingHorizontal: 10, borderRadius: 40, marginTop: 12, justifyContent: 'space-between', alignItems: 'center'}}>
+              <View style={{flexDirection: 'row'}}>
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                  <Image style={{width: 32, height: 32, borderRadius: 20, borderWidth: 1, borderColor: whiteColor}} source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREoRGyXmHy_6aIgXYqWHdOT3KjfmnuSyxypw&s'}} />
+                  <View style={{position: 'absolute'}}>
+                    <CheckBlack width={20} height={20} />
+                  </View>
+                </View>
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                  <Image style={{width: 32, height: 32, borderRadius: 20, borderWidth: 1, borderColor: whiteColor, transform: [{translateX: -10}]}} source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREoRGyXmHy_6aIgXYqWHdOT3KjfmnuSyxypw&s'}} />
+                  <View style={{position: 'absolute', transform: [{translateX: -10}]}}>
+                    <ClockBlack width={20} height={20} />
+                  </View>
+                </View>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Users height={14} width={14}/>
+                <Text style={{color: whiteColor, fontSize: RFValue(12, 812)}}>1/2</Text>
+              </View>
+            </View>
           </View>
         );
 

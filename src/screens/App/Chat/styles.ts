@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {blackColor, lightGray11Color, lightGray6Color, lightGrayColor, lightGreenColor, lightRedColor, whiteColor} from 'constants/colors.ts';
+import {blackColor, grayScale700, lightGray11Color, lightGray15Color, lightGray6Color, lightGrayColor, lightGreenColor, lightRedColor, whiteColor} from 'constants/colors.ts';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 import {Satoshi500, Satoshi400, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -7,12 +7,13 @@ import {RFValue} from 'react-native-responsive-fontsize';
 const useStyles = () => {
   return StyleSheet.create({
     container: {
-      backgroundColor: lightGray6Color,
+      backgroundColor: blackColor,
       flex: 1,
       paddingHorizontal: screenWidth / 19,
       paddingBottom: 60,
     },
     wrapperItem: {
+      alignItems: 'center',
       flexDirection: 'row',
     },
     textYouNeedToJoin: {
@@ -31,9 +32,9 @@ const useStyles = () => {
       textAlign: 'center',
     },
     item: {
-      paddingVertical: screenHeight / 42,
+      paddingVertical: screenHeight / 48,
       borderTopWidth: 1,
-      borderTopColor: lightGray11Color,
+      borderTopColor: grayScale700,
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
@@ -54,7 +55,7 @@ const useStyles = () => {
       marginLeft: screenWidth / 38,
       paddingVertical: 4,
       paddingHorizontal: 8,
-      borderRadius: 4,
+      borderRadius: 40,
       borderWidth: 1,
       borderColor: whiteColor,
     },
@@ -63,21 +64,25 @@ const useStyles = () => {
       marginLeft: screenWidth / 38,
       paddingVertical: 4,
       paddingHorizontal: 8,
-      borderRadius: 4,
-      backgroundColor: lightGrayColor,
+      borderRadius: 40,
+      borderWidth: 1,
+      borderColor: lightGray15Color,
     },
     textStatusInvitationAccepted: {
-      color: whiteColor,
+      color: blackColor,
       marginLeft: screenWidth / 38,
       paddingVertical: 4,
       paddingHorizontal: 8,
-      borderRadius: 4,
-      backgroundColor: lightGreenColor,
+      borderRadius: 40,
+      backgroundColor: whiteColor,
     },
     textStatusInvite: {
-      color: whiteColor,
+      // color: whiteColor,
       fontFamily: Satoshi400,
-      fontSize: RFValue(13, 812),
+      fontWeight: 'bold',
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      fontSize: RFValue(12, 812),
     },
     textMessage: {
       marginTop: screenHeight / 80,
@@ -185,6 +190,25 @@ const useStyles = () => {
       borderTopWidth: 1,
       borderTopColor: lightGray11Color,
     },
+    newMessage: {
+      height: 24,
+      width: 24,
+      backgroundColor: grayScale700,
+      borderRadius: 40,
+      justifyContent: 'center',
+    },
+    wrapperTextMessage: {
+      // marginTop: screenHeight / 80,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end'
+    },
+    textCountNewMessages: {
+      color: whiteColor,
+      textAlign: 'center',
+      fontSize: RFValue(12, 812),
+      fontFamily: Satoshi700
+    }
   });
 };
 
