@@ -31,6 +31,7 @@ type ItemProps = {
   inviteStatus: string;
   superInvite: boolean;
   invitedStatus: string;
+  uid: string;
 };
 
 type ItemEventsJoiningProps = {
@@ -89,7 +90,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       });
   };
 
-  const Item = ({title, message, image, online, story, inviteStatus, messages, id, superInvite, invitedStatus}: ItemProps) => (
+  const Item = ({title, message, image, online, story, inviteStatus, messages, id, superInvite, invitedStatus, uid}: ItemProps) => (
     <View style={styles.item}>
       <View style={{flexDirection: 'row', height: 75, width: '100%', justifyContent: 'space-between'}}>
       <TouchableOpacity
@@ -106,6 +107,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               id: id,
               superInvite: superInvite,
               invitedStatus: invitedStatus,
+              uid: uid
             },
           });
         }}
@@ -296,6 +298,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             showsVerticalScrollIndicator={false}
             data={messages?.chats}
             renderItem={({item}) => {
+            console.log('item', item);
+                          
               return (
                 <Item
                   inviteStatus={item?.invitedStatus}
@@ -308,6 +312,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   superInvite={item?.superInvite}
                   invitedStatus={item?.invitedStatus}
                   id={item?.id}
+                  uid={item?.uid}
                 />
               );
             }}

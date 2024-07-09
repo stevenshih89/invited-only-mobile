@@ -52,7 +52,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({ navigation, route }) => {
   const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
   const [name, setName] = useState('');
   const [age, setAge] = useState()
-  let { image, title, online, activeEvent, id, superInvite, invitedStatus } = route?.params;
+  let { image, title, online, activeEvent, id, superInvite, invitedStatus, uid} = route?.params;
 
   useEffect(() => {
     if (title) {
@@ -60,6 +60,29 @@ const ChatCorrespondence: FC<NavigationParams> = ({ navigation, route }) => {
       setName(name[0])
     }
   }, [title])
+
+  useEffect(() => {
+    if(uid) {
+      const fetchUserInfo = async () => {
+        const user = auth().currentUser;
+        if (user) {
+          try {
+            const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+
+            if (userInfoDoc.exists) {
+              const age = calculateAge(userInfoDoc.data().date)
+              setAge(age)
+            } else {
+              Alert.alert('Error', 'No user data found in Firestore');
+            }
+          } catch (error: any) {
+            Alert.alert('Error', error.message || 'Something went wrong');
+          }
+        }
+      };
+      fetchUserInfo()
+    }
+  },[uid])
 
   const userData = useUser((i: any) => i?.user);
 
@@ -192,7 +215,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({ navigation, route }) => {
                 </View>
                 <View style={styles.wrapperTitleOnline}>
                   <View style={styles.fdrAlc}>
-                    <Text style={styles.textNameUser}>{name}, 16</Text>
+                    <Text style={styles.textNameUser}>{name}, {age}</Text>
                     <CheckStar />
                     <View style={{ marginLeft: 16, flexDirection: 'row' }}>
                       <View style={{ backgroundColor: whiteColor, borderRadius: 4 }}>
