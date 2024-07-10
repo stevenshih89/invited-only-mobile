@@ -13,8 +13,8 @@ const SafetyAndWellbeing = () => {
         <View style={styles.avatarContainer}>
           <AvatarHelp />
           <View style={{marginLeft: 6}}>
-            <Text style={styles.avatarText}>Mark Robbinson</Text>
-            <Text style={styles.onlineText}>Online</Text>
+            <Text style={styles.avatarText}>Support@invitedonly.com</Text>
+            {/* <Text style={styles.onlineText}>Online</Text> */}
           </View>
         </View>
       </View>

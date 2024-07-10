@@ -31,6 +31,7 @@ import {
   notificationSettingPath,
   contactAndFAQPath,
   securePrivacyPath,
+  paymentPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -55,6 +56,7 @@ import PhoneChange from 'screens/App/Profile/screens/Settings/PhoneChange';
 import NotificationSetting from 'screens/App/Profile/screens/Settings/NotificationSetting';
 import ContactAndFAQ from 'screens/App/Profile/screens/Settings/ContactAndFAQ';
 import SecurePrivacy from 'screens/App/Profile/screens/SecurePrivacy/SecurePrivacy.tsx';
+import Payment from 'screens/Auth/Payment/Payment';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -376,6 +378,20 @@ const UserProfileStackScreen = () => {
   );
 };
 
+const PaymentStackScreen = () => {
+  const styles = useStyles();
+  const [isModalVisible, setModalVisible] = useState<boolean>(false);
+  return (
+    <EventCreatingStack.Navigator
+        initialRouteName={paymentPath}
+        screenOptions={{
+        headerShown: false,  
+        }}>
+        <EventCreatingStack.Screen key={paymentPath} name={paymentPath} component={Payment} />
+      </EventCreatingStack.Navigator>
+  );
+};
+
 const AppStackScreen = () => {
   return (
     <AppStack.Navigator initialRouteName={bottomTabsStackPath} screenOptions={{headerShown: false}}>
@@ -385,6 +401,7 @@ const AppStackScreen = () => {
       <AppStack.Screen key={chatCorrespondencePath} name={chatCorrespondencePath} component={ChatCorrespondenceStackScreen} />
       <AppStack.Screen key={userProfilePath} name={userProfilePath} component={UserProfileStackScreen} />
       <AppStack.Screen key={commonStackPath} name={commonStackPath} component={CommonStackScreen} />
+      <AppStack.Screen key={paymentPath} name={paymentPath} component={PaymentStackScreen} />
     </AppStack.Navigator>
   );
 };

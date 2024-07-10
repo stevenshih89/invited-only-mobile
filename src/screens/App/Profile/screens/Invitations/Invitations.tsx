@@ -15,7 +15,11 @@ const Invitations: FC = () => {
   const styles = useStyles();
 
   const userHost = useUser((i: any) => i?.user);
+  
   const inviteLink = userHost?.codeForInvitingOtherUsers;
+
+  console.log('inviteLink', inviteLink);
+  
 
   const handleCopy = (val: string) => {
     Clipboard.setString(val);
@@ -60,7 +64,7 @@ const Invitations: FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>You have {numberCodes} codes</Text>
+      <Text style={styles.title}>You have {numberCodes} App invitations codes</Text>
       {/*<View style={styles.inviteContainer}>*/}
       {/*  <Text style={styles.label}>Invite code</Text>*/}
       {/*  <TouchableOpacity activeOpacity={0.7} style={styles.inviteButton}>*/}
@@ -69,12 +73,13 @@ const Invitations: FC = () => {
       {/*  </TouchableOpacity>*/}
       {/*</View>*/}
       <View style={styles.inviteContainer}>
-        <Text style={styles.label}>Invite code</Text>
+        <Text style={styles.label}>IO Invitations</Text>
         <TouchableOpacity activeOpacity={0.7} onPress={() => handleCopy(inviteLink)} style={styles.inviteButton}>
           <Text style={styles.inviteText}>{inviteLink}</Text>
           <Copy />
         </TouchableOpacity>
       </View>
+      
       <Button title="Share" onPress={handleShare} buttonStyle={styles.shareButton} />
     </View>
   );

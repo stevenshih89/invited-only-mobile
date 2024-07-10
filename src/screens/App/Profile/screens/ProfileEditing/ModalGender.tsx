@@ -1,13 +1,14 @@
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
 import Gender from 'assets/images/icons/tabler_gender-bigender.svg';
-import {blackColor, grayColor, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {blackColor, grayColor, lightGray15Color, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
 import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from '../../../../../store/userStore';
+import Button from 'components/Button/Button';
 
 interface ModalGenderProps {
   isVisible: boolean;
@@ -86,14 +87,14 @@ const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setS
           style={{
             borderRadius: 100,
             backgroundColor: transparentGray90Color,
-            height: 50,
-            width: 50,
+            height: 84,
+            width: 84,
             justifyContent: 'center',
             alignItems: 'center',
             alignSelf: 'center',
             marginBottom: 20,
           }}>
-          <Gender />
+          <Gender width={32} height={32} />
         </View>
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), textAlign: 'center', marginBottom: 10}}>
           What is your gender?
@@ -123,13 +124,13 @@ const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setS
                   borderStyle: 'solid',
                   borderRadius: isActive ? 10 : 0,
                   borderBottomColor: isActive ? 'transparent' : transparentWhite16Color,
-                  backgroundColor: isActive ? whiteColor : 'transparent',
-                  paddingVertical: 18,
-                  alignItems: 'center',
+                  backgroundColor: isActive ? lightGray15Color : 'transparent',
+                  padding: 16,
+                  // alignItems: 'center',
                 }}>
                 <Text
                   style={{
-                    color: isActive ? blackColor : whiteColor,
+                    color: isActive ? whiteColor : whiteColor,
                     fontSize: RFValue(18, 812),
                     fontFamily: Satoshi400,
                     textTransform: 'capitalize',
@@ -140,6 +141,7 @@ const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setS
             );
           }}
         />
+        <Button title="Save" buttonStyle={{marginTop: 20}} />
       </View>
     </Modal>
   );
