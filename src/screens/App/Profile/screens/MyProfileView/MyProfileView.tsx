@@ -198,7 +198,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
             <View style={styles.basicsWrapper}>
               <Text style={styles.testBasics}>My basics</Text>
               <View style={styles.wrapperTextTags}>
-                {userInfo?.work && 
+                {userInfo?.work?.title && 
                 <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
                   <View style={{width: 20}}>
                     <Job />
