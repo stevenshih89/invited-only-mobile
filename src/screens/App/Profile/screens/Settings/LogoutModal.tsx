@@ -53,7 +53,40 @@ const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
           paddingHorizontal: 30,
         }}>
         <View style={{backgroundColor: whiteColor, height: 2, borderRadius: 10, width: 40, alignSelf: 'center', marginBottom: 22}} />
-        <ImageBackground
+
+        {/* <ImageBackground
+          source={{uri: userHost?.photos[0]?.image}}
+          style={{width: 84, height: 84, alignSelf: 'center', marginBottom: 10, justifyContent: 'center',
+            alignItems: 'center',}}
+          imageStyle={{borderRadius: 160}}
+          resizeMode="cover">
+          <View
+            style={{
+              width: 40,
+              height: 40,
+              backgroundColor: whiteColor,
+              borderRadius: 160,
+              zIndex: 1000,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <LogoutBlackIcon width={22} height={22} />
+          </View>
+        </ImageBackground> */}
+        {/* <View
+          style={{backgroundColor: blackColor, borderRadius: 5, borderWidth: 2, borderColor: whiteColor, paddingHorizontal: 12, paddingVertical: 2, alignSelf: 'center', marginTop:10, marginBottom: 6}}>
+          <Text style={{color: whiteColor, fontSize: 14, fontFamily: Satoshi700, textTransform: 'capitalize'}}>{userHost?.accountType}</Text>
+        </View>
+        <View style={{flexDirection: 'row', alignSelf: 'center', alignItems: 'center'}}>
+          <Text style={{color: whiteColor, marginRight: 6, fontFamily: Satoshi500, fontSize: RFValue(20, 812), textAlign: 'center'}}>
+            {userHost?.name}, {userAge} 
+          </Text>
+          <CheckStarIcon />
+        </View>
+        <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), marginBottom: 40, marginTop: 30, textAlign: 'center'}}> */}
+
+        {!!userHost?.photos.length && (
+          <ImageBackground
           source={{uri: userHost?.photos[0]?.image}}
           style={{width: 84, height: 84, alignSelf: 'center', marginBottom: 10, justifyContent: 'center',
             alignItems: 'center',}}
@@ -72,6 +105,7 @@ const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
             <LogoutBlackIcon width={22} height={22} />
           </View>
         </ImageBackground>
+        )}
         <View
           style={{backgroundColor: blackColor, borderRadius: 5, borderWidth: 2, borderColor: whiteColor, paddingHorizontal: 12, paddingVertical: 2, alignSelf: 'center', marginTop:10, marginBottom: 6}}>
           <Text style={{color: whiteColor, fontSize: 14, fontFamily: Satoshi700, textTransform: 'capitalize'}}>{userHost?.accountType}</Text>
