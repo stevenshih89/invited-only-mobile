@@ -15,10 +15,12 @@ const Input: FC<InputProps> = ({
   labelStyle,
   isError = false,
   placeholder,
+  placeholderTextColor = transparentWhite30Color,
   value,
   label,
   keyboardType = 'default',
   InputIcon,
+  required
 }) => {
   const inputRef = useRef<TextInput>(null);
 
@@ -34,7 +36,7 @@ const Input: FC<InputProps> = ({
 
   return (
     <View style={[containerStyle]}>
-      {label && <Text style={[styles.titleText, {...labelStyle}]}>{label}</Text>}
+      {label && <Text style={[styles.titleText, {...labelStyle}]}>{label} {required && <Text style={{color: errorColor}}>*</Text>}</Text>}
       <TouchableOpacity activeOpacity={1} onPress={onPress} style={[styles.container, containerInnerStyle]}>
         <TextInput
           ref={inputRef}
@@ -43,7 +45,7 @@ const Input: FC<InputProps> = ({
           onBlur={onBlur}
           placeholder={placeholder}
           style={[styles.input, inputStyle, {width: InputIcon ? '90%' : '100%', color: isError ? errorColor : whiteColor}]}
-          placeholderTextColor={transparentWhite30Color}
+          placeholderTextColor={placeholderTextColor}
           keyboardAppearance="dark"
           value={value}
           onChangeText={handleOnChange}
