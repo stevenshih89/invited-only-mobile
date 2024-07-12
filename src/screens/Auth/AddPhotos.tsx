@@ -41,8 +41,20 @@ const AddPhotos: FC = (): JSX.Element => {
       id: 2,
       image: null,
     },
+    {
+      id: 3,
+      image: null,
+    },
+    {
+      id: 4,
+      image: null
+    },
+    {
+      id: 5,
+      image: null
+    }
   ]);
-  const {onBoarding, setOnBoarding} = useContext(AuthContext);
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);  
 
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
     const result = await check(permission);
@@ -121,6 +133,7 @@ const AddPhotos: FC = (): JSX.Element => {
     if (!hasPhoto(photos)) {
       return;
     }
+  
     setOnBoarding([...onBoarding, {photos: photos}]);
     navigation.navigate(enterBirthdayPath as never);
   };

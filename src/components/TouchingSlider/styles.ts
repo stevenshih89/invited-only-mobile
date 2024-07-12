@@ -63,7 +63,7 @@ const useStyles = () => {
       color: whiteColor,
       fontFamily: Satoshi700,
       fontSize: RFValue(26, 812),
-      marginLeft: 12,
+      marginHorizontal: 12,
     },
     wrapperFooterCard: {
       flexDirection: 'row',
@@ -91,11 +91,12 @@ const useStyles = () => {
     },
     infoTags: {
       flexDirection: 'row',
-      backgroundColor: 'rgba(37, 37, 37, 0.60)',
+      backgroundColor: 'rgba(0, 0, 0, 0.60)',
       paddingVertical: screenHeight / 85,
       paddingHorizontal: screenWidth / 24,
       borderRadius: 50,
       alignItems: 'center',
+      alignSelf: 'flex-start'
     },
     textInfoTags: {
       color: whiteColor,

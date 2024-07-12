@@ -16,7 +16,7 @@ import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const TurnNotifications: FC = (): JSX.Element => {
   const [notifications, setNotifications] = useState<boolean>(false);
-  const [location, setLocation] = useState<boolean>(false);
+  const [showLocation, setShowLocation] = useState<boolean>(false);
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const getCurrentLocation = (): void => {
@@ -24,16 +24,16 @@ const TurnNotifications: FC = (): JSX.Element => {
       skipPermissionRequests: false,
     });
     Geolocation.getCurrentPosition(
-      position => position,
+      position => console.log('position', position),
       error => console.error(error),
     );
   };
 
   useEffect(() => {
-    if (location) {
+    if (showLocation) {
       getCurrentLocation();
     }
-  }, [location]);
+  }, [showLocation]);
 
   const navigation = useAppNavigation();
 
@@ -42,7 +42,8 @@ const TurnNotifications: FC = (): JSX.Element => {
       ...onBoarding,
       {
         notifications: notifications,
-        location: location,
+        location: null,
+        showLocation: showLocation
       },
     ]);
     navigation.navigate(addPhotosPath as never);
@@ -53,7 +54,7 @@ const TurnNotifications: FC = (): JSX.Element => {
   };
 
   const handleLocationChange = (value: boolean): void => {
-    setLocation(value);
+    setShowLocation(value);
   };
 
   return (
@@ -151,7 +152,7 @@ const TurnNotifications: FC = (): JSX.Element => {
                     }}>
                     Location
                   </Text>
-                  <Switch trackColor={{false: grayColor, true: toggleColor}} checked={location} onChange={handleLocationChange} />
+                  <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showLocation} onChange={handleLocationChange} />
                 </View>
               </View>
             </View>
