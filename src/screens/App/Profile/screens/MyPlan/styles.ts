@@ -30,8 +30,10 @@ const useStyles = () => {
     },
     buttonUpgrade: {
       marginHorizontal: screenWidth / 9.5,
-      borderRadius: 10,
-      height: 39,
+      borderRadius: 12,
+      paddingHorizontal: 70,
+      paddingVertical: 8
+      // height: 39,
     },
     textButtonTitleStyle: {
       color: blackColor,
@@ -63,10 +65,10 @@ const useStyles = () => {
       marginHorizontal: screenWidth / 10.5,
     },
     textYearlySpot: {
-      color: whiteColor,
+      color: blackColor,
       fontFamily: Satoshi700,
       fontSize: RFValue(14, 812),
-      marginTop: screenHeight / 25,
+      marginTop: screenHeight / 81,
       textAlign: 'left',
     },
     listColumnWrapper: {
@@ -125,6 +127,12 @@ const useStyles = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
+    wrapperIcon: {
+      backgroundColor: lightGray5Color,
+      borderRadius: 100,
+      padding: 8,
+      marginRight: 10
+    }
   });
 };
 

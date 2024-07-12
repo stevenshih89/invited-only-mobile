@@ -209,6 +209,7 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       position: 'relative',
+      marginHorizontal: 1,
     },
     buttonFlash: {
       width: 61,

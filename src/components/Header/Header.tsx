@@ -17,7 +17,7 @@ import {
   notificationsStackPath,
   settingsPath,
 } from 'constants/pathLocations';
-import {ANY_DAY, screenHeight, THIS_WEEKEND, TODAY, ALL, THIS_MONTH} from 'constants/common.ts';
+import {screenHeight, THIS_WEEKEND, ALL, THIS_MONTH} from 'constants/common.ts';
 import {blackColor, grayColor, lightGray2Color, lightGray5Color, orangeColor, whiteColor} from 'constants/colors.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';

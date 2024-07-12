@@ -1,14 +1,14 @@
-import {lightRed1Color, whiteColor} from 'constants/colors';
+import {blackColor, lightRed1Color, transparent60Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import moment from 'moment';
 import {Animated, Image, ImageBackground, Text, TouchableOpacity, View} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
 import useStyles from './styles';
-import ArrowRight from 'assets/images/icons/arrow-right.svg';
-import FlashFilled from 'assets/images/icons/flash-filled.svg';
+import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
 import User from 'assets/images/icons/user.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
+import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import {FC, useEffect, useState} from 'react';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventInfoPath} from 'constants/pathLocations';
@@ -16,6 +16,7 @@ import firestore from '@react-native-firebase/firestore';
 import {ActivityIndicator} from '@ant-design/react-native';
 import {showToast} from 'helpers/showToast.ts';
 import {useUser} from '../../../store/userStore';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
   const [hostInfo, setHostInfo] = useState([]);
@@ -27,7 +28,9 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
 
-  if (item[0]?.uid !== user?.uid) return
+  if (item[0]?.uid !== user?.uid) {
+    return;
+  }
 
   const goToEventInfo = () => {
     navigation.navigate(commonStackPath, {screen: eventInfoPath, params: {list: list}});
@@ -167,48 +170,86 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
             <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: photos[0]?.image}}>
               <View style={[styles.itemContentContainer, {justifyContent: item[0]?.isSuperInvite ? 'space-between' : 'flex-end'}]}>
                 {item[0]?.isSuperInvite && (
-                  <View style={styles.superLikeContainer}>
-                    <View style={styles.superLikeRow}>
-                      <FlashFilled style={styles.superLikeIcon} />
-                      <Text style={styles.superLikeText}>Super invite you!`</Text>
+                  <View style={{alignItems: 'flex-start'}}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        backgroundColor: whiteColor,
+                        borderRadius: 5,
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        marginBottom: 'auto',
+                        marginTop: 10,
+                        marginHorizontal: 6,
+                      }}>
+                      <FlashFillBlack />
+                      <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>Super wants to join you</Text>
                     </View>
                   </View>
                 )}
-                <TouchableOpacity activeOpacity={0.7} style={[styles.buttonContainer, {margin: 7}]} onPress={goToEventInfo}>
-                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                    <Image source={{uri: hostInfo?.photos[0]?.image}} style={{width: 25, height: 25, borderRadius: 20}} />
-                    <View style={{marginLeft: 8}}>
-                      <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(9, 812)}}>{hostInfo?.name}</Text>
-                      <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(6, 812)}}>Host</Text>
+                <LinearGradient
+                  colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.8)']}
+                  style={styles.linearGradient}
+                  start={{x: 0, y: 0}}
+                  end={{x: 0, y: 1}}>
+                  <TouchableOpacity activeOpacity={0.7} style={[styles.buttonContainer, {marginTop: 'auto'}]} onPress={goToEventInfo}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                      <Image source={{uri: hostInfo?.photos[0]?.image}} style={{width: 25, height: 25, borderRadius: 20}} />
+                      <View style={{marginLeft: 8}}>
+                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(9, 812)}}>{hostInfo?.name}</Text>
+                        <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(7, 812), textTransform: 'capitalize'}}>
+                          {hostInfo?.accountType}
+                        </Text>
+                      </View>
                     </View>
-                  </View>
-                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 6}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>{address}</Text>
-                    <ArrowRight height={12} />
-                  </View>
-                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 6}}>
-                    <User width={10} height={10} />
-                    <Text
+                    <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 6}}>
+                      <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(17, 812)}}>{placeName}</Text>
+                      {hostInfo?.accountConfirmed && <CheckStarWhite style={{marginLeft: 4}} />}
+                    </View>
+                    <View
                       style={{
-                        color: whiteColor,
-                        fontFamily: Satoshi400,
-                        fontSize: RFValue(10, 812),
-                        marginLeft: 4,
-                      }}>{`${female + femaleFriend} x Girl invitation `}</Text>
-                  </View>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Calendar width={10} height={10} />
-                    <Text
-                      style={{
-                        color: whiteColor,
-                        fontFamily: Satoshi400,
-                        fontSize: RFValue(10, 812),
-                        marginLeft: 4,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        alignSelf: 'flex-start',
+                        marginBottom: 6,
+                        backgroundColor: transparent60Color,
+                        borderRadius: 50,
+                        paddingVertical: 4,
+                        paddingHorizontal: 6,
                       }}>
-                      {moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+                      <User width={10} height={10} />
+                      <Text
+                        style={{
+                          color: whiteColor,
+                          fontFamily: Satoshi400,
+                          fontSize: RFValue(10, 812),
+                          marginLeft: 4,
+                        }}>{`${female + femaleFriend} x Women invitation `}</Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        alignSelf: 'flex-start',
+                        backgroundColor: transparent60Color,
+                        borderRadius: 50,
+                        paddingVertical: 4,
+                        paddingHorizontal: 6,
+                      }}>
+                      <Calendar width={10} height={10} />
+                      <Text
+                        style={{
+                          color: whiteColor,
+                          fontFamily: Satoshi400,
+                          fontSize: RFValue(10, 812),
+                          marginLeft: 4,
+                        }}>
+                        {moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD MMMM YYYY')}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </LinearGradient>
               </View>
             </ImageBackground>
           </TinderCard>

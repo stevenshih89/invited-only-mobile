@@ -1,6 +1,6 @@
 import {KeyboardAvoidingView, Text, View} from 'react-native';
 import Modal from 'react-native-modal';
-import Bookmark from 'assets/images/icons/bookmark.svg';
+import Cake from 'assets/images/icons/cake.svg';
 import {blackColor, grayColor, lightGray2Color, toggleColor, transparentGray90Color, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
 import {Dispatch, FC, SetStateAction} from 'react';
@@ -8,6 +8,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import MaskInput from 'react-native-mask-input';
 import {isIos} from 'constants/common';
+import Button from 'components/Button/Button';
 
 interface ModalBirthdayProps {
   isVisible: boolean;
@@ -20,9 +21,10 @@ interface ModalBirthdayProps {
   setYear: Dispatch<SetStateAction<string>>;
   showAge: boolean;
   setShowAge: Dispatch<SetStateAction<boolean>>;
+  saveUserInfo: any;
 }
 
-const ModalBirthday: FC<ModalBirthdayProps> = ({isVisible, onClose, month, setMonth, day, setDay, year, setYear, showAge, setShowAge}) => {
+const ModalBirthday: FC<ModalBirthdayProps> = ({isVisible, onClose, month, setMonth, day, setDay, year, setYear, showAge, setShowAge, saveUserInfo}) => {
   const handleMonthChange = (input: string): void => {
     const numericInput = input.replace(/[^0-9]/g, '');
     const trimmedInput = numericInput.slice(0, 2);
@@ -90,20 +92,20 @@ const ModalBirthday: FC<ModalBirthdayProps> = ({isVisible, onClose, month, setMo
             style={{
               borderRadius: 100,
               backgroundColor: transparentGray90Color,
-              height: 50,
-              width: 50,
+              height: 84,
+              width: 84,
               justifyContent: 'center',
               alignItems: 'center',
               alignSelf: 'center',
               marginBottom: 20,
             }}>
-            <Bookmark />
+            <Cake width={32} height={32} />
           </View>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), textAlign: 'center', marginBottom: 10}}>
-            What is your work?
+          What is your birthday?
           </Text>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
-            <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
+            <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show my age</Text>
             <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showAge} onChange={val => setShowAge(val)} />
           </View>
           <View style={{width: '100%', flexDirection: 'row'}}>
@@ -170,6 +172,7 @@ const ModalBirthday: FC<ModalBirthdayProps> = ({isVisible, onClose, month, setMo
               />
             </View>
           </View>
+          <Button onPress={saveUserInfo} title="Save" buttonStyle={{marginTop: 20}} />
         </View>
       </KeyboardAvoidingView>
     </Modal>

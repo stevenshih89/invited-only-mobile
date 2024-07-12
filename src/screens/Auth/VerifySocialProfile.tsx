@@ -100,14 +100,20 @@ const VerifySocialProfile = () => {
   const generateInviteCode = () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const length = 12;
-    let inviteCode = '';
+    const countCodes = 5
+    const inviteCodes = []
 
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      inviteCode += characters.charAt(randomIndex);
+    for (let i = 0; i < countCodes; i++) {
+      let inviteCode = '';
+
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        inviteCode += characters.charAt(randomIndex);
+      }
+      inviteCodes.push({isActive: true, inviteCode: inviteCode})
     }
 
-    return inviteCode;
+    return inviteCodes;
   };
 
   const formatDate = (date: any) => {

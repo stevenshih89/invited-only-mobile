@@ -10,6 +10,8 @@ interface MyBioProps {
   setBio: Dispatch<SetStateAction<string>>;
 }
 
+// const [height, setHeight] = useState(40);
+
 const MyBio: FC<MyBioProps> = ({bio, setBio}) => {
   return (
     <View style={styles.view}>
@@ -18,7 +20,7 @@ const MyBio: FC<MyBioProps> = ({bio, setBio}) => {
         value={bio}
         onChangeText={(text: string) => setBio(text)}
         rows={9}
-        placeholder="Business owner from Dubai"
+        placeholder="Enter your bio"
         placeholderTextColor={transparentWhite30Color}
         styles={{
           container: styles.container,
