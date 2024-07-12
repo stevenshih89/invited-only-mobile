@@ -1,24 +1,42 @@
-import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
-import Bookmark from 'assets/images/icons/bookmark.svg';
-import {blackColor, grayColor, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import Job from 'assets/images/icons/job.svg';
+import {blackColor, grayColor, grayScale600, lightGray2Color, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
-import {Dispatch, FC, SetStateAction} from 'react';
+import {Dispatch, FC, SetStateAction, useState} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi400} from 'constants/fonts';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {screenHeight} from 'constants/common';
+import Button from 'components/Button/Button';
 
 interface ModalWorkProps {
   isVisible: boolean;
   onClose: () => void;
   showWork: boolean;
   setShowWork: Dispatch<SetStateAction<boolean>>;
-  activeWorkItem: {id: number; title: string} | null;
-  setActiveWorkItem: (val: any) => void;
-  listOfWorks: any[];
+  // activeWorkItem: {id: number; title: string} | null;
+  // setActiveWorkItem: (val: any) => void;
+  saveUserInfo: any;
+  textNameWork: string;
+  setTextNameWork: Dispatch<SetStateAction<string>>;
+  textDescription: string;
+  setTextDescription: Dispatch<SetStateAction<string>>;
 }
 
-const ModalWork: FC<ModalWorkProps> = ({isVisible, onClose, listOfWorks, showWork, setShowWork, activeWorkItem, setActiveWorkItem}) => {
+const ModalWork: FC<ModalWorkProps> = ({
+  isVisible, 
+  onClose, 
+  saveUserInfo, 
+  showWork, 
+  setShowWork, 
+  textNameWork, 
+  setTextNameWork,
+  textDescription,
+  setTextDescription
+}) => {
+
+  
+
   return (
     <Modal
       isVisible={isVisible}
@@ -50,23 +68,37 @@ const ModalWork: FC<ModalWorkProps> = ({isVisible, onClose, listOfWorks, showWor
           style={{
             borderRadius: 100,
             backgroundColor: transparentGray90Color,
-            height: 50,
-            width: 50,
+            height: 84,
+            width: 84,
             justifyContent: 'center',
             alignItems: 'center',
             alignSelf: 'center',
             marginBottom: 20,
           }}>
-          <Bookmark />
+          <Job width={32} height={32} />
         </View>
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), textAlign: 'center', marginBottom: 10}}>
-          What is your work?
+          What do you do for living? 
         </Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
           <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showWork} onChange={val => setShowWork(val)} />
         </View>
-        <FlatList
+        <View>
+          <Text style={{fontSize: RFValue(14,812), fontFamily: Satoshi500, color: whiteColor, marginBottom: 8}}>Work name</Text>
+          <TextInput value={textNameWork} onChangeText={text => setTextNameWork(text)} placeholder='Enter work name' placeholderTextColor={grayScale600} style={{padding: 16, borderRadius: 10, fontSize: RFValue(18, 812), backgroundColor: lightGray2Color, color: whiteColor}}/>
+        </View>
+        <View>
+          <Text style={{fontSize: RFValue(14,812), fontFamily: Satoshi500, color: whiteColor, marginTop: 14, marginBottom: 8}}>Description</Text>
+          <TextInput value={textDescription} onChangeText={text => setTextDescription(text)} placeholder='Enter description' placeholderTextColor={grayScale600} style={{padding: 16, borderRadius: 10, fontSize: RFValue(18, 812), backgroundColor: lightGray2Color, color: whiteColor}}/>
+        </View>
+        <Button onPress={() => {
+          // setActiveWorkItem({title: textNameWork, description: textDescription})
+          saveUserInfo()
+        }} title="Save" buttonStyle={{marginTop: 20}} 
+          
+          />
+        {/* <FlatList
           data={listOfWorks}
           keyExtractor={item => item.id.toString()}
           showsVerticalScrollIndicator={false}
@@ -89,7 +121,7 @@ const ModalWork: FC<ModalWorkProps> = ({isVisible, onClose, listOfWorks, showWor
               </TouchableOpacity>
             );
           }}
-        />
+        /> */}
       </View>
     </Modal>
   );

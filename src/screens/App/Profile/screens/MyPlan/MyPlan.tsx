@@ -10,11 +10,18 @@ import {useUser} from '../../../../../store/userStore';
 import {Satoshi700} from 'constants/fonts';
 import Button from 'components/Button/Button';
 import {blackColor, lightGray5Color} from 'constants/colors';
+import {paymentPath} from 'constants/pathLocations';  
 
 //import images
 import CheckIcon from 'assets/images/icons/check.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import CloseIcon from 'assets/images/icons/close-circle.svg';
+import Calendar from 'assets/images/icons/calendar.svg';
+import Unlimited from 'assets/images/icons/unlimited.svg';
+import IO from 'assets/images/icons/io.svg';
+import Flash from 'assets/images/icons/flash.svg';
+import Eye from 'assets/images/icons/eye.svg';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 
 const ControlledTooltip: FC<TooltipProps | any> = props => {
   const [open, setOpen] = useState(false);
@@ -32,7 +39,16 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
   );
 };
 
+
 const MyPlan = () => {
+
+  const navigation = useAppNavigation();
+
+  const goToMyProfileView = () => {
+    // @ts-ignore
+    navigation.navigate(paymentPath);
+  };
+  
   const styles = useStyles();
   const isPremium = useUser((i: any) => i?.premium);
   return (
@@ -45,18 +61,23 @@ const MyPlan = () => {
             <Text style={styles.textHostPremium}>Host Premium</Text>
             <Text style={styles.textGetAccess}>Get Access & Unlock all of our features. Secure your spot. Host Access is limited.</Text>
             <View style={styles.buttonWrapper}>
-              <Button title="Upgrade $99/m" buttonTitleStyle={styles.textButtonTitleStyle} buttonStyle={styles.buttonUpgrade} />
+              <Button title="Get Access" onPress={goToMyProfileView} buttonTitleStyle={styles.textButtonTitleStyle} buttonStyle={styles.buttonUpgrade} />
             </View>
+            {/* <Text style={styles.textYearlySpot}>Yearly Spot*</Text> */}
+            {/* <Text style={styles.textYearlySpot}>Yearly Spot*</Text> */}
           </>
         )}
       </LinearGradient>
-      {!isPremium && <Text style={styles.textYearlySpot}>Yearly Spot*</Text>}
+      {/* {!isPremium && <Text style={styles.textYearlySpot}>Yearly Spot*</Text>} */}
       <View style={styles.listColumnWrapper}>
         <Text style={styles.textWhatYouGet}>What you {isPremium ? 'have' : 'get'}:</Text>
         {!isPremium && <Text style={styles.textPremium}>Premium</Text>}
       </View>
       <View style={styles.itemInTheList}>
         <View style={styles.rowTextAndCheckCircleIcon}>
+          <View style={styles.wrapperIcon}>
+            <Calendar />
+          </View>
           <Text style={styles.textFromTheList}>Unlimited Events Creation</Text>
           <ControlledTooltip
             width={300}
@@ -79,6 +100,9 @@ const MyPlan = () => {
       </View>
       <View style={styles.itemInTheList}>
         <View style={styles.rowTextAndCheckCircleIcon}>
+          <View style={styles.wrapperIcon}>
+            <Unlimited />
+          </View>
           <Text style={styles.textFromTheList}>Unlimited Invitations</Text>
           <ControlledTooltip
             width={300}
@@ -101,6 +125,9 @@ const MyPlan = () => {
       </View>
       <View style={styles.itemInTheList}>
         <View style={styles.rowTextAndCheckCircleIcon}>
+          <View style={styles.wrapperIcon}>
+            <IO/>
+          </View>
           <Text style={styles.textFromTheList}>Unlimited Likes</Text>
           <ControlledTooltip
             width={300}
@@ -123,6 +150,9 @@ const MyPlan = () => {
       </View>
       <View style={styles.itemInTheList}>
         <View style={styles.rowTextAndCheckCircleIcon}>
+          <View style={styles.wrapperIcon}>
+            <Flash width={20} height={20}/>
+          </View>
           <Text style={styles.textFromTheList}>5 Super invites a week</Text>
           <ControlledTooltip
             width={300}
@@ -145,6 +175,9 @@ const MyPlan = () => {
       </View>
       <View style={styles.itemInTheList}>
         <View style={styles.rowTextAndCheckCircleIcon}>
+          <View style={styles.wrapperIcon}>
+            <Unlimited/>
+          </View>
           <Text style={styles.textFromTheList}>Join events</Text>
           <ControlledTooltip
             width={300}
@@ -167,6 +200,9 @@ const MyPlan = () => {
       </View>
       <View style={styles.itemInTheList}>
         <View style={styles.rowTextAndCheckCircleIcon}>
+          <View style={styles.wrapperIcon}>
+            <Eye/>
+          </View>
           <Text style={styles.textFromTheList}>See who wants to join you</Text>
           <ControlledTooltip
             width={300}

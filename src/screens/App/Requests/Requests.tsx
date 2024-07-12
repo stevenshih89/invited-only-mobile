@@ -38,7 +38,8 @@ const Requests: FC = (): ReactElement => {
     if (user && activeEvent !== 'host') {
       try {
         const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
-        console.log('querySnapshot', querySnapshot.data());
+        console.warn('querySnapshot', querySnapshot.data());
+
         if (querySnapshot.exists) {
           setRequestsForHost(querySnapshot.data());
         } else {
@@ -51,8 +52,6 @@ const Requests: FC = (): ReactElement => {
       try {
         const querySnapshot = await firestore().collection('Events').get();
         const data = querySnapshot?.docs?.map(i => i?.data());
-        console.log('activeEvent host', data);
-
         if (data) {
           setRequestsForHost(data);
         } else {
@@ -80,9 +79,9 @@ const Requests: FC = (): ReactElement => {
       try {
         const querySnapshot = await firestore().collection('Events').get();
         const data = querySnapshot?.docs?.map(i => i?.data());
-        console.log('filter', filterByUid(data, user?.uid));
+        // console.log('filter', filterByUid(data, user?.uid));
         const filterUid = filterByUid(data, user?.uid);
-        console.log('filterUid', filterUid);
+        // console.log('filterUid', filterUid);
         setDataForGuest(filterUid);
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
@@ -116,11 +115,10 @@ const Requests: FC = (): ReactElement => {
   useFocusEffect(
     useCallback(() => {
       isHost ? fetchHostRequests() : fetchGuestRequests();
-    }, [activeEvent, requestFilter]),
+    }, [activeEvent, requestFilter, isHost]),
   );
 
   const list = isHost ? requestsForHost : dataForGuest;
-
 
   if (loading && !list) {
     return <ActivityIndicator style={styles.container} />;
@@ -128,7 +126,7 @@ const Requests: FC = (): ReactElement => {
 
   return (
     <View style={styles.container}>
-      {list.lenght ? (
+      {!!list.length || !!list?.requestsList?.length ? (
         <FlatList
           // @ts-ignore
           data={isHost ? list?.requestsList : list}
@@ -163,4 +161,3 @@ const Requests: FC = (): ReactElement => {
 };
 
 export default Requests;
-

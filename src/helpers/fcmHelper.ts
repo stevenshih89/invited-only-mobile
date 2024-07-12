@@ -158,7 +158,9 @@ async function onDisplayNotification(title, body, data) {
 // it would be called when the app in foreground state
 export function onMatchNotificationSubscription(handler: (message: FirebaseMessagingTypes.RemoteMessage) => void) {
   return messaging().onMessage(async remoteMessage => {
-    if (remoteMessage.data?.type !== 'match') return;
+    if (remoteMessage.data?.type !== 'match') {
+      return;
+    }
 
     // Request permissions for iOS
     await notifee.requestPermission();

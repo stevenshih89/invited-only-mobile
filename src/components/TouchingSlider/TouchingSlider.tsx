@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 //import components
 import useStyles from 'components/TouchingSlider/styles.ts';
-import {blackColor, gray1Color, transparentGray60Color, whiteColor} from 'constants/colors.ts';
+import {blackColor, gray1Color, transparentGray60Color, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
@@ -13,14 +13,18 @@ import EventPreview from './components/EventPreview.tsx';
 //import icons
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import HomeIcon from 'assets/images/icons/home.svg';
+import Location from 'assets/images/icons/location.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import FlashBlackIcon from 'assets/images/icons/flash-black.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
 import Lock from 'assets/images/icons/lock.svg';
 import Heart from 'assets/images/icons/heart.svg';
-import {Satoshi700} from 'constants/fonts.ts';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing} from 'react-native-reanimated';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import CheckStar from 'assets/images/icons/check-star-white.svg';
+import {Satoshi400, Satoshi700} from 'constants/fonts.ts';
+import Animated, {useAnimatedStyle, useSharedValue, withTiming, Easing} from 'react-native-reanimated';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import {calculateAge} from 'helpers/calculateAge.ts';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 interface Photo {
   url: string;
@@ -30,11 +34,14 @@ interface TouchingSliderProps {
   photos: Photo[];
   handleOpenSuperInvite?: () => void;
   handleOpenMatch?: () => void;
+  onInvite?: () => void;
   isShowCardButtons?: boolean;
+  isShowLocation?: boolean;
   isShowWantsJoin?: boolean;
   isShowInvitesTooltip?: boolean;
   isShowEventPreview?: boolean;
   isLocked?: boolean;
+  hostInfo?: any;
   name?: string;
   age?: string | number;
   homeAddress?: string;
@@ -49,8 +56,9 @@ interface TouchingSliderProps {
 const TouchingSlider: FC<TouchingSliderProps> = ({
   photos,
   handleOpenSuperInvite,
-  handleOpenMatch,
+  onInvite,
   isShowCardButtons = true,
+  isShowLocation = false,
   isShowWantsJoin = false,
   isShowInvitesTooltip = true,
   isLocked = false,
@@ -64,6 +72,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   eventPhotos,
   confirmedAccount = false,
   accountType,
+  hostInfo,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
@@ -99,23 +108,20 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       duration: 600,
       easing: Easing.inOut(Easing.ease),
     });
-    setFlipped(!flipped);
+    setFlipped(prev => !prev);
+    handleOpenSuperInvite && handleOpenSuperInvite();
   };
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { rotateY: `${rotation.value}deg` },
-      ],
+      transform: [{rotateY: `${rotation.value}deg`}],
       opacity: rotation.value >= 90 && rotation.value <= 270 ? 0 : 1,
     };
   });
 
   const backAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { rotateY: `${rotation.value}deg` },
-      ],
+      transform: [{rotateY: `${rotation.value}deg`}],
       opacity: rotation.value >= 90 && rotation.value <= 270 ? 1 : 0,
     };
   });
@@ -138,6 +144,17 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           ))}
         </View>
       </LinearGradient>
+      {hostInfo?.name && (
+        <View style={{flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 60, left: 16}}>
+          <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>{hostInfo.name}</Text>
+          {hostInfo?.date && (
+            <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 10}}>
+              , {calculateAge(hostInfo?.date)}
+            </Text>
+          )}
+          {hostInfo?.accountConfirmed && <CheckStarWhite width={18} height={18} />}
+        </View>
+      )}
       {isLocked && (
         <View style={styles.lockedWrapper}>
           <View style={styles.lockIconWr}>
@@ -157,7 +174,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       )}
       {isShowEventPreview ? (
         <View style={styles.eventPreviewWr}>
-          <EventPreview placeName={placeName} date={date} girls={girls} photos={eventPhotos} />
+          <EventPreview placeName={placeName} date={date} girls={girls} photos={eventPhotos} flipCoin={flipCoin} />
         </View>
       ) : (
         <LinearGradient
@@ -166,9 +183,30 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           start={{x: 0, y: 0}}
           end={{x: 0, y: 1}}>
           <View style={styles.wrapperBio}>
+            <View style={{flexDirection: 'row'}}>
             <View
-              style={{backgroundColor: whiteColor, borderRadius: 5, paddingHorizontal: 12, paddingVertical: 4, alignSelf: 'flex-start'}}>
-              <Text style={{color: blackColor, fontSize: 14, fontFamily: Satoshi700, textTransform: 'capitalize'}}>{accountType}</Text>
+              style={{backgroundColor: blackColor, borderRadius: 5, borderWidth: 2, borderColor: whiteColor, paddingHorizontal: 12, paddingVertical: 2, alignSelf: 'flex-start'}}>
+              <Text style={{color: whiteColor, fontSize: 14, fontFamily: Satoshi700, textTransform: 'capitalize'}}>{accountType}</Text>
+            </View>
+            {true && <LinearGradient 
+                colors={['#977B4A', '#E5D291', '#A28453']} 
+                style={{
+                  marginLeft: 6,
+                  alignSelf: 'flex-start',
+                  borderRadius: 4,
+                  paddingHorizontal: 12,
+                  paddingVertical: 2,
+                  backgroundColor: blackColor
+                }}
+                start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+                >
+                {true && <Text style={{
+                  color: blackColor,
+                  fontSize: RFValue(14, 812),
+                  fontFamily: Satoshi400,
+                  fontWeight: 'bold'
+                }}>Premium</Text>}
+              </LinearGradient>}
             </View>
             <View style={styles.rowBioInfo}>
               <Text style={styles.textName}>{name},</Text>
@@ -178,18 +216,24 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             <View style={styles.wrapperFooterCard}>
               <View>
                 {homeAddress && (
-                  <View style={[styles.infoTags, {marginTop: screenHeight / 37, width: 130}]}>
+                  <View style={[styles.infoTags, {marginTop: screenHeight / 37}]}>
                     <HomeIcon />
                     <Text style={styles.textInfoTags}>From {homeAddress}</Text>
+                  </View>
+                )}
+                {isShowLocation && (
+                  <View style={[styles.infoTags, {marginTop: 5}]}>
+                    <Location />
+                    <Text style={styles.textInfoTags}>2 kilometers away</Text>
                   </View>
                 )}
               </View>
               {isShowCardButtons && (
                 <View style={styles.wrapperRightButton}>
-                  <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenMatch}>
+                  <TouchableOpacity style={styles.buttonFlash} onPress={onInvite}>
                     <View
                       style={{
-                        backgroundColor: transparentGray60Color,
+                        backgroundColor: transparentWhite56Color,
                         width: '100%',
                         height: '100%',
                         borderRadius: 50,
@@ -200,7 +244,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     />
                     <View
                       style={{
-                        backgroundColor: transparentGray60Color,
+                        backgroundColor: transparentWhite56Color,
                         width: '100%',
                         height: '100%',
                         borderRadius: 50,
@@ -225,7 +269,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   <TouchableWithoutFeedback style={[styles.buttonFlash, {marginTop: screenHeight / 70}]} onPress={flipCoin}>
                     <View
                       style={{
-                        backgroundColor: transparentGray60Color,
+                        backgroundColor: transparentWhite56Color,
                         width: '100%',
                         height: '100%',
                         borderRadius: 50,
@@ -236,7 +280,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     />
                     <View
                       style={{
-                        backgroundColor: transparentGray60Color,
+                        backgroundColor: transparentWhite56Color,
                         width: '100%',
                         height: '100%',
                         borderRadius: 50,
@@ -246,32 +290,34 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                       }}
                     />
                     <Animated.View
-                      style={[{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        position: 'absolute',
-                        alignItems: 'center',
-                      },
-                      frontAnimatedStyle
+                      style={[
+                        {
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: blackColor,
+                          borderRadius: 50,
+                          zIndex: 10,
+                          justifyContent: 'center',
+                          position: 'absolute',
+                          alignItems: 'center',
+                        },
+                        frontAnimatedStyle,
                       ]}>
                       <FlashIcon />
                     </Animated.View>
                     <Animated.View
-                      style={[{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        position: 'absolute',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      },
-                      backAnimatedStyle
+                      style={[
+                        {
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: blackColor,
+                          borderRadius: 50,
+                          zIndex: 10,
+                          position: 'absolute',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        },
+                        backAnimatedStyle,
                       ]}>
                       <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>4</Text>
                     </Animated.View>

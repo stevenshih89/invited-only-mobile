@@ -27,4 +27,6 @@ export interface InputProps {
   disableFastClear?: boolean;
   keyboardType?: KeyboardType;
   InputIcon?: any;
+  required?: boolean;
+  placeholderTextColor?: string;
 }

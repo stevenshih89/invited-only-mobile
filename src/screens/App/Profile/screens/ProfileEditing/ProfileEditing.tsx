@@ -17,6 +17,8 @@ import ModalBirthday from './ModalBirthday';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
+import ModalLocation from './ModalLocation';
+import ModalHomeAdress from './ModalHomeAdress';
 
 const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleSmokeModal, setIsVisibleSmokeModal] = useState<boolean>(false);
@@ -27,13 +29,21 @@ const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleBirthdayModal, setIsVisibleBirthdayModal] = useState<boolean>(false);
   const [loadingSave, setLoadingSave] = useState<boolean>(false);
   const [interestsLoading, setInterestsLoading] = useState<boolean>(false);
+  const [isVisibleLocationModal, setIsVisibleLocationModal] = useState<boolean>(false)
+  const [isVisibleHomeAddressModal, setIsVisibleHomeAddressModal] = useState<boolean>(false)
 
   const [month, setMonth] = useState<string>('');
   const [day, setDay] = useState<string>('');
   const [year, setYear] = useState<string>('');
   const [showWork, setShowWork] = useState(false);
   const [showAge, setShowAge] = useState(false);
-  const [activeWorkItem, setActiveWorkItem] = useState(null);
+  const [showLocation, setShowLocation] = useState<boolean>(false);
+  const [location, setLocation] = useState<string>('');
+  const [showHomeAdress, setShowHomeAdress] = useState<boolean>(false);
+  const [textHomeAdress, setTextHomeAdress] = useState<string>('');
+  // const [activeWorkItem, setActiveWorkItem] = useState(null);
+  const [textNameWork, setTextNameWork] = useState<string>('');
+  const [textDescription, setTextDescription] = useState<string>('');
   const [bio, setBio] = useState<string>('');
   const [showGender, setShowGender] = useState(false);
   const [activeGenderItem, setActiveGenderItem] = useState<{title: string} | null>(null);
@@ -104,6 +114,18 @@ const ProfileEditing: FC = (): ReactElement => {
     },
     {
       id: 2,
+      image: null,
+    },
+    {
+      id: 3,
+      image: null,
+    },
+    {
+      id: 4,
+      image: null,
+    },
+    {
+      id: 5,
       image: null,
     },
   ]);
@@ -287,7 +309,7 @@ const ProfileEditing: FC = (): ReactElement => {
           setDefaultBio(documentSnapshot.data()?.bio);
         }
         if (documentSnapshot.data()?.work) {
-          setActiveWorkItem(documentSnapshot.data()?.work);
+          setTextNameWork(documentSnapshot.data()?.work.title);
         }
         if (documentSnapshot.data()?.showWork) {
           setShowWork(documentSnapshot.data()?.showWork);
@@ -327,6 +349,18 @@ const ProfileEditing: FC = (): ReactElement => {
         if (documentSnapshot.data()?.showSmoke) {
           setShowSmoke(documentSnapshot.data()?.showSmoke);
         }
+        if (documentSnapshot.data()?.showLocation) {
+          setShowLocation(documentSnapshot.data()?.showLocation);
+        }
+        if (documentSnapshot.data()?.location) {
+          setLocation(documentSnapshot.data()?.location);
+        }
+        if (documentSnapshot.data()?.showHomeAddress) {
+          setShowHomeAdress(documentSnapshot.data()?.showHomeAddress);
+        }
+        if (documentSnapshot.data()?.homeAddress) {
+          setTextHomeAdress(documentSnapshot.data()?.homeAddress);
+        }
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
@@ -336,7 +370,7 @@ const ProfileEditing: FC = (): ReactElement => {
 
   useEffect(() => {
     fetchUserInfo();
-    console.log('fetchUserInfo');
+    // console.log('fetchUserInfo');
   }, [setShowGender, setActiveGenderItem]);
 
   const fetchImages = async (user: any) => {
@@ -345,6 +379,9 @@ const ProfileEditing: FC = (): ReactElement => {
     const mainImgId = images.findIndex(({id}) => id === 0);
     const secondImgId = images.findIndex(({id}) => id === 1);
     const thirdImgId = images.findIndex(({id}) => id === 2);
+    const fourthImId = images.findIndex(({id}) => id === 3);
+    const fifthImId = images.findIndex(({id}) => id === 4);
+    const sixthImId = images.findIndex(({id}) => id === 5);
 
     await uploadImage(images[mainImgId].image, user.uid).then(async image => {
       allImagesUrl.push({id: images[mainImgId].id, image});
@@ -355,7 +392,19 @@ const ProfileEditing: FC = (): ReactElement => {
     await uploadImage(images[thirdImgId].image, user.uid).then(async image => {
       allImagesUrl.push({id: images[thirdImgId].id, image});
     });
+    await uploadImage(images[fourthImId].image, user.uid).then(async image => {
+      allImagesUrl.push({id: images[fourthImId].id, image});
+    });
+    await uploadImage(images[fifthImId].image, user.uid).then(async image => {
+      allImagesUrl.push({id: images[fifthImId].id, image});
+    });
+    await uploadImage(images[sixthImId].image, user.uid).then(async image => {
+      allImagesUrl.push({id: images[sixthImId].id, image});
+    });    
     await updatePhotosImage(user.uid, allImagesUrl);
+
+    // console.log('allImagesUrl', allImagesUrl);
+    
   };
 
   const saveUserInfo = async () => {
@@ -376,9 +425,9 @@ const ProfileEditing: FC = (): ReactElement => {
           .update({
             interests: reqInterests,
             bio: bio,
-            work: activeWorkItem,
+            work: {title: textNameWork, description: textDescription},
             showWork,
-            date: bithdate,
+            date: `${day}.${month}.${year}`,
             showGender,
             showAge,
             alcohol: activeAlcoholItem,
@@ -387,6 +436,10 @@ const ProfileEditing: FC = (): ReactElement => {
             showSmoke,
             height,
             showHeight,
+            location,
+            showLocation,
+            homeAddress: textHomeAdress,
+            showHomeAddress: showHomeAdress
           })
           .then(async () => {
             await fetchImages(user);
@@ -399,6 +452,9 @@ const ProfileEditing: FC = (): ReactElement => {
       setLoadingSave(false);
     }
   };
+
+  // console.log('activeWorkItem', activeWorkItem);
+  
 
   return (
     <>
@@ -413,17 +469,22 @@ const ProfileEditing: FC = (): ReactElement => {
             <MyInterests listOfInterests={listOfInterests} setListOfInterests={setListOfInterests} loading={interestsLoading} />
             <MyBio bio={bio} setBio={setBio} />
             <MyBasics
-              activeWorkItem={activeWorkItem}
+              // activeWorkItem={activeWorkItem}
+              work={textNameWork}
               activeAlcoholItem={activeAlcoholItem}
               activeSmokeItem={activeSmokeItem}
               height={height}
               date={bithdate}
+              location={location}
+              homeAddress={textHomeAdress}
               setIsVisibleSmokeModal={setIsVisibleSmokeModal}
               setIsVisibleGenderModal={setIsVisibleGenderModal}
               setIsVisibleHeightModal={setIsVisibleHeightModal}
               setIsVisibleWorkModal={setIsVisibleWorkModal}
               setIsVisibleAlcoholModal={setIsVisibleAlcoholModal}
               setIsVisibleBirthdayModal={setIsVisibleBirthdayModal}
+              setIsVisibleLocationModal={setIsVisibleLocationModal}
+              setIsVisibleHomeAddressModal={setIsVisibleHomeAddressModal}
             />
             <LanguagesKnow />
             <Button title="Save" buttonStyle={{marginTop: 34}} onPress={saveUserInfo} loading={loadingSave} />
@@ -431,6 +492,7 @@ const ProfileEditing: FC = (): ReactElement => {
         </View>
       </SafeAreaView>
       <ModalSmoke
+        saveUserInfo={saveUserInfo}
         showSmoke={showSmoke}
         setShowSmoke={setShowSmoke}
         activeSmokeItem={activeSmokeItem}
@@ -449,6 +511,7 @@ const ProfileEditing: FC = (): ReactElement => {
         onClose={() => setIsVisibleGenderModal(false)}
       />
       <ModalHeight
+        saveUserInfo={saveUserInfo}
         showHeight={showHeight}
         setShowHeight={setShowHeight}
         heightsList={heightsList}
@@ -460,13 +523,16 @@ const ProfileEditing: FC = (): ReactElement => {
       <ModalWork
         showWork={showWork}
         setShowWork={setShowWork}
-        activeWorkItem={activeWorkItem}
-        setActiveWorkItem={setActiveWorkItem}
-        listOfWorks={listOfWorks}
+        textNameWork={textNameWork}
+        textDescription={textDescription}
+        setTextNameWork={setTextNameWork}
+        setTextDescription={setTextDescription}
         isVisible={isVisibleWorkModal}
         onClose={() => setIsVisibleWorkModal(false)}
+        saveUserInfo={saveUserInfo}
       />
       <ModalAlcohol
+        saveUserInfo={saveUserInfo}
         showAlcohol={showAlcohol}
         setShowAlcohol={setShowAlcohol}
         activeAlcoholItem={activeAlcoholItem}
@@ -486,6 +552,25 @@ const ProfileEditing: FC = (): ReactElement => {
         showAge={showAge}
         isVisible={isVisibleBirthdayModal}
         onClose={() => setIsVisibleBirthdayModal(false)}
+        saveUserInfo={saveUserInfo}
+      />
+      <ModalLocation
+        saveUserInfo={saveUserInfo}
+        location={location}
+        setLocation={setLocation}
+        setShowLocation={setShowLocation}
+        showLocation={showLocation}
+        isVisible={isVisibleLocationModal}
+        onClose={() => setIsVisibleLocationModal(false)}
+      />
+      <ModalHomeAdress
+        saveUserInfo={saveUserInfo}
+        textHomeAdress={textHomeAdress}
+        setTextHomeAdress={setTextHomeAdress}
+        setShowHomeAdress={setShowHomeAdress}
+        showHomeAdress={showHomeAdress}
+        isVisible={isVisibleHomeAddressModal}
+        onClose={() => setIsVisibleHomeAddressModal(false)}
       />
     </>
   );

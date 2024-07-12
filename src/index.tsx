@@ -50,8 +50,10 @@ const Main = () => {
   };
 
   useEffect(() => {
-    SplashScreen.hide();
-  }, []);
+    if (!initializing) {
+      SplashScreen.hide();
+    }
+  }, [initializing]);
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);

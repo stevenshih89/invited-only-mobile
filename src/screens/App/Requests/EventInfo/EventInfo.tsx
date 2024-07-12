@@ -28,9 +28,9 @@ const EventInfo = ({navigation, route}: any) => {
   const [loading, setLoading] = useState(true);
 
   const {list, isAcceptedInvitation} = route?.params;
-  const {photos, placeName, meetingSpot, description, hour, date, address, userPhotos, female, femaleFriend, male, maleFriend, name, uid} = list;
+  const {photos, placeName, meetingSpot, description, hour, date, address, userPhotos, female, femaleFriend, male, uid} = list;
 
-  console.log('list event info active', list);
+  console.warn('list event info active', list);
   const iconsArrayMale = Array.from({length: male}, (_, index) => index);
   const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
   const currUserPhotos = userPhotos?.map((photo: any) => photo?.image);
