@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, Alert} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import TrashCanIcon from 'assets/images/icons/trash.svg';
 import useStyles from 'screens/App/IO/screens/EventCreating/styles.ts';
-import { grayScale700, lightGray2Color, whiteColor } from 'constants/colors.ts';
+import { blackColor, grayScale700, lightGray2Color, whiteColor } from 'constants/colors.ts';
 import InvitedOnly from 'screens/App/IO/screens/EventCreating/components/InvitedOnly/InvitedOnly.tsx';
 import EventDetails from 'screens/App/IO/screens/EventCreating/components/EventDetails/EventDetails.tsx';
 import {useFocusEffect, useRoute} from '@react-navigation/native';
@@ -259,7 +259,7 @@ const EventCreating: FC = () => {
                 </View>
                 <View style={{ alignItems: 'center' }}>
                   <View style={{ height: 32, width: 32, backgroundColor: currentCreateStep === 2 || currentCreateStep > 2? whiteColor : lightGray2Color, borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
-                  {currentCreateStep === 2 || currentCreateStep < 2? <Text style={{ fontSize: 16, fontFamily: Satoshi500, textAlign: 'center' }}>2</Text>:
+                  {currentCreateStep === 2 || currentCreateStep < 2? <Text style={{color: currentCreateStep === 2? blackColor: whiteColor, fontSize: 16, fontFamily: Satoshi500, textAlign: 'center' }}>2</Text>:
                     <Check />
                     }
                   </View>
@@ -267,7 +267,7 @@ const EventCreating: FC = () => {
                 </View>
                 <View style={{ alignItems: 'center' }}>
                   <View style={{ height: 32, width: 32, backgroundColor: currentCreateStep === 3? whiteColor : lightGray2Color, borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ fontSize: 16, fontFamily: Satoshi500, textAlign: 'center' }}>3</Text>
+                    <Text style={{color: currentCreateStep === 3? blackColor: whiteColor, fontSize: 16, fontFamily: Satoshi500, textAlign: 'center' }}>3</Text>
                   </View>
                   <Text style={{ color: currentCreateStep === 3? whiteColor: grayScale700, fontFamily: Satoshi500, fontSize: 12, marginTop: 8}}>Prewiev</Text>
                 </View>
@@ -338,7 +338,7 @@ const EventCreating: FC = () => {
         )}
         {tabState === 'eventPreview' && (
           <EventPreview 
-            photos={[mainImage]} 
+            photos={photos} 
             date={''} 
             girls={''} 
             placeName={''}  

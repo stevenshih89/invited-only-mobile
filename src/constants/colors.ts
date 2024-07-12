@@ -5,6 +5,7 @@ const black2Color: string = 'rgba(17, 17, 17, 1)';
 const darkRedColor: string = '#891936';
 const darkRed2Color: string = '#9B314C';
 const lightRedColor: string = '#FA0232';
+// const errorColor: string = '#FA0232';
 const lightGreenColor: string = '#2EB263';
 const lightRed1Color: string = '#FF4E40';
 const errorColor = 'rgba(238, 78, 78, 1)';
