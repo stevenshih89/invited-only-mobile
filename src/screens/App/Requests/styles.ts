@@ -1,4 +1,4 @@
-import {darkRedColor, lightGray6Color, transparent60Color, whiteColor} from 'constants/colors';
+import {black1Color, blackColor, darkRedColor, lightGray6Color, whiteColor} from 'constants/colors';
 import {screenHeight} from 'constants/common';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {StyleSheet} from 'react-native';
@@ -8,7 +8,7 @@ const useStyles = () =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: lightGray6Color,
+      backgroundColor: blackColor,
     },
     itemContainer: {
       height: 218,
@@ -23,6 +23,7 @@ const useStyles = () =>
     imageBackground: {
       borderRadius: 12,
       flex: 1,
+      width: '100%',
       height: '100%',
       overflow: 'hidden',
     },
@@ -59,15 +60,15 @@ const useStyles = () =>
       flex: 1,
     },
     linearGradient: {
-      height: 100,
+      height: 200,
       padding: 7,
     },
     buttonContainer: {
       borderRadius: 10,
       paddingHorizontal: 10,
       paddingVertical: 4,
-      marginTop: 'auto',
-      backgroundColor: transparent60Color,
+
+      // backgroundColor: transparent60Color,
     },
     nameContainer: {
       flexDirection: 'row',

@@ -80,7 +80,13 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
             </View>
             {!!invitedGuests.length && (
               <View
-                style={{borderBottomWidth: 1, borderStyle: 'solid', borderBottomColor: transparentWhite16Color, paddingBottom: 16, marginTop: 14}}>
+                style={{
+                  borderBottomWidth: 1,
+                  borderStyle: 'solid',
+                  borderBottomColor: transparentWhite16Color,
+                  paddingBottom: 16,
+                  marginTop: 14,
+                }}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16}}>
                   <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Invited</Text>
                   <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
@@ -102,7 +108,8 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                           <PendingClockIcon width={20} height={20} />
                         </ImageBackground>
 
-                        <Text style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
+                        <Text
+                          style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
                           {item?.name}
                         </Text>
                         <FlashIcon width={13} height={13} />
@@ -121,7 +128,13 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
             )}
             {!!acceptedGuests.length && (
               <View
-                style={{borderBottomWidth: 1, borderStyle: 'solid', borderBottomColor: transparentWhite16Color, paddingBottom: 16, marginTop: 14}}>
+                style={{
+                  borderBottomWidth: 1,
+                  borderStyle: 'solid',
+                  borderBottomColor: transparentWhite16Color,
+                  paddingBottom: 16,
+                  marginTop: 14,
+                }}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16}}>
                   <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Accepted</Text>
                   <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
@@ -142,7 +155,8 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                           resizeMode="cover">
                           <TickCircleIcon width={20} height={20} />
                         </ImageBackground>
-                        <Text style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
+                        <Text
+                          style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
                           {item?.name}
                         </Text>
                         <FlashIcon width={13} height={13} />
@@ -161,7 +175,13 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
             )}
             {!!rejectedGuests.length && (
               <View
-                style={{borderBottomWidth: 1, borderStyle: 'solid', borderBottomColor: transparentWhite16Color, paddingBottom: 16, marginTop: 14}}>
+                style={{
+                  borderBottomWidth: 1,
+                  borderStyle: 'solid',
+                  borderBottomColor: transparentWhite16Color,
+                  paddingBottom: 16,
+                  marginTop: 14,
+                }}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16}}>
                   <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Not accepted</Text>
                   <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
@@ -182,7 +202,8 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                           resizeMode="cover">
                           <InfoCircleGray width={20} height={20} />
                         </ImageBackground>
-                        <Text style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
+                        <Text
+                          style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
                           {item?.name}
                         </Text>
                         <FlashIcon width={13} height={13} />
@@ -202,7 +223,9 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
             <Button
               title="Edit"
               buttonStyle={{marginVertical: 34}}
-              onPress={() => navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})}
+              onPress={() =>
+                navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})
+              }
             />
             <View style={{borderTopColor: transparentWhite16Color, borderStyle: 'solid', borderTopWidth: 1, paddingTop: 34}}>
               <View>
@@ -228,7 +251,9 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                 <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{name}</Text>
               </View>
               <View style={{flex: 1, marginBottom: 20}}>
-                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812), marginBottom: 6}}>Event description</Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812), marginBottom: 6}}>
+                  Event description
+                </Text>
                 <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{description}</Text>
               </View>
               <View>
@@ -283,7 +308,12 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
         modalReport={modalReport}
         setModalReport={setModalReport}
       />
-      <ModalCancelEvent id={list?.id} image={photos[0]?.image} isVisible={isVisibleCancelModal} onClose={() => setIsVisibleCancelModal(false)} />
+      <ModalCancelEvent
+        id={list?.id}
+        image={photos[0]?.image}
+        isVisible={isVisibleCancelModal}
+        onClose={() => setIsVisibleCancelModal(false)}
+      />
     </>
   );
 };

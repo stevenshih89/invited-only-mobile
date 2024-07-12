@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 //import components
 import useStyles from 'components/TouchingSlider/styles.ts';
-import {blackColor, gray1Color, transparentGray60Color, whiteColor} from 'constants/colors.ts';
+import {blackColor, gray1Color, transparentGray60Color, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
@@ -54,7 +54,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   photos,
   handleOpenSuperInvite,
   onInvite,
-  handleOpenMatch,
   isShowCardButtons = true,
   isShowWantsJoin = false,
   isShowInvitesTooltip = true,
@@ -105,7 +104,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       duration: 600,
       easing: Easing.inOut(Easing.ease),
     });
-    setFlipped(!flipped);
+    setFlipped(prev => !prev);
     handleOpenSuperInvite && handleOpenSuperInvite();
   };
 
@@ -171,7 +170,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       )}
       {isShowEventPreview ? (
         <View style={styles.eventPreviewWr}>
-          <EventPreview placeName={placeName} date={date} girls={girls} photos={eventPhotos} />
+          <EventPreview placeName={placeName} date={date} girls={girls} photos={eventPhotos} flipCoin={flipCoin} />
         </View>
       ) : (
         <LinearGradient
@@ -203,7 +202,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   <TouchableOpacity style={styles.buttonFlash} onPress={onInvite}>
                     <View
                       style={{
-                        backgroundColor: transparentGray60Color,
+                        backgroundColor: transparentWhite56Color,
                         width: '100%',
                         height: '100%',
                         borderRadius: 50,
@@ -214,7 +213,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     />
                     <View
                       style={{
-                        backgroundColor: transparentGray60Color,
+                        backgroundColor: transparentWhite56Color,
                         width: '100%',
                         height: '100%',
                         borderRadius: 50,
@@ -239,7 +238,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   <TouchableWithoutFeedback style={[styles.buttonFlash, {marginTop: screenHeight / 70}]} onPress={flipCoin}>
                     <View
                       style={{
-                        backgroundColor: transparentGray60Color,
+                        backgroundColor: transparentWhite56Color,
                         width: '100%',
                         height: '100%',
                         borderRadius: 50,
@@ -250,7 +249,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     />
                     <View
                       style={{
-                        backgroundColor: transparentGray60Color,
+                        backgroundColor: transparentWhite56Color,
                         width: '100%',
                         height: '100%',
                         borderRadius: 50,

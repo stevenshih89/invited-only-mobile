@@ -29,7 +29,7 @@ const Requests: FC = (): ReactElement => {
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
   const [userInfo, setUserInfo] = useState<any>({});
-  const [dataForGuest, setDataForGuest] = useState([]);  
+  const [dataForGuest, setDataForGuest] = useState([]);
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -38,6 +38,8 @@ const Requests: FC = (): ReactElement => {
     if (user && activeEvent !== 'host') {
       try {
         const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
+        console.warn('querySnapshot', querySnapshot.data());
+
         if (querySnapshot.exists) {
           setRequestsForHost(querySnapshot.data());
         } else {
@@ -113,11 +115,10 @@ const Requests: FC = (): ReactElement => {
   useFocusEffect(
     useCallback(() => {
       isHost ? fetchHostRequests() : fetchGuestRequests();
-    }, [activeEvent, requestFilter]),
+    }, [activeEvent, requestFilter, isHost]),
   );
 
   const list = isHost ? requestsForHost : dataForGuest;
-
 
   if (loading && !list) {
     return <ActivityIndicator style={styles.container} />;
@@ -125,7 +126,7 @@ const Requests: FC = (): ReactElement => {
 
   return (
     <View style={styles.container}>
-      {list.lenght ? (
+      {!!list.length || !!list?.requestsList?.length ? (
         <FlatList
           // @ts-ignore
           data={isHost ? list?.requestsList : list}
@@ -160,4 +161,3 @@ const Requests: FC = (): ReactElement => {
 };
 
 export default Requests;
-
