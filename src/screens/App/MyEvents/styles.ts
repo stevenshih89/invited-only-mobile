@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {blackColor, lightGray2Color, lightGray5Color, lightGray6Color, lightRedColor, whiteColor} from 'constants/colors.ts';
+import {blackColor, lightGray2Color, lightGray5Color, lightRedColor, whiteColor} from 'constants/colors.ts';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -7,14 +7,13 @@ import {RFValue} from 'react-native-responsive-fontsize';
 const useStyles = () =>
   StyleSheet.create({
     container: {
-      backgroundColor: lightGray6Color,
+      backgroundColor: blackColor,
       flex: 1,
       paddingHorizontal: screenWidth / 19,
     },
     wrapperHeaderButtonMyEvents: {
       marginTop: screenHeight / 43,
       marginBottom: screenHeight / 30,
-      justifyContent: 'flex-start',
       alignItems: 'center',
       flexDirection: 'row',
     },

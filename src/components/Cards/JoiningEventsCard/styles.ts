@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
-import {lightGray2Color, whiteColor} from 'constants/colors.ts';
-import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
+import {lightGray2Color, transparent60Color, whiteColor} from 'constants/colors.ts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 
@@ -19,25 +19,23 @@ const useStyles = () =>
     linearGradientCard: {
       height: '100%',
       justifyContent: 'space-between',
-      paddingVertical: screenHeight / 70,
-      paddingHorizontal: screenWidth / 35,
+      paddingTop: screenHeight / 70,
     },
     wrapperEventInReviewView: {
       width: '100%',
       alignItems: 'center',
     },
     eventInReviewView: {
-      backgroundColor: lightGray2Color,
-      width: 185,
-      height: 108,
-      borderRadius: 30,
-      opacity: 0.8,
+      backgroundColor: transparent60Color,
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
       alignItems: 'center',
       justifyContent: 'center',
     },
     textEventInReview: {
       color: whiteColor,
-      fontFamily: Satoshi400,
+      fontFamily: Satoshi700,
       fontSize: RFValue(22, 812),
     },
     textEstimeTime: {
@@ -85,7 +83,6 @@ const useStyles = () =>
       fontFamily: Satoshi500,
       fontSize: RFValue(16, 812),
       paddingRight: screenWidth / 55,
-      marginLeft: 10,
     },
     arrowRightIcon: {
       marginTop: 5,
@@ -146,7 +143,7 @@ const useStyles = () =>
     textUnderFooter: {
       color: whiteColor,
       fontFamily: Satoshi400,
-      fontSize: RFValue(13, 812),
+      fontSize: RFValue(10, 812),
       marginLeft: 6,
     },
     rowTextUnderFooter: {

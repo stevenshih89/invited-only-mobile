@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
-import {lightGray2Color, whiteColor} from 'constants/colors.ts';
-import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
+import {lightGray2Color, transparent60Color, whiteColor, backgroundColor} from 'constants/colors.ts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 
@@ -23,20 +23,18 @@ const useStyles = () =>
     },
     wrapperEventInReviewView: {
       width: '100%',
-      alignItems: 'center',
     },
     eventInReviewView: {
-      backgroundColor: lightGray2Color,
-      width: 185,
-      height: 108,
-      borderRadius: 30,
-      opacity: 0.8,
+      backgroundColor: transparent60Color,
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
       alignItems: 'center',
       justifyContent: 'center',
     },
     textEventInReview: {
       color: whiteColor,
-      fontFamily: Satoshi400,
+      fontFamily: Satoshi700,
       fontSize: RFValue(22, 812),
     },
     textEstimeTime: {
@@ -62,11 +60,12 @@ const useStyles = () =>
     },
     userWrapper: {
       flexDirection: 'row',
+      alignItems: 'center',
       marginLeft: 12,
     },
     imageFakeGirl: {
-      width: 40,
-      height: 40,
+      width: 30,
+      height: 30,
       borderRadius: 50,
     },
     wrapperTextStartInviting: {
