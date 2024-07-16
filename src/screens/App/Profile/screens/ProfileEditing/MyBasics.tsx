@@ -1,11 +1,13 @@
 import {lightGray5Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
-import Book from 'assets/images/icons/book.svg';
+import Job from 'assets/images/icons/job.svg';
 import BiGender from 'assets/images/icons/tabler_gender-bigender.svg';
 import Cake from 'assets/images/icons/cake.svg';
 import Arrows from 'assets/images/icons/arrow-3.svg';
 import Wine from 'assets/images/icons/milk.svg';
 import Smoke from 'assets/images/icons/smoke.svg';
+import Location from 'assets/images/icons/location.svg';
+import Home from 'assets/images/icons/home.svg';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -19,36 +21,45 @@ const MyBasics: FC<{
   setIsVisibleWorkModal: (val: boolean) => void;
   setIsVisibleAlcoholModal: (val: boolean) => void;
   setIsVisibleBirthdayModal: (val: boolean) => void;
-  activeWorkItem: {id: number; title: string} | null;
+  setIsVisibleLocationModal: (val: boolean) => void;
+  setIsVisibleHomeAddressModal: (val: boolean) => void;
+  work: string;
   activeAlcoholItem: {id: number; title: string} | null;
   activeSmokeItem: {id: number; title: string} | null;
   height: string | null;
   date: string;
+  location: string;
+  homeAddress: string;
 }> = ({
   setIsVisibleSmokeModal,
   setIsVisibleGenderModal,
   setIsVisibleHeightModal,
+  setIsVisibleLocationModal,
   setIsVisibleWorkModal,
   setIsVisibleAlcoholModal,
   setIsVisibleBirthdayModal,
-  activeWorkItem,
+  setIsVisibleHomeAddressModal,
+  work,
   activeAlcoholItem,
   activeSmokeItem,
   height,
   date,
-}): ReactElement => {
+  location,
+  homeAddress
+}): ReactElement => {  
   const userHost = useUser((i: any) => i?.user);
+
   const gender = userHost?.gender?.charAt(0).toUpperCase() + userHost?.gender.slice(1);
   return (
     <View style={styles.container}>
       <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>My basics</Text>
       <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleWorkModal(true)}>
         <View style={styles.iconContainer}>
-          <Book />
+          <Job/>
           <Text style={styles.text}>Work</Text>
         </View>
         <View style={styles.iconContainer}>
-          <Text style={styles.subText}>{activeWorkItem?.title || 'Add'}</Text>
+          <Text style={styles.subText}>{work || 'Add'}</Text>
           <ArrowRight />
         </View>
       </TouchableOpacity>
@@ -62,26 +73,26 @@ const MyBasics: FC<{
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      {/* <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleLocationModal(true)}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleLocationModal(true)}>
         <View style={styles.iconContainer}>
           <Location />
           <Text style={styles.text}>Location</Text>
         </View>
         <View style={styles.iconContainer}>
-          <Text style={styles.subText}>Dubai</Text>
+          <Text style={styles.subText}>{location || 'Add'}</Text>
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleHomeAddressModal(true)}>
         <View style={styles.iconContainer}>
           <Home />
           <Text style={styles.text}>Hometown</Text>
         </View>
         <View style={styles.iconContainer}>
-          <Text style={styles.subText}>Odessa</Text>
+          <Text style={styles.subText}>{homeAddress || 'Add'}</Text>
           <ArrowRight />
         </View>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
       <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleBirthdayModal(true)}>
         <View style={styles.iconContainer}>
           <Cake />

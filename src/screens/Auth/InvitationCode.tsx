@@ -16,9 +16,11 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
+import Toast from 'react-native-toast-message';
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
+
   const navigation = useAppNavigation();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -67,14 +69,20 @@ const InvitationCode: FC = (): JSX.Element => {
   const generateInviteCode = () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const length = 12;
-    let inviteCode = '';
+    const countCodes = 5
+    const inviteCodes = []
 
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      inviteCode += characters.charAt(randomIndex);
+    for (let i = 0; i < countCodes; i++) {
+      let inviteCode = '';
+
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        inviteCode += characters.charAt(randomIndex);
+      }
+      inviteCodes.push({isActive: true, inviteCode: inviteCode})
     }
 
-    return inviteCode;
+    return inviteCodes;
   };
 
   const formatDate = (date: any) => {
@@ -144,17 +152,39 @@ const InvitationCode: FC = (): JSX.Element => {
   };
 
   const handleNext = async () => {
-    const findInvitationCodes = await firestore()
-      .collection('userInfo')
-      .where('codeForInvitingOtherUsers', '==', userHost.codeForInvitingOtherUsers)
-      .get();
-    const data = findInvitationCodes?.docs?.map(i => i?.data());
-    const culculate = data?.length - 5;
 
-    if (culculate >= 5) {
-      return showToast('cancel', '', 'The maximum amount has been used');
+    const usersRef = firestore().collection('userInfo');
+    const snapshot = await usersRef.get();
+    let userUid = null
+
+  for (const doc of snapshot.docs) {
+    const userData = doc.data();      
+    const inviteCodes = userData.codeForInvitingOtherUsers;
+
+    if (Array.isArray(inviteCodes)) {
+      const res = inviteCodes.find(item => item.inviteCode === code && item.isActive);
+      if (res) {
+        userUid = userData.uid
+        break; 
+      }
     }
+  }
 
+  if(userUid) {
+    const userInfo = await usersRef.doc(userUid).get()
+    const codeForInvitingOtherUsers = userInfo?.data()?.codeForInvitingOtherUsers
+    const updateCodeInvitions = codeForInvitingOtherUsers.map(item => {
+      if(item.inviteCode === code) {
+        return {
+          ...item,
+          isActive: false
+        };
+      }
+      return item;
+    })
+    
+    await usersRef.doc(userUid).update({codeForInvitingOtherUsers: updateCodeInvitions});
+    
     const onboardingData = [
       ...onBoarding,
       {
@@ -174,6 +204,9 @@ const InvitationCode: FC = (): JSX.Element => {
     setOnBoarding(onboardingData);
     await handleRegisterUser(onboardingData);
     navigation.navigate(codeVerifiedPath as never);
+  } else {
+    showToast('warning', 'Сode used or not found');
+  }   
   };
 
   return (

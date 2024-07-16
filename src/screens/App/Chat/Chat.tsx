@@ -19,6 +19,7 @@ import Button from 'components/Button/Button.tsx';
 import {useChat} from '../../../store/chatStore';
 import {EventContext} from 'contexts/EventContext.tsx';
 import moment from 'moment/moment';
+import { blackColor, whiteColor } from 'constants/colors';
 type ItemProps = {
   title: string;
   id: string | number;
@@ -30,6 +31,7 @@ type ItemProps = {
   inviteStatus: string;
   superInvite: boolean;
   invitedStatus: string;
+  uid: string;
 };
 
 type ItemEventsJoiningProps = {
@@ -55,7 +57,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
   const {myEvents} = useContext(EventContext);
-
+  
   const activeEvent = useChat((i: any) => i?.activeEvent);
 
   const handleBuildEventsData = () => {
@@ -64,8 +66,9 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       .get()
       .then(i => {
         const chats = i?.docs?.map(j => j?.data());
+        
 
-        myEvents?.map((events: any): void => {
+        myEvents?.map((events: any): void => {          
           chats?.map((chat: FirebaseFirestoreTypes.DocumentData, index: number): void => {
             if (chat?.activeEvent === events?.id) {
               // @ts-ignore
@@ -87,8 +90,9 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       });
   };
 
-  const Item = ({title, message, image, online, story, inviteStatus, messages, id, superInvite, invitedStatus}: ItemProps) => (
+  const Item = ({title, message, image, online, story, inviteStatus, messages, id, superInvite, invitedStatus, uid}: ItemProps) => (
     <View style={styles.item}>
+      <View style={{flexDirection: 'row', height: 75, width: '100%', justifyContent: 'space-between'}}>
       <TouchableOpacity
         onPress={() => {
           // @ts-ignore
@@ -97,12 +101,13 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             params: {
               image: image,
               title: title,
-              online: online,
+              online: false,
               messages: messages,
               activeEvent: activeEvent,
               id: id,
               superInvite: superInvite,
               invitedStatus: invitedStatus,
+              uid: uid
             },
           });
         }}
@@ -116,18 +121,28 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             <Text style={styles.textName}>
               {title} {superInvite && <FlashField width={13} height={13} />}
             </Text>
-            <View style={[handleCheckTypeInvitedStyles(inviteStatus)]}>
-              <Text style={styles.textStatusInvite}>{handleCheckTypeInvitedText(inviteStatus)}</Text>
-            </View>
           </View>
           <Text style={styles.textMessage}>{message}</Text>
         </View>
       </TouchableOpacity>
       <View style={styles.wrapperThreeDotsAndBadge}>
-        <TouchableOpacity>
+        <View>
+          <View style={[handleCheckTypeInvitedStyles(inviteStatus)]}>
+            <Text style={[styles.textStatusInvite, {color: inviteStatus === 'accepted'? blackColor: whiteColor}]}>{handleCheckTypeInvitedText(inviteStatus)}</Text>
+          </View>
+        </View>
+        <View style={styles.wrapperTextMessage}>
+          <View style={styles.newMessage}>
+            <Text style={styles.textCountNewMessages}>
+              1
+            </Text>
+          </View>
+        </View>
+        {/* <TouchableOpacity>
           <ThreeDoths />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/*<Badge value={22} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />*/}
+      </View>
       </View>
     </View>
   );
@@ -183,7 +198,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                 params: {
                   image: i?.avatar,
                   title: i?.name,
-                  online: false,
+                  online: true,
                   messages: i?.messages,
                   activeEvent: activeEvent,
                   id: i?.id,
@@ -197,7 +212,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             <View style={{flexDirection: 'row'}}>
               <View>
                 <Image source={{uri: i?.avatar}} style={{width: 50, height: 50, borderRadius: 50}} />
-                {/*<View style={styles.greenCircleChat} />*/}
+                {/* <View style={styles.greenCircleChat} /> */}
               </View>
               <View style={{marginLeft: 15}}>
                 <Text style={styles.textNameChat}>{i?.name}</Text>
@@ -214,12 +229,13 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const handleCheckTypeInvitedText = (type: string) => {
     switch (type) {
       case 'pending':
-        return 'Pending';
+        return 'Pending'.toUpperCase();
       case 'newInvited':
-        return 'New Invite Match';
+        return 'Invite Match'.toUpperCase();
       case 'accepted':
-        return 'Invitation Accepted';
-
+        return 'Accepted'.toUpperCase();
+      case 'admin':
+        return 'Admin'.toUpperCase();
       default:
         return null;
     }
@@ -233,7 +249,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
         return styles.textStatusInviteMatch;
       case 'accepted':
         return styles.textStatusInvitationAccepted;
-
+      case 'admin':
+        return styles.textStatusInviteMatch;
       default:
         return null;
     }
@@ -255,7 +272,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     }
   };
 
-  useEffect(() => {
+  useEffect(() => {   
     if (!activeEvent) {
       return;
     }
@@ -281,6 +298,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             showsVerticalScrollIndicator={false}
             data={messages?.chats}
             renderItem={({item}) => {
+            console.log('item', item);
+                          
               return (
                 <Item
                   inviteStatus={item?.invitedStatus}
@@ -293,6 +312,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   superInvite={item?.superInvite}
                   invitedStatus={item?.invitedStatus}
                   id={item?.id}
+                  uid={item?.uid}
                 />
               );
             }}

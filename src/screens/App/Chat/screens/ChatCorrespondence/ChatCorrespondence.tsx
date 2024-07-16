@@ -1,28 +1,34 @@
-import React, {FC, useEffect, useState} from 'react';
-import {View, Text, Image, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView} from 'react-native';
-import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
-import {NavigationProp} from '@react-navigation/native';
+import React, { FC, useEffect, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Alert } from 'react-native';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { NavigationProp } from '@react-navigation/native';
 
-//import components
+// Import components
 import useStyles from 'screens/App/Chat/screens/ChatCorrespondence/styles.ts';
-import {blackColor, lightGray6Color} from 'constants/colors.ts';
-import {isIos} from 'constants/common.ts';
+import { blackColor, grayScale700, lightGray15Color, lightGray3Color, lightGray6Color, transparentWhite40Color, whiteColor } from 'constants/colors.ts';
+import { isIos } from 'constants/common.ts';
 import ModalUserMenu from 'components/Modal/ModalUserMenu/ModalUserMenu.tsx';
 import ModalCancelOrConfirmInvitation from 'components/Modal/ModalCancelOrConfirmInvitation/ModalCancelOrConfirmInvitation.tsx';
 import Button from 'components/Button/Button.tsx';
 
-//import icons
+// Import icons
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import ThreeDots from 'assets/images/icons/more-white.svg';
 import FlashField from 'assets/images/icons/flash.svg';
 import SendIcon from 'assets/images/icons/send.svg';
+import CheckStar from 'assets/images/icons/check-star-white.svg'
 
-//import images
-import moment from 'moment';
+// Import images
+import moment, { RFC_2822 } from 'moment';
 import firestore from '@react-native-firebase/firestore';
-import {useUser} from '../../../../../store/userStore';
+import { useUser } from '../../../../../store/userStore';
+import LinearGradient from 'react-native-linear-gradient';
+import { RFValue } from 'react-native-responsive-fontsize';
+import babelConfig from 'functions/babel.config';
+import auth from '@react-native-firebase/auth';
+import { calculateAge } from 'helpers/calculateAge';
 
-interface messageUserProps {
+interface MessageProps {
   message: {
     time: string;
     text: string;
@@ -38,13 +44,45 @@ interface NavigationParams {
   route: any;
 }
 
-const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
+const ChatCorrespondence: FC<NavigationParams> = ({ navigation, route }) => {
   const [messageUser, setMessageUser] = useState<string>('');
   const [messages, setMessages] = useState([]);
   const [allChats, setAllChats] = useState([]);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
   const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
-  let {image, title, online, activeEvent, id, superInvite, invitedStatus} = route?.params;
+  const [name, setName] = useState('');
+  const [age, setAge] = useState()
+  let { image, title, online, activeEvent, id, superInvite, invitedStatus, uid} = route?.params;
+
+  useEffect(() => {
+    if (title) {
+      const name = title?.split(' ');
+      setName(name[0])
+    }
+  }, [title])
+
+  useEffect(() => {
+    if(uid) {
+      const fetchUserInfo = async () => {
+        const user = auth().currentUser;
+        if (user) {
+          try {
+            const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+
+            if (userInfoDoc.exists) {
+              const age = calculateAge(userInfoDoc.data().date)
+              setAge(age)
+            } else {
+              Alert.alert('Error', 'No user data found in Firestore');
+            }
+          } catch (error: any) {
+            Alert.alert('Error', error.message || 'Something went wrong');
+          }
+        }
+      };
+      fetchUserInfo()
+    }
+  },[uid])
 
   const userData = useUser((i: any) => i?.user);
 
@@ -57,7 +95,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       <Button
         onPress={() => setCancelInvitation(true)}
         buttonTitleStyle={styles.buttonTitleStyle}
-        buttonStyle={{height: 36, borderRadius: 10, marginLeft: 34}}
+        buttonStyle={{ height: 36, borderRadius: 10, marginLeft: 34 }}
         title="Click to confirm >"
       />
     </View>
@@ -99,20 +137,48 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     }
   };
 
-  const ChatMessage = ({messageUser, userAvatar}: messageUserProps) => {
-    const {message, userType, timestamp} = messageUser;
+  const getFormattedTime = (timestamp) => {
+    const messageDate = moment(timestamp);
+    const today = moment().startOf('day');
+    const yesterday = moment().subtract(1, 'days').startOf('day');
+    const dayBeforeYesterday = moment().subtract(2, 'days').startOf('day');
+
+    if (messageDate.isSame(today, 'day')) {
+      return `Today at ${messageDate.format('h:mm')}`;
+    } else if (messageDate.isSame(yesterday, 'day')) {
+      return `Yesterday at ${messageDate.format('h:mm')}`;
+    } else if (messageDate.isSame(dayBeforeYesterday, 'day')) {
+      return `2 days ago at ${messageDate.format('h:mm')}`;
+    } else {
+      return messageDate.format('MMMM D [at] h:mm');
+    }
+  };
+
+  const ChatMessage = ({ messageUser, userAvatar, showDate }: { messageUser: MessageProps, userAvatar: string, showDate: boolean }) => {
+    const { message, userType, timestamp } = messageUser;
+
     const containerStyle = userType !== 'host' ? styles.senderContainer : styles.receiverContainer;
     const textStyle = userType !== 'host' ? styles.senderText : styles.receiverText;
     return (
-      <View style={[styles.messageContainer, containerStyle]}>
-        {userType !== 'host' && <Image source={{uri: userAvatar}} style={styles.avatar} />}
-        <View>
-          {userType !== 'host' && <Text style={styles.textNameUserMessage}>{title}</Text>}
-          <View style={[{flexDirection: 'column'}, userType !== 'host' && {alignItems: 'flex-end'}]}>
-            <View style={[styles.messageContent, userType !== 'host' ? styles.isSenderTrue : styles.isSenderFalse]}>
-              <Text style={textStyle}>{message}</Text>
+      <View style={{ width: '100%' }}>
+        {showDate && (
+          <View style={{ alignItems: 'center', marginVertical: 10}}>
+            <View style={{backgroundColor: lightGray3Color, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 4}}>
+              <Text style={[styles.timeText]}>
+                {getFormattedTime(timestamp)}
+              </Text>
             </View>
-            <Text style={[userType !== 'host' && {marginLeft: 10}, styles.timeText]}>{moment(timestamp).format('h:mm A')}</Text>
+            
+          </View>
+        )}
+        <View style={[styles.messageContainer, containerStyle]}>
+          {userType !== 'host' && <Image source={{ uri: userAvatar }} style={styles.avatar} />}
+          <View>
+            <View style={[{ flexDirection: 'column' }, userType !== 'host' && { alignItems: 'flex-end' }]}>
+              <View style={[styles.messageContent, userType !== 'host' ? styles.isSenderTrue : styles.isSenderFalse]}>
+                <Text style={textStyle}>{message}</Text>
+              </View>
+            </View>
           </View>
         </View>
       </View>
@@ -142,15 +208,23 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <ArrowLeft />
               </TouchableOpacity>
-              <View style={[styles.fdrAlc, {marginLeft: 16}]}>
+              <View style={[styles.fdrAlc, { marginLeft: 16 }]}>
                 <View>
-                  <Image source={{uri: image}} style={styles.userPhoto} />
+                  <Image source={{ uri: image }} style={styles.userPhoto} />
                   {online && <View style={styles.greenCircle} />}
                 </View>
                 <View style={styles.wrapperTitleOnline}>
                   <View style={styles.fdrAlc}>
-                    <Text style={styles.textNameUser}>{title}</Text>
-                    {superInvite && <FlashField width={14} height={14} />}
+                    <Text style={styles.textNameUser}>{name}, {age}</Text>
+                    <CheckStar />
+                    <View style={{ marginLeft: 16, flexDirection: 'row' }}>
+                      <View style={{ backgroundColor: whiteColor, borderRadius: 4 }}>
+                        <Text style={{ paddingHorizontal: 9, paddingVertical: 2, fontWeight: 'bold', fontSize: RFValue(10, 812) }}>Guest</Text>
+                      </View>
+                      <LinearGradient colors={['#977B4A', '#E5D291', '#A28453']} style={{ borderRadius: 4, marginLeft: 4 }} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+                        <Text style={{ paddingHorizontal: 9, paddingVertical: 2, fontWeight: 'bold', fontSize: RFValue(10, 812) }}>Premium</Text>
+                      </LinearGradient>
+                    </View>
                   </View>
                   {online && <Text style={styles.textOnline}>Online</Text>}
                 </View>
@@ -161,10 +235,13 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             </TouchableOpacity>
           </View>
           <FlatList
-            contentContainerStyle={{paddingBottom: 20}}
+            contentContainerStyle={{ paddingBottom: 20 }}
             data={messages}
             showsVerticalScrollIndicator={false}
-            renderItem={({item}) => <ChatMessage userAvatar={image} messageUser={item} />}
+            renderItem={({ item, index }) => {
+              const showDate = index === 0 || !moment(item.timestamp).isSame(moment(messages[index - 1].timestamp), 'day');
+              return <ChatMessage userAvatar={image} messageUser={item} showDate={showDate} />
+            }}
             keyExtractor={(item, index) => index.toString()}
           />
         </View>
@@ -172,16 +249,16 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         <View style={styles.footer}>
           <View style={styles.inputContainer}>
             <TextInput
-              placeholderTextColor={blackColor}
+              placeholderTextColor={transparentWhite40Color}
               value={messageUser}
               onChangeText={setMessageUser}
               style={styles.textInput}
               placeholder="Write your message"
             />
+            <TouchableOpacity style={styles.buttonSend} onPress={() => handleSendMessage()}>
+              <SendIcon />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.buttonSend} onPress={() => handleSendMessage()}>
-            <SendIcon />
-          </TouchableOpacity>
         </View>
         <ModalCancelOrConfirmInvitation
           cancelInvitation={cancelInvitation}

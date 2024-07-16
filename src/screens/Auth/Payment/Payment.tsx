@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
+import {View, Text, SafeAreaView, ScrollView, TouchableOpacity, FlatList} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Tooltip, TooltipProps} from '@rneui/themed';
 
@@ -7,11 +7,12 @@ import {Tooltip, TooltipProps} from '@rneui/themed';
 import useStyles from 'screens/Auth/Payment/styles.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import Button from 'components/Button/Button.tsx';
-import {tutorialFlowPath} from 'constants/pathLocations.ts';
+import {profilePath, tutorialFlowPath} from 'constants/pathLocations.ts';
 import {
   backgroundColor,
   black1Color,
   blackColor,
+  lightGray2Color,
   lightGray5Color,
   transparent60Color,
   transparentWhite56Color,
@@ -28,10 +29,12 @@ import EyeIcon from 'assets/images/icons/eye.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import CloseCircleIcon from 'assets/images/icons/close-circle.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
+import Birthday from 'assets/images/icons/birthday.svg';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenWidth} from 'constants/common';
 import * as Progress from 'react-native-progress';
+import { SvgProps } from 'react-native-svg';
 
 interface PlanListItem {
   id: number;
@@ -41,6 +44,12 @@ interface PlanListItem {
   description: string;
   pricePerDuration: string;
   fullPrice?: string;
+}
+
+interface WhatGetItem {
+  title: string;
+  description: string;
+  icon: React.FC<SvgProps>
 }
 
 const ControlledTooltip: FC<TooltipProps | any> = props => {
@@ -66,6 +75,39 @@ const Payment: FC = (): JSX.Element => {
   const minProgress = 10;
   const maxProgress = 300;
 
+  const whatGet: WhatGetItem[] = [
+    {
+      title: 'Unlimited Events Creation',
+      description: 'Creating extraordinary events tailored to your vision.',
+      icon: CalendarIcon
+    },
+    {
+      title: 'Unlimited Invitations',
+      description: 'Send Unlimited Invitations and Create Your Guest List',
+      icon: UnlimitedIcon
+    },
+    {
+      title: 'Unlimited Swiped',
+      description: 'Enjoy limitless swipes for endless connections.',
+      icon: IOIcon
+    },
+    {
+      title: '5 Super invites a week',
+      description: 'Send 5 super invites each week.',
+      icon: FlashIcon
+    },
+    {
+      title: 'See who wants to join you',
+      description: 'View interested guests who want to join you in real-time.',
+      icon: EyeIcon
+    },
+    {
+      title: 'Guest Mode (Join events)',
+      description: 'Join events anonymously using Guest Mode.',
+      icon: Birthday
+    },
+  ]
+
   const generateRandomProgress = () => {
     return Math.floor(Math.random() * (maxProgress - minProgress + 1)) + minProgress;
   };
@@ -81,15 +123,6 @@ const Payment: FC = (): JSX.Element => {
       fullPrice: '59$',
     },
     {
-      id: 1,
-      title: 'EARLY ACCESS',
-      duration: 3,
-      durationName: 'months',
-      description: 'Months Access',
-      pricePerDuration: '$29/wk',
-      fullPrice: '357$',
-    },
-    {
       id: 2,
       title: 'SECURE YOUR SPOT',
       duration: 1,
@@ -98,11 +131,20 @@ const Payment: FC = (): JSX.Element => {
       pricePerDuration: '$25/wk',
       fullPrice: '1300$',
     },
+    {
+      id: 1,
+      title: 'EARLY ACCESS',
+      duration: 3,
+      durationName: 'months',
+      description: 'Months Access',
+      pricePerDuration: '$29/wk',
+      fullPrice: '357$',
+    },
   ]);
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
 
   const handleNext = () => {
-    navigation.navigate(tutorialFlowPath as never);
+    navigation.navigate(profilePath as never);
   };
 
   const convertProgress = () => {
@@ -119,16 +161,48 @@ const Payment: FC = (): JSX.Element => {
   const renderItem = ({item}: {item: PlanListItem}) => {
     const isActive = activePayment.id === item.id;
 
-    const colors = isActive ? ['#977B4A', '#E5D291', '#A28453'] : [backgroundColor, backgroundColor, backgroundColor];
+    const colors = isActive ? ['#977B4A', '#E5D291', '#A28453'] : [lightGray2Color, lightGray2Color, lightGray2Color];
 
     return (
       <TouchableOpacity
         key={item.id}
         disabled={isActive}
-        style={{position: 'relative', marginTop: isActive ? 0 : 10}}
+        style={{position: 'relative', marginTop: isActive ? 0 : 0}}
         activeOpacity={0.7}
         onPress={() => setActivePayment(item)}>
-        <View style={{position: 'absolute', top: 0, right: 0, left: 0, zIndex: 10}}>
+        {/* <View style={{position: 'absolute', top: 0, right: 0, left: 0, zIndex: 10}}>
+          <View
+            style={{
+              alignSelf: 'center',
+              borderWidth: 2,
+              borderStyle: 'solid',
+              borderColor: whiteColor,
+              borderRadius: 7,
+              paddingHorizontal: 6,
+              paddingVertical: 4,
+              backgroundColor: blackColor,
+            }}>
+            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(7, 812), color: whiteColor}}>{item.title}</Text>
+          </View>
+        </View> */}
+        <LinearGradient
+          colors={colors}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+          style={{
+            marginTop: 10,
+            borderRadius: 8,
+            borderWidth: 2,
+            borderStyle: 'solid',
+            borderColor: isActive ? whiteColor : 'transparent',
+            width: screenWidth / 3 - 30,
+            height: 180,
+            justifyContent: 'center',
+            paddingTop: isActive ? 26 : 20,
+            paddingBottom: isActive ? 34 : 20,
+            paddingHorizontal: 6,
+          }}>
+            <View style={{position: 'absolute', top: 10, right: 0, left: 0, zIndex: 10}}>
           <View
             style={{
               alignSelf: 'center',
@@ -143,21 +217,6 @@ const Payment: FC = (): JSX.Element => {
             <Text style={{fontFamily: Satoshi700, fontSize: RFValue(7, 812), color: whiteColor}}>{item.title}</Text>
           </View>
         </View>
-        <LinearGradient
-          colors={colors}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
-          style={{
-            marginTop: 10,
-            borderRadius: 8,
-            borderWidth: 2,
-            borderStyle: 'solid',
-            borderColor: isActive ? whiteColor : 'transparent',
-            width: screenWidth / 3 - 30,
-            paddingTop: isActive ? 26 : 20,
-            paddingBottom: isActive ? 34 : 20,
-            paddingHorizontal: 6,
-          }}>
           <Text
             style={{fontFamily: Satoshi700, fontSize: RFValue(22, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
             {item.duration}
@@ -265,7 +324,48 @@ const Payment: FC = (): JSX.Element => {
             <Text style={styles.textWhatYouGet}>What you get:</Text>
             <Text style={styles.textPremium}>Premium</Text>
           </View>
-          <View style={styles.itemInTheList}>
+          <FlatList data={whatGet}
+            renderItem={({item}) => {
+              return (
+                <View style={styles.itemInTheList}>
+            <View style={styles.rowTextAndCheckCircleIcon}>
+              <View
+                style={{
+                  marginRight: 8,
+                  borderRadius: 100,
+                  backgroundColor: lightGray5Color,
+                  width: 34,
+                  height: 34,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <item.icon />
+              </View>
+              <Text style={styles.textFromTheList}>{item.title}</Text>
+              <ControlledTooltip
+                width={300}
+                height={100}
+                backgroundColor={lightGray5Color}
+                withOverlay={false}
+                popover={
+                  <View style={styles.tooltipWrapper}>
+                    <View style={styles.rowTitleTooltip}>
+                      <Text style={styles.textUnlimitedEventsCreation}>{item.title}</Text>
+                      <CloseCircleIcon />
+                    </View>
+                    <Text style={styles.textHostAccessIsLimited}>{item.description}</Text>
+                  </View>
+                }
+                >
+                <InfoCircleIcon />
+              </ControlledTooltip>
+            </View>
+            <CheckIcon />
+          </View>
+              );
+            }}
+          />
+          {/* <View style={styles.itemInTheList}>
             <View style={styles.rowTextAndCheckCircleIcon}>
               <View
                 style={{
@@ -293,13 +393,14 @@ const Payment: FC = (): JSX.Element => {
                     </View>
                     <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
                   </View>
-                }>
+                }
+                >
                 <InfoCircleIcon />
               </ControlledTooltip>
             </View>
             <CheckIcon />
-          </View>
-          <View style={styles.itemInTheList}>
+          </View> */}
+          {/* <View style={styles.itemInTheList}>
             <View style={styles.rowTextAndCheckCircleIcon}>
               <View
                 style={{
@@ -332,8 +433,8 @@ const Payment: FC = (): JSX.Element => {
               </ControlledTooltip>
             </View>
             <CheckIcon />
-          </View>
-          <View style={styles.itemInTheList}>
+          </View> */}
+          {/* <View style={styles.itemInTheList}>
             <View style={styles.rowTextAndCheckCircleIcon}>
               <View
                 style={{
@@ -468,7 +569,7 @@ const Payment: FC = (): JSX.Element => {
               </ControlledTooltip>
             </View>
             <CheckIcon />
-          </View>
+          </View> */}
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,11 +1,12 @@
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
 import Smoke from 'assets/images/icons/smoke.svg';
-import {blackColor, grayColor, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {blackColor, grayColor, lightGray15Color, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
 import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
+import Button from 'components/Button/Button';
 
 interface ModalSmokeProps {
   isVisible: boolean;
@@ -15,9 +16,10 @@ interface ModalSmokeProps {
   activeSmokeItem: {id: number; title: string} | null;
   setActiveSmokeItem: Dispatch<SetStateAction<{id: number; title: string} | null>>;
   listOfSmokes: {id: number; title: string}[];
+  saveUserInfo: any;
 }
 
-const ModalSmoke: FC<ModalSmokeProps> = ({isVisible, onClose, showSmoke, setShowSmoke, activeSmokeItem, setActiveSmokeItem, listOfSmokes}) => {
+const ModalSmoke: FC<ModalSmokeProps> = ({isVisible, onClose, showSmoke, setShowSmoke, activeSmokeItem, setActiveSmokeItem, listOfSmokes, saveUserInfo}) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -48,14 +50,14 @@ const ModalSmoke: FC<ModalSmokeProps> = ({isVisible, onClose, showSmoke, setShow
           style={{
             borderRadius: 100,
             backgroundColor: transparentGray90Color,
-            height: 50,
-            width: 50,
+            height: 84,
+            width: 84,
             justifyContent: 'center',
             alignItems: 'center',
             alignSelf: 'center',
             marginBottom: 20,
           }}>
-          <Smoke />
+          <Smoke width={32} height={32} />
         </View>
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), textAlign: 'center', marginBottom: 10}}>
           Do you smoke?
@@ -79,15 +81,17 @@ const ModalSmoke: FC<ModalSmokeProps> = ({isVisible, onClose, showSmoke, setShow
                   borderStyle: 'solid',
                   borderRadius: isActive ? 10 : 0,
                   borderBottomColor: isActive ? 'transparent' : transparentWhite16Color,
-                  backgroundColor: isActive ? whiteColor : 'transparent',
-                  paddingVertical: 18,
-                  alignItems: 'center',
+                  backgroundColor: isActive ? lightGray15Color : 'transparent',
+                  paddingHorizontal: 20,
+                  paddingVertical: 16
+                  // alignItems: 'center',
                 }}>
-                <Text style={{color: isActive ? blackColor : whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>{item.title}</Text>
+                <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>{item.title}</Text>
               </TouchableOpacity>
             );
           }}
         />
+        <Button onPress={saveUserInfo} title="Save" buttonStyle={{marginTop: 20}} />
       </View>
     </Modal>
   );

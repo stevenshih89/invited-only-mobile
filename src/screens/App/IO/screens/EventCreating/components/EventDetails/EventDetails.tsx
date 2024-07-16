@@ -14,7 +14,7 @@ import useStyles from './styles.ts';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
 import {isIos} from 'constants/common';
-import {black1Color, gray1Color, orangeClose, toggleColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {black1Color, errorColor, gray1Color, lightGray10Color, lightGray2Color, orangeClose, toggleColor, transparentWhite16Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {showToast} from 'helpers/showToast.ts';
 import {uploadImage} from 'helpers/uploadImage.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
@@ -23,17 +23,20 @@ import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import Plus from 'assets/images/icons/plus.svg';
 import Location from 'assets/images/icons/location.svg';
 import Calendar from 'assets/images/icons/calendar-new.svg';
+import CalendarRed from 'assets/images/icons/calendar-red.svg';
 import Clock from 'assets/images/icons/clock-grey.svg';
+import ClockRed from 'assets/images/icons/clock-red.svg';
 import Close from 'assets/images/icons/close.svg';
 import {IOPath} from 'constants/pathLocations.ts';
 import auth from '@react-native-firebase/auth';
 import {useUser} from '../../../../../../../store/userStore';
 import moment from "moment";
 import { RFValue } from 'react-native-responsive-fontsize';
-import { Satoshi500 } from 'constants/fonts.ts';
+import { Satoshi400, Satoshi500 } from 'constants/fonts.ts';
 import { Switch } from '@ant-design/react-native';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import InstagramSlider from 'components/InstagramSlider/InstagramSlider.tsx';
+import ModalAddPhoto from './ModalAddPhoto.tsx';
 
 interface ImageType {
   image: null | string;
@@ -147,6 +150,25 @@ const EventDetails: FC<EventDetailsProps> = ({
     {id: 2, label: 'Club'},
     {id: 3, label: 'Restaurant'},
   ];
+
+  // console.log('photos', photos);
+  
+    
+  const [modalAddPhotoVisible, setModalAddPhotoVisible] = useState(false);
+  const [photosId, setPhotosId] = useState(null);
+  const [addressEmpty, setAddressEmpty] = useState(false)
+  const [placeNameEmpty, setPlaceNameEmpty] = useState(false)
+  const [eventNameEmpty, setEventNameEmpty] = useState(false)
+  const [dateEmpty, setDateEmpty] = useState(false)
+  const [hourEmpty, setHourEmpty] = useState(false)
+  
+  useEffect(() => {
+    if(address) setAddressEmpty(false)
+    if(placeName) setPlaceNameEmpty(false)
+    if(name) setEventNameEmpty(false)
+    if(date) setDateEmpty(false)
+    if(hour) setHourEmpty(false)
+  },[address, placeName, name, date, hour])
   
   useEffect(() => {
     if (isEditing) {
@@ -181,7 +203,7 @@ const EventDetails: FC<EventDetailsProps> = ({
     return result;
   };
 
-  const openLibrary = async (imageId: number): Promise<void> => {
+  const openLibrary = async (): Promise<void> => {
     const photoLibraryPermission = await makePermissionsRequest(isIos ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES);
 
     if (photoLibraryPermission !== RESULTS.GRANTED && photoLibraryPermission !== RESULTS.LIMITED) {
@@ -205,7 +227,7 @@ const EventDetails: FC<EventDetailsProps> = ({
             name: response.assets[0].fileName,
           };
           const newImages = photos.map(img => {
-            if (img.id === imageId) {
+            if (img.id === photosId) {
               if(img.id === 0) {
                 setMainImage(image.uri)
               }
@@ -214,10 +236,67 @@ const EventDetails: FC<EventDetailsProps> = ({
             return img;
           });
           setImages(newImages);
+          setModalAddPhotoVisible(false);
         }
       },
     );
   };
+
+  const addPlaceholderPhoto = () => {
+    const newPhotos = photos.map(img => {
+      if (img.id === photosId) {
+        return { ...img, image: 'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/FCMImages%2Fevent-placeholder.png?alt=media&token=a077a866-8a9f-45e6-a8d9-9e49a9509296' };
+      }
+      return img;
+    });
+    setImages(newPhotos);
+    setModalAddPhotoVisible(false);
+  }
+
+  const checkFieldsNotEmpty = () => {
+
+    let hasEmptyField = false;
+
+    if(!address) {
+      setAddressEmpty(true)
+      hasEmptyField= true
+    }
+    if(!placeName) {
+      setPlaceNameEmpty(true)
+      hasEmptyField= true
+    }
+    if(!name) {
+      setEventNameEmpty(true)
+      hasEmptyField= true
+    }
+    if(!date) {
+      setDateEmpty(true)
+      hasEmptyField= true
+    }
+    if(!hour) {
+      setHourEmpty(true)
+      hasEmptyField= true
+    }
+
+    if (!hasEmptyField) {
+      checkPhotos();
+    }
+  }
+
+  const checkPhotos = () => {
+    const newPhotos = photos.map(img => {
+      if(img.id != 3 && img.id != 4) {
+        if (img.image === null) {
+          return { ...img, image: 'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/FCMImages%2Fevent-placeholder.png?alt=media&token=a077a866-8a9f-45e6-a8d9-9e49a9509296' };
+        }
+        return img
+      }
+      return img;
+    });
+    setImages(newPhotos);
+    setCurrentCreateStap(3);
+    setTabState('eventPreview')
+  }
 
   const deleteImage = (id: number) => {
     const newPhotos = photos.map(img => {
@@ -298,7 +377,7 @@ const EventDetails: FC<EventDetailsProps> = ({
                 style={[
                   styles.eventTypeItem,
                   {
-                    backgroundColor: activeType === item.id ? whiteColor : transparentWhite16Color,
+                    backgroundColor: activeType === item.id ? whiteColor : lightGray2Color,
                   },
                 ]}>
                 <Text style={[styles.eventTypeItemText, {color: activeType === item.id ? black1Color : whiteColor,}]}>{item.label}</Text>
@@ -306,8 +385,14 @@ const EventDetails: FC<EventDetailsProps> = ({
             )}
           />
         </View>
-        <View style={styles.eventPlaceWr}>
+        {/* <View style={styles.eventPlaceWr}> */}
+          <View style={{backgroundColor: lightGray10Color, borderRadius: 8, padding: 20, marginBottom: 24}}>
           <Input
+            required
+            isError={placeNameEmpty}
+            errorText={placeNameEmpty? 'Incorrect place name': ''}
+            containerInnerStyle={{borderColor: placeNameEmpty? errorColor: '', borderWidth: placeNameEmpty? 1: 0}}
+            placeholderTextColor={placeNameEmpty? errorColor: transparentWhite30Color}
             label="Place name"
             labelStyle={styles.inputLabel}
             value={placeName}
@@ -315,17 +400,27 @@ const EventDetails: FC<EventDetailsProps> = ({
             placeholder="Enter place name"
           />
           <Input
+            required
+            isError={addressEmpty}
+            errorText={addressEmpty? 'Incorrect address': ''}
+            containerInnerStyle={{borderColor: addressEmpty? errorColor: '', borderWidth: addressEmpty? 1: 0}}
             value={address}
             onChange={val => setAddress(val)}
             placeholder="Enter adress"
+            placeholderTextColor={addressEmpty? errorColor: transparentWhite30Color}
             label="Address"
             // InputIcon={Location}
             labelStyle={styles.inputLabel}
           />
-          <Text style={styles.eventPhotosText}>Event photos</Text>
+          {/* <Text>Incorrect address</Text> */}
+          </View>
+          <Text style={styles.eventPhotosText}>Event photos <Text style={{color: errorColor}}>*</Text></Text>
           <View style={styles.flex}>
             <View style={styles.eventPhotoLargeWr}>
-              <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[0].id)} style={styles.touchableImage}>
+              <TouchableOpacity activeOpacity={0.7} onPress={() => {
+                setPhotosId(photos[0].id)
+                setModalAddPhotoVisible(true)
+              }} style={styles.touchableImage}>
                 {photos[0]?.image ? (
                   <>
                     <Image resizeMode="cover" source={{uri: photos[0].image}} style={styles.eventPhotoSmallImage} />
@@ -351,7 +446,10 @@ const EventDetails: FC<EventDetailsProps> = ({
             </View>
             <View style={[styles.eventPhotoRow, {marginBottom: 8}]}>
               <View style={styles.eventPhotoSmallLeftWr}>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[1].id)} style={styles.touchableImage}>
+                <TouchableOpacity activeOpacity={0.7} onPress={() => {
+                  setPhotosId(photos[1].id)
+                  setModalAddPhotoVisible(true)
+                }} style={styles.touchableImage}>
                   {photos[1]?.image ? (
                     <>
                       <Image resizeMode="cover" source={{uri: photos[1].image}} style={styles.eventPhotoSmallImage} />
@@ -374,7 +472,10 @@ const EventDetails: FC<EventDetailsProps> = ({
                 </View>
               </View>
               <View style={styles.eventPhotoSmallRightWr}>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(photos[2].id)} style={styles.touchableImage}>
+                <TouchableOpacity activeOpacity={0.7} onPress={() => {
+                  setPhotosId(photos[2].id)
+                  setModalAddPhotoVisible(true)
+                }} style={styles.touchableImage}>
                   {photos[2]?.image ? (
                     <>
                       <Image resizeMode="cover" source={{uri: photos[2].image}} style={styles.eventPhotoSmallImage} />
@@ -398,10 +499,19 @@ const EventDetails: FC<EventDetailsProps> = ({
               </View>
             </View>
           </View>
-        </View>
+        {/* </View> */}
         <View style={styles.eventDetailsWr}>
           <Text style={styles.eventDetailsTitle}>Event details</Text>
-          <Input value={name} onChange={val => setName(val)} placeholder="Enter event name" label="Event name" labelStyle={styles.inputLabel} />
+          <Input 
+            required 
+            isError={eventNameEmpty}
+            errorText={eventNameEmpty? 'Incorrect event name': ''}
+            containerInnerStyle={{borderColor: eventNameEmpty? errorColor: '', borderWidth: eventNameEmpty? 1: 0}}
+            placeholderTextColor={eventNameEmpty? errorColor: transparentWhite30Color}
+            value={name} 
+            onChange={val => setName(val)} 
+            placeholder="Enter event name (Or just the place name)" 
+            label="Event name" labelStyle={styles.inputLabel} />
           <Input
             value={description}
             onChange={val => setDescription(val)}
@@ -411,8 +521,9 @@ const EventDetails: FC<EventDetailsProps> = ({
           />
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{flexDirection: 'column', flex: 1, marginRight: 10}}>
-          <Text style={styles.maskInputLabel}>Date</Text>
-          <TouchableOpacity onPress={() => setOpen(true)} style={styles.maskInputWr}>
+          <Text style={styles.maskInputLabel}>Date <Text style={{color: errorColor}}>*</Text></Text>
+          <View style={{marginBottom: 26,}}>
+          <TouchableOpacity onPress={() => setOpen(true)} style={[styles.maskInputWr, {borderWidth: dateEmpty? 1: 0, borderColor: dateEmpty? errorColor: ''}]}>
             <DatePicker
               modal
               mode="date"
@@ -428,14 +539,16 @@ const EventDetails: FC<EventDetailsProps> = ({
                 setOpen(false);
               }}
             />
-            <Calendar />
-            <Text style={styles.maskInput}>{date ? date : 'MM/DD/YY'}</Text>
-            
+            {dateEmpty? <CalendarRed />: <Calendar/>}
+            <Text style={[styles.maskInput, {color: dateEmpty? errorColor: whiteColor}]}>{date ? date : 'MM/DD/YY'}</Text>
           </TouchableOpacity>
+          {dateEmpty && <Text style={{color: errorColor, marginTop: 10, fontSize: RFValue(14, 812), fontFamily: Satoshi400}}>Incorrect date</Text>}
+          </View>
           </View>
           <View style={{flexDirection: 'column', flex: 1}}>
-          <Text style={styles.maskInputLabel}>Hour</Text>
-          <TouchableOpacity onPress={() => setOpenHour(true)} style={styles.maskInputWr}>
+          <Text style={styles.maskInputLabel}>Hour <Text style={{color: errorColor}}>*</Text></Text>
+          <View>
+          <TouchableOpacity onPress={() => setOpenHour(true)} style={[styles.maskInputWr, {borderWidth: hourEmpty? 1: 0, borderColor: dateEmpty? errorColor: ''}]}>
             <DatePicker
               modal
               mode="time"
@@ -451,10 +564,11 @@ const EventDetails: FC<EventDetailsProps> = ({
                 setOpenHour(false);
               }}
             />
-            <Clock />
-            <Text style={styles.maskInput}>{hour ? hour : '00:30'}</Text>
-            
+            {hourEmpty? <ClockRed />: <Clock />}
+            <Text style={[styles.maskInput, {color: hourEmpty? errorColor: whiteColor}]}>{hour ? hour : '00:30'}</Text>
           </TouchableOpacity>
+          {hourEmpty && <Text style={{color: errorColor, marginTop: 10, fontSize: RFValue(14, 812), fontFamily: Satoshi400}}>Incorrect hour</Text>}
+          </View>
           </View>
           </View>
           <Input
@@ -470,24 +584,40 @@ const EventDetails: FC<EventDetailsProps> = ({
             <Switch trackColor={{false: gray1Color, true: toggleColor}} />
           </View>
         </View>
-        <Button
-          loading={loading}
-          title={isEditing ? 'Save changes' : 'Continue'}
-          buttonStyle={styles.button}
-          onPress={() => {
-            isEditing ? handleSaveChanges() : setTabState('eventPreview')
-            setCurrentCreateStap(3);
-          }}
-        />
-        <View style={{width: '100%', alignItems: 'center', marginTop: 20}}>
+        <View style={{flexDirection: 'row', width:'100%', alignItems: 'center', justifyContent: 'space-between'}}>
+        <View style={{alignItems: 'center', marginTop: 20}}>
           <TouchableOpacity onPress={() => {
             setTabState('invitedOnly')
             setCurrentCreateStap(1);
           }}>
-            <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Previous step</Text>
+            <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Back</Text>
           </TouchableOpacity>
         </View>
+        <Button
+          // disabled={
+          //   !placeName ||
+          //   !address ||
+          //   !name ||
+          //   !date ||
+          //   !hour ||
+          //   !photos[0].image
+          // }
+          loading={loading}
+          title={isEditing ? 'Save changes' : 'Continue'}
+          buttonStyle={styles.button}
+          onPress={() => {
+            isEditing ? handleSaveChanges() :
+            checkFieldsNotEmpty()
+          }}
+        />
+        </View>
       </KeyboardAwareScrollView>
+      <ModalAddPhoto 
+        isVisible={modalAddPhotoVisible} 
+        onClose={() => setModalAddPhotoVisible(false)}
+        openLibrary={openLibrary}
+        addPlaceholderPhoto={addPlaceholderPhoto}
+        />
     </View>
   );
 };
