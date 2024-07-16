@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {backgroundColor, lightGray2Color, lightGray5Color, lightGray8Color, whiteColor} from 'constants/colors.ts';
+import {backgroundColor, lightGray10Color, lightGray2Color, lightGray5Color, lightGray8Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common.ts';
@@ -59,7 +59,7 @@ const useStyles = () =>
     eventTypeWr: {
       borderRadius: 8,
       padding: 20,
-      backgroundColor: lightGray5Color,
+      backgroundColor: lightGray10Color,
       marginBottom: 24,
     },
     eventTypeTitle: {
@@ -71,7 +71,7 @@ const useStyles = () =>
     eventTypeItem: {
       // borderWidth: 1,
       // borderStyle: 'solid',
-      borderRadius: 8,
+      borderRadius: 88,
       paddingVertical: 6,
       paddingHorizontal: 12,
     },
@@ -147,7 +147,6 @@ const useStyles = () =>
       flexDirection: 'row',
       // justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 26,
     },
     flex: {
       flex: 1,
@@ -157,6 +156,7 @@ const useStyles = () =>
     },
     button: {
       marginTop: 24,
+      width: '80%'
     },
   });
 

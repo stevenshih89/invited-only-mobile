@@ -3,6 +3,8 @@ import {
   blackColor,
   lightGray11Color,
   lightGray12Color,
+  lightGray15Color,
+  lightGray2Color,
   lightGray5Color,
   lightGray6Color,
   lightGreenColor,
@@ -55,6 +57,7 @@ const useStyles = () => {
       color: whiteColor,
       marginRight: 5,
       fontFamily: Satoshi400,
+      fontWeight: 'bold',
       fontSize: RFValue(20, 812),
     },
     textNameUserMessage: {
@@ -85,11 +88,11 @@ const useStyles = () => {
       fontSize: RFValue(14, 812),
     },
     isSenderTrue: {
-      backgroundColor: lightGray12Color,
-      borderTopLeftRadius: 0,
+      backgroundColor: lightGray15Color,
+      // borderTopLeftRadius: 0,
     },
     isSenderFalse: {
-      borderTopRightRadius: 0,
+      // borderTopRightRadius: 0,
     },
     textOnline: {
       color: whiteColor,
@@ -130,7 +133,6 @@ const useStyles = () => {
       fontSize: RFValue(16, 812),
     },
     timeText: {
-      marginTop: 5,
       fontFamily: Satoshi400,
       fontSize: RFValue(12, 812),
       color: whiteColor,
@@ -149,9 +151,9 @@ const useStyles = () => {
       alignItems: 'center',
     },
     inputContainer: {
-      width: 283,
-      height: 50,
-      backgroundColor: 'white',
+      width: '100%',
+      height: 56,
+      backgroundColor: lightGray2Color,
       borderRadius: 12,
     },
     textInput: {
@@ -160,12 +162,20 @@ const useStyles = () => {
       fontSize: RFValue(14, 812),
       height: '100%',
       borderRadius: 12,
-      paddingHorizontal: screenWidth / 23,
+      paddingLeft: screenWidth / 23,
+      paddingRight: (screenWidth / 23) + 40 + 16
     },
     buttonSend: {
-      backgroundColor: lightGray5Color,
-      padding: 15,
-      marginLeft: screenWidth / 30,
+      position: 'absolute', 
+      right: 16,
+      top: 8,
+      backgroundColor: blackColor,
+      // padding: 10,
+      height: 40,
+      width: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+      // marginLeft: screenWidth / 30,
       borderRadius: 12,
     },
     keyboardAvoid: {

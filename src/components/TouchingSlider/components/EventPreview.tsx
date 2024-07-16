@@ -1,28 +1,18 @@
 import {FC, ReactElement, useCallback, useState} from 'react';
-import {View, ImageBackground, TouchableOpacity, Text, StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import {View, ImageBackground, TouchableOpacity, Text, StyleSheet} from 'react-native';
 // import components
-import {
-  blackColor,
-  gray1Color,
-  grayScale700,
-  transparent60Color,
-  transparentGray60Color,
-  transparentGray90Color,
-  transparentWhite56Color,
-  whiteColor,
-} from 'constants/colors.ts';
+import {blackColor, gray1Color, transparent60Color, transparentGray90Color, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
 import User from 'assets/images/icons/user.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
-import {screenHeight, screenWidth} from 'constants/common.ts';
+import {screenWidth} from 'constants/common.ts';
 import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import moment from 'moment/moment';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
-import Animated, {useAnimatedStyle, useSharedValue} from 'react-native-reanimated';
 
 const EventPreview: FC<{
   photos: any;
@@ -30,24 +20,11 @@ const EventPreview: FC<{
   girls: string;
   placeName: string;
   flipCoin: () => void;
-}> = ({photos, date, girls, placeName, flipCoin, frontAnimatedStyle, backAnimatedStyle}): ReactElement => {
+}> = ({photos, date, girls, placeName}): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
   const [imagesUser, setImagesUser] = useState();
-  const [nameUser, setNameUser] = useState('');
-  const [userAge, setUserAge] = useState('');
   const numberPhotos = imagesUser?.length;
-
-  function calculateAge(birthDateString: string) {
-    const parts = birthDateString.split('.');
-    const birthDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    if (today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    return age;
-  }
 
   useFocusEffect(
     useCallback(() => {
@@ -55,11 +32,6 @@ const EventPreview: FC<{
         try {
           const user = auth().currentUser;
           const userInfoDoc = await firestore().collection('userInfo').doc(user?.uid).get();
-          const nameUser = userInfoDoc.data()?.name;
-          const userAge = userInfoDoc.data()?.date;
-          setNameUser(nameUser);
-          const resultAge = calculateAge(userAge);
-          setUserAge(resultAge);
           const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
           if (userImage) {
             setImagesUser(userImage);

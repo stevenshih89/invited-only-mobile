@@ -928,8 +928,6 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  console.warn(events);
-
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>

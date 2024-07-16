@@ -1,10 +1,11 @@
-import {blackColor, lightGray5Color, lightGray6Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {blackColor, darkRed2Color, lightGray5Color, lightGray6Color, lightRed1Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {useState} from 'react';
 import {FlatList, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import LogoutIcon from 'assets/images/icons/logout.svg';
 import UserEdit from 'assets/images/icons/user-edit.svg';
 import SecurePrivacy from 'assets/images/icons/secure-privacy.svg';
 import Notification from 'assets/images/icons/notification.svg';
+import LogoutRed from 'assets/images/icons/logout-red.svg';
 import Messages from 'assets/images/icons/messages.svg';
 import RestorePurchase from 'assets/images/icons/restore-purchase.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
@@ -74,12 +75,12 @@ const Settings = () => {
       icon: Messages,
       onPress: goToContactAndFAQ,
     },
-    {
-      id: 4,
-      title: 'Restore purchase',
-      icon: RestorePurchase,
-      onPress: goToCRestorePurchase,
-    },
+    // {
+    //   id: 4,
+    //   title: 'Restore purchase',
+    //   icon: RestorePurchase,
+    //   onPress: goToCRestorePurchase,
+    // },
     {
       id: 5,
       title: 'Log out',
@@ -118,9 +119,9 @@ const Settings = () => {
                           backgroundColor: blackColor,
                           borderRadius: 100,
                         }}>
-                        <Icon width={16} height={16} />
+                        {item?.title !== 'Log out' ? <Icon width={16} height={16} /> : <LogoutRed width={16} height={16} />}
                       </View>
-                      <Text style={{color: whiteColor, marginLeft: 10, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>{item.title}</Text>
+                      <Text style={{color: item?.title === 'Log out'? '#CE2626': whiteColor, marginLeft: 10, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>{item.title}</Text>
                     </View>
                     {item.title !== 'Log out' && <ArrowRight />}
                   </View>

@@ -1,13 +1,14 @@
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
-import Bookmark from 'assets/images/icons/bookmark.svg';
-import {blackColor, grayColor, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import Сhampagne from 'assets/images/icons/champagne.svg';
+import {blackColor, grayColor, lightGray15Color, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
 import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from '../../../../../store/userStore';
+import Button from 'components/Button/Button';
 
 interface ModalAlcoholProps {
   isVisible: boolean;
@@ -17,6 +18,7 @@ interface ModalAlcoholProps {
   activeAlcoholItem: {title: string} | null;
   setActiveAlcoholItem: Dispatch<SetStateAction<{title: string} | null>>;
   listOfAlcohols: any[];
+  saveUserInfo: any;
 }
 
 const ModalAlcohol: FC<ModalAlcoholProps> = ({
@@ -27,6 +29,7 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
   activeAlcoholItem,
   setActiveAlcoholItem,
   listOfAlcohols,
+  saveUserInfo
 }) => {
   const userHost = useUser((i: any) => i?.user);
   const setUserInfo = useUser((i: any) => i?.setUser);
@@ -93,14 +96,14 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
           style={{
             borderRadius: 100,
             backgroundColor: transparentGray90Color,
-            height: 50,
-            width: 50,
+            height: 84,
+            width: 84,
             justifyContent: 'center',
             alignItems: 'center',
             alignSelf: 'center',
             marginBottom: 20,
           }}>
-          <Bookmark />
+          <Сhampagne width={32} height={32} />
         </View>
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), textAlign: 'center', marginBottom: 10}}>
           Do you drink alcohol?
@@ -128,15 +131,17 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
                   borderStyle: 'solid',
                   borderRadius: isActive ? 10 : 0,
                   borderBottomColor: isActive ? 'transparent' : transparentWhite16Color,
-                  backgroundColor: isActive ? whiteColor : 'transparent',
-                  paddingVertical: 18,
-                  alignItems: 'center',
+                  backgroundColor: isActive ? lightGray15Color : 'transparent',
+                  paddingHorizontal: 20,
+                  paddingVertical: 16,
+                  // alignItems: 'center',
                 }}>
-                <Text style={{color: isActive ? blackColor : whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>{item.title}</Text>
+                <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>{item.title}</Text>
               </TouchableOpacity>
             );
           }}
         />
+        <Button onPress={saveUserInfo} title="Save" buttonStyle={{marginTop: 20}} />
       </View>
     </Modal>
   );

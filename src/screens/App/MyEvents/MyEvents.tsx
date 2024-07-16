@@ -17,7 +17,7 @@ import ModalAcceptInvitation from './ModalAcceptInvitation';
 import {useUser} from '../../../store/userStore';
 import {ALL, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
 import {eventCreatingStackPath} from 'constants/pathLocations.ts';
-import {Satoshi500} from 'constants/fonts.ts';
+import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 
 //import images
@@ -56,7 +56,12 @@ const MyEvents: FC<any> = ({navigation}) => {
     setIsVisibleCancelAttendingModal(true);
   };
 
-  const handleOpenAcceptInvitationModal = (eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string}) => {
+  const handleOpenAcceptInvitationModal = (eventInfo: {
+    image: string;
+    textCityName: string;
+    date: string;
+    numberOfGirlsInvited: string;
+  }) => {
     setActiveModalEvent(eventInfo);
     setIsVisibleAcceptInvitationModal(true);
   };
@@ -175,21 +180,36 @@ const MyEvents: FC<any> = ({navigation}) => {
         {isHost ? (
           <View style={styles.wrapperHeaderButtonMyEvents}>
             <TouchableOpacity
-              style={[styles.buttonMyEvents, {backgroundColor: activeTab === MY_EVENTS ? whiteColor : lightGray2Color}]}
+              style={[
+                styles.buttonMyEvents,
+                {flex: 1, alignItems: 'center', backgroundColor: activeTab === MY_EVENTS ? whiteColor : lightGray2Color},
+              ]}
               onPress={() => setActiveTab(MY_EVENTS)}>
               <Text style={[styles.textMyEvents, {color: activeTab === MY_EVENTS ? blackColor : whiteColor}]}>My events</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.buttonEventsJoining, {backgroundColor: activeTab === EVENTS_JOINING ? whiteColor : lightGray2Color}]}
+              style={[
+                styles.buttonEventsJoining,
+                {
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: activeTab === EVENTS_JOINING ? whiteColor : lightGray2Color,
+                },
+              ]}
               onPress={() => setActiveTab(EVENTS_JOINING)}>
-              <Text style={[styles.textEventsJoining, {color: activeTab === EVENTS_JOINING ? blackColor : whiteColor}]}>Events I'm Joining</Text>
+              <Text
+                style={[
+                  {
+                    fontFamily: Satoshi400,
+                    fontSize: RFValue(16, 812),
+                    color: activeTab === EVENTS_JOINING ? blackColor : whiteColor,
+                  },
+                ]}>
+                Join Events
+              </Text>
               <View style={styles.rowTextCountEvents}>
                 <Text style={styles.textCountEvents}>{eventsJoiningData?.length}</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate(eventCreatingStackPath)} style={styles.addEventButton}>
-              <View style={styles.addEventView}>
-                <AddIcon width={19} height={19} />
               </View>
             </TouchableOpacity>
           </View>
@@ -309,8 +329,8 @@ const MyEvents: FC<any> = ({navigation}) => {
           {isHost ? (
             activeTab === MY_EVENTS ? (
               <FlatList
-                style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
                 showsVerticalScrollIndicator={false}
+                style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
                 data={myEventsData}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
@@ -323,14 +343,17 @@ const MyEvents: FC<any> = ({navigation}) => {
                     textCityName={item?.name}
                     estimeTime={item?.hour}
                     numberOfGirlsInvited={item?.female}
+                    placeName={item?.placeName}
                     invitingPeople={item?.usersList?.filter(i => i?.status !== 'notAccepted')}
+                    accountConfirmed={user?.accountConfirmed}
                   />
                 )}
               />
             ) : (
               <FlatList
+                showsVerticalScrollIndicator={false}
                 data={eventsJoiningData}
-                style={{flex: 1, backgroundColor: 'transparent'}}
+                style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
                 renderItem={({item}) => (
                   <JoiningEventsCard
                     uid={item?.uid}
@@ -344,7 +367,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     textCityName={item.name}
                     estimeTime={item.hour}
                     numberOfGirlsInvited={item?.female + item?.femaleFriend}
-                    host={{name: item?.name, image: item?.hostImage}}
+                    host={{name: item?.name, image: item?.hostImage, hostUid: item?.uid}}
                     joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
                     isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
                     handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
@@ -358,8 +381,9 @@ const MyEvents: FC<any> = ({navigation}) => {
           ) : (
             <View style={{flex: 1}}>
               <FlatList
+                showsVerticalScrollIndicator={false}
                 data={eventsJoiningData}
-                style={{flex: 1, backgroundColor: 'transparent'}}
+                style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
                 renderItem={({item}) => (
                   <JoiningEventsCard
                     activeState={item.statusEvent}
@@ -372,7 +396,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     textCityName={item.address}
                     estimeTime={item.hour}
                     numberOfGirlsInvited={item?.female + item?.femaleFriend}
-                    host={{name: item?.name, image: item?.hostImage}}
+                    host={{name: item?.name, image: item?.hostImage, hostUid: item?.uid}}
                     joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
                     isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
                     handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}

@@ -1,8 +1,8 @@
-import {grayColor, lightGray5Color, lightGray6Color, lightRedColor, toggleColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {deleteColor, grayColor, lightGray5Color, lightGray6Color, lightRedColor, toggleColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import AEFlag from 'assets/images/flags/ae.svg';
-import TrashCan from 'assets/images/icons/trash.svg';
+import TrashRed from 'assets/images/icons/trash-red.svg';
 import InstagramIcon from 'assets/images/auth/instagram.svg';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -25,6 +25,7 @@ const AccountSetting: FC = ({navigation, route}: any) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const user = useUser((i: any) => i?.user);
+  
   const setUser = useUser((i: any) => i?.setUser);
   const userPhone = auth()?.currentUser?.phoneNumber;
   const uid = user?.uid;
@@ -110,6 +111,27 @@ const AccountSetting: FC = ({navigation, route}: any) => {
               </TouchableOpacity>
             </View>
           </View>
+          <View style={{padding: 20, borderRadius: 10, backgroundColor: lightGray5Color, marginTop: 24}}>
+            <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>Email</Text>
+            <View style={{marginTop: 26, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                {/*<AEFlag />*/}
+                <Text numberOfLines={1} style={{color: whiteColor, maxWidth: '90%', overflow: 'hidden', fontSize: RFValue(15, 812), fontFamily: Satoshi700, marginLeft: 4}}>
+                  {/* {userPhone?.slice(0, 4)} */}
+                  {user?.email}
+                  {/* <Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi400}}> {userPhone?.slice(4, -1)}</Text> */}
+                </Text>
+              </View>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                // onPress={() => navigation.navigate(phoneChangePath as never)}
+                style={{flexDirection: 'row', alignItems: 'center'}}
+                hitSlop={{top: 20, left: 10, right: 10, bottom: 10}}>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>Change</Text>
+                <ArrowRight width={14} height={14} />
+              </TouchableOpacity>
+            </View>
+          </View>
           {isPremium && (
             <View
               style={{
@@ -155,7 +177,7 @@ const AccountSetting: FC = ({navigation, route}: any) => {
               }}
             />
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => setIsConnectedInstagram(prev => !prev)}
             style={{
@@ -177,13 +199,13 @@ const AccountSetting: FC = ({navigation, route}: any) => {
             <Text style={{color: isConnectedInstagram ? lightRedColor : whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi700}}>
               {isConnectedInstagram ? 'Disconnect' : 'Connect'}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => setIsVisibleDeleteAccountModal(true)}
             style={{flexDirection: 'row', alignItems: 'center', borderRadius: 10, backgroundColor: lightGray5Color, padding: 20, marginTop: 24}}>
-            <TrashCan />
-            <Text style={{color: whiteColor, marginLeft: 10, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>Delete my account</Text>
+            <TrashRed />
+            <Text style={{color: deleteColor, marginLeft: 10, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>Delete my account</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>

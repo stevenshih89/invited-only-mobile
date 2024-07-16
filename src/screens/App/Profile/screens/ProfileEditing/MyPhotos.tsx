@@ -1,11 +1,11 @@
-import {isIos, screenWidth} from 'constants/common';
+import {isIos, screenHeight, screenWidth} from 'constants/common';
 import {FC} from 'react';
 import {Alert, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Close from 'assets/images/icons/close.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import Plus from 'assets/images/icons/plus.svg';
 import {ImagePickerResponse, launchImageLibrary} from 'react-native-image-picker';
-import {blackColor, lightGray2Color, lightGray5Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGray2Color, lightGray5Color, orangeClose, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
@@ -17,6 +17,8 @@ interface MyPhotosProps {
 }
 
 const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
+  // console.log('imagesProps', images);
+  
   const userHost = useUser((i: any) => i?.user);
   const isConfirmed = userHost?.accountConfirmed;
 
@@ -42,7 +44,7 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
 
     if (photoLibraryPermission !== RESULTS.GRANTED && photoLibraryPermission !== RESULTS.LIMITED) {
       return;
-    }
+    }    
 
     launchImageLibrary(
       {
@@ -60,12 +62,15 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
             type: response.assets[0].type,
             name: response.assets[0].fileName,
           };
+
           const newImages = images.map(img => {
             if (img.id === imageId) {
               return {...img, image: image.uri};
             }
             return img;
           });
+          console.log('newImages', newImages);
+          
           setImages(newImages);
         }
       },
@@ -85,10 +90,19 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
   const mainImage = images[images.findIndex(item => item.id === 0)];
   const secondImage = images[images.findIndex(item => item.id === 1)];
   const thirdImage = images[images.findIndex(item => item.id === 2)];
+  const fourthImage = images[images.findIndex(item => item.id === 3)];
+  const fifthImage = images[images.findIndex(item => item.id === 4)];
+  const sixthImage = images[images.findIndex(item => item.id === 5)];
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>My photos</Text>
+      {isConfirmed && (
+        <View style={styles.verifiedContainer}>
+          <Text style={styles.verifiedText}>Verified account</Text>
+          <CheckStarWhite />
+        </View>
+      )}
       <View style={styles.photosContainer}>
         <View style={styles.photoContainer}>
           {mainImage?.image ? (
@@ -124,6 +138,9 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
                     style={styles.closeButton}>
                     <Close />
                   </TouchableOpacity>
+                  <View style={styles.labelContainer}>
+                    <Text style={styles.labelText}>02</Text>
+                  </View>
                 </ImageBackground>
               </View>
             ) : (
@@ -143,6 +160,9 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
                     style={styles.closeButton}>
                     <Close />
                   </TouchableOpacity>
+                  <View style={styles.labelContainer}>
+                    <Text style={styles.labelText}>03</Text>
+                  </View>
                 </ImageBackground>
               </View>
             ) : (
@@ -153,12 +173,91 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
           </View>
         </View>
       </View>
-      {isConfirmed && (
-        <View style={styles.verifiedContainer}>
-          <Text style={styles.verifiedText}>Verified account</Text>
-          <CheckStarWhite />
-        </View>
-      )}
+      <View style={{flexDirection: 'row', marginTop: 8,}}>
+      <View style={[styles.imageContainer]}>
+            <View style={{height: screenHeight/ 7, width: '94%'}}>
+            {fourthImage?.image ? (
+              <View style={[styles.imageContainer, {width: '94%'}]}>
+                <ImageBackground resizeMode="cover" source={{uri: fourthImage.image}} 
+                style={{
+                  width: "100%",
+                  height: screenHeight/ 7,
+                  justifyContent: "space-between"
+                  }}>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    hitSlop={{left: 15, bottom: 10}}
+                    onPress={() => deleteImage(fourthImage.id)}
+                    style={styles.closeButton}>
+                    <Close />
+                  </TouchableOpacity>
+                  <View style={styles.labelContainer}>
+                    <Text style={styles.labelText}>04</Text>
+                  </View>
+                </ImageBackground>
+              </View>
+            ) : (
+              <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(fourthImage?.id)} style={styles.plusButton}>
+                <Plus />
+              </TouchableOpacity>
+            )}
+            </View>
+          </View>
+          <View style={[styles.imageContainer]}>
+            <View style={{height: screenHeight/ 7, width: '94%'}}>
+            {fifthImage?.image ? (
+              <View style={[styles.imageContainer, {width: '94%'}]}>
+                <ImageBackground resizeMode="cover" source={{uri: fifthImage.image}} style={{
+                  width: "100%",
+                  height: screenHeight/ 7,
+                  justifyContent: "space-between",
+                  }}>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    hitSlop={{left: 15, bottom: 10}}
+                    onPress={() => deleteImage(fifthImage.id)}
+                    style={styles.closeButton}>
+                    <Close />
+                  </TouchableOpacity>
+                  <View style={styles.labelContainer}>
+                    <Text style={styles.labelText}>05</Text>
+                  </View>
+                </ImageBackground>
+              </View>
+            ) : (
+              <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(fifthImage?.id)} style={styles.plusButton}>
+                <Plus />
+              </TouchableOpacity>
+            )}
+            </View>
+          </View>
+          <View style={[styles.imageContainer,]}>
+            {sixthImage?.image ? (
+              <View style={[styles.imageContainer, {width: '94%'}]}>
+                <ImageBackground resizeMode="cover" source={{uri: sixthImage.image}} style={{
+                  width: "100%",
+                  height: screenHeight/ 7,
+                  justifyContent: "space-between",
+                  }}>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    hitSlop={{left: 15, bottom: 10}}
+                    onPress={() => deleteImage(sixthImage.id)}
+                    style={styles.closeButton}>
+                    <Close />
+                  </TouchableOpacity>
+                  <View style={styles.labelContainer}>
+                    <Text style={styles.labelText}>06</Text>
+                  </View>
+                </ImageBackground>
+              </View>
+            ) : (
+              <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(sixthImage?.id)} style={styles.plusButton}>
+                <Plus />
+              </TouchableOpacity>
+            )}
+          </View>
+      </View>
     </View>
   );
 };
@@ -201,8 +300,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-end',
-    borderRadius: 6,
-    backgroundColor: lightGray2Color,
+    borderRadius: 20,
+    backgroundColor: orangeClose,
     marginRight: 10,
     marginTop: 10,
   },
@@ -233,7 +332,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 26,
+    marginBottom: 26,
   },
   verifiedText: {
     color: whiteColor,
