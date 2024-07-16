@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {View, Text, ImageBackground, TouchableOpacity, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment/moment';
@@ -20,6 +20,7 @@ import {lightGray2Color, lightGreenColor} from 'constants/colors.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventActiveInfoPath, eventEditingPath} from 'constants/pathLocations';
 import {screenWidth} from 'constants/common.ts';
+import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
 
 interface MyEventsCard {
   estimeTime?: string;
@@ -31,13 +32,21 @@ interface MyEventsCard {
   numberOfGirlsInvited?: string;
   date?: string;
   imageBg?: string;
+  placeName?: string
+  isAcceptedInvitation: boolean;
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
-  const {list, imageBg, activeState, estimeTime, date, invitingPeople, numberOfGirlsInvited, allPeople, textCityName} = props;
+  const {list, placeName, imageBg, isAcceptedInvitation, activeState, estimeTime, date, invitingPeople, numberOfGirlsInvited, allPeople, textCityName} = props;
   const styles = useStyles();
 
+  const [eventStarting, setEventStarting] = useState<boolean>(false);
+  const [eventDate, setEventDate] = useState<string>('');
+  
+
   const navigation = useAppNavigation();
+
+  const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
 
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
@@ -49,6 +58,43 @@ const MyEventsCard: FC<MyEventsCard> = props => {
       </View>
     </View>
   );
+
+  const calculateTimeDifference = (start: string, end: string) => {
+    let startTime = start.split(':');
+    let endTime = end.split(':');
+
+    let startHour = parseInt(startTime[0], 10);
+    let startMinute = parseInt(startTime[1], 10);
+    let endHour = parseInt(endTime[0], 10);
+    let endMinute = parseInt(endTime[1], 10);
+
+    let startTotalMinutes = startHour * 60 + startMinute;
+    let endTotalMinutes = endHour * 60 + endMinute;
+
+    if (endTotalMinutes < startTotalMinutes) {
+      endTotalMinutes += 24 * 60;
+    }
+
+    let differenceInMinutes = endTotalMinutes - startTotalMinutes;
+
+    let hours = Math.floor(differenceInMinutes / 60);
+    let minutes = differenceInMinutes % 60;
+
+    return hours;
+    // return hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+  };
+
+  useEffect(() => {
+    if (
+      (calculateTimeDifference(currentTime, estimeTime) === 0) ||
+      (calculateTimeDifference(currentTime, estimeTime) >= 2) ||
+      (calculateTimeDifference(currentTime, estimeTime) >= 12) ||
+      (calculateTimeDifference(currentTime, estimeTime) >= 24)
+    ) {
+      setEventDate(calculateTimeDifference(currentTime, estimeTime).toString());
+      setEventStarting(true);
+    }
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -126,6 +172,20 @@ const MyEventsCard: FC<MyEventsCard> = props => {
           <Text style={styles.textUnderFooter}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
         </View>
       </View>
+      <ModalEventRemindes
+        eventStarting={eventStarting}
+        activeState={activeState}
+        setEventStarting={setEventStarting}
+        time={estimeTime}
+        image={imageBg}
+        placeName={placeName}
+        joinedPeopleCount={invitingPeople?.length}
+        date={eventDate}
+        girlInvitation={numberOfGirlsInvited}
+        // handleAcceptInvitation={handleAcceptInvitation}
+        // handleGetEventsIJoining={handleGetEventsIJoining}
+        allPeople={allPeople}
+      />
     </View>
   );
 };

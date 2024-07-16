@@ -127,11 +127,10 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
 
   useEffect(() => {
     if (
-      // (calculateTimeDifference(currentTime, hour) === 0 && !isAcceptedInvitation) ||
-      // (calculateTimeDifference(currentTime, hour) >= 2 && !isAcceptedInvitation) ||
-      // (calculateTimeDifference(currentTime, hour) >= 12 && !isAcceptedInvitation) ||
-      // (calculateTimeDifference(currentTime, hour) >= 24 && !isAcceptedInvitation)
-      true
+      (calculateTimeDifference(currentTime, hour) === 0 && !isAcceptedInvitation) ||
+      (calculateTimeDifference(currentTime, hour) >= 2 && !isAcceptedInvitation) ||
+      (calculateTimeDifference(currentTime, hour) >= 12 && !isAcceptedInvitation) ||
+      (calculateTimeDifference(currentTime, hour) >= 24 && !isAcceptedInvitation)
     ) {
       setEventData({
         time: calculateTimeDifference(currentTime, hour).toString(),
@@ -286,7 +285,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
         </View>
       </View>
       <ModalEventRemindes
-        eventStarting={true} // eventStarting
+        eventStarting={eventStarting} // eventStarting
         uid={uid}
         activeState={activeState}
         host={host}

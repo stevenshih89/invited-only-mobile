@@ -321,6 +321,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     allPeople={item?.female + item?.male}
                     date={item?.date}
                     textCityName={item?.name}
+                    placeName={item?.placeName}
                     estimeTime={item?.hour}
                     numberOfGirlsInvited={item?.female}
                     invitingPeople={item?.usersList?.filter(i => i?.status !== 'notAccepted')}

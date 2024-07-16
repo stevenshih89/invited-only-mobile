@@ -31,36 +31,36 @@ interface ModalEventRemindeProps {
   eventStarting: boolean;
   uid: string;
   activeState: boolean;
-  setEventStarting: boolean | any;
-  host: HostI;
+  setEventStarting?: boolean | any;
+  host?: HostI;
   time: string;
   image: any;
   joinedPeopleCount: number;
-  city: string;
+  city?: string;
   date: string;
   placeName: string;
   allPeople: number
   girlInvitation: number | string;
-  handleAcceptInvitation: any;
-  handleGetEventsIJoining: any;
+  handleAcceptInvitation?: any;
+  handleGetEventsIJoining?: any;
 }
 
 const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
-  handleAcceptInvitation,
-  uid,
-  handleGetEventsIJoining,
-  placeName,
-  activeState,
+  handleAcceptInvitation = null,
+  uid = null,
+  handleGetEventsIJoining = null,
+  placeName = '',
+  activeState = null,
   host,
-  allPeople,
-  joinedPeopleCount,
-  girlInvitation,
-  date,
+  allPeople = 0,
+  joinedPeopleCount = 0,
+  girlInvitation = 0,
+  date = '',
   city,
-  setEventStarting,
-  eventStarting,
-  time,
-  image,
+  setEventStarting = null,
+  eventStarting = null,
+  time = '',
+  image = '',
 }) => {
   const [chahModal, setChatModal] = useState<boolean>(false);
   const [onTheWayState, setOnTheWayState] = useState<boolean>(false);
@@ -83,108 +83,110 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
   }
     
     useEffect(() => {
-      getUserInfo()
+      if(uid) {
+        getUserInfo()
+      }
     },[])
 
-  const OnTheWayModal = () => {
-    return (
-      <Modal
-        isVisible={chahModal}
-        useNativeDriver={false}
-        propagateSwipe={true}
-        backdropColor={'rgba(0, 0, 0, 0.94)'}
-        testID={'bottom-half-modal-open-button'}
-        onBackdropPress={() => setChatModal(false)}
-        onSwipeComplete={() => setChatModal(false)}
-        style={styles.modalStyles}
-        swipeDirection={['down']}>
-        <View style={styles.wrapperCancelEvent}>
-          <View style={styles.whiteLine} />
-          <View>
-            <Image resizeMode="contain" source={{uri: image}} style={styles.eventImage} />
-          </View>
-          <View style={styles.main}>
-            <Text style={styles.textCity}>{city}</Text>
-            <View style={styles.fdr}>
-              <UserIcon />
-              <Text style={styles.textGirlInvitation}>{girlInvitation} x Girl invitation </Text>
-            </View>
-            <View style={styles.fdr}>
-              <CalendarIcon width={19} height={19} />
-              <Text style={styles.textDate}>{date}</Text>
-            </View>
-          </View>
-          <View style={[styles.fdr, {alignItems: 'center'}]}>
-            <Text style={styles.textAreYouSure}>Are you on the way?</Text>
-          </View>
-          <Button
-            onPress={() => {
-              showToast('success', 'Go to my events!');
-              setChatModal(false);
-              setEventStarting(false);
-            }}
-            title="Im on my way"
-            buttonStyle={styles.button}
-          />
-          <Button
-            variant="transparent"
-            onPress={() => {
-              setChatModal(false);
-            }}
-            title="Go to my event"
-            buttonStyle={{width: '100%'}}
-          />
-        </View>
-      </Modal>
-    );
-  };
+  // const OnTheWayModal = () => {
+  //   return (
+  //     <Modal
+  //       isVisible={chahModal}
+  //       useNativeDriver={false}
+  //       propagateSwipe={true}
+  //       backdropColor={'rgba(0, 0, 0, 0.94)'}
+  //       testID={'bottom-half-modal-open-button'}
+  //       onBackdropPress={() => setChatModal(false)}
+  //       onSwipeComplete={() => setChatModal(false)}
+  //       style={styles.modalStyles}
+  //       swipeDirection={['down']}>
+  //       <View style={styles.wrapperCancelEvent}>
+  //         <View style={styles.whiteLine} />
+  //         <View>
+  //           <Image resizeMode="contain" source={{uri: image}} style={styles.eventImage} />
+  //         </View>
+  //         <View style={styles.main}>
+  //           <Text style={styles.textCity}>{city}</Text>
+  //           <View style={styles.fdr}>
+  //             <UserIcon />
+  //             <Text style={styles.textGirlInvitation}>{girlInvitation} x Girl invitation </Text>
+  //           </View>
+  //           <View style={styles.fdr}>
+  //             <CalendarIcon width={19} height={19} />
+  //             <Text style={styles.textDate}>{date}</Text>
+  //           </View>
+  //         </View>
+  //         <View style={[styles.fdr, {alignItems: 'center'}]}>
+  //           <Text style={styles.textAreYouSure}>Are you on the way?</Text>
+  //         </View>
+  //         <Button
+  //           onPress={() => {
+  //             showToast('success', 'Go to my events!');
+  //             setChatModal(false);
+  //             setEventStarting(false);
+  //           }}
+  //           title="Im on my way"
+  //           buttonStyle={styles.button}
+  //         />
+  //         <Button
+  //           variant="transparent"
+  //           onPress={() => {
+  //             setChatModal(false);
+  //           }}
+  //           title="Go to my event"
+  //           buttonStyle={{width: '100%'}}
+  //         />
+  //       </View>
+  //     </Modal>
+  //   );
+  // };
 
-  const OpenChatModal = () => {
-    return (
-      <Modal
-        isVisible={onTheWayState}
-        useNativeDriver={false}
-        propagateSwipe={true}
-        backdropColor={'rgba(0, 0, 0, 0.94)'}
-        testID={'bottom-half-modal-open-button'}
-        onBackdropPress={() => setOnTheWayState(false)}
-        onSwipeComplete={() => setOnTheWayState(false)}
-        style={styles.modalStyles}
-        swipeDirection={['down']}>
-        <View style={styles.wrapperOnTheWay}>
-          <View style={styles.whiteLine} />
-          <View>
-            <Image source={{uri: image}} style={styles.userPhoto} />
-            {/*{online && <View style={styles.greenCircle} />}*/}
-            <View style={styles.greenCircle} />
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
-            <Text style={styles.title}>Alexa</Text>
-            <FlashIcon width={19} height={19} />
-          </View>
-          <Text style={styles.textAreYouSure}>Are you sure you want to remove Alexf?</Text>
-          <Text style={styles.textDescription}>Nammos Dubai place?</Text>
-          <Button
-            onPress={() => {
-              setOnTheWayState(false);
-              setChatModal(false);
-              setEventStarting(false);
-            }}
-            title="Chat"
-            buttonStyle={styles.button}
-          />
-          <Button
-            variant="transparent"
-            onPress={() => {
-              setOnTheWayState(false);
-            }}
-            title="Close"
-            buttonStyle={{width: '100%'}}
-          />
-        </View>
-      </Modal>
-    );
-  };
+  // const OpenChatModal = () => {
+  //   return (
+  //     <Modal
+  //       isVisible={onTheWayState}
+  //       useNativeDriver={false}
+  //       propagateSwipe={true}
+  //       backdropColor={'rgba(0, 0, 0, 0.94)'}
+  //       testID={'bottom-half-modal-open-button'}
+  //       onBackdropPress={() => setOnTheWayState(false)}
+  //       onSwipeComplete={() => setOnTheWayState(false)}
+  //       style={styles.modalStyles}
+  //       swipeDirection={['down']}>
+  //       <View style={styles.wrapperOnTheWay}>
+  //         <View style={styles.whiteLine} />
+  //         <View>
+  //           <Image source={{uri: image}} style={styles.userPhoto} />
+  //           {/*{online && <View style={styles.greenCircle} />}*/}
+  //           <View style={styles.greenCircle} />
+  //         </View>
+  //         <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
+  //           <Text style={styles.title}>Alexa</Text>
+  //           <FlashIcon width={19} height={19} />
+  //         </View>
+  //         <Text style={styles.textAreYouSure}>Are you sure you want to remove Alexf?</Text>
+  //         <Text style={styles.textDescription}>Nammos Dubai place?</Text>
+  //         <Button
+  //           onPress={() => {
+  //             setOnTheWayState(false);
+  //             setChatModal(false);
+  //             setEventStarting(false);
+  //           }}
+  //           title="Chat"
+  //           buttonStyle={styles.button}
+  //         />
+  //         <Button
+  //           variant="transparent"
+  //           onPress={() => {
+  //             setOnTheWayState(false);
+  //           }}
+  //           title="Close"
+  //           buttonStyle={{width: '100%'}}
+  //         />
+  //       </View>
+  //     </Modal>
+  //   );
+  // };
 
   return (
     <Modal
@@ -200,8 +202,8 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
       <View style={styles.wrapper}>
         <View style={styles.whiteLine} />
         <View>
-          <ImageBackground resizeMode="cover" source={{uri: host.image}} style={styles.eventImage}>
-            <TouchableOpacity style={{
+          <ImageBackground resizeMode="cover" source={{uri: image}} style={[styles.eventImage, {justifyContent: !uid?  'flex-end': 'space-between'}]}>
+            {uid&& <TouchableOpacity style={{
               backgroundColor: transparent60Color, 
               alignItems: 'center', 
               width: '100%', 
@@ -240,12 +242,12 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               </View> 
               </View>
               <ArrowRightIcon />
-            </TouchableOpacity>
+            </TouchableOpacity>}
             <View>
             <View style={{marginBottom: 12, flexDirection: 'row', alignItems: 'center'}}>
-              <View style={{backgroundColor: lightGreenColor, borderRadius: 5, paddingVertical: 4, paddingHorizontal: 6}}>
-                {activeState && <Text style={{fontSize: RFValue(12, 812), fontFamily: Satoshi500, color: whiteColor}}>Active</Text>}
-              </View>
+              {activeState && <View style={{backgroundColor: lightGreenColor, borderRadius: 5, paddingVertical: 4, paddingHorizontal: 6}}>
+                <Text style={{fontSize: RFValue(12, 812), fontFamily: Satoshi500, color: whiteColor}}>Active</Text>
+              </View>}
               <Text style={{fontSize: RFValue(20, 812), marginHorizontal: 8, fontWeight:'bold', fontFamily: Satoshi400, color: whiteColor}}>{placeName}</Text>
               <CheckStarIcon />
             </View>
