@@ -19,7 +19,7 @@ const useStyles = () => {
     },
     wrapper: {
       backgroundColor: black2Color,
-      height: '69%',
+      height: '90%',
       borderTopLeftRadius: 30,
       borderTopRightRadius: 30,
       alignItems: 'center',

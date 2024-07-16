@@ -7,6 +7,7 @@ import {Text, View} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import Modal from 'react-native-modal';
 import {RFValue} from 'react-native-responsive-fontsize';
+import Button from 'components/Button/Button';
 
 interface ModalHeightProps {
   isVisible: boolean;
@@ -16,9 +17,10 @@ interface ModalHeightProps {
   height: string | null;
   setHeight: Dispatch<SetStateAction<string | null>>;
   heightsList: {id: number; value: number; label: string}[];
+  saveUserInfo: any;
 }
 
-const ModalHeight: FC<ModalHeightProps> = ({isVisible, onClose, showHeight, setShowHeight, height, setHeight, heightsList}) => {
+const ModalHeight: FC<ModalHeightProps> = ({isVisible, onClose, showHeight, setShowHeight, height, setHeight, heightsList, saveUserInfo}) => {
   2;
   return (
     <Modal
@@ -47,14 +49,14 @@ const ModalHeight: FC<ModalHeightProps> = ({isVisible, onClose, showHeight, setS
           style={{
             borderRadius: 100,
             backgroundColor: transparentGray90Color,
-            height: 50,
-            width: 50,
+            height: 84,
+            width: 84,
             justifyContent: 'center',
             alignItems: 'center',
             alignSelf: 'center',
             marginBottom: 20,
           }}>
-          <Height />
+          <Height height={32} width={32}/>
         </View>
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), textAlign: 'center', marginBottom: 10}}>
           What is your height?
@@ -71,6 +73,7 @@ const ModalHeight: FC<ModalHeightProps> = ({isVisible, onClose, showHeight, setS
             <Picker.Item value={value} key={id} label={label} color={whiteColor} />
           ))}
         </Picker>
+        <Button onPress={saveUserInfo} title="Save" buttonStyle={{marginTop: 20}} />
       </View>
     </Modal>
   );

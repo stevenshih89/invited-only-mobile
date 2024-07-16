@@ -1,4 +1,4 @@
-import React, {FC, useState, useEffect} from 'react';
+import React, {FC, useState, useEffect, useCallback} from 'react';
 import {View, Text, ImageBackground, TouchableOpacity, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
@@ -9,15 +9,18 @@ import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import CalendarBlank from 'assets/images/icons/CalendarBlank.svg';
 import ProfileTwoUser from 'assets/images/icons/profile-2user.svg';
 import Users from 'assets/images/icons/Users.svg';
-import LoadingLoop from 'assets/images/icons/loading-loop.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
-import {blackColor, lightGray2Color, lightGreenColor, whiteColor} from 'constants/colors.ts';
+import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
+import {blackColor, lightGray8Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventInfoPath} from 'constants/pathLocations';
-import {Satoshi400} from 'constants/fonts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight} from 'constants/common';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
+import firestore from '@react-native-firebase/firestore';
+import {calculateAge} from 'helpers/calculateAge';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface JoiningEventsCard {
   estimeTime: string;
@@ -76,6 +79,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
 }) => {
   
   const [eventStarting, setEventStarting] = useState<boolean>(false);
+  const [userInfo, setUserInfo] = useState<any>();
   const [eventData, setEventData] = useState({
     time: '',
     image: '',
@@ -89,13 +93,24 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
 
   const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
 
+  const getUserInfo = async () => {
+    const userInfoDoc = await firestore().collection('userInfo').doc(host?.hostUid).get();
+    if (userInfoDoc.exists) {
+      setUserInfo(userInfoDoc.data());
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getUserInfo();
+    }, []),
+  );
+
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
-      <LoadingLoop />
-      <Text style={styles.textEventInReview}>Event in review</Text>
-      <View style={styles.rowEventInReview}>
-        <Clock width={12} height={12} />
-        <Text style={styles.textEstimeTime}>Estime time {estimeTime}</Text>
+      <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 30}}>
+        <Clock width={24} height={24} style={{marginRight: 8}} />
+        <Text style={styles.textEventInReview}>Event in review</Text>
       </View>
     </View>
   );
@@ -119,10 +134,8 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
     let differenceInMinutes = endTotalMinutes - startTotalMinutes;
 
     let hours = Math.floor(differenceInMinutes / 60);
-    let minutes = differenceInMinutes % 60;
 
     return hours;
-    // return hours + ':' + (minutes < 10 ? '0' : '') + minutes;
   };
 
   useEffect(() => {
@@ -146,102 +159,129 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
 
   return (
     <View style={styles.container}>
-      <ImageBackground borderRadius={14} imageStyle={{borderRadius: 14, overflow: 'hidden'}} source={{uri: image}} style={styles.imageBackground}>
-        <LinearGradient
-          colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
-          start={{x: 0, y: 1}}
-          end={{x: 0, y: 0}}
-          style={styles.linearGradientCard}>
-          {activeState ? (
-            <TouchableOpacity
-              style={styles.header}
-              onPress={() =>
-                navigation.navigate(commonStackPath, {
-                  screen: eventInfoPath,
-                  params: {list: list, isAcceptedInvitation: isAcceptedInvitation},
-                } as never)
-              }>
-              {host?.image && <Image style={{borderRadius: 100, width: 40, height: 40}} source={{uri: host.image}} />}
-              <View style={styles.wrapperTextStartInviting}>
-                <Text style={styles.textStartInviting}>{host?.name}</Text>
+      {activeState ? (
+        <View style={{overflow: 'hidden', height: 220}}>
+          <LinearGradient
+            colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
+            start={{x: 0, y: 1}}
+            end={{x: 0, y: 0}}
+            style={[styles.linearGradientCard, {paddingTop: 0, borderRadius: 20}]}>
+            <ImageBackground
+              source={{uri: image}}
+              resizeMode="cover"
+              style={{height: screenHeight / 5, paddingTop: screenHeight / 100}}
+              borderRadius={20}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: transparent60Color,
+                  borderRadius: 20,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginHorizontal: 14,
+                  paddingVertical: 6,
+                  paddingHorizontal: 12,
+                }}
+                activeOpacity={0.7}
+                onPress={() =>
+                  navigation.navigate(commonStackPath, {
+                    screen: eventInfoPath,
+                    params: {list: list, isAcceptedInvitation: isAcceptedInvitation},
+                  } as never)
+                }>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  {host?.image && <Image style={{borderRadius: 100, width: 40, height: 40}} source={{uri: host.image}} />}
+                  <View style={{marginLeft: 6}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      {userInfo?.accountType && (
+                        <View
+                          style={{
+                            borderColor: whiteColor,
+                            borderWidth: 1,
+                            borderStyle: 'solid',
+                            borderRadius: 5,
+                            paddingHorizontal: 6,
+                            paddingVertical: 2,
+                          }}>
+                          <Text style={{textTransform: 'capitalize', color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(9, 812)}}>
+                            {userInfo.accountType}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>
+                        {userInfo?.name}
+                        {userInfo?.date && `, ${calculateAge(userInfo.date)}`}
+                      </Text>
+                      {userInfo?.accountConfirmed && <CheckStarIcon width={12} height={12} style={{marginLeft: 4}} />}
+                    </View>
+                  </View>
+                </View>
                 <ArrowRight style={styles.arrowRightIcon} width={14} height={14} />
-              </View>
-            </TouchableOpacity>
-          ) : (
-            <View style={styles.wrapperEventInReviewView}>
-              <EventInReviewView />
-            </View>
-          )}
-          <View>
-            <View style={styles.footer}>
-              <View style={styles.wrapperFooterInfo}>
-                <View style={[styles.rowActiveStatus, {backgroundColor: activeState ? lightGreenColor : lightGray2Color}]}>
-                  <Text style={styles.textFooter}>{activeState ? 'Active' : 'Pending'}</Text>
+              </TouchableOpacity>
+              <View style={{marginTop: 'auto'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginLeft: 16}}>
+                  <View
+                    style={{backgroundColor: lightGreenColor, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 5, marginRight: 10}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>Active</Text>
+                  </View>
+                  <Text style={{fontFamily: Satoshi700, fontSize: RFValue(19, 812), color: whiteColor, marginRight: 8}}>{placeName}</Text>
+                  {userInfo?.accountConfirmed && <CheckStarIcon />}
                 </View>
-                <View style={styles.rowCountPeople}>
-                  <Users />
-                  <Text style={styles.textFooter}>
-                    {joinedPeopleCount}/{allPeople}
-                  </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: screenHeight / 70, marginBottom: 10}}>
+                  <View
+                    style={{
+                      backgroundColor: transparent60Color,
+                      borderRadius: 50,
+                      paddingVertical: 8,
+                      paddingHorizontal: 12,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginRight: 2,
+                    }}>
+                    <ProfileTwoUser />
+                    <Text style={styles.textUnderFooter}>{numberOfGirlsInvited} x Girl invitation</Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: transparent60Color,
+                      borderRadius: 50,
+                      paddingVertical: 8,
+                      paddingHorizontal: 12,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <CalendarBlank />
+                    <Text style={styles.textUnderFooter}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD MMMM YYYY')}</Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: transparent60Color,
+                      borderRadius: 50,
+                      paddingVertical: 8,
+                      paddingHorizontal: 12,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <Users />
+                    <Text style={styles.textUnderFooter}>
+                      {joinedPeopleCount}/{allPeople}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
-            {activeState && (
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                {!isAcceptedInvitation ? (
-                  <>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() =>
-                        handleOpenCancelAttendingModal({
-                          image,
-                          textCityName,
-                          date,
-                          numberOfGirlsInvited,
-                          host,
-                          list,
-                        })
-                      }
-                      style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderRadius: 10,
-                        paddingVertical: screenHeight / 150,
-                        marginRight: 6,
-                        borderColor: whiteColor,
-                        borderStyle: 'solid',
-                        borderWidth: 1,
-                      }}>
-                      <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>Cancel invitation</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() =>
-                        handleOpenAcceptInvitationModal({
-                          image,
-                          textCityName,
-                          date,
-                          numberOfGirlsInvited,
-                          host,
-                          list,
-                        })
-                      }
-                      style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderRadius: 10,
-                        paddingVertical: screenHeight / 150,
-                        marginLeft: 6,
-                        backgroundColor: whiteColor,
-                        borderWidth: 1,
-                        borderColor: whiteColor,
-                      }}>
-                      <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: blackColor}}>Accept invitation</Text>
-                    </TouchableOpacity>
-                  </>
-                ) : (
+            </ImageBackground>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: lightGray8Color,
+                paddingHorizontal: 16,
+                paddingVertical: 10,
+              }}>
+              {!isAcceptedInvitation ? (
+                <>
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() =>
@@ -261,29 +301,176 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
                       borderRadius: 10,
                       paddingVertical: screenHeight / 150,
                       marginRight: 6,
-                      borderColor: whiteColor,
-                      borderStyle: 'solid',
-                      borderWidth: 1,
                     }}>
-                    <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>Cancel attending</Text>
+                    <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>Reject invitation</Text>
                   </TouchableOpacity>
-                )}
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() =>
+                      handleOpenAcceptInvitationModal({
+                        image,
+                        textCityName,
+                        date,
+                        numberOfGirlsInvited,
+                        host,
+                        list,
+                      })
+                    }
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      borderRadius: 10,
+                      paddingVertical: screenHeight / 150,
+                      marginLeft: 6,
+                      backgroundColor: whiteColor,
+                      borderWidth: 1,
+                      borderColor: whiteColor,
+                    }}>
+                    <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: blackColor}}>Accept invitation</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() =>
+                    handleOpenCancelAttendingModal({
+                      image,
+                      textCityName,
+                      date,
+                      numberOfGirlsInvited,
+                      host,
+                      list,
+                    })
+                  }
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: 10,
+                    paddingVertical: screenHeight / 150,
+                    marginRight: 6,
+                    borderColor: whiteColor,
+                    borderStyle: 'solid',
+                    borderWidth: 1,
+                  }}>
+                  <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>Cancel attending</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </LinearGradient>
+        </View>
+      ) : (
+        <ImageBackground
+          borderRadius={14}
+          imageStyle={{borderRadius: 14, overflow: 'hidden'}}
+          source={{uri: image}}
+          style={styles.imageBackground}>
+          <LinearGradient
+            colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
+            start={{x: 0, y: 1}}
+            end={{x: 0, y: 0}}
+            style={styles.linearGradientCard}>
+            {activeState ? (
+              <TouchableOpacity
+                style={{
+                  backgroundColor: transparent60Color,
+                  borderRadius: 20,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginHorizontal: 14,
+                  paddingVertical: 6,
+                  paddingHorizontal: 12,
+                }}
+                onPress={() =>
+                  navigation.navigate(commonStackPath, {
+                    screen: eventInfoPath,
+                    params: {list: list, isAcceptedInvitation: isAcceptedInvitation},
+                  } as never)
+                }>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  {host?.image && <Image style={{borderRadius: 100, width: 40, height: 40}} source={{uri: host.image}} />}
+                  <View style={{marginLeft: 6}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      {userInfo?.accountType && (
+                        <View
+                          style={{
+                            borderColor: whiteColor,
+                            borderWidth: 1,
+                            borderStyle: 'solid',
+                            borderRadius: 5,
+                            paddingHorizontal: 6,
+                            paddingVertical: 2,
+                          }}>
+                          <Text style={{textTransform: 'capitalize', color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(9, 812)}}>
+                            {userInfo.accountType}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>
+                        {userInfo?.name}
+                        {userInfo?.date && `, ${calculateAge(userInfo.date)}`}
+                      </Text>
+                      {userInfo?.accountConfirmed && <CheckStarIcon width={12} height={12} style={{marginLeft: 4}} />}
+                    </View>
+                  </View>
+                </View>
+                <ArrowRight style={styles.arrowRightIcon} width={14} height={14} />
+              </TouchableOpacity>
+            ) : (
+              <View style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>
+                <EventInReviewView />
               </View>
             )}
-          </View>
-        </LinearGradient>
-      </ImageBackground>
-      <View style={styles.wrapperTextUnderCard}>
-        <Text style={styles.textCityName}>{textCityName}</Text>
-        <View style={styles.rowTextUnderFooter}>
-          <ProfileTwoUser />
-          <Text style={styles.textUnderFooter}>{numberOfGirlsInvited} x Girl invitation</Text>
-        </View>
-        <View style={styles.rowTextUnderFooter}>
-          <CalendarBlank />
-          <Text style={styles.textUnderFooter}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
-        </View>
-      </View>
+            <View style={{marginTop: 'auto'}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: screenHeight / 70, marginBottom: 10}}>
+                <View
+                  style={{
+                    backgroundColor: transparent60Color,
+                    borderRadius: 50,
+                    paddingVertical: 8,
+                    paddingHorizontal: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginRight: 2,
+                  }}>
+                  <ProfileTwoUser />
+                  <Text style={styles.textUnderFooter}>{numberOfGirlsInvited} x Girl invitation</Text>
+                </View>
+                <View
+                  style={{
+                    backgroundColor: transparent60Color,
+                    borderRadius: 50,
+                    paddingVertical: 8,
+                    paddingHorizontal: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <CalendarBlank />
+                  <Text style={styles.textUnderFooter}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD MMMM YYYY')}</Text>
+                </View>
+                <View
+                  style={{
+                    backgroundColor: transparent60Color,
+                    borderRadius: 50,
+                    paddingVertical: 8,
+                    paddingHorizontal: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <Users />
+                  <Text style={styles.textUnderFooter}>
+                    {joinedPeopleCount}/{allPeople}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </LinearGradient>
+        </ImageBackground>
+      )}
       <ModalEventRemindes
         eventStarting={eventStarting} // eventStarting
         uid={uid}

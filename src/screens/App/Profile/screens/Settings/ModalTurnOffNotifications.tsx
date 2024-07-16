@@ -1,7 +1,7 @@
 import {Text, View} from 'react-native';
 import Modal from 'react-native-modal';
 import {blackColor, transparentGray60Color, whiteColor} from 'constants/colors';
-import NotificationOff from 'assets/images/icons/notification-off.svg';
+import NotificationOff from 'assets/images/icons/notify-off.svg';
 import type {FC} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500} from 'constants/fonts';

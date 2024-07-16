@@ -142,7 +142,7 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
                   <Text style={styles.textButton}>-</Text>
                 </TouchableOpacity>
                 <View style={styles.wrapperTextCount}>
-                  <Text style={styles.textCount}>{female}</Text>
+                  <Text style={styles.textCount}>{male}</Text>
                 </View>
                 <TouchableOpacity onPress={() => setMale(male + 1)} style={styles.buttonPress}>
                   <Text style={styles.textButton}>+</Text>
@@ -220,6 +220,7 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
         </View> */}
       </View>
       <Button
+      disabled={!female && !male}
         onPress={() => {
           isEditing ? setIsVisibleSaveModal(true) : setTabState('eventDetails')
           setCurrentCreateStap(2);

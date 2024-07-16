@@ -149,7 +149,6 @@ const useStyles = () => {
     },
     wrapperTextTags: {
       flex: 1,
-      flexDirection: 'row',
       flexWrap: 'wrap',
       position: 'relative',
       right: 18,
@@ -222,6 +221,28 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
     },
+    basicsWrapper: {
+      marginTop: 38
+    },
+    testBasics: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontWeight: 'bold',
+      fontSize: RFValue(18, 812)
+    },
+    wrapperAboutMe: {
+      marginTop: 34
+    },
+    textAboutMe: {
+      marginTop: 14,
+      color: whiteColor,
+      fontSize: RFValue(16, 812),
+    },
+    textLocation: {
+      marginLeft: 10,
+      color: whiteColor,
+      fontSize: RFValue(16, 812),
+    }
   });
 };
 
