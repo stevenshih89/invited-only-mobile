@@ -153,6 +153,8 @@ const MyEvents: FC<any> = ({navigation}) => {
       if (user) {
         const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
         const data = querySnapshot?.docs?.map(i => i?.data());
+        // console.log('data', data);
+        
         setMyEventsData(data);
       }
     } catch (e) {
@@ -331,6 +333,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                 style={{flex: 1, backgroundColor: 'transparent'}}
                 renderItem={({item}) => (
                   <JoiningEventsCard
+                    uid={item?.uid}
                     activeState={item.statusEvent}
                     allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
                     date={item.date}

@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {black2Color, blackColor, lightGreenColor, whiteColor} from 'constants/colors.ts';
+import {black2Color, blackColor, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -11,7 +11,7 @@ const useStyles = () => {
     },
     wrapper: {
       backgroundColor: black2Color,
-      height: '60%',
+      // height: '60%',
       borderTopLeftRadius: 30,
       borderTopRightRadius: 30,
       alignItems: 'center',
@@ -44,9 +44,9 @@ const useStyles = () => {
     main: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginTop: screenHeight / 85,
+      // marginTop: screenHeight / 85,
       width: '100%',
-      justifyContent: 'space-between',
+      // justifyContent: 'space-between',
     },
     cancelEventImage: {
       width: 84,
@@ -61,7 +61,7 @@ const useStyles = () => {
       opacity: 0.8,
     },
     textCity: {
-      marginRight: 5,
+      marginLeft: 3,
       color: whiteColor,
       fontFamily: Satoshi400,
       fontSize: RFValue(14, 812),
@@ -105,11 +105,11 @@ const useStyles = () => {
       fontFamily: Satoshi400,
       textAlign: 'center',
       fontSize: RFValue(24, 812),
-      marginTop: screenHeight / 28,
+      marginTop: 20,
     },
     button: {
       width: '100%',
-      marginTop: screenHeight / 23,
+      marginTop: 20,
       marginBottom: 6,
     },
     textDescription: {
@@ -122,12 +122,21 @@ const useStyles = () => {
     },
     eventImage: {
       marginTop: 5,
-      width: 301,
-      height: 165,
-      borderRadius: 12,
+      width: screenWidth - 32,
+      height: 220,
+      borderRadius: 20,
+      overflow: 'hidden',
+      justifyContent: 'space-between',
+      padding: 16
     },
     fdr: {
-      flexDirection: 'row',
+      backgroundColor: transparent60Color, 
+      flexDirection: 'row', 
+      alignItems: 'center', 
+      paddingHorizontal: 12, 
+      paddingVertical: 8,
+      borderRadius: 100,
+      marginLeft: 2
     },
     modalStyles: {
       margin: 0,

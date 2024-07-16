@@ -21,6 +21,7 @@ import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRe
 
 interface JoiningEventsCard {
   estimeTime: string;
+  uid: string;
   activeState: boolean;
   host: {image: string; name: string};
   image: string;
@@ -55,6 +56,7 @@ interface JoiningEventsCard {
 
 const JoiningEventsCard: FC<JoiningEventsCard> = ({
   activeState,
+  uid,
   estimeTime,
   date,
   image,
@@ -72,6 +74,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
   handleAcceptInvitation,
   handleGetEventsIJoining,
 }) => {
+  
   const [eventStarting, setEventStarting] = useState<boolean>(false);
   const [eventData, setEventData] = useState({
     time: '',
@@ -124,10 +127,11 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
 
   useEffect(() => {
     if (
-      (calculateTimeDifference(currentTime, hour) === 0 && !isAcceptedInvitation) ||
-      (calculateTimeDifference(currentTime, hour) >= 2 && !isAcceptedInvitation) ||
-      (calculateTimeDifference(currentTime, hour) >= 12 && !isAcceptedInvitation) ||
-      (calculateTimeDifference(currentTime, hour) >= 24 && !isAcceptedInvitation)
+      // (calculateTimeDifference(currentTime, hour) === 0 && !isAcceptedInvitation) ||
+      // (calculateTimeDifference(currentTime, hour) >= 2 && !isAcceptedInvitation) ||
+      // (calculateTimeDifference(currentTime, hour) >= 12 && !isAcceptedInvitation) ||
+      // (calculateTimeDifference(currentTime, hour) >= 24 && !isAcceptedInvitation)
+      true
     ) {
       setEventData({
         time: calculateTimeDifference(currentTime, hour).toString(),
@@ -282,16 +286,21 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
         </View>
       </View>
       <ModalEventRemindes
-        eventStarting={eventStarting}
+        eventStarting={true} // eventStarting
+        uid={uid}
+        activeState={activeState}
+        host={host}
         setEventStarting={setEventStarting}
         time={eventData.time}
         image={eventData.image}
         placeName={eventData.placeName}
+        joinedPeopleCount={joinedPeopleCount}
         city={eventData.city}
         date={eventData.date}
         girlInvitation={eventData.girlInvitatio}
         handleAcceptInvitation={handleAcceptInvitation}
         handleGetEventsIJoining={handleGetEventsIJoining}
+        allPeople={allPeople}
       />
     </View>
   );
