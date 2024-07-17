@@ -24,6 +24,7 @@ import {useFocusEffect} from '@react-navigation/native';
 
 interface JoiningEventsCard {
   estimeTime: string;
+  uid: string;
   activeState: boolean;
   host: {image: string; name: string};
   image: string;
@@ -64,6 +65,8 @@ interface JoiningEventsCard {
 
 const JoiningEventsCard: FC<JoiningEventsCard> = ({
   activeState,
+  uid,
+  estimeTime,
   date,
   image,
   list,
@@ -507,16 +510,21 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
       </View>
       <View>
         <ModalEventRemindes
-          eventStarting={eventStarting}
+          eventStarting={eventStarting} // eventStarting
+          uid={uid}
+          activeState={activeState}
+          host={host}
           setEventStarting={setEventStarting}
           time={eventData.time}
           image={eventData.image}
           placeName={eventData.placeName}
+          joinedPeopleCount={joinedPeopleCount}
           city={eventData.city}
           date={eventData.date}
           girlInvitation={eventData.girlInvitatio}
           handleAcceptInvitation={handleAcceptInvitation}
           handleGetEventsIJoining={handleGetEventsIJoining}
+          allPeople={allPeople}
         />
       </View>
     </>
