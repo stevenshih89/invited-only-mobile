@@ -21,20 +21,29 @@ import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRe
 import firestore from '@react-native-firebase/firestore';
 import {calculateAge} from 'helpers/calculateAge';
 import {useFocusEffect} from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
+import { endEvent } from 'react-native/Libraries/Performance/Systrace';
 
 interface JoiningEventsCard {
   estimeTime: string;
   uid: string;
+  id: string;
   activeState: boolean;
   host: {image: string; name: string};
   image: string;
   list: any;
   allPeople: number;
+  dateNewViewed: [],
+  hourNewViewed: [],
+  nameNewViewed: [],
   textCityName: string;
   numberOfGirlsInvited: string;
   placeName: string;
   date: string;
   hour: string;
+  oldDate: string;
+  oldName: string;
+  oldHour: string;
   joinedPeopleCount: number;
   isAcceptedInvitation: boolean;
   handleAcceptInvitation: any;
@@ -60,8 +69,15 @@ interface JoiningEventsCard {
 const JoiningEventsCard: FC<JoiningEventsCard> = ({
   activeState,
   uid,
+  id,
   estimeTime,
   date,
+  oldDate,
+  oldName,
+  oldHour,
+  dateNewViewed,
+  nameNewViewed,
+  hourNewViewed,
   image,
   list,
   hour,
@@ -78,7 +94,9 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
   handleGetEventsIJoining,
 }) => {
   
-  const [eventStarting, setEventStarting] = useState<boolean>(false);
+  const [eventStarting, setEventStarting] = useState<boolean>(true);
+  const [updateEvent, setUpdateEvent] = useState<string | null>(null);
+  
   const [userInfo, setUserInfo] = useState<any>();
   const [eventData, setEventData] = useState({
     time: '',
@@ -89,7 +107,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
     girlInvitatio: '',
   });
   const styles = useStyles();
-  const navigation = useAppNavigation();
+  const navigation = useAppNavigation();  
 
   const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
 
@@ -154,9 +172,30 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
         placeName: placeName,
       });
       setEventStarting(true);
-    }
+    } 
   }, []);
 
+  const checkUpdate = () => {
+    const userId = auth().currentUser?.uid;
+    const userViewdDate = dateNewViewed.includes(userId, 0);
+    const userViewdHour = hourNewViewed.includes(userId, 0);
+    const userViewdName = nameNewViewed.includes(userId, 0);    
+    
+    if(oldDate != date && !userViewdDate && updateEvent != 'name' && updateEvent != 'hour' && updateEvent != 'date') {
+      setUpdateEvent('date')
+    } else if (oldName != textCityName && !userViewdName && updateEvent != 'name' && updateEvent != 'hour') {
+      setUpdateEvent('name')
+    } else if(oldHour != hour && !userViewdHour && updateEvent != 'hour' && updateEvent != 'date') {
+      setUpdateEvent('hour')
+    } else{
+      setUpdateEvent(null)
+    }
+  }
+
+  useEffect(() => {
+    checkUpdate()
+  },[])
+  
   return (
     <View style={styles.container}>
       {activeState ? (
@@ -472,17 +511,22 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
         </ImageBackground>
       )}
       <ModalEventRemindes
-        eventStarting={eventStarting} // eventStarting
+        updateEvent={updateEvent}
+        eventStarting={eventStarting}
+        setEventStarting={setEventStarting}
+        id={id}
         uid={uid}
         activeState={activeState}
+        checkUpdate={checkUpdate}
         host={host}
-        setEventStarting={setEventStarting}
+        setUpdateEvent={setUpdateEvent}
         time={eventData.time}
-        image={eventData.image}
-        placeName={eventData.placeName}
+        hour={hour}
+        image={image}
+        placeName={placeName}
         joinedPeopleCount={joinedPeopleCount}
         city={eventData.city}
-        date={eventData.date}
+        date={date}
         girlInvitation={eventData.girlInvitatio}
         handleAcceptInvitation={handleAcceptInvitation}
         handleGetEventsIJoining={handleGetEventsIJoining}

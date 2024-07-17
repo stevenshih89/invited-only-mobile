@@ -14,6 +14,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 
+
 const EventPreview: FC<{
   photos: any;
   date: string;
@@ -24,6 +25,7 @@ const EventPreview: FC<{
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
   const [imagesUser, setImagesUser] = useState();
+  const [userAccountType, setUserAccountType] = useState('')
   const numberPhotos = imagesUser?.length;
 
   useFocusEffect(
@@ -32,6 +34,7 @@ const EventPreview: FC<{
         try {
           const user = auth().currentUser;
           const userInfoDoc = await firestore().collection('userInfo').doc(user?.uid).get();
+          setUserAccountType(userInfoDoc.data()?.accountType)
           const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
           if (userImage) {
             setImagesUser(userImage);
@@ -60,26 +63,20 @@ const EventPreview: FC<{
     setActive(p => p - 1);
   };
 
-  return (
-    // @ts-ignore
-    <View style={styles.container}>
-      <ImageBackground
-        source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
-        style={styles.imageBackground}
-        imageStyle={styles.imageStyle}
-        resizeMode="cover">
-        {numberPhotos > 1 && (
+  if(userAccountType === 'guest') {
+    return (
+      <View style={styles.container}>
+        <ImageBackground source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}} style={styles.imageBackground} imageStyle={styles.imageStyle} resizeMode="cover">
           <View style={styles.wrapperBar}>
             {[...Array(numberPhotos)].map((_, index) => (
               <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
             ))}
-          </View>
-        )}
-        <View style={styles.wrapperButtons}>
-          <TouchableOpacity onPress={handleBack} style={styles.button} />
-          <TouchableOpacity onPress={handleNext} style={styles.button} />
-        </View>
-      </ImageBackground>
+            </View>
+            <View style={styles.wrapperButtons}>
+            <TouchableOpacity onPress={handleBack} style={styles.button} />
+            <TouchableOpacity onPress={handleNext} style={styles.button} />
+            </View>
+            </ImageBackground>
       <View style={styles.textContainer}>
         <Text style={styles.text}>{placeName}</Text>
         <View style={styles.rowContainer}>
@@ -89,107 +86,154 @@ const EventPreview: FC<{
           </View>
           <View style={[styles.row, styles.marginLeft]}>
             <Calendar />
-            <Text style={styles.subText}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD MMMM')}</Text>
-          </View>
+            <Text style={styles.subText}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
+            </View>
         </View>
-      </View>
-      <View style={styles.centerContainer}>
-        <TouchableOpacity
-          style={{
-            backgroundColor: 'black',
-            borderRadius: 50,
-            width: 56,
-            height: 56,
-            alignItems: 'center',
-            justifyContent: 'center',
-            opacity: 0.8,
-            marginRight: 12,
-          }}>
-          <View
-            style={{
-              backgroundColor: transparentWhite56Color,
-              width: '100%',
-              height: '100%',
-              borderRadius: 50,
-              position: 'absolute',
-              top: -1,
-              left: -1,
-            }}
-          />
-          <View
-            style={{
-              backgroundColor: transparentWhite56Color,
-              width: '100%',
-              height: '100%',
-              borderRadius: 50,
-              position: 'absolute',
-              right: -1,
-              bottom: -1,
-            }}
-          />
-          <View
-            style={{
-              width: '100%',
-              height: '100%',
-              backgroundColor: blackColor,
-              borderRadius: 50,
-              zIndex: 10,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <FlashIcon />
-          </View>
+        </View>
+        <View style={styles.centerContainer}>
+        <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginRight]}>
+          <FlashIcon />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: 'black',
-            borderRadius: 50,
-            width: 56,
-            height: 56,
-            alignItems: 'center',
-            justifyContent: 'center',
-            opacity: 0.8,
-            marginLeft: 12,
-          }}>
-          <View
-            style={{
-              backgroundColor: transparentWhite56Color,
-              width: '100%',
-              height: '100%',
-              borderRadius: 50,
-              position: 'absolute',
-              top: -1,
-              left: -1,
-            }}
-          />
-          <View
-            style={{
-              backgroundColor: transparentWhite56Color,
-              width: '100%',
-              height: '100%',
-              borderRadius: 50,
-              position: 'absolute',
-              right: -1,
-              bottom: -1,
-            }}
-          />
-          <View
-            style={{
-              width: '100%',
-              height: '100%',
-              backgroundColor: blackColor,
-              borderRadius: 50,
-              zIndex: 10,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <IOIcon />
-          </View>
-        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginLeft]}>
+          <IOIcon />
+          </TouchableOpacity>
       </View>
     </View>
-  );
-};
+    )
+  }
+
+  if (userAccountType === 'host') {
+    return (
+      // @ts-ignore
+      <View style={styles.container}>
+        <ImageBackground
+          source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
+          style={styles.imageBackground}
+          imageStyle={styles.imageStyle}
+          resizeMode="cover">
+          {numberPhotos > 1 && (
+            <View style={styles.wrapperBar}>
+              {[...Array(numberPhotos)].map((_, index) => (
+                <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
+              ))}
+            </View>
+          )}
+          <View style={styles.wrapperButtons}>
+            <TouchableOpacity onPress={handleBack} style={styles.button} />
+            <TouchableOpacity onPress={handleNext} style={styles.button} />
+          </View>
+        </ImageBackground>
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>{placeName}</Text>
+          <View style={styles.rowContainer}>
+            <View style={styles.row}>
+              <User />
+              <Text style={styles.subText}>{girls} x Girl invitation</Text>
+            </View>
+            <View style={[styles.row, styles.marginLeft]}>
+              <Calendar />
+              <Text style={styles.subText}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD MMMM')}</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.centerContainer}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: 'black',
+              borderRadius: 50,
+              width: 56,
+              height: 56,
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: 0.8,
+              marginRight: 12,
+            }}>
+            <View
+              style={{
+                backgroundColor: transparentWhite56Color,
+                width: '100%',
+                height: '100%',
+                borderRadius: 50,
+                position: 'absolute',
+                top: -1,
+                left: -1,
+              }}
+            />
+            <View
+              style={{
+                backgroundColor: transparentWhite56Color,
+                width: '100%',
+                height: '100%',
+                borderRadius: 50,
+                position: 'absolute',
+                right: -1,
+                bottom: -1,
+              }}
+            />
+            <View
+              style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: blackColor,
+                borderRadius: 50,
+                zIndex: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <FlashIcon />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: 'black',
+              borderRadius: 50,
+              width: 56,
+              height: 56,
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: 0.8,
+              marginLeft: 12,
+            }}>
+            <View
+              style={{
+                backgroundColor: transparentWhite56Color,
+                width: '100%',
+                height: '100%',
+                borderRadius: 50,
+                position: 'absolute',
+                top: -1,
+                left: -1,
+              }}
+            />
+            <View
+              style={{
+                backgroundColor: transparentWhite56Color,
+                width: '100%',
+                height: '100%',
+                borderRadius: 50,
+                position: 'absolute',
+                right: -1,
+                bottom: -1,
+              }}
+            />
+            <View
+              style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: blackColor,
+                borderRadius: 50,
+                zIndex: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <IOIcon />
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+  }
 
 const useStyles = () => {
   return StyleSheet.create({

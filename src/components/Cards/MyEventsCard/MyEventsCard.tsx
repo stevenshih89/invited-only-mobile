@@ -29,7 +29,7 @@ interface MyEventsCard {
   textCityName?: string;
   numberOfGirlsInvited?: string;
   date?: string;
-  imageBg?: string;
+  imageBg?: any;
   placeName?: string
   accountConfirmed:  boolean
 }
@@ -41,7 +41,12 @@ const MyEventsCard: FC<MyEventsCard> = props => {
 
   const [eventStarting, setEventStarting] = useState<boolean>(true);
   const [eventDate, setEventDate] = useState<string>('');
+  const [mainImageEvent, setMainImageEvent] = useState('')
   
+  useEffect(() => {
+    const filterImage = imageBg.filter(item => item.id < 1);
+    setMainImageEvent(filterImage[0].image)
+  }, [imageBg])
 
   const navigation = useAppNavigation();
 
@@ -100,7 +105,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     <TouchableOpacity
       onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: list}} as never)}
       style={styles.container}>
-      <ImageBackground borderRadius={14} source={{uri: imageBg}} style={styles.imageBackground}>
+      <ImageBackground borderRadius={14} source={{uri: mainImageEvent}} style={styles.imageBackground}>
         <LinearGradient
           colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
           start={{x: 0, y: 0}}
@@ -211,7 +216,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
         activeState={activeState}
         setEventStarting={setEventStarting}
         time={estimeTime}
-        image={imageBg}
+        image={mainImageEvent}
         placeName={placeName}
         joinedPeopleCount={invitingPeople?.length}
         date={eventDate}

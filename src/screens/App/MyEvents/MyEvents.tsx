@@ -158,7 +158,6 @@ const MyEvents: FC<any> = ({navigation}) => {
       if (user) {
         const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
         const data = querySnapshot?.docs?.map(i => i?.data());
-        // console.log('data', data);
         
         setMyEventsData(data);
       }
@@ -335,7 +334,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
                   <MyEventsCard
-                    imageBg={item?.photos[0]?.image}
+                    imageBg={item?.photos}
                     list={item}
                     activeState={item?.statusEvent}
                     allPeople={item?.female + item?.male}
@@ -357,10 +356,17 @@ const MyEvents: FC<any> = ({navigation}) => {
                 style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
                 renderItem={({item}) => (
                   <JoiningEventsCard
+                    id={item?.id}
                     uid={item?.uid}
                     activeState={item.statusEvent}
                     allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
                     date={item.date}
+                    oldDate={item.oldDate}
+                    oldName={item.oldName}
+                    oldHour={item.oldHour}
+                    dateNewViewed={item.dateNewViewed}
+                    nameNewViewed={item.nameNewViewed}
+                    hourNewViewed={item.hourNewViewed}
                     hour={item?.hour}
                     placeName={item?.placeName}
                     list={item}
@@ -387,9 +393,15 @@ const MyEvents: FC<any> = ({navigation}) => {
                 style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
                 renderItem={({item}) => (
                   <JoiningEventsCard
+                    uid={item?.uid}
                     activeState={item.statusEvent}
                     allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
                     date={item.date}
+                    oldName={item.oldName}
+                    oldHour={item.oldHour}
+                    dateNewViewed={item.dateNewViewed}
+                    nameNewViewed={item.nameNewViewed}
+                    hourNewViewed={item.hourNewViewed}
                     hour={item?.hour}
                     placeName={item?.placeName}
                     list={item}
