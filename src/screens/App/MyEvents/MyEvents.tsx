@@ -43,6 +43,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       image: '',
     },
   });
+  const [activeUserInfo, setActiveUserInfo] = useState<any>({});
   const [myEventsData, setMyEventsData] = useState([]);
   const [eventsJoiningData, setEventsJoiningData] = useState([]);
 
@@ -51,18 +52,26 @@ const MyEvents: FC<any> = ({navigation}) => {
   const isHost = user?.accountType === 'host';
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
-  const handleOpenCancelAttendingModal = (eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string}) => {
+  const handleOpenCancelAttendingModal = (
+    eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string},
+    userInfo,
+  ) => {
     setActiveModalEvent(eventInfo);
+    setActiveUserInfo(userInfo);
     setIsVisibleCancelAttendingModal(true);
   };
 
-  const handleOpenAcceptInvitationModal = (eventInfo: {
-    image: string;
-    textCityName: string;
-    date: string;
-    numberOfGirlsInvited: string;
-  }) => {
+  const handleOpenAcceptInvitationModal = (
+    eventInfo: {
+      image: string;
+      textCityName: string;
+      date: string;
+      numberOfGirlsInvited: string;
+    },
+    userInfo,
+  ) => {
     setActiveModalEvent(eventInfo);
+    setActiveUserInfo(userInfo);
     setIsVisibleAcceptInvitationModal(true);
   };
 
@@ -412,12 +421,14 @@ const MyEvents: FC<any> = ({navigation}) => {
         isVisible={isVisibleCancelAttendingModal}
         onClose={() => setIsVisibleCancelAttendingModal(false)}
         eventInfo={activeModalEvent}
+        userInfo={activeUserInfo}
       />
       <ModalAcceptInvitation
         handleRejectInvitation={handleRejectInvitation}
         handleAcceptInvitation={handleAcceptInvitation}
         isVisible={isVisibleAcceptInvitationModal}
         onClose={() => setIsVisibleAcceptInvitationModal(false)}
+        userInfo={activeUserInfo}
         eventInfo={activeModalEvent}
       />
     </>
