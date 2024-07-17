@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {View, Text, ImageBackground, TouchableOpacity, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment/moment';
@@ -13,10 +13,12 @@ import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
 import UsersIcon from 'assets/images/icons/Users.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
+import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
 import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {errorColor, lightGray10Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
+
 
 interface MyEventsCard {
   estimeTime?: string;
@@ -28,15 +30,22 @@ interface MyEventsCard {
   numberOfGirlsInvited?: string;
   date?: string;
   imageBg?: string;
-  placeName?: string;
-  accountConfirmed?: boolean;
+  placeName?: string
+  accountConfirmed:  boolean
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
-  const {list, imageBg, activeState, date, invitingPeople, numberOfGirlsInvited, allPeople, placeName, accountConfirmed} = props;
+  const {list,accountConfirmed, placeName, imageBg, activeState, estimeTime, date, invitingPeople, numberOfGirlsInvited, allPeople, textCityName} = props;
+
   const styles = useStyles();
 
+  const [eventStarting, setEventStarting] = useState<boolean>(true);
+  const [eventDate, setEventDate] = useState<string>('');
+  
+
   const navigation = useAppNavigation();
+
+  const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
 
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
@@ -47,7 +56,45 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     </View>
   );
 
+  const calculateTimeDifference = (start: string, end: string) => {
+    let startTime = start.split(':');
+    let endTime = end.split(':');
+
+    let startHour = parseInt(startTime[0], 10);
+    let startMinute = parseInt(startTime[1], 10);
+    let endHour = parseInt(endTime[0], 10);
+    let endMinute = parseInt(endTime[1], 10);
+
+    let startTotalMinutes = startHour * 60 + startMinute;
+    let endTotalMinutes = endHour * 60 + endMinute;
+
+    if (endTotalMinutes < startTotalMinutes) {
+      endTotalMinutes += 24 * 60;
+    }
+
+    let differenceInMinutes = endTotalMinutes - startTotalMinutes;
+
+    let hours = Math.floor(differenceInMinutes / 60);
+    let minutes = differenceInMinutes % 60;
+
+    return hours;
+    // return hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+  };
+
+  useEffect(() => {
+    if (
+      (calculateTimeDifference(currentTime, estimeTime) === 0) ||
+      (calculateTimeDifference(currentTime, estimeTime) >= 2) ||
+      (calculateTimeDifference(currentTime, estimeTime) >= 12) ||
+      (calculateTimeDifference(currentTime, estimeTime) >= 24)
+    ) {
+      setEventDate(calculateTimeDifference(currentTime, estimeTime).toString());
+      setEventStarting(true);
+    }
+  }, []);
+
   const approvedPeople = invitingPeople?.filter(i => i?.status === 'accepted');
+
 
   return (
     <TouchableOpacity
@@ -148,6 +195,31 @@ const MyEventsCard: FC<MyEventsCard> = props => {
           </View>
         </LinearGradient>
       </ImageBackground>
+      <View style={styles.wrapperTextUnderCard}>
+        <Text style={styles.textCityName}>{textCityName}</Text>
+        <View style={styles.rowTextUnderFooter}>
+          <ProfileTwoUser />
+          <Text style={styles.textUnderFooter}>{numberOfGirlsInvited} x Girl invitation</Text>
+        </View>
+        <View style={styles.rowTextUnderFooter}>
+          <CalendarBlank />
+          <Text style={styles.textUnderFooter}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
+        </View>
+      </View>
+      <ModalEventRemindes
+        eventStarting={eventStarting}
+        activeState={activeState}
+        setEventStarting={setEventStarting}
+        time={estimeTime}
+        image={imageBg}
+        placeName={placeName}
+        joinedPeopleCount={invitingPeople?.length}
+        date={eventDate}
+        girlInvitation={numberOfGirlsInvited}
+        // handleAcceptInvitation={handleAcceptInvitation}
+        // handleGetEventsIJoining={handleGetEventsIJoining}
+        allPeople={allPeople}
+      />
     </TouchableOpacity>
   );
 };
