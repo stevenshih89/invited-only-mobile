@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 //import components
 import useStyles from 'components/TouchingSlider/styles.ts';
-import {blackColor, gray1Color, transparentGray60Color, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
+import {blackColor, gray1Color, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
@@ -19,7 +19,6 @@ import FlashBlackIcon from 'assets/images/icons/flash-black.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
 import Lock from 'assets/images/icons/lock.svg';
 import Heart from 'assets/images/icons/heart.svg';
-import CheckStar from 'assets/images/icons/check-star-white.svg';
 import {Satoshi400, Satoshi700} from 'constants/fonts.ts';
 import Animated, {useAnimatedStyle, useSharedValue, withTiming, Easing} from 'react-native-reanimated';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
@@ -184,29 +183,44 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           end={{x: 0, y: 1}}>
           <View style={styles.wrapperBio}>
             <View style={{flexDirection: 'row'}}>
-            <View
-              style={{backgroundColor: blackColor, borderRadius: 5, borderWidth: 2, borderColor: whiteColor, paddingHorizontal: 12, paddingVertical: 2, alignSelf: 'flex-start'}}>
-              <Text style={{color: whiteColor, fontSize: 14, fontFamily: Satoshi700, textTransform: 'capitalize'}}>{accountType}</Text>
-            </View>
-            {true && <LinearGradient 
-                colors={['#977B4A', '#E5D291', '#A28453']} 
+              <View
                 style={{
-                  marginLeft: 6,
-                  alignSelf: 'flex-start',
-                  borderRadius: 4,
+                  backgroundColor: blackColor,
+                  borderRadius: 5,
+                  borderWidth: 2,
+                  borderColor: whiteColor,
                   paddingHorizontal: 12,
                   paddingVertical: 2,
-                  backgroundColor: blackColor
-                }}
-                start={{x: 0, y: 0}} end={{x: 1, y: 0}}
-                >
-                {true && <Text style={{
-                  color: blackColor,
-                  fontSize: RFValue(14, 812),
-                  fontFamily: Satoshi400,
-                  fontWeight: 'bold'
-                }}>Premium</Text>}
-              </LinearGradient>}
+                  alignSelf: 'flex-start',
+                }}>
+                <Text style={{color: whiteColor, fontSize: 14, fontFamily: Satoshi700, textTransform: 'capitalize'}}>{accountType}</Text>
+              </View>
+              {true && (
+                <LinearGradient
+                  colors={['#977B4A', '#E5D291', '#A28453']}
+                  style={{
+                    marginLeft: 6,
+                    alignSelf: 'flex-start',
+                    borderRadius: 4,
+                    paddingHorizontal: 12,
+                    paddingVertical: 2,
+                    backgroundColor: blackColor,
+                  }}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}>
+                  {true && (
+                    <Text
+                      style={{
+                        color: blackColor,
+                        fontSize: RFValue(14, 812),
+                        fontFamily: Satoshi400,
+                        fontWeight: 'bold',
+                      }}>
+                      Premium
+                    </Text>
+                  )}
+                </LinearGradient>
+              )}
             </View>
             <View style={styles.rowBioInfo}>
               <Text style={styles.textName}>{name},</Text>

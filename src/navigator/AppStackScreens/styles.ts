@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {backgroundColor, whiteColor} from 'constants/colors.ts';
+import {backgroundColor, blackColor, whiteColor} from 'constants/colors.ts';
 import {Satoshi400} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 
@@ -8,7 +8,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 const useStyles = () => {
   return StyleSheet.create({
     headerStyle: {
-      backgroundColor: backgroundColor,
+      backgroundColor: blackColor,
       shadowOffset: {
         height: 0,
         width: 0,

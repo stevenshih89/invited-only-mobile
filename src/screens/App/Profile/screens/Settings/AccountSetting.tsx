@@ -1,4 +1,14 @@
-import {deleteColor, grayColor, lightGray5Color, lightGray6Color, lightRedColor, toggleColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {
+  blackColor,
+  deleteColor,
+  grayColor,
+  lightGray5Color,
+  lightGray6Color,
+  lightRedColor,
+  toggleColor,
+  transparentWhite16Color,
+  whiteColor,
+} from 'constants/colors';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import AEFlag from 'assets/images/flags/ae.svg';
@@ -14,7 +24,7 @@ import {useUser} from '../../../../../store/userStore';
 import auth from '@react-native-firebase/auth';
 import Geolocation from '@react-native-community/geolocation';
 import firestore from '@react-native-firebase/firestore';
-import chat from "screens/App/Chat/Chat.tsx";
+import chat from 'screens/App/Chat/Chat.tsx';
 
 const AccountSetting: FC = ({navigation, route}: any) => {
   const locationState = route?.params?.params?.locationState;
@@ -25,7 +35,7 @@ const AccountSetting: FC = ({navigation, route}: any) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const user = useUser((i: any) => i?.user);
-  
+
   const setUser = useUser((i: any) => i?.setUser);
   const userPhone = auth()?.currentUser?.phoneNumber;
   const uid = user?.uid;
@@ -86,7 +96,7 @@ const AccountSetting: FC = ({navigation, route}: any) => {
 
   return (
     <>
-      <View style={{backgroundColor: lightGray6Color, flex: 1, paddingHorizontal: 20}}>
+      <View style={{backgroundColor: blackColor, flex: 1, paddingHorizontal: 20}}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{paddingTop: 34, paddingBottom: 50}}
@@ -116,7 +126,16 @@ const AccountSetting: FC = ({navigation, route}: any) => {
             <View style={{marginTop: 26, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 {/*<AEFlag />*/}
-                <Text numberOfLines={1} style={{color: whiteColor, maxWidth: '90%', overflow: 'hidden', fontSize: RFValue(15, 812), fontFamily: Satoshi700, marginLeft: 4}}>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    color: whiteColor,
+                    maxWidth: '90%',
+                    overflow: 'hidden',
+                    fontSize: RFValue(15, 812),
+                    fontFamily: Satoshi700,
+                    marginLeft: 4,
+                  }}>
                   {/* {userPhone?.slice(0, 4)} */}
                   {user?.email}
                   {/* <Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi400}}> {userPhone?.slice(4, -1)}</Text> */}
@@ -140,7 +159,9 @@ const AccountSetting: FC = ({navigation, route}: any) => {
                 padding: 20,
                 marginTop: 24,
               }}>
-              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginBottom: 26}}>Subscription manage</Text>
+              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginBottom: 26}}>
+                Subscription manage
+              </Text>
               <TouchableOpacity activeOpacity={0.7} style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 <Text style={{color: whiteColor}}>Change payment method</Text>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -150,7 +171,9 @@ const AccountSetting: FC = ({navigation, route}: any) => {
               </TouchableOpacity>
               <View style={{height: 1, backgroundColor: transparentWhite16Color, marginVertical: 14}} />
               <TouchableOpacity activeOpacity={0.7} style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <Text style={{color: whiteColor, marginRight: 10, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>Change payment method</Text>
+                <Text style={{color: whiteColor, marginRight: 10, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>
+                  Change payment method
+                </Text>
                 <ArrowRight width={14} height={14} />
               </TouchableOpacity>
             </View>
@@ -203,7 +226,14 @@ const AccountSetting: FC = ({navigation, route}: any) => {
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => setIsVisibleDeleteAccountModal(true)}
-            style={{flexDirection: 'row', alignItems: 'center', borderRadius: 10, backgroundColor: lightGray5Color, padding: 20, marginTop: 24}}>
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              borderRadius: 10,
+              backgroundColor: lightGray5Color,
+              padding: 20,
+              marginTop: 24,
+            }}>
             <TrashRed />
             <Text style={{color: deleteColor, marginLeft: 10, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>Delete my account</Text>
           </TouchableOpacity>

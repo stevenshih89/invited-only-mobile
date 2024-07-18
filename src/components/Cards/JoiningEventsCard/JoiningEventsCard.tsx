@@ -95,7 +95,6 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
   });
   const styles = useStyles();
   const navigation = useAppNavigation();
-  console.warn(eventStarting);
 
   const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
 
@@ -385,9 +384,6 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
                       borderRadius: 10,
                       paddingVertical: screenHeight / 150,
                       marginRight: 6,
-                      borderColor: whiteColor,
-                      borderStyle: 'solid',
-                      borderWidth: 1,
                     }}>
                     <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>Cancel attending</Text>
                   </TouchableOpacity>

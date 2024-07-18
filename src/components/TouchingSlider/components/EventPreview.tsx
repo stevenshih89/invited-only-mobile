@@ -83,7 +83,6 @@ const EventPreview: FC<{
   };
 
   console.log('photos', photos);
-  
 
   return (
     // @ts-ignore
@@ -112,7 +111,7 @@ const EventPreview: FC<{
               <View style={styles.containerInfo}>
                 <ImageBackground
                   // source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
-                  source={{uri: photos[0].image}}
+                  source={{uri: photos?.[0]?.image}}
                   style={styles.imageBackground}
                   imageStyle={styles.imageStyle}
                   resizeMode="cover">
@@ -167,18 +166,17 @@ const EventPreview: FC<{
             <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Previous step</Text>
           </TouchableOpacity>
         </View> */}
-        <View style={{flexDirection: 'row', width:'100%', paddingHorizontal: 16, alignItems: 'center', justifyContent: 'space-between'}}>
-        <View style={{alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => {
-            setCurrentCreateStap(2);
-            setTabState('eventDetails');
-          }}>
-            <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Back</Text>
-          </TouchableOpacity>
-        </View>
-        <Button buttonStyle={styles.button}
-          onPress={handleCreateEvent} 
-          title={'Create event'}/>
+        <View style={{flexDirection: 'row', width: '100%', paddingHorizontal: 16, alignItems: 'center', justifyContent: 'space-between'}}>
+          <View style={{alignItems: 'center'}}>
+            <TouchableOpacity
+              onPress={() => {
+                setCurrentCreateStap(2);
+                setTabState('eventDetails');
+              }}>
+              <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Back</Text>
+            </TouchableOpacity>
+          </View>
+          <Button buttonStyle={styles.button} onPress={handleCreateEvent} title={'Create event'} />
         </View>
       </View>
     </SafeAreaView>
