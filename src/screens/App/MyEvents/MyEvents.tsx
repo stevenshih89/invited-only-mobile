@@ -16,12 +16,10 @@ import ModalCancelAttending from './ModalCancelAttending';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
 import {useUser} from '../../../store/userStore';
 import {ALL, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
-import {eventCreatingStackPath} from 'constants/pathLocations.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 
 //import images
-import AddIcon from 'assets/images/icons/add.svg';
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 
 const MyEvents: FC<any> = ({navigation}) => {
@@ -146,7 +144,6 @@ const MyEvents: FC<any> = ({navigation}) => {
       const events = await firestore().collection('Events').get();
       const data = events?.docs?.map(i => i?.data());
 
-      console.log('data', data);
       const filterData = data?.filter(obj => {
         return obj?.usersList?.some(user => {
           return user?.uid === uid && (user?.status === 'invited' || user?.status === 'accepted');
@@ -167,7 +164,6 @@ const MyEvents: FC<any> = ({navigation}) => {
       if (user) {
         const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
         const data = querySnapshot?.docs?.map(i => i?.data());
-        
         setMyEventsData(data);
       }
     } catch (e) {

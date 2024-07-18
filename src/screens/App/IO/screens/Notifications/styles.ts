@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {backgroundColor, lightGray5Color, transparentWhite16Color, whiteColor} from 'constants/colors.ts';
+import {backgroundColor, blackColor, lightGray5Color, transparentWhite16Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight} from 'constants/common.ts';
@@ -10,14 +10,14 @@ const useStyles = () =>
       flex: 1,
       paddingTop: screenHeight / 38,
       paddingHorizontal: 20,
-      backgroundColor: backgroundColor,
+      backgroundColor: blackColor,
     },
     containerScroll: {
       flex: 1,
       borderTopColor: transparentWhite16Color,
       borderTopWidth: 1,
       borderStyle: 'solid',
-      backgroundColor: backgroundColor,
+      backgroundColor: blackColor,
     },
     notificationItem: {
       flexDirection: 'row',

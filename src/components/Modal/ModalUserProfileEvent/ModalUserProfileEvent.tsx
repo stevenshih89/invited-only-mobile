@@ -10,7 +10,7 @@ import ReportIcon from 'assets/images/icons/info-circle.svg';
 import CloseIcon from 'assets/images/icons/close-circle-red.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {darkRedColor, gray1Color, whiteColor} from 'constants/colors.ts';
+import {gray1Color, whiteColor} from 'constants/colors.ts';
 import {chatCorrespondencePath, commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';

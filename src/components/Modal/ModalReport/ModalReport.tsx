@@ -14,8 +14,8 @@ import IndentityBasedIcon from 'assets/images/icons/identity-based.svg';
 import MoreCircle from 'assets/images/icons/more-circle.svg';
 import EightPlusIcon from 'assets/images/icons/18+.svg';
 import EmojiSadIcon from 'assets/images/icons/emoji-sad.svg';
-import {showToast} from "helpers/showToast.ts";
-import firestore from "@react-native-firebase/firestore";
+import {showToast} from 'helpers/showToast.ts';
+import firestore from '@react-native-firebase/firestore';
 
 interface ModalReportProps {
   modalReport?: boolean;

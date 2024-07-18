@@ -572,7 +572,13 @@ const IO: FC = (): JSX.Element => {
   };
 
   const getListForHost = async () => {
-    const userInfo: FirebaseFirestoreTypes.DocumentData = await firestore().collection('userInfo').limit(20).get();
+    let users: any;
+    if (userInfo?.chooseGuest === 'any') {
+      users = await firestore().collection('userInfo').limit(20).get();
+    } else {
+      users = await firestore().collection('userInfo').where('gender', '==', userInfo?.chooseGuest).limit(20).get();
+    }
+
     let data: any[] = [
       <View style={styles.wrapperCreateEventCard}>
         <Text style={styles.textYouNeedToCreate}>You need to create an event to start inviting</Text>
@@ -587,7 +593,7 @@ const IO: FC = (): JSX.Element => {
       </View>,
     ];
 
-    const usersList = await userInfo?._docs;
+    const usersList = await users?._docs;
 
     usersList
       ?.filter(i => i?._data?.uid !== userHost?.uid)

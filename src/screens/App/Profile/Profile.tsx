@@ -16,8 +16,8 @@ import {useFocusEffect} from '@react-navigation/native';
 import {transparentGray60Color, whiteColor} from 'constants/colors';
 import {calculateAge} from 'helpers/calculateAge';
 import Payment from 'screens/Auth/Payment/Payment';
-import Svg, { Circle, G } from 'react-native-svg';
-import { screenHeight } from 'constants/common';
+import Svg, {Circle, G} from 'react-native-svg';
+import {screenHeight} from 'constants/common';
 import LinearGradient from 'react-native-linear-gradient';
 
 const Profile: FC = () => {
@@ -25,7 +25,7 @@ const Profile: FC = () => {
   const [percentage, setPercentage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({} as any);
-  
+
   const [mainImage, setMainImage] = useState({id: 0, image: ''} as any);
 
   const tabList = [
@@ -116,23 +116,16 @@ const Profile: FC = () => {
     return <ActivityIndicator style={styles.scrollView} />;
   }
 
-  const ProgressCircle = ({ size, strokeWidth, progress, color, backgroundColor }) => {
+  const ProgressCircle = ({size, strokeWidth, progress, color, backgroundColor}) => {
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (progress / 100) * circumference;
-  
+
     return (
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <Svg width={size} height={size} style={{ position: 'absolute', zIndex: 10}}>
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <Svg width={size} height={size} style={{position: 'absolute', zIndex: 10}}>
           <G rotation="-90" origin={`${size / 2}, ${size / 2}`}>
-            <Circle
-              cx="50%"
-              cy="50%"
-              r={radius}
-              stroke={backgroundColor}
-              strokeWidth={strokeWidth}
-              fill="none"
-            />
+            <Circle cx="50%" cy="50%" r={radius} stroke={backgroundColor} strokeWidth={strokeWidth} fill="none" />
             <Circle
               cx="50%"
               cy="50%"
@@ -149,7 +142,6 @@ const Profile: FC = () => {
       </View>
     );
   };
-  
 
   return (
     <View style={styles.container}>
@@ -167,42 +159,39 @@ const Profile: FC = () => {
               <View style={[styles.profileImage, {backgroundColor: whiteColor}]} />
             )}
             <View style={[styles.buttonContainer, {position: 'absolute', bottom: 0, zIndex: 20}]}>
-                <Button title="Complete profile" buttonStyle={styles.button} buttonTitleStyle={styles.buttonTitle} onPress={goToMyProfileView} />
-            <View style={{position: 'absolute', right: 14,top: 10}}>
-              <EditBlack width={14} height={14} />
+              <Button
+                title="Complete profile"
+                buttonStyle={styles.button}
+                buttonTitleStyle={styles.buttonTitle}
+                onPress={goToMyProfileView}
+              />
+              <View style={{position: 'absolute', right: 14, top: 10}}>
+                <EditBlack width={14} height={14} />
+              </View>
             </View>
-          </View>
-          <View style={{position:'absolute', bottom: 80, zIndex: 0}}>
-            <ProgressCircle
-              size={175}
-              strokeWidth={4}
-              progress={percentage}
-              color="white"
-              backgroundColor={transparentGray60Color}
-            />
-          </View>
+            <View style={{position: 'absolute', bottom: 80, zIndex: 0}}>
+              <ProgressCircle size={175} strokeWidth={4} progress={percentage} color="white" backgroundColor={transparentGray60Color} />
+            </View>
           </View>
           <View style={styles.nameContainer}>
             <View style={{flexDirection: 'row'}}>
-            <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.showAge ? `, ${userAge}` : ''}`}</Text>
-            {userInfo?.accountConfirmed && <CheckStarWhite style={styles.checkStarIcon} />}
+              <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.showAge ? `, ${userAge}` : ''}`}</Text>
+              {userInfo?.accountConfirmed && <CheckStarWhite style={styles.checkStarIcon} />}
             </View>
             <View style={{flexDirection: 'row'}}>
               <View style={styles.accountTypeWrapper}>
                 <Text style={styles.accountTypeText}>{userInfo?.accountType}</Text>
               </View>
-              <LinearGradient 
-                colors={['#977B4A', '#E5D291', '#A28453']} 
+              <LinearGradient
+                colors={['#977B4A', '#E5D291', '#A28453']}
                 style={styles.accountTypeWrapperPremium}
-                start={{x: 0, y: 0}} end={{x: 1, y: 0}}
-                >
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0}}>
                 {true && <Text style={styles.accountTypePremium}>Premium</Text>}
               </LinearGradient>
             </View>
           </View>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          
-    </View>
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} />
         </View>
         <FlatList
           keyExtractor={item => item.id.toString()}

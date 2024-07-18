@@ -14,7 +14,6 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 
-
 const EventPreview: FC<{
   photos: any;
   date: string;
@@ -25,7 +24,7 @@ const EventPreview: FC<{
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
   const [imagesUser, setImagesUser] = useState();
-  const [userAccountType, setUserAccountType] = useState('')
+  const [userAccountType, setUserAccountType] = useState('');
   const numberPhotos = imagesUser?.length;
 
   useFocusEffect(
@@ -34,7 +33,7 @@ const EventPreview: FC<{
         try {
           const user = auth().currentUser;
           const userInfoDoc = await firestore().collection('userInfo').doc(user?.uid).get();
-          setUserAccountType(userInfoDoc.data()?.accountType)
+          setUserAccountType(userInfoDoc.data()?.accountType);
           const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
           if (userImage) {
             setImagesUser(userImage);
@@ -63,43 +62,55 @@ const EventPreview: FC<{
     setActive(p => p - 1);
   };
 
-  if(userAccountType === 'guest') {
+  if (userAccountType === 'guest') {
     return (
       <View style={styles.container}>
-        <ImageBackground source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}} style={styles.imageBackground} imageStyle={styles.imageStyle} resizeMode="cover">
-          <View style={styles.wrapperBar}>
-            {[...Array(numberPhotos)].map((_, index) => (
-              <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
-            ))}
-            </View>
-            <View style={styles.wrapperButtons}>
+        <ImageBackground
+          source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
+          style={styles.imageBackground}
+          imageStyle={styles.imageStyle}
+          resizeMode="cover">
+          {photos.length > 1 && (
+            <>
+              <View style={styles.wrapperBar}>
+                {[...Array(photos.length)].map((_, index) => (
+                  <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
+                ))}
+              </View>
+              <View style={styles.wrapperButtons}>
+                <TouchableOpacity onPress={handleBack} style={styles.button} />
+                <TouchableOpacity onPress={handleNext} style={styles.button} />
+              </View>
+            </>
+          )}
+          <View style={styles.wrapperButtons}>
             <TouchableOpacity onPress={handleBack} style={styles.button} />
             <TouchableOpacity onPress={handleNext} style={styles.button} />
-            </View>
-            </ImageBackground>
-      <View style={styles.textContainer}>
-        <Text style={styles.text}>{placeName}</Text>
-        <View style={styles.rowContainer}>
-          <View style={styles.row}>
-            <User />
-            <Text style={styles.subText}>{girls} x Girl invitation</Text>
           </View>
-          <View style={[styles.row, styles.marginLeft]}>
-            <Calendar />
-            <Text style={styles.subText}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
+        </ImageBackground>
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>{placeName}</Text>
+          <View style={styles.rowContainer}>
+            <View style={styles.row}>
+              <User />
+              <Text style={styles.subText}>{girls} x Girl invitation</Text>
             </View>
-        </View>
+            <View style={[styles.row, styles.marginLeft]}>
+              <Calendar />
+              <Text style={styles.subText}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
+            </View>
+          </View>
         </View>
         <View style={styles.centerContainer}>
-        <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginRight]}>
-          <FlashIcon />
-        </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginLeft]}>
-          <IOIcon />
+          <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginRight]}>
+            <FlashIcon />
           </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginLeft]}>
+            <IOIcon />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-    )
+    );
   }
 
   if (userAccountType === 'host') {
@@ -112,16 +123,18 @@ const EventPreview: FC<{
           imageStyle={styles.imageStyle}
           resizeMode="cover">
           {numberPhotos > 1 && (
-            <View style={styles.wrapperBar}>
-              {[...Array(numberPhotos)].map((_, index) => (
-                <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
-              ))}
-            </View>
+            <>
+              <View style={styles.wrapperBar}>
+                {[...Array(numberPhotos)].map((_, index) => (
+                  <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
+                ))}
+              </View>
+              <View style={styles.wrapperButtons}>
+                <TouchableOpacity onPress={handleBack} style={styles.button} />
+                <TouchableOpacity onPress={handleNext} style={styles.button} />
+              </View>
+            </>
           )}
-          <View style={styles.wrapperButtons}>
-            <TouchableOpacity onPress={handleBack} style={styles.button} />
-            <TouchableOpacity onPress={handleNext} style={styles.button} />
-          </View>
         </ImageBackground>
         <View style={styles.textContainer}>
           <Text style={styles.text}>{placeName}</Text>
@@ -232,8 +245,8 @@ const EventPreview: FC<{
         </View>
       </View>
     );
-  };
   }
+};
 
 const useStyles = () => {
   return StyleSheet.create({

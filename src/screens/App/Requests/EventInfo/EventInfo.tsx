@@ -21,6 +21,8 @@ import MapIcon from 'assets/images/icons/location.svg';
 import {transparentWhite16Color, whiteColor} from 'constants/colors';
 import firestore from '@react-native-firebase/firestore';
 import {ActivityIndicator} from '@ant-design/react-native';
+import {Satoshi400, Satoshi700} from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 const EventInfo = ({navigation, route}: any) => {
   const styles = useStyles();
@@ -28,7 +30,7 @@ const EventInfo = ({navigation, route}: any) => {
   const [loading, setLoading] = useState(true);
 
   const {list, isAcceptedInvitation} = route?.params;
-  const {photos, placeName, meetingSpot, description, hour, date, address, userPhotos, female, femaleFriend, male, uid} = list;
+  const {photos, placeName, meetingSpot, description, hour, date, address, userPhotos, female, femaleFriend, male, uid, name} = list;
 
   console.warn('list event info active', list);
   const iconsArrayMale = Array.from({length: male}, (_, index) => index);
@@ -70,29 +72,38 @@ const EventInfo = ({navigation, route}: any) => {
           />
 
           <View style={styles.bioWrapper}>
-            <Text style={styles.titleSection}>Event Details</Text>
-            <Text style={styles.subTitle}>Place name</Text>
-            <Text style={styles.textUnderSubTitle}>{placeName}</Text>
-            <Text style={[styles.subTitle, {marginTop: 20}]}>Event name</Text>
-            <Text style={styles.textUnderSubTitle}>{meetingSpot}</Text>
-            <Text style={[styles.subTitle, {marginTop: 20}]}>Event description</Text>
-            <Text style={styles.textDescription}>{description}</Text>
+            <Text style={[styles.titleSection, {marginTop: 20}]}>Event details</Text>
+            <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}}>Place name</Text>
+            <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{placeName}</Text>
+            <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+            <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
+              Event name
+            </Text>
+            <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{name}</Text>
+            <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+            <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
+              Event description
+            </Text>
+            <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{description}</Text>
+            <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
             <View style={{marginTop: 28}}>
-              <View style={styles.fdrAlc}>
+              <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                 <CalendarIcon width={16} height={16} />
-                <Text style={styles.textInfo}>{date}</Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{date}</Text>
               </View>
-              <View style={styles.fdrAlc}>
+              <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                 <ClockIcon width={16} height={16} />
-                <Text style={styles.textInfo}>{hour}</Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{hour}</Text>
               </View>
-              <View style={styles.fdrAlc}>
+              <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                 <MapIcon width={16} height={16} />
-                <Text style={styles.textInfo}>{address}</Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{address}</Text>
               </View>
-              <View style={styles.fdrAlc}>
+              <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                 <PeopleIcon width={16} height={16} />
-                <Text style={styles.textInfo}>{female + femaleFriend}x girl</Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
+                  {female + femaleFriend}x girl
+                </Text>
               </View>
             </View>
             {photos?.map((i, index) => (
@@ -106,13 +117,6 @@ const EventInfo = ({navigation, route}: any) => {
                   <Text style={styles.textNumberInvitedPeople}>{female}</Text>
                 </View>
               </View>
-              <View style={styles.rowPersonIcon}>
-                {iconsArrayFemale?.map(index => (
-                  <View key={index} style={[styles.wrapperPersonIcon, {marginLeft: index === 0 ? 0 : 10}]}>
-                    <PersonIcon width={18} height={18} />
-                  </View>
-                ))}
-              </View>
             </View>
             <View>
               <View style={[styles.wrapperNumberPeople, {marginTop: 12}]}>
@@ -120,13 +124,6 @@ const EventInfo = ({navigation, route}: any) => {
                 <View style={styles.rowNumberPeople}>
                   <Text style={styles.textNumberInvitedPeople}>{male}</Text>
                 </View>
-              </View>
-              <View style={{flexDirection: 'row', marginTop: 12, marginBottom: 28}}>
-                {iconsArrayMale?.map(index => (
-                  <View key={index} style={[styles.wrapperPersonIcon, {marginLeft: index === 0 ? 0 : 10}]}>
-                    <PersonIcon width={18} height={18} />
-                  </View>
-                ))}
               </View>
             </View>
             {loading ? (

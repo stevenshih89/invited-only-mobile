@@ -1,4 +1,12 @@
-import {grayColor, lightGray2Color, lightGray5Color, lightGray6Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {
+  blackColor,
+  grayColor,
+  lightGray2Color,
+  lightGray5Color,
+  lightGray6Color,
+  transparentWhite16Color,
+  whiteColor,
+} from 'constants/colors';
 import {isIos, screenHeight} from 'constants/common';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {RefObject, useEffect, useState} from 'react';
@@ -125,7 +133,7 @@ const PhoneChange = () => {
       };
 
   return (
-    <View style={{flex: 1, backgroundColor: lightGray6Color, paddingHorizontal: 20}}>
+    <View style={{flex: 1, backgroundColor: blackColor, paddingHorizontal: 20}}>
       <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={120} style={{flex: 1, paddingBottom: 0}}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <SafeAreaView style={{flex: 1, paddingBottom: 0, borderTopColor: transparentWhite16Color, borderTopWidth: 1}}>
@@ -161,7 +169,9 @@ const PhoneChange = () => {
                             borderStyle: 'solid',
                           }}>
                           {Icon}
-                          <Text style={{color: whiteColor, marginLeft: 4, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}}>{label}</Text>
+                          <Text style={{color: whiteColor, marginLeft: 4, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}}>
+                            {label}
+                          </Text>
                         </View>
                       )}
                       renderLeftIcon={() => (
@@ -252,7 +262,8 @@ const PhoneChange = () => {
                         <ArrowRight width={14} height={14} />
                       </TouchableOpacity>
                     </View>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), textAlign: 'center', marginTop: 34}}>
+                    <Text
+                      style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), textAlign: 'center', marginTop: 34}}>
                       Please enter verification code sent to your mobile{' '}
                       <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>
                         {mobilePhone.slice(-3, mobilePhone.length)}

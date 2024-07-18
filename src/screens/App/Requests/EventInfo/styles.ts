@@ -1,5 +1,13 @@
 import {StyleSheet} from 'react-native';
-import {blackColor, lightGray5Color, lightGray6Color, lightGrayColor, lightGreenColor, lightRed1Color, whiteColor} from 'constants/colors.ts';
+import {
+  blackColor,
+  lightGray5Color,
+  lightGray6Color,
+  lightGrayColor,
+  lightGreenColor,
+  lightRed1Color,
+  whiteColor,
+} from 'constants/colors.ts';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -7,7 +15,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 const useStyles = () => {
   return StyleSheet.create({
     container: {
-      backgroundColor: lightGray6Color,
+      backgroundColor: blackColor,
       flex: 1,
       paddingHorizontal: screenWidth / 15.5,
     },
@@ -103,14 +111,13 @@ const useStyles = () => {
       flexGrow: 1,
     },
     wrapperFakeCard: {
-      backgroundColor: lightGray6Color,
+      backgroundColor: blackColor,
     },
     bioWrapper: {
-      backgroundColor: lightGray5Color,
+      backgroundColor: blackColor,
       marginTop: screenHeight / 27,
       borderRadius: 11,
       paddingVertical: screenHeight / 38,
-      paddingHorizontal: screenWidth / 17,
     },
     titleSection: {
       color: whiteColor,
