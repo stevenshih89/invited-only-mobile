@@ -1,5 +1,5 @@
 import {Switch} from '@rneui/themed';
-import {grayColor, lightGray5Color, lightGray6Color, toggleColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {blackColor, grayColor, lightGray5Color, lightGray6Color, toggleColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {FC, useEffect, useState} from 'react';
 import {SafeAreaView, Text, View} from 'react-native';
@@ -143,12 +143,16 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
 
   return (
     <>
-      <View style={{flex: 1, backgroundColor: lightGray6Color, paddingHorizontal: 20}}>
+      <View style={{flex: 1, backgroundColor: blackColor, paddingHorizontal: 20}}>
         <SafeAreaView style={{borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
           <View style={{backgroundColor: lightGray5Color, borderRadius: 10, padding: 20, marginTop: 34}}>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 26}}>
               <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>All notifications</Text>
-              <Switch trackColor={{false: grayColor, true: toggleColor}} value={allNotification} onValueChange={handleChangeAllNotification} />
+              <Switch
+                trackColor={{false: grayColor, true: toggleColor}}
+                value={allNotification}
+                onValueChange={handleChangeAllNotification}
+              />
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14}}>
               <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Joined event</Text>

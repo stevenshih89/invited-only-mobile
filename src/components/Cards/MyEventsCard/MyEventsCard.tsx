@@ -19,7 +19,6 @@ import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {errorColor, lightGray10Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
 
-
 interface MyEventsCard {
   estimeTime?: string;
   activeState: boolean;
@@ -30,18 +29,35 @@ interface MyEventsCard {
   numberOfGirlsInvited?: string;
   date?: string;
   imageBg?: string;
-  placeName?: string
-  accountConfirmed:  boolean
+  placeName?: string;
+  accountConfirmed: boolean;
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
-  const {list,accountConfirmed, placeName, imageBg, activeState, estimeTime, date, invitingPeople, numberOfGirlsInvited, allPeople, textCityName} = props;
+  const {
+    list,
+    accountConfirmed,
+    placeName,
+    imageBg,
+    activeState,
+    estimeTime,
+    date,
+    invitingPeople,
+    numberOfGirlsInvited,
+    allPeople,
+    textCityName,
+  } = props;
 
   const styles = useStyles();
 
   const [eventStarting, setEventStarting] = useState<boolean>(true);
   const [eventDate, setEventDate] = useState<string>('');
+  const [mainImageEvent, setMainImageEvent] = useState('')
   
+  useEffect(() => {
+    const filterImage = imageBg.filter(item => item.id < 1);
+    setMainImageEvent(filterImage[0].image)
+  }, [imageBg])
 
   const navigation = useAppNavigation();
 
@@ -83,10 +99,10 @@ const MyEventsCard: FC<MyEventsCard> = props => {
 
   useEffect(() => {
     if (
-      (calculateTimeDifference(currentTime, estimeTime) === 0) ||
-      (calculateTimeDifference(currentTime, estimeTime) >= 2) ||
-      (calculateTimeDifference(currentTime, estimeTime) >= 12) ||
-      (calculateTimeDifference(currentTime, estimeTime) >= 24)
+      calculateTimeDifference(currentTime, estimeTime) === 0 ||
+      calculateTimeDifference(currentTime, estimeTime) >= 2 ||
+      calculateTimeDifference(currentTime, estimeTime) >= 12 ||
+      calculateTimeDifference(currentTime, estimeTime) >= 24
     ) {
       setEventDate(calculateTimeDifference(currentTime, estimeTime).toString());
       setEventStarting(true);
@@ -95,12 +111,11 @@ const MyEventsCard: FC<MyEventsCard> = props => {
 
   const approvedPeople = invitingPeople?.filter(i => i?.status === 'accepted');
 
-
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: list}} as never)}
       style={styles.container}>
-      <ImageBackground borderRadius={14} source={{uri: imageBg}} style={styles.imageBackground}>
+      <ImageBackground borderRadius={14} source={{uri: mainImageEvent}} style={styles.imageBackground}>
         <LinearGradient
           colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
           start={{x: 0, y: 0}}
@@ -195,23 +210,12 @@ const MyEventsCard: FC<MyEventsCard> = props => {
           </View>
         </LinearGradient>
       </ImageBackground>
-      <View style={styles.wrapperTextUnderCard}>
-        <Text style={styles.textCityName}>{textCityName}</Text>
-        <View style={styles.rowTextUnderFooter}>
-          <ProfileTwoUser />
-          <Text style={styles.textUnderFooter}>{numberOfGirlsInvited} x Girl invitation</Text>
-        </View>
-        <View style={styles.rowTextUnderFooter}>
-          <CalendarBlank />
-          <Text style={styles.textUnderFooter}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
-        </View>
-      </View>
       <ModalEventRemindes
         eventStarting={eventStarting}
         activeState={activeState}
         setEventStarting={setEventStarting}
         time={estimeTime}
-        image={imageBg}
+        image={mainImageEvent}
         placeName={placeName}
         joinedPeopleCount={invitingPeople?.length}
         date={eventDate}

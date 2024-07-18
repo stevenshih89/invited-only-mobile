@@ -186,29 +186,46 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           end={{x: 0, y: 1}}>
           <View style={styles.wrapperBio}>
             <View style={{flexDirection: 'row'}}>
-            {isShowAccountInfo && <View
-              style={{backgroundColor: blackColor, borderRadius: 5, borderWidth: 2, borderColor: whiteColor, paddingHorizontal: 12, paddingVertical: 2, alignSelf: 'flex-start'}}>
-              <Text style={{color: whiteColor, fontSize: 14, fontFamily: Satoshi700, textTransform: 'capitalize'}}>{accountType}</Text>
-            </View>}
-            {true && isShowAccountInfo && <LinearGradient 
-                colors={['#977B4A', '#E5D291', '#A28453']} 
-                style={{
-                  marginLeft: 6,
-                  alignSelf: 'flex-start',
-                  borderRadius: 4,
-                  paddingHorizontal: 12,
-                  paddingVertical: 2,
-                  backgroundColor: blackColor
-                }}
-                start={{x: 0, y: 0}} end={{x: 1, y: 0}}
-                >
-                {true && <Text style={{
-                  color: blackColor,
-                  fontSize: RFValue(14, 812),
-                  fontFamily: Satoshi400,
-                  fontWeight: 'bold'
-                }}>Premium</Text>}
-              </LinearGradient>}
+              {isShowAccountInfo && (
+                <View
+                  style={{
+                    backgroundColor: blackColor,
+                    borderRadius: 5,
+                    borderWidth: 2,
+                    borderColor: whiteColor,
+                    paddingHorizontal: 12,
+                    paddingVertical: 2,
+                    alignSelf: 'flex-start',
+                  }}>
+                  <Text style={{color: whiteColor, fontSize: 14, fontFamily: Satoshi700, textTransform: 'capitalize'}}>{accountType}</Text>
+                </View>
+              )}
+              {true && isShowAccountInfo && (
+                <LinearGradient
+                  colors={['#977B4A', '#E5D291', '#A28453']}
+                  style={{
+                    marginLeft: 6,
+                    alignSelf: 'flex-start',
+                    borderRadius: 4,
+                    paddingHorizontal: 12,
+                    paddingVertical: 2,
+                    backgroundColor: blackColor,
+                  }}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}>
+                  {true && (
+                    <Text
+                      style={{
+                        color: blackColor,
+                        fontSize: RFValue(14, 812),
+                        fontFamily: Satoshi400,
+                        fontWeight: 'bold',
+                      }}>
+                      Premium
+                    </Text>
+                  )}
+                </LinearGradient>
+              )}
             </View>
             <View style={styles.rowBioInfo}>
               <Text style={styles.textName}>{name},</Text>

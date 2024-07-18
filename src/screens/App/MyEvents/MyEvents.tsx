@@ -16,12 +16,10 @@ import ModalCancelAttending from './ModalCancelAttending';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
 import {useUser} from '../../../store/userStore';
 import {ALL, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
-import {eventCreatingStackPath} from 'constants/pathLocations.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 
 //import images
-import AddIcon from 'assets/images/icons/add.svg';
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 
 const MyEvents: FC<any> = ({navigation}) => {
@@ -43,6 +41,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       image: '',
     },
   });
+  const [activeUserInfo, setActiveUserInfo] = useState<any>({});
   const [myEventsData, setMyEventsData] = useState([]);
   const [eventsJoiningData, setEventsJoiningData] = useState([]);
 
@@ -51,18 +50,26 @@ const MyEvents: FC<any> = ({navigation}) => {
   const isHost = user?.accountType === 'host';
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
-  const handleOpenCancelAttendingModal = (eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string}) => {
+  const handleOpenCancelAttendingModal = (
+    eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string},
+    userInfo,
+  ) => {
     setActiveModalEvent(eventInfo);
+    setActiveUserInfo(userInfo);
     setIsVisibleCancelAttendingModal(true);
   };
 
-  const handleOpenAcceptInvitationModal = (eventInfo: {
-    image: string;
-    textCityName: string;
-    date: string;
-    numberOfGirlsInvited: string;
-  }) => {
+  const handleOpenAcceptInvitationModal = (
+    eventInfo: {
+      image: string;
+      textCityName: string;
+      date: string;
+      numberOfGirlsInvited: string;
+    },
+    userInfo,
+  ) => {
     setActiveModalEvent(eventInfo);
+    setActiveUserInfo(userInfo);
     setIsVisibleAcceptInvitationModal(true);
   };
 
@@ -137,7 +144,6 @@ const MyEvents: FC<any> = ({navigation}) => {
       const events = await firestore().collection('Events').get();
       const data = events?.docs?.map(i => i?.data());
 
-      console.log('data', data);
       const filterData = data?.filter(obj => {
         return obj?.usersList?.some(user => {
           return user?.uid === uid && (user?.status === 'invited' || user?.status === 'accepted');
@@ -158,8 +164,6 @@ const MyEvents: FC<any> = ({navigation}) => {
       if (user) {
         const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
         const data = querySnapshot?.docs?.map(i => i?.data());
-        // console.log('data', data);
-        
         setMyEventsData(data);
       }
     } catch (e) {
@@ -335,7 +339,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
                   <MyEventsCard
-                    imageBg={item?.photos[0]?.image}
+                    imageBg={item?.photos}
                     list={item}
                     activeState={item?.statusEvent}
                     allPeople={item?.female + item?.male}
@@ -357,10 +361,18 @@ const MyEvents: FC<any> = ({navigation}) => {
                 style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
                 renderItem={({item}) => (
                   <JoiningEventsCard
+                    id={item?.id}
                     uid={item?.uid}
                     activeState={item.statusEvent}
                     allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
                     date={item.date}
+                    deleteUsers={item.deleteUsers}
+                    oldDate={item.oldDate}
+                    oldName={item.oldName}
+                    oldHour={item.oldHour}
+                    dateNewViewed={item.dateNewViewed}
+                    nameNewViewed={item.nameNewViewed}
+                    hourNewViewed={item.hourNewViewed}
                     hour={item?.hour}
                     placeName={item?.placeName}
                     list={item}
@@ -387,9 +399,15 @@ const MyEvents: FC<any> = ({navigation}) => {
                 style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
                 renderItem={({item}) => (
                   <JoiningEventsCard
+                    uid={item?.uid}
                     activeState={item.statusEvent}
                     allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
                     date={item.date}
+                    oldName={item.oldName}
+                    oldHour={item.oldHour}
+                    dateNewViewed={item.dateNewViewed}
+                    nameNewViewed={item.nameNewViewed}
+                    hourNewViewed={item.hourNewViewed}
                     hour={item?.hour}
                     placeName={item?.placeName}
                     list={item}
@@ -416,12 +434,14 @@ const MyEvents: FC<any> = ({navigation}) => {
         isVisible={isVisibleCancelAttendingModal}
         onClose={() => setIsVisibleCancelAttendingModal(false)}
         eventInfo={activeModalEvent}
+        userInfo={activeUserInfo}
       />
       <ModalAcceptInvitation
         handleRejectInvitation={handleRejectInvitation}
         handleAcceptInvitation={handleAcceptInvitation}
         isVisible={isVisibleAcceptInvitationModal}
         onClose={() => setIsVisibleAcceptInvitationModal(false)}
+        userInfo={activeUserInfo}
         eventInfo={activeModalEvent}
       />
     </>

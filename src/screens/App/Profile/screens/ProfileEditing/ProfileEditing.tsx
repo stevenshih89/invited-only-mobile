@@ -1,4 +1,4 @@
-import {lightGray6Color, transparentWhite16Color} from 'constants/colors';
+import {blackColor, lightGray6Color, transparentWhite16Color} from 'constants/colors';
 import {FC, ReactElement, useEffect, useMemo, useState} from 'react';
 import {Alert, SafeAreaView, ScrollView, View} from 'react-native';
 import MyPhotos from './MyPhotos';
@@ -30,8 +30,8 @@ const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleBirthdayModal, setIsVisibleBirthdayModal] = useState<boolean>(false);
   const [loadingSave, setLoadingSave] = useState<boolean>(false);
   const [interestsLoading, setInterestsLoading] = useState<boolean>(false);
-  const [isVisibleLocationModal, setIsVisibleLocationModal] = useState<boolean>(false)
-  const [isVisibleHomeAddressModal, setIsVisibleHomeAddressModal] = useState<boolean>(false)
+  const [isVisibleLocationModal, setIsVisibleLocationModal] = useState<boolean>(false);
+  const [isVisibleHomeAddressModal, setIsVisibleHomeAddressModal] = useState<boolean>(false);
 
   const [month, setMonth] = useState<string>('');
   const [day, setDay] = useState<string>('');
@@ -401,11 +401,10 @@ const ProfileEditing: FC = (): ReactElement => {
     });
     await uploadImage(images[sixthImId].image, user.uid).then(async image => {
       allImagesUrl.push({id: images[sixthImId].id, image});
-    });    
+    });
     await updatePhotosImage(user.uid, allImagesUrl);
 
     // console.log('allImagesUrl', allImagesUrl);
-    
   };
 
   const saveUserInfo = async (title?: 'string') => {
@@ -458,11 +457,10 @@ const ProfileEditing: FC = (): ReactElement => {
   };
 
   // console.log('activeWorkItem', activeWorkItem);
-  
 
   return (
     <>
-      <SafeAreaView style={{flex: 1, backgroundColor: lightGray6Color}}>
+      <SafeAreaView style={{flex: 1, backgroundColor: blackColor}}>
         <View style={{flex: 1, paddingTop: screenHeight / 48, paddingHorizontal: 20}}>
           <ScrollView
             showsHorizontalScrollIndicator={false}

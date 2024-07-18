@@ -21,7 +21,8 @@ const ContactAndFAQ = () => {
     {
       id: 1,
       title: 'How can I update my profile information?',
-      description: "Go to the 'Profile' section in the app, click on 'Edit,' and update your information. Don't forget to save your changes.",
+      description:
+        "Go to the 'Profile' section in the app, click on 'Edit,' and update your information. Don't forget to save your changes.",
     },
     {
       id: 2,
@@ -50,7 +51,7 @@ const ContactAndFAQ = () => {
   ];
 
   return (
-    <View style={{flex: 1, paddingTop: screenHeight / 48, paddingHorizontal: 20, backgroundColor: lightGray6Color}}>
+    <View style={{flex: 1, paddingTop: screenHeight / 48, paddingHorizontal: 20, backgroundColor: blackColor}}>
       <ScrollView
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
@@ -66,7 +67,15 @@ const ContactAndFAQ = () => {
           }}>
           <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>Contact</Text>
           <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 26, flex: 1}}>
-            <View style={{backgroundColor: blackColor, borderRadius: 100, justifyContent: 'center', alignItems: 'center', width: 42, height: 42}}>
+            <View
+              style={{
+                backgroundColor: blackColor,
+                borderRadius: 100,
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: 42,
+                height: 42,
+              }}>
               <IOLogo width={20} height={20} />
             </View>
             <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812), marginLeft: 6, flex: 1}}>
@@ -108,7 +117,9 @@ const ContactAndFAQ = () => {
                       {isActive ? <ArrowUp width={16} height={16} /> : <ArrowDown width={16} height={16} />}
                     </View>
                     {isActive && (
-                      <Text style={{color: whiteColor, marginTop: 16, fontSize: RFValue(14, 812), fontFamily: Satoshi400}}>{item.description}</Text>
+                      <Text style={{color: whiteColor, marginTop: 16, fontSize: RFValue(14, 812), fontFamily: Satoshi400}}>
+                        {item.description}
+                      </Text>
                     )}
                   </TouchableOpacity>
                 );
@@ -116,8 +127,8 @@ const ContactAndFAQ = () => {
             />
             <View style={{borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid', paddingTop: 20}}>
               <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>
-                For any other inquiries, feel free to contact our support team. We appreciate your feedback as we strive to provide you with the best
-                mobile app experience.
+                For any other inquiries, feel free to contact our support team. We appreciate your feedback as we strive to provide you with
+                the best mobile app experience.
               </Text>
             </View>
           </View>
