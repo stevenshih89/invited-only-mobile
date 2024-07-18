@@ -33,6 +33,8 @@ interface JoiningEventsCard {
   image: string;
   list: any;
   allPeople: number;
+  // usersList: [],
+  deleteUsers: [],
   dateNewViewed: [],
   hourNewViewed: [],
   nameNewViewed: [],
@@ -73,6 +75,8 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
   estimeTime,
   date,
   oldDate,
+  // usersList,
+  deleteUsers,
   oldName,
   oldHour,
   dateNewViewed,
@@ -96,6 +100,8 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
   
   const [eventStarting, setEventStarting] = useState<boolean>(true);
   const [updateEvent, setUpdateEvent] = useState<string | null>(null);
+  const [visibleUserDelete, setVisibleUserDelete] = useState(true)
+  const [userDelete, setUserDelete] = useState<string | null>(null);
   
   const [userInfo, setUserInfo] = useState<any>();
   const [eventData, setEventData] = useState({
@@ -107,7 +113,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
     girlInvitatio: '',
   });
   const styles = useStyles();
-  const navigation = useAppNavigation();  
+  const navigation = useAppNavigation();    
 
   const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
 
@@ -192,12 +198,37 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
     }
   }
 
+  const deleteUserFromCanceled = async () => {
+    const userId = auth().currentUser?.uid;
+    const dataEvents = (await firestore().collection('Events').doc(id).get()).data();
+    const deleteUsers = dataEvents.deleteUsers.filter(item => item !== userId)
+    try {
+      await firestore().collection('Events').doc(id).update({
+        deleteUsers: [...deleteUsers]
+      })
+    } catch (error) {
+      console.log('error deleteUserFromCanceled', error);
+      
+    }
+  }
+
   useEffect(() => {
     checkUpdate()
   },[])
+
+  useEffect(() => {
+    const userId = auth().currentUser?.uid;
+    if(deleteUsers) {
+    const userInList = deleteUsers.filter(item => item === userId);
+      if(userInList.length) {
+        setUserDelete(userInList[0])
+      }
+    }
+  },[deleteUsers])
   
   return (
-    <View style={styles.container}>
+    <>
+    {!userDelete && <View style={styles.container}>
       {activeState ? (
         <View style={{overflow: 'hidden', height: 220}}>
           <LinearGradient
@@ -510,12 +541,17 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
           </LinearGradient>
         </ImageBackground>
       )}
-      <ModalEventRemindes
+    </View>}
+    <ModalEventRemindes
         updateEvent={updateEvent}
         eventStarting={eventStarting}
         setEventStarting={setEventStarting}
+        deleteUserFromCanceled={deleteUserFromCanceled}
         id={id}
         uid={uid}
+        userDelete={userDelete}
+        visibleUserDelete={visibleUserDelete}
+        setVisibleUserDelete={setVisibleUserDelete}
         activeState={activeState}
         checkUpdate={checkUpdate}
         host={host}
@@ -532,7 +568,7 @@ const JoiningEventsCard: FC<JoiningEventsCard> = ({
         handleGetEventsIJoining={handleGetEventsIJoining}
         allPeople={allPeople}
       />
-    </View>
+    </>
   );
 };
 

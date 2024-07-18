@@ -370,6 +370,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     activeState={item.statusEvent}
                     allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
                     date={item.date}
+                    deleteUsers={item.deleteUsers}
                     oldDate={item.oldDate}
                     oldName={item.oldName}
                     oldHour={item.oldHour}

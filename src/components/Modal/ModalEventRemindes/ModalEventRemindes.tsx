@@ -35,11 +35,15 @@ interface ModalEventRemindeProps {
   updateEvent?: string | null;
   uid: string;
   id: string;
+  userDelete:null | string;
+  deleteUserFromCanceled: () => void;
   activeState: boolean;
   checkUpdate: () => void,
   setEventStarting?: boolean | any;
   setUpdateEvent?:any;
   host?: HostI;
+  setVisibleUserDelete: any,
+  visibleUserDelete: any,
   time: string;
   hour: string;
   image: any;
@@ -57,12 +61,16 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
   handleAcceptInvitation = null,
   uid = null,
   handleGetEventsIJoining = null,
+  deleteUserFromCanceled,
   placeName = '',
   updateEvent,
   setUpdateEvent,
+  userDelete,
   activeState = null,
   host,
   checkUpdate,
+  setVisibleUserDelete,
+  visibleUserDelete,
   id,
   hour,
   allPeople = 0,
@@ -237,7 +245,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
     }
   }
 
-  if(eventStarting) {
+  if(eventStarting && !userDelete) {
     return (
       <Modal
         isVisible={eventStarting}
@@ -474,6 +482,108 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               Reject invitation
             </Text>
           </TouchableOpacity>
+        </View>
+      </Modal>
+    )
+  }
+
+  if(userDelete) {
+    return (
+      <Modal
+        isVisible={visibleUserDelete}
+        useNativeDriver={false}
+        propagateSwipe={true}
+        backdropColor={'rgba(0, 0, 0, 0.94)'}
+        testID={'bottom-half-modal-open-button'}
+        onBackdropPress={async () => {
+          setVisibleUserDelete(false)
+          deleteUserFromCanceled()
+        }}
+        onSwipeComplete={async () => {
+          setVisibleUserDelete(false)
+          deleteUserFromCanceled()
+        }}
+        style={styles.modalStyles}
+        swipeDirection={['down']}>
+        <View style={styles.wrapper}>
+          <View style={styles.whiteLine} />
+          <View>
+            <ImageBackground resizeMode="cover" source={{uri: image}} style={[styles.eventImage, {justifyContent: !uid?  'flex-end': 'space-between'}]}>
+              {uid&& <TouchableOpacity style={{
+                backgroundColor: transparent60Color, 
+                alignItems: 'center', 
+                width: '100%', 
+                borderRadius: 20, 
+                flexDirection: 'row', 
+                paddingHorizontal: 14, 
+                paddingVertical: 10,
+                justifyContent: 'space-between'
+                }}>
+                <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                <Image style={{height: 40, width: 40, borderRadius: 40}} source={{uri: photoUser}} />
+                <View>
+                  <View style={{flexDirection: 'row'}}>
+                    <View style={{backgroundColor: blackColor,marginLeft: 10, borderWidth: 1, borderRadius: 4.5, borderColor: whiteColor, paddingHorizontal: 10, paddingVertical: 2}}>
+                      <Text style={{fontSize: RFValue(10, 812), color: whiteColor, fontFamily: Satoshi500}}>Host</Text>
+                    </View>
+                    {false && <LinearGradient 
+                      colors={['#977B4A', '#E5D291', '#A28453']} 
+                      start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+                      style={{borderRadius: 4.5, paddingHorizontal: 10, paddingVertical: 2, marginLeft: 5,}}
+                      >
+                      <Text style={{fontSize: RFValue(10, 812), color: blackColor, fontFamily: Satoshi500}}>Premium</Text>
+                      </LinearGradient>}
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text 
+                    style={{
+                      fontSize: RFValue(20, 812), 
+                      marginLeft: 10,
+                      marginRight: 8, 
+                      color: whiteColor, 
+                      fontFamily: Satoshi400, 
+                      fontWeight: 'bold'}}>{nameUser}, {ageUser}</Text>
+                      <CheckStarIcon />
+                  </View>
+                </View> 
+                </View>
+                <ArrowRightIcon />
+              </TouchableOpacity>}
+              <View>
+              <View style={{marginBottom: 12, flexDirection: 'row', alignItems: 'center'}}>
+                {activeState && <View style={{backgroundColor: lightGreenColor, borderRadius: 5, paddingVertical: 4, paddingHorizontal: 6}}>
+                  <Text style={{fontSize: RFValue(12, 812), fontFamily: Satoshi500, color: whiteColor}}>Active</Text>
+                </View>}
+                <Text style={{fontSize: RFValue(20, 812), marginHorizontal: 8, fontWeight:'bold', fontFamily: Satoshi400, color: whiteColor}}>{placeName}</Text>
+                <CheckStarIcon />
+              </View>
+            <View style={styles.main}>
+            <View style={styles.fdr}>
+              <UserIcon />
+              <Text style={styles.textGirlInvitation}>{girlInvitation} x Girl invitation </Text>
+            </View>
+            <View style={styles.fdr}>
+              <CalendarIcon width={19} height={19} />
+              <Text style={styles.textDate}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
+            </View>
+            <View style={styles.fdr}>
+              <UsersIcon width={19} height={19}/>
+              <Text style={styles.textCity}>{joinedPeopleCount}/{allPeople}</Text>
+            </View>
+          </View>
+              </View>
+            </ImageBackground>
+          </View>
+          
+          <Text style={styles.textAreYouSure}>Simon has canceled your invitation</Text>
+          <Button
+            onPress={async () => {
+              setVisibleUserDelete(false)
+              deleteUserFromCanceled()
+            }}
+            title={'Ok, got itrm'}
+            buttonStyle={styles.button}
+          />
         </View>
       </Modal>
     )
