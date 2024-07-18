@@ -73,7 +73,10 @@ const ModalHeight: FC<ModalHeightProps> = ({isVisible, onClose, showHeight, setS
             <Picker.Item value={value} key={id} label={label} color={whiteColor} />
           ))}
         </Picker>
-        <Button onPress={saveUserInfo} title="Save" buttonStyle={{marginTop: 20}} />
+        <Button onPress={() => {
+          saveUserInfo('Height')
+          onClose()
+        }} title="Save" buttonStyle={{marginTop: 20}} />
       </View>
     </Modal>
   );

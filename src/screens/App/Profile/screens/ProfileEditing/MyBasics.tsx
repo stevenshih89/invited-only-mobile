@@ -47,7 +47,7 @@ const MyBasics: FC<{
   location,
   homeAddress
 }): ReactElement => {  
-  const userHost = useUser((i: any) => i?.user);
+  const userHost = useUser((i: any) => i?.user);  
 
   const gender = userHost?.gender?.charAt(0).toUpperCase() + userHost?.gender.slice(1);
   return (
@@ -79,7 +79,7 @@ const MyBasics: FC<{
           <Text style={styles.text}>Location</Text>
         </View>
         <View style={styles.iconContainer}>
-          <Text style={styles.subText}>{location || 'Add'}</Text>
+          <Text style={styles.subText}>{typeof(location) === 'string' && location || 'Add'}</Text>
           <ArrowRight />
         </View>
       </TouchableOpacity>

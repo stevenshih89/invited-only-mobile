@@ -59,6 +59,13 @@ const useStyles = () => {
       width: 200,
       alignSelf: 'flex-end',
     },
+    // changeProfile: {
+    //   backgroundColor: whiteColor,
+    //   alignSelf: 'center',
+    //   marginRight: 0,
+    //   height: 80,
+    //   padding: 16, 
+    // },
     text1: {
       color: whiteColor,
       fontFamily: Satoshi700,

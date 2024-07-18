@@ -40,6 +40,7 @@ interface TouchingSliderProps {
   isShowWantsJoin?: boolean;
   isShowInvitesTooltip?: boolean;
   isShowEventPreview?: boolean;
+  isShowAccountInfo?: boolean;
   isLocked?: boolean;
   hostInfo?: any;
   name?: string;
@@ -59,6 +60,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   onInvite,
   isShowCardButtons = true,
   isShowLocation = false,
+  isShowAccountInfo = true,
   isShowWantsJoin = false,
   isShowInvitesTooltip = true,
   isLocked = false,
@@ -184,11 +186,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           end={{x: 0, y: 1}}>
           <View style={styles.wrapperBio}>
             <View style={{flexDirection: 'row'}}>
-            <View
+            {isShowAccountInfo && <View
               style={{backgroundColor: blackColor, borderRadius: 5, borderWidth: 2, borderColor: whiteColor, paddingHorizontal: 12, paddingVertical: 2, alignSelf: 'flex-start'}}>
               <Text style={{color: whiteColor, fontSize: 14, fontFamily: Satoshi700, textTransform: 'capitalize'}}>{accountType}</Text>
-            </View>
-            {true && <LinearGradient 
+            </View>}
+            {true && isShowAccountInfo && <LinearGradient 
                 colors={['#977B4A', '#E5D291', '#A28453']} 
                 style={{
                   marginLeft: 6,

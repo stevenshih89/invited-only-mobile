@@ -91,7 +91,10 @@ const ModalSmoke: FC<ModalSmokeProps> = ({isVisible, onClose, showSmoke, setShow
             );
           }}
         />
-        <Button onPress={saveUserInfo} title="Save" buttonStyle={{marginTop: 20}} />
+        <Button onPress={() => {
+          saveUserInfo('Smoke')
+          onClose()
+          }} title="Save" buttonStyle={{marginTop: 20}} />
       </View>
     </Modal>
   );

@@ -11,6 +11,7 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import MaskInput from 'react-native-mask-input';
 import {isIos} from 'constants/common';
 import Button from 'components/Button/Button';
+import { showToast } from 'helpers/showToast';
 
 interface ModalLocationProps {
   isVisible: boolean;
@@ -96,7 +97,10 @@ const ModalLocation: FC<ModalLocationProps> = ({isVisible, onClose, showLocation
           placeholderTextColor={whiteColor}
           />
         </View>
-          <Button onPress={saveUserInfo} title="Save" buttonStyle={{marginTop: 20}} />
+          <Button onPress={() => {
+            saveUserInfo('Location')
+            onClose()
+            }} title="Save" buttonStyle={{marginTop: 20}} />
         </View>
       </KeyboardAvoidingView>
     </Modal>
