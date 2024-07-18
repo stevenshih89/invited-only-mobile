@@ -85,16 +85,16 @@ const ModalWork: FC<ModalWorkProps> = ({
           <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showWork} onChange={val => setShowWork(val)} />
         </View>
         <View>
-          <Text style={{fontSize: RFValue(14,812), fontFamily: Satoshi500, color: whiteColor, marginBottom: 8}}>Work name</Text>
-          <TextInput value={textNameWork} onChangeText={text => setTextNameWork(text)} placeholder='Enter work name' placeholderTextColor={grayScale600} style={{padding: 16, borderRadius: 10, fontSize: RFValue(18, 812), backgroundColor: lightGray2Color, color: whiteColor}}/>
+          <Text style={{fontSize: RFValue(14,812), fontFamily: Satoshi500, color: whiteColor, marginBottom: 8}}>Title</Text>
+          <TextInput value={textNameWork} onChangeText={text => setTextNameWork(text)} placeholder='Enter your title' placeholderTextColor={grayScale600} style={{padding: 16, borderRadius: 10, fontSize: RFValue(18, 812), backgroundColor: lightGray2Color, color: whiteColor}}/>
         </View>
         <View>
-          <Text style={{fontSize: RFValue(14,812), fontFamily: Satoshi500, color: whiteColor, marginTop: 14, marginBottom: 8}}>Description</Text>
-          <TextInput value={textDescription} onChangeText={text => setTextDescription(text)} placeholder='Enter description' placeholderTextColor={grayScale600} style={{padding: 16, borderRadius: 10, fontSize: RFValue(18, 812), backgroundColor: lightGray2Color, color: whiteColor}}/>
+          <Text style={{fontSize: RFValue(14,812), fontFamily: Satoshi500, color: whiteColor, marginTop: 14, marginBottom: 8}}>Company or industry</Text>
+          <TextInput value={textDescription} onChangeText={text => setTextDescription(text)} placeholder='Enter company (or just industry)' placeholderTextColor={grayScale600} style={{padding: 16, borderRadius: 10, fontSize: RFValue(18, 812), backgroundColor: lightGray2Color, color: whiteColor}}/>
         </View>
         <Button onPress={() => {
-          // setActiveWorkItem({title: textNameWork, description: textDescription})
-          saveUserInfo()
+          saveUserInfo('Work')
+          onClose()
         }} title="Save" buttonStyle={{marginTop: 20}} 
           
           />

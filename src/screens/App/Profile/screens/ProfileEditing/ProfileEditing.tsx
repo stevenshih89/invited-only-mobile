@@ -19,6 +19,7 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import ModalLocation from './ModalLocation';
 import ModalHomeAdress from './ModalHomeAdress';
+import { showToast } from 'helpers/showToast';
 
 const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleSmokeModal, setIsVisibleSmokeModal] = useState<boolean>(false);
@@ -406,7 +407,7 @@ const ProfileEditing: FC = (): ReactElement => {
     // console.log('allImagesUrl', allImagesUrl);
   };
 
-  const saveUserInfo = async () => {
+  const saveUserInfo = async (title?: 'string') => {
     setLoadingSave(true);
     const user = auth().currentUser;
     if (user) {
@@ -438,11 +439,14 @@ const ProfileEditing: FC = (): ReactElement => {
             location,
             showLocation,
             homeAddress: textHomeAdress,
-            showHomeAddress: showHomeAdress,
+            showHomeAddress: showHomeAdress
+          }).then(() => {
+            showToast('changeProfile', `${title} successfully changed!`, `Your profile is updated`);
           })
           .then(async () => {
             await fetchImages(user);
           });
+          
       } catch (error: any) {
         console.log(error?.message);
         // Alert.alert('Error', error.message || 'Something went wrong');
@@ -500,6 +504,7 @@ const ProfileEditing: FC = (): ReactElement => {
         onClose={() => setIsVisibleSmokeModal(false)}
       />
       <ModalGender
+        saveUserInfo={saveUserInfo}
         showGender={showGender}
         setShowGender={setShowGender}
         activeGenderItem={activeGenderItem}

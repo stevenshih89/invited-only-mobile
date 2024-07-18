@@ -96,7 +96,10 @@ const ModalHomeAdress: FC<ModalHomeAdressProps> = ({isVisible, onClose, showHome
           placeholderTextColor={whiteColor}
           />
         </View>
-          <Button onPress={saveUserInfo} title="Save" buttonStyle={{marginTop: 20}} />
+          <Button onPress={() => {
+            saveUserInfo('Address')
+            onClose()
+          }} title="Save" buttonStyle={{marginTop: 20}} />
         </View>
       </KeyboardAvoidingView>
     </Modal>

@@ -18,9 +18,10 @@ interface ModalGenderProps {
   activeGenderItem: {title: string} | null;
   setActiveGenderItem: Dispatch<SetStateAction<{title: string} | null>>;
   listOfGenders: any[];
+  saveUserInfo: any;
 }
 
-const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setShowGender, activeGenderItem, setActiveGenderItem, listOfGenders}) => {
+const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setShowGender, activeGenderItem, setActiveGenderItem, saveUserInfo, listOfGenders}) => {
   const userHost = useUser((i: any) => i?.user);
   const setUserInfo = useUser((i: any) => i?.setUser);
 
@@ -141,7 +142,10 @@ const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setS
             );
           }}
         />
-        <Button title="Save" buttonStyle={{marginTop: 20}} />
+        <Button onPress={() => {
+          saveUserInfo('Gender')
+          onClose()
+        }} title="Save" buttonStyle={{marginTop: 20}} />
       </View>
     </Modal>
   );

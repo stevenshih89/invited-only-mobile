@@ -59,7 +59,8 @@ const Invitations: FC = () => {
   };
 
   useEffect(() => {
-    handleCheckInviteCode();
+    setNumberCodes(inviteLink.length)
+    // handleCheckInviteCode();
   }, []);
 
   return (
@@ -78,7 +79,7 @@ const Invitations: FC = () => {
         renderItem={({item}) => 
         <View style={styles.inviteContainer}>
         <TouchableOpacity activeOpacity={0.7} onPress={() => handleCopy(item)} style={styles.inviteButton}>
-          <Text style={styles.inviteText}>{item}</Text>
+          <Text style={styles.inviteText}>{item.inviteCode}</Text>
           <Copy />
         </TouchableOpacity>
       </View>}
