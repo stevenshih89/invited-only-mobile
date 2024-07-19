@@ -114,18 +114,18 @@ const useStyles = () => {
     lockIconWr: {
       alignSelf: 'center',
       borderRadius: 60,
-      backgroundColor: transparentGray60Color,
+      backgroundColor: blackColor,
       width: 62,
       height: 62,
       justifyContent: 'center',
       alignItems: 'center',
     },
     lockDescWr: {
+      maxWidth: 320,
       marginTop: 8,
-      paddingHorizontal: 20,
-      paddingVertical: 16,
-      borderRadius: 30,
-      backgroundColor: transparentGray60Color,
+      padding: 16,
+      borderRadius: 14,
+      backgroundColor: blackColor,
       alignSelf: 'center',
     },
     lockedTitle: {
