@@ -98,7 +98,7 @@ const Invitations: FC = () => {
         }}
       /> */}
       
-      <Button title="Share" onPress={handleShare} buttonStyle={styles.shareButton} />
+      {/* <Button title="Share" onPress={handleShare} buttonStyle={styles.shareButton} /> */}
     </View>
   );
 };
