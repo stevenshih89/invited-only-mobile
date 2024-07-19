@@ -112,7 +112,7 @@ const EventPreview: FC<{
               <View style={styles.containerInfo}>
                 <ImageBackground
                   // source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
-                  source={{uri: photos[0].image}}
+                  // source={{uri: photos[0].image}}
                   style={styles.imageBackground}
                   imageStyle={styles.imageStyle}
                   resizeMode="cover">

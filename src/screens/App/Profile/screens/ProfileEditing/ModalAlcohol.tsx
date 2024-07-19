@@ -118,10 +118,7 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) => {
-            console.log('item', item);
-            console.log('activeAlcoholItem', activeAlcoholItem);
             const isActive = activeAlcoholItem === item.title;
-            console.log('active', isActive);
             return (
               <TouchableOpacity
                 activeOpacity={0.8}

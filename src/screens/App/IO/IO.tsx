@@ -49,7 +49,7 @@ const IO: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<any[]>([]);  
   const [myEvents, setMyEventsList] = useState([]);
   const [nameUser, setNameUser] = useState<string>('');
   const [uidScamUser, setUidScamUser] = useState<string>('');
@@ -58,8 +58,10 @@ const IO: FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
-  const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
-
+  const [eventsLength, setEventsLength] = useState(0) 
+  const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1); 
+  const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState()
+  
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
   const {activeEventDate} = useContext(EventsDate);
@@ -89,6 +91,7 @@ const IO: FC = (): JSX.Element => {
 
   const handleCloseMatch = (): void => {
     setIsVisibleMatch(false);
+    showToast('inviteMatch', 'Say, Hi! 👋',  'New invite match!', { ownerPhoto: ownerEventUserPhoto});
   };
 
   const getWeekNumber = date => {
@@ -200,10 +203,13 @@ const IO: FC = (): JSX.Element => {
   };
 
   const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {
-    try {
-      const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
-      const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
+    try {
+      const guest = await firestore().collection('userInfo').doc(forUserUid).get();      
+
+      const currentUid = auth().currentUser?.uid;
+
+      const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;      
 
       const host = userHost?.accountType === 'host';
 
@@ -222,34 +228,61 @@ const IO: FC = (): JSX.Element => {
       usersListCheck !== undefined && updateUsersList?.push(...usersListCheck);
 
       if (userHost?.accountType === 'host') {
+        
         await firestore().collection('Events').doc(activeEventId).update({
           usersList: updateUsersList,
         });
-      } else {
+
+        const getUserInRequestsList = (await firestore().collection('Events').doc(activeEventId).get()).data()?.requestsList;        
+
+        const userInRequestsList = getUserInRequestsList.find(item => item.uid === forUserUid);
+        
+        if(userInRequestsList) {
+          const photos = guest.data().photos
+          const getMainPhoto = photos.filter(item => item.id === 0)
+          setOwnerEventUserPhoto(getMainPhoto[0].image)
+          setIsVisibleMatch(true)
+        }
+
+      } else {        
         const updateRequestsList: any = [...requestsList, userInvited];
 
         await firestore()
           .collection('Events')
           .doc(activeEventId)
           .update({
-            usersList: updateUsersList ? updateUsersList : usersList,
+            // usersList: updateUsersList ? updateUsersList : usersList,
             requestsList: updateRequestsList,
           });
+        
+        const userInList = usersList.find(item => item.uid === currentUid);
+        
+        if(userInList) {
+          const photos = guest.data().photos
+          const getMainPhoto = photos.filter(item => item.id === 0)
+          setOwnerEventUserPhoto(getMainPhoto[0].image)
+          setIsVisibleMatch(true)
+        }
       }
       const ev = events?.filter(i => i?.info?.uid !== forUserUid);
 
-      setEvents(ev);
     } catch (error) {
       console.log('eror invite', error);
     }
   };
 
   const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {
-    if (type === 'accept') {
-      const item = events?.filter(j => j?.info?.uid === uid)[0];
+    
+    if (type === 'accept') { 
+           
+      const item = events?.filter(j => {
+        
+       return j?.info?.uid === uid
+      });
+      
       const filter: any[] = events?.filter(i => i?.info?.uid !== uid);
-      console.log('filter', filter);
-      await onInvite(item?.info?.uid, item?.info?.id, item?.info?.requestsList, item?.info?.usersList);
+      
+      await onInvite(item[0]?.info?.uid, item[0]?.info?.id, item[0]?.info?.requestsList, item[0]?.info?.usersList);
       setEvents([...filter]);
     } else {
       console.log('reject', events);
@@ -587,13 +620,12 @@ const IO: FC = (): JSX.Element => {
       </View>,
     ];
 
-    const usersList = await userInfo?._docs;
+    const usersList = await userInfo?._docs;    
 
     usersList
       ?.filter(i => i?._data?.uid !== userHost?.uid)
       ?.map((item: any, index: number): void => {
-        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;
-
+        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;        
         setNameUser(name);
         const girlPhotos = item?._data?.photos?.map((image: any): void => image?.image);
         const interests = item?._data?.interests?.map((i: any): void => i?.title);
@@ -612,6 +644,7 @@ const IO: FC = (): JSX.Element => {
                 isLocked={!userHost?.accountConfirmed}
                 confirmedAccount={accountConfirmed}
                 onInvite={() => handleChangeListsEvents(uid, 'accept')}
+                // check={() => check(item)}
                 handleOpenSuperInvite={() => handleOpenSuperInvite(item?._data)}
                 handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}
@@ -815,6 +848,7 @@ const IO: FC = (): JSX.Element => {
           info: item?._data,
         });
         setEvents([...data]);
+        setEventsLength(data.length)
       });
   };
 
@@ -888,13 +922,13 @@ const IO: FC = (): JSX.Element => {
     return <Loading text="Finding people near you..." userInfo={userInfo} />;
   }
 
-  if (currentEventCardPosition > events.length && events.length > 1) {
+  if (currentEventCardPosition > eventsLength && eventsLength> 1) {
     return (
       <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo} />
     );
   }
 
-  if (currentEventCardPosition > 1 && myEvents.length < 1) {
+  if (currentEventCardPosition > 1 && userInfo.accountType === 'host' && myEvents.length < 1) {
     return (
       <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
         <View style={{height: 370}}>
