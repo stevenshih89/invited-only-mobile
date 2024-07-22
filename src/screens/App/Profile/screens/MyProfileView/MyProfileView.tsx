@@ -42,6 +42,11 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
   const [loading, setLoading] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>({});
 
+useEffect(() => {
+  console.log('userInfo.location', userInfo?.location);
+
+},[userInfo])  
+
   const [photosList, setPhotosList] = useState<[]>([]);
 
   const route = useRoute();
@@ -104,6 +109,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
           <View style={styles.wrapperFakeCard}>
             <TouchingSlider
               photos={photosList}
+              confirmedAccount={userInfo?.accountConfirmed}
               isShowAccountInfo={false}
               isShowCardButtons={false}
               isShowWantsJoin={false}
@@ -311,7 +317,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
             </View>
             <View style={styles.wrapperAboutMe}>
               <Text style={styles.testBasics}>{userInfo?.name} location</Text>
-              <Text style={styles.textAboutMe}>Dubai, 2.4 km away</Text>
+              <Text style={styles.textAboutMe}>{typeof(userInfo?.location) === 'string'?userInfo?.location: 'Location not specified'}, 2.4 km away</Text>
               <View
                 style={{
                   paddingHorizontal: 18,
@@ -324,8 +330,8 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                   borderWidth: 1,
                   borderColor: lightGray5Color,
                 }}>
-                <FlagAE />
-                <Text style={styles.textLocation}>Lives in Dubai</Text>
+                {/* <FlagAE /> */}
+                <Text style={styles.textLocation}>Lives in {typeof(userInfo?.location) === 'string'?userInfo?.location: 'Location not specified'}</Text>
               </View>
             </View>
           </View>
