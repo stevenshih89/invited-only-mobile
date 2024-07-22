@@ -165,12 +165,14 @@ const Payment: FC = (): JSX.Element => {
   const pay = async (pack: PurchasesPackage) => {
     try {
       const { customerInfo } = await Purchases.purchasePackage(pack);
-      if (
-        typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
-        "undefined"
-      ) {
-        console.log('pay successful');
-      }
+      console.log('pay successful');
+      
+      // if (
+      //   typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
+      //   "undefined"
+      // ) {
+      //   console.log('pay successful');
+      // }
     } catch (e) {
       console.log('pay error', e);
     }
