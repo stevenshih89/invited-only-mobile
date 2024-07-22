@@ -2,7 +2,7 @@ import {SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity, Alert} fr
 import React, {FC, useState, useEffect, useContext, useCallback} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
-import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -78,9 +78,13 @@ const IO: FC = (): JSX.Element => {
     return () => unsubscribe();
   });
 
-  const handleOpenSuperInvite = (item): void => {
+  const handleOpenSuperInvite = async (item): void => {
     setActiveSuperInviteUser(item);
     setIsVisibleSuperInvite(true);
+
+    console.warn(item);
+
+    // await onInvite(item?.uid, item?.id, item?.requestsList, item?.usersList);
   };
 
   const handleCloseSuperInvite = (): void => {
@@ -173,7 +177,9 @@ const IO: FC = (): JSX.Element => {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
   };
 
   const fetchMyEvents = async (isFirstRender: boolean) => {
@@ -568,7 +574,7 @@ const IO: FC = (): JSX.Element => {
 
     setTimeout(() => {
       setEvents([...recommendedData]);
-    }, 2000);
+    }, 3000);
   };
 
   const getListForHost = async () => {
@@ -820,7 +826,10 @@ const IO: FC = (): JSX.Element => {
           ),
           info: item?._data,
         });
-        setEvents([...data]);
+
+        setTimeout(() => {
+          setEvents([...data]);
+        }, 3000);
       });
   };
 
@@ -900,18 +909,18 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (currentEventCardPosition > 1 && myEvents.length < 1) {
+  if (!activeEvent?.id) {
     return (
       <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
         <View style={{height: 370}}>
           <Loading userInfo={userInfo} topPosition={true} />
         </View>
         <View>
-          <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>
+          <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(14, 812), fontFamily: Satoshi400}}>
             You don't have any active event. Get started by creating an event to begin inviting guests.
           </Text>
         </View>
-        <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 40, marginBottom: 30}} />
+        <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 20, marginBottom: 30}} />
         <View style={{width: '100%', height: 1, backgroundColor: '#282828', marginBottom: 20, alignItems: 'center'}}>
           <View
             style={{
@@ -927,7 +936,7 @@ const IO: FC = (): JSX.Element => {
         </View>
         <View style={{width: '100%', alignItems: 'center'}}>
           <TouchableOpacity>
-            <Text style={{color: whiteColor, fontSize: RFValue(18, 812)}}>Start joining!</Text>
+            <Text style={{color: whiteColor, fontSize: RFValue(14, 812)}}>Start joining!</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -25,7 +25,7 @@ interface IInputPhoneViewProps {
 }
 
 export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
-  const DEFAULT_COUNTRY = 'AU';
+  const DEFAULT_COUNTRY = 'AE';
   const phoneRef: any = useRef(null);
   const [phoneNumber, setPhoneNumber] = useState(props.value);
   const [phoneValid, setPhoneValid] = useState<boolean>(false);

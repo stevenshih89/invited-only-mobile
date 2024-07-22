@@ -41,7 +41,7 @@ const CodeVerified: FC = (): JSX.Element => {
           </View>
           <View style={{marginTop: 20, alignSelf: 'center', alignItems: 'center', width: '90%'}}>
             <View style={{borderColor: whiteColor, borderWidth: 64, borderRadius: 500, alignSelf: 'center'}}>
-              <Image source={{uri: imageUser}} style={{width: 190, height: 190}} />
+              <Image source={{uri: imageUser}} style={{width: 190, height: 190, borderRadius: 100}} />
             </View>
             <View style={{width: 20, height: 23, backgroundColor: whiteColor, marginTop: -3}} />
             <View
