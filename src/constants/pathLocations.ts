@@ -52,6 +52,7 @@ const photoVerifiedPath: keyof RootStackParamList = '/photo-verified';
 const summaryInfoPath: keyof RootStackParamList = '/summary-info';
 const verifySocialProfilePath: keyof RootStackParamList = '/verify-social-profile';
 const checkingSpots: keyof RootStackParamList = '/checking-spots';
+const superInvitePayPath: keyof RootStackParamList = '/super-invite-pay';
 
 export {
   bottomTabsStackPath,
@@ -104,4 +105,5 @@ export {
   summaryInfoPath,
   verifySocialProfilePath,
   checkingSpots,
+  superInvitePayPath,
 };

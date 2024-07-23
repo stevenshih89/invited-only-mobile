@@ -34,7 +34,8 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenWidth} from 'constants/common';
 import * as Progress from 'react-native-progress';
-import {SvgProps} from 'react-native-svg';
+import { SvgProps } from 'react-native-svg';
+import Purchases, { PurchasesPackage } from 'react-native-purchases';
 
 interface PlanListItem {
   id: number;
@@ -157,6 +158,50 @@ const Payment: FC = (): JSX.Element => {
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  const pay = async (pack: PurchasesPackage) => {
+    try {
+      const { customerInfo } = await Purchases.purchasePackage(pack);
+      console.log('pay successful');
+      // if (
+      //   typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
+      //   "undefined"
+      // ) {
+      //   console.log('pay successful');
+      // }
+    } catch (e) {
+      console.log('pay error', e);
+    }
+  }
+
+  const getOfferings = async () => {
+    try {
+      const offerings = await Purchases.getOfferings();
+      if (offerings.current !== null) {  
+
+        const offeringsHostSubscription = offerings.all['Host subscription']
+        console.log('offerings', offeringsHostSubscription.availablePackages);
+        
+        if(activePayment.durationName === 'week') {
+          const product = offeringsHostSubscription.availablePackages[0]   
+          pay(product)
+        }
+
+        if(activePayment.durationName === 'year') {
+          const product = offeringsHostSubscription.availablePackages[2]
+          pay(product)
+        }
+
+        if(activePayment.durationName === 'months') {
+          const product = offeringsHostSubscription.availablePackages[1]
+          pay(product)
+        }
+      }
+    } catch (e) {
+      console.log('offering ger error', e);
+      
+    }
+  }
 
   const renderItem = ({item}: {item: PlanListItem}) => {
     const isActive = activePayment.id === item.id;
@@ -313,7 +358,7 @@ const Payment: FC = (): JSX.Element => {
               borderColor={black1Color}
             />
           </View>
-          <Button buttonStyle={{marginTop: 20}} title={'Get access'} />
+          <Button buttonStyle={{marginTop: 20}} title={'Get access'} onPress={getOfferings}/>
           <View style={{marginTop: 8}}>
             <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
               By tapping Continue, your App Store will be charged, your subscription will auto-renew for the same price and package lenght
