@@ -82,9 +82,7 @@ const IO: FC = (): JSX.Element => {
     setActiveSuperInviteUser(item);
     setIsVisibleSuperInvite(true);
 
-    console.warn(item);
-
-    // await onInvite(item?.uid, item?.id, item?.requestsList, item?.usersList);
+    await onInvite(item?.uid, item?.id, item?.requestsList, item?.usersList);
   };
 
   const handleCloseSuperInvite = (): void => {

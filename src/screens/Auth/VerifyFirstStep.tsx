@@ -65,9 +65,9 @@ const VerifySecondStep: FC = (): JSX.Element => {
   };
 
   const handleNext = () => {
-    // if (!imageUri) {
-    //   return;
-    // }
+    if (!imageUri) {
+      return;
+    }
     setOnBoarding([
       ...onBoarding,
       {
