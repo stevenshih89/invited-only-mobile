@@ -24,6 +24,7 @@ import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 import Button from 'components/Button/Button';
 import {eventCreatingStackPath} from 'constants/pathLocations';
 import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
+import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
@@ -45,6 +46,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     },
   });
   const [activeUserInfo, setActiveUserInfo] = useState<any>({});
+  
   const [myEventsData, setMyEventsData] = useState([]);
   const [eventsJoiningData, setEventsJoiningData] = useState([]);
 
@@ -491,6 +493,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         userInfo={activeUserInfo}
         eventInfo={activeModalEvent}
       />
+      {!activeUserInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true}/>}
     </>
   );
 };
