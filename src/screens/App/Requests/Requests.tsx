@@ -17,6 +17,9 @@ import {profilePath} from 'constants/pathLocations';
 import {EventContext} from 'contexts/EventContext';
 import {useUser} from '../../../store/userStore';
 import {useRequest} from '../../../store/requestsStore';
+import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
+import LinearGradient from 'react-native-linear-gradient';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
@@ -156,6 +159,7 @@ const Requests: FC = (): ReactElement => {
           <Button title="Create event" onPress={() => navigation.navigate(profilePath as never)} />
         </View>
       )}
+      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton />}
     </View>
   );
 };

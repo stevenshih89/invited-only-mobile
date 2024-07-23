@@ -1,8 +1,10 @@
 import {Text, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {FC, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {Tooltip, TooltipProps} from '@rneui/themed';
 import {RFValue} from 'react-native-responsive-fontsize';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from './styles';
@@ -25,6 +27,7 @@ import { useAppNavigation } from 'hooks/useAppNavigation';
 
 const ControlledTooltip: FC<TooltipProps | any> = props => {
   const [open, setOpen] = useState(false);
+  
   return (
     <Tooltip
       visible={open}
@@ -41,6 +44,27 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
 
 
 const MyPlan = () => {
+
+  const [userInfo, setUserInfo] = useState<any>({});
+
+  const fetchUserInfo = async () => {
+    const user = auth().currentUser;
+
+    if (user) {
+      try {
+        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        if (userInfoDoc.exists) {
+          setUserInfo(userInfoDoc.data());
+        }
+      } catch (error: any) {
+        
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
 
   const navigation = useAppNavigation();
 
@@ -61,7 +85,8 @@ const MyPlan = () => {
             <Text style={styles.textHostPremium}>Host Premium</Text>
             <Text style={styles.textGetAccess}>Get Access & Unlock all of our features. Secure your spot. Host Access is limited.</Text>
             <View style={styles.buttonWrapper}>
-              <Button title="Get Access" onPress={goToMyProfileView} buttonTitleStyle={styles.textButtonTitleStyle} buttonStyle={styles.buttonUpgrade} />
+              {userInfo?.accountConfirmed && <Button title="Get Access" onPress={goToMyProfileView} buttonTitleStyle={styles.textButtonTitleStyle} buttonStyle={styles.buttonUpgrade} />}
+              {!userInfo?.accountConfirmed && <Button title=" Upgrade" onPress={goToMyProfileView} buttonTitleStyle={styles.textButtonTitleStyle} buttonStyle={styles.buttonUpgrade} />}
             </View>
             {/* <Text style={styles.textYearlySpot}>Yearly Spot*</Text> */}
             {/* <Text style={styles.textYearlySpot}>Yearly Spot*</Text> */}

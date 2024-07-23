@@ -23,7 +23,7 @@ import {calculateAge} from 'helpers/calculateAge';
 import {useFocusEffect} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 
-interface JoiningEventsCard {
+interface JoiningEventsCardProps {
   estimeTime: string;
   uid: string;
   id: string;
@@ -67,7 +67,7 @@ interface JoiningEventsCard {
   }) => void;
 }
 
-const JoiningEventsCard: FC<JoiningEventsCard> = ({
+const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
   activeState,
   uid,
   id,

@@ -69,8 +69,8 @@ const InvitationCode: FC = (): JSX.Element => {
   const generateInviteCode = () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const length = 12;
-    const countCodes = 5
-    const inviteCodes = []
+    const countCodes = 5;
+    const inviteCodes = [];
 
     for (let i = 0; i < countCodes; i++) {
       let inviteCode = '';
@@ -79,7 +79,7 @@ const InvitationCode: FC = (): JSX.Element => {
         const randomIndex = Math.floor(Math.random() * characters.length);
         inviteCode += characters.charAt(randomIndex);
       }
-      inviteCodes.push({isActive: true, inviteCode: inviteCode})
+      inviteCodes.push({isActive: true, inviteCode: inviteCode});
     }
 
     return inviteCodes;
@@ -152,61 +152,60 @@ const InvitationCode: FC = (): JSX.Element => {
   };
 
   const handleNext = async () => {
-
     const usersRef = firestore().collection('userInfo');
     const snapshot = await usersRef.get();
-    let userUid = null
+    let userUid = null;
 
-  for (const doc of snapshot.docs) {
-    const userData = doc.data();      
-    const inviteCodes = userData.codeForInvitingOtherUsers;
+    for (const doc of snapshot.docs) {
+      const userData = doc.data();
+      const inviteCodes = userData.codeForInvitingOtherUsers;
 
-    if (Array.isArray(inviteCodes)) {
-      const res = inviteCodes.find(item => item.inviteCode === code && item.isActive);
-      if (res) {
-        userUid = userData.uid
-        break; 
+      if (Array.isArray(inviteCodes)) {
+        const res = inviteCodes.find(item => item.inviteCode === code && item.isActive);
+        if (res) {
+          userUid = userData.uid;
+          break;
+        }
       }
     }
-  }
 
-  if(userUid) {
-    const userInfo = await usersRef.doc(userUid).get()
-    const codeForInvitingOtherUsers = userInfo?.data()?.codeForInvitingOtherUsers
-    const updateCodeInvitions = codeForInvitingOtherUsers.map(item => {
-      if(item.inviteCode === code) {
-        return {
-          ...item,
-          isActive: false
-        };
-      }
-      return item;
-    })
-    
-    await usersRef.doc(userUid).update({codeForInvitingOtherUsers: updateCodeInvitions});
-    
-    const onboardingData = [
-      ...onBoarding,
-      {
-        invitationCode: code,
-        notificationSettings: {
-          joinedEvent: false,
-          myEvents: false,
-          requests: false,
-          chat: false,
-          superInvite: false,
-          superJoin: false,
-          match: false,
+    if (userUid) {
+      const userInfo = await usersRef.doc(userUid).get();
+      const codeForInvitingOtherUsers = userInfo?.data()?.codeForInvitingOtherUsers;
+      const updateCodeInvitions = codeForInvitingOtherUsers.map(item => {
+        if (item.inviteCode === code) {
+          return {
+            ...item,
+            isActive: false,
+          };
+        }
+        return item;
+      });
+
+      await usersRef.doc(userUid).update({codeForInvitingOtherUsers: updateCodeInvitions});
+
+      const onboardingData = [
+        ...onBoarding,
+        {
+          invitationCode: code,
+          notificationSettings: {
+            joinedEvent: false,
+            myEvents: false,
+            requests: false,
+            chat: false,
+            superInvite: false,
+            superJoin: false,
+            match: false,
+          },
         },
-      },
-    ];
+      ];
 
-    setOnBoarding(onboardingData);
-    await handleRegisterUser(onboardingData);
-    navigation.navigate(codeVerifiedPath as never);
-  } else {
-    showToast('warning', 'Сode used or not found');
-  }   
+      setOnBoarding(onboardingData);
+      await handleRegisterUser(onboardingData);
+      navigation.navigate(codeVerifiedPath as never);
+    } else {
+      showToast('warning', 'Сode used or not found');
+    }
   };
 
   return (

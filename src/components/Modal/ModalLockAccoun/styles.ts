@@ -1,0 +1,230 @@
+import {StyleSheet} from 'react-native';
+import {blackColor, darkRed2Color, darkRedColor, transparentGray60Color, whiteColor} from 'constants/colors.ts';
+import {Satoshi500, Satoshi400, Satoshi700} from 'constants/fonts.ts';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {screenHeight, screenWidth} from 'constants/common.ts';
+
+const useStyles = () => {
+  return StyleSheet.create({
+    container: {
+      width: '100%',
+      borderRadius: 22,
+      height: screenHeight * 0.661,
+    },
+    imageStyle: {
+      height: '100%',
+      borderRadius: 22,
+    },
+    wrapperBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: screenHeight / 30,
+      marginHorizontal: 10,
+    },
+    bar: {
+      flex: 1,
+      height: 3,
+      marginHorizontal: screenWidth / 130,
+      borderRadius: 30,
+    },
+    button: {
+      width: '50%',
+    },
+    wrapperButtons: {
+      flexDirection: 'row',
+      height: '70%',
+      position: 'absolute',
+      zIndex: 999,
+    },
+    wrapperBio: {
+      paddingLeft: screenWidth / 20,
+    },
+    linearGradientFooter: {
+      height: 201,
+      position: 'absolute',
+      width: '100%',
+      bottom: 0,
+      left: 0,
+      borderBottomLeftRadius: 22,
+      borderBottomRightRadius: 22,
+    },
+    linearGradientHeader: {
+      height: 125,
+      borderTopRightRadius: 22,
+      borderTopLeftRadius: 22,
+    },
+    textName: {
+      color: whiteColor,
+      fontFamily: Satoshi700,
+      fontSize: RFValue(31, 812),
+    },
+    textYears: {
+      color: whiteColor,
+      fontFamily: Satoshi700,
+      fontSize: RFValue(26, 812),
+      marginHorizontal: 12,
+    },
+    wrapperFooterCard: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '95%',
+    },
+    rowBioInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+    },
+    wrapperRightButton: {
+      position: 'relative',
+      bottom: screenHeight * 0.04,
+      zIndex: 999,
+    },
+    buttonFlash: {
+      backgroundColor: 'black',
+      borderRadius: 50,
+      width: 61,
+      height: 61,
+      alignItems: 'center',
+      justifyContent: 'center',
+      opacity: 0.8,
+    },
+    infoTags: {
+      flexDirection: 'row',
+      backgroundColor: 'rgba(0, 0, 0, 0.60)',
+      paddingVertical: screenHeight / 85,
+      paddingHorizontal: screenWidth / 24,
+      borderRadius: 50,
+      alignItems: 'center',
+      alignSelf: 'flex-start'
+    },
+    textInfoTags: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(14, 812),
+      marginLeft: screenWidth / 43,
+    },
+    lockedWrapper: {
+      position: 'absolute',
+      top: 120,
+      left: 0,
+      right: 0,
+    //   zIndex: 1000,
+    },
+    lockIconWr: {
+      alignSelf: 'center',
+      borderRadius: 60,
+      backgroundColor: blackColor,
+      width: 62,
+      height: 62,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    lockDescWr: {
+      maxWidth: 320,
+      marginTop: 8,
+      padding: 16,
+      borderRadius: 14,
+      backgroundColor: blackColor,
+      alignSelf: 'center',
+    },
+    lockedTitle: {
+      color: whiteColor,
+      textAlign: 'center',
+      marginBottom: 10,
+      fontFamily: Satoshi700,
+      fontSize: RFValue(20, 812),
+    },
+    lockedSubtitle: {
+      color: whiteColor,
+      textAlign: 'center',
+      marginBottom: 10,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(16, 812),
+    },
+    lockedHaveCodeWr: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    lockedHaveCodeTitle: {
+      color: whiteColor,
+      textAlign: 'center',
+      fontFamily: Satoshi500,
+      fontSize: RFValue(12, 812),
+    },
+    lockedHaveCodePressableText: {
+      textDecorationLine: 'underline',
+      marginLeft: 4,
+      color: whiteColor,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(12, 812),
+    },
+    wantToJoinWr: {
+      borderBottomLeftRadius: 10,
+      borderBottomRightRadius: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: darkRedColor,
+      paddingVertical: 5,
+      paddingHorizontal: 5,
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      left: 0,
+      flex: 1,
+    },
+    wantToJoinImage: {
+      borderRadius: 30,
+      backgroundColor: darkRed2Color,
+      width: 29,
+      height: 29,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 10,
+    },
+    wantToJoinText: {
+      color: whiteColor,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(14, 812),
+    },
+    inviteTooltipWr: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: whiteColor,
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      borderRadius: 10,
+      position: 'absolute',
+      right: 30,
+      top: screenHeight / 2.1,
+    },
+    inviteTooltipText: {
+      color: blackColor,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(14, 812),
+      marginLeft: 10,
+    },
+    inviteBottomCircleFigure: {
+      backgroundColor: whiteColor,
+      width: 6,
+      height: 6,
+      borderRadius: 10,
+      position: 'absolute',
+      bottom: -3,
+      right: 10,
+      transform: [{rotate: '180deg'}],
+    },
+    eventPreviewWr: {
+      padding: 10,
+      zIndex: 1000,
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      left: 0,
+    },
+  });
+};
+
+export default useStyles;

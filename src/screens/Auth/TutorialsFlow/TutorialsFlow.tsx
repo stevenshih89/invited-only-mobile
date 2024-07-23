@@ -1,4 +1,4 @@
-import React, {FC, ReactNode, useState} from 'react';
+import React, {FC, ReactNode, useContext, useState} from 'react';
 import {View, SafeAreaView, TouchableOpacity, Text} from 'react-native';
 
 //import components
@@ -17,9 +17,13 @@ import GetInviteMatch from './components/GetInviteMatch/GetInviteMatch';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import auth from '@react-native-firebase/auth';
+import {AuthContext} from 'contexts/AuthContext';
 
 const TutorialsFlow: FC = (): JSX.Element => {
   const [active, setActive] = useState<number>(0);
+
+  const {setUser} = useContext(AuthContext);
 
   const styles = useStyles();
 
@@ -48,12 +52,13 @@ const TutorialsFlow: FC = (): JSX.Element => {
     if (active === 6) {
       return handleCloseTutorialFlow();
     }
-
     setActive(p => p + 1);
   };
 
   const handleCloseTutorialFlow = async () => {
+    const user = auth().currentUser;
     setOnBoarding(true);
+    setUser([`${user?.uid}`]);
   };
 
   return (
