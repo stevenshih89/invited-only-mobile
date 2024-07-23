@@ -13,7 +13,7 @@ import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, myProfileViewPath, superInvitePayPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
@@ -43,6 +43,7 @@ import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
 import Match from './screens/Match/Match';
+import ModalSuperInvite from 'components/Modal/ModalSuperInvite';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();

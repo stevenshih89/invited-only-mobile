@@ -144,9 +144,6 @@ const Payment: FC = (): JSX.Element => {
   ]);
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
 
-  console.log('activePayment', activePayment);
-  
-
   const handleNext = () => {
     navigation.navigate(profilePath as never);
   };
@@ -166,7 +163,6 @@ const Payment: FC = (): JSX.Element => {
     try {
       const { customerInfo } = await Purchases.purchasePackage(pack);
       console.log('pay successful');
-      
       // if (
       //   typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
       //   "undefined"
@@ -184,10 +180,10 @@ const Payment: FC = (): JSX.Element => {
       if (offerings.current !== null) {  
 
         const offeringsHostSubscription = offerings.all['Host subscription']
-        console.log('offerings', offeringsHostSubscription.availablePackages[0]);
+        console.log('offerings', offeringsHostSubscription.availablePackages);
         
         if(activePayment.durationName === 'week') {
-          const product = offeringsHostSubscription.availablePackages[0]          
+          const product = offeringsHostSubscription.availablePackages[0]   
           pay(product)
         }
 

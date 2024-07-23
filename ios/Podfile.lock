@@ -1169,6 +1169,8 @@ PODS:
   - nanopb/decode (2.30909.1)
   - nanopb/encode (2.30909.1)
   - PromisesObjC (2.4.0)
+  - PurchasesHybridCommon (11.1.1):
+    - RevenueCat (= 4.43.2)
   - RCT-Folly (2022.05.16.00):
     - boost
     - DoubleConversion
@@ -2232,6 +2234,7 @@ PODS:
     - React-logger (= 0.73.3)
     - React-perflogger (= 0.73.3)
   - RecaptchaInterop (100.0.0)
+  - RevenueCat (4.43.2)
   - RNCAsyncStorage (1.23.1):
     - React-Core
   - RNCClipboard (1.14.1):
@@ -2275,6 +2278,9 @@ PODS:
   - RNNotifee/NotifeeCore (7.8.2):
     - React-Core
   - RNPermissions (4.1.5):
+    - React-Core
+  - RNPurchases (7.28.1):
+    - PurchasesHybridCommon (= 11.1.1)
     - React-Core
   - RNReanimated (3.12.1):
     - glog
@@ -2368,6 +2374,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
+  - RNPurchases (from `../node_modules/react-native-purchases`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -2403,7 +2410,9 @@ SPEC REPOS:
     - libevent
     - nanopb
     - PromisesObjC
+    - PurchasesHybridCommon
     - RecaptchaInterop
+    - RevenueCat
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -2546,6 +2555,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@notifee/react-native"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
+  RNPurchases:
+    :path: "../node_modules/react-native-purchases"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -2592,6 +2603,7 @@ SPEC CHECKSUMS:
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
+  PurchasesHybridCommon: 73f4f2c6e4ec3487b4219bf60e1661100fb85da3
   RCT-Folly: 7169b2b1c44399c76a47b5deaaba715eeeb476c0
   RCTRequired: 9b898847f76977a6dfed2a08f4c5ed37add75ec0
   RCTTypeSafety: 0debdc4ba38c8138016d8d8ada4bdf9ec1b8aa82
@@ -2642,6 +2654,7 @@ SPEC CHECKSUMS:
   React-utils: 2d25ca0a6e635c095bc5e67ac1202c7939ec4af3
   ReactCommon: 8564d71cf76b1715740cb8bdc5b382d1ddd12dd1
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
+  RevenueCat: 3d934653b7e8b09af88fd47e9e84cfaf5d0a89ba
   RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
   RNCClipboard: 0a720adef5ec193aa0e3de24c3977222c7e52a37
   RNCPicker: b7873ba797dc586bfaf3307d737cbdc620a9ff3e
@@ -2655,13 +2668,14 @@ SPEC CHECKSUMS:
   RNGestureHandler: 3e87b5059b54bf1315bba9bc0252fb08d8e2d7b2
   RNNotifee: 8e2d3df3f0e9ce8f5d1fe4c967431138190b6175
   RNPermissions: 4da8c626e4ac9d71c1a199d500d52dd54da62e38
+  RNPurchases: 4305de02b902d3c1e56a50295dc0a6e758b73095
   RNReanimated: 5fdbe436bdb843bb5fcf081539fd03cd9f2a5705
   RNScreens: e9eece68a6303235ba9c31a5b816cb416a88ae98
   RNSVG: 963a95f1f5d512a13d11ffd50d351c87fb5c6890
   RNVectorIcons: 9282eb0aef2f7d4747f621aa6c586ce910de23b1
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  Yoga: 08cd7601462818c4985bda7b205b9e6a92a7e66a
+  Yoga: ff0382b894475dba0b4d2a5fda860bfee5a9afad
 
 PODFILE CHECKSUM: 260162520fbef1a74395b2b88727676244daf74e
 
-COCOAPODS: 1.13.0
+COCOAPODS: 1.15.2
