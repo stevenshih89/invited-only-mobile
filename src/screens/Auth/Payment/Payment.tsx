@@ -1,7 +1,9 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {View, Text, SafeAreaView, ScrollView, TouchableOpacity, FlatList} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Tooltip, TooltipProps} from '@rneui/themed';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from 'screens/Auth/Payment/styles.ts';
@@ -35,6 +37,11 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {screenWidth} from 'constants/common';
 import * as Progress from 'react-native-progress';
 import { SvgProps } from 'react-native-svg';
+import Purchases, { PurchasesPackage } from 'react-native-purchases';
+import Loader from 'components/Modal/ModalLoader/Loader';
+import HostPremium from 'components/Modal/ModalHostPremium/HostPremium';
+import { useUser } from 'src/store/userStore';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 interface PlanListItem {
   id: number;
@@ -49,7 +56,7 @@ interface PlanListItem {
 interface WhatGetItem {
   title: string;
   description: string;
-  icon: React.FC<SvgProps>
+  icon: React.FC<SvgProps>;
 }
 
 const ControlledTooltip: FC<TooltipProps | any> = props => {
@@ -68,7 +75,7 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
   );
 };
 
-const Payment: FC = (): JSX.Element => {
+const Payment: FC = (): JSX.Element => {    
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [spotsLeft, setSpotsLeft] = useState<number>(0);
@@ -79,34 +86,34 @@ const Payment: FC = (): JSX.Element => {
     {
       title: 'Unlimited Events Creation',
       description: 'Creating extraordinary events tailored to your vision.',
-      icon: CalendarIcon
+      icon: CalendarIcon,
     },
     {
       title: 'Unlimited Invitations',
       description: 'Send Unlimited Invitations and Create Your Guest List',
-      icon: UnlimitedIcon
+      icon: UnlimitedIcon,
     },
     {
       title: 'Unlimited Swiped',
       description: 'Enjoy limitless swipes for endless connections.',
-      icon: IOIcon
+      icon: IOIcon,
     },
     {
       title: '5 Super invites a week',
       description: 'Send 5 super invites each week.',
-      icon: FlashIcon
+      icon: FlashIcon,
     },
     {
       title: 'See who wants to join you',
       description: 'View interested guests who want to join you in real-time.',
-      icon: EyeIcon
+      icon: EyeIcon,
     },
     {
       title: 'Guest Mode (Join events)',
       description: 'Join events anonymously using Guest Mode.',
-      icon: Birthday
+      icon: Birthday,
     },
-  ]
+  ];
 
   const generateRandomProgress = () => {
     return Math.floor(Math.random() * (maxProgress - minProgress + 1)) + minProgress;
@@ -142,8 +149,35 @@ const Payment: FC = (): JSX.Element => {
     },
   ]);
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
+  const [loaderVisible, setLoaderVisible] = useState(false)
+  const [successfulPay, setSuccessfulPay] = useState(false)
+  const [visibleHostPremium, setVsibleHostPremium] = useState(false)
+
+  const [userInfo, setUserInfo] = useState<any>({});
+
+  const updateUser = async () => {
+    const user = auth().currentUser;
+
+    if (user) {
+      try {
+        const userInfoUpdate = await firestore().collection('userInfo').doc(user.uid);
+        userInfoUpdate.update({
+          accountPremium: true,
+          superInvites: 10
+        })
+      } catch (error: any) {
+        console.log('error user premium update', error);
+        
+      }
+    }
+  };
+
+  const name = useUser(i => i?.user.name);
+
+  const photo = useUser(i => i?.user.photos[0].image);
 
   const handleNext = () => {
+    navigation.navigate(tutorialFlowPath as never)
     navigation.navigate(profilePath as never);
   };
 
@@ -157,6 +191,65 @@ const Payment: FC = (): JSX.Element => {
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  const showHostPremium = async () => {
+    setLoaderVisible(false)
+    setTimeout(() => {
+      setVsibleHostPremium(true)
+    }, 300);
+  }
+
+  const pay = async (pack: PurchasesPackage) => {
+    setLoaderVisible(true)
+    try {
+      const { customerInfo } = await Purchases.purchasePackage(pack);
+      updateUser()
+      setSuccessfulPay(true)
+      setTimeout(() => {
+        setLoaderVisible(false)
+        showHostPremium()
+      }, 1500)
+      console.log('pay successful');
+      // if (
+      //   typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
+      //   "undefined"
+      // ) {
+      //   console.log('pay successful');
+      // }
+    } catch (e) {
+      console.log('pay error', e);
+      setLoaderVisible(false)
+    }
+  }
+
+  const getOfferings = async () => {
+    try {
+      const offerings = await Purchases.getOfferings();
+      if (offerings.current !== null) {  
+
+        const offeringsHostSubscription = offerings.all['Host subscription']
+        console.log('offerings', offeringsHostSubscription.availablePackages);
+        
+        if(activePayment.durationName === 'week') {
+          const product = offeringsHostSubscription.availablePackages[0]
+          pay(product)
+        }
+
+        if(activePayment.durationName === 'year') {
+          const product = offeringsHostSubscription.availablePackages[2]
+          pay(product)
+        }
+
+        if(activePayment.durationName === 'months') {
+          const product = offeringsHostSubscription.availablePackages[1]
+          pay(product)
+        }
+      }
+    } catch (e) {
+      console.log('offering ger error', e);
+      
+    }
+  }
 
   const renderItem = ({item}: {item: PlanListItem}) => {
     const isActive = activePayment.id === item.id;
@@ -202,21 +295,21 @@ const Payment: FC = (): JSX.Element => {
             paddingBottom: isActive ? 34 : 20,
             paddingHorizontal: 6,
           }}>
-            <View style={{position: 'absolute', top: 10, right: 0, left: 0, zIndex: 10}}>
-          <View
-            style={{
-              alignSelf: 'center',
-              borderWidth: 2,
-              borderStyle: 'solid',
-              borderColor: whiteColor,
-              borderRadius: 7,
-              paddingHorizontal: 6,
-              paddingVertical: 4,
-              backgroundColor: blackColor,
-            }}>
-            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(7, 812), color: whiteColor}}>{item.title}</Text>
+          <View style={{position: 'absolute', top: 10, right: 0, left: 0, zIndex: 10}}>
+            <View
+              style={{
+                alignSelf: 'center',
+                borderWidth: 2,
+                borderStyle: 'solid',
+                borderColor: whiteColor,
+                borderRadius: 7,
+                paddingHorizontal: 6,
+                paddingVertical: 4,
+                backgroundColor: blackColor,
+              }}>
+              <Text style={{fontFamily: Satoshi700, fontSize: RFValue(7, 812), color: whiteColor}}>{item.title}</Text>
+            </View>
           </View>
-        </View>
           <Text
             style={{fontFamily: Satoshi700, fontSize: RFValue(22, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
             {item.duration}
@@ -250,6 +343,8 @@ const Payment: FC = (): JSX.Element => {
 
   return (
     <SafeAreaView style={{backgroundColor: black1Color}}>
+      <Loader isVisible={loaderVisible} successfulPay={successfulPay}/>
+      <HostPremium isVisible={visibleHostPremium} infoUser={{name, photo}} closeModal={visibleHostPremium}/>
       <ScrollView>
         <View style={styles.container}>
           <View style={{alignItems: 'flex-end', marginTop: 10}}>
@@ -313,7 +408,7 @@ const Payment: FC = (): JSX.Element => {
               borderColor={black1Color}
             />
           </View>
-          <Button buttonStyle={{marginTop: 20}} title={'Get access'} />
+          <Button buttonStyle={{marginTop: 20}} title={'Get access'} onPress={getOfferings}/>
           <View style={{marginTop: 8}}>
             <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
               By tapping Continue, your App Store will be charged, your subscription will auto-renew for the same price and package lenght
@@ -324,44 +419,44 @@ const Payment: FC = (): JSX.Element => {
             <Text style={styles.textWhatYouGet}>What you get:</Text>
             <Text style={styles.textPremium}>Premium</Text>
           </View>
-          <FlatList data={whatGet}
+          <FlatList
+            data={whatGet}
             renderItem={({item}) => {
               return (
                 <View style={styles.itemInTheList}>
-            <View style={styles.rowTextAndCheckCircleIcon}>
-              <View
-                style={{
-                  marginRight: 8,
-                  borderRadius: 100,
-                  backgroundColor: lightGray5Color,
-                  width: 34,
-                  height: 34,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <item.icon />
-              </View>
-              <Text style={styles.textFromTheList}>{item.title}</Text>
-              <ControlledTooltip
-                width={300}
-                height={100}
-                backgroundColor={lightGray5Color}
-                withOverlay={false}
-                popover={
-                  <View style={styles.tooltipWrapper}>
-                    <View style={styles.rowTitleTooltip}>
-                      <Text style={styles.textUnlimitedEventsCreation}>{item.title}</Text>
-                      <CloseCircleIcon />
+                  <View style={styles.rowTextAndCheckCircleIcon}>
+                    <View
+                      style={{
+                        marginRight: 8,
+                        borderRadius: 100,
+                        backgroundColor: lightGray5Color,
+                        width: 34,
+                        height: 34,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <item.icon />
                     </View>
-                    <Text style={styles.textHostAccessIsLimited}>{item.description}</Text>
+                    <Text style={styles.textFromTheList}>{item.title}</Text>
+                    <ControlledTooltip
+                      width={300}
+                      height={100}
+                      backgroundColor={lightGray5Color}
+                      withOverlay={false}
+                      popover={
+                        <View style={styles.tooltipWrapper}>
+                          <View style={styles.rowTitleTooltip}>
+                            <Text style={styles.textUnlimitedEventsCreation}>{item.title}</Text>
+                            <CloseCircleIcon />
+                          </View>
+                          <Text style={styles.textHostAccessIsLimited}>{item.description}</Text>
+                        </View>
+                      }>
+                      <InfoCircleIcon />
+                    </ControlledTooltip>
                   </View>
-                }
-                >
-                <InfoCircleIcon />
-              </ControlledTooltip>
-            </View>
-            <CheckIcon />
-          </View>
+                  <CheckIcon />
+                </View>
               );
             }}
           />

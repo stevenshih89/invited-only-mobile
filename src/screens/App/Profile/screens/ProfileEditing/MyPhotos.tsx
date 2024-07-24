@@ -115,9 +115,6 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
                   style={styles.closeButton}>
                   <Close />
                 </TouchableOpacity>
-                <View style={styles.labelContainer}>
-                  <Text style={styles.labelText}>Main</Text>
-                </View>
               </ImageBackground>
             </View>
           ) : (
@@ -125,6 +122,9 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
               <Plus />
             </TouchableOpacity>
           )}
+          <View style={styles.labelContainer}>
+              <Text style={styles.labelText}>Main</Text>
+            </View>
         </View>
         <View style={{flex: 1}}>
           <View style={[styles.imageContainer, {marginBottom: 6}]}>
@@ -138,9 +138,6 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
                     style={styles.closeButton}>
                     <Close />
                   </TouchableOpacity>
-                  <View style={styles.labelContainer}>
-                    <Text style={styles.labelText}>02</Text>
-                  </View>
                 </ImageBackground>
               </View>
             ) : (
@@ -148,6 +145,9 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
                 <Plus />
               </TouchableOpacity>
             )}
+            <View style={styles.labelContainer}>
+              <Text style={styles.labelText}>02</Text>
+            </View>
           </View>
           <View style={[styles.imageContainer, {marginTop: 6}]}>
             {thirdImage?.image ? (
@@ -160,9 +160,6 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
                     style={styles.closeButton}>
                     <Close />
                   </TouchableOpacity>
-                  <View style={styles.labelContainer}>
-                    <Text style={styles.labelText}>03</Text>
-                  </View>
                 </ImageBackground>
               </View>
             ) : (
@@ -170,6 +167,9 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
                 <Plus />
               </TouchableOpacity>
             )}
+            <View style={styles.labelContainer}>
+              <Text style={styles.labelText}>03</Text>
+            </View>
           </View>
         </View>
       </View>
@@ -191,9 +191,6 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
                     style={styles.closeButton}>
                     <Close />
                   </TouchableOpacity>
-                  <View style={styles.labelContainer}>
-                    <Text style={styles.labelText}>04</Text>
-                  </View>
                 </ImageBackground>
               </View>
             ) : (
@@ -201,6 +198,9 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
                 <Plus />
               </TouchableOpacity>
             )}
+            <View style={styles.labelContainer}>
+              <Text style={styles.labelText}>04</Text>
+            </View>
             </View>
           </View>
           <View style={[styles.imageContainer]}>
@@ -219,9 +219,6 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
                     style={styles.closeButton}>
                     <Close />
                   </TouchableOpacity>
-                  <View style={styles.labelContainer}>
-                    <Text style={styles.labelText}>05</Text>
-                  </View>
                 </ImageBackground>
               </View>
             ) : (
@@ -229,6 +226,9 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
                 <Plus />
               </TouchableOpacity>
             )}
+            <View style={styles.labelContainer}>
+              <Text style={styles.labelText}>05</Text>
+            </View>
             </View>
           </View>
           <View style={[styles.imageContainer,]}>
@@ -246,16 +246,19 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
                     style={styles.closeButton}>
                     <Close />
                   </TouchableOpacity>
-                  <View style={styles.labelContainer}>
-                    <Text style={styles.labelText}>06</Text>
-                  </View>
+                  
                 </ImageBackground>
+                
               </View>
+              
             ) : (
-              <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(sixthImage?.id)} style={styles.plusButton}>
+               <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(sixthImage?.id)} style={styles.plusButton}>
                 <Plus />
               </TouchableOpacity>
             )}
+            <View style={styles.labelContainer}>
+              <Text style={styles.labelText}>06</Text>
+            </View>
           </View>
       </View>
     </View>
@@ -313,7 +316,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 5,
-    marginBottom: 10,
+    position: 'absolute',
+    bottom: 6,
+    // marginTop: 10, 
   },
   labelText: {
     fontFamily: Satoshi700,
@@ -324,7 +329,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: lightGray2Color,
     borderRadius: 10,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 10,
   },

@@ -1,4 +1,4 @@
-import {lightGray6Color, transparentWhite16Color} from 'constants/colors';
+import {blackColor, lightGray6Color, transparentWhite16Color} from 'constants/colors';
 import {FC, ReactElement, useEffect, useMemo, useState} from 'react';
 import {Alert, SafeAreaView, ScrollView, View} from 'react-native';
 import MyPhotos from './MyPhotos';
@@ -19,6 +19,7 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import ModalLocation from './ModalLocation';
 import ModalHomeAdress from './ModalHomeAdress';
+import { showToast } from 'helpers/showToast';
 
 const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleSmokeModal, setIsVisibleSmokeModal] = useState<boolean>(false);
@@ -29,8 +30,8 @@ const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleBirthdayModal, setIsVisibleBirthdayModal] = useState<boolean>(false);
   const [loadingSave, setLoadingSave] = useState<boolean>(false);
   const [interestsLoading, setInterestsLoading] = useState<boolean>(false);
-  const [isVisibleLocationModal, setIsVisibleLocationModal] = useState<boolean>(false)
-  const [isVisibleHomeAddressModal, setIsVisibleHomeAddressModal] = useState<boolean>(false)
+  const [isVisibleLocationModal, setIsVisibleLocationModal] = useState<boolean>(false);
+  const [isVisibleHomeAddressModal, setIsVisibleHomeAddressModal] = useState<boolean>(false);
 
   const [month, setMonth] = useState<string>('');
   const [day, setDay] = useState<string>('');
@@ -400,14 +401,13 @@ const ProfileEditing: FC = (): ReactElement => {
     });
     await uploadImage(images[sixthImId].image, user.uid).then(async image => {
       allImagesUrl.push({id: images[sixthImId].id, image});
-    });    
+    });
     await updatePhotosImage(user.uid, allImagesUrl);
 
     // console.log('allImagesUrl', allImagesUrl);
-    
   };
 
-  const saveUserInfo = async () => {
+  const saveUserInfo = async (title?: 'string') => {
     setLoadingSave(true);
     const user = auth().currentUser;
     if (user) {
@@ -440,10 +440,13 @@ const ProfileEditing: FC = (): ReactElement => {
             showLocation,
             homeAddress: textHomeAdress,
             showHomeAddress: showHomeAdress
+          }).then(() => {
+            showToast('changeProfile', `${title} successfully changed!`, `Your profile is updated`);
           })
           .then(async () => {
             await fetchImages(user);
           });
+          
       } catch (error: any) {
         console.log(error?.message);
         // Alert.alert('Error', error.message || 'Something went wrong');
@@ -454,11 +457,10 @@ const ProfileEditing: FC = (): ReactElement => {
   };
 
   // console.log('activeWorkItem', activeWorkItem);
-  
 
   return (
     <>
-      <SafeAreaView style={{flex: 1, backgroundColor: lightGray6Color}}>
+      <SafeAreaView style={{flex: 1, backgroundColor: blackColor}}>
         <View style={{flex: 1, paddingTop: screenHeight / 48, paddingHorizontal: 20}}>
           <ScrollView
             showsHorizontalScrollIndicator={false}
@@ -502,6 +504,7 @@ const ProfileEditing: FC = (): ReactElement => {
         onClose={() => setIsVisibleSmokeModal(false)}
       />
       <ModalGender
+        saveUserInfo={saveUserInfo}
         showGender={showGender}
         setShowGender={setShowGender}
         activeGenderItem={activeGenderItem}

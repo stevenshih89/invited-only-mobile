@@ -21,7 +21,7 @@ const config = {
     assetExts: assetExts.filter(ext => ext !== 'svg'),
     sourceExts: [...sourceExts, 'svg'],
     extraNodeModules: {
-      'rn-tinder-card-bn-digital': path.resolve(__dirname, 'rn-tinder-card')
+      'rn-tinder-card-bn-digital': path.resolve(__dirname, 'rn-tinder-card'),
     },
   },
   watchFolders: ['./rn-tinder-card'],

@@ -18,7 +18,10 @@
 		BCCC8BC0B5054E7BA00B93E5 /* Satoshi-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5E3661FDAE824C2DBB70B6D2 /* Satoshi-Regular.ttf */; };
 		BED8147761A24931BC4532E2 /* Satoshi-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0421667BECB24F4D9A549725 /* Satoshi-Medium.ttf */; };
 		C2F6AB32764C4167BFC25FDB /* Satoshi-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 37A7BA376F934C74A1B3CC1B /* Satoshi-Bold.ttf */; };
+		C757797A2C4EACC9003D297B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C75779792C4EACC9003D297B /* StoreKit.framework */; };
 		C7A44CAA2C2DF57800254473 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C7A44CA92C2DF57800254473 /* GoogleService-Info.plist */; };
+		C7D1B6622C4FF655003B387E /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C7D1B6612C4FF655003B387E /* Configuration.storekit */; };
+		C7D1B6632C4FF655003B387E /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C7D1B6612C4FF655003B387E /* Configuration.storekit */; };
 		E0D0E189CB024998AD7523B3 /* Outfit-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B97FDA800D28499988137382 /* Outfit-Medium.ttf */; };
 /* End PBXBuildFile section */
 
@@ -53,7 +56,9 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = InvitedOnly/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B18D938971F5FD2F5D68C52F /* Pods-InvitedOnly.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InvitedOnly.release.xcconfig"; path = "Target Support Files/Pods-InvitedOnly/Pods-InvitedOnly.release.xcconfig"; sourceTree = "<group>"; };
 		B97FDA800D28499988137382 /* Outfit-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Outfit-Medium.ttf"; path = "../src/assets/fonts/Outfit-Medium.ttf"; sourceTree = "<group>"; };
+		C75779792C4EACC9003D297B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C7A44CA92C2DF57800254473 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C7D1B6612C4FF655003B387E /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
 		D8322A5EEA3011B7769DAFB9 /* Pods_InvitedOnly.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InvitedOnly.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCE91967811DAC37B59D232B /* Pods_InvitedOnly_InvitedOnlyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InvitedOnly_InvitedOnlyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -73,6 +78,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				386CF159E650D7A9B9939931 /* Pods_InvitedOnly.framework in Frameworks */,
+				C757797A2C4EACC9003D297B /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +119,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C75779792C4EACC9003D297B /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				D8322A5EEA3011B7769DAFB9 /* Pods_InvitedOnly.framework */,
 				DCE91967811DAC37B59D232B /* Pods_InvitedOnly_InvitedOnlyTests.framework */,
@@ -130,6 +137,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				C7D1B6612C4FF655003B387E /* Configuration.storekit */,
 				C7A44CA92C2DF57800254473 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* InvitedOnly */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -263,6 +271,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C7D1B6632C4FF655003B387E /* Configuration.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,6 +286,7 @@
 				BED8147761A24931BC4532E2 /* Satoshi-Medium.ttf in Resources */,
 				BCCC8BC0B5054E7BA00B93E5 /* Satoshi-Regular.ttf in Resources */,
 				50A9F8E1C4E84A9C8272D7CB /* Satoshi-BoldItalic.ttf in Resources */,
+				C7D1B6622C4FF655003B387E /* Configuration.storekit in Resources */,
 				E0D0E189CB024998AD7523B3 /* Outfit-Medium.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

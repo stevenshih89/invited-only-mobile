@@ -2,10 +2,11 @@ import React, {FC, useState, useEffect, useContext} from 'react';
 import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 //import components
 import useStyles from 'screens/App/Chat/styles.ts';
-import {Badge} from '@rneui/themed';
+
 import {chatCorrespondencePath} from 'constants/pathLocations.ts';
 import ModalHostMenu from 'components/Modal/ModalHostMenu/ModalHostMenu.tsx';
 
@@ -19,7 +20,9 @@ import Button from 'components/Button/Button.tsx';
 import {useChat} from '../../../store/chatStore';
 import {EventContext} from 'contexts/EventContext.tsx';
 import moment from 'moment/moment';
-import { blackColor, whiteColor } from 'constants/colors';
+import {blackColor, whiteColor} from 'constants/colors';
+import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
+
 type ItemProps = {
   title: string;
   id: string | number;
@@ -53,12 +56,34 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [messages, setMessages] = useState([]);
   const [DATAEventsJoining, setDATAEventsJoining] = useState([]);
+  const [userInfo, setUserInfo] = useState<any>({});
 
   const styles = useStyles();
   const navigation = useAppNavigation();
   const {myEvents} = useContext(EventContext);
-  
+
   const activeEvent = useChat((i: any) => i?.activeEvent);
+
+  const fetchUserInfo = async () => {
+    setLoading(true);
+    const user = auth().currentUser;
+
+    if (user) {
+      try {
+        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        if (userInfoDoc.exists) {
+          setUserInfo(userInfoDoc.data());
+        }
+      } catch (error: any) {
+        
+      }
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
 
   const handleBuildEventsData = () => {
     firestore()
@@ -66,9 +91,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       .get()
       .then(i => {
         const chats = i?.docs?.map(j => j?.data());
-        
 
-        myEvents?.map((events: any): void => {          
+        myEvents?.map((events: any): void => {
           chats?.map((chat: FirebaseFirestoreTypes.DocumentData, index: number): void => {
             if (chat?.activeEvent === events?.id) {
               // @ts-ignore
@@ -93,56 +117,69 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const Item = ({title, message, image, online, story, inviteStatus, messages, id, superInvite, invitedStatus, uid}: ItemProps) => (
     <View style={styles.item}>
       <View style={{flexDirection: 'row', height: 75, width: '100%', justifyContent: 'space-between'}}>
-      <TouchableOpacity
-        onPress={() => {
-          // @ts-ignore
-          navigation.navigate(chatCorrespondencePath, {
-            screen: chatCorrespondencePath,
-            params: {
-              image: image,
-              title: title,
-              online: false,
-              messages: messages,
-              activeEvent: activeEvent,
-              id: id,
-              superInvite: superInvite,
-              invitedStatus: invitedStatus,
-              uid: uid
-            },
-          });
-        }}
-        style={styles.wrapperItem}>
-        <View>
-          <Image resizeMode="cover" style={[styles.imageUser, story && styles.story]} source={{uri: image}} />
-          {online && <View style={styles.greenCircle} />}
-        </View>
-        <View style={styles.wrapperItemElements}>
-          <View style={styles.rowTextNameAndStatus}>
-            <Text style={styles.textName}>
-              {title} {superInvite && <FlashField width={13} height={13} />}
+        <TouchableOpacity
+          onPress={() => {
+            // @ts-ignore
+            navigation.navigate(chatCorrespondencePath, {
+              screen: chatCorrespondencePath,
+              params: {
+                image: image,
+                title: title,
+                online: false,
+                messages: messages,
+                activeEvent: activeEvent,
+                id: id,
+                superInvite: superInvite,
+                invitedStatus: invitedStatus,
+                uid: uid,
+              },
+            });
+          }}
+          style={styles.wrapperItem}>
+          <View>
+            <Image resizeMode="cover" style={[styles.imageUser, story && styles.story]} source={{uri: image}} />
+            {online && <View style={styles.greenCircle} />}
+          </View>
+          <View style={styles.wrapperItemElements}>
+            <View style={styles.rowTextNameAndStatus}>
+              <Text style={styles.textName}>
+                {title} {superInvite && <FlashField width={13} height={13} />}
+              </Text>
+            </View>
+            <Text style={styles.textMessage}>{message}</Text>
+          </View>
+        </TouchableOpacity>
+        <View style={styles.wrapperThreeDotsAndBadge}>
+          <View style={[handleCheckTypeInvitedStyles(inviteStatus), {marginTop: 4}]}>
+            <Text style={[styles.textStatusInvite, {color: inviteStatus === 'accepted' ? blackColor : whiteColor}]}>
+              {handleCheckTypeInvitedText(inviteStatus)}
             </Text>
           </View>
-          <Text style={styles.textMessage}>{message}</Text>
-        </View>
-      </TouchableOpacity>
-      <View style={styles.wrapperThreeDotsAndBadge}>
-        <View>
-          <View style={[handleCheckTypeInvitedStyles(inviteStatus)]}>
-            <Text style={[styles.textStatusInvite, {color: inviteStatus === 'accepted'? blackColor: whiteColor}]}>{handleCheckTypeInvitedText(inviteStatus)}</Text>
+          <View style={[styles.wrapperTextMessage, {flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between'}]}>
+            {/* <View
+              style={{
+                backgroundColor: inviteStatus === 'accepted' ? whiteColor : blackColor,
+                borderRadius: 50,
+                paddingHorizontal: 10,
+                paddingVertical: 3,
+                borderColor: whiteColor,
+                borderStyle: 'solid',
+                borderWidth: inviteStatus === 'accepted' ? 0 : 1,
+                marginBottom: 4,
+              }}>
+              <Text style={{fontSize: RFValue(9, 812), color: inviteStatus === 'accepted' ? blackColor : whiteColor}}>
+                {getTextByStatus(inviteStatus)}
+              </Text>
+            </View> */}
+            <View style={styles.newMessage}>
+              <Text style={styles.textCountNewMessages}>1</Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.wrapperTextMessage}>
-          <View style={styles.newMessage}>
-            <Text style={styles.textCountNewMessages}>
-              1
-            </Text>
-          </View>
-        </View>
-        {/* <TouchableOpacity>
+          {/* <TouchableOpacity>
           <ThreeDoths />
         </TouchableOpacity> */}
-        {/*<Badge value={22} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />*/}
-      </View>
+          {/*<Badge value={22} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />*/}
+        </View>
       </View>
     </View>
   );
@@ -228,7 +265,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   const handleCheckTypeInvitedText = (type: string) => {
     switch (type) {
-      case 'pending':
+      case 'invited':
         return 'Pending'.toUpperCase();
       case 'newInvited':
         return 'Invite Match'.toUpperCase();
@@ -243,7 +280,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   const handleCheckTypeInvitedStyles = (type: string) => {
     switch (type) {
-      case 'pending':
+      case 'invited':
         return styles.textStatusPending;
       case 'newInvited':
         return styles.textStatusInviteMatch;
@@ -272,7 +309,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     }
   };
 
-  useEffect(() => {   
+  useEffect(() => {
     if (!activeEvent) {
       return;
     }
@@ -298,8 +335,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             showsVerticalScrollIndicator={false}
             data={messages?.chats}
             renderItem={({item}) => {
-            console.log('item', item);
-                          
               return (
                 <Item
                   inviteStatus={item?.invitedStatus}
@@ -345,6 +380,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           />
         )
       ) : null}
+      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false}/>}
     </View>
   );
 };

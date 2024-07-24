@@ -2,9 +2,11 @@ const whiteColor: string = 'rgba(255, 255, 255, 1)';
 const blackColor: string = 'rgba(0, 0, 0, 1)';
 const black1Color: string = '#0B0B0B';
 const black2Color: string = 'rgba(17, 17, 17, 1)';
+const black2Color90: string = 'rgba(17, 17, 17, 0.9)';
 const darkRedColor: string = '#891936';
 const darkRed2Color: string = '#9B314C';
 const deleteColor = '#CE2626';
+
 const lightRedColor: string = '#FA0232';
 const errorColor: string = '#FA0232';
 const lightGreenColor: string = '#2EB263';
@@ -88,4 +90,5 @@ export {
   orangeClose,
   grayScale600,
   deleteColor,
+  black2Color90
 };

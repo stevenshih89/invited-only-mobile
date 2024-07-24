@@ -138,7 +138,10 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
             );
           }}
         />
-        <Button onPress={saveUserInfo} title="Save" buttonStyle={{marginTop: 20}} />
+        <Button onPress={() => {
+          saveUserInfo('Alcohol')
+          onClose()
+        }} title="Save" buttonStyle={{marginTop: 20}} />
       </View>
     </Modal>
   );

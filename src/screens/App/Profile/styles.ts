@@ -10,7 +10,7 @@ const useStyles = () =>
     },
     scrollView: {
       flex: 1,
-      backgroundColor: lightGray6Color,
+      backgroundColor: blackColor,
     },
     contentContainer: {
       paddingBottom: 120,
@@ -121,7 +121,7 @@ const useStyles = () =>
       // bottom: 18,
       paddingHorizontal: 12,
       paddingVertical: 2,
-      backgroundColor: blackColor
+      backgroundColor: blackColor,
     },
     accountTypeWrapperPremium: {
       marginTop: 12,
@@ -129,20 +129,20 @@ const useStyles = () =>
       borderRadius: 4,
       paddingHorizontal: 12,
       paddingVertical: 2,
-      backgroundColor: blackColor
+      backgroundColor: blackColor,
     },
     accountTypeText: {
       color: whiteColor,
       fontSize: RFValue(12, 812),
       fontFamily: Satoshi400,
-      fontWeight: 'bold'
+      fontWeight: 'bold',
     },
     accountTypePremium: {
       color: blackColor,
       fontSize: RFValue(12, 812),
       fontFamily: Satoshi400,
-      fontWeight: 'bold'
-    }
+      fontWeight: 'bold',
+    },
   });
 
 export default useStyles;

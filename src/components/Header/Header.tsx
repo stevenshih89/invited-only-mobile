@@ -178,14 +178,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
       </View>
       <Text style={styles.textButton}>{title}</Text>
-      {allPeople > 0 && (
-        <View style={styles.numberPeopleOnEvent}>
-          <PeopleIcon />
-          <Text style={styles.textNumberPeopleOnEvent}>
-            {filledTo}/{allPeople}
-          </Text>
-        </View>
-      )}
       <ModalEventRemindes
         girlInvitation={girlInvitation}
         eventStarting={eventStarting}
@@ -581,7 +573,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               <TouchableOpacity
                 onPress={() => setTypeEvents(true)}
                 style={[styles.buttonEventsJoining, {backgroundColor: !typeEvents ? lightGray2Color : whiteColor}]}>
-                <Text style={[styles.textEventsJoining, {color: !typeEvents ? whiteColor : blackColor}]}>Events I'm Joining</Text>
+                <Text style={[styles.textEventsJoining, {color: !typeEvents ? whiteColor : blackColor}]}>Join events</Text>
                 <View style={styles.rowTextCountEvents}>
                   <Text style={styles.textCountEvents}>{eventsImJoining?.length}</Text>
                 </View>
@@ -627,23 +619,47 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 />
               </View>
             )}
-            <View style={{flexDirection: 'row', backgroundColor: lightGray2Color, width: '100%', paddingVertical: 6, paddingHorizontal: 10, borderRadius: 40, marginTop: 12, justifyContent: 'space-between', alignItems: 'center'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                backgroundColor: lightGray2Color,
+                width: '100%',
+                paddingVertical: 6,
+                paddingHorizontal: 10,
+                borderRadius: 40,
+                marginTop: 12,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
               <View style={{flexDirection: 'row'}}>
                 <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                  <Image style={{width: 32, height: 32, borderRadius: 20, borderWidth: 1, borderColor: whiteColor}} source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREoRGyXmHy_6aIgXYqWHdOT3KjfmnuSyxypw&s'}} />
+                  <Image
+                    style={{width: 32, height: 32, borderRadius: 20, borderWidth: 1, borderColor: whiteColor}}
+                    source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREoRGyXmHy_6aIgXYqWHdOT3KjfmnuSyxypw&s'}}
+                  />
                   <View style={{position: 'absolute'}}>
                     <CheckBlack width={20} height={20} />
                   </View>
                 </View>
                 <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                  <Image style={{width: 32, height: 32, borderRadius: 20, borderWidth: 1, borderColor: whiteColor, transform: [{translateX: -10}]}} source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREoRGyXmHy_6aIgXYqWHdOT3KjfmnuSyxypw&s'}} />
+                  <Image
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 20,
+                      borderWidth: 1,
+                      borderColor: whiteColor,
+                      transform: [{translateX: -10}],
+                    }}
+                    source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREoRGyXmHy_6aIgXYqWHdOT3KjfmnuSyxypw&s'}}
+                  />
                   <View style={{position: 'absolute', transform: [{translateX: -10}]}}>
                     <ClockBlack width={20} height={20} />
                   </View>
                 </View>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Users height={14} width={14}/>
+                <Users height={14} width={14} />
                 <Text style={{color: whiteColor, fontSize: RFValue(12, 812)}}>1/2</Text>
               </View>
             </View>

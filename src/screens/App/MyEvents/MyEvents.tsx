@@ -1,9 +1,10 @@
-import React, {FC, useCallback, useContext, useState} from 'react';
+import React, {FC, useCallback, useContext, useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {FlatList} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
+import auth from '@react-native-firebase/auth';
 
 //import components
 import useStyles from 'screens/App/MyEvents/styles.ts';
@@ -16,13 +17,15 @@ import ModalCancelAttending from './ModalCancelAttending';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
 import {useUser} from '../../../store/userStore';
 import {ALL, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
-import {eventCreatingStackPath} from 'constants/pathLocations.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 
 //import images
-import AddIcon from 'assets/images/icons/add.svg';
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
+import Button from 'components/Button/Button';
+import {eventCreatingStackPath} from 'constants/pathLocations';
+import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
+import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
@@ -43,6 +46,8 @@ const MyEvents: FC<any> = ({navigation}) => {
       image: '',
     },
   });
+  const [activeUserInfo, setActiveUserInfo] = useState<any>({});  
+  
   const [myEventsData, setMyEventsData] = useState([]);
   const [eventsJoiningData, setEventsJoiningData] = useState([]);
 
@@ -51,19 +56,59 @@ const MyEvents: FC<any> = ({navigation}) => {
   const isHost = user?.accountType === 'host';
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
-  const handleOpenCancelAttendingModal = (eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string}) => {
+  const [userInfo, setUserInfo] = useState<any>({});
+
+  const fetchUserInfo = async () => {
+    const user = auth().currentUser;
+
+    if (user) {
+      try {
+        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        if (userInfoDoc.exists) {
+          setUserInfo(userInfoDoc.data());
+        }
+        
+      } catch (error: any) {
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+
+  const handleOpenCancelAttendingModal = (
+    eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string},
+    userInfo,
+  ) => {
     setActiveModalEvent(eventInfo);
+    setActiveUserInfo(userInfo);
     setIsVisibleCancelAttendingModal(true);
   };
 
-  const handleOpenAcceptInvitationModal = (eventInfo: {
-    image: string;
-    textCityName: string;
-    date: string;
-    numberOfGirlsInvited: string;
-  }) => {
+  const handleOpenAcceptInvitationModal = (
+    eventInfo: {
+      image: string;
+      textCityName: string;
+      date: string;
+      numberOfGirlsInvited: string;
+    },
+    userInfo,
+  ) => {
     setActiveModalEvent(eventInfo);
+    setActiveUserInfo(userInfo);
     setIsVisibleAcceptInvitationModal(true);
+  };
+
+  const goToCreateEvent = (): void => {
+    if (!user?.accountConfirmed) {
+      return;
+    }
+    navigation.navigate(eventCreatingStackPath);
+  };
+
+  const goToIOStack = () => {
+    navigation.navigate(IOStackNavigation);
   };
 
   const handleAcceptInvitation = async () => {
@@ -137,7 +182,6 @@ const MyEvents: FC<any> = ({navigation}) => {
       const events = await firestore().collection('Events').get();
       const data = events?.docs?.map(i => i?.data());
 
-      console.log('data', data);
       const filterData = data?.filter(obj => {
         return obj?.usersList?.some(user => {
           return user?.uid === uid && (user?.status === 'invited' || user?.status === 'accepted');
@@ -158,8 +202,6 @@ const MyEvents: FC<any> = ({navigation}) => {
       if (user) {
         const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
         const data = querySnapshot?.docs?.map(i => i?.data());
-        // console.log('data', data);
-        
         setMyEventsData(data);
       }
     } catch (e) {
@@ -333,9 +375,20 @@ const MyEvents: FC<any> = ({navigation}) => {
                 style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
                 data={myEventsData}
                 keyExtractor={item => item.id.toString()}
+                ListEmptyComponent={() => (
+                  <View style={{marginTop: screenHeight / 6}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
+                      Let's create an event
+                    </Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(17, 812), opacity: 0.8, marginBottom: 40}}>
+                      Get started by creating an event to begin inviting guests.
+                    </Text>
+                    <Button title="Create event" onPress={goToCreateEvent} />
+                  </View>
+                )}
                 renderItem={({item}) => (
                   <MyEventsCard
-                    imageBg={item?.photos[0]?.image}
+                    imageBg={item?.photos}
                     list={item}
                     activeState={item?.statusEvent}
                     allPeople={item?.female + item?.male}
@@ -355,12 +408,31 @@ const MyEvents: FC<any> = ({navigation}) => {
                 showsVerticalScrollIndicator={false}
                 data={eventsJoiningData}
                 style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
+                ListEmptyComponent={() => (
+                  <View style={{marginTop: screenHeight / 6}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
+                      You need to join an event
+                    </Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(17, 812), opacity: 0.8, marginBottom: 40}}>
+                      You don't have any active event.
+                    </Text>
+                    <Button title="Join event" onPress={goToIOStack} />
+                  </View>
+                )}
                 renderItem={({item}) => (
                   <JoiningEventsCard
+                    id={item?.id}
                     uid={item?.uid}
                     activeState={item.statusEvent}
                     allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
                     date={item.date}
+                    deleteUsers={item.deleteUsers}
+                    oldDate={item.oldDate}
+                    oldName={item.oldName}
+                    oldHour={item.oldHour}
+                    dateNewViewed={item.dateNewViewed}
+                    nameNewViewed={item.nameNewViewed}
+                    hourNewViewed={item.hourNewViewed}
                     hour={item?.hour}
                     placeName={item?.placeName}
                     list={item}
@@ -385,11 +457,28 @@ const MyEvents: FC<any> = ({navigation}) => {
                 showsVerticalScrollIndicator={false}
                 data={eventsJoiningData}
                 style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
+                ListEmptyComponent={() => (
+                  <View style={{marginTop: screenHeight / 6}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
+                      You need to join an event
+                    </Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(17, 812), opacity: 0.8, marginBottom: 40}}>
+                      You don't have any active event.
+                    </Text>
+                    <Button title="Join event" onPress={goToIOStack} />
+                  </View>
+                )}
                 renderItem={({item}) => (
                   <JoiningEventsCard
+                    uid={item?.uid}
                     activeState={item.statusEvent}
                     allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
                     date={item.date}
+                    oldName={item.oldName}
+                    oldHour={item.oldHour}
+                    dateNewViewed={item.dateNewViewed}
+                    nameNewViewed={item.nameNewViewed}
+                    hourNewViewed={item.hourNewViewed}
                     hour={item?.hour}
                     placeName={item?.placeName}
                     list={item}
@@ -416,14 +505,17 @@ const MyEvents: FC<any> = ({navigation}) => {
         isVisible={isVisibleCancelAttendingModal}
         onClose={() => setIsVisibleCancelAttendingModal(false)}
         eventInfo={activeModalEvent}
+        userInfo={activeUserInfo}
       />
       <ModalAcceptInvitation
         handleRejectInvitation={handleRejectInvitation}
         handleAcceptInvitation={handleAcceptInvitation}
         isVisible={isVisibleAcceptInvitationModal}
         onClose={() => setIsVisibleAcceptInvitationModal(false)}
+        userInfo={activeUserInfo}
         eventInfo={activeModalEvent}
       />
+      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true}/>}
     </>
   );
 };

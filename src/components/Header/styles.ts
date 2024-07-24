@@ -103,12 +103,16 @@ const useStyles = () =>
     rowButtonsChat: {
       flexDirection: 'row',
       width: '100%',
+      marginBottom: 16,
     },
     buttonMyEvents: {
       backgroundColor: whiteColor,
       paddingVertical: screenWidth / 60,
       paddingHorizontal: screenHeight / 70,
       borderRadius: 8,
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     textMyEvents: {
       color: blackColor,
@@ -122,6 +126,8 @@ const useStyles = () =>
       borderRadius: 8,
       marginLeft: screenWidth / 65,
       flexDirection: 'row',
+      justifyContent: 'center',
+      flex: 1,
     },
     textEventsJoining: {
       color: whiteColor,

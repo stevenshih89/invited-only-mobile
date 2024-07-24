@@ -1,23 +1,26 @@
-import React, {Dispatch, FC, SetStateAction} from 'react';
+import React, {Dispatch, FC, SetStateAction, useCallback, useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 
 //import components
 import useStyles from './styles.ts';
 import Modal from 'react-native-modal';
-import {screenHeight} from 'constants/common.ts';
-import FlashIcon from 'assets/images/icons/flash.svg';
 import UserIcon from 'assets/images/icons/user.svg';
 import ChatIcon from 'assets/images/icons/messages.svg';
 import ReportIcon from 'assets/images/icons/info-circle.svg';
-import CloseIcon from 'assets/images/icons/close-circle.svg';
+import CloseIcon from 'assets/images/icons/close-circle-red.svg';
+import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {gray1Color} from 'constants/colors.ts';
+import {gray1Color, whiteColor} from 'constants/colors.ts';
 import {chatCorrespondencePath, commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 import {useUser} from '../../../store/userStore';
-import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
+import {Satoshi700} from 'constants/fonts.ts';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {calculateAge} from 'helpers/calculateAge.ts';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface ModalUserProfileEventProps {
   isModalVisible?: boolean;
@@ -48,6 +51,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
 
   const navigation = useAppNavigation();
   const userHost = useUser((i: any) => i?.user);
+  const [userInfo, setUserInfo] = useState<any>({});
 
   const goToProfileView = () => {
     if (setModalVisible) {
@@ -61,6 +65,18 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       });
     }
   };
+  const getUserInfo = async () => {
+    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+    if (userInfoDoc.exists) {
+      setUserInfo(userInfoDoc.data());
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getUserInfo();
+    }, [uid]),
+  );
 
   const handleCancelInvitation = async () => {
     try {
@@ -209,14 +225,34 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
           swipeDirection={['down']}>
           <View style={styles.wrapper}>
             <View style={styles.whiteLine} />
-            <View>
-              <Image source={{uri: image}} style={styles.userPhoto} />
-              {/*{online && <View style={styles.greenCircle} />}*/}
-              {/*<View style={styles.greenCircle} />*/}
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: screenHeight / 80, marginBottom: 34}}>
-              <Text style={styles.title}>{title}</Text>
-              <FlashIcon width={19} height={19} />
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', width: '100%', marginBottom: 20}}>
+              {image && <Image style={{borderRadius: 100, width: 40, height: 40}} source={{uri: image}} />}
+              <View style={{marginLeft: 6}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>
+                    {title}
+                    {userInfo?.date && `, ${calculateAge(userInfo.date)}`}
+                  </Text>
+                  {userInfo?.accountConfirmed && <CheckStarIcon width={12} height={12} style={{marginLeft: 4}} />}
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  {userInfo?.accountType && (
+                    <View
+                      style={{
+                        borderColor: whiteColor,
+                        borderWidth: 1,
+                        borderStyle: 'solid',
+                        borderRadius: 5,
+                        paddingHorizontal: 6,
+                        paddingVertical: 2,
+                      }}>
+                      <Text style={{textTransform: 'capitalize', color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(9, 812)}}>
+                        {userInfo.accountType}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              </View>
             </View>
             <TouchableOpacity onPress={() => goToProfileView()} style={[styles.buttonFooter, {borderTopColor: gray1Color}]}>
               <UserIcon width={14} height={14} />
@@ -236,7 +272,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleCancelInvitation()} style={styles.buttonFooter}>
               <CloseIcon width={14} height={14} />
-              <Text style={styles.textButton}>Cancel invitation</Text>
+              <Text style={[styles.textButton, {color: 'rgb(206, 38, 38)'}]}>Cancel invitation</Text>
             </TouchableOpacity>
           </View>
           <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uid} />

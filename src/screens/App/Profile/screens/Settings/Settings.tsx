@@ -1,4 +1,12 @@
-import {blackColor, darkRed2Color, lightGray5Color, lightGray6Color, lightRed1Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {
+  blackColor,
+  darkRed2Color,
+  lightGray5Color,
+  lightGray6Color,
+  lightRed1Color,
+  transparentWhite16Color,
+  whiteColor,
+} from 'constants/colors';
 import {useState} from 'react';
 import {FlatList, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import LogoutIcon from 'assets/images/icons/logout.svg';
@@ -91,7 +99,7 @@ const Settings = () => {
 
   return (
     <>
-      <View style={{backgroundColor: lightGray6Color, flex: 1, paddingHorizontal: 20}}>
+      <View style={{backgroundColor: blackColor, flex: 1, paddingHorizontal: 20}}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{paddingTop: 20, paddingBottom: 50}}
@@ -121,7 +129,15 @@ const Settings = () => {
                         }}>
                         {item?.title !== 'Log out' ? <Icon width={16} height={16} /> : <LogoutRed width={16} height={16} />}
                       </View>
-                      <Text style={{color: item?.title === 'Log out'? '#CE2626': whiteColor, marginLeft: 10, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>{item.title}</Text>
+                      <Text
+                        style={{
+                          color: item?.title === 'Log out' ? '#CE2626' : whiteColor,
+                          marginLeft: 10,
+                          fontFamily: Satoshi500,
+                          fontSize: RFValue(18, 812),
+                        }}>
+                        {item.title}
+                      </Text>
                     </View>
                     {item.title !== 'Log out' && <ArrowRight />}
                   </View>

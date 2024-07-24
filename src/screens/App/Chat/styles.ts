@@ -1,5 +1,15 @@
 import {StyleSheet} from 'react-native';
-import {blackColor, grayScale700, lightGray11Color, lightGray15Color, lightGray6Color, lightGrayColor, lightGreenColor, lightRedColor, whiteColor} from 'constants/colors.ts';
+import {
+  blackColor,
+  grayScale700,
+  lightGray11Color,
+  lightGray15Color,
+  lightGray6Color,
+  lightGrayColor,
+  lightGreenColor,
+  lightRedColor,
+  whiteColor,
+} from 'constants/colors.ts';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 import {Satoshi500, Satoshi400, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -32,7 +42,6 @@ const useStyles = () => {
       textAlign: 'center',
     },
     item: {
-      paddingVertical: screenHeight / 48,
       borderTopWidth: 1,
       borderTopColor: grayScale700,
       flexDirection: 'row',
@@ -80,8 +89,9 @@ const useStyles = () => {
       // color: whiteColor,
       fontFamily: Satoshi400,
       fontWeight: 'bold',
+
       paddingHorizontal: 8,
-      paddingVertical: 4,
+      paddingVertical: 0,
       fontSize: RFValue(12, 812),
     },
     textMessage: {
@@ -93,6 +103,7 @@ const useStyles = () => {
     },
     wrapperThreeDotsAndBadge: {
       justifyContent: 'space-between',
+      paddingVertical: 4,
     },
     story: {
       borderWidth: 1,
@@ -201,14 +212,14 @@ const useStyles = () => {
       // marginTop: screenHeight / 80,
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'flex-end'
+      justifyContent: 'flex-end',
     },
     textCountNewMessages: {
       color: whiteColor,
       textAlign: 'center',
       fontSize: RFValue(12, 812),
-      fontFamily: Satoshi700
-    }
+      fontFamily: Satoshi700,
+    },
   });
 };
 

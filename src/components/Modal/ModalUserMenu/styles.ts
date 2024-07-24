@@ -12,7 +12,7 @@ const useStyles = () => {
       borderTopLeftRadius: 30,
       borderTopRightRadius: 30,
       alignItems: 'center',
-      paddingHorizontal: screenWidth / 10.5,
+      paddingHorizontal: screenWidth / 20,
     },
     wrapperBlockAndReport: {
       backgroundColor: black2Color,
@@ -20,7 +20,7 @@ const useStyles = () => {
       borderTopLeftRadius: 30,
       borderTopRightRadius: 30,
       alignItems: 'center',
-      paddingHorizontal: screenWidth / 10.5,
+      paddingHorizontal: screenWidth / 30,
     },
     wrapperModal: {
       backgroundColor: black2Color,

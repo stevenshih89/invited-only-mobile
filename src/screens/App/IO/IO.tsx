@@ -2,7 +2,7 @@ import {SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity, Alert} fr
 import React, {FC, useState, useEffect, useContext, useCallback} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
-import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -13,7 +13,7 @@ import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, myProfileViewPath, superInvitePayPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
@@ -43,6 +43,8 @@ import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
 import Match from './screens/Match/Match';
+import ModalSuperInvite from 'components/Modal/ModalSuperInvite';
+import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -80,9 +82,11 @@ const IO: FC = (): JSX.Element => {
     return () => unsubscribe();
   });
 
-  const handleOpenSuperInvite = (item): void => {
+  const handleOpenSuperInvite = async (item): void => {
     setActiveSuperInviteUser(item);
     setIsVisibleSuperInvite(true);
+
+    await onInvite(item?.uid, item?.id, item?.requestsList, item?.usersList);
   };
 
   const handleCloseSuperInvite = (): void => {
@@ -176,7 +180,9 @@ const IO: FC = (): JSX.Element => {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
   };
 
   const fetchMyEvents = async (isFirstRender: boolean) => {
@@ -292,6 +298,14 @@ const IO: FC = (): JSX.Element => {
       setEvents(filter);
     }
   };
+
+  if (!userInfo?.accountConfirmed) {
+    return (
+      <View style={{flex: 1, backgroundColor: blackColor}}>
+        <ModalLockAccount isVisibleButton />
+      </View>
+    );
+  }
 
   const getListForGuest = async () => {
     const user = auth().currentUser;
@@ -601,11 +615,17 @@ const IO: FC = (): JSX.Element => {
 
     setTimeout(() => {
       setEvents([...recommendedData]);
-    }, 2000);
+    }, 3000);
   };
 
   const getListForHost = async () => {
-    const userInfo: FirebaseFirestoreTypes.DocumentData = await firestore().collection('userInfo').limit(20).get();
+    let users: any;
+    if (userInfo?.chooseGuest === 'any') {
+      users = await firestore().collection('userInfo').limit(20).get();
+    } else {
+      users = await firestore().collection('userInfo').where('gender', '==', userInfo?.chooseGuest).limit(20).get();
+    }
+
     let data: any[] = [
       <View style={styles.wrapperCreateEventCard}>
         <Text style={styles.textYouNeedToCreate}>You need to create an event to start inviting</Text>
@@ -619,8 +639,7 @@ const IO: FC = (): JSX.Element => {
         </View>
       </View>,
     ];
-
-    const usersList = await userInfo?._docs;    
+    const usersList = await users?._docs;
 
     usersList
       ?.filter(i => i?._data?.uid !== userHost?.uid)
@@ -847,8 +866,11 @@ const IO: FC = (): JSX.Element => {
           ),
           info: item?._data,
         });
-        setEvents([...data]);
+
+        setTimeout(() => {
+          setEvents([...data]);
         setEventsLength(data.length)
+        }, 3000);
       });
   };
 
@@ -918,28 +940,28 @@ const IO: FC = (): JSX.Element => {
     navigation.navigate(eventCreatingStackPath);
   };
 
-  if (loading || !userHost) {
+  if (loading || (!userHost && userInfo.accountConfirmed)) {
     return <Loading text="Finding people near you..." userInfo={userInfo} />;
   }
 
-  if (currentEventCardPosition > eventsLength && eventsLength> 1) {
+  if (currentEventCardPosition > events.length && events.length > 1) {
     return (
       <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo} />
     );
   }
 
-  if (currentEventCardPosition > 1 && userInfo.accountType === 'host' && myEvents.length < 1) {
+  if (!activeEvent?.id && userInfo.accountConfirmed) {
     return (
       <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
         <View style={{height: 370}}>
           <Loading userInfo={userInfo} topPosition={true} />
         </View>
         <View>
-          <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>
+          <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(14, 812), fontFamily: Satoshi400}}>
             You don't have any active event. Get started by creating an event to begin inviting guests.
           </Text>
         </View>
-        <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 40, marginBottom: 30}} />
+        <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 20, marginBottom: 30}} />
         <View style={{width: '100%', height: 1, backgroundColor: '#282828', marginBottom: 20, alignItems: 'center'}}>
           <View
             style={{
@@ -955,7 +977,7 @@ const IO: FC = (): JSX.Element => {
         </View>
         <View style={{width: '100%', alignItems: 'center'}}>
           <TouchableOpacity>
-            <Text style={{color: whiteColor, fontSize: RFValue(18, 812)}}>Start joining!</Text>
+            <Text style={{color: whiteColor, fontSize: RFValue(14, 812)}}>Start joining!</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -995,6 +1017,7 @@ const IO: FC = (): JSX.Element => {
             // <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
           }
           <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
+
           <SuperInvite
             isVisibleSuperInvite={isVisibleSuperInvite}
             activeSuperInviteUser={activeSuperInviteUser}

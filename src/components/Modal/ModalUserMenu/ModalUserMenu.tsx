@@ -5,30 +5,204 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 //import components
 import useStyles from 'components/Modal/ModalUserMenu/styles.ts';
-import {screenHeight} from 'constants/common.ts';
 import Button from 'components/Button/Button.tsx';
-import {gray1Color, lightGray12Color} from 'constants/colors.ts';
+import {black2Color, blackColor, errorColor, gray1Color, whiteColor} from 'constants/colors.ts';
 import {showToast} from 'helpers/showToast.ts';
 
 //import icons
-import CloseIcon from 'assets/images/icons/close-circle.svg';
-import InfoCircle from 'assets/images/icons/info-circle-fill.svg';
-import Arrow from 'assets/images/icons/arrow-3.svg';
+import CloseIcon from 'assets/images/icons/close-circle-red.svg';
+import InfoIcon from 'assets/images/icons/info-circle-white.svg';
+import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
+import User from 'assets/images/icons/user.svg';
+import CheckIcon from 'assets/images/icons/check.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {useNavigation} from '@react-navigation/native';
+import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
+import {screenHeight, screenWidth} from 'constants/common';
 
 interface ModalUserMenuProps {
   isModalVisible: boolean;
   setModalVisible: boolean | any;
   title: string;
-  approve: boolean;
+  inviteStatus: string;
   image: any;
+  uid: string;
 }
 
-const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible, title, approve, image}) => {
+const BlockAndReportModal = ({blockAndReportState, setBlockAndReportState, reportState, setReportState, setModalVisible}) => {
+  return (
+    <Modal
+      isVisible={blockAndReportState}
+      useNativeDriver={false}
+      propagateSwipe={true}
+      backdropColor={'rgba(0, 0, 0, 0.94)'}
+      testID={'bottom-half-modal-open-button'}
+      onBackdropPress={() => setBlockAndReportState(false)}
+      onSwipeComplete={() => setBlockAndReportState(false)}
+      style={{
+        margin: 0,
+        justifyContent: 'flex-end',
+        zIndex: 999,
+      }}
+      swipeDirection={['down']}>
+      <View
+        style={{
+          backgroundColor: black2Color,
+          height: '75%',
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          alignItems: 'center',
+          paddingHorizontal: screenWidth / 30,
+        }}>
+        <View
+          style={{
+            backgroundColor: whiteColor,
+            height: 2,
+            width: 40,
+            marginTop: screenHeight / 50,
+            marginBottom: screenHeight / 48,
+            borderRadius: 10,
+          }}
+        />
+        <Text style={{marginTop: screenHeight / 38, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812)}}>Report</Text>
+        <TouchableOpacity
+          style={{
+            backgroundColor: reportState === 'Fake profile' ? '#313131' : 'transparent',
+            borderRadius: 10,
+            paddingVertical: 16,
+            paddingHorizontal: 20,
+            width: '100%',
+          }}
+          onPress={() => {
+            setReportState('Fake profile');
+          }}>
+          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Fake profile</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: reportState === 'Rude or abusive behaviator' ? '#313131' : 'transparent',
+            borderRadius: 10,
+            paddingVertical: 16,
+            paddingHorizontal: 20,
+            width: '100%',
+          }}
+          onPress={() => {
+            setReportState('Rude or abusive behaviator');
+          }}>
+          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Rude or abusive behaviator</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: reportState === 'Inappropriate content' ? '#313131' : 'transparent',
+            borderRadius: 10,
+            paddingVertical: 16,
+            paddingHorizontal: 20,
+            width: '100%',
+          }}
+          onPress={() => {
+            setReportState('Inappropriate content');
+          }}>
+          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Inappropriate content</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: reportState === 'Scam or commercial' ? '#313131' : 'transparent',
+            borderRadius: 10,
+            paddingVertical: 16,
+            paddingHorizontal: 20,
+            width: '100%',
+          }}
+          onPress={() => {
+            setReportState('Scam or commercial');
+          }}>
+          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Scam or commercial</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: reportState === 'Identity-based hate' ? '#313131' : 'transparent',
+            borderRadius: 10,
+            paddingVertical: 16,
+            paddingHorizontal: 20,
+            width: '100%',
+          }}
+          onPress={() => {
+            setReportState('Identity-based hate');
+          }}>
+          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Identity-based hate</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: reportState === 'Off IO behaviator' ? '#313131' : 'transparent',
+            borderRadius: 10,
+            paddingVertical: 16,
+            paddingHorizontal: 20,
+            width: '100%',
+          }}
+          onPress={() => {
+            setReportState('Off IO behaviator');
+          }}>
+          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Off IO behaviator</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: reportState === 'Underage' ? '#313131' : 'transparent',
+            borderRadius: 10,
+            paddingVertical: 16,
+            paddingHorizontal: 20,
+            width: '100%',
+          }}
+          onPress={() => {
+            setReportState('Underage');
+          }}>
+          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Underage</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: reportState === 'I`m just not interested' ? '#313131' : 'transparent',
+            borderRadius: 10,
+            paddingVertical: 16,
+            paddingHorizontal: 20,
+            width: '100%',
+          }}
+          onPress={() => {
+            setReportState('I`m just not interested');
+          }}>
+          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>I`m just not interested</Text>
+        </TouchableOpacity>
+        <Button
+          title="Send"
+          buttonStyle={{width: '100%'}}
+          onPress={() => {
+            setModalVisible(false);
+            setBlockAndReportState(false);
+          }}
+        />
+      </View>
+    </Modal>
+  );
+};
+
+const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible, title, inviteStatus, image, uid}) => {
   const [removingState, setRemovingState] = useState<boolean>(false);
   const [blockAndReportState, setBlockAndReportState] = useState<boolean>(false);
   const [cancelInvitationState, setCancelInvitationState] = useState<boolean>(false);
+  const [reportState, setReportState] = useState('Fake profile');
   const styles = useStyles();
+
+  const navigation = useNavigation();
+
+  const goToProfileView = () => {
+    setModalVisible(false);
+    navigation.navigate(commonStackPath, {
+      screen: myProfileViewPath,
+      params: {
+        uid: uid,
+        isShowEditButton: false,
+      },
+    });
+  };
 
   const RemovingUserModal = () => {
     return (
@@ -132,103 +306,6 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
     );
   };
 
-  const BlockAndReportModal = () => {
-    return (
-      <Modal
-        isVisible={blockAndReportState}
-        useNativeDriver={false}
-        propagateSwipe={true}
-        backdropColor={'rgba(0, 0, 0, 0.94)'}
-        testID={'bottom-half-modal-open-button'}
-        onBackdropPress={() => setBlockAndReportState(false)}
-        onSwipeComplete={() => setBlockAndReportState(false)}
-        style={{
-          margin: 0,
-          justifyContent: 'flex-end',
-          zIndex: 999,
-        }}
-        swipeDirection={['down']}>
-        <View style={styles.wrapperBlockAndReport}>
-          <View style={styles.whiteLine} />
-
-          <Text style={styles.textBlockAndReport}>Block and report</Text>
-          <Button
-            variant="default"
-            onPress={() => {
-              setBlockAndReportState(false);
-              setModalVisible(false);
-            }}
-            title={'Fake profile'}
-            buttonStyle={{width: '100%', marginTop: 34, alignItems: 'flex-start'}}
-          />
-          <Button
-            variant="transparent"
-            onPress={() => {
-              setBlockAndReportState(false);
-              setModalVisible(false);
-            }}
-            title={'Rude or abusive behaviator'}
-            buttonStyle={styles.transparentButton}
-          />
-          <Button
-            variant="transparent"
-            onPress={() => {
-              setBlockAndReportState(false);
-              setModalVisible(false);
-            }}
-            title={'Inappropriate content'}
-            buttonStyle={styles.transparentButton}
-          />
-          <Button
-            variant="transparent"
-            onPress={() => {
-              setBlockAndReportState(false);
-              setModalVisible(false);
-            }}
-            title={'Scam or commercial'}
-            buttonStyle={styles.transparentButton}
-          />
-          <Button
-            variant="transparent"
-            onPress={() => {
-              setBlockAndReportState(false);
-              setModalVisible(false);
-            }}
-            title={'Identity-based hate'}
-            buttonStyle={styles.transparentButton}
-          />
-          <Button
-            variant="transparent"
-            onPress={() => {
-              setBlockAndReportState(false);
-              setModalVisible(false);
-            }}
-            title={'Off IO behaviator'}
-            buttonStyle={styles.transparentButton}
-          />
-          <Button
-            variant="transparent"
-            onPress={() => {
-              setBlockAndReportState(false);
-              setModalVisible(false);
-            }}
-            title={'Underage'}
-            buttonStyle={styles.transparentButton}
-          />
-          <Button
-            variant="transparent"
-            onPress={() => {
-              setBlockAndReportState(false);
-              setModalVisible(false);
-            }}
-            title={'I`m just not interested'}
-            buttonStyle={styles.transparentButton}
-          />
-        </View>
-      </Modal>
-    );
-  };
-
   return (
     <View>
       <SafeAreaProvider>
@@ -247,22 +324,32 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
           swipeDirection={['down']}>
           <View style={styles.wrapper}>
             <View style={styles.whiteLine} />
-
-            <View>
-              <Image source={{uri: image}} style={styles.userPhoto} />
-              {/*{online && <View style={styles.sgreenCircle} />}*/}
-              <View style={styles.greenCircle} />
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: screenHeight / 80}}>
-              <Text style={styles.title}>{title}</Text>
-              <FlashIcon width={19} height={19} />
-            </View>
-            {!approve && (
-              <View style={{backgroundColor: lightGray12Color, borderRadius: 4, marginTop: screenHeight / 80, marginBottom: 34}}>
-                <Text style={styles.textPending}>Pending</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center', width: '100%'}}>
+              {image && <Image style={{borderRadius: 100, width: 40, height: 40}} source={{uri: image}} />}
+              <View style={{marginLeft: 6}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>
+                    {title}
+                    {', 29'}
+                  </Text>
+                  {<CheckStarIcon width={12} height={12} style={{marginLeft: 4}} />}
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View
+                    style={{
+                      backgroundColor: whiteColor,
+                      borderRadius: 5,
+                      paddingHorizontal: 6,
+                      paddingVertical: 2,
+                    }}>
+                    <Text style={{textTransform: 'capitalize', color: blackColor, fontFamily: Satoshi700, fontSize: RFValue(9, 812)}}>
+                      Guest
+                    </Text>
+                  </View>
+                </View>
               </View>
-            )}
-            {approve && (
+            </View>
+            {inviteStatus === 'accepted' && (
               <Button
                 onPress={() => {
                   showToast('pending', 'Invitation approved!');
@@ -272,27 +359,68 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
                 buttonStyle={{width: '100%', marginTop: 37, marginBottom: 34}}
               />
             )}
-            <TouchableOpacity onPress={() => setRemovingState(true)} style={styles.buttonFooter}>
-              <Arrow width={14} height={14} />
-              <Text style={styles.textButton}>Remove</Text>
+            {inviteStatus === 'invited' && (
+              <View
+                style={{
+                  backgroundColor: '#313131',
+                  paddingVertical: 16,
+                  width: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 10,
+                  marginTop: 20,
+                }}>
+                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812)}}>Waiting for invitation accepted</Text>
+              </View>
+            )}
+            {inviteStatus === 'accepted' && (
+              <View
+                style={{
+                  backgroundColor: 'transparent',
+                  paddingVertical: 16,
+                  borderColor: whiteColor,
+                  borderWidth: 1,
+                  borderStyle: 'solid',
+                  width: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 10,
+                  flexDirection: 'row',
+                  marginTop: 20,
+                }}>
+                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginRight: 6}}>Guest approved</Text>
+                <CheckIcon />
+              </View>
+            )}
+            <TouchableOpacity onPress={goToProfileView} style={[styles.buttonFooter, {marginTop: 10, borderTopWidth: 0}]}>
+              <User width={20} height={20} />
+              <Text style={styles.textButton}>Profile</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setBlockAndReportState(true)}
-              style={[styles.buttonFooter, approve && {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
-              <InfoCircle width={14} height={14} />
+              style={[styles.buttonFooter, inviteStatus === 'accepted' && {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
+              <InfoIcon width={20} height={20} />
               <Text style={styles.textButton}>Report</Text>
             </TouchableOpacity>
-            {!approve && (
+            {inviteStatus !== 'accepted' && (
               <TouchableOpacity
                 onPress={() => setCancelInvitationState(true)}
                 style={[styles.buttonFooter, {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
-                <CloseIcon width={14} height={14} />
-                <Text style={styles.textButton}>Cancel invitation</Text>
+                <CloseIcon width={20} height={20} />
+                <Text style={[styles.textButton, {color: errorColor}]}>Cancel invitation</Text>
               </TouchableOpacity>
             )}
-            <RemovingUserModal />
-            <BlockAndReportModal />
-            <CancelInvitationModal />
+            <View>
+              <RemovingUserModal />
+              <BlockAndReportModal
+                setBlockAndReportState={setBlockAndReportState}
+                blockAndReportState={blockAndReportState}
+                reportState={reportState}
+                setReportState={setReportState}
+                setModalVisible={setModalVisible}
+              />
+              <CancelInvitationModal />
+            </View>
           </View>
         </Modal>
       </SafeAreaProvider>

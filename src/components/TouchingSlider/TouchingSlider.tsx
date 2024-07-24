@@ -7,7 +7,7 @@ import useStyles from 'components/TouchingSlider/styles.ts';
 import {blackColor, gray1Color, transparentGray60Color, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
+import {commonStackPath, invitationCodePath, superInvitePayPath} from 'constants/pathLocations';
 import EventPreview from './components/EventPreview.tsx';
 
 //import icons
@@ -30,6 +30,8 @@ interface Photo {
   url: string;
 }
 
+const superInvites = 1;
+
 interface TouchingSliderProps {
   photos: Photo[];
   handleOpenSuperInvite?: () => void;
@@ -40,6 +42,7 @@ interface TouchingSliderProps {
   isShowWantsJoin?: boolean;
   isShowInvitesTooltip?: boolean;
   isShowEventPreview?: boolean;
+  isShowAccountInfo?: boolean;
   isLocked?: boolean;
   hostInfo?: any;
   name?: string;
@@ -59,6 +62,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   onInvite,
   isShowCardButtons = true,
   isShowLocation = false,
+  isShowAccountInfo = true,
   isShowWantsJoin = false,
   isShowInvitesTooltip = true,
   isLocked = false,
@@ -99,6 +103,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
     setActive(p => p - 1);
   };
 
+  const goToMyProfileView = () => {
+    // @ts-ignore
+    navigation.navigate(superInvitePayPath);
+  };
+
   //animation
   const rotation = useSharedValue(0);
   const [flipped, setFlipped] = useState(false);
@@ -109,7 +118,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       easing: Easing.inOut(Easing.ease),
     });
     setFlipped(prev => !prev);
-    handleOpenSuperInvite && handleOpenSuperInvite();
+    if(superInvites) {
+      handleOpenSuperInvite && handleOpenSuperInvite();
+    } else {
+      goToMyProfileView()
+    }
   };
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
@@ -162,7 +175,9 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
           <View style={styles.lockDescWr}>
             <Text style={styles.lockedTitle}>Locked</Text>
-            <Text style={styles.lockedSubtitle}>Your account on review</Text>
+            <Text style={styles.lockedSubtitle}>
+            Your account is under review. Thank you for your patience. You will be notified if your account is accepted
+            </Text>
             <View style={styles.lockedHaveCodeWr}>
               <Text style={styles.lockedHaveCodeTitle}>Have a code?</Text>
               <TouchableOpacity activeOpacity={0.7} onPress={goToCodeConfirmation}>
@@ -184,29 +199,46 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           end={{x: 0, y: 1}}>
           <View style={styles.wrapperBio}>
             <View style={{flexDirection: 'row'}}>
-            <View
-              style={{backgroundColor: blackColor, borderRadius: 5, borderWidth: 2, borderColor: whiteColor, paddingHorizontal: 12, paddingVertical: 2, alignSelf: 'flex-start'}}>
-              <Text style={{color: whiteColor, fontSize: 14, fontFamily: Satoshi700, textTransform: 'capitalize'}}>{accountType}</Text>
-            </View>
-            {true && <LinearGradient 
-                colors={['#977B4A', '#E5D291', '#A28453']} 
-                style={{
-                  marginLeft: 6,
-                  alignSelf: 'flex-start',
-                  borderRadius: 4,
-                  paddingHorizontal: 12,
-                  paddingVertical: 2,
-                  backgroundColor: blackColor
-                }}
-                start={{x: 0, y: 0}} end={{x: 1, y: 0}}
-                >
-                {true && <Text style={{
-                  color: blackColor,
-                  fontSize: RFValue(14, 812),
-                  fontFamily: Satoshi400,
-                  fontWeight: 'bold'
-                }}>Premium</Text>}
-              </LinearGradient>}
+              {isShowAccountInfo && (
+                <View
+                  style={{
+                    backgroundColor: blackColor,
+                    borderRadius: 5,
+                    borderWidth: 2,
+                    borderColor: whiteColor,
+                    paddingHorizontal: 12,
+                    paddingVertical: 2,
+                    alignSelf: 'flex-start',
+                  }}>
+                  <Text style={{color: whiteColor, fontSize: 14, fontFamily: Satoshi700, textTransform: 'capitalize'}}>{accountType}</Text>
+                </View>
+              )}
+              {true && isShowAccountInfo && (
+                <LinearGradient
+                  colors={['#977B4A', '#E5D291', '#A28453']}
+                  style={{
+                    marginLeft: 6,
+                    alignSelf: 'flex-start',
+                    borderRadius: 4,
+                    paddingHorizontal: 12,
+                    paddingVertical: 2,
+                    backgroundColor: blackColor,
+                  }}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}>
+                  {true && (
+                    <Text
+                      style={{
+                        color: blackColor,
+                        fontSize: RFValue(14, 812),
+                        fontFamily: Satoshi400,
+                        fontWeight: 'bold',
+                      }}>
+                      Premium
+                    </Text>
+                  )}
+                </LinearGradient>
+              )}
             </View>
             <View style={styles.rowBioInfo}>
               <Text style={styles.textName}>{name},</Text>

@@ -239,7 +239,7 @@ const useStyles = () => {
       fontSize: RFValue(16, 812),
     },
     textLocation: {
-      marginLeft: 10,
+      // marginLeft: 10,
       color: whiteColor,
       fontSize: RFValue(16, 812),
     }

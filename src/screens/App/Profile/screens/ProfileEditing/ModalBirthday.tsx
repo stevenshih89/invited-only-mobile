@@ -172,7 +172,10 @@ const ModalBirthday: FC<ModalBirthdayProps> = ({isVisible, onClose, month, setMo
               />
             </View>
           </View>
-          <Button onPress={saveUserInfo} title="Save" buttonStyle={{marginTop: 20}} />
+          <Button onPress={() => {
+            saveUserInfo('Birthday')
+            onClose()
+          }} title="Save" buttonStyle={{marginTop: 20}} />
         </View>
       </KeyboardAvoidingView>
     </Modal>
