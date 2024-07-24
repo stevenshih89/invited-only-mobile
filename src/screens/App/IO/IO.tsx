@@ -266,6 +266,14 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
+  if (!userInfo?.accountConfirmed) {
+    return (
+      <View style={{flex: 1, backgroundColor: blackColor}}>
+        <ModalLockAccount isVisibleButton />
+      </View>
+    );
+  }
+
   const getListForGuest = async () => {
     const user = auth().currentUser;
     if (!user) {
@@ -899,7 +907,7 @@ const IO: FC = (): JSX.Element => {
     navigation.navigate(eventCreatingStackPath);
   };
 
-  if (loading || !userHost && userInfo.accountConfirmed) {
+  if (loading || (!userHost && userInfo.accountConfirmed)) {
     return <Loading text="Finding people near you..." userInfo={userInfo} />;
   }
 
@@ -943,14 +951,6 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if(!userInfo?.accountConfirmed) {
-    return(
-      <View style={{flex: 1, backgroundColor: blackColor}}>
-        <ModalLockAccount isVisibleButton={false}/>
-      </View>
-    )
-  }
-
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
@@ -984,7 +984,7 @@ const IO: FC = (): JSX.Element => {
             // <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
           }
           <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
-          
+
           <SuperInvite
             isVisibleSuperInvite={isVisibleSuperInvite}
             activeSuperInviteUser={activeSuperInviteUser}
