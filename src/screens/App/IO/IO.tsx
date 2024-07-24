@@ -44,6 +44,7 @@ import Loading from 'components/Loading/Loading';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
 import Match from './screens/Match/Match';
 import ModalSuperInvite from 'components/Modal/ModalSuperInvite';
+import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -898,17 +899,17 @@ const IO: FC = (): JSX.Element => {
     navigation.navigate(eventCreatingStackPath);
   };
 
-  if (loading || !userHost) {
+  if (loading || !userHost && userInfo.accountConfirmed) {
     return <Loading text="Finding people near you..." userInfo={userInfo} />;
   }
 
-  if (currentEventCardPosition > events.length && events.length > 1) {
+  if (currentEventCardPosition > events.length && events.length > 1 && userInfo.accountConfirmed) {
     return (
       <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo} />
     );
   }
 
-  if (!activeEvent?.id) {
+  if (!activeEvent?.id && userInfo.accountConfirmed) {
     return (
       <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
         <View style={{height: 370}}>
@@ -940,6 +941,14 @@ const IO: FC = (): JSX.Element => {
         </View>
       </View>
     );
+  }
+
+  if(!userInfo?.accountConfirmed) {
+    return(
+      <View style={{flex: 1, backgroundColor: blackColor}}>
+        <ModalLockAccount isVisibleButton={false}/>
+      </View>
+    )
   }
 
   return (
@@ -975,6 +984,7 @@ const IO: FC = (): JSX.Element => {
             // <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
           }
           <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
+          
           <SuperInvite
             isVisibleSuperInvite={isVisibleSuperInvite}
             activeSuperInviteUser={activeSuperInviteUser}
