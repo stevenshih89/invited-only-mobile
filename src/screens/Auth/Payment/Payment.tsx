@@ -2,6 +2,8 @@ import React, {FC, useEffect, useRef, useState} from 'react';
 import {View, Text, SafeAreaView, ScrollView, TouchableOpacity, FlatList} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Tooltip, TooltipProps} from '@rneui/themed';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from 'screens/Auth/Payment/styles.ts';
@@ -39,6 +41,7 @@ import Purchases, { PurchasesPackage } from 'react-native-purchases';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import HostPremium from 'components/Modal/ModalHostPremium/HostPremium';
 import { useUser } from 'src/store/userStore';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 interface PlanListItem {
   id: number;
@@ -72,7 +75,7 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
   );
 };
 
-const Payment: FC = (): JSX.Element => {
+const Payment: FC = (): JSX.Element => {    
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [spotsLeft, setSpotsLeft] = useState<number>(0);
@@ -150,12 +153,32 @@ const Payment: FC = (): JSX.Element => {
   const [successfulPay, setSuccessfulPay] = useState(false)
   const [visibleHostPremium, setVsibleHostPremium] = useState(false)
 
+  const [userInfo, setUserInfo] = useState<any>({});
+
+  const updateUser = async () => {
+    const user = auth().currentUser;
+
+    if (user) {
+      try {
+        const userInfoUpdate = await firestore().collection('userInfo').doc(user.uid);
+        userInfoUpdate.update({
+          accountPremium: true,
+          superInvites: 10
+        })
+      } catch (error: any) {
+        console.log('error user premium update', error);
+        
+      }
+    }
+  };
+
   const name = useUser(i => i?.user.name);
 
   const photo = useUser(i => i?.user.photos[0].image);
 
   const handleNext = () => {
-    navigation.navigate(tutorialFlowPath as never);
+    navigation.navigate(tutorialFlowPath as never)
+    navigation.navigate(profilePath as never);
   };
 
   const convertProgress = () => {
@@ -180,6 +203,7 @@ const Payment: FC = (): JSX.Element => {
     setLoaderVisible(true)
     try {
       const { customerInfo } = await Purchases.purchasePackage(pack);
+      updateUser()
       setSuccessfulPay(true)
       setTimeout(() => {
         setLoaderVisible(false)

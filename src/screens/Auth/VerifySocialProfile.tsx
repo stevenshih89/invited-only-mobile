@@ -160,6 +160,8 @@ const VerifySocialProfile = () => {
           phoneNumber: phoneNumber,
           accountConfirmed: false,
           accountReviewed: false,
+          accountPremium: false,
+          superInvites: 0
         })
         .then(async () => {
           console.warn('User added!');

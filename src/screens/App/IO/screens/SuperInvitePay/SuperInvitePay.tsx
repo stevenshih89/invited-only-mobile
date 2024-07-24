@@ -4,6 +4,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenWidth} from 'constants/common';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from 'screens/App/IO/screens/SuperInvitePay/styles';
@@ -36,6 +38,28 @@ const SuperInvitePay: FC = (): JSX.Element => {
   const styles = useStyles();
   const navigation = useAppNavigation();
 
+  const updateSuperInvites = async (superInvites: number) => {
+    const user = auth().currentUser;
+
+    if (user) {
+      try {
+        const userInfoDoc = (await firestore().collection('userInfo').doc(user.uid).get()).data();
+        // console.log('superInvitesCurrent', userInfoDoc);
+        const superInvitesCurrent = userInfoDoc?.superInvites;
+        // console.log('superInvitesCurrent', superInvitesCurrent);
+        
+        await firestore().collection('userInfo').doc(user.uid).update({
+          superInvites: superInvitesCurrent + superInvites
+        })
+        
+      } catch (error: any) {
+        console.log('error updateSuperInvites', error);
+        
+      }
+    }
+  };
+
+
   const [plansList] = useState<PlanListItem[]>([
     {
         id: 0,
@@ -62,9 +86,10 @@ const SuperInvitePay: FC = (): JSX.Element => {
     navigation.navigate(IOPath as never);
   };
 
-  const pay = async (pack: PurchasesPackage) => {
+  const pay = async (pack: PurchasesPackage, superInvites: number) => {
     try {
       const { customerInfo } = await Purchases.purchasePackage(pack);
+      updateSuperInvites(superInvites)
       console.log('pay successful');
       // if (
       //   typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
@@ -87,17 +112,17 @@ const SuperInvitePay: FC = (): JSX.Element => {
         
         if(activePayment.id === 0) {
           const product = offeringsHostSubscription.availablePackages[0]   
-          pay(product)
+          pay(product, 30)
         }
 
         if(activePayment.id === 1) {
           const product = offeringsHostSubscription.availablePackages[1]
-          pay(product)
+          pay(product, 15)
         }
 
         if(activePayment.id === 2) {
           const product = offeringsHostSubscription.availablePackages[2]
-          pay(product)
+          pay(product, 5)
         }
       }
     } catch (e) {
