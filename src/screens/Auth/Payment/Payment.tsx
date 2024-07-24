@@ -53,7 +53,7 @@ interface PlanListItem {
 interface WhatGetItem {
   title: string;
   description: string;
-  icon: React.FC<SvgProps>
+  icon: React.FC<SvgProps>;
 }
 
 const ControlledTooltip: FC<TooltipProps | any> = props => {
@@ -83,34 +83,34 @@ const Payment: FC = (): JSX.Element => {
     {
       title: 'Unlimited Events Creation',
       description: 'Creating extraordinary events tailored to your vision.',
-      icon: CalendarIcon
+      icon: CalendarIcon,
     },
     {
       title: 'Unlimited Invitations',
       description: 'Send Unlimited Invitations and Create Your Guest List',
-      icon: UnlimitedIcon
+      icon: UnlimitedIcon,
     },
     {
       title: 'Unlimited Swiped',
       description: 'Enjoy limitless swipes for endless connections.',
-      icon: IOIcon
+      icon: IOIcon,
     },
     {
       title: '5 Super invites a week',
       description: 'Send 5 super invites each week.',
-      icon: FlashIcon
+      icon: FlashIcon,
     },
     {
       title: 'See who wants to join you',
       description: 'View interested guests who want to join you in real-time.',
-      icon: EyeIcon
+      icon: EyeIcon,
     },
     {
       title: 'Guest Mode (Join events)',
       description: 'Join events anonymously using Guest Mode.',
-      icon: Birthday
+      icon: Birthday,
     },
-  ]
+  ];
 
   const generateRandomProgress = () => {
     return Math.floor(Math.random() * (maxProgress - minProgress + 1)) + minProgress;
@@ -155,7 +155,7 @@ const Payment: FC = (): JSX.Element => {
   const photo = useUser(i => i?.user.photos[0].image);
 
   const handleNext = () => {
-    navigation.navigate(profilePath as never);
+    navigation.navigate(tutorialFlowPath as never);
   };
 
   const convertProgress = () => {
@@ -271,21 +271,21 @@ const Payment: FC = (): JSX.Element => {
             paddingBottom: isActive ? 34 : 20,
             paddingHorizontal: 6,
           }}>
-            <View style={{position: 'absolute', top: 10, right: 0, left: 0, zIndex: 10}}>
-          <View
-            style={{
-              alignSelf: 'center',
-              borderWidth: 2,
-              borderStyle: 'solid',
-              borderColor: whiteColor,
-              borderRadius: 7,
-              paddingHorizontal: 6,
-              paddingVertical: 4,
-              backgroundColor: blackColor,
-            }}>
-            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(7, 812), color: whiteColor}}>{item.title}</Text>
+          <View style={{position: 'absolute', top: 10, right: 0, left: 0, zIndex: 10}}>
+            <View
+              style={{
+                alignSelf: 'center',
+                borderWidth: 2,
+                borderStyle: 'solid',
+                borderColor: whiteColor,
+                borderRadius: 7,
+                paddingHorizontal: 6,
+                paddingVertical: 4,
+                backgroundColor: blackColor,
+              }}>
+              <Text style={{fontFamily: Satoshi700, fontSize: RFValue(7, 812), color: whiteColor}}>{item.title}</Text>
+            </View>
           </View>
-        </View>
           <Text
             style={{fontFamily: Satoshi700, fontSize: RFValue(22, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
             {item.duration}
@@ -395,44 +395,44 @@ const Payment: FC = (): JSX.Element => {
             <Text style={styles.textWhatYouGet}>What you get:</Text>
             <Text style={styles.textPremium}>Premium</Text>
           </View>
-          <FlatList data={whatGet}
+          <FlatList
+            data={whatGet}
             renderItem={({item}) => {
               return (
                 <View style={styles.itemInTheList}>
-            <View style={styles.rowTextAndCheckCircleIcon}>
-              <View
-                style={{
-                  marginRight: 8,
-                  borderRadius: 100,
-                  backgroundColor: lightGray5Color,
-                  width: 34,
-                  height: 34,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <item.icon />
-              </View>
-              <Text style={styles.textFromTheList}>{item.title}</Text>
-              <ControlledTooltip
-                width={300}
-                height={100}
-                backgroundColor={lightGray5Color}
-                withOverlay={false}
-                popover={
-                  <View style={styles.tooltipWrapper}>
-                    <View style={styles.rowTitleTooltip}>
-                      <Text style={styles.textUnlimitedEventsCreation}>{item.title}</Text>
-                      <CloseCircleIcon />
+                  <View style={styles.rowTextAndCheckCircleIcon}>
+                    <View
+                      style={{
+                        marginRight: 8,
+                        borderRadius: 100,
+                        backgroundColor: lightGray5Color,
+                        width: 34,
+                        height: 34,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <item.icon />
                     </View>
-                    <Text style={styles.textHostAccessIsLimited}>{item.description}</Text>
+                    <Text style={styles.textFromTheList}>{item.title}</Text>
+                    <ControlledTooltip
+                      width={300}
+                      height={100}
+                      backgroundColor={lightGray5Color}
+                      withOverlay={false}
+                      popover={
+                        <View style={styles.tooltipWrapper}>
+                          <View style={styles.rowTitleTooltip}>
+                            <Text style={styles.textUnlimitedEventsCreation}>{item.title}</Text>
+                            <CloseCircleIcon />
+                          </View>
+                          <Text style={styles.textHostAccessIsLimited}>{item.description}</Text>
+                        </View>
+                      }>
+                      <InfoCircleIcon />
+                    </ControlledTooltip>
                   </View>
-                }
-                >
-                <InfoCircleIcon />
-              </ControlledTooltip>
-            </View>
-            <CheckIcon />
-          </View>
+                  <CheckIcon />
+                </View>
               );
             }}
           />

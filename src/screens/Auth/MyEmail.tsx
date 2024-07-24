@@ -22,7 +22,6 @@ const MyEmail: FC = (): JSX.Element => {
   const handleEmailChange = (value: string) => {
     const truncatedText = value.slice(0, 40);
     setEmail(truncatedText);
-    checkIsValidEmail();
   };
 
   const checkIsValidEmail = () => {

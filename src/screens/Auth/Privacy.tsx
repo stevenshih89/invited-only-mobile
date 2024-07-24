@@ -9,7 +9,7 @@ import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {verifyFirstStepPath} from 'constants/pathLocations';
+import {codeVerifiedPath, pendingScreenPath, photoVerifiedPath, verifyFirstStepPath} from 'constants/pathLocations';
 import {TouchableOpacity} from 'react-native';
 
 const Privacy: FC = (): JSX.Element => {

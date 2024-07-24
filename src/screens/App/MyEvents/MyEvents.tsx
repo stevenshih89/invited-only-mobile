@@ -21,6 +21,10 @@ import {EventsDate} from 'contexts/EventsDate.tsx';
 
 //import images
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
+import Button from 'components/Button/Button';
+import {eventCreatingStackPath} from 'constants/pathLocations';
+import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
+import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
@@ -42,6 +46,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     },
   });
   const [activeUserInfo, setActiveUserInfo] = useState<any>({});
+  
   const [myEventsData, setMyEventsData] = useState([]);
   const [eventsJoiningData, setEventsJoiningData] = useState([]);
 
@@ -71,6 +76,17 @@ const MyEvents: FC<any> = ({navigation}) => {
     setActiveModalEvent(eventInfo);
     setActiveUserInfo(userInfo);
     setIsVisibleAcceptInvitationModal(true);
+  };
+
+  const goToCreateEvent = (): void => {
+    if (!user?.accountConfirmed) {
+      return;
+    }
+    navigation.navigate(eventCreatingStackPath);
+  };
+
+  const goToIOStack = () => {
+    navigation.navigate(IOStackNavigation);
   };
 
   const handleAcceptInvitation = async () => {
@@ -337,6 +353,17 @@ const MyEvents: FC<any> = ({navigation}) => {
                 style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
                 data={myEventsData}
                 keyExtractor={item => item.id.toString()}
+                ListEmptyComponent={() => (
+                  <View style={{marginTop: screenHeight / 6}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
+                      Let's create an event
+                    </Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(17, 812), opacity: 0.8, marginBottom: 40}}>
+                      Get started by creating an event to begin inviting guests.
+                    </Text>
+                    <Button title="Create event" onPress={goToCreateEvent} />
+                  </View>
+                )}
                 renderItem={({item}) => (
                   <MyEventsCard
                     imageBg={item?.photos}
@@ -359,6 +386,17 @@ const MyEvents: FC<any> = ({navigation}) => {
                 showsVerticalScrollIndicator={false}
                 data={eventsJoiningData}
                 style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
+                ListEmptyComponent={() => (
+                  <View style={{marginTop: screenHeight / 6}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
+                      You need to join an event
+                    </Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(17, 812), opacity: 0.8, marginBottom: 40}}>
+                      You don't have any active event.
+                    </Text>
+                    <Button title="Join event" onPress={goToIOStack} />
+                  </View>
+                )}
                 renderItem={({item}) => (
                   <JoiningEventsCard
                     id={item?.id}
@@ -397,6 +435,17 @@ const MyEvents: FC<any> = ({navigation}) => {
                 showsVerticalScrollIndicator={false}
                 data={eventsJoiningData}
                 style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
+                ListEmptyComponent={() => (
+                  <View style={{marginTop: screenHeight / 6}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
+                      You need to join an event
+                    </Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(17, 812), opacity: 0.8, marginBottom: 40}}>
+                      You don't have any active event.
+                    </Text>
+                    <Button title="Join event" onPress={goToIOStack} />
+                  </View>
+                )}
                 renderItem={({item}) => (
                   <JoiningEventsCard
                     uid={item?.uid}
@@ -444,6 +493,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         userInfo={activeUserInfo}
         eventInfo={activeModalEvent}
       />
+      {!activeUserInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true}/>}
     </>
   );
 };

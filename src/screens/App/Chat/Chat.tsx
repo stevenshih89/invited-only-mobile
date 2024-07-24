@@ -2,6 +2,7 @@ import React, {FC, useState, useEffect, useContext} from 'react';
 import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 //import components
 import useStyles from 'screens/App/Chat/styles.ts';
@@ -20,6 +21,7 @@ import {useChat} from '../../../store/chatStore';
 import {EventContext} from 'contexts/EventContext.tsx';
 import moment from 'moment/moment';
 import {blackColor, whiteColor} from 'constants/colors';
+import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 
 type ItemProps = {
   title: string;
@@ -54,12 +56,34 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [messages, setMessages] = useState([]);
   const [DATAEventsJoining, setDATAEventsJoining] = useState([]);
+  const [userInfo, setUserInfo] = useState<any>({});
 
   const styles = useStyles();
   const navigation = useAppNavigation();
   const {myEvents} = useContext(EventContext);
 
   const activeEvent = useChat((i: any) => i?.activeEvent);
+
+  const fetchUserInfo = async () => {
+    setLoading(true);
+    const user = auth().currentUser;
+
+    if (user) {
+      try {
+        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        if (userInfoDoc.exists) {
+          setUserInfo(userInfoDoc.data());
+        }
+      } catch (error: any) {
+        
+      }
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
 
   const handleBuildEventsData = () => {
     firestore()
@@ -356,6 +380,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           />
         )
       ) : null}
+      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false}/>}
     </View>
   );
 };
