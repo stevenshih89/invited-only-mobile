@@ -32,6 +32,7 @@ import {
   contactAndFAQPath,
   securePrivacyPath,
   paymentPath,
+  superInvitePayPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -57,6 +58,7 @@ import NotificationSetting from 'screens/App/Profile/screens/Settings/Notificati
 import ContactAndFAQ from 'screens/App/Profile/screens/Settings/ContactAndFAQ';
 import SecurePrivacy from 'screens/App/Profile/screens/SecurePrivacy/SecurePrivacy.tsx';
 import Payment from 'screens/Auth/Payment/Payment';
+import SuperInvitePay from 'screens/App/IO/screens/SuperInvitePay/SuperInvitePay';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -92,6 +94,14 @@ export const IOStackNavigation: FC = () => {
         name={joinEventsPath}
         key={joinEventsPath}
         component={JoinEvents}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name={superInvitePayPath}
+        key={superInvitePayPath}
+        component={SuperInvitePay}
       />
     </Stack.Navigator>
   );

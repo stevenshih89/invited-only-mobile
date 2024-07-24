@@ -49,6 +49,7 @@ export type RootStackParamList = {
   '/user-profile': undefined;
   '/event-info': undefined;
   '/event-active-info': undefined;
+  '/super-invite-pay': undefined;
   '/event-editing': {
     isEditing?: boolean;
   };

@@ -7,7 +7,7 @@ import useStyles from 'components/TouchingSlider/styles.ts';
 import {blackColor, gray1Color, transparentGray60Color, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
+import {commonStackPath, invitationCodePath, superInvitePayPath} from 'constants/pathLocations';
 import EventPreview from './components/EventPreview.tsx';
 
 //import icons
@@ -29,6 +29,8 @@ import {RFValue} from 'react-native-responsive-fontsize';
 interface Photo {
   url: string;
 }
+
+const superInvites = 1;
 
 interface TouchingSliderProps {
   photos: Photo[];
@@ -101,6 +103,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
     setActive(p => p - 1);
   };
 
+  const goToMyProfileView = () => {
+    // @ts-ignore
+    navigation.navigate(superInvitePayPath);
+  };
+
   //animation
   const rotation = useSharedValue(0);
   const [flipped, setFlipped] = useState(false);
@@ -111,7 +118,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       easing: Easing.inOut(Easing.ease),
     });
     setFlipped(prev => !prev);
-    handleOpenSuperInvite && handleOpenSuperInvite();
+    if(superInvites) {
+      handleOpenSuperInvite && handleOpenSuperInvite();
+    } else {
+      goToMyProfileView()
+    }
   };
 
   const frontAnimatedStyle = useAnimatedStyle(() => {

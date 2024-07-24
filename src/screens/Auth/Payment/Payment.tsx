@@ -1,7 +1,9 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {View, Text, SafeAreaView, ScrollView, TouchableOpacity, FlatList} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Tooltip, TooltipProps} from '@rneui/themed';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from 'screens/Auth/Payment/styles.ts';
@@ -34,7 +36,12 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenWidth} from 'constants/common';
 import * as Progress from 'react-native-progress';
-import {SvgProps} from 'react-native-svg';
+import { SvgProps } from 'react-native-svg';
+import Purchases, { PurchasesPackage } from 'react-native-purchases';
+import Loader from 'components/Modal/ModalLoader/Loader';
+import HostPremium from 'components/Modal/ModalHostPremium/HostPremium';
+import { useUser } from 'src/store/userStore';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 interface PlanListItem {
   id: number;
@@ -68,7 +75,7 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
   );
 };
 
-const Payment: FC = (): JSX.Element => {
+const Payment: FC = (): JSX.Element => {    
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [spotsLeft, setSpotsLeft] = useState<number>(0);
@@ -142,9 +149,36 @@ const Payment: FC = (): JSX.Element => {
     },
   ]);
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
+  const [loaderVisible, setLoaderVisible] = useState(false)
+  const [successfulPay, setSuccessfulPay] = useState(false)
+  const [visibleHostPremium, setVsibleHostPremium] = useState(false)
+
+  const [userInfo, setUserInfo] = useState<any>({});
+
+  const updateUser = async () => {
+    const user = auth().currentUser;
+
+    if (user) {
+      try {
+        const userInfoUpdate = await firestore().collection('userInfo').doc(user.uid);
+        userInfoUpdate.update({
+          accountPremium: true,
+          superInvites: 10
+        })
+      } catch (error: any) {
+        console.log('error user premium update', error);
+        
+      }
+    }
+  };
+
+  const name = useUser(i => i?.user.name);
+
+  const photo = useUser(i => i?.user.photos[0].image);
 
   const handleNext = () => {
-    navigation.navigate(tutorialFlowPath as never);
+    navigation.navigate(tutorialFlowPath as never)
+    navigation.navigate(profilePath as never);
   };
 
   const convertProgress = () => {
@@ -157,6 +191,65 @@ const Payment: FC = (): JSX.Element => {
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  const showHostPremium = async () => {
+    setLoaderVisible(false)
+    setTimeout(() => {
+      setVsibleHostPremium(true)
+    }, 300);
+  }
+
+  const pay = async (pack: PurchasesPackage) => {
+    setLoaderVisible(true)
+    try {
+      const { customerInfo } = await Purchases.purchasePackage(pack);
+      updateUser()
+      setSuccessfulPay(true)
+      setTimeout(() => {
+        setLoaderVisible(false)
+        showHostPremium()
+      }, 1500)
+      console.log('pay successful');
+      // if (
+      //   typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
+      //   "undefined"
+      // ) {
+      //   console.log('pay successful');
+      // }
+    } catch (e) {
+      console.log('pay error', e);
+      setLoaderVisible(false)
+    }
+  }
+
+  const getOfferings = async () => {
+    try {
+      const offerings = await Purchases.getOfferings();
+      if (offerings.current !== null) {  
+
+        const offeringsHostSubscription = offerings.all['Host subscription']
+        console.log('offerings', offeringsHostSubscription.availablePackages);
+        
+        if(activePayment.durationName === 'week') {
+          const product = offeringsHostSubscription.availablePackages[0]
+          pay(product)
+        }
+
+        if(activePayment.durationName === 'year') {
+          const product = offeringsHostSubscription.availablePackages[2]
+          pay(product)
+        }
+
+        if(activePayment.durationName === 'months') {
+          const product = offeringsHostSubscription.availablePackages[1]
+          pay(product)
+        }
+      }
+    } catch (e) {
+      console.log('offering ger error', e);
+      
+    }
+  }
 
   const renderItem = ({item}: {item: PlanListItem}) => {
     const isActive = activePayment.id === item.id;
@@ -250,6 +343,8 @@ const Payment: FC = (): JSX.Element => {
 
   return (
     <SafeAreaView style={{backgroundColor: black1Color}}>
+      <Loader isVisible={loaderVisible} successfulPay={successfulPay}/>
+      <HostPremium isVisible={visibleHostPremium} infoUser={{name, photo}} closeModal={visibleHostPremium}/>
       <ScrollView>
         <View style={styles.container}>
           <View style={{alignItems: 'flex-end', marginTop: 10}}>
@@ -313,7 +408,7 @@ const Payment: FC = (): JSX.Element => {
               borderColor={black1Color}
             />
           </View>
-          <Button buttonStyle={{marginTop: 20}} title={'Get access'} />
+          <Button buttonStyle={{marginTop: 20}} title={'Get access'} onPress={getOfferings}/>
           <View style={{marginTop: 8}}>
             <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
               By tapping Continue, your App Store will be charged, your subscription will auto-renew for the same price and package lenght
