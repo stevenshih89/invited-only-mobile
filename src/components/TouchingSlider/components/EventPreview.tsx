@@ -1,7 +1,14 @@
 import {Dispatch, FC, ReactElement, SetStateAction, useCallback, useState} from 'react';
 import {View, ImageBackground, TouchableOpacity, Text, StyleSheet, SafeAreaView} from 'react-native';
 // import components
-import {gray1Color, grayScale700, transparent60Color, transparentGray90Color, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
+import {
+  gray1Color,
+  grayScale700,
+  transparent60Color,
+  transparentGray90Color,
+  transparentWhite56Color,
+  whiteColor,
+} from 'constants/colors.ts';
 import User from 'assets/images/icons/user.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
@@ -24,7 +31,7 @@ const EventPreview: FC<{
   setCurrentCreateStap: Dispatch<SetStateAction<number>>;
   setTabState: Dispatch<SetStateAction<string>>;
   handleCreateEvent: any;
-}> = ({photos, date, girls, placeName, setCurrentCreateStap, setTabState, handleCreateEvent,}): ReactElement => {
+}> = ({photos, date, girls, placeName, setCurrentCreateStap, setTabState, handleCreateEvent}): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
   const [imagesUser, setImagesUser] = useState();
@@ -130,7 +137,7 @@ const EventPreview: FC<{
                     VIP Table
                   </Text>
                   {/* <View>
-  
+
         </View> */}
                   <View style={styles.textContainer}>
                     <Text style={styles.text}>{placeName}</Text>
@@ -167,18 +174,17 @@ const EventPreview: FC<{
               <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Previous step</Text>
             </TouchableOpacity>
           </View> */}
-          <View style={{flexDirection: 'row', width:'100%', paddingHorizontal: 16, alignItems: 'center', justifyContent: 'space-between'}}>
-          <View style={{alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => {
-              setCurrentCreateStap(2);
-              setTabState('eventDetails');
-            }}>
-              <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Back</Text>
-            </TouchableOpacity>
-          </View>
-          <Button buttonStyle={styles.button}
-            onPress={handleCreateEvent} 
-            title={'Create event'}/>
+          <View style={{flexDirection: 'row', width: '100%', paddingHorizontal: 16, alignItems: 'center', justifyContent: 'space-between'}}>
+            <View style={{alignItems: 'center'}}>
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentCreateStap(2);
+                  setTabState('eventDetails');
+                }}>
+                <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Back</Text>
+              </TouchableOpacity>
+            </View>
+            <Button buttonStyle={styles.button} onPress={handleCreateEvent} title={'Create event'} />
           </View>
         </View>
       </SafeAreaView>
@@ -187,9 +193,7 @@ const EventPreview: FC<{
 
   if (userAccountType === 'guest') {
     return (
-      <View style={[styles.container, {backgroundColor: transparentGray90Color,
-        padding: 16,
-        borderRadius: 16,}]}>
+      <View style={[styles.container, {backgroundColor: transparentGray90Color, padding: 16, borderRadius: 16}]}>
         <ImageBackground
           source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
           style={styles.imageBackground}
@@ -329,4 +333,3 @@ const useStyles = () => {
 };
 
 export default EventPreview;
-

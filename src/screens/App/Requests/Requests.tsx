@@ -122,6 +122,8 @@ const Requests: FC = (): ReactElement => {
   );
 
   const list = isHost ? requestsForHost : dataForGuest;
+  console.log('list', list);
+  
 
   if (loading && !list) {
     return <ActivityIndicator style={styles.container} />;
