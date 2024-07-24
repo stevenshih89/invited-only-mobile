@@ -7,9 +7,9 @@ import {RFValue} from 'react-native-responsive-fontsize';
 //import components
 import useStyles from './styles';
 import {useUser} from '../../../../../store/userStore';
-import {Satoshi700} from 'constants/fonts';
+import {Satoshi400, Satoshi700} from 'constants/fonts';
 import Button from 'components/Button/Button';
-import {blackColor, lightGray5Color} from 'constants/colors';
+import {blackColor, lightGray5Color, whiteColor} from 'constants/colors';
 import {paymentPath} from 'constants/pathLocations';  
 
 //import images
@@ -22,6 +22,8 @@ import IO from 'assets/images/icons/io.svg';
 import Flash from 'assets/images/icons/flash.svg';
 import Eye from 'assets/images/icons/eye.svg';
 import { useAppNavigation } from 'hooks/useAppNavigation';
+import Loader from '../../../../../components/Modal/ModalLoader/Loader';
+import HostPremium from 'components/Modal/ModalHostPremium/HostPremium';
 
 const ControlledTooltip: FC<TooltipProps | any> = props => {
   const [open, setOpen] = useState(false);
@@ -42,17 +44,27 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
 
 const MyPlan = () => {
 
+  const [loaderVisible, setLoaderVisible] = useState(false)
+
   const navigation = useAppNavigation();
+
+  const loaderVisibleFun = () => {
+    setLoaderVisible(true)
+    setTimeout(() => setLoaderVisible(false), 1000)
+  }
 
   const goToMyProfileView = () => {
     // @ts-ignore
+    loaderVisibleFun()
     navigation.navigate(paymentPath);
   };
   
   const styles = useStyles();
   const isPremium = useUser((i: any) => i?.premium);
+
   return (
     <View>
+      <Loader isVisible={loaderVisible} successfulPay={false} textLoader={'Checking for available spots...'}/>
       <LinearGradient colors={['#977B4A', '#E5D291', '#A28453']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linearGradient}>
         {isPremium ? (
           <Text style={{color: blackColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Premium</Text>
