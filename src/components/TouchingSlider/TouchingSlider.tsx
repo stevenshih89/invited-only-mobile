@@ -30,7 +30,7 @@ interface Photo {
   url: string;
 }
 
-const superInvites = 0;
+const superInvites = 1;
 
 interface TouchingSliderProps {
   photos: Photo[];

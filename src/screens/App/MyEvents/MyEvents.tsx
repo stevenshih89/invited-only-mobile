@@ -1,9 +1,10 @@
-import React, {FC, useCallback, useContext, useState} from 'react';
+import React, {FC, useCallback, useContext, useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {FlatList} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
+import auth from '@react-native-firebase/auth';
 
 //import components
 import useStyles from 'screens/App/MyEvents/styles.ts';
@@ -45,7 +46,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       image: '',
     },
   });
-  const [activeUserInfo, setActiveUserInfo] = useState<any>({});
+  const [activeUserInfo, setActiveUserInfo] = useState<any>({});  
   
   const [myEventsData, setMyEventsData] = useState([]);
   const [eventsJoiningData, setEventsJoiningData] = useState([]);
@@ -54,6 +55,27 @@ const MyEvents: FC<any> = ({navigation}) => {
   const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
   const isHost = user?.accountType === 'host';
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
+
+  const [userInfo, setUserInfo] = useState<any>({});
+
+  const fetchUserInfo = async () => {
+    const user = auth().currentUser;
+
+    if (user) {
+      try {
+        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        if (userInfoDoc.exists) {
+          setUserInfo(userInfoDoc.data());
+        }
+        
+      } catch (error: any) {
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
 
   const handleOpenCancelAttendingModal = (
     eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string},
@@ -493,7 +515,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         userInfo={activeUserInfo}
         eventInfo={activeModalEvent}
       />
-      {!activeUserInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true}/>}
+      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true}/>}
     </>
   );
 };
