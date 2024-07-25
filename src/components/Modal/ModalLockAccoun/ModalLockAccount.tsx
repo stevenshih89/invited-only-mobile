@@ -3,15 +3,16 @@ import {FC} from 'react';
 import Lock from 'assets/images/icons/lock.svg';
 import useStyles from './styles';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
+import {commonStackPath, invitationCodePath, paymentPath} from 'constants/pathLocations';
 import {transparent60Color, transparent80Color} from 'constants/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500} from 'constants/fonts';
 
 const ModalLockAccount: FC<{
+  isPremium?: boolean;
   isVisibleButton: boolean;
-}> = ({isVisibleButton}) => {
+}> = ({isVisibleButton, isPremium}) => {
   const styles = useStyles();
 
   const navigation = useAppNavigation();
@@ -19,6 +20,12 @@ const ModalLockAccount: FC<{
   const goToCodeConfirmation = (): void => {
     // @ts-ignore
     navigation.navigate(commonStackPath, {screen: invitationCodePath});
+  };
+
+  const goToMyProfileView = () => {
+    // @ts-ignore
+    // loaderVisibleFun()
+    navigation.navigate(paymentPath as never);
   };
 
   return (
@@ -49,8 +56,8 @@ const ModalLockAccount: FC<{
           </View>
         </View>
       </View>
-      {isVisibleButton && (
-        <TouchableOpacity style={{position: 'absolute', bottom: 120, zIndex: 2000, width: '100%', paddingHorizontal: 24}}>
+      {isVisibleButton && !isPremium&& (
+        <TouchableOpacity onPress={goToMyProfileView} style={{position: 'absolute', bottom: 120, zIndex: 2000, width: '100%', paddingHorizontal: 24}}>
           <LinearGradient
             colors={['#977B4A', '#E5D291', '#A28453']}
             start={{x: 0, y: 0}}

@@ -13,7 +13,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {profilePath} from 'constants/pathLocations';
+import {eventCreatingStackPath} from 'constants/pathLocations';
 import {EventContext} from 'contexts/EventContext';
 import {useUser} from '../../../store/userStore';
 import {useRequest} from '../../../store/requestsStore';
@@ -28,20 +28,26 @@ const Requests: FC = (): ReactElement => {
   const user = useUser((i: any) => i?.user);
   const requestFilter = useRequest((i: any) => i?.requestFilter);
 
-  const {activeEvent} = useContext(EventContext);
+  const {activeEvent} = useContext(EventContext);  
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
   const [userInfo, setUserInfo] = useState<any>({});
   const [dataForGuest, setDataForGuest] = useState([]);
+  const [myIventList, setMyInventList] = useState();
 
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchHostRequests = async () => {
     const user = auth().currentUser;
+    console.log('user', user);
+    
     if (user && activeEvent !== 'host') {
       try {
         const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
         console.warn('querySnapshot', querySnapshot.data());
+        const eventList = await firestore().collection('userInfo').doc(user.uid).get()
+        setMyInventList(eventList?.data()?.eventsList)
+        
 
         if (querySnapshot.exists) {
           setRequestsForHost(querySnapshot.data());
@@ -129,9 +135,12 @@ const Requests: FC = (): ReactElement => {
     return <ActivityIndicator style={styles.container} />;
   }
 
+  console.log('requestsForHost', dataForGuest);
+  
+
   return (
     <View style={styles.container}>
-      {!!list.length || !!list?.requestsList?.length ? (
+      {!!myIventList?.length? (
         <FlatList
           // @ts-ignore
           data={isHost ? list?.requestsList : list}
@@ -158,10 +167,10 @@ const Requests: FC = (): ReactElement => {
           <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
             You don't have any active event.
           </Text>
-          <Button title="Create event" onPress={() => navigation.navigate(profilePath as never)} />
+          <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
         </View>
       )}
-      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton />}
+      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium}/>}
     </View>
   );
 };

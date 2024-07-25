@@ -344,7 +344,8 @@ const EventCreating: FC = () => {
             placeName={''}  
             setCurrentCreateStap={setCurrentCreateStap}
             setTabState={setTabState}
-            handleCreateEvent={handleCreateEvent}    
+            handleCreateEvent={handleCreateEvent}
+            name={name}
           />
         )}
       </View>
