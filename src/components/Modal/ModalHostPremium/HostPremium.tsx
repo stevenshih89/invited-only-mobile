@@ -109,7 +109,7 @@ const HostPremium: FC<LoaderProps> = ({ isVisible }) => {
                 }}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0}}>
-                {userInfo?.photos && userInfo.photos[0]?.image && <Image style={{width: 300, height: 300, borderRadius: 300}} source={{uri: userInfo.photos[0].image}} />}
+                {userInfo?.photos && userInfo.photos?.[0]?.image && <Image style={{width: 300, height: 300, borderRadius: 300}} source={{uri: userInfo.photos[0].image}} />}
           </LinearGradient>
           <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'flex-end'}}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
