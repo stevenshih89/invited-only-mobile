@@ -172,10 +172,6 @@ const Payment: FC = (): JSX.Element => {
     }
   };
 
-  const name = useUser(i => i?.user.name);
-
-  const photo = useUser(i => i?.user.photos[0].image);
-
   const handleNext = () => {
     navigation.navigate(tutorialFlowPath as never)
     navigation.navigate(profilePath as never);
@@ -344,7 +340,7 @@ const Payment: FC = (): JSX.Element => {
   return (
     <SafeAreaView style={{backgroundColor: black1Color}}>
       <Loader isVisible={loaderVisible} successfulPay={successfulPay}/>
-      <HostPremium isVisible={visibleHostPremium} infoUser={{name, photo}} closeModal={visibleHostPremium}/>
+      <HostPremium isVisible={visibleHostPremium} />
       <ScrollView>
         <View style={styles.container}>
           <View style={{alignItems: 'flex-end', marginTop: 10}}>
