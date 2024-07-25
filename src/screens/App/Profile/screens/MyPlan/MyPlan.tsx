@@ -53,7 +53,7 @@ const MyPlan = () => {
   const [userInfo, setUserInfo] = useState<any>({});
 
   const fetchUserInfo = async () => {
-    setLoaderVisible(true)
+    // setLoaderVisible(true)
     const user = auth().currentUser;
 
     if (user) {
@@ -66,7 +66,7 @@ const MyPlan = () => {
       } catch (error: any) {
       }
     }
-    setLoaderVisible(false)
+    // setLoaderVisible(false)
   };
 
   useEffect(() => {

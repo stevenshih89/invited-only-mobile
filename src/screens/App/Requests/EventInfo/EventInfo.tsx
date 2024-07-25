@@ -69,6 +69,7 @@ const EventInfo = ({navigation, route}: any) => {
             isShowInvitesTooltip={false}
             isShowCardButtons={false}
             photos={photos}
+            name={name}
           />
 
           <View style={styles.bioWrapper}>
