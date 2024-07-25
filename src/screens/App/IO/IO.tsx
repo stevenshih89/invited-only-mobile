@@ -43,7 +43,7 @@ import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
 import Match from './screens/Match/Match';
-import ModalSuperInvite from 'components/Modal/ModalSuperInvite';
+// import ModalSuperInvite from 'components/Modal/ModalSuperInvite';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 
 const IO: FC = (): JSX.Element => {
@@ -62,7 +62,7 @@ const IO: FC = (): JSX.Element => {
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
   const [eventsLength, setEventsLength] = useState(0) 
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1); 
-  const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState()
+  const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState()  
   
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
@@ -298,14 +298,6 @@ const IO: FC = (): JSX.Element => {
       setEvents(filter);
     }
   };
-
-  if (!userInfo?.accountConfirmed) {
-    return (
-      <View style={{flex: 1, backgroundColor: blackColor}}>
-        <ModalLockAccount isVisibleButton />
-      </View>
-    );
-  }
 
   const getListForGuest = async () => {
     const user = auth().currentUser;
@@ -948,9 +940,9 @@ const IO: FC = (): JSX.Element => {
     return (
       <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo} />
     );
-  }
+  }  
 
-  if (!activeEvent?.id && userInfo.accountConfirmed) {
+  if (myEvents.length < 1 && userInfo.accountConfirmed) {
     return (
       <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
         <View style={{height: 370}}>
@@ -987,6 +979,7 @@ const IO: FC = (): JSX.Element => {
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
+      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
         <View style={styles.container}>
           {
             events?.map((item, index) => {

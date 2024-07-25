@@ -28,10 +28,11 @@ const EventPreview: FC<{
   date: string;
   girls: string;
   placeName: string;
+  name: string;
   setCurrentCreateStap: Dispatch<SetStateAction<number>>;
   setTabState: Dispatch<SetStateAction<string>>;
   handleCreateEvent: any;
-}> = ({photos, date, girls, placeName, setCurrentCreateStap, setTabState, handleCreateEvent}): ReactElement => {
+}> = ({photos, date, girls, placeName, setCurrentCreateStap, setTabState, handleCreateEvent, name}): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
   const [imagesUser, setImagesUser] = useState();
@@ -39,6 +40,9 @@ const EventPreview: FC<{
   const [userAge, setUserAge] = useState('');
   const [userAccountType, setUserAccountType] = useState('');
   const numberPhotos = imagesUser?.length;
+
+  console.log('name', name);
+  
 
   function calculateAge(birthDateString: string) {
     const parts = birthDateString.split('.');
@@ -134,7 +138,7 @@ const EventPreview: FC<{
             </View> */}
                   </ImageBackground>
                   <Text style={{color: whiteColor, fontFamily: Satoshi500, fontWeight: 'bold', fontSize: RFValue(27, 812), marginTop: 10}}>
-                    VIP Table
+                    {name}
                   </Text>
                   {/* <View>
 

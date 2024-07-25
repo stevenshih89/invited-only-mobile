@@ -81,7 +81,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
-  const navigation = useAppNavigation();
+  const navigation = useAppNavigation();  
 
   const goToCodeConfirmation = (): void => {
     // @ts-ignore
@@ -189,7 +189,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       )}
       {isShowEventPreview ? (
         <View style={styles.eventPreviewWr}>
-          <EventPreview placeName={placeName} date={date} girls={girls} photos={eventPhotos} flipCoin={flipCoin} />
+          <EventPreview placeName={placeName} date={date} girls={girls} photos={eventPhotos} name={name} flipCoin={flipCoin} />
         </View>
       ) : (
         <LinearGradient
