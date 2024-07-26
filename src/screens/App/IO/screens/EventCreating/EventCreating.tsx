@@ -136,6 +136,15 @@ const EventCreating: FC = () => {
         male,
         femaleFriend,
         maleFriend,
+        eventTypes,
+        placeName,
+        name,
+        description,
+        date,
+        hour,
+        address,
+        meetingSpot,
+        photos
       });
       navigation?.goBack();
       showToast('success', '', 'Event successfully changes!');
@@ -357,6 +366,7 @@ const EventCreating: FC = () => {
             setTabState={setTabState}
             handleCreateEvent={handleCreateEvent}
             name={name}
+            setIsVisibleSaveModal={setIsVisibleSaveModal}
           />
         )}
       </View>

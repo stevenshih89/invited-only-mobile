@@ -39,6 +39,7 @@ const EventPreview: FC<{
   name: string;
   setCurrentCreateStap: Dispatch<SetStateAction<number>>;
   setTabState: Dispatch<SetStateAction<string>>;
+  setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
   handleCreateEvent: any;
 }> = ({
   photos, 
@@ -56,6 +57,7 @@ const EventPreview: FC<{
   hour,
   address,
   meetingSpot,
+  setIsVisibleSaveModal
 
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
@@ -118,7 +120,7 @@ const EventPreview: FC<{
   };
 
   const handleSaveChanges = async () => {    
-    isEditing ? setIsVisibleSaveModal(true) : null;
+    // isEditing ? setIsVisibleSaveModal(true) : null;
     // try {
     //   await firestore().collection('Events').doc(id).update({
     //     eventTypes,
@@ -235,7 +237,7 @@ const EventPreview: FC<{
               </TouchableOpacity>
             </View>
             <Button buttonStyle={styles.button} onPress={() => {
-              isEditing? handleSaveChanges() : handleCreateEvent()
+              isEditing? setIsVisibleSaveModal(true): handleCreateEvent()
             }} title={isEditing? 'Save changes' : 'Create event'} />
           </View>
         </View>
