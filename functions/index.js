@@ -22,6 +22,8 @@ const sendNotification = async userId => {
   });
 };
 
+exports.processInviteMatch = functions.firestore.onDocumentUpdated('Events', async event => {});
+
 exports.processDocumentCreated = functions.firestore.onDocumentCreated('CollectionOfMatches', async event => {
   const newData = event.params;
   const uid = newData.uid;
