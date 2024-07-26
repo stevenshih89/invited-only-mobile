@@ -14,7 +14,7 @@ import useStyles from './styles.ts';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
 import {isIos} from 'constants/common';
-import {black1Color, errorColor, gray1Color, lightGray10Color, lightGray2Color, orangeClose, toggleColor, transparentWhite16Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {black1Color, black3Color, errorColor, gray1Color, lightGray10Color, lightGray2Color, orangeClose, toggleColor, transparentWhite16Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {showToast} from 'helpers/showToast.ts';
 import {uploadImage} from 'helpers/uploadImage.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
@@ -149,13 +149,10 @@ const EventDetails: FC<EventDetailsProps> = ({
     {id: 1, label: 'Table'},
     {id: 2, label: 'Club'},
     {id: 3, label: 'Restaurant'},
-  ];
-
-  // console.log('photos', photos);
-  
+  ];  
     
   const [modalAddPhotoVisible, setModalAddPhotoVisible] = useState(false);
-  const [photosId, setPhotosId] = useState(null);
+  const [photosId, setPhotosId] = useState();
   const [addressEmpty, setAddressEmpty] = useState(false)
   const [placeNameEmpty, setPlaceNameEmpty] = useState(false)
   const [eventNameEmpty, setEventNameEmpty] = useState(false)
@@ -182,7 +179,7 @@ const EventDetails: FC<EventDetailsProps> = ({
       setAddress(prevAddress ?? '');
       setMeetingSpot(prevMeetingSpot ?? '');
     }
-  }, [prevImages]);
+  }, []);
 
   const styles = useStyles();
 
@@ -245,7 +242,7 @@ const EventDetails: FC<EventDetailsProps> = ({
   const addPlaceholderPhoto = () => {
     const newPhotos = photos.map(img => {
       if (img.id === photosId) {
-        return { ...img, image: 'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/FCMImages%2Fevent-placeholder.png?alt=media&token=a077a866-8a9f-45e6-a8d9-9e49a9509296' };
+        return { ...img, image: 'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/placeholders%2FFrame%201321315887.jpg?alt=media&token=dd4f9b58-f90b-415e-85f8-52de10eb0e68' };
       }
       return img;
     });
@@ -386,7 +383,7 @@ const EventDetails: FC<EventDetailsProps> = ({
           />
         </View>
         {/* <View style={styles.eventPlaceWr}> */}
-          <View style={{backgroundColor: lightGray10Color, borderRadius: 8, padding: 20, marginBottom: 24}}>
+          <View style={{backgroundColor: black3Color, borderRadius: 20, padding: 20, marginBottom: 24}}>
           <Input
             required
             isError={placeNameEmpty}
@@ -414,6 +411,13 @@ const EventDetails: FC<EventDetailsProps> = ({
           />
           {/* <Text>Incorrect address</Text> */}
           </View>
+          
+          <View style={{
+              padding: 20, 
+              backgroundColor: black3Color,
+              borderRadius: 20,
+              marginBottom: 24
+            }}>
           <Text style={styles.eventPhotosText}>Event photos <Text style={{color: errorColor}}>*</Text></Text>
           <View style={styles.flex}>
             <View style={styles.eventPhotoLargeWr}>
@@ -499,6 +503,7 @@ const EventDetails: FC<EventDetailsProps> = ({
               </View>
             </View>
           </View>
+          </View>
         {/* </View> */}
         <View style={styles.eventDetailsWr}>
           <Text style={styles.eventDetailsTitle}>Event details</Text>
@@ -540,7 +545,7 @@ const EventDetails: FC<EventDetailsProps> = ({
               }}
             />
             {dateEmpty? <CalendarRed />: <Calendar/>}
-            <Text style={[styles.maskInput, {color: dateEmpty? errorColor: whiteColor}]}>{date ? date : 'MM/DD/YY'}</Text>
+            <Text style={[styles.maskInput, {color: dateEmpty? errorColor: whiteColor, opacity: date? 1 : 0.35,}]}>{date ? date : 'MM/DD/YY'}</Text>
           </TouchableOpacity>
           {dateEmpty && <Text style={{color: errorColor, marginTop: 10, fontSize: RFValue(14, 812), fontFamily: Satoshi400}}>Incorrect date</Text>}
           </View>
@@ -565,7 +570,7 @@ const EventDetails: FC<EventDetailsProps> = ({
               }}
             />
             {hourEmpty? <ClockRed />: <Clock />}
-            <Text style={[styles.maskInput, {color: hourEmpty? errorColor: whiteColor}]}>{hour ? hour : '00:30'}</Text>
+            <Text style={[styles.maskInput, {color: hourEmpty? errorColor: whiteColor, opacity: hour? 1 : 0.35}]}>{hour ? hour : '00:30'}</Text>
           </TouchableOpacity>
           {hourEmpty && <Text style={{color: errorColor, marginTop: 10, fontSize: RFValue(14, 812), fontFamily: Satoshi400}}>Incorrect hour</Text>}
           </View>
@@ -603,10 +608,9 @@ const EventDetails: FC<EventDetailsProps> = ({
           //   !photos[0].image
           // }
           loading={loading}
-          title={isEditing ? 'Save changes' : 'Continue'}
+          title={'Continue'}
           buttonStyle={styles.button}
           onPress={() => {
-            isEditing ? handleSaveChanges() :
             checkFieldsNotEmpty()
           }}
         />

@@ -66,15 +66,15 @@ const EventCreating: FC = () => {
   const [photos, setImages] = useState<{image: null | string; id: number}[]>([
     {
       id: 0,
-      image: null,
+      image: 'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/placeholders%2FFrame%201321315887.jpg?alt=media&token=dd4f9b58-f90b-415e-85f8-52de10eb0e68',
     },
     {
       id: 1,
-      image: null,
+      image: 'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/placeholders%2FFrame%201321315887.jpg?alt=media&token=dd4f9b58-f90b-415e-85f8-52de10eb0e68',
     },
     {
       id: 2,
-      image: null,
+      image: 'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/placeholders%2FFrame%201321315887.jpg?alt=media&token=dd4f9b58-f90b-415e-85f8-52de10eb0e68',
     },
     {
       id: 3,
@@ -86,6 +86,9 @@ const EventCreating: FC = () => {
     },
   ]);
 
+  console.log('photos', photos);
+  
+
   const navigation = useAppNavigation();
 
   const handleSetTabState = (type: string): void => {
@@ -96,7 +99,7 @@ const EventCreating: FC = () => {
 
   const isEditing = (route?.params as { isEditing?: boolean })?.isEditing;
   const isEditingItem = (route?.params as { isEditingItems?: any })?.isEditingItems;
-
+  
   useEffect(() => {
     if (isEditing) {
       navigation.setOptions({
@@ -186,10 +189,10 @@ const EventCreating: FC = () => {
         Alert.alert('Please add the main picture');
       }
 
-      let imagesUri: any[] = [];
+      // let imagesUri: any[] = [];
 
-      console.log('imagesUri', imagesUri);
-      console.log('images', photos);
+      // console.log('imagesUri', imagesUri);
+      // console.log('images', photos);
       // @ts-ignore
       await firestore()
         .collection('Events')
@@ -215,6 +218,7 @@ const EventCreating: FC = () => {
           eventReviewed: false,
           hostImage: userHost?.photos[0]?.image,
           hostName: userHost?.name,
+          photos: photos
         })
         .then(async () => {
           photos?.map(async (imagePath, index) => {
@@ -337,11 +341,18 @@ const EventCreating: FC = () => {
           />
         )}
         {tabState === 'eventPreview' && (
-          <EventPreview 
+          <EventPreview
+            isEditing={isEditing}
+            id={isEditingItem?.id}
+            eventTypes={eventTypes}
+            description={description}
+            hour={hour}
+            address={address}
+            meetingSpot={meetingSpot}
             photos={photos} 
-            date={''} 
-            girls={''} 
-            placeName={''}  
+            date={date} 
+            girls={female} 
+            placeName={placeName}  
             setCurrentCreateStap={setCurrentCreateStap}
             setTabState={setTabState}
             handleCreateEvent={handleCreateEvent}

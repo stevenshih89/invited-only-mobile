@@ -2,6 +2,7 @@ import {StyleSheet} from 'react-native';
 import {Satoshi500, Satoshi400} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {
+  black3Color,
   goldColor,
   lightGray10Color,
   lightGray5Color,
@@ -19,7 +20,7 @@ const useStyles = () => {
     wrapperSelectYourDesiredCompany: {
       // borderWidth: 1,
       // borderColor: goldColor,
-      backgroundColor: lightGray10Color,
+      backgroundColor: black3Color,
       borderRadius: 10,
       padding: 20,
       marginBottom: screenHeight / 42,
@@ -27,7 +28,7 @@ const useStyles = () => {
     wrapperOtherFriends: {
       borderRadius: 10,
       padding: 20,
-      backgroundColor: lightGray10Color,
+      backgroundColor: black3Color,
       marginBottom: screenHeight / 36,
     },
     textSelectYourDesiredCompany: {

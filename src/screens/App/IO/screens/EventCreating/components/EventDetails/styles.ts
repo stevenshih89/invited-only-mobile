@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {backgroundColor, lightGray10Color, lightGray2Color, lightGray5Color, lightGray8Color, whiteColor} from 'constants/colors.ts';
+import {backgroundColor, black3Color, blackColor, lightGray10Color, lightGray2Color, lightGray5Color, lightGray8Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common.ts';
@@ -15,7 +15,7 @@ const useStyles = () =>
     },
     scrollView: {
       flex: 1,
-      backgroundColor: backgroundColor,
+      backgroundColor: blackColor,
     },
     inputIcon: {
       backgroundColor: lightGray2Color,
@@ -53,13 +53,13 @@ const useStyles = () =>
       color: whiteColor,
       marginLeft: 5,
       borderTopLeftRadius: 10,
-      opacity: 0.35,
+      // opacity: 0.35,
       fontSize: RFValue(18, 812),
     },
     eventTypeWr: {
-      borderRadius: 8,
+      borderRadius: 20,
       padding: 20,
-      backgroundColor: lightGray10Color,
+      backgroundColor: black3Color,
       marginBottom: 24,
     },
     eventTypeTitle: {
@@ -126,7 +126,7 @@ const useStyles = () =>
     eventDetailsWr: {
       borderRadius: 8,
       padding: 20,
-      backgroundColor: lightGray5Color,
+      backgroundColor: black3Color,
     },
     eventDetailsTitle: {
       color: whiteColor,
@@ -150,6 +150,7 @@ const useStyles = () =>
     },
     flex: {
       flex: 1,
+      
     },
     inputLabel: {
       fontSize: RFValue(14, 812),
