@@ -376,7 +376,8 @@ const MyEvents: FC<any> = ({navigation}) => {
                 data={myEventsData}
                 keyExtractor={item => item.id.toString()}
                 ListEmptyComponent={() => (
-                  <View style={{marginTop: screenHeight / 6}}>
+                  <>
+                    {userInfo?.accountPremium && <View style={{marginTop: screenHeight / 6}}>
                     <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
                       Let's create an event
                     </Text>
@@ -384,7 +385,8 @@ const MyEvents: FC<any> = ({navigation}) => {
                       Get started by creating an event to begin inviting guests.
                     </Text>
                     <Button title="Create event" onPress={goToCreateEvent} />
-                  </View>
+                  </View>}
+                  </>
                 )}
                 renderItem={({item}) => (
                   <MyEventsCard

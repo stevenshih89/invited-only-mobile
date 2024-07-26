@@ -15,6 +15,7 @@ import {
   joinEventsPath,
   notificationsPath,
   notificationsStackPath,
+  paymentPath,
   settingsPath,
 } from 'constants/pathLocations';
 import {ANY_DAY, screenHeight, THIS_WEEKEND, TODAY, ALL, THIS_MONTH} from 'constants/common.ts';
@@ -92,7 +93,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     if (!userHost?.accountConfirmed) {
       return;
     }
-    navigation.navigate(eventCreatingStackPath);
+    if(userInfo?.accountPremium) {
+      navigation.navigate(eventCreatingStackPath);
+    } else navigation.navigate(paymentPath as never);
   };
 
   const fetchUserInfo = async () => {
