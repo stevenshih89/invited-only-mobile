@@ -9,6 +9,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import auth from '@react-native-firebase/auth'
 
 const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined}> = ({
   id,
@@ -18,14 +19,22 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
 }) => {
   const navigation = useAppNavigation();
   const handleCancelEvent = async () => {
+    const uidUser = auth().currentUser?.uid    
     try {
       await firestore().collection('Events').doc(id).delete();
+      const userInfo = await firestore().collection('userInfo').doc(uidUser).get()
+      const eventList = userInfo?.data()?.eventsList
+      const filterEvents = eventList.filter((item: string) => item != id)
+      await firestore().collection('userInfo').doc(uidUser).update({
+        eventList: filterEvents
+      });
+      
       showToast('success', '', 'Event successfully deleted!');
       onClose();
       navigation?.goBack();
     } catch (e) {
       showToast('cancel', '', 'Error!');
-      console.log(e);
+      console.log('error handleCancelEvent', e);
     }
   };
 
