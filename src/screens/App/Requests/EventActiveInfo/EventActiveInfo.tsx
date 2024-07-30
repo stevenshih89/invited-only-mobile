@@ -389,6 +389,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
         image={photos[0]?.image}
         isVisible={isVisibleCancelModal}
         onClose={() => setIsVisibleCancelModal(false)}
+        nameEvent={list?.name}
       />
     </>
   );

@@ -7,6 +7,7 @@ import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
+import { CLOUD_MESSAGING_SERVER_KEY } from '@env';
 
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
@@ -70,7 +71,7 @@ const IO: FC = (): JSX.Element => {
 
   const userHost = useUser((i: any) => i?.user);
 
-  let currentDate = new Date();
+  let currentDate = new Date();  
 
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
@@ -208,8 +209,41 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {
+  const getFcmTokenFromUser = async (uid: string) => {
+    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+    return userInfoDoc.data()?.fcmToken
+  }
 
+  const sendNotification = async (forUserUid: string, title: string, body: string) => {
+
+    const token = await getFcmTokenFromUser(forUserUid)
+    
+    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+      },
+      body: JSON.stringify({
+        to: token,
+        notification: {
+          title: title,
+          body: body
+        }
+      })
+    });
+  
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('error sending notification:', error);
+    } else {
+      const data = await response.json();
+      console.log('successfully:', data);
+    }
+  }
+
+  const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {    
+    
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();      
 
@@ -226,6 +260,7 @@ const IO: FC = (): JSX.Element => {
         superInvite: false,
         uid: host ? guest.data()?.uid : userHost?.uid,
         userPhoto: host ? guest.data()?.photos[0]?.image : userHost?.photos[0]?.image,
+        fcmToken: host ? guest.data()?.fcmToken : userHost?.fcmToken,
       };
 
       const usersListCheck = activeEvent?.usersList ? activeEvent?.usersList : usersList;
@@ -238,6 +273,8 @@ const IO: FC = (): JSX.Element => {
         await firestore().collection('Events').doc(activeEventId).update({
           usersList: updateUsersList,
         });
+
+        await sendNotification(forUserUid, 'New invite request', `${userInfo.name} wants to invite you!`);
 
         const getUserInRequestsList = (await firestore().collection('Events').doc(activeEventId).get()).data()?.requestsList;        
 
@@ -260,7 +297,7 @@ const IO: FC = (): JSX.Element => {
             // usersList: updateUsersList ? updateUsersList : usersList,
             requestsList: updateRequestsList,
           });
-        
+        await sendNotification(forUserUid, 'New join request', `${userInfo?.name} wants to join you!`);
         const userInList = usersList.find(item => item.uid === currentUid);
         
         if(userInList) {
@@ -872,7 +909,7 @@ const IO: FC = (): JSX.Element => {
 
     if (enabled) {
       // console.log('Authorization status:', authStatus);
-      fcmHelper().then();
+      fcmHelper(userInfo?.uid).then();
     }
   };
 
