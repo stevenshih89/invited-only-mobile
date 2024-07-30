@@ -5,6 +5,7 @@ import {FlatList} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
+import { CLOUD_MESSAGING_SERVER_KEY } from '@env'
 
 //import components
 import useStyles from 'screens/App/MyEvents/styles.ts';
@@ -85,7 +86,51 @@ const MyEvents: FC<any> = ({navigation}) => {
 
   const countMyEvent = useRef(0)
 
+  const getFcmTokens = async (usersList: []) => {
+    let tokens: string[] = [];
+    
+    const promises = usersList.map(async (item) => {
+      const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
+      console.log('userInfo', userInfo);
+      return userInfo.data().fcmToken;
+    });
+  
+    tokens = await Promise.all(promises);
+  
+    return tokens;
+  };
+
+  const sendNotification = async (usersList: [], title: string, body: string) => {
+    
+    const tokens = await getFcmTokens(usersList)
+    
+    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+      },
+      body: JSON.stringify({
+        registration_ids: tokens,
+        notification: {
+          title: title,
+          body: body
+        }
+      })
+    });
+  
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('error sending notification:', error);
+    } else {
+      const data = await response.json();
+      console.log('notification sent successfully:', data);
+    }
+  };
+
   const checkTimeEvent = (item) => {
+    console.log('item', item);
+    
     if (item) {
       const res  = calculateHoursUntilEvent(item.date, item.hour)
 
@@ -110,6 +155,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         setHoursUntilEvent(timeToEvent);
         setCurrentEvent(item)
         setVisibleModalEventRemindes(true);
+        sendNotification(item?.usersList, `${item?.name} starting in ${timeToEvent}h!`, 'Click here to confirm')
         timeToEvent = null
       } else {
         countMyEvent.current = countMyEvent.current + 1
@@ -118,7 +164,6 @@ const MyEvents: FC<any> = ({navigation}) => {
   }
 
   useEffect(() => {
-    console.log('countMyEvent', countMyEvent);
     if(myEventsData && myEventsData.length > countMyEvent.current) {
       checkTimeEvent(myEventsData[countMyEvent.current])
     }

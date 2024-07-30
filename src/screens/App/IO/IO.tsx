@@ -260,7 +260,6 @@ const IO: FC = (): JSX.Element => {
         superInvite: false,
         uid: host ? guest.data()?.uid : userHost?.uid,
         userPhoto: host ? guest.data()?.photos[0]?.image : userHost?.photos[0]?.image,
-        fcmToken: host ? guest.data()?.fcmToken : userHost?.fcmToken,
       };
 
       const usersListCheck = activeEvent?.usersList ? activeEvent?.usersList : usersList;
@@ -979,7 +978,7 @@ const IO: FC = (): JSX.Element => {
     );
   }  
 
-  if (myEvents.length < 1 && userInfo.accountConfirmed) {
+  if (myEvents.length < 1 && userInfo.accountConfirmed && userInfo.accountType === 'host') {
     return (
       <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
         <View style={{height: 370}}>

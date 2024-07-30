@@ -22,10 +22,18 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
   const navigation = useAppNavigation();
 
   const getFcmTokens = async (usersList: []) => {
-    let tokens = []
-    usersList.forEach(item => tokens.push(item?.fcmToken));    
-    return tokens
-  }
+    let tokens: string[] = [];
+    
+    const promises = usersList.map(async (item) => {
+      const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
+      console.log('userInfo', userInfo);
+      return userInfo.data().fcmToken;
+    });
+  
+    tokens = await Promise.all(promises);
+  
+    return tokens;
+  };
 
   const getUsersList = async () => {
     const eventInfoDoc = await firestore().collection('Events').doc(id).get()
