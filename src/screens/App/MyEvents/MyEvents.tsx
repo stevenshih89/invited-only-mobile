@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useContext, useEffect, useState} from 'react';
+import React, {FC, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {FlatList} from 'react-native';
@@ -26,6 +26,7 @@ import Button from 'components/Button/Button';
 import {eventCreatingStackPath} from 'constants/pathLocations';
 import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
+import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
@@ -35,6 +36,8 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [isVisibleCancelAttendingModal, setIsVisibleCancelAttendingModal] = useState<boolean>(false);
   const [isVisibleAcceptInvitationModal, setIsVisibleAcceptInvitationModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(MY_EVENTS);
+  const [visibleModalEventRemindes, setVisibleModalEventRemindes] = useState(false)  
+  
   const [activeModalEvent, setActiveModalEvent] = useState<any>({
     id: 0,
     image: '',
@@ -50,6 +53,8 @@ const MyEvents: FC<any> = ({navigation}) => {
   
   const [myEventsData, setMyEventsData] = useState([]);
   const [eventsJoiningData, setEventsJoiningData] = useState([]);
+  const [hoursUntilEvent, setHoursUntilEvent] = useState<number>();
+  const [currentEvent, setCurrentEvent] = useState()
 
   const user = useUser((i: any) => i?.user);
   const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
@@ -57,6 +62,67 @@ const MyEvents: FC<any> = ({navigation}) => {
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
   const [userInfo, setUserInfo] = useState<any>({});
+
+  const calculateHoursUntilEvent = (eventDate, eventTime) => {
+
+    const now = new Date();
+  
+    const [day, month, year] = eventDate.split('.');
+    const [hours, minutes] = eventTime.split(':');
+  
+    const eventDateTime = new Date(year, month - 1, day, hours, minutes);
+  
+    const diffInMilliseconds = eventDateTime - now;
+  
+    if (diffInMilliseconds < 0) {
+      return null;
+    }
+  
+    const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
+  
+    return Math.floor(diffInHours);
+  };
+
+  const countMyEvent = useRef(0)
+
+  const checkTimeEvent = (item) => {
+    if (item) {
+      const res  = calculateHoursUntilEvent(item.date, item.hour)
+
+      console.log('res',res);
+      
+
+      let timeToEvent = null
+
+      if(res && !timeToEvent && res >= 24) {
+        timeToEvent = 24
+      }
+
+      if(res && !timeToEvent && res >= 12) {
+        timeToEvent = 12
+      }
+
+      if(res && !timeToEvent &&res >= 2) {
+        timeToEvent = 2
+      }
+      
+      if(timeToEvent) {
+        setHoursUntilEvent(timeToEvent);
+        setCurrentEvent(item)
+        setVisibleModalEventRemindes(true);
+        timeToEvent = null
+      } else {
+        countMyEvent.current = countMyEvent.current + 1
+      }
+    }
+  }
+
+  useEffect(() => {
+    console.log('countMyEvent', countMyEvent);
+    if(myEventsData && myEventsData.length > countMyEvent.current) {
+      checkTimeEvent(myEventsData[countMyEvent.current])
+    }
+  },[myEventsData, countMyEvent.current])
 
   const fetchUserInfo = async () => {
     const user = auth().currentUser;
@@ -377,7 +443,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                 keyExtractor={item => item.id.toString()}
                 ListEmptyComponent={() => (
                   <>
-                    {userInfo?.accountPremium && <View style={{marginTop: screenHeight / 6}}>
+                    {userInfo?.accountConfirmed && <View style={{marginTop: screenHeight / 6}}>
                     <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
                       Let's create an event
                     </Text>
@@ -518,6 +584,21 @@ const MyEvents: FC<any> = ({navigation}) => {
         eventInfo={activeModalEvent}
       />
       {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true} isPremium={userInfo?.accountPremium}/>}
+      <ModalEventRemindes
+        currentEvent={currentEvent}
+        eventStarting={visibleModalEventRemindes}
+        // activeState={true}
+        setEventStarting={setVisibleModalEventRemindes}
+        hoursUntilEvent={hoursUntilEvent}
+        countMyEvent={countMyEvent}
+        // time={'10^00'}
+        // image={''}
+        // placeName={'name place'}
+        // joinedPeopleCount={2}
+        // date={eventDate}
+        // girlInvitation={2}
+        // allPeople={34}
+  />
     </>
   );
 };

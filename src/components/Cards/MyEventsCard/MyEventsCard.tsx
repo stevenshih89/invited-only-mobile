@@ -46,7 +46,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     numberOfGirlsInvited,
     allPeople,
     textCityName,
-  } = props;
+  } = props;  
 
   const styles = useStyles();
 
@@ -92,14 +92,14 @@ const MyEventsCard: FC<MyEventsCard> = props => {
 
     let hours = Math.floor(differenceInMinutes / 60);
     let minutes = differenceInMinutes % 60;
-
+    
     return hours;
     // return hours + ':' + (minutes < 10 ? '0' : '') + minutes;
   };
 
   useEffect(() => {
     if (
-      calculateTimeDifference(currentTime, estimeTime) === 0 ||
+      // calculateTimeDifference(currentTime, estimeTime) === 0 ||
       calculateTimeDifference(currentTime, estimeTime) >= 2 ||
       calculateTimeDifference(currentTime, estimeTime) >= 12 ||
       calculateTimeDifference(currentTime, estimeTime) >= 24
@@ -112,8 +112,13 @@ const MyEventsCard: FC<MyEventsCard> = props => {
   const approvedPeople = invitingPeople?.filter(i => i?.status === 'accepted');
 
   return (
+    <>
     <TouchableOpacity
-      onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: list}} as never)}
+      onPress={() => {
+        console.log('some');
+        
+        navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: list}} as never)
+      }}
       style={styles.container}>
       <ImageBackground borderRadius={14} source={{uri: mainImageEvent}} style={styles.imageBackground}>
         <LinearGradient
@@ -210,21 +215,22 @@ const MyEventsCard: FC<MyEventsCard> = props => {
           </View>
         </LinearGradient>
       </ImageBackground>
-      <ModalEventRemindes
-        eventStarting={eventStarting}
-        activeState={activeState}
-        setEventStarting={setEventStarting}
-        time={estimeTime}
-        image={mainImageEvent}
-        placeName={placeName}
-        joinedPeopleCount={invitingPeople?.length}
-        date={eventDate}
-        girlInvitation={numberOfGirlsInvited}
-        // handleAcceptInvitation={handleAcceptInvitation}
-        // handleGetEventsIJoining={handleGetEventsIJoining}
-        allPeople={allPeople}
-      />
     </TouchableOpacity>
+    {/* <ModalEventRemindes
+      eventStarting={eventStarting}
+      activeState={activeState}
+      setEventStarting={setEventStarting}
+      time={estimeTime}
+      image={mainImageEvent}
+      placeName={placeName}
+      joinedPeopleCount={invitingPeople?.length}
+      date={eventDate}
+      girlInvitation={numberOfGirlsInvited}
+      // handleAcceptInvitation={handleAcceptInvitation}
+      // handleGetEventsIJoining={handleGetEventsIJoining}
+      allPeople={allPeople}
+  /> */}
+    </>
   );
 };
 
