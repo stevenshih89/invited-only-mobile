@@ -25,7 +25,6 @@ const ModalCancelAttending: FC<{
   eventInfo: {id: number; image: string; textCityName: string; numberOfGirlsInvited: number; date: string};
   userInfo: any;
 }> = ({isVisible, onClose, eventInfo, handleCancelAttending, userInfo}) => {
-  console.log('eventInfo modal cancel', eventInfo, userInfo);
 
   const navigation = useNavigation();
   return (

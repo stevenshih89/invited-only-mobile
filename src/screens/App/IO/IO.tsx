@@ -979,7 +979,7 @@ const IO: FC = (): JSX.Element => {
     );
   }  
 
-  if (myEvents.length < 1 && userInfo.accountConfirmed && userInfo?.accountPremium) {
+  if (myEvents.length < 1 && userInfo.accountConfirmed) {
     return (
       <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
         <View style={{height: 370}}>

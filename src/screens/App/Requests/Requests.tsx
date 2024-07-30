@@ -161,7 +161,7 @@ const Requests: FC = (): ReactElement => {
         />
       ) : (
         <>
-          {userInfo?.accountPremium && <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
+          {userInfo?.accountConfirmed && <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
           <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi400, fontSize: RFValue(30, 812), marginBottom: 18}}>
             You don't have any events
           </Text>

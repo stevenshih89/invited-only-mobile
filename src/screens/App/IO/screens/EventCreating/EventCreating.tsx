@@ -274,16 +274,21 @@ const EventCreating: FC = () => {
           photos: photos
         })
         .then(async () => {
-          photos?.map(async (imagePath, index) => {
-            await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
-            await updatePhotosImage(uid, imagesUri).then(() => {
-              showToast('success', 'Go to my events >', 'Event successfully created ');
+          showToast('success', 'Go to my events >', 'Event successfully created ');
               showToast('pending', 'Your event in review.', 'Estimate time review 2h');
               isEditing ? setIsVisibleSaveModal(true) : null;
               setLoading(false);
               navigation.navigate(IOPath as never);
-            });
-          });
+          // photos?.map(async (imagePath, index) => {
+          //   await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
+          //   await updatePhotosImage(uid, imagesUri).then(() => {
+          //     showToast('success', 'Go to my events >', 'Event successfully created ');
+          //     showToast('pending', 'Your event in review.', 'Estimate time review 2h');
+          //     isEditing ? setIsVisibleSaveModal(true) : null;
+          //     setLoading(false);
+          //     navigation.navigate(IOPath as never);
+          //   });
+          // });
           await firestore()
             .collection('userInfo')
             .doc(user?.uid)
