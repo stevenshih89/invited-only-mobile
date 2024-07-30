@@ -15,6 +15,7 @@ import {
   joinEventsPath,
   notificationsPath,
   notificationsStackPath,
+  paymentPath,
   settingsPath,
 } from 'constants/pathLocations';
 import {ANY_DAY, screenHeight, THIS_WEEKEND, TODAY, ALL, THIS_MONTH} from 'constants/common.ts';
@@ -46,6 +47,7 @@ import EventBG from 'assets/images/app/card-event-bg.png';
 import {EventContext} from 'contexts/EventContext';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {useMyEvents} from '../../store/myEvents';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -88,11 +90,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const {myEvents, setActiveEvent, activeEvent} = useContext(EventContext);
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
-  const goToCreateEvent = (): void => {
+  const goToCreateEvent = async (): void => {
+    await fetchUserInfo()
     if (!userHost?.accountConfirmed) {
       return;
     }
-    navigation.navigate(eventCreatingStackPath);
+    if(userInfo?.accountPremium) {
+      navigation.navigate(eventCreatingStackPath);
+    } else navigation.navigate(paymentPath as never);
   };
 
   const fetchUserInfo = async () => {
@@ -111,9 +116,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     }
   };
 
-  useEffect(() => {
+  useFocusEffect(() => {
     fetchUserInfo();
-  }, []);
+  });
 
   const DATAEventsJoining = [
     {
@@ -701,3 +706,4 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 };
 
 export default Header;
+

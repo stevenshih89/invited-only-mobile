@@ -1,12 +1,12 @@
 import {StyleSheet} from 'react-native';
-import {lightGray6Color, lightGray9Color, transparentWhite16Color} from 'constants/colors.ts';
+import {black1Color, blackColor, lightGray6Color, lightGray9Color, transparentGray90Color, transparentWhite16Color} from 'constants/colors.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500} from 'constants/fonts.ts';
 
 const useStyles = () => {
   return StyleSheet.create({
     container: {
-      backgroundColor: lightGray6Color,
+      backgroundColor: blackColor,
       paddingHorizontal: 20,
       flex: 1,
     },

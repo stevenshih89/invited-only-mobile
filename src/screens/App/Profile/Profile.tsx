@@ -182,13 +182,13 @@ const Profile: FC = () => {
               <View style={styles.accountTypeWrapper}>
                 <Text style={styles.accountTypeText}>{userInfo?.accountType}</Text>
               </View>
-              <LinearGradient
+              {userInfo?.accountPremium && <LinearGradient
                 colors={['#977B4A', '#E5D291', '#A28453']}
                 style={styles.accountTypeWrapperPremium}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0}}>
                 {true && <Text style={styles.accountTypePremium}>Premium</Text>}
-              </LinearGradient>
+              </LinearGradient>}
             </View>
           </View>
           <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} />

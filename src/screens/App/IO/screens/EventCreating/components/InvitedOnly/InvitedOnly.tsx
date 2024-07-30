@@ -222,10 +222,10 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
       <Button
       disabled={!female && !male}
         onPress={() => {
-          isEditing ? setIsVisibleSaveModal(true) : setTabState('eventDetails')
+          setTabState('eventDetails')
           setCurrentCreateStap(2);
         }}
-        title={isEditing ? 'Save changes' : 'Continue'}
+        title={'Continue'}
       />
     </View>
     </ScrollView>

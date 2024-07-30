@@ -25,14 +25,17 @@ import auth from '@react-native-firebase/auth';
 import Geolocation from '@react-native-community/geolocation';
 import firestore from '@react-native-firebase/firestore';
 import chat from 'screens/App/Chat/Chat.tsx';
+import ModalConfirmPhone from './ModalConfirmPhone';
 
 const AccountSetting: FC = ({navigation, route}: any) => {
   const locationState = route?.params?.params?.locationState;
   const [isChechked, setIsChechked] = useState(false);
   const [isConnectedInstagram, setIsConnectedInstagram] = useState(false);
   const [isVisibleDeleteAccountModal, setIsVisibleDeleteAccountModal] = useState(false);
+  const [isVisibleConfirmPhoneModal, setIsVisibleConfirmPhoneModal] = useState(false);
   const [location, setLocation] = useState<boolean>(locationState);
   const [loading, setLoading] = useState<boolean>(true);
+  const [verificationId, setVerificationId] = useState('');
 
   const user = useUser((i: any) => i?.user);
 
@@ -93,6 +96,17 @@ const AccountSetting: FC = ({navigation, route}: any) => {
     }
     setLoading(false);
   }, [location, isChechked]);
+
+  const sendVerificationCode = async () => {
+    const phoneNumber = auth().currentUser?.phoneNumber;
+    if (!phoneNumber) return;
+    try {
+      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);      
+      setVerificationId(confirmation?.verificationId);
+    } catch (error) {
+      console.error('Failed to send verification code:', error);
+    }
+  };
 
   return (
     <>
@@ -239,7 +253,8 @@ const AccountSetting: FC = ({navigation, route}: any) => {
           </TouchableOpacity>
         </ScrollView>
       </View>
-      <ModalDeleteMyAccount isVisible={isVisibleDeleteAccountModal} onClose={() => setIsVisibleDeleteAccountModal(false)} />
+      <ModalDeleteMyAccount isVisible={isVisibleDeleteAccountModal} onClose={() => setIsVisibleDeleteAccountModal(false)} setIsVisibleConfirmPhoneModal={setIsVisibleConfirmPhoneModal} sendVerificationCode={sendVerificationCode}/>
+      <ModalConfirmPhone isVisible={isVisibleConfirmPhoneModal} onClose={() => setIsVisibleConfirmPhoneModal(false)} verificationId={verificationId}/>
     </>
   );
 };

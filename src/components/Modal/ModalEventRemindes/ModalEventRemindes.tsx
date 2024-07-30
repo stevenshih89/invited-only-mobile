@@ -55,6 +55,9 @@ interface ModalEventRemindeProps {
   girlInvitation: number | string;
   handleAcceptInvitation?: any;
   handleGetEventsIJoining?: any;
+  currentEvent: any,
+  hoursUntilEvent: number,
+  countMyEvent: any
 }
 
 const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
@@ -82,13 +85,16 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
   eventStarting = null,
   time = '',
   image = '',
+  currentEvent,
+  hoursUntilEvent,
+  countMyEvent
 }) => {
   const [chahModal, setChatModal] = useState<boolean>(false);
   const [onTheWayState, setOnTheWayState] = useState<boolean>(false);
   const [nameUser, setNameUser] = useState('')
   const [ageUser, setAgeUser] = useState('')
   const [photoUser, setPhotoUser] = useState('')
-  const styles = useStyles();       
+  const styles = useStyles();         
 
   const getUserInfo = async () => {
     try {
@@ -243,8 +249,8 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
         console.log('error update nameNewViewed', error);
       }
     }
-  }
-
+  }  
+  
   if(eventStarting && !userDelete) {
     return (
       <Modal
@@ -255,16 +261,18 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
         testID={'bottom-half-modal-open-button'}
         onBackdropPress={() => {
           setEventStarting(false)
+          countMyEvent.current = countMyEvent.current + 1
         }}
         onSwipeComplete={() => {
           setEventStarting(false)
+          countMyEvent.current = countMyEvent.current + 1
         }}
         style={styles.modalStyles}
         swipeDirection={['down']}>
         <View style={styles.wrapper}>
           <View style={styles.whiteLine} />
           <View>
-            <ImageBackground resizeMode="cover" source={{uri: image}} style={[styles.eventImage, {justifyContent: !uid?  'flex-end': 'space-between'}]}>
+            <ImageBackground resizeMode="cover" source={{uri: currentEvent.photos[0].image}} style={[styles.eventImage, {justifyContent: !uid?  'flex-end': 'space-between'}]}>
               {uid&& <TouchableOpacity style={{
                 backgroundColor: transparent60Color, 
                 alignItems: 'center', 
@@ -307,40 +315,43 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               </TouchableOpacity>}
               <View>
               <View style={{marginBottom: 12, flexDirection: 'row', alignItems: 'center'}}>
-                {activeState && <View style={{backgroundColor: lightGreenColor, borderRadius: 5, paddingVertical: 4, paddingHorizontal: 6}}>
+                {currentEvent.activeState && <View style={{backgroundColor: lightGreenColor, borderRadius: 5, paddingVertical: 4, paddingHorizontal: 6}}>
                   <Text style={{fontSize: RFValue(12, 812), fontFamily: Satoshi500, color: whiteColor}}>Active</Text>
                 </View>}
-                <Text style={{fontSize: RFValue(20, 812), marginHorizontal: 8, fontWeight:'bold', fontFamily: Satoshi400, color: whiteColor}}>{placeName}</Text>
+                <Text style={{fontSize: RFValue(20, 812), marginHorizontal: 8, fontWeight:'bold', fontFamily: Satoshi400, color: whiteColor}}>{currentEvent?.placeName}</Text>
                 <CheckStarIcon />
               </View>
             <View style={styles.main}>
             <View style={styles.fdr}>
               <UserIcon />
-              <Text style={styles.textGirlInvitation}>{girlInvitation} x Girl invitation </Text>
+              <Text style={styles.textGirlInvitation}>{currentEvent.female} x Girl invitation </Text>
             </View>
             <View style={styles.fdr}>
               <CalendarIcon width={19} height={19} />
-              <Text style={styles.textDate}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
+              <Text style={styles.textDate}>{moment(`${currentEvent.date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
             </View>
             <View style={styles.fdr}>
               <UsersIcon width={19} height={19}/>
-              <Text style={styles.textCity}>{joinedPeopleCount}/{allPeople}</Text>
+              <Text style={styles.textCity}>{joinedPeopleCount}/{currentEvent.female + currentEvent.male}</Text>
             </View>
           </View>
               </View>
             </ImageBackground>
           </View>
           
-          <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : `Event starting in ${time}h!`}</Text>
+          {hoursUntilEvent === 24 && <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : `Event starting in 24h!`}</Text>}
+          {hoursUntilEvent === 12 && <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : `Event starting in 12h!`}</Text>}
+          {hoursUntilEvent === 2 && <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : `Event starting in 2h!`}</Text>}
           <Button
             onPress={async () => {
               if (time === '0') {
                 setEventStarting(false);
               } else {
-                await handleAcceptInvitation();
-                await handleGetEventsIJoining();
-                showToast('success', 'Go to my events', `You confirmed ${placeName} event`);
+                // await handleAcceptInvitation();
+                // await handleGetEventsIJoining();
+                // showToast('success', 'Go to my events', `You confirmed ${currentEvent?.placeName} event`);
                 setEventStarting(false);
+                countMyEvent.current = countMyEvent.current + 1
                 // setModalVisible(false);
               }
             }}

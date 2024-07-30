@@ -140,7 +140,7 @@ const Requests: FC = (): ReactElement => {
 
   return (
     <View style={styles.container}>
-      {!!myIventList?.length? (
+      {!!myIventList?.length || userInfo?.accountType != 'host'?(
         <FlatList
           // @ts-ignore
           data={isHost ? list?.requestsList : list}
@@ -160,7 +160,8 @@ const Requests: FC = (): ReactElement => {
           }
         />
       ) : (
-        <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
+        <>
+          {userInfo?.accountConfirmed && <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
           <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi400, fontSize: RFValue(30, 812), marginBottom: 18}}>
             You don't have any events
           </Text>
@@ -168,7 +169,8 @@ const Requests: FC = (): ReactElement => {
             You don't have any active event.
           </Text>
           <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
-        </View>
+        </View>}
+        </>
       )}
       {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium}/>}
     </View>

@@ -253,12 +253,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     <Text style={styles.textInfoTags}>From {homeAddress}</Text>
                   </View>
                 )}
-                {isShowLocation && (
+                {/* {isShowLocation && (
                   <View style={[styles.infoTags, {marginTop: 5}]}>
                     <Location />
                     <Text style={styles.textInfoTags}>2 kilometers away</Text>
                   </View>
-                )}
+                )} */}
               </View>
               {isShowCardButtons && (
                 <View style={styles.wrapperRightButton}>

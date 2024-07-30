@@ -2,15 +2,29 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging, {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
 import notifee, {EventType} from '@notifee/react-native';
 import {PERMISSIONS, request} from 'react-native-permissions';
+import auth from "@react-native-firebase/auth"
+import firestore from '@react-native-firebase/firestore';
 
 export const fcmHelper = async () => {
+
+  const userUid = auth().currentUser?.uid
+  
   try {
     const oldToken = await messaging().getToken();
     await messaging().deleteToken(String('422527028413'), '*');
     const newToken = await messaging().getToken();
+    
     if (oldToken === newToken) {
       console.log('not refresh');
     } else {
+      try {
+        await firestore().collection('userInfo').doc(userUid).update({
+          fcmToken: newToken
+        })
+      } catch (error) {
+        console.log('error update token', error);
+        
+      }
       await AsyncStorage.setItem('fcmToken', JSON.stringify(newToken));
     }
     // console.log('frc token', newToken);
@@ -88,7 +102,7 @@ export const checkApplicationNotificationPermission = async () => {
 
 //method was called to listener events from firebase for notification triger
 export function registerListenerWithFCM() {
-  const unsubscribe = messaging().onMessage(async remoteMessage => {
+  const unsubscribe = messaging().onMessage(async remoteMessage => {    
     console.log('onMessage Received : ', JSON.stringify(remoteMessage));
     if (remoteMessage?.notification?.title && remoteMessage?.notification?.body) {
       onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data);

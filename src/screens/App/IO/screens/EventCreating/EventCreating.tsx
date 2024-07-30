@@ -20,6 +20,7 @@ import uuid from 'react-native-uuid';
 import { useUser } from 'src/store/userStore';
 import {uploadImage} from 'helpers/uploadImage.ts';
 import { IOPath } from 'constants/pathLocations';
+import {CLOUD_MESSAGING_SERVER_KEY} from '@env'
 
 const eventTypes = [
   {id: 0, label: 'Custom'},
@@ -66,15 +67,15 @@ const EventCreating: FC = () => {
   const [photos, setImages] = useState<{image: null | string; id: number}[]>([
     {
       id: 0,
-      image: null,
+      image: 'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/placeholders%2FFrame%201321315887.jpg?alt=media&token=dd4f9b58-f90b-415e-85f8-52de10eb0e68',
     },
     {
       id: 1,
-      image: null,
+      image: 'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/placeholders%2FFrame%201321315887.jpg?alt=media&token=dd4f9b58-f90b-415e-85f8-52de10eb0e68',
     },
     {
       id: 2,
-      image: null,
+      image: 'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/placeholders%2FFrame%201321315887.jpg?alt=media&token=dd4f9b58-f90b-415e-85f8-52de10eb0e68',
     },
     {
       id: 3,
@@ -85,6 +86,9 @@ const EventCreating: FC = () => {
       image: null,
     },
   ]);
+
+  console.log('photos', photos);
+  
 
   const navigation = useAppNavigation();
 
@@ -97,6 +101,9 @@ const EventCreating: FC = () => {
   const isEditing = (route?.params as { isEditing?: boolean })?.isEditing;
   const isEditingItem = (route?.params as { isEditingItems?: any })?.isEditingItems;
 
+  console.log('isEditingItem', isEditingItem);
+  
+  
   useEffect(() => {
     if (isEditing) {
       navigation.setOptions({
@@ -125,6 +132,45 @@ const EventCreating: FC = () => {
     prevMaleFriend: isEditingItem?.maleFriend,
   };
 
+  const getFcmTokens = async (usersList: []) => {
+    let tokens = []
+    usersList.forEach(item => tokens.push(item?.fcmToken));    
+    return tokens
+  }
+
+  // const getUsersList = async () => {
+  //   const eventInfoDoc = await firestore().collection('Events').doc(isEditingItem?.usersList).get()
+  //   const usersList = eventInfoDoc.data()?.usersList;
+  //   return usersList
+  // }
+
+  const sendNotification = async (title: string, body: string) => {
+    // const usersList = await getUsersList()
+    const tokens = await getFcmTokens(isEditingItem?.usersList)
+    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+      },
+      body: JSON.stringify({
+        registration_ids: tokens,
+        notification: {
+          title: title,
+          body: body
+        }
+      })
+    });
+  
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('error sending notification:', error);
+    } else {
+      const data = await response.json();
+      console.log('notification sent successfully:', data);
+    }
+  };
+
   const handleSaveChanges = async () => {
     try {
       const id = isEditingItem?.id;
@@ -133,9 +179,19 @@ const EventCreating: FC = () => {
         male,
         femaleFriend,
         maleFriend,
+        eventTypes,
+        placeName,
+        name,
+        description,
+        date,
+        hour,
+        address,
+        meetingSpot,
+        photos
       });
       navigation?.goBack();
       showToast('success', '', 'Event successfully changes!');
+      sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details')
     } catch (e) {
       console.log(e);
     }
@@ -186,10 +242,10 @@ const EventCreating: FC = () => {
         Alert.alert('Please add the main picture');
       }
 
-      let imagesUri: any[] = [];
+      // let imagesUri: any[] = [];
 
-      console.log('imagesUri', imagesUri);
-      console.log('images', photos);
+      // console.log('imagesUri', imagesUri);
+      // console.log('images', photos);
       // @ts-ignore
       await firestore()
         .collection('Events')
@@ -215,18 +271,24 @@ const EventCreating: FC = () => {
           eventReviewed: false,
           hostImage: userHost?.photos[0]?.image,
           hostName: userHost?.name,
+          photos: photos
         })
         .then(async () => {
-          photos?.map(async (imagePath, index) => {
-            await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
-            await updatePhotosImage(uid, imagesUri).then(() => {
-              showToast('success', 'Go to my events >', 'Event successfully created ');
+          showToast('success', 'Go to my events >', 'Event successfully created ');
               showToast('pending', 'Your event in review.', 'Estimate time review 2h');
               isEditing ? setIsVisibleSaveModal(true) : null;
               setLoading(false);
               navigation.navigate(IOPath as never);
-            });
-          });
+          // photos?.map(async (imagePath, index) => {
+          //   await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
+          //   await updatePhotosImage(uid, imagesUri).then(() => {
+          //     showToast('success', 'Go to my events >', 'Event successfully created ');
+          //     showToast('pending', 'Your event in review.', 'Estimate time review 2h');
+          //     isEditing ? setIsVisibleSaveModal(true) : null;
+          //     setLoading(false);
+          //     navigation.navigate(IOPath as never);
+          //   });
+          // });
           await firestore()
             .collection('userInfo')
             .doc(user?.uid)
@@ -337,15 +399,23 @@ const EventCreating: FC = () => {
           />
         )}
         {tabState === 'eventPreview' && (
-          <EventPreview 
+          <EventPreview
+            isEditing={isEditing}
+            id={isEditingItem?.id}
+            eventTypes={eventTypes}
+            description={description}
+            hour={hour}
+            address={address}
+            meetingSpot={meetingSpot}
             photos={photos} 
-            date={''} 
-            girls={''} 
-            placeName={''}  
+            date={date} 
+            girls={female} 
+            placeName={placeName}  
             setCurrentCreateStap={setCurrentCreateStap}
             setTabState={setTabState}
             handleCreateEvent={handleCreateEvent}
             name={name}
+            setIsVisibleSaveModal={setIsVisibleSaveModal}
           />
         )}
       </View>

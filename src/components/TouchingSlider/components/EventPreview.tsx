@@ -22,27 +22,51 @@ import Button from 'components/Button/Button';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
+import { showToast } from 'helpers/showToast';
 
 const EventPreview: FC<{
   photos: any;
+  isEditing: boolean | undefined;
+  id: string;
+  eventTypes: {},
+  description: string,
+  hour: string;
+  address: string;
+  meetingSpot: string;
   date: string;
-  girls: string;
+  girls: number;
   placeName: string;
   name: string;
   setCurrentCreateStap: Dispatch<SetStateAction<number>>;
   setTabState: Dispatch<SetStateAction<string>>;
+  setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
   handleCreateEvent: any;
-}> = ({photos, date, girls, placeName, setCurrentCreateStap, setTabState, handleCreateEvent, name}): ReactElement => {
+}> = ({
+  photos, 
+  date, 
+  girls, 
+  placeName, 
+  setCurrentCreateStap, 
+  setTabState, 
+  handleCreateEvent, 
+  name,
+  isEditing,
+  id,
+  eventTypes,
+  description,
+  hour,
+  address,
+  meetingSpot,
+  setIsVisibleSaveModal
+
+}): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
   const [imagesUser, setImagesUser] = useState();
   const [nameUser, setNameUser] = useState('');
   const [userAge, setUserAge] = useState('');
   const [userAccountType, setUserAccountType] = useState('');
-  const numberPhotos = imagesUser?.length;
-
-  console.log('name', name);
-  
+  const numberPhotos = imagesUser?.length;  
 
   function calculateAge(birthDateString: string) {
     const parts = birthDateString.split('.');
@@ -93,6 +117,30 @@ const EventPreview: FC<{
       return setActive(numberPhotos - 1);
     }
     setActive(p => p - 1);
+  };
+
+  const handleSaveChanges = async () => {    
+    // isEditing ? setIsVisibleSaveModal(true) : null;
+    // try {
+    //   await firestore().collection('Events').doc(id).update({
+    //     eventTypes,
+    //     placeName,
+    //     name,
+    //     description,
+    //     date,
+    //     hour,
+    //     address,
+    //     meetingSpot,
+    //     photos
+    //   });
+    //   showToast('success', '', 'Event successfully update ');
+      
+    //           setLoading(false);
+    //           navigation.navigate(IOPath as never);
+
+    // } catch (e) {
+    //   console.log(e);
+    // }
   };
 
   if (userAccountType === 'host') {
@@ -188,7 +236,9 @@ const EventPreview: FC<{
                 <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Back</Text>
               </TouchableOpacity>
             </View>
-            <Button buttonStyle={styles.button} onPress={handleCreateEvent} title={'Create event'} />
+            <Button buttonStyle={styles.button} onPress={() => {
+              isEditing? setIsVisibleSaveModal(true): handleCreateEvent()
+            }} title={isEditing? 'Save changes' : 'Create event'} />
           </View>
         </View>
       </SafeAreaView>
@@ -337,3 +387,7 @@ const useStyles = () => {
 };
 
 export default EventPreview;
+function setIsVisibleSaveModal(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
+
