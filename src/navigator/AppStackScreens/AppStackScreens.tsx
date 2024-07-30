@@ -61,6 +61,7 @@ import SecurePrivacy from 'screens/App/Profile/screens/SecurePrivacy/SecurePriva
 import Payment from 'screens/Auth/Payment/Payment';
 import SuperInvitePay from 'screens/App/IO/screens/SuperInvitePay/SuperInvitePay';
 import VerifySocialProfile from 'screens/Auth/VerifySocialProfile';
+import ConfirmPhone from 'screens/Auth/ConfirmPhone';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();

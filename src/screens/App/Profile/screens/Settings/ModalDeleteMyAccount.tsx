@@ -3,16 +3,25 @@ import Modal from 'react-native-modal';
 import {blackColor, deleteColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import TrashBlack from 'assets/images/icons/trash-black.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
-import type {FC} from 'react';
+import type {Dispatch, FC, SetStateAction} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
 import {useUser} from '../../../../../store/userStore';
 import {calculateAge} from 'helpers/calculateAge.ts';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { confirmPhonePath } from 'constants/pathLocations';
 
-const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
+const ModalDeleteMyAccount: FC<{
+  isVisible: boolean; 
+  onClose: () => void, 
+  setIsVisibleConfirmPhoneModal?: Dispatch<SetStateAction<boolean>>,
+  sendVerificationCode: () => Promise<void>
+}> = ({isVisible, onClose, setIsVisibleConfirmPhoneModal, sendVerificationCode}) => {
   const userHost = useUser((i: any) => i?.user);
+  
+  const navigation = useAppNavigation()
 
   const userAge = calculateAge(userHost?.date);
   const handleDeleteAccount = async () => {
@@ -23,7 +32,16 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void}> = ({is
           await auth().signOut();
         });
     } catch (e) {
-      console.log('e', e);
+      console.log('error delete', e);
+      if(e.code === 'auth/requires-recent-login') {
+        if(setIsVisibleConfirmPhoneModal) {
+          onClose()
+          sendVerificationCode()
+          setTimeout(() => {
+            setIsVisibleConfirmPhoneModal(true)
+          },1000)
+        }
+      }
     }
   };
 
