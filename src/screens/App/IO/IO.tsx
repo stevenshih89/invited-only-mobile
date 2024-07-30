@@ -7,7 +7,7 @@ import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
-import { CLOUD_MESSAGING_SERVER_KEY } from '@env';
+import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
@@ -52,7 +52,7 @@ const IO: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
-  const [events, setEvents] = useState<any[]>([]);  
+  const [events, setEvents] = useState<any[]>([]);
   const [myEvents, setMyEventsList] = useState([]);
   const [nameUser, setNameUser] = useState<string>('');
   const [uidScamUser, setUidScamUser] = useState<string>('');
@@ -61,17 +61,17 @@ const IO: FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
-  const [eventsLength, setEventsLength] = useState(0) 
-  const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1); 
-  const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState()  
-  
+  const [eventsLength, setEventsLength] = useState(0);
+  const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
+  const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState();
+
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
   const {activeEventDate} = useContext(EventsDate);
 
   const userHost = useUser((i: any) => i?.user);
 
-  let currentDate = new Date();  
+  let currentDate = new Date();
 
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
@@ -96,7 +96,7 @@ const IO: FC = (): JSX.Element => {
 
   const handleCloseMatch = (): void => {
     setIsVisibleMatch(false);
-    showToast('inviteMatch', 'Say, Hi! 👋',  'New invite match!', { ownerPhoto: ownerEventUserPhoto});
+    showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {ownerPhoto: ownerEventUserPhoto});
   };
 
   const getWeekNumber = date => {
@@ -211,28 +211,27 @@ const IO: FC = (): JSX.Element => {
 
   const getFcmTokenFromUser = async (uid: string) => {
     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-    return userInfoDoc.data()?.fcmToken
-  }
+    return userInfoDoc.data()?.fcmToken;
+  };
 
   const sendNotification = async (forUserUid: string, title: string, body: string) => {
+    const token = await getFcmTokenFromUser(forUserUid);
 
-    const token = await getFcmTokenFromUser(forUserUid)
-    
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+        Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
       },
       body: JSON.stringify({
         to: token,
         notification: {
           title: title,
-          body: body
-        }
-      })
+          body: body,
+        },
+      }),
     });
-  
+
     if (!response.ok) {
       const error = await response.json();
       console.error('error sending notification:', error);
@@ -240,23 +239,22 @@ const IO: FC = (): JSX.Element => {
       const data = await response.json();
       console.log('successfully:', data);
     }
-  }
+  };
 
-  const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {    
-    
+  const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {
     try {
-      const guest = await firestore().collection('userInfo').doc(forUserUid).get();      
+      const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
       const currentUid = auth().currentUser?.uid;
 
-      const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;      
+      const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
       const host = userHost?.accountType === 'host';
 
       const userInvited = {
         gender: host ? guest.data()?.gender : userHost?.gender,
         name: host ? guest.data()?.name : userHost?.name,
-        status: 'invited',
+        status: 'liked',
         superInvite: false,
         uid: host ? guest.data()?.uid : userHost?.uid,
         userPhoto: host ? guest.data()?.photos[0]?.image : userHost?.photos[0]?.image,
@@ -269,62 +267,53 @@ const IO: FC = (): JSX.Element => {
       usersListCheck !== undefined && updateUsersList?.push(...usersListCheck);
 
       if (userHost?.accountType === 'host') {
-        
         await firestore().collection('Events').doc(activeEventId).update({
           usersList: updateUsersList,
         });
 
         await sendNotification(forUserUid, 'New invite request', `${userInfo.name} wants to invite you!`);
 
-        const getUserInRequestsList = (await firestore().collection('Events').doc(activeEventId).get()).data()?.requestsList;        
-
+        const getUserInRequestsList = (await firestore().collection('Events').doc(activeEventId).get()).data()?.requestsList;
         const userInRequestsList = getUserInRequestsList.find(item => item.uid === forUserUid);
-        
-        if(userInRequestsList) {
-          const photos = guest.data().photos
-          const getMainPhoto = photos.filter(item => item.id === 0)
-          setOwnerEventUserPhoto(getMainPhoto[0].image)
-          setIsVisibleMatch(true)
-        }
 
-      } else {        
+        if (userInRequestsList) {
+          const photos = guest.data().photos;
+          const getMainPhoto = photos.filter(item => item.id === 0);
+          setOwnerEventUserPhoto(getMainPhoto[0].image);
+          setIsVisibleMatch(true);
+        }
+      } else {
         const updateRequestsList: any = [...requestsList, userInvited];
 
-        await firestore()
-          .collection('Events')
-          .doc(activeEventId)
-          .update({
-            // usersList: updateUsersList ? updateUsersList : usersList,
-            requestsList: updateRequestsList,
-          });
+        await firestore().collection('Events').doc(activeEventId).update({
+          // usersList: updateUsersList ? updateUsersList : usersList,
+          requestsList: updateRequestsList,
+        });
         await sendNotification(forUserUid, 'New join request', `${userInfo?.name} wants to join you!`);
+
         const userInList = usersList.find(item => item.uid === currentUid);
-        
-        if(userInList) {
-          const photos = guest.data().photos
-          const getMainPhoto = photos.filter(item => item.id === 0)
-          setOwnerEventUserPhoto(getMainPhoto[0].image)
-          setIsVisibleMatch(true)
+
+        if (userInList) {
+          const photos = guest.data().photos;
+          const getMainPhoto = photos.filter(item => item.id === 0);
+          setOwnerEventUserPhoto(getMainPhoto[0].image);
+          setIsVisibleMatch(true);
         }
       }
       const ev = events?.filter(i => i?.info?.uid !== forUserUid);
-
     } catch (error) {
       console.log('eror invite', error);
     }
   };
 
   const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {
-    
-    if (type === 'accept') { 
-           
+    if (type === 'accept') {
       const item = events?.filter(j => {
-        
-       return j?.info?.uid === uid
+        return j?.info?.uid === uid;
       });
-      
+
       const filter: any[] = events?.filter(i => i?.info?.uid !== uid);
-      
+
       await onInvite(item[0]?.info?.uid, item[0]?.info?.id, item[0]?.info?.requestsList, item[0]?.info?.usersList);
       setEvents([...filter]);
     } else {
@@ -673,7 +662,7 @@ const IO: FC = (): JSX.Element => {
     usersList
       ?.filter(i => i?._data?.uid !== userHost?.uid)
       ?.map((item: any, index: number): void => {
-        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;        
+        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;
         setNameUser(name);
         const girlPhotos = item?._data?.photos?.map((image: any): void => image?.image);
         const interests = item?._data?.interests?.map((i: any): void => i?.title);
@@ -898,7 +887,7 @@ const IO: FC = (): JSX.Element => {
 
         setTimeout(() => {
           setEvents([...data]);
-        setEventsLength(data.length)
+          setEventsLength(data.length);
         }, 3000);
       });
   };
@@ -977,7 +966,7 @@ const IO: FC = (): JSX.Element => {
     return (
       <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo} />
     );
-  }  
+  }
 
   if (myEvents.length < 1 && userInfo.accountConfirmed) {
     return (
@@ -1016,7 +1005,7 @@ const IO: FC = (): JSX.Element => {
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
-      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
+        {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
         <View style={styles.container}>
           {
             events?.map((item, index) => {
