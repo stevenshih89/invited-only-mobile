@@ -2,27 +2,70 @@ import {ImageBackground, Text, View} from 'react-native';
 import Modal from 'react-native-modal';
 import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import TrashRed from 'assets/images/icons/trash-red.svg';
-import {FC} from 'react';
+import {FC, useEffect} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {CLOUD_MESSAGING_SERVER_KEY} from '@env'
 
-const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined}> = ({
+const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined; nameEvent: string}> = ({
   id,
   isVisible,
   onClose,
   image,
+  nameEvent
 }) => {
   const navigation = useAppNavigation();
+
+  const getFcmTokens = async (usersList: []) => {
+    let tokens = []
+    usersList.forEach(item => tokens.push(item?.fcmToken));    
+    return tokens
+  }
+
+  const getUsersList = async () => {
+    const eventInfoDoc = await firestore().collection('Events').doc(id).get()
+    const usersList = eventInfoDoc.data()?.usersList;
+    return usersList
+  }
+
+  const sendNotification = async (title: string, body: string) => {
+    const usersList = await getUsersList()
+    const tokens = await getFcmTokens(usersList)
+    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+      },
+      body: JSON.stringify({
+        registration_ids: tokens,
+        notification: {
+          title: title,
+          body: body
+        }
+      })
+    });
+  
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('error sending notification:', error);
+    } else {
+      const data = await response.json();
+      console.log('notification sent successfully:', data);
+    }
+  };
+
   const handleCancelEvent = async () => {
     try {
       await firestore().collection('Events').doc(id).delete();
       showToast('success', '', 'Event successfully deleted!');
       onClose();
       navigation?.goBack();
+      sendNotification(`${nameEvent} has been cancelled`, 'Click here to see details')
     } catch (e) {
       showToast('cancel', '', 'Error!');
       console.log(e);

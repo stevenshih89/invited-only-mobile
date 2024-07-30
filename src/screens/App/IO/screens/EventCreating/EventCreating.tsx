@@ -20,6 +20,7 @@ import uuid from 'react-native-uuid';
 import { useUser } from 'src/store/userStore';
 import {uploadImage} from 'helpers/uploadImage.ts';
 import { IOPath } from 'constants/pathLocations';
+import {CLOUD_MESSAGING_SERVER_KEY} from '@env'
 
 const eventTypes = [
   {id: 0, label: 'Custom'},
@@ -99,6 +100,9 @@ const EventCreating: FC = () => {
 
   const isEditing = (route?.params as { isEditing?: boolean })?.isEditing;
   const isEditingItem = (route?.params as { isEditingItems?: any })?.isEditingItems;
+
+  console.log('isEditingItem', isEditingItem);
+  
   
   useEffect(() => {
     if (isEditing) {
@@ -128,6 +132,45 @@ const EventCreating: FC = () => {
     prevMaleFriend: isEditingItem?.maleFriend,
   };
 
+  const getFcmTokens = async (usersList: []) => {
+    let tokens = []
+    usersList.forEach(item => tokens.push(item?.fcmToken));    
+    return tokens
+  }
+
+  // const getUsersList = async () => {
+  //   const eventInfoDoc = await firestore().collection('Events').doc(isEditingItem?.usersList).get()
+  //   const usersList = eventInfoDoc.data()?.usersList;
+  //   return usersList
+  // }
+
+  const sendNotification = async (title: string, body: string) => {
+    // const usersList = await getUsersList()
+    const tokens = await getFcmTokens(isEditingItem?.usersList)
+    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+      },
+      body: JSON.stringify({
+        registration_ids: tokens,
+        notification: {
+          title: title,
+          body: body
+        }
+      })
+    });
+  
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('error sending notification:', error);
+    } else {
+      const data = await response.json();
+      console.log('notification sent successfully:', data);
+    }
+  };
+
   const handleSaveChanges = async () => {
     try {
       const id = isEditingItem?.id;
@@ -148,6 +191,7 @@ const EventCreating: FC = () => {
       });
       navigation?.goBack();
       showToast('success', '', 'Event successfully changes!');
+      sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details')
     } catch (e) {
       console.log(e);
     }

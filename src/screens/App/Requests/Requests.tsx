@@ -140,7 +140,7 @@ const Requests: FC = (): ReactElement => {
 
   return (
     <View style={styles.container}>
-      {!!myIventList?.length? (
+      {!!myIventList?.length || userInfo?.accountType != 'host'?(
         <FlatList
           // @ts-ignore
           data={isHost ? list?.requestsList : list}

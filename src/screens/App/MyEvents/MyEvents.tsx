@@ -214,7 +214,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       getMyEvents();
       handleGetEventsIJoining();
     }, [setIsVisibleCancelAttendingModal, isVisibleCancelAttendingModal]),
-  );
+  ); 
 
   return (
     <>

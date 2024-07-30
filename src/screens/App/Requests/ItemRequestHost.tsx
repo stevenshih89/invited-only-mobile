@@ -16,12 +16,15 @@ import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
-import {useEffect, useState} from 'react';
+import {useEffect, useId, useState} from 'react';
+import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
+import auth from '@react-native-firebase/auth'
 
 const ItemRequestHost = ({item, list}: any) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState({accountType: ''});
+  const [currentUserName, setCurrentUserName] = useState()
 
   const OverlayRight = () => {
     return (
@@ -60,6 +63,10 @@ const ItemRequestHost = ({item, list}: any) => {
   };
 
   const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
+
+    console.log('item', item);
+    
+
     const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
     const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
 
@@ -85,6 +92,7 @@ const ItemRequestHost = ({item, list}: any) => {
         requestsList: updateRequestsList,
       });
       showToast('success', '', 'The request has been confirmed');
+      sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`)
     } catch (e) {
       console.log(e);
       showToast('cancel', '', "There's been an error");
@@ -110,12 +118,15 @@ const ItemRequestHost = ({item, list}: any) => {
   };
 
   const fetchItemUserInfo = async () => {
+    const currentUserUid = auth()?.currentUser?.uid;
     if (item.uid) {
       try {
         const userInfoDoc = await firestore().collection('userInfo').doc(item.uid).get();
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
+        const currentUserInfo = await firestore().collection('userInfo').doc(currentUserUid).get();
+        setCurrentUserName(currentUserInfo.data()?.name)
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
@@ -134,6 +145,39 @@ const ItemRequestHost = ({item, list}: any) => {
       },
     });
   };
+
+  const getFcmTokenFromUser = async (uid: string) => {
+    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+    return userInfoDoc.data()?.fcmToken
+  }
+
+  const sendNotification = async (forUserUid: string, title: string, body: string) => {
+    
+    const token = await getFcmTokenFromUser(forUserUid)
+    
+    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+      },
+      body: JSON.stringify({
+        to: token,
+        notification: {
+          title: title,
+          body: body
+        }
+      })
+    });
+  
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('error sending notification:', error);
+    } else {
+      const data = await response.json();
+      console.log('successfully:', data);
+    }
+  }
 
   return (
     <View style={styles.itemContainer}>

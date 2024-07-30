@@ -34,6 +34,7 @@ import { Satoshi500 } from 'constants/fonts.ts';
 import { Switch } from '@ant-design/react-native';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import InstagramSlider from 'components/InstagramSlider/InstagramSlider.tsx';
+import {CLOUD_MESSAGING_SERVER_KEY} from '@env'
 
 interface EventPreviewProps {
   // isEditing?: boolean;
@@ -212,11 +213,9 @@ const EventPreview: FC<EventPreviewProps> = ({
 
     return true;
   };
+
   const handleSaveChanges = async () => {
     try {
-      console.log('photos', photos);
-      console.log('compareArrays', compareArrays(photos, photos));
-
       await firestore().collection('Events').doc(id).update({
         eventTypes,
         placeName,

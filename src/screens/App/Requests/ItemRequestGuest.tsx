@@ -17,6 +17,7 @@ import {ActivityIndicator} from '@ant-design/react-native';
 import {showToast} from 'helpers/showToast.ts';
 import {useUser} from '../../../store/userStore';
 import LinearGradient from 'react-native-linear-gradient';
+import {CLOUD_MESSAGING_SERVER_KEY} from '@env'
 
 const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
   const [hostInfo, setHostInfo] = useState([]);
@@ -24,13 +25,16 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
   const [heightAnim] = useState(new Animated.Value(218));
   const {photos, uid, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name} = list;
 
+
+  
+
   const styles = useStyles();
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
 
   if (item[0]?.uid !== user?.uid) {
     return;
-  }
+  }  
 
   const goToEventInfo = () => {
     navigation.navigate(commonStackPath, {screen: eventInfoPath, params: {list: list}});
@@ -85,6 +89,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
   };
 
   const handleSwipeGuestCardInvite = async (item: any): Promise<void> => {
+    
     Animated.timing(heightAnim, {
       toValue: 0,
       duration: 300,
@@ -108,6 +113,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
           requestsList: updateRequestsList,
         });
         await showToast('success', '', 'You accept invitation');
+        await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`)
       } catch (e) {
         console.log(e);
         showToast('cancel', '', "There's been an error");
@@ -134,6 +140,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
         requestsList: updateRequestsList,
       });
       await showToast('success', '', 'You reject invitation');
+      await sendNotification(uid, 'Invitation Reject!', `${item?.name} reject your invitation.`)
     } catch (e) {
       console.log(e);
       showToast('cancel', '', "There's been an error");
@@ -143,6 +150,39 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
   useEffect(() => {
     getHostInfo(uid);
   }, []);
+
+  const getFcmTokenFromUser = async (uid: string) => {
+    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+    return userInfoDoc.data()?.fcmToken
+  }
+
+  const sendNotification = async (forUserUid: string, title: string, body: string) => {
+    
+    const token = await getFcmTokenFromUser(forUserUid)
+    
+    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+      },
+      body: JSON.stringify({
+        to: token,
+        notification: {
+          title: title,
+          body: body
+        }
+      })
+    });
+  
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('error sending notification:', error);
+    } else {
+      const data = await response.json();
+      console.log('successfully:', data);
+    }
+  }
 
   return (
     <>

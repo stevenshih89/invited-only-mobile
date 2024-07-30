@@ -185,6 +185,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   );
 
   const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data, activeEvent}: ItemEventsJoiningProps) => {
+    
     const statusColor = handleCheckStatusStyles(status);
     return (
       <View style={styles.itemEventsJoining}>
