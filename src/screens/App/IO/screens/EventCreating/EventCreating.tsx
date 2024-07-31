@@ -133,19 +133,20 @@ const EventCreating: FC = () => {
   };
 
   const getFcmTokens = async (usersList: []) => {
-    let tokens = []
-    usersList.forEach(item => tokens.push(item?.fcmToken));    
-    return tokens
-  }
-
-  // const getUsersList = async () => {
-  //   const eventInfoDoc = await firestore().collection('Events').doc(isEditingItem?.usersList).get()
-  //   const usersList = eventInfoDoc.data()?.usersList;
-  //   return usersList
-  // }
+    let tokens: string[] = [];
+    
+    const promises = usersList.map(async (item) => {
+      const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
+      console.log('userInfo', userInfo);
+      return userInfo.data().fcmToken;
+    });
+  
+    tokens = await Promise.all(promises);
+  
+    return tokens;
+  };
 
   const sendNotification = async (title: string, body: string) => {
-    // const usersList = await getUsersList()
     const tokens = await getFcmTokens(isEditingItem?.usersList)
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
