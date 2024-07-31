@@ -28,11 +28,23 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
   const styles = useStyles();
 
   const handleSendReport = async (typeReport: string): Promise<void> => {
+    const infoUserUidDoc = await firestore().collection('userInfo').doc(uid).get();
+    const infoUserUidSenderDoc = await firestore().collection('userInfo').doc(uidSender).get();
+    const dataUserUid = infoUserUidDoc.data();
+    const dataUserUidSender = infoUserUidSenderDoc.data();
+    console.log('dataUserUid', dataUserUid);
+    
     try {
       await firestore().collection('report').add({
         typeReport: typeReport,
         uid: uid,
         uidSender: uidSender,
+        name: dataUserUid?.name,
+        nameSender: dataUserUidSender?.name,
+        photo: dataUserUid?.photos[0].image,
+        photoSender: dataUserUidSender?.photos[0].image,
+        phone: dataUserUid?.phoneNumber,
+        phoneSender: dataUserUidSender?.phoneNumber,
       });
       showToast('success', '', 'Success send report!');
       setModalReport(false);

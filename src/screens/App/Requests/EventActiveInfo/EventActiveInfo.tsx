@@ -23,7 +23,8 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
   const {list} = route?.params;
-  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name} = list;
+  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name} = list;  
+  
   const [usersListData, setUsersListsData] = useState<any>(usersList);
   const [activeTab, setActiveTab] = useState(GUEST_LIST);
 
@@ -47,7 +48,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
         </TouchableOpacity>
       ),
     });
-  }, []);
+  }, []);  
 
   const renderEventContent = () => {
     switch (activeTab) {
