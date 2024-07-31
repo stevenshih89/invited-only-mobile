@@ -135,12 +135,12 @@ const Requests: FC = (): ReactElement => {
     return <ActivityIndicator style={styles.container} />;
   }
 
-  console.log('requestsForHost', dataForGuest);
+  console.log('myIventList', myIventList);
   
 
   return (
     <View style={styles.container}>
-      {!!myIventList?.length || userInfo?.accountType != 'host'?(
+      {myIventList?.length > 0? (
         <FlatList
           // @ts-ignore
           data={isHost ? list?.requestsList : list}
