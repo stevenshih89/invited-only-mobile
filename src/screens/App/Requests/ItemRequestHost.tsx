@@ -19,6 +19,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useEffect, useId, useState} from 'react';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import auth from '@react-native-firebase/auth'
+import FastImage from 'react-native-fast-image';
 
 const ItemRequestHost = ({item, list}: any) => {
   const styles = useStyles();
@@ -196,7 +197,88 @@ const ItemRequestHost = ({item, list}: any) => {
         translateXRange={[-70, 0, 70]}
         disableTopSwipe={true}
         cardStyle={{height: '100%', width: '100%', borderRadius: 22, zIndex: 999}}>
-        <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: item.userPhoto}}>
+           <FastImage
+              style={styles.imageBackground}
+              source={{
+              uri: item.userPhoto,
+              headers:{ Authorization: 'someAuthToken' },
+              priority: FastImage.priority.normal,
+              }}
+              resizeMode={FastImage.resizeMode.cover}
+            >
+              <View style={[styles.itemContentContainer, {justifyContent: item?.superInvite ? 'space-between' : 'flex-end'}]}>
+            {item?.superInvite && (
+              <View style={{alignItems: 'flex-start'}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    backgroundColor: whiteColor,
+                    borderRadius: 5,
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                    marginBottom: 'auto',
+                    marginTop: 10,
+                    marginHorizontal: 6,
+                  }}>
+                  <FlashFillBlack />
+                  <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>Super invite you</Text>
+                </View>
+              </View>
+            )}
+            <LinearGradient
+              colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.8)']}
+              style={styles.linearGradient}
+              start={{x: 0, y: 0}}
+              end={{x: 0, y: 1}}>
+              {userInfo.accountType && (
+                <View
+                  style={{
+                    marginTop: 'auto',
+                    marginLeft: 8,
+                    marginBottom: 2,
+                    alignSelf: 'flex-start',
+                    paddingHorizontal: 6,
+                    paddingVertical: 1,
+                    backgroundColor: userInfo.accountType === 'host' ? blackColor : whiteColor,
+                    borderRadius: 4,
+                    borderWidth: 1,
+                    borderStyle: 'solid',
+                    borderColor: userInfo.accountType === 'host' ? whiteColor : blackColor,
+                  }}>
+                  <Text
+                    style={{
+                      textTransform: 'capitalize',
+                      fontFamily: Satoshi700,
+                      fontSize: 10,
+                      color: userInfo.accountType === 'host' ? whiteColor : blackColor,
+                    }}>
+                    {userInfo.accountType}
+                  </Text>
+                </View>
+              )}
+              <TouchableOpacity onPress={() => goToProfileView()} activeOpacity={0.7} style={styles.buttonContainer}>
+                <View style={styles.nameContainer}>
+                  <Text style={styles.nameText}>
+                    {item?.name} {`${userInfo?.date ? `, ${calculateAge(userInfo?.date)}` : ''}`}
+                  </Text>
+                  {userInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} style={{marginLeft: 4}} />}
+                </View>
+                {userInfo?.address && (
+                  <View style={styles.locationContainer}>
+                    <View style={styles.locationRow}>
+                      <Home height={12} />
+                      <Text style={styles.locationText}>From {item?.address}</Text>
+                    </View>
+                    <ArrowRight height={12} />
+                  </View>
+                )}
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>
+              
+            </FastImage>
+        {/* <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: item.userPhoto}}>
           <View style={[styles.itemContentContainer, {justifyContent: item?.superInvite ? 'space-between' : 'flex-end'}]}>
             {item?.superInvite && (
               <View style={{alignItems: 'flex-start'}}>
@@ -267,7 +349,7 @@ const ItemRequestHost = ({item, list}: any) => {
               </TouchableOpacity>
             </LinearGradient>
           </View>
-        </ImageBackground>
+        </ImageBackground> */}
       </TinderCard>
     </View>
   );
