@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useContext, useState} from 'react';
+import {FC, useContext, useEffect, useState} from 'react';
 import {Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Button from 'components/Button/Button';
@@ -10,8 +10,8 @@ import {AuthContext} from 'contexts/AuthContext.tsx';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import {useUser} from '../../store/userStore';
-import {black1Color, whiteColor} from 'constants/colors';
-import {Outfit500, Satoshi500} from 'constants/fonts';
+import {black1Color, errorColor, whiteColor} from 'constants/colors';
+import {Outfit500, Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import storage from '@react-native-firebase/storage';
@@ -20,6 +20,7 @@ import Toast from 'react-native-toast-message';
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
+  const [invalidCode, setInvalidCode] = useState(false)
 
   const navigation = useAppNavigation();
   const [loading, setLoading] = useState<boolean>(false);
@@ -205,8 +206,14 @@ const InvitationCode: FC = (): JSX.Element => {
       navigation.navigate(codeVerifiedPath as never);
     } else {
       showToast('warning', 'Сode used or not found');
+      setInvalidCode(true)
     }
   };
+
+  useEffect(() => {
+    setInvalidCode(false)
+  },[code])
+  
 
   return (
     <KeyboardAvoidingView
@@ -255,8 +262,8 @@ const InvitationCode: FC = (): JSX.Element => {
                       marginVertical: 20,
                     }}
                   />
-                  <View style={{width: '100%', marginBottom: 10}}>
-                    <Input value={code} onChange={setCode} containerStyle={{width: '100%'}} placeholder="Enter your invitation code" />
+                  <View style={{width: '100%', marginBottom: 40}}>
+                    <Input value={code} onChange={setCode} errorText='Incorrect invitation code' isError={invalidCode} containerStyle={{width: '100%', height: 60, marginBottom: 10, borderColor: invalidCode? errorColor: '', borderWidth: 1, borderRadius: 10}} placeholder="Enter your invitation code" />
                   </View>
                 </View>
                 <View
