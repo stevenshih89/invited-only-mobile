@@ -117,9 +117,11 @@ const Requests: FC = (): ReactElement => {
 
   const isHost = activeEvent === 'host' ? false : userInfo?.accountType?.toLowerCase() === 'host';
 
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserInfo();
+    }, []),
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -127,16 +129,11 @@ const Requests: FC = (): ReactElement => {
     }, [activeEvent, requestFilter, isHost]),
   );
 
-  const list = isHost ? requestsForHost : dataForGuest;
-  console.log('list', list);
-  
+  const list = isHost ? requestsForHost : dataForGuest;  
 
   if (loading && !list) {
     return <ActivityIndicator style={styles.container} />;
   }
-
-  console.log('myIventList', myIventList);
-  
 
   return (
     <View style={styles.container}>
