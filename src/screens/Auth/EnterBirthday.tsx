@@ -126,7 +126,7 @@ const EnterBirthday: FC = (): JSX.Element => {
                     fontFamily: Satoshi400,
                     fontSize: RFValue(16, 812),
                   }}>
-                  Add your birthday. You can change these later.
+                  Add your birthday. You can change it later.
                 </Text>
               </View>
               <View style={{width: '100%', flexDirection: 'row'}}>

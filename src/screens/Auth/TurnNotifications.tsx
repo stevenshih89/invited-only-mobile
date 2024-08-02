@@ -111,7 +111,7 @@ const TurnNotifications: FC = (): JSX.Element => {
                     fontSize: RFValue(18, 812),
                     opacity: 0.8,
                   }}>
-                  You’ll need to enable your location in order to use invited only.
+                  To use Invited Only, please enable your location and notifications.
                 </Text>
               </View>
               <View style={{width: '100%'}}>
