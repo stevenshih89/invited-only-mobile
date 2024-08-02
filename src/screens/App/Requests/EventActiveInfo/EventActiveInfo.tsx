@@ -23,8 +23,8 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
   const {list} = route?.params;
-  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name} = list;  
-  
+  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name} = list;
+
   const [usersListData, setUsersListsData] = useState<any>(usersList);
   const [activeTab, setActiveTab] = useState(GUEST_LIST);
 
@@ -32,7 +32,8 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const [user, setUser] = useState(null);
   const [modalReport, setModalReport] = useState(false);
 
-  const invitedGuests = usersListData?.filter(i => i?.status === 'invited');
+  const invitedGuests = usersListData?.filter(i => i?.status === 'invite_match');
+  const approvedGuests = usersListData?.filter(i => i?.status === 'approved');
   const acceptedGuests = usersListData?.filter(i => i?.status === 'accepted');
   const rejectedGuests = usersListData?.filter(i => i?.status === 'notAccepted');
 
@@ -48,7 +49,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
         </TouchableOpacity>
       ),
     });
-  }, []);  
+  }, []);
 
   const renderEventContent = () => {
     switch (activeTab) {
@@ -96,7 +97,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   marginTop: 14,
                 }}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Pending (Guest approved)</Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Invite Match</Text>
                   <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
                     <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{invitedGuests.length}</Text>
                   </View>
@@ -104,6 +105,51 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                 <FlatList
                   scrollEnabled={false}
                   data={invitedGuests}
+                  ItemSeparatorComponent={() => <View style={{height: 16}} />}
+                  renderItem={({item}) => (
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <ImageBackground
+                          source={{uri: item?.userPhoto}}
+                          style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
+                          imageStyle={{width: 50, height: 50, borderRadius: 200}}
+                          resizeMode="cover">
+                          <ClockFilledIcon width={20} height={20} />
+                        </ImageBackground>
+
+                        <Text
+                          style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
+                          {item?.name}
+                        </Text>
+                        <FlashIcon width={13} height={13} />
+                      </View>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setModalVisible(true);
+                          setUser(item);
+                        }}>
+                        <MoreIcon />
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                />
+              </View>
+            )}
+            {!!approvedGuests.length && (
+              <View
+                style={{
+                  paddingBottom: 16,
+                  marginTop: 14,
+                }}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Approved</Text>
+                  <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{invitedGuests.length}</Text>
+                  </View>
+                </View>
+                <FlatList
+                  scrollEnabled={false}
+                  data={approvedGuests}
                   ItemSeparatorComponent={() => <View style={{height: 16}} />}
                   renderItem={({item}) => (
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>

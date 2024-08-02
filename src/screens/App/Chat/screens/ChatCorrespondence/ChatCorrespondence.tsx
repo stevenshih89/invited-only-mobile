@@ -18,7 +18,7 @@ import {isIos} from 'constants/common.ts';
 import ModalUserMenu from 'components/Modal/ModalUserMenu/ModalUserMenu.tsx';
 import ModalCancelOrConfirmInvitation from 'components/Modal/ModalCancelOrConfirmInvitation/ModalCancelOrConfirmInvitation.tsx';
 import Button from 'components/Button/Button.tsx';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env'
+import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 
 // Import icons
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -61,8 +61,10 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
   const [name, setName] = useState('');
   const [age, setAge] = useState();
-  const [currentUserName, setCurrentUserName] = useState('')
+  const [currentUserName, setCurrentUserName] = useState('');
   let {image, title, online, activeEvent, id, superInvite, invitedStatus, uid} = route?.params;
+
+  console.warn(activeEvent);
 
   useEffect(() => {
     if (title) {
@@ -79,7 +81,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
           try {
             const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
             const currentUserInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
-            setCurrentUserName(currentUserInfoDoc?.data()?.name)
+            setCurrentUserName(currentUserInfoDoc?.data()?.name);
             if (userInfoDoc.exists) {
               const age = calculateAge(userInfoDoc.data().date);
               setAge(age);
@@ -121,28 +123,27 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
   const getFcmTokenFromUser = async (uid: string) => {
     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-    return userInfoDoc.data()?.fcmToken
-  }
+    return userInfoDoc.data()?.fcmToken;
+  };
 
   const sendNotification = async (forUserUid: string, title: string, body: string) => {
+    const token = await getFcmTokenFromUser(forUserUid);
 
-    const token = await getFcmTokenFromUser(forUserUid)
-    
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+        Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
       },
       body: JSON.stringify({
         to: token,
         notification: {
           title: title,
-          body: body
-        }
-      })
+          body: body,
+        },
+      }),
     });
-  
+
     if (!response.ok) {
       const error = await response.json();
       console.error('error sending notification:', error);
@@ -150,7 +151,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       const data = await response.json();
       console.log('successfully:', data);
     }
-  }
+  };
 
   const handleSendMessage = async () => {
     try {
@@ -174,7 +175,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         .update({
           chats: [...allChats],
         });
-      await sendNotification(uid, 'Invited Only', `${currentUserName} sent you a new message`)
+      await sendNotification(uid, 'Invited Only', `${currentUserName} sent you a new message`);
       setMessageUser('');
     } catch (e) {
       console.log(e);
@@ -330,6 +331,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
           inviteStatus={invitedStatus}
           isModalVisible={isModalVisible}
           setModalVisible={setModalVisible}
+          activeEvent={activeEvent}
         />
       </SafeAreaProvider>
     </KeyboardAvoidingView>
