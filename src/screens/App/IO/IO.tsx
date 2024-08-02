@@ -939,7 +939,7 @@ const IO: FC = (): JSX.Element => {
   }, [userInfo, userHost, activeEventDate]);
 
   useEffect(() => {
-    fetchUserInfo();
+    // fetchUserInfo();
     fetchMyEvents(true);
     requestUserPermission();
   }, []);
@@ -947,6 +947,7 @@ const IO: FC = (): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       fetchMyEvents(false);
+      fetchUserInfo();
     }, []),
   );
 

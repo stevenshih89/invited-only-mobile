@@ -6,27 +6,33 @@ import {blackColor, lightGray10Color, whiteColor} from 'constants/colors';
 import Modal from 'react-native-modal';
 import {Outfit500, Satoshi400, Satoshi500, Satoshi700, Satoshi700Italic} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {FC, useCallback, useEffect, useRef, useState} from 'react';
+import {Dispatch, FC, SetStateAction, useCallback, useEffect, useRef, useState} from 'react';
 import {screenHeight} from 'constants/common';
 import Animated, { useSharedValue, withTiming, Easing, useAnimatedStyle, withRepeat} from 'react-native-reanimated';
 import Button from 'components/Button/Button';
 import LinearGradient from 'react-native-linear-gradient';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import {profilePath} from 'constants/pathLocations.ts';
+import {paymentPath, profilePath, tutorialFlowPath} from 'constants/pathLocations.ts';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import { useRoute } from '@react-navigation/native';
 
 interface LoaderProps {
     isVisible: boolean;
+    setVsibleHostPremium: any;
+    screen: string;
 }
 
-const HostPremium: FC<LoaderProps> = ({ isVisible }) => {    
+const HostPremium: FC<LoaderProps> = ({ isVisible, setVsibleHostPremium, screen}) => {    
     const [userInfo, setUserInfo] = useState<any>({});
 
     const navigation = useAppNavigation();
 
     const handleNext = () => {
-      navigation.navigate(profilePath as never);
+      if(screen === 'pending') {
+        navigation.navigate(tutorialFlowPath as never)
+        setVsibleHostPremium(false)
+      } else navigation.navigate(profilePath as never);
     };
 
     const getUserInfo = async () => {
