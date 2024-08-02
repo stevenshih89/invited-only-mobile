@@ -179,9 +179,9 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   };
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     fetchUserInfo();
-  }, []);
+  },[]))
 
   const handleOpenCancelAttendingModal = (
     eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string},
