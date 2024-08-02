@@ -253,7 +253,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 
   const goToNotifications = (): void => {
     // @ts-ignore
-    navigation.navigate(notificationsStackPath, {screen: notificationsPath});
+    navigation.navigate(notificationsStackPath, {screen: notificationsPath, userInfo});
   };
 
   const headerInsets = {
