@@ -22,7 +22,7 @@ const Notifications: FC = (): ReactElement => {
     return (
       <View style={styles.notificationItem}>
         <View style={styles.notificationImageContainer}>
-          <ImageBackground resizeMode="cover" source={Man} width={40} height={40} style={styles.notificationImageBackground}>
+          <ImageBackground resizeMode="cover" source={{uri:user?.photos[0].image}} width={40} height={40} style={styles.notificationImageBackground}>
             <ClockOrange width={14} height={14} />
           </ImageBackground>
         </View>

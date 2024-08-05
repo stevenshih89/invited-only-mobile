@@ -110,18 +110,12 @@ const useStyles = () =>
       paddingRight: 33,
     },
     accountTypeWrapper: {
-      // position: 'absolute',
-      // alignSelf: 'flex-start',
       marginTop: 12,
       marginLeft: 6,
-      borderWidth: 1,
-      borderColor: whiteColor,
       borderRadius: 4,
-      // zIndex: 20,
-      // bottom: 18,
       paddingHorizontal: 12,
       paddingVertical: 2,
-      backgroundColor: blackColor,
+      backgroundColor: whiteColor,
     },
     accountTypeWrapperPremium: {
       marginTop: 12,
@@ -132,7 +126,7 @@ const useStyles = () =>
       backgroundColor: blackColor,
     },
     accountTypeText: {
-      color: whiteColor,
+      color: blackColor,
       fontSize: RFValue(12, 812),
       fontFamily: Satoshi400,
       fontWeight: 'bold',

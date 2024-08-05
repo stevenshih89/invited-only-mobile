@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
+import CheckStar from 'assets/images/icons/check-star-white.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import ExampleSelfie from 'assets/images/auth/example-selfie.png';
 import {black1Color, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
@@ -142,7 +143,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                         }}>
                         <ImageBackground
                           source={{uri: imageUri}}
-                          style={{borderRadius: 100, width: '100%', height: '100%', justifyContent: 'flex-end'}}>
+                          style={{borderRadius: 15, width: '100%', height: '100%', justifyContent: 'flex-end', overflow: 'hidden'}}>
                           <View style={{height: 36, width: '100%', justifyContent: 'center', position: 'relative', overflow: 'hidden'}}>
                             <View
                               style={{
@@ -155,9 +156,12 @@ const VerifySecondStep: FC = (): JSX.Element => {
                                 opacity: 0.87,
                               }}
                             />
-                            <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 812), alignSelf: 'center'}}>
+                            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                            <Text style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(20, 812), alignSelf: 'center'}}>
                               {name}
                             </Text>
+                             <CheckStar width={18} height={18}/>
+                            </View>
                           </View>
                         </ImageBackground>
                       </View>

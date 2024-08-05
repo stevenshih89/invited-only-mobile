@@ -28,13 +28,13 @@ const TutorialsFlow: FC = (): JSX.Element => {
   const styles = useStyles();
 
   const content: ReactNode[] = [
-    <CreateEvent />,
+    // <CreateEvent />,
     <SwipeToInvite />,
     <GetInviteMatch />,
-    <ApproveGuest />,
     <SeeHoWantsToJoinYou />,
+    <ApproveGuest />,
     <MeetEnjoy />,
-    <JoinEvents />,
+    // <JoinEvents />,
   ];
 
   const setOnBoarding = useUser((i: any) => i?.setOnBoarding);
@@ -49,7 +49,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
   };
 
   const handleNext = () => {
-    if (active === 6) {
+    if (active === 4) {
       return handleCloseTutorialFlow();
     }
     setActive(p => p + 1);
@@ -70,7 +70,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
       </View>
       <Stepper active={active} content={content} wrapperStyle={styles.wrapperStyle} />
       <View style={styles.wrapperBar}>
-        {[...Array(7)].map((_, index) => (
+        {[...Array(5)].map((_, index) => (
           <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
         ))}
       </View>

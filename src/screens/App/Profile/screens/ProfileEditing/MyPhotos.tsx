@@ -17,7 +17,6 @@ interface MyPhotosProps {
 }
 
 const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
-  // console.log('imagesProps', images);
   
   const userHost = useUser((i: any) => i?.user);
   const isConfirmed = userHost?.accountConfirmed;
@@ -45,6 +44,9 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
     if (photoLibraryPermission !== RESULTS.GRANTED && photoLibraryPermission !== RESULTS.LIMITED) {
       return;
     }    
+
+    console.log('imageId', imageId);
+    
 
     launchImageLibrary(
       {
