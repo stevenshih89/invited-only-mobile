@@ -38,6 +38,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [isVisibleAcceptInvitationModal, setIsVisibleAcceptInvitationModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(MY_EVENTS);
   const [visibleModalEventRemindes, setVisibleModalEventRemindes] = useState(false);
+  const countMyEvent = useRef(0);
 
   const [activeModalEvent, setActiveModalEvent] = useState<any>({
     id: 0,
@@ -82,8 +83,6 @@ const MyEvents: FC<any> = ({navigation}) => {
 
     return Math.floor(diffInHours);
   };
-
-  const countMyEvent = useRef(0);
 
   const getFcmTokens = async (usersList: []) => {
     let tokens: string[] = [];
@@ -179,9 +178,11 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   };
 
-  useFocusEffect(useCallback(() => {
-    fetchUserInfo();
-  },[]))
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserInfo();
+    }, []),
+  );
 
   const handleOpenCancelAttendingModal = (
     eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string},
@@ -290,7 +291,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
       const filterData = data?.filter(obj => {
         return obj?.usersList?.some(user => {
-          return user?.uid === uid && (user?.status === 'invited' || user?.status === 'accepted');
+          return user?.uid === uid && (user?.status === 'invite_match' || user?.status === 'accepted' || user?.status === 'approved');
         });
       });
 
@@ -553,6 +554,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     numberOfGirlsInvited={item?.female + item?.femaleFriend}
                     host={{name: item?.name, image: item?.hostImage, hostUid: item?.uid}}
                     joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
+                    status={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status}
                     isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
                     handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
                     handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
@@ -599,6 +601,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     numberOfGirlsInvited={item?.female + item?.femaleFriend}
                     host={{name: item?.name, image: item?.hostImage, hostUid: item?.uid}}
                     joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
+                    status={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status}
                     isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
                     handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
                     handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}

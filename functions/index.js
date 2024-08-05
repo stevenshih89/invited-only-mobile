@@ -50,18 +50,18 @@ exports.processInviteMatch = functions.firestore.onDocumentUpdated('Events/{even
     }
   });
 
-  const updatedRequestsList = requestsList.filter(request => request.uid !== matchedUser.uid);
-  const updatedUsersList = usersList.map(user => {
-    if (user.uid === matchedUser.uid) {
-      return {
-        ...user,
-        status: 'invite_match',
-      };
-    }
-    return user;
-  });
-
   if (matchedUser) {
+    const updatedRequestsList = requestsList.filter(request => request.uid !== matchedUser.uid);
+    const updatedUsersList = usersList.map(user => {
+      if (user.uid === matchedUser.uid) {
+        return {
+          ...user,
+          status: 'invite_match',
+        };
+      }
+      return user;
+    });
+
     await admin.firestore().collection('Events').doc(id).update({
       requestsList: updatedRequestsList,
       usersList: updatedUsersList,
@@ -121,31 +121,4 @@ exports.processCollectionOfMatches = functions.firestore.onDocumentCreated('Coll
       recipientUid,
     },
   });
-});
-
-exports.seedDataBase = functions.https.onRequest(async (req, res) => {
-  const events = [
-    {
-      activeType: 0,
-      adress: 'Dubai',
-      description: 'Description',
-      eventReview: false,
-      female: 2,
-      femaleFriend: 2,
-      hostImage: '',
-      hostName: 'Host Name',
-      name: "Event's Name",
-      photos: [
-        {
-          id: 0,
-          image:
-            'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/1.jpg?alt=media&token=3b3b3b3b-3b3b-3b3b-3b3b-3b3b3b3b3b3b',
-        },
-      ],
-      placeName: 'Dubai Palaca',
-      requestsList: [],
-      usersList: [],
-    },
-  ];
-  admin.firestore().collection('Events').add(events);
 });
