@@ -23,6 +23,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 import { showToast } from 'helpers/showToast';
+import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 
 const EventPreview: FC<{
   photos: any;
@@ -66,6 +67,7 @@ const EventPreview: FC<{
   const [nameUser, setNameUser] = useState('');
   const [userAge, setUserAge] = useState('');
   const [userAccountType, setUserAccountType] = useState('');
+  const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false)
   const numberPhotos = imagesUser?.length;  
 
   function calculateAge(birthDateString: string) {
@@ -78,6 +80,10 @@ const EventPreview: FC<{
     }
     return age;
   }
+
+  console.log(photos);
+  
+  
 
   useFocusEffect(
     useCallback(() => {
@@ -94,7 +100,6 @@ const EventPreview: FC<{
           const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
           if (userImage) {
             setImagesUser(userImage);
-            console.log('userImage', userImage);
           }
         } catch (error) {
           console.log('errorGetUserPhotos', error);
@@ -117,30 +122,6 @@ const EventPreview: FC<{
       return setActive(numberPhotos - 1);
     }
     setActive(p => p - 1);
-  };
-
-  const handleSaveChanges = async () => {    
-    // isEditing ? setIsVisibleSaveModal(true) : null;
-    // try {
-    //   await firestore().collection('Events').doc(id).update({
-    //     eventTypes,
-    //     placeName,
-    //     name,
-    //     description,
-    //     date,
-    //     hour,
-    //     address,
-    //     meetingSpot,
-    //     photos
-    //   });
-    //   showToast('success', '', 'Event successfully update ');
-      
-    //           setLoading(false);
-    //           navigation.navigate(IOPath as never);
-
-    // } catch (e) {
-    //   console.log(e);
-    // }
   };
 
   if (userAccountType === 'host') {
@@ -245,6 +226,13 @@ const EventPreview: FC<{
     );
   }
 
+  const handleSuperJoin = () => {
+    setVisibleModalSuperJoin(true)
+    setTimeout(() => {
+      setVisibleModalSuperJoin(false)
+    }, 3000);
+  }
+
   if (userAccountType === 'guest') {
     return (
       <View style={[styles.container, {backgroundColor: transparentGray90Color, padding: 16, borderRadius: 16}]}>
@@ -285,13 +273,18 @@ const EventPreview: FC<{
           </View>
         </View>
         <View style={styles.centerContainer}>
-          <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginRight]}>
+          <TouchableOpacity
+          onPress={handleSuperJoin} 
+          activeOpacity={0.7} 
+          style={[styles.iconButton, styles.marginRight]}
+          >
             <FlashIcon />
           </TouchableOpacity>
           <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginLeft]}>
             <IOIcon />
           </TouchableOpacity>
         </View>
+        <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={photos[0].image}/>
       </View>
     );
   }

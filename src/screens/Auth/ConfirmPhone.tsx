@@ -44,7 +44,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
 
       if (userData.exists) {
         setIsUserExist(true);
-        console.warn('user: ', user);
+        // console.warn('user: ', user);
       } else {
         setNextRoute(chooseAccountTypePath);
       }

@@ -30,7 +30,7 @@ const Navigator = () => {
     const userDataInfo = await firestore().collection('userInfo').doc(uid).get();
 
     if (userDataInfo.exists) {
-      console.warn('user', userDataInfo.data());
+      // console.warn('user', userDataInfo.data());
       setAuthState(!!userState);
       setUserData(userDataInfo.data());
     }

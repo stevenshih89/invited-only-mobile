@@ -46,6 +46,7 @@ import SuperInvite from './screens/SuperInvite/SuperInvite';
 import Match from './screens/Match/Match';
 // import ModalSuperInvite from 'components/Modal/ModalSuperInvite';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
+import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -400,8 +401,9 @@ const IO: FC = (): JSX.Element => {
               isShowWantsJoin={false}
               isShowInvitesTooltip={false}
               isShowCardButtons={false}
-              eventPhotos={eventPhotos}
+              eventPhotos={event?.photos}
               photos={currUserPhotos}
+              name={event?.name}
             />
             <View style={styles.bioWrapper}>
               <Text style={styles.titleSection}>Host profile</Text>
@@ -1035,7 +1037,6 @@ const IO: FC = (): JSX.Element => {
             // <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
           }
           <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
-
           <SuperInvite
             isVisibleSuperInvite={isVisibleSuperInvite}
             activeSuperInviteUser={activeSuperInviteUser}
