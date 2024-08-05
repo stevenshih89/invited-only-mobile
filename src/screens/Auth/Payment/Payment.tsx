@@ -160,14 +160,15 @@ const Payment: FC = (): JSX.Element => {
 
     if (user) {
       try {
+        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get()
+        const userInfo = userInfoDoc.data()
         const userInfoUpdate = await firestore().collection('userInfo').doc(user.uid);
         userInfoUpdate.update({
           accountPremium: true,
-          superInvites: 10
+          superInvites: userInfo?.superInvites + 10
         })
       } catch (error: any) {
         console.log('error user premium update', error);
-        
       }
     }
   };

@@ -15,6 +15,7 @@ import { useAppNavigation } from 'hooks/useAppNavigation';
 import {profilePath} from 'constants/pathLocations.ts';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import { showToast } from 'helpers/showToast';
 
 interface LoaderProps {
     isVisible: boolean;
@@ -25,8 +26,11 @@ const HostPremium: FC<LoaderProps> = ({ isVisible }) => {
 
     const navigation = useAppNavigation();
 
-    const handleNext = () => {
+    const handleNext = async () => {
+      // const userId = auth().currentUser?.uid;
       navigation.navigate(profilePath as never);
+      // const userInfoDoc = await firestore().collection('userInfo').doc(userId).get();
+      // showToast('inviteMatch', `You have ${userInfoDoc?.data()?.superInvites} super ${userInfo?.accountType === 'host'? 'Invites': 'Joins'}`, 'Let`s start swiping!', {ownerPhoto: userInfo?.photos[0].image, status: 'SUCCESSFUL'})
     };
 
     const getUserInfo = async () => {
@@ -41,7 +45,7 @@ const HostPremium: FC<LoaderProps> = ({ isVisible }) => {
   
     useEffect(() => {
       getUserInfo();
-    }, []);  // Добавлены зависимости для useEffect
+    }, []);
 
   return (
     <Modal
@@ -75,7 +79,9 @@ const HostPremium: FC<LoaderProps> = ({ isVisible }) => {
                   fontSize: RFValue(12, 812),
                   fontFamily: Satoshi400,
                   fontWeight: 'bold',
-                }}>Host</Text>
+                }}>
+                  {userInfo?.accountType === 'host'? 'Host': 'Guest'}
+                </Text>
               </View>
               <LinearGradient
                 colors={['#977B4A', '#E5D291', '#A28453']}

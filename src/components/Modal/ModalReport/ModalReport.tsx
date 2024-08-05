@@ -46,7 +46,7 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
         phone: dataUserUid?.phoneNumber,
         phoneSender: dataUserUidSender?.phoneNumber,
       });
-      showToast('success', '', 'Success send report!');
+      showToast('inviteMatch', 'Alexa was reported', 'Thank you!', {ownerPhoto: dataUserUid?.photos[0].image, status: 'SUCCESSFUL'});
       setModalReport(false);
     } catch (e) {
       showToast('cancel', '', 'Error!');
