@@ -91,6 +91,7 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
   placeName,
   joinedPeopleCount,
   isAcceptedInvitation,
+  status,
   handleOpenCancelAttendingModal,
   handleOpenAcceptInvitationModal,
   handleAcceptInvitation,
@@ -121,6 +122,10 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
       setUserInfo(userInfoDoc.data());
     }
   };
+
+  const isInviteMatchStatus = status === 'invite_match';
+  const isApprovedStatus = status === 'approved';
+  const isAcceptedStatus = status === 'accepted';
 
   useFocusEffect(
     useCallback(() => {
@@ -181,6 +186,9 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
 
   const checkUpdate = () => {
     const userId = auth().currentUser?.uid;
+    if (!userId) {
+      return;
+    }
     const userViewdDate = dateNewViewed?.includes(userId, 0);
     const userViewdHour = hourNewViewed?.includes(userId, 0);
     const userViewdName = nameNewViewed?.includes(userId, 0);
@@ -252,6 +260,7 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
                       marginHorizontal: 14,
                       paddingVertical: 6,
                       paddingHorizontal: 12,
+                      zIndex: 10,
                     }}
                     activeOpacity={0.7}
                     onPress={() =>
@@ -352,65 +361,73 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
                     </View>
                   </View>
                 </ImageBackground>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    backgroundColor: lightGray8Color,
-                    paddingHorizontal: 16,
-                    paddingVertical: 10,
-                  }}>
-                  {!isAcceptedInvitation ? (
-                    <>
-                      <TouchableOpacity
-                        activeOpacity={0.7}
-                        onPress={() =>
-                          handleOpenCancelAttendingModal({
-                            image,
-                            textCityName,
-                            date,
-                            numberOfGirlsInvited,
-                            host,
-                            list,
-                          })
-                        }
-                        style={{
-                          flex: 1,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          borderRadius: 10,
-                          paddingVertical: screenHeight / 150,
-                          marginRight: 6,
-                        }}>
-                        <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>Reject invitation</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        activeOpacity={0.7}
-                        onPress={() =>
-                          handleOpenAcceptInvitationModal({
-                            image,
-                            textCityName,
-                            date,
-                            numberOfGirlsInvited,
-                            host,
-                            list,
-                          })
-                        }
-                        style={{
-                          flex: 1,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          borderRadius: 10,
-                          paddingVertical: screenHeight / 150,
-                          marginLeft: 6,
-                          backgroundColor: whiteColor,
-                          borderWidth: 1,
-                          borderColor: whiteColor,
-                        }}>
-                        <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: blackColor}}>Accept invitation</Text>
-                      </TouchableOpacity>
-                    </>
-                  ) : (
+                {isApprovedStatus && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      backgroundColor: lightGray8Color,
+                      paddingHorizontal: 16,
+                      paddingVertical: 10,
+                    }}>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() =>
+                        handleOpenCancelAttendingModal({
+                          image,
+                          textCityName,
+                          date,
+                          numberOfGirlsInvited,
+                          host,
+                          list,
+                        })
+                      }
+                      style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: 10,
+                        paddingVertical: screenHeight / 150,
+                        marginRight: 6,
+                      }}>
+                      <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>Reject invitation</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() =>
+                        handleOpenAcceptInvitationModal({
+                          image,
+                          textCityName,
+                          date,
+                          numberOfGirlsInvited,
+                          host,
+                          list,
+                        })
+                      }
+                      style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: 10,
+                        paddingVertical: screenHeight / 150,
+                        marginLeft: 6,
+                        backgroundColor: whiteColor,
+                        borderWidth: 1,
+                        borderColor: whiteColor,
+                      }}>
+                      <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: blackColor}}>Accept invitation</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                {isAcceptedInvitation && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      backgroundColor: lightGray8Color,
+                      paddingHorizontal: 16,
+                      paddingVertical: 10,
+                    }}>
                     <TouchableOpacity
                       activeOpacity={0.7}
                       onPress={() =>
@@ -436,8 +453,8 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
                       }}>
                       <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>Cancel attending</Text>
                     </TouchableOpacity>
-                  )}
-                </View>
+                  </View>
+                )}
               </LinearGradient>
             </View>
           ) : (

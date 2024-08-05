@@ -10,6 +10,11 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight} from 'constants/common';
 import {FC, useEffect} from 'react';
 import Animated, {useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay} from 'react-native-reanimated';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {chatCorrespondencePath, commonStackPath} from 'constants/pathLocations';
+import {showToast} from 'helpers/showToast';
+import firestore from '@react-native-firebase/firestore';
+import {useUser} from 'src/store/userStore';
 
 const widthScreen = Dimensions.get('screen').width;
 
@@ -21,6 +26,8 @@ interface MatchData {
   imageUri: string;
   senderUid: string;
   recipientUid: string;
+  eventId: string;
+  superInvite: boolean;
 }
 
 const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: MatchData; userInfo: any}> = ({
@@ -39,6 +46,133 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   const words = userInfo?.name?.split(' ');
   const wordTranslations = words?.map(() => useSharedValue(widthScreen));
   const nameAnimation = useSharedValue(widthScreen);
+
+  const navigation = useAppNavigation();
+
+  const userHost = useUser((i: any) => i?.user);
+
+  const handleCreateChat = async () => {
+    const querySnapshot = await firestore().collection('Events').where('uid', '==', `${userHost?.uid}`).get();
+    const list = querySnapshot?.docs?.map(i => ({id: i.id, ...i?.data()})).find(i => i?.id === matchData.eventId);
+
+    try {
+      const messageCollection = await firestore().collection('messages').doc(list?.id).get();
+      const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === matchData.recipientUid)[0];
+      const activeEvent = messageCollection?.data()?.activeEvent;
+
+      if (chatCheck) {
+        await navigation.navigate(commonStackPath, {
+          screen: chatCorrespondencePath,
+          params: {
+            image: chatCheck?.avatar,
+            title: chatCheck?.name,
+            online: false,
+            messages: chatCheck?.messages,
+            activeEvent: activeEvent,
+            id: chatCheck?.id,
+            superInvite: chatCheck?.superInvite,
+            invitedStatus: chatCheck?.invitedStatus,
+          },
+        });
+        onCloseMatch();
+      } else {
+        if (messageCollection?.data()) {
+          const prevChats = messageCollection?.data()?.chats;
+          const newChats = {
+            avatar: matchData.imageUri,
+            id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
+            invitedStatus: 'invite_match',
+            messages: [],
+            name: matchData.name,
+            superInvite: matchData.superInvite,
+            uid: matchData.recipientUid,
+          };
+          await firestore()
+            .collection('messages')
+            .doc(list?.id)
+            .update({
+              chats: [...prevChats, newChats],
+            });
+
+          await navigation.navigate(commonStackPath, {
+            screen: chatCorrespondencePath,
+            params: {
+              image: newChats?.avatar,
+              title: newChats?.name,
+              online: false,
+              messages: [],
+              activeEvent: activeEvent,
+              id: newChats?.id,
+              superInvite: newChats?.superInvite,
+              invitedStatus: newChats?.invitedStatus,
+            },
+          });
+
+          onCloseMatch();
+        } else {
+          const id = list?.id;
+
+          await firestore().collection('messages').doc(id).set({
+            activeEvent: id,
+            avatarGuest: matchData.imageUri,
+            avatarHost: userHost?.photos[0]?.image,
+            chats: [],
+            inviteStatus: 'invite_match',
+            nameGuest: matchData.name,
+            uidGuest: matchData.recipientUid,
+            uidHost: userHost?.uid,
+          });
+
+          const newChats = {
+            avatar: matchData.imageUri,
+            id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
+            invitedStatus: 'invite_match',
+            messages: [],
+            name: matchData.name,
+            superInvite: matchData.superInvite,
+            uid: matchData.recipientUid,
+          };
+
+          await firestore()
+            .collection('messages')
+            .doc(id)
+            .update({
+              chats: [newChats],
+            });
+
+          await navigation.navigate(commonStackPath, {
+            screen: chatCorrespondencePath,
+            params: {
+              image: newChats?.avatar,
+              title: newChats?.name,
+              online: false,
+              messages: [],
+              activeEvent: id,
+              id: newChats?.id,
+              superInvite: newChats?.superInvite,
+              invitedStatus: newChats?.invitedStatus,
+            },
+          });
+
+          onCloseMatch();
+        }
+      }
+    } catch (e) {
+      console.log(e);
+      showToast('cancel', '', 'Error!');
+    }
+  };
+
+  const handleApproveGuestFromHost = async () => {
+    const eventQuerySnapshot = await firestore().collection('Events').doc(matchData.eventId).get();
+    if (eventQuerySnapshot.exists) {
+      const eventData = eventQuerySnapshot?.data();
+      const usersList = [...eventData?.usersList];
+      const userIndex = usersList.findIndex((user: any) => user.uid === matchData.recipientUid);
+      usersList[userIndex].status = 'approved';
+      await firestore().collection('Events').doc(matchData.eventId).update({usersList});
+    }
+  };
 
   const animatedOpacityWrapper = () => {
     opacityWrapper.value = withTiming(1, {
@@ -266,6 +400,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
               <View style={{flexDirection: 'row'}}>
                 <Animated.View style={buttonAnimatedStyle}>
                   <TouchableOpacity
+                    onPress={handleCreateChat}
                     style={{
                       width: 70,
                       height: 70,
@@ -280,6 +415,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
                 </Animated.View>
                 <Animated.View style={buttonAnimatedStyle}>
                   <TouchableOpacity
+                    onPress={handleApproveGuestFromHost}
                     style={{
                       width: 70,
                       height: 70,

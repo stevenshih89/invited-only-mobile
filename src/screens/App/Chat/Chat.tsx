@@ -75,9 +75,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
-      } catch (error: any) {
-        
-      }
+      } catch (error: any) {}
     }
     setLoading(false);
   };
@@ -186,7 +184,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   );
 
   const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data, activeEvent}: ItemEventsJoiningProps) => {
-    
     const statusColor = handleCheckStatusStyles(status);
     return (
       <View style={styles.itemEventsJoining}>
@@ -382,7 +379,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           />
         )
       ) : null}
-      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false}/>}
+      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
     </View>
   );
 };

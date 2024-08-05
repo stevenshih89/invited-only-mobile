@@ -145,7 +145,12 @@ const CommonStackScreen = () => {
       <CommonStack.Screen key={pendingScreenPath} name={pendingScreenPath} options={{headerShown: false}} component={PendingScreen} />
       <CommonStack.Screen key={accountRejectedPath} name={accountRejectedPath} options={{headerShown: false}} component={AccountRejected} />
       <CommonStack.Screen key={codeVerifiedPath} name={codeVerifiedPath} options={{headerShown: false}} component={CodeVerified} />
-      <CommonStack.Screen key={chatCorrespondencePath} name={chatCorrespondencePath} options={{headerShown: false}} component={ChatCorrespondence} />
+      <CommonStack.Screen
+        key={chatCorrespondencePath}
+        name={chatCorrespondencePath}
+        options={{headerShown: false}}
+        component={ChatCorrespondence}
+      />
       <CommonStack.Screen
         key={eventInfoPath}
         name={eventInfoPath}
@@ -373,7 +378,12 @@ const UserProfileStackScreen = () => {
         key={myProfileViewPath}
         name={myProfileViewPath}
         component={() => (
-          <MyProfileView setModalVisible={setModalVisible} isModalVisible={isModalVisible} isShowEditButton={false} isShowInstagramPhotos={false} />
+          <MyProfileView
+            setModalVisible={setModalVisible}
+            isModalVisible={isModalVisible}
+            isShowEditButton={false}
+            isShowInstagramPhotos={false}
+          />
         )}
         options={{
           headerStyle: styles.headerStyle,
@@ -398,12 +408,12 @@ const PaymentStackScreen = () => {
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
   return (
     <EventCreatingStack.Navigator
-        initialRouteName={paymentPath}
-        screenOptions={{
-        headerShown: false,  
-        }}>
-        <EventCreatingStack.Screen key={paymentPath} name={paymentPath} component={Payment} />
-      </EventCreatingStack.Navigator>
+      initialRouteName={paymentPath}
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <EventCreatingStack.Screen key={paymentPath} name={paymentPath} component={Payment} />
+    </EventCreatingStack.Navigator>
   );
 };
 
