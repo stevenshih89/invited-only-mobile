@@ -18,6 +18,7 @@ import {showToast} from 'helpers/showToast.ts';
 import {useUser} from '../../../store/userStore';
 import LinearGradient from 'react-native-linear-gradient';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env'
+import FastImage from 'react-native-fast-image';
 
 const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
   const [hostInfo, setHostInfo] = useState([]);
@@ -207,8 +208,16 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
             translateXRange={[-70, 0, 70]}
             disableTopSwipe={true}
             cardStyle={{height: '100%', borderRadius: 22, zIndex: 999}}>
-            <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: photos[0]?.image}}>
-              <View style={[styles.itemContentContainer, {justifyContent: item[0]?.isSuperInvite ? 'space-between' : 'flex-end'}]}>
+              <FastImage
+                      style={styles.imageBackground}
+                      source={{
+                      uri: photos[0]?.image,
+                      headers:{ Authorization: 'someAuthToken' },
+                      priority: FastImage.priority.normal,
+                      }}
+                      resizeMode={FastImage.resizeMode.cover}
+                    >
+                      <View style={[styles.itemContentContainer, {justifyContent: item[0]?.isSuperInvite ? 'space-between' : 'flex-end'}]}>
                 {item[0]?.isSuperInvite && (
                   <View style={{alignItems: 'flex-start'}}>
                     <View
@@ -235,7 +244,16 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
                   end={{x: 0, y: 1}}>
                   <TouchableOpacity activeOpacity={0.7} style={[styles.buttonContainer, {marginTop: 'auto'}]} onPress={goToEventInfo}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                      <Image source={{uri: hostInfo?.photos[0]?.image}} style={{width: 25, height: 25, borderRadius: 20}} />
+                    <FastImage
+                      style={{width: 25, height: 25, borderRadius: 20}}
+                      source={{
+                      uri: hostInfo?.photos[0]?.image,
+                      headers:{ Authorization: 'someAuthToken' },
+                      priority: FastImage.priority.normal,
+                      }}
+                      resizeMode={FastImage.resizeMode.cover}
+                    />
+                      {/* <Image source={{uri: hostInfo?.photos[0]?.image}} style={{width: 25, height: 25, borderRadius: 20}} /> */}
                       <View style={{marginLeft: 8}}>
                         <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(9, 812)}}>{hostInfo?.name}</Text>
                         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(7, 812), textTransform: 'capitalize'}}>
@@ -291,7 +309,10 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
                   </TouchableOpacity>
                 </LinearGradient>
               </View>
-            </ImageBackground>
+                    </FastImage>
+            {/* <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: photos[0]?.image}}> */}
+              
+            {/* </ImageBackground> */}
           </TinderCard>
         </Animated.View>
       )}

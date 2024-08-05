@@ -19,6 +19,7 @@ import Payment from 'screens/Auth/Payment/Payment';
 import Svg, {Circle, G} from 'react-native-svg';
 import {screenHeight} from 'constants/common';
 import LinearGradient from 'react-native-linear-gradient';
+import FastImage from 'react-native-fast-image';
 
 const Profile: FC = () => {
   const [activeTabId, setActiveTabId] = useState(0);
@@ -73,6 +74,10 @@ const Profile: FC = () => {
               if (userImage) {
                 setMainImage(userImage);
               }
+              Image.prefetch(userImage.image).catch(error => {
+                console.error('image prefetching error: ', error);
+              });
+
             } else {
               Alert.alert('Error', 'No user data found in Firestore');
             }
@@ -154,7 +159,17 @@ const Profile: FC = () => {
               </View>
             </View>
             {mainImage?.image ? (
-              <Image source={{uri: mainImage?.image}} style={styles.profileImage} />
+              <FastImage
+              style={styles.profileImage}
+              source={{
+                uri: mainImage?.image,
+                headers:{ Authorization: 'someAuthToken' },
+                priority: FastImage.priority.normal,
+              }}
+              resizeMode={FastImage.resizeMode.contain}
+            />
+          
+              // <Image source={{uri: mainImage?.image}} style={styles.profileImage} />
             ) : (
               <View style={[styles.profileImage, {backgroundColor: whiteColor}]} />
             )}
