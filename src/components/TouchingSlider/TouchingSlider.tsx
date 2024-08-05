@@ -55,6 +55,7 @@ interface TouchingSliderProps {
   eventPhotos?: any[];
   confirmedAccount?: boolean;
   accountType?: string;
+  isPremium?: string;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
@@ -78,6 +79,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   confirmedAccount = false,
   accountType,
   hostInfo,
+  isPremium
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
@@ -204,21 +206,18 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           end={{x: 0, y: 1}}>
           <View style={styles.wrapperBio}>
             <View style={{flexDirection: 'row'}}>
-              {isShowAccountInfo && (
                 <View
                   style={{
-                    backgroundColor: blackColor,
+                    backgroundColor: whiteColor,
                     borderRadius: 5,
-                    borderWidth: 2,
-                    borderColor: whiteColor,
                     paddingHorizontal: 12,
                     paddingVertical: 2,
                     alignSelf: 'flex-start',
                   }}>
-                  <Text style={{color: whiteColor, fontSize: 14, fontFamily: Satoshi700, textTransform: 'capitalize'}}>{accountType}</Text>
+                  {accountType === 'guest' && <Text style={{color: blackColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>Guest</Text>}
+                  {accountType === 'host' && <Text style={{color: blackColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>Host</Text>}
                 </View>
-              )}
-              {true && isShowAccountInfo && (
+              { true && (
                 <LinearGradient
                   colors={['#977B4A', '#E5D291', '#A28453']}
                   style={{
@@ -231,13 +230,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   }}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0}}>
-                  {true && (
+                  {isPremium && (
                     <Text
                       style={{
                         color: blackColor,
                         fontSize: RFValue(14, 812),
-                        fontFamily: Satoshi400,
-                        fontWeight: 'bold',
+                        fontFamily: Satoshi700,
                       }}>
                       Premium
                     </Text>
@@ -246,7 +244,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               )}
             </View>
             <View style={styles.rowBioInfo}>
-              <Text style={styles.textName}>{name},</Text>
+              <Text style={styles.textName}>{name}{age? <Text>,</Text>: null}</Text>
               <Text style={styles.textYears}>{age}</Text>
               <View style={{marginLeft: 10}}>{confirmedAccount && <CheckStarWhite width={22} height={22} />}</View>
             </View>
