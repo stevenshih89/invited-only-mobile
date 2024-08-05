@@ -94,26 +94,28 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
   const [nameUser, setNameUser] = useState('')
   const [ageUser, setAgeUser] = useState('')
   const [photoUser, setPhotoUser] = useState('')
-  const styles = useStyles();         
-
+  const [isPremium, setIsPremium] = useState()
+  
+  const styles = useStyles();        
+    
   const getUserInfo = async () => {
     try {
-      const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-      setNameUser(userInfoDoc.data().name);
-      const age = calculateAge(userInfoDoc.data().date)
-      const photo = userInfoDoc.data().photos[0].image
+      const uid = auth().currentUser?.uid
+      const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();      
+      setNameUser(userInfoDoc?.data()?.name);
+      const age = calculateAge(userInfoDoc?.data()?.date)
+      const photo = userInfoDoc?.data()?.photos[0].image
       setAgeUser(age)
       setPhotoUser(photo)
+      setIsPremium( userInfoDoc?.data()?.accountPremium)
     } catch (error) {
       console.log('error get user info', error);
     }
   }
     
     useEffect(() => {
-      if(uid) {
-        getUserInfo()
-      }
-    },[])
+      getUserInfo()
+    },[uid])
 
   const OnTheWayModal = () => {
     return (
@@ -290,7 +292,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                     <View style={{backgroundColor: blackColor,marginLeft: 10, borderWidth: 1, borderRadius: 4.5, borderColor: whiteColor, paddingHorizontal: 10, paddingVertical: 2}}>
                       <Text style={{fontSize: RFValue(10, 812), color: whiteColor, fontFamily: Satoshi500}}>Host</Text>
                     </View>
-                    {false && <LinearGradient 
+                    {isPremium && <LinearGradient 
                       colors={['#977B4A', '#E5D291', '#A28453']} 
                       start={{x: 0, y: 0}} end={{x: 1, y: 0}}
                       style={{borderRadius: 4.5, paddingHorizontal: 10, paddingVertical: 2, marginLeft: 5,}}

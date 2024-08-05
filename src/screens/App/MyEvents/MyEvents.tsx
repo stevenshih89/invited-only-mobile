@@ -631,6 +631,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true} isPremium={userInfo?.accountPremium}/>}
       <ModalEventRemindes
         currentEvent={currentEvent}
+        uid={userInfo?.uid}
         eventStarting={visibleModalEventRemindes}
         // activeState={true}
         setEventStarting={setVisibleModalEventRemindes}
