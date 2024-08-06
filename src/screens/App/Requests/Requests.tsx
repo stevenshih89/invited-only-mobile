@@ -39,7 +39,6 @@ const Requests: FC = (): ReactElement => {
 
   const fetchHostRequests = async () => {
     const user = auth().currentUser;
-    console.log('user', user);
     
     if (user && activeEvent !== 'host') {
       try {
