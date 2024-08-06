@@ -26,6 +26,7 @@ import {
   summaryInfoPath,
   verifySocialProfilePath,
   checkingSpots,
+  addBuisnessPath,
 } from 'constants/pathLocations';
 import {NavigationContainer} from '@react-navigation/native';
 import Onboard from 'screens/Auth/Onboard';
@@ -53,6 +54,7 @@ import PhotoVerified from 'screens/Auth/PhotoVerified';
 import SummaryInfo from 'screens/Auth/SummaryInfo';
 import VerifySocialProfile from 'screens/Auth/VerifySocialProfile';
 import {CheckingSpots} from 'screens/Auth/Payment/CheckingSpots';
+import AddBiusness from 'screens/Auth/AddBuisness';
 
 const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
@@ -65,6 +67,7 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={confirmPhonePath} name={confirmPhonePath} component={ConfirmPhone} />
         <AuthStack.Screen key={turnNotificationsPath} name={turnNotificationsPath} component={TurnNotifications} />
         <AuthStack.Screen key={chooseAccountTypePath} name={chooseAccountTypePath} component={ChooseAccountType} />
+        <AuthStack.Screen key={addBuisnessPath} name={addBuisnessPath} component={AddBiusness} />
         <AuthStack.Screen key={enterNamePath} name={enterNamePath} component={EnterName} />
         <AuthStack.Screen key={addPhotosPath} name={addPhotosPath} component={AddPhotos} />
         <AuthStack.Screen key={enterBirthdayPath} name={enterBirthdayPath} component={EnterBirthday} />

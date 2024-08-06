@@ -338,10 +338,12 @@ const Payment: FC = (): JSX.Element => {
     );
   };
 
+  const checkNavig = useRoute()    
+
   return (
     <SafeAreaView style={{backgroundColor: black1Color}}>
       <Loader isVisible={loaderVisible} successfulPay={successfulPay}/>
-      <HostPremium isVisible={visibleHostPremium} />
+      <HostPremium isVisible={visibleHostPremium} setVsibleHostPremium={setVsibleHostPremium} screen={checkNavig?.params?.screen}/>
       <ScrollView>
         <View style={styles.container}>
           <View style={{alignItems: 'flex-end', marginTop: 10}}>

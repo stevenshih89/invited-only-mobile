@@ -23,7 +23,6 @@ const useStyles = () => {
     },
     linearGradient: {
       borderRadius: 12,
-
       alignItems: 'center',
       paddingTop: screenHeight / 60,
       paddingBottom: screenHeight / 53,

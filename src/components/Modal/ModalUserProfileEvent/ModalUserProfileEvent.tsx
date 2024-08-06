@@ -10,17 +10,19 @@ import ReportIcon from 'assets/images/icons/info-circle.svg';
 import CloseIcon from 'assets/images/icons/close-circle-red.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {gray1Color, whiteColor} from 'constants/colors.ts';
+import CheckWhite from 'assets/images/icons/check.svg';
+import {backgroundColor, black1Color, gray1Color, grayScale700, whiteColor} from 'constants/colors.ts';
 import {chatCorrespondencePath, commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 import {useUser} from '../../../store/userStore';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
-import {Satoshi700} from 'constants/fonts.ts';
+import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {calculateAge} from 'helpers/calculateAge.ts';
 import {useFocusEffect} from '@react-navigation/native';
+import Button from 'components/Button/Button.tsx';
 
 interface ModalUserProfileEventProps {
   isModalVisible?: boolean;
@@ -52,6 +54,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   const navigation = useAppNavigation();
   const userHost = useUser((i: any) => i?.user);
   const [userInfo, setUserInfo] = useState<any>({});
+  const userGuest = usersList?.filter((i: any) => i?.uid === uid)[0];
 
   const goToProfileView = () => {
     if (setModalVisible) {
@@ -207,6 +210,91 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     }
   };
 
+  const handleApproveGuestFromHost = async () => {
+    try {
+      const updatedUsersList = usersList?.map(user => {
+        if (user.uid === uid) {
+          return {
+            ...user,
+            status: 'approved',
+          };
+        }
+      });
+
+      firestore().collection('Events').doc(list?.id).update({
+        usersList: updatedUsersList,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const getUserStatusButtonText = () => {
+    if (!userGuest?.status) {
+      return '';
+    }
+    if (userGuest?.status === 'invite_match') {
+      return 'Approve guest';
+    } else if (userGuest?.status === 'approved') {
+      return 'Waiting for invitation accepted';
+    } else if (userGuest?.status === 'accepted') {
+      return 'Guest Accepted';
+    }
+  };
+
+  const getIsDisabledButton = () => {
+    if (userGuest?.status === 'invite_match') {
+      return false;
+    }
+    return true;
+  };
+
+  const handleActionPress = () => {
+    if (userGuest?.status === 'invite_match') {
+      handleApproveGuestFromHost();
+      setModalVisible && setModalVisible(false);
+    }
+  };
+
+  const getButtonStyle = () => {
+    if (userGuest?.status === 'invite_match') {
+      return {
+        backgroundColor: whiteColor,
+        borderColor: whiteColor,
+      };
+    }
+    if (userGuest?.status === 'approved') {
+      return {
+        backgroundColor: grayScale700,
+        borderColor: grayScale700,
+      };
+    }
+    if (userGuest?.status === 'accepted') {
+      return {
+        backgroundColor: black1Color,
+        borderColor: whiteColor,
+        borderWidth: 1,
+      };
+    }
+  };
+
+  const getButtonTitleStyle = () => {
+    if (userGuest?.status === 'approved') {
+      return {
+        color: whiteColor,
+      };
+    }
+    if (userGuest?.status === 'invite_match') {
+      return {
+        color: black1Color,
+      };
+    }
+    if (userGuest?.status === 'accepted') {
+      return {
+        color: whiteColor,
+      };
+    }
+  };
+
   return (
     <View style={styles.container}>
       <SafeAreaProvider>
@@ -254,7 +342,22 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
                 </View>
               </View>
             </View>
-            <TouchableOpacity onPress={() => goToProfileView()} style={[styles.buttonFooter, {borderTopColor: gray1Color}]}>
+            <View style={{width: '100%', marginBottom: 20}}>
+              <TouchableOpacity
+                disabled={getIsDisabledButton()}
+                activeOpacity={0.7}
+                style={[
+                  {height: 56, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderRadius: 10},
+                  getButtonStyle(),
+                ]}
+                onPress={handleActionPress}>
+                <Text style={[{fontFamily: Satoshi500, fontSize: RFValue(18, 812)}, getButtonTitleStyle()]}>
+                  {getUserStatusButtonText()}
+                </Text>
+                {userGuest?.status === 'accepted' && <CheckWhite style={{marginLeft: 10}} />}
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={() => goToProfileView()} style={[styles.buttonFooter, {borderTopColor: 'transparent'}]}>
               <UserIcon width={14} height={14} />
               <Text style={styles.textButton}>Profile</Text>
             </TouchableOpacity>

@@ -53,6 +53,7 @@ const summaryInfoPath: keyof RootStackParamList = '/summary-info';
 const verifySocialProfilePath: keyof RootStackParamList = '/verify-social-profile';
 const checkingSpots: keyof RootStackParamList = '/checking-spots';
 const superInvitePayPath: keyof RootStackParamList = '/super-invite-pay';
+const addBuisnessPath: keyof RootStackParamList = '/add-biusness';
 
 export {
   bottomTabsStackPath,
@@ -106,4 +107,5 @@ export {
   verifySocialProfilePath,
   checkingSpots,
   superInvitePayPath,
+  addBuisnessPath
 };

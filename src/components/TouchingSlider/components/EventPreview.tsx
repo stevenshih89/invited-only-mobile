@@ -23,6 +23,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 import { showToast } from 'helpers/showToast';
+import FastImage from 'react-native-fast-image';
 
 const EventPreview: FC<{
   photos: any;
@@ -149,9 +150,15 @@ const EventPreview: FC<{
       <SafeAreaView style={{flex: 1}}>
         <View style={styles.container}>
           <View style={{flex: 1, paddingHorizontal: 24, marginBottom: 24}}>
-            <ImageBackground
+            <FastImage
               style={{flex: 1, width: '100%', height: '100%', borderRadius: 20, overflow: 'hidden'}}
-              source={{uri: imagesUser?.image ? imagesUser?.image : ''}}>
+              source={{
+                uri: imagesUser?.image ? imagesUser?.image : '',
+                headers:{ Authorization: 'someAuthToken' },
+                priority: FastImage.priority.normal,
+              }}
+              resizeMode={FastImage.resizeMode.cover}
+            >
               <View style={styles.wrapperBar}>
                 {[...Array(numberPhotos)].map((_, index) => (
                   <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
@@ -169,28 +176,24 @@ const EventPreview: FC<{
               </View>
               <View style={{width: '100%', position: 'absolute', padding: 12, bottom: 0}}>
                 <View style={styles.containerInfo}>
-                  <ImageBackground
-                    // source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
+                <FastImage
+                  style={styles.imageBackground}
+                  source={{
+                    uri: photos[0].image,
+                  headers:{ Authorization: 'someAuthToken' },
+                  priority: FastImage.priority.normal,
+                  }}
+                  resizeMode={FastImage.resizeMode.cover}
+                />
+                  {/* <ImageBackground
                     source={{uri: photos[0].image}}
                     style={styles.imageBackground}
                     imageStyle={styles.imageStyle}
                     resizeMode="cover">
-                    {/* <View style={styles.wrapperBar}>
-              {[...Array(numberPhotos)].map((_, index) => (
-                <View key={index} style={[styles.bar, { backgroundColor: index === active ? whiteColor : gray1Color }]} />
-              ))}
-            </View> */}
-                    {/* <View style={styles.wrapperButtons}>
-              <TouchableOpacity onPress={handleBack} style={styles.button} />
-              <TouchableOpacity onPress={handleNext} style={styles.button} />
-            </View> */}
-                  </ImageBackground>
+                  </ImageBackground> */}
                   <Text style={{color: whiteColor, fontFamily: Satoshi500, fontWeight: 'bold', fontSize: RFValue(27, 812), marginTop: 10}}>
                     {name}
                   </Text>
-                  {/* <View>
-
-        </View> */}
                   <View style={styles.textContainer}>
                     <Text style={styles.text}>{placeName}</Text>
                     <View style={styles.rowContainer}>
@@ -214,7 +217,61 @@ const EventPreview: FC<{
                   </View>
                 </View>
               </View>
-            </ImageBackground>
+            </FastImage>
+            {/* <ImageBackground
+              style={{flex: 1, width: '100%', height: '100%', borderRadius: 20, overflow: 'hidden'}}
+              source={{uri: imagesUser?.image ? imagesUser?.image : ''}}
+              >
+              <View style={styles.wrapperBar}>
+                {[...Array(numberPhotos)].map((_, index) => (
+                  <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
+                ))}
+              </View>
+              <View style={styles.wrapperButtons}>
+                <TouchableOpacity onPress={handleBack} style={styles.button} />
+                <TouchableOpacity onPress={handleNext} style={styles.button} />
+              </View>
+              <View style={{width: 100, height: 50, flexDirection: 'row', marginLeft: 14, marginTop: 20, alignItems: 'center'}}>
+                <Text style={{fontSize: RFValue(14, 812), color: whiteColor, fontWeight: 'bold', fontFamily: Satoshi500, marginRight: 7}}>
+                  {nameUser}, {userAge}
+                </Text>
+                <CheckStar />
+              </View>
+              <View style={{width: '100%', position: 'absolute', padding: 12, bottom: 0}}>
+                <View style={styles.containerInfo}>
+                  <ImageBackground
+                    source={{uri: photos[0].image}}
+                    style={styles.imageBackground}
+                    imageStyle={styles.imageStyle}
+                    resizeMode="cover">
+                  </ImageBackground>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontWeight: 'bold', fontSize: RFValue(27, 812), marginTop: 10}}>
+                    {name}
+                  </Text>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.text}>{placeName}</Text>
+                    <View style={styles.rowContainer}>
+                      <View style={styles.row}>
+                        <User />
+                        <Text style={styles.subText}>{girls} x Girl invitation</Text>
+                      </View>
+                      <View style={[styles.row, styles.marginLeft]}>
+                        <Calendar />
+                        <Text style={styles.subText}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
+                      </View>
+                    </View>
+                  </View>
+                  <View style={styles.centerContainer}>
+                    <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginRight]}>
+                      <FlashIcon />
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginLeft]}>
+                      <IOIcon />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </ImageBackground> */}
           </View>
           {/* <Button onPress={handleCreateEvent} title={'Create event'} />
           <View style={{width: '100%', alignItems: 'center', marginTop: 20}}>
@@ -311,9 +368,11 @@ const useStyles = () => {
       borderRadius: 15,
       padding: 10,
       zIndex: 10000,
+      overflow: 'hidden',
     },
     imageBackground: {
       height: 150,
+      overflow: 'hidden',
     },
     imageStyle: {
       borderRadius: 10,

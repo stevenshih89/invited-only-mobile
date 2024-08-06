@@ -15,9 +15,9 @@ import XIcon from 'assets/images/icons/X.svg';
 
 //import images
 import IconBackground from 'assets/images/app/bcon-background.png';
-import { blackColor, whiteColor } from 'constants/colors';
-import { Satoshi400, Satoshi500 } from 'constants/fonts';
-import { RFValue } from 'react-native-responsive-fontsize';
+import {blackColor, whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 const LocalNotification = () => {
   const styles = useStyles();
@@ -100,18 +100,35 @@ const LocalNotification = () => {
         </Text>
       </View>
     ),
-    inviteMatch: ({text1,text2,props}) => (      
-      <View style={{paddingHorizontal: 24, width:'100%'}}>
+    inviteMatch: ({text1, text2, props}) => (
+      <View style={{paddingHorizontal: 24, width: '100%'}}>
         <View style={{backgroundColor: whiteColor, padding: 16, borderRadius: 10, width: '100%'}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Image style={{height: 60, width: 60, borderRadius: 30}} source={{uri: props.ownerPhoto}} />
             <View style={{marginLeft: 16, flex: 1}}>
               <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start'}}>
-                <Text style={{color: blackColor, fontWeight: 'bold', fontSize: RFValue(16, 812), flex: 1, flexWrap: 'wrap', marginRight: 8, fontFamily: Satoshi400}}>
+                <Text
+                  style={{
+                    color: blackColor,
+                    fontWeight: 'bold',
+                    fontSize: RFValue(16, 812),
+                    flex: 1,
+                    flexWrap: 'wrap',
+                    marginRight: 8,
+                    fontFamily: Satoshi400,
+                  }}>
                   {text1}
                 </Text>
                 <View style={{borderRadius: 100, backgroundColor: blackColor}}>
-                  <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 100}}>
+                  <Text
+                    style={{
+                      fontSize: RFValue(12, 812),
+                      color: whiteColor,
+                      fontFamily: Satoshi500,
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 100,
+                    }}>
                     {props.status}
                   </Text>
                 </View>
@@ -122,7 +139,6 @@ const LocalNotification = () => {
         </View>
       </View>
     ),
-    
   };
 
   return <Toast visibilityTime={5000} config={toastConfig} />;
