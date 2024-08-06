@@ -399,27 +399,13 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               if (time === '0') {
                 setEventStarting(false);
               } else {
-                // await handleAcceptInvitation();
-                // await handleGetEventsIJoining();
-                // showToast('success', 'Go to my events', `You confirmed ${currentEvent?.placeName} event`);
                 setEventStarting(false);
                 countMyEvent.current = countMyEvent.current + 1;
-                // setModalVisible(false);
               }
             }}
             title={time === '0' ? 'Im on my way' : 'Confirm'}
             buttonStyle={styles.button}
           />
-          {/* <Button
-            variant="transparent"
-            onPress={() => {
-              setEventStarting(false);
-              // setChatModal(true);
-              // setOnTheWayState(true);
-            }}
-            title="Go to my event"
-            buttonStyle={{width: '100%'}}
-          /> */}
         </View>
         <OnTheWayModal />
         <OpenChatModal />
