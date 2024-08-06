@@ -964,7 +964,7 @@ const IO: FC = (): JSX.Element => {
 
   if (currentEventCardPosition > events.length && events.length > 1) {
     return (
-      <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo} />
+      <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo} wrapperText={false}/>
     );
   }
 
