@@ -2,7 +2,7 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
 //import components
-import {lightGray5Color, lightGray6Color, lightGrayColor, lightRed1Color, whiteColor} from 'constants/colors.ts';
+import {blackColor, lightGray5Color, lightGray6Color, lightGrayColor, lightRed1Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi400, Satoshi700, Satoshi500} from 'constants/fonts.ts';
 
 const screenHeight: number = Dimensions.get('window').height;
@@ -118,7 +118,7 @@ const useStyles = () => {
       flexGrow: 1,
     },
     wrapperFakeCard: {
-      backgroundColor: lightGray6Color,
+      backgroundColor: blackColor,
       flex: 1,
     },
     bioWrapper: {

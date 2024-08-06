@@ -18,7 +18,7 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {enterNamePath} from 'constants/pathLocations';
+import {addBuisnessPath, enterNamePath} from 'constants/pathLocations';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const ChooseAccountType: FC = (): JSX.Element => {
@@ -34,6 +34,10 @@ const ChooseAccountType: FC = (): JSX.Element => {
     setOnBoarding([...onBoarding, {accountType: accountType}]);
     navigation.navigate(enterNamePath as never);
   };
+
+  const handleGoToBusiness = () => {
+    navigation.navigate(addBuisnessPath as never);
+  }
 
   return (
     <KeyboardAvoidingView
@@ -146,7 +150,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
               <Button onPress={() => handleNext()} title="Continue" />
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
                 <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>Are you a bussiness?</Text>
-                <TouchableOpacity activeOpacity={0.7} style={{marginLeft: 4}}>
+                <TouchableOpacity onPress={handleGoToBusiness} activeOpacity={0.7} style={{marginLeft: 4}}>
                   <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), textDecorationLine: 'underline'}}>
                     Click here to join
                   </Text>

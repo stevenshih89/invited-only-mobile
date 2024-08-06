@@ -16,10 +16,10 @@ const MeetEnjoy = () => {
         <Image style={styles.image} resizeMode="contain" source={MeetEnjoyImage} />
       </View>
       <View style={styles.textWrapper}>
-        <Text style={styles.textMeetEnjoy}>Meet & Enjoy!</Text>
+        <Text style={styles.textMeetEnjoy}>Meet and Enjoy!</Text>
         <Text style={styles.textMeetNewPeople}>
           {accountTypeGuest
-            ? 'Have a great time together with new acquaintances!'
+            ? 'Connect with like-minded individuals at exclusive events. Network, socialize, and create lasting memories. Enjoy every moment!'
             : 'Meet new people, make new connections, and have fun together!'}
         </Text>
       </View>

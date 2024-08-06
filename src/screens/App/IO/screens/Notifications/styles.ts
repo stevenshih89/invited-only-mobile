@@ -33,6 +33,8 @@ const useStyles = () =>
       width: 40,
       height: 40,
       justifyContent: 'center',
+      borderRadius: 40,
+      overflow: 'hidden',
       alignItems: 'center',
     },
     notificationTitle: {

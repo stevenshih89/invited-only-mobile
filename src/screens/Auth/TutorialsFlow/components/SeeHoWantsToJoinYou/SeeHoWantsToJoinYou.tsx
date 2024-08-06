@@ -2,7 +2,7 @@ import {Image, Text, View} from 'react-native';
 import React, {useContext} from 'react';
 
 //import components
-import SeeHoWantsToJoinYouImage from 'assets/images/auth/tutorial-start-5.png';
+import SeeHoWantsToJoinYouImage from 'assets/images/auth/tutorial-start-3.png';
 import useStyles from 'screens/Auth/TutorialsFlow/components/SeeHoWantsToJoinYou/styles.ts';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 

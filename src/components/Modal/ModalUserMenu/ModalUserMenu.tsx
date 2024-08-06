@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useCallback, useState} from 'react';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -6,7 +6,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 //import components
 import useStyles from 'components/Modal/ModalUserMenu/styles.ts';
 import Button from 'components/Button/Button.tsx';
-import {black2Color, blackColor, errorColor, gray1Color, whiteColor} from 'constants/colors.ts';
+import {black1Color, black2Color, blackColor, errorColor, gray1Color, grayScale700, whiteColor} from 'constants/colors.ts';
 import {showToast} from 'helpers/showToast.ts';
 
 //import icons
@@ -18,9 +18,10 @@ import CheckIcon from 'assets/images/icons/check.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
 import {screenHeight, screenWidth} from 'constants/common';
+import firestore from '@react-native-firebase/firestore';
 
 interface ModalUserMenuProps {
   isModalVisible: boolean;
@@ -184,12 +185,18 @@ const BlockAndReportModal = ({blockAndReportState, setBlockAndReportState, repor
   );
 };
 
-const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible, title, inviteStatus, image, uid}) => {
+const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible, title, inviteStatus, image, uid, activeEvent}) => {
   const [removingState, setRemovingState] = useState<boolean>(false);
   const [blockAndReportState, setBlockAndReportState] = useState<boolean>(false);
   const [cancelInvitationState, setCancelInvitationState] = useState<boolean>(false);
   const [reportState, setReportState] = useState('Fake profile');
+  const [usersList, setUserList] = useState([]);
+  const [eventData, setEventData] = useState({usersList: []});
   const styles = useStyles();
+
+  const userGuest = eventData.usersList?.filter((i: any) => i?.uid === uid)[0];
+
+  console.warn(inviteStatus);
 
   const navigation = useNavigation();
 
@@ -202,6 +209,111 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
         isShowEditButton: false,
       },
     });
+  };
+
+  const getUsersList = async () => {
+    try {
+      const eventQuerySnapshot = await firestore().collection('Events').doc(activeEvent).get();
+      if (eventQuerySnapshot.exists) {
+        const data = eventQuerySnapshot.data();
+        setEventData(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getUsersList();
+    }, [activeEvent]),
+  );
+
+  const handleApproveGuestFromHost = async () => {
+    if (!eventData?.usersList.length) {
+      return;
+    }
+    try {
+      const updatedUsersList = eventData?.usersList?.map(user => {
+        if (user.uid === uid) {
+          return {
+            ...user,
+            status: 'approved',
+          };
+        }
+      });
+      firestore().collection('Events').doc(activeEvent).update({
+        usersList: updatedUsersList,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const getUserStatusButtonText = () => {
+    if (!userGuest?.status) {
+      return '';
+    }
+    if (userGuest?.status === 'invite_match') {
+      return 'Approve guest';
+    } else if (userGuest?.status === 'approved') {
+      return 'Waiting for invitation accepted';
+    } else if (userGuest?.status === 'accepted') {
+      return 'Guest Accepted';
+    }
+  };
+
+  const getIsDisabledButton = () => {
+    if (userGuest?.status === 'invite_match') {
+      return false;
+    }
+    return true;
+  };
+
+  const handleActionPress = () => {
+    if (userGuest?.status === 'invite_match') {
+      handleApproveGuestFromHost();
+      setModalVisible && setModalVisible(false);
+    }
+  };
+
+  const getButtonStyle = () => {
+    if (userGuest?.status === 'invite_match') {
+      return {
+        backgroundColor: whiteColor,
+        borderColor: whiteColor,
+      };
+    }
+    if (userGuest?.status === 'approved') {
+      return {
+        backgroundColor: grayScale700,
+        borderColor: grayScale700,
+      };
+    }
+    if (userGuest?.status === 'accepted') {
+      return {
+        backgroundColor: black1Color,
+        borderColor: whiteColor,
+        borderWidth: 1,
+      };
+    }
+  };
+
+  const getButtonTitleStyle = () => {
+    if (userGuest?.status === 'approved') {
+      return {
+        color: whiteColor,
+      };
+    }
+    if (userGuest?.status === 'invite_match') {
+      return {
+        color: black1Color,
+      };
+    }
+    if (userGuest?.status === 'accepted') {
+      return {
+        color: whiteColor,
+      };
+    }
   };
 
   const RemovingUserModal = () => {
@@ -222,7 +334,6 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
         swipeDirection={['down']}>
         <View style={styles.wrapper}>
           <View style={styles.whiteLine} />
-
           <View>
             <Image source={{uri: image}} style={styles.userPhoto} />
             {/*{online && <View style={styles.greenCircle} />}*/}
@@ -349,60 +460,32 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
                 </View>
               </View>
             </View>
-            {inviteStatus === 'accepted' && (
-              <Button
-                onPress={() => {
-                  showToast('pending', 'Invitation approved!');
-                  setModalVisible(false);
-                }}
-                title="Approve invitation"
-                buttonStyle={{width: '100%', marginTop: 37, marginBottom: 34}}
-              />
-            )}
-            {inviteStatus === 'invited' && (
-              <View
-                style={{
-                  backgroundColor: '#313131',
-                  paddingVertical: 16,
-                  width: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 10,
-                  marginTop: 20,
-                }}>
-                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812)}}>Waiting for invitation accepted</Text>
-              </View>
-            )}
-            {inviteStatus === 'accepted' && (
-              <View
-                style={{
-                  backgroundColor: 'transparent',
-                  paddingVertical: 16,
-                  borderColor: whiteColor,
-                  borderWidth: 1,
-                  borderStyle: 'solid',
-                  width: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 10,
-                  flexDirection: 'row',
-                  marginTop: 20,
-                }}>
-                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginRight: 6}}>Guest approved</Text>
-                <CheckIcon />
-              </View>
-            )}
+            <View style={{width: '100%', marginBottom: 20}}>
+              <TouchableOpacity
+                disabled={getIsDisabledButton()}
+                activeOpacity={0.7}
+                style={[
+                  {height: 56, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderRadius: 10},
+                  getButtonStyle(),
+                ]}
+                onPress={handleActionPress}>
+                <Text style={[{fontFamily: Satoshi500, fontSize: RFValue(18, 812)}, getButtonTitleStyle()]}>
+                  {getUserStatusButtonText()}
+                </Text>
+                {userGuest?.status === 'accepted' && <CheckIcon style={{marginLeft: 10}} />}
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity onPress={goToProfileView} style={[styles.buttonFooter, {marginTop: 10, borderTopWidth: 0}]}>
               <User width={20} height={20} />
               <Text style={styles.textButton}>Profile</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setBlockAndReportState(true)}
-              style={[styles.buttonFooter, inviteStatus === 'accepted' && {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
+              style={[styles.buttonFooter, userGuest?.status === 'accepted' && {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
               <InfoIcon width={20} height={20} />
               <Text style={styles.textButton}>Report</Text>
             </TouchableOpacity>
-            {inviteStatus !== 'accepted' && (
+            {userGuest?.status !== 'accepted' && (
               <TouchableOpacity
                 onPress={() => setCancelInvitationState(true)}
                 style={[styles.buttonFooter, {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>

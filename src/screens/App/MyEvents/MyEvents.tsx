@@ -5,7 +5,7 @@ import {FlatList} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
-import { CLOUD_MESSAGING_SERVER_KEY } from '@env'
+import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 
 //import components
 import useStyles from 'screens/App/MyEvents/styles.ts';
@@ -37,8 +37,9 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [isVisibleCancelAttendingModal, setIsVisibleCancelAttendingModal] = useState<boolean>(false);
   const [isVisibleAcceptInvitationModal, setIsVisibleAcceptInvitationModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(MY_EVENTS);
-  const [visibleModalEventRemindes, setVisibleModalEventRemindes] = useState(false)  
-  
+  const [visibleModalEventRemindes, setVisibleModalEventRemindes] = useState(false);
+  const countMyEvent = useRef(0);
+
   const [activeModalEvent, setActiveModalEvent] = useState<any>({
     id: 0,
     image: '',
@@ -50,12 +51,12 @@ const MyEvents: FC<any> = ({navigation}) => {
       image: '',
     },
   });
-  const [activeUserInfo, setActiveUserInfo] = useState<any>({});  
-  
+  const [activeUserInfo, setActiveUserInfo] = useState<any>({});
+
   const [myEventsData, setMyEventsData] = useState([]);
   const [eventsJoiningData, setEventsJoiningData] = useState([]);
   const [hoursUntilEvent, setHoursUntilEvent] = useState<number>();
-  const [currentEvent, setCurrentEvent] = useState()
+  const [currentEvent, setCurrentEvent] = useState();
 
   const user = useUser((i: any) => i?.user);
   const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
@@ -65,60 +66,56 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [userInfo, setUserInfo] = useState<any>({});
 
   const calculateHoursUntilEvent = (eventDate, eventTime) => {
-
     const now = new Date();
-  
+
     const [day, month, year] = eventDate.split('.');
     const [hours, minutes] = eventTime.split(':');
-  
+
     const eventDateTime = new Date(year, month - 1, day, hours, minutes);
-  
+
     const diffInMilliseconds = eventDateTime - now;
-  
+
     if (diffInMilliseconds < 0) {
       return null;
     }
-  
+
     const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
-  
+
     return Math.floor(diffInHours);
   };
 
-  const countMyEvent = useRef(0)
-
   const getFcmTokens = async (usersList: []) => {
     let tokens: string[] = [];
-    
-    const promises = usersList.map(async (item) => {
+
+    const promises = usersList.map(async item => {
       const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
       console.log('userInfo', userInfo);
       return userInfo.data().fcmToken;
     });
-  
+
     tokens = await Promise.all(promises);
-  
+
     return tokens;
   };
 
   const sendNotification = async (usersList: [], title: string, body: string) => {
-    
-    const tokens = await getFcmTokens(usersList)
-    
+    const tokens = await getFcmTokens(usersList);
+
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+        Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
       },
       body: JSON.stringify({
         registration_ids: tokens,
         notification: {
           title: title,
-          body: body
-        }
-      })
+          body: body,
+        },
+      }),
     });
-  
+
     if (!response.ok) {
       const error = await response.json();
       console.error('error sending notification:', error);
@@ -128,46 +125,45 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   };
 
-  const checkTimeEvent = (item) => {
+  const checkTimeEvent = item => {
     console.log('item', item);
-    
+
     if (item) {
-      const res  = calculateHoursUntilEvent(item.date, item.hour)
+      const res = calculateHoursUntilEvent(item.date, item.hour);
 
-      console.log('res',res);
-      
+      console.log('res', res);
 
-      let timeToEvent = null
+      let timeToEvent = null;
 
-      if(res && !timeToEvent && res >= 24) {
-        timeToEvent = 24
+      if (res && !timeToEvent && res >= 24) {
+        timeToEvent = 24;
       }
 
-      if(res && !timeToEvent && res >= 12) {
-        timeToEvent = 12
+      if (res && !timeToEvent && res >= 12) {
+        timeToEvent = 12;
       }
 
-      if(res && !timeToEvent &&res >= 2) {
-        timeToEvent = 2
+      if (res && !timeToEvent && res >= 2) {
+        timeToEvent = 2;
       }
-      
-      if(timeToEvent) {
+
+      if (timeToEvent) {
         setHoursUntilEvent(timeToEvent);
-        setCurrentEvent(item)
+        setCurrentEvent(item);
         setVisibleModalEventRemindes(true);
-        sendNotification(item?.usersList, `${item?.name} starting in ${timeToEvent}h!`, 'Click here to confirm')
-        timeToEvent = null
+        sendNotification(item?.usersList, `${item?.name} starting in ${timeToEvent}h!`, 'Click here to confirm');
+        timeToEvent = null;
       } else {
-        countMyEvent.current = countMyEvent.current + 1
+        countMyEvent.current = countMyEvent.current + 1;
       }
     }
-  }
+  };
 
   useEffect(() => {
-    if(myEventsData && myEventsData.length > countMyEvent.current) {
-      checkTimeEvent(myEventsData[countMyEvent.current])
+    if (myEventsData && myEventsData.length > countMyEvent.current) {
+      checkTimeEvent(myEventsData[countMyEvent.current]);
     }
-  },[myEventsData, countMyEvent.current])
+  }, [myEventsData, countMyEvent.current]);
 
   const fetchUserInfo = async () => {
     const user = auth().currentUser;
@@ -178,15 +174,15 @@ const MyEvents: FC<any> = ({navigation}) => {
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
-        
-      } catch (error: any) {
-      }
+      } catch (error: any) {}
     }
   };
 
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserInfo();
+    }, []),
+  );
 
   const handleOpenCancelAttendingModal = (
     eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string},
@@ -295,7 +291,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
       const filterData = data?.filter(obj => {
         return obj?.usersList?.some(user => {
-          return user?.uid === uid && (user?.status === 'invited' || user?.status === 'accepted');
+          return user?.uid === uid && (user?.status === 'invite_match' || user?.status === 'accepted' || user?.status === 'approved');
         });
       });
 
@@ -325,7 +321,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       getMyEvents();
       handleGetEventsIJoining();
     }, [setIsVisibleCancelAttendingModal, isVisibleCancelAttendingModal]),
-  ); 
+  );
 
   return (
     <>
@@ -488,15 +484,18 @@ const MyEvents: FC<any> = ({navigation}) => {
                 keyExtractor={item => item.id.toString()}
                 ListEmptyComponent={() => (
                   <>
-                    {userInfo?.accountConfirmed && <View style={{marginTop: screenHeight / 6}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
-                      Let's create an event
-                    </Text>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(17, 812), opacity: 0.8, marginBottom: 40}}>
-                      Get started by creating an event to begin inviting guests.
-                    </Text>
-                    <Button title="Create event" onPress={goToCreateEvent} />
-                  </View>}
+                    {userInfo?.accountConfirmed && (
+                      <View style={{marginTop: screenHeight / 6}}>
+                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
+                          Let's create an event
+                        </Text>
+                        <Text
+                          style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(17, 812), opacity: 0.8, marginBottom: 40}}>
+                          Get started by creating an event to begin inviting guests.
+                        </Text>
+                        <Button title="Create event" onPress={goToCreateEvent} />
+                      </View>
+                    )}
                   </>
                 )}
                 renderItem={({item}) => (
@@ -555,6 +554,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     numberOfGirlsInvited={item?.female + item?.femaleFriend}
                     host={{name: item?.name, image: item?.hostImage, hostUid: item?.uid}}
                     joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
+                    status={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status}
                     isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
                     handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
                     handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
@@ -601,6 +601,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     numberOfGirlsInvited={item?.female + item?.femaleFriend}
                     host={{name: item?.name, image: item?.hostImage, hostUid: item?.uid}}
                     joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
+                    status={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status}
                     isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
                     handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
                     handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
@@ -628,7 +629,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         userInfo={activeUserInfo}
         eventInfo={activeModalEvent}
       />
-      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true} isPremium={userInfo?.accountPremium}/>}
+      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true} isPremium={userInfo?.accountPremium} />}
       <ModalEventRemindes
         currentEvent={currentEvent}
         uid={userInfo?.uid}
@@ -644,7 +645,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         // date={eventDate}
         // girlInvitation={2}
         // allPeople={34}
-  />
+      />
     </>
   );
 };

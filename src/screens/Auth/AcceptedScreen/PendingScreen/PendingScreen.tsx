@@ -14,15 +14,16 @@ import {black1Color, blackColor, whiteColor} from 'constants/colors';
 import {AuthContext} from 'contexts/AuthContext';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import { useRoute } from '@react-navigation/native';
 
 const PendingScreen: FC = (): JSX.Element => {
   const styles = useStyles();
-  const navigation = useAppNavigation();
+  const navigation = useAppNavigation();  
 
   const {onBoarding} = useContext(AuthContext);
 
   const handleNext = () => {
-    navigation.navigate(paymentPath as never);
+    navigation.navigate(paymentPath as never, {screen: 'pending'});
   };
   const flattenedPhotos = onBoarding.filter((item: {photos: []}) => item.photos)[0]?.photos;
   const imageUser = flattenedPhotos?.find((photo: {id: number}) => photo.id === 0)?.image;

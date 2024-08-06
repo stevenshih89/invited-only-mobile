@@ -1,4 +1,4 @@
-import React, {FC, useState, useEffect, useContext} from 'react';
+import React, {FC, useState, useEffect, useContext, useCallback} from 'react';
 import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
@@ -22,6 +22,7 @@ import {EventContext} from 'contexts/EventContext.tsx';
 import moment from 'moment/moment';
 import {blackColor, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
+import { useFocusEffect } from '@react-navigation/native';
 
 type ItemProps = {
   title: string;
@@ -74,16 +75,14 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
-      } catch (error: any) {
-        
-      }
+      } catch (error: any) {}
     }
     setLoading(false);
   };
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     fetchUserInfo();
-  }, []);
+  },[]))
 
   const handleBuildEventsData = () => {
     firestore()
@@ -185,7 +184,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   );
 
   const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data, activeEvent}: ItemEventsJoiningProps) => {
-    
     const statusColor = handleCheckStatusStyles(status);
     return (
       <View style={styles.itemEventsJoining}>
@@ -381,7 +379,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           />
         )
       ) : null}
-      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false}/>}
+      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
     </View>
   );
 };
