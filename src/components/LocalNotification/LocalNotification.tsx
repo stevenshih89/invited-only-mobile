@@ -106,8 +106,19 @@ const LocalNotification = () => {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Image style={{height: 60, width: 60, borderRadius: 30}} source={{uri: props.ownerPhoto}} />
             <View style={{marginLeft: 16, flex: 1}}>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={{color: blackColor, fontWeight: 'bold', fontSize: RFValue(16, 812), fontFamily: Satoshi400}}>{text1}</Text>
+              <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start'}}>
+                <Text
+                  style={{
+                    color: blackColor,
+                    fontWeight: 'bold',
+                    fontSize: RFValue(16, 812),
+                    flex: 1,
+                    flexWrap: 'wrap',
+                    marginRight: 8,
+                    fontFamily: Satoshi400,
+                  }}>
+                  {text1}
+                </Text>
                 <View style={{borderRadius: 100, backgroundColor: blackColor}}>
                   <Text
                     style={{
@@ -118,7 +129,7 @@ const LocalNotification = () => {
                       paddingVertical: 4,
                       borderRadius: 100,
                     }}>
-                    INVITE MATCH
+                    {props.status}
                   </Text>
                 </View>
               </View>
