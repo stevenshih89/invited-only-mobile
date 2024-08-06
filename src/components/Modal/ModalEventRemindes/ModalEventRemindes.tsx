@@ -18,7 +18,7 @@ import CalendarWhiteIcon from 'assets/images/icons/calendar-white.svg';
 import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import moment from 'moment/moment';
-import {black1Color, blackColor, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import LinearGradient from 'react-native-linear-gradient';
@@ -67,10 +67,8 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
   deleteUserFromCanceled,
   placeName = '',
   updateEvent,
-  setUpdateEvent,
   userDelete,
   activeState = null,
-  host,
   checkUpdate,
   setVisibleUserDelete,
   visibleUserDelete,
@@ -94,26 +92,28 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
   const [nameUser, setNameUser] = useState('');
   const [ageUser, setAgeUser] = useState('');
   const [photoUser, setPhotoUser] = useState('');
+  const [isPremium, setIsPremium] = useState();
+
   const styles = useStyles();
 
   const getUserInfo = async () => {
     try {
+      const uid = auth().currentUser?.uid;
       const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-      setNameUser(userInfoDoc.data().name);
-      const age = calculateAge(userInfoDoc.data().date);
-      const photo = userInfoDoc.data().photos[0].image;
+      setNameUser(userInfoDoc?.data()?.name);
+      const age = calculateAge(userInfoDoc?.data()?.date);
+      const photo = userInfoDoc?.data()?.photos[0].image;
       setAgeUser(age);
       setPhotoUser(photo);
+      setIsPremium(userInfoDoc?.data()?.accountPremium);
     } catch (error) {
       console.log('error get user info', error);
     }
   };
 
   useEffect(() => {
-    if (uid) {
-      getUserInfo();
-    }
-  }, []);
+    getUserInfo();
+  }, [uid]);
 
   const OnTheWayModal = () => {
     return (
@@ -270,15 +270,11 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
         testID={'bottom-half-modal-open-button'}
         onBackdropPress={() => {
           setEventStarting(false);
-          if (countMyEvent?.current) {
-            countMyEvent.current = countMyEvent?.current + 1;
-          }
+          countMyEvent.current = countMyEvent.current + 1;
         }}
         onSwipeComplete={() => {
           setEventStarting(false);
-          if (countMyEvent?.current) {
-            countMyEvent.current = countMyEvent?.current + 1;
-          }
+          countMyEvent.current = countMyEvent.current + 1;
         }}
         style={styles.modalStyles}
         swipeDirection={['down']}>
@@ -287,7 +283,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
           <View>
             <ImageBackground
               resizeMode="cover"
-              source={{uri: currentEvent?.photos?.[0].image}}
+              source={{uri: currentEvent.photos[0].image}}
               style={[styles.eventImage, {justifyContent: !uid ? 'flex-end' : 'space-between'}]}>
               {uid && (
                 <TouchableOpacity
@@ -317,7 +313,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                           }}>
                           <Text style={{fontSize: RFValue(10, 812), color: whiteColor, fontFamily: Satoshi500}}>Host</Text>
                         </View>
-                        {false && (
+                        {isPremium && (
                           <LinearGradient
                             colors={['#977B4A', '#E5D291', '#A28453']}
                             start={{x: 0, y: 0}}
@@ -348,7 +344,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               )}
               <View>
                 <View style={{marginBottom: 12, flexDirection: 'row', alignItems: 'center'}}>
-                  {currentEvent?.activeState && (
+                  {currentEvent.activeState && (
                     <View style={{backgroundColor: lightGreenColor, borderRadius: 5, paddingVertical: 4, paddingHorizontal: 6}}>
                       <Text style={{fontSize: RFValue(12, 812), fontFamily: Satoshi500, color: whiteColor}}>Active</Text>
                     </View>
@@ -368,16 +364,16 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                 <View style={styles.main}>
                   <View style={styles.fdr}>
                     <UserIcon />
-                    <Text style={styles.textGirlInvitation}>{currentEvent?.female} x Girl invitation </Text>
+                    <Text style={styles.textGirlInvitation}>{currentEvent.female} x Girl invitation </Text>
                   </View>
                   <View style={styles.fdr}>
                     <CalendarIcon width={19} height={19} />
-                    <Text style={styles.textDate}>{moment(`${currentEvent?.date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
+                    <Text style={styles.textDate}>{moment(`${currentEvent.date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
                   </View>
                   <View style={styles.fdr}>
                     <UsersIcon width={19} height={19} />
                     <Text style={styles.textCity}>
-                      {joinedPeopleCount}/{currentEvent?.female + currentEvent?.male}
+                      {joinedPeopleCount}/{currentEvent.female + currentEvent.male}
                     </Text>
                   </View>
                 </View>
@@ -399,13 +395,27 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               if (time === '0') {
                 setEventStarting(false);
               } else {
+                // await handleAcceptInvitation();
+                // await handleGetEventsIJoining();
+                // showToast('success', 'Go to my events', `You confirmed ${currentEvent?.placeName} event`);
                 setEventStarting(false);
                 countMyEvent.current = countMyEvent.current + 1;
+                // setModalVisible(false);
               }
             }}
             title={time === '0' ? 'Im on my way' : 'Confirm'}
             buttonStyle={styles.button}
           />
+          {/* <Button
+            variant="transparent"
+            onPress={() => {
+              setEventStarting(false);
+              // setChatModal(true);
+              // setOnTheWayState(true);
+            }}
+            title="Go to my event"
+            buttonStyle={{width: '100%'}}
+          /> */}
         </View>
         <OnTheWayModal />
         <OpenChatModal />
