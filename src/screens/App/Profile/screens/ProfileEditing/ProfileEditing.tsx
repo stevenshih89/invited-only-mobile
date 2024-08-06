@@ -302,7 +302,15 @@ const ProfileEditing: FC = (): ReactElement => {
     if (user) {
       try {
         const documentSnapshot = await firestore().collection('userInfo').doc(user.uid).get();
-
+        const userData = documentSnapshot.data();
+        const updatedImages = images.map((item) => {
+          const photo = userData?.photos?.[item.id];
+          return {
+            id: item.id,
+            image: photo ? photo.image : item.image,
+          };
+        });
+        
         if (documentSnapshot.data()?.interests) {
           setDefaultInterests(documentSnapshot.data()?.interests);
         }
@@ -322,7 +330,7 @@ const ProfileEditing: FC = (): ReactElement => {
           setShowGender(documentSnapshot.data()?.showGender);
         }
         if (documentSnapshot.data()?.photos) {
-          setImages(documentSnapshot.data()?.photos);
+          setImages(updatedImages);
         }
         if (documentSnapshot.data()?.date) {
           setMonth(documentSnapshot.data()?.date.split('.')[0]);
@@ -441,7 +449,7 @@ const ProfileEditing: FC = (): ReactElement => {
             homeAddress: textHomeAdress,
             showHomeAddress: showHomeAdress
           }).then(() => {
-            showToast('changeProfile', `${title} successfully changed!`, `Your profile is updated`);
+            showToast('inviteMatch', 'Your profile is updated', `${title} successfully changed!`, {ownerPhoto: images[0].image, status: 'UPDATED'});
           })
           .then(async () => {
             await fetchImages(user);

@@ -42,12 +42,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
   const [loading, setLoading] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>({});
 
-useEffect(() => {
-  console.log('userInfo.location', userInfo?.location);
-
-},[userInfo])  
-
-  const [photosList, setPhotosList] = useState<[]>([]);
+  const [photosList, setPhotosList] = useState<[]>([]);  
 
   const route = useRoute();
 
@@ -120,6 +115,7 @@ useEffect(() => {
               homeAddress={userInfo?.location}
               age={userInfo?.showAge ? userAge : ''}
               isShowLocation={true}
+              isPremium={userInfo?.accountPremium}
             />
             {/* {isShowEditButton && <Button title="Edit" buttonStyle={{marginTop: 20}} onPress={goToProfileEditing} />} */}
             {/* <View style={styles.bioWrapper}>
@@ -313,7 +309,15 @@ useEffect(() => {
               />
             </View>
             <View>
-              <Image style={{height: 544, borderRadius: 20, marginTop: 34, width: '100%'}} source={{uri: photosList[1]}} />
+            {photosList?.map((item, index) => {
+              return (index !== 0 && item) ? (
+               <Image
+                key={index}
+                style={{height: 544, borderRadius: 20, marginTop: 34, width: '100%'}}
+                source={{uri: photosList[index]}}
+                />
+              ) : null;
+            })}
             </View>
             <View style={styles.wrapperAboutMe}>
               <Text style={styles.testBasics}>{userInfo?.name} location</Text>

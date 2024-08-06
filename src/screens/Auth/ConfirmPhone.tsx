@@ -22,6 +22,7 @@ import {chooseAccountTypePath} from 'constants/pathLocations';
 import auth from '@react-native-firebase/auth';
 import {showToast} from 'helpers/showToast.ts';
 import firebase from '@react-native-firebase/firestore';
+import Loader from 'components/Modal/ModalLoader/Loader';
 
 const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   const mobilePhone = route?.params?.mobilePhone;
@@ -34,6 +35,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
     setValue: setCode,
   });
   const [confirm, setConfirm] = useState<any>(route?.params?.confirm);
+  const [resendTimer, setResendTimer] = useState(0)
 
   const CELL_COUNT: number = 6;
   const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
@@ -54,11 +56,25 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
     }
   };
 
+  useEffect(() => {
+    let timer;
+    if (resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    } else {
+      clearInterval(timer);
+    }
+    return () => clearInterval(timer);
+  }, [resendTimer]);
+  
+
   async function signInWithPhoneNumber() {
     try {
       if (!mobilePhone) {
         return;
       }
+      setResendTimer(59)
       const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
       const confirmation = await auth().signInWithPhoneNumber(phone);
       setConfirm(confirmation);
@@ -76,7 +92,6 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
       setTimeout(() => {
         navigation.navigate(nextRoute);
       }, 1000);
-
       setLoadingConfirmation(false);
     } catch (e: any) {
       console.log(e);
@@ -196,7 +211,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
                   }}>
                   Didn't receive the code?{' '}
                 </Text>
-                <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{bottom: 10, right: 20}}>
+                {!resendTimer ? <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{bottom: 10, right: 20}}>
                   <Text
                     style={{
                       color: whiteColor,
@@ -205,7 +220,16 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
                     }}>
                     Resend Code
                   </Text>
-                </TouchableOpacity>
+                </TouchableOpacity>: 
+                  <Text
+                  style={{
+                    color: whiteColor,
+                    fontFamily: Satoshi700,
+                    fontSize: RFValue(13, 812),
+                  }}>
+                  Resend in {resendTimer}
+                </Text>
+                }
               </View>
             </View>
             <View style={{paddingHorizontal: 38, marginBottom: 4}}>
@@ -214,6 +238,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
           </View>
         </SafeAreaView>
       </TouchableWithoutFeedback>
+      <Loader isVisible={loadingConfirmation} textLoader='Please wait...' successfulPay={false} />
     </KeyboardAvoidingView>
   );
 };

@@ -9,6 +9,7 @@ import firestore from '@react-native-firebase/firestore';
 //import components
 import useStyles from './styles';
 import {useUser} from '../../../../../store/userStore';
+import ArrowRight from '../../../../../assets/images/icons/arrow-right-balck.svg'
 import {Satoshi400, Satoshi500, Satoshi700, Satoshi700Italic} from 'constants/fonts';
 import Button from 'components/Button/Button';
 import {blackColor, lightGray5Color, transparentGray90Color, whiteColor} from 'constants/colors';
@@ -111,24 +112,30 @@ const MyPlan = () => {
         </View>
         <TouchableOpacity onPress={goToMyProfileView} style={{marginTop: 34}}>
           <LinearGradient colors={['#977B4A', '#E5D291', '#A28453']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={{paddingVertical:16, borderRadius: 18, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={{fontSize: RFValue(18,812), fontFamily: Satoshi700, marginRight: 4}}>Upgrade to Yearly spot</Text>
+            <Text style={{fontSize: RFValue(18,812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade to Yearly spot</Text>
             <ArrowRightIcon width={16} height={16}/>
           </LinearGradient>
         </TouchableOpacity>
       </View>
       :
-      <LinearGradient colors={['#977B4A', '#E5D291', '#A28453']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linearGradient}>
+      <View>
+        {userInfo?.accountType === 'host'? 
+        <LinearGradient colors={['#977B4A', '#E5D291', '#A28453']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linearGradient}>
             <Text style={styles.textHostPremium}>Host Premium</Text>
             <Text style={styles.textGetAccess}>Get Access & Unlock all of our features. Secure your spot. Host Access is limited.</Text>
             <View style={styles.buttonWrapper}>
-              {/* {userInfo?.accountConfirmed && <Button title="Get Access" onPress={goToMyProfileView} buttonTitleStyle={styles.textButtonTitleStyle} buttonStyle={styles.buttonUpgrade} />} */}
-              {/* {!userInfo?.accountConfirmed && <Button title=" Upgrade" onPress={goToMyProfileView} buttonTitleStyle={styles.textButtonTitleStyle} buttonStyle={styles.buttonUpgrade} />} */}
               <Button title=" Upgrade" onPress={goToMyProfileView} buttonTitleStyle={styles.textButtonTitleStyle} buttonStyle={styles.buttonUpgrade} />
             </View>
-            {/* <Text style={styles.textYearlySpot}>Yearly Spot*</Text> */}
-            {/* <Text style={styles.textYearlySpot}>Yearly Spot*</Text> */}
-      </LinearGradient>}
-      {/* {!isPremium && <Text style={styles.textYearlySpot}>Yearly Spot*</Text>} */}
+        </LinearGradient>:
+        <TouchableOpacity onPress={goToMyProfileView}>
+          <LinearGradient colors={['#977B4A', '#E5D291', '#A28453']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={[styles.linearGradient, {borderRadius: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}]}>
+            <Text style={{color: blackColor, fontSize: RFValue(18, 821), fontFamily: Satoshi500, marginRight: 4}}>Upgrade to Yearly spot</Text>
+            <ArrowRight width={16} height={16}/>  
+          </LinearGradient>
+        </TouchableOpacity>
+        }
+      </View>
+      }
       <View style={styles.listColumnWrapper}>
         <Text style={styles.textWhatYouGet}>What you {userInfo?.accountPremium  ? 'have' : 'get'}:</Text>
         {!userInfo?.accountPremium  && <Text style={styles.textPremium}>Premium</Text>}

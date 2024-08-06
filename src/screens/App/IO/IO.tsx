@@ -97,8 +97,16 @@ const IO: FC = (): JSX.Element => {
 
   const handleCloseMatch = (): void => {
     setIsVisibleMatch(false);
-    showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {ownerPhoto: ownerEventUserPhoto});
+    showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {ownerPhoto: ownerEventUserPhoto, status: 'INVITE MATCH'});
   };
+
+  useEffect(() => {
+    if(Object.keys(userInfo).length != 0) {
+      if(!userInfo?.accountConfirmed || !userInfo?.accountReviewed) {
+        showToast('inviteMatch','have a code? click here', 'Your account is under review', {ownerPhoto: userInfo?.photos[0].image, status: 'ON REVIEW'});
+      }
+    }
+  },[userInfo])
 
   const getWeekNumber = date => {
     let firstDayOfYear: Date = new Date(date.getFullYear(), 0, 1);
@@ -941,7 +949,7 @@ const IO: FC = (): JSX.Element => {
   }, [userInfo, userHost, activeEventDate]);
 
   useEffect(() => {
-    fetchUserInfo();
+    // fetchUserInfo();
     fetchMyEvents(true);
     requestUserPermission();
   }, []);
@@ -949,6 +957,7 @@ const IO: FC = (): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       fetchMyEvents(false);
+      fetchUserInfo();
     }, []),
   );
 

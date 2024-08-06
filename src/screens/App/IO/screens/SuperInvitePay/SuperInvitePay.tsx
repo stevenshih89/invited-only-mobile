@@ -26,6 +26,7 @@ import {
 import FlashIcon from 'assets/images/icons/flash-filled.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import Purchases, { PurchasesPackage } from 'react-native-purchases';
+import { showToast } from 'helpers/showToast';
 
 interface PlanListItem {
   id: number;
@@ -44,14 +45,11 @@ const SuperInvitePay: FC = (): JSX.Element => {
     if (user) {
       try {
         const userInfoDoc = (await firestore().collection('userInfo').doc(user.uid).get()).data();
-        // console.log('superInvitesCurrent', userInfoDoc);
         const superInvitesCurrent = userInfoDoc?.superInvites;
-        // console.log('superInvitesCurrent', superInvitesCurrent);
-        
         await firestore().collection('userInfo').doc(user.uid).update({
           superInvites: superInvitesCurrent + superInvites
         })
-        
+        handleNext()
       } catch (error: any) {
         console.log('error updateSuperInvites', error);
         
@@ -82,8 +80,11 @@ const SuperInvitePay: FC = (): JSX.Element => {
   ]);
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);  
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    const userId = auth().currentUser?.uid;
     navigation.navigate(IOPath as never);
+    const userInfoDoc = await firestore().collection('userInfo').doc(userId).get();
+    showToast('inviteMatch', `You have ${userInfoDoc?.data()?.superInvites} super ${userInfoDoc?.data()?.accountType === 'host'? 'Invites': 'Joins'}`, 'Let`s start swiping!', {ownerPhoto: userInfoDoc?.data()?.photos[0].image, status: 'SUCCESSFUL'})
   };
 
   const pay = async (pack: PurchasesPackage, superInvites: number) => {
@@ -91,12 +92,6 @@ const SuperInvitePay: FC = (): JSX.Element => {
       const { customerInfo } = await Purchases.purchasePackage(pack);
       updateSuperInvites(superInvites)
       console.log('pay successful');
-      // if (
-      //   typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
-      //   "undefined"
-      // ) {
-      //   console.log('pay successful');
-      // }
     } catch (e) {
       console.log('pay error', e);
     }

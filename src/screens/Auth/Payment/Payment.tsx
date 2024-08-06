@@ -160,14 +160,15 @@ const Payment: FC = (): JSX.Element => {
 
     if (user) {
       try {
+        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get()
+        const userInfo = userInfoDoc.data()
         const userInfoUpdate = await firestore().collection('userInfo').doc(user.uid);
         userInfoUpdate.update({
           accountPremium: true,
-          superInvites: 10
+          superInvites: userInfo?.superInvites + 10
         })
       } catch (error: any) {
         console.log('error user premium update', error);
-        
       }
     }
   };
@@ -337,10 +338,12 @@ const Payment: FC = (): JSX.Element => {
     );
   };
 
+  const checkNavig = useRoute()    
+
   return (
     <SafeAreaView style={{backgroundColor: black1Color}}>
       <Loader isVisible={loaderVisible} successfulPay={successfulPay}/>
-      <HostPremium isVisible={visibleHostPremium} />
+      <HostPremium isVisible={visibleHostPremium} setVsibleHostPremium={setVsibleHostPremium} screen={checkNavig?.params?.screen}/>
       <ScrollView>
         <View style={styles.container}>
           <View style={{alignItems: 'flex-end', marginTop: 10}}>

@@ -34,7 +34,6 @@ const Loader: FC<LoaderProps> = ({
     );
 
     return () => {
-      // Очистка анимации при размонтировании компонента
       cancelAnimation(rotation);
     };
   }, [rotation]);
