@@ -23,7 +23,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
   const {list} = route?.params;
-  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name} = list;
+  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name} = list;  
 
   const [usersListData, setUsersListsData] = useState<any>(usersList);
   const [activeTab, setActiveTab] = useState(GUEST_LIST);
@@ -288,7 +288,14 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
           <View style={{backgroundColor: blackColor, borderRadius: 10, paddingBottom: 20}}>
             <View style={{paddingTop: 0}}>
               <View>
-                {photos?.map((i: any, index: number) => (
+                {photos.length > 0 && <Image
+                    source={{
+                      uri: photos[0].image
+                    }}
+                    style={{width: '100%', height: 216, borderRadius: 20}}
+                    resizeMode="cover"
+                  />}
+                {/* {photos?.map((i: any, index: number) => (
                   <Image
                     source={{
                       uri: i?.image,
@@ -296,7 +303,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                     style={{width: '100%', height: 178, marginTop: index !== 0 ? 28 : 0, borderRadius: 20}}
                     resizeMode="cover"
                   />
-                ))}
+                ))} */}
               </View>
               <Text style={[{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812), marginTop: 20}]}>Event details</Text>
               <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}}>Place name</Text>
@@ -335,14 +342,18 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   </Text>
                 </View>
               </View>
-              {photos?.map((i, index) => (
-                <Image
-                  key={index}
-                  source={{uri: i?.image}}
-                  style={{width: '100%', height: 178, borderRadius: 20, marginBottom: 34}}
-                  resizeMode="cover"
-                />
-              ))}
+              {photos?.map((i, index) => {
+                if(photos[index].image) {
+                  return(
+                    <Image
+                      key={index}
+                      source={{uri: i?.image}}
+                      style={{width: '100%', height: 216, borderRadius: 20, marginBottom: 34}}
+                      resizeMode="cover"
+                    />
+                  )
+                }
+              })}
             </View>
             <TouchableOpacity
               onPress={() => setIsVisibleCancelModal(true)}

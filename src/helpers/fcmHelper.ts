@@ -51,7 +51,7 @@ export const getFcmToken = async () => {
 
 //method was called on  user register with firebase FCM for notification
 export async function registerAppWithFCM() {
-  console.log('registerAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
+  // console.log('registerAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
   if (!messaging().isDeviceRegisteredForRemoteMessages) {
     await messaging()
       .registerDeviceForRemoteMessages()
@@ -66,7 +66,7 @@ export async function registerAppWithFCM() {
 
 //method was called on un register the user from firebase for stoping receiving notifications
 export async function unRegisterAppWithFCM() {
-  console.log('unRegisterAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
+  // console.log('unRegisterAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
 
   if (messaging().isDeviceRegisteredForRemoteMessages) {
     await messaging()
@@ -79,7 +79,7 @@ export async function unRegisterAppWithFCM() {
       });
   }
   await messaging().deleteToken();
-  console.log('unRegisterAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
+  // console.log('unRegisterAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
 }
 
 export const checkApplicationNotificationPermission = async () => {
@@ -87,11 +87,11 @@ export const checkApplicationNotificationPermission = async () => {
   const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    console.log('Authorization status:', authStatus);
+    // console.log('Authorization status:', authStatus);
   }
   request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS)
     .then(result => {
-      console.log('POST_NOTIFICATIONS status:', result);
+      // console.log('POST_NOTIFICATIONS status:', result);
     })
     .catch(error => {
       console.log('POST_NOTIFICATIONS error ', error);

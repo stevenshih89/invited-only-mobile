@@ -110,7 +110,7 @@ const useStyles = () => {
     button: {
       width: '100%',
       marginTop: 20,
-      marginBottom: 6,
+      marginBottom: 30,
     },
     textDescription: {
       color: whiteColor,

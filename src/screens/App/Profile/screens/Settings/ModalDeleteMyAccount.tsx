@@ -12,6 +12,7 @@ import {useUser} from '../../../../../store/userStore';
 import {calculateAge} from 'helpers/calculateAge.ts';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { confirmPhonePath } from 'constants/pathLocations';
+import { showToast } from 'helpers/showToast';
 
 const ModalDeleteMyAccount: FC<{
   isVisible: boolean; 
@@ -25,6 +26,7 @@ const ModalDeleteMyAccount: FC<{
 
   const userAge = calculateAge(userHost?.date);
   const handleDeleteAccount = async () => {
+    showToast('inviteMatch', '', 'Your account has been deleted', {ownerPhoto: userHost?.photos[0].image, status: 'SUCCESSED'})
     try {
       await auth()
         .currentUser?.delete()
