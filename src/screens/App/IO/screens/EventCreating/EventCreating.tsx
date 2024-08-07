@@ -62,7 +62,7 @@ const EventCreating: FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const [openHour, setOpenHour] = useState(false);
-  const userHost = useUser((i: any) => i?.user);
+  const userHost = useUser((i: any) => i?.user);  
 
   const [photos, setImages] = useState<{image: null | string; id: number}[]>([
     {
@@ -132,44 +132,77 @@ const EventCreating: FC = () => {
     prevMaleFriend: isEditingItem?.maleFriend,
   };
 
+  const generateRandomId = (length: number) =>  {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
   const getFcmTokens = async (usersList: []) => {
-    let tokens: string[] = [];
+    let users: Object[] = [];
     
     const promises = usersList.map(async (item) => {
       const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
       console.log('userInfo', userInfo);
-      return userInfo.data().fcmToken;
+      return {uid: userInfo?.data()?.uid, token: userInfo?.data()?.fcmToken};
     });
   
-    tokens = await Promise.all(promises);
+    users = await Promise.all(promises);
+
+    console.log('users', users);
+    
   
-    return tokens;
+    return users;
   };
 
-  const sendNotification = async (title: string, body: string) => {
-    const tokens = await getFcmTokens(isEditingItem?.usersList)
-    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
-      },
-      body: JSON.stringify({
-        registration_ids: tokens,
-        notification: {
-          title: title,
-          body: body
-        }
-      })
-    });
-  
-    if (!response.ok) {
-      const error = await response.json();
-      console.error('error sending notification:', error);
-    } else {
-      const data = await response.json();
-      console.log('notification sent successfully:', data);
-    }
+  const sendNotification = async (title: string, body: string, mark: string) => {
+    const users = await getFcmTokens(isEditingItem?.usersList)
+    
+    for (const user of users) {
+      const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+          },
+          body: JSON.stringify({
+              to: user.token,
+              notification: {
+                  title: title,
+                  body: body
+              }
+          })
+      });
+      
+      if (!response.ok) {
+          const error = await response.json();
+          console.error('error sending notification:', error);
+      } else {
+          const data = await response.json();
+          const userDoc = await firestore().collection('userInfo').doc(user.uid).get();
+          const userNotifications = userDoc.data()?.notifications || [];
+          const id = generateRandomId(8)
+          const notification = {
+              id,
+              title: title,
+              body: body,
+              mark: mark,
+              uid: userHost?.uid
+          };
+          
+          try {
+              await firestore().collection('userInfo').doc(user.uid).update({
+                  notifications: [...userNotifications, notification]
+              });
+          } catch (error) {
+              console.log('error update notifications', error);
+          }
+      }
+  }
   };
 
   const handleSaveChanges = async () => {
@@ -192,7 +225,7 @@ const EventCreating: FC = () => {
       });
       navigation?.goBack();
       showToast('success', '', 'Event successfully changes!');
-      sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details')
+      sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details', 'update')
     } catch (e) {
       console.log(e);
     }

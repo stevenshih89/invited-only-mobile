@@ -1,4 +1,4 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
+import React, {FC, useCallback, useContext, useEffect, useState} from 'react';
 import {View, TouchableOpacity, Text, Image, FlatList, ScrollView, Alert} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
@@ -675,6 +675,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         return null;
     }
   };
+  
 
   return (
     <View style={[styles.container, headerInsets]}>
@@ -685,7 +686,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
             {badge && (
               <TouchableOpacity onPress={goToNotifications} activeOpacity={0.7} style={{paddingRight: 6}}>
                 <NotificationIcon width={32} height={32} />
-                <Badge value={0} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
+                <Badge value={userHost?.notifications.length} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
               </TouchableOpacity>
             )}
             {headerType === 'profile' && (
