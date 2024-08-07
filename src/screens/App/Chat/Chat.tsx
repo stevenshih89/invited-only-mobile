@@ -22,7 +22,7 @@ import {EventContext} from 'contexts/EventContext.tsx';
 import moment from 'moment/moment';
 import {blackColor, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 
 type ItemProps = {
   title: string;
@@ -80,9 +80,11 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     setLoading(false);
   };
 
-  useFocusEffect(useCallback(() => {
-    fetchUserInfo();
-  },[]))
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserInfo();
+    }, []),
+  );
 
   const handleBuildEventsData = () => {
     firestore()

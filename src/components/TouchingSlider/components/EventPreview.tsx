@@ -1,14 +1,7 @@
 import {Dispatch, FC, ReactElement, SetStateAction, useCallback, useState} from 'react';
 import {View, ImageBackground, TouchableOpacity, Text, StyleSheet, SafeAreaView} from 'react-native';
 // import components
-import {
-  gray1Color,
-  grayScale700,
-  transparent60Color,
-  transparentGray90Color,
-  transparentWhite56Color,
-  whiteColor,
-} from 'constants/colors.ts';
+import {gray1Color, grayScale700, transparent60Color, transparentGray90Color, whiteColor} from 'constants/colors.ts';
 import User from 'assets/images/icons/user.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
@@ -22,7 +15,7 @@ import Button from 'components/Button/Button';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
-import { showToast } from 'helpers/showToast';
+import {showToast} from 'helpers/showToast';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import FastImage from 'react-native-fast-image';
 
@@ -30,8 +23,8 @@ const EventPreview: FC<{
   photos: any;
   isEditing: boolean | undefined;
   id: string;
-  eventTypes: {},
-  description: string,
+  eventTypes: {};
+  description: string;
   hour: string;
   address: string;
   meetingSpot: string;
@@ -44,13 +37,13 @@ const EventPreview: FC<{
   setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
   handleCreateEvent: any;
 }> = ({
-  photos, 
-  date, 
-  girls, 
-  placeName, 
-  setCurrentCreateStap, 
-  setTabState, 
-  handleCreateEvent, 
+  photos,
+  date,
+  girls,
+  placeName,
+  setCurrentCreateStap,
+  setTabState,
+  handleCreateEvent,
   name,
   isEditing,
   id,
@@ -59,8 +52,7 @@ const EventPreview: FC<{
   hour,
   address,
   meetingSpot,
-  setIsVisibleSaveModal
-
+  setIsVisibleSaveModal,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
@@ -68,8 +60,8 @@ const EventPreview: FC<{
   const [nameUser, setNameUser] = useState('');
   const [userAge, setUserAge] = useState('');
   const [userAccountType, setUserAccountType] = useState('');
-  const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false)
-  const numberPhotos = imagesUser?.length;  
+  const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
+  const numberPhotos = imagesUser?.length;
 
   function calculateAge(birthDateString: string) {
     const parts = birthDateString.split('.');
@@ -83,8 +75,6 @@ const EventPreview: FC<{
   }
 
   console.log(photos);
-  
-  
 
   useFocusEffect(
     useCallback(() => {
@@ -135,11 +125,10 @@ const EventPreview: FC<{
               style={{flex: 1, width: '100%', height: '100%', borderRadius: 20, overflow: 'hidden'}}
               source={{
                 uri: imagesUser?.image ? imagesUser?.image : '',
-                headers:{ Authorization: 'someAuthToken' },
+                headers: {Authorization: 'someAuthToken'},
                 priority: FastImage.priority.normal,
               }}
-              resizeMode={FastImage.resizeMode.cover}
-            >
+              resizeMode={FastImage.resizeMode.cover}>
               <View style={styles.wrapperBar}>
                 {[...Array(numberPhotos)].map((_, index) => (
                   <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
@@ -157,15 +146,15 @@ const EventPreview: FC<{
               </View>
               <View style={{width: '100%', position: 'absolute', padding: 12, bottom: 0}}>
                 <View style={styles.containerInfo}>
-                <FastImage
-                  style={styles.imageBackground}
-                  source={{
-                    uri: photos[0].image,
-                  headers:{ Authorization: 'someAuthToken' },
-                  priority: FastImage.priority.normal,
-                  }}
-                  resizeMode={FastImage.resizeMode.cover}
-                />
+                  <FastImage
+                    style={styles.imageBackground}
+                    source={{
+                      uri: photos[0].image,
+                      headers: {Authorization: 'someAuthToken'},
+                      priority: FastImage.priority.normal,
+                    }}
+                    resizeMode={FastImage.resizeMode.cover}
+                  />
                   {/* <ImageBackground
                     source={{uri: photos[0].image}}
                     style={styles.imageBackground}
@@ -274,9 +263,13 @@ const EventPreview: FC<{
                 <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Back</Text>
               </TouchableOpacity>
             </View>
-            <Button buttonStyle={styles.button} onPress={() => {
-              isEditing? setIsVisibleSaveModal(true): handleCreateEvent()
-            }} title={isEditing? 'Save changes' : 'Create event'} />
+            <Button
+              buttonStyle={styles.button}
+              onPress={() => {
+                isEditing ? setIsVisibleSaveModal(true) : handleCreateEvent();
+              }}
+              title={isEditing ? 'Save changes' : 'Create event'}
+            />
           </View>
         </View>
       </SafeAreaView>
@@ -284,11 +277,11 @@ const EventPreview: FC<{
   }
 
   const handleSuperJoin = () => {
-    setVisibleModalSuperJoin(true)
+    setVisibleModalSuperJoin(true);
     setTimeout(() => {
-      setVisibleModalSuperJoin(false)
+      setVisibleModalSuperJoin(false);
     }, 3000);
-  }
+  };
 
   if (userAccountType === 'guest') {
     return (
@@ -330,18 +323,14 @@ const EventPreview: FC<{
           </View>
         </View>
         <View style={styles.centerContainer}>
-          <TouchableOpacity
-          onPress={handleSuperJoin} 
-          activeOpacity={0.7} 
-          style={[styles.iconButton, styles.marginRight]}
-          >
+          <TouchableOpacity onPress={handleSuperJoin} activeOpacity={0.7} style={[styles.iconButton, styles.marginRight]}>
             <FlashIcon />
           </TouchableOpacity>
           <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginLeft]}>
             <IOIcon />
           </TouchableOpacity>
         </View>
-        <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={photos[0].image}/>
+        <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={photos[0].image} />
       </View>
     );
   }
@@ -442,4 +431,3 @@ export default EventPreview;
 function setIsVisibleSaveModal(arg0: boolean) {
   throw new Error('Function not implemented.');
 }
-

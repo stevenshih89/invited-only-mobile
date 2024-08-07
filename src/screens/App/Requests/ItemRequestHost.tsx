@@ -18,14 +18,14 @@ import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
 import {useEffect, useId, useState} from 'react';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
-import auth from '@react-native-firebase/auth'
+import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 
 const ItemRequestHost = ({item, list}: any) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState({accountType: ''});
-  const [currentUserName, setCurrentUserName] = useState()
+  const [currentUserName, setCurrentUserName] = useState();
 
   const OverlayRight = () => {
     return (
@@ -64,9 +64,7 @@ const ItemRequestHost = ({item, list}: any) => {
   };
 
   const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
-
     console.log('item', item);
-    
 
     const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
     const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
@@ -78,22 +76,21 @@ const ItemRequestHost = ({item, list}: any) => {
     const userAccepted = {
       gender: item?.gender,
       name: item?.name,
-      status: 'accepted',
+      status: 'liked',
       superInvite: false,
       uid: item?.uid,
       userPhoto: item?.userPhoto,
     };
 
     try {
-      const updateUsersList: any = [...list?.usersList, userAccepted];
-      const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
-
-      await firestore().collection('Events').doc(list?.id).update({
-        usersList: updateUsersList,
-        requestsList: updateRequestsList,
-      });
+      await firestore()
+        .collection('Events')
+        .doc(list?.id)
+        .update({
+          usersList: firestore.FieldValue.arrayUnion(userAccepted),
+        });
       showToast('success', '', 'The request has been confirmed');
-      sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`)
+      sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`);
     } catch (e) {
       console.log(e);
       showToast('cancel', '', "There's been an error");
@@ -127,7 +124,7 @@ const ItemRequestHost = ({item, list}: any) => {
           setUserInfo(userInfoDoc.data());
         }
         const currentUserInfo = await firestore().collection('userInfo').doc(currentUserUid).get();
-        setCurrentUserName(currentUserInfo.data()?.name)
+        setCurrentUserName(currentUserInfo.data()?.name);
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
@@ -149,28 +146,27 @@ const ItemRequestHost = ({item, list}: any) => {
 
   const getFcmTokenFromUser = async (uid: string) => {
     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-    return userInfoDoc.data()?.fcmToken
-  }
+    return userInfoDoc.data()?.fcmToken;
+  };
 
   const sendNotification = async (forUserUid: string, title: string, body: string) => {
-    
-    const token = await getFcmTokenFromUser(forUserUid)
-    
+    const token = await getFcmTokenFromUser(forUserUid);
+
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+        Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
       },
       body: JSON.stringify({
         to: token,
         notification: {
           title: title,
-          body: body
-        }
-      })
+          body: body,
+        },
+      }),
     });
-  
+
     if (!response.ok) {
       const error = await response.json();
       console.error('error sending notification:', error);
@@ -178,7 +174,7 @@ const ItemRequestHost = ({item, list}: any) => {
       const data = await response.json();
       console.log('successfully:', data);
     }
-  }
+  };
 
   return (
     <View style={styles.itemContainer}>
@@ -197,16 +193,15 @@ const ItemRequestHost = ({item, list}: any) => {
         translateXRange={[-70, 0, 70]}
         disableTopSwipe={true}
         cardStyle={{height: '100%', width: '100%', borderRadius: 22, zIndex: 999}}>
-           <FastImage
-              style={styles.imageBackground}
-              source={{
-              uri: item.userPhoto,
-              headers:{ Authorization: 'someAuthToken' },
-              priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.cover}
-            >
-              <View style={[styles.itemContentContainer, {justifyContent: item?.superInvite ? 'space-between' : 'flex-end'}]}>
+        <FastImage
+          style={styles.imageBackground}
+          source={{
+            uri: item.userPhoto,
+            headers: {Authorization: 'someAuthToken'},
+            priority: FastImage.priority.normal,
+          }}
+          resizeMode={FastImage.resizeMode.cover}>
+          <View style={[styles.itemContentContainer, {justifyContent: item?.superInvite ? 'space-between' : 'flex-end'}]}>
             {item?.superInvite && (
               <View style={{alignItems: 'flex-start'}}>
                 <View
@@ -276,8 +271,7 @@ const ItemRequestHost = ({item, list}: any) => {
               </TouchableOpacity>
             </LinearGradient>
           </View>
-              
-            </FastImage>
+        </FastImage>
         {/* <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: item.userPhoto}}>
           <View style={[styles.itemContentContainer, {justifyContent: item?.superInvite ? 'space-between' : 'flex-end'}]}>
             {item?.superInvite && (

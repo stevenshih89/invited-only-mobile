@@ -283,7 +283,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
           <View>
             <ImageBackground
               resizeMode="cover"
-              source={{uri: currentEvent.photos[0].image}}
+              source={{uri: currentEvent?.photos?.[0]?.image}}
               style={[styles.eventImage, {justifyContent: !uid ? 'flex-end' : 'space-between'}]}>
               {uid && (
                 <TouchableOpacity
@@ -344,7 +344,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               )}
               <View>
                 <View style={{marginBottom: 12, flexDirection: 'row', alignItems: 'center'}}>
-                  {currentEvent.activeState && (
+                  {currentEvent?.activeState && (
                     <View style={{backgroundColor: lightGreenColor, borderRadius: 5, paddingVertical: 4, paddingHorizontal: 6}}>
                       <Text style={{fontSize: RFValue(12, 812), fontFamily: Satoshi500, color: whiteColor}}>Active</Text>
                     </View>
@@ -364,16 +364,16 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                 <View style={styles.main}>
                   <View style={styles.fdr}>
                     <UserIcon />
-                    <Text style={styles.textGirlInvitation}>{currentEvent.female} x Girl invitation </Text>
+                    <Text style={styles.textGirlInvitation}>{currentEvent?.female} x Girl invitation </Text>
                   </View>
                   <View style={styles.fdr}>
                     <CalendarIcon width={19} height={19} />
-                    <Text style={styles.textDate}>{moment(`${currentEvent.date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
+                    <Text style={styles.textDate}>{moment(`${currentEvent?.date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
                   </View>
                   <View style={styles.fdr}>
                     <UsersIcon width={19} height={19} />
                     <Text style={styles.textCity}>
-                      {joinedPeopleCount}/{currentEvent.female + currentEvent.male}
+                      {joinedPeopleCount}/{currentEvent?.female + currentEvent?.male}
                     </Text>
                   </View>
                 </View>

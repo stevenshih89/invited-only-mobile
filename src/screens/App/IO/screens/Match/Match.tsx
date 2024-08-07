@@ -413,21 +413,23 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
                     <MessageText width={32} height={32} />
                   </TouchableOpacity>
                 </Animated.View>
-                <Animated.View style={buttonAnimatedStyle}>
-                  <TouchableOpacity
-                    onPress={handleApproveGuestFromHost}
-                    style={{
-                      width: 70,
-                      height: 70,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderRadius: 100,
-                      backgroundColor: 'black',
-                      marginRight: 28,
-                    }}>
-                    <CheckboxSelected width={32} height={32} />
-                  </TouchableOpacity>
-                </Animated.View>
+                {userHost?.accountType === 'host' && (
+                  <Animated.View style={buttonAnimatedStyle}>
+                    <TouchableOpacity
+                      onPress={handleApproveGuestFromHost}
+                      style={{
+                        width: 70,
+                        height: 70,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: 100,
+                        backgroundColor: 'black',
+                        marginRight: 28,
+                      }}>
+                      <CheckboxSelected width={32} height={32} />
+                    </TouchableOpacity>
+                  </Animated.View>
+                )}
               </View>
             </Animated.View>
             <View style={{alignItems: 'flex-end'}}>
