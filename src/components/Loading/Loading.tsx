@@ -3,15 +3,19 @@ import {Image, Text, View} from 'react-native';
 import useStyles from 'components/Loading/styles.ts';
 import Subtract from 'src/assets/images/icons/subtract.svg';
 import Animated, {Easing, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming} from 'react-native-reanimated';
-import {screenHeight} from 'constants/common';
+import {screenHeight, screenWidth} from 'constants/common';
+import { blackColor, whiteColor } from 'constants/colors';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
 
 interface LoadingProps {
   text?: string;
   userInfo: any;
   topPosition: boolean;
+  wrapperText?:boolean;
 }
 
-const Loading: FC<LoadingProps> = ({text, userInfo, topPosition}) => {
+const Loading: FC<LoadingProps> = ({text, userInfo, topPosition, wrapperText=true}) => {
   const styles = useStyles();
 
   const firstCircleScale = useSharedValue(0.9);
@@ -79,14 +83,39 @@ const Loading: FC<LoadingProps> = ({text, userInfo, topPosition}) => {
         </View>
         {text && (
           <>
-            <View style={{position: 'absolute', top: screenHeight / 2 - 30}}>
-              <Subtract />
-            </View>
+            {wrapperText? <>
+              <View style={{position: 'absolute', top: screenHeight / 2 - 30}}>
+                <Subtract />
+              </View>
             <View style={{alignItems: 'center', position: 'absolute', top: screenHeight / 2 - 10}}>
-              <View style={styles.textWrapper}>
-                <Text style={styles.textInner}>{text}</Text>
+              <View style={{
+                backgroundColor: whiteColor,
+                borderRadius: 17,
+                paddingHorizontal: 22,
+                paddingVertical: 11,
+                marginTop: 2
+              }}>
+                <Text style={{
+                  color: blackColor,
+                  fontSize: RFValue(20, 812),
+                  fontFamily: Satoshi500,
+                }}>{text}</Text>
+              </View>
+            </View></>: 
+              <View style={{alignItems: 'center', position: 'absolute', top: screenHeight / 2 - 10}}>
+              <View style={{
+                width: screenWidth - 32,
+                marginTop: 20
+              }}>
+                <Text style={{
+                    color: whiteColor,
+                    fontSize: RFValue(18, 812),
+                    fontFamily: Satoshi400,
+                    textAlign: 'center'
+                }}>{text}</Text>
               </View>
             </View>
+              }
           </>
         )}
       </View>

@@ -49,19 +49,8 @@ const useStyles = () => {
         alignItems: 'center',
         justifyContent: 'center'
     },
-    textWrapper: {
-        backgroundColor: whiteColor,
-        borderRadius: 17,
-        paddingHorizontal: 22,
-        paddingVertical: 11,
-        marginTop: 2
-    },
-    textInner: {
-        color: blackColor,
-        fontSize: RFValue(20, 812),
-        fontFamily: Satoshi500,
-    }
   });
 };
 
 export default useStyles;
+
