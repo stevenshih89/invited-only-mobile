@@ -224,7 +224,7 @@ const EventCreating: FC = () => {
         photos
       });
       navigation?.goBack();
-      showToast('success', '', 'Event successfully changes!');
+      showToast('inviteMatch', '', 'Event successfully changes!');
       sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details', 'update')
     } catch (e) {
       console.log(e);
@@ -308,8 +308,8 @@ const EventCreating: FC = () => {
           photos: photos
         })
         .then(async () => {
-          showToast('success', 'Go to my events >', 'Event successfully created ');
-              showToast('pending', 'Your event in review.', 'Estimate time review 2h');
+          showToast('inviteMatch', 'Go to my events >', 'Event successfully created ');
+              showToast('inviteMatch', 'Your event in review.', 'Estimate time review 2h');
               isEditing ? setIsVisibleSaveModal(true) : null;
               setLoading(false);
               navigation.navigate(IOPath as never);
@@ -333,7 +333,7 @@ const EventCreating: FC = () => {
     } catch (e) {
       setLoading(false);
       console.log(e);
-      showToast('cancel', '', `${e}`);
+      showToast('inviteMatch', '', `${e}`);
     }
   };
 

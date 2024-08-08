@@ -89,11 +89,11 @@ const ItemRequestHost = ({item, list}: any) => {
         usersList: updateUsersList,
         requestsList: updateRequestsList,
       });
-      showToast('success', '', 'The request has been confirmed');
+      showToast('inviteMatch', '', 'The request has been confirmed');
       sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite')
     } catch (e) {
       console.log(e);
-      showToast('cancel', '', "There's been an error");
+      showToast('inviteMatch', '', "There's been an error");
     }
   };
 

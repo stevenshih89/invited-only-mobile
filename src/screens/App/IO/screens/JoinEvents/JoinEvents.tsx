@@ -238,7 +238,7 @@ const JoinEvents = ({navigation}: any) => {
       const checkUser = list?.requestsList?.some(i => i?.uid === userHost?.uid);
 
       if (checkUser) {
-        return showToast('success', '', 'The invitation has been successfully withdrawn!');
+        return showToast('inviteMatch', '', 'The invitation has been successfully withdrawn!');
       }
 
       const userAccepted = {
@@ -254,7 +254,7 @@ const JoinEvents = ({navigation}: any) => {
       await firestore().collection('Events').doc(activeEvent).update({
         requestsList: updateRequestsList,
       });
-      await showToast('success', '', 'The invitation has been successfully withdrawn!');
+      await showToast('inviteMatch', '', 'The invitation has been successfully withdrawn!');
     } catch (e) {
       console.log(e);
     }

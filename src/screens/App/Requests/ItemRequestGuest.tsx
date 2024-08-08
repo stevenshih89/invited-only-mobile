@@ -113,11 +113,11 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
           usersList: updateUsersList,
           requestsList: updateRequestsList,
         });
-        await showToast('success', '', 'You accept invitation');
+        showToast('inviteMatch', '', 'You accept invitation');
         await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`, 'invite')
       } catch (e) {
         console.log(e);
-        showToast('cancel', '', "There's been an error");
+        showToast('inviteMatch', '', "There's been an error");
       }
     });
   };
@@ -140,11 +140,11 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
         usersList: updateUsersList,
         requestsList: updateRequestsList,
       });
-      await showToast('success', '', 'You reject invitation');
+      showToast('inviteMatch', '', 'You reject invitation');
       await sendNotification(uid, 'Invitation Reject!', `${item?.name} reject your invitation.`, 'invite')
     } catch (e) {
       console.log(e);
-      showToast('cancel', '', "There's been an error");
+      showToast('inviteMatch', '', "There's been an error");
     }
   };
 

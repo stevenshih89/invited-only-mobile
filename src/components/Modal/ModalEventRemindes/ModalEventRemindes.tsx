@@ -148,7 +148,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
           </View>
           <Button
             onPress={() => {
-              showToast('success', 'Go to my events!');
+              showToast('inviteMatch', 'Go to my events!');
               setChatModal(false);
               setEventStarting(false);
             }}
@@ -567,7 +567,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             onPress={async () => {
               await handleAcceptInvitation();
               await handleGetEventsIJoining();
-              showToast('success', `You confirmed ${placeName} event`);
+              showToast('inviteMatch', `You confirmed ${placeName} event`);
               await updateViewedNewData();
               checkUpdate();
             }}

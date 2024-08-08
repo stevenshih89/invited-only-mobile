@@ -92,10 +92,10 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         usersList: updateUsersList,
         requestsList: updateRequestsList,
       });
-      showToast('success', '', 'The invitation has been successfully withdrawn!');
+      showToast('inviteMatch', '', 'The invitation has been successfully withdrawn!');
       setModalVisible && setModalVisible(false);
     } catch (e) {
-      showToast('cancel', '', 'Error!');
+      showToast('inviteMatch', '', 'Error!');
       console.log(e);
     }
   };
@@ -206,7 +206,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       }
     } catch (e) {
       console.log(e);
-      showToast('cancel', '', 'Error!');
+      showToast('inviteMatch', '', 'Error!');
     }
   };
 

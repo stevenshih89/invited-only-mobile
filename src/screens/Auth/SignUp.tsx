@@ -37,7 +37,7 @@ const SignUp: FC = (): JSX.Element => {
       setLoading(false);
     } catch (e: any) {
       setLoading(false);
-      showToast('cancel', `${e?.message.split(']')[1]}`);
+      showToast('inviteMatch', `${e?.message.split(']')[1]}`);
       console.warn(e);
     }
   }
