@@ -83,7 +83,7 @@ const Invitations: FC = () => {
           <Copy />
         </TouchableOpacity>
       </View>}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.inviteCode}
       />
       {/* <FlatList 
         data={inviteLink}
