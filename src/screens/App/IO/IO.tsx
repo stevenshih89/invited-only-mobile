@@ -1,5 +1,5 @@
 import {SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity, Alert} from 'react-native';
-import React, {FC, useState, useEffect, useContext, useCallback} from 'react';
+import React, {FC, useState, useEffect, useContext, useCallback, useRef} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
 import firestore from '@react-native-firebase/firestore';
@@ -100,13 +100,14 @@ const IO: FC = (): JSX.Element => {
     showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {ownerPhoto: ownerEventUserPhoto, status: 'INVITE MATCH'});
   };
 
+
   useEffect(() => {
     if(Object.keys(userInfo).length != 0) {
       if(!userInfo?.accountConfirmed || !userInfo?.accountReviewed) {
         showToast('inviteMatch','have a code? click here', 'Your account is under review', {ownerPhoto: userInfo?.photos[0].image, status: 'ON REVIEW'});
       }
     }
-  },[userInfo])
+  },[])
 
   const getWeekNumber = date => {
     let firstDayOfYear: Date = new Date(date.getFullYear(), 0, 1);
