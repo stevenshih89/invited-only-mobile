@@ -239,7 +239,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
               </View>
             ) : (
               <View style={{marginBottom: 4}}>
-                <Button onPress={openCamera} title="Take a photo" />
+                <Button onPress={handleNext} title="Take a photo" />
               </View>
             )}
           </View>
