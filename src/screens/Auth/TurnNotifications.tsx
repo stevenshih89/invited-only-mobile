@@ -134,7 +134,7 @@ const TurnNotifications: FC = (): JSX.Element => {
                   </Text>
                   <Switch trackColor={{false: grayColor, true: toggleColor}} checked={notifications} onChange={handleNotificationsChange} />
                 </View>
-                <View
+                {/* <View
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
@@ -153,7 +153,7 @@ const TurnNotifications: FC = (): JSX.Element => {
                     Location
                   </Text>
                   <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showLocation} onChange={handleLocationChange} />
-                </View>
+                </View> */}
               </View>
             </View>
             <View style={{marginBottom: 4}}>
