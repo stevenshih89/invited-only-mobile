@@ -126,7 +126,7 @@ const Requests: FC = (): ReactElement => {
   useFocusEffect(
     useCallback(() => {
       isHost ? fetchHostRequests() : fetchGuestRequests();
-    }, [activeEvent, requestFilter, isHost]),
+    }, []),
   );
 
   const list = isHost ? requestsForHost : dataForGuest;    
@@ -177,9 +177,9 @@ const Requests: FC = (): ReactElement => {
         />
       ) : (
         <>
-          {userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myIventList?.length && <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
-          <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
-          Let’s create an event
+          {userInfo?.accountConfirmed && userInfo?.accountType === 'host' && <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
+          <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi400, fontSize: RFValue(30, 812), marginBottom: 18}}>
+            You don't have any events
           </Text>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
           Get started by creating an event to begin inviting guests.

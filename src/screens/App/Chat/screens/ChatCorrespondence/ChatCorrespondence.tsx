@@ -121,6 +121,16 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     paddingBottom: 0,
   };
 
+  const generateRandomId = (length: number) =>  {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
   const getFcmTokenFromUser = async (uid: string) => {
     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
     return userInfoDoc.data()?.fcmToken;
@@ -149,7 +159,24 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       console.error('error sending notification:', error);
     } else {
       const data = await response.json();
-      console.log('successfully:', data);
+      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get()
+      const userNotifications = userDoc.data()?.notifications
+      const id = generateRandomId(8)
+      const notification = {
+          id,
+          title: title,
+          body: body,
+          mark: 'message',
+          uid: userData?.uid
+      }
+      try {
+        await firestore().collection('userInfo').doc(forUserUid).update({
+          notifications: [...userNotifications, notification]
+        })
+      } catch (error) {
+        console.log('error update notifications', error);
+        
+      }
     }
   };
 
