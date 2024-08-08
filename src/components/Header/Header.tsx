@@ -675,6 +675,22 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         return null;
     }
   };
+
+  const [countNotifications, setCountNotifications] = useState(0)
+
+  const getCountNotifications = async () => {
+    try {
+      const getDoc = await firestore().collection('userInfo').doc(userHost?.uid).get();
+      const notifications = getDoc?.data()?.notifications
+      setCountNotifications(notifications.length);
+    } catch (error) {
+      
+    }
+  }
+
+  useFocusEffect(useCallback(() => {
+    getCountNotifications()    
+  },[]))
   
 
   return (
@@ -686,7 +702,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
             {badge && (
               <TouchableOpacity onPress={goToNotifications} activeOpacity={0.7} style={{paddingRight: 6}}>
                 <NotificationIcon width={32} height={32} />
-                <Badge value={userHost?.notifications.length} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
+                <Badge value={countNotifications} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
               </TouchableOpacity>
             )}
             {headerType === 'profile' && (
