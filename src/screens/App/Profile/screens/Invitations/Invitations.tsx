@@ -1,5 +1,5 @@
 import {FC, useEffect, useState} from 'react';
-import {Alert, FlatList, Share, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, FlatList, ScrollView, Share, Text, TouchableOpacity, View} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import firestore from '@react-native-firebase/firestore';
 
@@ -67,37 +67,28 @@ const Invitations: FC = () => {
     <View style={styles.container}>
       <Text style={styles.title}>You have {numberCodes} App invitations codes</Text>
       <Text style={styles.label}>IO Invitations</Text>
-      {/*<View style={styles.inviteContainer}>*/}
-      {/*  <Text style={styles.label}>Invite code</Text>*/}
-      {/*  <TouchableOpacity activeOpacity={0.7} style={styles.inviteButton}>*/}
-      {/*    <Text style={styles.inviteText}>{invitationCode}</Text>*/}
-      {/*    <Copy />*/}
-      {/*  </TouchableOpacity>*/}
-      {/*</View>*/}
-      <FlatList
+      <ScrollView>
+        {inviteLink.map(item => (
+          <View style={styles.inviteContainer}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => handleCopy(item.inviteCode)} style={styles.inviteButton}>
+            <Text style={styles.inviteText}>{item.inviteCode}</Text>
+            <Copy />
+          </TouchableOpacity>
+        </View>
+        ))}
+      </ScrollView>
+      {/* <FlatList
         data={inviteLink}
         renderItem={({item}) => 
         <View style={styles.inviteContainer}>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => handleCopy(item)} style={styles.inviteButton}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => handleCopy(item.inviteCode)} style={styles.inviteButton}>
           <Text style={styles.inviteText}>{item.inviteCode}</Text>
           <Copy />
         </TouchableOpacity>
-      </View>}
+      </View>
+      }
         keyExtractor={item => item.id}
-      />
-      {/* <FlatList 
-        data={inviteLink}
-        renderItem={({item}) => 
-          <View style={styles.inviteContainer}>
-            <Text style={styles.label}>IO Invitations</Text>
-            <TouchableOpacity activeOpacity={0.7} onPress={() => handleCopy(inviteLink)} style={styles.inviteButton}>
-              <Text style={styles.inviteText}>{inviteLink}</Text>
-              <Copy />
-            </TouchableOpacity>
-          </View>
-        }}
       /> */}
-      
       {/* <Button title="Share" onPress={handleShare} buttonStyle={styles.shareButton} /> */}
     </View>
   );
