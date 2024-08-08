@@ -147,7 +147,7 @@ const Profile: FC = () => {
       </View>
     );
   };
-
+    
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
@@ -222,6 +222,7 @@ const Profile: FC = () => {
             const isActive = activeTabId === id;
             return (
               <TouchableOpacity
+                disabled={id === 2 && !userInfo?.accountConfirmed}
                 activeOpacity={0.7}
                 onPress={() => setActiveTabId(id)}
                 style={[styles.tabButton, isActive ? styles.tabButtonActive : styles.tabButtonInactive]}>
