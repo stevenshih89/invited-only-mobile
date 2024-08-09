@@ -449,7 +449,7 @@ const ProfileEditing: FC = (): ReactElement => {
             homeAddress: textHomeAdress,
             showHomeAddress: showHomeAdress
           }).then(() => {
-            showToast('inviteMatch', 'Your profile is updated', `${title} successfully changed!`, {ownerPhoto: images[0].image, status: 'UPDATED'});
+            if(title && typeof(title) === 'string') showToast('inviteMatch', 'Your profile is updated', `${title} successfully changed!`, {ownerPhoto: images[0].image, status: 'UPDATED'});
           })
           .then(async () => {
             await fetchImages(user);
