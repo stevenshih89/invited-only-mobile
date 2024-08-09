@@ -102,15 +102,14 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
       };
 
       try {
-        const updateUsersList: any = [...list?.usersList, userAccepted];
-        const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
-
-        await firestore().collection('Events').doc(list?.id).update({
-          usersList: updateUsersList,
-          requestsList: updateRequestsList,
-        });
-        showToast('inviteMatch', '', 'You accept invitation');
-        await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`, 'invite')
+        await firestore()
+          .collection('Events')
+          .doc(list?.id)
+          .update({
+            requestsList: firestore.FieldValue.arrayUnion(userAccepted),
+          });
+        await showToast('success', '', 'You accept invitation');
+        await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`, 'accepted')
       } catch (e) {
         console.log(e);
         showToast('inviteMatch', '', "There's been an error");
@@ -179,6 +178,10 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
           title: title,
           body: body,
         },
+        data: {
+          status: mark,
+          image: user.photos[0].image
+        }
       }),
     });
 
