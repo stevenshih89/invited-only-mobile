@@ -161,6 +161,7 @@ const VerifySocialProfile = () => {
           accountConfirmed: false,
           accountReviewed: false,
           accountPremium: false,
+          notifications: [],
           superInvites: 0
         })
         .then(async () => {

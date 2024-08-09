@@ -109,7 +109,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
             requestsList: firestore.FieldValue.arrayUnion(userAccepted),
           });
         await showToast('success', '', 'You accept invitation');
-        await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`);
+        await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`, 'invite')
       } catch (e) {
         console.log(e);
         showToast('cancel', '', "There's been an error");
@@ -136,7 +136,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
         requestsList: updateRequestsList,
       });
       await showToast('success', '', 'You reject invitation');
-      await sendNotification(uid, 'Invitation Reject!', `${item?.name} reject your invitation.`);
+      await sendNotification(uid, 'Invitation Reject!', `${item?.name} reject your invitation.`, 'invite')
     } catch (e) {
       console.log(e);
       showToast('cancel', '', "There's been an error");
@@ -147,14 +147,25 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
     getHostInfo(uid);
   }, []);
 
+  const generateRandomId = (length: number) =>  {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
   const getFcmTokenFromUser = async (uid: string) => {
     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
     return userInfoDoc.data()?.fcmToken;
   };
 
-  const sendNotification = async (forUserUid: string, title: string, body: string) => {
-    const token = await getFcmTokenFromUser(forUserUid);
-
+  const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
+    
+    const token = await getFcmTokenFromUser(forUserUid)
+    
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers: {
@@ -175,7 +186,23 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
       console.error('error sending notification:', error);
     } else {
       const data = await response.json();
-      console.log('successfully:', data);
+      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get()
+      const userNotifications = userDoc.data()?.notifications
+      const id = generateRandomId(8)
+      const notification = {
+          id,
+          title: title,
+          body: body,
+          mark: mark,
+          uid: user?.uid
+      }
+      try {
+        await firestore().collection('userInfo').doc(forUserUid).update({
+          notifications: [...userNotifications, notification]
+        })
+      } catch (error) {
+        console.log('error update notifications', error);
+      }
     }
   };
 

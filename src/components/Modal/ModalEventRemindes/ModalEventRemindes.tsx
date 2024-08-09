@@ -95,7 +95,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
   const [isPremium, setIsPremium] = useState();
 
   const styles = useStyles();
-
+  
   const getUserInfo = async () => {
     try {
       const uid = auth().currentUser?.uid;
@@ -381,15 +381,15 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             </ImageBackground>
           </View>
 
-          {hoursUntilEvent === 24 && (
-            <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : 'Event starting in 24h!'}</Text>
-          )}
-          {hoursUntilEvent === 12 && (
+          {
+            <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : `Event starting in ${hoursUntilEvent}h!`}</Text>
+          }
+          {/* {hoursUntilEvent === 12 && (
             <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : 'Event starting in 12h!'}</Text>
           )}
           {hoursUntilEvent === 2 && (
             <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : 'Event starting in 2h!'}</Text>
-          )}
+          )} */}
           <Button
             onPress={async () => {
               if (time === '0') {

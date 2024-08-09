@@ -123,7 +123,7 @@ const Requests: FC = (): ReactElement => {
   useFocusEffect(
     useCallback(() => {
       isHost ? fetchHostRequests() : fetchGuestRequests();
-    }, [activeEvent, requestFilter, isHost]),
+    }, []),
   );
 
   const list = isHost ? requestsForHost : dataForGuest;

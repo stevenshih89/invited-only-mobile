@@ -358,7 +358,9 @@ const EventDetails: FC<EventDetailsProps> = ({
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainerContent}
-        style={styles.scrollView}>
+        style={styles.scrollView}
+        enableResetScrollToCoords={false}
+        >
         <View style={styles.eventTypeWr}>
           <Text style={styles.eventTypeTitle}>Event type</Text>
           <FlatList

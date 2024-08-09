@@ -63,8 +63,7 @@ const ItemRequestHost = ({item, list}: any) => {
     );
   };
 
-  const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
-    console.log('item', item);
+  const handleSwipeHostCardInvite = async (item: any): Promise<void> => {   
 
     const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
     const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
@@ -90,7 +89,7 @@ const ItemRequestHost = ({item, list}: any) => {
           usersList: firestore.FieldValue.arrayUnion(userAccepted),
         });
       showToast('success', '', 'The request has been confirmed');
-      sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`);
+      sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite')
     } catch (e) {
       console.log(e);
       showToast('cancel', '', "There's been an error");
@@ -144,14 +143,25 @@ const ItemRequestHost = ({item, list}: any) => {
     });
   };
 
+  const generateRandomId = (length: number) =>  {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
   const getFcmTokenFromUser = async (uid: string) => {
     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
     return userInfoDoc.data()?.fcmToken;
   };
-
-  const sendNotification = async (forUserUid: string, title: string, body: string) => {
-    const token = await getFcmTokenFromUser(forUserUid);
-
+  
+  const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
+        
+    const token = await getFcmTokenFromUser(forUserUid)
+    
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers: {
@@ -172,7 +182,24 @@ const ItemRequestHost = ({item, list}: any) => {
       console.error('error sending notification:', error);
     } else {
       const data = await response.json();
-      console.log('successfully:', data);
+      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get()
+      const userNotifications = userDoc.data()?.notifications
+      const id = generateRandomId
+      const notification = {
+          id,
+          title: title,
+          body: body,
+          mark: mark,
+          uid: userInfo?.uid
+      }      
+      
+      try {
+        await firestore().collection('userInfo').doc(forUserUid).update({
+          notifications: [...userNotifications, notification]
+        })
+      } catch (error) {
+        console.log('error update notifications', error);
+      }
     }
   };
 

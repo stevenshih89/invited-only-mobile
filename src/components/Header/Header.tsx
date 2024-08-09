@@ -1,4 +1,4 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
+import React, {FC, useCallback, useContext, useEffect, useState} from 'react';
 import {View, TouchableOpacity, Text, Image, FlatList, ScrollView, Alert} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
@@ -73,6 +73,7 @@ type ItemProps = {
 const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
   const [eventStarting, setEventStarting] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>(null);
+  const [myEvents, setMyEvents] = useState<Array<any>>()
   const styles = useStyles();
 
   const insets = useSafeAreaInsets();
@@ -87,8 +88,34 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const setRequestFilter = useRequest((i: any) => i?.setRequestFilter);
   const userHost = useUser((i: any) => i?.user);
 
-  const {myEvents, setActiveEvent, activeEvent} = useContext(EventContext);
+  const { setActiveEvent, activeEvent} = useContext(EventContext);
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
+
+  const fetchMyEvents = async () => {
+    const user = auth().currentUser;
+    if (user) {
+      try {
+        const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).get();
+
+        if (querySnapshot.empty) {
+          setMyEvents([]);
+          return;
+        }
+        const data = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setMyEvents(data);
+        return data
+      } catch (error: any) {
+        Alert.alert('Error', error.message || 'Something went wrong');
+      }
+    }
+  };
+
+  useFocusEffect(useCallback(() => {
+    fetchMyEvents()
+  },[]))
 
   const goToCreateEvent = async (): void => {
     await fetchUserInfo()
@@ -289,7 +316,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   </View>
                   <Text style={styles.textButton}>Join events</Text>
                 </TouchableOpacity>
-                {myEvents.map((event: any, index: number) => {
+                {myEvents && myEvents.map((event: any, index: number) => {
                   const isActive = activeEvent?.id === event.id;
                   const eventIsFinished = isEventFinished(event?.date);
                   const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
@@ -676,6 +703,22 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     }
   };
 
+  const [countNotifications, setCountNotifications] = useState(0)
+
+  const getCountNotifications = async () => {
+    try {
+      const getDoc = await firestore().collection('userInfo').doc(userHost?.uid).get();
+      const notifications = getDoc?.data()?.notifications
+      setCountNotifications(notifications.length);
+    } catch (error) {
+      
+    }
+  }
+
+  useFocusEffect(useCallback(() => {
+    getCountNotifications()    
+  },[]))
+    
   return (
     <View style={[styles.container, headerInsets]}>
       {showHeaderTop && (
@@ -685,7 +728,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
             {badge && (
               <TouchableOpacity onPress={goToNotifications} activeOpacity={0.7} style={{paddingRight: 6}}>
                 <NotificationIcon width={32} height={32} />
-                <Badge value={0} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
+                <Badge value={countNotifications} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
               </TouchableOpacity>
             )}
             {headerType === 'profile' && (

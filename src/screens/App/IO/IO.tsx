@@ -1,5 +1,5 @@
 import {SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity, Alert} from 'react-native';
-import React, {FC, useState, useEffect, useContext, useCallback} from 'react';
+import React, {FC, useState, useEffect, useContext, useCallback, useRef} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
 import firestore from '@react-native-firebase/firestore';
@@ -64,10 +64,10 @@ const IO: FC = (): JSX.Element => {
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
   const [eventsLength, setEventsLength] = useState(0);
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
-  const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState();
+  const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState();  
 
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
-
+ 
   const {activeEventDate} = useContext(EventsDate);
 
   const userHost = useUser((i: any) => i?.user);
@@ -100,13 +100,14 @@ const IO: FC = (): JSX.Element => {
     showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {ownerPhoto: ownerEventUserPhoto, status: 'INVITE MATCH'});
   };
 
+
   useEffect(() => {
     if(Object.keys(userInfo).length != 0) {
       if(!userInfo?.accountConfirmed || !userInfo?.accountReviewed) {
         showToast('inviteMatch','have a code? click here', 'Your account is under review', {ownerPhoto: userInfo?.photos[0].image, status: 'ON REVIEW'});
       }
     }
-  },[userInfo])
+  },[])
 
   const getWeekNumber = date => {
     let firstDayOfYear: Date = new Date(date.getFullYear(), 0, 1);
@@ -212,18 +213,30 @@ const IO: FC = (): JSX.Element => {
         setMyEventsList(data);
         setMyEvents(data);
         isFirstRender && setActiveEvent(data[0]);
+        return data
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
   };
 
+  const generateRandomId = (length: number) =>  {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+  
+
   const getFcmTokenFromUser = async (uid: string) => {
     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
     return userInfoDoc.data()?.fcmToken;
   };
 
-  const sendNotification = async (forUserUid: string, title: string, body: string) => {
+  const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
     const token = await getFcmTokenFromUser(forUserUid);
 
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
@@ -246,9 +259,28 @@ const IO: FC = (): JSX.Element => {
       console.error('error sending notification:', error);
     } else {
       const data = await response.json();
-      console.log('successfully:', data);
+      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get()
+      const userNotifications = userDoc.data()?.notifications
+      const id = generateRandomId(8)
+      const notification = {
+          id,
+          title: title,
+          body: body,
+          mark: mark,
+          uid: userInfo?.uid
+      }
+      console.log('notification', notification);
+      
+      try {
+        await firestore().collection('userInfo').doc(forUserUid).update({
+          notifications: [...userNotifications, notification]
+        })
+      } catch (error) {
+        console.log('error update notifications', error);
+      }
     }
   };
+
 
   const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {
     try {
@@ -279,7 +311,7 @@ const IO: FC = (): JSX.Element => {
           usersList: updateUsersList,
         });
 
-        await sendNotification(forUserUid, 'New invite request', `${userInfo.name} wants to invite you!`);
+        await sendNotification(forUserUid, 'New invite request', `${userInfo.name} wants to invite you!`, 'invite');
 
         const getUserInRequestsList = (await firestore().collection('Events').doc(activeEventId).get()).data()?.requestsList;
         const userInRequestsList = getUserInRequestsList.find(item => item.uid === forUserUid);
@@ -297,7 +329,7 @@ const IO: FC = (): JSX.Element => {
           // usersList: updateUsersList ? updateUsersList : usersList,
           requestsList: updateRequestsList,
         });
-        await sendNotification(forUserUid, 'New join request', `${userInfo?.name} wants to join you!`);
+        await sendNotification(forUserUid, 'New join request', `${userInfo?.name} wants to join you!`, 'join');
 
         const userInList = usersList.find(item => item.uid === currentUid);
 
