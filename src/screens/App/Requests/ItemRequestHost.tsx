@@ -18,14 +18,14 @@ import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
 import {useEffect, useId, useState} from 'react';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
-import auth from '@react-native-firebase/auth'
+import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 
 const ItemRequestHost = ({item, list}: any) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState({accountType: ''});
-  const [currentUserName, setCurrentUserName] = useState()
+  const [currentUserName, setCurrentUserName] = useState();
 
   const OverlayRight = () => {
     return (
@@ -75,7 +75,7 @@ const ItemRequestHost = ({item, list}: any) => {
     const userAccepted = {
       gender: item?.gender,
       name: item?.name,
-      status: 'accepted',
+      status: 'liked',
       superInvite: false,
       uid: item?.uid,
       userPhoto: item?.userPhoto,
@@ -124,7 +124,7 @@ const ItemRequestHost = ({item, list}: any) => {
           setUserInfo(userInfoDoc.data());
         }
         const currentUserInfo = await firestore().collection('userInfo').doc(currentUserUid).get();
-        setCurrentUserName(currentUserInfo.data()?.name)
+        setCurrentUserName(currentUserInfo.data()?.name);
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
@@ -156,9 +156,9 @@ const ItemRequestHost = ({item, list}: any) => {
 
   const getFcmTokenFromUser = async (uid: string) => {
     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-    return userInfoDoc.data()?.fcmToken
-  }
-
+    return userInfoDoc.data()?.fcmToken;
+  };
+  
   const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
         
     const token = await getFcmTokenFromUser(forUserUid)
@@ -202,7 +202,7 @@ const ItemRequestHost = ({item, list}: any) => {
         console.log('error update notifications', error);
       }
     }
-  }
+  };
 
   return (
     <View style={styles.itemContainer}>
@@ -221,16 +221,15 @@ const ItemRequestHost = ({item, list}: any) => {
         translateXRange={[-70, 0, 70]}
         disableTopSwipe={true}
         cardStyle={{height: '100%', width: '100%', borderRadius: 22, zIndex: 999}}>
-           <FastImage
-              style={styles.imageBackground}
-              source={{
-              uri: item.userPhoto,
-              headers:{ Authorization: 'someAuthToken' },
-              priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.cover}
-            >
-              <View style={[styles.itemContentContainer, {justifyContent: item?.superInvite ? 'space-between' : 'flex-end'}]}>
+        <FastImage
+          style={styles.imageBackground}
+          source={{
+            uri: item.userPhoto,
+            headers: {Authorization: 'someAuthToken'},
+            priority: FastImage.priority.normal,
+          }}
+          resizeMode={FastImage.resizeMode.cover}>
+          <View style={[styles.itemContentContainer, {justifyContent: item?.superInvite ? 'space-between' : 'flex-end'}]}>
             {item?.superInvite && (
               <View style={{alignItems: 'flex-start'}}>
                 <View
@@ -300,8 +299,7 @@ const ItemRequestHost = ({item, list}: any) => {
               </TouchableOpacity>
             </LinearGradient>
           </View>
-              
-            </FastImage>
+        </FastImage>
         {/* <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: item.userPhoto}}>
           <View style={[styles.itemContentContainer, {justifyContent: item?.superInvite ? 'space-between' : 'flex-end'}]}>
             {item?.superInvite && (

@@ -126,6 +126,7 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
   const isInviteMatchStatus = status === 'invite_match';
   const isApprovedStatus = status === 'approved';
   const isAcceptedStatus = status === 'accepted';
+  const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
 
   useFocusEffect(
     useCallback(() => {
@@ -311,7 +312,9 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
                           borderRadius: 5,
                           marginRight: 10,
                         }}>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>Active</Text>
+                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>
+                          {eventIsFull ? 'Full' : 'Active'}
+                        </Text>
                       </View>
                       <Text style={{fontFamily: Satoshi700, fontSize: RFValue(19, 812), color: whiteColor, marginRight: 8}}>
                         {placeName}
@@ -361,6 +364,21 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
                     </View>
                   </View>
                 </ImageBackground>
+                {isInviteMatchStatus && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: lightGray8Color,
+                      paddingHorizontal: 16,
+                      paddingVertical: 10,
+                    }}>
+                    <Text style={{fontFamily: Satoshi400, fontSize: RFValue(16, 812), color: whiteColor}}>
+                      Waiting for request approval
+                    </Text>
+                  </View>
+                )}
                 {isApprovedStatus && (
                   <View
                     style={{

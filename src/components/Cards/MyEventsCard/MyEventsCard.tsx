@@ -13,7 +13,6 @@ import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
 import UsersIcon from 'assets/images/icons/Users.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
 import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -63,6 +62,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
   const navigation = useAppNavigation();
 
   const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
+  const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
 
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
@@ -179,7 +179,9 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                 </View>
                 <View style={styles.wrapperTextStartInviting}>
                   <View style={{backgroundColor: lightGreenColor, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 5}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>Active</Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>
+                      {eventIsFull ? 'Full' : 'Active'}
+                    </Text>
                   </View>
                 </View>
               </View>
