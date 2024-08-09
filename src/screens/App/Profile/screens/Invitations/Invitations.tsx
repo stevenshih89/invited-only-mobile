@@ -23,7 +23,7 @@ const Invitations: FC = () => {
 
   const handleCopy = (val: string) => {
     Clipboard.setString(val);
-    showToast('success', '', 'Invite code copied!');
+    showToast('inviteMatch', '', 'Invite code copied!');
   };
 
   const handleCheckInviteCode = async () => {

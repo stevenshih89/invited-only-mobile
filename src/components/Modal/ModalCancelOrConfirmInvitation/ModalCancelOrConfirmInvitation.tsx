@@ -76,10 +76,10 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
             if (typeModal === 'cancel') {
               setCancelInvitation(false);
               setHostMenu(false);
-              showToast('cancel', 'You cancelled invitation');
+              showToast('inviteMatch', 'You cancelled invitation');
             } else {
               setCancelInvitation(false);
-              showToast('success', 'Go to my events >', 'Successfully! See you on Nammos Dubai');
+              showToast('inviteMatch', 'Go to my events >', 'Successfully! See you on Nammos Dubai');
             }
           }}
           buttonStyle={{width: '100%'}}
@@ -93,7 +93,7 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
               setCancelInvitation(false);
               // @ts-ignore
               navigation.navigate(requestsPath);
-              showToast('success', '', 'You rejected invitation');
+              showToast('inviteMatch', '', 'You rejected invitation');
             }
           }}
           buttonStyle={{width: '100%'}}

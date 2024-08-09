@@ -281,8 +281,8 @@ const EventPreview: FC<EventPreviewProps> = ({
           photos?.map(async (imagePath, index) => {
             await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
             await updatePhotosImage(uid, imagesUri).then(() => {
-              showToast('success', 'Go to my events >', 'Event successfully created ');
-              showToast('pending', 'Your event in review.', 'Estimate time review 2h');
+              showToast('inviteMatch', 'Go to my events >', 'Event successfully created ');
+              showToast('inviteMatch', 'Your event in review.', 'Estimate time review 2h');
               isEditing ? setIsVisibleSaveModal(true) : null;
               setLoading(false);
               navigation.navigate(IOPath as never);
@@ -298,7 +298,7 @@ const EventPreview: FC<EventPreviewProps> = ({
     } catch (e) {
       setLoading(false);
       console.log(e);
-      showToast('cancel', '', `${e}`);
+      showToast('inviteMatch', '', `${e}`);
     }
   };
 

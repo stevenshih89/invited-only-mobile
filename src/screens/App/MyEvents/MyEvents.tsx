@@ -304,9 +304,9 @@ const MyEvents: FC<any> = ({navigation}) => {
         usersList: list?.usersList,
       });
       setIsVisibleAcceptInvitationModal(false);
-      showToast('success', '', `You accepted ${activeModalEvent.textCityName} event`);
+      showToast('inviteMatch', '', `You accepted ${activeModalEvent.textCityName} event`);
     } catch (e) {
-      showToast('cancel', '', 'Error!');
+      showToast('inviteMatch', '', 'Error!');
       console.log(e);
     }
   };
@@ -322,9 +322,9 @@ const MyEvents: FC<any> = ({navigation}) => {
         usersList: list?.usersList,
       });
       setIsVisibleAcceptInvitationModal(false);
-      showToast('cancel', '', `You rejected ${activeModalEvent.textCityName} event`);
+      showToast('inviteMatch', '', `You rejected ${activeModalEvent.textCityName} event`);
     } catch (e) {
-      showToast('cancel', '', 'Error!');
+      showToast('inviteMatch', '', 'Error!');
       console.log(e);
     }
   };
@@ -349,9 +349,9 @@ const MyEvents: FC<any> = ({navigation}) => {
         usersList: list?.usersList,
       });
       setIsVisibleCancelAttendingModal(false);
-      showToast('cancel', 'Go to my events', `You rejected ${activeModalEvent.textCityName} event`);
+      showToast('inviteMatch', 'Go to my events', `You rejected ${activeModalEvent.textCityName} event`);
     } catch (e) {
-      showToast('cancel', '', 'Error!');
+      showToast('inviteMatch', '', 'Error!');
       console.log(e);
     }
   };

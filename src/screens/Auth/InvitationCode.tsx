@@ -150,7 +150,7 @@ const InvitationCode: FC = (): JSX.Element => {
       setLoading(false);
     } catch (e) {
       console.log(e);
-      showToast('cancel', '', `${e}`);
+      showToast('inviteMatch', '', `${e}`);
       setLoading(false);
     }
   };
@@ -208,7 +208,7 @@ const InvitationCode: FC = (): JSX.Element => {
       await handleRegisterUser(onboardingData);
       navigation.navigate(codeVerifiedPath as never);
     } else {
-      showToast('warning', 'Сode used or not found');
+      showToast('inviteMatch', 'Сode used or not found');
       setInvalidCode(true)
     }
   };

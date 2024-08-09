@@ -79,7 +79,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
       const confirmation = await auth().signInWithPhoneNumber(phone);
       setConfirm(confirmation);
     } catch (e: any) {
-      showToast('cancel', `${e?.message.split(']')[1]}`);
+      showToast('inviteMatch', `${e?.message.split(']')[1]}`);
       console.warn(e);
     }
   }
@@ -95,7 +95,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
       setLoadingConfirmation(false);
     } catch (e: any) {
       console.log(e);
-      showToast('cancel', '', `${e}`);
+      showToast('inviteMatch', '', `${e}`);
       setLoadingConfirmation(false);
     }
   };

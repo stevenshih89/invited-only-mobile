@@ -346,7 +346,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
           <Text style={styles.textAreYouSure}>Are you sure you want to remove {title}?</Text>
           <Button
             onPress={() => {
-              showToast('pending', `${title} was removed!`);
+              showToast('inviteMatch', `${title} was removed!`);
               setRemovingState(false);
               setModalVisible(false);
             }}
@@ -397,7 +397,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
           <Text style={styles.textAreYouSure}>Are you sure you want to cancel invitation?</Text>
           <Button
             onPress={() => {
-              showToast('pending', `${title} was removed!`);
+              showToast('inviteMatch', `${title} was removed!`);
               setCancelInvitationState(false);
               setModalVisible(false);
             }}

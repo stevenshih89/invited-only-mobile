@@ -82,17 +82,18 @@ const ItemRequestHost = ({item, list}: any) => {
     };
 
     try {
-      await firestore()
-        .collection('Events')
-        .doc(list?.id)
-        .update({
-          usersList: firestore.FieldValue.arrayUnion(userAccepted),
-        });
-      showToast('success', '', 'The request has been confirmed');
+      const updateUsersList: any = [...list?.usersList, userAccepted];
+      const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
+
+      await firestore().collection('Events').doc(list?.id).update({
+        usersList: updateUsersList,
+        requestsList: updateRequestsList,
+      });
+      showToast('inviteMatch', '', 'The request has been confirmed');
       sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite')
     } catch (e) {
       console.log(e);
-      showToast('cancel', '', "There's been an error");
+      showToast('inviteMatch', '', "There's been an error");
     }
   };
 

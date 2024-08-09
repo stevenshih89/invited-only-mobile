@@ -154,10 +154,10 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
       
       
       onClose();
-      showToast('success', '', 'Event successfully deleted!');
+      showToast('inviteMatch', '', 'Event successfully deleted!');
       navigation?.goBack();
     } catch (e) {
-      showToast('cancel', '', 'Error!');
+      showToast('inviteMatch', '', 'Error!');
       console.log('error handleCancelEvent', e);
     }
   };

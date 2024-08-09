@@ -104,7 +104,7 @@ const LocalNotification = () => {
       <View style={{paddingHorizontal: 24, width: '100%'}}>
         <View style={{backgroundColor: whiteColor, padding: 16, borderRadius: 10, width: '100%'}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Image style={{height: 60, width: 60, borderRadius: 30}} source={{uri: props.ownerPhoto}} />
+            {props.ownerPhoto && <Image style={{height: 60, width: 60, borderRadius: 30}} source={{uri: props.ownerPhoto}} />}
             <View style={{marginLeft: 16, flex: 1}}>
               <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start'}}>
                 <Text

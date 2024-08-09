@@ -288,7 +288,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   };
 
   const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | 'IO-JE' | undefined) => {
-    const isHost = userInfo?.accountType.toLowerCase() === 'host';
+    const isHost = userInfo?.accountType.toLowerCase() === 'host';    
 
     switch (type) {
       case 'IO':
@@ -522,7 +522,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               </View>
               <Text style={styles.textButton}>Join events</Text>
             </TouchableOpacity>
-            {myEvents?.map((event: any, index: number) => {
+            {myEvents?.map((event: any, index: number) => {              
               const isActive = activeEvent?.id === event.id;
               const eventIsFinished = isEventFinished(event?.date);
               const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
@@ -539,7 +539,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                     }
 
                     if (eventIsFinished) {
-                      showToast('warningGrey', 'Create new event', `Event is ended: ${event?.date}`);
+                      showToast('inviteMatch', 'Create new event', `Event is ended: ${event?.date}`, {ownerPhoto: event.photos[0].image});
                     }
                     setActiveEvent(event);
                   }}>

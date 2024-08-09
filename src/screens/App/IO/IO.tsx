@@ -153,7 +153,7 @@ const IO: FC = (): JSX.Element => {
         name: name,
         girlsPhoto: girlsPhoto,
       });
-      showToast('pending', `Chat with ${name} >`, 'Invitation approved! Waiting for Alexa to accept your invitation.');
+      showToast('inviteMatch', `Chat with ${name} >`, 'Invitation approved! Waiting for Alexa to accept your invitation.');
       // setIsVisibleMatch(true);
     } catch (e) {
       console.log(e);

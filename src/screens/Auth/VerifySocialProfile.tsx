@@ -180,7 +180,7 @@ const VerifySocialProfile = () => {
       setLoading(false);
     } catch (e) {
       console.log(e);
-      showToast('cancel', '', `${e}`);
+      showToast('inviteMatch', '', `${e}`);
       setLoading(false);
     }
   };

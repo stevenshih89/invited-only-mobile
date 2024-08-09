@@ -159,7 +159,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
       }
     } catch (e) {
       console.log(e);
-      showToast('cancel', '', 'Error!');
+      showToast('inviteMatch', '', 'Error!');
     }
   };
 
