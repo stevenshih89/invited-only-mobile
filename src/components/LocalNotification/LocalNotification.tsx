@@ -119,7 +119,7 @@ const LocalNotification = () => {
                   }}>
                   {text1}
                 </Text>
-                <View style={{borderRadius: 100, backgroundColor: blackColor}}>
+                {props.status && <View style={{borderRadius: 100, backgroundColor: blackColor}}>
                   <Text
                     style={{
                       fontSize: RFValue(12, 812),
@@ -131,7 +131,7 @@ const LocalNotification = () => {
                     }}>
                     {props.status}
                   </Text>
-                </View>
+                </View>}
               </View>
               <Text style={{color: blackColor, marginTop: 6, fontSize: RFValue(16, 812), fontFamily: Satoshi400}}>{text2}</Text>
             </View>
