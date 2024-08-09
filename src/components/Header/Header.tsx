@@ -73,6 +73,7 @@ type ItemProps = {
 const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
   const [eventStarting, setEventStarting] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>(null);
+  const [myEvents, setMyEvents] = useState<Array<any>>()
   const styles = useStyles();
 
   const insets = useSafeAreaInsets();
@@ -87,8 +88,34 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const setRequestFilter = useRequest((i: any) => i?.setRequestFilter);
   const userHost = useUser((i: any) => i?.user);
 
-  const {myEvents, setActiveEvent, activeEvent} = useContext(EventContext);
+  const { setActiveEvent, activeEvent} = useContext(EventContext);
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
+
+  const fetchMyEvents = async () => {
+    const user = auth().currentUser;
+    if (user) {
+      try {
+        const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).get();
+
+        if (querySnapshot.empty) {
+          setMyEvents([]);
+          return;
+        }
+        const data = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setMyEvents(data);
+        return data
+      } catch (error: any) {
+        Alert.alert('Error', error.message || 'Something went wrong');
+      }
+    }
+  };
+
+  useFocusEffect(useCallback(() => {
+    fetchMyEvents()
+  },[]))
 
   const goToCreateEvent = async (): void => {
     await fetchUserInfo()
@@ -289,7 +316,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   </View>
                   <Text style={styles.textButton}>Join events</Text>
                 </TouchableOpacity>
-                {myEvents.map((event: any, index: number) => {
+                {myEvents && myEvents.map((event: any, index: number) => {
                   const isActive = activeEvent?.id === event.id;
                   const eventIsFinished = isEventFinished(event?.date);
                   const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
