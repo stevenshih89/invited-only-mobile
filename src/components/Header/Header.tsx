@@ -691,8 +691,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   useFocusEffect(useCallback(() => {
     getCountNotifications()    
   },[]))
-  
-
+    
   return (
     <View style={[styles.container, headerInsets]}>
       {showHeaderTop && (
