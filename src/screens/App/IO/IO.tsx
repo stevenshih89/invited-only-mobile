@@ -236,8 +236,11 @@ const IO: FC = (): JSX.Element => {
     return userInfoDoc.data()?.fcmToken;
   };
 
-  const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
+  const sendNotification = async (forUserUid: string, title: string, body: string, mark: string, status: string) => {
     const token = await getFcmTokenFromUser(forUserUid);
+
+    console.log('forUserUid', forUserUid);
+    
 
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
@@ -251,6 +254,10 @@ const IO: FC = (): JSX.Element => {
           title: title,
           body: body,
         },
+        data: {
+          status: status,
+          image: userInfo?.photos[0].image
+        }
       }),
     });
 
@@ -311,7 +318,7 @@ const IO: FC = (): JSX.Element => {
           usersList: updateUsersList,
         });
 
-        await sendNotification(forUserUid, 'New invite request', `${userInfo.name} wants to invite you!`, 'invite');
+        await sendNotification(forUserUid, 'New invite request', `${userInfo.name} wants to invite you!`, 'invite', 'Invite match'.toUpperCase());
 
         const getUserInRequestsList = (await firestore().collection('Events').doc(activeEventId).get()).data()?.requestsList;
         const userInRequestsList = getUserInRequestsList.find(item => item.uid === forUserUid);
@@ -329,7 +336,7 @@ const IO: FC = (): JSX.Element => {
           // usersList: updateUsersList ? updateUsersList : usersList,
           requestsList: updateRequestsList,
         });
-        await sendNotification(forUserUid, 'New join request', `${userInfo?.name} wants to join you!`, 'join');
+        await sendNotification(forUserUid, 'New join request', `${userInfo?.name} wants to join you!`, 'join', 'New Join Request'.toUpperCase());
 
         const userInList = usersList.find(item => item.uid === currentUid);
 
