@@ -14,9 +14,6 @@ const useStyles = () =>
     },
     containerScroll: {
       flex: 1,
-      borderTopColor: transparentWhite16Color,
-      borderTopWidth: 1,
-      borderStyle: 'solid',
       backgroundColor: blackColor,
     },
     notificationItem: {

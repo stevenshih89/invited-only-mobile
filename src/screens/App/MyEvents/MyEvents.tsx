@@ -84,45 +84,118 @@ const MyEvents: FC<any> = ({navigation}) => {
     return Math.floor(diffInHours);
   };
 
+  // const getFcmTokens = async (usersList: []) => {
+  //   let tokens: string[] = [];
+
+  //   const promises = usersList.map(async item => {
+  //     const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
+  //     console.log('userInfo', userInfo);
+  //     return userInfo.data().fcmToken;
+  //   });
+
+  //   tokens = await Promise.all(promises);
+
+  //   return tokens;
+  // };
+
+  // const sendNotification = async (usersList: [], title: string, body: string) => {
+  //   const tokens = await getFcmTokens(usersList);
+
+  //   const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
+  //     },
+  //     body: JSON.stringify({
+  //       registration_ids: tokens,
+  //       notification: {
+  //         title: title,
+  //         body: body,
+  //       },
+  //     }),
+  //   });
+
+  //   if (!response.ok) {
+  //     const error = await response.json();
+  //     console.error('error sending notification:', error);
+  //   } else {
+  //     const data = await response.json();
+  //     console.log('notification sent successfully:', data);
+  //   }
+  // };
+
+  const generateRandomId = (length: number) =>  {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
+  const userData = useUser((i: any) => i?.user);  
+
   const getFcmTokens = async (usersList: []) => {
-    let tokens: string[] = [];
-
-    const promises = usersList.map(async item => {
+    
+    let users: Object[] = [];
+    
+    const promises = usersList.map(async (item) => {
       const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
-      console.log('userInfo', userInfo);
-      return userInfo.data().fcmToken;
+      return {uid: userInfo?.data()?.uid, token: userInfo?.data()?.fcmToken};
     });
-
-    tokens = await Promise.all(promises);
-
-    return tokens;
+  
+    users = await Promise.all(promises);    
+  
+    return users;
   };
 
-  const sendNotification = async (usersList: [], title: string, body: string) => {
-    const tokens = await getFcmTokens(usersList);
+  const sendNotification = async (usersList: [], title: string, body: string, mark: string) => {
+    const users = await getFcmTokens(usersList)
 
-    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-      },
-      body: JSON.stringify({
-        registration_ids: tokens,
-        notification: {
-          title: title,
-          body: body,
-        },
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      console.error('error sending notification:', error);
-    } else {
-      const data = await response.json();
-      console.log('notification sent successfully:', data);
-    }
+    for (const user of users) {
+      console.log('user of users', user);
+      
+      const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+          },
+          body: JSON.stringify({
+              to: user.token,
+              notification: {
+                  title: title,
+                  body: body
+              }
+          })
+      });
+      
+      if (!response.ok) {
+          const error = await response.json();
+          console.error('error sending notification:', error);
+      } else {
+          const data = await response.json();
+          const userDoc = await firestore().collection('userInfo').doc(user.uid).get();
+          const userNotifications = userDoc.data()?.notifications || [];
+          const id = generateRandomId(8)
+          const notification = {
+              id,
+              title: title,
+              body: body,
+              mark: mark,
+              uid: userData?.uid
+          };
+          try {
+              await firestore().collection('userInfo').doc(user.uid).update({
+                  notifications: [...userNotifications, notification]
+              });
+          } catch (error) {
+              console.log('error update notifications', error);
+          }
+      }
+  }
   };
 
   const checkTimeEvent = item => {
@@ -151,7 +224,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         setHoursUntilEvent(timeToEvent);
         setCurrentEvent(item);
         setVisibleModalEventRemindes(true);
-        sendNotification(item?.usersList, `${item?.name} starting in ${timeToEvent}h!`, 'Click here to confirm');
+        sendNotification(item?.usersList, `${item?.name} starting in ${timeToEvent}h!`, 'Click here to confirm', 'start');
         timeToEvent = null;
       } else {
         countMyEvent.current = countMyEvent.current + 1;

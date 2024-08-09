@@ -77,19 +77,6 @@ const Invitations: FC = () => {
         </View>
         ))}
       </ScrollView>
-      {/* <FlatList
-        data={inviteLink}
-        renderItem={({item}) => 
-        <View style={styles.inviteContainer}>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => handleCopy(item.inviteCode)} style={styles.inviteButton}>
-          <Text style={styles.inviteText}>{item.inviteCode}</Text>
-          <Copy />
-        </TouchableOpacity>
-      </View>
-      }
-        keyExtractor={item => item.id}
-      /> */}
-      {/* <Button title="Share" onPress={handleShare} buttonStyle={styles.shareButton} /> */}
     </View>
   );
 };

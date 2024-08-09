@@ -1,4 +1,4 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
+import React, {FC, useCallback, useContext, useEffect, useState} from 'react';
 import {View, TouchableOpacity, Text, Image, FlatList, ScrollView, Alert} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
@@ -676,6 +676,23 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     }
   };
 
+  const [countNotifications, setCountNotifications] = useState(0)
+
+  const getCountNotifications = async () => {
+    try {
+      const getDoc = await firestore().collection('userInfo').doc(userHost?.uid).get();
+      const notifications = getDoc?.data()?.notifications
+      setCountNotifications(notifications.length);
+    } catch (error) {
+      
+    }
+  }
+
+  useFocusEffect(useCallback(() => {
+    getCountNotifications()    
+  },[]))
+  
+
   return (
     <View style={[styles.container, headerInsets]}>
       {showHeaderTop && (
@@ -685,7 +702,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
             {badge && (
               <TouchableOpacity onPress={goToNotifications} activeOpacity={0.7} style={{paddingRight: 6}}>
                 <NotificationIcon width={32} height={32} />
-                <Badge value={0} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
+                <Badge value={countNotifications} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
               </TouchableOpacity>
             )}
             {headerType === 'profile' && (

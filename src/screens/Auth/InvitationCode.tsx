@@ -130,6 +130,9 @@ const InvitationCode: FC = (): JSX.Element => {
           phoneNumber: phoneNumber,
           accountConfirmed: true,
           accountReviewed: true,
+          accountPremium: false,
+          notifications: [],
+          superInvites: 0
         })
         .then(async () => {
           console.log('User added!');
