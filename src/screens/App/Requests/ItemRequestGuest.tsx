@@ -17,7 +17,7 @@ import {ActivityIndicator} from '@ant-design/react-native';
 import {showToast} from 'helpers/showToast.ts';
 import {useUser} from '../../../store/userStore';
 import LinearGradient from 'react-native-linear-gradient';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env'
+import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import FastImage from 'react-native-fast-image';
 
 const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
@@ -26,16 +26,13 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
   const [heightAnim] = useState(new Animated.Value(218));
   const {photos, uid, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name} = list;
 
-
-  
-
   const styles = useStyles();
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
 
   if (item[0]?.uid !== user?.uid) {
     return;
-  }  
+  }
 
   const goToEventInfo = () => {
     navigation.navigate(commonStackPath, {screen: eventInfoPath, params: {list: list}});
@@ -90,7 +87,6 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
   };
 
   const handleSwipeGuestCardInvite = async (item: any): Promise<void> => {
-    
     Animated.timing(heightAnim, {
       toValue: 0,
       duration: 300,
@@ -99,20 +95,19 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
       const userAccepted = {
         gender: item?.gender,
         name: item?.name,
-        status: 'accepted',
+        status: 'liked',
         superInvite: false,
         uid: item?.uid,
         userPhoto: item?.userPhoto,
       };
 
       try {
-        const updateUsersList: any = [...list?.usersList, userAccepted];
-        const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
-
-        await firestore().collection('Events').doc(list?.id).update({
-          usersList: updateUsersList,
-          requestsList: updateRequestsList,
-        });
+        await firestore()
+          .collection('Events')
+          .doc(list?.id)
+          .update({
+            requestsList: firestore.FieldValue.arrayUnion(userAccepted),
+          });
         await showToast('success', '', 'You accept invitation');
         await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`, 'invite')
       } catch (e) {
@@ -164,8 +159,8 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
 
   const getFcmTokenFromUser = async (uid: string) => {
     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-    return userInfoDoc.data()?.fcmToken
-  }
+    return userInfoDoc.data()?.fcmToken;
+  };
 
   const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
     
@@ -209,7 +204,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
         console.log('error update notifications', error);
       }
     }
-  }
+  };
 
   return (
     <>
@@ -234,16 +229,15 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
             translateXRange={[-70, 0, 70]}
             disableTopSwipe={true}
             cardStyle={{height: '100%', borderRadius: 22, zIndex: 999}}>
-              <FastImage
-                      style={styles.imageBackground}
-                      source={{
-                      uri: photos[0]?.image,
-                      headers:{ Authorization: 'someAuthToken' },
-                      priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.cover}
-                    >
-                      <View style={[styles.itemContentContainer, {justifyContent: item[0]?.isSuperInvite ? 'space-between' : 'flex-end'}]}>
+            <FastImage
+              style={styles.imageBackground}
+              source={{
+                uri: photos[0]?.image,
+                headers: {Authorization: 'someAuthToken'},
+                priority: FastImage.priority.normal,
+              }}
+              resizeMode={FastImage.resizeMode.cover}>
+              <View style={[styles.itemContentContainer, {justifyContent: item[0]?.isSuperInvite ? 'space-between' : 'flex-end'}]}>
                 {item[0]?.isSuperInvite && (
                   <View style={{alignItems: 'flex-start'}}>
                     <View
@@ -270,15 +264,15 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
                   end={{x: 0, y: 1}}>
                   <TouchableOpacity activeOpacity={0.7} style={[styles.buttonContainer, {marginTop: 'auto'}]} onPress={goToEventInfo}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                    <FastImage
-                      style={{width: 25, height: 25, borderRadius: 20}}
-                      source={{
-                      uri: hostInfo?.photos[0]?.image,
-                      headers:{ Authorization: 'someAuthToken' },
-                      priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.cover}
-                    />
+                      <FastImage
+                        style={{width: 25, height: 25, borderRadius: 20}}
+                        source={{
+                          uri: hostInfo?.photos[0]?.image,
+                          headers: {Authorization: 'someAuthToken'},
+                          priority: FastImage.priority.normal,
+                        }}
+                        resizeMode={FastImage.resizeMode.cover}
+                      />
                       {/* <Image source={{uri: hostInfo?.photos[0]?.image}} style={{width: 25, height: 25, borderRadius: 20}} /> */}
                       <View style={{marginLeft: 8}}>
                         <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(9, 812)}}>{hostInfo?.name}</Text>
@@ -335,9 +329,9 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
                   </TouchableOpacity>
                 </LinearGradient>
               </View>
-                    </FastImage>
+            </FastImage>
             {/* <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: photos[0]?.image}}> */}
-              
+
             {/* </ImageBackground> */}
           </TinderCard>
         </Animated.View>
