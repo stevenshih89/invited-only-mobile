@@ -225,7 +225,7 @@ const EventPreview: FC<EventPreviewProps> = ({
         hour,
         address,
         meetingSpot,
-      });
+      })
     } catch (e) {
       console.log(e);
     }

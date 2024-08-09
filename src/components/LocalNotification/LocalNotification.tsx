@@ -129,7 +129,7 @@ const LocalNotification = () => {
                       paddingVertical: 4,
                       borderRadius: 100,
                     }}>
-                    {props.status}
+                    {props.status.toUpperCase()}
                   </Text>
                 </View>}
               </View>
