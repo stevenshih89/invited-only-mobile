@@ -1,9 +1,9 @@
 import {black1Color, lightGray15Color, lightGray2Color, whiteColor} from 'constants/colors';
-import {FlatList, Platform, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, Keyboard, Platform, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckCircle from 'assets/images/icons/check-circle.svg';
 import CircleGray from 'assets/images/icons/circle-gray.svg';
-import {screenHeight} from 'constants/common';
+import {isIos, screenHeight} from 'constants/common';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useContext, useState} from 'react';
@@ -220,8 +220,9 @@ const VerifySocialProfile = () => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: black1Color}}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{paddingHorizontal: 24, flex: 1, justifyContent: 'space-between'}}>
-        <View>
+          <View>
           <View style={{alignItems: 'center'}}>
             <LogoPrimary2 />
           </View>
@@ -250,11 +251,12 @@ const VerifySocialProfile = () => {
             </Text>
           </View>
           <FlatList data={socials} ItemSeparatorComponent={() => <View style={{height: 8}} />} renderItem={renderItem} />
-        </View>
+          </View>
         <View style={{marginVertical: 4}}>
           <Button title="Continue" loading={loading} disabled={!socialNickname[openedSocial?.name]?.length} onPress={handleNext} />
         </View>
       </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };
