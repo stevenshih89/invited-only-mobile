@@ -56,6 +56,7 @@ interface TouchingSliderProps {
   confirmedAccount?: boolean;
   accountType?: string;
   isPremium?: string;
+  fromJoinEventsScreen: boolean;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
@@ -79,7 +80,8 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   confirmedAccount = false,
   accountType,
   hostInfo,
-  isPremium
+  isPremium,
+  fromJoinEventsScreen = false,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
@@ -196,7 +198,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       )}
       {isShowEventPreview ? (
         <View style={styles.eventPreviewWr}>
-          <EventPreview placeName={placeName} date={date} girls={girls} photos={eventPhotos} name={name} flipCoin={flipCoin} />
+          <EventPreview placeName={placeName} date={date} girls={girls} photos={eventPhotos} name={name} flipCoin={flipCoin} fromJoinEventsScreen={fromJoinEventsScreen}/>
         </View>
       ) : (
         <LinearGradient
