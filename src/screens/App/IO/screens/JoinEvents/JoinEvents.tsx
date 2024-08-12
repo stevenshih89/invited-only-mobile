@@ -32,6 +32,9 @@ import {showToast} from 'helpers/showToast.ts';
 const JoinEvents = ({navigation}: any) => {
   const [events, setEvents] = useState<any[]>([]);
 
+  console.log('events', events);
+  
+
   const styles = useStyles();
   const userHost = useUser((i: any) => i?.user);
 
@@ -52,11 +55,12 @@ const JoinEvents = ({navigation}: any) => {
 
   const getListForGuest = async () => {
     const user = auth().currentUser;
+    
     if (!user) {
       return;
     }
     try {
-      const querySnapshot = await firestore().collection('Events').limit(20).get();
+      const querySnapshot = await firestore().collection('Events').limit(20).get();   
 
       const filteredEvents = querySnapshot.docs
         .map((doc: any) => ({
@@ -65,27 +69,26 @@ const JoinEvents = ({navigation}: any) => {
         }))
         .filter(event => !event.requestsList || !event.requestsList.some((request: any) => request.uid === user.uid));
 
+        console.log();
+        
+
       async function enrichElementsWithPhotos(elements) {
         const promises = elements.map(async element => {
           const docRef = firestore().collection('userInfo').doc(element.uid);
           const doc = await docRef.get();
-
-          if (!doc.exists) {
-            return null;
-          } else {
             const userInfo = doc.data();
             return {...element, userPhotos: userInfo?.photos};
-          }
         });
 
         return Promise.all(promises);
       }
 
       const enrichedEvents = await enrichElementsWithPhotos(filteredEvents);
-
+      
       const data: any[] = [];
 
       enrichedEvents?.map((event: any) => {
+        
         const {
           address,
           date,
@@ -103,7 +106,7 @@ const JoinEvents = ({navigation}: any) => {
           userPhotos,
           female,
           femaleFriend,
-        } = event;
+        } = event;        
 
         const currUserPhotos = userPhotos?.map((photo: any) => photo?.image);
         const eventPhotos = photos?.map((photo: any) => photo?.image);
@@ -123,6 +126,7 @@ const JoinEvents = ({navigation}: any) => {
                 isShowCardButtons={false}
                 eventPhotos={eventPhotos}
                 photos={currUserPhotos}
+                fromJoinEventsScreen={true}
               />
               <View style={styles.bioWrapper}>
                 <Text style={styles.titleSection}>Event Details</Text>

@@ -36,6 +36,7 @@ const EventPreview: FC<{
   setTabState: Dispatch<SetStateAction<string>>;
   setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
   handleCreateEvent: any;
+  fromJoinEventsScreen: boolean;
 }> = ({
   photos,
   date,
@@ -52,6 +53,7 @@ const EventPreview: FC<{
   hour,
   address,
   meetingSpot,
+  fromJoinEventsScreen,
   setIsVisibleSaveModal,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
@@ -115,7 +117,7 @@ const EventPreview: FC<{
     setActive(p => p - 1);
   };
 
-  if (userAccountType === 'host') {
+  if (userAccountType === 'host' && !fromJoinEventsScreen) {
     return (
       // @ts-ignore
       <SafeAreaView style={{flex: 1}}>
@@ -283,7 +285,7 @@ const EventPreview: FC<{
     }, 3000);
   };
 
-  if (userAccountType === 'guest') {
+  if (userAccountType === 'guest' || fromJoinEventsScreen) {
     return (
       <View style={[styles.container, {backgroundColor: transparentGray90Color, padding: 16, borderRadius: 16}]}>
         <ImageBackground
