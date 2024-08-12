@@ -89,7 +89,7 @@ const ItemRequestHost = ({item, list}: any) => {
         usersList: updateUsersList,
         requestsList: updateRequestsList,
       });
-      showToast('inviteMatch', '', 'The request has been confirmed');
+      showToast('inviteMatch', 'Waiting for Alexa to accept your invitation. ', 'Almost there!', {ownerPhoto: item?.userPhoto, status: 'guest approved'});
       sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite')
     } catch (e) {
       console.log(e);
@@ -175,6 +175,10 @@ const ItemRequestHost = ({item, list}: any) => {
           title: title,
           body: body,
         },
+        data: {
+          status: mark,
+          image: userInfo?.photos[0].image
+        }
       }),
     });
 

@@ -386,7 +386,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
           </View>
 
           {
-            <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : `Event starting in ${hoursUntilEvent}h!`}</Text>
+            <Text style={styles.textAreYouSure}>{!time ? 'Are you on the way?' : `Event starting in ${hoursUntilEvent}h!`}</Text>
           }
           {/* {hoursUntilEvent === 12 && (
             <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : 'Event starting in 12h!'}</Text>
