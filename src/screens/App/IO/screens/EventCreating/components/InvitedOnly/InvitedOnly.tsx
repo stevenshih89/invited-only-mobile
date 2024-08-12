@@ -134,7 +134,7 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
                 </TouchableOpacity>
               </View>
           </View>
-          {iconsArrayFemale?.length > 0 && <View style={{flexDirection: 'row', marginTop: 20}}>{renderIconsArrayFemale()}</View>}
+          {/* {iconsArrayFemale?.length > 0 && <View style={{flexDirection: 'row', marginTop: 20}}>{renderIconsArrayFemale()}</View>} */}
           <View style={styles.rowMale}>
               <Text style={styles.textPersonGender}>Male</Text>
               <View style={styles.rowButtons}>
@@ -161,7 +161,7 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
               </TouchableOpacity>
             </View>
           </View> */}
-          {iconsArrayMale?.length > 0 && <View style={{flexDirection: 'row', marginTop: 20}}>{renderIconsArrayMale()}</View>}
+          {/* {iconsArrayMale?.length > 0 && <View style={{flexDirection: 'row', marginTop: 20}}>{renderIconsArrayMale()}</View>} */}
         </View>
       </View>
       <View style={styles.wrapperOtherFriends}>
