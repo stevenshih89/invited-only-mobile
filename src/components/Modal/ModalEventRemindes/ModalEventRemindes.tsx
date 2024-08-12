@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, Ref, RefObject, useEffect, useState} from 'react';
 import {View, Text, Image, ImageBackground, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
 import firestore from '@react-native-firebase/firestore';
@@ -57,7 +57,7 @@ interface ModalEventRemindeProps {
   handleGetEventsIJoining?: any;
   currentEvent: any;
   hoursUntilEvent: number;
-  countMyEvent: any;
+  countMyEvent: RefObject<number>;
 }
 
 const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
@@ -270,11 +270,15 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
         testID={'bottom-half-modal-open-button'}
         onBackdropPress={() => {
           setEventStarting(false);
-          countMyEvent.current = countMyEvent.current + 1;
+          if (countMyEvent?.current) {
+            countMyEvent.current = countMyEvent.current + 1;
+          }
         }}
         onSwipeComplete={() => {
           setEventStarting(false);
-          countMyEvent.current = countMyEvent.current + 1;
+          if (countMyEvent?.current) {
+            countMyEvent.current = countMyEvent.current + 1;
+          }
         }}
         style={styles.modalStyles}
         swipeDirection={['down']}>
@@ -399,7 +403,9 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                 // await handleGetEventsIJoining();
                 // showToast('success', 'Go to my events', `You confirmed ${currentEvent?.placeName} event`);
                 setEventStarting(false);
-                countMyEvent.current = countMyEvent.current + 1;
+                if (countMyEvent?.current) {
+                  countMyEvent.current = countMyEvent.current + 1;
+                }
                 // setModalVisible(false);
               }
             }}

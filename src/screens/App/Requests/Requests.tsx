@@ -18,6 +18,8 @@ import {EventContext} from 'contexts/EventContext';
 import {useUser} from '../../../store/userStore';
 import {useRequest} from '../../../store/requestsStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
+import LinearGradient from 'react-native-linear-gradient';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import Loading from 'components/Loading/Loading';
 
 const Requests: FC = (): ReactElement => {
@@ -185,7 +187,7 @@ const Requests: FC = (): ReactElement => {
               <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
             </View>
           )}
-          {userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && (
+          {userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && myIventList?.length && (
             <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
               {
                 <Loading
