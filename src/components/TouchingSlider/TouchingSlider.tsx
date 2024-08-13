@@ -56,7 +56,7 @@ interface TouchingSliderProps {
   confirmedAccount?: boolean;
   accountType?: string;
   isPremium?: string;
-  fromJoinEventsScreen: boolean;
+  fromJoinEventsScreen?: boolean;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
