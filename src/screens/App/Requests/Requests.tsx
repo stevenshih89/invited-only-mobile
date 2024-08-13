@@ -44,7 +44,7 @@ const Requests: FC = (): ReactElement => {
         const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
         console.warn('querySnapshot', querySnapshot.data());
         const eventList = await firestore().collection('userInfo').doc(user.uid).get();
-        setMyInventList(eventList?.data()?.eventsList);
+        setMyInventList(eventList?.data()?.eventsList);  
 
         if (querySnapshot.exists) {
           setRequestsForHost(querySnapshot.data());

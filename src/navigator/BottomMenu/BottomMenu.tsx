@@ -6,7 +6,7 @@ import useStyles from 'navigator/BottomMenu/styles.ts';
 import {IOStackNavigation, MyEventsStackNavigation, ChatStackScreen} from 'navigator/AppStackScreens/AppStackScreens.tsx';
 import {whiteColor} from 'constants/colors.ts';
 import {createStackNavigator} from '@react-navigation/stack';
-import {IOPath, chatPath, myEventsPath, myProfileViewPath, profileEditingPath, profilePath, requestsPath} from 'constants/pathLocations';
+import {IOPath, chatPath, joinEventsPathRequest, myEventsPath, myProfileViewPath, profileEditingPath, profilePath, requestsPath} from 'constants/pathLocations';
 import Requests from 'screens/App/Requests/Requests';
 import Header from 'components/Header/Header';
 import {tabBarName, tabIcon} from 'navigator/TabBar/TabBar';
@@ -17,6 +17,7 @@ import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileVi
 import ProfileEditing from 'screens/App/Profile/screens/ProfileEditing/ProfileEditing';
 import {TouchableOpacity} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
+import JoinEvents from 'screens/App/Requests/JoinEvents/JoinEvents';
 
 const RequestsStackScreen = () => {
   const RequestsStack = createStackNavigator();
@@ -31,6 +32,15 @@ const RequestsStackScreen = () => {
           headerShown: true,
           header: () => <Header badge={true} logoType="logo" headerType="request" />,
         }}
+      />
+      <RequestsStack.Screen
+        options={{
+          headerShown: true,
+          header: () => <Header badge={true} logoType="logo" headerType="IO-JE" />,
+        }}
+        name={joinEventsPathRequest}
+        key={joinEventsPathRequest}
+        component={JoinEvents}
       />
     </RequestsStack.Navigator>
   );
