@@ -77,13 +77,15 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {    
     const unsubscribe = onMatchNotificationSubscription(message => {
+      console.warn('message', message);
+
       const data = message?.data;
       setMatchData(data);
       setIsVisibleMatch(true);
     });
 
     return () => unsubscribe();
-  });
+  }, []);
 
   const handleOpenSuperInvite = async (item): void => {
     setActiveSuperInviteUser(item);
@@ -246,7 +248,6 @@ const IO: FC = (): JSX.Element => {
     const token = await getFcmTokenFromUser(forUserUid);
 
     console.log('forUserUid', forUserUid);
-    
 
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
@@ -262,8 +263,8 @@ const IO: FC = (): JSX.Element => {
         },
         data: {
           status: status,
-          image: userInfo?.photos[0].image
-        }
+          image: userInfo?.photos[0].image,
+        },
       }),
     });
 
@@ -318,6 +319,7 @@ const IO: FC = (): JSX.Element => {
         superInvite: false,
         uid: host ? guest.data()?.uid : userHost?.uid,
         userPhoto: host ? guest.data()?.photos[0]?.image : userHost?.photos[0]?.image,
+        fcmToken: host ? guest.data()?.fcmToken : userHost?.fcmToken,
       };
 
       const usersListCheck = activeEvent?.usersList ? activeEvent?.usersList : usersList;
@@ -326,6 +328,17 @@ const IO: FC = (): JSX.Element => {
       usersListCheck !== undefined && updateUsersList?.push(...usersListCheck);
 
       if (userHost?.accountType === 'host') {
+        await firestore().collection('Events').doc(activeEventId).update({
+          usersList: updateUsersList,
+        });
+
+        await sendNotification(
+          forUserUid,
+          'New invite request',
+         `${userInfo.name} wants to invite you!`,
+         'invite',
+         'Invite match'.toUpperCase(),
+        );
 
         const getUserInRequestsList = (await firestore().collection('Events').doc(activeEventId).get()).data()?.requestsList;
         const userInRequestsList = getUserInRequestsList.find(item => item.uid === forUserUid);
@@ -360,6 +373,13 @@ const IO: FC = (): JSX.Element => {
           
         }
         await sendNotification(forUserUid, 'New join request', `${userInfo?.name} wants to join you!`, 'join', 'New Join Request'.toUpperCase());
+        await sendNotification(
+          forUserUid,
+         'New join request',
+          `${userInfo?.name} wants to join you!`,
+         'join',
+           'New Join Request'.toUpperCase(),
+        );
 
         const userInList = usersList.find(item => item.uid === currentUid);
         const userListFilter = usersList.filter(item => item.uid !== currentUid);
@@ -716,8 +736,6 @@ const IO: FC = (): JSX.Element => {
     }, 3000);
   };
 
-  console.warn(activeEvent);
-
   const getListForHost = async () => {
     let users: any;
     if (userInfo?.chooseGuest === 'any') {
@@ -743,12 +761,7 @@ const IO: FC = (): JSX.Element => {
 
     usersList
       ?.filter(i => {
-        return (
-          i?._data?.uid !== userHost?.uid &&
-          activeEvent?.usersList?.some(j => {
-            return j?.uid !== i?._data?.uid;
-          })
-        );
+        return i?._data?.uid !== userHost?.uid && activeEvent?.usersList?.every(j => j?.uid !== i?._data?.uid);
       })
       ?.map((item: any, index: number): void => {
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;
@@ -1052,7 +1065,10 @@ const IO: FC = (): JSX.Element => {
     return <Loading text="Finding people near you..." userInfo={userInfo} />;
   }
 
-  if (currentEventCardPosition >= events.length && events.length) {
+  if (
+    (userInfo?.accountType === 'host' ? currentEventCardPosition >= events.length : currentEventCardPosition > events.length) &&
+    events.length
+  ) {
     return (
       <Loading
         text="Sorry, can't find any results. Please try adjusting your search parameters or try again later."

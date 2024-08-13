@@ -32,7 +32,7 @@ const Requests: FC = (): ReactElement => {
   const {activeEvent} = useContext(EventContext);
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
-  const [userInfo, setUserInfo] = useState<any>({});
+  const [userInfo, setUserInfoData] = useState<any>([]);
   const [dataForGuest, setDataForGuest] = useState([]);
   const [myIventList, setMyInventList] = useState([]);
 
@@ -99,22 +99,22 @@ const Requests: FC = (): ReactElement => {
 
   const fetchUserInfo = async () => {
     setLoading(true);
-    const user = auth().currentUser;
-
+    const user = auth()?.currentUser;
     if (user) {
       try {
         const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
-        if (userInfoDoc.exists) {
-          setUserInfo(userInfoDoc.data());
+        if (!userInfoDoc.exists) {
+          return;
         }
+        const data = userInfoDoc.data();
+        setUserInfoData(data);
       } catch (error: any) {
-        Alert.alert('Error', error.message || 'Something went wrong');
+        console.log('Error', error.message || 'Something went wrong');
       }
     }
-    setLoading(false);
   };
 
-  const isHost = activeEvent === 'host' ? false : userInfo?.accountType?.toLowerCase() === 'host';
+  const isHost = userInfo?.accountType?.toLowerCase() === 'host';
 
   useFocusEffect(
     useCallback(() => {
@@ -176,7 +176,7 @@ const Requests: FC = (): ReactElement => {
         />
       ) : (
         <>
-          {userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myIventList?.length && (
+          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myIventList?.length && (
             <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
               <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                 Let’s create an event
@@ -187,7 +187,7 @@ const Requests: FC = (): ReactElement => {
               <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
             </View>
           )}
-          {userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && myIventList?.length && (
+          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myIventList?.length && (
             <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
               {
                 <Loading
