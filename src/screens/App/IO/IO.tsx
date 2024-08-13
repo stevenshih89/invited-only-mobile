@@ -54,11 +54,12 @@ const IO: FC = (): JSX.Element => {
   const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [events, setEvents] = useState<any[]>([]);
+ 
   const [myEvents, setMyEventsList] = useState([]);
   const [nameUser, setNameUser] = useState<string>('');
   const [uidScamUser, setUidScamUser] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
-  const [matchData, setMatchData] = useState<any>({});
+  const [matchData, setMatchData] = useState<any>({});  
   const [loading, setLoading] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
@@ -70,11 +71,11 @@ const IO: FC = (): JSX.Element => {
  
   const {activeEventDate} = useContext(EventsDate);
 
-  const userHost = useUser((i: any) => i?.user);
+  const userHost = useUser((i: any) => i?.user);  
 
   let currentDate = new Date();
 
-  useEffect(() => {
+  useEffect(() => {    
     const unsubscribe = onMatchNotificationSubscription(message => {
       const data = message?.data;
       setMatchData(data);
@@ -290,6 +291,7 @@ const IO: FC = (): JSX.Element => {
 
 
   const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {
+    
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
@@ -297,6 +299,9 @@ const IO: FC = (): JSX.Element => {
 
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
+      console.log('activeEventId', activeEventId);
+      
+      
       const host = userHost?.accountType === 'host';
 
       const userInvited = {
@@ -314,33 +319,53 @@ const IO: FC = (): JSX.Element => {
       usersListCheck !== undefined && updateUsersList?.push(...usersListCheck);
 
       if (userHost?.accountType === 'host') {
-        await firestore().collection('Events').doc(activeEventId).update({
-          usersList: updateUsersList,
-        });
-
-        await sendNotification(forUserUid, 'New invite request', `${userInfo.name} wants to invite you!`, 'invite', 'Invite match'.toUpperCase());
 
         const getUserInRequestsList = (await firestore().collection('Events').doc(activeEventId).get()).data()?.requestsList;
         const userInRequestsList = getUserInRequestsList.find(item => item.uid === forUserUid);
 
         if (userInRequestsList) {
+          userInvited.status = 'invite_match'
           const photos = guest.data().photos;
           const getMainPhoto = photos.filter(item => item.id === 0);
           setOwnerEventUserPhoto(getMainPhoto[0].image);
-          setIsVisibleMatch(true);
+          setIsVisibleMatch(true); 
         }
-      } else {
-        const updateRequestsList: any = [...requestsList, userInvited];
 
+       try {
         await firestore().collection('Events').doc(activeEventId).update({
-          // usersList: updateUsersList ? updateUsersList : usersList,
-          requestsList: updateRequestsList,
+          usersList: updateUsersList,
         });
+        await sendNotification(forUserUid, 'New invite request', `${userInfo.name} wants to invite you!`, 'invite', 'Invite match'.toUpperCase());
+       } catch (error) {
+        console.log('New invite request error', error);
+       }
+        
+      } else {
+        const updateRequestsList: any = [...requestsList, userInvited];      
+
+        try {
+          await firestore().collection('Events').doc(activeEventId).update({
+            // usersList: updateUsersList ? updateUsersList : usersList,
+            requestsList: updateRequestsList,
+          });
+        } catch (error) {
+          console.log('error requestsList update', error);
+          
+        }
         await sendNotification(forUserUid, 'New join request', `${userInfo?.name} wants to join you!`, 'join', 'New Join Request'.toUpperCase());
 
         const userInList = usersList.find(item => item.uid === currentUid);
+        const userListFilter = usersList.filter(item => item.uid !== currentUid);
 
         if (userInList) {
+          userInList.status = 'invite_match'
+          try {
+            await firestore().collection('Events').doc(eventId).update({
+              usersList: [...userListFilter, userInList]
+            })
+          } catch (error) {
+            
+          }
           const photos = guest.data().photos;
           const getMainPhoto = photos.filter(item => item.id === 0);
           setOwnerEventUserPhoto(getMainPhoto[0].image);
@@ -430,7 +455,7 @@ const IO: FC = (): JSX.Element => {
 
     if (!filterDataWM.length) {
       return;
-    }
+    }    
 
     filterDataWM?.map((event: any) => {
       const currUserPhotos = event?.userPhotos?.map((photo: any) => photo?.image);

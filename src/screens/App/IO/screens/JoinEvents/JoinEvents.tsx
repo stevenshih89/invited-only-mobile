@@ -28,12 +28,14 @@ import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useUser} from '../../../../../store/userStore';
 import {showToast} from 'helpers/showToast.ts';
+import Match from '../Match/Match';
+import { onMatchNotificationSubscription } from 'helpers/fcmHelper';
 
 const JoinEvents = ({navigation}: any) => {
   const [events, setEvents] = useState<any[]>([]);
-
-  console.log('events', events);
-  
+  const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
+  const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState();  
+  const [matchData, setMatchData] = useState<any>({});  
 
   const styles = useStyles();
   const userHost = useUser((i: any) => i?.user);
@@ -52,6 +54,16 @@ const JoinEvents = ({navigation}: any) => {
       </View>
     );
   };
+
+  useEffect(() => {
+    const unsubscribe = onMatchNotificationSubscription(message => {
+      const data = message?.data;
+      setMatchData(data);
+      setIsVisibleMatch(true);
+    });
+
+    return () => unsubscribe();
+  });
 
   const getListForGuest = async () => {
     const user = auth().currentUser;
@@ -236,7 +248,7 @@ const JoinEvents = ({navigation}: any) => {
     }
   };
 
-  const onInvite = async (list: any) => {
+  const onInvite = async (list: any) => {    
     try {
       const activeEvent = list?.id;
       const checkUser = list?.requestsList?.some(i => i?.uid === userHost?.uid);
@@ -244,6 +256,21 @@ const JoinEvents = ({navigation}: any) => {
       if (checkUser) {
         return showToast('inviteMatch', '', 'The invitation has been successfully withdrawn!');
       }
+
+      const getUserInRequestsList = (await firestore().collection('Events').doc(list.id).get()).data()?.usersList;
+        const userInRequestsList = getUserInRequestsList.find(item => item.uid === userHost?.uid);
+
+        if (userInRequestsList) {
+          userInRequestsList.status = 'invite_match'
+          const filterUsers = getUserInRequestsList.filter(item => item.uid !== userHost?.uid);
+          await firestore().collection('Events').doc(list.id).update({
+            usersList: [...filterUsers, userInRequestsList]
+          })
+
+          const photos = userHost?.photos[0].image;
+          setOwnerEventUserPhoto(photos);
+          setIsVisibleMatch(true);
+        }
 
       const userAccepted = {
         gender: userHost?.gender,
@@ -258,7 +285,7 @@ const JoinEvents = ({navigation}: any) => {
       await firestore().collection('Events').doc(activeEvent).update({
         requestsList: updateRequestsList,
       });
-      await showToast('inviteMatch', '', 'The invitation has been successfully withdrawn!');
+      showToast('inviteMatch', '', 'The invitation has been successfully withdrawn!');
     } catch (e) {
       console.log(e);
     }
@@ -276,6 +303,11 @@ const JoinEvents = ({navigation}: any) => {
   useEffect(() => {
     getListForGuest();
   }, []);
+
+  const handleCloseMatch = (): void => {
+    setIsVisibleMatch(false);
+    showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {ownerPhoto: ownerEventUserPhoto, status: 'INVITE MATCH'});
+  };
 
   return (
     <View style={styles.container}>
@@ -302,6 +334,7 @@ const JoinEvents = ({navigation}: any) => {
             </View>
           );
         })}
+        <Match isVisibleMatch={isVisibleMatch} onCloseMatch={handleCloseMatch} userInfo={userHost} matchData={matchData} />
       </SafeAreaView>
     </View>
   );

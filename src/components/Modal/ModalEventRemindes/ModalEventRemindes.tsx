@@ -56,7 +56,7 @@ interface ModalEventRemindeProps {
   handleAcceptInvitation?: any;
   handleGetEventsIJoining?: any;
   currentEvent: any;
-  hoursUntilEvent: number;
+  hoursUntilEvent: number | undefined;
   countMyEvent: any;
 }
 

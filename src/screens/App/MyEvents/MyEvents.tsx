@@ -54,7 +54,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [activeUserInfo, setActiveUserInfo] = useState<any>({});
 
   const [myEventsData, setMyEventsData] = useState([]);
-  const [eventsJoiningData, setEventsJoiningData] = useState([]);
+  const [eventsJoiningData, setEventsJoiningData] = useState([]); 
   const [hoursUntilEvent, setHoursUntilEvent] = useState<number>();
   const [currentEvent, setCurrentEvent] = useState();
 
@@ -83,6 +83,8 @@ const MyEvents: FC<any> = ({navigation}) => {
 
     return Math.floor(diffInHours);
   };
+
+  
 
   // const getFcmTokens = async (usersList: []) => {
   //   let tokens: string[] = [];
@@ -199,36 +201,15 @@ const MyEvents: FC<any> = ({navigation}) => {
   };
 
   const checkTimeEvent = item => {
-    // console.log('item', item);
 
     if (item) {
       const res = calculateHoursUntilEvent(item.date, item.hour);
-
-      // console.log('res', res);
-
-      // let timeToEvent = null;
-
-      // if (res && !timeToEvent && res >= 24) {
-      //   timeToEvent = 24;
-      // }
-
-      // if (res && !timeToEvent && res >= 12) {
-      //   timeToEvent = 12;
-      // }
-
-      // if (res && !timeToEvent && res >= 2) {
-      //   timeToEvent = 2;
-      // }
-
-      // if (timeToEvent) {
-        setHoursUntilEvent(res);
-        setCurrentEvent(item);
-        setVisibleModalEventRemindes(true);
-        sendNotification(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
-        // timeToEvent = null;
-      // } else {
-      //   countMyEvent.current = countMyEvent.current + 1;
-      // }
+      
+      setHoursUntilEvent(res);
+      setCurrentEvent(item);
+      setVisibleModalEventRemindes(true);
+      if(res < 25) sendNotification(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
+      countMyEvent.current = countMyEvent.current + 1;
     }
   };
 
@@ -360,15 +341,13 @@ const MyEvents: FC<any> = ({navigation}) => {
     try {
       const uid = user?.uid;
       const events = await firestore().collection('Events').get();
-      const data = events?.docs?.map(i => i?.data());
+      const data = events?.docs?.map(i => i?.data());      
 
       const filterData = data?.filter(obj => {
         return obj?.usersList?.some(user => {
           return user?.uid === uid && (user?.status === 'invite_match' || user?.status === 'accepted' || user?.status === 'approved');
         });
-      });
-
-      console.log('filterData', filterData);
+      });      
       setEventsJoiningData(filterData);
       setEventsImJoining(filterData);
     } catch (e) {
@@ -379,7 +358,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
   const getMyEvents = async () => {
     try {
-      if (user) {
+      if (user) {        
         const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
         const data = querySnapshot?.docs?.map(i => i?.data());
         setMyEventsData(data);
@@ -703,22 +682,14 @@ const MyEvents: FC<any> = ({navigation}) => {
         eventInfo={activeModalEvent}
       />
       {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true} isPremium={userInfo?.accountPremium} />}
-      <ModalEventRemindes
+      {hoursUntilEvent < 25 && <ModalEventRemindes
         currentEvent={currentEvent}
         uid={userInfo?.uid}
         eventStarting={visibleModalEventRemindes}
-        // activeState={true}
         setEventStarting={setVisibleModalEventRemindes}
         hoursUntilEvent={hoursUntilEvent}
         countMyEvent={countMyEvent}
-        // time={'10^00'}
-        // image={''}
-        // placeName={'name place'}
-        // joinedPeopleCount={2}
-        // date={eventDate}
-        // girlInvitation={2}
-        // allPeople={34}
-      />
+      />}
     </>
   );
 };
