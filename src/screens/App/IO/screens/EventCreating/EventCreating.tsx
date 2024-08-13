@@ -224,7 +224,7 @@ const EventCreating: FC = () => {
         photos
       });
       navigation?.goBack();
-      showToast('inviteMatch', '', 'Event successfully changes!');
+      showToast('inviteMatch', 'Continue swiping👋', 'Event updated');
       sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details', 'update')
     } catch (e) {
       console.log(e);

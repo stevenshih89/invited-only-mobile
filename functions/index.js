@@ -23,10 +23,7 @@ const sendNotification = async userId => {
 };
 
 exports.processInviteMatch = functions.firestore.onDocumentUpdated('Events/{eventId}', async event => {
-  const currentUser = admin.auth().currentUser;
-  console.log('curr', currentUser);
   const eventData = event.data.after.data();
-  const id = event.id;
 
   let requestsList = [...eventData.requestsList];
   let usersList = [...eventData.usersList];
@@ -35,18 +32,22 @@ exports.processInviteMatch = functions.firestore.onDocumentUpdated('Events/{even
   let matchedUser = {};
 
   requestsList.forEach(request => {
-    if (uidSet.has(request.uid)) {
-      matchedUser = request;
-    } else {
-      uidSet.add(request.uid);
+    if (request.status === 'liked') {
+      if (uidSet.has(request.uid)) {
+        matchedUser = request;
+      } else {
+        uidSet.add(request.uid);
+      }
     }
   });
 
   usersList.forEach(user => {
-    if (uidSet.has(user.uid)) {
-      matchedUser = user;
-    } else {
-      uidSet.add(user.uid);
+    if (user.status === 'liked') {
+      if (uidSet.has(user.uid)) {
+        matchedUser = user;
+      } else {
+        uidSet.add(user.uid);
+      }
     }
   });
 
@@ -62,10 +63,6 @@ exports.processInviteMatch = functions.firestore.onDocumentUpdated('Events/{even
       return user;
     });
 
-    await admin.firestore().collection('Events').doc(id).update({
-      requestsList: updatedRequestsList,
-      usersList: updatedUsersList,
-    });
     await admin.messaging().send({
       token: matchedUser.fcmToken,
       notification: {
@@ -74,10 +71,20 @@ exports.processInviteMatch = functions.firestore.onDocumentUpdated('Events/{even
         imageUri: matchedUser.photos,
         senderUid: eventData?.uid,
         recipientUid: matchedUser.uid,
-        eventId: id,
+        eventId: eventData.id,
         superInvite: matchedUser.superInvite,
       },
     });
+
+    return event.data.after.ref.set(
+      {
+        requestsList: updatedRequestsList,
+        usersList: updatedUsersList,
+      },
+      {
+        merge: true,
+      },
+    );
   }
 });
 

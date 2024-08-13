@@ -86,6 +86,10 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
               notification: {
                   title: title,
                   body: body
+              },
+              data: {
+                status: mark,
+                image: image
               }
           })
       });
@@ -142,7 +146,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
   const handleCancelEvent = async () => {
     const uidUser = auth().currentUser?.uid    
     try {
-      await sendNotification(`${nameEvent} has been cancelled`, 'Click here to see details', 'cancelled')
+      await sendNotification(`${nameEvent} has been cancelled`, 'Swipe new events', 'cancelled')
       await firestore().collection('Events').doc(id).delete();
       const userInfo = await firestore().collection('userInfo').doc(uidUser).get()
       const eventList = userInfo?.data()?.eventsList
@@ -154,7 +158,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
       
       
       onClose();
-      showToast('inviteMatch', '', 'Event successfully deleted!');
+      showToast('inviteMatch', 'Create new event', 'Event cancelled');
       navigation?.goBack();
     } catch (e) {
       showToast('inviteMatch', '', 'Error!');
