@@ -1,7 +1,6 @@
 import {lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
 import {Text, TouchableOpacity, View, SafeAreaView, Dimensions} from 'react-native';
 import Modal from 'react-native-modal';
-import FakePlaceCircle from 'assets/images/app/fake-place-circle.png';
 import Close from 'assets/images/icons/close.svg';
 import MessageText from 'assets/images/icons/message-text.svg';
 import CheckboxSelected from 'assets/images/icons/checkbox-selected.svg';
@@ -28,6 +27,7 @@ interface MatchData {
   recipientUid: string;
   eventId: string;
   superInvite: boolean;
+  userHostImageUri: string;
 }
 
 const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: MatchData; userInfo: any}> = ({
@@ -36,6 +36,8 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   matchData,
   userInfo,
 }) => {
+  console.warn('isVisibleMatch', isVisibleMatch);
+
   const opacityWrapper = useSharedValue(0);
   const imagePosition = useSharedValue(-200 - widthScreen / 15.5);
   const textSize = useSharedValue(0);
@@ -84,7 +86,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             invitedStatus: 'invite_match',
             messages: [],
             name: matchData.name,
-            superInvite: matchData.superInvite,
+            superInvite: matchData?.superInvite,
             uid: matchData.recipientUid,
           };
           await firestore()
@@ -129,7 +131,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             invitedStatus: 'invite_match',
             messages: [],
             name: matchData.name,
-            superInvite: matchData.superInvite,
+            superInvite: matchData?.superInvite,
             uid: matchData.recipientUid,
           };
 
@@ -372,11 +374,16 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
                 ))}
               </View>
               <Text style={{color: whiteColor, position: 'absolute', right: 0, fontSize: RFValue(13, 812)}}>Guest</Text>
-              <Animated.Image source={FakePlaceCircle} style={[{width: 200, height: 200, position: 'absolute'}, leftImageStyle]} />
-              {matchData.imageUri && (
+              {matchData?.userHostImageUri && (
+                <Animated.Image
+                  source={{uri: matchData.userHostImageUri}}
+                  style={[{width: 200, height: 200, position: 'absolute', borderRadius: 100}, leftImageStyle]}
+                />
+              )}
+              {matchData?.imageUri && (
                 <Animated.Image
                   source={{uri: matchData.imageUri}}
-                  style={[{width: 200, height: 200, position: 'absolute'}, rightImageStyle]}
+                  style={[{width: 200, height: 200, position: 'absolute', borderRadius: 100}, rightImageStyle]}
                 />
               )}
               <View style={{flexDirection: 'column', width: '100%', alignItems: 'center'}}>

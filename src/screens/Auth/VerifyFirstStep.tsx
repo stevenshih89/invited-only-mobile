@@ -157,10 +157,17 @@ const VerifySecondStep: FC = (): JSX.Element => {
                               }}
                             />
                             <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(20, 812), alignSelf: 'center'}}>
-                              {name}
-                            </Text>
-                             <CheckStar width={18} height={18}/>
+                              <Text
+                                style={{
+                                  color: whiteColor,
+                                  marginRight: 8,
+                                  fontFamily: Satoshi500,
+                                  fontSize: RFValue(20, 812),
+                                  alignSelf: 'center',
+                                }}>
+                                {name}
+                              </Text>
+                              <CheckStar width={18} height={18} />
                             </View>
                           </View>
                         </ImageBackground>

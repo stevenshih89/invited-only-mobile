@@ -12,21 +12,8 @@ const firebaseConfig = {
 
 admin.initializeApp(firebaseConfig);
 
-const sendNotification = async userId => {
-  await admin.messaging().send({
-    token: userId,
-    notification: {
-      title: 'New message',
-      body: 'Description',
-    },
-  });
-};
-
 exports.processInviteMatch = functions.firestore.onDocumentUpdated('Events/{eventId}', async event => {
-  const currentUser = admin.auth().currentUser;
-  console.log('curr', currentUser);
   const eventData = event.data.after.data();
-  const id = event.id;
 
   let requestsList = [...eventData.requestsList];
   let usersList = [...eventData.usersList];
@@ -35,18 +22,22 @@ exports.processInviteMatch = functions.firestore.onDocumentUpdated('Events/{even
   let matchedUser = {};
 
   requestsList.forEach(request => {
-    if (uidSet.has(request.uid)) {
-      matchedUser = request;
-    } else {
-      uidSet.add(request.uid);
+    if (request.status === 'liked') {
+      if (uidSet.has(request.uid)) {
+        matchedUser = request;
+      } else {
+        uidSet.add(request.uid);
+      }
     }
   });
 
   usersList.forEach(user => {
-    if (uidSet.has(user.uid)) {
-      matchedUser = user;
-    } else {
-      uidSet.add(user.uid);
+    if (user.status === 'liked') {
+      if (uidSet.has(user.uid)) {
+        matchedUser = user;
+      } else {
+        uidSet.add(user.uid);
+      }
     }
   });
 
@@ -62,63 +53,33 @@ exports.processInviteMatch = functions.firestore.onDocumentUpdated('Events/{even
       return user;
     });
 
-    await admin.firestore().collection('Events').doc(id).update({
-      requestsList: updatedRequestsList,
-      usersList: updatedUsersList,
-    });
-    await admin.messaging().send({
-      token: matchedUser.fcmToken,
-      notification: {
-        type: 'match',
-        name: matchedUser.name,
-        imageUri: matchedUser.photos,
-        senderUid: eventData?.uid,
-        recipientUid: matchedUser.uid,
-        eventId: id,
-        superInvite: matchedUser.superInvite,
-      },
-    });
-  }
-});
-
-exports.processDocumentCreated = functions.firestore.onDocumentCreated('CollectionOfMatches', async event => {
-  const newData = event.params;
-  const uid = newData.uid;
-
-  try {
-    const userQuerySnapshot = await admin.firestore().collection('users').where('uid', '==', uid).get();
-
-    if (userQuerySnapshot.empty) {
-      console.warn('Пользователь с UID', uid, 'не найден');
-      return null;
+    if (matchedUser?.fcmToken) {
+      await admin.messaging().send({
+        token: matchedUser.fcmToken,
+        notification: {
+          title: 'You have a new match!',
+          body: `You have matched with ${eventData.name}`,
+        },
+        data: {
+          type: 'match',
+          name: `${matchedUser.name}`,
+          imageUri: `${matchedUser.userPhoto}`,
+          senderUid: `${eventData.uid}`,
+          recipientUid: `${matchedUser.uid}`,
+          eventId: `${eventData.id}`,
+          userHostImageUri: `${eventData.hostImage}`,
+        },
+      });
     }
 
-    userQuerySnapshot.forEach(async userDoc => {
-      const userId = userDoc.id;
-
-      await sendNotification(userId);
-
-      console.warn('Уведомление отправлено пользователю с ID', userId);
-    });
-
-    return null;
-  } catch (error) {
-    console.error('Ошибка при поиске пользователя:', error);
-    return null;
+    return event.data.after.ref.set(
+      {
+        requestsList: updatedRequestsList,
+        usersList: updatedUsersList,
+      },
+      {
+        merge: true,
+      },
+    );
   }
-});
-
-exports.processCollectionOfMatches = functions.firestore.onDocumentCreated('CollectionOfMatches', async event => {
-  const {notificationTokenSender, name, girlsPhoto, recipientUid, senderUid} = event.data;
-
-  await admin.messaging().send({
-    token: notificationTokenSender,
-    notification: {
-      type: 'match',
-      name,
-      imageUri: girlsPhoto,
-      senderUid,
-      recipientUid,
-    },
-  });
 });

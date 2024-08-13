@@ -108,7 +108,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
           .update({
             requestsList: firestore.FieldValue.arrayUnion(userAccepted),
           });
-        await showToast('success', '', 'You accept invitation');
+        showToast('inviteMatch', '', 'You accept invitation');
         await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`, 'accepted')
       } catch (e) {
         console.log(e);
@@ -136,7 +136,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
         requestsList: updateRequestsList,
       });
       showToast('inviteMatch', '', 'You reject invitation');
-      await sendNotification(uid, 'Invitation Reject!', `${item?.name} reject your invitation.`, 'invite')
+      await sendNotification(uid, 'Not now.', `${item?.name} reject your invitation.`, 'rejected')
     } catch (e) {
       console.log(e);
       showToast('inviteMatch', '', "There's been an error");
