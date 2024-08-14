@@ -199,8 +199,6 @@ const MyEvents: FC<any> = ({navigation}) => {
   };
 
   const checkTimeEvent = item => {
-    // console.log('item', item);
-
     if (item) {
       const res = calculateHoursUntilEvent(item.date, item.hour);
 
@@ -220,11 +218,14 @@ const MyEvents: FC<any> = ({navigation}) => {
       //   timeToEvent = 2;
       // }
 
+      if(res === 24 || res === 12 || res === 2) {
+        sendNotification(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
+      }
+
       // if (timeToEvent) {
         setHoursUntilEvent(res);
         setCurrentEvent(item);
         setVisibleModalEventRemindes(true);
-        sendNotification(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
         // timeToEvent = null;
       // } else {
       //   countMyEvent.current = countMyEvent.current + 1;
