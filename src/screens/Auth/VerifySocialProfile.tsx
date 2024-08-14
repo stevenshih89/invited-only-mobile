@@ -1,5 +1,5 @@
 import {black1Color, lightGray15Color, lightGray2Color, whiteColor} from 'constants/colors';
-import {FlatList, Keyboard, Platform, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {FlatList, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckCircle from 'assets/images/icons/check-circle.svg';
 import CircleGray from 'assets/images/icons/circle-gray.svg';
@@ -17,6 +17,7 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {showToast} from 'helpers/showToast';
 import {AuthContext} from 'contexts/AuthContext';
+import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 
 interface Social {
   id: number;
@@ -222,7 +223,7 @@ const VerifySocialProfile = () => {
     <SafeAreaView style={{flex: 1, backgroundColor: black1Color}}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{paddingHorizontal: 24, flex: 1, justifyContent: 'space-between'}}>
-          <View>
+          <View style={{flex: 1}}>
           <View style={{alignItems: 'center'}}>
             <LogoPrimary2 />
           </View>
@@ -250,7 +251,10 @@ const VerifySocialProfile = () => {
               Since you don't have an invitation code we need to check one of your social profile
             </Text>
           </View>
-          <FlatList data={socials} ItemSeparatorComponent={() => <View style={{height: 8}} />} renderItem={renderItem} />
+            <KeyboardAwareFlatList 
+              data={socials} 
+              ItemSeparatorComponent={() => <View style={{height: 8}} />} 
+              renderItem={renderItem} />
           </View>
         <View style={{marginVertical: 4}}>
           <Button title="Continue" loading={loading} disabled={!socialNickname[openedSocial?.name]?.length} onPress={handleNext} />
