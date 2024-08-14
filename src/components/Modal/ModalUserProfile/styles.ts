@@ -1,8 +1,8 @@
 import {StyleSheet} from 'react-native';
-import {black2Color, blackColor, gray1Color, lightGreenColor, whiteColor} from "constants/colors.ts";
-import {screenHeight, screenWidth} from "constants/common.ts";
-import {Satoshi400, Satoshi500} from "constants/fonts.ts";
-import {RFValue} from "react-native-responsive-fontsize";
+import {black2Color, blackColor, gray1Color, lightGreenColor, whiteColor} from 'constants/colors.ts';
+import {screenHeight, screenWidth} from 'constants/common.ts';
+import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 const useStyles = () => {
   return StyleSheet.create({
