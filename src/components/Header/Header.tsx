@@ -47,7 +47,7 @@ import EventBG from 'assets/images/app/card-event-bg.png';
 import {EventContext} from 'contexts/EventContext';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {useMyEvents} from '../../store/myEvents';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -73,7 +73,7 @@ type ItemProps = {
 const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
   const [eventStarting, setEventStarting] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>(null);
-  const [myEvents, setMyEvents] = useState<Array<any>>()
+  const [myEvents, setMyEvents] = useState<Array<any>>();
   const styles = useStyles();
 
   const insets = useSafeAreaInsets();
@@ -88,7 +88,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const setRequestFilter = useRequest((i: any) => i?.setRequestFilter);
   const userHost = useUser((i: any) => i?.user);
 
-  const { setActiveEvent, activeEvent} = useContext(EventContext);
+  const {setActiveEvent, activeEvent} = useContext(EventContext);
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
   const fetchMyEvents = async () => {
@@ -106,25 +106,29 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           ...doc.data(),
         }));
         setMyEvents(data);
-        return data
+        return data;
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
   };
 
-  useFocusEffect(useCallback(() => {
-    fetchMyEvents()
-  },[]))
+  useFocusEffect(
+    useCallback(() => {
+      fetchMyEvents();
+    }, []),
+  );
 
   const goToCreateEvent = async (): void => {
-    await fetchUserInfo()
+    await fetchUserInfo();
     if (!userHost?.accountConfirmed) {
       return;
     }
-    if(userInfo?.accountPremium) {
+    if (userInfo?.accountPremium) {
       navigation.navigate(eventCreatingStackPath);
-    } else navigation.navigate(paymentPath as never);
+    } else {
+      navigation.navigate(paymentPath as never);
+    }
   };
 
   const fetchUserInfo = async () => {
@@ -288,7 +292,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   };
 
   const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | 'IO-JE' | undefined) => {
-    const isHost = userInfo?.accountType.toLowerCase() === 'host';    
+    const isHost = userInfo?.accountType.toLowerCase() === 'host';
 
     switch (type) {
       case 'IO':
@@ -316,50 +320,51 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   </View>
                   <Text style={styles.textButton}>Join events</Text>
                 </TouchableOpacity>
-                {myEvents && myEvents.map((event: any, index: number) => {
-                  const isActive = activeEvent?.id === event.id;
-                  const eventIsFinished = isEventFinished(event?.date);
-                  const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
-                  const eventIsFull = event?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+                {myEvents &&
+                  myEvents.map((event: any, index: number) => {
+                    const isActive = activeEvent?.id === event.id;
+                    const eventIsFinished = isEventFinished(event?.date);
+                    const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
+                    const eventIsFull = event?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
 
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.eventButton}
-                      activeOpacity={0.7}
-                      onPress={() => {
-                        if (!userHost?.accountConfirmed) {
-                          return;
-                        }
-                        setActiveEvent(event);
-                      }}>
-                      <View
-                        style={{
-                          borderRadius: 50,
-                          borderWidth: 1,
-                          borderColor: eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color,
-                          borderStyle: 'solid',
-                          padding: 3,
-                          width: 55,
-                          height: 55,
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        style={styles.eventButton}
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          if (!userHost?.accountConfirmed) {
+                            return;
+                          }
+                          setActiveEvent(event);
                         }}>
-                        {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                        {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                        <Image source={{uri: event?.photos[0]?.image}} style={{width: '100%', height: '100%', borderRadius: 50}} />
-                      </View>
-                      <Text
-                        style={{
-                          marginTop: screenHeight / 190,
-                          color: whiteColor,
-                          fontFamily: Satoshi500,
-                          fontSize: RFValue(13, 812),
-                          textAlign: 'center',
-                        }}>
-                        {event?.name}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
+                        <View
+                          style={{
+                            borderRadius: 50,
+                            borderWidth: 1,
+                            borderColor: eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color,
+                            borderStyle: 'solid',
+                            padding: 3,
+                            width: 55,
+                            height: 55,
+                          }}>
+                          {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
+                          {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
+                          <Image source={{uri: event?.photos[0]?.image}} style={{width: '100%', height: '100%', borderRadius: 50}} />
+                        </View>
+                        <Text
+                          style={{
+                            marginTop: screenHeight / 190,
+                            color: whiteColor,
+                            fontFamily: Satoshi500,
+                            fontSize: RFValue(13, 812),
+                            textAlign: 'center',
+                          }}>
+                          {event?.name}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
               </ScrollView>
             ) : (
               <ScrollView horizontal scrollEnabled={false} contentContainerStyle={{marginVertical: screenHeight / 50}}>
@@ -522,7 +527,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               </View>
               <Text style={styles.textButton}>Join events</Text>
             </TouchableOpacity>
-            {myEvents?.map((event: any, index: number) => {              
+            {myEvents?.map((event: any, index: number) => {
               const isActive = activeEvent?.id === event.id;
               const eventIsFinished = isEventFinished(event?.date);
               const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
@@ -703,22 +708,22 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     }
   };
 
-  const [countNotifications, setCountNotifications] = useState(0)
+  const [countNotifications, setCountNotifications] = useState(0);
 
   const getCountNotifications = async () => {
     try {
       const getDoc = await firestore().collection('userInfo').doc(userHost?.uid).get();
-      const notifications = getDoc?.data()?.notifications
+      const notifications = getDoc?.data()?.notifications;
       setCountNotifications(notifications.length);
-    } catch (error) {
-      
-    }
-  }
+    } catch (error) {}
+  };
 
-  useFocusEffect(useCallback(() => {
-    getCountNotifications()    
-  },[]))
-    
+  useFocusEffect(
+    useCallback(() => {
+      getCountNotifications();
+    }, []),
+  );
+
   return (
     <View style={[styles.container, headerInsets]}>
       {showHeaderTop && (
@@ -749,4 +754,3 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 };
 
 export default Header;
-
