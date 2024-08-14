@@ -109,7 +109,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
             requestsList: firestore.FieldValue.arrayUnion(userAccepted),
           });
         showToast('inviteMatch', '', 'You accept invitation');
-        await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`, 'accepted')
+        await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`, 'accepted');
       } catch (e) {
         console.log(e);
         showToast('inviteMatch', '', "There's been an error");
@@ -119,24 +119,14 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
 
   const handleSwipeGuestCardReject = async (item: any): Promise<void> => {
     try {
-      const userNotAccepted = {
-        gender: item?.gender,
-        name: item?.name,
-        status: 'notAccepted',
-        superInvite: false,
-        uid: item?.uid,
-        userPhoto: item?.userPhoto,
-      };
-
-      const updateUsersList: any = [...list?.usersList, userNotAccepted];
-      const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
-
-      await firestore().collection('Events').doc(list?.id).update({
-        usersList: updateUsersList,
-        requestsList: updateRequestsList,
-      });
+      await firestore()
+        .collection('Events')
+        .doc(list?.id)
+        .update({
+          usersList: firestore.FieldValue.arrayRemove(item),
+        });
       showToast('inviteMatch', '', 'You reject invitation');
-      await sendNotification(uid, 'Not now.', `${item?.name} reject your invitation.`, 'rejected')
+      await sendNotification(uid, 'Not now.', `${item?.name} reject your invitation.`, 'rejected');
     } catch (e) {
       console.log(e);
       showToast('inviteMatch', '', "There's been an error");
@@ -147,7 +137,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
     getHostInfo(uid);
   }, []);
 
-  const generateRandomId = (length: number) =>  {
+  const generateRandomId = (length: number) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     const charactersLength = characters.length;
@@ -155,7 +145,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
-  }
+  };
 
   const getFcmTokenFromUser = async (uid: string) => {
     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
@@ -163,9 +153,8 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
   };
 
   const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
-    
-    const token = await getFcmTokenFromUser(forUserUid)
-    
+    const token = await getFcmTokenFromUser(forUserUid);
+
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers: {
@@ -180,8 +169,8 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
         },
         data: {
           status: mark,
-          image: user.photos[0].image
-        }
+          image: user.photos[0].image,
+        },
       }),
     });
 
@@ -190,20 +179,23 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
       console.error('error sending notification:', error);
     } else {
       const data = await response.json();
-      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get()
-      const userNotifications = userDoc.data()?.notifications
-      const id = generateRandomId(8)
+      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
+      const userNotifications = userDoc.data()?.notifications;
+      const id = generateRandomId(8);
       const notification = {
-          id,
-          title: title,
-          body: body,
-          mark: mark,
-          uid: user?.uid
-      }
+        id,
+        title: title,
+        body: body,
+        mark: mark,
+        uid: user?.uid,
+      };
       try {
-        await firestore().collection('userInfo').doc(forUserUid).update({
-          notifications: [...userNotifications, notification]
-        })
+        await firestore()
+          .collection('userInfo')
+          .doc(forUserUid)
+          .update({
+            notifications: [...userNotifications, notification],
+          });
       } catch (error) {
         console.log('error update notifications', error);
       }

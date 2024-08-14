@@ -1,6 +1,5 @@
 import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
-import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
-
+import {FC, ReactElement, useCallback, useContext, useState} from 'react';
 //import components
 import useStyles from './styles';
 import {blackColor, whiteColor} from 'constants/colors';
@@ -13,13 +12,10 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {eventCreatingStackPath} from 'constants/pathLocations';
+import {eventCreatingStackPath, IOPath} from 'constants/pathLocations';
 import {EventContext} from 'contexts/EventContext';
 import {useUser} from '../../../store/userStore';
-import {useRequest} from '../../../store/requestsStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
-import LinearGradient from 'react-native-linear-gradient';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import Loading from 'components/Loading/Loading';
 
 const Requests: FC = (): ReactElement => {
@@ -27,26 +23,31 @@ const Requests: FC = (): ReactElement => {
 
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
-  const requestFilter = useRequest((i: any) => i?.requestFilter);
 
   const {activeEvent} = useContext(EventContext);
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
   const [userInfo, setUserInfoData] = useState<any>([]);
   const [dataForGuest, setDataForGuest] = useState([]);
-  const [myIventList, setMyInventList] = useState([]);
+  const [myEventsList, setMyEventsList] = useState([]);
 
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchHostRequests = async () => {
     const user = auth().currentUser;
 
+    console.warn('activeEvent', activeEvent);
+
     if (user && activeEvent !== 'host') {
       try {
         const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
+        const myEventsQuery = await firestore().collection('Events').where('uid', '==', user.uid).get();
         console.warn('querySnapshot', querySnapshot.data());
-        const eventList = await firestore().collection('userInfo').doc(user.uid).get();
-        setMyInventList(eventList?.data()?.eventsList);  
+        
+        if (!myEventsQuery.empty) {
+          const eventList = myEventsQuery?.docs.map(i => i?.data());
+          setMyEventsList(eventList);
+        }
 
         if (querySnapshot.exists) {
           setRequestsForHost(querySnapshot.data());
@@ -108,13 +109,15 @@ const Requests: FC = (): ReactElement => {
         }
         const data = userInfoDoc.data();
         setUserInfoData(data);
+        setLoading(false);
       } catch (error: any) {
         console.log('Error', error.message || 'Something went wrong');
+        setLoading(false);
       }
     }
   };
 
-  const isHost = userInfo?.accountType?.toLowerCase() === 'host';
+  const isHost = user?.accountType?.toLowerCase() === 'host';
 
   useFocusEffect(
     useCallback(() => {
@@ -125,13 +128,32 @@ const Requests: FC = (): ReactElement => {
   useFocusEffect(
     useCallback(() => {
       isHost ? fetchHostRequests() : fetchGuestRequests();
-    }, []),
+    }, [activeEvent]),
   );
 
   const list = isHost ? requestsForHost : dataForGuest;
 
+  const expressionForHost = isHost && !!requestsForHost?.requestsList?.length;
+  const expressionForGuest = !isHost && !!dataForGuest.length;
+
   if (loading && !list) {
     return <ActivityIndicator style={styles.container} />;
+  }
+
+  if (!loading && (isHost ? !requestsForHost?.requestsList?.length : !dataForGuest?.length)) {
+    return (
+      <View style={styles.container}>
+        <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
+          <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
+            You don't have any requests
+          </Text>
+          <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
+            Get started by swiping to {isHost ? 'invite guests' : 'join events and begin receiving event requests.'}
+          </Text>
+          <Button title="Start swiping" onPress={() => navigation.navigate(IOPath as never)} />
+        </View>
+      </View>
+    );
   }
 
   function isDateTimePassed(dateString: string, timeString: string) {
@@ -150,7 +172,7 @@ const Requests: FC = (): ReactElement => {
 
   return (
     <View style={styles.container}>
-      {(myIventList.length || dataForGuest.length) && list?.eventReviewed ? (
+      {expressionForHost || expressionForGuest ? (
         <FlatList
           // @ts-ignore
           data={isHost ? list?.requestsList : list}
@@ -161,22 +183,17 @@ const Requests: FC = (): ReactElement => {
           extraData={isHost ? list?.requestsList : list}
           ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
           renderItem={({item}) => {
-            return (
-              <>
-                {isHost ? (
-                  <ItemRequestHost list={list} item={item} />
-                ) : (
-                  // @ts-ignore
-                  <ItemRequestGuest list={item} item={item?.usersList?.filter(i => i?.uid === user?.uid)} />
-                )}
-                ;
-              </>
+            return isHost ? (
+              <ItemRequestHost list={list} item={item} />
+            ) : (
+              // @ts-ignore
+              <ItemRequestGuest list={item} item={item?.usersList?.filter(i => i?.uid === user?.uid)} />
             );
           }}
         />
       ) : (
         <>
-          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myIventList?.length && (
+          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEventsList?.length && (
             <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
               <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                 Let’s create an event
@@ -187,7 +204,7 @@ const Requests: FC = (): ReactElement => {
               <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
             </View>
           )}
-          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myIventList?.length && (
+          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myEventsList?.length && (
             <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
               {
                 <Loading
