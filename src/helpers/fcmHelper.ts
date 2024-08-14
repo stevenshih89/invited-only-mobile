@@ -4,7 +4,7 @@ import notifee, {EventType} from '@notifee/react-native';
 import {PERMISSIONS, request} from 'react-native-permissions';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import { showToast } from './showToast';
+import {showToast} from './showToast';
 
 export const fcmHelper = async () => {
   const userUid = auth().currentUser?.uid;
@@ -101,7 +101,7 @@ export const checkApplicationNotificationPermission = async () => {
 
 //method was called to listener events from firebase for notification triger
 export function registerListenerWithFCM() {
-  const unsubscribe = messaging().onMessage(async remoteMessage => {    
+  const unsubscribe = messaging().onMessage(async remoteMessage => {
     console.log('onMessage Received : ', JSON.stringify(remoteMessage));
     if (remoteMessage?.notification?.title && remoteMessage?.notification?.body) {
       onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data);
@@ -144,7 +144,7 @@ export function registerListenerWithFCM() {
 //method was called to display notification
 async function onDisplayNotification(title, body, data) {
   console.log('onDisplayNotification: ', data);
-  showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image})
+  showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image});
   // Request permissions (required for iOS)
   await notifee.requestPermission();
   // Create a channel (required for Android)
@@ -173,15 +173,13 @@ export function onMatchNotificationSubscription(handler: (message: FirebaseMessa
   return messaging().onMessage(async remoteMessage => {
     console.warn('mes', remoteMessage);
 
-    if (remoteMessage.data?.type !== 'match') {
-      return;
-    }
-
     // Request permissions for iOS
     await notifee.requestPermission();
 
     // DEVNOTE: Just for debugging, remove log in release.
     console.log('onMatchNotificationSubscription Received Match', JSON.stringify(remoteMessage));
-    handler(remoteMessage);
+    if (remoteMessage.data?.type === 'match') {
+      handler(remoteMessage);
+    }
   });
 }

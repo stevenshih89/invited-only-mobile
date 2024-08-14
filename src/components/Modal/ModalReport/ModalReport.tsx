@@ -32,7 +32,6 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
     const infoUserUidSenderDoc = await firestore().collection('userInfo').doc(uidSender).get();
     const dataUserUid = infoUserUidDoc.data();
     const dataUserUidSender = infoUserUidSenderDoc.data();
-    console.log('dataUserUid', dataUserUid);
     
     try {
       await firestore().collection('report').add({

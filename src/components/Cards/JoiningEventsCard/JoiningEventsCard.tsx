@@ -589,7 +589,7 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
           )}
         </View>
       )}
-      <ModalEventRemindes
+      {/* <ModalEventRemindes
         updateEvent={updateEvent}
         eventStarting={eventStarting}
         setEventStarting={setEventStarting}
@@ -614,7 +614,7 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
         handleAcceptInvitation={handleAcceptInvitation}
         handleGetEventsIJoining={handleGetEventsIJoining}
         allPeople={allPeople}
-      />
+      /> */}
     </>
   );
 };
