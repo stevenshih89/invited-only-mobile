@@ -27,6 +27,8 @@ const ItemRequestHost = ({item, list}: any) => {
   const [userInfo, setUserInfo] = useState({accountType: ''});
   const [currentUserName, setCurrentUserName] = useState();
 
+  console.warn('item', item);
+
   const OverlayRight = () => {
     return (
       <View
@@ -63,8 +65,7 @@ const ItemRequestHost = ({item, list}: any) => {
     );
   };
 
-  const handleSwipeHostCardInvite = async (item: any): Promise<void> => {   
-
+  const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
     const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
     const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
 
@@ -82,15 +83,17 @@ const ItemRequestHost = ({item, list}: any) => {
     };
 
     try {
-      const updateUsersList: any = [...list?.usersList, userAccepted];
-      const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
-
-      await firestore().collection('Events').doc(list?.id).update({
-        usersList: updateUsersList,
-        requestsList: updateRequestsList,
+      await firestore()
+        .collection('Events')
+        .doc(list?.id)
+        .update({
+          usersList: firestore.FieldValue.arrayUnion(userAccepted),
+        });
+      showToast('inviteMatch', 'Waiting for Alexa to accept your invitation. ', 'Almost there!', {
+        ownerPhoto: item?.userPhoto,
+        status: 'guest approved',
       });
-      showToast('inviteMatch', 'Waiting for Alexa to accept your invitation. ', 'Almost there!', {ownerPhoto: item?.userPhoto, status: 'guest approved'});
-      sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite')
+      sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
     } catch (e) {
       console.log(e);
       showToast('inviteMatch', '', "There's been an error");
@@ -144,7 +147,7 @@ const ItemRequestHost = ({item, list}: any) => {
     });
   };
 
-  const generateRandomId = (length: number) =>  {
+  const generateRandomId = (length: number) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     const charactersLength = characters.length;
@@ -152,17 +155,16 @@ const ItemRequestHost = ({item, list}: any) => {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
-  }
+  };
 
   const getFcmTokenFromUser = async (uid: string) => {
     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
     return userInfoDoc.data()?.fcmToken;
   };
-  
+
   const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
-        
-    const token = await getFcmTokenFromUser(forUserUid)
-    
+    const token = await getFcmTokenFromUser(forUserUid);
+
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers: {
@@ -177,8 +179,8 @@ const ItemRequestHost = ({item, list}: any) => {
         },
         data: {
           status: mark,
-          image: userInfo?.photos[0].image
-        }
+          image: userInfo?.photos[0].image,
+        },
       }),
     });
 
@@ -187,21 +189,24 @@ const ItemRequestHost = ({item, list}: any) => {
       console.error('error sending notification:', error);
     } else {
       const data = await response.json();
-      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get()
-      const userNotifications = userDoc.data()?.notifications
-      const id = generateRandomId
+      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
+      const userNotifications = userDoc.data()?.notifications;
+      const id = generateRandomId;
       const notification = {
-          id,
-          title: title,
-          body: body,
-          mark: mark,
-          uid: userInfo?.uid
-      }      
-      
+        id,
+        title: title,
+        body: body,
+        mark: mark,
+        uid: userInfo?.uid,
+      };
+
       try {
-        await firestore().collection('userInfo').doc(forUserUid).update({
-          notifications: [...userNotifications, notification]
-        })
+        await firestore()
+          .collection('userInfo')
+          .doc(forUserUid)
+          .update({
+            notifications: [...userNotifications, notification],
+          });
       } catch (error) {
         console.log('error update notifications', error);
       }

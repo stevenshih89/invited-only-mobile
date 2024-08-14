@@ -1,6 +1,5 @@
 import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
-import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
-
+import {FC, ReactElement, useCallback, useContext, useState} from 'react';
 //import components
 import useStyles from './styles';
 import {blackColor, whiteColor} from 'constants/colors';
@@ -16,10 +15,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {eventCreatingStackPath} from 'constants/pathLocations';
 import {EventContext} from 'contexts/EventContext';
 import {useUser} from '../../../store/userStore';
-import {useRequest} from '../../../store/requestsStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
-import LinearGradient from 'react-native-linear-gradient';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import Loading from 'components/Loading/Loading';
 
 const Requests: FC = (): ReactElement => {
@@ -27,7 +23,6 @@ const Requests: FC = (): ReactElement => {
 
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
-  const requestFilter = useRequest((i: any) => i?.requestFilter);
 
   const {activeEvent} = useContext(EventContext);
 
@@ -40,6 +35,8 @@ const Requests: FC = (): ReactElement => {
 
   const fetchHostRequests = async () => {
     const user = auth().currentUser;
+
+    console.warn('activeEvent', activeEvent);
 
     if (user && activeEvent !== 'host') {
       try {
@@ -114,7 +111,7 @@ const Requests: FC = (): ReactElement => {
     }
   };
 
-  const isHost = userInfo?.accountType?.toLowerCase() === 'host';
+  const isHost = user?.accountType?.toLowerCase() === 'host';
 
   useFocusEffect(
     useCallback(() => {
@@ -125,7 +122,7 @@ const Requests: FC = (): ReactElement => {
   useFocusEffect(
     useCallback(() => {
       isHost ? fetchHostRequests() : fetchGuestRequests();
-    }, []),
+    }, [activeEvent]),
   );
 
   const list = isHost ? requestsForHost : dataForGuest;
@@ -148,9 +145,12 @@ const Requests: FC = (): ReactElement => {
     return inputDate < currentDate;
   }
 
+  const expressionForHost = isHost && !!requestsForHost?.requestsList?.length;
+  const expressionForGuest = !isHost && !!dataForGuest.length;
+
   return (
     <View style={styles.container}>
-      {(myIventList.length || dataForGuest.length) && list?.eventReviewed ? (
+      {expressionForHost || expressionForGuest ? (
         <FlatList
           // @ts-ignore
           data={isHost ? list?.requestsList : list}
@@ -161,16 +161,11 @@ const Requests: FC = (): ReactElement => {
           extraData={isHost ? list?.requestsList : list}
           ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
           renderItem={({item}) => {
-            return (
-              <>
-                {isHost ? (
-                  <ItemRequestHost list={list} item={item} />
-                ) : (
-                  // @ts-ignore
-                  <ItemRequestGuest list={item} item={item?.usersList?.filter(i => i?.uid === user?.uid)} />
-                )}
-                ;
-              </>
+            return isHost ? (
+              <ItemRequestHost list={list} item={item} />
+            ) : (
+              // @ts-ignore
+              <ItemRequestGuest list={item} item={item?.usersList?.filter(i => i?.uid === user?.uid)} />
             );
           }}
         />
