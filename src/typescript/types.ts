@@ -51,6 +51,7 @@ export type RootStackParamList = {
   '/event-active-info': undefined;
   '/super-invite-pay': undefined;
   '/add-biusness': undefined;
+  '/join-event-request': undefined;
   '/event-editing': {
     isEditing?: boolean;
   };

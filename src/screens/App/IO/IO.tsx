@@ -324,6 +324,8 @@ const IO: FC = (): JSX.Element => {
 
       let updateUsersList: any = [userInvited];
       usersListCheck !== undefined && updateUsersList?.push(...usersListCheck);
+      console.log('updateUsersList', updateUsersList);
+      
 
       if (userHost?.accountType === 'host') {
         await firestore().collection('Events').doc(activeEventId).update({

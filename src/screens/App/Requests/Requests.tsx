@@ -43,6 +43,7 @@ const Requests: FC = (): ReactElement => {
         const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
         const myEventsQuery = await firestore().collection('Events').where('uid', '==', user.uid).get();
         console.warn('querySnapshot', querySnapshot.data());
+        
         if (!myEventsQuery.empty) {
           const eventList = myEventsQuery?.docs.map(i => i?.data());
           setMyEventsList(eventList);

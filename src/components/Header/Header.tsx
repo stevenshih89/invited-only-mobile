@@ -13,6 +13,7 @@ import {
   commonStackPath,
   eventCreatingStackPath,
   joinEventsPath,
+  joinEventsPathRequest,
   notificationsPath,
   notificationsStackPath,
   paymentPath,
@@ -520,6 +521,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   return;
                 }
                 setActiveEvent('host');
+                navigation.navigate(joinEventsPathRequest);
               }}
               style={styles.eventButton}>
               <View style={[styles.joinEventActive, {borderColor: activeEvent === 'host' ? whiteColor : lightGray5Color}]}>

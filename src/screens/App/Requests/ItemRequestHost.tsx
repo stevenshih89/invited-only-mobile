@@ -22,6 +22,10 @@ import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 
 const ItemRequestHost = ({item, list}: any) => {
+  console.log('item', item);
+  console.log('list', list);
+  
+  
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState({accountType: ''});
