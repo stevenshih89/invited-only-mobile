@@ -12,23 +12,29 @@ import Animated, {useSharedValue, withTiming, Easing, useAnimatedStyle, withRepe
 import Button from 'components/Button/Button';
 import LinearGradient from 'react-native-linear-gradient';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {profilePath} from 'constants/pathLocations.ts';
+import {profilePath, tutorialFlowPath} from 'constants/pathLocations.ts';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {showToast} from 'helpers/showToast';
 
 interface LoaderProps {
   isVisible: boolean;
+  setVsibleHostPremium: any;
+  screen: string;
 }
 
-const HostPremium: FC<LoaderProps> = ({isVisible}) => {
+const HostPremium: FC<LoaderProps> = ({isVisible, setVsibleHostPremium, screen}) => {
   const [userInfo, setUserInfo] = useState<any>({});
 
   const navigation = useAppNavigation();
 
   const handleNext = async () => {
+    if(screen === 'pending') {
+      navigation.navigate(tutorialFlowPath as never)
+      setVsibleHostPremium(false)
+    } else navigation.navigate(profilePath as never);
     // const userId = auth().currentUser?.uid;
-    navigation.navigate(profilePath as never);
+    // navigation.navigate(profilePath as never);
     // const userInfoDoc = await firestore().collection('userInfo').doc(userId).get();
     // showToast('inviteMatch', `You have ${userInfoDoc?.data()?.superInvites} super ${userInfo?.accountType === 'host'? 'Invites': 'Joins'}`, 'Let`s start swiping!', {ownerPhoto: userInfo?.photos[0].image, status: 'SUCCESSFUL'})
   };
