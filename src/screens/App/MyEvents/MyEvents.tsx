@@ -682,14 +682,14 @@ const MyEvents: FC<any> = ({navigation}) => {
         eventInfo={activeModalEvent}
       />
       {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true} isPremium={userInfo?.accountPremium} />}
-      {hoursUntilEvent < 25 && <ModalEventRemindes
+      {/* {hoursUntilEvent < 25 && <ModalEventRemindes
         currentEvent={currentEvent}
         uid={userInfo?.uid}
         eventStarting={visibleModalEventRemindes}
         setEventStarting={setVisibleModalEventRemindes}
         hoursUntilEvent={hoursUntilEvent}
         countMyEvent={countMyEvent}
-      />}
+      />} */}
     </>
   );
 };
