@@ -76,7 +76,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     const diffInMilliseconds = eventDateTime - now;
 
     if (diffInMilliseconds < 0) {
-      return null;
+      return 0;
     }
 
     const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
@@ -200,11 +200,9 @@ const MyEvents: FC<any> = ({navigation}) => {
   }
   };
 
-  const checkTimeEvent = item => {
-
+  const checkTimeEvent = item => {    
     if (item) {
       const res = calculateHoursUntilEvent(item.date, item.hour);
-      
       setHoursUntilEvent(res);
       setCurrentEvent(item);
       setVisibleModalEventRemindes(true);
@@ -682,14 +680,14 @@ const MyEvents: FC<any> = ({navigation}) => {
         eventInfo={activeModalEvent}
       />
       {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true} isPremium={userInfo?.accountPremium} />}
-      {/* {hoursUntilEvent < 25 && <ModalEventRemindes
+      {hoursUntilEvent < 25 && hoursUntilEvent > 0 && <ModalEventRemindes
         currentEvent={currentEvent}
         uid={userInfo?.uid}
         eventStarting={visibleModalEventRemindes}
         setEventStarting={setVisibleModalEventRemindes}
         hoursUntilEvent={hoursUntilEvent}
         countMyEvent={countMyEvent}
-      />} */}
+      />}
     </>
   );
 };
