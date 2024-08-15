@@ -75,7 +75,7 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
   );
 };
 
-const Payment: FC = (): JSX.Element => {    
+const Payment: FC = (): JSX.Element => {
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [spotsLeft, setSpotsLeft] = useState<number>(0);
@@ -222,11 +222,11 @@ const Payment: FC = (): JSX.Element => {
   const getOfferings = async () => {
     try {
       const offerings = await Purchases.getOfferings();
-      if (offerings.current !== null) {  
+      if (offerings.current !== null) {
 
         const offeringsHostSubscription = offerings.all['Host subscription']
         console.log('offerings', offeringsHostSubscription.availablePackages);
-        
+
         if(activePayment.durationName === 'week') {
           const product = offeringsHostSubscription.availablePackages[0]
           pay(product)
@@ -244,7 +244,7 @@ const Payment: FC = (): JSX.Element => {
       }
     } catch (e) {
       console.log('offering ger error', e);
-      
+
     }
   }
 
@@ -338,7 +338,7 @@ const Payment: FC = (): JSX.Element => {
     );
   };
 
-  const checkNavig = useRoute()    
+  const checkNavig = useRoute()
 
   return (
     <SafeAreaView style={{backgroundColor: black1Color}}>

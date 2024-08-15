@@ -102,10 +102,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           setMyEvents([]);
           return;
         }
+
         const data = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));
+
+        console.warn('data', data);
+
         setMyEvents(data);
         return data;
       } catch (error: any) {
@@ -140,7 +144,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
 
         if (userInfoDoc.exists) {
-          setUserInfo(userInfoDoc.data());
+          const userData = userInfoDoc.data();
+          setUserInfo(userData);
+          setTypeEvents && setTypeEvents(userData?.accountType.toLowerCase() === 'host' ? false : true);
         }
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
@@ -603,21 +609,24 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       case 'chat':
         return (
           <View style={styles.wrapperHeaderButtonsChat}>
-            <View style={styles.rowButtonsChat}>
-              <TouchableOpacity
-                onPress={() => setTypeEvents(false)}
-                style={[styles.buttonMyEvents, {backgroundColor: !typeEvents ? whiteColor : lightGray2Color}]}>
-                <Text style={[styles.textMyEvents, {color: typeEvents ? whiteColor : blackColor}]}>My events</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setTypeEvents(true)}
-                style={[styles.buttonEventsJoining, {backgroundColor: !typeEvents ? lightGray2Color : whiteColor}]}>
-                <Text style={[styles.textEventsJoining, {color: !typeEvents ? whiteColor : blackColor}]}>Join events</Text>
-                <View style={styles.rowTextCountEvents}>
-                  <Text style={styles.textCountEvents}>{eventsImJoining?.length}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
+            {isHost && (
+              <View style={styles.rowButtonsChat}>
+                <TouchableOpacity
+                  onPress={() => setTypeEvents(false)}
+                  style={[styles.buttonMyEvents, {backgroundColor: !typeEvents ? whiteColor : lightGray2Color}]}>
+                  <Text style={[styles.textMyEvents, {color: typeEvents ? whiteColor : blackColor}]}>My events</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setTypeEvents(true)}
+                  style={[styles.buttonEventsJoining, {backgroundColor: !typeEvents ? lightGray2Color : whiteColor}]}>
+                  <Text style={[styles.textEventsJoining, {color: !typeEvents ? whiteColor : blackColor}]}>Join events</Text>
+                  <View style={styles.rowTextCountEvents}>
+                    <Text style={styles.textCountEvents}>{eventsImJoining?.length}</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            )}
+
             {!typeEvents ? (
               <View style={[styles.rowButtonsChat, {marginTop: screenHeight / 34}]}>
                 <FlatList
@@ -658,50 +667,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 />
               </View>
             )}
-            <View
-              style={{
-                flexDirection: 'row',
-                backgroundColor: lightGray2Color,
-                width: '100%',
-                paddingVertical: 6,
-                paddingHorizontal: 10,
-                borderRadius: 40,
-                marginTop: 12,
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <View style={{flexDirection: 'row'}}>
-                <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                  <Image
-                    style={{width: 32, height: 32, borderRadius: 20, borderWidth: 1, borderColor: whiteColor}}
-                    source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREoRGyXmHy_6aIgXYqWHdOT3KjfmnuSyxypw&s'}}
-                  />
-                  <View style={{position: 'absolute'}}>
-                    <CheckBlack width={20} height={20} />
-                  </View>
-                </View>
-                <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                  <Image
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 20,
-                      borderWidth: 1,
-                      borderColor: whiteColor,
-                      transform: [{translateX: -10}],
-                    }}
-                    source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREoRGyXmHy_6aIgXYqWHdOT3KjfmnuSyxypw&s'}}
-                  />
-                  <View style={{position: 'absolute', transform: [{translateX: -10}]}}>
-                    <ClockBlack width={20} height={20} />
-                  </View>
-                </View>
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Users height={14} width={14} />
-                <Text style={{color: whiteColor, fontSize: RFValue(12, 812)}}>1/2</Text>
-              </View>
-            </View>
           </View>
         );
 

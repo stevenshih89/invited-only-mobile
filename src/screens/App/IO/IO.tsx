@@ -325,7 +325,6 @@ const IO: FC = (): JSX.Element => {
       let updateUsersList: any = [userInvited];
       usersListCheck !== undefined && updateUsersList?.push(...usersListCheck);
       console.log('updateUsersList', updateUsersList);
-      
 
       if (userHost?.accountType === 'host') {
         await firestore().collection('Events').doc(activeEventId).update({
@@ -498,8 +497,8 @@ const IO: FC = (): JSX.Element => {
     filterDataWM
       ?.filter((event: any) => {
         return (
-          event?.requestsList?.some(j => j?.uid !== user?.uid) ||
-          event?.usersList?.some(j => j?.uid !== user?.uid && j?.status == 'invite_match')
+          !event?.requestsList?.some(j => j?.uid === user?.uid) ||
+          !event?.usersList?.some(j => j?.uid === user?.uid && j?.status == 'invite_match')
         );
       })
       .map((event: any) => {
@@ -785,7 +784,7 @@ const IO: FC = (): JSX.Element => {
 
     usersList
       ?.filter(i => {
-        return i?._data?.uid !== userHost?.uid && activeEvent?.usersList?.some(j => j?.uid !== i?._data?.uid);
+        return i?._data?.uid !== userHost?.uid && !activeEvent?.usersList?.some(j => j?.uid === i?._data?.uid);
       })
       ?.map((item: any, index: number): void => {
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;
