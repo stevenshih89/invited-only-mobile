@@ -208,6 +208,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       setVisibleModalEventRemindes(true);
       if(res < 25) sendNotification(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
       countMyEvent.current = countMyEvent.current + 1;
+
     }
   };
 

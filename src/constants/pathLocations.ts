@@ -54,6 +54,7 @@ const verifySocialProfilePath: keyof RootStackParamList = '/verify-social-profil
 const checkingSpots: keyof RootStackParamList = '/checking-spots';
 const superInvitePayPath: keyof RootStackParamList = '/super-invite-pay';
 const addBuisnessPath: keyof RootStackParamList = '/add-biusness';
+const joinEventsPathRequest: keyof RootStackParamList = '/join-event-request';
 
 export {
   bottomTabsStackPath,
@@ -107,5 +108,6 @@ export {
   verifySocialProfilePath,
   checkingSpots,
   superInvitePayPath,
-  addBuisnessPath
+  addBuisnessPath,
+  joinEventsPathRequest
 };

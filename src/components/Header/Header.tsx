@@ -13,6 +13,7 @@ import {
   commonStackPath,
   eventCreatingStackPath,
   joinEventsPath,
+  joinEventsPathRequest,
   notificationsPath,
   notificationsStackPath,
   paymentPath,
@@ -47,7 +48,7 @@ import EventBG from 'assets/images/app/card-event-bg.png';
 import {EventContext} from 'contexts/EventContext';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {useMyEvents} from '../../store/myEvents';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -73,7 +74,7 @@ type ItemProps = {
 const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
   const [eventStarting, setEventStarting] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>(null);
-  const [myEvents, setMyEvents] = useState<Array<any>>()
+  const [myEvents, setMyEvents] = useState<Array<any>>();
   const styles = useStyles();
 
   const insets = useSafeAreaInsets();
@@ -88,7 +89,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const setRequestFilter = useRequest((i: any) => i?.setRequestFilter);
   const userHost = useUser((i: any) => i?.user);
 
-  const { setActiveEvent, activeEvent} = useContext(EventContext);
+  const {setActiveEvent, activeEvent} = useContext(EventContext);
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
   const fetchMyEvents = async () => {
@@ -101,30 +102,38 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           setMyEvents([]);
           return;
         }
+
         const data = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));
+
+        console.warn('data', data);
+
         setMyEvents(data);
-        return data
+        return data;
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
   };
 
-  useFocusEffect(useCallback(() => {
-    fetchMyEvents()
-  },[]))
+  useFocusEffect(
+    useCallback(() => {
+      fetchMyEvents();
+    }, []),
+  );
 
   const goToCreateEvent = async (): void => {
-    await fetchUserInfo()
+    await fetchUserInfo();
     if (!userHost?.accountConfirmed) {
       return;
     }
-    if(userInfo?.accountPremium) {
+    if (userInfo?.accountPremium) {
       navigation.navigate(eventCreatingStackPath);
-    } else navigation.navigate(paymentPath as never);
+    } else {
+      navigation.navigate(paymentPath as never);
+    }
   };
 
   const fetchUserInfo = async () => {
@@ -135,7 +144,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
 
         if (userInfoDoc.exists) {
-          setUserInfo(userInfoDoc.data());
+          const userData = userInfoDoc.data();
+          setUserInfo(userData);
+          setTypeEvents && setTypeEvents(userData?.accountType.toLowerCase() === 'host' ? false : true);
         }
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
@@ -288,7 +299,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   };
 
   const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | 'IO-JE' | undefined) => {
-    const isHost = userInfo?.accountType.toLowerCase() === 'host';    
+    const isHost = userInfo?.accountType.toLowerCase() === 'host';
 
     switch (type) {
       case 'IO':
@@ -316,50 +327,51 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   </View>
                   <Text style={styles.textButton}>Join events</Text>
                 </TouchableOpacity>
-                {myEvents && myEvents.map((event: any, index: number) => {
-                  const isActive = activeEvent?.id === event.id;
-                  const eventIsFinished = isEventFinished(event?.date);
-                  const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
-                  const eventIsFull = event?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+                {myEvents &&
+                  myEvents.map((event: any, index: number) => {
+                    const isActive = activeEvent?.id === event.id;
+                    const eventIsFinished = isEventFinished(event?.date);
+                    const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
+                    const eventIsFull = event?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
 
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.eventButton}
-                      activeOpacity={0.7}
-                      onPress={() => {
-                        if (!userHost?.accountConfirmed) {
-                          return;
-                        }
-                        setActiveEvent(event);
-                      }}>
-                      <View
-                        style={{
-                          borderRadius: 50,
-                          borderWidth: 1,
-                          borderColor: eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color,
-                          borderStyle: 'solid',
-                          padding: 3,
-                          width: 55,
-                          height: 55,
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        style={styles.eventButton}
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          if (!userHost?.accountConfirmed) {
+                            return;
+                          }
+                          setActiveEvent(event);
                         }}>
-                        {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                        {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                        <Image source={{uri: event?.photos[0]?.image}} style={{width: '100%', height: '100%', borderRadius: 50}} />
-                      </View>
-                      <Text
-                        style={{
-                          marginTop: screenHeight / 190,
-                          color: whiteColor,
-                          fontFamily: Satoshi500,
-                          fontSize: RFValue(13, 812),
-                          textAlign: 'center',
-                        }}>
-                        {event?.name}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
+                        <View
+                          style={{
+                            borderRadius: 50,
+                            borderWidth: 1,
+                            borderColor: eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color,
+                            borderStyle: 'solid',
+                            padding: 3,
+                            width: 55,
+                            height: 55,
+                          }}>
+                          {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
+                          {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
+                          <Image source={{uri: event?.photos[0]?.image}} style={{width: '100%', height: '100%', borderRadius: 50}} />
+                        </View>
+                        <Text
+                          style={{
+                            marginTop: screenHeight / 190,
+                            color: whiteColor,
+                            fontFamily: Satoshi500,
+                            fontSize: RFValue(13, 812),
+                            textAlign: 'center',
+                          }}>
+                          {event?.name}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
               </ScrollView>
             ) : (
               <ScrollView horizontal scrollEnabled={false} contentContainerStyle={{marginVertical: screenHeight / 50}}>
@@ -515,6 +527,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   return;
                 }
                 setActiveEvent('host');
+                navigation.navigate(joinEventsPathRequest);
               }}
               style={styles.eventButton}>
               <View style={[styles.joinEventActive, {borderColor: activeEvent === 'host' ? whiteColor : lightGray5Color}]}>
@@ -522,7 +535,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               </View>
               <Text style={styles.textButton}>Join events</Text>
             </TouchableOpacity>
-            {myEvents?.map((event: any, index: number) => {              
+            {myEvents?.map((event: any, index: number) => {
               const isActive = activeEvent?.id === event.id;
               const eventIsFinished = isEventFinished(event?.date);
               const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
@@ -596,21 +609,24 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       case 'chat':
         return (
           <View style={styles.wrapperHeaderButtonsChat}>
-            <View style={styles.rowButtonsChat}>
-              <TouchableOpacity
-                onPress={() => setTypeEvents(false)}
-                style={[styles.buttonMyEvents, {backgroundColor: !typeEvents ? whiteColor : lightGray2Color}]}>
-                <Text style={[styles.textMyEvents, {color: typeEvents ? whiteColor : blackColor}]}>My events</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setTypeEvents(true)}
-                style={[styles.buttonEventsJoining, {backgroundColor: !typeEvents ? lightGray2Color : whiteColor}]}>
-                <Text style={[styles.textEventsJoining, {color: !typeEvents ? whiteColor : blackColor}]}>Join events</Text>
-                <View style={styles.rowTextCountEvents}>
-                  <Text style={styles.textCountEvents}>{eventsImJoining?.length}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
+            {isHost && (
+              <View style={styles.rowButtonsChat}>
+                <TouchableOpacity
+                  onPress={() => setTypeEvents(false)}
+                  style={[styles.buttonMyEvents, {backgroundColor: !typeEvents ? whiteColor : lightGray2Color}]}>
+                  <Text style={[styles.textMyEvents, {color: typeEvents ? whiteColor : blackColor}]}>My events</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setTypeEvents(true)}
+                  style={[styles.buttonEventsJoining, {backgroundColor: !typeEvents ? lightGray2Color : whiteColor}]}>
+                  <Text style={[styles.textEventsJoining, {color: !typeEvents ? whiteColor : blackColor}]}>Join events</Text>
+                  <View style={styles.rowTextCountEvents}>
+                    <Text style={styles.textCountEvents}>{eventsImJoining?.length}</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            )}
+
             {!typeEvents ? (
               <View style={[styles.rowButtonsChat, {marginTop: screenHeight / 34}]}>
                 <FlatList
@@ -651,50 +667,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 />
               </View>
             )}
-            <View
-              style={{
-                flexDirection: 'row',
-                backgroundColor: lightGray2Color,
-                width: '100%',
-                paddingVertical: 6,
-                paddingHorizontal: 10,
-                borderRadius: 40,
-                marginTop: 12,
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <View style={{flexDirection: 'row'}}>
-                <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                  <Image
-                    style={{width: 32, height: 32, borderRadius: 20, borderWidth: 1, borderColor: whiteColor}}
-                    source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREoRGyXmHy_6aIgXYqWHdOT3KjfmnuSyxypw&s'}}
-                  />
-                  <View style={{position: 'absolute'}}>
-                    <CheckBlack width={20} height={20} />
-                  </View>
-                </View>
-                <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                  <Image
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 20,
-                      borderWidth: 1,
-                      borderColor: whiteColor,
-                      transform: [{translateX: -10}],
-                    }}
-                    source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREoRGyXmHy_6aIgXYqWHdOT3KjfmnuSyxypw&s'}}
-                  />
-                  <View style={{position: 'absolute', transform: [{translateX: -10}]}}>
-                    <ClockBlack width={20} height={20} />
-                  </View>
-                </View>
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Users height={14} width={14} />
-                <Text style={{color: whiteColor, fontSize: RFValue(12, 812)}}>1/2</Text>
-              </View>
-            </View>
           </View>
         );
 
@@ -703,22 +675,22 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     }
   };
 
-  const [countNotifications, setCountNotifications] = useState(0)
+  const [countNotifications, setCountNotifications] = useState(0);
 
   const getCountNotifications = async () => {
     try {
       const getDoc = await firestore().collection('userInfo').doc(userHost?.uid).get();
-      const notifications = getDoc?.data()?.notifications
+      const notifications = getDoc?.data()?.notifications;
       setCountNotifications(notifications.length);
-    } catch (error) {
-      
-    }
-  }
+    } catch (error) {}
+  };
 
-  useFocusEffect(useCallback(() => {
-    getCountNotifications()    
-  },[]))
-    
+  useFocusEffect(
+    useCallback(() => {
+      getCountNotifications();
+    }, []),
+  );
+
   return (
     <View style={[styles.container, headerInsets]}>
       {showHeaderTop && (
@@ -749,4 +721,3 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 };
 
 export default Header;
-

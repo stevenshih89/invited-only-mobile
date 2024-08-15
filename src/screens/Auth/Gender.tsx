@@ -11,7 +11,7 @@ import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {genderPreferencesPath} from 'constants/pathLocations';
+import {genderPreferencesPath, myInterestsPath} from 'constants/pathLocations';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const Gender: FC = (): JSX.Element => {
@@ -23,8 +23,13 @@ const Gender: FC = (): JSX.Element => {
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const handleNext = () => {
-    setOnBoarding([...onBoarding, {gender: gender}]);
-    navigation.navigate(genderPreferencesPath as never);
+    const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
+    const isHost = accountType.toLowerCase() === 'host';
+    const data = isHost ? {gender: gender} : {gender: gender, chooseGuest: 'any'};
+    const nextPath = isHost ? genderPreferencesPath : myInterestsPath;
+
+    setOnBoarding([...onBoarding, data]);
+    navigation.navigate(nextPath as never);
   };
 
   const navigation = useAppNavigation();

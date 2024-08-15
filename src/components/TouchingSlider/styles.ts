@@ -96,7 +96,7 @@ const useStyles = () => {
       paddingHorizontal: screenWidth / 24,
       borderRadius: 50,
       alignItems: 'center',
-      alignSelf: 'flex-start'
+      alignSelf: 'flex-start',
     },
     textInfoTags: {
       color: whiteColor,

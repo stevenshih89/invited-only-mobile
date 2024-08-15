@@ -2,13 +2,11 @@ import {StyleSheet} from 'react-native';
 import {
   blackColor,
   lightGray11Color,
-  lightGray12Color,
   lightGray15Color,
   lightGray2Color,
   lightGray5Color,
-  lightGray6Color,
   lightGreenColor,
-  whiteColor
+  whiteColor,
 } from 'constants/colors.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -18,7 +16,7 @@ const useStyles = () => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: lightGray6Color,
+      backgroundColor: blackColor,
       paddingHorizontal: screenWidth / 19,
     },
     fdrAlc: {
@@ -29,6 +27,7 @@ const useStyles = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
+      backgroundColor: blackColor,
       borderBottomColor: lightGray11Color,
       borderBottomWidth: 1,
       paddingBottom: screenHeight / 42,
@@ -163,10 +162,10 @@ const useStyles = () => {
       height: '100%',
       borderRadius: 12,
       paddingLeft: screenWidth / 23,
-      paddingRight: (screenWidth / 23) + 40 + 16
+      paddingRight: screenWidth / 23 + 40 + 16,
     },
     buttonSend: {
-      position: 'absolute', 
+      position: 'absolute',
       right: 16,
       top: 8,
       backgroundColor: blackColor,

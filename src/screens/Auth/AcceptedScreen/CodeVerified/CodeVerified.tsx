@@ -5,7 +5,7 @@ import {SafeAreaView, View, Text, Image} from 'react-native';
 import useStyles from 'screens/Auth/AcceptedScreen/ReusableStyles/styles.ts';
 import Button from 'components/Button/Button.tsx';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {paymentPath} from 'constants/pathLocations.ts';
+import {paymentPath, tutorialFlowPath} from 'constants/pathLocations.ts';
 
 //import images
 import IconVerifyFilledAccepted from 'assets/images/icons/check-star.svg';
@@ -22,7 +22,10 @@ const CodeVerified: FC = (): JSX.Element => {
   const {onBoarding} = useContext(AuthContext);
 
   const handleNext = () => {
-    navigation.navigate(paymentPath as never);
+    const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
+    const isHost = accountType.toLowerCase() === 'host';
+    const nextPath = isHost ? paymentPath : tutorialFlowPath;
+    navigation.navigate(nextPath as never);
   };
 
   const flattenedPhotos = onBoarding.filter((item: {photos: []}) => item.photos)[0]?.photos;

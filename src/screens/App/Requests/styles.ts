@@ -1,4 +1,4 @@
-import {black1Color, blackColor, darkRedColor, lightGray6Color, whiteColor} from 'constants/colors';
+import {blackColor, darkRedColor, whiteColor} from 'constants/colors';
 import {screenHeight} from 'constants/common';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {StyleSheet} from 'react-native';
