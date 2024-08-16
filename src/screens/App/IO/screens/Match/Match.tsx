@@ -30,13 +30,13 @@ interface MatchData {
   userHostImageUri: string;
 }
 
-const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: MatchData; userInfo: any}> = ({
+const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: MatchData; guestInfo: any}> = ({
   isVisibleMatch,
   onCloseMatch,
   matchData,
-  userInfo,
+  guestInfo,
 }) => {
-  console.warn('isVisibleMatch', isVisibleMatch);
+  console.warn('guestInfo', guestInfo);
 
   const opacityWrapper = useSharedValue(0);
   const imagePosition = useSharedValue(-200 - widthScreen / 15.5);
@@ -45,13 +45,13 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   const figurePositin = useSharedValue(-screenHeight * 0.34 - 100);
   const buttonPosition = useSharedValue(-1000);
 
-  const words = userInfo?.name?.split(' ');
+  const userHost = useUser((i: any) => i?.user);
+  
+  const words = userHost?.name?.split(' ');
   const wordTranslations = words?.map(() => useSharedValue(widthScreen));
   const nameAnimation = useSharedValue(widthScreen);
 
   const navigation = useAppNavigation();
-
-  const userHost = useUser((i: any) => i?.user);
 
   const handleCreateChat = async () => {
     const querySnapshot = await firestore().collection('Events').where('uid', '==', `${userHost?.uid}`).get();
@@ -374,15 +374,15 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
                 ))}
               </View>
               <Text style={{color: whiteColor, position: 'absolute', right: 0, fontSize: RFValue(13, 812)}}>Guest</Text>
-              {matchData?.userHostImageUri && (
+              {guestInfo?.photos?.[0]?.image && (
                 <Animated.Image
-                  source={{uri: matchData.userHostImageUri}}
+                  source={{uri: guestInfo?.photos[0].image }}
                   style={[{width: 200, height: 200, position: 'absolute', borderRadius: 100}, leftImageStyle]}
                 />
               )}
-              {matchData?.imageUri && (
+              {userHost?.photos[0].image && (
                 <Animated.Image
-                  source={{uri: matchData.imageUri}}
+                  source={{uri: userHost?.photos[0].image}}
                   style={[{width: 200, height: 200, position: 'absolute', borderRadius: 100}, rightImageStyle]}
                 />
               )}

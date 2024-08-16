@@ -59,6 +59,7 @@ const IO: FC = (): JSX.Element => {
   const [nameUser, setNameUser] = useState<string>('');
   const [uidScamUser, setUidScamUser] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
+  const [guestInfo, setGuestInfo] = useState<any>({})
   const [matchData, setMatchData] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
@@ -306,8 +307,6 @@ const IO: FC = (): JSX.Element => {
 
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
-      console.log('activeEventId', activeEventId);
-
       const host = userHost?.accountType === 'host';
 
       const userInvited = {
@@ -319,40 +318,26 @@ const IO: FC = (): JSX.Element => {
         userPhoto: host ? guest.data()?.photos[0]?.image : userHost?.photos[0]?.image,
         fcmToken: host ? guest.data()?.fcmToken : userHost?.fcmToken,
       };
-
-      const usersListCheck = activeEvent?.usersList ? activeEvent?.usersList : usersList;
-
-      let updateUsersList: any = [userInvited];
-      usersListCheck !== undefined && updateUsersList?.push(...usersListCheck);
-      console.log('updateUsersList', updateUsersList);
-
+      
+      const usersListCheck = usersList? usersList: (await firestore().collection('Events').doc(activeEventId).get()).data()?.usersList;      
+      
       if (userHost?.accountType === 'host') {
-        await firestore().collection('Events').doc(activeEventId).update({
-          usersList: updateUsersList,
-        });
-
-        await sendNotification(
-          forUserUid,
-          'New invite request',
-          `${userInfo.name} wants to invite you!`,
-          'invite',
-          'Invite match'.toUpperCase(),
-        );
 
         const getUserInRequestsList = (await firestore().collection('Events').doc(activeEventId).get()).data()?.requestsList;
-        const userInRequestsList = getUserInRequestsList.find(item => item.uid === forUserUid);
+        const userInRequestsList = getUserInRequestsList.find(item => item.uid === forUserUid);        
 
         if (userInRequestsList) {
           userInvited.status = 'invite_match';
           const photos = guest.data().photos;
           const getMainPhoto = photos.filter(item => item.id === 0);
           setOwnerEventUserPhoto(getMainPhoto[0].image);
+          setGuestInfo(guest.data())
           setIsVisibleMatch(true);
         }
-
+        
         try {
           await firestore().collection('Events').doc(activeEventId).update({
-            usersList: updateUsersList,
+            usersList: [...usersListCheck, userInvited],
           });
           await sendNotification(
             forUserUid,
@@ -369,19 +354,11 @@ const IO: FC = (): JSX.Element => {
 
         try {
           await firestore().collection('Events').doc(activeEventId).update({
-            // usersList: updateUsersList ? updateUsersList : usersList,
             requestsList: updateRequestsList,
           });
         } catch (error) {
           console.log('error requestsList update', error);
         }
-        await sendNotification(
-          forUserUid,
-          'New join request',
-          `${userInfo?.name} wants to join you!`,
-          'join',
-          'New Join Request'.toUpperCase(),
-        );
         await sendNotification(
           forUserUid,
           'New join request',
@@ -406,6 +383,7 @@ const IO: FC = (): JSX.Element => {
           const photos = guest.data().photos;
           const getMainPhoto = photos.filter(item => item.id === 0);
           setOwnerEventUserPhoto(getMainPhoto[0].image);
+          setGuestInfo(guest.data())
           setIsVisibleMatch(true);
         }
       }
@@ -1181,7 +1159,7 @@ const IO: FC = (): JSX.Element => {
             activeSuperInviteUser={activeSuperInviteUser}
             onCloseSuperInvite={handleCloseSuperInvite}
           />
-          <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} userInfo={userInfo} />
+          <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} guestInfo={guestInfo} />
         </View>
       </SafeAreaView>
     </>
