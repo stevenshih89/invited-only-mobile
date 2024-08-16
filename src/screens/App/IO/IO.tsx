@@ -401,7 +401,7 @@ const IO: FC = (): JSX.Element => {
             senderUid: userInfo.uid,
             recipientUid: guest?.data()?.uid,
             eventId: activeEventId,
-            superInvite: false, // replace to data
+            superInvite: guest?.data()?.superInvite,
             userHostImageUri: userInfo.photos[0].image
           })
           setIsVisibleMatch(true);
