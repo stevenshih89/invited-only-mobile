@@ -332,6 +332,16 @@ const IO: FC = (): JSX.Element => {
           const getMainPhoto = photos.filter(item => item.id === 0);
           setOwnerEventUserPhoto(getMainPhoto[0].image);
           setGuestInfo(guest.data())
+          setMatchData({
+            type: 'Some type',
+            name: guest?.data()?.name,
+            imageUri: guest?.data()?.photos[0].image,
+            senderUid: userInfo.uid,
+            recipientUid: guest?.data()?.uid,
+            eventId: activeEventId,
+            superInvite: false,
+            userHostImageUri: userInfo.photos[0].image
+          })
           setIsVisibleMatch(true);
         }
         
@@ -384,6 +394,16 @@ const IO: FC = (): JSX.Element => {
           const getMainPhoto = photos.filter(item => item.id === 0);
           setOwnerEventUserPhoto(getMainPhoto[0].image);
           setGuestInfo(guest.data())
+          setMatchData({
+            type: 'Some type', // replace to data
+            name: guest?.data()?.name,
+            imageUri: guest?.data()?.photos[0].image,
+            senderUid: userInfo.uid,
+            recipientUid: guest?.data()?.uid,
+            eventId: activeEventId,
+            superInvite: false, // replace to data
+            userHostImageUri: userInfo.photos[0].image
+          })
           setIsVisibleMatch(true);
         }
       }

@@ -36,7 +36,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   matchData,
   guestInfo,
 }) => {
-  console.warn('guestInfo', guestInfo);
+  console.log('guestInfo', guestInfo);
 
   const opacityWrapper = useSharedValue(0);
   const imagePosition = useSharedValue(-200 - widthScreen / 15.5);
@@ -55,11 +55,15 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
 
   const handleCreateChat = async () => {
     const querySnapshot = await firestore().collection('Events').where('uid', '==', `${userHost?.uid}`).get();
-    const list = querySnapshot?.docs?.map(i => ({id: i.id, ...i?.data()})).find(i => i?.id === matchData.eventId);
+    // console.log('querySnapshot', querySnapshot.docs.map(i => console.log(i.data().id)
+    // ));    
+    
+    const list = querySnapshot?.docs?.map(i => ({id: i.id, ...i?.data()})).find(i => i?.id === matchData.eventId);    
 
     try {
       const messageCollection = await firestore().collection('messages').doc(list?.id).get();
       const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === matchData.recipientUid)[0];
+
       const activeEvent = messageCollection?.data()?.activeEvent;
 
       if (chatCheck) {
@@ -113,7 +117,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
           onCloseMatch();
         } else {
           const id = list?.id;
-
+          
           await firestore().collection('messages').doc(id).set({
             activeEvent: id,
             avatarGuest: matchData.imageUri,
@@ -374,15 +378,15 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
                 ))}
               </View>
               <Text style={{color: whiteColor, position: 'absolute', right: 0, fontSize: RFValue(13, 812)}}>Guest</Text>
-              {guestInfo?.photos?.[0]?.image && (
+              {matchData?.userHostImageUri && (
                 <Animated.Image
-                  source={{uri: guestInfo?.photos[0].image }}
+                  source={{uri: matchData.userHostImageUri}}
                   style={[{width: 200, height: 200, position: 'absolute', borderRadius: 100}, leftImageStyle]}
                 />
               )}
-              {userHost?.photos[0].image && (
+              {matchData?.imageUri && (
                 <Animated.Image
-                  source={{uri: userHost?.photos[0].image}}
+                  source={{uri: matchData?.imageUri}}
                   style={[{width: 200, height: 200, position: 'absolute', borderRadius: 100}, rightImageStyle]}
                 />
               )}
