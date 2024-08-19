@@ -2,6 +2,7 @@ import React, {FC, useCallback, useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, Alert} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import TrashCanIcon from 'assets/images/icons/trash.svg';
+import EventPreviewImage from 'assets/images/app/event-preview.png';
 import useStyles from 'screens/App/IO/screens/EventCreating/styles.ts';
 import {blackColor, grayScale700, lightGray2Color, whiteColor} from 'constants/colors.ts';
 import InvitedOnly from 'screens/App/IO/screens/EventCreating/components/InvitedOnly/InvitedOnly.tsx';
@@ -68,17 +69,17 @@ const EventCreating: FC = () => {
     {
       id: 0,
       image:
-        'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/placeholders%2FFrame%201321315887.jpg?alt=media&token=dd4f9b58-f90b-415e-85f8-52de10eb0e68',
+        'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805',
     },
     {
       id: 1,
       image:
-        'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/placeholders%2FFrame%201321315887.jpg?alt=media&token=dd4f9b58-f90b-415e-85f8-52de10eb0e68',
+        'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805',
     },
     {
       id: 2,
       image:
-        'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/placeholders%2FFrame%201321315887.jpg?alt=media&token=dd4f9b58-f90b-415e-85f8-52de10eb0e68',
+        'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805',
     },
     {
       id: 3,

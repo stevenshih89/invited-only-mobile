@@ -449,32 +449,31 @@ const IO: FC = (): JSX.Element => {
           id: doc.id,
           ...doc.data(),
         }))
-        ?.filter(
-          event =>
-            !event.requestsList || (!event.requestsList.some((request: any) => request.uid === user.uid) && event?.uid !== userHost?.uid),
-        );
+        ?.filter(event => {
+          if (event?.requestsList?.find(j => j?.uid === user?.uid)) {
+            return false;
+          }
+          if (event?.usersList?.find(j => j?.uid === user?.uid && j?.status === 'invite_match')) {
+            return false;
+          }
+          return true;
+        });
     } catch (e: any) {
       Alert.alert('Error', e.message || 'Something went wrong');
     }
 
+    console.warn('filteredEvents', filteredEvents);
+
     async function enrichElementsWithPhotos(elements) {
       const promises = elements?.map(async element => {
         const docRef = firestore().collection('userInfo').doc(element?.uid);
-        const docRefMessage = firestore().collection('messages').where('uidHost', '==', element?.uid);
         const doc = await docRef?.get();
-        const docMessages = await docRefMessage?.get();
 
         if (!doc?.exists) {
           return null;
         } else {
-          const userInfo = doc?.data();
-          const messages = docMessages?.docs;
-          const findChat = messages
-            ?.map(i => i?._data?.chats)
-            .flatMap(array => array)
-            .concat();
-          const checkChat = findChat?.some(j => j?.uid === userHost?.uid);
-          return {...element, userPhotos: userInfo?.photos, hostInfo: userInfo, availabilityOfChats: checkChat};
+          const userData = doc?.data();
+          return {...element, userPhotos: userData?.photos, hostInfo: userData};
         }
       });
 
@@ -494,263 +493,250 @@ const IO: FC = (): JSX.Element => {
       return;
     }
 
-    filterDataWM
-      ?.filter((event: any) => {
-        return (
-          !event?.requestsList?.some(j => j?.uid === user?.uid) ||
-          !event?.usersList?.some(j => j?.uid === user?.uid && j?.status == 'invite_match')
-        );
-      })
-      .map((event: any) => {
-        const currUserPhotos = event?.userPhotos?.map((photo: any) => photo?.image);
-        const eventPhotos = event?.photos?.map((photo: any) => photo?.image);
+    filterDataWM?.map((event: any) => {
+      const currUserPhotos = event?.userPhotos?.map((photo: any) => photo?.image);
+      const eventPhotos = event?.photos?.map((photo: any) => photo?.image);
 
-        data.push({
-          component: (
-            <View style={styles.wrapperFakeCard}>
-              <TouchingSlider
-                hostInfo={event?.hostInfo}
-                placeName={event?.placeName}
-                girls={event?.female + event?.femaleFriend}
-                date={event?.date}
-                isShowEventPreview={true}
-                isShowWantsJoin={false}
-                isShowInvitesTooltip={false}
-                isShowCardButtons={false}
-                eventPhotos={event?.photos}
-                photos={currUserPhotos}
-                name={event?.name}
-              />
-              <View style={styles.bioWrapper}>
-                <Text style={styles.titleSection}>Host profile</Text>
-                <TouchableOpacity // @ts-ignore
-                  onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: event?.uid}})}
-                  style={styles.wrapperHostProfile}>
-                  <View style={{flexDirection: 'row'}}>
-                    {event?.hostImage && (
-                      <View style={{flexDirection: 'row'}}>
-                        <Image source={{uri: event?.hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
-                        {/*<View style={styles.greenCircle} />*/}
-                      </View>
-                    )}
-                    <View style={{marginLeft: 13}}>
-                      <View
-                        style={{
-                          borderRadius: 4,
-                          borderColor: whiteColor,
-                          borderWidth: 1,
-                          borderStyle: 'solid',
-                          alignSelf: 'flex-start',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          paddingHorizontal: 6,
-                          paddingVertical: 2,
-                        }}>
-                        <Text style={{color: whiteColor, textTransform: 'capitalize', fontFamily: Satoshi700, fontSize: RFValue(10, 812)}}>
-                          {event?.hostInfo.accountType}
-                        </Text>
-                      </View>
-                      <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
-                          {event?.hostName}, {calculateAge(event?.hostInfo?.date)}
-                        </Text>
-                        {event?.hostInfo?.accountConfirmed && <CheckStarWhite />}
-                      </View>
+      data.push({
+        component: (
+          <View style={styles.wrapperFakeCard}>
+            <TouchingSlider
+              hostInfo={event?.hostInfo}
+              placeName={event?.placeName}
+              girls={event?.female + event?.femaleFriend}
+              date={event?.date}
+              isShowEventPreview={true}
+              isShowWantsJoin={false}
+              isShowInvitesTooltip={false}
+              isShowCardButtons={false}
+              eventPhotos={event?.photos}
+              photos={currUserPhotos}
+              name={event?.name}
+            />
+            <View style={styles.bioWrapper}>
+              <Text style={styles.titleSection}>Host profile</Text>
+              <TouchableOpacity // @ts-ignore
+                onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: event?.uid}})}
+                style={styles.wrapperHostProfile}>
+                <View style={{flexDirection: 'row'}}>
+                  {event?.hostImage && (
+                    <View style={{flexDirection: 'row'}}>
+                      <Image source={{uri: event?.hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
+                      {/*<View style={styles.greenCircle} />*/}
+                    </View>
+                  )}
+                  <View style={{marginLeft: 13}}>
+                    <View
+                      style={{
+                        borderRadius: 4,
+                        borderColor: whiteColor,
+                        borderWidth: 1,
+                        borderStyle: 'solid',
+                        alignSelf: 'flex-start',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        paddingHorizontal: 6,
+                        paddingVertical: 2,
+                      }}>
+                      <Text style={{color: whiteColor, textTransform: 'capitalize', fontFamily: Satoshi700, fontSize: RFValue(10, 812)}}>
+                        {event?.hostInfo.accountType}
+                      </Text>
+                    </View>
+                    <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
+                      <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
+                        {event?.hostName}, {calculateAge(event?.hostInfo?.date)}
+                      </Text>
+                      {event?.hostInfo?.accountConfirmed && <CheckStarWhite />}
                     </View>
                   </View>
-                  <View>
-                    <Text style={styles.textSeeProfile}>
-                      <ArrowRightIcon width={14} height={14} />
-                    </Text>
+                </View>
+                <View>
+                  <Text style={styles.textSeeProfile}>
+                    <ArrowRightIcon width={14} height={14} />
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <Text style={[styles.titleSection, {marginTop: 20}]}>Event details</Text>
+              <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}}>Place name</Text>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.placeName}</Text>
+              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
+                Event name
+              </Text>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.name}</Text>
+              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
+                Event description
+              </Text>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>
+                {event?.description}
+              </Text>
+              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+              <View style={{marginTop: 28}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                  <CalendarIcon width={16} height={16} />
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{event?.date}</Text>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                  <ClockIcon width={16} height={16} />
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{event?.hour}</Text>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                  <LocationIcon width={16} height={16} />
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
+                    {event?.address}
+                  </Text>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                  <PeopleIcon width={16} height={16} />
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
+                    {event?.female + event?.femaleFriend}x girl
+                  </Text>
+                </View>
+              </View>
+              <View>
+                {eventPhotos?.map((image: string) => (
+                  <Image source={{uri: image}} style={{width: '100%', height: screenHeight / 4, marginVertical: 10, borderRadius: 20}} />
+                ))}
+              </View>
+              <Text style={styles.titleSection}>Already joined</Text>
+              <View>
+                <View style={styles.wrapperNumberPeople}>
+                  <Text style={styles.textUnderSubTitle}>Female</Text>
+                  <View style={styles.rowNumberPeople}>
+                    <Text style={styles.textNumberInvitedPeople}>{event?.female}</Text>
+                  </View>
+                </View>
+              </View>
+              <View>
+                <View style={[styles.wrapperNumberPeople, {marginTop: 12}]}>
+                  <Text style={styles.textUnderSubTitle}>Male</Text>
+                  <View style={styles.rowNumberPeople}>
+                    <Text style={styles.textNumberInvitedPeople}>{event?.male}</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.wrapperButtonsFooter}>
+                <TouchableOpacity
+                  onPress={() => handleChangeListsEvents(event?.uid, 'reject')}
+                  style={[styles.buttonCloseOrCheck, {marginLeft: 1}]}>
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      top: -1,
+                      left: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      right: -1,
+                      bottom: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: blackColor,
+                      borderRadius: 50,
+                      zIndex: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <CloseIcon />
                   </View>
                 </TouchableOpacity>
-                <Text style={[styles.titleSection, {marginTop: 20}]}>Event details</Text>
-                <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}}>Place name</Text>
-                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>
-                  {event?.placeName}
-                </Text>
-                <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-                <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
-                  Event name
-                </Text>
-                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.name}</Text>
-                <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-                <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
-                  Event description
-                </Text>
-                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>
-                  {event?.description}
-                </Text>
-                <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-                <View style={{marginTop: 28}}>
-                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                    <CalendarIcon width={16} height={16} />
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
-                      {event?.date}
-                    </Text>
+                <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenSuperInvite}>
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      top: -1,
+                      left: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      right: -1,
+                      bottom: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: blackColor,
+                      borderRadius: 50,
+                      zIndex: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <FlashIcon />
                   </View>
-                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                    <ClockIcon width={16} height={16} />
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
-                      {event?.hour}
-                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleChangeListsEvents(event?.uid, 'accept')}
+                  style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      top: -1,
+                      left: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      right: -1,
+                      bottom: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: blackColor,
+                      borderRadius: 50,
+                      zIndex: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <CheckIcon />
                   </View>
-                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                    <LocationIcon width={16} height={16} />
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
-                      {event?.address}
-                    </Text>
-                  </View>
-                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                    <PeopleIcon width={16} height={16} />
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
-                      {event?.female + event?.femaleFriend}x girl
-                    </Text>
-                  </View>
-                </View>
-                <View>
-                  {eventPhotos?.map((image: string) => (
-                    <Image source={{uri: image}} style={{width: '100%', height: screenHeight / 4, marginVertical: 10, borderRadius: 20}} />
-                  ))}
-                </View>
-                <Text style={styles.titleSection}>Already joined</Text>
-                <View>
-                  <View style={styles.wrapperNumberPeople}>
-                    <Text style={styles.textUnderSubTitle}>Female</Text>
-                    <View style={styles.rowNumberPeople}>
-                      <Text style={styles.textNumberInvitedPeople}>{event?.female}</Text>
-                    </View>
-                  </View>
-                </View>
-                <View>
-                  <View style={[styles.wrapperNumberPeople, {marginTop: 12}]}>
-                    <Text style={styles.textUnderSubTitle}>Male</Text>
-                    <View style={styles.rowNumberPeople}>
-                      <Text style={styles.textNumberInvitedPeople}>{event?.male}</Text>
-                    </View>
-                  </View>
-                </View>
-                <View style={styles.wrapperButtonsFooter}>
-                  <TouchableOpacity
-                    onPress={() => handleChangeListsEvents(event?.uid, 'reject')}
-                    style={[styles.buttonCloseOrCheck, {marginLeft: 1}]}>
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        top: -1,
-                        left: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        right: -1,
-                        bottom: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
-                      <CloseIcon />
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenSuperInvite}>
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        top: -1,
-                        left: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        right: -1,
-                        bottom: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
-                      <FlashIcon />
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => handleChangeListsEvents(event?.uid, 'accept')}
-                    style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        top: -1,
-                        left: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        right: -1,
-                        bottom: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
-                      <CheckIcon />
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                <Text style={styles.textHideNadSendReport}>Reject and send report</Text>
+                </TouchableOpacity>
               </View>
+              <Text style={styles.textHideNadSendReport}>Reject and send report</Text>
             </View>
-          ),
-          info: event,
-        });
+          </View>
+        ),
+        info: event,
       });
+    });
 
     const recommendedData = sortByInterests(sortByDate(data)?.reverse(), userHost);
 
@@ -767,26 +753,24 @@ const IO: FC = (): JSX.Element => {
       users = await firestore().collection('userInfo').where('gender', '==', userInfo?.chooseGuest).limit(20).get();
     }
 
-    let data: any[] = [
-      <View style={styles.wrapperCreateEventCard}>
-        <Text style={styles.textYouNeedToCreate}>You need to create an event to start inviting</Text>
-        <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
-        <Button onPress={() => navigation.navigate(eventCreatingStackPath)} title="Create event" />
-        <View style={styles.rowText}>
-          <Text style={styles.textDontHaveAnEvent}>Don't have an event?</Text>
-          <View style={styles.rowJoinOne}>
-            <Text style={styles.textJoinOne}>Join one!</Text>
-          </View>
-        </View>
-      </View>,
-    ];
+    const data: any[] = [];
     const usersList = await users?._docs;
 
     usersList
-      ?.filter(i => {
-        return i?._data?.uid !== userHost?.uid && !activeEvent?.usersList?.some(j => j?.uid === i?._data?.uid);
+      ?.filter(item => {
+        console.warn('item', item?._data.uid, item?._data);
+
+        if (activeEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {
+          return false;
+        }
+        if (item?._data?.uid === userHost?.uid) {
+          return false;
+        }
+        return true;
       })
       ?.map((item: any, index: number): void => {
+        console.warn('itemMap', item?._data.uid, item?._data);
+
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;
         setNameUser(name);
         const girlPhotos = item?._data?.photos?.map((image: any): void => image?.image);
@@ -1009,12 +993,13 @@ const IO: FC = (): JSX.Element => {
           ),
           info: item?._data,
         });
-
-        setTimeout(() => {
-          setEvents([...data]);
-          setEventsLength(data.length);
-        }, 3000);
       });
+    console.warn('data', data);
+
+    setTimeout(() => {
+      setEvents([...data]);
+      setEventsLength(data.length);
+    }, 3000);
   };
 
   const requestUserPermission = async () => {
@@ -1050,7 +1035,6 @@ const IO: FC = (): JSX.Element => {
       if (
         !guest?.info?.hostInfo?.interests ||
         guest?.info?.hostInfo?.interests?.length === 0 ||
-        !guest?.info?.availabilityOfChats ||
         guest?.info?.hostInfo?.chooseGuest !== userHost?.chooseGuest
       ) {
         return false;
@@ -1089,8 +1073,10 @@ const IO: FC = (): JSX.Element => {
   }
 
   if (
-    (userInfo?.accountType === 'host' ? currentEventCardPosition >= events.length : currentEventCardPosition > events.length) &&
-    events.length
+    (userInfo?.accountType === 'host'
+      ? currentEventCardPosition >= events.length
+      : currentEventCardPosition > events.length && events.length) ||
+    !events.length
   ) {
     return (
       <Loading
