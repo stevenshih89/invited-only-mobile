@@ -94,7 +94,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   const { counterSuperInvites } = useCounterSuperEvents();  
 
   const handleSuperInvite = () => {
-    if(counterSuperInvites - 1 > 0) {
+    if(counterSuperInvites - 1 >= 0) {
       flipCoin()
       changeEventList()
     } else {

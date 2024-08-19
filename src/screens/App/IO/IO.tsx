@@ -68,7 +68,6 @@ const IO: FC = (): JSX.Element => {
   const [eventsLength, setEventsLength] = useState(0);
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
   const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState();
-  const [currentSuperInvites, setCurrentSuperInvites] = useState(0); 
   
   const { setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites } = useCounterSuperEvents();
 
@@ -109,7 +108,7 @@ const IO: FC = (): JSX.Element => {
       if(counterSuperInvites > 0) {
         setTimeout(() => {
           setIsVisibleSuperInvite(true);
-        }, 100);
+        }, 500);
         await onInvite(item?.uid, item?.id, item?.requestsList, item?.usersList).then(() => {
           firestore().collection('userInfo').doc(userHost.uid).update({
             superInvites: counterSuperInvites - 1
@@ -235,7 +234,7 @@ const IO: FC = (): JSX.Element => {
         if(isWeek) {
           await firestore().collection('userInfo').doc(user.uid).update({
             lastUpdateSuperInvite: Date.now(),
-            superInvites: userInfoDoc?.data()?.superInvites + 5
+            superInvites: 5
           })
         }
         
@@ -847,7 +846,6 @@ const IO: FC = (): JSX.Element => {
                 changeEventList={() => handleChangeListsEventsAfterSuperInvite(uid)}
                 // check={() => check(item)}
                 handleOpenSuperInvite={() => handleOpenSuperInvite(item?._data)}
-                currentSuperInvites={currentSuperInvites - 1}
                 handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}
                 accountType={accountType}
