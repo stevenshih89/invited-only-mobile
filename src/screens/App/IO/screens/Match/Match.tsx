@@ -36,7 +36,6 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   matchData,
   guestInfo,
 }) => {
-  console.log('guestInfo', guestInfo);
 
   const opacityWrapper = useSharedValue(0);
   const imagePosition = useSharedValue(-200 - widthScreen / 15.5);
