@@ -9,6 +9,7 @@ import {showToast} from 'helpers/showToast.ts';
 import useStyles from './styles';
 import Button from 'components/Button/Button';
 import Copy from 'assets/images/icons/copy.svg';
+import { grayColor, whiteColor } from 'constants/colors';
 
 const Invitations: FC = () => {
   const [numberCodes, setNumberCodes] = useState<number>();
@@ -70,9 +71,9 @@ const Invitations: FC = () => {
       <ScrollView>
         {inviteLink.map(item => (
           <View style={styles.inviteContainer}>
-          <TouchableOpacity activeOpacity={0.7} onPress={() => handleCopy(item.inviteCode)} style={styles.inviteButton}>
-            <Text style={styles.inviteText}>{item.inviteCode}</Text>
-            <Copy />
+          <TouchableOpacity disabled={!item.isActive} activeOpacity={0.7} onPress={() => handleCopy(item.inviteCode)} style={styles.inviteButton}>
+            <Text style={[styles.inviteText, {color: !item.isActive? grayColor: whiteColor}]}>{item.inviteCode}</Text>
+            {item.isActive && <Copy />}
           </TouchableOpacity>
         </View>
         ))}

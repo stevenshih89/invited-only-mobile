@@ -64,7 +64,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [currentUserName, setCurrentUserName] = useState('');
   let {image, title, online, activeEvent, id, superInvite, invitedStatus, uid} = route?.params;
 
-  console.warn(activeEvent);
+  // console.warn(activeEvent);
 
   useEffect(() => {
     if (title) {

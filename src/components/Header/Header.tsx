@@ -108,8 +108,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           ...doc.data(),
         }));
 
-        console.warn('data', data);
-
         setMyEvents(data);
         return data;
       } catch (error: any) {
@@ -271,6 +269,8 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     </TouchableOpacity>
   );
 
+  const isHost = userInfo?.accountType.toLowerCase() === 'host';
+
   const isEventFinished = (eventDate: string) => {
     const parts = eventDate.split('.');
 
@@ -299,8 +299,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   };
 
   const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | 'IO-JE' | undefined) => {
-    const isHost = userInfo?.accountType.toLowerCase() === 'host';
-
     switch (type) {
       case 'IO':
         return (

@@ -260,6 +260,10 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
     }
   };
 
+  console.log('hoursUntilEvent', hoursUntilEvent);
+  
+  
+
   if (eventStarting && !userDelete) {
     return (
       <Modal
@@ -386,7 +390,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
           </View>
 
           {
-            <Text style={styles.textAreYouSure}>{!time ? 'Are you on the way?' : `Event starting in ${hoursUntilEvent}h!`}</Text>
+            !!hoursUntilEvent && <Text style={styles.textAreYouSure}>{`Event starting in ${hoursUntilEvent}h!`}</Text>
           }
           {/* {hoursUntilEvent === 12 && (
             <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : 'Event starting in 12h!'}</Text>

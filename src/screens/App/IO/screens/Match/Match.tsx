@@ -30,11 +30,11 @@ interface MatchData {
   userHostImageUri: string;
 }
 
-const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: MatchData; userInfo: any}> = ({
+const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: MatchData; guestInfo: any}> = ({
   isVisibleMatch,
   onCloseMatch,
   matchData,
-  userInfo,
+  guestInfo,
 }) => {
 
   const opacityWrapper = useSharedValue(0);
@@ -44,21 +44,25 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   const figurePositin = useSharedValue(-screenHeight * 0.34 - 100);
   const buttonPosition = useSharedValue(-1000);
 
-  const words = userInfo?.name?.split(' ');
+  const userHost = useUser((i: any) => i?.user);
+  
+  const words = userHost?.name?.split(' ');
   const wordTranslations = words?.map(() => useSharedValue(widthScreen));
   const nameAnimation = useSharedValue(widthScreen);
 
   const navigation = useAppNavigation();
 
-  const userHost = useUser((i: any) => i?.user);
-
   const handleCreateChat = async () => {
     const querySnapshot = await firestore().collection('Events').where('uid', '==', `${userHost?.uid}`).get();
-    const list = querySnapshot?.docs?.map(i => ({id: i.id, ...i?.data()})).find(i => i?.id === matchData.eventId);
+    // console.log('querySnapshot', querySnapshot.docs.map(i => console.log(i.data().id)
+    // ));    
+    
+    const list = querySnapshot?.docs?.map(i => ({id: i.id, ...i?.data()})).find(i => i?.id === matchData.eventId);    
 
     try {
       const messageCollection = await firestore().collection('messages').doc(list?.id).get();
       const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === matchData.recipientUid)[0];
+
       const activeEvent = messageCollection?.data()?.activeEvent;
 
       if (chatCheck) {
@@ -112,7 +116,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
           onCloseMatch();
         } else {
           const id = list?.id;
-
+          
           await firestore().collection('messages').doc(id).set({
             activeEvent: id,
             avatarGuest: matchData.imageUri,
@@ -381,7 +385,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
               )}
               {matchData?.imageUri && (
                 <Animated.Image
-                  source={{uri: matchData.imageUri}}
+                  source={{uri: matchData?.imageUri}}
                   style={[{width: 200, height: 200, position: 'absolute', borderRadius: 100}, rightImageStyle]}
                 />
               )}

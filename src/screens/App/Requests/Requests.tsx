@@ -43,7 +43,7 @@ const Requests: FC = (): ReactElement => {
         const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
         const myEventsQuery = await firestore().collection('Events').where('uid', '==', user.uid).get();
         console.warn('querySnapshot', querySnapshot.data());
-        
+
         if (!myEventsQuery.empty) {
           const eventList = myEventsQuery?.docs.map(i => i?.data());
           setMyEventsList(eventList);
@@ -74,8 +74,8 @@ const Requests: FC = (): ReactElement => {
 
   const filterByUid = (array, uid) => {
     return array?.filter(item => {
-      if (Array?.isArray(item?.usersList)) {
-        return item?.usersList?.some(request => request?.uid === uid);
+      if (Array?.isArray(item?.requestsList)) {
+        return item?.requestsList?.some(request => request?.uid === uid);
       } else {
         return false;
       }
@@ -128,7 +128,7 @@ const Requests: FC = (): ReactElement => {
   useFocusEffect(
     useCallback(() => {
       isHost ? fetchHostRequests() : fetchGuestRequests();
-    }, [activeEvent]),
+    }, [activeEvent, isHost]),
   );
 
   const list = isHost ? requestsForHost : dataForGuest;
