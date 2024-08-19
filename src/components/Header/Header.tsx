@@ -108,8 +108,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           ...doc.data(),
         }));
 
-        console.warn('data', data);
-
         setMyEvents(data);
         return data;
       } catch (error: any) {

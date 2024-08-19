@@ -315,7 +315,7 @@ const JoinEvents = ({navigation}: any) => {
             </View>
           );
         })}
-        <Match isVisibleMatch={isVisibleMatch} onCloseMatch={handleCloseMatch} userInfo={userHost} matchData={matchData} />
+        <Match isVisibleMatch={isVisibleMatch} onCloseMatch={handleCloseMatch} guestInfo={userHost} matchData={matchData} />
       </SafeAreaView>
     </View>
   );
