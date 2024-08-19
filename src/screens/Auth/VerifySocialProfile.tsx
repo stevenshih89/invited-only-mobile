@@ -163,7 +163,8 @@ const VerifySocialProfile = () => {
           accountReviewed: false,
           accountPremium: false,
           notifications: [],
-          superInvites: 0
+          superInvites: 0,
+          lastUpdateSuperInvite: Date.now()
         })
         .then(async () => {
           console.warn('User added!');

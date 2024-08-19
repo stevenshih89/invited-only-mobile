@@ -132,7 +132,8 @@ const InvitationCode: FC = (): JSX.Element => {
           accountReviewed: true,
           accountPremium: false,
           notifications: [],
-          superInvites: 0
+          superInvites: 5,
+          lastUpdateSuperInvite: Date.now()
         })
         .then(async () => {
           console.log('User added!');

@@ -1,12 +1,13 @@
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import FlashIcon from 'assets/images/icons/flash-filled.svg';
-import {blackColor, lightGray10Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
 import Modal from 'react-native-modal';
 import {Outfit500, Satoshi700Italic} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {FC, useEffect} from 'react';
 import {screenHeight} from 'constants/common';
 import Animated, { useSharedValue, withTiming, Easing, useAnimatedStyle} from 'react-native-reanimated';
+import Close from 'assets/images/icons/close.svg';
 
 const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => void; activeSuperInviteUser: any}> = ({
   isVisibleSuperInvite,
@@ -77,6 +78,22 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
           <View style={{backgroundColor: blackColor, width: 100, height: 100, borderRadius: 100}} />
         </Animated.View>
         <View style={{alignItems: 'center'}}>
+          <TouchableOpacity
+            onPress={onCloseSuperInvite}
+            activeOpacity={0.7}
+            style={{
+            borderRadius: 100,
+            backgroundColor: transparentGray60Color,
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: 40,
+            height: 40,
+            alignSelf: 'flex-end',
+            marginRight: 20,
+            transform: [{translateY: -120}]
+            }}>
+                <Close />
+              </TouchableOpacity>
           <View style={{alignItems: 'flex-end'}}>
             <Text style={{color: whiteColor, fontFamily: Outfit500, fontSize: RFValue(54, 812)}}>{activeSuperInviteUser?.name}</Text>
             <Text style={{color: whiteColor, fontFamily: Outfit500, fontSize: RFValue(10, 812), textTransform: 'capitalize'}}>

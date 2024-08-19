@@ -47,6 +47,7 @@ import Match from './screens/Match/Match';
 // import ModalSuperInvite from 'components/Modal/ModalSuperInvite';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
+import { useCounterSuperEvents } from 'src/store/counterSuperInvites';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -66,6 +67,10 @@ const IO: FC = (): JSX.Element => {
   const [eventsLength, setEventsLength] = useState(0);
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
   const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState();
+  const [currentSuperInvites, setCurrentSuperInvites] = useState(0); 
+  
+  const { setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites } = useCounterSuperEvents();
+
 
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
@@ -87,11 +92,33 @@ const IO: FC = (): JSX.Element => {
     return () => unsubscribe();
   }, []);
 
-  const handleOpenSuperInvite = async (item): void => {
-    setActiveSuperInviteUser(item);
-    setIsVisibleSuperInvite(true);
+  const getSuperInvites = async () => {
+    const getDoc =  await firestore().collection('userInfo').doc(userHost.uid).get();
+    const currentSuperInvites = getDoc?.data()?.superInvites;
+    setCounterSuperInvites(currentSuperInvites)
+  }
 
-    await onInvite(item?.uid, item?.id, item?.requestsList, item?.usersList);
+  useFocusEffect(useCallback(() => {
+    getSuperInvites()
+  },[]))
+
+  const handleOpenSuperInvite = async (item): void => {
+    setActiveSuperInviteUser(item);    
+    try {
+      if(counterSuperInvites > 0) {
+        setTimeout(() => {
+          setIsVisibleSuperInvite(true);
+        }, 100);
+        await onInvite(item?.uid, item?.id, item?.requestsList, item?.usersList).then(() => {
+          firestore().collection('userInfo').doc(userHost.uid).update({
+            superInvites: counterSuperInvites - 1
+          })
+        })
+        decrementCounterSuperInvites(1)
+      }
+    } catch (error) {
+      console.log('error supert invite', error);
+    }
   };
 
   const handleCloseSuperInvite = (): void => {
@@ -185,6 +212,13 @@ const IO: FC = (): JSX.Element => {
     );
   };
 
+  function hasWeekPassed(previousTimestamp: number) {
+    const currentTimestamp = Date.now();
+    const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
+
+    return (currentTimestamp - previousTimestamp) >= oneWeekInMilliseconds;
+}
+
   const fetchUserInfo = async () => {
     setLoading(true);
     const user = auth().currentUser;
@@ -196,6 +230,14 @@ const IO: FC = (): JSX.Element => {
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
+        const isWeek = hasWeekPassed(userInfoDoc?.data()?.lastUpdateSuperInvite);
+        if(isWeek) {
+          await firestore().collection('userInfo').doc(user.uid).update({
+            lastUpdateSuperInvite: Date.now(),
+            superInvites: userInfoDoc?.data()?.superInvites + 5
+          })
+        }
+        
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
@@ -415,15 +457,29 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {
+  const handleChangeListsEventsAfterSuperInvite = async (uid: string) => {
+    const item = events?.filter(j => {       
+      return j?.info?.uid === uid;
+    });
+    
+    const filter: any[] = events?.filter(i => i?.info?.uid !== uid); 
+
+    console.log('filter', filter);
+    
+    await onInvite(item[0]?.info?.uid, item[0]?.info?.id, item[0]?.info?.requestsList, item[0]?.info?.usersList);
+    setEvents([...filter]);
+  }
+
+  const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {    
+
     if (type === 'accept') {
-      const item = events?.filter(j => {
+      const item = events?.filter(j => {       
         return j?.info?.uid === uid;
-      });
+      }); 
 
-      const filter: any[] = events?.filter(i => i?.info?.uid !== uid);
+      const filter: any[] = events?.filter(i => i?.info?.uid !== uid);      
 
-      await onInvite(item[0]?.info?.uid, item[0]?.info?.id, item[0]?.info?.requestsList, item[0]?.info?.usersList);
+      
       setEvents([...filter]);
     } else {
       console.log('reject', events);
@@ -788,6 +844,7 @@ const IO: FC = (): JSX.Element => {
       })
       ?.map((item: any, index: number): void => {
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;
+        
         setNameUser(name);
         const girlPhotos = item?._data?.photos?.map((image: any): void => image?.image);
         const interests = item?._data?.interests?.map((i: any): void => i?.title);
@@ -805,9 +862,10 @@ const IO: FC = (): JSX.Element => {
                 isShowInvitesTooltip={false}
                 isLocked={!userHost?.accountConfirmed}
                 confirmedAccount={accountConfirmed}
-                onInvite={() => handleChangeListsEvents(uid, 'accept')}
+                changeEventList={() => handleChangeListsEventsAfterSuperInvite(uid)}
                 // check={() => check(item)}
                 handleOpenSuperInvite={() => handleOpenSuperInvite(item?._data)}
+                currentSuperInvites={currentSuperInvites - 1}
                 handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}
                 accountType={accountType}
@@ -1008,12 +1066,15 @@ const IO: FC = (): JSX.Element => {
             </View>
           ),
           info: item?._data,
-        });
+        });        
 
-        setTimeout(() => {
-          setEvents([...data]);
-          setEventsLength(data.length);
-        }, 3000);
+        setEvents([...data]);
+        setEventsLength(data.length);
+
+        // setTimeout(() => {
+        //   setEvents([...data]);
+        //   setEventsLength(data.length);
+        // }, 3000);
       });
   };
 
@@ -1060,7 +1121,7 @@ const IO: FC = (): JSX.Element => {
     return matchedGuests;
   };
 
-  useEffect(() => {
+  useEffect(() => {       
     userHost?.accountType === 'host' ? getListForHost() : getListForGuest();
   }, [userInfo, userHost, activeEventDate]);
 

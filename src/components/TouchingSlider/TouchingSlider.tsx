@@ -26,6 +26,7 @@ import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {calculateAge} from 'helpers/calculateAge.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
+import { useCounterSuperEvents } from 'src/store/counterSuperInvites/index.ts';
 
 interface Photo {
   url: string;
@@ -57,6 +58,7 @@ interface TouchingSliderProps {
   accountType?: string;
   isPremium?: string;
   fromJoinEventsScreen?: boolean;
+  changeEventList: () => void;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
@@ -82,11 +84,23 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   hostInfo,
   isPremium,
   fromJoinEventsScreen = false,
+  changeEventList
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
   const navigation = useAppNavigation();  
+  
+  const { counterSuperInvites } = useCounterSuperEvents();  
+
+  const handleSuperInvite = () => {
+    if(counterSuperInvites - 1 > 0) {
+      flipCoin()
+      changeEventList()
+    } else {
+      navigation.navigate('/super-invite-pay')
+    }
+  }
 
   const goToCodeConfirmation = (): void => {
     // @ts-ignore
@@ -303,7 +317,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                       <IOIcon />
                     </View>
                   </TouchableOpacity>
-                  <TouchableWithoutFeedback style={[styles.buttonFlash, {marginTop: screenHeight / 70}]} onPress={flipCoin}>
+                  <TouchableWithoutFeedback style={[styles.buttonFlash, {marginTop: screenHeight / 70}]} onPress={handleSuperInvite}>
                     <View
                       style={{
                         backgroundColor: transparentWhite56Color,
@@ -356,7 +370,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                         },
                         backAnimatedStyle,
                       ]}>
-                      <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>4</Text>
+                      <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>{counterSuperInvites - 1}</Text>
                     </Animated.View>
                   </TouchableWithoutFeedback>
                 </View>
