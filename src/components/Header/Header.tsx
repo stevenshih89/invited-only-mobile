@@ -152,9 +152,11 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     }
   };
 
-  useFocusEffect(() => {
-    fetchUserInfo();
-  });
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserInfo();
+    }, []),
+  );
 
   const DATAEventsJoining = [
     {

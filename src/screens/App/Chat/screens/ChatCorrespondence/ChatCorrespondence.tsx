@@ -5,15 +5,7 @@ import {NavigationProp} from '@react-navigation/native';
 
 // Import components
 import useStyles from 'screens/App/Chat/screens/ChatCorrespondence/styles.ts';
-import {
-  blackColor,
-  grayScale700,
-  lightGray15Color,
-  lightGray3Color,
-  lightGray6Color,
-  transparentWhite40Color,
-  whiteColor,
-} from 'constants/colors.ts';
+import {blackColor, lightGray3Color, transparentWhite40Color, whiteColor} from 'constants/colors.ts';
 import {isIos} from 'constants/common.ts';
 import ModalUserMenu from 'components/Modal/ModalUserMenu/ModalUserMenu.tsx';
 import ModalCancelOrConfirmInvitation from 'components/Modal/ModalCancelOrConfirmInvitation/ModalCancelOrConfirmInvitation.tsx';
@@ -23,17 +15,15 @@ import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 // Import icons
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import ThreeDots from 'assets/images/icons/more-white.svg';
-import FlashField from 'assets/images/icons/flash.svg';
 import SendIcon from 'assets/images/icons/send.svg';
 import CheckStar from 'assets/images/icons/check-star-white.svg';
 
 // Import images
-import moment, {RFC_2822} from 'moment';
+import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from '../../../../../store/userStore';
 import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
-import babelConfig from 'functions/babel.config';
 import auth from '@react-native-firebase/auth';
 import {calculateAge} from 'helpers/calculateAge';
 
@@ -63,8 +53,6 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [age, setAge] = useState();
   const [currentUserName, setCurrentUserName] = useState('');
   let {image, title, online, activeEvent, id, superInvite, invitedStatus, uid} = route?.params;
-
-  // console.warn(activeEvent);
 
   useEffect(() => {
     if (title) {
@@ -116,7 +104,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
   const headerInsets = {
     paddingTop: insets.top,
-    backgroundColor: lightGray6Color,
+    backgroundColor: blackColor,
     flex: 1,
     paddingBottom: 0,
   };
@@ -205,10 +193,11 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
           chats: [...allChats],
         });
       await sendNotification(uid, 'Invited Only', `${currentUserName} sent you a new message`);
-      setMessageUser('');
     } catch (e) {
       console.log(e);
     }
+
+    setMessageUser('');
   };
 
   const getFormattedTime = timestamp => {
@@ -256,16 +245,15 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     );
   };
 
+  const handleGetMessages = documentSnapshot => {
+    const data = documentSnapshot.data()?.chats;
+    const findChat = data?.filter(j => j?.id === id);
+    setAllChats(data);
+    setMessages(findChat[0]?.messages);
+  };
+
   useEffect(() => {
-    const subscriber = firestore()
-      .collection('messages')
-      .doc(activeEvent)
-      .onSnapshot(documentSnapshot => {
-        const data = documentSnapshot.data()?.chats;
-        const findChat = data?.filter(j => j?.id === id);
-        setAllChats(data);
-        setMessages(findChat[0]?.messages);
-      });
+    const subscriber = firestore().collection('messages').doc(activeEvent).onSnapshot(handleGetMessages);
 
     return () => subscriber();
   }, [activeEvent]);
@@ -338,7 +326,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               style={styles.textInput}
               placeholder="Write your message"
             />
-            <TouchableOpacity style={styles.buttonSend} onPress={() => handleSendMessage()}>
+            <TouchableOpacity style={styles.buttonSend} onPress={handleSendMessage}>
               <SendIcon />
             </TouchableOpacity>
           </View>

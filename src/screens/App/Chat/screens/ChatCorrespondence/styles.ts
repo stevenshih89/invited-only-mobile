@@ -156,7 +156,7 @@ const useStyles = () => {
       borderRadius: 12,
     },
     textInput: {
-      color: blackColor,
+      color: whiteColor,
       fontFamily: Satoshi400,
       fontSize: RFValue(14, 812),
       height: '100%',

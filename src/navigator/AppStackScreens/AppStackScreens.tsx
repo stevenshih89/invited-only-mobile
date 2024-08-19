@@ -324,7 +324,9 @@ export const ChatStackScreen = () => {
       <Stack.Screen
         options={{
           headerShown: true,
-          header: () => <Header typeEvents={typeEvents} setTypeEvents={setTypeEvents} headerType="chat" showHeaderTop={true} logoType="logo"/>,
+          header: () => (
+            <Header typeEvents={typeEvents} setTypeEvents={setTypeEvents} headerType="chat" showHeaderTop={true} logoType="logo" />
+          ),
         }}
         name={chatPath}
         key={chatPath}>
