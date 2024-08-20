@@ -54,7 +54,7 @@ const IO: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<any[]>([]);  
 
   const [myEvents, setMyEventsList] = useState([]);
   const [nameUser, setNameUser] = useState<string>('');
@@ -65,9 +65,9 @@ const IO: FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
-  const [eventsLength, setEventsLength] = useState(0);
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
   const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState();
+  const [lastVisible, setLastVisible] = useState(false)
   
   const { setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites } = useCounterSuperEvents();
 
@@ -78,6 +78,10 @@ const IO: FC = (): JSX.Element => {
 
   const userHost = useUser((i: any) => i?.user);
 
+  const allEventsLength = useRef(0);
+ 
+  const eventsRef = useRef<any[]>();
+  
   let currentDate = new Date();
 
   useEffect(() => {
@@ -109,11 +113,14 @@ const IO: FC = (): JSX.Element => {
         setTimeout(() => {
           setIsVisibleSuperInvite(true);
         }, 500);
-        await onInvite(item?.uid, item?.id, item?.requestsList, item?.usersList).then(() => {
-          firestore().collection('userInfo').doc(userHost.uid).update({
-            superInvites: counterSuperInvites - 1
-          })
+        firestore().collection('userInfo').doc(userHost.uid).update({
+          superInvites: counterSuperInvites - 1
         })
+        // await onInvite(item?.uid, item?.id, item?.requestsList, item?.usersList).then(() => {
+        //   firestore().collection('userInfo').doc(userHost.uid).update({
+        //     superInvites: counterSuperInvites - 1
+        //   })
+        // })
         decrementCounterSuperInvites(1)
       }
     } catch (error) {
@@ -454,17 +461,30 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
+  // const handleChangeListsEventsAfterSuperInvite = useCallback( async(uid: string) => {
+    
+  // },[])
+  
   const handleChangeListsEventsAfterSuperInvite = async (uid: string) => {
-    const item = events?.filter(j => {       
+    const item = eventsRef.current?.filter(j => {   
       return j?.info?.uid === uid;
     });
     
-    const filter: any[] = events?.filter(i => i?.info?.uid !== uid); 
+    const filter: any[] = eventsRef.current?.filter(i => i?.info?.uid !== uid);
 
-    console.log('filter', filter);
+    if(filter.length === 0) {
+      setLastVisible(true)
+    }
+
+    setTimeout(() => {
+      setEvents(filter);
+    }, 500);
+
+    setCurrentEventCardPosition(prev => prev + 1)
+
+    eventsRef.current = filter
     
     await onInvite(item[0]?.info?.uid, item[0]?.info?.id, item[0]?.info?.requestsList, item[0]?.info?.usersList);
-    setEvents([...filter]);
   }
 
   const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {    
@@ -478,6 +498,7 @@ const IO: FC = (): JSX.Element => {
 
       
       setEvents([...filter]);
+      await onInvite(item[0]?.info?.uid, item[0]?.info?.id, item[0]?.info?.requestsList, item[0]?.info?.usersList);
     } else {
       console.log('reject', events);
       console.log('uid', uid);
@@ -795,6 +816,7 @@ const IO: FC = (): JSX.Element => {
 
     setTimeout(() => {
       setEvents([...recommendedData]);
+      allEventsLength.current = data.length
     }, 3000);
   };
 
@@ -811,7 +833,7 @@ const IO: FC = (): JSX.Element => {
 
     usersList
       ?.filter(item => {
-        console.warn('item', item?._data.uid, item?._data);
+        // console.warn('item', item?._data.uid, item?._data);
 
         if (activeEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {
           return false;
@@ -822,7 +844,7 @@ const IO: FC = (): JSX.Element => {
         return true;
       })
       ?.map((item: any, index: number): void => {
-        console.warn('itemMap', item?._data.uid, item?._data);
+        // console.warn('itemMap', item?._data.uid, item?._data);
 
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;
         
@@ -1048,21 +1070,23 @@ const IO: FC = (): JSX.Element => {
           info: item?._data,
         });        
 
-        setEvents([...data]);
-        setEventsLength(data.length);
+        
 
         // setTimeout(() => {
         //   setEvents([...data]);
         //   setEventsLength(data.length);
         // }, 3000);
 
-      });
-    console.warn('data', data);
+      });      
+      allEventsLength.current = data.length
+      setEvents(data);
+      eventsRef.current = data;
+    // console.warn('data', data);
 
-    setTimeout(() => {
-      setEvents([...data]);
-      setEventsLength(data.length);
-    }, 3000);
+    // setTimeout(() => {
+    //   setEvents([...data]);
+    //   setEventsLength(data.length);
+    // }, 3000);
   };
 
   const requestUserPermission = async () => {
@@ -1107,7 +1131,7 @@ const IO: FC = (): JSX.Element => {
     return matchedGuests;
   };
 
-  useEffect(() => {       
+  useEffect(() => {    
     userHost?.accountType === 'host' ? getListForHost() : getListForGuest();
   }, [userInfo, userHost, activeEventDate]);
 
@@ -1137,9 +1161,9 @@ const IO: FC = (): JSX.Element => {
 
   if (
     (userInfo?.accountType === 'host'
-      ? currentEventCardPosition >= events.length
-      : currentEventCardPosition > events.length && events.length) ||
-    !events.length
+      ? currentEventCardPosition > allEventsLength.current && !lastVisible
+      : currentEventCardPosition > allEventsLength.current && allEventsLength.current) ||
+    !allEventsLength.current
   ) {
     return (
       <Loading
@@ -1229,6 +1253,7 @@ const IO: FC = (): JSX.Element => {
             isVisibleSuperInvite={isVisibleSuperInvite}
             activeSuperInviteUser={activeSuperInviteUser}
             onCloseSuperInvite={handleCloseSuperInvite}
+            setLastVisible={setLastVisible}
           />
           <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} guestInfo={guestInfo} />
         </View>

@@ -133,7 +133,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   const flipCoin = () => {
     rotation.value = withTiming(flipped ? 0 : 180, {
-      duration: 600,
+      duration: 500,
       easing: Easing.inOut(Easing.ease),
     });
     setFlipped(prev => !prev);
