@@ -1,5 +1,5 @@
-import {Dispatch, FC, ReactElement, SetStateAction, useEffect, useState} from 'react';
-import {Alert, FlatList, Image, Text, View} from 'react-native';
+import {Dispatch, FC, ReactElement, SetStateAction, useEffect, useRef, useState} from 'react';
+import {Alert, FlatList, Image, Keyboard, Text, TextInput, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ImagePickerResponse, launchImageLibrary} from 'react-native-image-picker';
@@ -352,6 +352,11 @@ const EventDetails: FC<EventDetailsProps> = ({
     }
   };
 
+  const handleScroll = () => {
+      Keyboard.dismiss();
+  };
+
+
   return (
     <View style={styles.root}>
       <KeyboardAwareScrollView
@@ -360,6 +365,9 @@ const EventDetails: FC<EventDetailsProps> = ({
         contentContainerStyle={styles.scrollContainerContent}
         style={styles.scrollView}
         enableResetScrollToCoords={false}
+        // onMomentumScrollBegin={handleScroll}
+        enableAutomaticScroll={true}
+        keyboardDismissMode='on-drag'
         >
         <View style={styles.eventTypeWr}>
           <Text style={styles.eventTypeTitle}>Event type</Text>
@@ -397,6 +405,7 @@ const EventDetails: FC<EventDetailsProps> = ({
             value={placeName}
             onChange={val => setPlaceName(val)}
             placeholder="Enter place name"
+            onBlur={handleScroll}
           />
           <Input
             required
@@ -410,6 +419,7 @@ const EventDetails: FC<EventDetailsProps> = ({
             label="Address"
             // InputIcon={Location}
             labelStyle={styles.inputLabel}
+            onBlur={handleScroll}
           />
           {/* <Text>Incorrect address</Text> */}
           </View>
@@ -518,13 +528,17 @@ const EventDetails: FC<EventDetailsProps> = ({
             value={name} 
             onChange={val => setName(val)} 
             placeholder="Enter event name (Or just the place name)" 
-            label="Event name" labelStyle={styles.inputLabel} />
+            label="Event name" labelStyle={styles.inputLabel}
+            onBlur={handleScroll}
+            />
+            
           <Input
             value={description}
             onChange={val => setDescription(val)}
             placeholder="Enter description"
             label="Description"
             labelStyle={styles.inputLabel}
+            onBlur={handleScroll}
           />
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{flexDirection: 'column', flex: 1, marginRight: 10}}>
@@ -584,6 +598,7 @@ const EventDetails: FC<EventDetailsProps> = ({
             placeholder="Enter meeting spot"
             labelStyle={styles.inputLabel}
             label="Meeting spot"
+            onBlur={handleScroll}
             // InputIcon={Location}
           />
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
