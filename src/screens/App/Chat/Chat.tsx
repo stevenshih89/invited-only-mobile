@@ -23,6 +23,7 @@ import moment from 'moment/moment';
 import {blackColor, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import {useFocusEffect} from '@react-navigation/native';
+import {useUser} from 'src/store/userStore';
 
 type ItemProps = {
   title: string;
@@ -64,14 +65,15 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const {myEvents} = useContext(EventContext);
 
   const activeEvent = useChat((i: any) => i?.activeEvent);
+  const user = useUser((i: any) => i?.user);
 
   const fetchUserInfo = async () => {
     setLoading(true);
-    const user = auth().currentUser;
+    const userData = auth().currentUser;
 
-    if (user) {
+    if (userData) {
       try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        const userInfoDoc = await firestore().collection('userInfo').doc(userData.uid).get();
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
@@ -321,6 +323,9 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       .collection('messages')
       .doc(activeEvent)
       .onSnapshot(documentSnapshot => {
+        if (!documentSnapshot.exists) {
+          return;
+        }
         setMessages(documentSnapshot.data());
         setLoading(false);
       });
@@ -335,6 +340,13 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           <FlatList
             showsVerticalScrollIndicator={false}
             data={messages?.chats}
+            ListEmptyComponent={() => (
+              <View style={{height: '100%', marginTop: 104}}>
+                <Text style={styles.textYouNeedToJoin}>You don't have any chat</Text>
+                {/* <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
+                <Button buttonStyle={{marginTop: 34}} title="Join event" /> */}
+              </View>
+            )}
             renderItem={({item}) => {
               return (
                 <Item

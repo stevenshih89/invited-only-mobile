@@ -196,12 +196,11 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
 
   const userGuest = eventData.usersList?.filter((i: any) => i?.uid === uid)[0];
 
-  console.warn(inviteStatus);
-
   const navigation = useNavigation();
 
   const goToProfileView = () => {
     setModalVisible(false);
+    // @ts-ignore
     navigation.navigate(commonStackPath, {
       screen: myProfileViewPath,
       params: {
@@ -225,8 +224,10 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
 
   useFocusEffect(
     useCallback(() => {
-      getUsersList();
-    }, [activeEvent]),
+      if (isModalVisible) {
+        getUsersList();
+      }
+    }, [isModalVisible]),
   );
 
   const handleApproveGuestFromHost = async () => {
@@ -241,6 +242,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
             status: 'approved',
           };
         }
+        return user;
       });
       firestore().collection('Events').doc(activeEvent).update({
         usersList: updatedUsersList,

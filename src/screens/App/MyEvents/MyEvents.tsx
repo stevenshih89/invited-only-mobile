@@ -76,7 +76,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     const diffInMilliseconds = eventDateTime - now;
 
     if (diffInMilliseconds < 0) {
-      return null;
+      return 0;
     }
 
     const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
@@ -200,38 +200,15 @@ const MyEvents: FC<any> = ({navigation}) => {
   }
   };
 
-  const checkTimeEvent = item => {
+  const checkTimeEvent = item => {    
     if (item) {
       const res = calculateHoursUntilEvent(item.date, item.hour);
+      setHoursUntilEvent(res);
+      setCurrentEvent(item);
+      setVisibleModalEventRemindes(true);
+      if(res < 25) sendNotification(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
+      countMyEvent.current = countMyEvent.current + 1;
 
-      // console.log('res', res);
-
-      // let timeToEvent = null;
-
-      // if (res && !timeToEvent && res >= 24) {
-      //   timeToEvent = 24;
-      // }
-
-      // if (res && !timeToEvent && res >= 12) {
-      //   timeToEvent = 12;
-      // }
-
-      // if (res && !timeToEvent && res >= 2) {
-      //   timeToEvent = 2;
-      // }
-
-      if(res === 24 || res === 12 || res === 2) {
-        sendNotification(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
-      }
-
-      // if (timeToEvent) {
-        setHoursUntilEvent(res);
-        setCurrentEvent(item);
-        setVisibleModalEventRemindes(true);
-        // timeToEvent = null;
-      // } else {
-      //   countMyEvent.current = countMyEvent.current + 1;
-      // }
     }
   };
 
@@ -704,7 +681,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         eventInfo={activeModalEvent}
       />
       {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true} isPremium={userInfo?.accountPremium} />}
-      {hoursUntilEvent < 25 && <ModalEventRemindes
+      {hoursUntilEvent < 25 && hoursUntilEvent > 0 && <ModalEventRemindes
         currentEvent={currentEvent}
         uid={userInfo?.uid}
         eventStarting={visibleModalEventRemindes}
