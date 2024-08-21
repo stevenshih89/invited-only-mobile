@@ -31,7 +31,7 @@ const ItemRequestHost = ({item, list}: any) => {
   const [userInfo, setUserInfo] = useState({accountType: ''});
   const [currentUserName, setCurrentUserName] = useState();
 
-  console.warn('item', item);
+  // console.warn('item', item);
 
   const OverlayRight = () => {
     return (

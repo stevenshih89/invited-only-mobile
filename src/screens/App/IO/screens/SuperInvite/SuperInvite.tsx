@@ -4,15 +4,16 @@ import {blackColor, lightGray10Color, transparentGray60Color, whiteColor} from '
 import Modal from 'react-native-modal';
 import {Outfit500, Satoshi700Italic} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {FC, useEffect} from 'react';
+import {Dispatch, FC, SetStateAction, useEffect} from 'react';
 import {screenHeight} from 'constants/common';
 import Animated, { useSharedValue, withTiming, Easing, useAnimatedStyle} from 'react-native-reanimated';
 import Close from 'assets/images/icons/close.svg';
 
-const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => void; activeSuperInviteUser: any}> = ({
+const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => void; activeSuperInviteUser: any, setLastVisible: Dispatch<SetStateAction<boolean>>}> = ({
   isVisibleSuperInvite,
   onCloseSuperInvite,
   activeSuperInviteUser,
+  setLastVisible
 }) => {
   const imageIndex = activeSuperInviteUser?.photos?.findIndex((photo: {id: number; image: string}) => photo.id === 0);
   const image = activeSuperInviteUser?.photos?.[imageIndex]?.image;
@@ -79,7 +80,10 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
         </Animated.View>
         <View style={{alignItems: 'center'}}>
           <TouchableOpacity
-            onPress={onCloseSuperInvite}
+            onPress={() => {
+              onCloseSuperInvite()
+              setLastVisible(false)
+            }}
             activeOpacity={0.7}
             style={{
             borderRadius: 100,

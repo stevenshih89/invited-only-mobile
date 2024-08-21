@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
@@ -17,6 +17,7 @@ import CloseIcon from 'assets/images/icons/close-circle.svg';
 import {chatCorrespondencePath} from 'constants/pathLocations.ts';
 import {gray1Color} from 'constants/colors.ts';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
+import firestore from '@react-native-firebase/firestore';
 
 interface HostMenu {
   hostMenu?: boolean;
@@ -28,11 +29,31 @@ interface HostMenu {
   girlInvitation?: number;
 }
 
-const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMenu, image, name, imageBg}) => {
+const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMenu, image, name, imageBg, uidHost}) => {
+  console.warn('uidHost', uidHost);
+
   const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const navigation = useAppNavigation();
   const styles = useStyles();
+  const [hostName, setHostName] = useState('');
+
+  const getHostData = async () => {
+    if (!uidHost) {
+      return;
+    }
+    const hostQuery = await firestore().collection('userInfo').doc(uidHost).get();
+    if (!hostQuery.exists) {
+      return;
+    }
+    const hostData = hostQuery.data();
+    setHostName(hostData!.name);
+  };
+
+  useEffect(() => {
+    getHostData();
+  }, [uidHost]);
+
   return (
     <Modal
       isVisible={hostMenu}
@@ -72,8 +93,7 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
               <View style={styles.greenCircle} />
             </View>
             <View style={{marginLeft: 15}}>
-              <Text style={{color: 'white'}}>Simon</Text>
-              <Text style={{color: 'white'}}>Online</Text>
+              <Text style={{color: 'white'}}>{hostName}</Text>
             </View>
           </View>
           <TouchableOpacity
