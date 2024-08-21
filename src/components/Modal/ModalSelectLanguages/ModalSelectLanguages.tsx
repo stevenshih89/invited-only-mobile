@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, FlatList, TextInput} from 'react-native';
 import Modal from 'react-native-modal';
 
@@ -28,6 +28,7 @@ import DE from 'src/assets/images/flags/de.svg'
 import IT from 'src/assets/images/flags/it.svg'
 import KR from 'src/assets/images/flags/kr.svg'
 import Button from 'components/Button/Button.tsx';
+import { showToast } from 'helpers/showToast.ts';
 
 interface ModalSelectLanguagesProps {
   modalLanguages: boolean;
@@ -36,75 +37,81 @@ interface ModalSelectLanguagesProps {
   setShowLanguages: any;
 }
 
+const DATA = [
+  {
+    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+    title: 'English',
+    flag: US
+  },
+  {
+    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+    title: 'Arabic',
+    flag: AE
+  },
+  {
+    id: '58694a0f-3da1-471f-bd96-145571e29d72',
+    title: 'Spanish',
+    flag: ES
+  },
+  // {
+  //   id: 'bd7acbe2a-c1b1-46c2-aed5-3ad53abb28ba',
+  //   title: 'Russian',
+  //   flag: AE
+  // },
+  {
+    id: '3ac68af3c-c605-48d3-a4f8-fbd91aa97f63',
+    title: 'Ukranian',
+    flag: UA
+  },
+  {
+    id: '58694a40f-3da1-471f-bd96-145571e29d72',
+    title: 'French',
+    flag: FR
+  },
+  {
+    id: '12145a90f-1dа1-431f-b436-096771e29d72',
+    title: 'Polish',
+    flag: PL
+  },
+  {
+    id: 'bd7acb5ea-c1b1-46c2-aed5-3ad53abb28ba',
+    title: 'Hebrew',
+    flag: IL
+  },
+  {
+    id: '3ac68a6fc-c605-48d3-a4f8-fbd91aa97f63',
+    title: 'Portugese',
+    flag: PT
+  },
+  {
+    id: '58694a70f-3da1-471f-bd96-145571e29d72',
+    title: 'German',
+    flag: DE
+  },
+  {
+    id: '3ac688afc-c605-48d3-a4f8-fbd91aa97f63',
+    title: 'Italian',
+    flag: IT
+  },
+  {
+    id: '58694fa0f-3da1-471f-bd96-145571e29d72',
+    title: 'Korean',
+    flag: KR
+  },
+];
+
 const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, showLanguages, modalLanguages, setModalLanguages}) => {
   const styles = useStyles();
   const userHost = useUser((i: any) => i?.user);
+  
   const setUserData = useUser((i: any) => i?.setUser);
   const languagesTitle = userHost?.languages?.title;
   const uid = userHost?.uid;
+  const [selectLanguage, setSelectLanguage] = useState<Object>();
 
-  const DATA = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'English',
-      flag: US
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Arabic',
-      flag: AE
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      title: 'Spanish',
-      flag: ES
-    },
-    // {
-    //   id: 'bd7acbe2a-c1b1-46c2-aed5-3ad53abb28ba',
-    //   title: 'Russian',
-    //   flag: AE
-    // },
-    {
-      id: '3ac68af3c-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Ukranian',
-      flag: UA
-    },
-    {
-      id: '58694a40f-3da1-471f-bd96-145571e29d72',
-      title: 'French',
-      flag: FR
-    },
-    {
-      id: '12145a90f-1dа1-431f-b436-096771e29d72',
-      title: 'Polish',
-      flag: PL
-    },
-    {
-      id: 'bd7acb5ea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'Hebrew',
-      flag: IL
-    },
-    {
-      id: '3ac68a6fc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Portugese',
-      flag: PT
-    },
-    {
-      id: '58694a70f-3da1-471f-bd96-145571e29d72',
-      title: 'German',
-      flag: DE
-    },
-    {
-      id: '3ac688afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Italian',
-      flag: IT
-    },
-    {
-      id: '58694fa0f-3da1-471f-bd96-145571e29d72',
-      title: 'Korean',
-      flag: KR
-    },
-  ];
+  useEffect(() => {
+    setSelectLanguage(userHost.languages)
+  },[])
 
   const handleSetShowInMyProfile = async (state: boolean): Promise<void> => {
     try {
@@ -117,10 +124,10 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
     }
   };
 
-  const handleSetLanguages = async (item: string): Promise<void> => {
+  const handleSetLanguages = async (): Promise<void> => {
     try {
       await firestore().collection('userInfo').doc(uid).update({
-        languages: item,
+        languages: selectLanguage,
       });
       await firestore()
         .collection('userInfo')
@@ -128,7 +135,7 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
         .get()
         .then(res => {
           setUserData(res.data());
-        });
+        }).then(() => showToast('inviteMatch', 'Your profile is updated', 'Languages successfully changed!', {ownerPhoto: userHost.image, status: 'UPDATED'}));
     } catch (e) {
       console.log(e);
     }
@@ -184,11 +191,12 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
             keyExtractor={item => item.id.toString()}
             showsVerticalScrollIndicator={false}
             renderItem={({item}) => {
-              const isActive = languagesTitle === item?.title;
+              const isActive = selectLanguage?.title === item?.title;
               return (
                 <TouchableOpacity
                   activeOpacity={0.8}
-                  onPress={() => handleSetLanguages(item)}
+                  onPress={() => setSelectLanguage(item)}
+                  // onPress={() => handleSetLanguages(item)}
                   style={{
                     // borderWidth: 1,
                     borderStyle: 'solid',
@@ -234,7 +242,10 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
               );
             }}
           />
-          <Button title="Save" buttonStyle={{marginTop: 20, marginBottom: 20,}} />
+          <Button onPress={() => {
+            handleSetLanguages()
+            setModalLanguages(false)
+          }} title="Save" buttonStyle={{marginTop: 20, marginBottom: 20,}} />
         </View>
       </View>
     </Modal>
