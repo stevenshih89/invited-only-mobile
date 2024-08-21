@@ -193,7 +193,7 @@ const Requests: FC = (): ReactElement => {
         />
       ) : (
         <>
-          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEventsList?.length && (
+          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEventsList?.length && !loading &&(
             <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
               <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                 Let’s create an event
@@ -218,7 +218,7 @@ const Requests: FC = (): ReactElement => {
           )}
         </>
       )}
-      <>{!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}</>
+      <>{!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}</>
     </View>
   );
 };
