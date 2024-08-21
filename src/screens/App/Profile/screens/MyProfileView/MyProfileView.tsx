@@ -320,12 +320,12 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
             })}
             </View>
             <View style={styles.wrapperAboutMe}>
-              <Text style={styles.testBasics}>{userInfo?.name} location</Text>
+              {/* <Text style={styles.testBasics}>{userInfo?.name} location</Text>
               <Text style={styles.textAboutMe}>{typeof(userInfo?.location) === 'string'?userInfo?.location: 'Location not specified'}, 2.4 km away</Text>
               <View
                 style={{
                   paddingHorizontal: 18,
-                  marginTop: 14,
+                  // marginTop: 14,
                   flexDirection: 'row',
                   alignItems: 'center',
                   alignSelf: 'flex-start',
@@ -334,9 +334,9 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                   borderWidth: 1,
                   borderColor: lightGray5Color,
                 }}>
-                {/* <FlagAE /> */}
+
                 <Text style={styles.textLocation}>Lives in {typeof(userInfo?.location) === 'string'?userInfo?.location: 'Location not specified'}</Text>
-              </View>
+              </View> */}
             </View>
           </View>
           <ModalUserProfile title={'Alex'} image={Man} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
