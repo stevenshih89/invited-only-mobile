@@ -17,7 +17,7 @@ interface LoadingProps {
 
 const Loading: FC<LoadingProps> = ({text, userInfo, topPosition, wrapperText=true}) => {
   const styles = useStyles();
-
+  
   const firstCircleScale = useSharedValue(0.9);
   const secondCircleScale = useSharedValue(0.9);
 

@@ -38,6 +38,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [isVisibleAcceptInvitationModal, setIsVisibleAcceptInvitationModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(MY_EVENTS);
   const [visibleModalEventRemindes, setVisibleModalEventRemindes] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const countMyEvent = useRef(0);
 
   const [activeModalEvent, setActiveModalEvent] = useState<any>({
@@ -219,6 +220,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   }, [myEventsData, countMyEvent.current]);
 
   const fetchUserInfo = async () => {
+    setLoading(true)
     const user = auth().currentUser;
 
     if (user) {
@@ -227,8 +229,11 @@ const MyEvents: FC<any> = ({navigation}) => {
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
-      } catch (error: any) {}
+      } catch (error: any) {
+        setLoading(false)
+      }
     }
+    setLoading(false)
   };
 
   useFocusEffect(
@@ -680,7 +685,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         userInfo={activeUserInfo}
         eventInfo={activeModalEvent}
       />
-      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true} isPremium={userInfo?.accountPremium} />}
+      {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton={true} isPremium={userInfo?.accountPremium} />}
       {hoursUntilEvent < 25 && hoursUntilEvent > 0 && <ModalEventRemindes
         currentEvent={currentEvent}
         uid={userInfo?.uid}
