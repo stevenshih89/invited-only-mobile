@@ -95,7 +95,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
   const [isPremium, setIsPremium] = useState();
 
   const styles = useStyles();
-  
+
   const getUserInfo = async () => {
     try {
       const uid = auth().currentUser?.uid;
@@ -260,10 +260,6 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
     }
   };
 
-  console.log('hoursUntilEvent', hoursUntilEvent);
-  
-  
-
   if (eventStarting && !userDelete) {
     return (
       <Modal
@@ -389,9 +385,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             </ImageBackground>
           </View>
 
-          {
-            !!hoursUntilEvent && <Text style={styles.textAreYouSure}>{`Event starting in ${hoursUntilEvent}h!`}</Text>
-          }
+          {!!hoursUntilEvent && <Text style={styles.textAreYouSure}>{`Event starting in ${hoursUntilEvent}h!`}</Text>}
           {/* {hoursUntilEvent === 12 && (
             <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : 'Event starting in 12h!'}</Text>
           )}

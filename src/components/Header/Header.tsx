@@ -109,6 +109,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         }));
 
         setMyEvents(data);
+        setChat(data[0]?.id);
         return data;
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
@@ -144,7 +145,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         if (userInfoDoc.exists) {
           const userData = userInfoDoc.data();
           setUserInfo(userData);
-          setTypeEvents && setTypeEvents(userData?.accountType.toLowerCase() === 'host' ? false : true);
         }
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
@@ -157,6 +157,12 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       fetchUserInfo();
     }, []),
   );
+
+  useEffect(() => {
+    if (userInfo?.accountType) {
+      setTypeEvents && setTypeEvents(userInfo?.accountType.toLowerCase() === 'host' ? false : true);
+    }
+  }, [userInfo?.accountType]);
 
   const DATAEventsJoining = [
     {
@@ -620,9 +626,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   onPress={() => setTypeEvents(true)}
                   style={[styles.buttonEventsJoining, {backgroundColor: !typeEvents ? lightGray2Color : whiteColor}]}>
                   <Text style={[styles.textEventsJoining, {color: !typeEvents ? whiteColor : blackColor}]}>Join events</Text>
-                  <View style={styles.rowTextCountEvents}>
-                    <Text style={styles.textCountEvents}>{eventsImJoining?.length}</Text>
-                  </View>
                 </TouchableOpacity>
               </View>
             )}
