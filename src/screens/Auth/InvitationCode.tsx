@@ -132,7 +132,7 @@ const InvitationCode: FC = (): JSX.Element => {
           accountReviewed: true,
           accountPremium: false,
           notifications: [],
-          superInvites: 5,
+          weeklySuperInvites: 5,
           lastUpdateSuperInvite: Date.now()
         })
         .then(async () => {

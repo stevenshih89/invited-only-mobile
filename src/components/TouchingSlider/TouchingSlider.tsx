@@ -370,7 +370,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                         },
                         backAnimatedStyle,
                       ]}>
-                      <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>{counterSuperInvites - 1}</Text>
+                      <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>{counterSuperInvites}</Text>
                     </Animated.View>
                   </TouchableWithoutFeedback>
                 </View>

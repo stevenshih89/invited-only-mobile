@@ -81,6 +81,8 @@ const IO: FC = (): JSX.Element => {
   const allEventsLength = useRef(0);
  
   const eventsRef = useRef<any[]>();
+  const counterSuperInvitesRef = useRef(0);
+  const counterWeeklySuperInvitesRef = useRef(0);
   
   let currentDate = new Date();
 
@@ -99,7 +101,10 @@ const IO: FC = (): JSX.Element => {
   const getSuperInvites = async () => {
     const getDoc =  await firestore().collection('userInfo').doc(userHost.uid).get();
     const currentSuperInvites = getDoc?.data()?.superInvites;
-    setCounterSuperInvites(currentSuperInvites)
+    const currentWeeklySuperInvites = getDoc?.data()?.weeklySuperInvites;
+    counterSuperInvitesRef.current = currentSuperInvites;
+    counterWeeklySuperInvitesRef.current = currentWeeklySuperInvites;
+    setCounterSuperInvites(currentSuperInvites + currentWeeklySuperInvites);
   }
 
   useFocusEffect(useCallback(() => {
@@ -113,15 +118,18 @@ const IO: FC = (): JSX.Element => {
         setTimeout(() => {
           setIsVisibleSuperInvite(true);
         }, 500);
-        firestore().collection('userInfo').doc(userHost.uid).update({
-          superInvites: counterSuperInvites - 1
-        })
-        // await onInvite(item?.uid, item?.id, item?.requestsList, item?.usersList).then(() => {
-        //   firestore().collection('userInfo').doc(userHost.uid).update({
-        //     superInvites: counterSuperInvites - 1
-        //   })
-        // })
-        decrementCounterSuperInvites(1)
+        if(counterWeeklySuperInvitesRef.current > 0) {
+          firestore().collection('userInfo').doc(userHost.uid).update({
+            weeklySuperInvites: counterWeeklySuperInvitesRef.current - 1
+          })
+          counterWeeklySuperInvitesRef.current -= 1;
+        } else if (counterSuperInvitesRef.current > 0) {
+          firestore().collection('userInfo').doc(userHost.uid).update({
+            superInvites: counterSuperInvitesRef.current - 1
+          })
+          counterSuperInvitesRef.current -= 1;
+        }
+        decrementCounterSuperInvites(1);
       }
     } catch (error) {
       console.log('error supert invite', error);
