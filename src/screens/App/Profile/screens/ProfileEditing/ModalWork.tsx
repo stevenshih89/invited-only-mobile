@@ -1,4 +1,4 @@
-import {FlatList, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {FlatList, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
 import Job from 'assets/images/icons/job.svg';
 import {blackColor, grayColor, grayScale600, lightGray2Color, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
@@ -6,7 +6,7 @@ import {Switch} from '@ant-design/react-native';
 import {Dispatch, FC, SetStateAction, useState} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {screenHeight} from 'constants/common';
+import {isIos, screenHeight} from 'constants/common';
 import Button from 'components/Button/Button';
 
 interface ModalWorkProps {
@@ -49,11 +49,12 @@ const ModalWork: FC<ModalWorkProps> = ({
       backdropOpacity={0.8}
       style={{
         margin: 0,
-        marginTop: screenHeight / 2,
+        // marginTop: screenHeight / 2,
         justifyContent: 'flex-end',
         zIndex: 999,
       }}
       swipeDirection={['down']}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={0} style={{paddingBottom: 0}}>
       <View
         style={{
           backgroundColor: blackColor,
@@ -123,6 +124,7 @@ const ModalWork: FC<ModalWorkProps> = ({
           }}
         /> */}
       </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
