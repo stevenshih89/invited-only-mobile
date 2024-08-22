@@ -811,7 +811,7 @@ const IO: FC = (): JSX.Element => {
 
     usersList
       ?.filter(item => {
-        console.warn('item', item?._data.uid, item?._data);
+        // console.warn('item', item?._data.uid, item?._data);
 
         if (activeEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {
           return false;
@@ -822,7 +822,7 @@ const IO: FC = (): JSX.Element => {
         return true;
       })
       ?.map((item: any, index: number): void => {
-        console.warn('itemMap', item?._data.uid, item?._data);
+        // console.warn('itemMap', item?._data.uid, item?._data);
 
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;
         
@@ -1057,7 +1057,7 @@ const IO: FC = (): JSX.Element => {
         // }, 3000);
 
       });
-    console.warn('data', data);
+    // console.warn('data', data);
 
     setTimeout(() => {
       setEvents([...data]);
