@@ -36,7 +36,6 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   matchData,
   guestInfo,
 }) => {
-
   const opacityWrapper = useSharedValue(0);
   const imagePosition = useSharedValue(-200 - widthScreen / 15.5);
   const textSize = useSharedValue(0);
@@ -45,7 +44,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   const buttonPosition = useSharedValue(-1000);
 
   const userHost = useUser((i: any) => i?.user);
-  
+
   const words = userHost?.name?.split(' ');
   const wordTranslations = words?.map(() => useSharedValue(widthScreen));
   const nameAnimation = useSharedValue(widthScreen);
@@ -55,9 +54,9 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   const handleCreateChat = async () => {
     const querySnapshot = await firestore().collection('Events').where('uid', '==', `${userHost?.uid}`).get();
     // console.log('querySnapshot', querySnapshot.docs.map(i => console.log(i.data().id)
-    // ));    
-    
-    const list = querySnapshot?.docs?.map(i => ({id: i.id, ...i?.data()})).find(i => i?.id === matchData.eventId);    
+    // ));
+
+    const list = querySnapshot?.docs?.map(i => ({id: i.id, ...i?.data()})).find(i => i?.id === matchData.eventId);
 
     try {
       const messageCollection = await firestore().collection('messages').doc(list?.id).get();
@@ -91,6 +90,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             name: matchData.name,
             superInvite: matchData?.superInvite,
             uid: matchData.recipientUid,
+            hostUid: userHost?.uid,
           };
           await firestore()
             .collection('messages')
@@ -116,7 +116,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
           onCloseMatch();
         } else {
           const id = list?.id;
-          
+
           await firestore().collection('messages').doc(id).set({
             activeEvent: id,
             avatarGuest: matchData.imageUri,
@@ -136,6 +136,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             name: matchData.name,
             superInvite: matchData?.superInvite,
             uid: matchData.recipientUid,
+            hostUid: userHost?.uid,
           };
 
           await firestore()

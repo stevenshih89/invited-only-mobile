@@ -133,6 +133,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
             name: user?.name,
             superInvite: user?.superInvite,
             uid: user?.uid,
+            hostUid: userHost?.uid,
           };
           await firestore()
             .collection('messages')
@@ -178,6 +179,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
             name: user?.name,
             superInvite: user?.superInvite,
             uid: user?.uid,
+            hostUid: userHost?.uid,
           };
 
           await firestore()

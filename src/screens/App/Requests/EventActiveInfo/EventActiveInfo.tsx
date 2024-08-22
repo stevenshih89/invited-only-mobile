@@ -190,7 +190,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   marginTop: 14,
                 }}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(15, 812)}}>Accepted</Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Accepted</Text>
                   <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
                     <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{acceptedGuests.length}</Text>
                   </View>
@@ -237,7 +237,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   marginTop: 14,
                 }}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(15, 812)}}>Not accepted</Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Not accepted</Text>
                   <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
                     <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{rejectedGuests.length}</Text>
                   </View>

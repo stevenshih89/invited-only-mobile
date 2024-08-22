@@ -27,10 +27,11 @@ interface HostMenu {
   name?: string;
   data?: string;
   girlInvitation?: number;
+  hostUid?: string;
 }
 
-const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMenu, image, name, imageBg, uidHost}) => {
-  console.warn('uidHost', uidHost);
+const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMenu, image, name, imageBg, hostUid}) => {
+  console.warn('uidHost', hostUid);
 
   const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
@@ -39,20 +40,25 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
   const [hostName, setHostName] = useState('');
 
   const getHostData = async () => {
-    if (!uidHost) {
+    if (!hostUid) {
       return;
     }
-    const hostQuery = await firestore().collection('userInfo').doc(uidHost).get();
+    const hostQuery = await firestore().collection('userInfo').doc(hostUid).get();
+    console.warn('hostQuery', hostQuery.data());
+
     if (!hostQuery.exists) {
       return;
     }
+
+    console.warn('hostQuery', hostQuery.data());
+
     const hostData = hostQuery.data();
     setHostName(hostData!.name);
   };
 
   useEffect(() => {
     getHostData();
-  }, [uidHost]);
+  }, [hostUid]);
 
   return (
     <Modal

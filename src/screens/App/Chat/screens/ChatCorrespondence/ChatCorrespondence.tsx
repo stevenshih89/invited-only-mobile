@@ -54,6 +54,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [currentUserName, setCurrentUserName] = useState('');
   let {image, title, online, activeEvent, id, superInvite, invitedStatus, uid} = route?.params;
 
+  const user = useUser((i: any) => i?.user);
+
   useEffect(() => {
     if (title) {
       const name = title?.split(' ');
@@ -181,6 +183,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         message: messageUser,
         timestamp: new Date().getTime(),
         userType: `${userData?.accountType}`,
+        uid: `${userData?.uid}`,
       };
 
       const findChat = allChats?.filter(i => i?.id === id);
@@ -218,10 +221,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   };
 
   const ChatMessage = ({messageUser, userAvatar, showDate}: {messageUser: MessageProps; userAvatar: string; showDate: boolean}) => {
-    const {message, userType, timestamp} = messageUser;
+    const {message, userType, timestamp, uid} = messageUser;
 
-    const containerStyle = userType !== 'host' ? styles.senderContainer : styles.receiverContainer;
-    const textStyle = userType !== 'host' ? styles.senderText : styles.receiverText;
+    const isCurrentUserMessage = user.uid === uid;
+
+    const containerStyle = !isCurrentUserMessage ? styles.senderContainer : styles.receiverContainer;
+    const textStyle = !isCurrentUserMessage ? styles.senderText : styles.receiverText;
     return (
       <View style={{width: '100%'}}>
         {showDate && (
@@ -232,10 +237,10 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
           </View>
         )}
         <View style={[styles.messageContainer, containerStyle]}>
-          {userType !== 'host' && <Image source={{uri: userAvatar}} style={styles.avatar} />}
+          {!isCurrentUserMessage && <Image source={{uri: userAvatar}} style={styles.avatar} />}
           <View>
-            <View style={[{flexDirection: 'column'}, userType !== 'host' && {alignItems: 'flex-end'}]}>
-              <View style={[styles.messageContent, userType !== 'host' ? styles.isSenderTrue : styles.isSenderFalse]}>
+            <View style={[{flexDirection: 'column'}, !isCurrentUserMessage && {alignItems: 'flex-end'}]}>
+              <View style={[styles.messageContent, !isCurrentUserMessage ? styles.isSenderTrue : styles.isSenderFalse]}>
                 <Text style={textStyle}>{message}</Text>
               </View>
             </View>

@@ -1,7 +1,7 @@
 import React, {FC, useState, useEffect, useContext, useCallback} from 'react';
 import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
 //import components
@@ -47,6 +47,7 @@ type ItemEventsJoiningProps = {
   image: any;
   title: string;
   activeEvent: string;
+  hostUid: string;
 };
 
 interface ChatProps {
@@ -91,48 +92,44 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     }, []),
   );
 
-  const handleBuildGuestEventsData = () => {
-    firestore()
-      .collection('messages')
-      .get()
-      .then(chatDataQuery => {
-        if (chatDataQuery.empty) {
-          return;
-        }
+  // const handleBuildGuestEventsData = () => {
+  //   firestore()
+  //     .collection('messages')
+  //     .get()
+  //     .then(chatDataQuery => {
+  //       if (chatDataQuery.empty) {
+  //         return;
+  //       }
 
-        const chatData = chatDataQuery.docs.map(i => i.data());
-        const filteredChats = chatData.filter(chatDataItem => {
-          return chatDataItem?.chats?.some(chat => {
-            return chat?.uid === user?.uid;
-          });
-        });
+  //       const chatData = chatDataQuery.docs.map(i => i.data());
+  //       const filteredChats = chatData.filter(chatDataItem => {
+  //         return chatDataItem?.chats?.some(chat => {
+  //           return chat?.uid === user?.uid;
+  //         });
+  //       });
 
-        console.warn('filteredChats', filteredChats, user?.uid);
-
-        // const chats = i?.docs?.map(j => j?.data());
-
-        myEvents?.map((events: any): void => {
-          chats?.map((chat: FirebaseFirestoreTypes.DocumentData, index: number): void => {
-            if (chat?.activeEvent === events?.id) {
-              // @ts-ignore
-              setDATAEventsJoining((prev): void => [
-                ...prev,
-                {
-                  id: index,
-                  chats: chat?.activeEvent === events?.id ? chat?.chats : [],
-                  girlInvitation: events?.female + events?.femaleFriend,
-                  data: events?.date,
-                  status: events?.activeType,
-                  image: events?.photos[0]?.image,
-                  title: events?.placeName,
-                  uidHost: events?.uidHost,
-                },
-              ]);
-            }
-          });
-        });
-      });
-  };
+  //       myEvents?.map((events: any): void => {
+  //         chats?.map((chat: FirebaseFirestoreTypes.DocumentData, index: number): void => {
+  //           if (chat?.activeEvent === events?.id) {
+  //             // @ts-ignore
+  //             setDATAEventsJoining((prev): void => [
+  //               ...prev,
+  //               {
+  //                 id: index,
+  //                 chats: chat?.activeEvent === events?.id ? chat?.chats : [],
+  //                 girlInvitation: events?.female + events?.femaleFriend,
+  //                 data: events?.date,
+  //                 status: events?.activeType,
+  //                 image: events?.photos[0]?.image,
+  //                 title: events?.placeName,
+  //                 hostUid: events?.hostUid,
+  //               },
+  //             ]);
+  //           }
+  //         });
+  //       });
+  //     });
+  // };
 
   const Item = ({title, message, image, online, story, inviteStatus, messages, id, superInvite, invitedStatus, uid}: ItemProps) => (
     <View style={styles.item}>
@@ -204,7 +201,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     </View>
   );
 
-  const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data, activeEvent}: ItemEventsJoiningProps) => {
+  const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data, activeEvent, hostUid}: ItemEventsJoiningProps) => {
     const statusColor = handleCheckStatusStyles(status);
     return (
       <View style={styles.itemEventsJoining}>
@@ -245,6 +242,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           name={title}
           setHostMenu={setHostMenu}
           hostMenu={hostMenu}
+          hostUid={hostUid}
         />
         {chats?.map((i: any) => (
           <TouchableOpacity
@@ -273,7 +271,9 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               </View>
               <View style={{marginLeft: 15}}>
                 <Text style={styles.textNameChat}>{i?.name}</Text>
-                <Text style={styles.textDescription}>{i?.messages[0] && i?.messages[0]?.message}</Text>
+                <Text style={styles.textDescription}>
+                  {i?.messages[i?.messages.length - 1] && i?.messages[i?.messages.length - 1]?.message}
+                </Text>
               </View>
             </View>
             <ChatIcon width={18} height={18} />
@@ -372,25 +372,14 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               status: eventData?.activeType,
               image: eventData?.photos[0]?.image,
               title: eventData?.placeName,
-              uidHost: eventData?.uidHost,
-              chats: chat?.chats.filter(chat => chat.uid === user?.uid),
+              hostUid: eventData?.uid,
+              activeEvent: chat?.activeEvent,
+              chats: chat?.chats
+                .filter(chat => chat.uid === user?.uid)
+                .map(chat => ({...chat, avatar: eventData?.hostImage, name: eventData?.hostName})),
             };
             mappedChats.push(data);
           }
-
-          // setDATAEventsJoining([
-          //   {
-          //     id: index,
-          //     chats: chat?.activeEvent === events?.id ? chat?.chats : [],
-          //     girlInvitation: events?.female + events?.femaleFriend,
-          //     data: events?.date,
-          //     status: events?.activeType,
-          //     image: events?.photos[0]?.image,
-          //     title: events?.placeName,
-          //     uidHost: events?.uidHost,
-          //   },
-          // ]);
-          console.warn(filteredChats);
 
           setDATAEventsJoining(mappedChats);
           setLoading(false);
@@ -419,8 +408,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               </View>
             )}
             renderItem={({item}) => {
-              console.warn(item);
-
               return (
                 <Item
                   inviteStatus={item?.invitedStatus}
@@ -451,17 +438,20 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                 <Button buttonStyle={{marginTop: 34}} title="Join event" />
               </View>
             )}
-            renderItem={({item}) => (
-              <ItemEventsJoining
-                image={item.image}
-                title={item.title}
-                chats={item.chats}
-                data={item.data}
-                activeEvent={item.activeEvent}
-                girlInvitation={item.girlInvitation}
-                status={item.status}
-              />
-            )}
+            renderItem={({item}) => {
+              return (
+                <ItemEventsJoining
+                  image={item.image}
+                  title={item.title}
+                  chats={item.chats}
+                  data={item.data}
+                  activeEvent={item.activeEvent}
+                  girlInvitation={item.girlInvitation}
+                  hostUid={item.hostUid}
+                  status={item.status}
+                />
+              );
+            }}
             keyExtractor={(item, index) => index.toString()}
           />
         )
