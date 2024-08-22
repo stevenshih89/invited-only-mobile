@@ -163,7 +163,7 @@ const VerifySocialProfile = () => {
           accountReviewed: false,
           accountPremium: false,
           notifications: [],
-          superInvites: 0,
+          weeklySuperInvites: 5,
           lastUpdateSuperInvite: Date.now()
         })
         .then(async () => {

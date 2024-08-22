@@ -65,7 +65,10 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const {myEvents} = useContext(EventContext);
 
   const activeEvent = useChat((i: any) => i?.activeEvent);
+  const setChat = useChat((i: any) => i.setActiveEvent);
   const user = useUser((i: any) => i?.user);
+
+  const isHost = user?.accountType.toLowerCase() === 'host';
 
   const fetchUserInfo = async () => {
     setLoading(true);
@@ -88,18 +91,32 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     }, []),
   );
 
-  const handleBuildEventsData = () => {
+  const handleBuildGuestEventsData = () => {
     firestore()
       .collection('messages')
       .get()
-      .then(i => {
-        const chats = i?.docs?.map(j => j?.data());
+      .then(chatDataQuery => {
+        if (chatDataQuery.empty) {
+          return;
+        }
+
+        const chatData = chatDataQuery.docs.map(i => i.data());
+        const filteredChats = chatData.filter(chatDataItem => {
+          return chatDataItem?.chats?.some(chat => {
+            return chat?.uid === user?.uid;
+          });
+        });
+
+        console.warn('filteredChats', filteredChats, user?.uid);
+
+        // const chats = i?.docs?.map(j => j?.data());
 
         myEvents?.map((events: any): void => {
           chats?.map((chat: FirebaseFirestoreTypes.DocumentData, index: number): void => {
             if (chat?.activeEvent === events?.id) {
               // @ts-ignore
-              setDATAEventsJoining((): void => [
+              setDATAEventsJoining((prev): void => [
+                ...prev,
                 {
                   id: index,
                   chats: chat?.activeEvent === events?.id ? chat?.chats : [],
@@ -108,7 +125,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   status: events?.activeType,
                   image: events?.photos[0]?.image,
                   title: events?.placeName,
-                  activeEvent: chat?.activeEvent,
+                  uidHost: events?.uidHost,
                 },
               ]);
             }
@@ -268,9 +285,9 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   const handleCheckTypeInvitedText = (type: string) => {
     switch (type) {
-      case 'invited':
-        return 'Pending'.toUpperCase();
-      case 'newInvited':
+      case 'approved':
+        return 'Approved'.toUpperCase();
+      case 'invite_match':
         return 'Invite Match'.toUpperCase();
       case 'accepted':
         return 'Accepted'.toUpperCase();
@@ -283,9 +300,9 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   const handleCheckTypeInvitedStyles = (type: string) => {
     switch (type) {
-      case 'invited':
+      case 'approved':
         return styles.textStatusPending;
-      case 'newInvited':
+      case 'invite_match':
         return styles.textStatusInviteMatch;
       case 'accepted':
         return styles.textStatusInvitationAccepted;
@@ -313,24 +330,78 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   };
 
   useEffect(() => {
-    if (!activeEvent) {
-      return;
+    let hostSubscriber: any;
+    let guestSubscriber: any;
+    if (isHost) {
+      hostSubscriber = firestore()
+        .collection('messages')
+        .doc(activeEvent)
+        .onSnapshot(documentSnapshot => {
+          if (!documentSnapshot.exists) {
+            return;
+          }
+          setMessages(documentSnapshot.data());
+          setLoading(false);
+        });
+    } else {
+      guestSubscriber = firestore()
+        .collection('messages')
+        .onSnapshot(async documentSnapshot => {
+          if (documentSnapshot.empty) {
+            return;
+          }
+          const chatData = documentSnapshot.docs.map(i => i.data());
+          const filteredChats = chatData.filter(chatDataItem => {
+            return chatDataItem?.chats?.some(chat => {
+              return chat?.uid === user?.uid;
+            });
+          });
+
+          const mappedChats: any = [];
+
+          for (const chat of filteredChats) {
+            const eventQuery = await firestore().collection('Events').doc(chat?.activeEvent).get();
+            if (!eventQuery.exists) {
+              continue;
+            }
+            const eventData = eventQuery.data();
+            const data = {
+              id: chat?.id,
+              girlInvitation: eventData?.female + eventData?.femaleFriend,
+              data: eventData?.date,
+              status: eventData?.activeType,
+              image: eventData?.photos[0]?.image,
+              title: eventData?.placeName,
+              uidHost: eventData?.uidHost,
+              chats: chat?.chats.filter(chat => chat.uid === user?.uid),
+            };
+            mappedChats.push(data);
+          }
+
+          // setDATAEventsJoining([
+          //   {
+          //     id: index,
+          //     chats: chat?.activeEvent === events?.id ? chat?.chats : [],
+          //     girlInvitation: events?.female + events?.femaleFriend,
+          //     data: events?.date,
+          //     status: events?.activeType,
+          //     image: events?.photos[0]?.image,
+          //     title: events?.placeName,
+          //     uidHost: events?.uidHost,
+          //   },
+          // ]);
+          console.warn(filteredChats);
+
+          setDATAEventsJoining(mappedChats);
+          setLoading(false);
+        });
+      // handleBuildGuestEventsData();
     }
 
-    handleBuildEventsData();
-
-    const subscriber = firestore()
-      .collection('messages')
-      .doc(activeEvent)
-      .onSnapshot(documentSnapshot => {
-        if (!documentSnapshot.exists) {
-          return;
-        }
-        setMessages(documentSnapshot.data());
-        setLoading(false);
-      });
-
-    return () => subscriber();
+    return () => {
+      hostSubscriber && hostSubscriber();
+      guestSubscriber && guestSubscriber();
+    };
   }, [activeEvent, loading]);
 
   return (
@@ -348,6 +419,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               </View>
             )}
             renderItem={({item}) => {
+              console.warn(item);
+
               return (
                 <Item
                   inviteStatus={item?.invitedStatus}

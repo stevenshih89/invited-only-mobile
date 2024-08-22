@@ -38,6 +38,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [isVisibleAcceptInvitationModal, setIsVisibleAcceptInvitationModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(MY_EVENTS);
   const [visibleModalEventRemindes, setVisibleModalEventRemindes] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const countMyEvent = useRef(0);
 
   const [activeModalEvent, setActiveModalEvent] = useState<any>({
@@ -54,7 +55,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [activeUserInfo, setActiveUserInfo] = useState<any>({});
 
   const [myEventsData, setMyEventsData] = useState([]);
-  const [eventsJoiningData, setEventsJoiningData] = useState([]); 
+  const [eventsJoiningData, setEventsJoiningData] = useState([]);
   const [hoursUntilEvent, setHoursUntilEvent] = useState<number>();
   const [currentEvent, setCurrentEvent] = useState();
 
@@ -83,8 +84,6 @@ const MyEvents: FC<any> = ({navigation}) => {
 
     return Math.floor(diffInHours);
   };
-
-  
 
   // const getFcmTokens = async (usersList: []) => {
   //   let tokens: string[] = [];
@@ -127,7 +126,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   //   }
   // };
 
-  const generateRandomId = (length: number) =>  {
+  const generateRandomId = (length: number) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     const charactersLength = characters.length;
@@ -135,80 +134,83 @@ const MyEvents: FC<any> = ({navigation}) => {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
-  }
+  };
 
-  const userData = useUser((i: any) => i?.user);  
+  const userData = useUser((i: any) => i?.user);
 
   const getFcmTokens = async (usersList: []) => {
-    
     let users: Object[] = [];
-    
-    const promises = usersList.map(async (item) => {
+
+    const promises = usersList.map(async item => {
       const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
       return {uid: userInfo?.data()?.uid, token: userInfo?.data()?.fcmToken};
     });
-  
-    users = await Promise.all(promises);    
-  
+
+    users = await Promise.all(promises);
+
     return users;
   };
 
   const sendNotification = async (usersList: [], title: string, body: string, mark: string) => {
-    const users = await getFcmTokens(usersList)
+    const users = await getFcmTokens(usersList);
 
     for (const user of users) {
       console.log('user of users', user);
-      
+
       const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
+        },
+        body: JSON.stringify({
+          to: user.token,
+          notification: {
+            title: title,
+            body: body,
           },
-          body: JSON.stringify({
-              to: user.token,
-              notification: {
-                  title: title,
-                  body: body
-              }
-          })
+        }),
       });
-      
+
       if (!response.ok) {
-          const error = await response.json();
-          console.error('error sending notification:', error);
+        const error = await response.json();
+        console.error('error sending notification:', error);
       } else {
-          const data = await response.json();
-          const userDoc = await firestore().collection('userInfo').doc(user.uid).get();
-          const userNotifications = userDoc.data()?.notifications || [];
-          const id = generateRandomId(8)
-          const notification = {
-              id,
-              title: title,
-              body: body,
-              mark: mark,
-              uid: userData?.uid
-          };
-          try {
-              await firestore().collection('userInfo').doc(user.uid).update({
-                  notifications: [...userNotifications, notification]
-              });
-          } catch (error) {
-              console.log('error update notifications', error);
-          }
+        const data = await response.json();
+        const userDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        const userNotifications = userDoc.data()?.notifications || [];
+        const id = generateRandomId(8);
+        const notification = {
+          id,
+          title: title,
+          body: body,
+          mark: mark,
+          uid: userData?.uid,
+        };
+        try {
+          await firestore()
+            .collection('userInfo')
+            .doc(user.uid)
+            .update({
+              notifications: [...userNotifications, notification],
+            });
+        } catch (error) {
+          console.log('error update notifications', error);
+        }
       }
-  }
+    }
   };
 
-  const checkTimeEvent = item => {    
+  const checkTimeEvent = item => {
     if (item) {
       const res = calculateHoursUntilEvent(item.date, item.hour);
       setHoursUntilEvent(res);
       setCurrentEvent(item);
       setVisibleModalEventRemindes(true);
-      if(res < 25) sendNotification(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
+      if (res < 25) {
+        sendNotification(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
+      }
       countMyEvent.current = countMyEvent.current + 1;
-
     }
   };
 
@@ -219,6 +221,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   }, [myEventsData, countMyEvent.current]);
 
   const fetchUserInfo = async () => {
+    setLoading(true)
     const user = auth().currentUser;
 
     if (user) {
@@ -227,8 +230,11 @@ const MyEvents: FC<any> = ({navigation}) => {
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
-      } catch (error: any) {}
+      } catch (error: any) {
+        setLoading(false)
+      }
     }
+    setLoading(false)
   };
 
   useFocusEffect(
@@ -340,13 +346,13 @@ const MyEvents: FC<any> = ({navigation}) => {
     try {
       const uid = user?.uid;
       const events = await firestore().collection('Events').get();
-      const data = events?.docs?.map(i => i?.data());      
+      const data = events?.docs?.map(i => i?.data());
 
       const filterData = data?.filter(obj => {
         return obj?.usersList?.some(user => {
           return user?.uid === uid && (user?.status === 'invite_match' || user?.status === 'accepted' || user?.status === 'approved');
         });
-      });      
+      });
       setEventsJoiningData(filterData);
       setEventsImJoining(filterData);
     } catch (e) {
@@ -357,7 +363,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
   const getMyEvents = async () => {
     try {
-      if (user) {        
+      if (user) {
         const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
         const data = querySnapshot?.docs?.map(i => i?.data());
         setMyEventsData(data);
@@ -680,15 +686,15 @@ const MyEvents: FC<any> = ({navigation}) => {
         userInfo={activeUserInfo}
         eventInfo={activeModalEvent}
       />
-      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={true} isPremium={userInfo?.accountPremium} />}
-      {hoursUntilEvent < 25 && hoursUntilEvent > 0 && <ModalEventRemindes
+      {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton={true} isPremium={userInfo?.accountPremium} />}
+      {hoursUntilEvent < 25 && hoursUntilEvent > 0 && (<ModalEventRemindes
         currentEvent={currentEvent}
         uid={userInfo?.uid}
         eventStarting={visibleModalEventRemindes}
         setEventStarting={setVisibleModalEventRemindes}
         hoursUntilEvent={hoursUntilEvent}
         countMyEvent={countMyEvent}
-      />}
+      />)}
     </>
   );
 };

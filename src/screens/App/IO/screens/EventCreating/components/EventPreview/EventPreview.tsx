@@ -28,13 +28,13 @@ import Close from 'assets/images/icons/close.svg';
 import {IOPath} from 'constants/pathLocations.ts';
 import auth from '@react-native-firebase/auth';
 import {useUser} from '../../../../../../../store/userStore/index.ts';
-import moment from "moment";
-import { RFValue } from 'react-native-responsive-fontsize';
-import { Satoshi500 } from 'constants/fonts.ts';
-import { Switch } from '@ant-design/react-native';
+import moment from 'moment';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {Satoshi500} from 'constants/fonts.ts';
+import {Switch} from '@ant-design/react-native';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import InstagramSlider from 'components/InstagramSlider/InstagramSlider.tsx';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env'
+import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 
 interface EventPreviewProps {
   // isEditing?: boolean;
@@ -55,24 +55,26 @@ interface EventPreviewProps {
   // maleFriend?: number;
 }
 
-const EventPreview: FC<EventPreviewProps> = ({
-  // isEditing,
-  // setIsVisibleSaveModal,
-  // prevImages,
-  // prevActiveType,
-  // prevPlaceName,
-  // prevName,
-  // prevDescription,
-  // prevDate,
-  // prevHour,
-  // prevAddress,
-  // prevMeetingSpot,
-  // female,
-  // male,
-  // femaleFriend,
-  // maleFriend,
-  // id,
-}): ReactElement => {
+const EventPreview: FC<EventPreviewProps> = (
+  {
+    // isEditing,
+    // setIsVisibleSaveModal,
+    // prevImages,
+    // prevActiveType,
+    // prevPlaceName,
+    // prevName,
+    // prevDescription,
+    // prevDate,
+    // prevHour,
+    // prevAddress,
+    // prevMeetingSpot,
+    // female,
+    // male,
+    // femaleFriend,
+    // maleFriend,
+    // id,
+  },
+): ReactElement => {
   // const eventTypes = [
   //   {id: 0, label: 'Custom'},
   //   {id: 1, label: 'Table'},
@@ -153,7 +155,9 @@ const EventPreview: FC<EventPreviewProps> = ({
   };
 
   const openLibrary = async (imageId: number): Promise<void> => {
-    const photoLibraryPermission = await makePermissionsRequest(isIos ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES);
+    const photoLibraryPermission = await makePermissionsRequest(
+      isIos ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
+    );
 
     if (photoLibraryPermission !== RESULTS.GRANTED && photoLibraryPermission !== RESULTS.LIMITED) {
       return;
@@ -225,7 +229,7 @@ const EventPreview: FC<EventPreviewProps> = ({
         hour,
         address,
         meetingSpot,
-      })
+      });
     } catch (e) {
       console.log(e);
     }
@@ -271,7 +275,7 @@ const EventPreview: FC<EventPreviewProps> = ({
           usersList: [],
           nameNewViewed: [],
           dateNewViewed: [],
-          hourNewViewed:[],
+          hourNewViewed: [],
           statusEvent: false,
           eventReviewed: false,
           hostImage: userHost?.photos[0]?.image,
@@ -355,22 +359,29 @@ const EventPreview: FC<EventPreviewProps> = ({
                 {photos[0]?.image ? (
                   <>
                     <Image resizeMode="cover" source={{uri: photos[0].image}} style={styles.eventPhotoSmallImage} />
-                    
-                      <View style={{position: 'absolute', top: 12, right: 12}}>
-                        <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center', width: 26, height: 26, borderRadius: 13, backgroundColor: orangeClose}}>
-                          <Close/>
-                        </TouchableOpacity>
-                      </View>
-                    
+
+                    <View style={{position: 'absolute', top: 12, right: 12}}>
+                      <TouchableOpacity
+                        style={{
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: 26,
+                          height: 26,
+                          borderRadius: 13,
+                          backgroundColor: orangeClose,
+                        }}>
+                        <Close />
+                      </TouchableOpacity>
+                    </View>
                   </>
                 ) : (
                   <Plus width={40} height={40} />
                 )}
               </TouchableOpacity>
               <View style={{position: 'absolute', bottom: 18, width: '100%', alignItems: 'center'}}>
-              <View style={styles.imageNumber}>
-                <Text style={styles.eventPhotoNumberText}>Main</Text>
-              </View>
+                <View style={styles.imageNumber}>
+                  <Text style={styles.eventPhotoNumberText}>Main</Text>
+                </View>
               </View>
             </View>
             <View style={[styles.eventPhotoRow, {marginBottom: 8}]}>
@@ -379,9 +390,17 @@ const EventPreview: FC<EventPreviewProps> = ({
                   {photos[1]?.image ? (
                     <>
                       <Image resizeMode="cover" source={{uri: photos[1].image}} style={styles.eventPhotoSmallImage} />
-                    <View style={{position: 'absolute', top: 12, right: 12}}>
-                        <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center', width: 26, height: 26, borderRadius: 13, backgroundColor: orangeClose}}>
-                          <Close/>
+                      <View style={{position: 'absolute', top: 12, right: 12}}>
+                        <TouchableOpacity
+                          style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: 26,
+                            height: 26,
+                            borderRadius: 13,
+                            backgroundColor: orangeClose,
+                          }}>
+                          <Close />
                         </TouchableOpacity>
                       </View>
                     </>
@@ -390,9 +409,9 @@ const EventPreview: FC<EventPreviewProps> = ({
                   )}
                 </TouchableOpacity>
                 <View style={{position: 'absolute', bottom: 18, width: '100%', alignItems: 'center'}}>
-                <View style={styles.imageNumber}>
-                  <Text style={styles.eventPhotoNumberText}>2</Text>
-                </View>
+                  <View style={styles.imageNumber}>
+                    <Text style={styles.eventPhotoNumberText}>2</Text>
+                  </View>
                 </View>
               </View>
               <View style={styles.eventPhotoSmallRightWr}>
@@ -400,9 +419,17 @@ const EventPreview: FC<EventPreviewProps> = ({
                   {photos[2]?.image ? (
                     <>
                       <Image resizeMode="cover" source={{uri: photos[2].image}} style={styles.eventPhotoSmallImage} />
-                    <View style={{position: 'absolute', top: 12, right: 12}}>
-                        <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center', width: 26, height: 26, borderRadius: 13, backgroundColor: orangeClose}}>
-                          <Close/>
+                      <View style={{position: 'absolute', top: 12, right: 12}}>
+                        <TouchableOpacity
+                          style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: 26,
+                            height: 26,
+                            borderRadius: 13,
+                            backgroundColor: orangeClose,
+                          }}>
+                          <Close />
                         </TouchableOpacity>
                       </View>
                     </>
@@ -411,9 +438,9 @@ const EventPreview: FC<EventPreviewProps> = ({
                   )}
                 </TouchableOpacity>
                 <View style={{position: 'absolute', bottom: 18, width: '100%', alignItems: 'center'}}>
-                <View style={styles.imageNumber}>
-                  <Text style={styles.eventPhotoNumberText}>3</Text>
-                </View>
+                  <View style={styles.imageNumber}>
+                    <Text style={styles.eventPhotoNumberText}>3</Text>
+                  </View>
                 </View>
               </View>
             </View>
@@ -447,7 +474,13 @@ const EventPreview: FC<EventPreviewProps> = ({
         </View>
         <View style={styles.eventDetailsWr}>
           <Text style={styles.eventDetailsTitle}>Event details</Text>
-          <Input value={name} onChange={val => setName(val)} placeholder="Enter event name" label="Event name" labelStyle={styles.inputLabel} />
+          <Input
+            value={name}
+            onChange={val => setName(val)}
+            placeholder="Enter event name"
+            label="Event name"
+            labelStyle={styles.inputLabel}
+          />
           <Input
             value={description}
             onChange={val => setDescription(val)}
@@ -456,52 +489,50 @@ const EventPreview: FC<EventPreviewProps> = ({
             labelStyle={styles.inputLabel}
           />
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View style={{flexDirection: 'column', flex: 1, marginRight: 10}}>
-          <Text style={styles.maskInputLabel}>Date</Text>
-          <TouchableOpacity onPress={() => setOpen(true)} style={styles.maskInputWr}>
-            <DatePicker
-              modal
-              mode="date"
-              open={open}
-              date={datePicker}
-              onConfirm={date => {
-                const data = moment(date).format('DD.MM.YYYY');
-                setOpen(false);
-                setDate(data);
-                setDatePicker(date);
-              }}
-              onCancel={() => {
-                setOpen(false);
-              }}
-            />
-            <Calendar />
-            <Text style={styles.maskInput}>{date ? date : 'MM/DD/YY'}</Text>
-            
-          </TouchableOpacity>
-          </View>
-          <View style={{flexDirection: 'column', flex: 1}}>
-          <Text style={styles.maskInputLabel}>Hour</Text>
-          <TouchableOpacity onPress={() => setOpenHour(true)} style={styles.maskInputWr}>
-            <DatePicker
-              modal
-              mode="time"
-              open={openHour}
-              date={hourPicker}
-              onConfirm={date => {
-                setOpenHour(false);
-                const time = moment(date).format('HH:mm');
-                setHour(time);
-                setHourPicker(date);
-              }}
-              onCancel={() => {
-                setOpenHour(false);
-              }}
-            />
-            <Clock />
-            <Text style={styles.maskInput}>{hour ? hour : '00:30'}</Text>
-            
-          </TouchableOpacity>
-          </View>
+            <View style={{flexDirection: 'column', flex: 1, marginRight: 10}}>
+              <Text style={styles.maskInputLabel}>Date</Text>
+              <TouchableOpacity onPress={() => setOpen(true)} style={styles.maskInputWr}>
+                <DatePicker
+                  modal
+                  mode="date"
+                  open={open}
+                  date={datePicker}
+                  onConfirm={date => {
+                    const data = moment(date).format('DD.MM.YYYY');
+                    setOpen(false);
+                    setDate(data);
+                    setDatePicker(date);
+                  }}
+                  onCancel={() => {
+                    setOpen(false);
+                  }}
+                />
+                <Calendar />
+                <Text style={styles.maskInput}>{date ? date : 'MM/DD/YY'}</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{flexDirection: 'column', flex: 1}}>
+              <Text style={styles.maskInputLabel}>Hour</Text>
+              <TouchableOpacity onPress={() => setOpenHour(true)} style={styles.maskInputWr}>
+                <DatePicker
+                  modal
+                  mode="time"
+                  open={openHour}
+                  date={hourPicker}
+                  onConfirm={date => {
+                    setOpenHour(false);
+                    const time = moment(date).format('HH:mm');
+                    setHour(time);
+                    setHourPicker(date);
+                  }}
+                  onCancel={() => {
+                    setOpenHour(false);
+                  }}
+                />
+                <Clock />
+                <Text style={styles.maskInput}>{hour ? hour : '00:30'}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
           <Input
             value={meetingSpot}
@@ -512,7 +543,9 @@ const EventPreview: FC<EventPreviewProps> = ({
             // InputIcon={Location}
           />
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <Text style={{fontSize: RFValue(14, 812), fontFamily: Satoshi500, color: whiteColor}}>Are you responsible for the pick up?</Text>
+            <Text style={{fontSize: RFValue(14, 812), fontFamily: Satoshi500, color: whiteColor}}>
+              Are you responsible for the pick up?
+            </Text>
             <Switch trackColor={{false: gray1Color, true: toggleColor}} />
           </View>
         </View>

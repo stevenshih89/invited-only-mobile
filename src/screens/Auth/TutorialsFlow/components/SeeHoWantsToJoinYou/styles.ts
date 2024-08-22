@@ -31,7 +31,7 @@ const useStyles = () => {
       fontFamily: Satoshi400,
       fontSize: RFValue(14, 812),
       textAlign: 'center',
-      marginTop: dimensionsHeight / 44,
+      // marginTop: dimensionsHeight / 44,
     },
     textWrapper: {
       alignItems: 'center',

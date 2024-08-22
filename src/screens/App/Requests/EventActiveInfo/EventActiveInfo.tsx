@@ -23,7 +23,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
   const {list} = route?.params;
-  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name} = list;  
+  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name} = list;
 
   const [usersListData, setUsersListsData] = useState<any>(usersList);
   const [activeTab, setActiveTab] = useState(GUEST_LIST);
@@ -288,13 +288,15 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
           <View style={{backgroundColor: blackColor, borderRadius: 10, paddingBottom: 20}}>
             <View style={{paddingTop: 0}}>
               <View>
-                {photos.length > 0 && <Image
+                {photos.length > 0 && (
+                  <Image
                     source={{
-                      uri: photos[0].image
+                      uri: photos[0].image,
                     }}
                     style={{width: '100%', height: 216, borderRadius: 20}}
                     resizeMode="cover"
-                  />}
+                  />
+                )}
                 {/* {photos?.map((i: any, index: number) => (
                   <Image
                     source={{
@@ -343,15 +345,15 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                 </View>
               </View>
               {photos?.map((i, index) => {
-                if(photos[index].image) {
-                  return(
+                if (photos[index].image) {
+                  return (
                     <Image
                       key={index}
                       source={{uri: i?.image}}
                       style={{width: '100%', height: 216, borderRadius: 20, marginBottom: 34}}
                       resizeMode="cover"
                     />
-                  )
+                  );
                 }
               })}
             </View>

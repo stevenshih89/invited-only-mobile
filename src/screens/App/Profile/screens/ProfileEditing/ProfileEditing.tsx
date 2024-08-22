@@ -20,6 +20,7 @@ import storage from '@react-native-firebase/storage';
 import ModalLocation from './ModalLocation';
 import ModalHomeAdress from './ModalHomeAdress';
 import { showToast } from 'helpers/showToast';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleSmokeModal, setIsVisibleSmokeModal] = useState<boolean>(false);
@@ -470,8 +471,9 @@ const ProfileEditing: FC = (): ReactElement => {
     <>
       <SafeAreaView style={{flex: 1, backgroundColor: blackColor}}>
         <View style={{flex: 1, paddingTop: screenHeight / 48, paddingHorizontal: 20}}>
-          <ScrollView
+          <KeyboardAwareScrollView
             showsHorizontalScrollIndicator={false}
+            enableResetScrollToCoords={false}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{paddingTop: 20, paddingBottom: 80}}
             style={{flex: 1, borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
@@ -498,7 +500,7 @@ const ProfileEditing: FC = (): ReactElement => {
             />
             <LanguagesKnow />
             <Button title="Save" buttonStyle={{marginTop: 34}} onPress={saveUserInfo} loading={loadingSave} />
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </View>
       </SafeAreaView>
       <ModalSmoke

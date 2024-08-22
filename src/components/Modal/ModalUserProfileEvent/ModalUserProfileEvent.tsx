@@ -210,20 +210,52 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     }
   };
 
+  const updateChatDocument = async () => {
+    const chatQuery = await firestore().collection('messages').doc(list?.id).get();
+    if (!chatQuery.exists) {
+      return;
+    }
+    const chatData = chatQuery?.data();
+    const chatList = chatData?.chats;
+    const updatedChatList = chatList?.map((chat: any) => {
+      if (chat.uid === uid) {
+        return {
+          ...chat,
+          invitedStatus: 'accepted',
+        };
+      }
+      return chat;
+    });
+    await firestore().collection('messages').doc(list?.id).update({
+      chats: updatedChatList,
+    });
+  };
+
+  const updateEventDocument = async () => {
+    const eventQuery = await firestore().collection('Events').doc(list?.id).get();
+    if (!eventQuery.exists) {
+      return;
+    }
+    const usersListData = eventQuery?.data()?.usersList;
+    const updatedUsersList = usersListData?.map((user: any) => {
+      if (user.uid === uid) {
+        return {
+          ...user,
+          status: 'approved',
+        };
+      }
+      return user;
+    });
+
+    await firestore().collection('Events').doc(list?.id).update({
+      usersList: updatedUsersList,
+    });
+  };
+
   const handleApproveGuestFromHost = async () => {
     try {
-      const updatedUsersList = usersList?.map(user => {
-        if (user.uid === uid) {
-          return {
-            ...user,
-            status: 'approved',
-          };
-        }
-      });
-
-      firestore().collection('Events').doc(list?.id).update({
-        usersList: updatedUsersList,
-      });
+      await updateChatDocument();
+      await updateEventDocument();
     } catch (e) {
       console.log(e);
     }
