@@ -12,7 +12,8 @@ import {Satoshi500} from 'constants/fonts';
 const ModalLockAccount: FC<{
   isPremium?: boolean;
   isVisibleButton: boolean;
-}> = ({isVisibleButton, isPremium}) => {
+  text?: string
+}> = ({isVisibleButton, isPremium, text}) => {
   const styles = useStyles();
 
   const navigation = useAppNavigation();
@@ -46,7 +47,7 @@ const ModalLockAccount: FC<{
         <View style={styles.lockDescWr}>
           <Text style={styles.lockedTitle}>Locked</Text>
           <Text style={styles.lockedSubtitle}>
-            Your account is under review. Thank you for your patience. You will be notified if your account is accepted
+            {text? text: 'Your account is under review. Thank you for your patience. You will be notified if your account is accepted'}
           </Text>
           <View style={styles.lockedHaveCodeWr}>
             <Text style={styles.lockedHaveCodeTitle}>Have a code?</Text>
