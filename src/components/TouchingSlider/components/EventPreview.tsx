@@ -65,6 +65,9 @@ const EventPreview: FC<{
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
   const numberPhotos = imagesUser?.length;
 
+  console.log('photos', photos);
+  
+
   function calculateAge(birthDateString: string) {
     const parts = birthDateString.split('.');
     const birthDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
@@ -293,7 +296,7 @@ const EventPreview: FC<{
           style={styles.imageBackground}
           imageStyle={styles.imageStyle}
           resizeMode="cover">
-          {photos.length > 1 && (
+          {photos && photos.length > 1 && (
             <>
               <View style={styles.wrapperBar}>
                 {[...Array(photos.length)].map((_, index) => (
@@ -332,7 +335,7 @@ const EventPreview: FC<{
             <IOIcon />
           </TouchableOpacity>
         </View>
-        <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={photos[0].image} />
+        <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={photos? photos[0]?.image: ''} />
       </View>
     );
   }

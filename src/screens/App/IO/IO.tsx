@@ -74,7 +74,7 @@ const IO: FC = (): JSX.Element => {
 
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
-  const {activeEventDate} = useContext(EventsDate);
+  const {activeEventDate} = useContext(EventsDate);  
 
   const userHost = useUser((i: any) => i?.user);
 
@@ -544,8 +544,6 @@ const IO: FC = (): JSX.Element => {
       Alert.alert('Error', e.message || 'Something went wrong');
     }
 
-    console.warn('filteredEvents', filteredEvents);
-
     async function enrichElementsWithPhotos(elements) {
       const promises = elements?.map(async element => {
         const docRef = firestore().collection('userInfo').doc(element?.uid);
@@ -578,252 +576,253 @@ const IO: FC = (): JSX.Element => {
     filterDataWM?.map((event: any) => {
       const currUserPhotos = event?.userPhotos?.map((photo: any) => photo?.image);
       const eventPhotos = event?.photos?.map((photo: any) => photo?.image);
-
-      data.push({
-        component: (
-          <View style={styles.wrapperFakeCard}>
-            <TouchingSlider
-              hostInfo={event?.hostInfo}
-              placeName={event?.placeName}
-              girls={event?.female + event?.femaleFriend}
-              date={event?.date}
-              isShowEventPreview={true}
-              isShowWantsJoin={false}
-              isShowInvitesTooltip={false}
-              isShowCardButtons={false}
-              eventPhotos={event?.photos}
-              photos={currUserPhotos}
-              name={event?.name}
-            />
-            <View style={styles.bioWrapper}>
-              <Text style={styles.titleSection}>Host profile</Text>
-              <TouchableOpacity // @ts-ignore
-                onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: event?.uid}})}
-                style={styles.wrapperHostProfile}>
-                <View style={{flexDirection: 'row'}}>
-                  {event?.hostImage && (
-                    <View style={{flexDirection: 'row'}}>
-                      <Image source={{uri: event?.hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
-                      {/*<View style={styles.greenCircle} />*/}
+        data.push({
+          component: (
+            <View style={styles.wrapperFakeCard}>
+              <TouchingSlider
+                hostInfo={event?.hostInfo}
+                placeName={event?.placeName}
+                girls={event?.female + event?.femaleFriend}
+                date={event?.date}
+                isShowEventPreview={true}
+                isShowWantsJoin={false}
+                isShowInvitesTooltip={false}
+                isShowCardButtons={false}
+                eventPhotos={event?.photos}
+                photos={currUserPhotos}
+                name={event?.name}
+              />
+              <View style={styles.bioWrapper}>
+                <Text style={styles.titleSection}>Host profile</Text>
+                <TouchableOpacity // @ts-ignore
+                  onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: event?.uid}})}
+                  style={styles.wrapperHostProfile}>
+                  <View style={{flexDirection: 'row'}}>
+                    {event?.hostImage && (
+                      <View style={{flexDirection: 'row'}}>
+                        <Image source={{uri: event?.hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
+                        {/*<View style={styles.greenCircle} />*/}
+                      </View>
+                    )}
+                    <View style={{marginLeft: 13}}>
+                      <View
+                        style={{
+                          borderRadius: 4,
+                          borderColor: whiteColor,
+                          borderWidth: 1,
+                          borderStyle: 'solid',
+                          alignSelf: 'flex-start',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          paddingHorizontal: 6,
+                          paddingVertical: 2,
+                        }}>
+                        <Text style={{color: whiteColor, textTransform: 'capitalize', fontFamily: Satoshi700, fontSize: RFValue(10, 812)}}>
+                          {event?.hostInfo.accountType}
+                        </Text>
+                      </View>
+                      <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
+                        <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
+                          {event?.hostName}, {calculateAge(event?.hostInfo?.date)}
+                        </Text>
+                        {event?.hostInfo?.accountConfirmed && <CheckStarWhite />}
+                      </View>
                     </View>
-                  )}
-                  <View style={{marginLeft: 13}}>
-                    <View
-                      style={{
-                        borderRadius: 4,
-                        borderColor: whiteColor,
-                        borderWidth: 1,
-                        borderStyle: 'solid',
-                        alignSelf: 'flex-start',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        paddingHorizontal: 6,
-                        paddingVertical: 2,
-                      }}>
-                      <Text style={{color: whiteColor, textTransform: 'capitalize', fontFamily: Satoshi700, fontSize: RFValue(10, 812)}}>
-                        {event?.hostInfo.accountType}
-                      </Text>
-                    </View>
-                    <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
-                      <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
-                        {event?.hostName}, {calculateAge(event?.hostInfo?.date)}
-                      </Text>
-                      {event?.hostInfo?.accountConfirmed && <CheckStarWhite />}
+                  </View>
+                  <View>
+                    <Text style={styles.textSeeProfile}>
+                      <ArrowRightIcon width={14} height={14} />
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <Text style={[styles.titleSection, {marginTop: 20}]}>Event details</Text>
+                <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}}>Place name</Text>
+                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.placeName}</Text>
+                <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+                <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
+                  Event name
+                </Text>
+                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.name}</Text>
+                <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+                <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
+                  Event description
+                </Text>
+                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>
+                  {event?.description}
+                </Text>
+                <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+                <View style={{marginTop: 28}}>
+                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                    <CalendarIcon width={16} height={16} />
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{event?.date}</Text>
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                    <ClockIcon width={16} height={16} />
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{event?.hour}</Text>
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                    <LocationIcon width={16} height={16} />
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
+                      {event?.address}
+                    </Text>
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                    <PeopleIcon width={16} height={16} />
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
+                      {event?.female + event?.femaleFriend}x girl
+                    </Text>
+                  </View>
+                </View>
+                <View>
+                  {eventPhotos?.map((image: string) => (
+                    <Image source={{uri: image}} style={{width: '100%', height: screenHeight / 4, marginVertical: 10, borderRadius: 20}} />
+                  ))}
+                </View>
+                <Text style={styles.titleSection}>Already joined</Text>
+                <View>
+                  <View style={styles.wrapperNumberPeople}>
+                    <Text style={styles.textUnderSubTitle}>Female</Text>
+                    <View style={styles.rowNumberPeople}>
+                      <Text style={styles.textNumberInvitedPeople}>{event?.female}</Text>
                     </View>
                   </View>
                 </View>
                 <View>
-                  <Text style={styles.textSeeProfile}>
-                    <ArrowRightIcon width={14} height={14} />
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <Text style={[styles.titleSection, {marginTop: 20}]}>Event details</Text>
-              <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}}>Place name</Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.placeName}</Text>
-              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
-                Event name
-              </Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.name}</Text>
-              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
-                Event description
-              </Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>
-                {event?.description}
-              </Text>
-              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-              <View style={{marginTop: 28}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                  <CalendarIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{event?.date}</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                  <ClockIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{event?.hour}</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                  <LocationIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
-                    {event?.address}
-                  </Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                  <PeopleIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
-                    {event?.female + event?.femaleFriend}x girl
-                  </Text>
-                </View>
-              </View>
-              <View>
-                {eventPhotos?.map((image: string) => (
-                  <Image source={{uri: image}} style={{width: '100%', height: screenHeight / 4, marginVertical: 10, borderRadius: 20}} />
-                ))}
-              </View>
-              <Text style={styles.titleSection}>Already joined</Text>
-              <View>
-                <View style={styles.wrapperNumberPeople}>
-                  <Text style={styles.textUnderSubTitle}>Female</Text>
-                  <View style={styles.rowNumberPeople}>
-                    <Text style={styles.textNumberInvitedPeople}>{event?.female}</Text>
+                  <View style={[styles.wrapperNumberPeople, {marginTop: 12}]}>
+                    <Text style={styles.textUnderSubTitle}>Male</Text>
+                    <View style={styles.rowNumberPeople}>
+                      <Text style={styles.textNumberInvitedPeople}>{event?.male}</Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-              <View>
-                <View style={[styles.wrapperNumberPeople, {marginTop: 12}]}>
-                  <Text style={styles.textUnderSubTitle}>Male</Text>
-                  <View style={styles.rowNumberPeople}>
-                    <Text style={styles.textNumberInvitedPeople}>{event?.male}</Text>
-                  </View>
+                <View style={styles.wrapperButtonsFooter}>
+                  <TouchableOpacity
+                    onPress={() => handleChangeListsEvents(event?.uid, 'reject')}
+                    style={[styles.buttonCloseOrCheck, {marginLeft: 1}]}>
+                    <View
+                      style={{
+                        backgroundColor: transparentWhite56Color,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 50,
+                        position: 'absolute',
+                        top: -1,
+                        left: -1,
+                      }}
+                    />
+                    <View
+                      style={{
+                        backgroundColor: transparentWhite56Color,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 50,
+                        position: 'absolute',
+                        right: -1,
+                        bottom: -1,
+                      }}
+                    />
+                    <View
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: blackColor,
+                        borderRadius: 50,
+                        zIndex: 10,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <CloseIcon />
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenSuperInvite}>
+                    <View
+                      style={{
+                        backgroundColor: transparentWhite56Color,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 50,
+                        position: 'absolute',
+                        top: -1,
+                        left: -1,
+                      }}
+                    />
+                    <View
+                      style={{
+                        backgroundColor: transparentWhite56Color,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 50,
+                        position: 'absolute',
+                        right: -1,
+                        bottom: -1,
+                      }}
+                    />
+                    <View
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: blackColor,
+                        borderRadius: 50,
+                        zIndex: 10,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <FlashIcon />
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handleChangeListsEvents(event?.uid, 'accept')}
+                    style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
+                    <View
+                      style={{
+                        backgroundColor: transparentWhite56Color,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 50,
+                        position: 'absolute',
+                        top: -1,
+                        left: -1,
+                      }}
+                    />
+                    <View
+                      style={{
+                        backgroundColor: transparentWhite56Color,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 50,
+                        position: 'absolute',
+                        right: -1,
+                        bottom: -1,
+                      }}
+                    />
+                    <View
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: blackColor,
+                        borderRadius: 50,
+                        zIndex: 10,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <CheckIcon />
+                    </View>
+                  </TouchableOpacity>
                 </View>
+                <Text style={styles.textHideNadSendReport}>Reject and send report</Text>
               </View>
-              <View style={styles.wrapperButtonsFooter}>
-                <TouchableOpacity
-                  onPress={() => handleChangeListsEvents(event?.uid, 'reject')}
-                  style={[styles.buttonCloseOrCheck, {marginLeft: 1}]}>
-                  <View
-                    style={{
-                      backgroundColor: transparentWhite56Color,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 50,
-                      position: 'absolute',
-                      top: -1,
-                      left: -1,
-                    }}
-                  />
-                  <View
-                    style={{
-                      backgroundColor: transparentWhite56Color,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 50,
-                      position: 'absolute',
-                      right: -1,
-                      bottom: -1,
-                    }}
-                  />
-                  <View
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      backgroundColor: blackColor,
-                      borderRadius: 50,
-                      zIndex: 10,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <CloseIcon />
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenSuperInvite}>
-                  <View
-                    style={{
-                      backgroundColor: transparentWhite56Color,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 50,
-                      position: 'absolute',
-                      top: -1,
-                      left: -1,
-                    }}
-                  />
-                  <View
-                    style={{
-                      backgroundColor: transparentWhite56Color,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 50,
-                      position: 'absolute',
-                      right: -1,
-                      bottom: -1,
-                    }}
-                  />
-                  <View
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      backgroundColor: blackColor,
-                      borderRadius: 50,
-                      zIndex: 10,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <FlashIcon />
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleChangeListsEvents(event?.uid, 'accept')}
-                  style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
-                  <View
-                    style={{
-                      backgroundColor: transparentWhite56Color,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 50,
-                      position: 'absolute',
-                      top: -1,
-                      left: -1,
-                    }}
-                  />
-                  <View
-                    style={{
-                      backgroundColor: transparentWhite56Color,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 50,
-                      position: 'absolute',
-                      right: -1,
-                      bottom: -1,
-                    }}
-                  />
-                  <View
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      backgroundColor: blackColor,
-                      borderRadius: 50,
-                      zIndex: 10,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <CheckIcon />
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <Text style={styles.textHideNadSendReport}>Reject and send report</Text>
             </View>
-          </View>
-        ),
-        info: event,
-      });
+          ),
+          info: event,
+        });
     });
 
-    const recommendedData = sortByInterests(sortByDate(data)?.reverse(), userHost);
+    const filteredData = data.filter(item => item.info && item.info.eventReviewed);    
+    
+    const recommendedData = sortByInterests(sortByDate(filteredData)?.reverse(), userHost);
 
     setTimeout(() => {
-      setEvents([...recommendedData]);
+      setEvents(recommendedData);
       allEventsLength.current = data.length
     }, 3000);
   };
@@ -1216,7 +1215,7 @@ const IO: FC = (): JSX.Element => {
       </View>
     );
   }
-
+  
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
@@ -1257,6 +1256,9 @@ const IO: FC = (): JSX.Element => {
             // :
             // <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
           }
+          {!activeEvent.eventReviewed && userInfo.accountType === 'host' && <ModalLockAccount 
+          isVisibleButton={false} 
+          text='Your event is under review. Thank you for your patience. You will be notified if your account is accepted'/>}
           <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
           <SuperInvite
             isVisibleSuperInvite={isVisibleSuperInvite}
