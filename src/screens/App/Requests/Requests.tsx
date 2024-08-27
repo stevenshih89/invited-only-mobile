@@ -140,7 +140,7 @@ const Requests: FC = (): ReactElement => {
     return <ActivityIndicator style={styles.container} />;
   }
 
-  if (!loading && (isHost ? !requestsForHost?.requestsList?.length : !dataForGuest?.length)) {
+  if (!loading && userInfo?.accountConfirmed && (isHost ? !requestsForHost?.requestsList?.length : !dataForGuest?.length)) {
     return (
       <View style={styles.container}>
         <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
@@ -170,8 +170,14 @@ const Requests: FC = (): ReactElement => {
     return inputDate < currentDate;
   }
 
+  console.log('!userInfo?.accountConfirmed', !userInfo?.accountConfirmed );
+  console.log('loading', loading);
+  
+  
+
   return (
     <View style={styles.container}>
+      {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}
       {expressionForHost || expressionForGuest ? (
         <FlatList
           // @ts-ignore
@@ -218,7 +224,6 @@ const Requests: FC = (): ReactElement => {
           )}
         </>
       )}
-      <>{!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}</>
     </View>
   );
 };
