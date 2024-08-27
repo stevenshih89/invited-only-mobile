@@ -154,18 +154,18 @@ async function onDisplayNotification(title, body, data) {
   });
 
   // Display a notification
-  await notifee.displayNotification({
-    title: title,
-    body: body,
-    data: data,
-    android: {
-      channelId,
-      // pressAction is needed if you want the notification to open the app when pressed
-      pressAction: {
-        id: 'default',
-      },
-    },
-  });
+  // await notifee.displayNotification({
+  //   title: title,
+  //   body: body,
+  //   data: data,
+  //   android: {
+  //     channelId,
+  //     // pressAction is needed if you want the notification to open the app when pressed
+  //     pressAction: {
+  //       id: 'default',
+  //     },
+  //   },
+  // });
 }
 
 // it would be called when the app in foreground state
