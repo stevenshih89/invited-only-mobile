@@ -133,6 +133,7 @@ const InvitationCode: FC = (): JSX.Element => {
           accountPremium: false,
           notifications: [],
           weeklySuperInvites: 5,
+          superInvites: 0,
           lastUpdateSuperInvite: Date.now()
         })
         .then(async () => {
