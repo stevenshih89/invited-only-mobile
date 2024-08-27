@@ -16,11 +16,44 @@
         }
       ],
       "productID" : "io_80_30_si",
-      "referenceName" : "30 Super Invite",
+      "referenceName" : "30 Super Invites",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "45",
+      "familyShareable" : false,
+      "internalID" : "B2F84640",
+      "localizations" : [
+        {
+          "description" : "",
+          "displayName" : "",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "io_46_15_si",
+      "referenceName" : "15 Super Invites",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "25",
+      "familyShareable" : false,
+      "internalID" : "CC1BFAE0",
+      "localizations" : [
+        {
+          "description" : "",
+          "displayName" : "",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "io_25_5_si",
+      "referenceName" : "5 Super Invites",
       "type" : "Consumable"
     }
   ],
   "settings" : {
+    "_compatibilityTimeRate" : {
+      "3" : 6
+    },
     "_failTransactionsEnabled" : false,
     "_locale" : "en_US",
     "_storefront" : "USA",
@@ -70,7 +103,8 @@
         "enabled" : false,
         "name" : "Offer Code Redeem Sheet"
       }
-    ]
+    ],
+    "_timeRate" : 1004
   },
   "subscriptionGroups" : [
     {
@@ -102,6 +136,56 @@
           "productID" : "io_59_1w",
           "recurringSubscriptionPeriod" : "P1W",
           "referenceName" : "Weekly",
+          "subscriptionGroupID" : "97D1B37B",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "25",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "A2C2B4E6",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "",
+              "displayName" : "",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "io_25_wk",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Annual",
+          "subscriptionGroupID" : "97D1B37B",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "29",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "41516DE4",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "",
+              "displayName" : "",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "io_29_3m",
+          "recurringSubscriptionPeriod" : "P3M",
+          "referenceName" : "Months ",
           "subscriptionGroupID" : "97D1B37B",
           "type" : "RecurringSubscription"
         }
