@@ -18,7 +18,7 @@ const EnterBirthday: FC = (): JSX.Element => {
   const [month, setMonth] = useState<string>('');
   const [day, setDay] = useState<string>('');
   const [year, setYear] = useState<string>('');
-  const [showAge, setShowAge] = useState<boolean>(false);
+  const [showAge, setShowAge] = useState<boolean>(true);
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 

@@ -65,13 +65,12 @@ const AddBiusness: FC = (): JSX.Element => {
                 style={{
                   width: '100%',
                   marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 10,
                 }}>
                 <Text
                   style={{
                     color: whiteColor,
                     fontFamily: Satoshi500,
-                    fontSize: RFValue(40, 812),
+                    fontSize: RFValue(48, 812),
                     marginBottom: 18,
                   }}>
                   Join as a Business and get more client's.

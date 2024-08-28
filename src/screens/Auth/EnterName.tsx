@@ -12,14 +12,18 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {turnNotificationsPath} from 'constants/pathLocations';
 import Input from 'components/Inputs/Input';
 import {AuthContext} from 'contexts/AuthContext.tsx';
+import { isName } from 'helpers/regExpValidators';
 
 const EnterName: FC = (): JSX.Element => {
   const [name, setName] = useState<string>('');
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
+  const [errorInputName, setErrorInputName] = useState<boolean>(false)
 
   const handleNameChange = (value: string) => {
-    const truncatedText = value.slice(0, 40);
-    setName(truncatedText);
+    if(!isName(value) && name.length > 2 || value.length > 14) {
+      setErrorInputName(true)
+    } else setErrorInputName(false)
+    setName(value)
   };
 
   const navigation = useAppNavigation();
@@ -76,7 +80,7 @@ const EnterName: FC = (): JSX.Element => {
                 style={{
                   width: '100%',
                   marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 10,
+                  marginTop: screenHeight / 8,
                 }}>
                 <Text
                   style={{
@@ -100,11 +104,11 @@ const EnterName: FC = (): JSX.Element => {
                 </Text>
               </View>
               <View style={{width: '100%'}}>
-                <Input value={name} onChange={handleNameChange} containerStyle={{width: '100%'}} placeholder="Enter your name" />
+                <Input isError={errorInputName} errorText='The name must be up to 14 characters long and contain no special characters.' value={name} onChange={handleNameChange} containerStyle={{width: '100%'}} placeholder="Enter your name" />
               </View>
             </View>
             <View style={{marginBottom: 4}}>
-              <Button disabled={name.length < 3} onPress={() => handleNext()} title="Continue" />
+              <Button disabled={name.length < 3 || errorInputName} onPress={() => handleNext()} title="Continue" />
             </View>
           </View>
         </SafeAreaView>

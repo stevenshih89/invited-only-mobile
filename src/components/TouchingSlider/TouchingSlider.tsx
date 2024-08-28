@@ -59,6 +59,7 @@ interface TouchingSliderProps {
   isPremium?: string;
   fromJoinEventsScreen?: boolean;
   changeEventList: () => void;
+  isProfile?: boolean;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
@@ -84,6 +85,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   hostInfo,
   isPremium,
   fromJoinEventsScreen = false,
+  isProfile,
   changeEventList
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
@@ -261,7 +263,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             </View>
             <View style={styles.rowBioInfo}>
               <Text style={styles.textName}>{name}{age? <Text>,</Text>: null}</Text>
-              <Text style={styles.textYears}>{age}</Text>
+              {!isProfile && <Text style={styles.textYears}>{age}</Text>}
               <View style={{marginLeft: 10}}>{confirmedAccount && <CheckStarWhite width={22} height={22} />}</View>
             </View>
             <View style={styles.wrapperFooterCard}>

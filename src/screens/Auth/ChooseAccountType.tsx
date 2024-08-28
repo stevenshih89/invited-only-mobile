@@ -76,7 +76,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
                 style={{
                   width: '100%',
                   marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 14,
+                  marginTop: screenHeight / 8,
                 }}>
                 <Text
                   style={{
