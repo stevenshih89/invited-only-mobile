@@ -17,6 +17,7 @@ import {EventContext} from 'contexts/EventContext';
 import {useUser} from '../../../store/userStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import Loading from 'components/Loading/Loading';
+import moment from 'moment';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
@@ -74,8 +75,8 @@ const Requests: FC = (): ReactElement => {
 
   const filterByUid = (array, uid) => {
     return array?.filter(item => {
-      if (Array?.isArray(item?.requestsList)) {
-        return item?.requestsList?.some(request => request?.uid === uid);
+      if (Array?.isArray(item?.usersList)) {
+        return item?.usersList?.some(request => request?.uid === uid && request?.status === 'liked');
       } else {
         return false;
       }
@@ -90,6 +91,8 @@ const Requests: FC = (): ReactElement => {
         const data = querySnapshot?.docs?.map(i => i?.data());
         // console.log('filter', filterByUid(data, user?.uid));
         const filterUid = filterByUid(data, user?.uid);
+        console.warn('filterUid', filterUid);
+
         // console.log('filterUid', filterUid);
         setDataForGuest(filterUid);
       } catch (error: any) {
@@ -136,8 +139,46 @@ const Requests: FC = (): ReactElement => {
   const expressionForHost = isHost && !!requestsForHost?.requestsList?.length;
   const expressionForGuest = !isHost && !!dataForGuest.length;
 
+  function isDateTimePassed(dateString: string, timeString: string) {
+    if (typeof dateString !== 'string' || typeof timeString !== 'string') {
+      return false;
+    }
+
+    const [day, month, year] = dateString.split('.').map(Number);
+    const [hours, minutes] = timeString.split(':').map(Number);
+
+    const isExpired = moment().isAfter(moment(`${year}-${month}-${day} ${hours}:${minutes}`));
+
+    return isExpired;
+  }
+
   if (loading && !list) {
     return <ActivityIndicator style={styles.container} />;
+  }
+
+  if (!userInfo?.accountConfirmed && !loading) {
+    return (
+      <View style={styles.container}>
+        <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />
+      </View>
+    );
+  }
+
+  if (!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myEventsList?.length) {
+    return (
+      <View style={styles.container}>
+        <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
+          {
+            <Loading
+              userInfo={list}
+              topPosition={false}
+              wrapperText={false}
+              text={isDateTimePassed(list?.date, list?.hour) ? `Event Expired: ${list.date}` : `Event Start: ${list.date}`}
+            />
+          }
+        </View>
+      </View>
+    );
   }
 
   if (!loading && userInfo?.accountConfirmed && (isHost ? !requestsForHost?.requestsList?.length : !dataForGuest?.length)) {
@@ -156,25 +197,6 @@ const Requests: FC = (): ReactElement => {
     );
   }
 
-  function isDateTimePassed(dateString: string, timeString: string) {
-    if (typeof dateString !== 'string' || typeof timeString !== 'string') {
-      return false;
-    }
-
-    const [day, month, year] = dateString.split('.').map(Number);
-    const [hours, minutes] = timeString.split(':').map(Number);
-
-    const inputDate = new Date(year, month - 1, day, hours, minutes);
-    const currentDate = new Date();
-
-    return inputDate < currentDate;
-  }
-
-  console.log('!userInfo?.accountConfirmed', !userInfo?.accountConfirmed );
-  console.log('loading', loading);
-  
-  
-
   return (
     <View style={styles.container}>
       {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}
@@ -190,16 +212,16 @@ const Requests: FC = (): ReactElement => {
           ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
           renderItem={({item}) => {
             return isHost ? (
-              <ItemRequestHost list={list} item={item} />
+              <ItemRequestHost list={list} item={item} setRequestsForHost={setRequestsForHost} />
             ) : (
               // @ts-ignore
-              <ItemRequestGuest list={item} item={item?.usersList?.filter(i => i?.uid === user?.uid)} />
+              <ItemRequestGuest list={item} item={item?.usersList?.filter(i => i?.uid === user?.uid)} setDataForGuest={setDataForGuest} />
             );
           }}
         />
       ) : (
         <>
-          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEventsList?.length && !loading &&(
+          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEventsList?.length && !loading && (
             <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
               <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                 Let’s create an event
@@ -210,7 +232,7 @@ const Requests: FC = (): ReactElement => {
               <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
             </View>
           )}
-          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myEventsList?.length && (
+          {/* {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myEventsList?.length && (
             <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
               {
                 <Loading
@@ -221,7 +243,7 @@ const Requests: FC = (): ReactElement => {
                 />
               }
             </View>
-          )}
+          )} */}
         </>
       )}
     </View>

@@ -43,7 +43,7 @@ export const getFcmToken = async () => {
   await registerAppWithFCM();
   try {
     token = await messaging().getToken();
-    // console.log('getFcmToken-->', token);
+    console.warn('getFcmToken-->', token);
   } catch (error) {
     console.log('getFcmToken Device Token error ', error);
   }
@@ -170,7 +170,6 @@ async function onDisplayNotification(title, body, data) {
 
 // it would be called when the app in foreground state
 export function onMatchNotificationSubscription(handler: (message: FirebaseMessagingTypes.RemoteMessage) => void) {
-  
   return messaging().onMessage(async remoteMessage => {
     console.warn('mes', remoteMessage);
 
@@ -178,7 +177,7 @@ export function onMatchNotificationSubscription(handler: (message: FirebaseMessa
     await notifee.requestPermission();
 
     // DEVNOTE: Just for debugging, remove log in release.
-    console.log('onMatchNotificationSubscription Received Match', JSON.stringify(remoteMessage));
+    console.warn('onMatchNotificationSubscription Received Match', JSON.stringify(remoteMessage));
     if (remoteMessage.data?.type === 'match') {
       handler(remoteMessage);
     }

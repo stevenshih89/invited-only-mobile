@@ -21,11 +21,10 @@ import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 
-const ItemRequestHost = ({item, list}: any) => {
+const ItemRequestHost = ({item, list, setRequestsForHost}: any) => {
   console.log('item', item);
   console.log('list', list);
-  
-  
+
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState({accountType: ''});
@@ -98,6 +97,10 @@ const ItemRequestHost = ({item, list}: any) => {
         status: 'guest approved',
       });
       sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
+      setRequestsForHost(prev => ({
+        ...prev,
+        requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),
+      }));
     } catch (e) {
       console.log(e);
       showToast('inviteMatch', '', "There's been an error");
@@ -117,6 +120,10 @@ const ItemRequestHost = ({item, list}: any) => {
       await firestore().collection('Events').doc(list?.id).update({
         requestsList: updateRequestsList,
       });
+      setRequestsForHost(prev => ({
+        ...prev,
+        requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),
+      }));
     } catch (e) {
       console.log(e);
     }

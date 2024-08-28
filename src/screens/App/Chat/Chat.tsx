@@ -7,7 +7,7 @@ import auth from '@react-native-firebase/auth';
 //import components
 import useStyles from 'screens/App/Chat/styles.ts';
 
-import {chatCorrespondencePath} from 'constants/pathLocations.ts';
+import {chatCorrespondencePath, IOPath} from 'constants/pathLocations.ts';
 import ModalHostMenu from 'components/Modal/ModalHostMenu/ModalHostMenu.tsx';
 
 //import icons
@@ -24,6 +24,8 @@ import {blackColor, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import {useFocusEffect} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 type ItemProps = {
   title: string;
@@ -401,10 +403,16 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             showsVerticalScrollIndicator={false}
             data={messages?.chats}
             ListEmptyComponent={() => (
-              <View style={{height: '100%', marginTop: 104}}>
-                <Text style={styles.textYouNeedToJoin}>You don't have any chat</Text>
-                {/* <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
-                <Button buttonStyle={{marginTop: 34}} title="Join event" /> */}
+              <View style={{height: '100%', marginTop: 30}}>
+                <View style={{flex: 1, justifyContent: 'center'}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(28, 812), marginBottom: 18}}>
+                    You don't have any chat
+                  </Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
+                    Get started by swiping to {isHost ? 'invite guests' : 'join events and begin receiving messages.'}
+                  </Text>
+                  <Button title="Start swiping" onPress={() => navigation.navigate(IOPath as never)} />
+                </View>
               </View>
             )}
             renderItem={({item}) => {
