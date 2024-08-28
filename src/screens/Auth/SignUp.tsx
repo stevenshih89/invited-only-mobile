@@ -70,7 +70,7 @@ const SignUp: FC = (): JSX.Element => {
               <View
                 style={{
                   marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 10,
+                  marginTop: screenHeight / 8,
                 }}>
                 <Text
                   style={{
