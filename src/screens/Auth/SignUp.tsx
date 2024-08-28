@@ -70,14 +70,14 @@ const SignUp: FC = (): JSX.Element => {
               <View
                 style={{
                   marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 14,
+                  marginTop: screenHeight / 10,
                 }}>
                 <Text
                   style={{
                     color: whiteColor,
                     fontFamily: Satoshi500,
                     fontSize: RFValue(48, 812),
-                    marginBottom: 18,
+                    marginBottom: 8,
                   }}>
                   Your phone
                 </Text>
