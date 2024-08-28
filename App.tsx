@@ -11,7 +11,7 @@ const App: FC = (): JSX.Element => {
   useEffect(() => {
     if (Platform.OS === 'ios') {
       if (IO_PUBLICK_RC_IOS) {
-        Purchases.configure({apiKey: IO_PUBLICK_RC_IOS});
+        Purchases.configure({apiKey: IO_PUBLICK_RC_IOS, usesStoreKit2IfAvailable: false});
       }
     } else if (Platform.OS === 'android') {
     }

@@ -197,15 +197,19 @@ const Payment: FC = (): JSX.Element => {
   }
 
   const pay = async (pack: PurchasesPackage) => {
+    
     setLoaderVisible(true)
     try {
       const { customerInfo } = await Purchases.purchasePackage(pack);
-      updateUser()
+      console.log('customerInfo', customerInfo);
+      
+      
       setSuccessfulPay(true)
       setTimeout(() => {
         setLoaderVisible(false)
         showHostPremium()
       }, 1500)
+      updateUser()
       console.log('pay successful');
       // if (
       //   typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
