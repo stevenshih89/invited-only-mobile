@@ -192,7 +192,7 @@ const AccountSetting: FC = ({navigation, route}: any) => {
               </TouchableOpacity>
             </View>
           )}
-          <View
+          {/* <View
             style={{
               borderRadius: 10,
               backgroundColor: lightGray5Color,
@@ -213,7 +213,7 @@ const AccountSetting: FC = ({navigation, route}: any) => {
                 // setLocation(!location);
               }}
             />
-          </View>
+          </View> */}
           {/* <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => setIsConnectedInstagram(prev => !prev)}
