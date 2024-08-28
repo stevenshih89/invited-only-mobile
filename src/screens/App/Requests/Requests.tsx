@@ -74,8 +74,8 @@ const Requests: FC = (): ReactElement => {
 
   const filterByUid = (array, uid) => {
     return array?.filter(item => {
-      if (Array?.isArray(item?.requestsList)) {
-        return item?.requestsList?.some(request => request?.uid === uid);
+      if (Array?.isArray(item?.usersList)) {
+        return item?.usersList?.some(request => request?.uid === uid && request?.status === 'liked');
       } else {
         return false;
       }
@@ -90,6 +90,8 @@ const Requests: FC = (): ReactElement => {
         const data = querySnapshot?.docs?.map(i => i?.data());
         // console.log('filter', filterByUid(data, user?.uid));
         const filterUid = filterByUid(data, user?.uid);
+        console.warn('filterUid', filterUid);
+
         // console.log('filterUid', filterUid);
         setDataForGuest(filterUid);
       } catch (error: any) {
@@ -140,6 +142,14 @@ const Requests: FC = (): ReactElement => {
     return <ActivityIndicator style={styles.container} />;
   }
 
+  if (!userInfo?.accountConfirmed && !loading) {
+    return (
+      <View style={styles.container}>
+        <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />
+      </View>
+    );
+  }
+
   if (!loading && (isHost ? !requestsForHost?.requestsList?.length : !dataForGuest?.length)) {
     return (
       <View style={styles.container}>
@@ -184,16 +194,16 @@ const Requests: FC = (): ReactElement => {
           ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
           renderItem={({item}) => {
             return isHost ? (
-              <ItemRequestHost list={list} item={item} />
+              <ItemRequestHost list={list} item={item} setRequestsForHost={setRequestsForHost} />
             ) : (
               // @ts-ignore
-              <ItemRequestGuest list={item} item={item?.usersList?.filter(i => i?.uid === user?.uid)} />
+              <ItemRequestGuest list={item} item={item?.usersList?.filter(i => i?.uid === user?.uid)} setDataForGuest={setDataForGuest} />
             );
           }}
         />
       ) : (
         <>
-          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEventsList?.length && !loading &&(
+          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEventsList?.length && !loading && (
             <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
               <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                 Let’s create an event
@@ -218,7 +228,6 @@ const Requests: FC = (): ReactElement => {
           )}
         </>
       )}
-      <>{!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}</>
     </View>
   );
 };

@@ -47,46 +47,47 @@ import Match from './screens/Match/Match';
 // import ModalSuperInvite from 'components/Modal/ModalSuperInvite';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
-import { useCounterSuperEvents } from 'src/store/counterSuperInvites';
+import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
-  const [events, setEvents] = useState<any[]>([]);  
+  const [events, setEvents] = useState<any[]>([]);
 
   const [myEvents, setMyEventsList] = useState([]);
   const [nameUser, setNameUser] = useState<string>('');
   const [uidScamUser, setUidScamUser] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
-  const [guestInfo, setGuestInfo] = useState<any>({})
+  const [guestInfo, setGuestInfo] = useState<any>({});
   const [matchData, setMatchData] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
   const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState();
-  const [lastVisible, setLastVisible] = useState(false)
-  
-  const { setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites } = useCounterSuperEvents();
+  const [lastVisible, setLastVisible] = useState(false);
 
+  const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
-  const {activeEventDate} = useContext(EventsDate);  
+  const {activeEventDate} = useContext(EventsDate);
 
   const userHost = useUser((i: any) => i?.user);
 
   const allEventsLength = useRef(0);
- 
+
   const eventsRef = useRef<any[]>();
   const counterSuperInvitesRef = useRef(0);
   const counterWeeklySuperInvitesRef = useRef(0);
-  
+
   let currentDate = new Date();
 
   useEffect(() => {
+    console.warn('activeEvent', activeEvent);
+
     const unsubscribe = onMatchNotificationSubscription(message => {
       console.warn('message', message);
 
@@ -99,34 +100,42 @@ const IO: FC = (): JSX.Element => {
   }, []);
 
   const getSuperInvites = async () => {
-    const getDoc =  await firestore().collection('userInfo').doc(userHost.uid).get();
+    const getDoc = await firestore().collection('userInfo').doc(userHost.uid).get();
     const currentSuperInvites = getDoc?.data()?.superInvites;
     const currentWeeklySuperInvites = getDoc?.data()?.weeklySuperInvites;
     counterSuperInvitesRef.current = currentSuperInvites;
     counterWeeklySuperInvitesRef.current = currentWeeklySuperInvites;
     setCounterSuperInvites(currentSuperInvites + currentWeeklySuperInvites);
-  }
+  };
 
-  useFocusEffect(useCallback(() => {
-    getSuperInvites()
-  },[]))
+  useFocusEffect(
+    useCallback(() => {
+      getSuperInvites();
+    }, []),
+  );
 
   const handleOpenSuperInvite = async (item): void => {
-    setActiveSuperInviteUser(item);    
+    setActiveSuperInviteUser(item);
     try {
-      if(counterSuperInvites > 0) {
+      if (counterSuperInvites > 0) {
         setTimeout(() => {
           setIsVisibleSuperInvite(true);
         }, 500);
-        if(counterWeeklySuperInvitesRef.current > 0) {
-          firestore().collection('userInfo').doc(userHost.uid).update({
-            weeklySuperInvites: counterWeeklySuperInvitesRef.current - 1
-          })
+        if (counterWeeklySuperInvitesRef.current > 0) {
+          firestore()
+            .collection('userInfo')
+            .doc(userHost.uid)
+            .update({
+              weeklySuperInvites: counterWeeklySuperInvitesRef.current - 1,
+            });
           counterWeeklySuperInvitesRef.current -= 1;
         } else if (counterSuperInvitesRef.current > 0) {
-          firestore().collection('userInfo').doc(userHost.uid).update({
-            superInvites: counterSuperInvitesRef.current - 1
-          })
+          firestore()
+            .collection('userInfo')
+            .doc(userHost.uid)
+            .update({
+              superInvites: counterSuperInvitesRef.current - 1,
+            });
           counterSuperInvitesRef.current -= 1;
         }
         decrementCounterSuperInvites(1);
@@ -231,8 +240,8 @@ const IO: FC = (): JSX.Element => {
     const currentTimestamp = Date.now();
     const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
 
-    return (currentTimestamp - previousTimestamp) >= oneWeekInMilliseconds;
-}
+    return currentTimestamp - previousTimestamp >= oneWeekInMilliseconds;
+  }
 
   const fetchUserInfo = async () => {
     setLoading(true);
@@ -246,13 +255,12 @@ const IO: FC = (): JSX.Element => {
           setUserInfo(userInfoDoc.data());
         }
         const isWeek = hasWeekPassed(userInfoDoc?.data()?.lastUpdateSuperInvite);
-        if(isWeek) {
+        if (isWeek) {
           await firestore().collection('userInfo').doc(user.uid).update({
             lastUpdateSuperInvite: Date.now(),
-            superInvites: 5
-          })
+            superInvites: 5,
+          });
         }
-        
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
@@ -359,7 +367,7 @@ const IO: FC = (): JSX.Element => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
-      const currentUid = auth().currentUser?.uid;
+      // const currentUid = auth().currentUser?.uid;
 
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
@@ -374,137 +382,104 @@ const IO: FC = (): JSX.Element => {
         userPhoto: host ? guest.data()?.photos[0]?.image : userHost?.photos[0]?.image,
         fcmToken: host ? guest.data()?.fcmToken : userHost?.fcmToken,
       };
-      
-      const usersListCheck = usersList? usersList: (await firestore().collection('Events').doc(activeEventId).get()).data()?.usersList;      
-      
+
+      // const usersListCheck = activeEvent?.usersList ? activeEvent?.usersList : usersList;
+
+      // let updateUsersList: any = [userInvited];
+      // usersListCheck !== undefined && updateUsersList?.push(...usersListCheck);
+
       if (userHost?.accountType === 'host') {
-
-        const getUserInRequestsList = (await firestore().collection('Events').doc(activeEventId).get()).data()?.requestsList;
-        const userInRequestsList = getUserInRequestsList.find(item => item.uid === forUserUid);        
-
-        if (userInRequestsList) {
-          userInvited.status = 'invite_match';
-          const photos = guest.data().photos;
-          const getMainPhoto = photos.filter(item => item.id === 0);
-          setOwnerEventUserPhoto(getMainPhoto[0].image);
-          setGuestInfo(guest.data())
-          setMatchData({
-            type: 'Some type',
-            name: guest?.data()?.name,
-            imageUri: guest?.data()?.photos[0].image,
-            senderUid: userInfo.uid,
-            recipientUid: guest?.data()?.uid,
-            eventId: activeEventId,
-            superInvite: false,
-            userHostImageUri: userInfo.photos[0].image
-          })
-          setIsVisibleMatch(true);
-        }
-        
-        try {
-          await firestore().collection('Events').doc(activeEventId).update({
-            usersList: [...usersListCheck, userInvited],
+        await firestore()
+          .collection('Events')
+          .doc(activeEventId)
+          .update({
+            usersList: firestore.FieldValue.arrayUnion(userInvited),
           });
-          await sendNotification(
-            forUserUid,
-            'New invite request',
-            `${userInfo.name} wants to invite you!`,
-            'invite',
-            'Invite match'.toUpperCase(),
-          );
-        } catch (error) {
-          console.log('New invite request error', error);
-        }
+
+        // await sendNotification(
+        //   forUserUid,
+        //   'New invite request',
+        //   `${userInfo.name} wants to invite you!`,
+        //   'invite',
+        //   'Invite match'.toUpperCase(),
+        // );
+
+        // const getUserInRequestsList = (await firestore().collection('Events').doc(activeEventId).get()).data()?.requestsList;
+        // const userInRequestsList = getUserInRequestsList.find(item => item.uid === forUserUid);
+
+        // if (userInRequestsList) {
+        //   const photos = guest.data().photos;
+        //   const getMainPhoto = photos.filter(item => item.id === 0);
+        //   setOwnerEventUserPhoto(getMainPhoto[0].image);
+        //   setIsVisibleMatch(true);
+        // }
       } else {
-        const updateRequestsList: any = [...requestsList, userInvited];
+        // const updateRequestsList: any = [...requestsList, userInvited];
 
-        try {
-          await firestore().collection('Events').doc(activeEventId).update({
-            requestsList: updateRequestsList,
+        await firestore()
+          .collection('Events')
+          .doc(activeEventId)
+          .update({
+            // usersList: updateUsersList ? updateUsersList : usersList,
+            requestsList: firestore.FieldValue.arrayUnion(userInvited),
           });
-        } catch (error) {
-          console.log('error requestsList update', error);
-        }
-        await sendNotification(
-          forUserUid,
-          'New join request',
-          `${userInfo?.name} wants to join you!`,
-          'join',
-          'New Join Request'.toUpperCase(),
-        );
+        // await sendNotification(
+        //   forUserUid,
+        //   'New join request',
+        //   `${userInfo?.name} wants to join you!`,
+        //   'join',
+        //   'New Join Request'.toUpperCase(),
+        // );
 
-        const userInList = usersList.find(item => item.uid === currentUid);
-        const userListFilter = usersList.filter(item => item.uid !== currentUid);
+        // const userInList = usersList.find(item => item.uid === currentUid);
 
-        if (userInList) {
-          userInList.status = 'invite_match';
-          try {
-            await firestore()
-              .collection('Events')
-              .doc(eventId)
-              .update({
-                usersList: [...userListFilter, userInList],
-              });
-          } catch (error) {}
-          const photos = guest.data().photos;
-          const getMainPhoto = photos.filter(item => item.id === 0);
-          setOwnerEventUserPhoto(getMainPhoto[0].image);
-          setGuestInfo(guest.data())
-          setMatchData({
-            type: 'Some type', // replace to data
-            name: guest?.data()?.name,
-            imageUri: guest?.data()?.photos[0].image,
-            senderUid: userInfo.uid,
-            recipientUid: guest?.data()?.uid,
-            eventId: activeEventId,
-            superInvite: guest?.data()?.superInvite,
-            userHostImageUri: userInfo.photos[0].image
-          })
-          setIsVisibleMatch(true);
-        }
+        // if (userInList) {
+        //   const photos = guest.data().photos;
+        //   const getMainPhoto = photos.filter(item => item.id === 0);
+        //   setOwnerEventUserPhoto(getMainPhoto[0].image);
+        //   setIsVisibleMatch(true);
+        // }
       }
-      const ev = events?.filter(i => i?.info?.uid !== forUserUid);
+      // const ev = events?.filter(i => i?.info?.uid !== forUserUid);
     } catch (error) {
       console.log('eror invite', error);
     }
   };
 
   // const handleChangeListsEventsAfterSuperInvite = useCallback( async(uid: string) => {
-    
+
   // },[])
-  
+
   const handleChangeListsEventsAfterSuperInvite = async (uid: string) => {
-    const item = eventsRef.current?.filter(j => {   
+    const item = eventsRef.current?.filter(j => {
       return j?.info?.uid === uid;
     });
-    
+
     const filter: any[] = eventsRef.current?.filter(i => i?.info?.uid !== uid);
 
-    if(filter.length === 0) {
-      setLastVisible(true)
+    if (filter.length === 0) {
+      setLastVisible(true);
     }
 
     setTimeout(() => {
       setEvents(filter);
     }, 500);
 
-    setCurrentEventCardPosition(prev => prev + 1)
+    setCurrentEventCardPosition(prev => prev + 1);
 
-    eventsRef.current = filter
-    
+    eventsRef.current = filter;
+
     await onInvite(item[0]?.info?.uid, item[0]?.info?.id, item[0]?.info?.requestsList, item[0]?.info?.usersList);
-  }
+  };
 
-  const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {    
-
+  const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {
     if (type === 'accept') {
-      const item = events?.filter(j => {       
+      const item = events?.filter(j => {
         return j?.info?.uid === uid;
-      }); 
+      });
 
-      const filter: any[] = events?.filter(i => i?.info?.uid !== uid);      
+      const filter: any[] = events?.filter(i => i?.info?.uid !== uid);
 
-      
       setEvents([...filter]);
       await onInvite(item[0]?.info?.uid, item[0]?.info?.id, item[0]?.info?.requestsList, item[0]?.info?.usersList);
     } else {
@@ -576,254 +551,254 @@ const IO: FC = (): JSX.Element => {
     filterDataWM?.map((event: any) => {
       const currUserPhotos = event?.userPhotos?.map((photo: any) => photo?.image);
       const eventPhotos = event?.photos?.map((photo: any) => photo?.image);
-        data.push({
-          component: (
-            <View style={styles.wrapperFakeCard}>
-              <TouchingSlider
-                hostInfo={event?.hostInfo}
-                placeName={event?.placeName}
-                girls={event?.female + event?.femaleFriend}
-                date={event?.date}
-                isShowEventPreview={true}
-                isShowWantsJoin={false}
-                isShowInvitesTooltip={false}
-                isShowCardButtons={false}
-                eventPhotos={event?.photos}
-                photos={currUserPhotos}
-                name={event?.name}
-              />
-              <View style={styles.bioWrapper}>
-                <Text style={styles.titleSection}>Host profile</Text>
-                <TouchableOpacity // @ts-ignore
-                  onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: event?.uid}})}
-                  style={styles.wrapperHostProfile}>
-                  <View style={{flexDirection: 'row'}}>
-                    {event?.hostImage && (
-                      <View style={{flexDirection: 'row'}}>
-                        <Image source={{uri: event?.hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
-                        {/*<View style={styles.greenCircle} />*/}
-                      </View>
-                    )}
-                    <View style={{marginLeft: 13}}>
-                      <View
-                        style={{
-                          borderRadius: 4,
-                          borderColor: whiteColor,
-                          borderWidth: 1,
-                          borderStyle: 'solid',
-                          alignSelf: 'flex-start',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          paddingHorizontal: 6,
-                          paddingVertical: 2,
-                        }}>
-                        <Text style={{color: whiteColor, textTransform: 'capitalize', fontFamily: Satoshi700, fontSize: RFValue(10, 812)}}>
-                          {event?.hostInfo.accountType}
-                        </Text>
-                      </View>
-                      <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
-                          {event?.hostName}, {calculateAge(event?.hostInfo?.date)}
-                        </Text>
-                        {event?.hostInfo?.accountConfirmed && <CheckStarWhite />}
-                      </View>
+      data.push({
+        component: (
+          <View style={styles.wrapperFakeCard}>
+            <TouchingSlider
+              hostInfo={event?.hostInfo}
+              placeName={event?.placeName}
+              girls={event?.female + event?.femaleFriend}
+              date={event?.date}
+              isShowEventPreview={true}
+              isShowWantsJoin={false}
+              isShowInvitesTooltip={false}
+              isShowCardButtons={false}
+              eventPhotos={event?.photos}
+              photos={currUserPhotos}
+              name={event?.name}
+            />
+            <View style={styles.bioWrapper}>
+              <Text style={styles.titleSection}>Host profile</Text>
+              <TouchableOpacity // @ts-ignore
+                onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: event?.uid}})}
+                style={styles.wrapperHostProfile}>
+                <View style={{flexDirection: 'row'}}>
+                  {event?.hostImage && (
+                    <View style={{flexDirection: 'row'}}>
+                      <Image source={{uri: event?.hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
+                      {/*<View style={styles.greenCircle} />*/}
+                    </View>
+                  )}
+                  <View style={{marginLeft: 13}}>
+                    <View
+                      style={{
+                        borderRadius: 4,
+                        borderColor: whiteColor,
+                        borderWidth: 1,
+                        borderStyle: 'solid',
+                        alignSelf: 'flex-start',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        paddingHorizontal: 6,
+                        paddingVertical: 2,
+                      }}>
+                      <Text style={{color: whiteColor, textTransform: 'capitalize', fontFamily: Satoshi700, fontSize: RFValue(10, 812)}}>
+                        {event?.hostInfo.accountType}
+                      </Text>
+                    </View>
+                    <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
+                      <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
+                        {event?.hostName}, {calculateAge(event?.hostInfo?.date)}
+                      </Text>
+                      {event?.hostInfo?.accountConfirmed && <CheckStarWhite />}
                     </View>
                   </View>
-                  <View>
-                    <Text style={styles.textSeeProfile}>
-                      <ArrowRightIcon width={14} height={14} />
-                    </Text>
+                </View>
+                <View>
+                  <Text style={styles.textSeeProfile}>
+                    <ArrowRightIcon width={14} height={14} />
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <Text style={[styles.titleSection, {marginTop: 20}]}>Event details</Text>
+              <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}}>Place name</Text>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.placeName}</Text>
+              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
+                Event name
+              </Text>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.name}</Text>
+              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
+                Event description
+              </Text>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>
+                {event?.description}
+              </Text>
+              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+              <View style={{marginTop: 28}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                  <CalendarIcon width={16} height={16} />
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{event?.date}</Text>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                  <ClockIcon width={16} height={16} />
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{event?.hour}</Text>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                  <LocationIcon width={16} height={16} />
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
+                    {event?.address}
+                  </Text>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+                  <PeopleIcon width={16} height={16} />
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
+                    {event?.female + event?.femaleFriend}x girl
+                  </Text>
+                </View>
+              </View>
+              <View>
+                {eventPhotos?.map((image: string) => (
+                  <Image source={{uri: image}} style={{width: '100%', height: screenHeight / 4, marginVertical: 10, borderRadius: 20}} />
+                ))}
+              </View>
+              <Text style={styles.titleSection}>Already joined</Text>
+              <View>
+                <View style={styles.wrapperNumberPeople}>
+                  <Text style={styles.textUnderSubTitle}>Female</Text>
+                  <View style={styles.rowNumberPeople}>
+                    <Text style={styles.textNumberInvitedPeople}>{event?.female}</Text>
+                  </View>
+                </View>
+              </View>
+              <View>
+                <View style={[styles.wrapperNumberPeople, {marginTop: 12}]}>
+                  <Text style={styles.textUnderSubTitle}>Male</Text>
+                  <View style={styles.rowNumberPeople}>
+                    <Text style={styles.textNumberInvitedPeople}>{event?.male}</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.wrapperButtonsFooter}>
+                <TouchableOpacity
+                  onPress={() => handleChangeListsEvents(event?.uid, 'reject')}
+                  style={[styles.buttonCloseOrCheck, {marginLeft: 1}]}>
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      top: -1,
+                      left: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      right: -1,
+                      bottom: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: blackColor,
+                      borderRadius: 50,
+                      zIndex: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <CloseIcon />
                   </View>
                 </TouchableOpacity>
-                <Text style={[styles.titleSection, {marginTop: 20}]}>Event details</Text>
-                <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}}>Place name</Text>
-                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.placeName}</Text>
-                <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-                <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
-                  Event name
-                </Text>
-                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.name}</Text>
-                <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-                <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
-                  Event description
-                </Text>
-                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>
-                  {event?.description}
-                </Text>
-                <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-                <View style={{marginTop: 28}}>
-                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                    <CalendarIcon width={16} height={16} />
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{event?.date}</Text>
+                <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenSuperInvite}>
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      top: -1,
+                      left: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      right: -1,
+                      bottom: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: blackColor,
+                      borderRadius: 50,
+                      zIndex: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <FlashIcon />
                   </View>
-                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                    <ClockIcon width={16} height={16} />
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{event?.hour}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleChangeListsEvents(event?.uid, 'accept')}
+                  style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      top: -1,
+                      left: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      right: -1,
+                      bottom: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: blackColor,
+                      borderRadius: 50,
+                      zIndex: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <CheckIcon />
                   </View>
-                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                    <LocationIcon width={16} height={16} />
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
-                      {event?.address}
-                    </Text>
-                  </View>
-                  <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                    <PeopleIcon width={16} height={16} />
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
-                      {event?.female + event?.femaleFriend}x girl
-                    </Text>
-                  </View>
-                </View>
-                <View>
-                  {eventPhotos?.map((image: string) => (
-                    <Image source={{uri: image}} style={{width: '100%', height: screenHeight / 4, marginVertical: 10, borderRadius: 20}} />
-                  ))}
-                </View>
-                <Text style={styles.titleSection}>Already joined</Text>
-                <View>
-                  <View style={styles.wrapperNumberPeople}>
-                    <Text style={styles.textUnderSubTitle}>Female</Text>
-                    <View style={styles.rowNumberPeople}>
-                      <Text style={styles.textNumberInvitedPeople}>{event?.female}</Text>
-                    </View>
-                  </View>
-                </View>
-                <View>
-                  <View style={[styles.wrapperNumberPeople, {marginTop: 12}]}>
-                    <Text style={styles.textUnderSubTitle}>Male</Text>
-                    <View style={styles.rowNumberPeople}>
-                      <Text style={styles.textNumberInvitedPeople}>{event?.male}</Text>
-                    </View>
-                  </View>
-                </View>
-                <View style={styles.wrapperButtonsFooter}>
-                  <TouchableOpacity
-                    onPress={() => handleChangeListsEvents(event?.uid, 'reject')}
-                    style={[styles.buttonCloseOrCheck, {marginLeft: 1}]}>
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        top: -1,
-                        left: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        right: -1,
-                        bottom: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
-                      <CloseIcon />
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenSuperInvite}>
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        top: -1,
-                        left: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        right: -1,
-                        bottom: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
-                      <FlashIcon />
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => handleChangeListsEvents(event?.uid, 'accept')}
-                    style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        top: -1,
-                        left: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        right: -1,
-                        bottom: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
-                      <CheckIcon />
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                <Text style={styles.textHideNadSendReport}>Reject and send report</Text>
+                </TouchableOpacity>
               </View>
+              <Text style={styles.textHideNadSendReport}>Reject and send report</Text>
             </View>
-          ),
-          info: event,
-        });
+          </View>
+        ),
+        info: event,
+      });
     });
 
-    const filteredData = data.filter(item => item.info && item.info.eventReviewed);    
-    
+    const filteredData = data.filter(item => item.info && item.info.eventReviewed);
+
     const recommendedData = sortByInterests(sortByDate(filteredData)?.reverse(), userHost);
 
     setTimeout(() => {
       setEvents(recommendedData);
-      allEventsLength.current = data.length
+      allEventsLength.current = data.length;
     }, 3000);
   };
 
@@ -854,7 +829,7 @@ const IO: FC = (): JSX.Element => {
         // console.warn('itemMap', item?._data.uid, item?._data);
 
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;
-        
+
         setNameUser(name);
         const girlPhotos = item?._data?.photos?.map((image: any): void => image?.image);
         const interests = item?._data?.interests?.map((i: any): void => i?.title);
@@ -1075,20 +1050,16 @@ const IO: FC = (): JSX.Element => {
             </View>
           ),
           info: item?._data,
-        });        
-
-        
+        });
 
         // setTimeout(() => {
         //   setEvents([...data]);
         //   setEventsLength(data.length);
         // }, 3000);
-
-
-      });      
-      allEventsLength.current = data.length
-      setEvents(data);
-      eventsRef.current = data;
+      });
+    allEventsLength.current = data.length;
+    setEvents(data);
+    eventsRef.current = data;
     // console.warn('data', data);
 
     // setTimeout(() => {
@@ -1139,7 +1110,7 @@ const IO: FC = (): JSX.Element => {
     return matchedGuests;
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     userHost?.accountType === 'host' ? getListForHost() : getListForGuest();
   }, [userInfo, userHost, activeEventDate]);
 
@@ -1215,7 +1186,7 @@ const IO: FC = (): JSX.Element => {
       </View>
     );
   }
-  
+
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
@@ -1256,9 +1227,12 @@ const IO: FC = (): JSX.Element => {
             // :
             // <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
           }
-          {!activeEvent.eventReviewed && userInfo.accountType === 'host' && <ModalLockAccount 
-          isVisibleButton={false} 
-          text='Your event is under review. Thank you for your patience. You will be notified if your account is accepted'/>}
+          {!activeEvent.eventReviewed && userInfo.accountType === 'host' && (
+            <ModalLockAccount
+              isVisibleButton={false}
+              text="Your event is under review. Thank you for your patience. You will be notified if your account is accepted"
+            />
+          )}
           <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
           <SuperInvite
             isVisibleSuperInvite={isVisibleSuperInvite}

@@ -20,7 +20,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import FastImage from 'react-native-fast-image';
 
-const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
+const ItemRequestGuest: FC = ({list, item, setDataForGuest}: any): JSX.Element => {
   const [hostInfo, setHostInfo] = useState([]);
   const [loading, setLoading] = useState(true);
   const [heightAnim] = useState(new Animated.Value(218));
@@ -99,6 +99,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
         superInvite: false,
         uid: item?.uid,
         userPhoto: item?.userPhoto,
+        fcmToken: item?.fcmToken,
       };
 
       try {
@@ -110,6 +111,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
           });
         showToast('inviteMatch', '', 'You accept invitation');
         await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`, 'accepted');
+        setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
       } catch (e) {
         console.log(e);
         showToast('inviteMatch', '', "There's been an error");
@@ -127,6 +129,7 @@ const ItemRequestGuest: FC = ({list, item}: any): JSX.Element => {
         });
       showToast('inviteMatch', '', 'You reject invitation');
       await sendNotification(uid, 'Not now.', `${item?.name} reject your invitation.`, 'rejected');
+      setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
     } catch (e) {
       console.log(e);
       showToast('inviteMatch', '', "There's been an error");
