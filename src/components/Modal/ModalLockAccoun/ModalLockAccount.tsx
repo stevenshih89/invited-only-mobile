@@ -12,8 +12,9 @@ import {Satoshi500} from 'constants/fonts';
 const ModalLockAccount: FC<{
   isPremium?: boolean;
   isVisibleButton: boolean;
+  wrapperStyle?: StyleProp<ViewStyle>
   text?: string
-}> = ({isVisibleButton, isPremium, text}) => {
+}> = ({isVisibleButton, isPremium, text, wrapperStyle}) => {
   const styles = useStyles();
 
   const navigation = useAppNavigation();
@@ -40,7 +41,7 @@ const ModalLockAccount: FC<{
         backgroundColor: transparent60Color,
         zIndex: 1000,
       }}>
-      <View style={styles.lockedWrapper}>
+      <View style={[styles.lockedWrapper, wrapperStyle]}>
         <View style={styles.lockIconWr}>
           <Lock width={24} height={24} />
         </View>

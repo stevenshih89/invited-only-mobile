@@ -20,7 +20,7 @@ import {
   settingsPath,
 } from 'constants/pathLocations';
 import {ANY_DAY, screenHeight, THIS_WEEKEND, TODAY, ALL, THIS_MONTH} from 'constants/common.ts';
-import {blackColor, grayColor, grayScale700, lightGray2Color, lightGray5Color, orangeColor, whiteColor} from 'constants/colors.ts';
+import {blackColor, grayColor, grayScale700, lightGray2Color, lightGray5Color, orangeColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
 import {useChat} from '../../store/chatStore';
@@ -696,6 +696,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 
   return (
     <View style={[styles.container, headerInsets]}>
+      {!userInfo?.accountConfirmed && headerType !== 'profile' &&  <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: transparent60Color, zIndex: 1000}}></View>}
       {showHeaderTop && (
         <View style={styles.wrapperHeader}>
           {logoType === 'logo' ? <Logo width={157} height={32} /> : <LogoPrimary width={157} height={32} />}
