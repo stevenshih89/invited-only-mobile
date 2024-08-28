@@ -17,6 +17,7 @@ import {EventContext} from 'contexts/EventContext';
 import {useUser} from '../../../store/userStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import Loading from 'components/Loading/Loading';
+import moment from 'moment';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
@@ -138,6 +139,19 @@ const Requests: FC = (): ReactElement => {
   const expressionForHost = isHost && !!requestsForHost?.requestsList?.length;
   const expressionForGuest = !isHost && !!dataForGuest.length;
 
+  function isDateTimePassed(dateString: string, timeString: string) {
+    if (typeof dateString !== 'string' || typeof timeString !== 'string') {
+      return false;
+    }
+
+    const [day, month, year] = dateString.split('.').map(Number);
+    const [hours, minutes] = timeString.split(':').map(Number);
+
+    const isExpired = moment().isAfter(moment(`${year}-${month}-${day} ${hours}:${minutes}`));
+
+    return isExpired;
+  }
+
   if (loading && !list) {
     return <ActivityIndicator style={styles.container} />;
   }
@@ -146,6 +160,23 @@ const Requests: FC = (): ReactElement => {
     return (
       <View style={styles.container}>
         <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />
+      </View>
+    );
+  }
+
+  if (!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myEventsList?.length) {
+    return (
+      <View style={styles.container}>
+        <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
+          {
+            <Loading
+              userInfo={list}
+              topPosition={false}
+              wrapperText={false}
+              text={isDateTimePassed(list?.date, list?.hour) ? `Event Expired: ${list.date}` : `Event Start: ${list.date}`}
+            />
+          }
+        </View>
       </View>
     );
   }
@@ -164,20 +195,6 @@ const Requests: FC = (): ReactElement => {
         </View>
       </View>
     );
-  }
-
-  function isDateTimePassed(dateString: string, timeString: string) {
-    if (typeof dateString !== 'string' || typeof timeString !== 'string') {
-      return false;
-    }
-
-    const [day, month, year] = dateString.split('.').map(Number);
-    const [hours, minutes] = timeString.split(':').map(Number);
-
-    const inputDate = new Date(year, month - 1, day, hours, minutes);
-    const currentDate = new Date();
-
-    return inputDate < currentDate;
   }
 
   return (
@@ -214,7 +231,7 @@ const Requests: FC = (): ReactElement => {
               <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
             </View>
           )}
-          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myEventsList?.length && (
+          {/* {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myEventsList?.length && (
             <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
               {
                 <Loading
@@ -225,7 +242,7 @@ const Requests: FC = (): ReactElement => {
                 />
               }
             </View>
-          )}
+          )} */}
         </>
       )}
     </View>

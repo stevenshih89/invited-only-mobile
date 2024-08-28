@@ -16,7 +16,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {errorColor, lightGray10Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
+import {errorColor, grayScale600, lightGray10Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
 import FastImage from 'react-native-fast-image';
 
 interface MyEventsCard {
@@ -110,6 +110,22 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     }
   }, []);
 
+  const getEventStatus = () => {
+    if (date && moment(date, 'D/M/YYYY, HH:mm:ss').isBefore(moment())) {
+      return {
+        plateTitle: 'Expired',
+        plateBackgroundColor: grayScale600,
+      };
+    }
+    if (eventIsFull) {
+      return {plateTitle: 'Full', plateBackgroundColor: lightGreenColor};
+    }
+    return {
+      plateTitle: 'Active',
+      plateBackgroundColor: lightGreenColor,
+    };
+  };
+
   const approvedPeople = invitingPeople?.filter(i => i?.status === 'accepted');
 
   return (
@@ -178,9 +194,15 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                   </View>
                 </View>
                 <View style={styles.wrapperTextStartInviting}>
-                  <View style={{backgroundColor: lightGreenColor, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 5}}>
+                  <View
+                    style={{
+                      backgroundColor: getEventStatus().plateBackgroundColor,
+                      paddingHorizontal: 6,
+                      paddingVertical: 4,
+                      borderRadius: 5,
+                    }}>
                     <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>
-                      {eventIsFull ? 'Full' : 'Active'}
+                      {getEventStatus().plateTitle}
                     </Text>
                   </View>
                 </View>

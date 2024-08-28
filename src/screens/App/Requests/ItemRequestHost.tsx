@@ -97,7 +97,10 @@ const ItemRequestHost = ({item, list, setRequestsForHost}: any) => {
         status: 'guest approved',
       });
       sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
-      setRequestsForHost(prev => prev.filter((i: any) => i?.uid !== item?.uid));
+      setRequestsForHost(prev => ({
+        ...prev,
+        requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),
+      }));
     } catch (e) {
       console.log(e);
       showToast('inviteMatch', '', "There's been an error");
@@ -117,7 +120,10 @@ const ItemRequestHost = ({item, list, setRequestsForHost}: any) => {
       await firestore().collection('Events').doc(list?.id).update({
         requestsList: updateRequestsList,
       });
-      setRequestsForHost(prev => prev.filter((i: any) => i?.uid !== item?.uid));
+      setRequestsForHost(prev => ({
+        ...prev,
+        requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),
+      }));
     } catch (e) {
       console.log(e);
     }
