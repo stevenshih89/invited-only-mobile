@@ -1229,6 +1229,7 @@ const IO: FC = (): JSX.Element => {
           }
           {!activeEvent.eventReviewed && userInfo.accountType === 'host' && (
             <ModalLockAccount
+              haveCode={false}
               isVisibleButton={false}
               text="Your event is under review. Thank you for your patience. You will be notified if your account is accepted"
             />

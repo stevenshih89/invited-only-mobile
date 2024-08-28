@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, View} from 'react-native';
+import {StyleProp, Text, TouchableOpacity, View, ViewStyle} from 'react-native';
 import {FC} from 'react';
 import Lock from 'assets/images/icons/lock.svg';
 import useStyles from './styles';
@@ -12,9 +12,10 @@ import {Satoshi500} from 'constants/fonts';
 const ModalLockAccount: FC<{
   isPremium?: boolean;
   isVisibleButton: boolean;
-  wrapperStyle?: StyleProp<ViewStyle>
-  text?: string
-}> = ({isVisibleButton, isPremium, text, wrapperStyle}) => {
+  wrapperStyle?: StyleProp<ViewStyle>;
+  text?: string;
+  haveCode?: boolean
+}> = ({isVisibleButton, isPremium, text, wrapperStyle, haveCode = true}) => {
   const styles = useStyles();
 
   const navigation = useAppNavigation();
@@ -50,12 +51,12 @@ const ModalLockAccount: FC<{
           <Text style={styles.lockedSubtitle}>
             {text? text: 'Your account is under review. Thank you for your patience. You will be notified if your account is accepted'}
           </Text>
-          <View style={styles.lockedHaveCodeWr}>
+          {haveCode && <View style={styles.lockedHaveCodeWr}>
             <Text style={styles.lockedHaveCodeTitle}>Have a code?</Text>
             <TouchableOpacity activeOpacity={0.7} onPress={goToCodeConfirmation}>
               <Text style={styles.lockedHaveCodePressableText}>Click here</Text>
             </TouchableOpacity>
-          </View>
+          </View>}
         </View>
       </View>
       {isVisibleButton && !isPremium&& (
