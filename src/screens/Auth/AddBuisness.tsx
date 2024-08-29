@@ -65,13 +65,12 @@ const AddBiusness: FC = (): JSX.Element => {
                 style={{
                   width: '100%',
                   marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 10,
                 }}>
                 <Text
                   style={{
                     color: whiteColor,
                     fontFamily: Satoshi500,
-                    fontSize: RFValue(40, 812),
+                    fontSize: RFValue(48, 812),
                     marginBottom: 18,
                   }}>
                   Join as a Business and get more client's.
@@ -97,7 +96,7 @@ const AddBiusness: FC = (): JSX.Element => {
               </View>
               <View style={{marginBottom: 4, width: '100%', alignItems: 'center'}}>
               <TouchableOpacity onPress={handleGoBack}>
-                <Text style={{color: whiteColor, fontSize: RFValue(20), fontFamily: Satoshi500}}>Go back</Text>
+                <Text style={{color: whiteColor, fontSize: RFValue(18), fontFamily: Satoshi500}}>Go back</Text>
               </TouchableOpacity>
             </View>
             </View>

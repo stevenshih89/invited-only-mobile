@@ -13,6 +13,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {myEmailPath} from 'constants/pathLocations';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import Input from 'components/Inputs/Input';
+import AuthProgress from 'components/AuthProgress';
 
 const MyInterests: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -102,7 +103,8 @@ const MyInterests: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                <EightyIcon height={40} />
+                {/* <EightyIcon height={40} /> */}
+                <AuthProgress startPercentage={70} endPercentage={80} animationDuration={1000} />
               </View>
               <View
                 style={{

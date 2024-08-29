@@ -13,9 +13,11 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {addPhotosPath} from 'constants/pathLocations';
 import {Switch} from '@ant-design/react-native';
 import {AuthContext} from 'contexts/AuthContext.tsx';
+import { getFcmToken } from 'helpers/fcmHelper';
+import AuthProgress from 'components/AuthProgress';
 
 const TurnNotifications: FC = (): JSX.Element => {
-  const [notifications, setNotifications] = useState<boolean>(false);
+  const [notifications, setNotifications] = useState<boolean>(true);
   const [showLocation, setShowLocation] = useState<boolean>(false);
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
@@ -46,6 +48,9 @@ const TurnNotifications: FC = (): JSX.Element => {
         showLocation: showLocation
       },
     ]);
+    if(notifications) {
+      await getFcmToken()
+    }
     navigation.navigate(addPhotosPath as never);
   };
 
@@ -88,19 +93,20 @@ const TurnNotifications: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                <ThirtyIcon height={40} />
+                {/* <ThirtyIcon height={40} /> */}
+                <AuthProgress startPercentage={20} endPercentage={30} animationDuration={1000} />
               </View>
               <View
                 style={{
                   marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 14,
+                  marginTop: screenHeight / 8,
                 }}>
                 <Text
                   style={{
                     color: whiteColor,
                     fontFamily: Satoshi500,
-                    fontSize: RFValue(34, 812),
-                    marginBottom: 18,
+                    fontSize: RFValue(42, 812),
+                    marginBottom: 8,
                   }}>
                   Confirm access
                 </Text>
@@ -111,7 +117,7 @@ const TurnNotifications: FC = (): JSX.Element => {
                     fontSize: RFValue(18, 812),
                     opacity: 0.8,
                   }}>
-                  To use Invited Only, please enable your location and notifications.
+                  To use Invited Only, please enable your notifications.
                 </Text>
               </View>
               <View style={{width: '100%'}}>

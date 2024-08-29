@@ -116,6 +116,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
               age={userInfo?.showAge ? userAge : ''}
               isShowLocation={true}
               isPremium={userInfo?.accountPremium}
+              isProfile={true}
             />
             {/* {isShowEditButton && <Button title="Edit" buttonStyle={{marginTop: 20}} onPress={goToProfileEditing} />} */}
             {/* <View style={styles.bioWrapper}>

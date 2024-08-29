@@ -42,7 +42,6 @@ const useStyles = () => {
       color: errorColor,
     },
     wrapperErrorText: {
-      height: 22,
       marginTop: 2,
       marginBottom: 4,
       flexDirection: 'row',

@@ -13,12 +13,13 @@ import {genderPath} from 'constants/pathLocations';
 import {Switch} from '@ant-design/react-native';
 import MaskInput from 'react-native-mask-input';
 import {AuthContext} from 'contexts/AuthContext.tsx';
+import AuthProgress from 'components/AuthProgress';
 
 const EnterBirthday: FC = (): JSX.Element => {
   const [month, setMonth] = useState<string>('');
   const [day, setDay] = useState<string>('');
   const [year, setYear] = useState<string>('');
-  const [showAge, setShowAge] = useState<boolean>(false);
+  const [showAge, setShowAge] = useState<boolean>(true);
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
@@ -103,7 +104,8 @@ const EnterBirthday: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                <FiftyIcon height={40} />
+                {/* <FiftyIcon height={40} /> */}
+                <AuthProgress startPercentage={40} endPercentage={50} animationDuration={1000} />
               </View>
               <View
                 style={{

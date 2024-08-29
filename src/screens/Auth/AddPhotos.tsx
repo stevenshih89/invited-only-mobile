@@ -25,6 +25,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {enterBirthdayPath} from 'constants/pathLocations';
 import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
 import {AuthContext} from 'contexts/AuthContext.tsx';
+import AuthProgress from 'components/AuthProgress';
 
 const AddPhotos: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -169,7 +170,8 @@ const AddPhotos: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                <FourtyIcon height={40} />
+                {/* <FourtyIcon height={40} /> */}
+                <AuthProgress startPercentage={30} endPercentage={40} animationDuration={1000} />
               </View>
               <View
                 style={{

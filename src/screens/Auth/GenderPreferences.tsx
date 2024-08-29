@@ -13,6 +13,7 @@ import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {myInterestsPath} from 'constants/pathLocations';
 import {AuthContext} from 'contexts/AuthContext.tsx';
+import AuthProgress from 'components/AuthProgress';
 
 const GenderPreferences: FC = (): JSX.Element => {
   const MAN = 'man';
@@ -65,7 +66,8 @@ const GenderPreferences: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                <SeventyIcon height={40} />
+                {/* <SeventyIcon height={40} /> */}
+                <AuthProgress startPercentage={60} endPercentage={70} animationDuration={1000} />
               </View>
               <View
                 style={{
@@ -77,7 +79,7 @@ const GenderPreferences: FC = (): JSX.Element => {
                   style={{
                     color: whiteColor,
                     fontFamily: Satoshi500,
-                    fontSize: RFValue(38, 812),
+                    fontSize: RFValue(48, 812),
                     marginBottom: 18,
                   }}>
                   Choose your guests
@@ -155,7 +157,7 @@ const GenderPreferences: FC = (): JSX.Element => {
               </View>
             </View>
             <View style={{marginBottom: 4}}>
-              <Button onPress={() => handleNext()} title="Continue" />
+              <Button buttonTitleStyle={{fontSize: RFValue(20, 812)}} onPress={() => handleNext()} title="Continue" />
               <TouchableOpacity
                 activeOpacity={0.7}
                 style={{paddingVertical: 16, alignItems: 'center', marginTop: 4}}
