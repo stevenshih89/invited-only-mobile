@@ -12,6 +12,7 @@ import InfoCircleOrange from 'assets/images/icons/info-circle-orange.svg';
 import InfoCircleGrey from 'assets/images/icons/info-circle-gray.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import XIcon from 'assets/images/icons/X.svg';
+import IOImage from 'assets/images/app/IO.png'
 
 //import images
 import IconBackground from 'assets/images/app/bcon-background.png';
@@ -104,7 +105,9 @@ const LocalNotification = () => {
       <View style={{paddingHorizontal: 24, width: '100%'}}>
         <View style={{backgroundColor: whiteColor, padding: 16, borderRadius: 10, width: '100%'}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            {props.ownerPhoto && <Image style={{height: 60, width: 60, borderRadius: 30}} source={{uri: props.ownerPhoto}} />}
+            {props.ownerPhoto ? <Image style={{height: 60, width: 60, borderRadius: 30}} source={{uri: props.ownerPhoto}}/> : 
+            <Image style={{height: 60, width: 60, borderRadius: 30}} source={IOImage}/>
+            }
             <View style={{marginLeft: 16, flex: 1}}>
               <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start'}}>
                 <Text

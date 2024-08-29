@@ -210,7 +210,7 @@ const InvitationCode: FC = (): JSX.Element => {
       await handleRegisterUser(onboardingData);
       navigation.navigate(codeVerifiedPath as never);
     } else {
-      showToast('inviteMatch', 'Сode used or not found');
+      showToast('inviteMatch', 'Please try anther code', 'The invitation codehas already been used', {status: 'error'});
       setInvalidCode(true)
     }
   };
