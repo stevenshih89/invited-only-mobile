@@ -61,7 +61,7 @@ const AuthStackScreens: FC = (): JSX.Element => {
 
   return (
     <NavigationContainer independent={true}>
-      <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{headerShown: false}}>
+      <AuthStack.Navigator initialRouteName={enterNamePath} screenOptions={{headerShown: false}}>
         <AuthStack.Screen key={onboardPath} name={onboardPath} component={Onboard} />
         <AuthStack.Screen key={signUpPath} name={signUpPath} component={SignUp} />
         <AuthStack.Screen key={confirmPhonePath} name={confirmPhonePath} component={ConfirmPhone} />

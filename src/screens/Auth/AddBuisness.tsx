@@ -96,7 +96,7 @@ const AddBiusness: FC = (): JSX.Element => {
               </View>
               <View style={{marginBottom: 4, width: '100%', alignItems: 'center'}}>
               <TouchableOpacity onPress={handleGoBack}>
-                <Text style={{color: whiteColor, fontSize: RFValue(20), fontFamily: Satoshi500}}>Go back</Text>
+                <Text style={{color: whiteColor, fontSize: RFValue(18), fontFamily: Satoshi500}}>Go back</Text>
               </TouchableOpacity>
             </View>
             </View>

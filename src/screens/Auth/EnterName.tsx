@@ -13,6 +13,7 @@ import {turnNotificationsPath} from 'constants/pathLocations';
 import Input from 'components/Inputs/Input';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import { isName } from 'helpers/regExpValidators';
+import AuthProgress from 'components/AuthProgress';
 
 const EnterName: FC = (): JSX.Element => {
   const [name, setName] = useState<string>('');
@@ -74,7 +75,7 @@ const EnterName: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                <TwentyIcon height={40} />
+                <AuthProgress startPercentage={10} endPercentage={20} animationDuration={1000} />
               </View>
               <View
                 style={{

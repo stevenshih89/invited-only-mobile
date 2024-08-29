@@ -13,6 +13,7 @@ import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {genderPreferencesPath, myInterestsPath} from 'constants/pathLocations';
 import {AuthContext} from 'contexts/AuthContext.tsx';
+import AuthProgress from 'components/AuthProgress';
 
 const Gender: FC = (): JSX.Element => {
   const MAN = 'man';
@@ -65,7 +66,8 @@ const Gender: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                <SixtyIcon height={40} />
+                {/* <SixtyIcon height={40} /> */}
+                <AuthProgress startPercentage={50} endPercentage={60} animationDuration={1000} />
               </View>
               <View
                 style={{

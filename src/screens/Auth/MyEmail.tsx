@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useContext, useState} from 'react';
+import {FC, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import NinetyIcon from 'assets/images/auth/progress/ninety.svg';
@@ -13,22 +13,27 @@ import {privacyPath} from 'constants/pathLocations';
 import Input from 'components/Inputs/Input';
 import {isEmailValid} from 'helpers/regExpValidators';
 import {AuthContext} from 'contexts/AuthContext.tsx';
+import AuthProgress from 'components/AuthProgress';
+import { useUser } from 'src/store/userStore';
 
 const MyEmail: FC = (): JSX.Element => {
-  const [email, setEmail] = useState<string>('');
+  // const [email, setEmail] = useState<string>('');
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
 
+  const { email, setEmail } = useUser();
+
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
+  
   const handleEmailChange = (value: string) => {
     const truncatedText = value.slice(0, 40);
     setEmail(truncatedText);
-  };
-
-  const checkIsValidEmail = () => {
-    setIsValidEmail(isEmailValid(email));
+    setIsValidEmail(true);
+    setEmail(truncatedText);
   };
 
   const handleNext = () => {
+    setIsValidEmail(isEmailValid(email));
+    const isValidEmail = isEmailValid(email);
     if (!email || !isValidEmail) {
       return;
     }
@@ -60,7 +65,9 @@ const MyEmail: FC = (): JSX.Element => {
             <View style={{alignItems: 'center'}}>
               <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
                 <TouchableOpacity
-                  onPress={() => navigation.goBack()}
+                  onPress={() => {
+                    navigation.goBack()
+                  }}
                   activeOpacity={0.7}
                   hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
                   style={{
@@ -74,7 +81,8 @@ const MyEmail: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                <NinetyIcon height={40} />
+                {/* <NinetyIcon height={40} /> */}
+                <AuthProgress startPercentage={80} endPercentage={90} animationDuration={1000} />
               </View>
               <View
                 style={{
@@ -104,9 +112,8 @@ const MyEmail: FC = (): JSX.Element => {
                 <Input
                   value={email}
                   onChange={handleEmailChange}
-                  onBlur={checkIsValidEmail}
                   isError={!isValidEmail}
-                  errorText="Email is not valid"
+                  errorText="Incorrect email"
                   containerStyle={{width: '100%'}}
                   placeholder="Enter your email"
                 />

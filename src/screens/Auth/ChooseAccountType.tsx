@@ -20,6 +20,7 @@ import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {addBuisnessPath, enterNamePath} from 'constants/pathLocations';
 import {AuthContext} from 'contexts/AuthContext.tsx';
+import AuthProgress from 'components/AuthProgress';
 
 const ChooseAccountType: FC = (): JSX.Element => {
   const HOST = 'host';
@@ -70,7 +71,8 @@ const ChooseAccountType: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                <TenIcon height={40} />
+                <AuthProgress startPercentage={0} endPercentage={10} animationDuration={1000} />
+                {/* <TenIcon height={40} /> */}
               </View>
               <View
                 style={{

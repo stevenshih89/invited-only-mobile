@@ -14,6 +14,7 @@ import {addPhotosPath} from 'constants/pathLocations';
 import {Switch} from '@ant-design/react-native';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import { getFcmToken } from 'helpers/fcmHelper';
+import AuthProgress from 'components/AuthProgress';
 
 const TurnNotifications: FC = (): JSX.Element => {
   const [notifications, setNotifications] = useState<boolean>(true);
@@ -92,7 +93,8 @@ const TurnNotifications: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                <ThirtyIcon height={40} />
+                {/* <ThirtyIcon height={40} /> */}
+                <AuthProgress startPercentage={20} endPercentage={30} animationDuration={1000} />
               </View>
               <View
                 style={{
