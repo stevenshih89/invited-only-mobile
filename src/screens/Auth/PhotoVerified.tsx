@@ -49,19 +49,19 @@ const PhotoVerified = () => {
 
   return (
     <SafeAreaView style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
-      <View style={{paddingHorizontal: 24, flex: 1}}>
-        <View style={{alignItems: 'center', marginTop: 10}}>
+      <View style={{paddingHorizontal: 24, flex: 1, justifyContent: 'space-around'}}>
+        <View style={{alignItems: 'center', transform:[{translateY: -20}]}}>
           <LogoPrimary2 />
         </View>
+        <View>
         <View
           style={{
-            marginTop: screenHeight / 10,
             alignSelf: 'center',
             width: 180,
             height: 180,
             position: 'relative',
           }}>
-          <CheckStarIcon style={{position: 'absolute', top: 10, right: 10, zIndex: 10}} width={36} height={36} />
+          <CheckStarIcon style={{position: 'absolute', top: 0, right: 0, zIndex: 10}} width={36} height={36} />
           <Image source={{uri: imageUri}} style={{width: 180, height: 180, borderRadius: 180}} />
         </View>
         <Text style={{textAlign: 'center', fontFamily: Satoshi400, fontSize: RFValue(18, 812), color: whiteColor, marginTop: 20}}>
@@ -70,6 +70,8 @@ const PhotoVerified = () => {
         <Animated.View style={[animatedStyle, {width: 90, height: 90, alignSelf: 'center', marginTop: 40}]}>
           <Loader width={90} height={90} />
         </Animated.View>
+        </View>
+        <View></View>
       </View>
     </SafeAreaView>
   );

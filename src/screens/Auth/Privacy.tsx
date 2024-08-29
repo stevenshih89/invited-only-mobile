@@ -5,7 +5,7 @@ import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {black1Color, lightGray3Color, lightGray4Color, transparentWhite30Color, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi700} from 'constants/fonts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -70,13 +70,13 @@ const Privacy: FC = (): JSX.Element => {
                 style={{
                   width: '100%',
                   marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 14,
+                  marginTop: screenHeight / 10,
                 }}>
                 <Text
                   style={{
                     color: whiteColor,
-                    fontFamily: Satoshi400,
-                    fontSize: RFValue(34, 812),
+                    fontFamily: Satoshi500,
+                    fontSize: RFValue(48, 812),
                     marginBottom: 18,
                   }}>
                   Welcome

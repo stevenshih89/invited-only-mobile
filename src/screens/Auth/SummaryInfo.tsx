@@ -1,4 +1,4 @@
-import {black1Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {black1Color, lightGray16Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -29,7 +29,7 @@ const SummaryInfo = () => {
     <SafeAreaView style={{flex: 1, backgroundColor: black1Color}}>
       <View style={{flex: 1, paddingHorizontal: 24, justifyContent: 'space-between'}}>
         <View>
-          <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'flex-start'}}>
+          <View style={{flexDirection: 'row', marginTop: 32, width: '100%', alignItems: 'center', justifyContent: 'flex-start'}}>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               activeOpacity={0.7}
@@ -40,13 +40,13 @@ const SummaryInfo = () => {
                 height: 40,
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: transparentWhite30Color,
+                backgroundColor: lightGray16Color,
               }}>
               <ArrowLeft />
             </TouchableOpacity>
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: screenHeight / 20}}>
-            <View style={{backgroundColor: whiteColor, height: '100%', width: 26}} />
+            <View style={{backgroundColor: whiteColor, height: 100, width: 26}} />
             <View style={{alignItems: 'flex-end', flexDirection: 'column', flex: 1}}>
               <Text style={{fontFamily: Outfit500, fontSize: RFValue(58, 812), color: whiteColor, lineHeight: 60}}>
                 {name?.split(' ')[0]}
