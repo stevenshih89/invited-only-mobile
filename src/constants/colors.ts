@@ -9,7 +9,7 @@ const darkRed2Color: string = '#9B314C';
 const deleteColor = '#CE2626';
 
 const lightRedColor: string = '#FA0232';
-const errorColor: string = '#FA0232';
+const errorColor: string = '#EB5858';
 const lightGreenColor: string = '#2EB263';
 const lightRed1Color: string = '#FF4E40';
 const transparent60Color: string = 'rgba(0, 0, 0, 0.6)';
