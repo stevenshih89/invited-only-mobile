@@ -134,7 +134,8 @@ const InvitationCode: FC = (): JSX.Element => {
           notifications: [],
           weeklySuperInvites: 5,
           superInvites: 0,
-          lastUpdateSuperInvite: Date.now()
+          lastUpdateSuperInvite: Date.now(),
+          reports: []
         })
         .then(async () => {
           console.log('User added!');

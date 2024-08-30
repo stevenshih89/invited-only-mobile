@@ -22,9 +22,10 @@ interface ModalReportProps {
   setModalReport?: any;
   uidSender?: string;
   uid?: string;
+  sortEventsByReport: (uid: string) => void;
 }
 
-const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid}) => {
+const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid, sortEventsByReport}) => {
   const styles = useStyles();
 
   const handleSendReport = async (typeReport: string): Promise<void> => {
@@ -45,7 +46,14 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
         phone: dataUserUid?.phoneNumber,
         phoneSender: dataUserUidSender?.phoneNumber,
       });
-      showToast('inviteMatch', 'Alexa was reported', 'Thank you!', {ownerPhoto: dataUserUid?.photos[0].image, status: 'SUCCESSFUL'});
+
+      await firestore().collection('userInfo').doc(uid).update({
+        reports: [...dataUserUid?.reports, uidSender]
+      })
+
+      sortEventsByReport(uid);
+
+      showToast('inviteMatch', `${dataUserUid?.name} was reported`, 'Thank you!', {ownerPhoto: dataUserUid?.photos[0].image, status: 'SUCCESSFUL'});
       setModalReport(false);
     } catch (e) {
       showToast('inviteMatch', '', 'Error!');

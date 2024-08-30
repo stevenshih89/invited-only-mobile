@@ -1057,8 +1057,9 @@ const IO: FC = (): JSX.Element => {
         //   setEventsLength(data.length);
         // }, 3000);
       });
-    allEventsLength.current = data.length;
-    setEvents(data);
+    allEventsLength.current = data.length;  
+    const sortReports = sortEventsByReportFirstRender(data);    
+    setEvents(sortReports);
     eventsRef.current = data;
     // console.warn('data', data);
 
@@ -1066,6 +1067,19 @@ const IO: FC = (): JSX.Element => {
     //   setEvents([...data]);
     //   setEventsLength(data.length);
     // }, 3000);
+  };
+
+  const sortEventsByReport = (uid: string) => {    
+    const res = events.filter(item => item.info.uid !== uid)
+    setEvents(res);
+  }
+
+  const sortEventsByReportFirstRender = (data: any) => {    
+    const filterData = data.filter(item => {
+      return item && !item.info.reports.includes(userInfo.uid);
+    });
+  
+    return filterData;
   };
 
   const requestUserPermission = async () => {
@@ -1234,7 +1248,7 @@ const IO: FC = (): JSX.Element => {
               text="Your event is under review. Thank you for your patience. You will be notified if your account is accepted"
             />
           )}
-          <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
+          <ModalReport sortEventsByReport={sortEventsByReport} modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
           <SuperInvite
             isVisibleSuperInvite={isVisibleSuperInvite}
             activeSuperInviteUser={activeSuperInviteUser}
