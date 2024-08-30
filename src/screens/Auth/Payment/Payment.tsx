@@ -26,7 +26,7 @@ import CheckIcon from 'assets/images/icons/check.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import UnlimitedIcon from 'assets/images/icons/unlimited.svg';
 import IOIcon from 'assets/images/icons/io.svg';
-import FlashIcon from 'assets/images/icons/flash.svg';
+import FlashIcon from 'assets/images/icons/flash-white.svg';
 import EyeIcon from 'assets/images/icons/eye.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import CloseCircleIcon from 'assets/images/icons/close-circle.svg';
@@ -85,7 +85,7 @@ const Payment: FC = (): JSX.Element => {
   const whatGet: WhatGetItem[] = [
     {
       title: 'Unlimited Events Creation',
-      description: 'Creating extraordinary events tailored to your vision.',
+      description: 'Create Unlimited VIP Tables and Events to Invite.',
       icon: CalendarIcon,
     },
     {
@@ -264,21 +264,6 @@ const Payment: FC = (): JSX.Element => {
         style={{position: 'relative', marginTop: isActive ? 0 : 0}}
         activeOpacity={0.7}
         onPress={() => setActivePayment(item)}>
-        {/* <View style={{position: 'absolute', top: 0, right: 0, left: 0, zIndex: 10}}>
-          <View
-            style={{
-              alignSelf: 'center',
-              borderWidth: 2,
-              borderStyle: 'solid',
-              borderColor: whiteColor,
-              borderRadius: 7,
-              paddingHorizontal: 6,
-              paddingVertical: 4,
-              backgroundColor: blackColor,
-            }}>
-            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(7, 812), color: whiteColor}}>{item.title}</Text>
-          </View>
-        </View> */}
         <LinearGradient
           colors={colors}
           start={{x: 0, y: 0}}
@@ -289,7 +274,7 @@ const Payment: FC = (): JSX.Element => {
             borderWidth: 2,
             borderStyle: 'solid',
             borderColor: isActive ? whiteColor : 'transparent',
-            width: screenWidth / 3 - 30,
+            width: screenWidth / 3 - 25,
             height: 180,
             justifyContent: 'center',
             paddingTop: isActive ? 26 : 20,
@@ -308,17 +293,17 @@ const Payment: FC = (): JSX.Element => {
                 paddingVertical: 4,
                 backgroundColor: blackColor,
               }}>
-              <Text style={{fontFamily: Satoshi700, fontSize: RFValue(7, 812), color: whiteColor}}>{item.title}</Text>
+              <Text style={{fontFamily: Satoshi700, fontSize: RFValue(8, 812), color: whiteColor}}>{item.title}</Text>
             </View>
           </View>
           <Text
-            style={{fontFamily: Satoshi700, fontSize: RFValue(22, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
+            style={{fontFamily: Satoshi700, fontSize: isActive? RFValue(38, 812): RFValue(26, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
             {item.duration}
           </Text>
           <Text
             style={{
               fontFamily: Satoshi500,
-              fontSize: RFValue(11, 812),
+              fontSize: RFValue(12, 812),
               color: isActive ? blackColor : whiteColor,
               textAlign: 'center',
               marginTop: 6,
@@ -334,7 +319,7 @@ const Payment: FC = (): JSX.Element => {
             }}
           />
           <Text
-            style={{fontFamily: Satoshi700, fontSize: RFValue(10, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
+            style={{fontFamily: Satoshi700, fontSize: RFValue(16, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
             {item.pricePerDuration}
           </Text>
         </LinearGradient>
