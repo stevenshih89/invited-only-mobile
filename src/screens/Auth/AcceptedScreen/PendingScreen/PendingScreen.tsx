@@ -39,11 +39,11 @@ const PendingScreen: FC = (): JSX.Element => {
     <SafeAreaView style={[styles.safeAreaView, {backgroundColor: black1Color}]}>
       <View style={{flex: 1, paddingHorizontal: 24, justifyContent: 'space-between'}}>
         <View>
-          <View style={{alignItems: 'center'}}>
+          <View style={{alignItems: 'center', marginTop: 16, paddingVertical: 28}}>
             <LogoPrimary2 />
           </View>
           <View style={{alignItems: 'center', marginTop: 20}}>
-            <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(46, 812)}}>In Review</Text>
+            <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812)}}>In Review</Text>
           </View>
           <View style={{marginTop: 20, alignSelf: 'center', alignItems: 'center', width: '90%'}}>
             <View style={{borderColor: whiteColor, borderWidth: 64, borderRadius: 500, alignSelf: 'center'}}>
@@ -67,12 +67,9 @@ const PendingScreen: FC = (): JSX.Element => {
               <TimerIcon />
             </View>
           </View>
-          <View style={{marginTop: 10}}>
-            <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), textAlign: 'center'}}>
-              Your account is under review.
-            </Text>
-            <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), textAlign: 'center'}}>
-              You will be notified soon.
+          <View style={{marginTop: 30}}>
+            <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(20, 812), textAlign: 'center'}}>
+            Your account is under review. Thank you for your patience. You will be notified if your account is accepted.
             </Text>
           </View>
         </View>

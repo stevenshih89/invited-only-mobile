@@ -36,7 +36,7 @@ const CodeVerified: FC = (): JSX.Element => {
     <SafeAreaView style={[styles.safeAreaView, {backgroundColor: black1Color}]}>
       <View style={{flex: 1, paddingHorizontal: 24, justifyContent: 'space-between'}}>
         <View>
-          <View style={{alignItems: 'center'}}>
+          <View style={{alignItems: 'center', marginTop: 16, paddingVertical: 28}}>
             <LogoPrimary2 />
           </View>
           <View style={{alignItems: 'center', marginTop: 20}}>
@@ -66,7 +66,7 @@ const CodeVerified: FC = (): JSX.Element => {
           </View>
           <View style={{marginTop: 10}}>
             <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), textAlign: 'center'}}>
-              Congratulations! Join invitation accepted. Welcome aboard!
+            Congratulations! Your join invitation has been accepted. Welcome aboard!
             </Text>
           </View>
         </View>
