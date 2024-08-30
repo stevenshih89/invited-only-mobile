@@ -77,7 +77,6 @@ const Profile: FC = () => {
               Image.prefetch(userImage.image).catch(error => {
                 console.error('image prefetching error: ', error);
               });
-
             } else {
               Alert.alert('Error', 'No user data found in Firestore');
             }
@@ -147,7 +146,7 @@ const Profile: FC = () => {
       </View>
     );
   };
-    
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
@@ -160,17 +159,16 @@ const Profile: FC = () => {
             </View>
             {mainImage?.image ? (
               <FastImage
-              style={styles.profileImage}
-              source={{
-                uri: mainImage?.image,
-                headers:{ Authorization: 'someAuthToken' },
-                priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.contain}
-            />
-          
-              // <Image source={{uri: mainImage?.image}} style={styles.profileImage} />
+                style={styles.profileImage}
+                source={{
+                  uri: mainImage?.image,
+                  headers: {Authorization: 'someAuthToken'},
+                  priority: FastImage.priority.normal,
+                }}
+                resizeMode={FastImage.resizeMode.contain}
+              />
             ) : (
+              // <Image source={{uri: mainImage?.image}} style={styles.profileImage} />
               <View style={[styles.profileImage, {backgroundColor: whiteColor}]} />
             )}
             <View style={[styles.buttonContainer, {position: 'absolute', bottom: 0, zIndex: 20}]}>
@@ -198,13 +196,15 @@ const Profile: FC = () => {
                 {userInfo?.accountType?.toLowerCase() === 'host' && <Text style={styles.accountTypeText}>Host</Text>}
                 {userInfo?.accountType?.toLowerCase() === 'guest' && <Text style={styles.accountTypeText}>Guest</Text>}
               </View>
-              {userInfo?.accountPremium && <LinearGradient
-                colors={['#977B4A', '#E5D291', '#A28453']}
-                style={styles.accountTypeWrapperPremium}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 0}}>
-                {true && <Text style={styles.accountTypePremium}>Premium</Text>}
-              </LinearGradient>}
+              {userInfo?.accountPremium && (
+                <LinearGradient
+                  colors={['#977B4A', '#E5D291', '#A28453']}
+                  style={styles.accountTypeWrapperPremium}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}>
+                  {true && <Text style={styles.accountTypePremium}>Premium</Text>}
+                </LinearGradient>
+              )}
             </View>
           </View>
           <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} />

@@ -342,10 +342,9 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   };
 
-  const handleGetEventsIJoining = async () => {
+  const handleGetEventsIJoining = async events => {
     try {
       const uid = user?.uid;
-      const events = await firestore().collection('Events').get();
       const data = events?.docs?.map(i => i?.data());
 
       const filterData = data?.filter(obj => {
@@ -361,24 +360,52 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   };
 
-  const getMyEvents = async () => {
-    try {
-      if (user) {
-        const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
-        const data = querySnapshot?.docs?.map(i => i?.data());
-        setMyEventsData(data);
-      }
-    } catch (e) {
-      console.log('error my events', e);
-    }
-  };
+  // const getMyEvents = async () => {
+  //   try {
+  //     if (user) {
+  //       const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
+  //       const data = querySnapshot?.docs?.map(i => i?.data());
+  //       setMyEventsData(data);
+  //     }
+  //   } catch (e) {
+  //     console.log('error my events', e);
+  //   }
+  // };
 
-  useFocusEffect(
-    useCallback(() => {
-      getMyEvents();
-      handleGetEventsIJoining();
-    }, [setIsVisibleCancelAttendingModal, isVisibleCancelAttendingModal]),
-  );
+  useEffect(() => {
+    let myEventsSubscribe: any;
+    let eventsJoiningSubscribe: any;
+    if (user?.uid) {
+      myEventsSubscribe = firestore()
+        .collection('Events')
+        .where('uid', '==', `${user?.uid}`)
+        .onSnapshot(querySnapshot => {
+          if (querySnapshot.empty) {
+            return;
+          }
+          const data = querySnapshot?.docs?.map(i => i?.data());
+          setMyEventsData(data);
+        });
+    }
+
+    eventsJoiningSubscribe = firestore()
+      .collection('Events')
+      .onSnapshot(querySnapshot => {
+        handleGetEventsIJoining(querySnapshot);
+      });
+
+    return () => {
+      myEventsSubscribe && myEventsSubscribe();
+      eventsJoiningSubscribe && eventsJoiningSubscribe();
+    };
+  }, [setIsVisibleCancelAttendingModal, isVisibleCancelAttendingModal]);
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     getMyEvents();
+  //     handleGetEventsIJoining();
+  //   }, [setIsVisibleCancelAttendingModal, isVisibleCancelAttendingModal]),
+  // );
 
   return (
     <>
@@ -683,7 +710,9 @@ const MyEvents: FC<any> = ({navigation}) => {
         userInfo={activeUserInfo}
         eventInfo={activeModalEvent}
       />
-      {!userInfo?.accountConfirmed && !loading && <ModalLockAccount wrapperStyle={{marginTop: 100}} isVisibleButton={true} isPremium={userInfo?.accountPremium} />}
+      {!userInfo?.accountConfirmed && !loading && (
+        <ModalLockAccount wrapperStyle={{marginTop: 100}} isVisibleButton={true} isPremium={userInfo?.accountPremium} />
+      )}
       {hoursUntilEvent < 25 && hoursUntilEvent > 0 && (
         <ModalEventRemindes
           currentEvent={currentEvent}

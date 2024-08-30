@@ -19,8 +19,8 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import ModalLocation from './ModalLocation';
 import ModalHomeAdress from './ModalHomeAdress';
-import { showToast } from 'helpers/showToast';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {showToast} from 'helpers/showToast';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleSmokeModal, setIsVisibleSmokeModal] = useState<boolean>(false);
@@ -304,14 +304,14 @@ const ProfileEditing: FC = (): ReactElement => {
       try {
         const documentSnapshot = await firestore().collection('userInfo').doc(user.uid).get();
         const userData = documentSnapshot.data();
-        const updatedImages = images.map((item) => {
+        const updatedImages = images.map(item => {
           const photo = userData?.photos?.[item.id];
           return {
             id: item.id,
             image: photo ? photo.image : item.image,
           };
         });
-        
+
         if (documentSnapshot.data()?.interests) {
           setDefaultInterests(documentSnapshot.data()?.interests);
         }
@@ -448,14 +448,19 @@ const ProfileEditing: FC = (): ReactElement => {
             location,
             showLocation,
             homeAddress: textHomeAdress,
-            showHomeAddress: showHomeAdress
-          }).then(() => {
-            if(title && typeof(title) === 'string') showToast('inviteMatch', 'Your profile is updated', `${title} successfully changed!`, {ownerPhoto: images[0].image, status: 'UPDATED'});
+            showHomeAddress: showHomeAdress,
+          })
+          .then(() => {
+            if (title && typeof title === 'string') {
+              showToast('inviteMatch', 'Your profile is updated', `${title} successfully changed!`, {
+                ownerPhoto: images[0].image,
+                status: 'UPDATED',
+              });
+            }
           })
           .then(async () => {
             await fetchImages(user);
           });
-          
       } catch (error: any) {
         console.log(error?.message);
         // Alert.alert('Error', error.message || 'Something went wrong');

@@ -48,6 +48,7 @@ import Match from './screens/Match/Match';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
+import moment from 'moment';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -86,11 +87,7 @@ const IO: FC = (): JSX.Element => {
   let currentDate = new Date();
 
   useEffect(() => {
-    console.warn('activeEvent', activeEvent);
-
     const unsubscribe = onMatchNotificationSubscription(message => {
-      console.warn('message', message);
-
       const data = message?.data;
       setMatchData(data);
       setIsVisibleMatch(true);
@@ -367,8 +364,6 @@ const IO: FC = (): JSX.Element => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
-      // const currentUid = auth().currentUser?.uid;
-
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
       const host = userHost?.accountType === 'host';
@@ -383,11 +378,6 @@ const IO: FC = (): JSX.Element => {
         fcmToken: host ? guest.data()?.fcmToken : userHost?.fcmToken,
       };
 
-      // const usersListCheck = activeEvent?.usersList ? activeEvent?.usersList : usersList;
-
-      // let updateUsersList: any = [userInvited];
-      // usersListCheck !== undefined && updateUsersList?.push(...usersListCheck);
-
       if (userHost?.accountType === 'host') {
         await firestore()
           .collection('Events')
@@ -395,52 +385,15 @@ const IO: FC = (): JSX.Element => {
           .update({
             usersList: firestore.FieldValue.arrayUnion(userInvited),
           });
-
-        // await sendNotification(
-        //   forUserUid,
-        //   'New invite request',
-        //   `${userInfo.name} wants to invite you!`,
-        //   'invite',
-        //   'Invite match'.toUpperCase(),
-        // );
-
-        // const getUserInRequestsList = (await firestore().collection('Events').doc(activeEventId).get()).data()?.requestsList;
-        // const userInRequestsList = getUserInRequestsList.find(item => item.uid === forUserUid);
-
-        // if (userInRequestsList) {
-        //   const photos = guest.data().photos;
-        //   const getMainPhoto = photos.filter(item => item.id === 0);
-        //   setOwnerEventUserPhoto(getMainPhoto[0].image);
-        //   setIsVisibleMatch(true);
-        // }
       } else {
-        // const updateRequestsList: any = [...requestsList, userInvited];
-
         await firestore()
           .collection('Events')
           .doc(activeEventId)
           .update({
-            // usersList: updateUsersList ? updateUsersList : usersList,
             requestsList: firestore.FieldValue.arrayUnion(userInvited),
           });
-        // await sendNotification(
-        //   forUserUid,
-        //   'New join request',
-        //   `${userInfo?.name} wants to join you!`,
-        //   'join',
-        //   'New Join Request'.toUpperCase(),
-        // );
-
-        // const userInList = usersList.find(item => item.uid === currentUid);
-
-        // if (userInList) {
-        //   const photos = guest.data().photos;
-        //   const getMainPhoto = photos.filter(item => item.id === 0);
-        //   setOwnerEventUserPhoto(getMainPhoto[0].image);
-        //   setIsVisibleMatch(true);
-        // }
       }
-      // const ev = events?.filter(i => i?.info?.uid !== forUserUid);
+      setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
     } catch (error) {
       console.log('eror invite', error);
     }
@@ -848,7 +801,7 @@ const IO: FC = (): JSX.Element => {
                 isLocked={!userHost?.accountConfirmed}
                 confirmedAccount={accountConfirmed}
                 changeEventList={() => handleChangeListsEventsAfterSuperInvite(uid)}
-                // check={() => check(item)}
+                onInvite={() => onInvite(uid, item?._data?.id, [], [])}
                 handleOpenSuperInvite={() => handleOpenSuperInvite(item?._data)}
                 handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}
@@ -1136,6 +1089,22 @@ const IO: FC = (): JSX.Element => {
 
   if (loading || (!userHost && userInfo.accountConfirmed)) {
     return <Loading text="Finding people near you..." userInfo={userInfo} />;
+  }
+
+  if (activeEvent?.date) {
+    const [day, month, year] = activeEvent?.date?.split('.').map(Number);
+    const [hours, minutes] = activeEvent?.hour?.split(':').map(Number);
+
+    const isExpired = moment().isAfter(moment(`${year}-${month}-${day} ${hours}:${minutes}`));
+    if (isExpired) {
+      return (
+        <View style={{flex: 1}}>
+          <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
+            {<Loading userInfo={activeEvent} topPosition={false} wrapperText={false} text={`Event Expired: ${activeEvent.date}`} />}
+          </View>
+        </View>
+      );
+    }
   }
 
   if (

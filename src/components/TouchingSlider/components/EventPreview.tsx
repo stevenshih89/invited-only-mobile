@@ -66,7 +66,6 @@ const EventPreview: FC<{
   const numberPhotos = imagesUser?.length;
 
   console.log('photos', photos);
-  
 
   function calculateAge(birthDateString: string) {
     const parts = birthDateString.split('.');
@@ -335,7 +334,7 @@ const EventPreview: FC<{
             <IOIcon />
           </TouchableOpacity>
         </View>
-        <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={photos? photos[0]?.image: ''} />
+        <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={photos ? photos[0]?.image : ''} />
       </View>
     );
   }

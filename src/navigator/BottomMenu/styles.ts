@@ -19,7 +19,7 @@ const useStyles = () =>
       },
     },
     headerStyle: {
-      backgroundColor: backgroundColor,
+      backgroundColor: blackColor,
       shadowOffset: {
         height: 0,
         width: 0,

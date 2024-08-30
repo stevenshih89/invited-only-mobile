@@ -9,36 +9,36 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env'
-import auth from '@react-native-firebase/auth'
-import { useUser } from 'src/store/userStore';
+import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
+import auth from '@react-native-firebase/auth';
+import {useUser} from 'src/store/userStore';
 
 const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined; nameEvent: string}> = ({
   id,
   isVisible,
   onClose,
   image,
-  nameEvent
+  nameEvent,
 }) => {
   const navigation = useAppNavigation();
 
   // const getFcmTokens = async (usersList: []) => {
   //   let tokens: string[] = [];
-    
+
   //   const promises = usersList.map(async (item) => {
   //     const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
   //     console.log('userInfo', userInfo);
   //     return userInfo.data().fcmToken;
   //   });
-  
+
   //   tokens = await Promise.all(promises);
-  
+
   //   return tokens;
   // };
 
   const userData = useUser((i: any) => i?.user);
 
-  const generateRandomId = (length: number) =>  {
+  const generateRandomId = (length: number) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     const charactersLength = characters.length;
@@ -46,79 +46,81 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
-  }
+  };
 
   const getFcmTokens = async (usersList: []) => {
-    
     let users: Object[] = [];
-    
-    const promises = usersList.map(async (item) => {
+
+    const promises = usersList.map(async item => {
       const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
       return {uid: userInfo?.data()?.uid, token: userInfo?.data()?.fcmToken};
     });
-  
-    users = await Promise.all(promises);    
-  
+
+    users = await Promise.all(promises);
+
     return users;
   };
 
   const getUsersList = async () => {
-    const eventInfoDoc = await firestore().collection('Events').doc(id).get()
+    const eventInfoDoc = await firestore().collection('Events').doc(id).get();
     const usersList = eventInfoDoc.data()?.usersList;
-    return usersList
-  }
+    return usersList;
+  };
 
   const sendNotification = async (title: string, body: string, mark: string) => {
-    const usersList = await getUsersList()
-    const users = await getFcmTokens(usersList)
+    const usersList = await getUsersList();
+    const users = await getFcmTokens(usersList);
 
     for (const user of users) {
       console.log('const user of users', user);
-      
+
       const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
+        },
+        body: JSON.stringify({
+          to: user.token,
+          notification: {
+            title: title,
+            body: body,
           },
-          body: JSON.stringify({
-              to: user.token,
-              notification: {
-                  title: title,
-                  body: body
-              },
-              data: {
-                status: mark,
-                image: image
-              }
-          })
+          data: {
+            status: mark,
+            image: image,
+          },
+        }),
       });
-      
+
       if (!response.ok) {
-          const error = await response.json();
-          console.error('error sending notification:', error);
+        const error = await response.json();
+        console.error('error sending notification:', error);
       } else {
-          const data = await response.json();
-          const userDoc = await firestore().collection('userInfo').doc(user.uid).get();
-          const userNotifications = userDoc.data()?.notifications || [];
-          const id = generateRandomId(8)
-          const notification = {
-              id,
-              title: title,
-              body: body,
-              mark: mark,
-              uid: userData?.uid
-          };
-          
-          try {
-              await firestore().collection('userInfo').doc(user.uid).update({
-                  notifications: [...userNotifications, notification]
-              });
-          } catch (error) {
-              console.log('error update notifications', error);
-          }
+        const data = await response.json();
+        const userDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        const userNotifications = userDoc.data()?.notifications || [];
+        const id = generateRandomId(8);
+        const notification = {
+          id,
+          title: title,
+          body: body,
+          mark: mark,
+          uid: userData?.uid,
+        };
+
+        try {
+          await firestore()
+            .collection('userInfo')
+            .doc(user.uid)
+            .update({
+              notifications: [...userNotifications, notification],
+            });
+        } catch (error) {
+          console.log('error update notifications', error);
+        }
       }
-  }
+    }
     // const response = await fetch('https://fcm.googleapis.com/fcm/send', {
     //   method: 'POST',
     //   headers: {
@@ -133,7 +135,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
     //     }
     //   })
     // });
-  
+
     // if (!response.ok) {
     //   const error = await response.json();
     //   console.error('error sending notification:', error);
@@ -144,19 +146,18 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
   };
 
   const handleCancelEvent = async () => {
-    const uidUser = auth().currentUser?.uid    
+    const uidUser = auth().currentUser?.uid;
     try {
-      await sendNotification(`${nameEvent} has been cancelled`, 'Swipe new events', 'cancelled')
+      await sendNotification(`${nameEvent} has been cancelled`, 'Swipe new events', 'cancelled');
       await firestore().collection('Events').doc(id).delete();
-      const userInfo = await firestore().collection('userInfo').doc(uidUser).get()
-      const eventList = userInfo?.data()?.eventsList
-      
-      const filterEvents = eventList.filter((item: string) => item != id)
+      const userInfo = await firestore().collection('userInfo').doc(uidUser).get();
+      const eventList = userInfo?.data()?.eventsList;
+
+      const filterEvents = eventList.filter((item: string) => item != id);
       await firestore().collection('userInfo').doc(uidUser).update({
-        eventsList: filterEvents
+        eventsList: filterEvents,
       });
-      
-      
+
       onClose();
       showToast('inviteMatch', 'Create new event', 'Event cancelled');
       navigation?.goBack();

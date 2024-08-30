@@ -21,13 +21,12 @@ import {useEffect, useId, useState} from 'react';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
-import { formatDate } from 'helpers/formatDate';
+import {formatDate} from 'helpers/formatDate';
 
 const EventsRequest = ({item, list}: any) => {
   console.log('item', item);
   console.log('list', list);
-  
-  
+
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState({accountType: ''});
@@ -69,8 +68,7 @@ const EventsRequest = ({item, list}: any) => {
     );
   };
 
-  const handleSwipeHostCardInvite = async (item: any): Promise<void> => {   
-
+  const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
     const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
     const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
 
@@ -96,7 +94,7 @@ const EventsRequest = ({item, list}: any) => {
         requestsList: updateRequestsList,
       });
       showToast('inviteMatch', '', 'The request has been confirmed');
-      sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite')
+      sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
     } catch (e) {
       console.log(e);
       showToast('inviteMatch', '', "There's been an error");
@@ -150,7 +148,7 @@ const EventsRequest = ({item, list}: any) => {
     });
   };
 
-  const generateRandomId = (length: number) =>  {
+  const generateRandomId = (length: number) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     const charactersLength = characters.length;
@@ -158,17 +156,16 @@ const EventsRequest = ({item, list}: any) => {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
-  }
+  };
 
   const getFcmTokenFromUser = async (uid: string) => {
     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
     return userInfoDoc.data()?.fcmToken;
   };
-  
+
   const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
-        
-    const token = await getFcmTokenFromUser(forUserUid)
-    
+    const token = await getFcmTokenFromUser(forUserUid);
+
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers: {
@@ -189,27 +186,29 @@ const EventsRequest = ({item, list}: any) => {
       console.error('error sending notification:', error);
     } else {
       const data = await response.json();
-      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get()
-      const userNotifications = userDoc.data()?.notifications
-      const id = generateRandomId
+      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
+      const userNotifications = userDoc.data()?.notifications;
+      const id = generateRandomId;
       const notification = {
-          id,
-          title: title,
-          body: body,
-          mark: mark,
-          uid: userInfo?.uid
-      }      
-      
+        id,
+        title: title,
+        body: body,
+        mark: mark,
+        uid: userInfo?.uid,
+      };
+
       try {
-        await firestore().collection('userInfo').doc(forUserUid).update({
-          notifications: [...userNotifications, notification]
-        })
+        await firestore()
+          .collection('userInfo')
+          .doc(forUserUid)
+          .update({
+            notifications: [...userNotifications, notification],
+          });
       } catch (error) {
         console.log('error update notifications', error);
       }
     }
   };
-  
 
   return (
     <View style={styles.itemContainer}>
@@ -261,40 +260,53 @@ const EventsRequest = ({item, list}: any) => {
               style={styles.linearGradient}
               start={{x: 0, y: 0}}
               end={{x: 0, y: 1}}>
-                <View style={{
+              <View
+                style={{
                   flexDirection: 'row',
-                  alignItems: 'center'
+                  alignItems: 'center',
                 }}>
-                  <Image style={{width: 26, height: 26, borderRadius: 26}} source={{uri: item.hostImage}}/>
-                  <View style={{
-                    marginLeft: 8
+                <Image style={{width: 26, height: 26, borderRadius: 26}} source={{uri: item.hostImage}} />
+                <View
+                  style={{
+                    marginLeft: 8,
                   }}>
-                    <Text style={{
+                  <Text
+                    style={{
                       fontSize: RFValue(10, 812),
                       fontFamily: Satoshi500,
                       color: whiteColor,
-                      marginBottom: 2
-                      }}>{item.hostName}</Text>
-                    <Text style={{
+                      marginBottom: 2,
+                    }}>
+                    {item.hostName}
+                  </Text>
+                  <Text
+                    style={{
                       fontSize: RFValue(8, 812),
                       fontFamily: Satoshi400,
-                      color: lightGray11Color
-                    }}>Host</Text>
-                  </View>
+                      color: lightGray11Color,
+                    }}>
+                    Host
+                  </Text>
                 </View>
-                <View style={{
+              </View>
+              <View
+                style={{
                   flexDirection: 'row',
                   alignItems: 'center',
-                  marginTop: 4
+                  marginTop: 4,
                 }}>
-                <Text style={{
-                  color: whiteColor,
-                  fontSize: RFValue(20,812),
-                  fontFamily: Satoshi700
-                }}>{item.placeName}</Text>
+                <Text
+                  style={{
+                    color: whiteColor,
+                    fontSize: RFValue(20, 812),
+                    fontFamily: Satoshi700,
+                  }}>
+                  {item.placeName}
+                </Text>
                 <CheckStarWhite width={14} height={14} style={{marginLeft: 4}} />
-                </View>
-                <View style={{
+              </View>
+              <View
+                style={{
                   flexDirection: 'row',
                   alignItems: 'center',
                   alignSelf: 'flex-start',
@@ -302,17 +314,21 @@ const EventsRequest = ({item, list}: any) => {
                   paddingHorizontal: 12,
                   paddingVertical: 8,
                   borderRadius: 100,
-                  marginTop: 10
+                  marginTop: 10,
                 }}>
-                  <User width={10} height={10}/>
-                  <Text style={{
+                <User width={10} height={10} />
+                <Text
+                  style={{
                     fontFamily: Satoshi400,
                     color: whiteColor,
                     fontSize: RFValue(10, 812),
-                    marginLeft: 6.5
-                  }}>{item.female}x Women invitation</Text>
-                </View>
-                <View style={{
+                    marginLeft: 6.5,
+                  }}>
+                  {item.female}x Women invitation
+                </Text>
+              </View>
+              <View
+                style={{
                   flexDirection: 'row',
                   alignItems: 'center',
                   alignSelf: 'flex-start',
@@ -320,16 +336,19 @@ const EventsRequest = ({item, list}: any) => {
                   paddingHorizontal: 12,
                   paddingVertical: 8,
                   borderRadius: 100,
-                  marginTop: 2
+                  marginTop: 2,
                 }}>
-                  <Calendar width={10} height={10}/>
-                  <Text style={{
+                <Calendar width={10} height={10} />
+                <Text
+                  style={{
                     fontFamily: Satoshi400,
                     color: whiteColor,
                     fontSize: RFValue(10, 812),
-                    marginLeft: 6.5
-                  }}>{formatDate(item.date)}</Text>
-                </View>
+                    marginLeft: 6.5,
+                  }}>
+                  {formatDate(item.date)}
+                </Text>
+              </View>
               {/* {userInfo.accountType && (
                 <View
                   style={{

@@ -1,4 +1,4 @@
-import React, {Dispatch, FC, SetStateAction, useCallback, useState} from 'react';
+import React, {Dispatch, FC, SetStateAction, useCallback, useEffect, useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 
 //import components
@@ -34,7 +34,7 @@ interface ModalUserProfileEventProps {
   uid?: string;
   list?: any;
   usersList?: any;
-  setUsersListsData?: Dispatch<SetStateAction<boolean>>;
+  setUsersListsData?: Dispatch<SetStateAction<any[]>>;
 }
 
 const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
@@ -54,7 +54,13 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   const navigation = useAppNavigation();
   const userHost = useUser((i: any) => i?.user);
   const [userInfo, setUserInfo] = useState<any>({});
-  const userGuest = usersList?.filter((i: any) => i?.uid === uid)[0];
+  const [userGuest, setUserGuest] = useState<any>(usersList?.filter((i: any) => i?.uid === uid)[0]);
+
+  console.warn('userGuest', userGuest, usersList, uid);
+
+  useEffect(() => {
+    setUserGuest(usersList?.filter((i: any) => i?.uid === uid)[0]);
+  }, [uid, usersList]);
 
   const goToProfileView = () => {
     if (setModalVisible) {
@@ -285,6 +291,10 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   const handleActionPress = () => {
     if (userGuest?.status === 'invite_match') {
       handleApproveGuestFromHost();
+      const newArray = usersList.map((i: any) => (i.uid === uid ? {...i, status: 'approved'} : i));
+
+      setUsersListsData && setUsersListsData(newArray);
+      setUserGuest({...userGuest, status: 'approved'});
       setModalVisible && setModalVisible(false);
     }
   };

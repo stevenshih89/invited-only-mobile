@@ -127,7 +127,11 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   };
 
   const sendNotification = async (forUserUid: string, title: string, body: string) => {
+    console.warn(forUserUid);
+
     const token = await getFcmTokenFromUser(forUserUid);
+
+    console.warn(token);
 
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',

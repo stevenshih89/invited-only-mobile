@@ -1,4 +1,4 @@
-import {Dispatch, FC, SetStateAction, useEffect, useState} from 'react';
+import {Dispatch, FC, SetStateAction, useCallback, useEffect, useState} from 'react';
 import InstagramSLider from 'components/InstagramSlider/InstagramSlider';
 import {blackColor, lightGray5Color, lightGray6Color, lightGrayColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {screenHeight, screenWidth} from 'constants/common';
@@ -28,7 +28,7 @@ import {calculateAge} from 'helpers/calculateAge';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {useUser} from '../../../../../store/userStore';
-import {useRoute} from '@react-navigation/native';
+import {useFocusEffect, useRoute} from '@react-navigation/native';
 
 interface MyProfileViewProps {
   isShowEditButton?: boolean;
@@ -42,7 +42,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
   const [loading, setLoading] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>({});
 
-  const [photosList, setPhotosList] = useState<[]>([]);  
+  const [photosList, setPhotosList] = useState<[]>([]);
 
   const route = useRoute();
 
@@ -55,42 +55,48 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
     navigation.navigate(profileEditingPath as never);
   };
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      setLoading(true);
-      const user = userHost?.uid;
-      const uid = route?.params?.uid;
-      console.log('route', route);
-      console.log('uid', uid);
-      console.log('userHost uid', user);
-      if (user) {
-        try {
-          const userUid = uid !== undefined ? uid : user;
-          const userInfoDoc = await firestore().collection('userInfo').doc(userUid).get();
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUserInfo = async () => {
+        setLoading(true);
+        const user = userHost?.uid;
+        const uid = route?.params?.uid;
+        console.log('route', route);
+        console.log('uid', uid);
+        console.log('userHost uid', user);
+        if (user) {
+          try {
+            const userUid = uid !== undefined ? uid : user;
+            const userInfoDoc = await firestore().collection('userInfo').doc(userUid).get();
 
-          if (userInfoDoc?.exists) {
-            setUserInfo(userInfoDoc?.data());
-            const userPhotos = userInfoDoc?.data()?.photos;
-            if (userPhotos?.length) {
-              const mappedPhotos = userPhotos?.map((img: {id: number; image: string}) => img?.image);
-              setPhotosList(mappedPhotos);
+            if (userInfoDoc?.exists) {
+              setUserInfo(userInfoDoc?.data());
+              const userPhotos = userInfoDoc?.data()?.photos;
+              if (userPhotos?.length) {
+                const mappedPhotos = userPhotos?.map((img: {id: number; image: string}) => img?.image);
+                setPhotosList(mappedPhotos);
+              }
+            } else {
+              Alert.alert('Error', 'No user data found in Firestore');
             }
-          } else {
-            Alert.alert('Error', 'No user data found in Firestore');
+          } catch (error: any) {
+            Alert.alert('Error', error.message || 'Something went wrong');
           }
-        } catch (error: any) {
-          Alert.alert('Error', error.message || 'Something went wrong');
+          setLoading(false);
         }
-        setLoading(false);
-      }
-    };
-    fetchUserInfo();
-  }, []);
+      };
+      fetchUserInfo();
+    }, []),
+  );
 
   const userAge = calculateAge(userInfo?.date);
 
   if (loading || !userInfo) {
-    return <ActivityIndicator style={{flex: 1, backgroundColor: blackColor}} />;
+    return (
+      <View style={{flex: 1, backgroundColor: blackColor}}>
+        <ActivityIndicator style={{flex: 1, backgroundColor: blackColor}} />
+      </View>
+    );
   }
 
   return (
@@ -201,7 +207,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
             </View> */}
             <View style={styles.basicsWrapper}>
               {/* <Text style={styles.testBasics}>My basics</Text> */}
-              <Button onPress={goToProfileEditing} title={'Edit profile'}/>
+              <Button onPress={goToProfileEditing} title={'Edit profile'} />
               <View style={styles.wrapperTextTags}>
                 {userInfo?.work?.title && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
@@ -310,15 +316,15 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
               />
             </View>
             <View>
-            {photosList?.map((item, index) => {
-              return (index !== 0 && item) ? (
-               <Image
-                key={index}
-                style={{height: 544, borderRadius: 20, marginTop: 34, width: '100%'}}
-                source={{uri: photosList[index]}}
-                />
-              ) : null;
-            })}
+              {photosList?.map((item, index) => {
+                return index !== 0 && item ? (
+                  <Image
+                    key={index}
+                    style={{height: 544, borderRadius: 20, marginTop: 34, width: '100%'}}
+                    source={{uri: photosList[index]}}
+                  />
+                ) : null;
+              })}
             </View>
             <View style={styles.wrapperAboutMe}>
               {/* <Text style={styles.testBasics}>{userInfo?.name} location</Text>

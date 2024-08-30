@@ -26,7 +26,7 @@ import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {calculateAge} from 'helpers/calculateAge.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
-import { useCounterSuperEvents } from 'src/store/counterSuperInvites/index.ts';
+import {useCounterSuperEvents} from 'src/store/counterSuperInvites/index.ts';
 
 interface Photo {
   url: string;
@@ -86,23 +86,23 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   isPremium,
   fromJoinEventsScreen = false,
   isProfile,
-  changeEventList
+  changeEventList,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
-  const navigation = useAppNavigation();  
-  
-  const { counterSuperInvites } = useCounterSuperEvents();  
+  const navigation = useAppNavigation();
+
+  const {counterSuperInvites} = useCounterSuperEvents();
 
   const handleSuperInvite = () => {
-    if(counterSuperInvites - 1 >= 0) {
-      flipCoin()
-      changeEventList()
+    if (counterSuperInvites - 1 >= 0) {
+      flipCoin();
+      changeEventList();
     } else {
-      navigation.navigate('/super-invite-pay')
+      navigation.navigate('/super-invite-pay');
     }
-  }
+  };
 
   const goToCodeConfirmation = (): void => {
     // @ts-ignore
@@ -139,10 +139,10 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       easing: Easing.inOut(Easing.ease),
     });
     setFlipped(prev => !prev);
-    if(superInvites) {
+    if (superInvites) {
       handleOpenSuperInvite && handleOpenSuperInvite();
     } else {
-      goToMyProfileView()
+      goToMyProfileView();
     }
   };
 
@@ -165,13 +165,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
     <FastImage
       style={[styles.imageStyle, styles.container]}
       source={{
-      uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active],
-      headers:{ Authorization: 'someAuthToken' },
-      priority: FastImage.priority.normal,
+        uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active],
+        headers: {Authorization: 'someAuthToken'},
+        priority: FastImage.priority.normal,
       }}
-      resizeMode={FastImage.resizeMode.cover}
-      >
-        <LinearGradient
+      resizeMode={FastImage.resizeMode.cover}>
+      <LinearGradient
         colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
         start={{x: 0, y: 1}}
         end={{x: 0, y: 0}}
@@ -201,7 +200,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           <View style={styles.lockDescWr}>
             <Text style={styles.lockedTitle}>Locked</Text>
             <Text style={styles.lockedSubtitle}>
-            Your account is under review. Thank you for your patience. You will be notified if your account is accepted
+              Your account is under review. Thank you for your patience. You will be notified if your account is accepted
             </Text>
             <View style={styles.lockedHaveCodeWr}>
               <Text style={styles.lockedHaveCodeTitle}>Have a code?</Text>
@@ -214,7 +213,15 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       )}
       {isShowEventPreview ? (
         <View style={styles.eventPreviewWr}>
-          <EventPreview placeName={placeName} date={date} girls={girls} photos={eventPhotos} name={name} flipCoin={flipCoin} fromJoinEventsScreen={fromJoinEventsScreen}/>
+          <EventPreview
+            placeName={placeName}
+            date={date}
+            girls={girls}
+            photos={eventPhotos}
+            name={name}
+            flipCoin={flipCoin}
+            fromJoinEventsScreen={fromJoinEventsScreen}
+          />
         </View>
       ) : (
         <LinearGradient
@@ -224,18 +231,26 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           end={{x: 0, y: 1}}>
           <View style={styles.wrapperBio}>
             <View style={{flexDirection: 'row'}}>
-                <View
-                  style={{
-                    backgroundColor: whiteColor,
-                    borderRadius: 5,
-                    paddingHorizontal: 12,
-                    paddingVertical: 2,
-                    alignSelf: 'flex-start',
-                  }}>
-                  {accountType === 'guest' && <Text style={{color: blackColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>Guest</Text>}
-                  {accountType === 'host' && <Text style={{color: blackColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>Host</Text>}
-                </View>
-              { true && (
+              <View
+                style={{
+                  backgroundColor: whiteColor,
+                  borderRadius: 5,
+                  paddingHorizontal: 12,
+                  paddingVertical: 2,
+                  alignSelf: 'flex-start',
+                }}>
+                {accountType === 'guest' && (
+                  <Text style={{color: blackColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                    Guest
+                  </Text>
+                )}
+                {accountType === 'host' && (
+                  <Text style={{color: blackColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                    Host
+                  </Text>
+                )}
+              </View>
+              {true && (
                 <LinearGradient
                   colors={['#977B4A', '#E5D291', '#A28453']}
                   style={{
@@ -262,7 +277,10 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               )}
             </View>
             <View style={styles.rowBioInfo}>
-              <Text style={styles.textName}>{name}{age? <Text>,</Text>: null}</Text>
+              <Text style={styles.textName}>
+                {name}
+                {age ? <Text>,</Text> : null}
+              </Text>
               {!isProfile && <Text style={styles.textYears}>{age}</Text>}
               <View style={{marginLeft: 10}}>{confirmedAccount && <CheckStarWhite width={22} height={22} />}</View>
             </View>
@@ -372,7 +390,9 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                         },
                         backAnimatedStyle,
                       ]}>
-                      <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>{counterSuperInvites}</Text>
+                      <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>
+                        {counterSuperInvites}
+                      </Text>
                     </Animated.View>
                   </TouchableWithoutFeedback>
                 </View>
@@ -400,7 +420,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           <View style={styles.inviteBottomCircleFigure} />
         </View>
       )}
-      </FastImage>
+    </FastImage>
     // <ImageBackground
     //   source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
     //   resizeMode="cover"

@@ -36,14 +36,10 @@ const Requests: FC = (): ReactElement => {
 
   const fetchHostRequests = async () => {
     const user = auth().currentUser;
-
-    console.warn('activeEvent', activeEvent);
-
     if (user && activeEvent !== 'host') {
       try {
         const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
         const myEventsQuery = await firestore().collection('Events').where('uid', '==', user.uid).get();
-        console.warn('querySnapshot', querySnapshot.data());
 
         if (!myEventsQuery.empty) {
           const eventList = myEventsQuery?.docs.map(i => i?.data());
@@ -91,7 +87,6 @@ const Requests: FC = (): ReactElement => {
         const data = querySnapshot?.docs?.map(i => i?.data());
         // console.log('filter', filterByUid(data, user?.uid));
         const filterUid = filterByUid(data, user?.uid);
-        console.warn('filterUid', filterUid);
 
         // console.log('filterUid', filterUid);
         setDataForGuest(filterUid);
