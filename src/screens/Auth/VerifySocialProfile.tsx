@@ -17,7 +17,8 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {showToast} from 'helpers/showToast';
 import {AuthContext} from 'contexts/AuthContext';
-import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareFlatList, KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface Social {
   id: number;
@@ -30,6 +31,7 @@ const VerifySocialProfile = () => {
   const [socialNickname, setSocialNickname] = useState<any>({});
   const navigation = useAppNavigation();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isFocusInput, setIsFocusInput] = useState<boolean>(false);
 
   const {onBoarding} = useContext(AuthContext);
 
@@ -214,57 +216,63 @@ const VerifySocialProfile = () => {
         </View>
         {isActive ? (
           <View style={{marginTop: 16}}>
-            <Input value={socialNickname[item.name]} onChange={val => handleSocialNicknameChange(val, item.name)} />
+            <Input onPressFocus={() => setIsFocusInput(true)} onBlur={() => setIsFocusInput(false)} value={socialNickname[item.name]} onChange={val => handleSocialNicknameChange(val, item.name)} />
           </View>
         ) : null}
       </TouchableOpacity>
     );
   };
 
+  
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: black1Color}}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={{paddingHorizontal: 24, flex: 1, justifyContent: 'space-between'}}>
-          <View style={{flex: 1}}>
-          <View style={{alignItems: 'center'}}>
-            <LogoPrimary2 />
-          </View>
-          <View
-            style={{
-              width: '100%',
-              marginBottom: screenHeight / 28,
-              marginTop: screenHeight / 14,
-            }}>
-            <Text
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        style={{flex: 1}}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{paddingHorizontal: 24, flex: 1, justifyContent: 'space-between'}}>
+            {!isFocusInput && <View style={{alignItems: 'center', marginTop: 16, paddingVertical: 28}}>
+              <LogoPrimary2 />
+            </View>}
+            <View
               style={{
-                color: whiteColor,
-                fontFamily: Satoshi400,
-                fontSize: RFValue(34, 812),
-                marginBottom: 18,
+                width: '100%',
+                marginBottom: screenHeight / 28,
+                marginTop: isFocusInput? screenHeight / 40: screenHeight / 14,
               }}>
-              Please verify your social profile
-            </Text>
-            <Text
-              style={{
-                color: whiteColor,
-                fontFamily: Satoshi400,
-                fontSize: RFValue(16, 812),
-              }}>
-              Since you don't have an invitation code we need to check one of your social profile
-            </Text>
-          </View>
-            <KeyboardAwareFlatList 
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(38, 812),
+                  marginBottom: 18,
+                }}>
+                Please verify your social profile
+              </Text>
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi400,
+                  fontSize: RFValue(16, 812),
+                }}>
+                Since you don't have an invitation code we need to check one of your social profile
+              </Text>
+            </View>
+            <KeyboardAwareFlatList
+              enableAutomaticScroll={false}
               data={socials} 
               ItemSeparatorComponent={() => <View style={{height: 8}} />} 
               renderItem={renderItem} />
+            <View style={{marginVertical: 4}}>
+              <Button title="Continue" loading={loading} disabled={!socialNickname[openedSocial?.name]?.length} onPress={handleNext} />
+            </View>
           </View>
-        <View style={{marginVertical: 4}}>
-          <Button title="Continue" loading={loading} disabled={!socialNickname[openedSocial?.name]?.length} onPress={handleNext} />
-        </View>
-      </View>
-      </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
+
 };
 
 export default VerifySocialProfile;

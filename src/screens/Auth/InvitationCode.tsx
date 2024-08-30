@@ -17,17 +17,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import Toast from 'react-native-toast-message';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
-  const [invalidCode, setInvalidCode] = useState(false)
+  const [invalidCode, setInvalidCode] = useState(false);
+  const [isFocusInput, setIsfocusInput] = useState<boolean>(false);
 
   const navigation = useAppNavigation();
   const [loading, setLoading] = useState<boolean>(false);
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
-
-  const userHost = useUser((i: any) => i?.user);
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
     const uploadUri = Platform.OS === 'ios' ? imagePath.replace('file://', '') : imagePath;
@@ -234,12 +234,12 @@ const InvitationCode: FC = (): JSX.Element => {
               paddingBottom: 0,
               paddingHorizontal: 24,
             }}>
-            <View style={{alignItems: 'center'}}>
-              <View style={{flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
+            <ScrollView showsVerticalScrollIndicator={false} style={{}}>
+              <View style={{flexDirection: 'row', marginTop: 16, paddingVertical: 28, width: '100%', justifyContent: 'center'}}>
                 <LogoPrimary2 />
               </View>
               <View />
-              <View style={{marginTop: screenHeight / 20}}>
+              <View style={{marginTop: 64}}>
                 <View
                   style={{
                     paddingHorizontal: 36,
@@ -268,7 +268,7 @@ const InvitationCode: FC = (): JSX.Element => {
                     }}
                   />
                   <View style={{width: '100%', marginBottom: 40}}>
-                    <Input value={code} onChange={setCode} errorText='Incorrect invitation code' isError={invalidCode} containerStyle={{width: '100%', height: 60, marginBottom: 10, borderColor: invalidCode? errorColor: '', borderWidth: 1, borderRadius: 10}} placeholder="Enter your invitation code" />
+                    <Input onPressFocus={() => setIsfocusInput(true)} onBlur={() => setIsfocusInput(false)} value={code} onChange={setCode} errorText='Incorrect invitation code' isError={invalidCode} containerStyle={{width: '100%', height: 60, marginBottom: 10, borderColor: invalidCode? errorColor: '', borderWidth: 1, borderRadius: 10}} placeholder="Enter your invitation code" />
                   </View>
                 </View>
                 <View
@@ -299,15 +299,15 @@ const InvitationCode: FC = (): JSX.Element => {
                   </Text>
                 </View>
               </View>
-            </View>
-            <View style={{marginBottom: 4}}>
+            </ScrollView>
+            <View style={{marginBottom: 4, marginTop: isFocusInput? 16: 0}}>
               <Button onPress={() => handleNext()} loading={loading} disabled={!code.length} title="Apply code" />
-              <Button
+              {!isFocusInput && <Button
                 onPress={() => navigation.navigate(verifySocialProfilePath as never)}
                 buttonTitleStyle={{textDecorationLine: 'underline'}}
                 title="I don't have a code"
                 variant="transparent"
-              />
+              />}
             </View>
           </View>
         </SafeAreaView>
