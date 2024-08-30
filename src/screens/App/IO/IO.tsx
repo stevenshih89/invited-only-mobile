@@ -757,10 +757,14 @@ const IO: FC = (): JSX.Element => {
 
   const getListForHost = async () => {
     let users: any;
-    if (userInfo?.chooseGuest === 'any') {
+    console.log('activeEvent', activeEvent);
+    
+    if (activeEvent.male > 0 && activeEvent.female > 0) {
       users = await firestore().collection('userInfo').limit(20).get();
-    } else {
-      users = await firestore().collection('userInfo').where('gender', '==', userInfo?.chooseGuest).limit(20).get();
+    } else if (activeEvent.male > 0) {
+      users = await firestore().collection('userInfo').where('gender', '==', 'man').limit(20).get();
+    } else if (activeEvent.female > 0) {
+      users = await firestore().collection('userInfo').where('gender', '==', 'woman').limit(20).get();
     }
 
     const data: any[] = [];
