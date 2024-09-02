@@ -13,13 +13,7 @@ import Animated, {useSharedValue, useAnimatedStyle, withTiming, Easing, withDela
 
 const widthScreen = Dimensions.get('screen').width;
 
-
-
-const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string, imageEvent: string}> = ({
-  isVisibleMatch,
-  nameEvent,
-  imageEvent
-}) => {
+const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: string}> = ({isVisibleMatch, nameEvent, imageEvent}) => {
   const opacityWrapper = useSharedValue(0);
   const imagePosition = useSharedValue(-200);
   const textSize = useSharedValue(0);
@@ -27,7 +21,7 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string, imageEvent: s
   const figurePositin = useSharedValue(-screenHeight * 0.34 - 100);
   const buttonPosition = useSharedValue(-1000);
 
-  const words = nameEvent?.split(' ');
+  const words = 'La la la la'?.split(' ');
   const wordTranslations = words?.map(() => useSharedValue(widthScreen));
   const nameAnimation = useSharedValue(widthScreen);
 
@@ -134,8 +128,8 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string, imageEvent: s
 
   const leftImageStyle = useAnimatedStyle(() => ({
     // left: imagePosition.value,
-    transform: [{translateX: imagePosition.value}]
-  }));  
+    transform: [{translateX: imagePosition.value}],
+  }));
 
   return (
     <View>
@@ -149,36 +143,39 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string, imageEvent: s
         animationIn={'fadeIn'}
         animationInTiming={1}>
         <SafeAreaView style={{flex: 1}}>
-          
           <Animated.View style={[{flex: 1, justifyContent: 'space-between'}, opacityWrapperStyle]}>
             <View>
-            <Animated.View
-            style={[
-              {
-                backgroundColor: whiteColor,
-                width: 141,
-                height: screenHeight * 0.2,
-                position: 'absolute',
-                borderBottomLeftRadius: 24,
-                borderBottomRightRadius: 24,
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-              },
-              figureTopStyle,
-            ]}>
-            <View
-              style={{
-                width: 106,
-                height: 106,
-                borderRadius: 100,
-                backgroundColor: 'black',
-                marginBottom: 38,
-              }}
-            />
-          </Animated.View>
+              <Animated.View
+                style={[
+                  {
+                    backgroundColor: whiteColor,
+                    width: 141,
+                    height: screenHeight * 0.2,
+                    position: 'absolute',
+                    borderBottomLeftRadius: 24,
+                    borderBottomRightRadius: 24,
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                  },
+                  figureTopStyle,
+                ]}>
+                <View
+                  style={{
+                    width: 106,
+                    height: 106,
+                    borderRadius: 100,
+                    backgroundColor: 'black',
+                    marginBottom: 38,
+                  }}
+                />
+              </Animated.View>
             </View>
-            <Animated.View style={[{flexDirection: 'column', marginTop: screenHeight / 20, paddingHorizontal: 50, alignItems: 'center', width: '100%'}, opacityWrapperStyle]}>
-              <View style={{marginTop: -50, width: screenWidth /2.5,flexWrap: 'wrap', flexDirection: 'row', alignSelf: 'flex-end'}}>
+            <Animated.View
+              style={[
+                {flexDirection: 'column', marginTop: screenHeight / 20, paddingHorizontal: 50, alignItems: 'center', width: '100%'},
+                opacityWrapperStyle,
+              ]}>
+              <View style={{marginTop: -50, width: screenWidth / 2.5, flexWrap: 'wrap', flexDirection: 'row', alignSelf: 'flex-end'}}>
                 {words?.map((word, index) => (
                   <Animated.Text
                     key={index}
@@ -202,15 +199,12 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string, imageEvent: s
                 <Text style={{color: whiteColor, position: 'absolute', right: 0, bottom: -10, fontSize: RFValue(13, 812)}}>Event</Text>
               </View>
               <View>
-                  <Animated.Image source={{uri: imageEvent}} 
-                    style={[{width: 215, height: 215, borderRadius: 215}, 
-                    leftImageStyle]} 
-                  />
-                </View>
-              <View style={{marginTop: 25}}>
-                <Flash width={70} height={70}/>
+                <Animated.Image source={{uri: imageEvent}} style={[{width: 215, height: 215, borderRadius: 215}, leftImageStyle]} />
               </View>
-              <Text style={{fontSize:RFValue(35, 812), color: whiteColor, fontFamily: Satoshi700Italic}}>Super Join</Text>
+              <View style={{marginTop: 25}}>
+                <Flash width={70} height={70} />
+              </View>
+              <Text style={{fontSize: RFValue(35, 812), color: whiteColor, fontFamily: Satoshi700Italic}}>Super Join</Text>
             </Animated.View>
             <View style={{alignItems: 'flex-end'}}>
               <Animated.View

@@ -3,7 +3,7 @@ import React, {useContext} from 'react';
 
 //import components
 import useStyles from 'screens/Auth/TutorialsFlow/components/MeetEnjoy/styles.ts';
-import MeetEnjoyImage from 'assets/images/auth/tutorial-start-6.png';
+import MeetEnjoyImage from 'assets/images/auth/tutorial-start-7.png';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const MeetEnjoy = () => {

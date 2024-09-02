@@ -174,9 +174,18 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
     if (eventQuerySnapshot.exists) {
       const eventData = eventQuerySnapshot?.data();
       const usersList = [...eventData?.usersList];
-      const userIndex = usersList.findIndex((user: any) => user.uid === matchData.recipientUid);
-      usersList[userIndex].status = 'approved';
-      await firestore().collection('Events').doc(matchData.eventId).update({usersList});
+      // const userIndex = usersList.findIndex((user: any) => user.uid === matchData.recipientUid);
+      const updatedUsersList = usersList.map((user: any) => {
+        if (user.uid === matchData.senderUid) {
+          return {
+            ...user,
+            status: 'approved',
+          };
+        }
+        return user;
+      });
+      await firestore().collection('Events').doc(matchData.eventId).update({usersList: updatedUsersList});
+      onCloseMatch();
     }
   };
 

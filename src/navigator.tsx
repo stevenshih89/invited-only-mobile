@@ -53,10 +53,9 @@ const Navigator = () => {
   useEffect(() => {
     const subcriber = auth().onAuthStateChanged(onAuthStateChanged);
     getOnbordingState();
-    if(authState) {
+    if (authState) {
       getFcmToken();
     }
-    registerListenerWithFCM();
 
     if (userData?.id) {
       setAuthState(true);

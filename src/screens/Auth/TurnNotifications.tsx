@@ -13,7 +13,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {addPhotosPath} from 'constants/pathLocations';
 import {Switch} from '@ant-design/react-native';
 import {AuthContext} from 'contexts/AuthContext.tsx';
-import { getFcmToken } from 'helpers/fcmHelper';
+import {getFcmToken} from 'helpers/fcmHelper';
 import AuthProgress from 'components/AuthProgress';
 
 const TurnNotifications: FC = (): JSX.Element => {
@@ -45,11 +45,11 @@ const TurnNotifications: FC = (): JSX.Element => {
       {
         notifications: notifications,
         location: null,
-        showLocation: showLocation
+        showLocation: showLocation,
       },
     ]);
-    if(notifications) {
-      await getFcmToken()
+    if (notifications) {
+      await getFcmToken();
     }
     navigation.navigate(addPhotosPath as never);
   };

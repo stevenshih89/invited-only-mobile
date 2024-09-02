@@ -10,22 +10,22 @@ export const fcmHelper = async () => {
   const userUid = auth().currentUser?.uid;
 
   try {
-    const oldToken = await messaging().getToken();
-    await messaging().deleteToken(String('422527028413'), '*');
+    // const oldToken = await messaging().getToken();
+    // await messaging().deleteToken(String('422527028413'), '*');
     const newToken = await messaging().getToken();
 
-    if (oldToken === newToken) {
-      console.log('not refresh');
-    } else {
-      try {
-        await firestore().collection('userInfo').doc(userUid).update({
-          fcmToken: newToken,
-        });
-      } catch (error) {
-        console.log('error update token', error);
-      }
-      await AsyncStorage.setItem('fcmToken', JSON.stringify(newToken));
+    // if (oldToken === newToken) {
+    //   console.log('not refresh');
+    // } else {
+    try {
+      await firestore().collection('userInfo').doc(userUid).update({
+        fcmToken: newToken,
+      });
+    } catch (error) {
+      console.log('error update token', error);
     }
+    await AsyncStorage.setItem('fcmToken', JSON.stringify(newToken));
+    // }
     // console.log('frc token', newToken);
     return newToken;
     // const fcmToken = await messaging().getToken();
