@@ -17,11 +17,13 @@ const CreateEvent = () => {
         <Image style={styles.image} resizeMode="stretch" source={CreateEventImage} />
       </View>
       <View style={styles.textWrapper}>
-        <Text style={styles.textCreateEvent}>{accountTypeGuest ? 'Select event' : 'Create event'}</Text>
+        {/* <Text style={styles.textCreateEvent}>{accountTypeGuest ? 'Select event' : 'Create event'}</Text> */}
+        <Text style={styles.textCreateEvent}>Create event</Text>
         <Text style={styles.textAddYourEvent}>
-          {accountTypeGuest
+        Add your event or table details, select who you want to invite, and specify the number of invites
+          {/* {accountTypeGuest
             ? 'Explore and join events happening around you, and get invited to exciting experiences'
-            : 'Add your event or table details, select who you want to invite, and specify the number of invites'}
+            : 'Add your event or table details, select who you want to invite, and specify the number of invites'} */}
         </Text>
       </View>
     </View>
