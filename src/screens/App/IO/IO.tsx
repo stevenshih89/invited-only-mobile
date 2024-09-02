@@ -157,6 +157,7 @@ const IO: FC = (): JSX.Element => {
         showToast('inviteMatch', 'have a code? click here', 'Your account is under review', {
           ownerPhoto: userInfo?.photos[0].image,
           status: 'ON REVIEW',
+          path: 'invitationCode'
         });
       }
     }

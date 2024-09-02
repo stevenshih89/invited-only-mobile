@@ -19,9 +19,24 @@ import IconBackground from 'assets/images/app/bcon-background.png';
 import {blackColor, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { screenWidth } from 'constants/common';
+import { useNavigation } from '@react-navigation/native';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { commonStackPath, invitationCodePath } from 'constants/pathLocations';
 
 const LocalNotification = () => {
   const styles = useStyles();
+  const navigation = useAppNavigation();
+  const handlePress = (path: string) => {
+    switch (path) {
+      case 'invitationCode':
+        navigation.navigate(commonStackPath, {screen: invitationCodePath})
+        break;
+      default:
+        break;
+    }
+  }
   const toastConfig: ToastConfig = {
     success: props => (
       <BaseToast
@@ -102,45 +117,54 @@ const LocalNotification = () => {
       </View>
     ),
     inviteMatch: ({text1, text2, props}) => (
-      <View style={{paddingHorizontal: 24, width: '100%'}}>
-        <View style={{backgroundColor: whiteColor, padding: 16, borderRadius: 10, width: '100%'}}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            {props.ownerPhoto ? <Image style={{height: 60, width: 60, borderRadius: 30}} source={{uri: props.ownerPhoto}}/> : 
-            <Image style={{height: 60, width: 60, borderRadius: 30}} source={IOImage}/>
-            }
-            <View style={{marginLeft: 16, flex: 1}}>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start'}}>
-                <Text
-                  style={{
-                    color: blackColor,
-                    fontWeight: 'bold',
-                    fontSize: RFValue(16, 812),
-                    flex: 1,
-                    flexWrap: 'wrap',
-                    marginRight: 8,
-                    fontFamily: Satoshi400,
-                  }}>
-                  {text1}
-                </Text>
-                {props.status && <View style={{borderRadius: 100, backgroundColor: blackColor}}>
+      <TouchableOpacity style={{width: screenWidth}} onPress={() => handlePress(props.path)}>
+        <View style={{paddingHorizontal: 24, width: '100%'}}>
+          <View style={{backgroundColor: whiteColor, padding: 16, borderRadius: 10, width: '100%'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              {props.ownerPhoto ? (
+                <Image style={{height: 60, width: 60, borderRadius: 30}} source={{uri: props.ownerPhoto}} />
+              ) : (
+                <Image style={{height: 60, width: 60, borderRadius: 30}} source={IOImage} />
+              )}
+              <View style={{marginLeft: 16, flex: 1}}>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start'}}>
                   <Text
                     style={{
-                      fontSize: RFValue(12, 812),
-                      color: whiteColor,
-                      fontFamily: Satoshi500,
-                      paddingHorizontal: 8,
-                      paddingVertical: 4,
-                      borderRadius: 100,
+                      color: blackColor,
+                      fontWeight: 'bold',
+                      fontSize: RFValue(16, 812),
+                      flex: 1,
+                      flexWrap: 'wrap',
+                      marginRight: 8,
+                      fontFamily: Satoshi400,
                     }}>
-                    {props.status.toUpperCase()}
+                    {text1}
                   </Text>
-                </View>}
+                  {props.status && (
+                    <View style={{borderRadius: 100, backgroundColor: blackColor}}>
+                      <Text
+                        style={{
+                          fontSize: RFValue(12, 812),
+                          color: whiteColor,
+                          fontFamily: Satoshi500,
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          borderRadius: 100,
+                        }}>
+                        {props.status.toUpperCase()}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+                <Text style={{color: blackColor, marginTop: 6, fontSize: RFValue(16, 812), fontFamily: Satoshi400}}>
+                  {text2}
+                </Text>
               </View>
-              <Text style={{color: blackColor, marginTop: 6, fontSize: RFValue(16, 812), fontFamily: Satoshi400}}>{text2}</Text>
             </View>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
+
     ),
   };
 
