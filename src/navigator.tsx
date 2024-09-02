@@ -8,8 +8,6 @@ import SplashScreen from 'react-native-splash-screen';
 import {getFcmToken, registerListenerWithFCM} from 'helpers/fcmHelper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import {NavigationContainer} from '@react-navigation/native';
-import messaging from '@react-native-firebase/messaging';
 
 const Navigator = () => {
   const [initializing, setInitializing] = useState<boolean>(true);
@@ -69,7 +67,7 @@ const Navigator = () => {
     return null;
   }
 
-  return <NavigationContainer>{authState ? <AppStackScreens /> : <AuthStackScreens />}</NavigationContainer>;
+  return authState ? <AppStackScreens /> : <AuthStackScreens />;
 };
 
 export default Navigator;
