@@ -443,7 +443,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               <View style={{height: '100%', marginTop: 104}}>
                 <Text style={styles.textYouNeedToJoin}>You need to join an event</Text>
                 <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
-                <Button buttonStyle={{marginTop: 34}} title="Join event" />
+                <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />
               </View>
             )}
             renderItem={({item}) => {
