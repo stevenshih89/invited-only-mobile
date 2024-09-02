@@ -17,11 +17,13 @@ const ApproveGuest = () => {
         <Image resizeMode="stretch" style={styles.image} source={ApproveGuestImage} />
       </View>
       <View style={styles.textWrapper}>
-        <Text style={styles.textApproveGuest}>{accountType ? 'Approve invitation' : 'Approve Guest'}</Text>
+        {/* <Text style={styles.textApproveGuest}>{accountType ? 'Approve invitation' : 'Approve Guest'}</Text> */}
+        <Text style={styles.textApproveGuest}>Approve Guest</Text> 
         <Text style={styles.textSelectAndApprove}>
-          {accountType
+        Select and approve guests for your event to finalize the guest list
+          {/* {accountType
             ? 'Do you like the invitation? Accept it and have fun together!'
-            : 'Select and approve guests for your event to finalize the guest list'}
+            : 'Select and approve guests for your event to finalize the guest list'} */}
         </Text>
       </View>
     </View>

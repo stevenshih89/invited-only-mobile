@@ -3,7 +3,7 @@ import React from 'react';
 
 //import components
 import useStyles from 'screens/Auth/TutorialsFlow/components/JoinEvents /styles.ts';
-import JoinEventsImage from 'assets/images/auth/tutorial-start-7.png';
+import JoinEventsImage from 'assets/images/auth/tutorial-start-6.png';
 
 const JoinEvents = () => {
   const styles = useStyles();

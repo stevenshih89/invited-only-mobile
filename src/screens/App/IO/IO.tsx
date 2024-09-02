@@ -8,13 +8,14 @@ import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
+import functions from '@react-native-firebase/functions';
 
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, superInvitePayPath, userProfilePath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, myProfileViewPath, superInvitePayPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
@@ -88,10 +89,13 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
+      console.warn('message', message);
+
       const data = message?.data;
       setMatchData(data);
       setIsVisibleMatch(true);
     });
+    console.warn('unsubscribe', unsubscribe);
 
     return () => unsubscribe();
   }, []);
@@ -309,26 +313,46 @@ const IO: FC = (): JSX.Element => {
   const sendNotification = async (forUserUid: string, title: string, body: string, mark: string, status: string) => {
     const token = await getFcmTokenFromUser(forUserUid);
 
-    console.log('forUserUid', forUserUid);
-
-    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-      },
-      body: JSON.stringify({
-        to: token,
+    console.warn('forUserUid', forUserUid);
+    try {
+      const result = await functions().httpsCallable('sendNotification')({
+        token: token,
         notification: {
-          title: title,
-          body: body,
+          title,
+          body,
         },
         data: {
-          status: status,
+          status,
           image: userInfo?.photos[0].image,
         },
-      }),
-    });
+      });
+      if (result.data.success) {
+        console.warn('Notification sent successfully', result.data.data);
+      } else {
+        console.error('Error sending notification:', result.data.error);
+      }
+    } catch (error) {
+      console.error('Error calling Firebase Function:', error);
+    }
+
+    // const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
+    //   },
+    //   body: JSON.stringify({
+    //     to: token,
+    //     notification: {
+    //       title: title,
+    //       body: body,
+    //     },
+    //     data: {
+    //       status: status,
+    //       image: userInfo?.photos[0].image,
+    //     },
+    //   }),
+    // });
 
     if (!response.ok) {
       const error = await response.json();
@@ -363,8 +387,13 @@ const IO: FC = (): JSX.Element => {
   const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
-
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
+
+      const eventData = await firestore().collection('Events').doc(activeEventId).get();
+      const event = eventData.data();
+      if (!event) {
+        return;
+      }
 
       const host = userHost?.accountType === 'host';
 
@@ -385,6 +414,14 @@ const IO: FC = (): JSX.Element => {
           .update({
             usersList: firestore.FieldValue.arrayUnion(userInvited),
           });
+
+        await sendNotification(
+          forUserUid,
+          'New invite request',
+          `${userInfo.name} wants to invite you!`,
+          'invite',
+          'New Invite Request'.toUpperCase(),
+        );
       } else {
         await firestore()
           .collection('Events')
@@ -392,6 +429,14 @@ const IO: FC = (): JSX.Element => {
           .update({
             requestsList: firestore.FieldValue.arrayUnion(userInvited),
           });
+
+        await sendNotification(
+          event.uid,
+          'New join request',
+          `${userInfo.name} wants to join you!`,
+          'invite',
+          'New Join Request'.toUpperCase(),
+        );
       }
       setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
     } catch (error) {
@@ -757,10 +802,14 @@ const IO: FC = (): JSX.Element => {
 
   const getListForHost = async () => {
     let users: any;
-    if (userInfo?.chooseGuest === 'any') {
+    console.log('activeEvent', activeEvent);
+    
+    if (activeEvent.male > 0 && activeEvent.female > 0) {
       users = await firestore().collection('userInfo').limit(20).get();
-    } else {
-      users = await firestore().collection('userInfo').where('gender', '==', userInfo?.chooseGuest).limit(20).get();
+    } else if (activeEvent.male > 0) {
+      users = await firestore().collection('userInfo').where('gender', '==', 'man').limit(20).get();
+    } else if (activeEvent.female > 0) {
+      users = await firestore().collection('userInfo').where('gender', '==', 'woman').limit(20).get();
     }
 
     const data: any[] = [];
@@ -1084,7 +1133,11 @@ const IO: FC = (): JSX.Element => {
     if (!userHost?.accountConfirmed) {
       return;
     }
-    navigation.navigate(eventCreatingStackPath);
+    if(!userInfo.accountPremium) {
+      navigation.navigate(paymentPath as never);
+    } else {
+      navigation.navigate(eventCreatingStackPath);
+    }
   };
 
   if (loading || (!userHost && userInfo.accountConfirmed)) {
