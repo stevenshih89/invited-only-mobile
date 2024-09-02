@@ -24,7 +24,7 @@ import {EventsDate} from 'contexts/EventsDate.tsx';
 //import images
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 import Button from 'components/Button/Button';
-import {eventCreatingStackPath, paymentPath} from 'constants/pathLocations';
+import {eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocations';
 import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
@@ -279,7 +279,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   };
 
   const goToIOStack = () => {
-    navigation.navigate(IOStackNavigation);
+    navigation.navigate(IOPath);
   };
 
   const handleAcceptInvitation = async () => {

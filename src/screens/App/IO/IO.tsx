@@ -15,7 +15,7 @@ import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, myProfileViewPath, paymentPath, superInvitePayPath, userProfilePath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, myProfileViewPath, superInvitePayPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
@@ -1201,7 +1201,7 @@ const IO: FC = (): JSX.Element => {
           </View>
         </View>
         <View style={{width: '100%', alignItems: 'center'}}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() =>  navigation.navigate(joinEventsPath)}>
             <Text style={{color: whiteColor, fontSize: RFValue(14, 812)}}>Start joining!</Text>
           </TouchableOpacity>
         </View>
