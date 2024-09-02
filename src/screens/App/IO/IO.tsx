@@ -15,7 +15,7 @@ import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, myProfileViewPath, superInvitePayPath, userProfilePath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, myProfileViewPath, paymentPath, superInvitePayPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
@@ -1129,7 +1129,11 @@ const IO: FC = (): JSX.Element => {
     if (!userHost?.accountConfirmed) {
       return;
     }
-    navigation.navigate(eventCreatingStackPath);
+    if(!userInfo.accountPremium) {
+      navigation.navigate(paymentPath as never);
+    } else {
+      navigation.navigate(eventCreatingStackPath);
+    }
   };
 
   if (loading || (!userHost && userInfo.accountConfirmed)) {

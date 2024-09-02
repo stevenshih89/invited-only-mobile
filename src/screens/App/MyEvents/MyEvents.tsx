@@ -24,7 +24,7 @@ import {EventsDate} from 'contexts/EventsDate.tsx';
 //import images
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 import Button from 'components/Button/Button';
-import {eventCreatingStackPath} from 'constants/pathLocations';
+import {eventCreatingStackPath, paymentPath} from 'constants/pathLocations';
 import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
@@ -270,7 +270,12 @@ const MyEvents: FC<any> = ({navigation}) => {
     if (!user?.accountConfirmed) {
       return;
     }
-    navigation.navigate(eventCreatingStackPath);
+    if(!user.accountPremium) {
+      navigation.navigate(paymentPath);
+    } else {
+      navigation.navigate(eventCreatingStackPath);
+    }
+    
   };
 
   const goToIOStack = () => {
