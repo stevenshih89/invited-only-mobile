@@ -1,4 +1,5 @@
-const functions = require('firebase-functions/v2');
+const functionsV2 = require('firebase-functions/v2');
+const functionsV1 = require('firebase-functions');
 const admin = require('firebase-admin');
 
 const firebaseConfig = {
@@ -12,7 +13,27 @@ const firebaseConfig = {
 
 admin.initializeApp(firebaseConfig);
 
-exports.processInviteMatch = functions.firestore.onDocumentUpdated('Events/{eventId}', async event => {
+exports.sendNotification = functionsV1.https.onCall(async data => {
+  const {token, notification, data: msgData} = data;
+  if (token) {
+    const message = {
+      token: token,
+      notification: notification,
+      data: msgData,
+    };
+
+    try {
+      await admin.messaging().send(message);
+      return {success: true, data: message};
+    } catch (error) {
+      return {success: false, error: error.message};
+    }
+  } else {
+    return {success: false, error: 'FCM token not found'};
+  }
+});
+
+exports.processInviteMatch = functionsV2.firestore.onDocumentUpdated('Events/{eventId}', async event => {
   const eventData = event.data.after.data();
 
   let requestsList = [...eventData.requestsList];
@@ -41,7 +62,7 @@ exports.processInviteMatch = functions.firestore.onDocumentUpdated('Events/{even
     }
   });
 
-  if (matchedUser) {
+  if (matchedUser?.uid) {
     const updatedRequestsList = requestsList.filter(request => request.uid !== matchedUser.uid);
     const updatedUsersList = usersList.map(user => {
       if (user.uid === matchedUser.uid) {
@@ -66,6 +87,24 @@ exports.processInviteMatch = functions.firestore.onDocumentUpdated('Events/{even
           imageUri: `${matchedUser.userPhoto}`,
           senderUid: `${eventData.uid}`,
           recipientUid: `${matchedUser.uid}`,
+          eventId: `${eventData.id}`,
+          userHostImageUri: `${eventData.hostImage}`,
+        },
+      });
+    }
+    if (eventData?.hostFcmToken) {
+      await admin.messaging().send({
+        token: eventData.hostFcmToken,
+        notification: {
+          title: 'You have a new match!',
+          body: `You have matched with ${matchedUser.name}`,
+        },
+        data: {
+          type: 'match',
+          name: `${eventData.name}`,
+          imageUri: `${matchedUser.userPhoto}`,
+          senderUid: `${matchedUser.uid}`,
+          recipientUid: `${eventData.uid}`,
           eventId: `${eventData.id}`,
           userHostImageUri: `${eventData.hostImage}`,
         },

@@ -9,6 +9,7 @@ import {getFcmToken, registerListenerWithFCM} from 'helpers/fcmHelper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {NavigationContainer} from '@react-navigation/native';
+import messaging from '@react-native-firebase/messaging';
 
 const Navigator = () => {
   const [initializing, setInitializing] = useState<boolean>(true);
@@ -54,10 +55,9 @@ const Navigator = () => {
   useEffect(() => {
     const subcriber = auth().onAuthStateChanged(onAuthStateChanged);
     getOnbordingState();
-    if(authState) {
+    if (authState) {
       getFcmToken();
     }
-    registerListenerWithFCM();
 
     if (userData?.id) {
       setAuthState(true);
