@@ -464,7 +464,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           />
         )
       ) : null}
-      {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
+      {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton={false} />}
     </View>
   );
 };
