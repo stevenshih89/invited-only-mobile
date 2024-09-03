@@ -103,10 +103,9 @@ export const checkApplicationNotificationPermission = async () => {
 
 //method was called to listener events from firebase for notification triger
 export function registerListenerWithFCM() {
-  console.log('lasdkasdk');
-  
+  console.warn('registerListenerWithFCM');
   const unsubscribe = messaging().onMessage(async remoteMessage => {
-    console.log('onMessage Received : ', JSON.stringify(remoteMessage));
+    console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
     if (remoteMessage?.notification?.title && remoteMessage?.notification?.body) {
       onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data);
     }

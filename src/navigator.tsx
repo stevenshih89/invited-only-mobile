@@ -55,6 +55,7 @@ const Navigator = () => {
     getOnbordingState();
     if (authState) {
       getFcmToken();
+      registerListenerWithFCM();
     }
 
     if (userData?.id) {

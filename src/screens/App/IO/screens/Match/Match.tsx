@@ -26,7 +26,7 @@ interface MatchData {
   senderUid: string;
   recipientUid: string;
   eventId: string;
-  superInvite: boolean;
+  superInvite: string;
   userHostImageUri: string;
 }
 
@@ -157,7 +157,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             invitedStatus: 'invite_match',
             messages: [],
             name: matchData.name,
-            superInvite: matchData?.superInvite,
+            superInvite: matchData?.superInvite === 'true' ? true : false,
             uid: matchData.recipientUid,
             hostUid: userHost?.uid,
           };
