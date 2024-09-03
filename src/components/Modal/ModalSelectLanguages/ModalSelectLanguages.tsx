@@ -53,11 +53,6 @@ const DATA = [
     title: 'Spanish',
     flag: ES
   },
-  // {
-  //   id: 'bd7acbe2a-c1b1-46c2-aed5-3ad53abb28ba',
-  //   title: 'Russian',
-  //   flag: AE
-  // },
   {
     id: '3ac68af3c-c605-48d3-a4f8-fbd91aa97f63',
     title: 'Ukranian',
@@ -107,27 +102,35 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
   const setUserData = useUser((i: any) => i?.setUser);
   const languagesTitle = userHost?.languages?.title;
   const uid = userHost?.uid;
-  const [selectLanguage, setSelectLanguage] = useState<Object>();
+  const [selectLanguage, setSelectLanguage] = useState<any>([]);
+  console.log('selectLanguage', selectLanguage);
+  
 
   useEffect(() => {
-    setSelectLanguage(userHost.languages)
+    if(userHost.languages) {
+      setSelectLanguage(userHost.languages)
+    }
+    if(userHost.showLanguages) {
+      setShowLanguages(userHost.showLanguages)
+    }
   },[])
 
-  const handleSetShowInMyProfile = async (state: boolean): Promise<void> => {
-    try {
-      setShowLanguages(state);
-      await firestore().collection('userInfo').doc(uid).update({
-        showLanguages: state,
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  // const handleSetShowInMyProfile = async (state: boolean): Promise<void> => {
+  //   try {
+  //     setShowLanguages(state);
+  //     await firestore().collection('userInfo').doc(uid).update({
+  //       showLanguages: state,
+  //     });
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
   const handleSetLanguages = async (): Promise<void> => {
     try {
       await firestore().collection('userInfo').doc(uid).update({
         languages: selectLanguage,
+        showLanguages: showLanguages
       });
       await firestore()
         .collection('userInfo')
@@ -138,6 +141,15 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
         }).then(() => showToast('inviteMatch', 'Your profile is updated', 'Languages successfully changed!', {ownerPhoto: userHost.image, status: 'UPDATED'}));
     } catch (e) {
       console.log(e);
+    }
+  };
+
+  const handleSelectLanguage = (language: any) => {
+    const isSelected = selectLanguage?.some((item: any) => item.title === language.title);
+    if (isSelected) {
+      setSelectLanguage(selectLanguage?.filter((item: any) => item.title !== language.title));
+    } else {
+      setSelectLanguage([...selectLanguage, language]);
     }
   };
 
@@ -161,7 +173,7 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
         <Text style={styles.textReport}>Select the languages</Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34, width: '100%'}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showLanguages} onChange={val => handleSetShowInMyProfile(val)} />
+          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showLanguages} onChange={val => setShowLanguages(val)} />
         </View>
         <View style={{width: '100%', marginBottom: 34, alignItems: 'center'}}>
           <View style={{position: 'absolute', zIndex: 20, left: 20, top: 22}}>
@@ -191,14 +203,12 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
             keyExtractor={item => item.id.toString()}
             showsVerticalScrollIndicator={false}
             renderItem={({item}) => {
-              const isActive = selectLanguage?.title === item?.title;
+              const isActive = selectLanguage?.some((selected: any) => selected.title === item.title);
               return (
                 <TouchableOpacity
                   activeOpacity={0.8}
-                  onPress={() => setSelectLanguage(item)}
-                  // onPress={() => handleSetLanguages(item)}
+                  onPress={() => handleSelectLanguage(item)}
                   style={{
-                    // borderWidth: 1,
                     borderStyle: 'solid',
                     borderRadius: 10,
                     borderColor: isActive ? whiteColor : 'transparent',
@@ -243,9 +253,9 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
             }}
           />
           <Button onPress={() => {
-            handleSetLanguages()
-            setModalLanguages(false)
-          }} title="Save" buttonStyle={{marginTop: 20, marginBottom: 20,}} />
+            handleSetLanguages();
+            setModalLanguages(false);
+          }} title="Save" buttonStyle={{marginTop: 20, marginBottom: 20}} />
         </View>
       </View>
     </Modal>
