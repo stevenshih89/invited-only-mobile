@@ -22,6 +22,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
 import {screenHeight, screenWidth} from 'constants/common';
 import firestore from '@react-native-firebase/firestore';
+import {useUser} from 'src/store/userStore';
 
 interface ModalUserMenuProps {
   isModalVisible: boolean;
@@ -30,6 +31,7 @@ interface ModalUserMenuProps {
   inviteStatus: string;
   image: any;
   uid: string;
+  hostUid: string;
 }
 
 const BlockAndReportModal = ({blockAndReportState, setBlockAndReportState, reportState, setReportState, setModalVisible}) => {
@@ -185,7 +187,16 @@ const BlockAndReportModal = ({blockAndReportState, setBlockAndReportState, repor
   );
 };
 
-const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible, title, inviteStatus, image, uid, activeEvent}) => {
+const ModalUserMenu: FC<ModalUserMenuProps> = ({
+  isModalVisible,
+  setModalVisible,
+  title,
+  inviteStatus,
+  image,
+  uid,
+  activeEvent,
+  hostUid,
+}) => {
   const [removingState, setRemovingState] = useState<boolean>(false);
   const [blockAndReportState, setBlockAndReportState] = useState<boolean>(false);
   const [cancelInvitationState, setCancelInvitationState] = useState<boolean>(false);
@@ -194,7 +205,12 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
   const [eventData, setEventData] = useState({usersList: []});
   const styles = useStyles();
 
-  const userGuest = eventData.usersList?.filter((i: any) => i?.uid === uid)[0];
+  const user = useUser((state: any) => state.user);
+
+  const userGuest =
+    uid === hostUid
+      ? eventData.usersList?.filter((i: any) => i?.uid === user?.uid)[0]
+      : eventData.usersList?.filter((i: any) => i?.uid === uid)[0];
 
   const navigation = useNavigation();
 
@@ -238,6 +254,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
       const updatedUsersList = eventData?.usersList?.map(user => {
         if (user.uid === uid) {
           return {
+            // @ts-ignore
             ...user,
             status: 'approved',
           };
@@ -251,9 +268,37 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
       console.log(e);
     }
   };
+  const handleAcceptGuestFromGuest = async () => {
+    const eventQuerySnapshot = await firestore().collection('Events').doc(activeEvent).get();
+    const eventDataList = eventQuerySnapshot.data();
+    if (!eventDataList?.usersList.length) {
+      return;
+    }
+
+    try {
+      const updatedUsersList = eventDataList?.usersList?.map(userItem => {
+        if (userItem.uid === user?.uid) {
+          return {
+            // @ts-ignore
+            ...userItem,
+            status: 'accepted',
+          };
+        }
+        return userItem;
+      });
+      firestore().collection('Events').doc(activeEvent).update({
+        usersList: updatedUsersList,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
   const getUserStatusButtonText = () => {
     if (!userGuest?.status) {
       return '';
+    }
+    if (uid === hostUid && userGuest?.status === 'approved') {
+      return 'Accept invitation';
     }
     if (userGuest?.status === 'invite_match') {
       return 'Approve guest';
@@ -265,6 +310,9 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
   };
 
   const getIsDisabledButton = () => {
+    if (uid === hostUid && userGuest?.status === 'approved') {
+      return false;
+    }
     if (userGuest?.status === 'invite_match') {
       return false;
     }
@@ -272,13 +320,25 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
   };
 
   const handleActionPress = () => {
+    if (uid === hostUid && userGuest?.status === 'approved') {
+      handleAcceptGuestFromGuest();
+      setModalVisible && setModalVisible(false);
+      return;
+    }
     if (userGuest?.status === 'invite_match') {
       handleApproveGuestFromHost();
       setModalVisible && setModalVisible(false);
+      return;
     }
   };
 
   const getButtonStyle = () => {
+    if (uid === hostUid && userGuest?.status === 'approved') {
+      return {
+        backgroundColor: whiteColor,
+        borderColor: whiteColor,
+      };
+    }
     if (userGuest?.status === 'invite_match') {
       return {
         backgroundColor: whiteColor,
@@ -301,6 +361,11 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
   };
 
   const getButtonTitleStyle = () => {
+    if (uid === hostUid && userGuest?.status === 'approved') {
+      return {
+        color: blackColor,
+      };
+    }
     if (userGuest?.status === 'approved') {
       return {
         color: whiteColor,
@@ -441,10 +506,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
               {image && <Image style={{borderRadius: 100, width: 40, height: 40}} source={{uri: image}} />}
               <View style={{marginLeft: 6}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>
-                    {title}
-                    {', 29'}
-                  </Text>
+                  <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>{title}</Text>
                   {<CheckStarIcon width={12} height={12} style={{marginLeft: 4}} />}
                 </View>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -462,21 +524,24 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({isModalVisible, setModalVisible,
                 </View>
               </View>
             </View>
-            <View style={{width: '100%', marginBottom: 20}}>
-              <TouchableOpacity
-                disabled={getIsDisabledButton()}
-                activeOpacity={0.7}
-                style={[
-                  {height: 56, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderRadius: 10},
-                  getButtonStyle(),
-                ]}
-                onPress={handleActionPress}>
-                <Text style={[{fontFamily: Satoshi500, fontSize: RFValue(18, 812)}, getButtonTitleStyle()]}>
-                  {getUserStatusButtonText()}
-                </Text>
-                {userGuest?.status === 'accepted' && <CheckIcon style={{marginLeft: 10}} />}
-              </TouchableOpacity>
-            </View>
+            {(userGuest?.status === 'accepted' || userGuest?.status === 'invite_match' || userGuest?.status === 'notAccepted') &&
+            uid === hostUid ? null : (
+              <View style={{width: '100%', marginBottom: 20}}>
+                <TouchableOpacity
+                  disabled={getIsDisabledButton()}
+                  activeOpacity={0.7}
+                  style={[
+                    {height: 56, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderRadius: 10},
+                    getButtonStyle(),
+                  ]}
+                  onPress={handleActionPress}>
+                  <Text style={[{fontFamily: Satoshi500, fontSize: RFValue(18, 812)}, getButtonTitleStyle()]}>
+                    {getUserStatusButtonText()}
+                  </Text>
+                  {userGuest?.status === 'accepted' && <CheckIcon style={{marginLeft: 10}} />}
+                </TouchableOpacity>
+              </View>
+            )}
             <TouchableOpacity onPress={goToProfileView} style={[styles.buttonFooter, {marginTop: 10, borderTopWidth: 0}]}>
               <User width={20} height={20} />
               <Text style={styles.textButton}>Profile</Text>

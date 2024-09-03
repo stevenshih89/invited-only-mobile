@@ -18,7 +18,6 @@ export const fcmHelper = async () => {
     //   console.log('not refresh');
     // } else {
     console.log('newToken', newToken, userUid);
-    
     try {
       await firestore().collection('userInfo').doc(userUid).update({
         fcmToken: newToken,
@@ -175,9 +174,9 @@ async function onDisplayNotification(title, body, data) {
 export function onMatchNotificationSubscription(handler: (message: FirebaseMessagingTypes.RemoteMessage) => void) {
   return messaging().onMessage(async remoteMessage => {
     await notifee.requestPermission();
-    onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data)
     if (remoteMessage.data?.type === 'match') {
       handler(remoteMessage);
     }
+    onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data);
   });
 }

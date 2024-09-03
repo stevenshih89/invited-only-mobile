@@ -14,7 +14,7 @@ import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, superInvitePayPath, userProfilePath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
@@ -88,10 +88,11 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
-      const data = message?.data;      
+      const data = message?.data;
       setMatchData(data);
       setIsVisibleMatch(true);
     });
+
     console.warn('unsubscribe', unsubscribe);
 
     return () => unsubscribe();
@@ -315,7 +316,7 @@ const IO: FC = (): JSX.Element => {
     try {
       const result = await functions().httpsCallable('sendNotification')({
         token: token,
-        priority: "high",
+        priority: 'high',
         notification: {
           title,
           body,
@@ -419,7 +420,7 @@ const IO: FC = (): JSX.Element => {
           'New invite request',
           `${userInfo.name} wants to invite you!`,
           'invite',
-          'New Invite Request'.toUpperCase(),
+          'Invite Request'.toUpperCase(),
         );
       } else {
         await firestore()
@@ -434,7 +435,7 @@ const IO: FC = (): JSX.Element => {
           'New join request',
           `${userInfo.name} wants to join you!`,
           'invite',
-          'New Join Request'.toUpperCase(),
+          'Join Request'.toUpperCase(),
         );
       }
       setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));

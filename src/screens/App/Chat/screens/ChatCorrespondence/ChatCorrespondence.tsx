@@ -52,7 +52,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [name, setName] = useState('');
   const [age, setAge] = useState();
   const [currentUserName, setCurrentUserName] = useState('');
-  let {image, title, online, activeEvent, id, superInvite, invitedStatus, uid} = route?.params;
+  const {image, title, online, activeEvent, id, superInvite, invitedStatus, uid, hostUid} = route?.params;
 
   const user = useUser((i: any) => i?.user);
 
@@ -358,6 +358,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
           isModalVisible={isModalVisible}
           setModalVisible={setModalVisible}
           activeEvent={activeEvent}
+          hostUid={hostUid}
         />
       </SafeAreaProvider>
     </KeyboardAvoidingView>

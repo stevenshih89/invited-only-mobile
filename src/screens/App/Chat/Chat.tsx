@@ -39,6 +39,7 @@ type ItemProps = {
   superInvite: boolean;
   invitedStatus: string;
   uid: string;
+  hostUid: string;
 };
 
 type ItemEventsJoiningProps = {
@@ -62,6 +63,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const [messages, setMessages] = useState([]);
   const [DATAEventsJoining, setDATAEventsJoining] = useState([]);
   const [userInfo, setUserInfo] = useState<any>({});
+  const [eventData, setEventData] = useState<any>({});
 
   const styles = useStyles();
   const navigation = useAppNavigation();
@@ -88,120 +90,116 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     setLoading(false);
   };
 
+  const fetchEventData = async () => {
+    setLoading(true);
+    const eventDataDoc = await firestore().collection('Events').doc(activeEvent).get();
+    if (eventDataDoc.exists) {
+      const data = eventDataDoc.data();
+      setEventData(data);
+    }
+    setLoading(false);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchEventData();
+    }, [activeEvent]),
+  );
+
   useFocusEffect(
     useCallback(() => {
       fetchUserInfo();
     }, []),
   );
 
-  // const handleBuildGuestEventsData = () => {
-  //   firestore()
-  //     .collection('messages')
-  //     .get()
-  //     .then(chatDataQuery => {
-  //       if (chatDataQuery.empty) {
-  //         return;
-  //       }
+  const Item = ({
+    title,
+    message,
+    image,
+    online,
+    story,
+    messages: messagesItem,
+    id,
+    superInvite,
+    invitedStatus,
+    uid,
+    hostUid,
+  }: ItemProps) => {
+    const userStatus = eventData?.usersList?.find(i => i?.uid === uid)?.status;
 
-  //       const chatData = chatDataQuery.docs.map(i => i.data());
-  //       const filteredChats = chatData.filter(chatDataItem => {
-  //         return chatDataItem?.chats?.some(chat => {
-  //           return chat?.uid === user?.uid;
-  //         });
-  //       });
+    console.warn('userStatus', userStatus);
 
-  //       myEvents?.map((events: any): void => {
-  //         chats?.map((chat: FirebaseFirestoreTypes.DocumentData, index: number): void => {
-  //           if (chat?.activeEvent === events?.id) {
-  //             // @ts-ignore
-  //             setDATAEventsJoining((prev): void => [
-  //               ...prev,
-  //               {
-  //                 id: index,
-  //                 chats: chat?.activeEvent === events?.id ? chat?.chats : [],
-  //                 girlInvitation: events?.female + events?.femaleFriend,
-  //                 data: events?.date,
-  //                 status: events?.activeType,
-  //                 image: events?.photos[0]?.image,
-  //                 title: events?.placeName,
-  //                 hostUid: events?.hostUid,
-  //               },
-  //             ]);
-  //           }
-  //         });
-  //       });
-  //     });
-  // };
-
-  const Item = ({title, message, image, online, story, inviteStatus, messages, id, superInvite, invitedStatus, uid}: ItemProps) => (
-    <View style={styles.item}>
-      <View style={{flexDirection: 'row', height: 75, width: '100%', justifyContent: 'space-between'}}>
-        <TouchableOpacity
-          onPress={() => {
-            // @ts-ignore
-            navigation.navigate(chatCorrespondencePath, {
-              screen: chatCorrespondencePath,
-              params: {
-                image: image,
-                title: title,
-                online: false,
-                messages: messages,
-                activeEvent: activeEvent,
-                id: id,
-                superInvite: superInvite,
-                invitedStatus: invitedStatus,
-                uid: uid,
-              },
-            });
-          }}
-          style={styles.wrapperItem}>
-          <View>
-            <Image resizeMode="cover" style={[styles.imageUser, story && styles.story]} source={{uri: image}} />
-            {online && <View style={styles.greenCircle} />}
-          </View>
-          <View style={styles.wrapperItemElements}>
-            <View style={styles.rowTextNameAndStatus}>
-              <Text style={styles.textName}>
-                {title} {superInvite && <FlashField width={13} height={13} />}
+    return (
+      <View style={styles.item}>
+        <View style={{flexDirection: 'row', height: 75, width: '100%', justifyContent: 'space-between'}}>
+          <TouchableOpacity
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate(chatCorrespondencePath, {
+                screen: chatCorrespondencePath,
+                params: {
+                  image: image,
+                  title: title,
+                  online: false,
+                  messages: messagesItem,
+                  activeEvent: activeEvent,
+                  id: id,
+                  superInvite: superInvite,
+                  invitedStatus: invitedStatus,
+                  uid: uid,
+                  hostUid: hostUid,
+                },
+              });
+            }}
+            style={styles.wrapperItem}>
+            <View>
+              <Image resizeMode="cover" style={[styles.imageUser, story && styles.story]} source={{uri: image}} />
+              {online && <View style={styles.greenCircle} />}
+            </View>
+            <View style={styles.wrapperItemElements}>
+              <View style={styles.rowTextNameAndStatus}>
+                <Text style={styles.textName}>
+                  {title} {superInvite && <FlashField width={13} height={13} />}
+                </Text>
+              </View>
+              <Text style={styles.textMessage}>{message}</Text>
+            </View>
+          </TouchableOpacity>
+          <View style={styles.wrapperThreeDotsAndBadge}>
+            <View style={[handleCheckTypeInvitedStyles(userStatus), {marginTop: 4}]}>
+              <Text style={[styles.textStatusInvite, {color: userStatus === 'accepted' ? blackColor : whiteColor}]}>
+                {handleCheckTypeInvitedText(userStatus)}
               </Text>
             </View>
-            <Text style={styles.textMessage}>{message}</Text>
-          </View>
-        </TouchableOpacity>
-        <View style={styles.wrapperThreeDotsAndBadge}>
-          <View style={[handleCheckTypeInvitedStyles(inviteStatus), {marginTop: 4}]}>
-            <Text style={[styles.textStatusInvite, {color: inviteStatus === 'accepted' ? blackColor : whiteColor}]}>
-              {handleCheckTypeInvitedText(inviteStatus)}
-            </Text>
-          </View>
-          <View style={[styles.wrapperTextMessage, {flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between'}]}>
-            {/* <View
-              style={{
-                backgroundColor: inviteStatus === 'accepted' ? whiteColor : blackColor,
-                borderRadius: 50,
-                paddingHorizontal: 10,
-                paddingVertical: 3,
-                borderColor: whiteColor,
-                borderStyle: 'solid',
-                borderWidth: inviteStatus === 'accepted' ? 0 : 1,
-                marginBottom: 4,
-              }}>
-              <Text style={{fontSize: RFValue(9, 812), color: inviteStatus === 'accepted' ? blackColor : whiteColor}}>
-                {getTextByStatus(inviteStatus)}
-              </Text>
-            </View> */}
-            <View style={styles.newMessage}>
-              <Text style={styles.textCountNewMessages}>1</Text>
+            <View style={[styles.wrapperTextMessage, {flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between'}]}>
+              {/* <View
+                style={{
+                  backgroundColor: inviteStatus === 'accepted' ? whiteColor : blackColor,
+                  borderRadius: 50,
+                  paddingHorizontal: 10,
+                  paddingVertical: 3,
+                  borderColor: whiteColor,
+                  borderStyle: 'solid',
+                  borderWidth: inviteStatus === 'accepted' ? 0 : 1,
+                  marginBottom: 4,
+                }}>
+                <Text style={{fontSize: RFValue(9, 812), color: inviteStatus === 'accepted' ? blackColor : whiteColor}}>
+                  {getTextByStatus(inviteStatus)}
+                </Text>
+              </View> */}
+              <View style={styles.newMessage}>
+                <Text style={styles.textCountNewMessages}>1</Text>
+              </View>
             </View>
+            {/* <TouchableOpacity>
+            <ThreeDoths />
+          </TouchableOpacity> */}
+            {/*<Badge value={22} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />*/}
           </View>
-          {/* <TouchableOpacity>
-          <ThreeDoths />
-        </TouchableOpacity> */}
-          {/*<Badge value={22} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />*/}
         </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data, activeEvent, hostUid}: ItemEventsJoiningProps) => {
     const statusColor = handleCheckStatusStyles(status);
@@ -261,6 +259,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   id: i?.id,
                   superInvite: false,
                   invitedStatus: i?.invitedStatus,
+                  uid: hostUid,
+                  hostUid: hostUid,
                 },
               });
             }}
@@ -429,6 +429,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   invitedStatus={item?.invitedStatus}
                   id={item?.id}
                   uid={item?.uid}
+                  hostUid={item?.hostUid}
                 />
               );
             }}
