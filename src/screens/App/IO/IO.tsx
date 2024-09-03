@@ -384,28 +384,7 @@ const IO: FC = (): JSX.Element => {
     // }
   };
 
-  const onReject = async (uid: string, eventId: string) => {
-    const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
-    try {
-      const doc = firestore().collection('Events').doc(activeEventId)
-      const data = (await doc.get()).data()
-      if(data?.rejectList) {
-        doc.update({
-          rejectList: [...data?.rejectList, uid]
-        })
-      } else {
-        doc.update({
-          rejectList: [uid]
-        })
-      }
-    } catch (error) {
-      console.log('error update reject list', error);
-      
-    }
-  } 
-
   const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {
-    
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
@@ -840,9 +819,7 @@ const IO: FC = (): JSX.Element => {
       ?.filter(item => {
         // console.warn('item', item?._data.uid, item?._data);
 
-        if (activeEvent?.usersList?.find(j => j?.uid === item?._data.uid) ||
-            activeEvent?.rejectList?.find(j => j === item?._data.uid)
-        ) {
+        if (activeEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {
           return false;
         }
         if (item?._data?.uid === userHost?.uid) {
@@ -1082,9 +1059,8 @@ const IO: FC = (): JSX.Element => {
         //   setEventsLength(data.length);
         // }, 3000);
       });
-    allEventsLength.current = data.length;  
-    const sortReports = sortEventsByReportFirstRender(data);    
-    setEvents(sortReports);
+    allEventsLength.current = data.length;
+    setEvents(data);
     eventsRef.current = data;
     // console.warn('data', data);
 
@@ -1092,19 +1068,6 @@ const IO: FC = (): JSX.Element => {
     //   setEvents([...data]);
     //   setEventsLength(data.length);
     // }, 3000);
-  };
-
-  const sortEventsByReport = (uid: string) => {    
-    const res = events.filter(item => item.info.uid !== uid)
-    setEvents(res);
-  }
-
-  const sortEventsByReportFirstRender = (data: any) => {    
-    const filterData = data.filter(item => {
-      return item && !item.info.reports.includes(userInfo.uid);
-    });
-  
-    return filterData;
   };
 
   const requestUserPermission = async () => {
@@ -1261,7 +1224,6 @@ const IO: FC = (): JSX.Element => {
                     // @ts-ignore
                     cardHeight="100%"
                     onSwipedLeft={() => {
-                      onReject(item?.info?.uid, item?.info?.id);
                       setTimeout(() => {
                         setCurrentEventCardPosition(prev => prev + 1);
                       }, 500);
@@ -1294,7 +1256,7 @@ const IO: FC = (): JSX.Element => {
               text="Your event is under review. Thank you for your patience. You will be notified if your account is accepted"
             />
           )}
-          <ModalReport sortEventsByReport={sortEventsByReport} modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
+          <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
           <SuperInvite
             isVisibleSuperInvite={isVisibleSuperInvite}
             activeSuperInviteUser={activeSuperInviteUser}
