@@ -13,6 +13,7 @@ import {calculateAge} from 'helpers/calculateAge.ts';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { confirmPhonePath } from 'constants/pathLocations';
 import { showToast } from 'helpers/showToast';
+import firestore from '@react-native-firebase/firestore'
 
 const ModalDeleteMyAccount: FC<{
   isVisible: boolean; 
@@ -26,26 +27,37 @@ const ModalDeleteMyAccount: FC<{
 
   const userAge = calculateAge(userHost?.date);
   const handleDeleteAccount = async () => {
-    showToast('inviteMatch', '', 'Your account has been deleted', {ownerPhoto: userHost?.photos[0].image, status: 'SUCCESSED'})
+    await auth().signOut();
     try {
-      await auth()
-        .currentUser?.delete()
-        .then(async () => {
-          await auth().signOut();
-        });
+      const docSnapshot = await firestore().collection('userInfo').doc(userHost.uid).get();
+      const docData = docSnapshot.data();
+      
+      if (docData?.eventsList.length > 0) {
+        for (const item of docData.eventsList) {
+          await firestore().collection('Events').doc(item).delete();
+          await firestore().collection('messages').doc(item).delete();
+        }
+      }
+      await firestore().collection('userInfo').doc(userHost.uid).delete();
+      await auth().currentUser?.delete();
+      showToast('inviteMatch', '', 'Your account has been deleted', {
+        ownerPhoto: userHost?.photos[0].image,
+        status: 'SUCCESSED',
+      });
     } catch (e) {
       console.log('error delete', e);
-      if(e.code === 'auth/requires-recent-login') {
-        if(setIsVisibleConfirmPhoneModal) {
-          onClose()
-          sendVerificationCode()
+      if (e.code === 'auth/requires-recent-login') {
+        if (setIsVisibleConfirmPhoneModal) {
+          onClose();
+          sendVerificationCode();
           setTimeout(() => {
-            setIsVisibleConfirmPhoneModal(true)
-          },1000)
+            setIsVisibleConfirmPhoneModal(true);
+          }, 1000);
         }
       }
     }
   };
+  
 
   return (
     <Modal
