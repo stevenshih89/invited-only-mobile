@@ -7,7 +7,6 @@ import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import functions from '@react-native-firebase/functions';
 
 //import components
@@ -15,7 +14,7 @@ import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, myProfileViewPath, superInvitePayPath, userProfilePath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
@@ -161,7 +160,7 @@ const IO: FC = (): JSX.Element => {
         showToast('inviteMatch', 'have a code? click here', 'Your account is under review', {
           ownerPhoto: userInfo?.photos[0].image,
           status: 'ON REVIEW',
-          path: 'invitationCode'
+          path: 'invitationCode',
         });
       }
     }
@@ -355,34 +354,34 @@ const IO: FC = (): JSX.Element => {
     //   }),
     // });
 
-    if (!response.ok) {
-      const error = await response.json();
-      console.error('error sending notification:', error);
-    } else {
-      const data = await response.json();
-      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
-      const userNotifications = userDoc.data()?.notifications;
-      const id = generateRandomId(8);
-      const notification = {
-        id,
-        title: title,
-        body: body,
-        mark: mark,
-        uid: userInfo?.uid,
-      };
-      console.log('notification', notification);
+    // if (!response.ok) {
+    //   const error = await response.json();
+    //   console.error('error sending notification:', error);
+    // } else {
+    // const data = await response.json();
+    const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
+    const userNotifications = userDoc.data()?.notifications;
+    const id = generateRandomId(8);
+    const notification = {
+      id,
+      title: title,
+      body: body,
+      mark: mark,
+      uid: userInfo?.uid,
+    };
+    console.log('notification', notification);
 
-      try {
-        await firestore()
-          .collection('userInfo')
-          .doc(forUserUid)
-          .update({
-            notifications: [...userNotifications, notification],
-          });
-      } catch (error) {
-        console.log('error update notifications', error);
-      }
+    try {
+      await firestore()
+        .collection('userInfo')
+        .doc(forUserUid)
+        .update({
+          notifications: [...userNotifications, notification],
+        });
+    } catch (error) {
+      console.log('error update notifications', error);
     }
+    // }
   };
 
   const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {
@@ -804,7 +803,7 @@ const IO: FC = (): JSX.Element => {
   const getListForHost = async () => {
     let users: any;
     console.log('activeEvent', activeEvent);
-    
+
     if (activeEvent.male > 0 && activeEvent.female > 0) {
       users = await firestore().collection('userInfo').limit(20).get();
     } else if (activeEvent.male > 0) {
@@ -1134,7 +1133,7 @@ const IO: FC = (): JSX.Element => {
     if (!userHost?.accountConfirmed) {
       return;
     }
-    if(!userInfo.accountPremium) {
+    if (!userInfo.accountPremium) {
       navigation.navigate(paymentPath as never);
     } else {
       navigation.navigate(eventCreatingStackPath);
@@ -1202,7 +1201,7 @@ const IO: FC = (): JSX.Element => {
           </View>
         </View>
         <View style={{width: '100%', alignItems: 'center'}}>
-          <TouchableOpacity onPress={() =>  navigation.navigate(joinEventsPath)}>
+          <TouchableOpacity onPress={() => navigation.navigate(joinEventsPath)}>
             <Text style={{color: whiteColor, fontSize: RFValue(14, 812)}}>Start joining!</Text>
           </TouchableOpacity>
         </View>

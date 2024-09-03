@@ -74,6 +74,9 @@ exports.processInviteMatch = functionsV2.firestore.onDocumentUpdated('Events/{ev
       return user;
     });
 
+    const userFromRequestsList = requestsList.find(request => request.uid === matchedUser.uid);
+    const userFromUsersList = usersList.find(user => user.uid === matchedUser.uid);
+
     if (matchedUser?.fcmToken) {
       await admin.messaging().send({
         token: matchedUser.fcmToken,
@@ -89,6 +92,7 @@ exports.processInviteMatch = functionsV2.firestore.onDocumentUpdated('Events/{ev
           recipientUid: `${matchedUser.uid}`,
           eventId: `${eventData.id}`,
           userHostImageUri: `${eventData.hostImage}`,
+          superInvite: userFromRequestsList?.superInvite ? 'true' : 'false',
         },
       });
     }
@@ -107,6 +111,7 @@ exports.processInviteMatch = functionsV2.firestore.onDocumentUpdated('Events/{ev
           recipientUid: `${eventData.uid}`,
           eventId: `${eventData.id}`,
           userHostImageUri: `${eventData.hostImage}`,
+          superInvite: userFromUsersList?.superInvite ? 'true' : 'false',
         },
       });
     }
