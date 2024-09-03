@@ -58,7 +58,7 @@ const JoinEvents = ({navigation}: any) => {
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
       const data = message?.data;
-      setMatchData(data);
+      setMatchData({...data, superInvite: data?.superInvite? JSON.parse(data?.superInvite as any): false});
       setIsVisibleMatch(true);
     });
 

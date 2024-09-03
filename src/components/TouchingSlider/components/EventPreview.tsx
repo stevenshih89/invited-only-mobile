@@ -65,7 +65,7 @@ const EventPreview: FC<{
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
   const numberPhotos = imagesUser?.length;
 
-  console.log('photos', photos);
+  // console.log('photos', photos);
 
   function calculateAge(birthDateString: string) {
     const parts = birthDateString.split('.');

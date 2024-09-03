@@ -36,6 +36,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   matchData,
   guestInfo,
 }) => {
+  
   const opacityWrapper = useSharedValue(0);
   const imagePosition = useSharedValue(-200 - widthScreen / 15.5);
   const textSize = useSharedValue(0);
@@ -52,18 +53,40 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   const navigation = useAppNavigation();
 
   const handleCreateChat = async () => {
-    const querySnapshot = await firestore().collection('Events').where('uid', '==', `${userHost?.uid}`).get();
+    console.log('userHost?.uid', userHost?.uid);
+    // where('uid', '==', `${userHost?.uid}`).get()
+    
+    const querySnapshot = await firestore().collection('Events').get()
     // console.log('querySnapshot', querySnapshot.docs.map(i => console.log(i.data().id)
     // ));
 
+    // console.log('matchData',matchData);
+    
+    // console.log('querySnapshot',querySnapshot.docs);
+    
     const list = querySnapshot?.docs?.map(i => ({id: i.id, ...i?.data()})).find(i => i?.id === matchData.eventId);
+    console.log('list', list);
+    
 
     try {
       const messageCollection = await firestore().collection('messages').doc(list?.id).get();
+      console.log('messageCollection', messageCollection);
+      
       const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === matchData.recipientUid)[0];
+      console.log('chatCheck', chatCheck);
 
       const activeEvent = messageCollection?.data()?.activeEvent;
-
+      // console.log('EROR', {
+      //   image: chatCheck?.avatar,
+      //   title: chatCheck?.name,
+      //   online: false,
+      //   messages: chatCheck?.messages,
+      //   activeEvent: activeEvent,
+      //   id: chatCheck?.id,
+      //   superInvite: chatCheck?.superInvite,
+      //   invitedStatus: chatCheck?.invitedStatus,
+      // });      
+      
       if (chatCheck) {
         await navigation.navigate(commonStackPath, {
           screen: chatCorrespondencePath,
