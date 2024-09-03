@@ -124,7 +124,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   );
 
   const goToCreateEvent = async (): void => {
-    await fetchUserInfo();
+    const userHost =  await fetchUserInfo();
     if (!userHost?.accountConfirmed) {
       return;
     }
@@ -145,6 +145,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         if (userInfoDoc.exists) {
           const userData = userInfoDoc.data();
           setUserInfo(userData);
+          return userData
         }
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
