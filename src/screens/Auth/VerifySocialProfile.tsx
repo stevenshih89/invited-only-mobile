@@ -167,8 +167,7 @@ const VerifySocialProfile = () => {
           notifications: [],
           weeklySuperInvites: 5,
           superInvites: 0,
-          lastUpdateSuperInvite: Date.now(),
-          reports: []
+          lastUpdateSuperInvite: Date.now()
         })
         .then(async () => {
           console.warn('User added!');
