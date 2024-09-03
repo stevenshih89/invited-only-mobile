@@ -285,6 +285,18 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
             </View>
             <View style={styles.wrapperAboutMe}>
               <Text style={styles.testBasics}>About me</Text>
+              {userInfo?.showLanguages && (
+                  <View style={{flexDirection: 'row', alignItems: 'center', marginTop: screenHeight / 55,}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812),}}>
+                    Lenguages: 
+                    </Text>
+                    {userInfo?.languages?.length > 0? userInfo?.languages?.map(item => 
+                    <View style={{backgroundColor: whiteColor, padding: 2, borderRadius: 4, marginLeft: 5}}>
+                      <Text style={{fontSize: RFValue(14, 812), color: blackColor, fontFamily: Satoshi500}}>{` ${item.title}`}</Text>
+                    </View>
+                    ): <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}> No languages ​​selected</Text>}
+                  </View>
+                )}
               <Text style={styles.textAboutMe}>{userInfo?.bio ? userInfo.bio : 'Bio is empty'}</Text>
             </View>
             <View style={{marginTop: 34}}>
