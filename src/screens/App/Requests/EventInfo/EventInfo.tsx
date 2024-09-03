@@ -3,7 +3,7 @@ import {View, Text, ScrollView, Image, TouchableOpacity} from 'react-native';
 
 //import components
 import useStyles from './styles';
-import {userProfilePath} from 'constants/pathLocations.ts';
+import {commonStackPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 
 //import icons
@@ -30,8 +30,10 @@ const EventInfo = ({navigation, route}: any) => {
   const [loading, setLoading] = useState(true);
 
   const {list, isAcceptedInvitation} = route?.params;
-  const {photos, placeName, meetingSpot, description, hour, date, address, userPhotos, female, femaleFriend, male, uid, name} = list;
+  const {photos, placeName, meetingSpot, description, hour, date, address, userPhotos, female, femaleFriend, male, uid, name} = list;  
 
+  console.log('uid', uid);
+  
   console.warn('list event info active', list);
   const iconsArrayMale = Array.from({length: male}, (_, index) => index);
   const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
@@ -51,6 +53,16 @@ const EventInfo = ({navigation, route}: any) => {
   useEffect(() => {
     getHostInfo(uid);
   }, []);
+
+  const goToProfileView = () => {
+    navigation.navigate(commonStackPath, {
+      screen: myProfileViewPath,
+      params: {
+        uid: uid,
+        isShowEditButton: false
+      },
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -143,7 +155,7 @@ const EventInfo = ({navigation, route}: any) => {
                       {/*<Text style={styles.textOnline}>Online</Text>*/}
                     </View>
                   </View>
-                  <TouchableOpacity onPress={() => navigation.navigate(userProfilePath, {params: {uid: uid}})}>
+                  <TouchableOpacity onPress={goToProfileView}>
                     <Text style={styles.textSeeProfile}>
                       See profile <ArrowRightIcon width={14} height={14} />
                     </Text>

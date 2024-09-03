@@ -154,6 +154,7 @@ const ItemRequestHost = ({item, list, setRequestsForHost}: any) => {
       screen: myProfileViewPath,
       params: {
         uid: item?.uid,
+        isShowEditButton: false
       },
     });
   };

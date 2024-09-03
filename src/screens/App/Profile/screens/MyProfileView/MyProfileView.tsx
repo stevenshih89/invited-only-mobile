@@ -207,7 +207,8 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
             </View> */}
             <View style={styles.basicsWrapper}>
               {/* <Text style={styles.testBasics}>My basics</Text> */}
-              <Button onPress={goToProfileEditing} title={'Edit profile'} />
+              {isShowEditButton &&
+              <Button onPress={goToProfileEditing} title={'Edit profile'} />}
               <View style={styles.wrapperTextTags}>
                 {userInfo?.work?.title && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
