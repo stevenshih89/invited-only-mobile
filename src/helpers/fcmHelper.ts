@@ -17,6 +17,8 @@ export const fcmHelper = async () => {
     // if (oldToken === newToken) {
     //   console.log('not refresh');
     // } else {
+    console.log('newToken', newToken, userUid);
+    
     try {
       await firestore().collection('userInfo').doc(userUid).update({
         fcmToken: newToken,
@@ -101,6 +103,8 @@ export const checkApplicationNotificationPermission = async () => {
 
 //method was called to listener events from firebase for notification triger
 export function registerListenerWithFCM() {
+  console.log('lasdkasdk');
+  
   const unsubscribe = messaging().onMessage(async remoteMessage => {
     console.log('onMessage Received : ', JSON.stringify(remoteMessage));
     if (remoteMessage?.notification?.title && remoteMessage?.notification?.body) {
@@ -172,7 +176,7 @@ async function onDisplayNotification(title, body, data) {
 export function onMatchNotificationSubscription(handler: (message: FirebaseMessagingTypes.RemoteMessage) => void) {
   return messaging().onMessage(async remoteMessage => {
     await notifee.requestPermission();
-
+    onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data)
     if (remoteMessage.data?.type === 'match') {
       handler(remoteMessage);
     }

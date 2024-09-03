@@ -15,7 +15,7 @@ import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, myProfileViewPath, superInvitePayPath, userProfilePath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, superInvitePayPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
@@ -89,9 +89,7 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
-      console.warn('message', message);
-
-      const data = message?.data;
+      const data = message?.data;      
       setMatchData(data);
       setIsVisibleMatch(true);
     });
@@ -318,6 +316,7 @@ const IO: FC = (): JSX.Element => {
     try {
       const result = await functions().httpsCallable('sendNotification')({
         token: token,
+        priority: "high",
         notification: {
           title,
           body,
