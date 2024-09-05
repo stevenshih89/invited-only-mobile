@@ -55,6 +55,7 @@ const EventPreview: FC<{
   meetingSpot,
   fromJoinEventsScreen,
   setIsVisibleSaveModal,
+  onInvite,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
@@ -64,8 +65,6 @@ const EventPreview: FC<{
   const [userAccountType, setUserAccountType] = useState('');
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
   const numberPhotos = imagesUser?.length;
-
-  // console.log('photos', photos);
 
   function calculateAge(birthDateString: string) {
     const parts = birthDateString.split('.');
@@ -77,8 +76,6 @@ const EventPreview: FC<{
     }
     return age;
   }
-
-  console.log(photos);
 
   useFocusEffect(
     useCallback(() => {
@@ -185,7 +182,13 @@ const EventPreview: FC<{
                     <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginRight]}>
                       <FlashIcon />
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginLeft]}>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      style={[styles.iconButton, styles.marginLeft]}
+                      onPress={() => {
+                        console.warn('fsfdsfsf');
+                        onInvite();
+                      }}>
                       <IOIcon />
                     </TouchableOpacity>
                   </View>

@@ -221,6 +221,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             name={name}
             flipCoin={flipCoin}
             fromJoinEventsScreen={fromJoinEventsScreen}
+            onInvite={onInvite}
           />
         </View>
       ) : (

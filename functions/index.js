@@ -1,4 +1,3 @@
-const functionsV2 = require('firebase-functions/v2');
 const functionsV1 = require('firebase-functions');
 const admin = require('firebase-admin');
 
@@ -33,97 +32,24 @@ exports.sendNotification = functionsV1.https.onCall(async data => {
   }
 });
 
-exports.processInviteMatch = functionsV2.firestore.onDocumentUpdated('Events/{eventId}', async event => {
-  const eventData = event.data.after.data();
+exports.sendNotificationReq = functionsV1.https.onRequest(async (req, res) => {
+  const {token, notification, data: msgData} = req.body;
 
-  let requestsList = [...eventData.requestsList];
-  let usersList = [...eventData.usersList];
+  if (token) {
+    const message = {
+      token: token,
+      notification: notification,
+      data: msgData,
+    };
 
-  const uidSet = new Set();
-  let matchedUser = {};
-
-  requestsList.forEach(request => {
-    if (request.status === 'liked') {
-      if (uidSet.has(request.uid)) {
-        matchedUser = request;
-      } else {
-        uidSet.add(request.uid);
-      }
+    try {
+      await admin.messaging().send(message);
+      return res.status(200).send({success: true, data: message});
+      // return {success: true, data: message};
+    } catch (error) {
+      return {success: false, error: error.message};
     }
-  });
-
-  usersList.forEach(user => {
-    if (user.status === 'liked') {
-      if (uidSet.has(user.uid)) {
-        matchedUser = user;
-      } else {
-        uidSet.add(user.uid);
-      }
-    }
-  });
-
-  if (matchedUser?.uid) {
-    const updatedRequestsList = requestsList.filter(request => request.uid !== matchedUser.uid);
-    const updatedUsersList = usersList.map(user => {
-      if (user.uid === matchedUser.uid) {
-        return {
-          ...user,
-          status: 'invite_match',
-        };
-      }
-      return user;
-    });
-
-    const userFromRequestsList = requestsList.find(request => request.uid === matchedUser.uid);
-    const userFromUsersList = usersList.find(user => user.uid === matchedUser.uid);
-
-    if (matchedUser?.fcmToken) {
-      await admin.messaging().send({
-        token: matchedUser.fcmToken,
-        notification: {
-          title: 'You have a new match!',
-          body: `You have matched with ${eventData.name}`,
-        },
-        data: {
-          type: 'match',
-          name: `${matchedUser.name}`,
-          imageUri: `${matchedUser.userPhoto}`,
-          senderUid: `${eventData.uid}`,
-          recipientUid: `${matchedUser.uid}`,
-          eventId: `${eventData.id}`,
-          userHostImageUri: `${eventData.hostImage}`,
-          superInvite: userFromRequestsList?.superInvite ? 'true' : 'false',
-        },
-      });
-    }
-    if (eventData?.hostFcmToken) {
-      await admin.messaging().send({
-        token: eventData.hostFcmToken,
-        notification: {
-          title: 'You have a new match!',
-          body: `You have matched with ${matchedUser.name}`,
-        },
-        data: {
-          type: 'match',
-          name: `${eventData.name}`,
-          imageUri: `${matchedUser.userPhoto}`,
-          senderUid: `${matchedUser.uid}`,
-          recipientUid: `${eventData.uid}`,
-          eventId: `${eventData.id}`,
-          userHostImageUri: `${eventData.hostImage}`,
-          superInvite: userFromUsersList?.superInvite ? 'true' : 'false',
-        },
-      });
-    }
-
-    return event.data.after.ref.set(
-      {
-        requestsList: updatedRequestsList,
-        usersList: updatedUsersList,
-      },
-      {
-        merge: true,
-      },
-    );
+  } else {
+    return {success: false, error: 'FCM token not found'};
   }
 });

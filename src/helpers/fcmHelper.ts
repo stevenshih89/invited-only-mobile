@@ -17,7 +17,7 @@ export const fcmHelper = async () => {
     // if (oldToken === newToken) {
     //   console.log('not refresh');
     // } else {
-    console.log('newToken', newToken, userUid);
+    console.warn('newToken', newToken, userUid);
     try {
       await firestore().collection('userInfo').doc(userUid).update({
         fcmToken: newToken,
@@ -86,10 +86,13 @@ export async function unRegisterAppWithFCM() {
 
 export const checkApplicationNotificationPermission = async () => {
   const authStatus = await messaging().requestPermission();
+
+  console.warn('Authorization status1:', authStatus);
+
   const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    // console.log('Authorization status:', authStatus);
+    console.warn('Authorization status:', authStatus);
   }
   request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS)
     .then(result => {
@@ -173,10 +176,107 @@ async function onDisplayNotification(title, body, data) {
 // it would be called when the app in foreground state
 export function onMatchNotificationSubscription(handler: (message: FirebaseMessagingTypes.RemoteMessage) => void) {
   return messaging().onMessage(async remoteMessage => {
-    await notifee.requestPermission();
+    console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
+
+    // await notifee.requestPermission();
     if (remoteMessage.data?.type === 'match') {
       handler(remoteMessage);
     }
     onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data);
   });
 }
+
+// exports.processInviteMatch = functionsV2.firestore.onDocumentUpdated('Events/{eventId}', async event => {
+//   const eventData = event.data.after.data();
+
+//   let requestsList = [...eventData.requestsList];
+//   let usersList = [...eventData.usersList];
+
+//   const uidSet = new Set();
+//   let matchedUser = {};
+
+//   requestsList.forEach(request => {
+//     if (request.status === 'liked') {
+//       if (uidSet.has(request.uid)) {
+//         matchedUser = request;
+//       } else {
+//         uidSet.add(request.uid);
+//       }
+//     }
+//   });
+
+//   usersList.forEach(user => {
+//     if (user.status === 'liked') {
+//       if (uidSet.has(user.uid)) {
+//         matchedUser = user;
+//       } else {
+//         uidSet.add(user.uid);
+//       }
+//     }
+//   });
+
+//   if (matchedUser?.uid) {
+//     const updatedRequestsList = requestsList.filter(request => request.uid !== matchedUser.uid);
+//     const updatedUsersList = usersList.map(user => {
+//       if (user.uid === matchedUser.uid) {
+//         return {
+//           ...user,
+//           status: 'invite_match',
+//         };
+//       }
+//       return user;
+//     });
+
+//     const userFromRequestsList = requestsList.find(request => request.uid === matchedUser.uid);
+//     const userFromUsersList = usersList.find(user => user.uid === matchedUser.uid);
+
+//     if (matchedUser?.fcmToken) {
+//       await admin.messaging().send({
+//         token: matchedUser.fcmToken,
+//         notification: {
+//           title: 'You have a new match!',
+//           body: `You have matched with ${eventData.name}`,
+//         },
+//         data: {
+//           type: 'match',
+//           name: `${matchedUser.name}`,
+//           imageUri: `${matchedUser.userPhoto}`,
+//           senderUid: `${eventData.uid}`,
+//           recipientUid: `${matchedUser.uid}`,
+//           eventId: `${eventData.id}`,
+//           userHostImageUri: `${eventData.hostImage}`,
+//           superInvite: userFromRequestsList?.superInvite ? 'true' : 'false',
+//         },
+//       });
+//     }
+//     if (eventData?.hostFcmToken) {
+//       await admin.messaging().send({
+//         token: eventData.hostFcmToken,
+//         notification: {
+//           title: 'You have a new match!',
+//           body: `You have matched with ${matchedUser.name}`,
+//         },
+//         data: {
+//           type: 'match',
+//           name: `${eventData.name}`,
+//           imageUri: `${matchedUser.userPhoto}`,
+//           senderUid: `${matchedUser.uid}`,
+//           recipientUid: `${eventData.uid}`,
+//           eventId: `${eventData.id}`,
+//           userHostImageUri: `${eventData.hostImage}`,
+//           superInvite: userFromUsersList?.superInvite ? 'true' : 'false',
+//         },
+//       });
+//     }
+
+//     return event.data.after.ref.set(
+//       {
+//         requestsList: updatedRequestsList,
+//         usersList: updatedUsersList,
+//       },
+//       {
+//         merge: true,
+//       },
+//     );
+//   }
+// });

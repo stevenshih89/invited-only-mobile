@@ -19,15 +19,15 @@ const widthScreen = Dimensions.get('screen').width;
 
 console.log('screenHeight', screenHeight);
 
-interface MatchData {
-  type: string;
-  name: string;
-  imageUri: string;
-  senderUid: string;
-  recipientUid: string;
-  eventId: string;
-  superInvite: string;
-  userHostImageUri: string;
+export interface MatchData {
+  type?: string;
+  name?: string;
+  imageUri?: string;
+  uidHost?: string;
+  uidGuest?: string;
+  eventId?: string;
+  superInvite?: string;
+  userHostImageUri?: string;
 }
 
 const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: MatchData; guestInfo: any}> = ({
@@ -36,7 +36,6 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   matchData,
   guestInfo,
 }) => {
-  
   const opacityWrapper = useSharedValue(0);
   const imagePosition = useSharedValue(-200 - widthScreen / 15.5);
   const textSize = useSharedValue(0);
@@ -46,7 +45,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
 
   const userHost = useUser((i: any) => i?.user);
 
-  const words = userHost?.name?.split(' ');
+  const words = `${matchData?.name} `?.split(' ');
   const wordTranslations = words?.map(() => useSharedValue(widthScreen));
   const nameAnimation = useSharedValue(widthScreen);
 
@@ -54,39 +53,21 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
 
   const handleCreateChat = async () => {
     console.log('userHost?.uid', userHost?.uid);
-    // where('uid', '==', `${userHost?.uid}`).get()
-    
-    const querySnapshot = await firestore().collection('Events').get()
-    // console.log('querySnapshot', querySnapshot.docs.map(i => console.log(i.data().id)
-    // ));
 
-    // console.log('matchData',matchData);
-    
-    // console.log('querySnapshot',querySnapshot.docs);
-    
+    const querySnapshot = await firestore().collection('Events').get();
+
     const list = querySnapshot?.docs?.map(i => ({id: i.id, ...i?.data()})).find(i => i?.id === matchData.eventId);
     console.log('list', list);
-    
 
     try {
       const messageCollection = await firestore().collection('messages').doc(list?.id).get();
       console.log('messageCollection', messageCollection);
-      
-      const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === matchData.recipientUid)[0];
+
+      const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === matchData.uidGuest)[0];
       console.log('chatCheck', chatCheck);
 
       const activeEvent = messageCollection?.data()?.activeEvent;
-      // console.log('EROR', {
-      //   image: chatCheck?.avatar,
-      //   title: chatCheck?.name,
-      //   online: false,
-      //   messages: chatCheck?.messages,
-      //   activeEvent: activeEvent,
-      //   id: chatCheck?.id,
-      //   superInvite: chatCheck?.superInvite,
-      //   invitedStatus: chatCheck?.invitedStatus,
-      // });      
-      
+
       if (chatCheck) {
         await navigation.navigate(commonStackPath, {
           screen: chatCorrespondencePath,
@@ -112,7 +93,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             messages: [],
             name: matchData.name,
             superInvite: matchData?.superInvite,
-            uid: matchData.recipientUid,
+            uid: matchData.uidGuest,
             hostUid: userHost?.uid,
           };
           await firestore()
@@ -147,7 +128,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             chats: [],
             inviteStatus: 'invite_match',
             nameGuest: matchData.name,
-            uidGuest: matchData.recipientUid,
+            uidGuest: matchData.uidGuest,
             uidHost: userHost?.uid,
           });
 
@@ -158,7 +139,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             messages: [],
             name: matchData.name,
             superInvite: matchData?.superInvite === 'true' ? true : false,
-            uid: matchData.recipientUid,
+            uid: matchData.uidGuest,
             hostUid: userHost?.uid,
           };
 
@@ -193,13 +174,15 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   };
 
   const handleApproveGuestFromHost = async () => {
+    console.warn(matchData);
     const eventQuerySnapshot = await firestore().collection('Events').doc(matchData.eventId).get();
     if (eventQuerySnapshot.exists) {
       const eventData = eventQuerySnapshot?.data();
       const usersList = [...eventData?.usersList];
-      // const userIndex = usersList.findIndex((user: any) => user.uid === matchData.recipientUid);
+      // const userIndex = usersList.findIndex((user: any) => user.uid === matchData.uidGuest);
+
       const updatedUsersList = usersList.map((user: any) => {
-        if (user.uid === matchData.senderUid) {
+        if (user.uid === matchData.uidGuest) {
           return {
             ...user,
             status: 'approved',

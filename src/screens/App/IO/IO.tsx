@@ -43,7 +43,7 @@ import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
-import Match from './screens/Match/Match';
+import Match, {MatchData} from './screens/Match/Match';
 // import ModalSuperInvite from 'components/Modal/ModalSuperInvite';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
@@ -62,7 +62,7 @@ const IO: FC = (): JSX.Element => {
   const [uidScamUser, setUidScamUser] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
   const [guestInfo, setGuestInfo] = useState<any>({});
-  const [matchData, setMatchData] = useState<any>({});
+  const [matchData, setMatchData] = useState<MatchData>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
@@ -88,6 +88,8 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
+      console.warn('message', message);
+
       const data = message?.data;
       setMatchData(data);
       setIsVisibleMatch(true);
@@ -201,23 +203,22 @@ const IO: FC = (): JSX.Element => {
     return filteredData;
   };
 
-  const handleOpenMatch = async (recipientUid: string, name: string, girlsPhoto: string) => {
-    const userId = auth().currentUser?.uid;
-    const token = await getFcmToken();
-
-    try {
-      await firestore().collection('CollectionOfMatches').add({
-        notificationTokenSender: token,
-        recipientUid: recipientUid,
-        senderUid: userId,
-        name: name,
-        girlsPhoto: girlsPhoto,
-      });
-      showToast('inviteMatch', `Chat with ${name} >`, 'Invitation approved! Waiting for Alexa to accept your invitation.');
-      // setIsVisibleMatch(true);
-    } catch (e) {
-      console.log(e);
-    }
+  const handleOpenMatch = async (uidGuest: string, name: string, girlsPhoto: string) => {
+    // const userId = auth().currentUser?.uid;
+    // const token = await getFcmToken();
+    // try {
+    //   await firestore().collection('CollectionOfMatches').add({
+    //     notificationTokenSender: token,
+    //     uidGuest: uidGuest,
+    //     hostUid: userId,
+    //     name: name,
+    //     girlsPhoto: girlsPhoto,
+    //   });
+    //   showToast('inviteMatch', `Chat with ${name} >`, 'Invitation approved! Waiting for Alexa to accept your invitation.');
+    //   // setIsVisibleMatch(true);
+    // } catch (e) {
+    //   console.log(e);
+    // }
   };
 
   const OverlayRight = () => {
@@ -395,25 +396,44 @@ const IO: FC = (): JSX.Element => {
         return;
       }
 
-      const host = userHost?.accountType === 'host';
+      const isHost = userHost?.accountType === 'host';
 
       const userInvited = {
-        gender: host ? guest.data()?.gender : userHost?.gender,
-        name: host ? guest.data()?.name : userHost?.name,
+        gender: isHost ? guest.data()?.gender : userHost?.gender,
+        name: isHost ? guest.data()?.name : userHost?.name,
         status: 'liked',
         superInvite: false,
-        uid: host ? guest.data()?.uid : userHost?.uid,
-        userPhoto: host ? guest.data()?.photos[0]?.image : userHost?.photos[0]?.image,
-        fcmToken: host ? guest.data()?.fcmToken : userHost?.fcmToken,
+        uid: isHost ? guest.data()?.uid : userHost?.uid,
+        userPhoto: isHost ? guest.data()?.photos[0]?.image : userHost?.photos[0]?.image,
+        fcmToken: isHost ? guest.data()?.fcmToken : userHost?.fcmToken,
       };
 
-      if (userHost?.accountType === 'host') {
-        await firestore()
-          .collection('Events')
-          .doc(activeEventId)
-          .update({
-            usersList: firestore.FieldValue.arrayUnion(userInvited),
+      if (isHost) {
+        const matchedGuest = event.requestsList?.find(reqUser => reqUser?.uid === forUserUid && reqUser?.status === 'liked');
+        let data = {};
+        if (matchedGuest) {
+          data = {
+            requestsList: firestore.FieldValue.arrayRemove(matchedGuest),
+            usersList: firestore.FieldValue.arrayUnion({...userInvited, status: 'invite_match'}),
+          };
+          setMatchData({
+            type: 'match',
+            name: matchedGuest?.name,
+            imageUri: matchedGuest?.userPhoto,
+            uidHost: userHost?.uid,
+            uidGuest: matchedGuest?.uid,
+            eventId: activeEventId,
+            superInvite: false,
+            userHostImageUri: userHost?.photos[0]?.image,
           });
+          setIsVisibleMatch(true);
+        } else {
+          data = {
+            usersList: firestore.FieldValue.arrayUnion(userInvited),
+          };
+        }
+
+        await firestore().collection('Events').doc(activeEventId).update(data);
 
         await sendNotification(
           forUserUid,
@@ -423,12 +443,39 @@ const IO: FC = (): JSX.Element => {
           'Invite Request'.toUpperCase(),
         );
       } else {
-        await firestore()
-          .collection('Events')
-          .doc(activeEventId)
-          .update({
-            requestsList: firestore.FieldValue.arrayUnion(userInvited),
+        const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userHost?.uid && invUser?.status === 'liked');
+        let data = {};
+        if (matchedGuest) {
+          const updatedUsersList = event?.usersList?.map(invUser => {
+            if (invUser?.uid === userHost?.uid) {
+              return {
+                ...invUser,
+                status: 'invite_match',
+              };
+            }
+            return invUser;
           });
+          data = {
+            usersList: updatedUsersList,
+          };
+          setMatchData({
+            type: 'match',
+            name: event?.hostName,
+            imageUri: matchedGuest?.userPhoto,
+            uidHost: event?.uid,
+            uidGuest: matchedGuest?.uid,
+            eventId: activeEventId,
+            superInvite: false,
+            userHostImageUri: event?.hostImage,
+          });
+          setIsVisibleMatch(true);
+        } else {
+          data = {
+            requestsList: firestore.FieldValue.arrayUnion(userInvited),
+          };
+        }
+
+        await firestore().collection('Events').doc(activeEventId).update(data);
 
         await sendNotification(
           event.uid,
@@ -1140,11 +1187,11 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  if (loading || (!userHost && userInfo.accountConfirmed)) {
+  if ((loading || (!userHost && userInfo.accountConfirmed)) && !isVisibleMatch) {
     return <Loading text="Finding people near you..." userInfo={userInfo} />;
   }
 
-  if (activeEvent?.date) {
+  if (activeEvent?.date && !isVisibleMatch) {
     const [day, month, year] = activeEvent?.date?.split('.').map(Number);
     const [hours, minutes] = activeEvent?.hour?.split(':').map(Number);
 
@@ -1161,10 +1208,11 @@ const IO: FC = (): JSX.Element => {
   }
 
   if (
-    (userInfo?.accountType === 'host'
+    ((userInfo?.accountType === 'host'
       ? currentEventCardPosition > allEventsLength.current && !lastVisible
       : currentEventCardPosition > allEventsLength.current && allEventsLength.current) ||
-    !allEventsLength.current
+      !allEventsLength.current) &&
+    !isVisibleMatch
   ) {
     return (
       <Loading
@@ -1175,7 +1223,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (myEvents.length < 1 && userInfo.accountConfirmed && userInfo.accountType === 'host') {
+  if (myEvents.length < 1 && userInfo.accountConfirmed && userInfo.accountType === 'host' && !isVisibleMatch) {
     return (
       <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
         <View style={{height: 370}}>
@@ -1263,9 +1311,9 @@ const IO: FC = (): JSX.Element => {
             onCloseSuperInvite={handleCloseSuperInvite}
             setLastVisible={setLastVisible}
           />
-          <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} guestInfo={guestInfo} />
         </View>
       </SafeAreaView>
+      <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} guestInfo={guestInfo} />
     </>
   );
 };

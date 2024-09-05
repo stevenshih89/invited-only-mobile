@@ -8,6 +8,7 @@ import SplashScreen from 'react-native-splash-screen';
 import {getFcmToken, registerListenerWithFCM} from 'helpers/fcmHelper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 
 const Navigator = () => {
   const [initializing, setInitializing] = useState<boolean>(true);
@@ -49,6 +50,19 @@ const Navigator = () => {
       SplashScreen.hide();
     }
   }, [initializing]);
+
+  useEffect(() => {
+    console.warn('works');
+    messaging().onMessage(async remoteMessage => {
+      console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
+
+      // await notifee.requestPermission();
+      // if (remoteMessage.data?.type === 'match') {
+      //   handler(remoteMessage);
+      // }
+      // onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data);
+    });
+  }, []);
 
   useEffect(() => {
     const subcriber = auth().onAuthStateChanged(onAuthStateChanged);
