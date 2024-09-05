@@ -30,11 +30,10 @@ export interface MatchData {
   userHostImageUri?: string;
 }
 
-const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: MatchData; guestInfo: any}> = ({
+const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: MatchData}> = ({
   isVisibleMatch,
   onCloseMatch,
   matchData,
-  guestInfo,
 }) => {
   const opacityWrapper = useSharedValue(0);
   const imagePosition = useSharedValue(-200 - widthScreen / 15.5);

@@ -18,6 +18,8 @@ import {useUser} from '../../../store/userStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import Loading from 'components/Loading/Loading';
 import moment from 'moment';
+import Match, {MatchData} from '../IO/screens/Match/Match';
+import {showToast} from 'helpers/showToast';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
@@ -31,8 +33,15 @@ const Requests: FC = (): ReactElement => {
   const [userInfo, setUserInfoData] = useState<any>([]);
   const [dataForGuest, setDataForGuest] = useState([]);
   const [myEventsList, setMyEventsList] = useState([]);
+  const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
+  const [matchData, setMatchData] = useState<MatchData>({});
 
   const [loading, setLoading] = useState<boolean>(false);
+
+  const handleCloseMatch = (): void => {
+    setIsVisibleMatch(false);
+    showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {ownerPhoto: '', status: 'INVITE MATCH'});
+  };
 
   const fetchHostRequests = async () => {
     const user = auth().currentUser;
@@ -116,6 +125,12 @@ const Requests: FC = (): ReactElement => {
   };
 
   const isHost = user?.accountType?.toLowerCase() === 'host';
+  const list = isHost ? requestsForHost : dataForGuest;
+
+  const handleOpenMatch = (data: MatchData) => {
+    setMatchData(data);
+    setIsVisibleMatch(true);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -128,8 +143,6 @@ const Requests: FC = (): ReactElement => {
       isHost ? fetchHostRequests() : fetchGuestRequests();
     }, [activeEvent, isHost]),
   );
-
-  const list = isHost ? requestsForHost : dataForGuest;
 
   const expressionForHost = isHost && !!requestsForHost?.requestsList?.length;
   const expressionForGuest = !isHost && !!dataForGuest.length;
@@ -147,11 +160,11 @@ const Requests: FC = (): ReactElement => {
     return isExpired;
   }
 
-  if (loading && !list) {
+  if (loading && !list && !isVisibleMatch) {
     return <ActivityIndicator style={styles.container} />;
   }
 
-  if (!userInfo?.accountConfirmed && !loading) {
+  if (!userInfo?.accountConfirmed && !loading && !isVisibleMatch) {
     return (
       <View style={styles.container}>
         <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />
@@ -159,7 +172,13 @@ const Requests: FC = (): ReactElement => {
     );
   }
 
-  if (!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myEventsList?.length) {
+  if (
+    !!userInfo?.accountConfirmed &&
+    userInfo?.accountType === 'host' &&
+    !list.eventReviewed &&
+    !!myEventsList?.length &&
+    !isVisibleMatch
+  ) {
     return (
       <View style={styles.container}>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
@@ -176,7 +195,12 @@ const Requests: FC = (): ReactElement => {
     );
   }
 
-  if (!loading && userInfo?.accountConfirmed && (isHost ? !requestsForHost?.requestsList?.length : !dataForGuest?.length)) {
+  if (
+    !loading &&
+    userInfo?.accountConfirmed &&
+    (isHost ? !requestsForHost?.requestsList?.length : !dataForGuest?.length) &&
+    !isVisibleMatch
+  ) {
     return (
       <View style={styles.container}>
         <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
@@ -193,55 +217,63 @@ const Requests: FC = (): ReactElement => {
   }
 
   return (
-    <View style={styles.container}>
-      {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}
-      {expressionForHost || expressionForGuest ? (
-        <FlatList
-          // @ts-ignore
-          data={isHost ? list?.requestsList : list}
-          numColumns={2}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={({uid, name}) => `${uid}${name}`}
-          contentContainerStyle={styles.listContentContainer}
-          extraData={isHost ? list?.requestsList : list}
-          ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-          renderItem={({item}) => {
-            return isHost ? (
-              <ItemRequestHost list={list} item={item} setRequestsForHost={setRequestsForHost} />
-            ) : (
-              // @ts-ignore
-              <ItemRequestGuest list={item} item={item?.usersList?.filter(i => i?.uid === user?.uid)} setDataForGuest={setDataForGuest} />
-            );
-          }}
-        />
-      ) : (
-        <>
-          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEventsList?.length && !loading && (
-            <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
-              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
-                Let’s create an event
-              </Text>
-              <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
-                Get started by creating an event to begin inviting guests.
-              </Text>
-              <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
-            </View>
-          )}
-          {/* {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myEventsList?.length && (
-            <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
-              {
-                <Loading
-                  userInfo={list}
-                  topPosition={false}
-                  wrapperText={false}
-                  text={isDateTimePassed(list?.date, list?.hour) ? `Event Expired: ${list.date}` : `Event Start: ${list.date}`}
+    <>
+      <View style={styles.container}>
+        {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}
+        {expressionForHost || expressionForGuest ? (
+          <FlatList
+            // @ts-ignore
+            data={isHost ? list?.requestsList : list}
+            numColumns={2}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={({uid, name}) => `${uid}${name}`}
+            contentContainerStyle={styles.listContentContainer}
+            extraData={isHost ? list?.requestsList : list}
+            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+            renderItem={({item}) => {
+              return isHost ? (
+                <ItemRequestHost list={list} item={item} setRequestsForHost={setRequestsForHost} handleOpenMatch={handleOpenMatch} />
+              ) : (
+                // @ts-ignore
+                <ItemRequestGuest
+                  list={item}
+                  item={item?.usersList?.filter(i => i?.uid === user?.uid)}
+                  setDataForGuest={setDataForGuest}
+                  handleOpenMatch={handleOpenMatch}
                 />
+              );
+            }}
+          />
+        ) : (
+          <>
+            {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEventsList?.length && !loading && (
+              <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
+                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
+                  Let’s create an event
+                </Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
+                  Get started by creating an event to begin inviting guests.
+                </Text>
+                <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
+              </View>
+            )}
+            {/* {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myEventsList?.length && (
+            <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
+            {
+              <Loading
+              userInfo={list}
+              topPosition={false}
+              wrapperText={false}
+              text={isDateTimePassed(list?.date, list?.hour) ? `Event Expired: ${list.date}` : `Event Start: ${list.date}`}
+              />
               }
-            </View>
-          )} */}
-        </>
-      )}
-    </View>
+              </View>
+              )} */}
+          </>
+        )}
+      </View>
+      <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} />
+    </>
   );
 };
 

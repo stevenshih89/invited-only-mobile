@@ -20,14 +20,17 @@ import {useEffect, useId, useState} from 'react';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
+import {useUser} from 'src/store/userStore';
 
-const ItemRequestHost = ({item, list, setRequestsForHost}: any) => {
+const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch}: any) => {
   console.log('item', item);
   console.log('list', list);
 
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState({accountType: ''});
+
+  const user = useUser((state: any) => state.user);
   const [currentUserName, setCurrentUserName] = useState();
 
   // console.warn('item', item);
@@ -69,6 +72,8 @@ const ItemRequestHost = ({item, list, setRequestsForHost}: any) => {
   };
 
   const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
+    console.warn('item', item);
+
     const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
     const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
 
@@ -79,7 +84,7 @@ const ItemRequestHost = ({item, list, setRequestsForHost}: any) => {
     const userAccepted = {
       gender: item?.gender,
       name: item?.name,
-      status: 'liked',
+      status: 'invite_match',
       superInvite: false,
       uid: item?.uid,
       userPhoto: item?.userPhoto,
@@ -90,13 +95,24 @@ const ItemRequestHost = ({item, list, setRequestsForHost}: any) => {
         .collection('Events')
         .doc(list?.id)
         .update({
+          requestsList: firestore.FieldValue.arrayRemove(item),
           usersList: firestore.FieldValue.arrayUnion(userAccepted),
         });
-      showToast('inviteMatch', 'Waiting for Alexa to accept your invitation. ', 'Almost there!', {
-        ownerPhoto: item?.userPhoto,
-        status: 'guest approved',
+      // showToast('inviteMatch', 'Waiting for Alexa to accept your invitation. ', 'Almost there!', {
+      //   ownerPhoto: item?.userPhoto,
+      //   status: 'guest approved',
+      // });
+      // sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
+      handleOpenMatch({
+        type: 'match',
+        name: item?.name,
+        imageUri: item?.userPhoto,
+        uidHost: user?.uid,
+        uidGuest: item?.uid,
+        eventId: list?.id,
+        superInvite: false,
+        userHostImageUri: user?.photos[0]?.image,
       });
-      sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
       setRequestsForHost(prev => ({
         ...prev,
         requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),
@@ -154,7 +170,7 @@ const ItemRequestHost = ({item, list, setRequestsForHost}: any) => {
       screen: myProfileViewPath,
       params: {
         uid: item?.uid,
-        isShowEditButton: false
+        isShowEditButton: false,
       },
     });
   };

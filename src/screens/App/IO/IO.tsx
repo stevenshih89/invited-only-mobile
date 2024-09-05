@@ -61,7 +61,6 @@ const IO: FC = (): JSX.Element => {
   const [nameUser, setNameUser] = useState<string>('');
   const [uidScamUser, setUidScamUser] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
-  const [guestInfo, setGuestInfo] = useState<any>({});
   const [matchData, setMatchData] = useState<MatchData>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
@@ -336,30 +335,6 @@ const IO: FC = (): JSX.Element => {
       console.error('Error calling Firebase Function:', error);
     }
 
-    // const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-    //   },
-    //   body: JSON.stringify({
-    //     to: token,
-    //     notification: {
-    //       title: title,
-    //       body: body,
-    //     },
-    //     data: {
-    //       status: status,
-    //       image: userInfo?.photos[0].image,
-    //     },
-    //   }),
-    // });
-
-    // if (!response.ok) {
-    //   const error = await response.json();
-    //   console.error('error sending notification:', error);
-    // } else {
-    // const data = await response.json();
     const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
     const userNotifications = userDoc.data()?.notifications;
     const id = generateRandomId(8);
@@ -382,10 +357,9 @@ const IO: FC = (): JSX.Element => {
     } catch (error) {
       console.log('error update notifications', error);
     }
-    // }
   };
 
-  const onInvite = async (forUserUid: string, eventId: string, requestsList: any, usersList: any) => {
+  const onInvite = async (forUserUid: string, eventId: string) => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
@@ -1313,7 +1287,7 @@ const IO: FC = (): JSX.Element => {
           />
         </View>
       </SafeAreaView>
-      <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} guestInfo={guestInfo} />
+      <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} />
     </>
   );
 };

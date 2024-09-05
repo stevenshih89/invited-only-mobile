@@ -20,7 +20,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import FastImage from 'react-native-fast-image';
 
-const ItemRequestGuest: FC = ({list, item, setDataForGuest}: any): JSX.Element => {
+const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: any) => {
   const [hostInfo, setHostInfo] = useState([]);
   const [loading, setLoading] = useState(true);
   const [heightAnim] = useState(new Animated.Value(218));
@@ -29,10 +29,6 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest}: any): JSX.Element =
   const styles = useStyles();
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
-
-  if (item[0]?.uid !== user?.uid) {
-    return;
-  }
 
   const goToEventInfo = () => {
     navigation.navigate(commonStackPath, {screen: eventInfoPath, params: {list: list}});
@@ -92,23 +88,35 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest}: any): JSX.Element =
       duration: 300,
       useNativeDriver: false,
     }).start(async () => {
-      const userAccepted = {
-        gender: item?.gender,
-        name: item?.name,
-        status: 'liked',
-        superInvite: false,
-        uid: item?.uid,
-        userPhoto: item?.userPhoto,
-        fcmToken: item?.fcmToken,
-      };
+      const eventData = await firestore().collection('Events').doc(list?.id).get();
+      const event = eventData.data();
+      if (!event) {
+        return;
+      }
 
       try {
-        await firestore()
-          .collection('Events')
-          .doc(list?.id)
-          .update({
-            requestsList: firestore.FieldValue.arrayUnion(userAccepted),
-          });
+        const updatedUsersList = event.usersList?.map(invUser => {
+          if (invUser.uid === item?.uid) {
+            return {
+              ...invUser,
+              status: 'invite_match',
+            };
+          }
+          return invUser;
+        });
+        await firestore().collection('Events').doc(list?.id).update({
+          usersList: updatedUsersList,
+        });
+        handleOpenMatch({
+          type: 'match',
+          name: list?.hostName,
+          imageUri: item?.userPhoto,
+          uidHost: list?.uid,
+          uidGuest: item?.uid,
+          eventId: list?.id,
+          superInvite: false,
+          userHostImageUri: list?.hostImage,
+        });
         showToast('inviteMatch', '', 'You accept invitation');
         await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`, 'accepted');
         setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
@@ -204,6 +212,10 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest}: any): JSX.Element =
       }
     }
   };
+
+  if (item[0]?.uid !== user?.uid) {
+    return null;
+  }
 
   return (
     <>
