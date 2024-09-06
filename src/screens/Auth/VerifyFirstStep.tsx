@@ -14,7 +14,9 @@ import {
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckStar from 'assets/images/icons/check-star-white.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import ExampleSelfie from 'assets/images/auth/example-selfie.png';
+import MaleExampleSelfie from 'assets/images/auth/example-selfie.png';
+import FemaleExampleSelfie from 'assets/images/auth/female-selfie-example.png';
+
 import {black1Color, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -27,11 +29,14 @@ import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
-  const [imageUri, setImageUri] = useState<string | undefined>('uri://');
+  const [imageUri, setImageUri] = useState<string | undefined>('');
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
-  const name = onBoarding.find((item: {name: string}) => item.name)?.name;
+  const name = onBoarding.find((item: {name: string}) => item?.name)?.name;
+  const isHost = onBoarding.find((item: {accountType: 'host' | 'guest'}) => item?.accountType)?.accountType === 'host' ?? false;
+
+  const selfieSource = isHost ? MaleExampleSelfie : FemaleExampleSelfie;
 
   const openCamera = async () => {
     if (isIos) {
@@ -207,7 +212,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                           alignSelf: 'center',
                         }}>
                         <ImageBackground
-                          source={ExampleSelfie}
+                          source={selfieSource}
                           style={{borderRadius: 100, width: '100%', height: '100%', justifyContent: 'flex-end'}}>
                           <View style={{height: 36, width: '100%', justifyContent: 'center', position: 'relative', overflow: 'hidden'}}>
                             <View
