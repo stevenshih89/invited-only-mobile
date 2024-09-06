@@ -27,7 +27,7 @@ import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
-  const [imageUri, setImageUri] = useState<string | undefined>('');
+  const [imageUri, setImageUri] = useState<string | undefined>('uri://');
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 

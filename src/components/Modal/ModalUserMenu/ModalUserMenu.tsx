@@ -264,6 +264,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       firestore().collection('Events').doc(activeEvent).update({
         usersList: updatedUsersList,
       });
+      // TODO: send in-app notification to host
     } catch (e) {
       console.log(e);
     }
@@ -289,6 +290,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       firestore().collection('Events').doc(activeEvent).update({
         usersList: updatedUsersList,
       });
+
+      // TODO: send in-app notification to guest
     } catch (e) {
       console.log(e);
     }
@@ -484,6 +487,29 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     );
   };
 
+  const userProfileItemCard = (
+    <View style={{flexDirection: 'row', alignItems: 'center', width: '100%'}}>
+      {image && <Image style={{borderRadius: 100, width: 62, height: 62}} source={{uri: image}} />}
+      <View style={{marginLeft: 16, gap: 8}}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>{title}</Text>
+          {<CheckStarIcon width={12} height={12} style={{marginLeft: 4}} />}
+        </View>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View
+            style={{
+              backgroundColor: whiteColor,
+              borderRadius: 5,
+              paddingHorizontal: 6,
+              paddingVertical: 2,
+            }}>
+            <Text style={{textTransform: 'capitalize', color: blackColor, fontFamily: Satoshi700, fontSize: RFValue(9, 812)}}>Guest</Text>
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+
   return (
     <View>
       <SafeAreaProvider>
@@ -502,31 +528,13 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
           swipeDirection={['down']}>
           <View style={styles.wrapper}>
             <View style={styles.whiteLine} />
-            <View style={{flexDirection: 'row', alignItems: 'center', width: '100%'}}>
-              {image && <Image style={{borderRadius: 100, width: 40, height: 40}} source={{uri: image}} />}
-              <View style={{marginLeft: 6}}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>{title}</Text>
-                  {<CheckStarIcon width={12} height={12} style={{marginLeft: 4}} />}
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <View
-                    style={{
-                      backgroundColor: whiteColor,
-                      borderRadius: 5,
-                      paddingHorizontal: 6,
-                      paddingVertical: 2,
-                    }}>
-                    <Text style={{textTransform: 'capitalize', color: blackColor, fontFamily: Satoshi700, fontSize: RFValue(9, 812)}}>
-                      Guest
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
+            {/* UserProfileItem */}
+            {userProfileItemCard}
+            {/* gap */}
+            <View style={{height: 24}} />
             {(userGuest?.status === 'accepted' || userGuest?.status === 'invite_match' || userGuest?.status === 'notAccepted') &&
             uid === hostUid ? null : (
-              <View style={{width: '100%', marginBottom: 20}}>
+              <View style={{width: '100%'}}>
                 <TouchableOpacity
                   disabled={getIsDisabledButton()}
                   activeOpacity={0.7}
@@ -542,7 +550,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
                 </TouchableOpacity>
               </View>
             )}
-            <TouchableOpacity onPress={goToProfileView} style={[styles.buttonFooter, {marginTop: 10, borderTopWidth: 0}]}>
+            <View style={{height: 24}} />
+            <TouchableOpacity onPress={goToProfileView} style={[styles.buttonFooter, {borderTopWidth: 0}]}>
               <User width={20} height={20} />
               <Text style={styles.textButton}>Profile</Text>
             </TouchableOpacity>

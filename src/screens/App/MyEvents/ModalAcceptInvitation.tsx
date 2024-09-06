@@ -104,13 +104,13 @@ const ModalAcceptInvitation: FC<{
                 </View>
               </View>
             </View>
-            <ArrowRight
+            {/* <ArrowRight
               style={{
                 marginTop: 5,
               }}
               width={14}
               height={14}
-            />
+            /> */}
           </TouchableOpacity>
           <View style={{marginTop: 'auto'}}>
             <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginLeft: 16}}>
