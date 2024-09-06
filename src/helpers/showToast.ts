@@ -2,7 +2,7 @@ import Toast from 'react-native-toast-message';
 import {screenWidth} from 'constants/common.ts';
 export type UseToastType = 'success' | 'pending' | 'warning' | 'cancel' | 'customToast' | 'warningGrey' | 'inviteMatch';
 
-export const showToast = (type: UseToastType, message: string, title?: string, props?: any) => {  
+export const showToast = (type: UseToastType, message: string, title?: string, props?: any) => {
   if (!title) {
     if (type === 'success') {
       title = 'Event successfully created';

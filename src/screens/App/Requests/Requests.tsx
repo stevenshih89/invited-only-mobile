@@ -40,7 +40,6 @@ const Requests: FC = (): ReactElement => {
 
   const handleCloseMatch = (): void => {
     setIsVisibleMatch(false);
-    showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {ownerPhoto: '', status: 'INVITE MATCH'});
   };
 
   const fetchHostRequests = async () => {

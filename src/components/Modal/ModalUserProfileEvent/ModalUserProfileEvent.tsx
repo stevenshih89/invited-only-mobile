@@ -11,7 +11,7 @@ import CloseIcon from 'assets/images/icons/close-circle-red.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import CheckWhite from 'assets/images/icons/check.svg';
-import {backgroundColor, black1Color, gray1Color, grayScale700, whiteColor} from 'constants/colors.ts';
+import {black1Color, grayScale700, whiteColor} from 'constants/colors.ts';
 import {chatCorrespondencePath, commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
@@ -22,7 +22,7 @@ import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {calculateAge} from 'helpers/calculateAge.ts';
 import {useFocusEffect} from '@react-navigation/native';
-import Button from 'components/Button/Button.tsx';
+import {sendNotification} from 'helpers/fcmHelper.ts';
 
 interface ModalUserProfileEventProps {
   isModalVisible?: boolean;
@@ -89,8 +89,14 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
 
   const handleCancelInvitation = async () => {
     try {
-      const updateUsersList: any = list?.usersList ? list?.usersList?.filter((i: any) => i?.uid !== uid) : [];
-      const updateRequestsList: any = list?.requestsList ? list?.requestsList?.filter((i: any) => i?.uid !== uid) : [];
+      const eventQuery = await firestore().collection('Events').doc(list?.id).get();
+      if (!eventQuery.exists || !uid) {
+        return;
+      }
+      const usersListData = [...eventQuery?.data()?.usersList];
+      const requestListData = [...eventQuery?.data()?.requestsList];
+      const updateUsersList: any = usersListData ? usersListData?.filter((i: any) => i?.uid !== uid) : [];
+      const updateRequestsList: any = requestListData ? requestListData?.filter((i: any) => i?.uid !== uid) : [];
       const filterUsersList = usersList?.filter((i: any) => i?.uid !== uid);
       setUsersListsData && setUsersListsData(filterUsersList);
 
@@ -98,7 +104,15 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         usersList: updateUsersList,
         requestsList: updateRequestsList,
       });
-      showToast('inviteMatch', '', 'The invitation has been successfully withdrawn!');
+      console.warn('usersListData', usersListData);
+      const rejectedUser = usersListData.find((i: any) => i?.uid === uid);
+      if (rejectedUser?.status !== 'notAccepted') {
+        await sendNotification(uid, `${userHost?.name} rejected your request`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), userHost);
+      }
+      showToast('inviteMatch', `You rejected ${rejectedUser?.name}`, 'Not now', {
+        ownerPhoto: rejectedUser?.userPhoto,
+        status: 'REJECTED'.toUpperCase(),
+      });
       setModalVisible && setModalVisible(false);
     } catch (e) {
       showToast('inviteMatch', '', 'Error!');
@@ -125,6 +139,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
             id: chatCheck?.id,
             superInvite: chatCheck?.superInvite,
             invitedStatus: chatCheck?.invitedStatus,
+            uid: chatCheck?.uid,
           },
         });
         setModalVisible && setModalVisible(false);
@@ -159,6 +174,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
               id: newChats?.id,
               superInvite: newChats?.superInvite,
               invitedStatus: newChats?.invitedStatus,
+              uid: newChats?.uid,
             },
           });
 
@@ -206,6 +222,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
               id: newChats?.id,
               superInvite: newChats?.superInvite,
               invitedStatus: newChats?.invitedStatus,
+              uid: newChats?.uid,
             },
           });
 
@@ -229,7 +246,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       if (chat.uid === uid) {
         return {
           ...chat,
-          invitedStatus: 'accepted',
+          invitedStatus: 'approved',
         };
       }
       return chat;
@@ -262,12 +279,20 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
 
   const handleApproveGuestFromHost = async () => {
     try {
-      await updateChatDocument();
-      await updateEventDocument();
+      if (uid) {
+        await updateChatDocument();
+        await updateEventDocument();
+        await sendNotification(uid, 'Please confirm your attendence', 'Request approved', 'Approve', 'Approved'.toUpperCase(), userInfo);
+        showToast('inviteMatch', `Waiting for ${userGuest?.name} to accept your invitation`, 'Almost there!', {
+          ownerPhoto: userGuest?.userPhoto,
+          status: 'GUEST APPROVED',
+        });
+      }
     } catch (e) {
       console.log(e);
     }
   };
+
   const getUserStatusButtonText = () => {
     if (!userGuest?.status) {
       return '';

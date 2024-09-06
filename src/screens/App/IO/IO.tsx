@@ -20,7 +20,7 @@ import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
 import {EventContext} from 'contexts/EventContext';
 import {blackColor, transparentWhite56Color, whiteColor} from 'constants/colors';
-import {fcmHelper, getFcmToken, onMatchNotificationSubscription} from 'helpers/fcmHelper.ts';
+import {fcmHelper, getFcmToken, onMatchNotificationSubscription, sendNotification} from 'helpers/fcmHelper.ts';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {useUser} from '../../../store/userStore';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
@@ -151,7 +151,6 @@ const IO: FC = (): JSX.Element => {
 
   const handleCloseMatch = (): void => {
     setIsVisibleMatch(false);
-    showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {ownerPhoto: ownerEventUserPhoto, status: 'INVITE MATCH'});
   };
 
   useEffect(() => {
@@ -294,70 +293,70 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const generateRandomId = (length: number) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  };
+  // const sendNotification = async (forUserUid: string, title: string, body: string, mark: string, status: string) => {
+  //   const generateRandomId = (length: number) => {
+  //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  //     let result = '';
+  //     const charactersLength = characters.length;
+  //     for (let i = 0; i < length; i++) {
+  //       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  //     }
+  //     return result;
+  //   };
 
-  const getFcmTokenFromUser = async (uid: string) => {
-    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-    return userInfoDoc.data()?.fcmToken;
-  };
+  //   const getFcmTokenFromUser = async (uid: string) => {
+  //     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+  //     return userInfoDoc.data()?.fcmToken;
+  //   };
 
-  const sendNotification = async (forUserUid: string, title: string, body: string, mark: string, status: string) => {
-    const token = await getFcmTokenFromUser(forUserUid);
+  //   const token = await getFcmTokenFromUser(forUserUid);
 
-    console.warn('forUserUid', forUserUid);
-    try {
-      const result = await functions().httpsCallable('sendNotification')({
-        token: token,
-        priority: 'high',
-        notification: {
-          title,
-          body,
-        },
-        data: {
-          status,
-          image: userInfo?.photos[0].image,
-        },
-      });
-      if (result.data.success) {
-        console.warn('Notification sent successfully', result.data.data);
-      } else {
-        console.error('Error sending notification:', result.data.error);
-      }
-    } catch (error) {
-      console.error('Error calling Firebase Function:', error);
-    }
+  //   console.warn('forUserUid', forUserUid);
+  //   try {
+  //     const result = await functions().httpsCallable('sendNotification')({
+  //       token: token,
+  //       priority: 'high',
+  //       notification: {
+  //         title,
+  //         body,
+  //       },
+  //       data: {
+  //         status,
+  //         image: userInfo?.photos[0].image,
+  //       },
+  //     });
+  //     if (result.data.success) {
+  //       console.warn('Notification sent successfully', result.data.data);
+  //     } else {
+  //       console.error('Error sending notification:', result.data.error);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error calling Firebase Function:', error);
+  //   }
 
-    const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
-    const userNotifications = userDoc.data()?.notifications;
-    const id = generateRandomId(8);
-    const notification = {
-      id,
-      title: title,
-      body: body,
-      mark: mark,
-      uid: userInfo?.uid,
-    };
-    console.log('notification', notification);
+  //   const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
+  //   const userNotifications = userDoc.data()?.notifications;
+  //   const id = generateRandomId(8);
+  //   const notification = {
+  //     id,
+  //     title: title,
+  //     body: body,
+  //     mark: mark,
+  //     uid: userInfo?.uid,
+  //   };
+  //   console.log('notification', notification);
 
-    try {
-      await firestore()
-        .collection('userInfo')
-        .doc(forUserUid)
-        .update({
-          notifications: [...userNotifications, notification],
-        });
-    } catch (error) {
-      console.log('error update notifications', error);
-    }
-  };
+  //   try {
+  //     await firestore()
+  //       .collection('userInfo')
+  //       .doc(forUserUid)
+  //       .update({
+  //         notifications: [...userNotifications, notification],
+  //       });
+  //   } catch (error) {
+  //     console.log('error update notifications', error);
+  //   }
+  // };
 
   const onInvite = async (forUserUid: string, eventId: string) => {
     try {
@@ -415,6 +414,7 @@ const IO: FC = (): JSX.Element => {
           `${userInfo.name} wants to invite you!`,
           'invite',
           'Invite Request'.toUpperCase(),
+          userInfo,
         );
       } else {
         const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userHost?.uid && invUser?.status === 'liked');
@@ -457,6 +457,7 @@ const IO: FC = (): JSX.Element => {
           `${userInfo.name} wants to join you!`,
           'invite',
           'Join Request'.toUpperCase(),
+          userInfo,
         );
       }
       setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
