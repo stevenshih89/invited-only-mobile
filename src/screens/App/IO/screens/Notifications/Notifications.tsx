@@ -12,6 +12,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { Satoshi400, Satoshi700 } from 'constants/fonts';
 import { useFocusEffect } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import { showToast } from 'helpers/showToast';
 
 const Notifications: FC = (): ReactElement => {
   const navigation = useAppNavigation();
@@ -30,6 +31,14 @@ const Notifications: FC = (): ReactElement => {
     const notifications = dataDoc?.data()?.notifications;
     setNotifications(notifications || []);
   };
+
+  const handleClearNotifications = async () => {
+    setNotifications([])
+    showToast('inviteMatch', 'Notifications have been read', 'Notifications', {status: 'success', ownerPhoto: user?.photos[0].image})
+    await firestore().collection('userInfo').doc(user?.uid).update({
+      notifications: []
+    })
+  }
 
   useFocusEffect(useCallback(() => {
     getNotifications();
@@ -85,6 +94,7 @@ const Notifications: FC = (): ReactElement => {
         borderTopWidth: 1,
         borderStyle: 'solid',
       }}>
+        {notifications.length > 0 && <TouchableOpacity onPress={handleClearNotifications}>
         <Text style={{
           fontSize: RFValue(16, 812), 
           color: whiteColor,
@@ -93,6 +103,7 @@ const Notifications: FC = (): ReactElement => {
         }}>
           Mark as read
         </Text>
+        </TouchableOpacity>}
       </View>
       <FlatList
         data={notifications}
