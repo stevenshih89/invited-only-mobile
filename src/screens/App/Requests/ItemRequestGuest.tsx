@@ -20,6 +20,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import FastImage from 'react-native-fast-image';
 import {sendNotification} from 'helpers/fcmHelper';
+import {handleCreateChat} from 'helpers/chat';
 
 const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: any) => {
   const [hostInfo, setHostInfo] = useState([]);
@@ -105,10 +106,8 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           }
           return invUser;
         });
-        await firestore().collection('Events').doc(list?.id).update({
-          usersList: updatedUsersList,
-        });
-        handleOpenMatch({
+
+        const matchedData = {
           type: 'match',
           name: event?.hostName,
           imageUri: item?.userPhoto,
@@ -117,16 +116,27 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           eventId: event?.id,
           superInvite: false,
           userHostImageUri: event?.hostImage,
-        });
-        await sendNotification(
-          event.uid,
-          'New join request',
-          `${user.name} wants to join you!`,
-          'invite',
-          'Join Request'.toUpperCase(),
-          user,
-        );
-        setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
+        };
+
+        await firestore()
+          .collection('Events')
+          .doc(list?.id)
+          .update({
+            usersList: updatedUsersList,
+          })
+          .then(async () => {
+            await handleCreateChat(matchedData);
+            handleOpenMatch(matchedData);
+            await sendNotification(
+              event.uid,
+              'New join request',
+              `${user.name} wants to join you!`,
+              'invite',
+              'Join Request'.toUpperCase(),
+              user,
+            );
+            setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
+          });
       } catch (e) {
         console.log(e);
         showToast('inviteMatch', '', "There's been an error");
@@ -155,20 +165,20 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
     getHostInfo(uid);
   }, []);
 
-  const generateRandomId = (length: number) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  };
+  // const generateRandomId = (length: number) => {
+  //   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  //   let result = '';
+  //   const charactersLength = characters.length;
+  //   for (let i = 0; i < length; i++) {
+  //     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  //   }
+  //   return result;
+  // };
 
-  const getFcmTokenFromUser = async (uid: string) => {
-    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-    return userInfoDoc.data()?.fcmToken;
-  };
+  // const getFcmTokenFromUser = async (uid: string) => {
+  //   const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+  //   return userInfoDoc.data()?.fcmToken;
+  // };
 
   // const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
   //   const token = await getFcmTokenFromUser(forUserUid);

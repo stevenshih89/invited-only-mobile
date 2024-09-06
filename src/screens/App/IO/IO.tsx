@@ -49,6 +49,7 @@ import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount'
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
 import moment from 'moment';
+import {handleCreateChat} from 'helpers/chat';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -384,12 +385,13 @@ const IO: FC = (): JSX.Element => {
       if (isHost) {
         const matchedGuest = event.requestsList?.find(reqUser => reqUser?.uid === forUserUid && reqUser?.status === 'liked');
         let data = {};
+        let matchedGuestData: MatchData;
         if (matchedGuest) {
           data = {
             requestsList: firestore.FieldValue.arrayRemove(matchedGuest),
             usersList: firestore.FieldValue.arrayUnion({...userInvited, status: 'invite_match'}),
           };
-          setMatchData({
+          matchedGuestData = {
             type: 'match',
             name: matchedGuest?.name,
             imageUri: matchedGuest?.userPhoto,
@@ -398,27 +400,36 @@ const IO: FC = (): JSX.Element => {
             eventId: activeEventId,
             superInvite: false,
             userHostImageUri: userHost?.photos[0]?.image,
-          });
-          setIsVisibleMatch(true);
+          };
         } else {
           data = {
             usersList: firestore.FieldValue.arrayUnion(userInvited),
           };
         }
 
-        await firestore().collection('Events').doc(activeEventId).update(data);
-
-        await sendNotification(
-          forUserUid,
-          'New invite request',
-          `${userInfo.name} wants to invite you!`,
-          'invite',
-          'Invite Request'.toUpperCase(),
-          userInfo,
-        );
+        await firestore()
+          .collection('Events')
+          .doc(activeEventId)
+          .update(data)
+          .then(async () => {
+            if (matchedGuest && matchedGuestData) {
+              await handleCreateChat(matchedGuestData);
+              setMatchData(matchedGuestData);
+              setIsVisibleMatch(true);
+            }
+            await sendNotification(
+              forUserUid,
+              'New invite request',
+              `${userInfo.name} wants to invite you!`,
+              'invite',
+              'Invite Request'.toUpperCase(),
+              userInfo,
+            );
+          });
       } else {
         const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userHost?.uid && invUser?.status === 'liked');
         let data = {};
+        let matchedGuestData: MatchData;
         if (matchedGuest) {
           const updatedUsersList = event?.usersList?.map(invUser => {
             if (invUser?.uid === userHost?.uid) {
@@ -432,7 +443,7 @@ const IO: FC = (): JSX.Element => {
           data = {
             usersList: updatedUsersList,
           };
-          setMatchData({
+          matchedGuestData = {
             type: 'match',
             name: event?.hostName,
             imageUri: matchedGuest?.userPhoto,
@@ -441,24 +452,32 @@ const IO: FC = (): JSX.Element => {
             eventId: activeEventId,
             superInvite: false,
             userHostImageUri: event?.hostImage,
-          });
-          setIsVisibleMatch(true);
+          };
         } else {
           data = {
             requestsList: firestore.FieldValue.arrayUnion(userInvited),
           };
         }
 
-        await firestore().collection('Events').doc(activeEventId).update(data);
-
-        await sendNotification(
-          event.uid,
-          'New join request',
-          `${userInfo.name} wants to join you!`,
-          'invite',
-          'Join Request'.toUpperCase(),
-          userInfo,
-        );
+        await firestore()
+          .collection('Events')
+          .doc(activeEventId)
+          .update(data)
+          .then(async () => {
+            if (matchedGuest && matchedGuestData) {
+              await handleCreateChat(matchedGuestData);
+              setMatchData(matchedGuestData);
+              setIsVisibleMatch(true);
+            }
+            await sendNotification(
+              event.uid,
+              'New join request',
+              `${userInfo.name} wants to join you!`,
+              'invite',
+              'Join Request'.toUpperCase(),
+              userInfo,
+            );
+          });
       }
       setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
     } catch (error) {

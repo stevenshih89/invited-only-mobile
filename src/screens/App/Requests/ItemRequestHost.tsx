@@ -1,11 +1,10 @@
-import {Alert, ImageBackground, TouchableOpacity, View} from 'react-native';
+import {Alert, TouchableOpacity, View} from 'react-native';
 import {Text} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
 import Home from 'assets/images/icons/home.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
-import FlashFilled from 'assets/images/icons/flash-filled.svg';
 import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
 import useStyles from './styles';
 import {Satoshi700} from 'constants/fonts';
@@ -16,12 +15,12 @@ import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
-import {useEffect, useId, useState} from 'react';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
+import {useEffect, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
+import {handleCreateChat} from 'helpers/chat';
 
 const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch}: any) => {
   console.log('item', item);
@@ -82,37 +81,17 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch}: any)
       return showToast('cancel', 'Go to my events', `Event Full: ${allPeople}/${allPeople} guests invited`);
     }
 
-    const userAccepted = {
-      gender: item?.gender,
-      name: item?.name,
-      status: 'invite_match',
-      superInvite: false,
-      uid: item?.uid,
-      userPhoto: item?.userPhoto,
-    };
-
     try {
-      await firestore()
-        .collection('Events')
-        .doc(list?.id)
-        .update({
-          requestsList: firestore.FieldValue.arrayRemove(item),
-          usersList: firestore.FieldValue.arrayUnion(userAccepted),
-        });
-      // showToast('inviteMatch', 'Waiting for Alexa to accept your invitation. ', 'Almost there!', {
-      //   ownerPhoto: item?.userPhoto,
-      //   status: 'guest approved',
-      // });
-      // sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
-      await sendNotification(
-        item?.uid,
-        'New invite request',
-        `${userInfo?.name} wants to invite you!`,
-        'invite',
-        'Invite Request'.toUpperCase(),
-        userInfo,
-      );
-      handleOpenMatch({
+      const userAccepted = {
+        gender: item?.gender,
+        name: item?.name,
+        status: 'invite_match',
+        superInvite: false,
+        uid: item?.uid,
+        userPhoto: item?.userPhoto,
+      };
+
+      const matchedData = {
         type: 'match',
         name: item?.name,
         imageUri: item?.userPhoto,
@@ -121,11 +100,31 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch}: any)
         eventId: list?.id,
         superInvite: false,
         userHostImageUri: user?.photos[0]?.image,
-      });
-      setRequestsForHost(prev => ({
-        ...prev,
-        requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),
-      }));
+      };
+
+      await firestore()
+        .collection('Events')
+        .doc(list?.id)
+        .update({
+          requestsList: firestore.FieldValue.arrayRemove(item),
+          usersList: firestore.FieldValue.arrayUnion(userAccepted),
+        })
+        .then(async () => {
+          await handleCreateChat(matchedData);
+          handleOpenMatch(matchedData);
+          await sendNotification(
+            item?.uid,
+            'New invite request',
+            `${userInfo?.name} wants to invite you!`,
+            'invite',
+            'Invite Request'.toUpperCase(),
+            userInfo,
+          );
+          setRequestsForHost(prev => ({
+            ...prev,
+            requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),
+          }));
+        });
     } catch (e) {
       console.log(e);
       showToast('inviteMatch', '', "There's been an error");

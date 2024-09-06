@@ -25,7 +25,7 @@ export interface MatchData {
   uidHost?: string;
   uidGuest?: string;
   eventId?: string;
-  superInvite?: string;
+  superInvite?: boolean;
   userHostImageUri?: string;
 }
 
