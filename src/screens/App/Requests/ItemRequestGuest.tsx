@@ -19,6 +19,7 @@ import {useUser} from '../../../store/userStore';
 import LinearGradient from 'react-native-linear-gradient';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import FastImage from 'react-native-fast-image';
+import {sendNotification} from 'helpers/fcmHelper';
 
 const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: any) => {
   const [hostInfo, setHostInfo] = useState([]);
@@ -109,16 +110,22 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
         });
         handleOpenMatch({
           type: 'match',
-          name: list?.hostName,
+          name: event?.hostName,
           imageUri: item?.userPhoto,
-          uidHost: list?.uid,
+          uidHost: event?.uid,
           uidGuest: item?.uid,
-          eventId: list?.id,
+          eventId: event?.id,
           superInvite: false,
-          userHostImageUri: list?.hostImage,
+          userHostImageUri: event?.hostImage,
         });
-        showToast('inviteMatch', '', 'You accept invitation');
-        await sendNotification(uid, 'Invitation Accepted!', `${item?.name} accepted your invitation.`, 'accepted');
+        await sendNotification(
+          event.uid,
+          'New join request',
+          `${user.name} wants to join you!`,
+          'invite',
+          'Join Request'.toUpperCase(),
+          user,
+        );
         setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
       } catch (e) {
         console.log(e);
@@ -136,7 +143,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           usersList: firestore.FieldValue.arrayRemove(item),
         });
       showToast('inviteMatch', '', 'You reject invitation');
-      await sendNotification(uid, 'Not now.', `${item?.name} reject your invitation.`, 'rejected');
+      await sendNotification(uid, 'Not now.', `${item?.name} reject your invitation.`, 'rejected', 'Rejected'.toUpperCase(), user);
       setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
     } catch (e) {
       console.log(e);
@@ -163,55 +170,55 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
     return userInfoDoc.data()?.fcmToken;
   };
 
-  const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
-    const token = await getFcmTokenFromUser(forUserUid);
+  // const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
+  //   const token = await getFcmTokenFromUser(forUserUid);
 
-    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-      },
-      body: JSON.stringify({
-        to: token,
-        notification: {
-          title: title,
-          body: body,
-        },
-        data: {
-          status: mark,
-          image: user.photos[0].image,
-        },
-      }),
-    });
+  //   const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
+  //     },
+  //     body: JSON.stringify({
+  //       to: token,
+  //       notification: {
+  //         title: title,
+  //         body: body,
+  //       },
+  //       data: {
+  //         status: mark,
+  //         image: user.photos[0].image,
+  //       },
+  //     }),
+  //   });
 
-    if (!response.ok) {
-      const error = await response.json();
-      console.error('error sending notification:', error);
-    } else {
-      const data = await response.json();
-      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
-      const userNotifications = userDoc.data()?.notifications;
-      const id = generateRandomId(8);
-      const notification = {
-        id,
-        title: title,
-        body: body,
-        mark: mark,
-        uid: user?.uid,
-      };
-      try {
-        await firestore()
-          .collection('userInfo')
-          .doc(forUserUid)
-          .update({
-            notifications: [...userNotifications, notification],
-          });
-      } catch (error) {
-        console.log('error update notifications', error);
-      }
-    }
-  };
+  //   if (!response.ok) {
+  //     const error = await response.json();
+  //     console.error('error sending notification:', error);
+  //   } else {
+  //     const data = await response.json();
+  //     const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
+  //     const userNotifications = userDoc.data()?.notifications;
+  //     const id = generateRandomId(8);
+  //     const notification = {
+  //       id,
+  //       title: title,
+  //       body: body,
+  //       mark: mark,
+  //       uid: user?.uid,
+  //     };
+  //     try {
+  //       await firestore()
+  //         .collection('userInfo')
+  //         .doc(forUserUid)
+  //         .update({
+  //           notifications: [...userNotifications, notification],
+  //         });
+  //     } catch (error) {
+  //       console.log('error update notifications', error);
+  //     }
+  //   }
+  // };
 
   if (item[0]?.uid !== user?.uid) {
     return null;

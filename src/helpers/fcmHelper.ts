@@ -5,6 +5,7 @@ import {PERMISSIONS, request} from 'react-native-permissions';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from './showToast';
+import functions from '@react-native-firebase/functions';
 
 export const fcmHelper = async () => {
   const userUid = auth().currentUser?.uid;
@@ -185,3 +186,68 @@ export function onMatchNotificationSubscription(handler: (message: FirebaseMessa
     onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data);
   });
 }
+
+export const sendNotification = async (forUserUid: string, title: string, body: string, mark: string, status: string, userInfo: any) => {
+  const generateRandomId = (length: number) => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  };
+
+  const getFcmTokenFromUser = async (uid: string) => {
+    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+    return userInfoDoc.data()?.fcmToken;
+  };
+
+  const token = await getFcmTokenFromUser(forUserUid);
+
+  console.warn('forUserUid', forUserUid);
+  try {
+    const result = await functions().httpsCallable('sendNotification')({
+      token: token,
+      priority: 'high',
+      notification: {
+        title,
+        body,
+      },
+      data: {
+        status,
+        image: userInfo?.photos[0].image,
+      },
+    });
+    if (result.data.success) {
+      console.warn('Notification sent successfully', result.data.data);
+    } else {
+      console.error('Error sending notification:', result.data.error);
+    }
+  } catch (error) {
+    console.error('Error calling Firebase Function:', error);
+  }
+
+  const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
+  const userNotifications = userDoc.data()?.notifications;
+  const id = generateRandomId(8);
+  const notification = {
+    id,
+    title: title,
+    body: body,
+    mark: mark,
+    uid: userInfo?.uid,
+  };
+  console.log('notification', notification);
+
+  try {
+    await firestore()
+      .collection('userInfo')
+      .doc(forUserUid)
+      .update({
+        notifications: [...userNotifications, notification],
+      });
+  } catch (error) {
+    console.log('error update notifications', error);
+  }
+};

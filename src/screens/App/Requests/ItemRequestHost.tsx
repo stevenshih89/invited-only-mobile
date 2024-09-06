@@ -21,6 +21,7 @@ import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 import {useUser} from 'src/store/userStore';
+import {sendNotification} from 'helpers/fcmHelper';
 
 const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch}: any) => {
   console.log('item', item);
@@ -103,6 +104,14 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch}: any)
       //   status: 'guest approved',
       // });
       // sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
+      await sendNotification(
+        item?.uid,
+        'New invite request',
+        `${userInfo?.name} wants to invite you!`,
+        'invite',
+        'Invite Request'.toUpperCase(),
+        userInfo,
+      );
       handleOpenMatch({
         type: 'match',
         name: item?.name,
@@ -190,56 +199,56 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch}: any)
     return userInfoDoc.data()?.fcmToken;
   };
 
-  const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
-    const token = await getFcmTokenFromUser(forUserUid);
+  // const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
+  //   const token = await getFcmTokenFromUser(forUserUid);
 
-    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-      },
-      body: JSON.stringify({
-        to: token,
-        notification: {
-          title: title,
-          body: body,
-        },
-        data: {
-          status: mark,
-          image: userInfo?.photos[0].image,
-        },
-      }),
-    });
+  //   const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
+  //     },
+  //     body: JSON.stringify({
+  //       to: token,
+  //       notification: {
+  //         title: title,
+  //         body: body,
+  //       },
+  //       data: {
+  //         status: mark,
+  //         image: userInfo?.photos[0].image,
+  //       },
+  //     }),
+  //   });
 
-    if (!response.ok) {
-      const error = await response.json();
-      console.error('error sending notification:', error);
-    } else {
-      const data = await response.json();
-      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
-      const userNotifications = userDoc.data()?.notifications;
-      const id = generateRandomId;
-      const notification = {
-        id,
-        title: title,
-        body: body,
-        mark: mark,
-        uid: userInfo?.uid,
-      };
+  //   if (!response.ok) {
+  //     const error = await response.json();
+  //     console.error('error sending notification:', error);
+  //   } else {
+  //     const data = await response.json();
+  //     const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
+  //     const userNotifications = userDoc.data()?.notifications;
+  //     const id = generateRandomId;
+  //     const notification = {
+  //       id,
+  //       title: title,
+  //       body: body,
+  //       mark: mark,
+  //       uid: userInfo?.uid,
+  //     };
 
-      try {
-        await firestore()
-          .collection('userInfo')
-          .doc(forUserUid)
-          .update({
-            notifications: [...userNotifications, notification],
-          });
-      } catch (error) {
-        console.log('error update notifications', error);
-      }
-    }
-  };
+  //     try {
+  //       await firestore()
+  //         .collection('userInfo')
+  //         .doc(forUserUid)
+  //         .update({
+  //           notifications: [...userNotifications, notification],
+  //         });
+  //     } catch (error) {
+  //       console.log('error update notifications', error);
+  //     }
+  //   }
+  // };
 
   return (
     <View style={styles.itemContainer}>

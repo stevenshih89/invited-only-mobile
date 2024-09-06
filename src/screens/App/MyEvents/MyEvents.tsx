@@ -28,6 +28,7 @@ import {eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocatio
 import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
+import {sendNotification} from 'helpers/fcmHelper';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
@@ -151,7 +152,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     return users;
   };
 
-  const sendNotification = async (usersList: [], title: string, body: string, mark: string) => {
+  const sendNotificationInner = async (usersList: [], title: string, body: string, mark: string) => {
     const users = await getFcmTokens(usersList);
 
     for (const user of users) {
@@ -208,7 +209,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       setCurrentEvent(item);
       setVisibleModalEventRemindes(true);
       if (res < 25) {
-        sendNotification(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
+        sendNotificationInner(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
       }
       countMyEvent.current = countMyEvent.current + 1;
     }
@@ -270,12 +271,11 @@ const MyEvents: FC<any> = ({navigation}) => {
     if (!user?.accountConfirmed) {
       return;
     }
-    if(!user.accountPremium) {
+    if (!user.accountPremium) {
       navigation.navigate(paymentPath);
     } else {
       navigation.navigate(eventCreatingStackPath);
     }
-    
   };
 
   const goToIOStack = () => {
@@ -283,37 +283,79 @@ const MyEvents: FC<any> = ({navigation}) => {
   };
 
   const handleAcceptInvitation = async () => {
+    let list = activeModalEvent?.list;
+    const eventQuerySnapshot = await firestore().collection('Events').doc(list?.id).get();
+    const eventDataList = eventQuerySnapshot.data();
+    if (!eventDataList?.usersList.length) {
+      return;
+    }
+
     try {
-      let list = activeModalEvent?.list;
-      const uid = user?.uid;
-
-      changeStatus(list?.usersList, uid, 'accepted');
-      console.log('handleAcceptInvitation');
-
-      console.log('accepted', list?.usersList);
-      await firestore().collection('Events').doc(list?.id).update({
-        usersList: list?.usersList,
+      const updatedUsersList = eventDataList?.usersList?.map(userItem => {
+        if (userItem.uid === user?.uid) {
+          return {
+            // @ts-ignore
+            ...userItem,
+            status: 'accepted',
+          };
+        }
+        return userItem;
       });
+      await firestore().collection('Events').doc(list?.id).update({
+        usersList: updatedUsersList,
+      });
+      showToast('inviteMatch', `See you at ${eventDataList?.date}`, 'You joined to this event!', {
+        ownerPhoto: eventDataList?.hostImage,
+        status: 'Joined'.toUpperCase(),
+      });
+      await sendNotification(
+        eventDataList?.uid,
+        `${user?.name} accepted your invitation`,
+        'Invitation Accepted!',
+        'Accepted',
+        'Accepted'.toUpperCase(),
+        user,
+      );
       setIsVisibleAcceptInvitationModal(false);
-      showToast('inviteMatch', '', `You accepted ${activeModalEvent.textCityName} event`);
     } catch (e) {
-      showToast('inviteMatch', '', 'Error!');
       console.log(e);
     }
   };
+
+  // const handleAcceptInvitation = async () => {
+  //   try {
+  //     let list = activeModalEvent?.list;
+  //     const uid = user?.uid;
+
+  //     changeStatus(list?.usersList, uid, 'accepted');
+  //     console.log('handleAcceptInvitation');
+
+  //     console.log('accepted', list?.usersList);
+  //     await firestore().collection('Events').doc(list?.id).update({
+  //       usersList: list?.usersList,
+  //     });
+  //     setIsVisibleAcceptInvitationModal(false);
+  //     showToast('inviteMatch', '', `You accepted ${activeModalEvent.textCityName} event`);
+  //   } catch (e) {
+  //     showToast('inviteMatch', '', 'Error!');
+  //     console.log(e);
+  //   }
+  // };
 
   const handleRejectInvitation = async () => {
     try {
       let list = activeModalEvent?.list;
       const uid = user?.uid;
-
       changeStatus(list?.usersList, uid, 'notAccepted');
-
       await firestore().collection('Events').doc(list?.id).update({
         usersList: list?.usersList,
       });
       setIsVisibleAcceptInvitationModal(false);
-      showToast('inviteMatch', '', `You rejected ${activeModalEvent.textCityName} event`);
+      await sendNotification(list?.uid, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+      showToast('inviteMatch', `You rejected ${list?.placeName} event`, 'Not now', {
+        ownerPhoto: list?.hostImage,
+        status: 'REJECTED'.toUpperCase(),
+      });
     } catch (e) {
       showToast('inviteMatch', '', 'Error!');
       console.log(e);
@@ -340,7 +382,11 @@ const MyEvents: FC<any> = ({navigation}) => {
         usersList: list?.usersList,
       });
       setIsVisibleCancelAttendingModal(false);
-      showToast('inviteMatch', 'Go to my events', `You rejected ${activeModalEvent.textCityName} event`);
+      await sendNotification(list?.uid, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+      showToast('inviteMatch', `You rejected ${list?.placeName} event`, 'Not now', {
+        ownerPhoto: list?.hostImage,
+        status: 'REJECTED'.toUpperCase(),
+      });
     } catch (e) {
       showToast('inviteMatch', '', 'Error!');
       console.log(e);
