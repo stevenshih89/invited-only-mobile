@@ -101,7 +101,7 @@ const Notifications: FC = (): ReactElement => {
           fontFamily: Satoshi700,
           textAlign: 'right',
         }}>
-          Mark as read
+          Mark all as read
         </Text>
         </TouchableOpacity>}
       </View>
