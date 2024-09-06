@@ -5,7 +5,6 @@ import CalendarBlank from 'assets/images/icons/CalendarBlank.svg';
 import ProfileTwoUser from 'assets/images/icons/profile-2user.svg';
 import Users from 'assets/images/icons/Users.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
-import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import {FC} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
@@ -26,6 +25,7 @@ const ModalAcceptInvitation: FC<{
   userInfo: any;
 }> = ({isVisible, onClose, eventInfo, handleAcceptInvitation, handleRejectInvitation, userInfo}) => {
   const navigation = useNavigation();
+
   return (
     <Modal
       isVisible={isVisible}
@@ -104,13 +104,6 @@ const ModalAcceptInvitation: FC<{
                 </View>
               </View>
             </View>
-            {/* <ArrowRight
-              style={{
-                marginTop: 5,
-              }}
-              width={14}
-              height={14}
-            /> */}
           </TouchableOpacity>
           <View style={{marginTop: 'auto'}}>
             <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginLeft: 16}}>

@@ -176,9 +176,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
         end={{x: 0, y: 0}}
         style={styles.linearGradientHeader}>
         <View style={styles.wrapperBar}>
-          {[...Array(numberPhotos)].map((_, index) => (
-            <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
-          ))}
+          {numberPhotos > 1
+            ? [...Array(numberPhotos)].map((_, index) => (
+                <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
+              ))
+            : null}
         </View>
       </LinearGradient>
       {hostInfo?.name && (

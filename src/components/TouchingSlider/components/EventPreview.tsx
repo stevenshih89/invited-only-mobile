@@ -131,9 +131,11 @@ const EventPreview: FC<{
               }}
               resizeMode={FastImage.resizeMode.cover}>
               <View style={styles.wrapperBar}>
-                {[...Array(numberPhotos)].map((_, index) => (
-                  <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
-                ))}
+                {numberPhotos > 1
+                  ? [...Array(numberPhotos)].map((_, index) => (
+                      <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
+                    ))
+                  : null}
               </View>
               <View style={styles.wrapperButtons}>
                 <TouchableOpacity onPress={handleBack} style={styles.button} />
