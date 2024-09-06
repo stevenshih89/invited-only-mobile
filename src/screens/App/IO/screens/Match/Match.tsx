@@ -14,10 +14,9 @@ import {chatCorrespondencePath, commonStackPath} from 'constants/pathLocations';
 import {showToast} from 'helpers/showToast';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
+import {sendNotification} from 'helpers/fcmHelper';
 
 const widthScreen = Dimensions.get('screen').width;
-
-console.log('screenHeight', screenHeight);
 
 export interface MatchData {
   type?: string;
@@ -26,7 +25,7 @@ export interface MatchData {
   uidHost?: string;
   uidGuest?: string;
   eventId?: string;
-  superInvite?: string;
+  superInvite?: boolean;
   userHostImageUri?: string;
 }
 
@@ -50,12 +49,31 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
 
   const navigation = useAppNavigation();
 
+  const handleCloseMatch = async () => {
+    onCloseMatch();
+    const uidForNotification = userHost?.uid === matchData?.uidHost ? matchData?.uidGuest : matchData?.uidHost;
+    const ownerPhoto = userHost?.uid === matchData?.uidHost ? matchData?.imageUri : matchData?.userHostImageUri;
+    if (uidForNotification) {
+      await sendNotification(
+        uidForNotification,
+        'Say, Hi! 👋',
+        'New invite match!',
+        'Invite Match',
+        'Invite Match'.toUpperCase(),
+        userHost,
+      );
+    }
+    showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {ownerPhoto: ownerPhoto, status: 'INVITE MATCH'});
+  };
+
   const handleCreateChat = async () => {
     console.log('userHost?.uid', userHost?.uid);
 
-    const querySnapshot = await firestore().collection('Events').get();
-
-    const list = querySnapshot?.docs?.map(i => ({id: i.id, ...i?.data()})).find(i => i?.id === matchData.eventId);
+    const querySnapshot = await firestore().collection('Events').doc(matchData.eventId).get();
+    if (!querySnapshot.exists) {
+      return;
+    }
+    const list = querySnapshot.data();
     console.log('list', list);
 
     try {
@@ -81,7 +99,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             invitedStatus: chatCheck?.invitedStatus,
           },
         });
-        onCloseMatch();
+        handleCloseMatch();
       } else {
         if (messageCollection?.data()) {
           const prevChats = messageCollection?.data()?.chats;
@@ -116,7 +134,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             },
           });
 
-          onCloseMatch();
+          handleCloseMatch();
         } else {
           const id = list?.id;
 
@@ -163,7 +181,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             },
           });
 
-          onCloseMatch();
+          handleCloseMatch();
         }
       }
     } catch (e) {
@@ -190,6 +208,20 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
         return user;
       });
       await firestore().collection('Events').doc(matchData.eventId).update({usersList: updatedUsersList});
+      if (matchData?.uidGuest) {
+        await sendNotification(
+          matchData?.uidGuest,
+          'Request approved',
+          'Please confirm your attendence',
+          'Approve',
+          'Approved'.toUpperCase(),
+          userHost,
+        );
+        showToast('inviteMatch', `Waiting for ${matchData?.name} to accept your invitation`, 'Almost there!', {
+          ownerPhoto: matchData?.imageUri,
+          status: 'GUEST APPROVED',
+        });
+      }
       onCloseMatch();
     }
   };
@@ -321,7 +353,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
         isVisible={isVisibleMatch}
         coverScreen
         backdropOpacity={1}
-        onBackdropPress={onCloseMatch}
+        onBackdropPress={handleCloseMatch}
         backdropColor={lightGray10Color}
         backdropTransitionInTiming={1000}
         animationIn={'fadeIn'}
@@ -355,7 +387,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             <View>
               <TouchableOpacity
                 activeOpacity={0.7}
-                onPress={onCloseMatch}
+                onPress={handleCloseMatch}
                 style={{
                   borderRadius: 100,
                   backgroundColor: transparentGray60Color,

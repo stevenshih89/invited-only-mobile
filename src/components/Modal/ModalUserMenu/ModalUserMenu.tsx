@@ -23,6 +23,7 @@ import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
 import {screenHeight, screenWidth} from 'constants/common';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
+import {sendNotification} from 'helpers/fcmHelper';
 
 interface ModalUserMenuProps {
   isModalVisible: boolean;
@@ -226,6 +227,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     });
   };
 
+  console.warn('userGuest', userGuest);
+
   const getUsersList = async () => {
     try {
       const eventQuerySnapshot = await firestore().collection('Events').doc(activeEvent).get();
@@ -261,10 +264,14 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         }
         return user;
       });
-      firestore().collection('Events').doc(activeEvent).update({
+      await firestore().collection('Events').doc(activeEvent).update({
         usersList: updatedUsersList,
       });
-      // TODO: send in-app notification to host
+      showToast('inviteMatch', `Waiting for ${userGuest?.name} to accept your invitation`, 'Almost there!', {
+        ownerPhoto: userGuest?.imagePhoto,
+        status: 'GUEST APPROVED',
+      });
+      await sendNotification(uid, 'Request approved', 'Please confirm your attendence', 'Approve', 'Approved'.toUpperCase(), user);
     } catch (e) {
       console.log(e);
     }
@@ -287,11 +294,17 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         }
         return userItem;
       });
-      firestore().collection('Events').doc(activeEvent).update({
+      await firestore().collection('Events').doc(activeEvent).update({
         usersList: updatedUsersList,
       });
-
-      // TODO: send in-app notification to guest
+      await sendNotification(
+        eventDataList?.uid,
+        'Invitation Accepted!',
+        `${user?.name} accepted your invitation`,
+        'Accepted',
+        'Accepted'.toUpperCase(),
+        user,
+      );
     } catch (e) {
       console.log(e);
     }
