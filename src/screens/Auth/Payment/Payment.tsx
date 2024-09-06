@@ -14,6 +14,7 @@ import {
   backgroundColor,
   black1Color,
   blackColor,
+  gray1Color,
   lightGray2Color,
   lightGray5Color,
   transparent60Color,
@@ -42,6 +43,7 @@ import Loader from 'components/Modal/ModalLoader/Loader';
 import HostPremium from 'components/Modal/ModalHostPremium/HostPremium';
 import { useUser } from 'src/store/userStore';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { showToast } from 'helpers/showToast';
 
 interface PlanListItem {
   id: number;
@@ -195,6 +197,39 @@ const Payment: FC = (): JSX.Element => {
       setVsibleHostPremium(true)
     }, 300);
   }
+
+  const restorePurchases = async () => {
+    try {
+      const purchaserInfo = await Purchases.restorePurchases();
+      
+      if (purchaserInfo.activeSubscriptions.length > 0) {
+        switch (purchaserInfo.activeSubscriptions[0]) {
+          case 'io_59_1w':
+            showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', {status: 'success'})
+            navigation.navigate('/profile');
+            break;
+          case 'io_25_wk':
+            showToast('inviteMatch', 'Annual subscription restored', 'Restore purchases', {status: 'success'})
+            navigation.navigate('/profile');
+            break;
+          case 'io_29_3m':
+            showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', {status: 'success'})
+            navigation.navigate('/profile');
+            break;
+          default:
+            break;
+        }
+        console.log('purchases restore', purchaserInfo.activeSubscriptions[0]);
+        
+      } else {
+        console.log('purchases not found');
+        showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', {status: 'fail'})
+      }
+    } catch (e) {
+      console.error('error restore purchases', e);
+      
+    }
+  };
 
   const pay = async (pack: PurchasesPackage) => {
     
@@ -397,10 +432,23 @@ const Payment: FC = (): JSX.Element => {
             />
           </View>
           <Button buttonStyle={{marginTop: 20}} title={'Get access'} onPress={getOfferings}/>
-          <View style={{marginTop: 8}}>
+          <View style={{width: '100%', height: 1, backgroundColor: gray1Color, marginTop: 16}}>
+            <Text style={{backgroundColor: blackColor, borderRadius: 20, color: whiteColor, position: 'absolute', fontFamily: Satoshi400, padding: 5, top: -15, left: screenWidth / 2 - 40}}>or</Text>
+          </View>
+          <TouchableOpacity onPress={restorePurchases} style={{marginTop: 8, alignItems: 'center'}}>
+            <Text style={{fontSize: RFValue(14), color: whiteColor, fontFamily: Satoshi500}}>Restore purchases</Text>
+          </TouchableOpacity>
+          <View style={{marginTop: 16}}>
             <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
-              By tapping Continue, your App Store will be charged, your subscription will auto-renew for the same price and package lenght
-              untill you cancel via App Store settings, and you agree to your Terms
+              By tapping , your App Store will be charged, your subscription will auto-renew for the same price and package lenght untill you cancel via App Store settings,
+              and you agree to your Terms.
+              More details can be found here: 
+              <TouchableOpacity>
+                <Text style={{textDecorationLine:'underline', fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor}}>Privacy policy, </Text>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Text style={{textDecorationLine:'underline', fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor}}>Terms and conditios</Text>
+              </TouchableOpacity>
             </Text>
           </View>
           <View style={styles.listColumnWrapper}>
