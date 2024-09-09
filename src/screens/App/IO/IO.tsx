@@ -478,6 +478,7 @@ const IO: FC = (): JSX.Element => {
             );
           });
       }
+
       setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
     } catch (error) {
       console.log('eror invite', error);
@@ -488,6 +489,9 @@ const IO: FC = (): JSX.Element => {
     const item = eventsRef.current?.filter(j => {
       return j?.info?.uid === uid;
     });
+    if (!item?.length) {
+      return;
+    }
 
     const filter: any[] = eventsRef.current?.filter(i => i?.info?.uid !== uid);
 
@@ -503,7 +507,7 @@ const IO: FC = (): JSX.Element => {
 
     eventsRef.current = filter;
 
-    await onInvite(item[0]?.info?.uid, item[0]?.info?.id, item[0]?.info?.requestsList, item[0]?.info?.usersList);
+    await onInvite(item[0]?.info?.uid, item[0]?.info?.id);
   };
 
   const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {
@@ -515,7 +519,7 @@ const IO: FC = (): JSX.Element => {
       const filter: any[] = events?.filter(i => i?.info?.uid !== uid);
 
       setEvents([...filter]);
-      await onInvite(item[0]?.info?.uid, item[0]?.info?.id, item[0]?.info?.requestsList, item[0]?.info?.usersList);
+      await onInvite(item[0]?.info?.uid, item[0]?.info?.id);
     } else {
       console.log('reject', events);
       console.log('uid', uid);
@@ -833,7 +837,7 @@ const IO: FC = (): JSX.Element => {
     setTimeout(() => {
       setEvents(recommendedData);
       allEventsLength.current = data.length;
-    }, 3000);
+    }, 2000);
   };
 
   const getListForHost = async () => {
@@ -1246,6 +1250,7 @@ const IO: FC = (): JSX.Element => {
       />
     );
   }
+  console.warn('events', events, isVisibleMatch);
 
   return (
     <>
