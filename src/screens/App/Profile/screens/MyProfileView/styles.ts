@@ -231,7 +231,7 @@ const useStyles = () => {
       fontSize: RFValue(18, 812)
     },
     wrapperAboutMe: {
-      // marginTop: 34
+      marginTop: screenHeight / 55
     },
     textAboutMe: {
       marginTop: 14,

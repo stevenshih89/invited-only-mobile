@@ -233,14 +233,14 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                     {` ${userInfo?.gender}`}
                   </Text>
                 )}
-                {userInfo?.date && (
+                {/* {userInfo?.date && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
                     <View style={{width: 20}}>
                       <Cake />
                     </View>
                     {` ${userInfo?.date}`}
                   </Text>
-                )}
+                )} */}
                 {userInfo?.location && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
                     <View style={{width: 20}}>
@@ -299,9 +299,9 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                   )}
                 </View>
               )}
-              <Text style={styles.textAboutMe}>{userInfo?.bio ? userInfo.bio : 'Bio is empty'}</Text>
+              {userInfo?.bio && <Text style={styles.textAboutMe}>{userInfo?.bio}</Text>}
             </View>
-            <View style={{marginTop: 34}}>
+            <View style={{marginTop: screenHeight / 55}}>
               <Text style={[styles.testBasics, {marginBottom: 14}]}>My interests</Text>
               <FlatList
                 data={userInfo?.interests}
