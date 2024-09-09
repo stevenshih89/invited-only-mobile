@@ -85,6 +85,7 @@ const IO: FC = (): JSX.Element => {
   const counterWeeklySuperInvitesRef = useRef(0);
 
   let currentDate = new Date();
+  const isHost = userHost?.accountType === 'host';
 
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
@@ -223,7 +224,7 @@ const IO: FC = (): JSX.Element => {
   const OverlayRight = () => {
     return (
       <View style={[styles.overlayLabelContainerInvite]}>
-        <Text style={styles.overlayLabelTextInvite}>{userHost?.accountType === 'host' ? 'INVITE' : 'Join'}</Text>
+        <Text style={styles.overlayLabelTextInvite}>{isHost ? 'INVITE' : 'Join'}</Text>
       </View>
     );
   };
@@ -370,8 +371,6 @@ const IO: FC = (): JSX.Element => {
         return;
       }
 
-      const isHost = userHost?.accountType === 'host';
-
       const userInvited = {
         gender: isHost ? guest.data()?.gender : userHost?.gender,
         name: isHost ? guest.data()?.name : userHost?.name,
@@ -484,10 +483,6 @@ const IO: FC = (): JSX.Element => {
       console.log('eror invite', error);
     }
   };
-
-  // const handleChangeListsEventsAfterSuperInvite = useCallback( async(uid: string) => {
-
-  // },[])
 
   const handleChangeListsEventsAfterSuperInvite = async (uid: string) => {
     const item = eventsRef.current?.filter(j => {
@@ -1154,7 +1149,7 @@ const IO: FC = (): JSX.Element => {
   };
 
   useEffect(() => {
-    userHost?.accountType === 'host' ? getListForHost() : getListForGuest();
+    isHost ? getListForHost() : getListForGuest();
   }, [userInfo, userHost, activeEventDate]);
 
   useEffect(() => {
@@ -1185,39 +1180,23 @@ const IO: FC = (): JSX.Element => {
     return <Loading text="Finding people near you..." userInfo={userInfo} />;
   }
 
-  if (activeEvent?.date && !isVisibleMatch) {
-    const [day, month, year] = activeEvent?.date?.split('.').map(Number);
-    const [hours, minutes] = activeEvent?.hour?.split(':').map(Number);
+  // if (activeEvent?.date && !isVisibleMatch) {
+  //   const [day, month, year] = activeEvent?.date?.split('.').map(Number);
+  //   const [hours, minutes] = activeEvent?.hour?.split(':').map(Number);
 
-    const isExpired = moment().isAfter(moment(`${year}-${month}-${day} ${hours}:${minutes}`));
-    if (isExpired) {
-      return (
-        <View style={{flex: 1}}>
-          <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
-            {<Loading userInfo={activeEvent} topPosition={false} wrapperText={false} text={`Event Expired: ${activeEvent.date}`} />}
-          </View>
-        </View>
-      );
-    }
-  }
+  //   const isExpired = moment().isAfter(moment(`${year}-${month}-${day} ${hours}:${minutes}`));
+  //   if (isExpired) {
+  //     return (
+  //       <View style={{flex: 1}}>
+  //         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
+  //           {<Loading userInfo={activeEvent} topPosition={false} wrapperText={false} text={`Event Expired: ${activeEvent.date}`} />}
+  //         </View>
+  //       </View>
+  //     );
+  //   }
+  // }
 
-  if (
-    ((userInfo?.accountType === 'host'
-      ? currentEventCardPosition > allEventsLength.current && !lastVisible
-      : currentEventCardPosition > allEventsLength.current && allEventsLength.current) ||
-      !allEventsLength.current) &&
-    !isVisibleMatch
-  ) {
-    return (
-      <Loading
-        text="Sorry, can't find any results. Please try adjusting your search parameters or try again later."
-        userInfo={userInfo}
-        wrapperText={false}
-      />
-    );
-  }
-
-  if (myEvents.length < 1 && userInfo.accountConfirmed && userInfo.accountType === 'host' && !isVisibleMatch) {
+  if (!loading && myEvents.length < 1 && userInfo.accountConfirmed && isHost && !isVisibleMatch) {
     return (
       <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
         <View style={{height: 370}}>
@@ -1251,47 +1230,60 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
+  if (
+    ((!loading &&
+      (isHost
+        ? currentEventCardPosition > allEventsLength.current && !lastVisible
+        : currentEventCardPosition > allEventsLength.current && allEventsLength.current)) ||
+      !allEventsLength.current) &&
+    !isVisibleMatch
+  ) {
+    return (
+      <Loading
+        text="Sorry, can't find any results. Please try adjusting your search parameters or try again later."
+        userInfo={userInfo}
+        wrapperText={false}
+      />
+    );
+  }
+
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
         {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
         <View style={styles.container}>
-          {
-            events?.map((item, index) => {
-              return (
-                <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
-                  <TinderCard
-                    // @ts-ignore
-                    cardWidth="100%"
-                    // @ts-ignore
-                    cardHeight="100%"
-                    onSwipedLeft={() => {
-                      setTimeout(() => {
-                        setCurrentEventCardPosition(prev => prev + 1);
-                      }, 500);
-                    }}
-                    onSwipedRight={() => {
-                      onInvite(item?.info?.uid, item?.info?.id, item?.info?.requestsList, item?.info?.usersList);
-                      setTimeout(() => {
-                        setCurrentEventCardPosition(prev => prev + 1);
-                      }, 500);
-                    }}
-                    OverlayLabelRight={OverlayRight}
-                    OverlayLabelLeft={OverlayLeft}
-                    disableBottomSwipe={true}
-                    disableTopSwipe={true}
-                    cardStyle={styles.card}>
-                    <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
-                      {item.component}
-                    </ScrollView>
-                  </TinderCard>
-                </View>
-              );
-            })
-            // :
-            // <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
-          }
-          {!activeEvent.eventReviewed && userInfo.accountType === 'host' && (
+          {events?.map((item, index) => {
+            return (
+              <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
+                <TinderCard
+                  // @ts-ignore
+                  cardWidth="100%"
+                  // @ts-ignore
+                  cardHeight="100%"
+                  onSwipedLeft={() => {
+                    setTimeout(() => {
+                      setCurrentEventCardPosition(prev => prev + 1);
+                    }, 500);
+                  }}
+                  onSwipedRight={() => {
+                    onInvite(item?.info?.uid, item?.info?.id);
+                    setTimeout(() => {
+                      setCurrentEventCardPosition(prev => prev + 1);
+                    }, 500);
+                  }}
+                  OverlayLabelRight={OverlayRight}
+                  OverlayLabelLeft={OverlayLeft}
+                  disableBottomSwipe={true}
+                  disableTopSwipe={true}
+                  cardStyle={styles.card}>
+                  <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
+                    {item.component}
+                  </ScrollView>
+                </TinderCard>
+              </View>
+            );
+          })}
+          {!activeEvent.eventReviewed && isHost && (
             <ModalLockAccount
               haveCode={false}
               isVisibleButton={false}

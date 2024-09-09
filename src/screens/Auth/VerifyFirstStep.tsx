@@ -34,7 +34,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const name = onBoarding.find((item: {name: string}) => item?.name)?.name;
-  const isHost = onBoarding.find((item: {accountType: 'host' | 'guest'}) => item?.accountType)?.accountType === 'host' ?? false;
+  const isHost = onBoarding.find((item: {accountType: 'host' | 'guest'}) => item?.accountType)?.accountType === 'host' || false;
 
   const selfieSource = isHost ? MaleExampleSelfie : FemaleExampleSelfie;
 

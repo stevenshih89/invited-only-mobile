@@ -340,7 +340,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
         .doc(activeEvent)
         .onSnapshot(documentSnapshot => {
           if (!documentSnapshot.exists) {
-            return;
+            return setMessages([]);
           }
           setMessages(documentSnapshot.data());
           setLoading(false);
