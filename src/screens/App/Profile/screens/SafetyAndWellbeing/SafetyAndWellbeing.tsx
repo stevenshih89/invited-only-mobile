@@ -2,8 +2,13 @@ import {Text, TouchableOpacity, View} from 'react-native';
 import AvatarHelp from 'assets/images/icons/avatar-help.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import useStyles from './styles';
+import { FC } from 'react';
 
-const SafetyAndWellbeing = () => {
+interface ISafetyAndWellbeing {
+  wellbeingShow?: boolean
+}
+
+const SafetyAndWellbeing: FC<ISafetyAndWellbeing> = ({wellbeingShow = true}) => {
   const styles = useStyles();
 
   return (
@@ -18,13 +23,13 @@ const SafetyAndWellbeing = () => {
           </View>
         </View>
       </View>
-      <TouchableOpacity activeOpacity={0.7} style={styles.buttonContainer}>
+      {wellbeingShow && <TouchableOpacity activeOpacity={0.7} style={styles.buttonContainer}>
         <Text style={styles.buttonText}>IO values and guidlines</Text>
         <View style={styles.buttonContent}>
           <Text style={styles.buttonDescription}>See what IO stands for and what we ask of community</Text>
           <ArrowRight />
         </View>
-      </TouchableOpacity>
+      </TouchableOpacity>}
     </View>
   );
 };

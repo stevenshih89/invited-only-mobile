@@ -26,6 +26,9 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
+import { useAdminActions } from 'src/store/adminActions';
+import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 type ItemProps = {
   title: string;
@@ -65,6 +68,10 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const [DATAEventsJoining, setDATAEventsJoining] = useState([]);
   const [userInfo, setUserInfo] = useState<any>({});
   const [eventData, setEventData] = useState<any>({});
+
+  const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
+  const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
+  const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
 
   const styles = useStyles();
   const navigation = useAppNavigation();
@@ -399,6 +406,10 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   return (
     <View style={styles.container}>
+      {userInfo?.photos?.length > 0 && (
+        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />
+      )}
+      <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible}/>
       {!loading ? (
         !typeEvents ? (
           <FlatList
