@@ -14,7 +14,6 @@ import Animated, {
   runOnJS,
   withTiming,
   Easing,
-  withDecay,
 } from 'react-native-reanimated';
 import {
   PanGestureHandler,
@@ -243,13 +242,13 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
       translateX.value = withSpring(0, userConfig);
     }, [translateY, translateX]);
 
-    // Expose the swipeBack method using useImperativeHandle
     useImperativeHandle(ref, () => ({
       swipeBack: () => swipeBack(),
       swipeRight: () => swipeRight(),
       swipeLeft: () => swipeLeft(),
       swipeTop: () => swipeTop(),
       swipeBottom: () => swipeBottom(),
+      autoSwipeLeft: () => swipeLeft(),
       autoSwipeRight: () => swipeRight(),
     }));
 
@@ -329,16 +328,13 @@ CardItem.defaultProps = {
   //* Rotation Animation Props
   inputRotationRange: [-windowWidth, 0, windowWidth],
   outputRotationRange: [-10, 0, 10],
-  //* Overlay Labels Animation Props
-  inputOverlayLabelRightOpacityRange: [0, windowWidth / 2],
+  //* Overlay Labels Props
+  inputOverlayLabelRightOpacityRange: [0, windowWidth / 3],
   outputOverlayLabelRightOpacityRange: [0, 1],
-
-  inputOverlayLabelLeftOpacityRange: [0, -windowWidth / 2],
-  outputOverlayLabelLeftOpacityRange: [0, 1],
-
-  inputOverlayLabelTopOpacityRange: [0, -windowHeight / 2],
-  outputOverlayLabelTopOpacityRange: [0, 1],
-
-  inputOverlayLabelBottomOpacityRange: [0, windowHeight / 2],
+  inputOverlayLabelLeftOpacityRange: [-windowWidth / 3, 0],
+  outputOverlayLabelLeftOpacityRange: [1, 0],
+  inputOverlayLabelTopOpacityRange: [-windowHeight / 3, 0],
+  outputOverlayLabelTopOpacityRange: [1, 0],
+  inputOverlayLabelBottomOpacityRange: [0, windowHeight / 3],
   outputOverlayLabelBottomOpacityRange: [0, 1],
 };
