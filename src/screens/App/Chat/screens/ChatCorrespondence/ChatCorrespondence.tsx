@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {View, Text, Image, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Alert} from 'react-native';
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NavigationProp} from '@react-navigation/native';
@@ -53,6 +53,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [age, setAge] = useState();
   const [currentUserName, setCurrentUserName] = useState('');
   const {image, title, online, activeEvent, id, superInvite, invitedStatus, uid, hostUid} = route?.params;
+
+  const clearChat = useRef(false);
 
   const user = useUser((i: any) => i?.user);
 
@@ -176,6 +178,32 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     }
   };
 
+  useEffect(() => {
+    if(allChats.length > 0 && !clearChat.current) {
+      handleBack()
+      clearChat.current = true
+    }
+  }, [allChats]);
+
+
+  const handleBack = async () => {   
+    console.log('handleBack');
+     
+    const doc = firestore().collection('messages').doc(`${activeEvent}`);
+
+      const findChat = allChats?.filter(i => i?.id === id);
+  
+      if (findChat && findChat.length > 0) {
+        if (typeof findChat[0].newMessages === 'number') {
+          findChat[0].newMessages = 0;
+        } 
+        await doc.update({
+          chats: [...allChats],
+        });
+        await sendNotification(uid, 'Invited Only', `${currentUserName} sent you a new message`);
+      }
+  }
+
   const handleSendMessage = async () => {
     try {
       if (!messageUser) {
@@ -189,23 +217,30 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         userType: `${userData?.accountType}`,
         uid: `${userData?.uid}`,
       };
-
+  
+      const doc = firestore().collection('messages').doc(`${activeEvent}`);
+  
       const findChat = allChats?.filter(i => i?.id === id);
-      findChat[0]?.messages.push(updateData);
-
-      await firestore()
-        .collection('messages')
-        .doc(`${activeEvent}`)
-        .update({
+  
+      if (findChat && findChat.length > 0) {
+        findChat[0].messages.push(updateData);
+        if (typeof findChat[0].newMessages === 'number') {
+          findChat[0].newMessages = findChat[0].newMessages + 1;
+        } else {
+          findChat[0].newMessages = 1;
+        }
+        await doc.update({
           chats: [...allChats],
         });
-      await sendNotification(uid, 'Invited Only', `${currentUserName} sent you a new message`);
+        await sendNotification(uid, 'Invited Only', `${currentUserName} sent you a new message`);
+      }
+
     } catch (e) {
       console.log(e);
     }
-
     setMessageUser('');
   };
+  
 
   const getFormattedTime = timestamp => {
     const messageDate = moment(timestamp);
@@ -273,7 +308,10 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.fdrAlc}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+              <TouchableOpacity onPress={() => {
+                handleBack()
+                navigation.goBack()
+              }}>
                 <ArrowLeft />
               </TouchableOpacity>
               <View style={[styles.fdrAlc, {marginLeft: 16}]}>

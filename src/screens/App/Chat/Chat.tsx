@@ -40,6 +40,7 @@ type ItemProps = {
   invitedStatus: string;
   uid: string;
   hostUid: string;
+  newMessages: number;
 };
 
 type ItemEventsJoiningProps = {
@@ -124,6 +125,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     invitedStatus,
     uid,
     hostUid,
+    newMessages
   }: ItemProps) => {
     const userStatus = eventData?.usersList?.find(i => i?.uid === uid)?.status;
 
@@ -187,9 +189,9 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   {getTextByStatus(inviteStatus)}
                 </Text>
               </View> */}
-              <View style={styles.newMessage}>
-                <Text style={styles.textCountNewMessages}>1</Text>
-              </View>
+              {!!newMessages && <View style={styles.newMessage}>
+                <Text style={styles.textCountNewMessages}>{newMessages}</Text>
+              </View>}
             </View>
             {/* <TouchableOpacity>
             <ThreeDoths />
@@ -416,6 +418,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               </View>
             )}
             renderItem={({item}) => {
+              console.log('item', item);
+              
               return (
                 <Item
                   inviteStatus={item?.invitedStatus}
@@ -430,6 +434,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   id={item?.id}
                   uid={item?.uid}
                   hostUid={item?.hostUid}
+                  newMessages={item?.newMessages}
                 />
               );
             }}
