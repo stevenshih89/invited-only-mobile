@@ -19,17 +19,20 @@ const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
   const userHost = useUser((i: any) => i?.user);
   const setHookUser = useUser((i: any) => i?.setUser);
   console.log('userHost', userHost);
-  
 
   const userAge = calculateAge(userHost?.date);
 
   const handleLogout = async () => {
-    await auth().signOut();
-    setUser([]);
-    setHookUser([]);
-    await AsyncStorage.removeItem('uid');
-    onClose();
-    showToast('inviteMatch', '', 'You logged out from your account', {ownerPhoto: userHost?.photos[0].image, status:'SUCCESSFULY'})
+    try {
+      await auth().signOut();
+      showToast('inviteMatch', '', 'You logged out from your account', {ownerPhoto: userHost?.photos[0].image, status:'SUCCESSFULY'})
+      setUser([]);
+      setHookUser(null);
+      await AsyncStorage.removeItem('uid');
+      onClose();
+    } catch (error) {
+      console.log('error log out', error);
+    }
   };
   return (
     <Modal
