@@ -18,6 +18,7 @@ import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {errorColor, grayScale600, lightGray10Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
 import FastImage from 'react-native-fast-image';
+import FullEvent from 'components/FullEvent';
 
 interface MyEventsCard {
   estimeTime?: string;
@@ -31,6 +32,9 @@ interface MyEventsCard {
   imageBg?: string;
   placeName?: string;
   accountConfirmed: boolean;
+  findAcceptedGuest?: any[];
+  totalRequestsGuests: number;
+  item: any;
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
@@ -46,14 +50,18 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     numberOfGirlsInvited,
     allPeople,
     textCityName,
-  } = props;
+    totalRequestsGuests,
+    findAcceptedGuest,
+    item,
 
+  } = props;
+  
   const styles = useStyles();
 
   const [eventStarting, setEventStarting] = useState<boolean>(true);
   const [eventDate, setEventDate] = useState<string>('');
   const [mainImageEvent, setMainImageEvent] = useState('');
-
+  
   useEffect(() => {
     const filterImage = imageBg.filter(item => item.id < 1);
     setMainImageEvent(filterImage[0].image);
@@ -132,8 +140,6 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     <>
       <TouchableOpacity
         onPress={() => {
-          console.log('some');
-
           navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: list}} as never);
         }}
         style={styles.container}>
@@ -145,13 +151,25 @@ const MyEventsCard: FC<MyEventsCard> = props => {
             priority: FastImage.priority.normal,
           }}
           resizeMode={FastImage.resizeMode.cover}>
+          {findAcceptedGuest?.length >= allPeople && <FullEvent 
+            activeEvent={item}
+            text={`Event is full: ${findAcceptedGuest?.length}/${allPeople} guests invited`}
+            totalQuantityGuests={allPeople} 
+            acceptQuantityGuest={findAcceptedGuest?.length}
+            rightComponent={
+              <TouchableOpacity style={{backgroundColor: lightGreenColor, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 5}}>
+                <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500}}>Active</Text>
+              </TouchableOpacity>}
+            styleContainer={{position: 'absolute', top: 14}}
+          />}
           <LinearGradient
             colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
             style={styles.linearGradientCard}>
-            {activeState ? (
-              <View
+            {activeState? (
+              <>
+                {!findAcceptedGuest?.length >= allPeople && <View
                 style={{
                   backgroundColor: approvedPeople?.length === allPeople ? errorColor : lightGray10Color,
                   flexDirection: 'row',
@@ -206,7 +224,8 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                     </Text>
                   </View>
                 </View>
-              </View>
+              </View>}
+              </>
             ) : (
               <View style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>
                 <EventInReviewView />

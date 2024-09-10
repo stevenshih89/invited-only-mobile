@@ -1,11 +1,12 @@
-import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
-import {FC, ReactElement, useCallback, useContext, useState} from 'react';
+import {ActivityIndicator, Alert, FlatList, Text, View, Image} from 'react-native';
+import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
 //import components
 import useStyles from './styles';
-import {blackColor, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {blackColor, orangeClose, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
+import PersoneIcon from 'assets/images/icons/Users.svg'
 import ItemRequestGuest from './ItemRequestGuest';
 import ItemRequestHost from './ItemRequestHost';
 import firestore from '@react-native-firebase/firestore';
@@ -20,6 +21,9 @@ import Loading from 'components/Loading/Loading';
 import moment from 'moment';
 import Match, {MatchData} from '../IO/screens/Match/Match';
 import {showToast} from 'helpers/showToast';
+import FullEvent from 'components/FullEvent';
+import { checkIsFullGuests } from 'helpers/checkIsFullGuests';
+import ModalFullEvent from 'components/Modal/ModalFullEvent';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
@@ -34,17 +38,21 @@ const Requests: FC = (): ReactElement => {
   const [dataForGuest, setDataForGuest] = useState([]);
   const [myEventsList, setMyEventsList] = useState([]);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
+  const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [matchData, setMatchData] = useState<MatchData>({});
-
+  const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
+  const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
+  const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
+  
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleCloseMatch = (): void => {
     setIsVisibleMatch(false);
   };
 
-  const fetchHostRequests = async () => {
+  const fetchHostRequests = async () => {      
     const user = auth().currentUser;
-    if (user && activeEvent !== 'host') {
+    if (user && activeEvent !== 'host') {      
       try {
         const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
         const myEventsQuery = await firestore().collection('Events').where('uid', '==', user.uid).get();
@@ -54,15 +62,15 @@ const Requests: FC = (): ReactElement => {
           setMyEventsList(eventList);
         }
 
-        if (querySnapshot.exists) {
-          setRequestsForHost(querySnapshot.data());
+        if (querySnapshot.exists) {          
+          setRequestsForHost(querySnapshot.data());       
         } else {
           setRequestsForHost([]);
         }
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
-    } else if (user && activeEvent === 'host') {
+    } else if (user && activeEvent === 'host') {   
       try {
         const querySnapshot = await firestore().collection('Events').get();
         const data = querySnapshot?.docs?.map(i => i?.data());
@@ -130,10 +138,21 @@ const Requests: FC = (): ReactElement => {
     setMatchData(data);
     setIsVisibleMatch(true);
   };
+  
+  const checkIsFullGuestsFun = async () => {
+    const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(activeEvent?.id);
+    if(findAcceptedGuest >= allGuests) {
+      setTotalQuantityGuests(allGuests)
+    }
+    setTotalRequestsGuests(totalRequestsGuests);
+    setAcceptQuantityGuest(findAcceptedGuest);
+    return findAcceptedGuest >= allGuests
+  }
 
   useFocusEffect(
     useCallback(() => {
       fetchUserInfo();
+      checkIsFullGuestsFun()
     }, []),
   );
 
@@ -218,7 +237,21 @@ const Requests: FC = (): ReactElement => {
   return (
     <>
       <View style={styles.container}>
+        <ModalFullEvent isVisible={isVisibleModalFullEvent} idEvent={activeEvent.id} setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}/>
         {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}
+        {totalQuantityGuests > 0 && 
+          <FullEvent
+            text={`Event is full: ${acceptQuantityGuest}/${totalQuantityGuests} Guests Accepted`}
+            activeEvent={activeEvent} 
+            totalQuantityGuests={totalQuantityGuests} 
+            totalRequestsGuests={totalRequestsGuests}
+            acceptQuantityGuest={acceptQuantityGuest}
+            rightComponent={<View style={{flexDirection: 'row', alignItems:'center'}}>
+            <PersoneIcon width={16} height={16}/>
+            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(12, 812), color: whiteColor, marginLeft: 2}}>{`${acceptQuantityGuest}/${totalQuantityGuests}`}</Text>
+          </View>}
+          />
+        }
         {expressionForHost || expressionForGuest ? (
           <FlatList
             // @ts-ignore
@@ -231,7 +264,15 @@ const Requests: FC = (): ReactElement => {
             ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
             renderItem={({item}) => {
               return isHost ? (
-                <ItemRequestHost list={list} item={item} setRequestsForHost={setRequestsForHost} handleOpenMatch={handleOpenMatch} />
+                <ItemRequestHost 
+                  list={list} 
+                  item={item} 
+                  setRequestsForHost={setRequestsForHost} 
+                  handleOpenMatch={handleOpenMatch} 
+                  checkIsFullGuestsFun={checkIsFullGuestsFun} 
+                  setIsVisibleModalFullEvent={() => setIsVisibleModalFullEvent(true)}
+                  fetchHostRequests={fetchHostRequests}
+                  />
               ) : (
                 // @ts-ignore
                 <ItemRequestGuest

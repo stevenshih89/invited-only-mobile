@@ -644,6 +644,9 @@ const MyEvents: FC<any> = ({navigation}) => {
                     placeName={item?.placeName}
                     invitingPeople={item?.usersList?.filter(i => i?.status !== 'notAccepted')}
                     accountConfirmed={user?.accountConfirmed}
+                    findAcceptedGuest={item?.usersList?.filter(item => item.status === 'invite_match')}
+                    totalRequestsGuests={item?.requestsList?.length}
+                    item={item}
                   />
                 )}
               />

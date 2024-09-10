@@ -142,6 +142,7 @@ const useStyles = () => {
       margin: 0,
       justifyContent: 'flex-end',
       zIndex: 999,
+      marginBottom: 30
     },
   });
 };
