@@ -154,7 +154,10 @@ const Requests: FC = (): ReactElement => {
     const [day, month, year] = dateString.split('.').map(Number);
     const [hours, minutes] = timeString.split(':').map(Number);
 
-    const isExpired = moment().isAfter(moment(`${year}-${month}-${day} ${hours}:${minutes}`));
+    const dateTime = moment(`${year}-${month}-${day} ${hours}:${minutes}`);
+
+    const dateTimeWithAddedHours = dateTime.add(12, 'hours');
+    const isExpired = moment().isAfter(dateTimeWithAddedHours);
 
     return isExpired;
   }
@@ -166,7 +169,7 @@ const Requests: FC = (): ReactElement => {
   if (!userInfo?.accountConfirmed && !loading && !isVisibleMatch) {
     return (
       <View style={styles.container}>
-        <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType}/>
+        <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} />
       </View>
     );
   }

@@ -30,10 +30,10 @@ const EventInfo = ({navigation, route}: any) => {
   const [loading, setLoading] = useState(true);
 
   const {list, isAcceptedInvitation} = route?.params;
-  const {photos, placeName, meetingSpot, description, hour, date, address, userPhotos, female, femaleFriend, male, uid, name} = list;  
+  const {photos, placeName, meetingSpot, description, hour, date, address, userPhotos, female, femaleFriend, male, uid, name} = list;
 
   console.log('uid', uid);
-  
+
   console.warn('list event info active', list);
   const iconsArrayMale = Array.from({length: male}, (_, index) => index);
   const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
@@ -59,7 +59,7 @@ const EventInfo = ({navigation, route}: any) => {
       screen: myProfileViewPath,
       params: {
         uid: uid,
-        isShowEditButton: false
+        isShowEditButton: false,
       },
     });
   };
