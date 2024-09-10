@@ -28,9 +28,8 @@ import auth from '@react-native-firebase/auth';
 import {calculateAge} from 'helpers/calculateAge';
 
 import {sendNotification} from 'helpers/fcmHelper';
-import { checkIsFullGuests } from 'helpers/checkIsFullGuests';
+import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
-import { EventContext } from 'contexts/EventContext';
 
 interface MessageProps {
   message: {
@@ -70,26 +69,26 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
   const getActiveEventData = async () => {
     const getEventData = (await firestore().collection('Events').doc(activeEvent).get()).data();
-    if(getEventData) {      
-      setActualActiveEventData(getEventData)
-      return getEventData
+    if (getEventData) {
+      setActualActiveEventData(getEventData);
+      return getEventData;
     }
-  }
+  };
 
-  const checkIsFullGuestsFun = async (activeEvent) => {
+  const checkIsFullGuestsFun = async activeEvent => {
     const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(activeEvent);
     setTotalQuantityGuests(allGuests);
     setAcceptQuantityGuest(findAcceptedGuest);
     setTotalRequestsGuests(totalRequestsGuests);
-    await getActiveEventData()
+    await getActiveEventData();
 
-    if(findAcceptedGuest >= allGuests) {
+    if (findAcceptedGuest >= allGuests) {
       setTimeout(() => {
-        setIsVisibleModalFullEvent(true)
+        setIsVisibleModalFullEvent(true);
       }, 500);
     }
-    return findAcceptedGuest >= allGuests
-  }
+    return findAcceptedGuest >= allGuests;
+  };
 
   useEffect(() => {
     if (title) {
@@ -161,55 +160,55 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     return userInfoDoc.data()?.fcmToken;
   };
 
-  const sendNotificationInner = async (forUserUid: string, title: string, body: string) => {
-    console.warn(forUserUid);
+  // const sendNotificationInner = async (forUserUid: string, title: string, body: string) => {
+  //   console.warn(forUserUid);
 
-    const token = await getFcmTokenFromUser(forUserUid);
+  //   const token = await getFcmTokenFromUser(forUserUid);
 
-    console.warn(token);
+  //   console.warn(token);
 
-    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-      },
-      body: JSON.stringify({
-        to: token,
-        notification: {
-          title: title,
-          body: body,
-        },
-      }),
-    });
+  //   const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
+  //     },
+  //     body: JSON.stringify({
+  //       to: token,
+  //       notification: {
+  //         title: title,
+  //         body: body,
+  //       },
+  //     }),
+  //   });
 
-    if (!response.ok) {
-      const error = await response.json();
-      console.error('error sending notification:', error);
-    } else {
-      const data = await response.json();
-      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
-      const userNotifications = userDoc.data()?.notifications;
-      const id = generateRandomId(8);
-      const notification = {
-        id,
-        title: title,
-        body: body,
-        mark: 'message',
-        uid: userData?.uid,
-      };
-      try {
-        await firestore()
-          .collection('userInfo')
-          .doc(forUserUid)
-          .update({
-            notifications: [...userNotifications, notification],
-          });
-      } catch (error) {
-        console.log('error update notifications', error);
-      }
-    }
-  };
+  //   if (!response.ok) {
+  //     const error = await response.json();
+  //     console.error('error sending notification:', error);
+  //   } else {
+  //     const data = await response.json();
+  //     const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
+  //     const userNotifications = userDoc.data()?.notifications;
+  //     const id = generateRandomId(8);
+  //     const notification = {
+  //       id,
+  //       title: title,
+  //       body: body,
+  //       mark: 'message',
+  //       uid: userData?.uid,
+  //     };
+  //     try {
+  //       await firestore()
+  //         .collection('userInfo')
+  //         .doc(forUserUid)
+  //         .update({
+  //           notifications: [...userNotifications, notification],
+  //         });
+  //     } catch (error) {
+  //       console.log('error update notifications', error);
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     if (allChats.length > 0 && !clearChat.current) {
@@ -232,7 +231,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       await doc.update({
         chats: [...allChats],
       });
-      await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
+      // await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
     }
   };
 
@@ -343,14 +342,15 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   return (
     <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={styles.keyboardAvoid}>
       <SafeAreaProvider style={headerInsets}>
-      <ModalFullEvent 
-        actualActiveEventData={actualActiveEventData}
-        totalQuantityGuests={totalQuantityGuests}
-        acceptQuantityGuest={acceptQuantityGuest}
-        totalRequestsGuests={totalRequestsGuests}
-        isVisible={isVisibleModalFullEvent} 
-        idEvent={activeEvent.id} 
-        setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}/>
+        <ModalFullEvent
+          actualActiveEventData={actualActiveEventData}
+          totalQuantityGuests={totalQuantityGuests}
+          acceptQuantityGuest={acceptQuantityGuest}
+          totalRequestsGuests={totalRequestsGuests}
+          isVisible={isVisibleModalFullEvent}
+          idEvent={activeEvent.id}
+          setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
+        />
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.fdrAlc}>
