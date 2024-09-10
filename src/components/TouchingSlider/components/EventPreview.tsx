@@ -37,6 +37,8 @@ const EventPreview: FC<{
   setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
   handleCreateEvent: any;
   fromJoinEventsScreen: boolean;
+  onInvite: () => void;
+  superJoin: () => void;
 }> = ({
   photos,
   date,
@@ -56,6 +58,7 @@ const EventPreview: FC<{
   fromJoinEventsScreen,
   setIsVisibleSaveModal,
   onInvite,
+  superJoin,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
@@ -188,7 +191,6 @@ const EventPreview: FC<{
                       activeOpacity={0.7}
                       style={[styles.iconButton, styles.marginLeft]}
                       onPress={() => {
-                        console.warn('fsfdsfsf');
                         onInvite();
                       }}>
                       <IOIcon />
@@ -286,6 +288,7 @@ const EventPreview: FC<{
   }
 
   const handleSuperJoin = () => {
+    superJoin();
     setVisibleModalSuperJoin(true);
     setTimeout(() => {
       setVisibleModalSuperJoin(false);
@@ -335,7 +338,7 @@ const EventPreview: FC<{
           <TouchableOpacity onPress={handleSuperJoin} activeOpacity={0.7} style={[styles.iconButton, styles.marginRight]}>
             <FlashIcon />
           </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginLeft]}>
+          <TouchableOpacity onPress={onInvite} activeOpacity={0.7} style={[styles.iconButton, styles.marginLeft]}>
             <IOIcon />
           </TouchableOpacity>
         </View>
@@ -437,6 +440,3 @@ const useStyles = () => {
 };
 
 export default EventPreview;
-function setIsVisibleSaveModal(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}

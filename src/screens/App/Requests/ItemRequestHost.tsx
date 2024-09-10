@@ -290,7 +290,7 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch}: any)
                     marginHorizontal: 6,
                   }}>
                   <FlashFillBlack />
-                  <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>Super invite you</Text>
+                  <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>Super wants to join you</Text>
                 </View>
               </View>
             )}

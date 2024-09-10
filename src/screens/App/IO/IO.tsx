@@ -360,7 +360,7 @@ const IO: FC = (): JSX.Element => {
   //   }
   // };
 
-  const onInvite = async (forUserUid: string, eventId: string) => {
+  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
@@ -375,7 +375,7 @@ const IO: FC = (): JSX.Element => {
         gender: isHost ? guest.data()?.gender : userHost?.gender,
         name: isHost ? guest.data()?.name : userHost?.name,
         status: 'liked',
-        superInvite: false,
+        superInvite: superInvite ? superInvite : false,
         uid: isHost ? guest.data()?.uid : userHost?.uid,
         userPhoto: isHost ? guest.data()?.photos[0]?.image : userHost?.photos[0]?.image,
         fcmToken: isHost ? guest.data()?.fcmToken : userHost?.fcmToken,
@@ -507,7 +507,7 @@ const IO: FC = (): JSX.Element => {
 
     eventsRef.current = filter;
 
-    await onInvite(item[0]?.info?.uid, item[0]?.info?.id);
+    await onInvite(item[0]?.info?.uid, item[0]?.info?.id, true);
   };
 
   const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {
@@ -604,6 +604,8 @@ const IO: FC = (): JSX.Element => {
               eventPhotos={event?.photos}
               photos={currUserPhotos}
               name={event?.name}
+              onInvite={() => onInvite(event?.uid, event?.id)}
+              superJoin={() => onInvite(event?.uid, event?.id, true)}
             />
             <View style={styles.bioWrapper}>
               <Text style={styles.titleSection}>Host profile</Text>
@@ -842,22 +844,24 @@ const IO: FC = (): JSX.Element => {
 
   const getListForHost = async () => {
     let users: any;
-    
+
     if (activeEvent.male > 0 && activeEvent.female > 0) {
-      users = await firestore().collection('userInfo').limit(20).get();      
+      users = await firestore().collection('userInfo').limit(20).get();
     } else if (activeEvent.male > 0) {
       users = await firestore().collection('userInfo').where('gender', '==', 'man').limit(20).get();
     } else if (activeEvent.female > 0) {
       users = await firestore().collection('userInfo').where('gender', '==', 'woman').limit(20).get();
     }
 
-    const getActualDataEvent = (await firestore().collection('Events').doc(activeEvent?.id).get()).data()    
+    const getActualDataEvent = (await firestore().collection('Events').doc(activeEvent?.id).get()).data();
 
     const data: any[] = [];
     const usersList = await users?._docs;
     usersList
       ?.filter(item => {
-        if (getActualDataEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {   
+        // console.warn('item', item?._data.uid, item?._data);
+
+        if (getActualDataEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {
           return false;
         }
         if (item?._data?.uid === userHost?.uid) {
@@ -869,6 +873,12 @@ const IO: FC = (): JSX.Element => {
         // console.warn('itemMap', item?._data.uid, item?._data);
 
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;
+
+        const findSuperJoin = getActualDataEvent?.requestsList.find(i => {
+          if (item?._data.uid === i.uid && i.superInvite) {
+            return true;
+          }
+        });
 
         setNameUser(name);
         const girlPhotos = item?._data?.photos?.map((image: any): void => image?.image);
@@ -893,6 +903,7 @@ const IO: FC = (): JSX.Element => {
                 handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}
                 accountType={accountType}
+                isShowWantsJoin={findSuperJoin}
               />
               <View style={styles.bioWrapper}>
                 <Text style={[styles.titleSection, bio && styles.mt31]}>My basics</Text>
@@ -1100,7 +1111,6 @@ const IO: FC = (): JSX.Element => {
     allEventsLength.current = data.length;
     setEvents(data);
     eventsRef.current = data;
-    // console.warn('data', data);
 
     // setTimeout(() => {
     //   setEvents([...data]);

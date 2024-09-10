@@ -40,6 +40,7 @@ const lightGray12Color: string = '#212727';
 const lightGray14Color: string = '#292929';
 const lightGray15Color: string = '#313131';
 const lightGray16Color: string = '#383838';
+const lightGray17Color: string = '#E6E6E6';
 const goldColor: string = '#977B4A';
 
 const orangeColor: string = '#FA9601';
@@ -84,6 +85,7 @@ export {
   lightGray14Color,
   lightGray15Color,
   lightGray16Color,
+  lightGray17Color,
   goldColor,
   grayColor,
   gray1Color,
@@ -94,5 +96,5 @@ export {
   grayScale600,
   deleteColor,
   black2Color90,
-  black3Color
+  black3Color,
 };

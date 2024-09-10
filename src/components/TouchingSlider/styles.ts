@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {blackColor, darkRed2Color, darkRedColor, transparentGray60Color, whiteColor} from 'constants/colors.ts';
+import {blackColor, lightGray17Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi500, Satoshi400, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common.ts';
@@ -77,7 +77,7 @@ const useStyles = () => {
     },
     wrapperRightButton: {
       position: 'relative',
-      bottom: screenHeight * 0.04,
+      bottom: screenHeight * 0.075,
       zIndex: 999,
     },
     buttonFlash: {
@@ -166,18 +166,18 @@ const useStyles = () => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: darkRedColor,
-      paddingVertical: 5,
+      backgroundColor: whiteColor,
+      paddingVertical: 10,
       paddingHorizontal: 5,
       position: 'absolute',
-      bottom: 0,
+      bottom: 10,
       right: 0,
       left: 0,
       flex: 1,
     },
     wantToJoinImage: {
       borderRadius: 30,
-      backgroundColor: darkRed2Color,
+      backgroundColor: lightGray17Color,
       width: 29,
       height: 29,
       justifyContent: 'center',
@@ -185,9 +185,9 @@ const useStyles = () => {
       marginRight: 10,
     },
     wantToJoinText: {
-      color: whiteColor,
-      fontFamily: Satoshi500,
-      fontSize: RFValue(14, 812),
+      color: blackColor,
+      fontFamily: Satoshi700,
+      fontSize: RFValue(16, 812),
     },
     inviteTooltipWr: {
       flexDirection: 'row',

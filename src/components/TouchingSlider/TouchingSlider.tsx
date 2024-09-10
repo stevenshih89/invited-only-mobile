@@ -1,10 +1,10 @@
 import {FC, ReactElement, useState} from 'react';
-import {View, ImageBackground, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, Text} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 //import components
 import useStyles from 'components/TouchingSlider/styles.ts';
-import {blackColor, gray1Color, transparentGray60Color, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
+import {blackColor, gray1Color, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, invitationCodePath, superInvitePayPath} from 'constants/pathLocations';
@@ -13,14 +13,12 @@ import EventPreview from './components/EventPreview.tsx';
 //import icons
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import HomeIcon from 'assets/images/icons/home.svg';
-import Location from 'assets/images/icons/location.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import FlashBlackIcon from 'assets/images/icons/flash-black.svg';
+import FlashFilledBlackIcon from 'assets/images/icons/flash-filled-black.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
 import Lock from 'assets/images/icons/lock.svg';
-import Heart from 'assets/images/icons/heart.svg';
-import CheckStar from 'assets/images/icons/check-star-white.svg';
-import {Satoshi400, Satoshi700} from 'constants/fonts.ts';
+import {Satoshi700} from 'constants/fonts.ts';
 import Animated, {useAnimatedStyle, useSharedValue, withTiming, Easing} from 'react-native-reanimated';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {calculateAge} from 'helpers/calculateAge.ts';
@@ -39,6 +37,7 @@ interface TouchingSliderProps {
   handleOpenSuperInvite?: () => void;
   handleOpenMatch?: () => void;
   onInvite?: () => void;
+  superJoin?: () => void; 
   isShowCardButtons?: boolean;
   isShowLocation?: boolean;
   isShowWantsJoin?: boolean;
@@ -87,12 +86,13 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   fromJoinEventsScreen = false,
   isProfile,
   changeEventList,
+  superJoin
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
   const navigation = useAppNavigation();
-
+  
   const {counterSuperInvites} = useCounterSuperEvents();
 
   const handleSuperInvite = () => {
@@ -224,6 +224,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             flipCoin={flipCoin}
             fromJoinEventsScreen={fromJoinEventsScreen}
             onInvite={onInvite}
+            superJoin={superJoin}
           />
         </View>
       ) : (
@@ -411,9 +412,9 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       {isShowWantsJoin && (
         <View style={styles.wantToJoinWr}>
           <View style={styles.wantToJoinImage}>
-            <Heart />
+            <FlashFilledBlackIcon width={14} height={14}/>
           </View>
-          <Text style={styles.wantToJoinText}>{name} Super wants Join you!</Text>
+          <Text style={styles.wantToJoinText}>{name} super wants to join you</Text>
         </View>
       )}
       {isShowInvitesTooltip && (
