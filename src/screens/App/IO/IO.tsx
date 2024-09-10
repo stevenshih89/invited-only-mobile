@@ -92,6 +92,14 @@ const IO: FC = (): JSX.Element => {
   const counterSuperInvitesRef = useRef(0);
   const counterWeeklySuperInvitesRef = useRef(0);
 
+  const cardRef = useRef(null);
+
+  const handleAutoSwipeRight = () => {
+    if (cardRef.current) {
+      cardRef.current.autoSwipeRight();
+    }
+  };
+
   let currentDate = new Date();
   const isHost = userHost?.accountType === 'host';
 
@@ -407,7 +415,7 @@ const IO: FC = (): JSX.Element => {
         fcmToken: isHost ? guest.data()?.fcmToken : userHost?.fcmToken,
       };
 
-      if (isHost) {
+      if (userHost?.accountType === 'host') {
         const matchedGuest = event.requestsList?.find(reqUser => reqUser?.uid === forUserUid && reqUser?.status === 'liked');
         let data = {};
         let matchedGuestData: MatchData;
@@ -431,7 +439,6 @@ const IO: FC = (): JSX.Element => {
             usersList: firestore.FieldValue.arrayUnion(userInvited),
           };
         }
-
         await firestore()
           .collection('Events')
           .doc(activeEventId)
@@ -929,6 +936,7 @@ const IO: FC = (): JSX.Element => {
                 handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}
                 accountType={accountType}
+                handleAutoSwipeRight={handleAutoSwipeRight}
                 isShowWantsJoin={findSuperJoin}
               />
               <View style={styles.bioWrapper}>
@@ -1307,38 +1315,43 @@ const IO: FC = (): JSX.Element => {
         }
         {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
         <View style={styles.container}>
-          {events?.map((item, index) => {
-            return (
-              <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
-                <TinderCard
-                  // @ts-ignore
-                  cardWidth="100%"
-                  // @ts-ignore
-                  cardHeight="100%"
-                  onSwipedLeft={() => {
-                    setTimeout(() => {
-                      setCurrentEventCardPosition(prev => prev + 1);
-                    }, 500);
-                  }}
-                  onSwipedRight={() => {
-                    onInvite(item?.info?.uid, item?.info?.id);
-                    setTimeout(() => {
-                      setCurrentEventCardPosition(prev => prev + 1);
-                    }, 500);
-                  }}
-                  OverlayLabelRight={OverlayRight}
-                  OverlayLabelLeft={OverlayLeft}
-                  disableBottomSwipe={true}
-                  disableTopSwipe={true}
-                  cardStyle={styles.card}>
-                  <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
-                    {item.component}
-                  </ScrollView>
-                </TinderCard>
-              </View>
-            );
-          })}
-          {!activeEvent.eventReviewed && isHost && (
+          {
+            events?.map((item, index) => {
+              return (
+                <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
+                  <TinderCard
+                    ref={cardRef}
+                    // @ts-ignore
+                    cardWidth="100%"
+                    // @ts-ignore
+                    cardHeight="100%"
+                    onSwipedLeft={() => {
+                      setTimeout(() => {
+                        setCurrentEventCardPosition(prev => prev + 1);
+                      }, 500);
+                    }}
+                    onSwipedRight={() => {
+                      onInvite(item?.info?.uid, item?.info?.id, item?.info?.requestsList, item?.info?.usersList);
+                      setTimeout(() => {
+                        setCurrentEventCardPosition(prev => prev + 1);
+                      }, 500);
+                    }}
+                    OverlayLabelRight={OverlayRight}
+                    OverlayLabelLeft={OverlayLeft}
+                    disableBottomSwipe={true}
+                    disableTopSwipe={true}
+                    cardStyle={styles.card}>
+                    <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
+                      {item.component}
+                    </ScrollView>
+                  </TinderCard>
+                </View>
+              );
+            })
+            // :
+            // <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
+          }
+          {!activeEvent.eventReviewed && userInfo.accountType === 'host' && (
             <ModalLockAccount
               haveCode={false}
               isVisibleButton={false}

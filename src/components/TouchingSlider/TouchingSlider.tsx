@@ -37,6 +37,7 @@ interface TouchingSliderProps {
   handleOpenSuperInvite?: () => void;
   handleOpenMatch?: () => void;
   onInvite?: () => void;
+  handleAutoSwipeRight?: () => void;
   superJoin?: () => void; 
   isShowCardButtons?: boolean;
   isShowLocation?: boolean;
@@ -65,6 +66,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   photos,
   handleOpenSuperInvite,
   onInvite,
+  handleAutoSwipeRight,
   isShowCardButtons = true,
   isShowLocation = false,
   isShowAccountInfo = true,
@@ -305,7 +307,10 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               </View>
               {isShowCardButtons && (
                 <View style={styles.wrapperRightButton}>
-                  <TouchableOpacity style={styles.buttonFlash} onPress={onInvite}>
+                  <TouchableOpacity style={styles.buttonFlash} onPress={() => {
+                    onInvite()
+                    handleAutoSwipeRight()
+                  }}>
                     <View
                       style={{
                         backgroundColor: transparentWhite56Color,
