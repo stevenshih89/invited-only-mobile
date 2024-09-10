@@ -762,7 +762,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         eventInfo={activeModalEvent}
       />
       {!userInfo?.accountConfirmed && !loading && (
-        <ModalLockAccount wrapperStyle={{marginTop: 100}} isVisibleButton={true} isPremium={userInfo?.accountPremium} />
+        <ModalLockAccount wrapperStyle={{marginTop: 100}} isVisibleButton={true} isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType}/>
       )}
       {hoursUntilEvent < 25 && hoursUntilEvent > 0 && (
         <ModalEventRemindes

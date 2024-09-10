@@ -166,7 +166,7 @@ const Requests: FC = (): ReactElement => {
   if (!userInfo?.accountConfirmed && !loading && !isVisibleMatch) {
     return (
       <View style={styles.container}>
-        <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />
+        <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType}/>
       </View>
     );
   }

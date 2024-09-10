@@ -15,7 +15,8 @@ const ModalLockAccount: FC<{
   wrapperStyle?: StyleProp<ViewStyle>;
   text?: string;
   haveCode?: boolean
-}> = ({isVisibleButton, isPremium, text, wrapperStyle, haveCode = true}) => {
+  accountType?: string
+}> = ({isVisibleButton, isPremium, text, wrapperStyle, haveCode = true, accountType}) => {
   const styles = useStyles();
 
   const navigation = useAppNavigation();
@@ -59,7 +60,7 @@ const ModalLockAccount: FC<{
           </View>}
         </View>
       </View>
-      {isVisibleButton && !isPremium&& (
+      {isVisibleButton && !isPremium && accountType === 'host' &&(
         <TouchableOpacity onPress={goToMyProfileView} style={{position: 'absolute', bottom: 120, zIndex: 2000, width: '100%', paddingHorizontal: 24}}>
           <LinearGradient
             colors={['#977B4A', '#E5D291', '#A28453']}

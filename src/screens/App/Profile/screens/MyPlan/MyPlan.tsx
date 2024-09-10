@@ -98,7 +98,7 @@ const MyPlan = () => {
   return (
     <View>
       <Loader isVisible={loaderVisible} successfulPay={false} textLoader={'Checking for available spots...'}/>
-      {userInfo?.accountPremium? 
+      {userInfo?.accountPremium?
         <View>
           <View style={{alignItems: 'center', padding: 24, backgroundColor: transparentGray90Color, flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{alignItems: 'center', flexDirection: 'row'}}>
@@ -110,29 +110,29 @@ const MyPlan = () => {
           <ArrowRightIcon width={16} height={16}/>
         </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={goToMyProfileView} style={{marginTop: 34}}>
+        {userInfo?. accountType === 'host' && <TouchableOpacity onPress={goToMyProfileView} style={{marginTop: 34}}>
           <LinearGradient colors={['#977B4A', '#E5D291', '#A28453']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={{paddingVertical:16, borderRadius: 18, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
             <Text style={{fontSize: RFValue(18,812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade to Yearly spot</Text>
             <ArrowRightIcon width={16} height={16}/>
           </LinearGradient>
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
       :
       <View>
-        {userInfo?.accountType === 'host'? 
+        {userInfo?.accountType === 'host' &&
         <LinearGradient colors={['#977B4A', '#E5D291', '#A28453']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linearGradient}>
             <Text style={styles.textHostPremium}>Host Premium</Text>
             <Text style={styles.textGetAccess}>Get Access & Unlock all of our features. Secure your spot. Host Access is limited.</Text>
             <View style={styles.buttonWrapper}>
               <Button title=" Upgrade" onPress={goToMyProfileView} buttonTitleStyle={styles.textButtonTitleStyle} buttonStyle={styles.buttonUpgrade} />
             </View>
-        </LinearGradient>:
-        <TouchableOpacity onPress={goToMyProfileView}>
-          <LinearGradient colors={['#977B4A', '#E5D291', '#A28453']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={[styles.linearGradient, {borderRadius: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}]}>
-            <Text style={{color: blackColor, fontSize: RFValue(18, 821), fontFamily: Satoshi500, marginRight: 4}}>Upgrade to Yearly spot</Text>
-            <ArrowRight width={16} height={16}/>  
-          </LinearGradient>
-        </TouchableOpacity>
+        </LinearGradient>
+        // <TouchableOpacity onPress={goToMyProfileView}>
+        //   <LinearGradient colors={['#977B4A', '#E5D291', '#A28453']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={[styles.linearGradient, {borderRadius: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}]}>
+        //     <Text style={{color: blackColor, fontSize: RFValue(18, 821), fontFamily: Satoshi500, marginRight: 4}}>Upgrade to Yearly spot</Text>
+        //     <ArrowRight width={16} height={16}/>  
+        //   </LinearGradient>
+        // </TouchableOpacity>
         }
       </View>
       }
