@@ -842,24 +842,22 @@ const IO: FC = (): JSX.Element => {
 
   const getListForHost = async () => {
     let users: any;
-    console.log('activeEvent', activeEvent);
-
+    
     if (activeEvent.male > 0 && activeEvent.female > 0) {
-      users = await firestore().collection('userInfo').limit(20).get();
+      users = await firestore().collection('userInfo').limit(20).get();      
     } else if (activeEvent.male > 0) {
       users = await firestore().collection('userInfo').where('gender', '==', 'man').limit(20).get();
     } else if (activeEvent.female > 0) {
       users = await firestore().collection('userInfo').where('gender', '==', 'woman').limit(20).get();
     }
 
+    const getActualDataEvent = (await firestore().collection('Events').doc(activeEvent?.id).get()).data()    
+
     const data: any[] = [];
     const usersList = await users?._docs;
-
     usersList
       ?.filter(item => {
-        // console.warn('item', item?._data.uid, item?._data);
-
-        if (activeEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {
+        if (getActualDataEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {   
           return false;
         }
         if (item?._data?.uid === userHost?.uid) {
