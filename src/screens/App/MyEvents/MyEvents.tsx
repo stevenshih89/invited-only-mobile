@@ -726,6 +726,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     <Button title="Join event" onPress={goToIOStack} />
                   </View>
                 )}
+                ItemSeparatorComponent={() => <View style={{height: 10}} />}
                 renderItem={({item}) => (
                   <JoiningEventsCard
                     uid={item?.uid}

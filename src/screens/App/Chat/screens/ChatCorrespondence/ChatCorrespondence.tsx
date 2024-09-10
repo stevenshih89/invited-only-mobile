@@ -1,4 +1,4 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
 import {View, Text, Image, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Alert} from 'react-native';
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NavigationProp} from '@react-navigation/native';
@@ -26,6 +26,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
 import {calculateAge} from 'helpers/calculateAge';
+
+import {sendNotification} from 'helpers/fcmHelper';
 import { checkIsFullGuests } from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import { EventContext } from 'contexts/EventContext';
@@ -159,7 +161,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     return userInfoDoc.data()?.fcmToken;
   };
 
-  const sendNotification = async (forUserUid: string, title: string, body: string) => {
+  const sendNotificationInner = async (forUserUid: string, title: string, body: string) => {
     console.warn(forUserUid);
 
     const token = await getFcmTokenFromUser(forUserUid);
@@ -210,30 +212,29 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    if(allChats.length > 0 && !clearChat.current) {
-      handleBack()
-      clearChat.current = true
+    if (allChats.length > 0 && !clearChat.current) {
+      handleBack();
+      clearChat.current = true;
     }
   }, [allChats]);
 
-
-  const handleBack = async () => {   
+  const handleBack = async () => {
     console.log('handleBack');
-     
+
     const doc = firestore().collection('messages').doc(`${activeEvent}`);
 
-      const findChat = allChats?.filter(i => i?.id === id);
-  
-      if (findChat && findChat.length > 0) {
-        if (typeof findChat[0].newMessages === 'number') {
-          findChat[0].newMessages = 0;
-        } 
-        await doc.update({
-          chats: [...allChats],
-        });
-        await sendNotification(uid, 'Invited Only', `${currentUserName} sent you a new message`);
+    const findChat = allChats?.filter(i => i?.id === id);
+
+    if (findChat && findChat.length > 0) {
+      if (typeof findChat[0].newMessages === 'number') {
+        findChat[0].newMessages = 0;
       }
-  }
+      await doc.update({
+        chats: [...allChats],
+      });
+      await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
+    }
+  };
 
   const handleSendMessage = async () => {
     try {
@@ -248,11 +249,11 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         userType: `${userData?.accountType}`,
         uid: `${userData?.uid}`,
       };
-  
+
       const doc = firestore().collection('messages').doc(`${activeEvent}`);
-  
+
       const findChat = allChats?.filter(i => i?.id === id);
-  
+
       if (findChat && findChat.length > 0) {
         findChat[0].messages.push(updateData);
         if (typeof findChat[0].newMessages === 'number') {
@@ -263,15 +264,13 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         await doc.update({
           chats: [...allChats],
         });
-        await sendNotification(uid, 'Invited Only', `${currentUserName} sent you a new message`);
+        await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
       }
-
     } catch (e) {
       console.log(e);
     }
     setMessageUser('');
   };
-  
 
   const getFormattedTime = timestamp => {
     const messageDate = moment(timestamp);
@@ -290,45 +289,53 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     }
   };
 
-  const ChatMessage = ({messageUser, userAvatar, showDate}: {messageUser: MessageProps; userAvatar: string; showDate: boolean}) => {
-    const {message, userType, timestamp, uid} = messageUser;
+  useEffect(() => {
+    console.warn('messages', messages);
+  }, [messages]);
 
-    const isCurrentUserMessage = user.uid === uid;
+  const ChatMessage = useCallback(
+    ({messageUser, userAvatar, showDate}: {messageUser: MessageProps; userAvatar: string; showDate: boolean}) => {
+      const {message, userType, timestamp, uid} = messageUser;
 
-    const containerStyle = !isCurrentUserMessage ? styles.senderContainer : styles.receiverContainer;
-    const textStyle = !isCurrentUserMessage ? styles.senderText : styles.receiverText;
-    return (
-      <View style={{width: '100%'}}>
-        {showDate && (
-          <View style={{alignItems: 'center', marginVertical: 10}}>
-            <View style={{backgroundColor: lightGray3Color, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 4}}>
-              <Text style={[styles.timeText]}>{getFormattedTime(timestamp)}</Text>
+      const isCurrentUserMessage = user.uid === uid;
+
+      const containerStyle = !isCurrentUserMessage ? styles.senderContainer : styles.receiverContainer;
+      const textStyle = !isCurrentUserMessage ? styles.senderText : styles.receiverText;
+      return (
+        <View style={{width: '100%'}}>
+          {showDate && (
+            <View style={{alignItems: 'center', marginVertical: 10}}>
+              <View style={{backgroundColor: lightGray3Color, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 4}}>
+                <Text style={[styles.timeText]}>{getFormattedTime(timestamp)}</Text>
+              </View>
             </View>
-          </View>
-        )}
-        <View style={[styles.messageContainer, containerStyle]}>
-          {!isCurrentUserMessage && <Image source={{uri: userAvatar}} style={styles.avatar} />}
-          <View>
-            <View style={[{flexDirection: 'column'}, !isCurrentUserMessage && {alignItems: 'flex-end'}]}>
-              <View style={[styles.messageContent, !isCurrentUserMessage ? styles.isSenderTrue : styles.isSenderFalse]}>
-                <Text style={textStyle}>{message}</Text>
+          )}
+          <View style={[styles.messageContainer, containerStyle]}>
+            {!isCurrentUserMessage && <Image source={{uri: userAvatar}} style={styles.avatar} />}
+            <View>
+              <View style={[{flexDirection: 'column'}, !isCurrentUserMessage && {alignItems: 'flex-end'}]}>
+                <View style={[styles.messageContent, !isCurrentUserMessage ? styles.isSenderTrue : styles.isSenderFalse]}>
+                  <Text style={textStyle}>{message}</Text>
+                </View>
               </View>
             </View>
           </View>
         </View>
-      </View>
-    );
-  };
-
-  const handleGetMessages = documentSnapshot => {
-    const data = documentSnapshot.data()?.chats;
-    const findChat = data?.filter(j => j?.id === id);
-    setAllChats(data);
-    setMessages(findChat[0]?.messages);
-  };
+      );
+    },
+    [],
+  );
 
   useEffect(() => {
-    const subscriber = firestore().collection('messages').doc(activeEvent).onSnapshot(handleGetMessages);
+    const subscriber = firestore()
+      .collection('messages')
+      .doc(activeEvent)
+      .onSnapshot(documentSnapshot => {
+        const data = documentSnapshot.data()?.chats;
+        const findChat = data?.filter(j => j?.id === id);
+        setAllChats(data);
+        setMessages(findChat[0]?.messages);
+      });
 
     return () => subscriber();
   }, [activeEvent]);
@@ -347,10 +354,11 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.fdrAlc}>
-              <TouchableOpacity onPress={() => {
-                handleBack()
-                navigation.goBack()
-              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  handleBack();
+                  navigation.goBack();
+                }}>
                 <ArrowLeft />
               </TouchableOpacity>
               <View style={[styles.fdrAlc, {marginLeft: 16}]}>
@@ -399,7 +407,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               const showDate = index === 0 || !moment(item.timestamp).isSame(moment(messages[index - 1].timestamp), 'day');
               return <ChatMessage userAvatar={image} messageUser={item} showDate={showDate} />;
             }}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item, index) => `${item.timestamp}${index}`}
           />
         </View>
         {/*{handleInvitationApproved()}*/}

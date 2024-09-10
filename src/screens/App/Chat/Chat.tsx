@@ -75,7 +75,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const setChat = useChat((i: any) => i.setActiveEvent);
   const user = useUser((i: any) => i?.user);
 
-  const isHost = user?.accountType.toLowerCase() === 'host';
+  const isHost = user?.accountType?.toLowerCase() === 'host';
 
   const {accountConfirmed} = useUserProfileChangeSubscription();
   useEffect(() => {
