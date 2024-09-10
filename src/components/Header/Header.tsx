@@ -321,7 +321,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   <Text style={styles.textButton}>Create event</Text>
                 </TouchableOpacity>
                 {/*@ts-ignore*/}
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={() => {
                     if (!userHost?.accountConfirmed) {
                       return;
@@ -333,7 +333,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                     <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: 24}}>J</Text>
                   </View>
                   <Text style={styles.textButton}>Join events</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 {myEvents &&
                   myEvents.map((event: any, index: number) => {
                     const isActive = activeEvent?.id === event.id;
@@ -506,12 +506,12 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               <Text style={styles.textButton}>Create event</Text>
             </TouchableOpacity>
             {/*@ts-ignore*/}
-            <TouchableOpacity style={styles.joinEventButton}>
+            {/* <TouchableOpacity style={styles.joinEventButton}>
               <View style={styles.joinEventView}>
                 <CalendarSearchIcon width={26} height={26} />
               </View>
               <Text style={styles.textButton}>Join events</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         );
       case 'myEvents':
@@ -528,7 +528,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               <Text style={styles.textButton}>Create event</Text>
             </TouchableOpacity>
             {/*@ts-ignore*/}
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 if (!userHost?.accountConfirmed) {
                   return;
@@ -541,7 +541,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 <CalendarSearchIcon width={26} height={26} />
               </View>
               <Text style={styles.textButton}>Join events</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             {myEvents?.map((event: any, index: number) => {
               const isActive = activeEvent?.id === event.id;
               const eventIsFinished = isEventFinished(event?.date);
@@ -623,11 +623,11 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   style={[styles.buttonMyEvents, {backgroundColor: !typeEvents ? whiteColor : lightGray2Color}]}>
                   <Text style={[styles.textMyEvents, {color: typeEvents ? whiteColor : blackColor}]}>My events</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={() => setTypeEvents(true)}
                   style={[styles.buttonEventsJoining, {backgroundColor: !typeEvents ? lightGray2Color : whiteColor}]}>
                   <Text style={[styles.textEventsJoining, {color: !typeEvents ? whiteColor : blackColor}]}>Join events</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             )}
 

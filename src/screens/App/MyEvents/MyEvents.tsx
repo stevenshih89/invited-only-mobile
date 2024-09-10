@@ -471,7 +471,7 @@ const MyEvents: FC<any> = ({navigation}) => {
               onPress={() => setActiveTab(MY_EVENTS)}>
               <Text style={[styles.textMyEvents, {color: activeTab === MY_EVENTS ? blackColor : whiteColor}]}>My events</Text>
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={[
                 styles.buttonEventsJoining,
                 {
@@ -492,7 +492,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                 ]}>
                 Join Events
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         ) : (
           <View style={{marginVertical: screenHeight / 50, height: 77, flexDirection: 'row'}}>
