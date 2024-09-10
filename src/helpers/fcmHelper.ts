@@ -5,11 +5,11 @@ import {PERMISSIONS, request} from 'react-native-permissions';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from './showToast';
-import { useAdminActions } from 'src/store/adminActions';
 import functions from '@react-native-firebase/functions';
 
 export const fcmHelper = async () => {
   const userUid = auth().currentUser?.uid;
+
   try {
     // const oldToken = await messaging().getToken();
     // await messaging().deleteToken(String('422527028413'), '*');
@@ -148,14 +148,9 @@ export function registerListenerWithFCM() {
 }
 
 //method was called to display notification
-async function onDisplayNotification(title, body, data, setRejectVisible: () => void, setAcceptModalVisible: () => void) {  
+async function onDisplayNotification(title, body, data) {
+  console.log('onDisplayNotification: ', data);
   showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image});
-  if(title === 'Your Account is Not Approved') {
-    setRejectVisible()
-  }
-  if(title === 'Your account has been approved') {
-    setAcceptModalVisible()
-  }
   // Request permissions (required for iOS)
   await notifee.requestPermission();
   // Create a channel (required for Android)
@@ -180,10 +175,11 @@ async function onDisplayNotification(title, body, data, setRejectVisible: () => 
 }
 
 // it would be called when the app in foreground state
-export function onMatchNotificationSubscription(handler: (message: FirebaseMessagingTypes.RemoteMessage) => void, setRejectVisible: () => void, setAcceptModalVisible: () => void) {
+export function onMatchNotificationSubscription(handler: (message: FirebaseMessagingTypes.RemoteMessage) => void) {
   return messaging().onMessage(async remoteMessage => {
-    await notifee.requestPermission();
-    onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data, setRejectVisible, setAcceptModalVisible)
+    console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
+
+    // await notifee.requestPermission();
     if (remoteMessage.data?.type === 'match') {
       handler(remoteMessage);
     }

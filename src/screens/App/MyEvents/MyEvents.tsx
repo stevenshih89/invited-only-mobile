@@ -28,9 +28,6 @@ import {eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocatio
 import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
-import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
-import { useAdminActions } from 'src/store/adminActions';
-import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import {sendNotification} from 'helpers/fcmHelper';
 
 const MyEvents: FC<any> = ({navigation}) => {
@@ -67,10 +64,6 @@ const MyEvents: FC<any> = ({navigation}) => {
   const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
   const isHost = user?.accountType === 'host';
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
-
-  const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
-  const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
-  const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
 
   const [userInfo, setUserInfo] = useState<any>({});
 
@@ -468,10 +461,6 @@ const MyEvents: FC<any> = ({navigation}) => {
   return (
     <>
       <View style={styles.container}>
-      {userInfo?.photos?.length > 0 && (
-        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />
-      )}
-      <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible}/>
         {isHost ? (
           <View style={styles.wrapperHeaderButtonMyEvents}>
             <TouchableOpacity

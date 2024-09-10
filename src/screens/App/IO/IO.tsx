@@ -50,9 +50,6 @@ import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount'
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
 import moment from 'moment';
-import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
-import { useAdminActions } from 'src/store/adminActions';
-import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import {handleCreateChat} from 'helpers/chat';
 import { checkIsFullGuests } from 'helpers/checkIsFullGuests';
 import FullEvent from 'components/FullEvent';
@@ -89,11 +86,6 @@ const IO: FC = (): JSX.Element => {
 
   const userHost = useUser((i: any) => i?.user);
 
-  const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
-  const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
-  const setRejectModalVisible = useAdminActions((i: any) => i?.setRejectModalVisible);
-  const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
-
   const allEventsLength = useRef(0);
 
   const eventsRef = useRef<any[]>();
@@ -111,27 +103,17 @@ const IO: FC = (): JSX.Element => {
   let currentDate = new Date();
   const isHost = userHost?.accountType === 'host';
 
-  
-  const setRejectVisible = () => {
-    setRejectModalVisible(true)
-  }
-
-  const setAcceptVisible = () => {
-    setAcceptModalVisible(true)
-  }
-
-  useEffect(() => {
-    if(userInfo && userInfo?.showModalAccept) {
-      setAcceptModalVisible(true)
-    }
-  },[userInfo])
-
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
-      const data = message?.data;        
+      console.warn('message', message);
+
+      const data = message?.data;
       setMatchData(data);
       setIsVisibleMatch(true);
-    }, setRejectVisible, setAcceptVisible);
+    });
+
+    console.warn('unsubscribe', unsubscribe);
+
     return () => unsubscribe();
   }, []);
 
@@ -946,7 +928,7 @@ const IO: FC = (): JSX.Element => {
                 age={age}
                 homeAddress={homeAddress}
                 isShowInvitesTooltip={false}
-                isLocked={!userInfo?.accountConfirmed}
+                isLocked={!userHost?.accountConfirmed}
                 confirmedAccount={accountConfirmed}
                 changeEventList={() => handleChangeListsEventsAfterSuperInvite(uid)}
                 onInvite={() => onInvite(uid, item?._data?.id, [], [])}
@@ -1332,8 +1314,6 @@ const IO: FC = (): JSX.Element => {
           />
         }
         {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
-        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible}/>
-        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos[0].image}/>
         <View style={styles.container}>
           {
             events?.map((item, index) => {

@@ -19,9 +19,6 @@ import {useUser} from '../../../store/userStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import Loading from 'components/Loading/Loading';
 import moment from 'moment';
-import { useAdminActions } from 'src/store/adminActions';
-import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
-import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import Match, {MatchData} from '../IO/screens/Match/Match';
 import {showToast} from 'helpers/showToast';
 import FullEvent from 'components/FullEvent';
@@ -43,11 +40,6 @@ const Requests: FC = (): ReactElement => {
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [matchData, setMatchData] = useState<MatchData>({});
-
-  const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
-  const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
-  const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
-
   const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
   const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
   const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
@@ -190,7 +182,7 @@ const Requests: FC = (): ReactElement => {
     return <ActivityIndicator style={styles.container} />;
   }
 
-  if (!userInfo?.accountConfirmed && !loading && !rejectModalVisible && !acceptModalVisible) {
+  if (!userInfo?.accountConfirmed && !loading && !isVisibleMatch) {
     return (
       <View style={styles.container}>
         <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType}/>
@@ -243,52 +235,51 @@ const Requests: FC = (): ReactElement => {
   }
 
   return (
-    <View style={styles.container}>
-      {userInfo?.photos?.length > 0 && (
-        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />
-      )}
-      <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible}/>
-      {!userInfo?.accountConfirmed && !loading && !rejectModalVisible && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}
-      {expressionForHost || expressionForGuest ? (
-        <FlatList
-          // @ts-ignore
-          data={isHost ? list?.requestsList : list}
-          numColumns={2}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={({uid, name}) => `${uid}${name}`}
-          contentContainerStyle={styles.listContentContainer}
-          extraData={isHost ? list?.requestsList : list}
-          ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-          renderItem={({item}) => {
-            return isHost ? (
-              <ItemRequestHost list={list} item={item} setRequestsForHost={setRequestsForHost} />
-            ) : (
-              // @ts-ignore
-              <ItemRequestGuest list={item} item={item?.usersList?.filter(i => i?.uid === user?.uid)} setDataForGuest={setDataForGuest} />
-            );
-          }}
-        />
-      ) : (
-        <>
-          {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEventsList?.length && !loading && (
-            <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
-              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
-                Let’s create an event
-              </Text>
-              <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
-                Get started by creating an event to begin inviting guests.
-              </Text>
-              <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
-            </View>
-          )}
-          {/* {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myEventsList?.length && (
-            <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
-              {
-                <Loading
-                  userInfo={list}
-                  topPosition={false}
-                  wrapperText={false}
-                  text={isDateTimePassed(list?.date, list?.hour) ? `Event Expired: ${list.date}` : `Event Start: ${list.date}`}
+    <>
+      <View style={styles.container}>
+        <ModalFullEvent isVisible={isVisibleModalFullEvent} idEvent={activeEvent.id} setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}/>
+        {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}
+        {totalQuantityGuests > 0 && 
+          <FullEvent
+            text={`Event is full: ${acceptQuantityGuest}/${totalQuantityGuests} Guests Accepted`}
+            activeEvent={activeEvent} 
+            totalQuantityGuests={totalQuantityGuests} 
+            totalRequestsGuests={totalRequestsGuests}
+            acceptQuantityGuest={acceptQuantityGuest}
+            rightComponent={<View style={{flexDirection: 'row', alignItems:'center'}}>
+            <PersoneIcon width={16} height={16}/>
+            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(12, 812), color: whiteColor, marginLeft: 2}}>{`${acceptQuantityGuest}/${totalQuantityGuests}`}</Text>
+          </View>}
+          />
+        }
+        {expressionForHost || expressionForGuest ? (
+          <FlatList
+            // @ts-ignore
+            data={isHost ? list?.requestsList : list}
+            numColumns={2}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={({uid, name}) => `${uid}${name}`}
+            contentContainerStyle={styles.listContentContainer}
+            extraData={isHost ? list?.requestsList : list}
+            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+            renderItem={({item}) => {
+              return isHost ? (
+                <ItemRequestHost 
+                  list={list} 
+                  item={item} 
+                  setRequestsForHost={setRequestsForHost} 
+                  handleOpenMatch={handleOpenMatch} 
+                  checkIsFullGuestsFun={checkIsFullGuestsFun} 
+                  setIsVisibleModalFullEvent={() => setIsVisibleModalFullEvent(true)}
+                  fetchHostRequests={fetchHostRequests}
+                  />
+              ) : (
+                // @ts-ignore
+                <ItemRequestGuest
+                  list={item}
+                  item={item?.usersList?.filter(i => i?.uid === user?.uid)}
+                  setDataForGuest={setDataForGuest}
+                  handleOpenMatch={handleOpenMatch}
                 />
               );
             }}

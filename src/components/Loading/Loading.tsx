@@ -2,7 +2,6 @@ import React, {FC, useEffect} from 'react';
 import {Image, Text, View} from 'react-native';
 import useStyles from 'components/Loading/styles.ts';
 import Subtract from 'src/assets/images/icons/subtract.svg';
-import CheckStarIcon from 'src/assets/images/icons/check-star.svg';
 import Animated, {Easing, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming} from 'react-native-reanimated';
 import {screenHeight, screenWidth} from 'constants/common';
 import { blackColor, whiteColor } from 'constants/colors';
@@ -14,11 +13,9 @@ interface LoadingProps {
   userInfo: any;
   topPosition: boolean;
   wrapperText?:boolean;
-  styleContainer?: any;
-  showCheckIcon?: boolean;
 }
 
-const Loading: FC<LoadingProps> = ({text, userInfo, topPosition, wrapperText=true, styleContainer, showCheckIcon = false}) => {
+const Loading: FC<LoadingProps> = ({text, userInfo, topPosition, wrapperText=true}) => {
   const styles = useStyles();
   
   const firstCircleScale = useSharedValue(0.9);
@@ -58,7 +55,7 @@ const Loading: FC<LoadingProps> = ({text, userInfo, topPosition, wrapperText=tru
   }, []);
 
   return (
-    <View style={[styles.container, styleContainer]}>
+    <View style={styles.container}>
       <View style={{alignItems: 'center', flex: 1}}>
         {/* <View style={{flex:, backgroundColor: 'red', width: 400}}>
 
@@ -82,7 +79,7 @@ const Loading: FC<LoadingProps> = ({text, userInfo, topPosition, wrapperText=tru
             styles.whiteCircle,
             {top: topPosition ? 35 : screenHeight / 2 - 365, height: topPosition ? 300 : 340, width: topPosition ? 300 : 340},
           ]}>
-          {userInfo?.photos && <Image style={{width: 180, height: 180, borderRadius: 100}} source={{uri: userInfo?.photos[0]?.image}} />}
+          {userInfo.photos && <Image style={{width: 180, height: 180, borderRadius: 100}} source={{uri: userInfo?.photos[0]?.image}} />}
         </View>
         {text && (
           <>
@@ -98,15 +95,11 @@ const Loading: FC<LoadingProps> = ({text, userInfo, topPosition, wrapperText=tru
                 paddingVertical: 11,
                 marginTop: 2
               }}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={{
                   color: blackColor,
                   fontSize: RFValue(20, 812),
                   fontFamily: Satoshi500,
-                  marginRight: 8
                 }}>{text}</Text>
-                {showCheckIcon && <CheckStarIcon />}
-                </View>
               </View>
             </View></>: 
               <View style={{alignItems: 'center', position: 'absolute', top: screenHeight / 2 - 10}}>
