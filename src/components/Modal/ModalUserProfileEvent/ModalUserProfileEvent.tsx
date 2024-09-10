@@ -23,6 +23,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {calculateAge} from 'helpers/calculateAge.ts';
 import {useFocusEffect} from '@react-navigation/native';
 import {sendNotification} from 'helpers/fcmHelper.ts';
+import ModalFullEvent from '../ModalFullEvent/index.tsx';
 
 interface ModalUserProfileEventProps {
   isModalVisible?: boolean;
@@ -34,7 +35,9 @@ interface ModalUserProfileEventProps {
   uid?: string;
   list?: any;
   usersList?: any;
+  checkIsFullGuestsFun?: any;
   setUsersListsData?: Dispatch<SetStateAction<any[]>>;
+  setIsVisibleModalFullEvent: Dispatch<SetStateAction<boolean>>;
 }
 
 const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
@@ -48,6 +51,8 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   modalReport,
   setModalReport,
   setUsersListsData,
+  checkIsFullGuestsFun,
+  setIsVisibleModalFullEvent
 }) => {
   const styles = useStyles();
 
@@ -313,7 +318,15 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     return true;
   };
 
-  const handleActionPress = () => {
+  const handleActionPress = async () => {
+    const isFull = await checkIsFullGuestsFun()
+    if(isFull) {
+      setModalVisible(false)
+      setTimeout(() => {
+        setIsVisibleModalFullEvent(true)
+      }, 300);
+      return
+    }
     if (userGuest?.status === 'invite_match') {
       handleApproveGuestFromHost();
       const newArray = usersList.map((i: any) => (i.uid === uid ? {...i, status: 'approved'} : i));

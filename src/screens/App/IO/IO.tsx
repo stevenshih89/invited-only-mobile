@@ -40,6 +40,7 @@ import PeopleIcon from 'assets/images/icons/profile-2user.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
+import PersoneIcon from 'assets/images/icons/Users.svg';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
@@ -50,6 +51,10 @@ import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
 import moment from 'moment';
 import {handleCreateChat} from 'helpers/chat';
+import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
+import FullEvent from 'components/FullEvent';
+import ModalFullEvent from 'components/Modal/ModalFullEvent';
+import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -69,6 +74,10 @@ const IO: FC = (): JSX.Element => {
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
   const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState();
   const [lastVisible, setLastVisible] = useState(false);
+  const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
+  const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
+  const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
+  const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
 
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
@@ -83,6 +92,23 @@ const IO: FC = (): JSX.Element => {
   const eventsRef = useRef<any[]>();
   const counterSuperInvitesRef = useRef(0);
   const counterWeeklySuperInvitesRef = useRef(0);
+
+  const cardRef = useRef(null);
+
+  const {accountConfirmed} = useUserProfileChangeSubscription();
+  useEffect(() => {
+    if (!Object.keys(userInfo).length) {
+      return;
+    }
+
+    setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
+  }, [accountConfirmed]);
+
+  const handleAutoSwipeRight = () => {
+    if (cardRef.current) {
+      cardRef.current.autoSwipeRight();
+    }
+  };
 
   let currentDate = new Date();
   const isHost = userHost?.accountType === 'host';
@@ -108,6 +134,16 @@ const IO: FC = (): JSX.Element => {
     counterSuperInvitesRef.current = currentSuperInvites;
     counterWeeklySuperInvitesRef.current = currentWeeklySuperInvites;
     setCounterSuperInvites(currentSuperInvites + currentWeeklySuperInvites);
+  };
+
+  const checkIsFullGuestsFun = async () => {
+    const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(activeEvent?.id);
+    if (findAcceptedGuest >= allGuests) {
+      setTotalQuantityGuests(allGuests);
+    }
+    setTotalRequestsGuests(totalRequestsGuests);
+    setAcceptQuantityGuest(findAcceptedGuest);
+    return findAcceptedGuest >= allGuests;
   };
 
   useFocusEffect(
@@ -361,6 +397,13 @@ const IO: FC = (): JSX.Element => {
   // };
 
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
+    const isFull = await checkIsFullGuestsFun();
+
+    if (isFull) {
+      setIsVisibleModalFullEvent(true);
+      return;
+    }
+
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
@@ -381,7 +424,7 @@ const IO: FC = (): JSX.Element => {
         fcmToken: isHost ? guest.data()?.fcmToken : userHost?.fcmToken,
       };
 
-      if (isHost) {
+      if (userHost?.accountType === 'host') {
         const matchedGuest = event.requestsList?.find(reqUser => reqUser?.uid === forUserUid && reqUser?.status === 'liked');
         let data = {};
         let matchedGuestData: MatchData;
@@ -405,7 +448,6 @@ const IO: FC = (): JSX.Element => {
             usersList: firestore.FieldValue.arrayUnion(userInvited),
           };
         }
-
         await firestore()
           .collection('Events')
           .doc(activeEventId)
@@ -903,6 +945,7 @@ const IO: FC = (): JSX.Element => {
                 handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}
                 accountType={accountType}
+                handleAutoSwipeRight={handleAutoSwipeRight}
                 isShowWantsJoin={findSuperJoin}
               />
               <View style={styles.bioWrapper}>
@@ -1111,6 +1154,8 @@ const IO: FC = (): JSX.Element => {
     allEventsLength.current = data.length;
     setEvents(data);
     eventsRef.current = data;
+    checkIsFullGuestsFun();
+    // console.warn('data', data);
 
     // setTimeout(() => {
     //   setEvents([...data]);
@@ -1263,40 +1308,71 @@ const IO: FC = (): JSX.Element => {
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
+        <ModalFullEvent
+          isVisible={isVisibleModalFullEvent}
+          idEvent={activeEvent.id}
+          setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
+        />
+        {totalQuantityGuests > 0 && (
+          <FullEvent
+            text={`Event is full: ${acceptQuantityGuest}/${totalQuantityGuests} Guests Accepted`}
+            activeEvent={activeEvent}
+            totalQuantityGuests={totalQuantityGuests}
+            totalRequestsGuests={totalRequestsGuests}
+            acceptQuantityGuest={acceptQuantityGuest}
+            rightComponent={
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <PersoneIcon width={16} height={16} />
+                <Text
+                  style={{
+                    fontFamily: Satoshi700,
+                    fontSize: RFValue(12, 812),
+                    color: whiteColor,
+                    marginLeft: 2,
+                  }}>{`${acceptQuantityGuest}/${totalQuantityGuests}`}</Text>
+              </View>
+            }
+          />
+        )}
         {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
         <View style={styles.container}>
-          {events?.map((item, index) => {
-            return (
-              <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
-                <TinderCard
-                  // @ts-ignore
-                  cardWidth="100%"
-                  // @ts-ignore
-                  cardHeight="100%"
-                  onSwipedLeft={() => {
-                    setTimeout(() => {
-                      setCurrentEventCardPosition(prev => prev + 1);
-                    }, 500);
-                  }}
-                  onSwipedRight={() => {
-                    onInvite(item?.info?.uid, item?.info?.id);
-                    setTimeout(() => {
-                      setCurrentEventCardPosition(prev => prev + 1);
-                    }, 500);
-                  }}
-                  OverlayLabelRight={OverlayRight}
-                  OverlayLabelLeft={OverlayLeft}
-                  disableBottomSwipe={true}
-                  disableTopSwipe={true}
-                  cardStyle={styles.card}>
-                  <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
-                    {item.component}
-                  </ScrollView>
-                </TinderCard>
-              </View>
-            );
-          })}
-          {!activeEvent.eventReviewed && isHost && (
+          {
+            events?.map((item, index) => {
+              return (
+                <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
+                  <TinderCard
+                    ref={cardRef}
+                    // @ts-ignore
+                    cardWidth="100%"
+                    // @ts-ignore
+                    cardHeight="100%"
+                    onSwipedLeft={() => {
+                      setTimeout(() => {
+                        setCurrentEventCardPosition(prev => prev + 1);
+                      }, 500);
+                    }}
+                    onSwipedRight={() => {
+                      onInvite(item?.info?.uid, item?.info?.id, item?.info?.requestsList, item?.info?.usersList);
+                      setTimeout(() => {
+                        setCurrentEventCardPosition(prev => prev + 1);
+                      }, 500);
+                    }}
+                    OverlayLabelRight={OverlayRight}
+                    OverlayLabelLeft={OverlayLeft}
+                    disableBottomSwipe={true}
+                    disableTopSwipe={true}
+                    cardStyle={styles.card}>
+                    <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
+                      {item.component}
+                    </ScrollView>
+                  </TinderCard>
+                </View>
+              );
+            })
+            // :
+            // <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
+          }
+          {!activeEvent.eventReviewed && userInfo.accountType === 'host' && (
             <ModalLockAccount
               haveCode={false}
               isVisibleButton={false}

@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useState} from 'react';
+import React, {Dispatch, FC, SetStateAction, useCallback, useState} from 'react';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -33,6 +33,8 @@ interface ModalUserMenuProps {
   image: any;
   uid: string;
   hostUid: string;
+  checkIsFullGuestsFun: () => Promise<boolean>;
+  setIsVisibleModalFullEvent: Dispatch<SetStateAction<boolean>>;
 }
 
 const BlockAndReportModal = ({blockAndReportState, setBlockAndReportState, reportState, setReportState, setModalVisible}) => {
@@ -197,6 +199,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   uid,
   activeEvent,
   hostUid,
+  checkIsFullGuestsFun,
+  setIsVisibleModalFullEvent
 }) => {
   const [removingState, setRemovingState] = useState<boolean>(false);
   const [blockAndReportState, setBlockAndReportState] = useState<boolean>(false);
@@ -333,7 +337,15 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     return true;
   };
 
-  const handleActionPress = () => {
+  const handleActionPress = async () => {    
+    const isFull = await checkIsFullGuestsFun()      
+    if(isFull) {   
+      setModalVisible(false)
+      // setTimeout(() => {
+      //   setIsVisibleModalFullEvent(true)
+      // }, 300);
+    }
+    return
     if (uid === hostUid && userGuest?.status === 'approved') {
       handleAcceptGuestFromGuest();
       setModalVisible && setModalVisible(false);

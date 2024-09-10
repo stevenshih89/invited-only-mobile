@@ -26,7 +26,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
 import {calculateAge} from 'helpers/calculateAge';
+
 import {sendNotification} from 'helpers/fcmHelper';
+import { checkIsFullGuests } from 'helpers/checkIsFullGuests';
+import ModalFullEvent from 'components/Modal/ModalFullEvent';
+import { EventContext } from 'contexts/EventContext';
 
 interface MessageProps {
   message: {
@@ -54,10 +58,38 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [age, setAge] = useState();
   const [currentUserName, setCurrentUserName] = useState('');
   const {image, title, online, activeEvent, id, superInvite, invitedStatus, uid, hostUid} = route?.params;
+  const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
+  const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
+  const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
+  const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
 
   const clearChat = useRef(false);
-
   const user = useUser((i: any) => i?.user);
+
+  const [actualActiveEventData, setActualActiveEventData] = useState([]);
+
+  const getActiveEventData = async () => {
+    const getEventData = (await firestore().collection('Events').doc(activeEvent).get()).data();
+    if(getEventData) {      
+      setActualActiveEventData(getEventData)
+      return getEventData
+    }
+  }
+
+  const checkIsFullGuestsFun = async (activeEvent) => {
+    const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(activeEvent);
+    setTotalQuantityGuests(allGuests);
+    setAcceptQuantityGuest(findAcceptedGuest);
+    setTotalRequestsGuests(totalRequestsGuests);
+    await getActiveEventData()
+
+    if(findAcceptedGuest >= allGuests) {
+      setTimeout(() => {
+        setIsVisibleModalFullEvent(true)
+      }, 500);
+    }
+    return findAcceptedGuest >= allGuests
+  }
 
   useEffect(() => {
     if (title) {
@@ -311,6 +343,14 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   return (
     <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={styles.keyboardAvoid}>
       <SafeAreaProvider style={headerInsets}>
+      <ModalFullEvent 
+        actualActiveEventData={actualActiveEventData}
+        totalQuantityGuests={totalQuantityGuests}
+        acceptQuantityGuest={acceptQuantityGuest}
+        totalRequestsGuests={totalRequestsGuests}
+        isVisible={isVisibleModalFullEvent} 
+        idEvent={activeEvent.id} 
+        setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}/>
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.fdrAlc}>
@@ -404,6 +444,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
           setModalVisible={setModalVisible}
           activeEvent={activeEvent}
           hostUid={hostUid}
+          checkIsFullGuestsFun={() => checkIsFullGuestsFun(activeEvent)}
+          setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
         />
       </SafeAreaProvider>
     </KeyboardAvoidingView>

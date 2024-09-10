@@ -18,12 +18,14 @@ import React, {FC, useEffect, useState} from 'react';
 import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
 import ModalUserProfileEvent from 'components/Modal/ModalUserProfileEvent/ModalUserProfileEvent.tsx';
 import {screenHeight, screenWidth} from 'constants/common';
+import { checkIsFullGuests } from 'helpers/checkIsFullGuests';
+import ModalFullEvent from 'components/Modal/ModalFullEvent';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
   const {list} = route?.params;
-  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name} = list;
+  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name, id} = list;
 
   const [usersListData, setUsersListsData] = useState<any>(usersList);
   const [activeTab, setActiveTab] = useState(GUEST_LIST);
@@ -31,6 +33,10 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [user, setUser] = useState(null);
   const [modalReport, setModalReport] = useState(false);
+  const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
+  const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
+  const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
+  const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
 
   const invitedGuests = usersListData?.filter(i => i?.status === 'invite_match');
   const approvedGuests = usersListData?.filter(i => i?.status === 'approved');
@@ -50,6 +56,17 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
       ),
     });
   }, []);
+
+  const checkIsFullGuestsFun = async () => {
+    const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(id);
+    if(findAcceptedGuest >= allGuests) {
+      setTotalQuantityGuests(allGuests)
+    }
+    setTotalRequestsGuests(totalRequestsGuests);
+    setAcceptQuantityGuest(findAcceptedGuest);
+    return findAcceptedGuest >= allGuests
+  }
+
 
   const renderEventContent = () => {
     switch (activeTab) {
@@ -373,6 +390,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   return (
     <>
       <View style={{backgroundColor: blackColor, flex: 1, paddingHorizontal: 20}}>
+      <ModalFullEvent isVisible={isVisibleModalFullEvent} idEvent={id} setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}/>
         <View
           style={{
             marginTop: screenHeight / 43,
@@ -443,6 +461,8 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
         setUsersListsData={setUsersListsData}
         modalReport={modalReport}
         setModalReport={setModalReport}
+        checkIsFullGuestsFun={checkIsFullGuestsFun}
+        setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
       />
       <ModalCancelEvent
         id={list?.id}

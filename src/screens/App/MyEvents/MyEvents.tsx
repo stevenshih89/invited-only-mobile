@@ -29,6 +29,7 @@ import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
 import {sendNotification} from 'helpers/fcmHelper';
+import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
@@ -66,6 +67,15 @@ const MyEvents: FC<any> = ({navigation}) => {
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
   const [userInfo, setUserInfo] = useState<any>({});
+
+  const {accountConfirmed} = useUserProfileChangeSubscription();
+  useEffect(() => {
+    if (!Object.keys(userInfo).length) {
+      return;
+    }
+
+    setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
+  }, [accountConfirmed]);
 
   const calculateHoursUntilEvent = (eventDate, eventTime) => {
     const now = new Date();
@@ -644,6 +654,9 @@ const MyEvents: FC<any> = ({navigation}) => {
                     placeName={item?.placeName}
                     invitingPeople={item?.usersList?.filter(i => i?.status !== 'notAccepted')}
                     accountConfirmed={user?.accountConfirmed}
+                    findAcceptedGuest={item?.usersList?.filter(item => item.status === 'invite_match')}
+                    totalRequestsGuests={item?.requestsList?.length}
+                    item={item}
                   />
                 )}
               />

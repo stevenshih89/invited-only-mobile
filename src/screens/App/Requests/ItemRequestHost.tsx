@@ -22,9 +22,7 @@ import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
 
-const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch}: any) => {
-  console.log('item', item);
-  console.log('list', list);
+const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch, checkIsFullGuestsFun, setIsVisibleModalFullEvent, fetchHostRequests}: any) => {
 
   const styles = useStyles();
   const navigation = useAppNavigation();
@@ -72,8 +70,12 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch}: any)
   };
 
   const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
-    console.warn('item', item);
-
+    const isFull = await checkIsFullGuestsFun()
+    if (isFull) {
+      setIsVisibleModalFullEvent()
+      fetchHostRequests()
+      return
+    }
     const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
     const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
 
@@ -125,6 +127,7 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch}: any)
             requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),
           }));
         });
+        checkIsFullGuestsFun()
     } catch (e) {
       console.log(e);
       showToast('inviteMatch', '', "There's been an error");

@@ -26,6 +26,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
 
 type ItemProps = {
   title: string;
@@ -75,6 +76,15 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const user = useUser((i: any) => i?.user);
 
   const isHost = user?.accountType?.toLowerCase() === 'host';
+
+  const {accountConfirmed} = useUserProfileChangeSubscription();
+  useEffect(() => {
+    if (!Object.keys(userInfo).length) {
+      return;
+    }
+
+    setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
+  }, [accountConfirmed]);
 
   const fetchUserInfo = async () => {
     setLoading(true);

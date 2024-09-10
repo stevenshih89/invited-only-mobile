@@ -41,57 +41,68 @@ const DATA = [
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
     title: 'English',
-    flag: US
+    flag: 'us',
+    flagShow: US
   },
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
     title: 'Arabic',
-    flag: AE
+    flag: 'ae',
+    flagShow: AE
   },
   {
     id: '58694a0f-3da1-471f-bd96-145571e29d72',
     title: 'Spanish',
-    flag: ES
+    flag: 'es',
+    flagShow: ES
   },
   {
     id: '3ac68af3c-c605-48d3-a4f8-fbd91aa97f63',
     title: 'Ukranian',
-    flag: UA
+    flag: 'ua',
+    flagShow: UA
   },
   {
     id: '58694a40f-3da1-471f-bd96-145571e29d72',
     title: 'French',
-    flag: FR
+    flag: 'fr',
+    flagShow: FR
   },
   {
     id: '12145a90f-1dа1-431f-b436-096771e29d72',
     title: 'Polish',
-    flag: PL
+    flag: 'pl',
+    flagShow: PL
   },
   {
     id: 'bd7acb5ea-c1b1-46c2-aed5-3ad53abb28ba',
     title: 'Hebrew',
-    flag: IL
+    flag: 'il',
+    flagShow: IL
   },
   {
     id: '3ac68a6fc-c605-48d3-a4f8-fbd91aa97f63',
     title: 'Portugese',
-    flag: PT
+    flag: 'pt',
+    flagShow: PT
   },
   {
     id: '58694a70f-3da1-471f-bd96-145571e29d72',
     title: 'German',
-    flag: DE
+    flag: 'de',
+    flagShow: DE
   },
   {
     id: '3ac688afc-c605-48d3-a4f8-fbd91aa97f63',
     title: 'Italian',
-    flag: IT
+    flag: 'it',
+    flagShow: IT
   },
   {
     id: '58694fa0f-3da1-471f-bd96-145571e29d72',
     title: 'Korean',
-    flag: KR
+    flag: 'kr',
+    flagShow: KR
   },
 ];
 
@@ -204,6 +215,8 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
             showsVerticalScrollIndicator={false}
             renderItem={({item}) => {
               const isActive = selectLanguage?.some((selected: any) => selected.title === item.title);
+              console.log('item', item);
+              
               return (
                 <TouchableOpacity
                   activeOpacity={0.8}
@@ -221,7 +234,7 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
                     justifyContent: 'space-between',
                   }}>
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <item.flag />
+                    <item.flagShow />
                     <Text style={{color: whiteColor, fontSize: RFValue(18, 812), marginLeft: 10, fontFamily: Satoshi400}}>{item.title}</Text>
                   </View>
                   {isActive ? (

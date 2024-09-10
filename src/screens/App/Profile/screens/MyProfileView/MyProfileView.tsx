@@ -15,7 +15,20 @@ import SmokeIcon from 'assets/images/icons/smoke.svg';
 import Job from 'assets/images/icons/job.svg';
 import Gender from 'assets/images/icons/gender.svg';
 import Cake from 'assets/images/icons/cake.svg';
+
+//Flags
 import FlagAE from 'assets/images/flags/ae.svg';
+import FlagDE from 'assets/images/flags/de.svg';
+import FlagES from 'assets/images/flags/es.svg';
+import FlagFR from 'assets/images/flags/fr.svg';
+import FlagIL from 'assets/images/flags/il.svg';
+import FlagIT from 'assets/images/flags/it.svg';
+import FlagKR from 'assets/images/flags/kr.svg';
+import FlagPL from 'assets/images/flags/pl.svg';
+import FlagPT from 'assets/images/flags/pt.svg';
+import FlagUA from 'assets/images/flags/ua.svg';
+import FlagUS from 'assets/images/flags/us.svg';
+
 import useStyles from './styles';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -26,7 +39,7 @@ import auth from '@react-native-firebase/auth';
 import {ActivityIndicator} from 'react-native';
 import {calculateAge} from 'helpers/calculateAge';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {useUser} from '../../../../../store/userStore';
 import {useFocusEffect, useRoute} from '@react-navigation/native';
 
@@ -97,6 +110,46 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
         <ActivityIndicator style={{flex: 1, backgroundColor: blackColor}} />
       </View>
     );
+  }
+
+  const getFlag = (flag: string) => {
+    switch (flag) {
+      case 'us':
+        return <FlagUS />
+        break;
+      case 'ua':
+        return <FlagUA />
+        break
+      case 'ae':
+        return <FlagAE />
+        break;
+      case 'de':
+        return <FlagDE />
+        break
+      case 'fr':
+        return <FlagFR />
+        break;
+      case 'es':
+        return <FlagES />
+        break
+      case 'il':
+        return <FlagIL />
+        break;
+      case 'it':
+        return <FlagIT />
+        break
+      case 'kr':
+        return <FlagKR />
+        break
+      case 'pl':
+        return <FlagPL />
+        break
+      case 'pt':
+        return <FlagPT />
+        break
+      default:
+        return
+    }
   }
 
   return (
@@ -286,17 +339,20 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
             <View style={styles.wrapperAboutMe}>
               <Text style={styles.testBasics}>About me</Text>
               {userInfo?.showLanguages && (
-                <View style={{flexDirection: 'row', alignItems: 'center', marginTop: screenHeight / 55}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>Lenguages:</Text>
+                <View style={{marginTop: screenHeight / 55}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>Languages</Text>
+                  <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
                   {userInfo?.languages?.length > 0 ? (
                     userInfo?.languages?.map(item => (
-                      <View style={{backgroundColor: whiteColor, padding: 2, borderRadius: 4, marginLeft: 5}}>
-                        <Text style={{fontSize: RFValue(14, 812), color: blackColor, fontFamily: Satoshi500}}>{` ${item.title}`}</Text>
+                      <View style={{borderColor: lightGrayColor, borderWidth: 1, padding: 8, borderRadius: 30, flexDirection: 'row', alignItems: 'center', marginTop: 14, marginRight: 4}}>
+                        {getFlag(item.flag)}
+                        <Text style={{fontSize: RFValue(16, 812), color: whiteColor, fontFamily: Satoshi400, marginLeft: 10}}>{` ${item.title}`}</Text>
                       </View>
                     ))
                   ) : (
                     <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}> No languages ​​selected</Text>
                   )}
+                  </View>
                 </View>
               )}
               {userInfo?.bio && <Text style={styles.textAboutMe}>{userInfo?.bio}</Text>}
