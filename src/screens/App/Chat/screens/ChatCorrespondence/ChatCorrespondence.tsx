@@ -30,6 +30,7 @@ import {calculateAge} from 'helpers/calculateAge';
 import {sendNotification} from 'helpers/fcmHelper';
 import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
+import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
 
 interface MessageProps {
   message: {
@@ -292,6 +293,18 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     console.warn('messages', messages);
   }, [messages]);
 
+  const goToProfileView = (currentUid: string) => {
+    setModalVisible(false);
+    // @ts-ignore
+    navigation.navigate(commonStackPath, {
+      screen: myProfileViewPath,
+      params: {
+        uid: currentUid,
+        isShowEditButton: false,
+      },
+    });
+  };
+
   const ChatMessage = useCallback(
     ({messageUser, userAvatar, showDate}: {messageUser: MessageProps; userAvatar: string; showDate: boolean}) => {
       const {message, userType, timestamp, uid} = messageUser;
@@ -310,7 +323,11 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             </View>
           )}
           <View style={[styles.messageContainer, containerStyle]}>
-            {!isCurrentUserMessage && <Image source={{uri: userAvatar}} style={styles.avatar} />}
+            {!isCurrentUserMessage && (
+              <TouchableOpacity onPress={() => goToProfileView(uid)}>
+                <Image source={{uri: userAvatar}} style={styles.avatar} />
+              </TouchableOpacity>
+            )}
             <View>
               <View style={[{flexDirection: 'column'}, !isCurrentUserMessage && {alignItems: 'flex-end'}]}>
                 <View style={[styles.messageContent, !isCurrentUserMessage ? styles.isSenderTrue : styles.isSenderFalse]}>
