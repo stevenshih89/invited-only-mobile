@@ -227,8 +227,6 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     });
   };
 
-  console.warn('userGuest', userGuest);
-
   const getUsersList = async () => {
     try {
       const eventQuerySnapshot = await firestore().collection('Events').doc(activeEvent).get();

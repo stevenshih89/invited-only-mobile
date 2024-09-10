@@ -240,8 +240,7 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
       {!userDelete && (
         <View style={styles.container}>
           {activeState ? (
-            <View style={{overflow: 'hidden'}}>
-              {/* <View style={{overflow: 'hidden', height: 220}}> */}
+            <View style={{overflow: 'hidden', height: screenHeight / 3.8}}>
               <LinearGradient
                 colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
                 start={{x: 0, y: 1}}

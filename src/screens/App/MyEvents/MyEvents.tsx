@@ -713,6 +713,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     <Button title="Join event" onPress={goToIOStack} />
                   </View>
                 )}
+                ItemSeparatorComponent={() => <View style={{height: 10}} />}
                 renderItem={({item}) => (
                   <JoiningEventsCard
                     uid={item?.uid}
@@ -762,7 +763,12 @@ const MyEvents: FC<any> = ({navigation}) => {
         eventInfo={activeModalEvent}
       />
       {!userInfo?.accountConfirmed && !loading && (
-        <ModalLockAccount wrapperStyle={{marginTop: 100}} isVisibleButton={true} isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType}/>
+        <ModalLockAccount
+          wrapperStyle={{marginTop: 100}}
+          isVisibleButton={true}
+          isPremium={userInfo?.accountPremium}
+          accountType={userInfo?.accountType}
+        />
       )}
       {hoursUntilEvent < 25 && hoursUntilEvent > 0 && (
         <ModalEventRemindes
