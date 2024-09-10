@@ -102,10 +102,6 @@ const IO: FC = (): JSX.Element => {
 
   const cardRef = useRef(null);
 
-  const handleAutoSwipeLeft = () => {
-    if (cardRef.current) {
-      cardRef.current.autoSwipeLeft();
-      
   const handleAutoSwipeRight = () => {
     if (cardRef.current) {
       cardRef.current.autoSwipeRight();
@@ -343,134 +339,72 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const generateRandomId = (length: number) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  };
+  // const sendNotification = async (forUserUid: string, title: string, body: string, mark: string, status: string) => {
+  //   const generateRandomId = (length: number) => {
+  //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  //     let result = '';
+  //     const charactersLength = characters.length;
+  //     for (let i = 0; i < length; i++) {
+  //       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  //     }
+  //     return result;
+  //   };
 
-  const getFcmTokenFromUser = async (uid: string) => {
-    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-    return userInfoDoc.data()?.fcmToken;
-  };
+  //   const getFcmTokenFromUser = async (uid: string) => {
+  //     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+  //     return userInfoDoc.data()?.fcmToken;
+  //   };
 
-  const sendNotification = async (forUserUid: string, title: string, body: string, mark: string, status: string) => {
-    const token = await getFcmTokenFromUser(forUserUid);
+  //   const token = await getFcmTokenFromUser(forUserUid);
 
-    console.warn('forUserUid', forUserUid);
-    try {
-      const result = await functions().httpsCallable('sendNotification')({
-        token: token,
-        priority: 'high',
-        notification: {
-          title,
-          body,
-        },
-        data: {
-          status,
-          image: userInfo?.photos[0].image,
-        },
-      });
-      if (result.data.success) {
-        console.warn('Notification sent successfully', result.data.data);
-      } else {
-        console.error('Error sending notification:', result.data.error);
-      }
-    } catch (error) {
-      console.error('Error calling Firebase Function:', error);
-    }
+  //   console.warn('forUserUid', forUserUid);
+  //   try {
+  //     const result = await functions().httpsCallable('sendNotification')({
+  //       token: token,
+  //       priority: 'high',
+  //       notification: {
+  //         title,
+  //         body,
+  //       },
+  //       data: {
+  //         status,
+  //         image: userInfo?.photos[0].image,
+  //       },
+  //     });
+  //     if (result.data.success) {
+  //       console.warn('Notification sent successfully', result.data.data);
+  //     } else {
+  //       console.error('Error sending notification:', result.data.error);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error calling Firebase Function:', error);
+  //   }
 
-    // const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-    //   },
-    //   body: JSON.stringify({
-    //     to: token,
-    //     notification: {
-    //       title: title,
-    //       body: body,
-    //     },
-    //     data: {
-    //       status: status,
-    //       image: userInfo?.photos[0].image,
-    //     },
-    //   }),
-    // });
+  //   const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
+  //   const userNotifications = userDoc.data()?.notifications;
+  //   const id = generateRandomId(8);
+  //   const notification = {
+  //     id,
+  //     title: title,
+  //     body: body,
+  //     mark: mark,
+  //     uid: userInfo?.uid,
+  //   };
+  //   console.log('notification', notification);
 
-    // if (!response.ok) {
-    //   const error = await response.json();
-    //   console.error('error sending notification:', error);
-    // } else {
-    // const data = await response.json();
-    const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
-    const userNotifications = userDoc.data()?.notifications;
-    const id = generateRandomId(8);
-    const notification = {
-      id,
-      title: title,
-      body: body,
-      mark: mark,
-      uid: userInfo?.uid,
-    };
-    console.log('notification', notification);
+  //   try {
+  //     await firestore()
+  //       .collection('userInfo')
+  //       .doc(forUserUid)
+  //       .update({
+  //         notifications: [...userNotifications, notification],
+  //       });
+  //   } catch (error) {
+  //     console.log('error update notifications', error);
+  //   }
+  // };
 
-    try {
-      await firestore()
-        .collection('userInfo')
-        .doc(forUserUid)
-        .update({
-          notifications: [...userNotifications, notification],
-        });
-    } catch (error) {
-      console.log('error update notifications', error);
-    }
-    // }
-  };
-
-  const onReject = async (uid: string, eventId: string) => {
-    if(userInfo?.accountType === 'guest') {
-      try {
-        const doc = firestore().collection('userInfo').doc(userInfo?.uid)
-      const data = (await doc.get()).data();
-      if(data?.rejectEvents) {
-        await doc.update({
-          rejectEvents: [...data.rejectEvents, eventId]
-        })
-      } else {
-        await doc.update({
-          rejectEvents: [eventId]
-        })
-      }
-      } catch (error) {
-        console.log('error update rejectEvents', error);
-      }
-    } else {
-      const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
-    try {
-      const doc = firestore().collection('Events').doc(activeEventId)
-      const data = (await doc.get()).data()
-      if(data?.rejectList) {
-        await doc.update({
-          rejectList: [...data?.rejectList, uid]
-        })
-      } else {
-        await doc.update({
-          rejectList: [uid]
-        })
-      }
-    } catch (error) {
-      console.log('error update reject list', error);
-    }
-  }
-}
-
-  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean, requestsList: any, usersList: any) => {
+  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
 
     const isFull = await checkIsFullGuestsFun()
 
@@ -953,21 +887,11 @@ const IO: FC = (): JSX.Element => {
 
     const recommendedData = sortByInterests(sortByDate(filteredData)?.reverse(), userHost);
 
-    const sortRejectEvents = sortByRejectEvents(recommendedData);
-    
     setTimeout(() => {
-      setEvents(sortRejectEvents);
+      setEvents(recommendedData);
       allEventsLength.current = data.length;
     }, 2000);
   };
-
-  const sortByRejectEvents = (data: any) => {
-    const filterData = data?.filter(i => {
-      return !userInfo?.rejectEvents.includes(i.info.id);
-    });
-    return filterData;
-  };
-  
 
   const getListForHost = async () => {
     let users: any;
@@ -988,16 +912,13 @@ const IO: FC = (): JSX.Element => {
       ?.filter(item => {
         // console.warn('item', item?._data.uid, item?._data);
 
-        if (activeEvent?.usersList?.find(j => j?.uid === item?._data.uid) ||
-            activeEvent?.rejectList?.find(j => j === item?._data.uid)
-        ) {
+        if (getActualDataEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {
           return false;
         }
         if (item?._data?.uid === userHost?.uid) {
           return false;
         }
         return true;
-
       })
       ?.map((item: any, index: number): void => {
         // console.warn('itemMap', item?._data.uid, item?._data);
@@ -1239,34 +1160,16 @@ const IO: FC = (): JSX.Element => {
         //   setEventsLength(data.length);
         // }, 3000);
       });
-    setTimeout(() => {
-      allEventsLength.current = data.length;  
-      const sortReports = sortEventsByReportFirstRender(data);       
-      setEvents(sortReports);
-      eventsRef.current = data;
-    }, 2000);
+    allEventsLength.current = data.length;
+    setEvents(data);
+    eventsRef.current = data;
+    checkIsFullGuestsFun()
     // console.warn('data', data);
 
     // setTimeout(() => {
     //   setEvents([...data]);
     //   setEventsLength(data.length);
     // }, 3000);
-  };
-
-  const sortEventsByReport = (uid: string) => {     
-    if(uid) {
-      const res = events?.filter(item => item.info.uid !== uid)
-      setEvents(res);
-      setCurrentEventCardPosition(prev => prev + 1);
-    }
-  }
-
-  const sortEventsByReportFirstRender = (data: any) => {    
-    const filterData = data.filter(item => {
-      return item && !item.info.reports?.includes(userInfo.uid);
-    });
-  
-    return filterData;
   };
 
   const requestUserPermission = async () => {
@@ -1443,7 +1346,6 @@ const IO: FC = (): JSX.Element => {
                     // @ts-ignore
                     cardHeight="100%"
                     onSwipedLeft={() => {
-                      onReject(item?.info?.uid, item?.info?.id)
                       setTimeout(() => {
                         setCurrentEventCardPosition(prev => prev + 1);
                       }, 500);
@@ -1476,7 +1378,7 @@ const IO: FC = (): JSX.Element => {
               text="Your event is under review. Thank you for your patience. You will be notified if your account is accepted"
             />
           )}
-          <ModalReport handleAutoSwipeLeft={handleAutoSwipeLeft} sortEventsByReport={sortEventsByReport} modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
+          <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
           <SuperInvite
             isVisibleSuperInvite={isVisibleSuperInvite}
             activeSuperInviteUser={activeSuperInviteUser}

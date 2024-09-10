@@ -22,55 +22,32 @@ interface ModalReportProps {
   setModalReport?: any;
   uidSender?: string;
   uid?: string;
-  sortEventsByReport: (uid: string) => void;
-  handleAutoSwipeLeft: () => void;
 }
 
-const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid, sortEventsByReport, handleAutoSwipeLeft}) => {
-  const styles = useStyles();  
+const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid}) => {
+  const styles = useStyles();
+
   const handleSendReport = async (typeReport: string): Promise<void> => {
-    try {
-      const infoUserUidDoc = await firestore().collection('userInfo').doc(uid).get();
-      const infoUserUidSenderDoc = await firestore().collection('userInfo').doc(uidSender).get();
-      const dataUserUid = infoUserUidDoc.data();
-      const dataUserUidSender = infoUserUidSenderDoc.data();
-  
-      if (!dataUserUid || !dataUserUidSender) {
-        throw new Error('User data is missing');
-      }
-  
-      const userPhoto = dataUserUid.photos && dataUserUid.photos.length > 0 ? dataUserUid.photos[0].image : null;
-      const senderPhoto = dataUserUidSender.photos && dataUserUidSender.photos.length > 0 ? dataUserUidSender.photos[0].image : null;
-  
-      const userReports = dataUserUid.reports || [];
+    const infoUserUidDoc = await firestore().collection('userInfo').doc(uid).get();
+    const infoUserUidSenderDoc = await firestore().collection('userInfo').doc(uidSender).get();
+    const dataUserUid = infoUserUidDoc.data();
+    const dataUserUidSender = infoUserUidSenderDoc.data();
     
+    try {
       await firestore().collection('report').add({
         typeReport: typeReport,
         uid: uid,
         uidSender: uidSender,
-        name: dataUserUid.name,
-        nameSender: dataUserUidSender.name,
-        photo: userPhoto,
-        photoSender: senderPhoto,
-        phone: dataUserUid.phoneNumber,
-        phoneSender: dataUserUidSender.phoneNumber,
+        name: dataUserUid?.name,
+        nameSender: dataUserUidSender?.name,
+        photo: dataUserUid?.photos[0].image,
+        photoSender: dataUserUidSender?.photos[0].image,
+        phone: dataUserUid?.phoneNumber,
+        phoneSender: dataUserUidSender?.phoneNumber,
       });
-      await firestore().collection('userInfo').doc(uid).update({
-        reports: [...userReports, uidSender],
-      });
-
-      showToast('inviteMatch', `${dataUserUid.name} was reported`, 'Thank you!', {ownerPhoto: userPhoto, status: 'SUCCESSFUL'});
+      showToast('inviteMatch', 'Alexa was reported', 'Thank you!', {ownerPhoto: dataUserUid?.photos[0].image, status: 'SUCCESSFUL'});
       setModalReport(false);
-
-      setTimeout(() => {
-        handleAutoSwipeLeft()
-      }, 200);
-
-      setTimeout(() => {
-        sortEventsByReport(uid);
-      }, 1000);
     } catch (e) {
-      console.log('error handleSendReport', e);
       showToast('inviteMatch', '', 'Error!');
     }
   };
