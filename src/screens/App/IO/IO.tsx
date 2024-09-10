@@ -40,7 +40,7 @@ import PeopleIcon from 'assets/images/icons/profile-2user.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
-import PersoneIcon from 'assets/images/icons/Users.svg'
+import PersoneIcon from 'assets/images/icons/Users.svg';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
@@ -51,9 +51,10 @@ import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
 import moment from 'moment';
 import {handleCreateChat} from 'helpers/chat';
-import { checkIsFullGuests } from 'helpers/checkIsFullGuests';
+import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import FullEvent from 'components/FullEvent';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
+import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -94,6 +95,15 @@ const IO: FC = (): JSX.Element => {
 
   const cardRef = useRef(null);
 
+  const {accountConfirmed} = useUserProfileChangeSubscription();
+  useEffect(() => {
+    if (!Object.keys(userInfo).length) {
+      return;
+    }
+
+    setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
+  }, [accountConfirmed]);
+
   const handleAutoSwipeRight = () => {
     if (cardRef.current) {
       cardRef.current.autoSwipeRight();
@@ -126,15 +136,15 @@ const IO: FC = (): JSX.Element => {
     setCounterSuperInvites(currentSuperInvites + currentWeeklySuperInvites);
   };
 
-  const checkIsFullGuestsFun = async () => {    
+  const checkIsFullGuestsFun = async () => {
     const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(activeEvent?.id);
-    if(findAcceptedGuest >= allGuests) {    
+    if (findAcceptedGuest >= allGuests) {
       setTotalQuantityGuests(allGuests);
     }
     setTotalRequestsGuests(totalRequestsGuests);
     setAcceptQuantityGuest(findAcceptedGuest);
-    return findAcceptedGuest >= allGuests
-  }
+    return findAcceptedGuest >= allGuests;
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -387,14 +397,13 @@ const IO: FC = (): JSX.Element => {
   // };
 
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
+    const isFull = await checkIsFullGuestsFun();
 
-    const isFull = await checkIsFullGuestsFun()
-
-    if(isFull) {
-      setIsVisibleModalFullEvent(true)
-      return
+    if (isFull) {
+      setIsVisibleModalFullEvent(true);
+      return;
     }
-    
+
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
@@ -1145,7 +1154,7 @@ const IO: FC = (): JSX.Element => {
     allEventsLength.current = data.length;
     setEvents(data);
     eventsRef.current = data;
-    checkIsFullGuestsFun()
+    checkIsFullGuestsFun();
     // console.warn('data', data);
 
     // setTimeout(() => {
@@ -1299,20 +1308,32 @@ const IO: FC = (): JSX.Element => {
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
-      <ModalFullEvent isVisible={isVisibleModalFullEvent} idEvent={activeEvent.id} setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}/>
-      {totalQuantityGuests > 0 && 
+        <ModalFullEvent
+          isVisible={isVisibleModalFullEvent}
+          idEvent={activeEvent.id}
+          setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
+        />
+        {totalQuantityGuests > 0 && (
           <FullEvent
             text={`Event is full: ${acceptQuantityGuest}/${totalQuantityGuests} Guests Accepted`}
-            activeEvent={activeEvent} 
-            totalQuantityGuests={totalQuantityGuests} 
+            activeEvent={activeEvent}
+            totalQuantityGuests={totalQuantityGuests}
             totalRequestsGuests={totalRequestsGuests}
             acceptQuantityGuest={acceptQuantityGuest}
-            rightComponent={<View style={{flexDirection: 'row', alignItems:'center'}}>
-            <PersoneIcon width={16} height={16}/>
-            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(12, 812), color: whiteColor, marginLeft: 2}}>{`${acceptQuantityGuest}/${totalQuantityGuests}`}</Text>
-          </View>}
+            rightComponent={
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <PersoneIcon width={16} height={16} />
+                <Text
+                  style={{
+                    fontFamily: Satoshi700,
+                    fontSize: RFValue(12, 812),
+                    color: whiteColor,
+                    marginLeft: 2,
+                  }}>{`${acceptQuantityGuest}/${totalQuantityGuests}`}</Text>
+              </View>
+            }
           />
-        }
+        )}
         {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
         <View style={styles.container}>
           {

@@ -26,6 +26,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
 
 type ItemProps = {
   title: string;
@@ -76,6 +77,15 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   const isHost = user?.accountType.toLowerCase() === 'host';
 
+  const {accountConfirmed} = useUserProfileChangeSubscription();
+  useEffect(() => {
+    if (!Object.keys(userInfo).length) {
+      return;
+    }
+
+    setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
+  }, [accountConfirmed]);
+
   const fetchUserInfo = async () => {
     setLoading(true);
     const userData = auth().currentUser;
@@ -125,7 +135,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     invitedStatus,
     uid,
     hostUid,
-    newMessages
+    newMessages,
   }: ItemProps) => {
     const userStatus = eventData?.usersList?.find(i => i?.uid === uid)?.status;
 
@@ -189,9 +199,11 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   {getTextByStatus(inviteStatus)}
                 </Text>
               </View> */}
-              {!!newMessages && <View style={styles.newMessage}>
-                <Text style={styles.textCountNewMessages}>{newMessages}</Text>
-              </View>}
+              {!!newMessages && (
+                <View style={styles.newMessage}>
+                  <Text style={styles.textCountNewMessages}>{newMessages}</Text>
+                </View>
+              )}
             </View>
             {/* <TouchableOpacity>
             <ThreeDoths />
@@ -419,7 +431,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             )}
             renderItem={({item}) => {
               console.log('item', item);
-              
+
               return (
                 <Item
                   inviteStatus={item?.invitedStatus}

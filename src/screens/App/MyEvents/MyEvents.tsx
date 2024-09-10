@@ -29,6 +29,7 @@ import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
 import {sendNotification} from 'helpers/fcmHelper';
+import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
@@ -66,6 +67,15 @@ const MyEvents: FC<any> = ({navigation}) => {
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
   const [userInfo, setUserInfo] = useState<any>({});
+
+  const {accountConfirmed} = useUserProfileChangeSubscription();
+  useEffect(() => {
+    if (!Object.keys(userInfo).length) {
+      return;
+    }
+
+    setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
+  }, [accountConfirmed]);
 
   const calculateHoursUntilEvent = (eventDate, eventTime) => {
     const now = new Date();
@@ -765,7 +775,12 @@ const MyEvents: FC<any> = ({navigation}) => {
         eventInfo={activeModalEvent}
       />
       {!userInfo?.accountConfirmed && !loading && (
-        <ModalLockAccount wrapperStyle={{marginTop: 100}} isVisibleButton={true} isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType}/>
+        <ModalLockAccount
+          wrapperStyle={{marginTop: 100}}
+          isVisibleButton={true}
+          isPremium={userInfo?.accountPremium}
+          accountType={userInfo?.accountType}
+        />
       )}
       {hoursUntilEvent < 25 && hoursUntilEvent > 0 && (
         <ModalEventRemindes
