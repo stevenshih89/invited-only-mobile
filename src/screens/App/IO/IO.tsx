@@ -97,22 +97,8 @@ const IO: FC = (): JSX.Element => {
 
   const cardRef = useRef(null);
 
-  // const {accountConfirmed} = useUserProfileChangeSubscription();
-  // console.log('IO:accountConfirmed', accountConfirmed);
-  // useEffect(() => {
-  //   if (!Object.keys(userInfo).length) {
-  //     return;
-  //   }
-
-  //   console.log('IO:useEffect:accountConfirmed', accountConfirmed);
-
-  //   setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
-  // }, [accountConfirmed]);
-
   useEffect(() => {
-    console.log('IO:register:useEffect');
     const subscription = onUserProfileChangeSubscription(info => {
-      console.log('IO:useEffect', info);
       setUserInfo((prev: UserInfo) => ({...prev, ...info}));
     });
 
@@ -130,14 +116,10 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
-      // console.warn('message', message);
-
       const data = message?.data;
       setMatchData(data);
       setIsVisibleMatch(true);
     });
-
-    // console.warn('unsubscribe', unsubscribe);
 
     return () => unsubscribe();
   }, []);

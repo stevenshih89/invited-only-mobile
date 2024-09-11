@@ -20,7 +20,16 @@ import {
   settingsPath,
 } from 'constants/pathLocations';
 import {ANY_DAY, screenHeight, THIS_WEEKEND, TODAY, ALL, THIS_MONTH} from 'constants/common.ts';
-import {blackColor, grayColor, grayScale700, lightGray2Color, lightGray5Color, orangeColor, transparent60Color, whiteColor} from 'constants/colors.ts';
+import {
+  blackColor,
+  grayColor,
+  grayScale700,
+  lightGray2Color,
+  lightGray5Color,
+  orangeColor,
+  transparent60Color,
+  whiteColor,
+} from 'constants/colors.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
 import {useChat} from '../../store/chatStore';
@@ -49,6 +58,8 @@ import {EventContext} from 'contexts/EventContext';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {useMyEvents} from '../../store/myEvents';
 import {useFocusEffect} from '@react-navigation/native';
+import {onUserProfileChangeSubscription} from 'helpers/userProfile';
+import {UserInfo} from 'src/types/userInfo';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -124,7 +135,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   );
 
   const goToCreateEvent = async (): void => {
-    const userHost =  await fetchUserInfo();
+    const userHost = await fetchUserInfo();
     if (!userHost?.accountConfirmed) {
       return;
     }
@@ -145,7 +156,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         if (userInfoDoc.exists) {
           const userData = userInfoDoc.data();
           setUserInfo(userData);
-          return userData
+          return userData;
         }
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
@@ -164,6 +175,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       setTypeEvents && setTypeEvents(userInfo?.accountType.toLowerCase() === 'host' ? false : true);
     }
   }, [userInfo?.accountType]);
+
+  useEffect(() => {
+    const subscription = onUserProfileChangeSubscription(info => {
+      setUserInfo((prev: UserInfo) => ({...prev, ...info}));
+    });
+
+    return subscription;
+  }, []);
 
   const DATAEventsJoining = [
     {
@@ -278,7 +297,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     </TouchableOpacity>
   );
 
-  const isHost = userInfo?.accountType.toLowerCase() === 'host';
+  // DEVNOTE: keep this just for safety
+  // const isHost = userInfo?.accountType.toLowerCase() === 'host';
+  const isHost = userInfo?.isHost;
 
   const isEventFinished = (eventDate: string) => {
     const parts = eventDate.split('.');
@@ -697,7 +718,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 
   return (
     <View style={[styles.container, headerInsets]}>
-      {!userInfo?.accountConfirmed && headerType !== 'profile' &&  <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: transparent60Color, zIndex: 1000}}></View>}
+      {!userInfo?.accountConfirmed && headerType !== 'profile' && (
+        <View
+          style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: transparent60Color, zIndex: 1000}}></View>
+      )}
       {showHeaderTop && (
         <View style={styles.wrapperHeader}>
           {logoType === 'logo' ? <Logo width={157} height={32} /> : <LogoPrimary width={157} height={32} />}
