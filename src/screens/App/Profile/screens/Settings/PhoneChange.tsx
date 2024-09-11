@@ -91,7 +91,7 @@ const PhoneChange = () => {
       setLoading(false);
       setIsSecondStep(true);
     } catch (error) {
-      console.log('error', error);
+      // console.log('error', error);
       setLoading(false);
     }
   };
@@ -109,10 +109,10 @@ const PhoneChange = () => {
           phoneNumber: phone,
         })
         .then(() => {
-          console.warn('User phone number updated in Firestore');
+          // console.warn('User phone number updated in Firestore');
         })
         .catch(error => {
-          console.error('Error updating user phone number: ', error);
+          // console.error('Error updating user phone number: ', error);
         });
       setLoading(false);
     } catch (error) {

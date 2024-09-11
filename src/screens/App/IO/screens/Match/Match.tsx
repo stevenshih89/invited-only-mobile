@@ -67,21 +67,21 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   };
 
   const handleCreateChat = async () => {
-    console.log('userHost?.uid', userHost?.uid);
+    // console.log('userHost?.uid', userHost?.uid);
 
     const querySnapshot = await firestore().collection('Events').doc(matchData.eventId).get();
     if (!querySnapshot.exists) {
       return;
     }
     const list = querySnapshot.data();
-    console.log('list', list);
+    // console.log('list', list);
 
     try {
       const messageCollection = await firestore().collection('messages').doc(list?.id).get();
-      console.log('messageCollection', messageCollection);
+      // console.log('messageCollection', messageCollection);
 
       const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === matchData.uidGuest)[0];
-      console.log('chatCheck', chatCheck);
+      // console.log('chatCheck', chatCheck);
 
       const activeEvent = messageCollection?.data()?.activeEvent;
 
@@ -185,13 +185,13 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
         }
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       showToast('inviteMatch', '', 'Error!');
     }
   };
 
   const handleApproveGuestFromHost = async () => {
-    console.warn(matchData);
+    // console.warn(matchData);
     const eventQuerySnapshot = await firestore().collection('Events').doc(matchData.eventId).get();
     if (eventQuerySnapshot.exists) {
       const eventData = eventQuerySnapshot?.data();

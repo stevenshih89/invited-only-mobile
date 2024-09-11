@@ -1,7 +1,15 @@
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
 import Gender from 'assets/images/icons/tabler_gender-bigender.svg';
-import {blackColor, grayColor, lightGray15Color, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {
+  blackColor,
+  grayColor,
+  lightGray15Color,
+  toggleColor,
+  transparentGray90Color,
+  transparentWhite16Color,
+  whiteColor,
+} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
 import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -21,7 +29,16 @@ interface ModalGenderProps {
   saveUserInfo: any;
 }
 
-const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setShowGender, activeGenderItem, setActiveGenderItem, saveUserInfo, listOfGenders}) => {
+const ModalGender: FC<ModalGenderProps> = ({
+  isVisible,
+  onClose,
+  showGender,
+  setShowGender,
+  activeGenderItem,
+  setActiveGenderItem,
+  saveUserInfo,
+  listOfGenders,
+}) => {
   const userHost = useUser((i: any) => i?.user);
   const setUserInfo = useUser((i: any) => i?.setUser);
 
@@ -38,7 +55,7 @@ const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setS
         setUserInfo(userInfoDoc.data());
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -55,7 +72,7 @@ const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setS
         setUserInfo(userInfoDoc.data());
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
   return (
@@ -142,10 +159,14 @@ const ModalGender: FC<ModalGenderProps> = ({isVisible, onClose, showGender, setS
             );
           }}
         />
-        <Button onPress={() => {
-          saveUserInfo('Gender')
-          onClose()
-        }} title="Save" buttonStyle={{marginTop: 20}} />
+        <Button
+          onPress={() => {
+            saveUserInfo('Gender');
+            onClose();
+          }}
+          title="Save"
+          buttonStyle={{marginTop: 20}}
+        />
       </View>
     </Modal>
   );

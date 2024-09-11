@@ -63,7 +63,7 @@ const AccountSetting: FC = ({navigation, route}: any) => {
             });
         });
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -73,14 +73,14 @@ const AccountSetting: FC = ({navigation, route}: any) => {
     });
     Geolocation.getCurrentPosition(
       position => {
-        console.log('Granted', position);
+        // console.log('Granted', position);
         setLocation(true);
         handleChangeLocation(true);
         setIsChechked(true);
         setLoading(false);
       },
       error => {
-        console.log('Denied', error);
+        // console.log('Denied', error);
         setLocation(false);
         setIsChechked(false);
         setLoading(false);
@@ -101,10 +101,10 @@ const AccountSetting: FC = ({navigation, route}: any) => {
     const phoneNumber = auth().currentUser?.phoneNumber;
     if (!phoneNumber) return;
     try {
-      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);      
+      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
       setVerificationId(confirmation?.verificationId);
     } catch (error) {
-      console.error('Failed to send verification code:', error);
+      // console.error('Failed to send verification code:', error);
     }
   };
 
@@ -253,8 +253,17 @@ const AccountSetting: FC = ({navigation, route}: any) => {
           </TouchableOpacity>
         </ScrollView>
       </View>
-      <ModalDeleteMyAccount isVisible={isVisibleDeleteAccountModal} onClose={() => setIsVisibleDeleteAccountModal(false)} setIsVisibleConfirmPhoneModal={setIsVisibleConfirmPhoneModal} sendVerificationCode={sendVerificationCode}/>
-      <ModalConfirmPhone isVisible={isVisibleConfirmPhoneModal} onClose={() => setIsVisibleConfirmPhoneModal(false)} verificationId={verificationId}/>
+      <ModalDeleteMyAccount
+        isVisible={isVisibleDeleteAccountModal}
+        onClose={() => setIsVisibleDeleteAccountModal(false)}
+        setIsVisibleConfirmPhoneModal={setIsVisibleConfirmPhoneModal}
+        sendVerificationCode={sendVerificationCode}
+      />
+      <ModalConfirmPhone
+        isVisible={isVisibleConfirmPhoneModal}
+        onClose={() => setIsVisibleConfirmPhoneModal(false)}
+        verificationId={verificationId}
+      />
     </>
   );
 };

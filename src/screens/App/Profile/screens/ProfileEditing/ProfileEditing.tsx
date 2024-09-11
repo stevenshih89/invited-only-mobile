@@ -281,7 +281,7 @@ const ProfileEditing: FC = (): ReactElement => {
       });
     } catch (e: any) {
       Alert.alert('Error', e.message || 'Something went wrong');
-      console.error('Error updating user profile image: ', e);
+      // console.error('Error updating user profile image: ', e);
     }
   };
 
@@ -380,7 +380,7 @@ const ProfileEditing: FC = (): ReactElement => {
 
   useEffect(() => {
     fetchUserInfo();
-    // console.log('fetchUserInfo');
+    // // console.log('fetchUserInfo');
   }, [setShowGender, setActiveGenderItem]);
 
   const fetchImages = async (user: any) => {
@@ -413,7 +413,7 @@ const ProfileEditing: FC = (): ReactElement => {
     });
     await updatePhotosImage(user.uid, allImagesUrl);
 
-    // console.log('allImagesUrl', allImagesUrl);
+    // // console.log('allImagesUrl', allImagesUrl);
   };
 
   const saveUserInfo = async (title?: 'string') => {
@@ -462,7 +462,7 @@ const ProfileEditing: FC = (): ReactElement => {
             await fetchImages(user);
           });
       } catch (error: any) {
-        console.log(error?.message);
+        // console.log(error?.message);
         // Alert.alert('Error', error.message || 'Something went wrong');
         setLoadingSave(false);
       }
@@ -470,7 +470,7 @@ const ProfileEditing: FC = (): ReactElement => {
     }
   };
 
-  // console.log('activeWorkItem', activeWorkItem);
+  // // console.log('activeWorkItem', activeWorkItem);
 
   return (
     <>

@@ -1,7 +1,15 @@
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
 import Сhampagne from 'assets/images/icons/champagne.svg';
-import {blackColor, grayColor, lightGray15Color, toggleColor, transparentGray90Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {
+  blackColor,
+  grayColor,
+  lightGray15Color,
+  toggleColor,
+  transparentGray90Color,
+  transparentWhite16Color,
+  whiteColor,
+} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
 import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -29,7 +37,7 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
   activeAlcoholItem,
   setActiveAlcoholItem,
   listOfAlcohols,
-  saveUserInfo
+  saveUserInfo,
 }) => {
   const userHost = useUser((i: any) => i?.user);
   const setUserInfo = useUser((i: any) => i?.setUser);
@@ -47,7 +55,7 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
         setUserInfo(userInfoDoc.data());
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
   const handleUpdateAlcohol = async (gender: string): Promise<void> => {
@@ -63,7 +71,7 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
         setUserInfo(userInfoDoc.data());
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
   return (
@@ -110,7 +118,11 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
         </Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showAlcohol} onChange={val => handleUpdateShowInMyProfile(val)} />
+          <Switch
+            trackColor={{false: grayColor, true: toggleColor}}
+            checked={showAlcohol}
+            onChange={val => handleUpdateShowInMyProfile(val)}
+          />
         </View>
         <FlatList
           data={listOfAlcohols}
@@ -138,10 +150,14 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
             );
           }}
         />
-        <Button onPress={() => {
-          saveUserInfo('Alcohol')
-          onClose()
-        }} title="Save" buttonStyle={{marginTop: 20}} />
+        <Button
+          onPress={() => {
+            saveUserInfo('Alcohol');
+            onClose();
+          }}
+          title="Save"
+          buttonStyle={{marginTop: 20}}
+        />
       </View>
     </Modal>
   );

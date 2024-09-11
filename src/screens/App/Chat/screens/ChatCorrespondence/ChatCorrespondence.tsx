@@ -162,11 +162,11 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   };
 
   // const sendNotificationInner = async (forUserUid: string, title: string, body: string) => {
-  //   console.warn(forUserUid);
+  //   // console.warn(forUserUid);
 
   //   const token = await getFcmTokenFromUser(forUserUid);
 
-  //   console.warn(token);
+  //   // console.warn(token);
 
   //   const response = await fetch('https://fcm.googleapis.com/fcm/send', {
   //     method: 'POST',
@@ -185,7 +185,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
   //   if (!response.ok) {
   //     const error = await response.json();
-  //     console.error('error sending notification:', error);
+  //     // console.error('error sending notification:', error);
   //   } else {
   //     const data = await response.json();
   //     const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
@@ -206,7 +206,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   //           notifications: [...userNotifications, notification],
   //         });
   //     } catch (error) {
-  //       console.log('error update notifications', error);
+  //       // console.log('error update notifications', error);
   //     }
   //   }
   // };
@@ -219,7 +219,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   }, [allChats]);
 
   const handleBack = async () => {
-    console.log('handleBack');
+    // console.log('handleBack');
 
     const doc = firestore().collection('messages').doc(`${activeEvent}`);
 
@@ -267,7 +267,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
     setMessageUser('');
   };
@@ -290,7 +290,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    console.warn('messages', messages);
+    // console.warn('messages', messages);
   }, [messages]);
 
   const goToProfileView = (currentUid: string) => {

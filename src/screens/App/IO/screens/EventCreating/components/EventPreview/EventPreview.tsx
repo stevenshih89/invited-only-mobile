@@ -196,9 +196,9 @@ const EventPreview: FC<EventPreviewProps> = (
       await firestore().collection('Events').doc(userId).update({
         photos: imageUrl,
       });
-      console.log('Events image updated successfully.');
+      // console.log('Events image updated successfully.');
     } catch (e) {
-      console.error('Error updating events image: ', e);
+      // console.error('Error updating events image: ', e);
     }
   };
 
@@ -231,7 +231,7 @@ const EventPreview: FC<EventPreviewProps> = (
         meetingSpot,
       });
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -247,8 +247,8 @@ const EventPreview: FC<EventPreviewProps> = (
 
       let imagesUri: any[] = [];
 
-      console.log('imagesUri', imagesUri);
-      console.log('images', photos);
+      // console.log('imagesUri', imagesUri);
+      // console.log('images', photos);
       // @ts-ignore
       await firestore()
         .collection('Events')
@@ -301,7 +301,7 @@ const EventPreview: FC<EventPreviewProps> = (
         });
     } catch (e) {
       setLoading(false);
-      console.log(e);
+      // console.log(e);
       showToast('inviteMatch', '', `${e}`);
     }
   };

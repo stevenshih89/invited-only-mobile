@@ -75,7 +75,7 @@ const Profile: FC = () => {
                 setMainImage(userImage);
               }
               Image.prefetch(userImage.image).catch(error => {
-                console.error('image prefetching error: ', error);
+                // console.error('image prefetching error: ', error);
               });
             } else {
               Alert.alert('Error', 'No user data found in Firestore');

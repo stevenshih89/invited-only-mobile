@@ -107,7 +107,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
       setPhotoUser(photo);
       setIsPremium(userInfoDoc?.data()?.accountPremium);
     } catch (error) {
-      console.log('error get user info', error);
+      // console.log('error get user info', error);
     }
   };
 
@@ -231,7 +231,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             dateNewViewed: [...dateNewViewed, userUid],
           });
       } catch (error) {
-        console.log('error update dateNewViewed', error);
+        // console.log('error update dateNewViewed', error);
       }
     }
     if (updateEvent === 'hour') {
@@ -243,7 +243,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             hourNewViewed: [...hourNewViewed, userUid],
           });
       } catch (error) {
-        console.log('error update hourNewViewed', error);
+        // console.log('error update hourNewViewed', error);
       }
     }
     if (updateEvent === 'name') {
@@ -255,7 +255,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             nameNewViewed: [...nameNewViewed, userUid],
           });
       } catch (error) {
-        console.log('error update nameNewViewed', error);
+        // console.log('error update nameNewViewed', error);
       }
     }
   };

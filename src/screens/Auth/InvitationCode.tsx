@@ -40,7 +40,7 @@ const InvitationCode: FC = (): JSX.Element => {
       const url = await storageRef.getDownloadURL();
       return url;
     } catch (e) {
-      console.error(e);
+      // console.error(e);
       return null;
     }
   };
@@ -50,9 +50,9 @@ const InvitationCode: FC = (): JSX.Element => {
       await firestore().collection('userInfo').doc(userId).update({
         facePhoto: imageUrl,
       });
-      console.log('User profile image updated successfully.');
+      // console.log('User profile image updated successfully.');
     } catch (e) {
-      console.error('Error updating user profile image: ', e);
+      // console.error('Error updating user profile image: ', e);
     }
   };
 
@@ -61,9 +61,9 @@ const InvitationCode: FC = (): JSX.Element => {
       await firestore().collection('userInfo').doc(userId).update({
         photos: imageUrl,
       });
-      console.log('User profile image updated successfully.');
+      // console.log('User profile image updated successfully.');
     } catch (e) {
-      console.error('Error updating user profile image: ', e);
+      // console.error('Error updating user profile image: ', e);
     }
   };
 
@@ -137,7 +137,7 @@ const InvitationCode: FC = (): JSX.Element => {
           lastUpdateSuperInvite: Date.now(),
         })
         .then(async () => {
-          console.log('User added!');
+          // console.log('User added!');
 
           photos?.map(async (i: any, index: number) => {
             await uploadImage(i, userId).then(async image => {
@@ -151,7 +151,7 @@ const InvitationCode: FC = (): JSX.Element => {
         });
       setLoading(false);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       showToast('inviteMatch', '', `${e}`);
       setLoading(false);
     }

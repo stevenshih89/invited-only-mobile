@@ -97,7 +97,7 @@ const EventPreview: FC<{
             setImagesUser(userImage);
           }
         } catch (error) {
-          console.log('errorGetUserPhotos', error);
+          // console.log('errorGetUserPhotos', error);
         }
       };
       getUserPhotos();

@@ -1,4 +1,4 @@
-import {EffectCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
@@ -16,17 +16,12 @@ const defaultAccountInfo: AccountInfoFlyWeight = {
   isHost: false,
 };
 
-export const onUserProfileChangeSubscription = (callback: (info: AccountInfoFlyWeight) => void): EffectCallback => {
+export const onUserProfileChangeSubscription = (callback: (info: AccountInfoFlyWeight) => void) => {
   const user = auth().currentUser;
-  const unsubscribe: EffectCallback = function () {};
-
-  if (user === null) {
-    return unsubscribe;
-  }
 
   return firestore()
     .collection('userInfo')
-    .doc(user.uid)
+    .doc(user?.uid ?? undefined)
     .onSnapshot(snap => {
       if (!snap.exists) {
         return;
@@ -49,7 +44,9 @@ export const useUserProfileChangeSubscription = (): AccountInfoFlyWeight => {
   const [state, setState] = useState<AccountInfoFlyWeight>(defaultAccountInfo);
 
   useEffect(() => {
-    onUserProfileChangeSubscription(setState);
+    const unsubscribe = onUserProfileChangeSubscription(setState);
+
+    return () => unsubscribe();
   }, []);
 
   return state;

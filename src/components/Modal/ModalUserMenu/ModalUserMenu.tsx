@@ -200,7 +200,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   activeEvent,
   hostUid,
   checkIsFullGuestsFun,
-  setIsVisibleModalFullEvent
+  setIsVisibleModalFullEvent,
 }) => {
   const [removingState, setRemovingState] = useState<boolean>(false);
   const [blockAndReportState, setBlockAndReportState] = useState<boolean>(false);
@@ -239,7 +239,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         setEventData(data);
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -275,7 +275,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       });
       await sendNotification(uid, 'Request approved', 'Please confirm your attendence', 'Approve', 'Approved'.toUpperCase(), user);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
   const handleAcceptGuestFromGuest = async () => {
@@ -308,7 +308,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         user,
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
   const getUserStatusButtonText = () => {
@@ -337,15 +337,15 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     return true;
   };
 
-  const handleActionPress = async () => {    
-    const isFull = await checkIsFullGuestsFun()      
-    if(isFull) {   
-      setModalVisible(false)
+  const handleActionPress = async () => {
+    const isFull = await checkIsFullGuestsFun();
+    if (isFull) {
+      setModalVisible(false);
       // setTimeout(() => {
       //   setIsVisibleModalFullEvent(true)
       // }, 300);
     }
-    return
+    return;
     if (uid === hostUid && userGuest?.status === 'approved') {
       handleAcceptGuestFromGuest();
       setModalVisible && setModalVisible(false);

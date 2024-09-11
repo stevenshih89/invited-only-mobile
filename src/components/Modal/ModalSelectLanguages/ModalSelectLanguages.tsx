@@ -14,21 +14,21 @@ import {Switch} from '@ant-design/react-native';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from '../../../store/userStore';
 
-import CloseCircle from 'src/assets/images/icons/close-circle.svg'
-import Search from 'src/assets/images/icons/search.svg'
-import US from 'src/assets/images/flags/us.svg'
-import AE from 'src/assets/images/flags/ae.svg'
-import ES from 'src/assets/images/flags/es.svg'
-import UA from 'src/assets/images/flags/ua.svg'
-import FR from 'src/assets/images/flags/fr.svg'
-import PL from 'src/assets/images/flags/pl.svg'
-import IL from 'src/assets/images/flags/il.svg'
-import PT from 'src/assets/images/flags/pt.svg'
-import DE from 'src/assets/images/flags/de.svg'
-import IT from 'src/assets/images/flags/it.svg'
-import KR from 'src/assets/images/flags/kr.svg'
+import CloseCircle from 'src/assets/images/icons/close-circle.svg';
+import Search from 'src/assets/images/icons/search.svg';
+import US from 'src/assets/images/flags/us.svg';
+import AE from 'src/assets/images/flags/ae.svg';
+import ES from 'src/assets/images/flags/es.svg';
+import UA from 'src/assets/images/flags/ua.svg';
+import FR from 'src/assets/images/flags/fr.svg';
+import PL from 'src/assets/images/flags/pl.svg';
+import IL from 'src/assets/images/flags/il.svg';
+import PT from 'src/assets/images/flags/pt.svg';
+import DE from 'src/assets/images/flags/de.svg';
+import IT from 'src/assets/images/flags/it.svg';
+import KR from 'src/assets/images/flags/kr.svg';
 import Button from 'components/Button/Button.tsx';
-import { showToast } from 'helpers/showToast.ts';
+import {showToast} from 'helpers/showToast.ts';
 
 interface ModalSelectLanguagesProps {
   modalLanguages: boolean;
@@ -42,89 +42,88 @@ const DATA = [
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
     title: 'English',
     flag: 'us',
-    flagShow: US
+    flagShow: US,
   },
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
     title: 'Arabic',
     flag: 'ae',
-    flagShow: AE
+    flagShow: AE,
   },
   {
     id: '58694a0f-3da1-471f-bd96-145571e29d72',
     title: 'Spanish',
     flag: 'es',
-    flagShow: ES
+    flagShow: ES,
   },
   {
     id: '3ac68af3c-c605-48d3-a4f8-fbd91aa97f63',
     title: 'Ukranian',
     flag: 'ua',
-    flagShow: UA
+    flagShow: UA,
   },
   {
     id: '58694a40f-3da1-471f-bd96-145571e29d72',
     title: 'French',
     flag: 'fr',
-    flagShow: FR
+    flagShow: FR,
   },
   {
     id: '12145a90f-1dа1-431f-b436-096771e29d72',
     title: 'Polish',
     flag: 'pl',
-    flagShow: PL
+    flagShow: PL,
   },
   {
     id: 'bd7acb5ea-c1b1-46c2-aed5-3ad53abb28ba',
     title: 'Hebrew',
     flag: 'il',
-    flagShow: IL
+    flagShow: IL,
   },
   {
     id: '3ac68a6fc-c605-48d3-a4f8-fbd91aa97f63',
     title: 'Portugese',
     flag: 'pt',
-    flagShow: PT
+    flagShow: PT,
   },
   {
     id: '58694a70f-3da1-471f-bd96-145571e29d72',
     title: 'German',
     flag: 'de',
-    flagShow: DE
+    flagShow: DE,
   },
   {
     id: '3ac688afc-c605-48d3-a4f8-fbd91aa97f63',
     title: 'Italian',
     flag: 'it',
-    flagShow: IT
+    flagShow: IT,
   },
   {
     id: '58694fa0f-3da1-471f-bd96-145571e29d72',
     title: 'Korean',
     flag: 'kr',
-    flagShow: KR
+    flagShow: KR,
   },
 ];
 
 const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, showLanguages, modalLanguages, setModalLanguages}) => {
   const styles = useStyles();
   const userHost = useUser((i: any) => i?.user);
-  
+
   const setUserData = useUser((i: any) => i?.setUser);
   const languagesTitle = userHost?.languages?.title;
   const uid = userHost?.uid;
   const [selectLanguage, setSelectLanguage] = useState<any>([]);
-  console.log('selectLanguage', selectLanguage);
-  
+  // console.log('selectLanguage', selectLanguage);
 
   useEffect(() => {
-    if(userHost.languages) {
-      setSelectLanguage(userHost.languages)
+    if (userHost.languages) {
+      setSelectLanguage(userHost.languages);
     }
-    if(userHost.showLanguages) {
-      setShowLanguages(userHost.showLanguages)
+    if (userHost.showLanguages) {
+      setShowLanguages(userHost.showLanguages);
     }
-  },[])
+  }, []);
 
   // const handleSetShowInMyProfile = async (state: boolean): Promise<void> => {
   //   try {
@@ -133,7 +132,7 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
   //       showLanguages: state,
   //     });
   //   } catch (e) {
-  //     console.log(e);
+  //     // console.log(e);
   //   }
   // };
 
@@ -141,7 +140,7 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
     try {
       await firestore().collection('userInfo').doc(uid).update({
         languages: selectLanguage,
-        showLanguages: showLanguages
+        showLanguages: showLanguages,
       });
       await firestore()
         .collection('userInfo')
@@ -149,9 +148,15 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
         .get()
         .then(res => {
           setUserData(res.data());
-        }).then(() => showToast('inviteMatch', 'Your profile is updated', 'Languages successfully changed!', {ownerPhoto: userHost.image, status: 'UPDATED'}));
+        })
+        .then(() =>
+          showToast('inviteMatch', 'Your profile is updated', 'Languages successfully changed!', {
+            ownerPhoto: userHost.image,
+            status: 'UPDATED',
+          }),
+        );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -188,24 +193,25 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
         </View>
         <View style={{width: '100%', marginBottom: 34, alignItems: 'center'}}>
           <View style={{position: 'absolute', zIndex: 20, left: 20, top: 22}}>
-            <Search width={16} height={16}/>
+            <Search width={16} height={16} />
           </View>
           <TouchableOpacity style={{position: 'absolute', zIndex: 20, right: 20, top: 22}}>
-            <CloseCircle width={16} height={16}/>
+            <CloseCircle width={16} height={16} />
           </TouchableOpacity>
           <TextInput
-          style={{
-            paddingVertical: 16, 
-            paddingLeft: 44,
-            paddingRight: 44,
-            backgroundColor: lightGray2Color, 
-            borderRadius: 10, 
-            width: '100%', 
-            fontSize: RFValue(18, 812), 
-            fontFamily: Satoshi400, 
-            color: whiteColor}}
-          placeholder='English'
-          placeholderTextColor={whiteColor}
+            style={{
+              paddingVertical: 16,
+              paddingLeft: 44,
+              paddingRight: 44,
+              backgroundColor: lightGray2Color,
+              borderRadius: 10,
+              width: '100%',
+              fontSize: RFValue(18, 812),
+              fontFamily: Satoshi400,
+              color: whiteColor,
+            }}
+            placeholder="English"
+            placeholderTextColor={whiteColor}
           />
         </View>
         <View style={{height: '70%', width: '100%'}}>
@@ -215,8 +221,8 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
             showsVerticalScrollIndicator={false}
             renderItem={({item}) => {
               const isActive = selectLanguage?.some((selected: any) => selected.title === item.title);
-              console.log('item', item);
-              
+              // console.log('item', item);
+
               return (
                 <TouchableOpacity
                   activeOpacity={0.8}
@@ -235,7 +241,9 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
                   }}>
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <item.flagShow />
-                    <Text style={{color: whiteColor, fontSize: RFValue(18, 812), marginLeft: 10, fontFamily: Satoshi400}}>{item.title}</Text>
+                    <Text style={{color: whiteColor, fontSize: RFValue(18, 812), marginLeft: 10, fontFamily: Satoshi400}}>
+                      {item.title}
+                    </Text>
                   </View>
                   {isActive ? (
                     <View
@@ -265,10 +273,14 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
               );
             }}
           />
-          <Button onPress={() => {
-            handleSetLanguages();
-            setModalLanguages(false);
-          }} title="Save" buttonStyle={{marginTop: 20, marginBottom: 20}} />
+          <Button
+            onPress={() => {
+              handleSetLanguages();
+              setModalLanguages(false);
+            }}
+            title="Save"
+            buttonStyle={{marginTop: 20, marginBottom: 20}}
+          />
         </View>
       </View>
     </Modal>

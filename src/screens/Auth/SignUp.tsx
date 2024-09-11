@@ -38,7 +38,7 @@ const SignUp: FC = (): JSX.Element => {
     } catch (e: any) {
       setLoading(false);
       showToast('inviteMatch', `${e?.message.split(']')[1]}`);
-      console.warn(e);
+      // console.warn(e);
     }
   }
 

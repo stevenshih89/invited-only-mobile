@@ -139,7 +139,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   }: ItemProps) => {
     const userStatus = eventData?.usersList?.find(i => i?.uid === uid)?.status;
 
-    console.warn('userStatus', userStatus);
+    // console.warn('userStatus', userStatus);
 
     return (
       <View style={styles.item}>
@@ -430,7 +430,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               </View>
             )}
             renderItem={({item}) => {
-              console.log('item', item);
+              // console.log('item', item);
 
               return (
                 <Item

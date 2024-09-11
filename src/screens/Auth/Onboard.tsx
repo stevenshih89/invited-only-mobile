@@ -17,11 +17,11 @@ const Onboard: FC = (): JSX.Element => {
     try {
       const value = await AsyncStorage.getItem('uid');
       if (value !== null) {
-        console.warn('value', value);
+        // console.warn('value', value);
         return value;
       }
     } catch (e) {
-      console.warn('error', e);
+      // console.warn('error', e);
     }
   };
 

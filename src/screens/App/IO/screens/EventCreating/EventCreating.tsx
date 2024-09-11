@@ -91,7 +91,7 @@ const EventCreating: FC = () => {
     },
   ]);
 
-  console.log('photos', photos);
+  // console.log('photos', photos);
 
   const navigation = useAppNavigation();
 
@@ -104,7 +104,7 @@ const EventCreating: FC = () => {
   const isEditing = (route?.params as {isEditing?: boolean})?.isEditing;
   const isEditingItem = (route?.params as {isEditingItems?: any})?.isEditingItems;
 
-  console.log('isEditingItem', isEditingItem);
+  // console.log('isEditingItem', isEditingItem);
 
   useEffect(() => {
     if (isEditing) {
@@ -149,13 +149,13 @@ const EventCreating: FC = () => {
 
     const promises = usersList.map(async item => {
       const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
-      console.log('userInfo', userInfo);
+      // console.log('userInfo', userInfo);
       return {uid: userInfo?.data()?.uid, token: userInfo?.data()?.fcmToken};
     });
 
     users = await Promise.all(promises);
 
-    console.log('users', users);
+    // console.log('users', users);
 
     return users;
   };
@@ -181,7 +181,7 @@ const EventCreating: FC = () => {
 
       if (!response.ok) {
         const error = await response.json();
-        console.error('error sending notification:', error);
+        // console.error('error sending notification:', error);
       } else {
         const data = await response.json();
         const userDoc = await firestore().collection('userInfo').doc(user.uid).get();
@@ -203,7 +203,7 @@ const EventCreating: FC = () => {
               notifications: [...userNotifications, notification],
             });
         } catch (error) {
-          console.log('error update notifications', error);
+          // console.log('error update notifications', error);
         }
       }
     }
@@ -231,7 +231,7 @@ const EventCreating: FC = () => {
       showToast('inviteMatch', 'Continue swiping👋', 'Event updated');
       sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details', 'update');
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -266,9 +266,9 @@ const EventCreating: FC = () => {
       await firestore().collection('Events').doc(userId).update({
         photos: imageUrl,
       });
-      console.log('Events image updated successfully.');
+      // console.log('Events image updated successfully.');
     } catch (e) {
-      console.error('Error updating events image: ', e);
+      // console.error('Error updating events image: ', e);
     }
   };
 
@@ -284,8 +284,8 @@ const EventCreating: FC = () => {
 
       // let imagesUri: any[] = [];
 
-      // console.log('imagesUri', imagesUri);
-      // console.log('images', photos);
+      // // console.log('imagesUri', imagesUri);
+      // // console.log('images', photos);
       // @ts-ignore
       await firestore()
         .collection('Events')
@@ -339,7 +339,7 @@ const EventCreating: FC = () => {
         });
     } catch (e) {
       setLoading(false);
-      console.log(e);
+      // console.log(e);
       showToast('inviteMatch', '', `${e}`);
     }
   };
