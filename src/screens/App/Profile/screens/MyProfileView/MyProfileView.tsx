@@ -74,9 +74,9 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
         setLoading(true);
         const user = userHost?.uid;
         const uid = route?.params?.uid;
-        console.log('route', route);
-        console.log('uid', uid);
-        console.log('userHost uid', user);
+        // console.log('route', route);
+        // console.log('uid', uid);
+        // console.log('userHost uid', user);
         if (user) {
           try {
             const userUid = uid !== undefined ? uid : user;
@@ -115,42 +115,42 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
   const getFlag = (flag: string) => {
     switch (flag) {
       case 'us':
-        return <FlagUS />
+        return <FlagUS />;
         break;
       case 'ua':
-        return <FlagUA />
-        break
+        return <FlagUA />;
+        break;
       case 'ae':
-        return <FlagAE />
+        return <FlagAE />;
         break;
       case 'de':
-        return <FlagDE />
-        break
+        return <FlagDE />;
+        break;
       case 'fr':
-        return <FlagFR />
+        return <FlagFR />;
         break;
       case 'es':
-        return <FlagES />
-        break
+        return <FlagES />;
+        break;
       case 'il':
-        return <FlagIL />
+        return <FlagIL />;
         break;
       case 'it':
-        return <FlagIT />
-        break
+        return <FlagIT />;
+        break;
       case 'kr':
-        return <FlagKR />
-        break
+        return <FlagKR />;
+        break;
       case 'pl':
-        return <FlagPL />
-        break
+        return <FlagPL />;
+        break;
       case 'pt':
-        return <FlagPT />
-        break
+        return <FlagPT />;
+        break;
       default:
-        return
+        return;
     }
-  }
+  };
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: blackColor}}>
@@ -342,16 +342,32 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 <View style={{marginTop: screenHeight / 55}}>
                   <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>Languages</Text>
                   <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-                  {userInfo?.languages?.length > 0 ? (
-                    userInfo?.languages?.map(item => (
-                      <View style={{borderColor: lightGrayColor, borderWidth: 1, padding: 8, borderRadius: 30, flexDirection: 'row', alignItems: 'center', marginTop: 14, marginRight: 4}}>
-                        {getFlag(item.flag)}
-                        <Text style={{fontSize: RFValue(16, 812), color: whiteColor, fontFamily: Satoshi400, marginLeft: 10}}>{` ${item.title}`}</Text>
-                      </View>
-                    ))
-                  ) : (
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}> No languages ​​selected</Text>
-                  )}
+                    {userInfo?.languages?.length > 0 ? (
+                      userInfo?.languages?.map(item => (
+                        <View
+                          style={{
+                            borderColor: lightGrayColor,
+                            borderWidth: 1,
+                            padding: 8,
+                            borderRadius: 30,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            marginTop: 14,
+                            marginRight: 4,
+                          }}>
+                          {getFlag(item.flag)}
+                          <Text
+                            style={{
+                              fontSize: RFValue(16, 812),
+                              color: whiteColor,
+                              fontFamily: Satoshi400,
+                              marginLeft: 10,
+                            }}>{` ${item.title}`}</Text>
+                        </View>
+                      ))
+                    ) : (
+                      <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}> No languages ​​selected</Text>
+                    )}
                   </View>
                 </View>
               )}

@@ -329,9 +329,9 @@ const EventDetails: FC<EventDetailsProps> = ({
       await firestore().collection('Events').doc(userId).update({
         photos: imageUrl,
       });
-      console.log('Events image updated successfully.');
+      // console.log('Events image updated successfully.');
     } catch (e) {
-      console.error('Error updating events image: ', e);
+      // console.error('Error updating events image: ', e);
     }
   };
 
@@ -352,8 +352,8 @@ const EventDetails: FC<EventDetailsProps> = ({
   };
   const handleSaveChanges = async () => {
     try {
-      console.log('photos', photos);
-      console.log('compareArrays', compareArrays(photos, photos));
+      // console.log('photos', photos);
+      // console.log('compareArrays', compareArrays(photos, photos));
 
       await firestore().collection('Events').doc(id).update({
         eventTypes,
@@ -366,14 +366,13 @@ const EventDetails: FC<EventDetailsProps> = ({
         meetingSpot,
       });
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
   const handleScroll = () => {
-      Keyboard.dismiss();
+    Keyboard.dismiss();
   };
-
 
   return (
     <View style={styles.root}>
@@ -385,8 +384,7 @@ const EventDetails: FC<EventDetailsProps> = ({
         enableResetScrollToCoords={false}
         // onMomentumScrollBegin={handleScroll}
         enableAutomaticScroll={true}
-        keyboardDismissMode='on-drag'
-        >
+        keyboardDismissMode="on-drag">
         <View style={styles.eventTypeWr}>
           <Text style={styles.eventTypeTitle}>Event type</Text>
           <FlatList
@@ -572,15 +570,16 @@ const EventDetails: FC<EventDetailsProps> = ({
           <Input
             required
             isError={eventNameEmpty}
-            errorText={eventNameEmpty? 'Incorrect event name': ''}
-            containerInnerStyle={{borderColor: eventNameEmpty? errorColor: '', borderWidth: eventNameEmpty? 1: 0}}
-            placeholderTextColor={eventNameEmpty? errorColor: transparentWhite30Color}
-            value={name} 
-            onChange={val => setName(val)} 
-            placeholder="Enter event name (Or just the place name)" 
-            label="Event name" labelStyle={styles.inputLabel}
+            errorText={eventNameEmpty ? 'Incorrect event name' : ''}
+            containerInnerStyle={{borderColor: eventNameEmpty ? errorColor : '', borderWidth: eventNameEmpty ? 1 : 0}}
+            placeholderTextColor={eventNameEmpty ? errorColor : transparentWhite30Color}
+            value={name}
+            onChange={val => setName(val)}
+            placeholder="Enter event name (Or just the place name)"
+            label="Event name"
+            labelStyle={styles.inputLabel}
             onBlur={handleScroll}
-            />
+          />
           <Input
             value={description}
             onChange={val => setDescription(val)}

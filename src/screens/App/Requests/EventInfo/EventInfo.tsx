@@ -32,9 +32,9 @@ const EventInfo = ({navigation, route}: any) => {
   const {list, isAcceptedInvitation} = route?.params;
   const {photos, placeName, meetingSpot, description, hour, date, address, userPhotos, female, femaleFriend, male, uid, name} = list;
 
-  console.log('uid', uid);
+  // console.log('uid', uid);
 
-  console.warn('list event info active', list);
+  // console.warn('list event info active', list);
   const iconsArrayMale = Array.from({length: male}, (_, index) => index);
   const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
   const currUserPhotos = userPhotos?.map((photo: any) => photo?.image);
@@ -46,7 +46,7 @@ const EventInfo = ({navigation, route}: any) => {
       setLoading(false);
     } catch (e) {
       setLoading(false);
-      console.log(e);
+      // console.log(e);
     }
   };
 

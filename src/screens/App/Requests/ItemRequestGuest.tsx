@@ -41,10 +41,10 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
       const host = await firestore().collection('userInfo').doc(uid).get();
       setHostInfo(host.data());
       setLoading(false);
-      console.log('host data', host.data());
+      // console.log('host data', host.data());
     } catch (e) {
       setLoading(false);
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -138,7 +138,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
             setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
           });
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         showToast('inviteMatch', '', "There's been an error");
       }
     });
@@ -156,7 +156,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
       await sendNotification(uid, 'Not now.', `${item?.name} reject your invitation.`, 'rejected', 'Rejected'.toUpperCase(), user);
       setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       showToast('inviteMatch', '', "There's been an error");
     }
   };
@@ -204,7 +204,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
 
   //   if (!response.ok) {
   //     const error = await response.json();
-  //     console.error('error sending notification:', error);
+  //     // console.error('error sending notification:', error);
   //   } else {
   //     const data = await response.json();
   //     const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
@@ -225,7 +225,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
   //           notifications: [...userNotifications, notification],
   //         });
   //     } catch (error) {
-  //       console.log('error update notifications', error);
+  //       // console.log('error update notifications', error);
   //     }
   //   }
   // };

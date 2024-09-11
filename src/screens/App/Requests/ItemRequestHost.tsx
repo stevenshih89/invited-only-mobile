@@ -22,8 +22,15 @@ import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
 
-const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch, checkIsFullGuestsFun, setIsVisibleModalFullEvent, fetchHostRequests}: any) => {
-
+const ItemRequestHost = ({
+  item,
+  list,
+  setRequestsForHost,
+  handleOpenMatch,
+  checkIsFullGuestsFun,
+  setIsVisibleModalFullEvent,
+  fetchHostRequests,
+}: any) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState({accountType: ''});
@@ -31,7 +38,7 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch, check
   const user = useUser((state: any) => state.user);
   const [currentUserName, setCurrentUserName] = useState();
 
-  // console.warn('item', item);
+  // // console.warn('item', item);
 
   const OverlayRight = () => {
     return (
@@ -70,11 +77,11 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch, check
   };
 
   const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
-    const isFull = await checkIsFullGuestsFun()
+    const isFull = await checkIsFullGuestsFun();
     if (isFull) {
-      setIsVisibleModalFullEvent()
-      fetchHostRequests()
-      return
+      setIsVisibleModalFullEvent();
+      fetchHostRequests();
+      return;
     }
     const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
     const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
@@ -127,9 +134,9 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch, check
             requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),
           }));
         });
-        checkIsFullGuestsFun()
+      checkIsFullGuestsFun();
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       showToast('inviteMatch', '', "There's been an error");
     }
   };
@@ -152,7 +159,7 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch, check
         requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),
       }));
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -225,7 +232,7 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch, check
 
   //   if (!response.ok) {
   //     const error = await response.json();
-  //     console.error('error sending notification:', error);
+  //     // console.error('error sending notification:', error);
   //   } else {
   //     const data = await response.json();
   //     const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
@@ -247,7 +254,7 @@ const ItemRequestHost = ({item, list, setRequestsForHost, handleOpenMatch, check
   //           notifications: [...userNotifications, notification],
   //         });
   //     } catch (error) {
-  //       console.log('error update notifications', error);
+  //       // console.log('error update notifications', error);
   //     }
   //   }
   // };

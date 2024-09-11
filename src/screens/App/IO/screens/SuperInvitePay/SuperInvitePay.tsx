@@ -54,7 +54,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
           });
         handleNext();
       } catch (error: any) {
-        console.log('error updateSuperInvites', error);
+        // console.log('error updateSuperInvites', error);
       }
     }
   };
@@ -97,9 +97,9 @@ const SuperInvitePay: FC = (): JSX.Element => {
     try {
       const {customerInfo} = await Purchases.purchasePackage(pack);
       updateSuperInvites(superInvites);
-      console.log('pay successful');
+      // console.log('pay successful');
     } catch (e) {
-      console.log('pay error', e);
+      // console.log('pay error', e);
     }
   };
 
@@ -108,7 +108,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
       const offerings = await Purchases.getOfferings();
       if (offerings.current !== null) {
         const offeringsHostSubscription = offerings.all['Super Invite'];
-        console.log('offerings', offeringsHostSubscription.availablePackages);
+        // console.log('offerings', offeringsHostSubscription.availablePackages);
 
         if (activePayment.id === 0) {
           const product = offeringsHostSubscription.availablePackages[0];
@@ -126,7 +126,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
         }
       }
     } catch (e) {
-      console.log('offering ger error', e);
+      // console.log('offering ger error', e);
     }
   };
 

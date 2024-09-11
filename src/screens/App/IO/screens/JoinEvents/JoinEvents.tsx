@@ -58,7 +58,7 @@ const JoinEvents = ({navigation}: any) => {
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
       const data = message?.data;
-      setMatchData({...data, superInvite: data?.superInvite? JSON.parse(data?.superInvite as any): false});
+      setMatchData({...data, superInvite: data?.superInvite ? JSON.parse(data?.superInvite as any) : false});
       setIsVisibleMatch(true);
     });
 
@@ -81,7 +81,7 @@ const JoinEvents = ({navigation}: any) => {
         }))
         .filter(event => !event.requestsList || !event.requestsList.some((request: any) => request.uid === user.uid));
 
-      console.log();
+      // console.log();
 
       async function enrichElementsWithPhotos(elements) {
         const promises = elements.map(async element => {
@@ -268,7 +268,7 @@ const JoinEvents = ({navigation}: any) => {
         });
       showToast('inviteMatch', '', 'The invitation has been successfully withdrawn!');
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -277,7 +277,7 @@ const JoinEvents = ({navigation}: any) => {
       const filterEvents = events?.filter(i => i?.info?.id !== list?.id);
       setEvents(filterEvents);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 

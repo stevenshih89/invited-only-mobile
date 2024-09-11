@@ -12,26 +12,26 @@ import {AuthContext} from 'contexts/AuthContext.tsx';
 import {useUser} from '../../../../../store/userStore';
 import {calculateAge} from 'helpers/calculateAge.ts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { showToast } from 'helpers/showToast';
+import {showToast} from 'helpers/showToast';
 
 const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
   const {setUser} = useContext(AuthContext);
   const userHost = useUser((i: any) => i?.user);
   const setHookUser = useUser((i: any) => i?.setUser);
-  console.log('userHost', userHost);
+  // console.log('userHost', userHost);
 
   const userAge = calculateAge(userHost?.date);
 
   const handleLogout = async () => {
     try {
       await auth().signOut();
-      showToast('inviteMatch', '', 'You logged out from your account', {ownerPhoto: userHost?.photos[0].image, status:'SUCCESSFULY'})
+      showToast('inviteMatch', '', 'You logged out from your account', {ownerPhoto: userHost?.photos[0].image, status: 'SUCCESSFULY'});
       setUser([]);
       setHookUser(null);
       await AsyncStorage.removeItem('uid');
       onClose();
     } catch (error) {
-      console.log('error log out', error);
+      // console.log('error log out', error);
     }
   };
   return (

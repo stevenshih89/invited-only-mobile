@@ -9,18 +9,17 @@ import {showToast} from 'helpers/showToast.ts';
 import useStyles from './styles';
 import Button from 'components/Button/Button';
 import Copy from 'assets/images/icons/copy.svg';
-import { grayColor, whiteColor } from 'constants/colors';
+import {grayColor, whiteColor} from 'constants/colors';
 
 const Invitations: FC = () => {
   const [numberCodes, setNumberCodes] = useState<number>();
   const styles = useStyles();
 
   const userHost = useUser((i: any) => i?.user);
-  
+
   const inviteLink = userHost?.codeForInvitingOtherUsers;
 
-  console.log('inviteLink', inviteLink);
-  
+  // console.log('inviteLink', inviteLink);
 
   const handleCopy = (val: string) => {
     Clipboard.setString(val);
@@ -36,7 +35,7 @@ const Invitations: FC = () => {
       const data = findInvitationCodes?.docs?.map(i => i?.data());
       setNumberCodes(5 - data?.length);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -54,13 +53,13 @@ const Invitations: FC = () => {
       } else if (result.action === Share.dismissedAction) {
         // dismissed
       }
-    } catch (error: any) { 
+    } catch (error: any) {
       Alert.alert(error.message);
     }
   };
 
   useEffect(() => {
-    setNumberCodes(inviteLink.length)
+    setNumberCodes(inviteLink.length);
     // handleCheckInviteCode();
   }, []);
 
@@ -71,11 +70,15 @@ const Invitations: FC = () => {
       <ScrollView>
         {inviteLink.map(item => (
           <View style={styles.inviteContainer}>
-          <TouchableOpacity disabled={!item.isActive} activeOpacity={0.7} onPress={() => handleCopy(item.inviteCode)} style={styles.inviteButton}>
-            <Text style={[styles.inviteText, {color: !item.isActive? grayColor: whiteColor}]}>{item.inviteCode}</Text>
-            {item.isActive && <Copy />}
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              disabled={!item.isActive}
+              activeOpacity={0.7}
+              onPress={() => handleCopy(item.inviteCode)}
+              style={styles.inviteButton}>
+              <Text style={[styles.inviteText, {color: !item.isActive ? grayColor : whiteColor}]}>{item.inviteCode}</Text>
+              {item.isActive && <Copy />}
+            </TouchableOpacity>
+          </View>
         ))}
       </ScrollView>
     </View>

@@ -52,7 +52,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   setModalReport,
   setUsersListsData,
   checkIsFullGuestsFun,
-  setIsVisibleModalFullEvent
+  setIsVisibleModalFullEvent,
 }) => {
   const styles = useStyles();
 
@@ -61,7 +61,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   const [userInfo, setUserInfo] = useState<any>({});
   const [userGuest, setUserGuest] = useState<any>(usersList?.filter((i: any) => i?.uid === uid)[0]);
 
-  console.warn('userGuest', userGuest, usersList, uid);
+  // console.warn('userGuest', userGuest, usersList, uid);
 
   useEffect(() => {
     setUserGuest(usersList?.filter((i: any) => i?.uid === uid)[0]);
@@ -109,7 +109,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         usersList: updateUsersList,
         requestsList: updateRequestsList,
       });
-      console.warn('usersListData', usersListData);
+      // console.warn('usersListData', usersListData);
       const rejectedUser = usersListData.find((i: any) => i?.uid === uid);
       if (rejectedUser?.status !== 'notAccepted') {
         await sendNotification(uid, `${userHost?.name} rejected your request`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), userHost);
@@ -121,7 +121,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       setModalVisible && setModalVisible(false);
     } catch (e) {
       showToast('inviteMatch', '', 'Error!');
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -235,7 +235,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         }
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       showToast('inviteMatch', '', 'Error!');
     }
   };
@@ -294,7 +294,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         });
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -319,13 +319,13 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   };
 
   const handleActionPress = async () => {
-    const isFull = await checkIsFullGuestsFun()
-    if(isFull) {
-      setModalVisible(false)
+    const isFull = await checkIsFullGuestsFun();
+    if (isFull) {
+      setModalVisible(false);
       setTimeout(() => {
-        setIsVisibleModalFullEvent(true)
+        setIsVisibleModalFullEvent(true);
       }, 300);
-      return
+      return;
     }
     if (userGuest?.status === 'invite_match') {
       handleApproveGuestFromHost();

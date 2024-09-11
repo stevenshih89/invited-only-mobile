@@ -17,8 +17,17 @@ import {
   paymentPath,
   settingsPath,
 } from 'constants/pathLocations';
+import {
+  blackColor,
+  grayColor,
+  grayScale700,
+  lightGray2Color,
+  lightGray5Color,
+  orangeColor,
+  transparent60Color,
+  whiteColor,
+} from 'constants/colors.ts';
 import {screenHeight, THIS_WEEKEND, ALL, THIS_MONTH} from 'constants/common.ts';
-import {blackColor, grayColor, lightGray2Color, lightGray5Color, orangeColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
 import {useChat} from '../../store/chatStore';
@@ -44,6 +53,7 @@ import {Satoshi500} from 'constants/fonts';
 import {useMyEvents} from '../../store/myEvents';
 import {useFocusEffect} from '@react-navigation/native';
 import {onUserProfileChangeSubscription} from 'helpers/userProfile';
+import {UserInfo} from 'src/types/userInfo';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -119,7 +129,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   );
 
   const goToCreateEvent = async (): void => {
+
     if (!userInfo?.accountConfirmed) {
+
       return;
     }
     if (userInfo?.accountPremium) {
@@ -144,6 +156,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       setTypeEvents && setTypeEvents(userInfo?.accountType?.toLowerCase() === 'host' ? false : true);
     }
   }, [userInfo?.accountType]);
+
+  useEffect(() => {
+    const subscription = onUserProfileChangeSubscription(info => {
+      setUserInfo((prev: UserInfo) => ({...prev, ...info}));
+    });
+
+    return subscription;
+  }, []);
 
   const DATAEventsJoining = [
     {

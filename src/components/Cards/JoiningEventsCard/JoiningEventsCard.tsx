@@ -217,7 +217,7 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
           deleteUsers: [...deleteUsers],
         });
     } catch (error) {
-      console.log('error deleteUserFromCanceled', error);
+      // console.log('error deleteUserFromCanceled', error);
     }
   };
 

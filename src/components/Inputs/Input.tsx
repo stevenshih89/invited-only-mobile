@@ -20,7 +20,7 @@ const Input: FC<InputProps> = ({
   label,
   keyboardType = 'default',
   InputIcon,
-  required
+  required,
 }) => {
   const inputRef = useRef<TextInput>(null);
 
@@ -36,7 +36,11 @@ const Input: FC<InputProps> = ({
 
   return (
     <View style={[containerStyle]}>
-      {label && <Text style={[styles.titleText, {...labelStyle}]}>{label} {required && <Text style={{color: errorColor}}>*</Text>}</Text>}
+      {label && (
+        <Text style={[styles.titleText, {...labelStyle}]}>
+          {label} {required && <Text style={{color: errorColor}}>*</Text>}
+        </Text>
+      )}
       <TouchableOpacity activeOpacity={1} onPress={onPress} style={[styles.container, containerInnerStyle]}>
         <TextInput
           ref={inputRef}

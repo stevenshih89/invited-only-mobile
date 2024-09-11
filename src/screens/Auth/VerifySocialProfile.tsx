@@ -1,5 +1,15 @@
 import {black1Color, lightGray15Color, lightGray2Color, whiteColor} from 'constants/colors';
-import {FlatList, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {
+  FlatList,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckCircle from 'assets/images/icons/check-circle.svg';
 import CircleGray from 'assets/images/icons/circle-gray.svg';
@@ -17,8 +27,8 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {showToast} from 'helpers/showToast';
 import {AuthContext} from 'contexts/AuthContext';
-import { KeyboardAwareFlatList, KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { ScrollView } from 'react-native-gesture-handler';
+import {KeyboardAwareFlatList, KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {ScrollView} from 'react-native-gesture-handler';
 
 interface Social {
   id: number;
@@ -73,7 +83,7 @@ const VerifySocialProfile = () => {
       const url = await storageRef.getDownloadURL();
       return url;
     } catch (e) {
-      console.error(e);
+      // console.error(e);
       return null;
     }
   };
@@ -83,9 +93,9 @@ const VerifySocialProfile = () => {
       await firestore().collection('userInfo').doc(userId).update({
         facePhoto: imageUrl,
       });
-      console.log('User profile image updated successfully.');
+      // console.log('User profile image updated successfully.');
     } catch (e) {
-      console.error('Error updating user profile image: ', e);
+      // console.error('Error updating user profile image: ', e);
     }
   };
 
@@ -94,17 +104,17 @@ const VerifySocialProfile = () => {
       await firestore().collection('userInfo').doc(userId).update({
         photos: imageUrl,
       });
-      console.log('User profile image updated successfully.');
+      // console.log('User profile image updated successfully.');
     } catch (e) {
-      console.error('Error updating user profile image: ', e);
+      // console.error('Error updating user profile image: ', e);
     }
   };
 
   const generateInviteCode = () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const length = 12;
-    const countCodes = 5
-    const inviteCodes = []
+    const countCodes = 5;
+    const inviteCodes = [];
 
     for (let i = 0; i < countCodes; i++) {
       let inviteCode = '';
@@ -113,7 +123,7 @@ const VerifySocialProfile = () => {
         const randomIndex = Math.floor(Math.random() * characters.length);
         inviteCode += characters.charAt(randomIndex);
       }
-      inviteCodes.push({isActive: true, inviteCode: inviteCode})
+      inviteCodes.push({isActive: true, inviteCode: inviteCode});
     }
 
     return inviteCodes;
@@ -167,10 +177,10 @@ const VerifySocialProfile = () => {
           notifications: [],
           weeklySuperInvites: 5,
           superInvites: 0,
-          lastUpdateSuperInvite: Date.now()
+          lastUpdateSuperInvite: Date.now(),
         })
         .then(async () => {
-          console.warn('User added!');
+          // console.warn('User added!');
 
           photos?.map(async (i: any, index: number) => {
             await uploadImage(i, userId).then(async image => {
@@ -184,7 +194,7 @@ const VerifySocialProfile = () => {
         });
       setLoading(false);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       showToast('inviteMatch', '', `${e}`);
       setLoading(false);
     }
@@ -216,30 +226,36 @@ const VerifySocialProfile = () => {
         </View>
         {isActive ? (
           <View style={{marginTop: 16}}>
-            <Input onPressFocus={() => setIsFocusInput(true)} onBlur={() => setIsFocusInput(false)} value={socialNickname[item.name]} onChange={val => handleSocialNicknameChange(val, item.name)} />
+            <Input
+              onPressFocus={() => setIsFocusInput(true)}
+              onBlur={() => setIsFocusInput(false)}
+              value={socialNickname[item.name]}
+              onChange={val => handleSocialNicknameChange(val, item.name)}
+            />
           </View>
         ) : null}
       </TouchableOpacity>
     );
   };
 
-  
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: black1Color}}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         style={{flex: 1}}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={{paddingHorizontal: 24, flex: 1, justifyContent: 'space-between'}}>
-            {!isFocusInput && <View style={{alignItems: 'center', marginTop: 16, paddingVertical: 28}}>
-              <LogoPrimary2 />
-            </View>}
+            {!isFocusInput && (
+              <View style={{alignItems: 'center', marginTop: 16, paddingVertical: 28}}>
+                <LogoPrimary2 />
+              </View>
+            )}
             <View
               style={{
                 width: '100%',
                 marginBottom: screenHeight / 28,
-                marginTop: isFocusInput? screenHeight / 40: screenHeight / 14,
+                marginTop: isFocusInput ? screenHeight / 40 : screenHeight / 14,
               }}>
               <Text
                 style={{
@@ -261,9 +277,10 @@ const VerifySocialProfile = () => {
             </View>
             <KeyboardAwareFlatList
               enableAutomaticScroll={false}
-              data={socials} 
-              ItemSeparatorComponent={() => <View style={{height: 8}} />} 
-              renderItem={renderItem} />
+              data={socials}
+              ItemSeparatorComponent={() => <View style={{height: 8}} />}
+              renderItem={renderItem}
+            />
             <View style={{marginVertical: 4}}>
               <Button title="Continue" loading={loading} disabled={!socialNickname[openedSocial?.name]?.length} onPress={handleNext} />
             </View>
@@ -272,7 +289,6 @@ const VerifySocialProfile = () => {
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-
 };
 
 export default VerifySocialProfile;

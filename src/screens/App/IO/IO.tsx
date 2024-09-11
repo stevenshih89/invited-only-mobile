@@ -54,7 +54,9 @@ import {handleCreateChat} from 'helpers/chat';
 import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import FullEvent from 'components/FullEvent';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
-import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
+import {AccountInfoFlyWeight, onUserProfileChangeSubscription, useUserProfileChangeSubscription} from 'helpers/userProfile';
+
+type UserInfo = any;
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -95,14 +97,13 @@ const IO: FC = (): JSX.Element => {
 
   const cardRef = useRef(null);
 
-  const {accountConfirmed} = useUserProfileChangeSubscription();
   useEffect(() => {
-    if (!Object.keys(userInfo).length) {
-      return;
-    }
+    const subscription = onUserProfileChangeSubscription(info => {
+      setUserInfo((prev: UserInfo) => ({...prev, ...info}));
+    });
 
-    setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
-  }, [accountConfirmed]);
+    return subscription;
+  }, []);
 
   const handleAutoSwipeRight = () => {
     if (cardRef.current) {
@@ -115,14 +116,10 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(message => {
-      console.warn('message', message);
-
       const data = message?.data;
       setMatchData(data);
       setIsVisibleMatch(true);
     });
-
-    console.warn('unsubscribe', unsubscribe);
 
     return () => unsubscribe();
   }, []);
@@ -179,7 +176,7 @@ const IO: FC = (): JSX.Element => {
         decrementCounterSuperInvites(1);
       }
     } catch (error) {
-      console.log('error supert invite', error);
+      // console.log('error supert invite', error);
     }
   };
 
@@ -253,7 +250,7 @@ const IO: FC = (): JSX.Element => {
     //   showToast('inviteMatch', `Chat with ${name} >`, 'Invitation approved! Waiting for Alexa to accept your invitation.');
     //   // setIsVisibleMatch(true);
     // } catch (e) {
-    //   console.log(e);
+    //   // console.log(e);
     // }
   };
 
@@ -349,7 +346,7 @@ const IO: FC = (): JSX.Element => {
 
   //   const token = await getFcmTokenFromUser(forUserUid);
 
-  //   console.warn('forUserUid', forUserUid);
+  //   // console.warn('forUserUid', forUserUid);
   //   try {
   //     const result = await functions().httpsCallable('sendNotification')({
   //       token: token,
@@ -364,12 +361,12 @@ const IO: FC = (): JSX.Element => {
   //       },
   //     });
   //     if (result.data.success) {
-  //       console.warn('Notification sent successfully', result.data.data);
+  //       // console.warn('Notification sent successfully', result.data.data);
   //     } else {
-  //       console.error('Error sending notification:', result.data.error);
+  //       // console.error('Error sending notification:', result.data.error);
   //     }
   //   } catch (error) {
-  //     console.error('Error calling Firebase Function:', error);
+  //     // console.error('Error calling Firebase Function:', error);
   //   }
 
   //   const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
@@ -382,7 +379,7 @@ const IO: FC = (): JSX.Element => {
   //     mark: mark,
   //     uid: userInfo?.uid,
   //   };
-  //   console.log('notification', notification);
+  //   // console.log('notification', notification);
 
   //   try {
   //     await firestore()
@@ -392,7 +389,7 @@ const IO: FC = (): JSX.Element => {
   //         notifications: [...userNotifications, notification],
   //       });
   //   } catch (error) {
-  //     console.log('error update notifications', error);
+  //     // console.log('error update notifications', error);
   //   }
   // };
 
@@ -523,7 +520,7 @@ const IO: FC = (): JSX.Element => {
 
       setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
     } catch (error) {
-      console.log('eror invite', error);
+      // console.log('eror invite', error);
     }
   };
 
@@ -563,10 +560,10 @@ const IO: FC = (): JSX.Element => {
       setEvents([...filter]);
       await onInvite(item[0]?.info?.uid, item[0]?.info?.id);
     } else {
-      console.log('reject', events);
-      console.log('uid', uid);
+      // console.log('reject', events);
+      // console.log('uid', uid);
       const filter: any[] = events?.filter(i => i?.info?.uid !== uid);
-      console.log('filter events', filter);
+      // console.log('filter events', filter);
       setEvents(filter);
     }
   };
@@ -901,7 +898,7 @@ const IO: FC = (): JSX.Element => {
     const usersList = await users?._docs;
     usersList
       ?.filter(item => {
-        // console.warn('item', item?._data.uid, item?._data);
+        // // console.warn('item', item?._data.uid, item?._data);
 
         if (getActualDataEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {
           return false;
@@ -912,7 +909,7 @@ const IO: FC = (): JSX.Element => {
         return true;
       })
       ?.map((item: any, index: number): void => {
-        // console.warn('itemMap', item?._data.uid, item?._data);
+        // // console.warn('itemMap', item?._data.uid, item?._data);
 
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;
 
@@ -1155,7 +1152,7 @@ const IO: FC = (): JSX.Element => {
     setEvents(data);
     eventsRef.current = data;
     checkIsFullGuestsFun();
-    // console.warn('data', data);
+    // // console.warn('data', data);
 
     // setTimeout(() => {
     //   setEvents([...data]);
@@ -1168,7 +1165,7 @@ const IO: FC = (): JSX.Element => {
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
     if (enabled) {
-      // console.log('Authorization status:', authStatus);
+      // // console.log('Authorization status:', authStatus);
       fcmHelper(userInfo?.uid).then();
     }
   };
@@ -1285,7 +1282,7 @@ const IO: FC = (): JSX.Element => {
       />
     );
   }
-  console.warn('events', events, isVisibleMatch);
+  // console.warn('events', events, isVisibleMatch);
 
   return (
     <>

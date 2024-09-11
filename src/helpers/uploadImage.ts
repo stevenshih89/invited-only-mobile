@@ -12,7 +12,7 @@ export const uploadImage = async (imagePath: {image: string | null; id: number},
     const url = await storageRef.getDownloadURL();
     return url;
   } catch (e) {
-    console.error(e);
+    // console.error(e);
     return null;
   }
 };

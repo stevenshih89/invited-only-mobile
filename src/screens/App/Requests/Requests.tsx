@@ -111,10 +111,10 @@ const Requests: FC = (): ReactElement => {
       try {
         const querySnapshot = await firestore().collection('Events').get();
         const data = querySnapshot?.docs?.map(i => i?.data());
-        // console.log('filter', filterByUid(data, user?.uid));
+        // // console.log('filter', filterByUid(data, user?.uid));
         const filterUid = filterByUid(data, user?.uid);
 
-        // console.log('filterUid', filterUid);
+        // // console.log('filterUid', filterUid);
         setDataForGuest(filterUid);
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
@@ -135,7 +135,7 @@ const Requests: FC = (): ReactElement => {
         setUserInfoData(data);
         setLoading(false);
       } catch (error: any) {
-        console.log('Error', error.message || 'Something went wrong');
+        // console.log('Error', error.message || 'Something went wrong');
         setLoading(false);
       }
     }

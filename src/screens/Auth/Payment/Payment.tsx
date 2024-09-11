@@ -37,13 +37,13 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenWidth} from 'constants/common';
 import * as Progress from 'react-native-progress';
-import { SvgProps } from 'react-native-svg';
-import Purchases, { PurchasesPackage } from 'react-native-purchases';
+import {SvgProps} from 'react-native-svg';
+import Purchases, {PurchasesPackage} from 'react-native-purchases';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import HostPremium from 'components/Modal/ModalHostPremium/HostPremium';
-import { useUser } from 'src/store/userStore';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { showToast } from 'helpers/showToast';
+import {useUser} from 'src/store/userStore';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {showToast} from 'helpers/showToast';
 
 interface PlanListItem {
   id: number;
@@ -151,9 +151,9 @@ const Payment: FC = (): JSX.Element => {
     },
   ]);
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
-  const [loaderVisible, setLoaderVisible] = useState(false)
-  const [successfulPay, setSuccessfulPay] = useState(false)
-  const [visibleHostPremium, setVsibleHostPremium] = useState(false)
+  const [loaderVisible, setLoaderVisible] = useState(false);
+  const [successfulPay, setSuccessfulPay] = useState(false);
+  const [visibleHostPremium, setVsibleHostPremium] = useState(false);
 
   const [userInfo, setUserInfo] = useState<any>({});
 
@@ -162,21 +162,21 @@ const Payment: FC = (): JSX.Element => {
 
     if (user) {
       try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get()
-        const userInfo = userInfoDoc.data()
+        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        const userInfo = userInfoDoc.data();
         const userInfoUpdate = await firestore().collection('userInfo').doc(user.uid);
         userInfoUpdate.update({
           accountPremium: true,
-          superInvites: userInfo?.superInvites + 10
-        })
+          superInvites: userInfo?.superInvites + 10,
+        });
       } catch (error: any) {
-        console.log('error user premium update', error);
+        // console.log('error user premium update', error);
       }
     }
   };
 
   const handleNext = () => {
-    navigation.navigate(tutorialFlowPath as never)
+    navigation.navigate(tutorialFlowPath as never);
     navigation.navigate(profilePath as never);
   };
 
@@ -192,100 +192,94 @@ const Payment: FC = (): JSX.Element => {
   }, []);
 
   const showHostPremium = async () => {
-    setLoaderVisible(false)
+    setLoaderVisible(false);
     setTimeout(() => {
-      setVsibleHostPremium(true)
+      setVsibleHostPremium(true);
     }, 300);
-  }
+  };
 
   const restorePurchases = async () => {
     try {
       const purchaserInfo = await Purchases.restorePurchases();
-      
+
       if (purchaserInfo.activeSubscriptions.length > 0) {
         switch (purchaserInfo.activeSubscriptions[0]) {
           case 'io_59_1w':
-            showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', {status: 'success'})
+            showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', {status: 'success'});
             navigation.navigate('/profile');
             break;
           case 'io_25_wk':
-            showToast('inviteMatch', 'Annual subscription restored', 'Restore purchases', {status: 'success'})
+            showToast('inviteMatch', 'Annual subscription restored', 'Restore purchases', {status: 'success'});
             navigation.navigate('/profile');
             break;
           case 'io_29_3m':
-            showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', {status: 'success'})
+            showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', {status: 'success'});
             navigation.navigate('/profile');
             break;
           default:
             break;
         }
-        console.log('purchases restore', purchaserInfo.activeSubscriptions[0]);
-        
+        // console.log('purchases restore', purchaserInfo.activeSubscriptions[0]);
       } else {
-        console.log('purchases not found');
-        showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', {status: 'fail'})
+        // console.log('purchases not found');
+        showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', {status: 'fail'});
       }
     } catch (e) {
-      console.error('error restore purchases', e);
-      
+      // console.error('error restore purchases', e);
     }
   };
 
   const pay = async (pack: PurchasesPackage) => {
-    
-    setLoaderVisible(true)
+    setLoaderVisible(true);
     try {
-      const { customerInfo } = await Purchases.purchasePackage(pack);
-      console.log('customerInfo', customerInfo);
-      
-      
-      setSuccessfulPay(true)
+      const {customerInfo} = await Purchases.purchasePackage(pack);
+      // console.log('customerInfo', customerInfo);
+
+      setSuccessfulPay(true);
       setTimeout(() => {
-        setLoaderVisible(false)
-        showHostPremium()
-      }, 1500)
-      updateUser()
-      console.log('pay successful');
+        setLoaderVisible(false);
+        showHostPremium();
+      }, 1500);
+      updateUser();
+      // console.log('pay successful');
       // if (
       //   typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
       //   "undefined"
       // ) {
-      //   console.log('pay successful');
+      //   // console.log('pay successful');
       // }
     } catch (e) {
-      console.log('pay error', e);
-      setLoaderVisible(false)
+      // console.log('pay error', e);
+      setLoaderVisible(false);
     }
-  }
+  };
 
   const getOfferings = async () => {
     try {
       const offerings = await Purchases.getOfferings();
       if (offerings.current !== null) {
+        const offeringsHostSubscription = offerings.all['Host subscription'];
+        // console.log('offerings', offeringsHostSubscription.availablePackages);
 
-        const offeringsHostSubscription = offerings.all['Host subscription']
-        console.log('offerings', offeringsHostSubscription.availablePackages);
-
-        if(activePayment.durationName === 'week') {
-          const product = offeringsHostSubscription.availablePackages[0]
-          pay(product)
+        if (activePayment.durationName === 'week') {
+          const product = offeringsHostSubscription.availablePackages[0];
+          pay(product);
         }
 
-        if(activePayment.durationName === 'year') {
-          const product = offeringsHostSubscription.availablePackages[2]
-          pay(product)
+        if (activePayment.durationName === 'year') {
+          const product = offeringsHostSubscription.availablePackages[2];
+          pay(product);
         }
 
-        if(activePayment.durationName === 'months') {
-          const product = offeringsHostSubscription.availablePackages[1]
-          pay(product)
+        if (activePayment.durationName === 'months') {
+          const product = offeringsHostSubscription.availablePackages[1];
+          pay(product);
         }
       }
     } catch (e) {
-      console.log('offering ger error', e);
-
+      // console.log('offering ger error', e);
     }
-  }
+  };
 
   const renderItem = ({item}: {item: PlanListItem}) => {
     const isActive = activePayment.id === item.id;
@@ -332,7 +326,12 @@ const Payment: FC = (): JSX.Element => {
             </View>
           </View>
           <Text
-            style={{fontFamily: Satoshi700, fontSize: isActive? RFValue(38, 812): RFValue(26, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
+            style={{
+              fontFamily: Satoshi700,
+              fontSize: isActive ? RFValue(38, 812) : RFValue(26, 812),
+              color: isActive ? blackColor : whiteColor,
+              textAlign: 'center',
+            }}>
             {item.duration}
           </Text>
           <Text
@@ -362,12 +361,12 @@ const Payment: FC = (): JSX.Element => {
     );
   };
 
-  const checkNavig = useRoute()
+  const checkNavig = useRoute();
 
   return (
     <SafeAreaView style={{backgroundColor: black1Color}}>
-      <Loader isVisible={loaderVisible} successfulPay={successfulPay}/>
-      <HostPremium isVisible={visibleHostPremium} setVsibleHostPremium={setVsibleHostPremium} screen={checkNavig?.params?.screen}/>
+      <Loader isVisible={loaderVisible} successfulPay={successfulPay} />
+      <HostPremium isVisible={visibleHostPremium} setVsibleHostPremium={setVsibleHostPremium} screen={checkNavig?.params?.screen} />
       <ScrollView>
         <View style={styles.container}>
           <View style={{alignItems: 'flex-end', marginTop: 10}}>
@@ -431,23 +430,38 @@ const Payment: FC = (): JSX.Element => {
               borderColor={black1Color}
             />
           </View>
-          <Button buttonStyle={{marginTop: 20}} title={'Get access'} onPress={getOfferings}/>
+          <Button buttonStyle={{marginTop: 20}} title={'Get access'} onPress={getOfferings} />
           <View style={{width: '100%', height: 1, backgroundColor: gray1Color, marginTop: 16}}>
-            <Text style={{backgroundColor: blackColor, borderRadius: 20, color: whiteColor, position: 'absolute', fontFamily: Satoshi400, padding: 5, top: -15, left: screenWidth / 2 - 40}}>or</Text>
+            <Text
+              style={{
+                backgroundColor: blackColor,
+                borderRadius: 20,
+                color: whiteColor,
+                position: 'absolute',
+                fontFamily: Satoshi400,
+                padding: 5,
+                top: -15,
+                left: screenWidth / 2 - 40,
+              }}>
+              or
+            </Text>
           </View>
           <TouchableOpacity onPress={restorePurchases} style={{marginTop: 8, alignItems: 'center'}}>
             <Text style={{fontSize: RFValue(14), color: whiteColor, fontFamily: Satoshi500}}>Restore purchases</Text>
           </TouchableOpacity>
           <View style={{marginTop: 16}}>
             <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
-              By tapping , your App Store will be charged, your subscription will auto-renew for the same price and package lenght untill you cancel via App Store settings,
-              and you agree to your Terms.
-              More details can be found here: 
+              By tapping , your App Store will be charged, your subscription will auto-renew for the same price and package lenght untill
+              you cancel via App Store settings, and you agree to your Terms. More details can be found here:
               <TouchableOpacity>
-                <Text style={{textDecorationLine:'underline', fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor}}>Privacy policy, </Text>
+                <Text style={{textDecorationLine: 'underline', fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor}}>
+                  Privacy policy,{' '}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity>
-                <Text style={{textDecorationLine:'underline', fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor}}>Terms and conditios</Text>
+                <Text style={{textDecorationLine: 'underline', fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor}}>
+                  Terms and conditios
+                </Text>
               </TouchableOpacity>
             </Text>
           </View>

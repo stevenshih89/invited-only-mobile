@@ -27,7 +27,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
 
   //   const promises = usersList.map(async (item) => {
   //     const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
-  //     console.log('userInfo', userInfo);
+  //     // console.log('userInfo', userInfo);
   //     return userInfo.data().fcmToken;
   //   });
 
@@ -72,7 +72,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
     const users = await getFcmTokens(usersList);
 
     for (const user of users) {
-      console.log('const user of users', user);
+      // console.log('const user of users', user);
 
       const response = await fetch('https://fcm.googleapis.com/fcm/send', {
         method: 'POST',
@@ -95,7 +95,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
 
       if (!response.ok) {
         const error = await response.json();
-        console.error('error sending notification:', error);
+        // console.error('error sending notification:', error);
       } else {
         const data = await response.json();
         const userDoc = await firestore().collection('userInfo').doc(user.uid).get();
@@ -117,7 +117,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
               notifications: [...userNotifications, notification],
             });
         } catch (error) {
-          console.log('error update notifications', error);
+          // console.log('error update notifications', error);
         }
       }
     }
@@ -138,10 +138,10 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
 
     // if (!response.ok) {
     //   const error = await response.json();
-    //   console.error('error sending notification:', error);
+    //   // console.error('error sending notification:', error);
     // } else {
     //   const data = await response.json();
-    //   console.log('notification sent successfully:', data);
+    //   // console.log('notification sent successfully:', data);
     // }
   };
 
@@ -163,7 +163,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
       navigation?.goBack();
     } catch (e) {
       showToast('inviteMatch', '', 'Error!');
-      console.log('error handleCancelEvent', e);
+      // console.log('error handleCancelEvent', e);
     }
   };
 

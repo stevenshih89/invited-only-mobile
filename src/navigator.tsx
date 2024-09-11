@@ -30,7 +30,7 @@ const Navigator = () => {
     const userDataInfo = await firestore().collection('userInfo').doc(uid).get();
 
     if (userDataInfo.exists) {
-      // console.warn('user', userDataInfo.data());
+      // // console.warn('user', userDataInfo.data());
       setAuthState(!!userState);
       setUserData(userDataInfo.data());
     }
@@ -52,10 +52,9 @@ const Navigator = () => {
   }, [initializing]);
 
   useEffect(() => {
-    console.warn('works');
+    // // console.warn('works');
     messaging().onMessage(async remoteMessage => {
-      console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
-
+      // // console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
       // await notifee.requestPermission();
       // if (remoteMessage.data?.type === 'match') {
       //   handler(remoteMessage);

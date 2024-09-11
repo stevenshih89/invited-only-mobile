@@ -9,7 +9,7 @@ import {blackColor, lightGray2Color, lightGray5Color, orangeClose, whiteColor} f
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
-import {useUser} from "../../../../../store/userStore";
+import {useUser} from '../../../../../store/userStore';
 
 interface MyPhotosProps {
   images: {id: number; image: string | null}[];
@@ -17,7 +17,6 @@ interface MyPhotosProps {
 }
 
 const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
-  
   const userHost = useUser((i: any) => i?.user);
   const isConfirmed = userHost?.accountConfirmed;
 
@@ -39,14 +38,15 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
   };
 
   const openLibrary = async (imageId: number): Promise<void> => {
-    const photoLibraryPermission = await makePermissionsRequest(isIos ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES);
+    const photoLibraryPermission = await makePermissionsRequest(
+      isIos ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
+    );
 
     if (photoLibraryPermission !== RESULTS.GRANTED && photoLibraryPermission !== RESULTS.LIMITED) {
       return;
-    }    
+    }
 
-    console.log('imageId', imageId);
-    
+    // console.log('imageId', imageId);
 
     launchImageLibrary(
       {
@@ -71,8 +71,8 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
             }
             return img;
           });
-          console.log('newImages', newImages);
-          
+          // console.log('newImages', newImages);
+
           setImages(newImages);
         }
       },
@@ -125,8 +125,8 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
             </TouchableOpacity>
           )}
           <View style={styles.labelContainer}>
-              <Text style={styles.labelText}>Main</Text>
-            </View>
+            <Text style={styles.labelText}>Main</Text>
+          </View>
         </View>
         <View style={{flex: 1}}>
           <View style={[styles.imageContainer, {marginBottom: 6}]}>
@@ -175,16 +175,18 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
           </View>
         </View>
       </View>
-      <View style={{flexDirection: 'row', marginTop: 8,}}>
-      <View style={[styles.imageContainer]}>
-            <View style={{height: screenHeight/ 7, width: '94%'}}>
+      <View style={{flexDirection: 'row', marginTop: 8}}>
+        <View style={[styles.imageContainer]}>
+          <View style={{height: screenHeight / 7, width: '94%'}}>
             {fourthImage?.image ? (
               <View style={[styles.imageContainer, {width: '94%'}]}>
-                <ImageBackground resizeMode="cover" source={{uri: fourthImage.image}} 
-                style={{
-                  width: "100%",
-                  height: screenHeight/ 7,
-                  justifyContent: "space-between"
+                <ImageBackground
+                  resizeMode="cover"
+                  source={{uri: fourthImage.image}}
+                  style={{
+                    width: '100%',
+                    height: screenHeight / 7,
+                    justifyContent: 'space-between',
                   }}>
                   <TouchableOpacity
                     activeOpacity={0.7}
@@ -203,16 +205,19 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
             <View style={styles.labelContainer}>
               <Text style={styles.labelText}>04</Text>
             </View>
-            </View>
           </View>
-          <View style={[styles.imageContainer]}>
-            <View style={{height: screenHeight/ 7, width: '94%'}}>
+        </View>
+        <View style={[styles.imageContainer]}>
+          <View style={{height: screenHeight / 7, width: '94%'}}>
             {fifthImage?.image ? (
               <View style={[styles.imageContainer, {width: '94%'}]}>
-                <ImageBackground resizeMode="cover" source={{uri: fifthImage.image}} style={{
-                  width: "100%",
-                  height: screenHeight/ 7,
-                  justifyContent: "space-between",
+                <ImageBackground
+                  resizeMode="cover"
+                  source={{uri: fifthImage.image}}
+                  style={{
+                    width: '100%',
+                    height: screenHeight / 7,
+                    justifyContent: 'space-between',
                   }}>
                   <TouchableOpacity
                     activeOpacity={0.7}
@@ -231,37 +236,37 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
             <View style={styles.labelContainer}>
               <Text style={styles.labelText}>05</Text>
             </View>
-            </View>
           </View>
-          <View style={[styles.imageContainer,]}>
-            {sixthImage?.image ? (
-              <View style={[styles.imageContainer, {width: '94%'}]}>
-                <ImageBackground resizeMode="cover" source={{uri: sixthImage.image}} style={{
-                  width: "100%",
-                  height: screenHeight/ 7,
-                  justifyContent: "space-between",
-                  }}>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    hitSlop={{left: 15, bottom: 10}}
-                    onPress={() => deleteImage(sixthImage.id)}
-                    style={styles.closeButton}>
-                    <Close />
-                  </TouchableOpacity>
-                  
-                </ImageBackground>
-                
-              </View>
-              
-            ) : (
-               <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(sixthImage?.id)} style={styles.plusButton}>
-                <Plus />
-              </TouchableOpacity>
-            )}
-            <View style={styles.labelContainer}>
-              <Text style={styles.labelText}>06</Text>
+        </View>
+        <View style={[styles.imageContainer]}>
+          {sixthImage?.image ? (
+            <View style={[styles.imageContainer, {width: '94%'}]}>
+              <ImageBackground
+                resizeMode="cover"
+                source={{uri: sixthImage.image}}
+                style={{
+                  width: '100%',
+                  height: screenHeight / 7,
+                  justifyContent: 'space-between',
+                }}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  hitSlop={{left: 15, bottom: 10}}
+                  onPress={() => deleteImage(sixthImage.id)}
+                  style={styles.closeButton}>
+                  <Close />
+                </TouchableOpacity>
+              </ImageBackground>
             </View>
+          ) : (
+            <TouchableOpacity activeOpacity={0.7} onPress={() => openLibrary(sixthImage?.id)} style={styles.plusButton}>
+              <Plus />
+            </TouchableOpacity>
+          )}
+          <View style={styles.labelContainer}>
+            <Text style={styles.labelText}>06</Text>
           </View>
+        </View>
       </View>
     </View>
   );
@@ -320,7 +325,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     position: 'absolute',
     bottom: 6,
-    // marginTop: 10, 
+    // marginTop: 10,
   },
   labelText: {
     fontFamily: Satoshi700,

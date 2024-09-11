@@ -101,7 +101,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
   //   const promises = usersList.map(async item => {
   //     const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
-  //     console.log('userInfo', userInfo);
+  //     // console.log('userInfo', userInfo);
   //     return userInfo.data().fcmToken;
   //   });
 
@@ -130,10 +130,10 @@ const MyEvents: FC<any> = ({navigation}) => {
 
   //   if (!response.ok) {
   //     const error = await response.json();
-  //     console.error('error sending notification:', error);
+  //     // console.error('error sending notification:', error);
   //   } else {
   //     const data = await response.json();
-  //     console.log('notification sent successfully:', data);
+  //     // console.log('notification sent successfully:', data);
   //   }
   // };
 
@@ -166,7 +166,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     const users = await getFcmTokens(usersList);
 
     for (const user of users) {
-      console.log('user of users', user);
+      // console.log('user of users', user);
 
       const response = await fetch('https://fcm.googleapis.com/fcm/send', {
         method: 'POST',
@@ -185,7 +185,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
       if (!response.ok) {
         const error = await response.json();
-        console.error('error sending notification:', error);
+        // console.error('error sending notification:', error);
       } else {
         const data = await response.json();
         const userDoc = await firestore().collection('userInfo').doc(user.uid).get();
@@ -206,7 +206,7 @@ const MyEvents: FC<any> = ({navigation}) => {
               notifications: [...userNotifications, notification],
             });
         } catch (error) {
-          console.log('error update notifications', error);
+          // console.log('error update notifications', error);
         }
       }
     }
@@ -328,7 +328,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       );
       setIsVisibleAcceptInvitationModal(false);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -338,9 +338,9 @@ const MyEvents: FC<any> = ({navigation}) => {
   //     const uid = user?.uid;
 
   //     changeStatus(list?.usersList, uid, 'accepted');
-  //     console.log('handleAcceptInvitation');
+  //     // console.log('handleAcceptInvitation');
 
-  //     console.log('accepted', list?.usersList);
+  //     // console.log('accepted', list?.usersList);
   //     await firestore().collection('Events').doc(list?.id).update({
   //       usersList: list?.usersList,
   //     });
@@ -348,7 +348,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   //     showToast('inviteMatch', '', `You accepted ${activeModalEvent.textCityName} event`);
   //   } catch (e) {
   //     showToast('inviteMatch', '', 'Error!');
-  //     console.log(e);
+  //     // console.log(e);
   //   }
   // };
 
@@ -368,7 +368,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       });
     } catch (e) {
       showToast('inviteMatch', '', 'Error!');
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -399,7 +399,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       });
     } catch (e) {
       showToast('inviteMatch', '', 'Error!');
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -416,7 +416,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       setEventsJoiningData(filterData);
       setEventsImJoining(filterData);
     } catch (e) {
-      console.log('error events im joining', e);
+      // console.log('error events im joining', e);
       // showToast('cancel', 'Error!');
     }
   };
@@ -429,7 +429,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   //       setMyEventsData(data);
   //     }
   //   } catch (e) {
-  //     console.log('error my events', e);
+  //     // console.log('error my events', e);
   //   }
   // };
 

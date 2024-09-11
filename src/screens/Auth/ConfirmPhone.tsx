@@ -36,7 +36,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
     setValue: setCode,
   });
   const [confirm, setConfirm] = useState<any>(route?.params?.confirm);
-  const [resendTimer, setResendTimer] = useState(0)
+  const [resendTimer, setResendTimer] = useState(0);
 
   const CELL_COUNT: number = 6;
   const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
@@ -47,11 +47,11 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
 
       if (userData.exists) {
         setIsUserExist(true);
-        // console.warn('user: ', user);
+        // // console.warn('user: ', user);
       } else {
         setNextRoute(chooseAccountTypePath);
       }
-      console.warn('user123: ', user);
+      // console.warn('user123: ', user);
     } else {
       setNextRoute(chooseAccountTypePath);
     }
@@ -61,41 +61,40 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
     let timer;
     if (resendTimer > 0) {
       timer = setInterval(() => {
-        setResendTimer((prev) => prev - 1);
+        setResendTimer(prev => prev - 1);
       }, 1000);
     } else {
       clearInterval(timer);
     }
     return () => clearInterval(timer);
   }, [resendTimer]);
-  
 
   async function signInWithPhoneNumber() {
     try {
       if (!mobilePhone) {
         return;
       }
-      setResendTimer(59)
+      setResendTimer(59);
       const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
       const confirmation = await auth().signInWithPhoneNumber(phone);
       setConfirm(confirmation);
     } catch (e: any) {
       showToast('inviteMatch', `${e?.message.split(']')[1]}`);
-      console.warn(e);
+      // console.warn(e);
     }
   }
 
   const handleConfirmPhoneNumber = async () => {
     try {
       setLoadingConfirmation(true);
-      console.warn(isUserExist);
+      // console.warn(isUserExist);
       await confirm.confirm(code);
       setTimeout(() => {
         navigation.navigate(nextRoute);
       }, 1000);
       setLoadingConfirmation(false);
     } catch (e: any) {
-      console.log(e);
+      // console.log(e);
       showToast('inviteMatch', '', `${e}`);
       setLoadingConfirmation(false);
     }
@@ -212,25 +211,27 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
                   }}>
                   Didn't receive the code?{' '}
                 </Text>
-                {!resendTimer ? <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{bottom: 10, right: 20}}>
+                {!resendTimer ? (
+                  <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{bottom: 10, right: 20}}>
+                    <Text
+                      style={{
+                        color: whiteColor,
+                        fontFamily: Satoshi700,
+                        fontSize: RFValue(13, 812),
+                      }}>
+                      Resend Code
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
                   <Text
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi700,
                       fontSize: RFValue(13, 812),
                     }}>
-                    Resend Code
+                    Resend in {resendTimer}
                   </Text>
-                </TouchableOpacity>: 
-                  <Text
-                  style={{
-                    color: whiteColor,
-                    fontFamily: Satoshi700,
-                    fontSize: RFValue(13, 812),
-                  }}>
-                  Resend in {resendTimer}
-                </Text>
-                }
+                )}
               </View>
             </View>
             <View style={{paddingHorizontal: 38, marginBottom: 4}}>
@@ -239,7 +240,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
           </LinearGradient>
         </SafeAreaView>
       </TouchableWithoutFeedback>
-      <Loader isVisible={loadingConfirmation} textLoader='Please wait...' successfulPay={false} />
+      <Loader isVisible={loadingConfirmation} textLoader="Please wait..." successfulPay={false} />
     </KeyboardAvoidingView>
   );
 };
@@ -265,4 +266,3 @@ const styles = StyleSheet.create({
 });
 
 export default ConfirmPhone;
-

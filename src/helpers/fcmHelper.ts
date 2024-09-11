@@ -16,25 +16,25 @@ export const fcmHelper = async () => {
     const newToken = await messaging().getToken();
 
     // if (oldToken === newToken) {
-    //   console.log('not refresh');
+    //   // console.log('not refresh');
     // } else {
-    console.warn('newToken', newToken, userUid);
+    // console.warn('newToken', newToken, userUid);
     try {
       await firestore().collection('userInfo').doc(userUid).update({
         fcmToken: newToken,
       });
     } catch (error) {
-      console.log('error update token', error);
+      // console.log('error update token', error);
     }
     await AsyncStorage.setItem('fcmToken', JSON.stringify(newToken));
     // }
-    // console.log('frc token', newToken);
+    // // console.log('frc token', newToken);
     return newToken;
     // const fcmToken = await messaging().getToken();
     // await AsyncStorage.setItem('fcmToken', JSON.stringify(fcmToken));
-    // console.log('fcmToken', fcmToken);
+    // // console.log('fcmToken', fcmToken);
   } catch (e) {
-    console.log('error fcm token', e);
+    // console.log('error fcm token', e);
   }
 };
 
@@ -45,70 +45,70 @@ export const getFcmToken = async () => {
   await registerAppWithFCM();
   try {
     token = await messaging().getToken();
-    console.warn('getFcmToken-->', token);
+    // console.warn('getFcmToken-->', token);
   } catch (error) {
-    console.log('getFcmToken Device Token error ', error);
+    // console.log('getFcmToken Device Token error ', error);
   }
   return token;
 };
 
 //method was called on  user register with firebase FCM for notification
 export async function registerAppWithFCM() {
-  // console.log('registerAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
+  // // console.log('registerAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
   if (!messaging().isDeviceRegisteredForRemoteMessages) {
     await messaging()
       .registerDeviceForRemoteMessages()
       .then(status => {
-        console.log('registerDeviceForRemoteMessages status', status);
+        // console.log('registerDeviceForRemoteMessages status', status);
       })
       .catch(error => {
-        console.log('registerDeviceForRemoteMessages error ', error);
+        // console.log('registerDeviceForRemoteMessages error ', error);
       });
   }
 }
 
 //method was called on un register the user from firebase for stoping receiving notifications
 export async function unRegisterAppWithFCM() {
-  // console.log('unRegisterAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
+  // // console.log('unRegisterAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
 
   if (messaging().isDeviceRegisteredForRemoteMessages) {
     await messaging()
       .unregisterDeviceForRemoteMessages()
       .then(status => {
-        console.log('unregisterDeviceForRemoteMessages status', status);
+        // console.log('unregisterDeviceForRemoteMessages status', status);
       })
       .catch(error => {
-        console.log('unregisterDeviceForRemoteMessages error ', error);
+        // console.log('unregisterDeviceForRemoteMessages error ', error);
       });
   }
   await messaging().deleteToken();
-  // console.log('unRegisterAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
+  // // console.log('unRegisterAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
 }
 
 export const checkApplicationNotificationPermission = async () => {
   const authStatus = await messaging().requestPermission();
 
-  console.warn('Authorization status1:', authStatus);
+  // console.warn('Authorization status1:', authStatus);
 
   const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    console.warn('Authorization status:', authStatus);
+    // console.warn('Authorization status:', authStatus);
   }
   request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS)
     .then(result => {
-      // console.log('POST_NOTIFICATIONS status:', result);
+      // // console.log('POST_NOTIFICATIONS status:', result);
     })
     .catch(error => {
-      console.log('POST_NOTIFICATIONS error ', error);
+      // console.log('POST_NOTIFICATIONS error ', error);
     });
 };
 
 //method was called to listener events from firebase for notification triger
 export function registerListenerWithFCM() {
-  console.warn('registerListenerWithFCM');
+  // console.warn('registerListenerWithFCM');
   const unsubscribe = messaging().onMessage(async remoteMessage => {
-    console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
+    // console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
     if (remoteMessage?.notification?.title && remoteMessage?.notification?.body) {
       onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data);
     }
@@ -116,10 +116,10 @@ export function registerListenerWithFCM() {
   notifee.onForegroundEvent(({type, detail}) => {
     switch (type) {
       case EventType.DISMISSED:
-        console.log('User dismissed notification', detail.notification);
+        // console.log('User dismissed notification', detail.notification);
         break;
       case EventType.PRESS:
-        console.log('User pressed notification', detail.notification);
+        // console.log('User pressed notification', detail.notification);
         // if (detail?.notification?.data?.clickAction) {
         //   onNotificationClickActionHandling(
         //     detail.notification.data.clickAction
@@ -130,7 +130,7 @@ export function registerListenerWithFCM() {
   });
 
   messaging().onNotificationOpenedApp(async remoteMessage => {
-    console.log('onNotificationOpenedApp Received', JSON.stringify(remoteMessage));
+    // console.log('onNotificationOpenedApp Received', JSON.stringify(remoteMessage));
     // if (remoteMessage?.data?.clickAction) {
     //   onNotificationClickActionHandling(remoteMessage.data.clickAction);
     // }
@@ -140,7 +140,7 @@ export function registerListenerWithFCM() {
     .getInitialNotification()
     .then(remoteMessage => {
       if (remoteMessage) {
-        console.log('Notification caused app to open from quit state:', remoteMessage.notification);
+        // console.log('Notification caused app to open from quit state:', remoteMessage.notification);
       }
     });
 
@@ -149,7 +149,7 @@ export function registerListenerWithFCM() {
 
 //method was called to display notification
 async function onDisplayNotification(title, body, data) {
-  console.log('onDisplayNotification: ', data);
+  // console.log('onDisplayNotification: ', data);
   showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image});
   // Request permissions (required for iOS)
   await notifee.requestPermission();
@@ -177,7 +177,7 @@ async function onDisplayNotification(title, body, data) {
 // it would be called when the app in foreground state
 export function onMatchNotificationSubscription(handler: (message: FirebaseMessagingTypes.RemoteMessage) => void) {
   return messaging().onMessage(async remoteMessage => {
-    console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
+    // console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
 
     // await notifee.requestPermission();
     if (remoteMessage.data?.type === 'match') {
@@ -205,7 +205,7 @@ export const sendNotification = async (forUserUid: string, title: string, body: 
 
   const token = await getFcmTokenFromUser(forUserUid);
 
-  console.warn('forUserUid', forUserUid);
+  // console.warn('forUserUid', forUserUid);
   try {
     const result = await functions().httpsCallable('sendNotification')({
       token: token,
@@ -220,12 +220,12 @@ export const sendNotification = async (forUserUid: string, title: string, body: 
       },
     });
     if (result.data.success) {
-      console.warn('Notification sent successfully', result.data.data);
+      // console.warn('Notification sent successfully', result.data.data);
     } else {
-      console.error('Error sending notification:', result.data.error);
+      // console.error('Error sending notification:', result.data.error);
     }
   } catch (error) {
-    console.error('Error calling Firebase Function:', error);
+    // console.error('Error calling Firebase Function:', error);
   }
 
   const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
@@ -238,7 +238,7 @@ export const sendNotification = async (forUserUid: string, title: string, body: 
     mark: mark,
     uid: userInfo?.uid,
   };
-  console.log('notification', notification);
+  // console.log('notification', notification);
 
   try {
     await firestore()
@@ -248,6 +248,6 @@ export const sendNotification = async (forUserUid: string, title: string, body: 
         notifications: [...userNotifications, notification],
       });
   } catch (error) {
-    console.log('error update notifications', error);
+    // console.log('error update notifications', error);
   }
 };

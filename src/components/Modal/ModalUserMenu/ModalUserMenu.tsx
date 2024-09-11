@@ -239,7 +239,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         setEventData(data);
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -275,7 +275,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       });
       await sendNotification(uid, 'Request approved', 'Please confirm your attendence', 'Approve', 'Approved'.toUpperCase(), user);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
   const handleAcceptGuestFromGuest = async () => {
@@ -308,7 +308,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         user,
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
   const getUserStatusButtonText = () => {

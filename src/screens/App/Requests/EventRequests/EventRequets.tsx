@@ -24,8 +24,8 @@ import FastImage from 'react-native-fast-image';
 import {formatDate} from 'helpers/formatDate';
 
 const EventsRequest = ({item, list}: any) => {
-  console.log('item', item);
-  console.log('list', list);
+  // console.log('item', item);
+  // console.log('list', list);
 
   const styles = useStyles();
   const navigation = useAppNavigation();
@@ -96,7 +96,7 @@ const EventsRequest = ({item, list}: any) => {
       showToast('inviteMatch', '', 'The request has been confirmed');
       sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       showToast('inviteMatch', '', "There's been an error");
     }
   };
@@ -115,7 +115,7 @@ const EventsRequest = ({item, list}: any) => {
         requestsList: updateRequestsList,
       });
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
@@ -183,7 +183,7 @@ const EventsRequest = ({item, list}: any) => {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error('error sending notification:', error);
+      // console.error('error sending notification:', error);
     } else {
       const data = await response.json();
       const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
@@ -205,7 +205,7 @@ const EventsRequest = ({item, list}: any) => {
             notifications: [...userNotifications, notification],
           });
       } catch (error) {
-        console.log('error update notifications', error);
+        // console.log('error update notifications', error);
       }
     }
   };
