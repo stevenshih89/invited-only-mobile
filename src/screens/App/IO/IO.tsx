@@ -14,7 +14,7 @@ import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, paymentPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
@@ -1262,24 +1262,6 @@ const IO: FC = (): JSX.Element => {
           </Text>
         </View>
         <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 20, marginBottom: 30}} />
-        <View style={{width: '100%', height: 1, backgroundColor: '#282828', marginBottom: 20, alignItems: 'center'}}>
-          <View
-            style={{
-              width: 30,
-              height: 30,
-              backgroundColor: blackColor,
-              borderRadius: 15,
-              transform: [{translateY: -15}],
-              justifyContent: 'center',
-            }}>
-            <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(14, 812), fontFamily: Satoshi400}}>or</Text>
-          </View>
-        </View>
-        <View style={{width: '100%', alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => navigation.navigate(joinEventsPath)}>
-            <Text style={{color: whiteColor, fontSize: RFValue(14, 812)}}>Start joining!</Text>
-          </TouchableOpacity>
-        </View>
       </View>
     );
   }
