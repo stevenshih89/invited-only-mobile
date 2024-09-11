@@ -165,7 +165,7 @@ const Profile: FC = () => {
                   headers: {Authorization: 'someAuthToken'},
                   priority: FastImage.priority.normal,
                 }}
-                resizeMode={FastImage.resizeMode.contain}
+                resizeMode={FastImage.resizeMode.cover}
               />
             ) : (
               // <Image source={{uri: mainImage?.image}} style={styles.profileImage} />

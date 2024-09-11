@@ -14,7 +14,7 @@ import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ChatActiveIcon from 'assets/images/tab-bar/chat-active.svg';
 import InfoIcon from 'assets/images/icons/info-circle-fill.svg';
 import CloseIcon from 'assets/images/icons/close-circle.svg';
-import {chatCorrespondencePath} from 'constants/pathLocations.ts';
+import {chatCorrespondencePath, commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {gray1Color} from 'constants/colors.ts';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 import firestore from '@react-native-firebase/firestore';
@@ -54,6 +54,18 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
 
     const hostData = hostQuery.data();
     setHostName(hostData!.name);
+  };
+
+  const goToProfileView = (currentUid: string) => {
+    setHostMenu(false);
+    // @ts-ignore
+    navigation.navigate(commonStackPath, {
+      screen: myProfileViewPath,
+      params: {
+        uid: currentUid,
+        isShowEditButton: false,
+      },
+    });
   };
 
   useEffect(() => {
@@ -119,7 +131,7 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
             <CalendarIcon style={styles.iconButton} width={14} height={14} />
             <Text style={styles.textButton}>Event information</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonEvent}>
+          <TouchableOpacity style={styles.buttonEvent} onPress={() => goToProfileView(hostUid)}>
             <UserIcon style={styles.iconButton} width={14} height={14} />
             <Text style={styles.textButton}>Host profile</Text>
           </TouchableOpacity>

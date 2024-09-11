@@ -53,15 +53,14 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     totalRequestsGuests,
     findAcceptedGuest,
     item,
-
   } = props;
-  
+
   const styles = useStyles();
 
   const [eventStarting, setEventStarting] = useState<boolean>(true);
   const [eventDate, setEventDate] = useState<string>('');
   const [mainImageEvent, setMainImageEvent] = useState('');
-  
+
   useEffect(() => {
     const filterImage = imageBg.filter(item => item.id < 1);
     setMainImageEvent(filterImage[0].image);
@@ -151,80 +150,83 @@ const MyEventsCard: FC<MyEventsCard> = props => {
             priority: FastImage.priority.normal,
           }}
           resizeMode={FastImage.resizeMode.cover}>
-          {findAcceptedGuest?.length >= allPeople && <FullEvent 
-            activeEvent={item}
-            text={`Event is full: ${findAcceptedGuest?.length}/${allPeople} guests invited`}
-            totalQuantityGuests={allPeople} 
-            acceptQuantityGuest={findAcceptedGuest?.length}
-            rightComponent={
-              <TouchableOpacity style={{backgroundColor: lightGreenColor, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 5}}>
-                <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500}}>Active</Text>
-              </TouchableOpacity>}
-            styleContainer={{position: 'absolute', top: 14}}
-          />}
+          {findAcceptedGuest?.length >= allPeople && (
+            <FullEvent
+              activeEvent={item}
+              text={`Event is full: ${findAcceptedGuest?.length}/${allPeople} guests invited`}
+              totalQuantityGuests={allPeople}
+              acceptQuantityGuest={findAcceptedGuest?.length}
+              rightComponent={
+                <TouchableOpacity style={{backgroundColor: lightGreenColor, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 5}}>
+                  <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500}}>Active</Text>
+                </TouchableOpacity>
+              }
+              styleContainer={{position: 'absolute', top: 14}}
+            />
+          )}
           <LinearGradient
             colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
             style={styles.linearGradientCard}>
-            {activeState? (
+            {activeState ? (
               <>
-                {!findAcceptedGuest?.length >= allPeople && <View
-                style={{
-                  backgroundColor: approvedPeople?.length === allPeople ? errorColor : lightGray10Color,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingVertical: 6,
-                  paddingHorizontal: 16,
-                  borderRadius: 10,
-                }}>
-                <View style={styles.userWrapper}>
-                  {invitingPeople?.map((i: any | boolean, index: number) => {
-                    const indexRight: number = 10 * (index + 1);
-                    if (index >= 3) {
-                      return;
-                    }
-                    return (
-                      <View key={index} style={[styles.userItemWrapper, {position: 'relative', right: indexRight}]}>
-                        <Image style={styles.imageFakeGirl} source={{uri: i?.userPhoto}} />
-                        {i?.status === 'accepted' ? (
-                          <CheckCircle style={styles.iconStatus} width={18} height={18} />
-                        ) : (
-                          <ClockWhiteFill style={styles.iconStatus} width={18} height={18} />
-                        )}
-                      </View>
-                    );
-                  })}
-                  <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: -16}}>
-                    {approvedPeople?.length === allPeople ? (
-                      <Text style={{color: whiteColor}}>
-                        {`Event is full: ${approvedPeople?.length}/${allPeople} guests invited ${approvedPeople?.length}/${allPeople}`}
-                      </Text>
-                    ) : (
-                      <>
-                        <UsersIcon width={16} height={16} />
+                <View
+                  style={{
+                    backgroundColor: approvedPeople?.length === allPeople ? errorColor : lightGray10Color,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingVertical: 6,
+                    paddingHorizontal: 16,
+                    borderRadius: 10,
+                  }}>
+                  <View style={styles.userWrapper}>
+                    {invitingPeople?.map((i: any | boolean, index: number) => {
+                      const indexRight: number = 10 * (index + 1);
+                      if (index >= 3) {
+                        return;
+                      }
+                      return (
+                        <View key={index} style={[styles.userItemWrapper, {position: 'relative', right: indexRight}]}>
+                          <Image style={styles.imageFakeGirl} source={{uri: i?.userPhoto}} />
+                          {i?.status === 'accepted' ? (
+                            <CheckCircle style={styles.iconStatus} width={18} height={18} />
+                          ) : (
+                            <ClockWhiteFill style={styles.iconStatus} width={18} height={18} />
+                          )}
+                        </View>
+                      );
+                    })}
+                    <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: -16}}>
+                      {approvedPeople?.length === allPeople ? (
                         <Text style={{color: whiteColor}}>
-                          {approvedPeople?.length}/{allPeople}
+                          {`Event is full: ${approvedPeople?.length}/${allPeople} guests invited ${approvedPeople?.length}/${allPeople}`}
                         </Text>
-                      </>
-                    )}
+                      ) : (
+                        <>
+                          <UsersIcon width={16} height={16} />
+                          <Text style={{color: whiteColor}}>
+                            {approvedPeople?.length}/{allPeople}
+                          </Text>
+                        </>
+                      )}
+                    </View>
+                  </View>
+                  <View style={styles.wrapperTextStartInviting}>
+                    <View
+                      style={{
+                        backgroundColor: getEventStatus().plateBackgroundColor,
+                        paddingHorizontal: 6,
+                        paddingVertical: 4,
+                        borderRadius: 5,
+                      }}>
+                      <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>
+                        {getEventStatus().plateTitle}
+                      </Text>
+                    </View>
                   </View>
                 </View>
-                <View style={styles.wrapperTextStartInviting}>
-                  <View
-                    style={{
-                      backgroundColor: getEventStatus().plateBackgroundColor,
-                      paddingHorizontal: 6,
-                      paddingVertical: 4,
-                      borderRadius: 5,
-                    }}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>
-                      {getEventStatus().plateTitle}
-                    </Text>
-                  </View>
-                </View>
-              </View>}
               </>
             ) : (
               <View style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>

@@ -38,7 +38,7 @@ interface TouchingSliderProps {
   handleOpenMatch?: () => void;
   onInvite?: () => void;
   handleAutoSwipeRight?: () => void;
-  superJoin?: () => void; 
+  superJoin?: () => void;
   isShowCardButtons?: boolean;
   isShowLocation?: boolean;
   isShowWantsJoin?: boolean;
@@ -88,13 +88,13 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   fromJoinEventsScreen = false,
   isProfile,
   changeEventList,
-  superJoin
+  superJoin,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
   const navigation = useAppNavigation();
-  
+
   const {counterSuperInvites} = useCounterSuperEvents();
 
   const handleSuperInvite = () => {
@@ -307,10 +307,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               </View>
               {isShowCardButtons && (
                 <View style={styles.wrapperRightButton}>
-                  <TouchableOpacity style={styles.buttonFlash} onPress={() => {
-                    onInvite()
-                    handleAutoSwipeRight()
-                  }}>
+                  <TouchableOpacity
+                    style={styles.buttonFlash}
+                    onPress={() => {
+                      onInvite();
+                      handleAutoSwipeRight();
+                    }}>
                     <View
                       style={{
                         backgroundColor: transparentWhite56Color,
@@ -417,7 +419,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       {isShowWantsJoin && (
         <View style={styles.wantToJoinWr}>
           <View style={styles.wantToJoinImage}>
-            <FlashFilledBlackIcon width={14} height={14}/>
+            <FlashFilledBlackIcon width={14} height={14} />
           </View>
           <Text style={styles.wantToJoinText}>{name} super wants to join you</Text>
         </View>
