@@ -412,12 +412,12 @@ const IO: FC = (): JSX.Element => {
   // };
 
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
-    const isFull = await checkIsFullGuestsFun();
+    // const isFull = await checkIsFullGuestsFun();
 
-    if (isFull) {
-      setIsVisibleModalFullEvent(true);
-      return;
-    }
+    // if (isFull) {
+    //   setIsVisibleModalFullEvent(true);
+    //   return;
+    // }
 
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
@@ -952,7 +952,6 @@ const IO: FC = (): JSX.Element => {
                 age={age}
                 homeAddress={homeAddress}
                 isShowInvitesTooltip={false}
-                // isLocked={!userHost?.accountConfirmed}
                 isLocked={!userInfo?.accountConfirmed}
                 confirmedAccount={accountConfirmed}
                 changeEventList={() => handleChangeListsEventsAfterSuperInvite(uid)}

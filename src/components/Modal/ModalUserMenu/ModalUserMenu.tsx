@@ -338,14 +338,14 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   };
 
   const handleActionPress = async () => {
-    const isFull = await checkIsFullGuestsFun();
-    if (isFull) {
-      setModalVisible(false);
-      // setTimeout(() => {
-      //   setIsVisibleModalFullEvent(true)
-      // }, 300);
-    }
-    return;
+    // const isFull = await checkIsFullGuestsFun();
+    // if (isFull) {
+    //   setModalVisible(false);
+    //   // setTimeout(() => {
+    //   //   setIsVisibleModalFullEvent(true)
+    //   // }, 300);
+    //   return;
+    // }
     if (uid === hostUid && userGuest?.status === 'approved') {
       handleAcceptGuestFromGuest();
       setModalVisible && setModalVisible(false);

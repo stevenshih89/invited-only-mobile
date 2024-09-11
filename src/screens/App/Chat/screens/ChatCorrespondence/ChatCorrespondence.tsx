@@ -76,20 +76,20 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     }
   };
 
-  const checkIsFullGuestsFun = async activeEvent => {
-    const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(activeEvent);
-    setTotalQuantityGuests(allGuests);
-    setAcceptQuantityGuest(findAcceptedGuest);
-    setTotalRequestsGuests(totalRequestsGuests);
-    await getActiveEventData();
+  // const checkIsFullGuestsFun = async activeEvent => {
+  //   const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(activeEvent);
+  //   setTotalQuantityGuests(allGuests);
+  //   setAcceptQuantityGuest(findAcceptedGuest);
+  //   setTotalRequestsGuests(totalRequestsGuests);
+  //   await getActiveEventData();
 
-    if (findAcceptedGuest >= allGuests) {
-      setTimeout(() => {
-        setIsVisibleModalFullEvent(true);
-      }, 500);
-    }
-    return findAcceptedGuest >= allGuests;
-  };
+  //   if (findAcceptedGuest >= allGuests) {
+  //     setTimeout(() => {
+  //       setIsVisibleModalFullEvent(true);
+  //     }, 500);
+  //   }
+  //   return findAcceptedGuest >= allGuests;
+  // };
 
   useEffect(() => {
     if (title) {
