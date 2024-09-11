@@ -12,15 +12,13 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {
   commonStackPath,
   eventCreatingStackPath,
-  joinEventsPath,
-  joinEventsPathRequest,
   notificationsPath,
   notificationsStackPath,
   paymentPath,
   settingsPath,
 } from 'constants/pathLocations';
-import {ANY_DAY, screenHeight, THIS_WEEKEND, TODAY, ALL, THIS_MONTH} from 'constants/common.ts';
-import {blackColor, grayColor, grayScale700, lightGray2Color, lightGray5Color, orangeColor, transparent60Color, whiteColor} from 'constants/colors.ts';
+import {screenHeight, THIS_WEEKEND, ALL, THIS_MONTH} from 'constants/common.ts';
+import {blackColor, grayColor, lightGray2Color, lightGray5Color, orangeColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
 import {useChat} from '../../store/chatStore';
@@ -34,21 +32,18 @@ import Logo from 'assets/images/icons/logo.svg';
 import NotificationIcon from 'assets/images/icons/notification.svg';
 import AddIcon from 'assets/images/icons/add.svg';
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
-import PeopleIcon from 'assets/images/icons/profile-2user.svg';
 import SettingsIcon from 'assets/images/icons/settings.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
-import CheckBlack from 'assets/images/icons/Check-black.svg';
-import ClockBlack from 'assets/images/icons/clock-black.svg';
-import Users from 'assets/images/icons/Users.svg';
 import InfoCircleGrayIcon from 'assets/images/icons/info-circle-gray.svg';
 import InfoCircleOrangeIcon from 'assets/images/icons/info-circle-orange.svg';
 
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
 import {EventContext} from 'contexts/EventContext';
-import {Satoshi500, Satoshi700} from 'constants/fonts';
+import {Satoshi500} from 'constants/fonts';
 import {useMyEvents} from '../../store/myEvents';
 import {useFocusEffect} from '@react-navigation/native';
+import {onUserProfileChangeSubscription} from 'helpers/userProfile';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -83,7 +78,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const selectedChat = useChat((i: any) => i?.activeEvent);
   const setChat = useChat((i: any) => i.setActiveEvent);
   const eventFilter = useChat((i: any) => i?.eventFilter);
-  const eventsImJoining = useMyEvents((i: any) => i?.eventsImJoining);
+
   const requestFilter = useRequest((i: any) => i?.requestFilter);
   const setEventFilter = useChat((i: any) => i?.setEventFilter);
   const setRequestFilter = useRequest((i: any) => i?.setRequestFilter);
@@ -124,8 +119,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   );
 
   const goToCreateEvent = async (): void => {
-    const userHost =  await fetchUserInfo();
-    if (!userHost?.accountConfirmed) {
+    if (!userInfo?.accountConfirmed) {
       return;
     }
     if (userInfo?.accountPremium) {
@@ -135,33 +129,19 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     }
   };
 
-  const fetchUserInfo = async () => {
-    const user = auth().currentUser;
-
-    if (user) {
-      try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
-
-        if (userInfoDoc.exists) {
-          const userData = userInfoDoc.data();
-          setUserInfo(userData);
-          return userData
-        }
-      } catch (error: any) {
-        Alert.alert('Error', error.message || 'Something went wrong');
-      }
-    }
-  };
-
   useFocusEffect(
     useCallback(() => {
-      fetchUserInfo();
+      const subscription = onUserProfileChangeSubscription(info => {
+        setUserInfo((prev: any) => ({...prev, ...info}));
+      });
+
+      return subscription;
     }, []),
   );
 
   useEffect(() => {
     if (userInfo?.accountType) {
-      setTypeEvents && setTypeEvents(userInfo?.accountType.toLowerCase() === 'host' ? false : true);
+      setTypeEvents && setTypeEvents(userInfo?.accountType?.toLowerCase() === 'host' ? false : true);
     }
   }, [userInfo?.accountType]);
 
@@ -278,7 +258,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     </TouchableOpacity>
   );
 
-  const isHost = userInfo?.accountType.toLowerCase() === 'host';
+  const isHost = userInfo?.isHost;
 
   const isEventFinished = (eventDate: string) => {
     const parts = eventDate.split('.');
@@ -697,7 +677,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 
   return (
     <View style={[styles.container, headerInsets]}>
-      {!userInfo?.accountConfirmed && headerType !== 'profile' &&  <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: transparent60Color, zIndex: 1000}}></View>}
+      {!userInfo?.accountConfirmed && headerType !== 'profile' && (
+        <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: transparent60Color, zIndex: 1000}} />
+      )}
       {showHeaderTop && (
         <View style={styles.wrapperHeader}>
           {logoType === 'logo' ? <Logo width={157} height={32} /> : <LogoPrimary width={157} height={32} />}

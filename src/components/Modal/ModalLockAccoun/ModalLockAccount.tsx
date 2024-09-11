@@ -14,8 +14,8 @@ const ModalLockAccount: FC<{
   isVisibleButton: boolean;
   wrapperStyle?: StyleProp<ViewStyle>;
   text?: string;
-  haveCode?: boolean
-  accountType?: string
+  haveCode?: boolean;
+  accountType?: string;
 }> = ({isVisibleButton, isPremium, text, wrapperStyle, haveCode = true, accountType}) => {
   const styles = useStyles();
 
@@ -50,18 +50,22 @@ const ModalLockAccount: FC<{
         <View style={styles.lockDescWr}>
           <Text style={styles.lockedTitle}>Locked</Text>
           <Text style={styles.lockedSubtitle}>
-            {text? text: 'Your account is under review. Thank you for your patience. You will be notified if your account is accepted'}
+            {text ? text : 'Your account is under review. Thank you for your patience. You will be notified if your account is accepted'}
           </Text>
-          {haveCode && <View style={styles.lockedHaveCodeWr}>
-            <Text style={styles.lockedHaveCodeTitle}>Have a code?</Text>
-            <TouchableOpacity activeOpacity={0.7} onPress={goToCodeConfirmation}>
-              <Text style={styles.lockedHaveCodePressableText}>Click here</Text>
-            </TouchableOpacity>
-          </View>}
+          {haveCode && (
+            <View style={styles.lockedHaveCodeWr}>
+              <Text style={styles.lockedHaveCodeTitle}>Have a code?</Text>
+              <TouchableOpacity activeOpacity={0.7} onPress={goToCodeConfirmation}>
+                <Text style={styles.lockedHaveCodePressableText}>Click here</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
-      {isVisibleButton && !isPremium && accountType === 'host' &&(
-        <TouchableOpacity onPress={goToMyProfileView} style={{position: 'absolute', bottom: 120, zIndex: 2000, width: '100%', paddingHorizontal: 24}}>
+      {isVisibleButton && !isPremium && accountType === 'host' && (
+        <TouchableOpacity
+          onPress={goToMyProfileView}
+          style={{position: 'absolute', bottom: 120, zIndex: 2000, width: '100%', paddingHorizontal: 24}}>
           <LinearGradient
             colors={['#977B4A', '#E5D291', '#A28453']}
             start={{x: 0, y: 0}}
