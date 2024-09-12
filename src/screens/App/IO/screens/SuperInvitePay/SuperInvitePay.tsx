@@ -93,6 +93,10 @@ const SuperInvitePay: FC = (): JSX.Element => {
     );
   };
 
+  const handleCloseModal = () => {
+    navigation.goBack();
+  }
+
   const pay = async (pack: PurchasesPackage, superInvites: number) => {
     try {
       const {customerInfo} = await Purchases.purchasePackage(pack);
@@ -248,7 +252,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
               backgroundColor: black2Color90,
               borderRadius: 25,
             }}
-            onPress={handleNext}>
+            onPress={handleCloseModal}>
             <CloseIcon width={25} height={25} />
           </TouchableOpacity>
         </View>
