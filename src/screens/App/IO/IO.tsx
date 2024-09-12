@@ -55,6 +55,7 @@ import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import FullEvent from 'components/FullEvent';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {AccountInfoFlyWeight, onUserProfileChangeSubscription, useUserProfileChangeSubscription} from 'helpers/userProfile';
+import {User} from 'src/types/userInfo';
 
 type UserInfo = any;
 
@@ -88,6 +89,7 @@ const IO: FC = (): JSX.Element => {
   const {activeEventDate} = useContext(EventsDate);
 
   const userHost = useUser((i: any) => i?.user);
+  const setUser = useUser((i: any) => i?.setUser);
 
   const allEventsLength = useRef(0);
 
@@ -100,6 +102,7 @@ const IO: FC = (): JSX.Element => {
   useEffect(() => {
     const subscription = onUserProfileChangeSubscription(info => {
       setUserInfo((prev: UserInfo) => ({...prev, ...info}));
+      setUser(info);
     });
 
     return subscription;
@@ -920,8 +923,8 @@ const IO: FC = (): JSX.Element => {
         });
 
         setNameUser(name);
-        const girlPhotos = item?._data?.photos?.map((image: any): void => image?.image);
-        const interests = item?._data?.interests?.map((i: any): void => i?.title);
+        const girlPhotos = item?._data?.photos?.filter((item: User.Photo) => item.image !== null).map((image: User.Photo) => image?.image);
+        const interests = item?._data?.interests?.map((i: User.Interests) => i?.title);
         const smoking = item?._data?.smoke?.title;
 
         const age: string = calculateAge(date);

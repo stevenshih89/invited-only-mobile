@@ -36,7 +36,12 @@ export const onUserProfileChangeSubscription = (callback: (info: AccountInfoFlyW
         isHost: userInfo?.accountType === 'host' ?? false,
       };
 
-      callback(accountInfo);
+      // DEVNOTE: just keep it for safety
+      // callback(accountInfo);
+      callback({
+        ...userInfo,
+        isHost: userInfo?.accountType === 'host' ?? false,
+      });
     });
 };
 
