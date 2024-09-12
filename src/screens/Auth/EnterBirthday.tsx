@@ -38,6 +38,18 @@ const EnterBirthday: FC = (): JSX.Element => {
     setMonth(trimmedInput);
   };
 
+  const checkMounth = () => {
+    if (Number(month) >= 1 && Number(month) <= 9) {
+      setMonth(`0${month}`);
+    }
+  }
+
+  const checkDay = () => {
+    if (Number(day) >= 1 && Number(day) <= 9) {
+      setDay(`0${day}`);
+    }
+  }
+
   const handleDayChange = (input: string): void => {
     const numericInput = input.replace(/[^0-9]/g, '');
     const trimmedInput = numericInput.slice(0, 2);
@@ -146,6 +158,7 @@ const EnterBirthday: FC = (): JSX.Element => {
                     keyboardAppearance="dark"
                     value={month}
                     keyboardType="number-pad"
+                    onBlur={checkMounth}
                     onChangeText={(masked: any) => handleMonthChange(masked)}
                     placeholder="MM"
                     placeholderTextColor={whiteColor}
@@ -167,6 +180,7 @@ const EnterBirthday: FC = (): JSX.Element => {
                     keyboardAppearance="dark"
                     value={day}
                     keyboardType="number-pad"
+                    onBlur={checkDay}
                     onChangeText={(masked: any) => handleDayChange(masked)}
                     placeholder="DD"
                     placeholderTextColor={whiteColor}
