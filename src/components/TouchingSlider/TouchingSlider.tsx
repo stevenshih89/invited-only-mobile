@@ -256,7 +256,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   </Text>
                 )}
               </View>
-              {true && (
+              {isPremium && (
                 <LinearGradient
                   colors={['#977B4A', '#E5D291', '#A28453']}
                   style={{
