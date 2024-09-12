@@ -203,9 +203,11 @@ const IO: FC = (): JSX.Element => {
     }
   }, [userInfo]);
 
-  useEffect(() => {
-    setCurrentEventCardPosition(1);
-  }, [activeEvent]);
+  useFocusEffect(
+    useCallback(() => {
+      setCurrentEventCardPosition(1);
+    }, [activeEvent]),
+  );
 
   const getWeekNumber = date => {
     let firstDayOfYear: Date = new Date(date.getFullYear(), 0, 1);
@@ -880,7 +882,7 @@ const IO: FC = (): JSX.Element => {
 
     setTimeout(() => {
       setEvents(recommendedData);
-      allEventsLength.current = data.length;
+      allEventsLength.current = recommendedData.length;
     }, 2000);
   };
 

@@ -118,15 +118,20 @@ const MyEventsCard: FC<MyEventsCard> = props => {
   }, []);
 
   const getEventStatus = () => {
-    if (date && moment(date, 'D/M/YYYY, HH:mm:ss').isBefore(moment())) {
-      return {
-        plateTitle: 'Expired',
-        plateBackgroundColor: grayScale600,
-      };
+    if (date) {
+      const adjustedDate = moment(date, 'D/M/YYYY, HH:mm:ss').add(12, 'hours');
+      if (adjustedDate.isBefore(moment())) {
+        return {
+          plateTitle: 'Expired',
+          plateBackgroundColor: grayScale600,
+        };
+      }
     }
+
     if (eventIsFull) {
       return {plateTitle: 'Full', plateBackgroundColor: lightGreenColor};
     }
+
     return {
       plateTitle: 'Active',
       plateBackgroundColor: lightGreenColor,
@@ -200,9 +205,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                     })}
                     <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: -16}}>
                       {approvedPeople?.length === allPeople ? (
-                        <Text style={{color: whiteColor}}>
-                          {`Event is full: ${approvedPeople?.length}/${allPeople} guests invited ${approvedPeople?.length}/${allPeople}`}
-                        </Text>
+                        <Text style={{color: whiteColor}}>{`Event is full: ${approvedPeople?.length}/${allPeople}`}</Text>
                       ) : (
                         <>
                           <UsersIcon width={16} height={16} />
