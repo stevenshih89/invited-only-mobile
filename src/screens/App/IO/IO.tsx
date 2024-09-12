@@ -297,7 +297,7 @@ const IO: FC = (): JSX.Element => {
         if (isWeek) {
           await firestore().collection('userInfo').doc(user.uid).update({
             lastUpdateSuperInvite: Date.now(),
-            superInvites: 5,
+            weeklySuperInvites: 5,
           });
         }
       } catch (error: any) {

@@ -106,7 +106,7 @@ const MyPlan = () => {
             <View style={{alignItems: 'center', flexDirection: 'row'}}>
               <FlashIcon width={18} height={18} />
               <Text style={{fontSize: RFValue(18, 812), marginLeft: 8, color: whiteColor, fontFamily: Satoshi700Italic}}>
-                Super Invite <Text style={{fontFamily: Satoshi400}}>({userInfo?.superInvites})</Text>
+                Super Invite <Text style={{fontFamily: Satoshi400}}>({userInfo?.superInvites + userInfo?.weeklySuperInvites})</Text>
               </Text>
             </View>
             <TouchableOpacity
