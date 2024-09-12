@@ -3,6 +3,7 @@ import {Dimensions, ImageBackground, SafeAreaView, Text, TouchableOpacity, View,
 import Background from 'assets/images/auth/background.png';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
 import ArrowRightBalck from 'assets/images/icons/arrow-right-balck.svg';
+import CheckCircle from 'assets/images/icons/check-circle.svg';
 import {black1Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Outfit500, Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -116,21 +117,25 @@ const Onboard: FC = (): JSX.Element => {
               </Text>
               <ArrowRightBalck />
             </TouchableOpacity>
-            <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center'}}>
-              <Text style={{fontFamily: Satoshi400, fontSize: RFValue(14, 812), color: whiteColor}}>
-                By creating account in you accept our{' '}
-              </Text>
-              <Text
-                style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}
-                onPress={() => openLink('https://www.invitedonly.app/terms-and-conditions')}>
-                Terms of Use
-              </Text>
-              <Text style={{fontFamily: Satoshi400, fontSize: RFValue(14, 812), color: whiteColor}}> and </Text>
-              <Text
-                style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}
-                onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
-                Privacy Policy
-              </Text>
+
+            <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 40}}>
+              <CheckCircle />
+              <View style={{flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12}}>
+                <Text style={{fontFamily: Satoshi400, fontSize: RFValue(14, 812), color: whiteColor}}>
+                  By creating account in you accept our{' '}
+                </Text>
+                <Text
+                  style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}
+                  onPress={() => openLink('https://www.invitedonly.app/terms-and-conditions')}>
+                  Terms of Use
+                </Text>
+                <Text style={{fontFamily: Satoshi400, fontSize: RFValue(14, 812), color: whiteColor}}> and </Text>
+                <Text
+                  style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}
+                  onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
+                  Privacy Policy
+                </Text>
+              </View>
             </View>
           </View>
         </SafeAreaView>

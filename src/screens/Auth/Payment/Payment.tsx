@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useRef, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {View, Text, SafeAreaView, ScrollView, TouchableOpacity, FlatList} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Tooltip, TooltipProps} from '@rneui/themed';
@@ -41,8 +41,8 @@ import {SvgProps} from 'react-native-svg';
 import Purchases, {PurchasesPackage} from 'react-native-purchases';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import HostPremium from 'components/Modal/ModalHostPremium/HostPremium';
+import {useRoute} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
-import {useNavigation, useRoute} from '@react-navigation/native';
 import {showToast} from 'helpers/showToast';
 
 interface PlanListItem {
@@ -129,7 +129,7 @@ const Payment: FC = (): JSX.Element => {
       durationName: 'week',
       description: 'Week Access',
       pricePerDuration: '$59/wk',
-      fullPrice: '59$',
+      fullPrice: '$59',
     },
     {
       id: 2,
@@ -138,7 +138,7 @@ const Payment: FC = (): JSX.Element => {
       durationName: 'year',
       description: 'Year Access',
       pricePerDuration: '$25/wk',
-      fullPrice: '1300$',
+      fullPrice: '$1300',
     },
     {
       id: 1,
@@ -147,7 +147,7 @@ const Payment: FC = (): JSX.Element => {
       durationName: 'months',
       description: 'Months Access',
       pricePerDuration: '$29/wk',
-      fullPrice: '357$',
+      fullPrice: '$357',
     },
   ]);
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
@@ -277,8 +277,14 @@ const Payment: FC = (): JSX.Element => {
         }
       }
     } catch (e) {
-      // console.log('offering ger error', e);
+      console.log('offering ger error', e);
     }
+  };
+
+  const getButtonTitle = () => {
+    const {duration, durationName, fullPrice} = activePayment;
+
+    return `Get ${duration} ${durationName} for ${fullPrice}`;
   };
 
   const renderItem = ({item}: {item: PlanListItem}) => {
@@ -430,7 +436,7 @@ const Payment: FC = (): JSX.Element => {
               borderColor={black1Color}
             />
           </View>
-          <Button buttonStyle={{marginTop: 20}} title={'Get access'} onPress={getOfferings} />
+          <Button buttonStyle={{marginTop: 20}} title={getButtonTitle()} onPress={getOfferings} />
           <View style={{width: '100%', height: 1, backgroundColor: gray1Color, marginTop: 16}}>
             <Text
               style={{
@@ -455,7 +461,7 @@ const Payment: FC = (): JSX.Element => {
               you cancel via App Store settings, and you agree to your Terms. More details can be found here:
               <TouchableOpacity>
                 <Text style={{textDecorationLine: 'underline', fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor}}>
-                  Privacy policy,{' '}
+                  Privacy policy,
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity>
