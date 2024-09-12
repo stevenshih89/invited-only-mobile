@@ -42,6 +42,8 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {useUser} from '../../../../../store/userStore';
 import {useFocusEffect, useRoute} from '@react-navigation/native';
+import {User} from 'src/types/userInfo';
+import {pipe} from 'helpers/pipe';
 
 interface MyProfileViewProps {
   isShowEditButton?: boolean;
@@ -51,11 +53,16 @@ interface MyProfileViewProps {
   route: any;
 }
 
+const filterPhotos = (photos: User.Photo[]): User.Photo[] => photos.filter(p => p.image !== null);
+const mapPhotos = (photos: User.Photo[]): (string | null)[] => photos.map(p => p.image);
+
+const processUserPhotos = pipe<string[]>(filterPhotos, mapPhotos);
+
 const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible, isShowInstagramPhotos = true}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>({});
 
-  const [photosList, setPhotosList] = useState<[]>([]);
+  const [photosList, setPhotosList] = useState<string[]>([]);
 
   const route = useRoute();
 
@@ -74,9 +81,6 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
         setLoading(true);
         const user = userHost?.uid;
         const uid = route?.params?.uid;
-        // console.log('route', route);
-        // console.log('uid', uid);
-        // console.log('userHost uid', user);
         if (user) {
           try {
             const userUid = uid !== undefined ? uid : user;
@@ -86,7 +90,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
               setUserInfo(userInfoDoc?.data());
               const userPhotos = userInfoDoc?.data()?.photos;
               if (userPhotos?.length) {
-                const mappedPhotos = userPhotos?.map((img: {id: number; image: string}) => img?.image);
+                const mappedPhotos = processUserPhotos(userPhotos);
                 setPhotosList(mappedPhotos);
               }
             } else {
@@ -116,37 +120,26 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
     switch (flag) {
       case 'us':
         return <FlagUS />;
-        break;
       case 'ua':
         return <FlagUA />;
-        break;
       case 'ae':
         return <FlagAE />;
-        break;
       case 'de':
         return <FlagDE />;
-        break;
       case 'fr':
         return <FlagFR />;
-        break;
       case 'es':
         return <FlagES />;
-        break;
       case 'il':
         return <FlagIL />;
-        break;
       case 'it':
         return <FlagIT />;
-        break;
       case 'kr':
         return <FlagKR />;
-        break;
       case 'pl':
         return <FlagPL />;
-        break;
       case 'pt':
         return <FlagPT />;
-        break;
       default:
         return;
     }
@@ -338,6 +331,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
             </View>
             <View style={styles.wrapperAboutMe}>
               <Text style={styles.testBasics}>About me</Text>
+              {userInfo?.bio && <Text style={styles.textAboutMe}>{userInfo?.bio}</Text>}
               {userInfo?.showLanguages && (
                 <View style={{marginTop: screenHeight / 55}}>
                   <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>Languages</Text>
@@ -371,7 +365,6 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                   </View>
                 </View>
               )}
-              {userInfo?.bio && <Text style={styles.textAboutMe}>{userInfo?.bio}</Text>}
             </View>
             <View style={{marginTop: screenHeight / 55}}>
               <Text style={[styles.testBasics, {marginBottom: 14}]}>My interests</Text>

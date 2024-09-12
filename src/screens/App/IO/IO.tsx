@@ -54,10 +54,10 @@ import {handleCreateChat} from 'helpers/chat';
 import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import FullEvent from 'components/FullEvent';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
-import {AccountInfoFlyWeight, onUserProfileChangeSubscription, useUserProfileChangeSubscription} from 'helpers/userProfile';
-import {User} from 'src/types/userInfo';
+import {onUserProfileChangeSubscription} from 'helpers/userProfile';
+import {User, UserInfo} from 'src/types/userInfo';
 
-type UserInfo = any;
+const USERS_FETCHING_DELAY = 3000;
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -306,7 +306,7 @@ const IO: FC = (): JSX.Element => {
     }
     setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, USERS_FETCHING_DELAY);
   };
 
   const fetchMyEvents = async (isFirstRender: boolean) => {
@@ -631,8 +631,9 @@ const IO: FC = (): JSX.Element => {
     }
 
     filterDataWM?.map((event: any) => {
-      const currUserPhotos = event?.userPhotos?.map((photo: any) => photo?.image);
-      const eventPhotos = event?.photos?.map((photo: any) => photo?.image);
+      const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
+      const eventPhotos = event?.photos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
+
       data.push({
         component: (
           <View style={styles.wrapperFakeCard}>
@@ -1151,7 +1152,7 @@ const IO: FC = (): JSX.Element => {
         // setTimeout(() => {
         //   setEvents([...data]);
         //   setEventsLength(data.length);
-        // }, 3000);
+        // }, USERS_FETCHING_DELAY);
       });
     allEventsLength.current = data.length;
     setEvents(data);
@@ -1162,7 +1163,7 @@ const IO: FC = (): JSX.Element => {
     // setTimeout(() => {
     //   setEvents([...data]);
     //   setEventsLength(data.length);
-    // }, 3000);
+    // }, USERS_FETCHING_DELAY);
   };
 
   const requestUserPermission = async () => {

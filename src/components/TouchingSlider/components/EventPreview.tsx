@@ -303,7 +303,7 @@ const EventPreview: FC<{
           style={styles.imageBackground}
           imageStyle={styles.imageStyle}
           resizeMode="cover">
-          {photos && photos.length > 1 && (
+          {/* {photos && photos.length > 1 && (
             <>
               <View style={styles.wrapperBar}>
                 {[...Array(photos.length)].map((_, index) => (
@@ -315,7 +315,7 @@ const EventPreview: FC<{
                 <TouchableOpacity onPress={handleNext} style={styles.button} />
               </View>
             </>
-          )}
+          )} */}
           <View style={styles.wrapperButtons}>
             <TouchableOpacity onPress={handleBack} style={styles.button} />
             <TouchableOpacity onPress={handleNext} style={styles.button} />
