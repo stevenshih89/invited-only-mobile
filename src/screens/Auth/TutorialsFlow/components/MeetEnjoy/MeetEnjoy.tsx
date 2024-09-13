@@ -3,7 +3,9 @@ import React, {useContext} from 'react';
 
 //import components
 import useStyles from 'screens/Auth/TutorialsFlow/components/MeetEnjoy/styles.ts';
+import JoinEventsImage from 'assets/images/auth/tutorial-start-6.png';
 import MeetEnjoyImage from 'assets/images/auth/tutorial-start-7.png';
+
 import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const MeetEnjoy = () => {
@@ -13,7 +15,7 @@ const MeetEnjoy = () => {
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
-        <Image style={styles.image} resizeMode="contain" source={MeetEnjoyImage} />
+        <Image style={styles.image} resizeMode="contain" source={accountTypeGuest ? MeetEnjoyImage : JoinEventsImage} />
       </View>
       <View style={styles.textWrapper}>
         <Text style={styles.textMeetEnjoy}>Meet and Enjoy!</Text>

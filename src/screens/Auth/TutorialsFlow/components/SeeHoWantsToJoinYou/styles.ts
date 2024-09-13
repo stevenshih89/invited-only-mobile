@@ -31,11 +31,12 @@ const useStyles = () => {
       fontFamily: Satoshi400,
       fontSize: RFValue(14, 812),
       textAlign: 'center',
-      // marginTop: dimensionsHeight / 44,
+      paddingHorizontal: dimensionsHeight / 22,
+      marginTop: 8,
     },
     textWrapper: {
       alignItems: 'center',
-      paddingHorizontal: dimensionsHeight / 18,
+      paddingHorizontal: dimensionsHeight / 22,
     },
   });
 };

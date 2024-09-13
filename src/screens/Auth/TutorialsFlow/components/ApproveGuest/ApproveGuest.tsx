@@ -4,6 +4,7 @@ import React, {useContext} from 'react';
 //import components
 import useStyles from 'screens/Auth/TutorialsFlow/components/ApproveGuest/styles.ts';
 import ApproveGuestImage from 'assets/images/auth/tutorial-start-4.png';
+import ApproveInvitationImage from 'assets/images/auth/tutorial-guest-4.png';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 
 const ApproveGuest = () => {
@@ -14,16 +15,14 @@ const ApproveGuest = () => {
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
-        <Image resizeMode="stretch" style={styles.image} source={ApproveGuestImage} />
+        <Image resizeMode="contain" style={styles.image} source={accountType ? ApproveInvitationImage : ApproveGuestImage} />
       </View>
       <View style={styles.textWrapper}>
-        {/* <Text style={styles.textApproveGuest}>{accountType ? 'Approve invitation' : 'Approve Guest'}</Text> */}
-        <Text style={styles.textApproveGuest}>Approve Guest</Text> 
+        <Text style={styles.textApproveGuest}>{accountType ? 'Approve invitation' : 'Approve Guest'}</Text>
         <Text style={styles.textSelectAndApprove}>
-        Select and approve guests for your event to finalize the guest list
-          {/* {accountType
+          {accountType
             ? 'Do you like the invitation? Accept it and have fun together!'
-            : 'Select and approve guests for your event to finalize the guest list'} */}
+            : 'Select and approve guests for your event to finalize the guest list'}
         </Text>
       </View>
     </View>

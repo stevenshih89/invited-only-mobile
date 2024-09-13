@@ -23,11 +23,12 @@ import {AuthContext} from 'contexts/AuthContext';
 const TutorialsFlow: FC = (): JSX.Element => {
   const [active, setActive] = useState<number>(0);
 
-  const {setUser} = useContext(AuthContext);
+  const {setUser, onBoarding} = useContext(AuthContext);
+  const accountTypeGuest = onBoarding[0]?.accountType === 'guest';
 
   const styles = useStyles();
 
-  const content: ReactNode[] = [
+  const hostContent: ReactNode[] = [
     <CreateEvent />,
     <SwipeToInvite />,
     <GetInviteMatch />,
@@ -36,6 +37,10 @@ const TutorialsFlow: FC = (): JSX.Element => {
     <MeetEnjoy />,
     <JoinEvents />,
   ];
+
+  const guestContent: ReactNode[] = [<SwipeToInvite />, <GetInviteMatch />, <SeeHoWantsToJoinYou />, <ApproveGuest />, <MeetEnjoy />];
+
+  const content = accountTypeGuest ? guestContent : hostContent;
 
   const setOnBoarding = useUser((i: any) => i?.setOnBoarding);
   const navigation = useAppNavigation();
@@ -49,7 +54,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
   };
 
   const handleNext = () => {
-    if (active === 6) {
+    if (active === content.length - 1) {
       return handleCloseTutorialFlow();
     }
     setActive(p => p + 1);
@@ -70,7 +75,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
       </View>
       <Stepper active={active} content={content} wrapperStyle={styles.wrapperStyle} />
       <View style={styles.wrapperBar}>
-        {[...Array(7)].map((_, index) => (
+        {[...Array(content.length)].map((_, index) => (
           <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
         ))}
       </View>

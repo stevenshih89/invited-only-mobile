@@ -3,14 +3,14 @@ import React from 'react';
 
 //import components
 import useStyles from 'screens/Auth/TutorialsFlow/components/JoinEvents /styles.ts';
-import JoinEventsImage from 'assets/images/auth/tutorial-start-6.png';
+import MeetEnjoyImage from 'assets/images/auth/tutorial-start-7.png';
 
 const JoinEvents = () => {
   const styles = useStyles();
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
-        <Image style={styles.image} resizeMode="contain" source={JoinEventsImage} />
+        <Image style={styles.image} resizeMode="contain" source={MeetEnjoyImage} />
       </View>
       <View style={styles.textWrapper}>
         <Text style={styles.textJoinEvents}>Join events</Text>
