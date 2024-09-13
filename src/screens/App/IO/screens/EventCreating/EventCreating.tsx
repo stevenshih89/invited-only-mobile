@@ -439,7 +439,7 @@ const EventCreating: FC = () => {
                       fontSize: 12,
                       marginTop: 8,
                     }}>
-                    Prewiev
+                    Preview
                   </Text>
                 </View>
               </View>

@@ -398,6 +398,20 @@ const IO: FC = (): JSX.Element => {
   //   }
   // };
 
+  const onReject = async (uid: string, eventId: string) => {
+    const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
+    try {
+      await firestore()
+        .collection('Events')
+        .doc(activeEventId)
+        .update({
+          rejectsList: firestore.FieldValue.arrayUnion({uid}),
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
     // const isFull = await checkIsFullGuestsFun();
 
@@ -905,6 +919,10 @@ const IO: FC = (): JSX.Element => {
     usersList
       ?.filter(item => {
         // // console.warn('item', item?._data.uid, item?._data);
+
+        if (getActualDataEvent?.rejectsList?.find(j => j?.uid === item?._data.uid)) {
+          return false;
+        }
 
         if (getActualDataEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {
           return false;
