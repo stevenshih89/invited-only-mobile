@@ -66,6 +66,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
       invitedStatus: chatCheck?.invitedStatus,
       uid: chatCheck?.uid,
       hostUid: matchData.uidHost,
+      path: 'chat',
     };
 
     const chatDataGuest = {
@@ -79,6 +80,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
       invitedStatus: chatCheck?.invitedStatus,
       uid: matchData.uidHost,
       hostUid: matchData.uidHost,
+      path: 'chat',
     };
     const isEventHost = userHost?.uid === matchData?.uidHost;
     const uidForNotification = isEventHost ? matchData?.uidGuest : matchData?.uidHost;
@@ -91,6 +93,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
         'Invite Match',
         'Invite Match'.toUpperCase(),
         userHost,
+        isEventHost ? chatDataHost : chatDataGuest,
       );
     }
     showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {

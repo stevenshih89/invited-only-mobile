@@ -150,7 +150,7 @@ export function registerListenerWithFCM() {
 //method was called to display notification
 async function onDisplayNotification(title, body, data) {
   // console.log('onDisplayNotification: ', data);
-  showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image});
+  showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image, path: data.params?.path, params: data.params});
   // Request permissions (required for iOS)
   await notifee.requestPermission();
   // Create a channel (required for Android)
@@ -213,21 +213,23 @@ export const sendNotification = async (
 
   const token = await getFcmTokenFromUser(forUserUid);
 
-  // console.warn('forUserUid', forUserUid);
+  const notificationData = {
+    token: token,
+    priority: 'high',
+    notification: {
+      title,
+      body,
+    },
+    data: {
+      status,
+      image: userInfo?.photos[0].image,
+    },
+  };
+  if (params) {
+    notificationData.data.params = params;
+  }
   try {
-    const result = await functions().httpsCallable('sendNotification')({
-      token: token,
-      priority: 'high',
-      notification: {
-        title,
-        body,
-      },
-      data: {
-        status,
-        image: userInfo?.photos[0].image,
-        params,
-      },
-    });
+    const result = await functions().httpsCallable('sendNotification')(notificationData);
     if (result.data.success) {
       // console.warn('Notification sent successfully', result.data.data);
     } else {
