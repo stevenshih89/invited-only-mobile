@@ -114,6 +114,12 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
+  const handleAutoSwipeLeft = () => {
+    if (cardRef.current) {
+      cardRef.current.autoSwipeLeft();
+  }
+}
+
   let currentDate = new Date();
   const isHost = userHost?.accountType === 'host';
 
@@ -888,7 +894,7 @@ const IO: FC = (): JSX.Element => {
   };
 
   const getListForHost = async () => {
-    let users: any;
+    let users: any;    
 
     if (activeEvent.male > 0 && activeEvent.female > 0) {
       users = await firestore().collection('userInfo').limit(20).get();
@@ -906,7 +912,9 @@ const IO: FC = (): JSX.Element => {
       ?.filter(item => {
         // // console.warn('item', item?._data.uid, item?._data);
 
-        if (getActualDataEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {
+        if (activeEvent?.usersList?.find(j => j?.uid === item?._data.uid) ||
+            activeEvent?.rejectList?.find(j => j === item?._data.uid)
+        ) {
           return false;
         }
         if (item?._data?.uid === userHost?.uid) {
@@ -1154,7 +1162,7 @@ const IO: FC = (): JSX.Element => {
         //   setEventsLength(data.length);
         // }, USERS_FETCHING_DELAY);
       });
-    allEventsLength.current = data.length;
+    allEventsLength.current = data.length;    
     setEvents(data);
     eventsRef.current = data;
     checkIsFullGuestsFun();
@@ -1165,6 +1173,51 @@ const IO: FC = (): JSX.Element => {
     //   setEventsLength(data.length);
     // }, USERS_FETCHING_DELAY);
   };
+
+  const sortEventsByReject = (uid: string) => { 
+    if(uid) {
+      const res = events?.filter(item => item.info.uid !== uid)
+      setEvents(res);
+      setCurrentEventCardPosition(prev => prev + 1);
+    }
+  }
+
+  const onReject = async (uid: string, eventId: string) => {
+    if(userInfo?.accountType === 'guest') {
+      try {
+        const doc = firestore().collection('userInfo').doc(userInfo?.uid)
+      const data = (await doc.get()).data();
+      if(data?.rejectEvents) {
+        await doc.update({
+          rejectEvents: [...data.rejectEvents, eventId]
+        })
+      } else {
+        await doc.update({
+          rejectEvents: [eventId]
+        })
+      }
+      } catch (error) {
+        console.log('error update rejectEvents', error);
+      }
+    } else {
+      const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
+    try {
+      const doc = firestore().collection('Events').doc(activeEventId)
+      const data = (await doc.get()).data()
+      if(data?.rejectList) {
+        await doc.update({
+          rejectList: [...data?.rejectList, uid]
+        })
+      } else {
+        await doc.update({
+          rejectList: [uid]
+        })
+      }
+    } catch (error) {
+      console.log('error update reject list', error);
+    }
+  }
+}
 
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission();
@@ -1332,6 +1385,8 @@ const IO: FC = (): JSX.Element => {
                     // @ts-ignore
                     cardHeight="100%"
                     onSwipedLeft={() => {
+                      onReject(item?.info?.uid, item?.info?.id)
+                      sortEventsByReject(item?.info?.uid)
                       setTimeout(() => {
                         setCurrentEventCardPosition(prev => prev + 1);
                       }, 500);
@@ -1364,7 +1419,7 @@ const IO: FC = (): JSX.Element => {
               text="Your event is under review. Thank you for your patience. You will be notified if your account is accepted"
             />
           )}
-          <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
+          <ModalReport handleAutoSwipeLeft={handleAutoSwipeLeft} sortEventsByReject={sortEventsByReject} modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
           <SuperInvite
             isVisibleSuperInvite={isVisibleSuperInvite}
             activeSuperInviteUser={activeSuperInviteUser}
