@@ -20,7 +20,8 @@ const widthScreen = Dimensions.get('screen').width;
 
 export interface MatchData {
   type?: string;
-  name?: string;
+  nameHost?: string;
+  nameGuest?: string;
   imageUri?: string;
   uidHost?: string;
   uidGuest?: string;
@@ -43,7 +44,8 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
 
   const userHost = useUser((i: any) => i?.user);
 
-  const words = `${matchData?.name} `?.split(' ');
+  const name = userHost?.uid === matchData?.uidHost ? matchData?.nameGuest : matchData?.nameHost;
+  const words = `${name} `?.split(' ');
   const wordTranslations = words?.map(() => useSharedValue(widthScreen));
   const nameAnimation = useSharedValue(widthScreen);
 
@@ -51,8 +53,36 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
 
   const handleCloseMatch = async () => {
     onCloseMatch();
-    const uidForNotification = userHost?.uid === matchData?.uidHost ? matchData?.uidGuest : matchData?.uidHost;
-    const ownerPhoto = userHost?.uid === matchData?.uidHost ? matchData?.imageUri : matchData?.userHostImageUri;
+    const messageCollection = await firestore().collection('messages').doc(matchData?.eventId).get();
+    const chatCheck = messageCollection?.data()?.chats?.find(i => i?.uid === matchData.uidGuest);
+    const chatDataHost = {
+      image: chatCheck?.avatar,
+      title: matchData.nameGuest,
+      online: false,
+      messages: chatCheck?.messages,
+      activeEvent: matchData.eventId,
+      id: chatCheck?.id,
+      superInvite: chatCheck?.superInvite,
+      invitedStatus: chatCheck?.invitedStatus,
+      uid: chatCheck?.uid,
+      hostUid: matchData.uidHost,
+    };
+
+    const chatDataGuest = {
+      image: matchData.userHostImageUri,
+      title: matchData.nameHost,
+      online: false,
+      messages: chatCheck?.messages,
+      activeEvent: matchData.eventId,
+      id: chatCheck?.id,
+      superInvite: chatCheck?.superInvite,
+      invitedStatus: chatCheck?.invitedStatus,
+      uid: matchData.uidHost,
+      hostUid: matchData.uidHost,
+    };
+    const isEventHost = userHost?.uid === matchData?.uidHost;
+    const uidForNotification = isEventHost ? matchData?.uidGuest : matchData?.uidHost;
+    const ownerPhoto = isEventHost ? matchData?.imageUri : matchData?.userHostImageUri;
     if (uidForNotification) {
       await sendNotification(
         uidForNotification,
@@ -63,7 +93,12 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
         userHost,
       );
     }
-    showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {ownerPhoto: ownerPhoto, status: 'INVITE MATCH'});
+    showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {
+      ownerPhoto: ownerPhoto,
+      status: 'INVITE MATCH',
+      path: 'chat',
+      params: isEventHost ? chatDataHost : chatDataGuest,
+    });
   };
 
   const handleCreateChat = async () => {
@@ -108,7 +143,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
             invitedStatus: 'invite_match',
             messages: [],
-            name: matchData.name,
+            name: matchData.nameGuest,
             superInvite: matchData?.superInvite,
             uid: matchData.uidGuest,
             hostUid: userHost?.uid,
@@ -144,7 +179,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             avatarHost: userHost?.photos[0]?.image,
             chats: [],
             inviteStatus: 'invite_match',
-            nameGuest: matchData.name,
+            nameGuest: matchData.nameGuest,
             uidGuest: matchData.uidGuest,
             uidHost: userHost?.uid,
           });
@@ -154,7 +189,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
             invitedStatus: 'invite_match',
             messages: [],
-            name: matchData.name,
+            name: matchData.nameGuest,
             superInvite: matchData?.superInvite === 'true' ? true : false,
             uid: matchData.uidGuest,
             hostUid: userHost?.uid,

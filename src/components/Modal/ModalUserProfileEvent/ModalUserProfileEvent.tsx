@@ -129,7 +129,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     try {
       const user = usersList?.filter((i: any) => i?.uid === uid)[0];
       const messageCollection = await firestore().collection('messages').doc(list?.id).get();
-      const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === uid)[0];
+      const chatCheck = messageCollection?.data()?.chats?.find(i => i?.uid === uid)
       const activeEvent = messageCollection?.data()?.activeEvent;
 
       if (chatCheck) {

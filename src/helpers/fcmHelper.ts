@@ -187,7 +187,15 @@ export function onMatchNotificationSubscription(handler: (message: FirebaseMessa
   });
 }
 
-export const sendNotification = async (forUserUid: string, title: string, body: string, mark: string, status: string, userInfo: any) => {
+export const sendNotification = async (
+  forUserUid: string,
+  title: string,
+  body: string,
+  mark: string,
+  status: string,
+  userInfo: any,
+  params?: any,
+) => {
   const generateRandomId = (length: number) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -217,6 +225,7 @@ export const sendNotification = async (forUserUid: string, title: string, body: 
       data: {
         status,
         image: userInfo?.photos[0].image,
+        params,
       },
     });
     if (result.data.success) {

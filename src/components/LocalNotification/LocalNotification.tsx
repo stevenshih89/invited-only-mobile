@@ -12,31 +12,38 @@ import InfoCircleOrange from 'assets/images/icons/info-circle-orange.svg';
 import InfoCircleGrey from 'assets/images/icons/info-circle-gray.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import XIcon from 'assets/images/icons/X.svg';
-import IOImage from 'assets/images/app/IO.png'
+import IOImage from 'assets/images/app/IO.png';
 
 //import images
 import IconBackground from 'assets/images/app/bcon-background.png';
 import {blackColor, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { screenWidth } from 'constants/common';
-import { useNavigation } from '@react-navigation/native';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import { commonStackPath, invitationCodePath } from 'constants/pathLocations';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {screenWidth} from 'constants/common';
+import {useNavigation} from '@react-navigation/native';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {chatCorrespondencePath, commonStackPath, invitationCodePath} from 'constants/pathLocations';
 
 const LocalNotification = () => {
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const handlePress = (path: string) => {
+  const handlePress = (path: string, params?: any) => {
     switch (path) {
       case 'invitationCode':
-        navigation.navigate(commonStackPath, {screen: invitationCodePath})
+        navigation.navigate(commonStackPath, {screen: invitationCodePath});
+        break;
+      case 'chat':
+        // @ts-ignore
+        navigation.navigate(chatCorrespondencePath, {
+          screen: chatCorrespondencePath,
+          params,
+        });
         break;
       default:
         break;
     }
-  }
+  };
   const toastConfig: ToastConfig = {
     success: props => (
       <BaseToast
@@ -117,7 +124,7 @@ const LocalNotification = () => {
       </View>
     ),
     inviteMatch: ({text1, text2, props}) => (
-      <TouchableOpacity style={{width: screenWidth}} onPress={() => handlePress(props.path)}>
+      <TouchableOpacity style={{width: screenWidth}} onPress={() => handlePress(props.path, props.params)}>
         <View style={{paddingHorizontal: 24, width: '100%'}}>
           <View style={{backgroundColor: whiteColor, padding: 16, borderRadius: 10, width: '100%'}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -156,15 +163,12 @@ const LocalNotification = () => {
                     </View>
                   )}
                 </View>
-                <Text style={{color: blackColor, marginTop: 6, fontSize: RFValue(16, 812), fontFamily: Satoshi400}}>
-                  {text2}
-                </Text>
+                <Text style={{color: blackColor, marginTop: 6, fontSize: RFValue(16, 812), fontFamily: Satoshi400}}>{text2}</Text>
               </View>
             </View>
           </View>
         </View>
       </TouchableOpacity>
-
     ),
   };
 

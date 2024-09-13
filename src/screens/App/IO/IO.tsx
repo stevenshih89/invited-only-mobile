@@ -117,15 +117,15 @@ const IO: FC = (): JSX.Element => {
   let currentDate = new Date();
   const isHost = userHost?.accountType === 'host';
 
-  useEffect(() => {
-    const unsubscribe = onMatchNotificationSubscription(message => {
-      const data = message?.data;
-      setMatchData(data);
-      setIsVisibleMatch(true);
-    });
+  // useEffect(() => {
+  //   const unsubscribe = onMatchNotificationSubscription(message => {
+  //     const data = message?.data;
+  //     setMatchData(data);
+  //     setIsVisibleMatch(true);
+  //   });
 
-    return () => unsubscribe();
-  }, []);
+  //   return () => unsubscribe();
+  // }, []);
 
   const getSuperInvites = async () => {
     const getDoc = await firestore().collection('userInfo').doc(userHost.uid).get();
@@ -136,15 +136,15 @@ const IO: FC = (): JSX.Element => {
     setCounterSuperInvites(currentSuperInvites + currentWeeklySuperInvites);
   };
 
-  const checkIsFullGuestsFun = async () => {
-    const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(activeEvent?.id);
-    if (findAcceptedGuest >= allGuests) {
-      setTotalQuantityGuests(allGuests);
-    }
-    setTotalRequestsGuests(totalRequestsGuests);
-    setAcceptQuantityGuest(findAcceptedGuest);
-    return findAcceptedGuest >= allGuests;
-  };
+  // const checkIsFullGuestsFun = async () => {
+  //   const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(activeEvent?.id);
+  //   if (findAcceptedGuest >= allGuests) {
+  //     setTotalQuantityGuests(allGuests);
+  //   }
+  //   setTotalRequestsGuests(totalRequestsGuests);
+  //   setAcceptQuantityGuest(findAcceptedGuest);
+  //   return findAcceptedGuest >= allGuests;
+  // };
 
   useFocusEffect(
     useCallback(() => {
@@ -413,13 +413,6 @@ const IO: FC = (): JSX.Element => {
   };
 
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
-    // const isFull = await checkIsFullGuestsFun();
-
-    // if (isFull) {
-    //   setIsVisibleModalFullEvent(true);
-    //   return;
-    // }
-
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
@@ -440,7 +433,7 @@ const IO: FC = (): JSX.Element => {
         fcmToken: isHost ? guest.data()?.fcmToken : userHost?.fcmToken,
       };
 
-      if (userHost?.accountType === 'host') {
+      if (isHost) {
         const matchedGuest = event.requestsList?.find(reqUser => reqUser?.uid === forUserUid && reqUser?.status === 'liked');
         let data = {};
         let matchedGuestData: MatchData;
@@ -451,7 +444,8 @@ const IO: FC = (): JSX.Element => {
           };
           matchedGuestData = {
             type: 'match',
-            name: matchedGuest?.name,
+            nameHost: event?.hostName,
+            nameGuest: matchedGuest?.name,
             imageUri: matchedGuest?.userPhoto,
             uidHost: userHost?.uid,
             uidGuest: matchedGuest?.uid,
@@ -502,7 +496,8 @@ const IO: FC = (): JSX.Element => {
           };
           matchedGuestData = {
             type: 'match',
-            name: event?.hostName,
+            nameHost: event?.hostName,
+            nameGuest: matchedGuest?.name,
             imageUri: matchedGuest?.userPhoto,
             uidHost: event?.uid,
             uidGuest: matchedGuest?.uid,
@@ -1175,7 +1170,7 @@ const IO: FC = (): JSX.Element => {
     allEventsLength.current = data.length;
     setEvents(data);
     eventsRef.current = data;
-    checkIsFullGuestsFun();
+    // checkIsFullGuestsFun();
     // // console.warn('data', data);
 
     // setTimeout(() => {
@@ -1350,6 +1345,7 @@ const IO: FC = (): JSX.Element => {
                     // @ts-ignore
                     cardHeight="100%"
                     onSwipedLeft={() => {
+                      onReject(item?.info?.uid, item?.info?.id);
                       setTimeout(() => {
                         setCurrentEventCardPosition(prev => prev + 1);
                       }, 500);
