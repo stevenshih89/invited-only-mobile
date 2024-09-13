@@ -1,5 +1,5 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, Alert} from 'react-native';
+import {View, Text, TouchableOpacity, Alert, Platform} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import TrashCanIcon from 'assets/images/icons/trash.svg';
 import EventPreviewImage from 'assets/images/app/event-preview.png';
@@ -21,6 +21,7 @@ import uuid from 'react-native-uuid';
 import {useUser} from 'src/store/userStore';
 import {uploadImage} from 'helpers/uploadImage.ts';
 import {IOPath} from 'constants/pathLocations';
+import storage from '@react-native-firebase/storage';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 
 const eventTypes = [
@@ -261,14 +262,41 @@ const EventCreating: FC = () => {
     }, []),
   );
 
-  const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
+  const updatePhotosImage = async (userId: string | null, imageUrl: any[]) => {
+
+    const filteredImages = imageUrl.filter((item) => item.image !== undefined && item.image !== null);
+    const sortedPhotos = filteredImages.sort((a, b) => a.id - b.id);
+
+    
     try {
       await firestore().collection('Events').doc(userId).update({
-        photos: imageUrl,
+        photos: sortedPhotos,
       });
-      // console.log('Events image updated successfully.');
     } catch (e) {
-      // console.error('Error updating events image: ', e);
+      console.error('Error updating events image: ', e);
+    }
+  };
+  
+
+  const uploadImage = async (imagePath: string, userId: string | null) => {
+    if(imagePath) {
+      if(imagePath === 'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805') {
+        return imagePath
+      } else {
+        const uploadUri = Platform.OS === 'ios' ? imagePath.replace('file://', '') : imagePath;
+      const filename = `${userId}_${new Date().getTime()}`; // or another unique naming convention
+      const storageRef = storage().ref(`images/${filename}`);
+      const task = storageRef.putFile(uploadUri);
+      try {
+        await task;
+      // Get the URL to the uploaded image
+        const url = await storageRef.getDownloadURL();        
+        return url;
+      } catch (e) {
+        // console.error(e);
+        return null;
+      }
+      }
     }
   };
 
@@ -282,7 +310,7 @@ const EventCreating: FC = () => {
         Alert.alert('Please add the main picture');
       }
 
-      // let imagesUri: any[] = [];
+      let imagesUri: any[] = [];
 
       // // console.log('imagesUri', imagesUri);
       // // console.log('images', photos);
@@ -320,16 +348,12 @@ const EventCreating: FC = () => {
           isEditing ? setIsVisibleSaveModal(true) : null;
           setLoading(false);
           navigation.navigate(IOPath as never);
-          // photos?.map(async (imagePath, index) => {
-          //   await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
-          //   await updatePhotosImage(uid, imagesUri).then(() => {
-          //     showToast('success', 'Go to my events >', 'Event successfully created ');
-          //     showToast('pending', 'Your event in review.', 'Estimate time review 2h');
-          //     isEditing ? setIsVisibleSaveModal(true) : null;
-          //     setLoading(false);
-          //     navigation.navigate(IOPath as never);
-          //   });
-          // });
+          photos?.map(async (i, index) => {      
+            await uploadImage(i?.image, userHost.uid)
+            .then(img => imagesUri.push({id: index, image: img}))
+            .catch(e => console.log('error uploadImage', e))
+            await updatePhotosImage(uid, imagesUri)
+          })
           await firestore()
             .collection('userInfo')
             .doc(user?.uid)
