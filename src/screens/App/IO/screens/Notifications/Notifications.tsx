@@ -116,7 +116,16 @@ const Notifications: FC = (): ReactElement => {
               <Image source={{uri: images[item.uid]}} style={{width: 60, height: 60, borderRadius: 60}} />
               <View style={{marginLeft: 16, justifyContent: 'center', flex: 1}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1}}>
-                  <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi700, marginBottom: 4}}>{item.title}</Text>
+                  <Text
+                    style={{
+                      color: whiteColor,
+                      fontSize: RFValue(16, 812),
+                      fontFamily: Satoshi700,
+                      marginBottom: 4,
+                      flexShrink: 1,
+                    }}>
+                    {item.title}
+                  </Text>
                   <View
                     style={{
                       borderRadius: 40,
