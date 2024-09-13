@@ -310,7 +310,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   <TouchableOpacity
                     style={styles.buttonFlash}
                     onPress={() => {
-                      onInvite();
                       handleAutoSwipeRight();
                     }}>
                     <View
