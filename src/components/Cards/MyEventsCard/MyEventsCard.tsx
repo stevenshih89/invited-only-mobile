@@ -63,7 +63,10 @@ const MyEventsCard: FC<MyEventsCard> = props => {
 
   useEffect(() => {
     const filterImage = imageBg.filter(item => item.id < 1);
-    setMainImageEvent(filterImage[0].image);
+
+    const cover = filterImage[0]?.image ?? '';
+
+    setMainImageEvent(cover);
   }, [imageBg]);
 
   const navigation = useAppNavigation();

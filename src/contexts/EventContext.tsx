@@ -1,5 +1,4 @@
 import {createContext, FC, ReactNode, useState} from 'react';
-
 interface EventContextType {
   myEvents?: any;
   setMyEvents?: any;

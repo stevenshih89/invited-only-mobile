@@ -23,6 +23,7 @@ import {uploadImage} from 'helpers/uploadImage.ts';
 import {IOPath} from 'constants/pathLocations';
 import storage from '@react-native-firebase/storage';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
+import {createEvent, IOEvent} from 'src/api/event';
 
 const eventTypes = [
   {id: 0, label: 'Custom'},
@@ -263,11 +264,9 @@ const EventCreating: FC = () => {
   );
 
   const updatePhotosImage = async (userId: string | null, imageUrl: any[]) => {
-
-    const filteredImages = imageUrl.filter((item) => item.image !== undefined && item.image !== null);
+    const filteredImages = imageUrl.filter(item => item.image !== undefined && item.image !== null);
     const sortedPhotos = filteredImages.sort((a, b) => a.id - b.id);
 
-    
     try {
       await firestore().collection('Events').doc(userId).update({
         photos: sortedPhotos,
@@ -276,26 +275,28 @@ const EventCreating: FC = () => {
       console.error('Error updating events image: ', e);
     }
   };
-  
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
-    if(imagePath) {
-      if(imagePath === 'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805') {
-        return imagePath
+    if (imagePath) {
+      if (
+        imagePath ===
+        'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805'
+      ) {
+        return imagePath;
       } else {
         const uploadUri = Platform.OS === 'ios' ? imagePath.replace('file://', '') : imagePath;
-      const filename = `${userId}_${new Date().getTime()}`; // or another unique naming convention
-      const storageRef = storage().ref(`images/${filename}`);
-      const task = storageRef.putFile(uploadUri);
-      try {
-        await task;
-      // Get the URL to the uploaded image
-        const url = await storageRef.getDownloadURL();        
-        return url;
-      } catch (e) {
-        // console.error(e);
-        return null;
-      }
+        const filename = `${userId}_${new Date().getTime()}`; // or another unique naming convention
+        const storageRef = storage().ref(`images/${filename}`);
+        const task = storageRef.putFile(uploadUri);
+        try {
+          await task;
+          // Get the URL to the uploaded image
+          const url = await storageRef.getDownloadURL();
+          return url;
+        } catch (e) {
+          // console.error(e);
+          return null;
+        }
       }
     }
   };
@@ -303,7 +304,7 @@ const EventCreating: FC = () => {
   const handleCreateEvent = async () => {
     try {
       setLoading(true);
-      const uid: string | number[] = uuid.v4();
+      const uid: string = uuid.v4() as string;
       const user = auth().currentUser;
 
       if (photos[0] === null) {
@@ -312,55 +313,101 @@ const EventCreating: FC = () => {
 
       let imagesUri: any[] = [];
 
-      // // console.log('imagesUri', imagesUri);
-      // // console.log('images', photos);
-      // @ts-ignore
+      const event: IOEvent = {
+        activeType: activeType,
+        female: female,
+        name: name,
+        description: description,
+        date: date,
+        hour: hour,
+        address: address,
+        meetingSpot: meetingSpot,
+        male: male,
+        femaleFriend: femaleFriend,
+        maleFriend: maleFriend,
+        placeName: placeName,
+        id: uid,
+        uid: user?.uid,
+        requestsList: [],
+        usersList: [],
+        statusEvent: false,
+        eventReviewed: false,
+        hostImage: userHost?.photos[0]?.image,
+        hostName: userHost?.name,
+        photos: photos,
+        hostFcmToken: userHost?.fcmToken,
+      };
+
+      await createEvent(uid, event);
+
+      showToast('inviteMatch', 'Go to my events >', 'Event successfully created ');
+      showToast('inviteMatch', 'Your event in review.', 'Estimate time review 2h');
+
+      isEditing ? setIsVisibleSaveModal(true) : null;
+
+      photos?.forEach(async (i, index) => {
+        const img = await uploadImage(i?.image, userHost.uid);
+        imagesUri.push({id: index, image: img});
+        await updatePhotosImage(uid, imagesUri);
+      });
+
       await firestore()
-        .collection('Events')
-        .doc(uid)
-        .set({
-          activeType: activeType,
-          female: female,
-          name: name,
-          description: description,
-          date: date,
-          hour: hour,
-          address: address,
-          meetingSpot: meetingSpot,
-          male: male,
-          femaleFriend: femaleFriend,
-          maleFriend: maleFriend,
-          placeName: placeName,
-          id: uid,
-          uid: user?.uid,
-          requestsList: [],
-          usersList: [],
-          statusEvent: false,
-          eventReviewed: false,
-          hostImage: userHost?.photos[0]?.image,
-          hostName: userHost?.name,
-          photos: photos,
-          hostFcmToken: userHost?.fcmToken,
-        })
-        .then(async () => {
-          showToast('inviteMatch', 'Go to my events >', 'Event successfully created ');
-          showToast('inviteMatch', 'Your event in review.', 'Estimate time review 2h');
-          isEditing ? setIsVisibleSaveModal(true) : null;
-          setLoading(false);
-          navigation.navigate(IOPath as never);
-          photos?.map(async (i, index) => {      
-            await uploadImage(i?.image, userHost.uid)
-            .then(img => imagesUri.push({id: index, image: img}))
-            .catch(e => console.log('error uploadImage', e))
-            await updatePhotosImage(uid, imagesUri)
-          })
-          await firestore()
-            .collection('userInfo')
-            .doc(user?.uid)
-            .update({
-              eventsList: firestore.FieldValue.arrayUnion(uid),
-            });
+        .collection('userInfo')
+        .doc(user?.uid)
+        .update({
+          eventsList: firestore.FieldValue.arrayUnion(uid),
         });
+
+      setLoading(false);
+
+      navigation.navigate(IOPath as never);
+
+      // await firestore()
+      //   .collection('Events')
+      //   .doc(uid)
+      //   .set({
+      //     activeType: activeType,
+      //     female: female,
+      //     name: name,
+      //     description: description,
+      //     date: date,
+      //     hour: hour,
+      //     address: address,
+      //     meetingSpot: meetingSpot,
+      //     male: male,
+      //     femaleFriend: femaleFriend,
+      //     maleFriend: maleFriend,
+      //     placeName: placeName,
+      //     id: uid,
+      //     uid: user?.uid,
+      //     requestsList: [],
+      //     usersList: [],
+      //     statusEvent: false,
+      //     eventReviewed: false,
+      //     hostImage: userHost?.photos[0]?.image,
+      //     hostName: userHost?.name,
+      //     photos: photos,
+      //     hostFcmToken: userHost?.fcmToken,
+      //   })
+      //   .then(async () => {
+      //     showToast('inviteMatch', 'Go to my events >', 'Event successfully created ');
+      //     showToast('inviteMatch', 'Your event in review.', 'Estimate time review 2h');
+      //     isEditing ? setIsVisibleSaveModal(true) : null;
+      //     setLoading(false);
+      //     navigation.navigate(IOPath as never);
+      //     photos?.map(async (i, index) => {
+      //       await uploadImage(i?.image, userHost.uid)
+      //         .then(img => imagesUri.push({id: index, image: img}))
+      //         .catch(e => console.log('error uploadImage', e));
+      //       await updatePhotosImage(uid, imagesUri);
+      //     });
+      //     await firestore()
+      //       .collection('userInfo')
+      //       .doc(user?.uid)
+      //       .update({
+      //         eventsList: firestore.FieldValue.arrayUnion(uid),
+      //       });
+      //   });
     } catch (e) {
       setLoading(false);
       // console.log(e);

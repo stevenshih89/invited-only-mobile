@@ -157,8 +157,8 @@ const IO: FC = (): JSX.Element => {
     decrementCounterSuperInvites(1);
     try {
       if (counterSuperInvites > 0) {
-          setIsVisibleSuperInvite(true);
-          handleChangeListsEventsAfterSuperInvite(uid)
+        setIsVisibleSuperInvite(true);
+        handleChangeListsEventsAfterSuperInvite(uid);
         if (counterWeeklySuperInvitesRef.current > 0) {
           firestore()
             .collection('userInfo')
@@ -954,7 +954,7 @@ const IO: FC = (): JSX.Element => {
                 isShowInvitesTooltip={false}
                 isLocked={!userInfo?.accountConfirmed}
                 confirmedAccount={accountConfirmed}
-                onInvite={() => onInvite(uid, item?._data?.id, [], [])}
+                onInvite={() => onInvite(uid, item?._data?.id)}
                 handleOpenSuperInvite={() => handleOpenSuperInvite(item?._data, uid)}
                 handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}
@@ -1349,7 +1349,7 @@ const IO: FC = (): JSX.Element => {
                       }, 500);
                     }}
                     onSwipedRight={() => {
-                      onInvite(item?.info?.uid, item?.info?.id, item?.info?.requestsList, item?.info?.usersList);
+                      onInvite(item?.info?.uid, item?.info?.id);
                       setTimeout(() => {
                         setCurrentEventCardPosition(prev => prev + 1);
                       }, 500);
