@@ -1,4 +1,4 @@
-import {blackColor, darkRedColor, whiteColor} from 'constants/colors';
+import {blackColor, darkRedColor, transparent60Color, whiteColor} from 'constants/colors';
 import {screenHeight} from 'constants/common';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {StyleSheet} from 'react-native';
@@ -60,8 +60,19 @@ const useStyles = () =>
       flex: 1,
     },
     linearGradient: {
-      height: 200,
       padding: 7,
+    },
+    accountTypeWrapperPremium: {
+      marginLeft: 6,
+      borderRadius: 4,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      backgroundColor: blackColor,
+    },
+    accountTypePremium: {
+      color: blackColor,
+      fontSize: RFValue(10, 812),
+      fontFamily: Satoshi700,
     },
     buttonContainer: {
       borderRadius: 10,
@@ -77,7 +88,7 @@ const useStyles = () =>
     },
     nameText: {
       color: whiteColor,
-      fontSize: RFValue(13, 812),
+      fontSize: RFValue(20, 812),
       fontFamily: Satoshi700,
     },
     ageText: {
@@ -88,9 +99,14 @@ const useStyles = () =>
     },
     locationContainer: {
       flexDirection: 'row',
+      alignSelf: 'flex-start',
       alignItems: 'center',
       justifyContent: 'space-between',
       marginBottom: 6,
+      backgroundColor: transparent60Color,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 50
     },
     locationRow: {
       flexDirection: 'row',

@@ -3,6 +3,7 @@ import {Text} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
 import Home from 'assets/images/icons/home.svg';
+import Location from 'assets/images/icons/location.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
@@ -33,7 +34,8 @@ const ItemRequestHost = ({
 }: any) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const [userInfo, setUserInfo] = useState({accountType: ''});
+  const [userInfo, setUserInfo] = useState({accountType: ''});  
+
 
   const user = useUser((state: any) => state.user);
   const [currentUserName, setCurrentUserName] = useState();
@@ -310,29 +312,36 @@ const ItemRequestHost = ({
               start={{x: 0, y: 0}}
               end={{x: 0, y: 1}}>
               {userInfo.accountType && (
-                <View
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                   <View
                   style={{
                     marginTop: 'auto',
                     marginLeft: 8,
-                    marginBottom: 2,
                     alignSelf: 'flex-start',
                     paddingHorizontal: 6,
-                    paddingVertical: 1,
+                    paddingVertical: 2,
                     backgroundColor: userInfo.accountType === 'host' ? blackColor : whiteColor,
                     borderRadius: 4,
-                    borderWidth: 1,
-                    borderStyle: 'solid',
-                    borderColor: userInfo.accountType === 'host' ? whiteColor : blackColor,
                   }}>
                   <Text
                     style={{
                       textTransform: 'capitalize',
                       fontFamily: Satoshi700,
-                      fontSize: 10,
+                      fontSize: RFValue(10, 812),
                       color: userInfo.accountType === 'host' ? whiteColor : blackColor,
                     }}>
                     {userInfo.accountType}
                   </Text>
+                </View>
+                {userInfo?.accountPremium && (
+                <LinearGradient
+                  colors={['#977B4A', '#E5D291', '#A28453']}
+                  style={styles.accountTypeWrapperPremium}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}>
+                  <Text style={styles.accountTypePremium}>Premium</Text>
+                </LinearGradient>
+              )}
                 </View>
               )}
               <TouchableOpacity onPress={() => goToProfileView()} activeOpacity={0.7} style={styles.buttonContainer}>
@@ -342,15 +351,6 @@ const ItemRequestHost = ({
                   </Text>
                   {userInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} style={{marginLeft: 4}} />}
                 </View>
-                {userInfo?.address && (
-                  <View style={styles.locationContainer}>
-                    <View style={styles.locationRow}>
-                      <Home height={12} />
-                      <Text style={styles.locationText}>From {item?.address}</Text>
-                    </View>
-                    <ArrowRight height={12} />
-                  </View>
-                )}
               </TouchableOpacity>
             </LinearGradient>
           </View>
