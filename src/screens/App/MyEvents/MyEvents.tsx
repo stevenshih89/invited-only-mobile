@@ -20,6 +20,9 @@ import {useUser} from '../../../store/userStore';
 import {ALL, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {EventsDate} from 'contexts/EventsDate.tsx';
+import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
+import { useAdminActions } from 'src/store/adminActions';
+import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import images
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
@@ -42,6 +45,10 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [visibleModalEventRemindes, setVisibleModalEventRemindes] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const countMyEvent = useRef(0);
+
+  const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
+  const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
+  const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
 
   const [activeModalEvent, setActiveModalEvent] = useState<any>({
     id: 0,
@@ -471,6 +478,10 @@ const MyEvents: FC<any> = ({navigation}) => {
   return (
     <>
       <View style={styles.container}>
+      {userInfo?.photos?.length > 0 && (
+        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />
+      )}
+      <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible}/>
         {isHost ? (
           <View style={styles.wrapperHeaderButtonMyEvents}>
             <TouchableOpacity

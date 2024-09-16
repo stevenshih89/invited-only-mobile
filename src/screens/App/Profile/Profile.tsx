@@ -20,6 +20,9 @@ import Svg, {Circle, G} from 'react-native-svg';
 import {screenHeight} from 'constants/common';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
+import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
+import { useAdminActions } from 'src/store/adminActions';
+import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 const Profile: FC = () => {
   const [activeTabId, setActiveTabId] = useState(0);
@@ -28,6 +31,10 @@ const Profile: FC = () => {
   const [userInfo, setUserInfo] = useState({} as any);
 
   const [mainImage, setMainImage] = useState({id: 0, image: ''} as any);
+
+  const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
+  const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
+  const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
 
   const tabList = [
     {id: 0, title: 'My Plan'},
@@ -149,6 +156,10 @@ const Profile: FC = () => {
 
   return (
     <View style={styles.container}>
+      {userInfo?.photos?.length > 0 && (
+        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />
+      )}
+      <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible}/>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
         <View>
           <View style={styles.profileImageContainer}>

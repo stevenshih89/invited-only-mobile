@@ -148,9 +148,14 @@ export function registerListenerWithFCM() {
 }
 
 //method was called to display notification
-async function onDisplayNotification(title, body, data) {
-  // console.log('onDisplayNotification: ', data);
-  showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image, path: data.params?.path, params: data.params});
+async function onDisplayNotification(title, body, data, setRejectVisible: () => void, setAcceptModalVisible: () => void) {  
+  showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image});
+  if(title === 'Your Account is Not Approved') {
+    setRejectVisible()
+  }
+  if(title === 'Your account has been approved') {
+    setAcceptModalVisible()
+  }
   // Request permissions (required for iOS)
   await notifee.requestPermission();
   // Create a channel (required for Android)
@@ -175,7 +180,7 @@ async function onDisplayNotification(title, body, data) {
 }
 
 // it would be called when the app in foreground state
-export function onMatchNotificationSubscription(handler: (message: FirebaseMessagingTypes.RemoteMessage) => void) {
+export function onMatchNotificationSubscription(handler: (message: FirebaseMessagingTypes.RemoteMessage) => void,  setRejectVisible: () => void, setAcceptModalVisible: () => void) {
   return messaging().onMessage(async remoteMessage => {
     // console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
 
@@ -183,7 +188,7 @@ export function onMatchNotificationSubscription(handler: (message: FirebaseMessa
     if (remoteMessage.data?.type === 'match') {
       handler(remoteMessage);
     }
-    onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data);
+    onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data, setRejectVisible, setAcceptModalVisible)
   });
 }
 

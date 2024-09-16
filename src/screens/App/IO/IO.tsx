@@ -56,6 +56,9 @@ import FullEvent from 'components/FullEvent';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {onUserProfileChangeSubscription} from 'helpers/userProfile';
 import {User, UserInfo} from 'src/types/userInfo';
+import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
+import { useAdminActions } from 'src/store/adminActions';
+import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -91,6 +94,11 @@ const IO: FC = (): JSX.Element => {
   const userHost = useUser((i: any) => i?.user);
   const setUser = useUser((i: any) => i?.setUser);
 
+  const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
+  const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
+  const setRejectModalVisible = useAdminActions((i: any) => i?.setRejectModalVisible);
+  const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
+
   const allEventsLength = useRef(0);
 
   const eventsRef = useRef<any[]>();
@@ -116,6 +124,29 @@ const IO: FC = (): JSX.Element => {
 
   let currentDate = new Date();
   const isHost = userHost?.accountType === 'host';
+
+  const setRejectVisible = () => {
+    setRejectModalVisible(true)
+  }
+
+  const setAcceptVisible = () => {
+    setAcceptModalVisible(true)
+  }
+
+  useEffect(() => {
+    if(userInfo && userInfo?.showModalAccept) {
+      setAcceptModalVisible(true)
+    }
+  },[userInfo])
+
+  useEffect(() => {
+    const unsubscribe = onMatchNotificationSubscription(message => {
+      const data = message?.data;        
+      setMatchData(data);
+      setIsVisibleMatch(true);
+    }, setRejectVisible, setAcceptVisible);
+    return () => unsubscribe();
+  }, []);
 
   // useEffect(() => {
   //   const unsubscribe = onMatchNotificationSubscription(message => {
@@ -1304,6 +1335,8 @@ const IO: FC = (): JSX.Element => {
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
+        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible}/>
+        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos[0].image}/>
         <ModalFullEvent
           isVisible={isVisibleModalFullEvent}
           idEvent={activeEvent.id}

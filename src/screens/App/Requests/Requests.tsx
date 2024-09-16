@@ -25,6 +25,9 @@ import FullEvent from 'components/FullEvent';
 import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
+import { useAdminActions } from 'src/store/adminActions';
+import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
+import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
@@ -44,6 +47,10 @@ const Requests: FC = (): ReactElement => {
   const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
   const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
   const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
+
+  const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
+  const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
+  const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -195,7 +202,9 @@ const Requests: FC = (): ReactElement => {
     return <ActivityIndicator style={styles.container} />;
   }
 
-  if (!userInfo?.accountConfirmed && !loading && !isVisibleMatch) {
+
+
+  if (!userInfo?.accountConfirmed && !loading && !rejectModalVisible && !acceptModalVisible) {
     return (
       <View style={styles.container}>
         <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} />
@@ -250,6 +259,10 @@ const Requests: FC = (): ReactElement => {
   return (
     <>
       <View style={styles.container}>
+        {userInfo?.photos?.length > 0 && (
+          <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />
+        )}
+        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible}/>
         <ModalFullEvent
           isVisible={isVisibleModalFullEvent}
           idEvent={activeEvent.id}
