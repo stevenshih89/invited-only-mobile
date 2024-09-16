@@ -1,6 +1,6 @@
-import {isIos, screenHeight} from 'constants/common';
+import {isIos} from 'constants/common';
 import {FC, useContext, useEffect, useState} from 'react';
-import {Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
+import {Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
@@ -9,15 +9,16 @@ import {codeVerifiedPath, verifySocialProfilePath} from 'constants/pathLocations
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
-import {useUser} from '../../store/userStore';
-import {black1Color, errorColor, whiteColor} from 'constants/colors';
-import {Outfit500, Satoshi400, Satoshi500} from 'constants/fonts';
+import {black1Color, errorColor, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {Outfit500, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
-import Toast from 'react-native-toast-message';
 import {ScrollView} from 'react-native-gesture-handler';
+import ArrowLeft from 'assets/images/icons/arrow-left.svg';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {RootStackParamList} from 'typescript/types';
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
@@ -26,6 +27,9 @@ const InvitationCode: FC = (): JSX.Element => {
 
   const navigation = useAppNavigation();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const route = useRoute<RouteProp<RootStackParamList, '/invitation-code'>>();
+  const {cameFromSummary = false} = route.params || {};
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
@@ -234,7 +238,33 @@ const InvitationCode: FC = (): JSX.Element => {
               paddingHorizontal: 24,
             }}>
             <ScrollView showsVerticalScrollIndicator={false} style={{}}>
-              <View style={{flexDirection: 'row', marginTop: 16, paddingVertical: 28, width: '100%', justifyContent: 'center'}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginTop: 16,
+                  paddingVertical: 28,
+                  width: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                {!cameFromSummary && (
+                  <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    activeOpacity={0.7}
+                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      borderRadius: 50,
+                      width: 40,
+                      height: 40,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: transparentWhite30Color,
+                    }}>
+                    <ArrowLeft />
+                  </TouchableOpacity>
+                )}
                 <LogoPrimary2 />
               </View>
               <View />
@@ -317,7 +347,7 @@ const InvitationCode: FC = (): JSX.Element => {
             </ScrollView>
             <View style={{marginBottom: 4, marginTop: isFocusInput ? 16 : 0}}>
               <Button onPress={() => handleNext()} loading={loading} disabled={!code.length} title="Apply code" />
-              {!isFocusInput && (
+              {!isFocusInput && cameFromSummary && (
                 <Button
                   onPress={() => navigation.navigate(verifySocialProfilePath as never)}
                   buttonTitleStyle={{textDecorationLine: 'underline'}}

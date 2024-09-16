@@ -1,4 +1,4 @@
-import {black1Color, lightGray16Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {black1Color, lightGray16Color, whiteColor} from 'constants/colors';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -9,7 +9,6 @@ import {Outfit500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common';
 import Button from 'components/Button/Button';
-import {invitationCodePath} from 'constants/pathLocations';
 
 const SummaryInfo = () => {
   const navigation = useAppNavigation();
@@ -22,7 +21,7 @@ const SummaryInfo = () => {
   const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
 
   const handleNext = () => {
-    navigation.navigate(invitationCodePath as never);
+    navigation.navigate('/invitation-code', {cameFromSummary: true});
   };
 
   return (

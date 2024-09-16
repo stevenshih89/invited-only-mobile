@@ -34,7 +34,7 @@ export type RootStackParamList = {
   '/code-verified': undefined;
   '/verify-first-step': undefined;
   '/verify-second-step': undefined;
-  '/invitation-code': undefined;
+  '/invitation-code': {cameFromSummary: boolean};
   '/payment': undefined;
   '/tutorial-flow': undefined;
   '/io': undefined;
