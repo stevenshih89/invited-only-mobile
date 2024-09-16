@@ -21,10 +21,12 @@ const EnterName: FC = (): JSX.Element => {
   const [errorInputName, setErrorInputName] = useState<boolean>(false)
 
   const handleNameChange = (value: string) => {
+    const formattedValue = value.charAt(0).toUpperCase() + value.slice(1);
+
     if(!isName(value) && name.length > 2 || value.length > 14) {
       setErrorInputName(true)
     } else setErrorInputName(false)
-    setName(value)
+    setName(formattedValue)
   };
 
   const navigation = useAppNavigation();
