@@ -24,6 +24,7 @@ import {screenHeight, screenWidth} from 'constants/common';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
+import ModalReport from '../ModalReport/ModalReport';
 
 interface ModalUserMenuProps {
   isModalVisible: boolean;
@@ -33,162 +34,163 @@ interface ModalUserMenuProps {
   image: any;
   uid: string;
   hostUid: string;
+  activeEvent: string,
   checkIsFullGuestsFun: () => Promise<boolean>;
   setIsVisibleModalFullEvent: Dispatch<SetStateAction<boolean>>;
 }
 
-const BlockAndReportModal = ({blockAndReportState, setBlockAndReportState, reportState, setReportState, setModalVisible}) => {
-  return (
-    <Modal
-      isVisible={blockAndReportState}
-      useNativeDriver={false}
-      propagateSwipe={true}
-      backdropColor={'rgba(0, 0, 0, 0.94)'}
-      testID={'bottom-half-modal-open-button'}
-      onBackdropPress={() => setBlockAndReportState(false)}
-      onSwipeComplete={() => setBlockAndReportState(false)}
-      style={{
-        margin: 0,
-        justifyContent: 'flex-end',
-        zIndex: 999,
-      }}
-      swipeDirection={['down']}>
-      <View
-        style={{
-          backgroundColor: black2Color,
-          height: '75%',
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-          alignItems: 'center',
-          paddingHorizontal: screenWidth / 30,
-        }}>
-        <View
-          style={{
-            backgroundColor: whiteColor,
-            height: 2,
-            width: 40,
-            marginTop: screenHeight / 50,
-            marginBottom: screenHeight / 48,
-            borderRadius: 10,
-          }}
-        />
-        <Text style={{marginTop: screenHeight / 38, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812)}}>Report</Text>
-        <TouchableOpacity
-          style={{
-            backgroundColor: reportState === 'Fake profile' ? '#313131' : 'transparent',
-            borderRadius: 10,
-            paddingVertical: 16,
-            paddingHorizontal: 20,
-            width: '100%',
-          }}
-          onPress={() => {
-            setReportState('Fake profile');
-          }}>
-          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Fake profile</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: reportState === 'Rude or abusive behaviator' ? '#313131' : 'transparent',
-            borderRadius: 10,
-            paddingVertical: 16,
-            paddingHorizontal: 20,
-            width: '100%',
-          }}
-          onPress={() => {
-            setReportState('Rude or abusive behaviator');
-          }}>
-          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Rude or abusive behaviator</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: reportState === 'Inappropriate content' ? '#313131' : 'transparent',
-            borderRadius: 10,
-            paddingVertical: 16,
-            paddingHorizontal: 20,
-            width: '100%',
-          }}
-          onPress={() => {
-            setReportState('Inappropriate content');
-          }}>
-          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Inappropriate content</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: reportState === 'Scam or commercial' ? '#313131' : 'transparent',
-            borderRadius: 10,
-            paddingVertical: 16,
-            paddingHorizontal: 20,
-            width: '100%',
-          }}
-          onPress={() => {
-            setReportState('Scam or commercial');
-          }}>
-          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Scam or commercial</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: reportState === 'Identity-based hate' ? '#313131' : 'transparent',
-            borderRadius: 10,
-            paddingVertical: 16,
-            paddingHorizontal: 20,
-            width: '100%',
-          }}
-          onPress={() => {
-            setReportState('Identity-based hate');
-          }}>
-          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Identity-based hate</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: reportState === 'Off IO behaviator' ? '#313131' : 'transparent',
-            borderRadius: 10,
-            paddingVertical: 16,
-            paddingHorizontal: 20,
-            width: '100%',
-          }}
-          onPress={() => {
-            setReportState('Off IO behaviator');
-          }}>
-          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Off IO behaviator</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: reportState === 'Underage' ? '#313131' : 'transparent',
-            borderRadius: 10,
-            paddingVertical: 16,
-            paddingHorizontal: 20,
-            width: '100%',
-          }}
-          onPress={() => {
-            setReportState('Underage');
-          }}>
-          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Underage</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: reportState === 'I`m just not interested' ? '#313131' : 'transparent',
-            borderRadius: 10,
-            paddingVertical: 16,
-            paddingHorizontal: 20,
-            width: '100%',
-          }}
-          onPress={() => {
-            setReportState('I`m just not interested');
-          }}>
-          <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>I`m just not interested</Text>
-        </TouchableOpacity>
-        <Button
-          title="Send"
-          buttonStyle={{width: '100%'}}
-          onPress={() => {
-            setModalVisible(false);
-            setBlockAndReportState(false);
-          }}
-        />
-      </View>
-    </Modal>
-  );
-};
+// const BlockAndReportModal = ({blockAndReportState, setBlockAndReportState, reportState, setReportState, setModalVisible}) => {
+//   return (
+//     <Modal
+//       isVisible={blockAndReportState}
+//       useNativeDriver={false}
+//       propagateSwipe={true}
+//       backdropColor={'rgba(0, 0, 0, 0.94)'}
+//       testID={'bottom-half-modal-open-button'}
+//       onBackdropPress={() => setBlockAndReportState(false)}
+//       onSwipeComplete={() => setBlockAndReportState(false)}
+//       style={{
+//         margin: 0,
+//         justifyContent: 'flex-end',
+//         zIndex: 999,
+//       }}
+//       swipeDirection={['down']}>
+//       <View
+//         style={{
+//           backgroundColor: black2Color,
+//           height: '75%',
+//           borderTopLeftRadius: 30,
+//           borderTopRightRadius: 30,
+//           alignItems: 'center',
+//           paddingHorizontal: screenWidth / 30,
+//         }}>
+//         <View
+//           style={{
+//             backgroundColor: whiteColor,
+//             height: 2,
+//             width: 40,
+//             marginTop: screenHeight / 50,
+//             marginBottom: screenHeight / 48,
+//             borderRadius: 10,
+//           }}
+//         />
+//         <Text style={{marginTop: screenHeight / 38, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812)}}>Report</Text>
+//         <TouchableOpacity
+//           style={{
+//             backgroundColor: reportState === 'Fake profile' ? '#313131' : 'transparent',
+//             borderRadius: 10,
+//             paddingVertical: 16,
+//             paddingHorizontal: 20,
+//             width: '100%',
+//           }}
+//           onPress={() => {
+//             setReportState('Fake profile');
+//           }}>
+//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Fake profile</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity
+//           style={{
+//             backgroundColor: reportState === 'Rude or abusive behaviator' ? '#313131' : 'transparent',
+//             borderRadius: 10,
+//             paddingVertical: 16,
+//             paddingHorizontal: 20,
+//             width: '100%',
+//           }}
+//           onPress={() => {
+//             setReportState('Rude or abusive behaviator');
+//           }}>
+//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Rude or abusive behaviator</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity
+//           style={{
+//             backgroundColor: reportState === 'Inappropriate content' ? '#313131' : 'transparent',
+//             borderRadius: 10,
+//             paddingVertical: 16,
+//             paddingHorizontal: 20,
+//             width: '100%',
+//           }}
+//           onPress={() => {
+//             setReportState('Inappropriate content');
+//           }}>
+//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Inappropriate content</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity
+//           style={{
+//             backgroundColor: reportState === 'Scam or commercial' ? '#313131' : 'transparent',
+//             borderRadius: 10,
+//             paddingVertical: 16,
+//             paddingHorizontal: 20,
+//             width: '100%',
+//           }}
+//           onPress={() => {
+//             setReportState('Scam or commercial');
+//           }}>
+//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Scam or commercial</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity
+//           style={{
+//             backgroundColor: reportState === 'Identity-based hate' ? '#313131' : 'transparent',
+//             borderRadius: 10,
+//             paddingVertical: 16,
+//             paddingHorizontal: 20,
+//             width: '100%',
+//           }}
+//           onPress={() => {
+//             setReportState('Identity-based hate');
+//           }}>
+//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Identity-based hate</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity
+//           style={{
+//             backgroundColor: reportState === 'Off IO behaviator' ? '#313131' : 'transparent',
+//             borderRadius: 10,
+//             paddingVertical: 16,
+//             paddingHorizontal: 20,
+//             width: '100%',
+//           }}
+//           onPress={() => {
+//             setReportState('Off IO behaviator');
+//           }}>
+//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Off IO behaviator</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity
+//           style={{
+//             backgroundColor: reportState === 'Underage' ? '#313131' : 'transparent',
+//             borderRadius: 10,
+//             paddingVertical: 16,
+//             paddingHorizontal: 20,
+//             width: '100%',
+//           }}
+//           onPress={() => {
+//             setReportState('Underage');
+//           }}>
+//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Underage</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity
+//           style={{
+//             backgroundColor: reportState === 'I`m just not interested' ? '#313131' : 'transparent',
+//             borderRadius: 10,
+//             paddingVertical: 16,
+//             paddingHorizontal: 20,
+//             width: '100%',
+//           }}
+//           onPress={() => {
+//             setReportState('I`m just not interested');
+//           }}>
+//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>I`m just not interested</Text>
+//         </TouchableOpacity>
+//         <Button
+//           title="Send"
+//           buttonStyle={{width: '100%'}}
+//           onPress={() => {
+//             setModalVisible(false);
+//             setBlockAndReportState(false);
+//           }}
+//         />
+//       </View>
+//     </Modal>
+//   );
+// };
 
 const ModalUserMenu: FC<ModalUserMenuProps> = ({
   isModalVisible,
@@ -209,7 +211,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   const [usersList, setUserList] = useState([]);
   const [eventData, setEventData] = useState({usersList: []});
   const styles = useStyles();
-
+ 
   const user = useUser((state: any) => state.user);
 
   const userGuest =
@@ -513,10 +515,10 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   const userProfileItemCard = (
     <View style={{flexDirection: 'row', alignItems: 'center', width: '100%'}}>
       {image && <Image style={{borderRadius: 100, width: 62, height: 62}} source={{uri: image}} />}
-      <View style={{marginLeft: 16, gap: 8}}>
+      <View style={{marginLeft: 16, gap: 8, marginBottom: 8}}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>{title}</Text>
-          {<CheckStarIcon width={12} height={12} style={{marginLeft: 4}} />}
+          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(24, 812), color: whiteColor}}>{title}</Text>
+          {<CheckStarIcon width={18} height={18} style={{marginLeft: 4}} />}
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View
@@ -594,13 +596,20 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
             )}
             <View>
               <RemovingUserModal />
-              <BlockAndReportModal
+              <ModalReport 
+                modalReport={blockAndReportState} 
+                setModalReport={setBlockAndReportState}
+                uidSender={user.uid}
+                uid={uid}
+                activeEvent={activeEvent}
+                />
+              {/* <BlockAndReportModal
                 setBlockAndReportState={setBlockAndReportState}
                 blockAndReportState={blockAndReportState}
                 reportState={reportState}
                 setReportState={setReportState}
                 setModalVisible={setModalVisible}
-              />
+              /> */}
               <CancelInvitationModal />
             </View>
           </View>

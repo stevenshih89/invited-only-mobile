@@ -16,16 +16,31 @@ import EightPlusIcon from 'assets/images/icons/18+.svg';
 import EmojiSadIcon from 'assets/images/icons/emoji-sad.svg';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
+import { chatPath } from 'constants/pathLocations';
 
 interface ModalReportProps {
   modalReport?: boolean;
   setModalReport?: any;
   uidSender?: string;
   uid?: string;
+  activeEvent?: string;
 }
 
-const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid}) => {
+const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid, activeEvent}) => {
   const styles = useStyles();
+
+  const navigation = useNavigation()
+
+  const deleteChat = async () => {
+    try {
+      await firestore().collection('messages').doc(activeEvent).delete()
+      navigation.navigate(chatPath as never)
+    } catch (error) {
+      console.log('error delete messages', error);
+      
+    }
+  }
 
   const handleSendReport = async (typeReport: string): Promise<void> => {
     const infoUserUidDoc = await firestore().collection('userInfo').doc(uid).get();
@@ -45,6 +60,11 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
         phone: dataUserUid?.phoneNumber,
         phoneSender: dataUserUidSender?.phoneNumber,
       });
+
+      if(activeEvent) {
+        deleteChat()
+      }
+
       showToast('inviteMatch', 'Alexa was reported', 'Thank you!', {ownerPhoto: dataUserUid?.photos[0].image, status: 'SUCCESSFUL'});
       setModalReport(false);
     } catch (e) {

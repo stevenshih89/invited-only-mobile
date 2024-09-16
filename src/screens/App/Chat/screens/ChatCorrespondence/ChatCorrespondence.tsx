@@ -212,7 +212,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   // };
 
   useEffect(() => {
-    if (allChats.length > 0 && !clearChat.current) {
+    if (allChats && allChats.length > 0 && !clearChat.current) {
       handleBack();
       clearChat.current = true;
     }
@@ -350,7 +350,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         const data = documentSnapshot.data()?.chats;
         const findChat = data?.filter(j => j?.id === id);
         setAllChats(data);
-        setMessages(findChat[0]?.messages);
+        setMessages(findChat? findChat[0]?.messages: null);
       });
 
     return () => subscriber();
