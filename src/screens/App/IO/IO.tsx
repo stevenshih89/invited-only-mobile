@@ -152,13 +152,13 @@ const IO: FC = (): JSX.Element => {
     }, []),
   );
 
-  const handleOpenSuperInvite = async (item): void => {
+  const handleOpenSuperInvite = async (item, uid?: string): void => {
     setActiveSuperInviteUser(item);
+    decrementCounterSuperInvites(1);
     try {
       if (counterSuperInvites > 0) {
-        setTimeout(() => {
           setIsVisibleSuperInvite(true);
-        }, 500);
+          handleChangeListsEventsAfterSuperInvite(uid)
         if (counterWeeklySuperInvitesRef.current > 0) {
           firestore()
             .collection('userInfo')
@@ -176,7 +176,6 @@ const IO: FC = (): JSX.Element => {
             });
           counterSuperInvitesRef.current -= 1;
         }
-        decrementCounterSuperInvites(1);
       }
     } catch (error) {
       // console.log('error supert invite', error);
@@ -552,11 +551,11 @@ const IO: FC = (): JSX.Element => {
       setLastVisible(true);
     }
 
+    setCurrentEventCardPosition(prev => prev + 1);
+
     setTimeout(() => {
       setEvents(filter);
-    }, 500);
-
-    setCurrentEventCardPosition(prev => prev + 1);
+    }, 20);
 
     eventsRef.current = filter;
 
@@ -955,9 +954,8 @@ const IO: FC = (): JSX.Element => {
                 isShowInvitesTooltip={false}
                 isLocked={!userInfo?.accountConfirmed}
                 confirmedAccount={accountConfirmed}
-                changeEventList={() => handleChangeListsEventsAfterSuperInvite(uid)}
                 onInvite={() => onInvite(uid, item?._data?.id, [], [])}
-                handleOpenSuperInvite={() => handleOpenSuperInvite(item?._data)}
+                handleOpenSuperInvite={() => handleOpenSuperInvite(item?._data, uid)}
                 handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}
                 accountType={accountType}

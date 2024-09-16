@@ -58,7 +58,6 @@ interface TouchingSliderProps {
   accountType?: string;
   isPremium?: string;
   fromJoinEventsScreen?: boolean;
-  changeEventList: () => void;
   isProfile?: boolean;
 }
 
@@ -87,7 +86,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   isPremium,
   fromJoinEventsScreen = false,
   isProfile,
-  changeEventList,
   superJoin,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
@@ -100,7 +98,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   const handleSuperInvite = () => {
     if (counterSuperInvites - 1 >= 0) {
       flipCoin();
-      changeEventList();
+      // changeEventList();
     } else {
       navigation.navigate('/super-invite-pay');
     }
@@ -137,12 +135,14 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   const flipCoin = () => {
     rotation.value = withTiming(flipped ? 0 : 180, {
-      duration: 500,
+      duration: 300,
       easing: Easing.inOut(Easing.ease),
     });
     setFlipped(prev => !prev);
     if (superInvites) {
-      handleOpenSuperInvite && handleOpenSuperInvite();
+      setTimeout(() => {
+        handleOpenSuperInvite && handleOpenSuperInvite();
+      }, 300);
     } else {
       goToMyProfileView();
     }

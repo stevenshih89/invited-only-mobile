@@ -33,6 +33,17 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
     });
   };
 
+  const resetFigurePosition = () => {
+    figureTopPosition.value = withTiming(-screenHeight / 4.2, {
+      duration: 500,
+      easing: Easing.out(Easing.cubic),
+    });
+    figureBottomPosition.value = withTiming(screenHeight / 4.2, {
+      duration: 500,
+      easing: Easing.out(Easing.cubic),
+    });
+  };
+
   const figureTopStyle = useAnimatedStyle(() => ({
     transform: [{
       translateY: figureTopPosition.value
@@ -51,6 +62,12 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
     }
   }, [isVisibleSuperInvite]);
 
+  const handleClose = () => {
+    resetFigurePosition();
+    onCloseSuperInvite();
+    setLastVisible(false);
+  };
+
   return (
     <Modal
       isVisible={isVisibleSuperInvite}
@@ -59,10 +76,10 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
       backdropColor={lightGray10Color}
       backdropOpacity={1}
       style={{margin: 0}}
-      onBackdropPress={onCloseSuperInvite}>
+      onBackdropPress={handleClose}>
       <TouchableOpacity
         activeOpacity={1}
-        onPress={onCloseSuperInvite}
+        onPress={handleClose}
         style={{backgroundColor: blackColor, width: '100%', height: '100%', justifyContent: 'space-between'}}>
         <Animated.View
           style={[{
@@ -80,10 +97,7 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
         </Animated.View>
         <View style={{alignItems: 'center'}}>
           <TouchableOpacity
-            onPress={() => {
-              onCloseSuperInvite()
-              setLastVisible(false)
-            }}
+            onPress={handleClose}
             activeOpacity={0.7}
             style={{
             borderRadius: 100,
@@ -145,4 +159,3 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
 };
 
 export default SuperInvite;
-
