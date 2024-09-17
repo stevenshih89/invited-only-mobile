@@ -8,7 +8,7 @@ import PeopleIcon from 'assets/images/icons/Users.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import MoreIcon from 'assets/images/icons/more-white.svg';
 import ClockFilledIcon from 'assets/images/icons/clock-white-fill.svg';
-import {FlatList, Image, ImageBackground, Text, TouchableOpacity} from 'react-native';
+import {FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {ScrollView, View} from 'react-native';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -346,13 +346,13 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   <ClockIcon width={16} height={16} />
                   <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{hour}</Text>
                 </View>
-                <Button
+                {/* <Button
                   title="Edit event"
                   buttonStyle={{marginBottom: 4}}
                   onPress={() =>
                     navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})
                   }
-                />
+                /> */}
                 <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                   <PeopleIcon width={16} height={16} />
                   <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
@@ -445,9 +445,16 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingTop: 20, paddingBottom: 50}} style={{flex: 1}}>
+       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingTop: 20, paddingBottom: 50}} style={{flex: 1}}>
           {renderEventContent()}
         </ScrollView>
+        {activeTab === 'EVENT_INFO' && <Button
+          title="Edit event"
+          buttonStyle={{marginBottom: 28}}
+          onPress={() =>
+            navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})
+          }
+        />}
       </View>
       <ModalUserProfileEvent
         uid={user?.uid}
