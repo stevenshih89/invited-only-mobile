@@ -43,6 +43,8 @@ const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userI
       propagateSwipe={true}
       backdropOpacity={1}
       backdropColor={blackColor}
+      animationInTiming={1} 
+      animationOutTiming={1}
       style={{
         margin: 0,
         zIndex: 999,

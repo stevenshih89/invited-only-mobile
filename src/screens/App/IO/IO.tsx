@@ -126,11 +126,13 @@ const IO: FC = (): JSX.Element => {
   const isHost = userHost?.accountType === 'host';
 
   const setRejectVisible = () => {
+    setAcceptModalVisible(false)
     setRejectModalVisible(true)
   }
 
   const setAcceptVisible = () => {
-    setAcceptModalVisible(true)
+    setRejectModalVisible(false);
+    setAcceptModalVisible(true);
   }
 
   useEffect(() => {

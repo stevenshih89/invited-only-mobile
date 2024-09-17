@@ -38,6 +38,8 @@ const ModalRejectAccount: FC<RejectAccount> = ({isVisible, setIsVisible, image})
       useNativeDriver={false}
       propagateSwipe={true}
       backdropOpacity={1}
+      animationInTiming={1} 
+      animationOutTiming={1}
       backdropColor={blackColor}
       style={{
         margin: 0,
