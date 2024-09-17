@@ -122,6 +122,12 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
+  const handleAutoSwipeLeft = () => {
+    if (cardRef.current) {
+      cardRef.current.autoSwipeLeft();
+    }
+  };
+
   let currentDate = new Date();
   const isHost = userHost?.accountType === 'host';
 
@@ -928,6 +934,15 @@ const IO: FC = (): JSX.Element => {
     }, 2000);
   };
 
+  const sortEvents = (uid: string) => {     
+    if(uid) {
+      const res = eventsRef.current?.filter(item => item.info.uid !== uid)      
+      eventsRef.current = res
+      setEvents(res);
+      setCurrentEventCardPosition(prev => prev + 1);
+    }
+  }
+
   const getListForHost = async () => {
     let users: any;
 
@@ -1071,7 +1086,12 @@ const IO: FC = (): JSX.Element => {
                   ))}
                 </View>
                 <View style={styles.wrapperButtonsFooter}>
-                  <TouchableOpacity onPress={() => handleChangeListsEvents(uid, 'reject')} style={styles.buttonCloseOrCheck}>
+                  <TouchableOpacity onPress={() => {
+                    handleAutoSwipeLeft()
+                    setTimeout(() => {
+                      sortEvents(item?._data?.uid)
+                    }, 500);
+                  }} style={styles.buttonCloseOrCheck}>
                     <View
                       style={{
                         backgroundColor: transparentWhite56Color,
@@ -1143,7 +1163,12 @@ const IO: FC = (): JSX.Element => {
                       <FlashIcon />
                     </View>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleChangeListsEvents(uid, 'accept')} style={styles.buttonCloseOrCheck}>
+                  <TouchableOpacity onPress={() => {
+                    handleAutoSwipeRight()
+                    setTimeout(() => {
+                      sortEvents(item?._data?.uid)
+                    }, 500);
+                    }} style={styles.buttonCloseOrCheck}>
                     <View
                       style={{
                         backgroundColor: transparentWhite56Color,

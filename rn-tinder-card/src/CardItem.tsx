@@ -251,6 +251,7 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
       swipeTop: () => swipeTop(),
       swipeBottom: () => swipeBottom(),
       autoSwipeRight: () => swipeRight(),
+      autoSwipeLeft: () => swipeLeft(),
     }));
 
     return (
