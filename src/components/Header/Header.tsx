@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useContext, useEffect, useState} from 'react';
+import React, {FC, ReactNode, useCallback, useContext, useEffect, useState} from 'react';
 import {View, TouchableOpacity, Text, Image, FlatList, ScrollView, Alert} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
@@ -46,6 +46,9 @@ import CalendarIcon from 'assets/images/icons/calendar.svg';
 import InfoCircleGrayIcon from 'assets/images/icons/info-circle-gray.svg';
 import InfoCircleOrangeIcon from 'assets/images/icons/info-circle-orange.svg';
 
+import WIcon from 'assets/images/icons/W.svg';
+import MIcon from 'assets/images/icons/M.svg';
+
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
 import {EventContext} from 'contexts/EventContext';
@@ -74,6 +77,7 @@ type ItemProps = {
   activeEvent?: string;
   hour?: string;
   girlInvitation?: number | string;
+  icon: ReactNode;
 };
 
 const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
@@ -129,9 +133,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   );
 
   const goToCreateEvent = async (): void => {
-
     if (!userInfo?.accountConfirmed) {
-
       return;
     }
     if (userInfo?.accountPremium) {
@@ -174,6 +176,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       image: CalendarIcon,
       numberBadge: 0,
       date: '12.12.12',
+      icon: <CalendarIcon width={26} height={26} color={whiteColor} />,
     },
     {
       id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
@@ -183,6 +186,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       image: EventBG,
       numberBadge: 0,
       date: '12.12.12',
+      icon: <WIcon width={26} height={33} color={whiteColor} />,
     },
     {
       id: '58694a0f-3da1-471f-bd96-145571e29d72',
@@ -192,6 +196,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       image: EventBG,
       numberBadge: 0,
       date: '12.12.12',
+      icon: <MIcon width={22} height={33} color={whiteColor} />,
     },
   ];
 
@@ -240,12 +245,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     </TouchableOpacity>
   );
 
-  const ItemEventsJoining = ({title, numberBadge, image, date}: ItemProps) => (
+  const ItemEventsJoining = ({title, image, date, icon}: ItemProps) => (
     <TouchableOpacity onPress={() => setEventFilter(title)} style={styles.eventButton}>
       <View style={[styles.eventViewFlatList, {borderColor: eventFilter === title ? whiteColor : lightGray5Color}]}>
-        <View style={styles.imageEventsJoining}>
-          <CalendarIcon width={26} height={26} />
-        </View>
+        <View style={styles.imageEventsJoining}>{icon}</View>
       </View>
       <Text style={styles.textButton}>{title}</Text>
       <ModalEventRemindes
@@ -436,14 +439,15 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       padding: 3,
                       width: 55,
                       height: 55,
-                      backgroundColor: lightGray5Color,
+                      // backgroundColor: lightGray5Color,
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    <CalendarSearchIcon width={26} height={26} />
-                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>
+                    {/* <CalendarSearchIcon width={26} height={26} /> */}
+                    <WIcon width={26} height={33} />
+                    {/* <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>
                       Weekend
-                    </Text>
+                    </Text> */}
                   </View>
                   <Text
                     style={{
@@ -474,12 +478,13 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       padding: 3,
                       width: 55,
                       height: 55,
-                      backgroundColor: lightGray5Color,
+                      // backgroundColor: lightGray5Color,
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    <CalendarSearchIcon width={26} height={26} />
-                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_MONTH ? whiteColor : grayColor}}>Month</Text>
+                    <MIcon width={22} height={33} />
+                    {/* <CalendarSearchIcon width={26} height={26} /> */}
+                    {/* <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_MONTH ? whiteColor : grayColor}}>Month</Text> */}
                   </View>
                   <Text
                     style={{
@@ -665,6 +670,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       numberBadge={item.numberBadge}
                       title={item.title}
                       date={item.date}
+                      icon={item.icon}
                     />
                   )}
                   keyExtractor={item => item.id}

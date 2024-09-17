@@ -57,7 +57,7 @@ import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {onUserProfileChangeSubscription} from 'helpers/userProfile';
 import {User, UserInfo} from 'src/types/userInfo';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
-import { useAdminActions } from 'src/store/adminActions';
+import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 const USERS_FETCHING_DELAY = 3000;
@@ -132,27 +132,31 @@ const IO: FC = (): JSX.Element => {
   const isHost = userHost?.accountType === 'host';
 
   const setRejectVisible = () => {
-    setAcceptModalVisible(false)
-    setRejectModalVisible(true)
-  }
+    setAcceptModalVisible(false);
+    setRejectModalVisible(true);
+  };
 
   const setAcceptVisible = () => {
     setRejectModalVisible(false);
     setAcceptModalVisible(true);
-  }
+  };
 
   useEffect(() => {
-    if(userInfo && userInfo?.showModalAccept) {
-      setAcceptModalVisible(true)
+    if (userInfo && userInfo?.showModalAccept) {
+      setAcceptModalVisible(true);
     }
-  },[userInfo])
+  }, [userInfo]);
 
   useEffect(() => {
-    const unsubscribe = onMatchNotificationSubscription(message => {
-      const data = message?.data;        
-      setMatchData(data);
-      setIsVisibleMatch(true);
-    }, setRejectVisible, setAcceptVisible);
+    const unsubscribe = onMatchNotificationSubscription(
+      message => {
+        const data = message?.data;
+        setMatchData(data);
+        setIsVisibleMatch(true);
+      },
+      setRejectVisible,
+      setAcceptVisible,
+    );
     return () => unsubscribe();
   }, []);
 
@@ -217,7 +221,7 @@ const IO: FC = (): JSX.Element => {
         }
       }
     } catch (error) {
-      // console.log('error supert invite', error);
+      console.log('error supert invite', error);
     }
   };
 
@@ -934,14 +938,14 @@ const IO: FC = (): JSX.Element => {
     }, 2000);
   };
 
-  const sortEvents = (uid: string) => {     
-    if(uid) {
-      const res = eventsRef.current?.filter(item => item.info.uid !== uid)      
-      eventsRef.current = res
+  const sortEvents = (uid: string) => {
+    if (uid) {
+      const res = eventsRef.current?.filter(item => item.info.uid !== uid);
+      eventsRef.current = res;
       setEvents(res);
       setCurrentEventCardPosition(prev => prev + 1);
     }
-  }
+  };
 
   const getListForHost = async () => {
     let users: any;
@@ -1086,12 +1090,14 @@ const IO: FC = (): JSX.Element => {
                   ))}
                 </View>
                 <View style={styles.wrapperButtonsFooter}>
-                  <TouchableOpacity onPress={() => {
-                    handleAutoSwipeLeft()
-                    setTimeout(() => {
-                      sortEvents(item?._data?.uid)
-                    }, 500);
-                  }} style={styles.buttonCloseOrCheck}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleAutoSwipeLeft();
+                      setTimeout(() => {
+                        sortEvents(item?._data?.uid);
+                      }, 500);
+                    }}
+                    style={styles.buttonCloseOrCheck}>
                     <View
                       style={{
                         backgroundColor: transparentWhite56Color,
@@ -1163,12 +1169,14 @@ const IO: FC = (): JSX.Element => {
                       <FlashIcon />
                     </View>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => {
-                    handleAutoSwipeRight()
-                    setTimeout(() => {
-                      sortEvents(item?._data?.uid)
-                    }, 500);
-                    }} style={styles.buttonCloseOrCheck}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleAutoSwipeRight();
+                      setTimeout(() => {
+                        sortEvents(item?._data?.uid);
+                      }, 500);
+                    }}
+                    style={styles.buttonCloseOrCheck}>
                     <View
                       style={{
                         backgroundColor: transparentWhite56Color,
@@ -1282,7 +1290,6 @@ const IO: FC = (): JSX.Element => {
   }, [userInfo, userHost, activeEventDate]);
 
   useEffect(() => {
-    // fetchUserInfo();
     fetchMyEvents(true);
     requestUserPermission();
   }, []);
@@ -1362,8 +1369,8 @@ const IO: FC = (): JSX.Element => {
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
-        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible}/>
-        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos[0].image}/>
+        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos[0].image} />
         <ModalFullEvent
           isVisible={isVisibleModalFullEvent}
           idEvent={activeEvent.id}

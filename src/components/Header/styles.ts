@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {blackColor, lightGray2Color, lightGray5Color, lightGray6Color, lightRedColor, whiteColor} from 'constants/colors.ts';
+import {blackColor, lightGray2Color, lightGray5Color, lightRedColor, whiteColor} from 'constants/colors.ts';
 import {Satoshi500, Satoshi700, Satoshi400} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common';
@@ -68,7 +68,8 @@ const useStyles = () =>
       borderRadius: 50,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: lightGray5Color,
+      // backgroundColor: lightGray5Color,
+      color: whiteColor,
       opacity: 0.5,
     },
     addEventButton: {

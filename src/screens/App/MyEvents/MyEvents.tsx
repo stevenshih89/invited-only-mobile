@@ -26,6 +26,9 @@ import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import images
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
+import WIcon from 'assets/images/icons/W.svg';
+import MIcon from 'assets/images/icons/M.svg';
+
 import Button from 'components/Button/Button';
 import {eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocations';
 import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
@@ -428,18 +431,6 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   };
 
-  // const getMyEvents = async () => {
-  //   try {
-  //     if (user) {
-  //       const querySnapshot = await firestore().collection('Events').where('uid', '==', `${user?.uid}`).get();
-  //       const data = querySnapshot?.docs?.map(i => i?.data());
-  //       setMyEventsData(data);
-  //     }
-  //   } catch (e) {
-  //     // console.log('error my events', e);
-  //   }
-  // };
-
   useEffect(() => {
     let myEventsSubscribe: any;
     let eventsJoiningSubscribe: any;
@@ -467,13 +458,6 @@ const MyEvents: FC<any> = ({navigation}) => {
       eventsJoiningSubscribe && eventsJoiningSubscribe();
     };
   }, [setIsVisibleCancelAttendingModal, isVisibleCancelAttendingModal]);
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     getMyEvents();
-  //     handleGetEventsIJoining();
-  //   }, [setIsVisibleCancelAttendingModal, isVisibleCancelAttendingModal]),
-  // );
 
   return (
     <>
@@ -533,7 +517,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                   padding: 3,
                   width: 55,
                   height: 55,
-                  backgroundColor: lightGray5Color,
+                  // backgroundColor: lightGray5Color,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
@@ -569,12 +553,13 @@ const MyEvents: FC<any> = ({navigation}) => {
                   padding: 3,
                   width: 55,
                   height: 55,
-                  backgroundColor: lightGray5Color,
+                  // backgroundColor: lightGray5Color,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <CalendarSearchIcon width={26} height={26} />
-                <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>Weekend</Text>
+                <WIcon width={26} height={33} />
+                {/* <CalendarSearchIcon width={26} height={26} />
+                <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>Weekend</Text> */}
               </View>
               <Text
                 style={{
@@ -605,12 +590,13 @@ const MyEvents: FC<any> = ({navigation}) => {
                   padding: 3,
                   width: 55,
                   height: 55,
-                  backgroundColor: lightGray5Color,
+                  // backgroundColor: lightGray5Color,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <CalendarSearchIcon width={26} height={26} />
-                <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_MONTH ? whiteColor : grayColor}}>Month</Text>
+                <MIcon width={22} height={33} />
+                {/* <CalendarSearchIcon width={26} height={26} />
+                <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_MONTH ? whiteColor : grayColor}}>Month</Text> */}
               </View>
               <Text
                 style={{
