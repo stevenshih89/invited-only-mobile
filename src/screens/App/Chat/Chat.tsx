@@ -10,7 +10,7 @@ import useStyles from 'screens/App/Chat/styles.ts';
 import {chatCorrespondencePath, IOPath} from 'constants/pathLocations.ts';
 import ModalHostMenu from 'components/Modal/ModalHostMenu/ModalHostMenu.tsx';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
-import { useAdminActions } from 'src/store/adminActions';
+import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import icons
@@ -30,6 +30,7 @@ import {useUser} from 'src/store/userStore';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
+import {screenHeight} from 'constants/common';
 
 type ItemProps = {
   title: string;
@@ -418,22 +419,20 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   return (
     <View style={styles.container}>
-      {userInfo?.photos?.length > 0 && (
-        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />
-      )}
-      <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible}/>
+      {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
+      <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
       {!loading ? (
         !typeEvents ? (
           <FlatList
             showsVerticalScrollIndicator={false}
             data={messages?.chats}
             ListEmptyComponent={() => (
-              <View style={{height: '100%', marginTop: 30}}>
+              <View style={{height: '100%', marginTop: 60}}>
                 <View style={{flex: 1, justifyContent: 'center'}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(28, 812), marginBottom: 18}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                     You don't have any chat
                   </Text>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>
                     Get started by swiping to {isHost ? 'invite guests' : 'join events and begin receiving messages.'}
                   </Text>
                   <Button title="Start swiping" onPress={() => navigation.navigate(IOPath as never)} />
@@ -469,7 +468,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{marginBottom: 20}}
             ListEmptyComponent={() => (
-              <View style={{height: '100%', marginTop: 104}}>
+              <View style={{height: '100%', marginTop: screenHeight / 8}}>
                 <Text style={styles.textYouNeedToJoin}>You need to join an event</Text>
                 <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
                 <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />

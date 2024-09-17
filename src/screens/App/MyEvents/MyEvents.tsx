@@ -21,7 +21,7 @@ import {ALL, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
-import { useAdminActions } from 'src/store/adminActions';
+import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import images
@@ -478,10 +478,8 @@ const MyEvents: FC<any> = ({navigation}) => {
   return (
     <>
       <View style={styles.container}>
-      {userInfo?.photos?.length > 0 && (
-        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />
-      )}
-      <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible}/>
+        {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
+        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
         {isHost ? (
           <View style={styles.wrapperHeaderButtonMyEvents}>
             <TouchableOpacity
@@ -639,11 +637,11 @@ const MyEvents: FC<any> = ({navigation}) => {
                   <>
                     {userInfo?.accountConfirmed && (
                       <View style={{marginTop: screenHeight / 6}}>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
+                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                           Let's create an event
                         </Text>
                         <Text
-                          style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(17, 812), opacity: 0.8, marginBottom: 40}}>
+                          style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>
                           Get started by creating an event to begin inviting guests.
                         </Text>
                         <Button title="Create event" onPress={goToCreateEvent} />
@@ -678,10 +676,10 @@ const MyEvents: FC<any> = ({navigation}) => {
                 style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
                 ListEmptyComponent={() => (
                   <View style={{marginTop: screenHeight / 6}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                       You need to join an event
                     </Text>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(17, 812), opacity: 0.8, marginBottom: 40}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>
                       You don't have any active event.
                     </Text>
                     <Button title="Join event" onPress={goToIOStack} />
@@ -728,10 +726,10 @@ const MyEvents: FC<any> = ({navigation}) => {
                 style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
                 ListEmptyComponent={() => (
                   <View style={{marginTop: screenHeight / 6}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(44, 812), marginBottom: 20}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                       You need to join an event
                     </Text>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(17, 812), opacity: 0.8, marginBottom: 40}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>
                       You don't have any active event.
                     </Text>
                     <Button title="Join event" onPress={goToIOStack} />

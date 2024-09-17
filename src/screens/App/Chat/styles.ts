@@ -28,18 +28,15 @@ const useStyles = () => {
     },
     textYouNeedToJoin: {
       color: whiteColor,
-      fontFamily: Satoshi400,
-      fontSize: RFValue(30, 812),
-      textAlign: 'center',
-      paddingHorizontal: 80,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(48, 812),
+      marginBottom: 18,
     },
     textYouDontHaveAny: {
       color: whiteColor,
       fontFamily: Satoshi400,
       fontSize: RFValue(18, 812),
       opacity: 0.8,
-      marginTop: 19,
-      textAlign: 'center',
     },
     item: {
       borderTopWidth: 1,
