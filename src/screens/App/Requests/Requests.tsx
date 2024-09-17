@@ -1,12 +1,13 @@
-import {ActivityIndicator, Alert, FlatList, Text, View, Image} from 'react-native';
+import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
 import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
 //import components
 import useStyles from './styles';
-import {blackColor, orangeClose, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGray10Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import PersoneIcon from 'assets/images/icons/Users.svg';
+import Clock from 'assets/images/icons/clock-white.svg';
 import ItemRequestGuest from './ItemRequestGuest';
 import ItemRequestHost from './ItemRequestHost';
 import firestore from '@react-native-firebase/firestore';
@@ -20,12 +21,11 @@ import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount'
 import Loading from 'components/Loading/Loading';
 import moment from 'moment';
 import Match, {MatchData} from '../IO/screens/Match/Match';
-import {showToast} from 'helpers/showToast';
 import FullEvent from 'components/FullEvent';
 import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
-import { useAdminActions } from 'src/store/adminActions';
+import {useAdminActions} from 'src/store/adminActions';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
@@ -202,12 +202,54 @@ const Requests: FC = (): ReactElement => {
     return <ActivityIndicator style={styles.container} />;
   }
 
-
-
   if (!userInfo?.accountConfirmed && !loading && !rejectModalVisible && !acceptModalVisible) {
     return (
       <View style={styles.container}>
         <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} />
+      </View>
+    );
+  }
+
+  if (!requestsForHost.eventReviewed) {
+    const total = requestsForHost.female + requestsForHost.male;
+
+    return (
+      <View style={styles.container}>
+        <View
+          style={{
+            marginTop: 18,
+            marginHorizontal: 23,
+            backgroundColor: lightGray10Color,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderRadius: 10,
+            padding: 10,
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Clock width={32} height={32} />
+            <Text
+              style={{
+                marginLeft: 6,
+                color: whiteColor,
+                fontFamily: Satoshi700,
+                fontSize: RFValue(12, 812),
+              }}>
+              Event under review
+            </Text>
+          </View>
+
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <PersoneIcon width={16} height={16} />
+            <Text
+              style={{
+                fontFamily: Satoshi500,
+                fontSize: RFValue(12, 812),
+                color: whiteColor,
+                marginLeft: 2,
+              }}>{`${acceptQuantityGuest}/${total}`}</Text>
+          </View>
+        </View>
       </View>
     );
   }
@@ -259,10 +301,8 @@ const Requests: FC = (): ReactElement => {
   return (
     <>
       <View style={styles.container}>
-        {userInfo?.photos?.length > 0 && (
-          <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />
-        )}
-        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible}/>
+        {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
+        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
         <ModalFullEvent
           isVisible={isVisibleModalFullEvent}
           idEvent={activeEvent.id}
