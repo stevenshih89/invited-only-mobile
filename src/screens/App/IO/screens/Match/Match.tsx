@@ -41,10 +41,11 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   const textOpacity = useSharedValue(0);
   const figurePositin = useSharedValue(-screenHeight * 0.34 - 100);
   const buttonPosition = useSharedValue(-1000);
-
+  
   const userHost = useUser((i: any) => i?.user);
 
   const name = userHost?.uid === matchData?.uidHost ? matchData?.nameGuest : matchData?.nameHost;
+  
   const words = `${name} `?.split(' ');
   const wordTranslations = words?.map(() => useSharedValue(widthScreen));
   const nameAnimation = useSharedValue(widthScreen);

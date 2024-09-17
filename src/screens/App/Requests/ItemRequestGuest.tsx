@@ -113,6 +113,8 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           imageUri: item?.userPhoto,
           uidHost: event?.uid,
           uidGuest: item?.uid,
+          nameGuest: item?.name,
+          nameHost: hostInfo?.name,
           eventId: event?.id,
           superInvite: false,
           userHostImageUri: event?.hostImage,

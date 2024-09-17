@@ -108,6 +108,8 @@ const ItemRequestHost = ({
         imageUri: item?.userPhoto,
         uidHost: user?.uid,
         uidGuest: item?.uid,
+        nameGuest: item?.name,
+        nameHost: currentUserName,
         eventId: list?.id,
         superInvite: false,
         userHostImageUri: user?.photos[0]?.image,
