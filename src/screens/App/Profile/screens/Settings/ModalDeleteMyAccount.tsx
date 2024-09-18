@@ -29,14 +29,24 @@ const ModalDeleteMyAccount: FC<{
   const handleDeleteAccount = async () => {
     await auth().signOut();
     try {
-      const docSnapshot = await firestore().collection('userInfo').doc(userHost.uid).get();
-      const docData = docSnapshot.data();
-
-      if (docData?.eventsList.length > 0) {
-        for (const item of docData.eventsList) {
-          await firestore().collection('Events').doc(item).delete();
-          await firestore().collection('messages').doc(item).delete();
+      if(userHost.accountType === 'host') {
+        const docSnapshot = await firestore().collection('userInfo').doc(userHost.uid).get();
+        const docData = docSnapshot.data();
+      
+        if (docData?.eventsList.length > 0) {
+          for (const item of docData.eventsList) {
+            await firestore().collection('Events').doc(item).delete();
+            await firestore().collection('messages').doc(item).delete();
+          }
         }
+      } else {
+        const docSnapshot = await firestore().collection('messages').where('uidGuest','==', userHost.uid).get()
+        if (!docSnapshot.empty) {
+          const deletePromises = docSnapshot.docs.map(doc => {
+            return firestore().collection('messages').doc(doc.id).delete();
+          });
+          await Promise.all(deletePromises);
+        } 
       }
       await firestore().collection('userInfo').doc(userHost.uid).delete();
       await auth().currentUser?.delete();
