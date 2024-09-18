@@ -77,7 +77,7 @@ const useStyles = () => {
     },
     wrapperRightButton: {
       position: 'relative',
-      bottom: screenHeight * 0.075,
+      bottom: screenHeight * 0.040,
       zIndex: 999,
     },
     buttonFlash: {

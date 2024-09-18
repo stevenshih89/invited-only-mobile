@@ -116,10 +116,11 @@ const IO: FC = (): JSX.Element => {
     return subscription;
   }, []);
 
-  const handleAutoSwipeRight = () => {
+  const handleAutoSwipeRight = (uid: string) => {    
     if (cardRef.current) {
       cardRef.current.autoSwipeRight();
     }
+    sortEvents(uid);
   };
 
   const handleAutoSwipeLeft = () => {
@@ -700,6 +701,7 @@ const IO: FC = (): JSX.Element => {
               eventPhotos={event?.photos}
               photos={currUserPhotos}
               name={event?.name}
+              handleAutoSwipeRight={() => handleAutoSwipeRight(event?.id)}
               onInvite={() => onInvite(event?.uid, event?.id)}
               superJoin={() => onInvite(event?.uid, event?.id, true)}
             />
@@ -934,6 +936,7 @@ const IO: FC = (): JSX.Element => {
 
     setTimeout(() => {
       setEvents(recommendedData);
+      eventsRef.current = recommendedData
       allEventsLength.current = recommendedData.length;
     }, 2000);
   };
@@ -1011,7 +1014,7 @@ const IO: FC = (): JSX.Element => {
                 handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}
                 accountType={accountType}
-                handleAutoSwipeRight={handleAutoSwipeRight}
+                handleAutoSwipeRight={() => handleAutoSwipeRight(item?._data?.id)}
                 isShowWantsJoin={findSuperJoin}
               />
               <View style={styles.bioWrapper}>
@@ -1171,10 +1174,7 @@ const IO: FC = (): JSX.Element => {
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
-                      handleAutoSwipeRight();
-                      setTimeout(() => {
-                        sortEvents(item?._data?.uid);
-                      }, 500);
+                      handleAutoSwipeRight(item?._data?.id);
                     }}
                     style={styles.buttonCloseOrCheck}>
                     <View

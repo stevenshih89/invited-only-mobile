@@ -226,6 +226,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             flipCoin={flipCoin}
             fromJoinEventsScreen={fromJoinEventsScreen}
             onInvite={onInvite}
+            handleAutoSwipeRight={handleAutoSwipeRight}
             superJoin={superJoin}
           />
         </View>

@@ -39,6 +39,7 @@ const EventPreview: FC<{
   fromJoinEventsScreen: boolean;
   onInvite: () => void;
   superJoin: () => void;
+  handleAutoSwipeRight: () => void;
 }> = ({
   photos,
   date,
@@ -59,6 +60,7 @@ const EventPreview: FC<{
   setIsVisibleSaveModal,
   onInvite,
   superJoin,
+  handleAutoSwipeRight
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
@@ -338,7 +340,7 @@ const EventPreview: FC<{
           <TouchableOpacity onPress={handleSuperJoin} activeOpacity={0.7} style={[styles.iconButton, styles.marginRight]}>
             <FlashIcon />
           </TouchableOpacity>
-          <TouchableOpacity onPress={onInvite} activeOpacity={0.7} style={[styles.iconButton, styles.marginLeft]}>
+          <TouchableOpacity onPress={handleAutoSwipeRight} activeOpacity={0.7} style={[styles.iconButton, styles.marginLeft]}>
             <IOIcon />
           </TouchableOpacity>
         </View>
