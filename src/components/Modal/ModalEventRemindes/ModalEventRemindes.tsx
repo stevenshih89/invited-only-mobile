@@ -136,7 +136,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             <Text style={styles.textCity}>{city}</Text>
             <View style={styles.fdr}>
               <UserIcon />
-              <Text style={styles.textGirlInvitation}>{girlInvitation} x Girl invitation </Text>
+              <Text style={styles.textGirlInvitation}>{girlInvitation} x Guest invitation </Text>
             </View>
             <View style={styles.fdr}>
               <CalendarIcon width={19} height={19} />
@@ -368,7 +368,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                 <View style={styles.main}>
                   <View style={styles.fdr}>
                     <UserIcon />
-                    <Text style={styles.textGirlInvitation}>{currentEvent?.female} x Girl invitation </Text>
+                    <Text style={styles.textGirlInvitation}>{currentEvent?.female} x Guest invitation </Text>
                   </View>
                   <View style={styles.fdr}>
                     <CalendarIcon width={19} height={19} />
@@ -531,7 +531,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                 <View style={styles.main}>
                   <View style={styles.fdr}>
                     <UserIcon />
-                    <Text style={styles.textGirlInvitation}>{girlInvitation} x Girl invitation </Text>
+                    <Text style={styles.textGirlInvitation}>{girlInvitation} x Guest invitation </Text>
                   </View>
                   <View style={styles.fdr}>
                     <CalendarIcon width={19} height={19} />
@@ -695,7 +695,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                 <View style={styles.main}>
                   <View style={styles.fdr}>
                     <UserIcon />
-                    <Text style={styles.textGirlInvitation}>{girlInvitation} x Girl invitation </Text>
+                    <Text style={styles.textGirlInvitation}>{girlInvitation} x Guest invitation </Text>
                   </View>
                   <View style={styles.fdr}>
                     <CalendarIcon width={19} height={19} />

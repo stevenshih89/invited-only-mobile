@@ -60,7 +60,7 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
             <Text style={{color: 'white'}}>{title}</Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <PersonIcon width={12} height={12} />
-              <Text style={{color: 'white', marginLeft: 5}}>{girlInvitation} x Girl invitation</Text>
+              <Text style={{color: 'white', marginLeft: 5}}>{girlInvitation} x Guest invitation</Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <CalendarIcon width={12} height={12} />

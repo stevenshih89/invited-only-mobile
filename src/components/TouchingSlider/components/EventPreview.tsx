@@ -177,7 +177,7 @@ const EventPreview: FC<{
                     <View style={styles.rowContainer}>
                       <View style={styles.row}>
                         <User />
-                        <Text style={styles.subText}>{girls} x Girl invitation</Text>
+                        <Text style={styles.subText}>{girls} x Guest invitation</Text>
                       </View>
                       <View style={[styles.row, styles.marginLeft]}>
                         <Calendar />
@@ -236,7 +236,7 @@ const EventPreview: FC<{
                     <View style={styles.rowContainer}>
                       <View style={styles.row}>
                         <User />
-                        <Text style={styles.subText}>{girls} x Girl invitation</Text>
+                        <Text style={styles.subText}>{girls} x Guest invitation</Text>
                       </View>
                       <View style={[styles.row, styles.marginLeft]}>
                         <Calendar />
@@ -328,7 +328,7 @@ const EventPreview: FC<{
           <View style={styles.rowContainer}>
             <View style={styles.row}>
               <User />
-              <Text style={styles.subText}>{girls} x Girl invitation</Text>
+              <Text style={styles.subText}>{girls} x Guest invitation</Text>
             </View>
             <View style={[styles.row, styles.marginLeft]}>
               <Calendar />

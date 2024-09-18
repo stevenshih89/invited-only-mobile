@@ -333,7 +333,7 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
                           marginRight: 2,
                         }}>
                         <ProfileTwoUser />
-                        <Text style={styles.textUnderFooter}>{numberOfGirlsInvited} x Girl invitation</Text>
+                        <Text style={styles.textUnderFooter}>{numberOfGirlsInvited} x Guest invitation</Text>
                       </View>
                       <View
                         style={{
@@ -554,7 +554,7 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
                         marginRight: 2,
                       }}>
                       <ProfileTwoUser />
-                      <Text style={styles.textUnderFooter}>{numberOfGirlsInvited} x Girl invitation</Text>
+                      <Text style={styles.textUnderFooter}>{numberOfGirlsInvited} x Guest invitation</Text>
                     </View>
                     <View
                       style={{

@@ -134,7 +134,7 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
                 <View style={styles.fdr}>
                   <UserIcon />
                   <Text style={styles.textGirlInvitation}>
-                    {actualActiveEventDataProps ? actualActiveEventDataProps : actualActiveEventData?.female} x Girl invitation{' '}
+                    {actualActiveEventDataProps ? actualActiveEventDataProps : actualActiveEventData?.female} x Guest invitation{' '}
                   </Text>
                 </View>
                 <View style={styles.fdr}>

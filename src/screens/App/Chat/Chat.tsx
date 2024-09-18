@@ -243,7 +243,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               <View style={{flexDirection: 'row', marginTop: 10}}>
                 <View style={styles.fdrAiC}>
                   <PersonIcon width={14} height={14} />
-                  <Text style={styles.textDescriptionUnderTitle}>{girlInvitation} x Girl invitation </Text>
+                  <Text style={styles.textDescriptionUnderTitle}>{girlInvitation} x Guest invitation </Text>
                 </View>
                 <View style={styles.fdrAiC}>
                   <CalendarIcon style={{marginLeft: 10}} width={14} height={14} />

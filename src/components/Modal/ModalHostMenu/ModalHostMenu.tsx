@@ -95,7 +95,7 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
             <Text style={{color: 'white'}}>{name}</Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <PersonIcon width={12} height={12} />
-              <Text style={{color: 'white', marginLeft: 5}}>{girlInvitation} x Girl invitation</Text>
+              <Text style={{color: 'white', marginLeft: 5}}>{girlInvitation} x Guest invitation</Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <CalendarIcon width={12} height={12} />
