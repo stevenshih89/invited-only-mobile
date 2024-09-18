@@ -2,9 +2,10 @@ import {ImageBackground, Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
 import {blackColor, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
 import CalendarBlank from 'assets/images/icons/CalendarBlank.svg';
-import ProfileTwoUser from 'assets/images/icons/profile-2user.svg';
 import Users from 'assets/images/icons/Users.svg';
+import UserIcon from 'assets/images/icons/user.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
+import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
 import {FC} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
@@ -15,6 +16,7 @@ import moment from 'moment';
 import {commonStackPath, eventInfoPath} from 'constants/pathLocations';
 import {useNavigation} from '@react-navigation/native';
 import {calculateAge} from 'helpers/calculateAge';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ModalAcceptInvitation: FC<{
   isVisible: boolean;
@@ -75,27 +77,53 @@ const ModalAcceptInvitation: FC<{
                 params: {list: eventInfo?.list, isAcceptedInvitation: eventInfo?.isAcceptedInvitation},
               } as never)
             }>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+              <View style={{flexDirection: 'row'}}>
               {eventInfo?.host?.image && <Image style={{borderRadius: 100, width: 40, height: 40}} source={{uri: eventInfo?.host.image}} />}
-              <View style={{marginLeft: 6}}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 6}}>
                   {userInfo?.accountType && (
                     <View
                       style={{
                         borderColor: whiteColor,
                         borderWidth: 1,
                         borderStyle: 'solid',
-                        borderRadius: 5,
+                        borderRadius: 4,
                         paddingHorizontal: 6,
                         paddingVertical: 2,
+                        backgroundColor: blackColor
                       }}>
-                      <Text style={{textTransform: 'capitalize', color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(9, 812)}}>
-                        {userInfo.accountType}
+                      <Text style={{textTransform: 'capitalize', color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(10, 812)}}>
+                        {userInfo?.accountType}
                       </Text>
                     </View>
                   )}
+                  {userInfo?.premium && (
+                    <LinearGradient
+                    colors={['#977B4A', '#E5D291', '#A28453']}
+                    style={{
+                      marginLeft: 5,
+                      borderRadius: 4,
+                      paddingHorizontal: 12,
+                      paddingVertical: 2,
+                      backgroundColor: blackColor,
+                    }}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}>
+                    {true && (
+                      <Text
+                        style={{
+                          color: blackColor,
+                          fontSize: RFValue(10, 812),
+                          fontFamily: Satoshi400,
+                          fontWeight: 'bold',
+                        }}>
+                        Premium
+                      </Text>
+                    )}
+                  </LinearGradient>
+                  )}
                 </View>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 6}}>
                   <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>
                     {userInfo?.name}
                     {userInfo?.date && `, ${calculateAge(userInfo.date)}`}
@@ -103,6 +131,7 @@ const ModalAcceptInvitation: FC<{
                   {userInfo?.accountConfirmed && <CheckStarIcon width={12} height={12} style={{marginLeft: 4}} />}
                 </View>
               </View>
+              <ArrowRightIcon />
             </View>
           </TouchableOpacity>
           <View style={{marginTop: 'auto'}}>
@@ -126,7 +155,7 @@ const ModalAcceptInvitation: FC<{
                   alignItems: 'center',
                   marginRight: 2,
                 }}>
-                <ProfileTwoUser />
+                <UserIcon width={12} height={12} />
                 <Text
                   style={{
                     color: whiteColor,
@@ -146,7 +175,7 @@ const ModalAcceptInvitation: FC<{
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}>
-                <CalendarBlank />
+                <CalendarBlank width={12} height={12} />
                 <Text
                   style={{
                     color: whiteColor,
@@ -184,14 +213,14 @@ const ModalAcceptInvitation: FC<{
           style={{
             color: whiteColor,
             fontFamily: Satoshi500,
-            fontSize: RFValue(20, 812),
-            marginBottom: screenHeight / 18,
+            fontSize: RFValue(30, 812),
+            marginVertical: 20,
             textAlign: 'center',
           }}>
-          {`${eventInfo?.host.name} has approved your invitation! Confirm?`}
+          {`${eventInfo?.host.name} approved you as a guest!`}
         </Text>
-        <Button title="Yes, confirm invitation" onPress={handleAcceptInvitation} />
-        <Button title="No, reject invitation" variant="transparent" onPress={handleRejectInvitation} />
+        <Button title="Accept Invitation" onPress={handleAcceptInvitation} />
+        <Button buttonContatinerStyle={{marginTop: 14}} title="Reject Invitation" variant="transparent" onPress={handleRejectInvitation} />
       </View>
     </Modal>
   );
