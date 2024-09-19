@@ -161,16 +161,6 @@ const IO: FC = (): JSX.Element => {
     return () => unsubscribe();
   }, []);
 
-  // useEffect(() => {
-  //   const unsubscribe = onMatchNotificationSubscription(message => {
-  //     const data = message?.data;
-  //     setMatchData(data);
-  //     setIsVisibleMatch(true);
-  //   });
-
-  //   return () => unsubscribe();
-  // }, []);
-
   const getSuperInvites = async () => {
     const getDoc = await firestore().collection('userInfo').doc(userHost.uid).get();
     const currentSuperInvites = getDoc?.data()?.superInvites;
@@ -179,16 +169,6 @@ const IO: FC = (): JSX.Element => {
     counterWeeklySuperInvitesRef.current = currentWeeklySuperInvites;
     setCounterSuperInvites(currentSuperInvites + currentWeeklySuperInvites);
   };
-
-  // const checkIsFullGuestsFun = async () => {
-  //   const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(activeEvent?.id);
-  //   if (findAcceptedGuest >= allGuests) {
-  //     setTotalQuantityGuests(allGuests);
-  //   }
-  //   setTotalRequestsGuests(totalRequestsGuests);
-  //   setAcceptQuantityGuest(findAcceptedGuest);
-  //   return findAcceptedGuest >= allGuests;
-  // };
 
   useFocusEffect(
     useCallback(() => {
@@ -303,24 +283,6 @@ const IO: FC = (): JSX.Element => {
   //   return filteredData;
   // };
 
-  const handleOpenMatch = async (uidGuest: string, name: string, girlsPhoto: string) => {
-    // const userId = auth().currentUser?.uid;
-    // const token = await getFcmToken();
-    // try {
-    //   await firestore().collection('CollectionOfMatches').add({
-    //     notificationTokenSender: token,
-    //     uidGuest: uidGuest,
-    //     hostUid: userId,
-    //     name: name,
-    //     girlsPhoto: girlsPhoto,
-    //   });
-    //   showToast('inviteMatch', `Chat with ${name} >`, 'Invitation approved! Waiting for Alexa to accept your invitation.');
-    //   // setIsVisibleMatch(true);
-    // } catch (e) {
-    //   // console.log(e);
-    // }
-  };
-
   const OverlayRight = () => {
     return (
       <View style={[styles.overlayLabelContainerInvite]}>
@@ -399,71 +361,6 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  // const sendNotification = async (forUserUid: string, title: string, body: string, mark: string, status: string) => {
-  //   const generateRandomId = (length: number) => {
-  //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  //     let result = '';
-  //     const charactersLength = characters.length;
-  //     for (let i = 0; i < length; i++) {
-  //       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  //     }
-  //     return result;
-  //   };
-
-  //   const getFcmTokenFromUser = async (uid: string) => {
-  //     const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-  //     return userInfoDoc.data()?.fcmToken;
-  //   };
-
-  //   const token = await getFcmTokenFromUser(forUserUid);
-
-  //   // console.warn('forUserUid', forUserUid);
-  //   try {
-  //     const result = await functions().httpsCallable('sendNotification')({
-  //       token: token,
-  //       priority: 'high',
-  //       notification: {
-  //         title,
-  //         body,
-  //       },
-  //       data: {
-  //         status,
-  //         image: userInfo?.photos[0].image,
-  //       },
-  //     });
-  //     if (result.data.success) {
-  //       // console.warn('Notification sent successfully', result.data.data);
-  //     } else {
-  //       // console.error('Error sending notification:', result.data.error);
-  //     }
-  //   } catch (error) {
-  //     // console.error('Error calling Firebase Function:', error);
-  //   }
-
-  //   const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
-  //   const userNotifications = userDoc.data()?.notifications;
-  //   const id = generateRandomId(8);
-  //   const notification = {
-  //     id,
-  //     title: title,
-  //     body: body,
-  //     mark: mark,
-  //     uid: userInfo?.uid,
-  //   };
-  //   // console.log('notification', notification);
-
-  //   try {
-  //     await firestore()
-  //       .collection('userInfo')
-  //       .doc(forUserUid)
-  //       .update({
-  //         notifications: [...userNotifications, notification],
-  //       });
-  //   } catch (error) {
-  //     // console.log('error update notifications', error);
-  //   }
-  // };
-
   const onReject = async (uid: string, eventId: string) => {
     const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
     try {
@@ -473,6 +370,8 @@ const IO: FC = (): JSX.Element => {
         .update({
           rejectsList: firestore.FieldValue.arrayUnion({uid}),
         });
+
+      setEvents(prev => prev.filter(i => i?.info?.uid !== uid));
     } catch (error) {
       console.error(error);
     }
@@ -648,7 +547,21 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
+  const filterEventsByBlockedUsers = async (events: any[]) => {
+    const user = auth().currentUser;
+    if (!user) {
+      return;
+    }
+    const blockedUsers = await firestore().collection('report').where('uidSender', '==', user?.uid).get();
+
+    const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
+    const filteredEvents = events.filter(event => !blockedUsersList.includes(event?.info?.uid));
+
+    return filteredEvents;
+  };
+
   const getListForGuest = async () => {    
+
     const user = auth().currentUser;
     if (!user) {
       return;
@@ -960,11 +873,12 @@ const IO: FC = (): JSX.Element => {
       });
     });
 
-    const filteredData = data.filter(item => {      
-      return item.info && item.info.eventReviewed
-    }); 
-    
-    const recommendedData = sortByInterests(sortByDate(filteredData)?.reverse(), userHost);
+    const filteredData = data.filter(item => item.info && item.info.eventReviewed);
+
+    const sortedByInterestsData = sortByInterests(sortByDate(filteredData)?.reverse(), userHost);
+
+    const recommendedData = (await filterEventsByBlockedUsers(sortedByInterestsData)) || [];
+
 
     setTimeout(() => {
       setEvents(recommendedData);
@@ -983,6 +897,7 @@ const IO: FC = (): JSX.Element => {
   };
 
   const getListForHost = async () => {
+    const user = auth().currentUser;
     let users: any;
 
     if (activeEvent.male > 0 && activeEvent.female > 0) {
@@ -995,11 +910,17 @@ const IO: FC = (): JSX.Element => {
 
     const getActualDataEvent = (await firestore().collection('Events').doc(activeEvent?.id).get()).data();
 
+    const blockedUsers = await firestore().collection('report').where('uidSender', '==', user?.uid).get();
+
+    const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
+
     const data: any[] = [];
     const usersList = await users?._docs;
     usersList
       ?.filter(item => {
-        // // console.warn('item', item?._data.uid, item?._data);
+        if (blockedUsersList.includes(item?._data.uid)) {
+          return false;
+        }
 
         if (getActualDataEvent?.rejectsList?.find(j => j?.uid === item?._data.uid)) {
           return false;
@@ -1014,7 +935,6 @@ const IO: FC = (): JSX.Element => {
         return true;
       })
       ?.map((item: any, index: number): void => {
-        // // console.warn('itemMap', item?._data.uid, item?._data);
 
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} =
           item?._data;
@@ -1044,7 +964,6 @@ const IO: FC = (): JSX.Element => {
                 confirmedAccount={accountConfirmed}
                 onInvite={() => onInvite(uid, item?._data?.id)}
                 handleOpenSuperInvite={() => handleOpenSuperInvite(item?._data, uid)}
-                handleOpenMatch={() => handleOpenMatch(uid, name, girlPhotos[0])}
                 photos={girlPhotos}
                 accountType={accountType}
                 handleAutoSwipeRight={() => handleAutoSwipeRight(item?._data?.id)}
@@ -1259,22 +1178,11 @@ const IO: FC = (): JSX.Element => {
           ),
           info: item?._data,
         });
-
-        // setTimeout(() => {
-        //   setEvents([...data]);
-        //   setEventsLength(data.length);
-        // }, USERS_FETCHING_DELAY);
       });
+
     allEventsLength.current = data.length;
     setEvents(data);
     eventsRef.current = data;
-    // checkIsFullGuestsFun();
-    // // console.warn('data', data);
-
-    // setTimeout(() => {
-    //   setEvents([...data]);
-    //   setEventsLength(data.length);
-    // }, USERS_FETCHING_DELAY);
   };
 
   const requestUserPermission = async () => {
@@ -1399,7 +1307,6 @@ const IO: FC = (): JSX.Element => {
       />
     );
   }
-  // console.warn('events', events, isVisibleMatch);
 
   return (
     <>
@@ -1434,43 +1341,39 @@ const IO: FC = (): JSX.Element => {
         )}
         {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
         <View style={styles.container}>
-          {
-            events?.map((item, index) => {
-              return (
-                <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
-                  <TinderCard
-                    ref={cardRef}
-                    // @ts-ignore
-                    cardWidth="100%"
-                    // @ts-ignore
-                    cardHeight="100%"
-                    onSwipedLeft={() => {
-                      onReject(item?.info?.uid, item?.info?.id);
-                      setTimeout(() => {
-                        setCurrentEventCardPosition(prev => prev + 1);
-                      }, 500);
-                    }}
-                    onSwipedRight={() => {
-                      onInvite(item?.info?.uid, item?.info?.id);
-                      setTimeout(() => {
-                        setCurrentEventCardPosition(prev => prev + 1);
-                      }, 500);
-                    }}
-                    OverlayLabelRight={OverlayRight}
-                    OverlayLabelLeft={OverlayLeft}
-                    disableBottomSwipe={true}
-                    disableTopSwipe={true}
-                    cardStyle={styles.card}>
-                    <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
-                      {item.component}
-                    </ScrollView>
-                  </TinderCard>
-                </View>
-              );
-            })
-            // :
-            // <Loading text="Sorry, can't find any results. Please try adjusting your search parameters or try again later." userInfo={userInfo}/>
-          }
+          {events?.map((item, index) => {
+            return (
+              <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
+                <TinderCard
+                  ref={cardRef}
+                  // @ts-ignore
+                  cardWidth="100%"
+                  // @ts-ignore
+                  cardHeight="100%"
+                  onSwipedLeft={() => {
+                    onReject(item?.info?.uid, item?.info?.id);
+                    setTimeout(() => {
+                      setCurrentEventCardPosition(prev => prev + 1);
+                    }, 500);
+                  }}
+                  onSwipedRight={() => {
+                    onInvite(item?.info?.uid, item?.info?.id);
+                    setTimeout(() => {
+                      setCurrentEventCardPosition(prev => prev + 1);
+                    }, 500);
+                  }}
+                  OverlayLabelRight={OverlayRight}
+                  OverlayLabelLeft={OverlayLeft}
+                  disableBottomSwipe={true}
+                  disableTopSwipe={true}
+                  cardStyle={styles.card}>
+                  <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
+                    {item.component}
+                  </ScrollView>
+                </TinderCard>
+              </View>
+            );
+          })}
           {!activeEvent.eventReviewed && userInfo.accountType === 'host' && (
             <ModalLockAccount
               haveCode={false}
@@ -1478,7 +1381,13 @@ const IO: FC = (): JSX.Element => {
               text="Your event is under review. Thank you for your patience. You will be notified if your account is accepted"
             />
           )}
-          <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uidScamUser} />
+          <ModalReport
+            handleAutoSwipeLeft={handleAutoSwipeLeft}
+            modalReport={modalReport}
+            setModalReport={setModalReport}
+            uidSender={userHost?.uid}
+            uid={uidScamUser}
+          />
           <SuperInvite
             isVisibleSuperInvite={isVisibleSuperInvite}
             activeSuperInviteUser={activeSuperInviteUser}

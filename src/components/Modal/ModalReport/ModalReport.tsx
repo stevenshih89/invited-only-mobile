@@ -16,8 +16,8 @@ import EightPlusIcon from 'assets/images/icons/18+.svg';
 import EmojiSadIcon from 'assets/images/icons/emoji-sad.svg';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
-import { useNavigation } from '@react-navigation/native';
-import { chatPath } from 'constants/pathLocations';
+import {useNavigation} from '@react-navigation/native';
+import {chatPath} from 'constants/pathLocations';
 
 interface ModalReportProps {
   modalReport?: boolean;
@@ -25,29 +25,29 @@ interface ModalReportProps {
   uidSender?: string;
   uid?: string;
   activeEvent?: string;
+  handleAutoSwipeLeft: () => void;
 }
 
-const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid, activeEvent}) => {
+const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid, activeEvent, handleAutoSwipeLeft}) => {
   const styles = useStyles();
 
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   const deleteChat = async () => {
     try {
-      await firestore().collection('messages').doc(activeEvent).delete()
-      navigation.navigate(chatPath as never)
+      await firestore().collection('messages').doc(activeEvent).delete();
+      navigation.navigate(chatPath as never);
     } catch (error) {
       console.log('error delete messages', error);
-      
     }
-  }
+  };
 
   const handleSendReport = async (typeReport: string): Promise<void> => {
     const infoUserUidDoc = await firestore().collection('userInfo').doc(uid).get();
     const infoUserUidSenderDoc = await firestore().collection('userInfo').doc(uidSender).get();
     const dataUserUid = infoUserUidDoc.data();
     const dataUserUidSender = infoUserUidSenderDoc.data();
-    
+
     try {
       await firestore().collection('report').add({
         typeReport: typeReport,
@@ -61,11 +61,15 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
         phoneSender: dataUserUidSender?.phoneNumber,
       });
 
-      if(activeEvent) {
-        deleteChat()
+      handleAutoSwipeLeft();
+      if (activeEvent) {
+        deleteChat();
       }
 
-      showToast('inviteMatch', 'Alexa was reported', 'Thank you!', {ownerPhoto: dataUserUid?.photos[0].image, status: 'SUCCESSFUL'});
+      showToast('inviteMatch', `${dataUserUid?.name} was reported`, 'Thank you!', {
+        ownerPhoto: dataUserUid?.photos[0].image,
+        status: 'SUCCESSFUL',
+      });
       setModalReport(false);
     } catch (e) {
       showToast('inviteMatch', '', 'Error!');

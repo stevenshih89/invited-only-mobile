@@ -35,7 +35,6 @@ const superInvites = 1;
 interface TouchingSliderProps {
   photos: Photo[];
   handleOpenSuperInvite?: () => void;
-  handleOpenMatch?: () => void;
   onInvite?: () => void;
   handleAutoSwipeRight?: () => void;
   superJoin?: () => void;
@@ -93,8 +92,8 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
-  const navigation = useAppNavigation();  
-  
+  const navigation = useAppNavigation();
+
   const {counterSuperInvites} = useCounterSuperEvents();
 
   const handleSuperInvite = () => {
