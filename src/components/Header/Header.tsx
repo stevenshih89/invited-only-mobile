@@ -17,16 +17,7 @@ import {
   paymentPath,
   settingsPath,
 } from 'constants/pathLocations';
-import {
-  blackColor,
-  grayColor,
-  grayScale700,
-  lightGray2Color,
-  lightGray5Color,
-  orangeColor,
-  transparent60Color,
-  whiteColor,
-} from 'constants/colors.ts';
+import {blackColor, grayColor, lightGray2Color, lightGray5Color, orangeColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight, THIS_WEEKEND, ALL, THIS_MONTH} from 'constants/common.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
@@ -129,7 +120,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   useFocusEffect(
     useCallback(() => {
       fetchMyEvents();
-    }, []),
+    }, [headerType]),
   );
 
   const goToCreateEvent = async (): void => {
