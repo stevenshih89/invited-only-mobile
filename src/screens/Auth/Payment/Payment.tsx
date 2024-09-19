@@ -9,7 +9,7 @@ import firestore from '@react-native-firebase/firestore';
 import useStyles from 'screens/Auth/Payment/styles.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import Button from 'components/Button/Button.tsx';
-import {profilePath, tutorialFlowPath} from 'constants/pathLocations.ts';
+import {privacyPath, profilePath, securePrivacyPath, tutorialFlowPath} from 'constants/pathLocations.ts';
 import {
   backgroundColor,
   black1Color,
@@ -44,6 +44,9 @@ import HostPremium from 'components/Modal/ModalHostPremium/HostPremium';
 import {useRoute} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast';
+import {getSubscriptions} from 'src/api/purchase';
+import getSymbolFromCurrency from 'currency-symbol-map';
+import {openLink} from 'helpers/links';
 
 interface PlanListItem {
   id: number;
@@ -53,6 +56,7 @@ interface PlanListItem {
   description: string;
   pricePerDuration: string;
   fullPrice?: string;
+  weeksInPeriod: number;
 }
 
 interface WhatGetItem {
@@ -121,7 +125,7 @@ const Payment: FC = (): JSX.Element => {
     return Math.floor(Math.random() * (maxProgress - minProgress + 1)) + minProgress;
   };
 
-  const [plansList] = useState<PlanListItem[]>([
+  const [plansList, setPlansList] = useState<PlanListItem[]>([
     {
       id: 0,
       title: 'FOR TRAVELLERS',
@@ -130,24 +134,27 @@ const Payment: FC = (): JSX.Element => {
       description: 'Week Access',
       pricePerDuration: '$59/wk',
       fullPrice: '$59',
+      weeksInPeriod: 1,
     },
     {
-      id: 2,
+      id: 1,
       title: 'SECURE YOUR SPOT',
       duration: 1,
       durationName: 'year',
       description: 'Year Access',
       pricePerDuration: '$25/wk',
       fullPrice: '$1300',
+      weeksInPeriod: 52,
     },
     {
-      id: 1,
+      id: 2,
       title: 'EARLY ACCESS',
       duration: 3,
       durationName: 'months',
       description: 'Months Access',
       pricePerDuration: '$29/wk',
       fullPrice: '$357',
+      weeksInPeriod: 13, // trust me this is true
     },
   ]);
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
@@ -227,23 +234,13 @@ const Payment: FC = (): JSX.Element => {
     setLoaderVisible(true);
     try {
       const {customerInfo} = await Purchases.purchasePackage(pack);
-      // console.log('customerInfo', customerInfo);
-
       setSuccessfulPay(true);
       setTimeout(() => {
         setLoaderVisible(false);
         showHostPremium();
       }, 1500);
       updateUser();
-      // console.log('pay successful');
-      // if (
-      //   typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
-      //   "undefined"
-      // ) {
-      //   // console.log('pay successful');
-      // }
     } catch (e) {
-      // console.log('pay error', e);
       setLoaderVisible(false);
     }
   };
@@ -253,7 +250,6 @@ const Payment: FC = (): JSX.Element => {
       const offerings = await Purchases.getOfferings();
       if (offerings.current !== null) {
         const offeringsHostSubscription = offerings.all['Host subscription'];
-        // console.log('offerings', offeringsHostSubscription.availablePackages);
 
         if (activePayment.durationName === 'week') {
           const product = offeringsHostSubscription.availablePackages[0];
@@ -261,17 +257,17 @@ const Payment: FC = (): JSX.Element => {
         }
 
         if (activePayment.durationName === 'year') {
-          const product = offeringsHostSubscription.availablePackages[2];
+          const product = offeringsHostSubscription.availablePackages[1];
           pay(product);
         }
 
         if (activePayment.durationName === 'months') {
-          const product = offeringsHostSubscription.availablePackages[1];
+          const product = offeringsHostSubscription.availablePackages[2];
           pay(product);
         }
       }
     } catch (e) {
-      console.log('offering ger error', e);
+      console.log('error', e);
     }
   };
 
@@ -363,6 +359,32 @@ const Payment: FC = (): JSX.Element => {
 
   const checkNavig = useRoute();
 
+  const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  useEffect(() => {
+    getSubscriptions().then(setSubscriptions);
+  }, []);
+
+  useEffect(() => {
+    if (!subscriptions.length) {
+      return;
+    }
+
+    const products = subscriptions.map((offer, idx) => ({
+      id: idx,
+      title: plansList[idx].title,
+      duration: plansList[idx].duration,
+      durationName: plansList[idx].durationName,
+      description: plansList[idx].description,
+      pricePerDuration:
+        getSymbolFromCurrency(offer.product.currencyCode) + (offer.product.price / plansList[idx].weeksInPeriod).toFixed(2) + '/wk',
+      priceString: offer.product.priceString,
+      fullPrice: offer.product.priceString,
+      package: offer,
+    }));
+    setPlansList(products);
+    setActivePayment(products[1]);
+  }, [subscriptions]);
+
   return (
     <SafeAreaView style={{backgroundColor: black1Color}}>
       <Loader isVisible={loaderVisible} successfulPay={successfulPay} />
@@ -449,16 +471,16 @@ const Payment: FC = (): JSX.Element => {
           <TouchableOpacity onPress={restorePurchases} style={{marginTop: 8, alignItems: 'center'}}>
             <Text style={{fontSize: RFValue(14), color: whiteColor, fontFamily: Satoshi500}}>Restore purchases</Text>
           </TouchableOpacity>
-          <View style={{marginTop: 16}}>
+          <View style={{marginTop: 16, alignItems: 'center'}}>
             <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
               By tapping , your App Store will be charged, your subscription will auto-renew for the same price and package lenght untill
               you cancel via App Store settings, and you agree to your Terms. More details can be found here:
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
                 <Text style={{textDecorationLine: 'underline', fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor}}>
                   Privacy policy,
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/terms-and-conditions')}>
                 <Text style={{textDecorationLine: 'underline', fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor}}>
                   Terms and conditios
                 </Text>
@@ -510,211 +532,6 @@ const Payment: FC = (): JSX.Element => {
               );
             }}
           />
-          {/* <View style={styles.itemInTheList}>
-            <View style={styles.rowTextAndCheckCircleIcon}>
-              <View
-                style={{
-                  marginRight: 8,
-                  borderRadius: 100,
-                  backgroundColor: lightGray5Color,
-                  width: 34,
-                  height: 34,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <CalendarIcon />
-              </View>
-              <Text style={styles.textFromTheList}>Unlimited Events Creation</Text>
-              <ControlledTooltip
-                width={300}
-                height={100}
-                backgroundColor={lightGray5Color}
-                withOverlay={false}
-                popover={
-                  <View style={styles.tooltipWrapper}>
-                    <View style={styles.rowTitleTooltip}>
-                      <Text style={styles.textUnlimitedEventsCreation}>Unlimited Events Creation</Text>
-                      <CloseCircleIcon />
-                    </View>
-                    <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
-                  </View>
-                }
-                >
-                <InfoCircleIcon />
-              </ControlledTooltip>
-            </View>
-            <CheckIcon />
-          </View> */}
-          {/* <View style={styles.itemInTheList}>
-            <View style={styles.rowTextAndCheckCircleIcon}>
-              <View
-                style={{
-                  marginRight: 8,
-                  borderRadius: 100,
-                  backgroundColor: lightGray5Color,
-                  width: 34,
-                  height: 34,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <UnlimitedIcon />
-              </View>
-              <Text style={styles.textFromTheList}>Unlimited Invitations</Text>
-              <ControlledTooltip
-                width={300}
-                height={100}
-                backgroundColor={lightGray5Color}
-                withOverlay={false}
-                popover={
-                  <View style={styles.tooltipWrapper}>
-                    <View style={styles.rowTitleTooltip}>
-                      <Text style={styles.textUnlimitedEventsCreation}>Unlimited Events Creation</Text>
-                      <CloseCircleIcon />
-                    </View>
-                    <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
-                  </View>
-                }>
-                <InfoCircleIcon />
-              </ControlledTooltip>
-            </View>
-            <CheckIcon />
-          </View> */}
-          {/* <View style={styles.itemInTheList}>
-            <View style={styles.rowTextAndCheckCircleIcon}>
-              <View
-                style={{
-                  marginRight: 8,
-                  borderRadius: 100,
-                  backgroundColor: lightGray5Color,
-                  width: 34,
-                  height: 34,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <IOIcon />
-              </View>
-              <Text style={styles.textFromTheList}>Unlimited Likes</Text>
-              <ControlledTooltip
-                width={300}
-                height={100}
-                backgroundColor={lightGray5Color}
-                withOverlay={false}
-                popover={
-                  <View style={styles.tooltipWrapper}>
-                    <View style={styles.rowTitleTooltip}>
-                      <Text style={styles.textUnlimitedEventsCreation}>Unlimited Events Creation</Text>
-                      <CloseCircleIcon />
-                    </View>
-                    <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
-                  </View>
-                }>
-                <InfoCircleIcon />
-              </ControlledTooltip>
-            </View>
-            <CheckIcon />
-          </View>
-          <View style={styles.itemInTheList}>
-            <View style={styles.rowTextAndCheckCircleIcon}>
-              <View
-                style={{
-                  marginRight: 8,
-                  borderRadius: 100,
-                  backgroundColor: lightGray5Color,
-                  width: 34,
-                  height: 34,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <FlashIcon width={18} />
-              </View>
-              <Text style={styles.textFromTheList}>5 Super invites a week</Text>
-              <ControlledTooltip
-                width={300}
-                height={100}
-                backgroundColor={lightGray5Color}
-                withOverlay={false}
-                popover={
-                  <View style={styles.tooltipWrapper}>
-                    <View style={styles.rowTitleTooltip}>
-                      <Text style={styles.textUnlimitedEventsCreation}>Unlimited Events Creation</Text>
-                      <CloseCircleIcon />
-                    </View>
-                    <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
-                  </View>
-                }>
-                <InfoCircleIcon />
-              </ControlledTooltip>
-            </View>
-            <CheckIcon />
-          </View>
-          <View style={styles.itemInTheList}>
-            <View style={styles.rowTextAndCheckCircleIcon}>
-              <View
-                style={{
-                  marginRight: 8,
-                  borderRadius: 100,
-                  backgroundColor: lightGray5Color,
-                  width: 34,
-                  height: 34,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <UnlimitedIcon />
-              </View>
-              <Text style={styles.textFromTheList}>Join events</Text>
-              <ControlledTooltip
-                width={300}
-                height={100}
-                backgroundColor={lightGray5Color}
-                withOverlay={false}
-                popover={
-                  <View style={styles.tooltipWrapper}>
-                    <View style={styles.rowTitleTooltip}>
-                      <Text style={styles.textUnlimitedEventsCreation}>Unlimited Events Creation</Text>
-                      <CloseCircleIcon />
-                    </View>
-                    <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
-                  </View>
-                }>
-                <InfoCircleIcon />
-              </ControlledTooltip>
-            </View>
-            <CheckIcon />
-          </View>
-          <View style={styles.itemInTheList}>
-            <View style={styles.rowTextAndCheckCircleIcon}>
-              <View
-                style={{
-                  marginRight: 8,
-                  borderRadius: 100,
-                  backgroundColor: lightGray5Color,
-                  width: 34,
-                  height: 34,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <EyeIcon />
-              </View>
-              <Text style={styles.textFromTheList}>See who wants to join you</Text>
-              <ControlledTooltip
-                width={300}
-                height={100}
-                backgroundColor={lightGray5Color}
-                withOverlay={false}
-                popover={
-                  <View style={styles.tooltipWrapper}>
-                    <View style={styles.rowTitleTooltip}>
-                      <Text style={styles.textUnlimitedEventsCreation}>Unlimited Events Creation</Text>
-                      <CloseCircleIcon />
-                    </View>
-                    <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
-                  </View>
-                }>
-                <InfoCircleIcon />
-              </ControlledTooltip>
-            </View>
-            <CheckIcon />
-          </View> */}
         </View>
       </ScrollView>
     </SafeAreaView>

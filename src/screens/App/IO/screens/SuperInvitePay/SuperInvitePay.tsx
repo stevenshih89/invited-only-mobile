@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {View, Text, SafeAreaView, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
@@ -27,12 +27,17 @@ import FlashIcon from 'assets/images/icons/flash-filled.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import Purchases, {PurchasesPackage} from 'react-native-purchases';
 import {showToast} from 'helpers/showToast';
+import {getSuperInvites} from 'src/api/purchase';
+
+import getSymbolFromCurrency from 'currency-symbol-map';
 
 interface PlanListItem {
   id: number;
   quantity: number;
   priceEach: number;
+  priceString: string;
   save: number;
+  package: PurchasesPackage;
 }
 
 const SuperInvitePay: FC = (): JSX.Element => {
@@ -59,7 +64,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
     }
   };
 
-  const [plansList] = useState<PlanListItem[]>([
+  const [plansList, setPlansList] = useState<PlanListItem[]>([
     {
       id: 0,
       quantity: 30,
@@ -95,7 +100,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
 
   const handleCloseModal = () => {
     navigation.goBack();
-  }
+  };
 
   const pay = async (pack: PurchasesPackage, superInvites: number) => {
     try {
@@ -112,7 +117,6 @@ const SuperInvitePay: FC = (): JSX.Element => {
       const offerings = await Purchases.getOfferings();
       if (offerings.current !== null) {
         const offeringsHostSubscription = offerings.all['Super Invite'];
-        // console.log('offerings', offeringsHostSubscription.availablePackages);
 
         if (activePayment.id === 0) {
           const product = offeringsHostSubscription.availablePackages[0];
@@ -180,21 +184,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
             paddingBottom: isActive ? 34 : 20,
             paddingHorizontal: 6,
           }}>
-          <View style={{position: 'absolute', top: 10, right: 0, left: 0, zIndex: 10}}>
-            {/* <View
-            style={{
-              alignSelf: 'center',
-              borderWidth: 2,
-              borderStyle: 'solid',
-              borderColor: whiteColor,
-              borderRadius: 7,
-              paddingHorizontal: 6,
-              paddingVertical: 4,
-              backgroundColor: blackColor,
-            }}>
-            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(7, 812), color: whiteColor}}>{item.title}</Text>
-          </View> */}
-          </View>
+          <View style={{position: 'absolute', top: 10, right: 0, left: 0, zIndex: 10}}></View>
           <Text
             style={{fontFamily: Satoshi700, fontSize: RFValue(26, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
             {item.quantity}
@@ -219,7 +209,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
           />
           <Text
             style={{fontFamily: Satoshi500, fontSize: RFValue(16, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
-            ${item.priceEach} each
+            {item.priceEach} each
           </Text>
           <View
             style={{
@@ -236,6 +226,29 @@ const SuperInvitePay: FC = (): JSX.Element => {
       </TouchableOpacity>
     );
   };
+
+  const [superInvites, setSuperInvites] = useState<any[]>([]);
+
+  useEffect(() => {
+    getSuperInvites().then(setSuperInvites);
+  }, []);
+
+  useEffect(() => {
+    if (!superInvites.length) {
+      return;
+    }
+
+    const products = superInvites.map((offer, idx) => ({
+      id: idx,
+      quantity: plansList[idx].quantity,
+      priceEach: getSymbolFromCurrency(offer.product.currencyCode) + (offer.product.price / plansList[idx].quantity).toFixed(2),
+      priceString: offer.product.priceString,
+      save: plansList[idx].save,
+      package: offer,
+    }));
+    setPlansList(products);
+    setActivePayment(products[1]);
+  }, [superInvites]);
 
   return (
     <SafeAreaView style={{backgroundColor: black1Color, flex: 1, justifyContent: 'center'}}>
@@ -298,7 +311,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
           </View>
           <Button
             buttonStyle={{marginTop: 20}}
-            title={`Get ${activePayment.quantity} super invites for $${activePayment.priceEach * activePayment.quantity}9`}
+            title={`Get ${activePayment.quantity} super invites for ${activePayment.priceString}`}
             onPress={getOfferings}
           />
         </View>
