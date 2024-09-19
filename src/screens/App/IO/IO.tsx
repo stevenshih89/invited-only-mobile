@@ -236,7 +236,7 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     if (Object.keys(userInfo).length != 0) {
-      if (!userInfo?.accountConfirmed || !userInfo?.accountReviewed) {
+      if (!userInfo?.accountReviewed) {
         showToast('inviteMatch', 'have a code? click here', 'Your account is under review', {
           ownerPhoto: userInfo?.photos[0].image,
           status: 'ON REVIEW',
@@ -335,6 +335,10 @@ const IO: FC = (): JSX.Element => {
 
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
+
+          if(userInfoDoc.data().accountReviewed && !userInfoDoc.data().accountConfirmed) {
+            setRejectModalVisible(true)
+          }
         }
         const isWeek = hasWeekPassed(userInfoDoc?.data()?.lastUpdateSuperInvite);
         if (isWeek) {
