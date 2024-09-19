@@ -116,7 +116,7 @@ const IO: FC = (): JSX.Element => {
     return subscription;
   }, []);
 
-  const handleAutoSwipeRight = (uid: string) => {    
+  const handleAutoSwipeRight = (uid: string) => {
     if (cardRef.current) {
       cardRef.current.autoSwipeRight();
     }
@@ -336,8 +336,8 @@ const IO: FC = (): JSX.Element => {
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
 
-          if(userInfoDoc.data().accountReviewed && !userInfoDoc.data().accountConfirmed) {
-            setRejectModalVisible(true)
+          if (userInfoDoc.data().accountReviewed && !userInfoDoc.data().accountConfirmed) {
+            setRejectModalVisible(true);
           }
         }
         const isWeek = hasWeekPassed(userInfoDoc?.data()?.lastUpdateSuperInvite);
@@ -941,7 +941,7 @@ const IO: FC = (): JSX.Element => {
 
     setTimeout(() => {
       setEvents(recommendedData);
-      eventsRef.current = recommendedData
+      eventsRef.current = recommendedData;
       allEventsLength.current = recommendedData.length;
     }, 2000);
   };
@@ -989,7 +989,8 @@ const IO: FC = (): JSX.Element => {
       ?.map((item: any, index: number): void => {
         // // console.warn('itemMap', item?._data.uid, item?._data);
 
-        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} = item?._data;
+        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} =
+          item?._data;
 
         const findSuperJoin = getActualDataEvent?.requestsList.find(i => {
           if (item?._data.uid === i.uid && i.superInvite) {
@@ -1338,7 +1339,7 @@ const IO: FC = (): JSX.Element => {
   //   }
   // }
 
-  if (!loading && myEvents.length < 1 && userInfo.accountConfirmed && isHost && !isVisibleMatch) {
+  if (!loading && myEvents.length < 1 && userInfo.accountConfirmed && isHost && !isVisibleMatch && !acceptModalVisible) {
     return (
       <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
         <View style={{height: 370}}>
@@ -1360,6 +1361,7 @@ const IO: FC = (): JSX.Element => {
         ? currentEventCardPosition > allEventsLength.current && !lastVisible
         : currentEventCardPosition > allEventsLength.current && allEventsLength.current)) ||
       !allEventsLength.current) &&
+    !acceptModalVisible &&
     !isVisibleMatch
   ) {
     return (
