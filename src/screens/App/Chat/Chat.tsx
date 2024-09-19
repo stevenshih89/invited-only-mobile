@@ -182,7 +182,9 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   {title} {superInvite && <FlashField width={13} height={13} />}
                 </Text>
               </View>
-              <Text style={styles.textMessage}>{message}</Text>
+              <Text numberOfLines={1} style={styles.textMessage}>
+                {message}
+              </Text>
             </View>
           </TouchableOpacity>
           <View style={styles.wrapperThreeDotsAndBadge}>
