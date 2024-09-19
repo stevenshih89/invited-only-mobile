@@ -155,22 +155,16 @@ const Payment: FC = (): JSX.Element => {
   const [successfulPay, setSuccessfulPay] = useState(false);
   const [visibleHostPremium, setVsibleHostPremium] = useState(false);
 
-  const [userInfo, setUserInfo] = useState<any>({});
-
   const updateUser = async () => {
     const user = auth().currentUser;
-
     if (user) {
       try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
-        const userInfo = userInfoDoc.data();
         const userInfoUpdate = await firestore().collection('userInfo').doc(user.uid);
         userInfoUpdate.update({
           accountPremium: true,
-          superInvites: userInfo?.superInvites + 10,
         });
       } catch (error: any) {
-        // console.log('error user premium update', error);
+        console.log('error user premium update', error);
       }
     }
   };
