@@ -11,7 +11,7 @@ const useStyles = () =>
       backgroundColor: blackColor,
     },
     itemContainer: {
-      height: 218,
+      height: 282,
       flex: 1,
       maxWidth: '50%',
       paddingHorizontal: 7,
@@ -76,10 +76,7 @@ const useStyles = () =>
     },
     buttonContainer: {
       borderRadius: 10,
-      paddingHorizontal: 10,
       paddingVertical: 4,
-
-      // backgroundColor: transparent60Color,
     },
     nameContainer: {
       flexDirection: 'row',
@@ -88,8 +85,8 @@ const useStyles = () =>
     },
     nameText: {
       color: whiteColor,
-      fontSize: RFValue(20, 812),
       fontFamily: Satoshi700,
+      flexShrink: 1,
     },
     ageText: {
       color: whiteColor,
@@ -106,7 +103,7 @@ const useStyles = () =>
       backgroundColor: transparent60Color,
       paddingVertical: 8,
       paddingHorizontal: 12,
-      borderRadius: 50
+      borderRadius: 50,
     },
     locationRow: {
       flexDirection: 'row',

@@ -25,7 +25,7 @@ import {handleCreateChat} from 'helpers/chat';
 const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: any) => {
   const [hostInfo, setHostInfo] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [heightAnim] = useState(new Animated.Value(218));
+  const [heightAnim] = useState(new Animated.Value(282));
   const {photos, uid, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name} = list;
 
   const styles = useStyles();
@@ -295,7 +295,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
                   <TouchableOpacity activeOpacity={0.7} style={[styles.buttonContainer, {marginTop: 'auto'}]} onPress={goToEventInfo}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
                       <FastImage
-                        style={{width: 25, height: 25, borderRadius: 20}}
+                        style={{width: 26, height: 26, borderRadius: 20}}
                         source={{
                           uri: hostInfo?.photos[0]?.image,
                           headers: {Authorization: 'someAuthToken'},
@@ -305,14 +305,16 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
                       />
                       {/* <Image source={{uri: hostInfo?.photos[0]?.image}} style={{width: 25, height: 25, borderRadius: 20}} /> */}
                       <View style={{marginLeft: 8}}>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(9, 812)}}>{hostInfo?.name}</Text>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(7, 812), textTransform: 'capitalize'}}>
+                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(10, 812)}}>{hostInfo?.name}</Text>
+                        <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(8, 812), textTransform: 'capitalize'}}>
                           {hostInfo?.accountType}
                         </Text>
                       </View>
                     </View>
                     <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 6}}>
-                      <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(17, 812)}}>{placeName}</Text>
+                      <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(20, 812), flexShrink: 1}}>
+                        {placeName}
+                      </Text>
                       {hostInfo?.accountConfirmed && <CheckStarWhite style={{marginLeft: 4}} />}
                     </View>
                     <View

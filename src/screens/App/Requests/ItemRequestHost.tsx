@@ -22,6 +22,7 @@ import FastImage from 'react-native-fast-image';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
+import {getFontSize} from 'helpers/getFontSize';
 
 const ItemRequestHost = ({
   item,
@@ -34,8 +35,7 @@ const ItemRequestHost = ({
 }: any) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const [userInfo, setUserInfo] = useState({accountType: ''});  
-
+  const [userInfo, setUserInfo] = useState({accountType: ''});
 
   const user = useUser((state: any) => state.user);
   const [currentUserName, setCurrentUserName] = useState();
@@ -315,45 +315,53 @@ const ItemRequestHost = ({
               end={{x: 0, y: 1}}>
               {userInfo.accountType && (
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                   <View
-                  style={{
-                    marginTop: 'auto',
-                    marginLeft: 8,
-                    alignSelf: 'flex-start',
-                    paddingHorizontal: 6,
-                    paddingVertical: 2,
-                    backgroundColor: userInfo.accountType === 'host' ? blackColor : whiteColor,
-                    borderRadius: 4,
-                  }}>
-                  <Text
+                  <View
                     style={{
-                      textTransform: 'capitalize',
-                      fontFamily: Satoshi700,
-                      fontSize: RFValue(10, 812),
-                      color: userInfo.accountType === 'host' ? whiteColor : blackColor,
+                      marginTop: 'auto',
+                      alignSelf: 'flex-start',
+                      paddingHorizontal: 6,
+                      paddingVertical: 2,
+                      backgroundColor: userInfo.accountType === 'host' ? blackColor : whiteColor,
+                      borderRadius: 4,
                     }}>
-                    {userInfo.accountType}
-                  </Text>
-                </View>
-                {userInfo?.accountPremium && (
-                <LinearGradient
-                  colors={['#977B4A', '#E5D291', '#A28453']}
-                  style={styles.accountTypeWrapperPremium}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}>
-                  <Text style={styles.accountTypePremium}>Premium</Text>
-                </LinearGradient>
-              )}
+                    <Text
+                      style={{
+                        textTransform: 'capitalize',
+                        fontFamily: Satoshi700,
+                        fontSize: RFValue(10, 812),
+                        color: userInfo.accountType === 'host' ? whiteColor : blackColor,
+                      }}>
+                      {userInfo.accountType}
+                    </Text>
+                  </View>
+                  {userInfo?.accountPremium && (
+                    <LinearGradient
+                      colors={['#977B4A', '#E5D291', '#A28453']}
+                      style={styles.accountTypeWrapperPremium}
+                      start={{x: 0, y: 0}}
+                      end={{x: 1, y: 0}}>
+                      <Text style={styles.accountTypePremium}>Premium</Text>
+                    </LinearGradient>
+                  )}
                 </View>
               )}
               <TouchableOpacity onPress={() => goToProfileView()} activeOpacity={0.7} style={styles.buttonContainer}>
                 <View style={styles.nameContainer}>
-                  <Text style={styles.nameText}>
-                    {item?.name} {`${userInfo?.date ? `, ${calculateAge(userInfo?.date)}` : ''}`}
+                  <Text style={[styles.nameText, {fontSize: getFontSize(item?.name)}]}>
+                    {item?.name}
+                    {`${userInfo?.date ? `, ${calculateAge(userInfo?.date)}` : ''}`}
                   </Text>
                   {userInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} style={{marginLeft: 4}} />}
                 </View>
               </TouchableOpacity>
+              {userInfo?.homeAddress && (
+                <View style={styles.locationContainer}>
+                  <View style={styles.locationRow}>
+                    <Home height={12} />
+                    <Text style={styles.locationText}>From {item?.homeAddress}</Text>
+                  </View>
+                </View>
+              )}
             </LinearGradient>
           </View>
         </FastImage>
