@@ -5,7 +5,7 @@ import {SafeAreaView, View, Text, Image} from 'react-native';
 import useStyles from 'screens/Auth/AcceptedScreen/ReusableStyles/styles.ts';
 import Button from 'components/Button/Button.tsx';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {paymentPath, tutorialFlowPath} from 'constants/pathLocations.ts';
+import {IOPath, paymentPath, tutorialFlowPath} from 'constants/pathLocations.ts';
 
 //import images
 import IconVerifyFilledAccepted from 'assets/images/icons/check-star.svg';
@@ -14,18 +14,27 @@ import {black1Color, blackColor, whiteColor} from 'constants/colors';
 import {AuthContext} from 'contexts/AuthContext';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {RootStackParamList} from 'typescript/types';
 
 const CodeVerified: FC = (): JSX.Element => {
   const styles = useStyles();
   const navigation = useAppNavigation();
 
   const {onBoarding} = useContext(AuthContext);
+  const route = useRoute<RouteProp<RootStackParamList, '/invitation-code'>>();
+  const {cameFromSummary} = route.params || {};
 
   const handleNext = () => {
     const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
     const isHost = accountType.toLowerCase() === 'host';
     const nextPath = isHost ? paymentPath : tutorialFlowPath;
-    navigation.navigate(nextPath as never);
+
+    if (cameFromSummary) {
+      navigation.navigate(nextPath as never);
+    } else {
+      navigation.navigate(IOPath as never);
+    }
   };
 
   const flattenedPhotos = onBoarding.filter((item: {photos: []}) => item.photos)[0]?.photos;
@@ -66,7 +75,7 @@ const CodeVerified: FC = (): JSX.Element => {
           </View>
           <View style={{marginTop: 10}}>
             <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), textAlign: 'center'}}>
-            Congratulations! Your join invitation has been accepted. Welcome aboard!
+              Congratulations! Your join invitation has been accepted. Welcome aboard!
             </Text>
           </View>
         </View>

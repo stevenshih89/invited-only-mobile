@@ -5,7 +5,7 @@ import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {codeVerifiedPath, verifySocialProfilePath} from 'constants/pathLocations.ts';
+import {verifySocialProfilePath} from 'constants/pathLocations.ts';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
@@ -212,7 +212,7 @@ const InvitationCode: FC = (): JSX.Element => {
 
       setOnBoarding(onboardingData);
       await handleRegisterUser(onboardingData);
-      navigation.navigate(codeVerifiedPath as never);
+      navigation.navigate('/code-verified', {cameFromSummary} as never);
     } else {
       showToast('inviteMatch', 'Please try anther code', 'The invitation code has already been used', {status: 'error'});
       setInvalidCode(true);
