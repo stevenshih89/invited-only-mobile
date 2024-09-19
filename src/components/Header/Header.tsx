@@ -108,6 +108,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           ...doc.data(),
         }));
 
+        if (data.length > 0) {
+          setActiveEvent(data[0]);
+        }
+
         setMyEvents(data);
         setChat(data[0]?.id);
         return data;

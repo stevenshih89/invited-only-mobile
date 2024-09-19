@@ -13,6 +13,7 @@ import {useUser} from '../../../../../store/userStore';
 import {calculateAge} from 'helpers/calculateAge.ts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {showToast} from 'helpers/showToast';
+import messaging from '@react-native-firebase/messaging';
 
 const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
   const {setUser} = useContext(AuthContext);
@@ -29,9 +30,10 @@ const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
       setUser([]);
       setHookUser(null);
       await AsyncStorage.removeItem('uid');
+      await messaging().deleteToken()
       onClose();
     } catch (error) {
-      // console.log('error log out', error);
+      console.log('error log out', error);
     }
   };
   return (

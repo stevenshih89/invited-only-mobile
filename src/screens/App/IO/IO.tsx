@@ -232,37 +232,56 @@ const IO: FC = (): JSX.Element => {
     }, [activeEvent]),
   );
 
-  const getWeekNumber = date => {
-    let firstDayOfYear: Date = new Date(date.getFullYear(), 0, 1);
-    let pastDaysOfYear: number = (date - firstDayOfYear) / 86400000;
-    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-  };
+  // const getWeekNumber = date => {
+  //   let firstDayOfYear: Date = new Date(date.getFullYear(), 0, 1);
+  //   let pastDaysOfYear: number = (date - firstDayOfYear) / 86400000;
+  //   return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+  // };
 
-  const filterDataByWeekAndMonth = (data, week, month) => {
-    const weekNumber: number = parseInt(week);
-    const monthNumber: number = parseInt(month);
+  function filterDataByWeekMonth(data: any, days: number) {    
+    const today = new Date();
+    
+    const nextWeek = new Date(today);
+    nextWeek.setDate(today.getDate() + days);
 
-    const isInWeek = (dateString, weekNumber): boolean => {
-      const date: Date = new Date(dateString);
-      const targetWeek: 1 | 0 = new Date(date.getFullYear(), 0, 1).getDay() === 0 ? 0 : 1;
-      const currentWeek: number = Math.floor(
-        ((date - new Date(date.getFullYear(), 0, 1)) / 86400000 + new Date(date.getFullYear(), 0, 1).getDay() + 1) / 7,
-      );
-      return currentWeek === weekNumber - targetWeek;
-    };
-
-    const isInMonth = (dateString, monthNumber): boolean => {
-      const date: Date = new Date(dateString);
-      return date.getMonth() + 1 === monthNumber;
-    };
-
-    const filteredData = data?.filter(event => {
-      const eventDate = event?.date?.split('.').reverse().join('-');
-      return isInWeek(eventDate, weekNumber) && isInMonth(eventDate, monthNumber);
+    const filter = data.filter(item => {
+        const parts = item.date.split('.');
+        const itemDate = new Date(parts[2], parts[1] - 1, parts[0]);
+        if (isNaN(itemDate)) {
+            return false;
+        }
+        return itemDate >= today && itemDate <= nextWeek;
     });
+    return filter;
+}
 
-    return filteredData;
-  };
+  // const filterDataByWeekAndMonth = (data, week, month) => {
+  //   console.log('data', data, week, month);
+    
+  //   const weekNumber: number = parseInt(week);
+  //   const monthNumber: number = parseInt(month);
+
+  //   const isInWeek = (dateString, weekNumber): boolean => {
+  //     const date: Date = new Date(dateString);
+  //     const targetWeek: 1 | 0 = new Date(date.getFullYear(), 0, 1).getDay() === 0 ? 0 : 1;
+  //     const currentWeek: number = Math.floor(
+  //       ((date - new Date(date.getFullYear(), 0, 1)) / 86400000 + new Date(date.getFullYear(), 0, 1).getDay() + 1) / 7,
+  //     );
+  //     return currentWeek === weekNumber - targetWeek;
+  //   };
+
+  //   const isInMonth = (dateString, monthNumber): boolean => {
+  //     const date: Date = new Date(dateString);
+  //     return date.getMonth() + 1 === monthNumber;
+  //   };
+
+  //   const filteredData = data?.filter(event => {
+  //     const eventDate = event?.date?.split('.').reverse().join('-');
+  //     return isInWeek(eventDate, weekNumber) && isInMonth(eventDate, monthNumber);
+  //   });
+
+  //   return filteredData;
+  // };
 
   const OverlayRight = () => {
     return (
@@ -541,7 +560,8 @@ const IO: FC = (): JSX.Element => {
     return filteredEvents;
   };
 
-  const getListForGuest = async () => {
+  const getListForGuest = async () => {    
+
     const user = auth().currentUser;
     if (!user) {
       return;
@@ -586,17 +606,23 @@ const IO: FC = (): JSX.Element => {
     }
 
     const enrichedEvents = await enrichElementsWithPhotos(filteredEvents);
-
+    
     const data: any[] = [];
 
-    const currentMonth = new Date().getMonth() + 1;
-    const currentWeek = getWeekNumber(currentDate);
+    // const currentMonth = new Date().getMonth() + 1;
+    
+    // const currentWeek = getWeekNumber(currentDate);    
 
-    const filterDataWM = activeEventDate === 'all' ? enrichedEvents : filterDataByWeekAndMonth(enrichedEvents, currentWeek, currentMonth);
+    const filterDataWM =
+      activeEventDate === 'all'
+        ? enrichedEvents
+        : activeEventDate === 'this_weekend'
+        ? filterDataByWeekMonth(enrichedEvents, 7)
+        : filterDataByWeekMonth(enrichedEvents, 31);
 
     if (!filterDataWM.length) {
       return;
-    }
+    }        
 
     filterDataWM?.map((event: any) => {
       const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
@@ -853,6 +879,7 @@ const IO: FC = (): JSX.Element => {
 
     const recommendedData = (await filterEventsByBlockedUsers(sortedByInterestsData)) || [];
 
+
     setTimeout(() => {
       setEvents(recommendedData);
       eventsRef.current = recommendedData;
@@ -908,6 +935,7 @@ const IO: FC = (): JSX.Element => {
         return true;
       })
       ?.map((item: any, index: number): void => {
+
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} =
           item?._data;
 
@@ -1246,7 +1274,7 @@ const IO: FC = (): JSX.Element => {
   //   }
   // }
 
-  if (!loading && myEvents.length < 1 && userInfo.accountConfirmed && isHost && !isVisibleMatch) {
+  if (!loading && myEvents.length < 1 && userInfo.accountConfirmed && isHost && !isVisibleMatch && !acceptModalVisible) {
     return (
       <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
         <View style={{height: 370}}>
@@ -1268,6 +1296,7 @@ const IO: FC = (): JSX.Element => {
         ? currentEventCardPosition > allEventsLength.current && !lastVisible
         : currentEventCardPosition > allEventsLength.current && allEventsLength.current)) ||
       !allEventsLength.current) &&
+    !acceptModalVisible &&
     !isVisibleMatch
   ) {
     return (
@@ -1373,3 +1402,4 @@ const IO: FC = (): JSX.Element => {
 };
 
 export default gestureHandlerRootHOC(IO);
+

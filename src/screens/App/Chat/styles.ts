@@ -25,6 +25,7 @@ const useStyles = () => {
     wrapperItem: {
       alignItems: 'center',
       flexDirection: 'row',
+      flex: 1,
     },
     textYouNeedToJoin: {
       color: whiteColor,
@@ -54,6 +55,7 @@ const useStyles = () => {
       alignItems: 'center',
     },
     wrapperItemElements: {
+      flex: 1,
       marginLeft: screenWidth / 25,
     },
     textStatusInviteMatch: {

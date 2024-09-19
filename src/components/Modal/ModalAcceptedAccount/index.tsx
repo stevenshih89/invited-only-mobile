@@ -49,7 +49,7 @@ const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userI
         margin: 0,
         zIndex: 999,
       }}>
-      <SafeAreaView style={{flex: 1}}>
+      <SafeAreaView style={{flex: 1, justifyContent: 'space-between'}}>
       <View style={{flex: 1, alignItems: 'center', paddingHorizontal: 24}}>
         <Logo />
         <Text style={{color: whiteColor, fontSize: RFValue(48, 812), fontFamily: Satoshi500, marginTop: 35}}>
@@ -58,9 +58,11 @@ const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userI
         <View style={{}}>
           <Loading topPosition={false} userInfo={userInfo} text={userInfo?.name} styleContainer={{height: 490, flex: 0}} showCheckIcon={true}/>  
         </View>
+      </View>
+      <View style={{paddingHorizontal: 24}}>
         <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(20, 812), fontFamily: Satoshi400, marginBottom: 30}}>Congratulations! Join invitation accepted. Welcome aboard!</Text>
         <Button onPress={handleContinue} title='Continue' buttonStyle={{width: '100%'}}/>
-      </View>
+        </View>
       </SafeAreaView>
     </Modal>
   );
