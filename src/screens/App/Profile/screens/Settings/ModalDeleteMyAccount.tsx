@@ -14,6 +14,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {confirmPhonePath} from 'constants/pathLocations';
 import {showToast} from 'helpers/showToast';
 import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 
 const ModalDeleteMyAccount: FC<{
   isVisible: boolean;
@@ -48,6 +49,7 @@ const ModalDeleteMyAccount: FC<{
           await Promise.all(deletePromises);
         } 
       }
+      await messaging().deleteToken()
       await firestore().collection('userInfo').doc(userHost.uid).delete();
       await auth().currentUser?.delete();
       showToast('inviteMatch', '', 'Your account has been deleted', {
