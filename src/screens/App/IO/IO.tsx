@@ -691,6 +691,7 @@ const IO: FC = (): JSX.Element => {
           <View style={styles.wrapperFakeCard}>
             <TouchingSlider
               hostInfo={event?.hostInfo}
+              userInfo={userInfo}
               placeName={event?.placeName}
               girls={event?.female + event?.femaleFriend}
               date={event?.date}
@@ -984,7 +985,7 @@ const IO: FC = (): JSX.Element => {
       ?.map((item: any, index: number): void => {
         // // console.warn('itemMap', item?._data.uid, item?._data);
 
-        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid} = item?._data;
+        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} = item?._data;
 
         const findSuperJoin = getActualDataEvent?.requestsList.find(i => {
           if (item?._data.uid === i.uid && i.superInvite) {
@@ -1016,6 +1017,7 @@ const IO: FC = (): JSX.Element => {
                 accountType={accountType}
                 handleAutoSwipeRight={() => handleAutoSwipeRight(item?._data?.id)}
                 isShowWantsJoin={findSuperJoin}
+                isPremium={accountPremium}
               />
               <View style={styles.bioWrapper}>
                 <Text style={[styles.titleSection, bio && styles.mt31]}>My basics</Text>

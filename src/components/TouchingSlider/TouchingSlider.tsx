@@ -59,6 +59,7 @@ interface TouchingSliderProps {
   isPremium?: string;
   fromJoinEventsScreen?: boolean;
   isProfile?: boolean;
+  userInfo: any;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
@@ -83,6 +84,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   confirmedAccount = false,
   accountType,
   hostInfo,
+  userInfo,
   isPremium,
   fromJoinEventsScreen = false,
   isProfile,
@@ -91,8 +93,8 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
-  const navigation = useAppNavigation();
-
+  const navigation = useAppNavigation();  
+  
   const {counterSuperInvites} = useCounterSuperEvents();
 
   const handleSuperInvite = () => {
@@ -194,6 +196,28 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             </Text>
           )}
           {hostInfo?.accountConfirmed && <CheckStarWhite width={18} height={18} />}
+          {/* {userInfo?.accountType === 'guest' && (
+            <LinearGradient
+            colors={['#977B4A', '#E5D291', '#A28453']}
+            style={{
+              marginLeft: 12,
+              borderRadius: 4,
+              paddingHorizontal: 6,
+              paddingVertical: 2,
+              backgroundColor: blackColor,
+            }}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}>
+            <Text
+              style={{
+                color: blackColor,
+                fontSize: RFValue(10, 812),
+                fontFamily: Satoshi700,
+              }}>
+                Premium
+            </Text>
+          </LinearGradient>
+          )} */}
         </View>
       )}
       {isLocked && (
@@ -257,7 +281,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   </Text>
                 )}
               </View>
-              {isPremium && (
+              {(isPremium || accountType === 'guest') && (
                 <LinearGradient
                   colors={['#977B4A', '#E5D291', '#A28453']}
                   style={{
@@ -270,7 +294,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   }}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0}}>
-                  {isPremium && (
+                  {(isPremium || accountType === 'guest' )&& (
                     <Text
                       style={{
                         color: blackColor,
