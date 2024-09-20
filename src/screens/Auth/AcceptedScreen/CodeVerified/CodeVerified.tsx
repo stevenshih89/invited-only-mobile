@@ -24,13 +24,12 @@ const CodeVerified: FC = (): JSX.Element => {
   const {onBoarding} = useContext(AuthContext);
   const route = useRoute<RouteProp<RootStackParamList, '/invitation-code'>>();
   const {cameFromSummary} = route.params || {};
-
+  
   const handleNext = () => {
-    const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
-    const isHost = accountType.toLowerCase() === 'host';
-    const nextPath = isHost ? paymentPath : tutorialFlowPath;
-
     if (cameFromSummary) {
+      const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
+      const isHost = accountType.toLowerCase() === 'host';
+      const nextPath = isHost ? paymentPath : tutorialFlowPath;
       navigation.navigate(nextPath as never);
     } else {
       navigation.navigate(IOPath as never);

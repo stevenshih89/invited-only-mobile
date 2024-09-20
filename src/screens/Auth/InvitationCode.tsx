@@ -30,7 +30,7 @@ const InvitationCode: FC = (): JSX.Element => {
 
   const route = useRoute<RouteProp<RootStackParamList, '/invitation-code'>>();
   const {cameFromSummary = false} = route.params || {};
-
+  
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
@@ -211,7 +211,18 @@ const InvitationCode: FC = (): JSX.Element => {
       ];
 
       setOnBoarding(onboardingData);
-      await handleRegisterUser(onboardingData);
+      if(cameFromSummary) {
+        await handleRegisterUser(onboardingData);
+      } else {
+        try {
+          await firestore().collection('userInfo').doc(auth()?.currentUser?.uid).update({
+            accountReviewed: true,
+            accountConfirmed: true
+          })
+        } catch (error) {
+          console.log('error update user', error);
+        }
+      }      
       navigation.navigate('/code-verified', {cameFromSummary} as never);
     } else {
       showToast('inviteMatch', 'Please try anther code', 'The invitation code has already been used', {status: 'error'});
