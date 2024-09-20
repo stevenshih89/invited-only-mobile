@@ -335,7 +335,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
                           fontFamily: Satoshi400,
                           fontSize: RFValue(10, 812),
                           marginLeft: 4,
-                        }}>{`${female + femaleFriend} x Women invitation `}</Text>
+                        }}>{`${female + femaleFriend} x Guest invitation `}</Text>
                     </View>
                     <View
                       style={{
