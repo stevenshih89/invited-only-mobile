@@ -71,7 +71,7 @@ const IO: FC = (): JSX.Element => {
 
   const [myEvents, setMyEventsList] = useState([]);
   const [nameUser, setNameUser] = useState<string>('');
-  const [uidScamUser, setUidScamUser] = useState<string>('');
+  const [reportedItem, setReportedItem] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
   const [matchData, setMatchData] = useState<MatchData>({});
   const [loading, setLoading] = useState<boolean>(false);
@@ -238,26 +238,32 @@ const IO: FC = (): JSX.Element => {
   //   return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
   // };
 
-  function filterDataByWeekMonth(data: any, days: number) {    
+  const handleReport = (uid: string, event?: any) => {
+    const currEvent = isHost ? activeEvent : event;
+    setReportedItem({uid, event: currEvent});
+    setModalReport(true);
+  };
+
+  function filterDataByWeekMonth(data: any, days: number) {
     const today = new Date();
-    
+
     const nextWeek = new Date(today);
     nextWeek.setDate(today.getDate() + days);
 
     const filter = data.filter(item => {
-        const parts = item.date.split('.');
-        const itemDate = new Date(parts[2], parts[1] - 1, parts[0]);
-        if (isNaN(itemDate)) {
-            return false;
-        }
-        return itemDate >= today && itemDate <= nextWeek;
+      const parts = item.date.split('.');
+      const itemDate = new Date(parts[2], parts[1] - 1, parts[0]);
+      if (isNaN(itemDate)) {
+        return false;
+      }
+      return itemDate >= today && itemDate <= nextWeek;
     });
     return filter;
-}
+  }
 
   // const filterDataByWeekAndMonth = (data, week, month) => {
   //   console.log('data', data, week, month);
-    
+
   //   const weekNumber: number = parseInt(week);
   //   const monthNumber: number = parseInt(month);
 
@@ -560,8 +566,7 @@ const IO: FC = (): JSX.Element => {
     return filteredEvents;
   };
 
-  const getListForGuest = async () => {    
-
+  const getListForGuest = async () => {
     const user = auth().currentUser;
     if (!user) {
       return;
@@ -606,12 +611,12 @@ const IO: FC = (): JSX.Element => {
     }
 
     const enrichedEvents = await enrichElementsWithPhotos(filteredEvents);
-    
+
     const data: any[] = [];
 
     // const currentMonth = new Date().getMonth() + 1;
-    
-    // const currentWeek = getWeekNumber(currentDate);    
+
+    // const currentWeek = getWeekNumber(currentDate);
 
     const filterDataWM =
       activeEventDate === 'all'
@@ -622,7 +627,7 @@ const IO: FC = (): JSX.Element => {
 
     if (!filterDataWM.length) {
       return;
-    }        
+    }
 
     filterDataWM?.map((event: any) => {
       const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
@@ -865,7 +870,12 @@ const IO: FC = (): JSX.Element => {
                   </View>
                 </TouchableOpacity>
               </View>
-              <Text style={styles.textHideNadSendReport}>Reject and send report</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  handleReport(event.uid, event.id);
+                }}>
+                <Text style={styles.textHideNadSendReport}>Block and Report</Text>
+              </TouchableOpacity>
             </View>
           </View>
         ),
@@ -878,7 +888,6 @@ const IO: FC = (): JSX.Element => {
     const sortedByInterestsData = sortByInterests(sortByDate(filteredData)?.reverse(), userHost);
 
     const recommendedData = (await filterEventsByBlockedUsers(sortedByInterestsData)) || [];
-
 
     setTimeout(() => {
       setEvents(recommendedData);
@@ -935,7 +944,6 @@ const IO: FC = (): JSX.Element => {
         return true;
       })
       ?.map((item: any, index: number): void => {
-
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} =
           item?._data;
 
@@ -1168,10 +1176,9 @@ const IO: FC = (): JSX.Element => {
                 </View>
                 <TouchableOpacity
                   onPress={() => {
-                    setUidScamUser(uid);
-                    setModalReport(true);
+                    handleReport(uid, activeEvent);
                   }}>
-                  <Text style={styles.textHideNadSendReport}>Hide and send report</Text>
+                  <Text style={styles.textHideNadSendReport}>Block and Report</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -1386,7 +1393,8 @@ const IO: FC = (): JSX.Element => {
             modalReport={modalReport}
             setModalReport={setModalReport}
             uidSender={userHost?.uid}
-            uid={uidScamUser}
+            uid={reportedItem?.uid}
+            activeEvent={reportedItem?.event?.id}
           />
           <SuperInvite
             isVisibleSuperInvite={isVisibleSuperInvite}
@@ -1402,4 +1410,3 @@ const IO: FC = (): JSX.Element => {
 };
 
 export default gestureHandlerRootHOC(IO);
-

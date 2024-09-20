@@ -231,7 +231,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       <View style={styles.itemEventsJoining}>
         <View style={styles.wrapperItemEventsJoining}>
           <TouchableOpacity style={styles.fdrAiC}>
-            <Image resizeMode="contain" source={{uri: image}} style={{width: 50, height: 50, borderRadius: 50}} />
+            <Image resizeMode="cover" source={{uri: image}} style={{width: 50, height: 50, borderRadius: 50}} />
             <View style={{marginLeft: 15}}>
               <View style={styles.fdrAiC}>
                 <Text style={styles.title}>{title}</Text>

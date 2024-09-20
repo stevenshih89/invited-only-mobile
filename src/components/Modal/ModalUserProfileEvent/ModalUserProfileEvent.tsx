@@ -6,7 +6,7 @@ import useStyles from './styles.ts';
 import Modal from 'react-native-modal';
 import UserIcon from 'assets/images/icons/user.svg';
 import ChatIcon from 'assets/images/icons/messages.svg';
-import ReportIcon from 'assets/images/icons/info-circle.svg';
+import ReportIcon from 'assets/images/icons/block_and_report.svg';
 import CloseIcon from 'assets/images/icons/close-circle-red.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -60,8 +60,6 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   const userHost = useUser((i: any) => i?.user);
   const [userInfo, setUserInfo] = useState<any>({});
   const [userGuest, setUserGuest] = useState<any>(usersList?.filter((i: any) => i?.uid === uid)[0]);
-
-  // console.warn('userGuest', userGuest, usersList, uid);
 
   useEffect(() => {
     setUserGuest(usersList?.filter((i: any) => i?.uid === uid)[0]);
@@ -129,7 +127,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     try {
       const user = usersList?.filter((i: any) => i?.uid === uid)[0];
       const messageCollection = await firestore().collection('messages').doc(list?.id).get();
-      const chatCheck = messageCollection?.data()?.chats?.find(i => i?.uid === uid)
+      const chatCheck = messageCollection?.data()?.chats?.find(i => i?.uid === uid);
       const activeEvent = messageCollection?.data()?.activeEvent;
 
       if (chatCheck) {
@@ -453,14 +451,20 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
               }}
               style={styles.buttonFooter}>
               <ReportIcon width={14} height={14} />
-              <Text style={styles.textButton}>Report</Text>
+              <Text style={styles.textButton}>Block & Report</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleCancelInvitation()} style={styles.buttonFooter}>
               <CloseIcon width={14} height={14} />
               <Text style={[styles.textButton, {color: 'rgb(206, 38, 38)'}]}>Cancel invitation</Text>
             </TouchableOpacity>
           </View>
-          <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={uid} />
+          <ModalReport
+            modalReport={modalReport}
+            setModalReport={setModalReport}
+            activeEvent={list.id}
+            uidSender={userHost?.uid}
+            uid={uid}
+          />
         </Modal>
       </SafeAreaProvider>
     </View>

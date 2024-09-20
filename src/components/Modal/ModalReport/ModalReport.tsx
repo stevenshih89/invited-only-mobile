@@ -16,8 +16,6 @@ import EightPlusIcon from 'assets/images/icons/18+.svg';
 import EmojiSadIcon from 'assets/images/icons/emoji-sad.svg';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
-import {useNavigation} from '@react-navigation/native';
-import {chatPath} from 'constants/pathLocations';
 
 interface ModalReportProps {
   modalReport?: boolean;
@@ -25,29 +23,37 @@ interface ModalReportProps {
   uidSender?: string;
   uid?: string;
   activeEvent?: string;
-  handleAutoSwipeLeft: () => void;
+  handleAutoSwipeLeft?: () => void;
 }
 
 const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid, activeEvent, handleAutoSwipeLeft}) => {
   const styles = useStyles();
 
-  const navigation = useNavigation();
+  // const deleteChat = async (uidItem: string) => {
+  //   try {
+  //     const chat = await firestore().collection('messages').doc(activeEvent).get();
 
-  const deleteChat = async () => {
-    try {
-      await firestore().collection('messages').doc(activeEvent).delete();
-      navigation.navigate(chatPath as never);
-    } catch (error) {
-      console.log('error delete messages', error);
-    }
-  };
+  //     const chatsList = chat.data()?.chats;
+
+  //     const updatedChats = chatsList.filter((chatItem: {uid: string}) => chatItem.uid !== uidItem);
+
+  //     firestore().collection('messages').doc(activeEvent).update({
+  //       chats: updatedChats,
+  //     });
+  //   } catch (error) {
+  //     console.log('error delete messages', error);
+  //   }
+  // };
 
   const handleSendReport = async (typeReport: string): Promise<void> => {
     const infoUserUidDoc = await firestore().collection('userInfo').doc(uid).get();
     const infoUserUidSenderDoc = await firestore().collection('userInfo').doc(uidSender).get();
+
+    if (!infoUserUidDoc.exists || !infoUserUidSenderDoc.exists || !uid || !activeEvent) {
+      return;
+    }
     const dataUserUid = infoUserUidDoc.data();
     const dataUserUidSender = infoUserUidSenderDoc.data();
-
     try {
       await firestore().collection('report').add({
         typeReport: typeReport,
@@ -61,10 +67,55 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
         phoneSender: dataUserUidSender?.phoneNumber,
       });
 
-      handleAutoSwipeLeft();
-      if (activeEvent) {
-        deleteChat();
+      const isHost = dataUserUidSender?.accountType?.toLowerCase() === 'host';
+      if (isHost) {
+        const eventsList = await firestore().collection('Events').where('uid', '==', uidSender).get();
+        if (!eventsList.empty) {
+          const eventsListData = eventsList.docs.map(doc => doc.data());
+
+          const filteredEvents =
+            eventsListData.filter(event => {
+              if (event.usersList.some(userItem => userItem.uid === uid) || event.requestsList.some(userItem => userItem.uid === uid)) {
+                return true;
+              }
+              return false;
+            }) || [];
+
+          for (const event of filteredEvents) {
+            const userInUsersList = event.usersList.find(userItem => userItem.uid === uid);
+            const userInRequestsList = event.requestsList.find(userItem => userItem.uid === uid);
+
+            const data = {
+              usersList: userInUsersList ? firestore.FieldValue.arrayRemove(userInUsersList) : event.usersList,
+              requestsList: userInRequestsList ? firestore.FieldValue.arrayRemove(userInRequestsList) : event.requestsList,
+            };
+
+            await firestore().collection('Events').doc(event.id).update(data);
+          }
+        }
+        const chatsList = await firestore().collection('messages').where('uidHost', '==', uidSender).get();
+        if (!chatsList.empty) {
+          const chatsListData = chatsList.docs.map(doc => ({id: doc.id, ...doc.data()}));
+          const filteredChats =
+            chatsListData.filter(chat => {
+              if (chat.chats.some(chatItem => chatItem.uid === uid)) {
+                return true;
+              }
+              return false;
+            }) || [];
+
+          for (const chat of filteredChats) {
+            const removedChat = chat.chats.filter(chatItem => chatItem.uid !== uid);
+
+            await firestore().collection('messages').doc(chat.id).update({
+              chats: removedChat,
+            });
+          }
+        }
+      } else {
       }
+
+      handleAutoSwipeLeft && handleAutoSwipeLeft();
 
       showToast('inviteMatch', `${dataUserUid?.name} was reported`, 'Thank you!', {
         ownerPhoto: dataUserUid?.photos[0].image,

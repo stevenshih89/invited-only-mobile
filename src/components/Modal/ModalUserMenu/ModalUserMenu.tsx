@@ -11,7 +11,7 @@ import {showToast} from 'helpers/showToast.ts';
 
 //import icons
 import CloseIcon from 'assets/images/icons/close-circle-red.svg';
-import InfoIcon from 'assets/images/icons/info-circle-white.svg';
+import InfoIcon from 'assets/images/icons/block_and_report.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import User from 'assets/images/icons/user.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
@@ -20,7 +20,6 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
-import {screenHeight, screenWidth} from 'constants/common';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
@@ -34,7 +33,7 @@ interface ModalUserMenuProps {
   image: any;
   uid: string;
   hostUid: string;
-  activeEvent: string,
+  activeEvent: string;
   checkIsFullGuestsFun: () => Promise<boolean>;
   setIsVisibleModalFullEvent: Dispatch<SetStateAction<boolean>>;
 }
@@ -211,7 +210,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   const [usersList, setUserList] = useState([]);
   const [eventData, setEventData] = useState({usersList: []});
   const styles = useStyles();
- 
+
   const user = useUser((state: any) => state.user);
 
   const userGuest =
@@ -584,7 +583,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
               onPress={() => setBlockAndReportState(true)}
               style={[styles.buttonFooter, userGuest?.status === 'accepted' && {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
               <InfoIcon width={20} height={20} />
-              <Text style={styles.textButton}>Report</Text>
+              <Text style={styles.textButton}>Block & Report</Text>
             </TouchableOpacity>
             {userGuest?.status !== 'accepted' && (
               <TouchableOpacity
@@ -596,13 +595,13 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
             )}
             <View>
               <RemovingUserModal />
-              <ModalReport 
-                modalReport={blockAndReportState} 
+              <ModalReport
+                modalReport={blockAndReportState}
                 setModalReport={setBlockAndReportState}
                 uidSender={user.uid}
                 uid={uid}
                 activeEvent={activeEvent}
-                />
+              />
               {/* <BlockAndReportModal
                 setBlockAndReportState={setBlockAndReportState}
                 blockAndReportState={blockAndReportState}

@@ -14,12 +14,14 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {commonStackPath, eventEditingPath} from 'constants/pathLocations';
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
 import ModalUserProfileEvent from 'components/Modal/ModalUserProfileEvent/ModalUserProfileEvent.tsx';
 import {screenHeight, screenWidth} from 'constants/common';
 import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
+import {useFocusEffect} from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
@@ -46,6 +48,22 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const maxGuests = female + male;
 
   const [isVisibleCancelModal, setIsVisibleCancelModal] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = firestore()
+        .collection('Events')
+        .doc(id)
+        .onSnapshot(querySnapshot => {
+          if (querySnapshot.exists) {
+            const data = querySnapshot.data();
+            setUsersListsData(data?.usersList);
+          }
+        });
+
+      return () => unsubscribe();
+    }, [list]),
+  );
 
   useEffect(() => {
     navigation.setOptions({
@@ -445,21 +463,23 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
             </Text>
           </TouchableOpacity>
         </View>
-       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingTop: 20, paddingBottom: 50}} style={{flex: 1}}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingTop: 20, paddingBottom: 50}} style={{flex: 1}}>
           {renderEventContent()}
         </ScrollView>
-        {activeTab === 'EVENT_INFO' && <Button
-          title="Edit event"
-          buttonStyle={{marginBottom: 28}}
-          onPress={() =>
-            navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})
-          }
-        />}
+        {activeTab === 'EVENT_INFO' && (
+          <Button
+            title="Edit event"
+            buttonStyle={{marginBottom: 28}}
+            onPress={() =>
+              navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})
+            }
+          />
+        )}
       </View>
       <ModalUserProfileEvent
         uid={user?.uid}
         list={list}
-        usersList={usersList}
+        usersList={usersListData}
         title={user?.name}
         image={user?.userPhoto}
         isModalVisible={isModalVisible}

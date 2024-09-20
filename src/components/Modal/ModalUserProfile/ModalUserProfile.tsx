@@ -7,7 +7,7 @@ import Modal from 'react-native-modal';
 import {screenHeight} from 'constants/common.ts';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import InfoIcon from 'assets/images/icons/info-circle.svg';
+import InfoIcon from 'assets/images/icons/block_and_report.svg';
 
 interface ModalUserProfileProps {
   isModalVisible?: boolean;
@@ -47,7 +47,7 @@ const ModalUserProfile: FC<ModalUserProfileProps> = ({title, image, isModalVisib
             </View>
             <TouchableOpacity onPress={() => setModalVisible && setModalVisible(false)} style={styles.buttonFooter}>
               <InfoIcon width={14} height={14} />
-              <Text style={styles.textButton}>Report</Text>
+              <Text style={styles.textButton}>Block & Report</Text>
             </TouchableOpacity>
           </View>
         </Modal>
