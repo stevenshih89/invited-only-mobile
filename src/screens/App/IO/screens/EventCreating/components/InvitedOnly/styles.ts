@@ -1,21 +1,14 @@
 import {StyleSheet} from 'react-native';
 import {Satoshi500, Satoshi400} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {
-  black3Color,
-  goldColor,
-  lightGray10Color,
-  lightGray5Color,
-  lightGray6Color,
-  lightGray9Color,
-  whiteColor
-} from 'constants/colors.ts';
+import {black3Color, goldColor, lightGray10Color, lightGray5Color, lightGray6Color, lightGray9Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 
 const useStyles = () => {
   return StyleSheet.create({
     container: {
       flex: 1,
+      paddingBottom: 40,
     },
     wrapperSelectYourDesiredCompany: {
       // borderWidth: 1,
@@ -64,7 +57,7 @@ const useStyles = () => {
     },
     rowButtons: {
       flexDirection: 'row',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
     },
     textPersonGender: {
       fontFamily: Satoshi500,

@@ -214,7 +214,9 @@ const Requests: FC = (): ReactElement => {
   }
 
   if (isHost && !requestsForHost.eventReviewed && myEventsList?.length) {
-    const total = requestsForHost.female + requestsForHost.male;
+    const totalGuests = requestsForHost.female + requestsForHost.male;
+    const acceptedGuests = 0;
+
     return (
       <View style={styles.container}>
         <View
@@ -248,7 +250,7 @@ const Requests: FC = (): ReactElement => {
                 fontSize: RFValue(12, 812),
                 color: whiteColor,
                 marginLeft: 2,
-              }}>{`${acceptQuantityGuest}/${total}`}</Text>
+              }}>{`${acceptedGuests}/${totalGuests}`}</Text>
           </View>
         </View>
       </View>

@@ -145,7 +145,7 @@ const EventInfo = ({navigation, route}: any) => {
               <>
                 <Text style={styles.titleSection}>Host profile</Text>
                 <View style={styles.wrapperHostProfile}>
-                  <View style={{flexDirection: 'row'}}>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <View style={{flexDirection: 'row'}}>
                       <Image source={{uri: hostInfo?.photos[0]?.image}} style={{width: 40, height: 40, borderRadius: 50}} />
                       {/*<View style={styles.greenCircle} />*/}

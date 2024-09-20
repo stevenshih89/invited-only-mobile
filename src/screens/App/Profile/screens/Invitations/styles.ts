@@ -11,18 +11,18 @@ const useStyles = () =>
       padding: 20,
     },
     title: {
-      fontFamily: Satoshi400,
+      fontFamily: Satoshi500,
       fontSize: RFValue(18, 812),
       color: whiteColor,
     },
     inviteContainer: {
-      marginTop: 24,
+      marginTop: 10,
     },
     label: {
       fontFamily: Satoshi500,
       fontSize: RFValue(14, 812),
       color: whiteColor,
-      marginBottom: 10,
+      marginTop: 26,
     },
     inviteButton: {
       flexDirection: 'row',

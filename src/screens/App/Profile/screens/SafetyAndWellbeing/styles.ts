@@ -48,13 +48,14 @@ const useStyles = () =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginTop: 24,
+      marginTop: 26,
       width: '100%',
     },
     buttonDescription: {
       fontFamily: Satoshi400,
-      fontSize: RFValue(14, 812),
+      fontSize: RFValue(16, 812),
       color: whiteColor,
+      width: '80%',
     },
   });
 

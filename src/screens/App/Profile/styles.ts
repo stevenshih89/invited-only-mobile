@@ -54,11 +54,11 @@ const useStyles = () =>
     },
     nameText: {
       color: whiteColor,
-      fontSize: RFValue(16, 812),
+      fontSize: RFValue(24, 812),
       fontFamily: Satoshi700,
     },
     checkStarIcon: {
-      marginLeft: 4,
+      marginLeft: 6,
     },
     buttonContainer: {
       alignItems: 'center',
