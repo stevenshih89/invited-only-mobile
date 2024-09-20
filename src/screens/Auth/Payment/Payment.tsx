@@ -44,12 +44,15 @@ import HostPremium from 'components/Modal/ModalHostPremium/HostPremium';
 import {useRoute} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast';
+import { useSubscriptions } from 'src/store/subscriptionsStore';
+import ModalUpgradeSuccessful from 'components/Modal/ModalUpgradeSuccessful/ModalUpgradeSuccessful';
 import {getSubscriptions} from 'src/api/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {openLink} from 'helpers/links';
 
 interface PlanListItem {
   id: number;
+  identifier: string;
   title: string;
   duration: number;
   durationName: string;
@@ -128,6 +131,7 @@ const Payment: FC = (): JSX.Element => {
   const [plansList, setPlansList] = useState<PlanListItem[]>([
     {
       id: 0,
+      identifier: 'io_59_1w',
       title: 'FOR TRAVELLERS',
       duration: 1,
       durationName: 'week',
@@ -138,6 +142,7 @@ const Payment: FC = (): JSX.Element => {
     },
     {
       id: 1,
+      identifier: 'io_25_wk',
       title: 'SECURE YOUR SPOT',
       duration: 1,
       durationName: 'year',
@@ -148,6 +153,7 @@ const Payment: FC = (): JSX.Element => {
     },
     {
       id: 2,
+      identifier: 'io_29_3m',
       title: 'EARLY ACCESS',
       duration: 3,
       durationName: 'months',
@@ -161,6 +167,9 @@ const Payment: FC = (): JSX.Element => {
   const [loaderVisible, setLoaderVisible] = useState(false);
   const [successfulPay, setSuccessfulPay] = useState(false);
   const [visibleHostPremium, setVsibleHostPremium] = useState(false);
+  const [visibleUpgradeSuccessful, setVsibleUpgradeSuccessful] = useState(false);
+
+  const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions)
 
   const updateUser = async () => {
     const user = auth().currentUser;
@@ -195,8 +204,14 @@ const Payment: FC = (): JSX.Element => {
   const showHostPremium = async () => {
     setLoaderVisible(false);
     setTimeout(() => {
+      setVsibleUpgradeSuccessful(true);
+    }, 100);
+    setTimeout(() => {
+      setVsibleUpgradeSuccessful(false);
+    }, 600);
+    setTimeout(() => {
       setVsibleHostPremium(true);
-    }, 300);
+    }, 1000);
   };
 
   const restorePurchases = async () => {
@@ -238,7 +253,7 @@ const Payment: FC = (): JSX.Element => {
       setTimeout(() => {
         setLoaderVisible(false);
         showHostPremium();
-      }, 1500);
+      }, 1000);
       updateUser();
     } catch (e) {
       setLoaderVisible(false);
@@ -277,16 +292,32 @@ const Payment: FC = (): JSX.Element => {
     return `Get ${duration} ${durationName} for ${fullPrice}`;
   };
 
-  const renderItem = ({item}: {item: PlanListItem}) => {
-    const isActive = activePayment.id === item.id;
+  console.log('currentSubscriptions', currentSubscriptions);
 
-    const colors = isActive ? ['#977B4A', '#E5D291', '#A28453'] : [lightGray2Color, lightGray2Color, lightGray2Color];
+  const renderItem = ({item}: {item: PlanListItem}) => {
+    
+    const res = currentSubscriptions.activeSubscriptions.find((i: any) => i === item.identifier)
+    
+    if(!res) {
+
+      let isActive = activePayment.id === item.id;
+
+      if(currentSubscriptions.activeSubscriptions.length > 1) {
+        isActive = true
+      }
+
+      const colors = isActive ? ['#977B4A', '#E5D291', '#A28453'] : [lightGray2Color, lightGray2Color, lightGray2Color];
 
     return (
       <TouchableOpacity
         key={item.id}
         disabled={isActive}
-        style={{position: 'relative', marginTop: isActive ? 0 : 0}}
+        style={{
+          position: 'relative', 
+          marginTop: isActive ? 0 : 0, 
+          flex: 1, 
+          marginHorizontal: 3
+        }}
         activeOpacity={0.7}
         onPress={() => setActivePayment(item)}>
         <LinearGradient
@@ -299,7 +330,8 @@ const Payment: FC = (): JSX.Element => {
             borderWidth: 2,
             borderStyle: 'solid',
             borderColor: isActive ? whiteColor : 'transparent',
-            width: screenWidth / 3 - 25,
+            width: '100%',
+            // width: screenWidth / 3 - 25,
             height: 180,
             justifyContent: 'center',
             paddingTop: isActive ? 26 : 20,
@@ -355,6 +387,7 @@ const Payment: FC = (): JSX.Element => {
         </LinearGradient>
       </TouchableOpacity>
     );
+    }
   };
 
   const checkNavig = useRoute();
@@ -388,6 +421,7 @@ const Payment: FC = (): JSX.Element => {
   return (
     <SafeAreaView style={{backgroundColor: black1Color}}>
       <Loader isVisible={loaderVisible} successfulPay={successfulPay} />
+      <ModalUpgradeSuccessful isVisible={visibleUpgradeSuccessful}/>
       <HostPremium isVisible={visibleHostPremium} setVsibleHostPremium={setVsibleHostPremium} screen={checkNavig?.params?.screen} />
       <ScrollView>
         <View style={styles.container}>
@@ -414,7 +448,7 @@ const Payment: FC = (): JSX.Element => {
             </Text>
             <View style={styles.buttonWrapper} />
           </View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 30}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 30, flex: 1}}>
             {plansList.map(item => renderItem({item}))}
           </View>
           <View style={{width: '100%', height: 20, marginTop: 30, position: 'relative', justifyContent: 'center'}}>

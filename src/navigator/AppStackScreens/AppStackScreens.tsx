@@ -35,6 +35,7 @@ import {
   superInvitePayPath,
   verifySocialProfilePath,
   tutorialFlowPath,
+  manageSubscriptionPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -60,6 +61,7 @@ import NotificationSetting from 'screens/App/Profile/screens/Settings/Notificati
 import ContactAndFAQ from 'screens/App/Profile/screens/Settings/ContactAndFAQ';
 import SecurePrivacy from 'screens/App/Profile/screens/SecurePrivacy/SecurePrivacy.tsx';
 import Payment from 'screens/Auth/Payment/Payment';
+import ManageSubscription from 'screens/App/Profile/screens/ManageSubscription';
 import SuperInvitePay from 'screens/App/IO/screens/SuperInvitePay/SuperInvitePay';
 import VerifySocialProfile from 'screens/Auth/VerifySocialProfile';
 import ConfirmPhone from 'screens/Auth/ConfirmPhone';
@@ -419,6 +421,28 @@ const PaymentStackScreen = () => {
   );
 };
 
+const ManageSubscriptionScreen = () => {
+
+  const styles = useStyles();
+
+  return (
+    <EventCreatingStack.Navigator
+    screenOptions={{
+      headerStyle: styles.headerStyle,
+      headerTitleStyle: styles.headerTitleStyle,
+      headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+      headerBackTitleVisible: false,
+      headerTitle: 'Manage Subscription',
+      headerShown: true,
+    }}
+      initialRouteName={manageSubscriptionPath}
+      >
+      <EventCreatingStack.Screen key={manageSubscriptionPath} name={manageSubscriptionPath} component={ManageSubscription} />
+    </EventCreatingStack.Navigator>
+  );
+};
+
+
 const AppStackScreen = () => {
   return (
     <AppStack.Navigator initialRouteName={bottomTabsStackPath} screenOptions={{headerShown: false}}>
@@ -430,6 +454,7 @@ const AppStackScreen = () => {
       <AppStack.Screen key={commonStackPath} name={commonStackPath} component={CommonStackScreen} />
       <AppStack.Screen key={paymentPath} name={paymentPath} component={PaymentStackScreen} />
       <AppStack.Screen key={verifySocialProfilePath} name={verifySocialProfilePath} component={VerifySocialProfile} />
+      <AppStack.Screen key={manageSubscriptionPath} name={manageSubscriptionPath} component={ManageSubscriptionScreen} />
       {/* <AppStack.Screen key={tutorialFlowPath} name={tutorialFlowPath} component={TutorialsFlow} /> */}
     </AppStack.Navigator>
   );

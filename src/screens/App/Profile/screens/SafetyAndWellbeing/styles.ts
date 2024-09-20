@@ -8,7 +8,7 @@ const useStyles = () =>
     container: {
       backgroundColor: lightGray5Color,
       borderRadius: 10,
-      padding: 20,
+      padding: 16,
       width: '100%',
     },
     title: {
@@ -20,7 +20,7 @@ const useStyles = () =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
-      marginTop: 26,
+      marginTop: 16,
     },
     avatarText: {
       fontFamily: Satoshi400,

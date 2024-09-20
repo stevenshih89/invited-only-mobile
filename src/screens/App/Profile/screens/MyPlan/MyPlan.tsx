@@ -12,12 +12,13 @@ import {useUser} from '../../../../../store/userStore';
 import ArrowRight from '../../../../../assets/images/icons/arrow-right-balck.svg';
 import {Satoshi400, Satoshi500, Satoshi700, Satoshi700Italic} from 'constants/fonts';
 import Button from 'components/Button/Button';
-import {blackColor, lightGray5Color, transparentGray90Color, whiteColor} from 'constants/colors';
-import {paymentPath, superInvitePayPath} from 'constants/pathLocations';
+import {black2Color90, blackColor, lightGray5Color, transparentGray90Color, whiteColor} from 'constants/colors';
+import {manageSubscriptionPath, paymentPath, superInvitePayPath} from 'constants/pathLocations';
 
 //import images
 import CheckIcon from 'assets/images/icons/check.svg';
 import ArrowRightIcon from 'assets/images/icons/arrow-right-balck.svg';
+import ArrowRightWhiteIcon from 'assets/images/icons/arrow-right.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import FlashIcon from 'assets/images/icons/flash-filled.svg';
 import CloseIcon from 'assets/images/icons/close-circle.svg';
@@ -29,6 +30,7 @@ import Eye from 'assets/images/icons/eye.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import Loader from '../../../../../components/Modal/ModalLoader/Loader';
 import HostPremium from 'components/Modal/ModalHostPremium/HostPremium';
+import { useSubscriptions } from 'src/store/subscriptionsStore';
 
 const ControlledTooltip: FC<TooltipProps | any> = props => {
   const [open, setOpen] = useState(false);
@@ -51,6 +53,11 @@ const MyPlan = () => {
   const [loaderVisible, setLoaderVisible] = useState(false);
   const [userInfo, setUserInfo] = useState<any>({});
 
+  const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions)
+
+  console.log('currentSubscriptions', currentSubscriptions);
+  
+  
   const fetchUserInfo = async () => {
     // setLoaderVisible(true)
     const user = auth().currentUser;
@@ -77,9 +84,11 @@ const MyPlan = () => {
     setTimeout(() => setLoaderVisible(false), 1000);
   };
 
-  const goToMyProfileView = () => {
-    // @ts-ignore
-    // loaderVisibleFun()
+  const goToManagePath = () => {
+    navigation.navigate(manageSubscriptionPath as never);
+  }
+  
+  const goToPaymentPath = () => {
     navigation.navigate(paymentPath as never);
   };
 
@@ -90,82 +99,112 @@ const MyPlan = () => {
     navigation.navigate(superInvitePayPath);
   };
 
+  const getCurrentPlan = () => {
+    const item = currentSubscriptions.activeSubscriptions.at(-1);
+    let text = '';
+
+    switch (item) {
+      case 'io_59_1w':
+        text = '1 week access';
+        break;
+      case 'io_29_3m':
+        text = '3 month access';
+        break;
+      case 'io_25_wk':
+        text = '1 year access';
+        break;
+      default:
+        text = 'Basic';
+        break;
+    }
+
+    return (
+      <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>
+        {text}
+      </Text>
+    );
+}
+
+
   return (
     <View>
       <Loader isVisible={loaderVisible} successfulPay={false} textLoader={'Checking for available spots...'} />
-      {userInfo?.accountPremium ? (
-        <View>
-          <View
-            style={{
-              alignItems: 'center',
-              padding: 24,
-              backgroundColor: transparentGray90Color,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <View style={{alignItems: 'center', flexDirection: 'row'}}>
-              <FlashIcon width={18} height={18} />
-              <Text style={{fontSize: RFValue(18, 812), marginLeft: 8, color: whiteColor, fontFamily: Satoshi700Italic}}>
-                Super Invite <Text style={{fontFamily: Satoshi400}}>({userInfo?.superInvites + userInfo?.weeklySuperInvites})</Text>
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={goToSuperInvitePay}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                backgroundColor: whiteColor,
-                borderRadius: 10,
-              }}>
-              <Text style={{fontSize: RFValue(16, 812), marginRight: 4, fontFamily: Satoshi500, color: blackColor}}>Add more</Text>
-              <ArrowRightIcon width={16} height={16} />
-            </TouchableOpacity>
+      <View>
+        <View
+          style={{
+            alignItems: 'center',
+            padding: 24,
+            backgroundColor: transparentGray90Color,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <View style={{alignItems: 'center', flexDirection: 'row'}}>
+            <FlashIcon width={18} height={18} />
+            <Text style={{fontSize: RFValue(18, 812), marginLeft: 8, color: whiteColor, fontFamily: Satoshi700Italic}}>
+              Super Invite <Text style={{fontFamily: Satoshi400}}>({userInfo?.superInvites + userInfo?.weeklySuperInvites})</Text>
+            </Text>
           </View>
-          {userInfo?.accountType === 'host' && (
-            <TouchableOpacity onPress={goToMyProfileView} style={{marginTop: 34}}>
+          <TouchableOpacity
+            onPress={goToSuperInvitePay}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              backgroundColor: whiteColor,
+              borderRadius: 10,
+            }}>
+            <Text style={{fontSize: RFValue(16, 812), marginRight: 4, fontFamily: Satoshi500, color: blackColor}}>Add more</Text>
+            <ArrowRightIcon width={16} height={16} />
+          </TouchableOpacity>
+        </View>
+        {userInfo?.accountType === 'host' && (
+          <>
+            <TouchableOpacity
+            disabled={!currentSubscriptions.activeSubscriptions.length}
+            onPress={goToManagePath}
+              style={{padding: 24, borderRadius: 18, backgroundColor: black2Color90, marginTop: 34, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+                <View style={{width: '100%'}}>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi700}}>Current plan: </Text>
+                  {currentSubscriptions.activeSubscriptions.length ? (
+                    getCurrentPlan()
+                  ) : (
+                    <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>Basic</Text>
+                  )}
+                </View>
+              {!currentSubscriptions.activeSubscriptions.length ? (
+                <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24, width: '100%'}}>
+                  <LinearGradient
+                    colors={['#977B4A', '#E5D291', '#A28453']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
+                    style={{paddingVertical: 9, borderRadius: 18, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%'}}>
+                    <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
+                    <ArrowRightIcon width={16} height={16} />
+                  </LinearGradient>
+                </TouchableOpacity>
+              ) : (
+                <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginTop: 8}}>
+                  Manage subscription
+                </Text>
+              )}
+                </View>
+                {currentSubscriptions.activeSubscriptions.length > 0 && <ArrowRightWhiteIcon />}
+            </TouchableOpacity>
+            {currentSubscriptions.activeSubscriptions.length > 0 && currentSubscriptions.activeSubscriptions.length < 3 && <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24}}>
               <LinearGradient
                 colors={['#977B4A', '#E5D291', '#A28453']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0}}
                 style={{paddingVertical: 16, borderRadius: 18, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade to Yearly spot</Text>
+                <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
                 <ArrowRightIcon width={16} height={16} />
               </LinearGradient>
-            </TouchableOpacity>
-          )}
-        </View>
-      ) : (
-        <View>
-          {
-            userInfo?.accountType === 'host' && (
-              <LinearGradient
-                colors={['#977B4A', '#E5D291', '#A28453']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 0}}
-                style={styles.linearGradient}>
-                <Text style={styles.textHostPremium}>Host Premium</Text>
-                <Text style={styles.textGetAccess}>Get Access & Unlock all of our features. Secure your spot. Host Access is limited.</Text>
-                <View style={styles.buttonWrapper}>
-                  <Button
-                    title=" Upgrade"
-                    onPress={goToMyProfileView}
-                    buttonTitleStyle={styles.textButtonTitleStyle}
-                    buttonStyle={styles.buttonUpgrade}
-                  />
-                </View>
-              </LinearGradient>
-            )
-            // <TouchableOpacity onPress={goToMyProfileView}>
-            //   <LinearGradient colors={['#977B4A', '#E5D291', '#A28453']} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={[styles.linearGradient, {borderRadius: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}]}>
-            //     <Text style={{color: blackColor, fontSize: RFValue(18, 821), fontFamily: Satoshi500, marginRight: 4}}>Upgrade to Yearly spot</Text>
-            //     <ArrowRight width={16} height={16}/>
-            //   </LinearGradient>
-            // </TouchableOpacity>
-          }
-        </View>
-      )}
+            </TouchableOpacity>}
+          </>
+        )}
+      </View>
       <View style={styles.listColumnWrapper}>
         <Text style={styles.textWhatYouGet}>What you {userInfo?.accountPremium ? 'have' : 'get'}:</Text>
         {!userInfo?.accountPremium && <Text style={styles.textPremium}>Premium</Text>}
@@ -325,3 +364,4 @@ const MyPlan = () => {
 };
 
 export default MyPlan;
+
