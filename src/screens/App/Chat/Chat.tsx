@@ -468,7 +468,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           <FlatList
             data={DATAEventsJoining}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{marginBottom: 20}}
+            contentContainerStyle={{marginBottom: 20, marginHorizontal: 5}}
             ListEmptyComponent={() => (
               <View style={{height: '100%', marginTop: screenHeight / 8}}>
                 <Text style={styles.textYouNeedToJoin}>You need to join an event</Text>

@@ -34,11 +34,13 @@ import AddIcon from 'assets/images/icons/add.svg';
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 import SettingsIcon from 'assets/images/icons/settings.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
+import CalendarCheckIcon from 'assets/images/icons/calendar-check.svg';
 import InfoCircleGrayIcon from 'assets/images/icons/info-circle-gray.svg';
 import InfoCircleOrangeIcon from 'assets/images/icons/info-circle-orange.svg';
 
 import WIcon from 'assets/images/icons/W.svg';
 import MIcon from 'assets/images/icons/M.svg';
+import JIcon from 'assets/images/icons/J.svg';
 
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
@@ -171,7 +173,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       image: CalendarIcon,
       numberBadge: 0,
       date: '12.12.12',
-      icon: <CalendarIcon width={26} height={26} color={whiteColor} />,
+      icon: <CalendarCheckIcon width={26} height={26} color={whiteColor} />,
     },
     {
       id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
@@ -181,7 +183,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       image: EventBG,
       numberBadge: 0,
       date: '12.12.12',
-      icon: <WIcon width={26} height={33} color={whiteColor} />,
+      icon: <WIcon color={whiteColor} />,
     },
     {
       id: '58694a0f-3da1-471f-bd96-145571e29d72',
@@ -191,7 +193,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       image: EventBG,
       numberBadge: 0,
       date: '12.12.12',
-      icon: <MIcon width={22} height={33} color={whiteColor} />,
+      icon: <MIcon color={whiteColor} />,
     },
   ];
 
@@ -204,15 +206,17 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       image: CalendarIcon,
       numberBadge: 0,
       date: '12.12.12',
+      icon: <CalendarCheckIcon width={26} height={26} color={whiteColor} />,
     },
     {
       id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'New',
+      title: 'Join events',
       allPeople: 0,
       filledTo: 0,
       image: EventBG,
       numberBadge: 0,
       date: '12.12.12',
+      icon: <JIcon />,
     },
   ];
 
@@ -257,12 +261,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     </TouchableOpacity>
   );
 
-  const ItemRequests = ({title, numberBadge, image, date}: ItemProps) => (
+  const ItemRequests = ({title, icon, numberBadge, image, date}: ItemProps) => (
     <TouchableOpacity onPress={() => setRequestFilter(title)} style={styles.eventButton}>
       <View style={[styles.eventViewFlatList, {borderColor: requestFilter === title ? whiteColor : lightGray5Color}]}>
-        <View style={styles.imageEventsJoining}>
-          <CalendarIcon width={26} height={26} />
-        </View>
+        <View style={styles.imageEventsJoining}>{icon}</View>
       </View>
       <Text style={styles.textButton}>{title}</Text>
       <ModalEventRemindes
@@ -396,14 +398,12 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       borderColor: activeEventDate === ALL ? whiteColor : lightGray5Color,
                       borderStyle: 'solid',
                       padding: 3,
-                      width: 55,
-                      height: 55,
-                      backgroundColor: lightGray5Color,
+                      width: 63,
+                      height: 63,
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    <CalendarSearchIcon width={26} height={26} />
-                    <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === ALL ? whiteColor : grayColor}}>Today</Text>
+                    <CalendarCheckIcon width={26} height={26} />
                   </View>
                   <Text
                     style={{
@@ -432,14 +432,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       borderColor: activeEventDate === THIS_WEEKEND ? whiteColor : lightGray5Color,
                       borderStyle: 'solid',
                       padding: 3,
-                      width: 55,
-                      height: 55,
+                      width: 63,
+                      height: 63,
                       // backgroundColor: lightGray5Color,
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
                     {/* <CalendarSearchIcon width={26} height={26} /> */}
-                    <WIcon width={26} height={33} />
+                    <WIcon />
                     {/* <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>
                       Weekend
                     </Text> */}
@@ -471,13 +471,13 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       borderColor: activeEventDate === THIS_MONTH ? whiteColor : lightGray5Color,
                       borderStyle: 'solid',
                       padding: 3,
-                      width: 55,
-                      height: 55,
+                      width: 63,
+                      height: 63,
                       // backgroundColor: lightGray5Color,
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    <MIcon width={22} height={33} />
+                    <MIcon />
                     {/* <CalendarSearchIcon width={26} height={26} /> */}
                     {/* <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_MONTH ? whiteColor : grayColor}}>Month</Text> */}
                   </View>
@@ -599,7 +599,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           <FlatList
             data={DATARequestGuest}
             horizontal={true}
-            style={{marginTop: 17, marginBottom: 25}}
+            style={{marginTop: screenHeight / 50, marginBottom: 25}}
             renderItem={({item}) => (
               <ItemRequests
                 filledTo={item.filledTo}
@@ -608,6 +608,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 numberBadge={item.numberBadge}
                 title={item.title}
                 date={item.date}
+                icon={item.icon}
               />
             )}
             keyExtractor={item => item.id}

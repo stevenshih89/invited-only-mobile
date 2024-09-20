@@ -26,6 +26,7 @@ import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import images
 import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
+import CalendarCheckIcon from 'assets/images/icons/calendar-check.svg';
 import WIcon from 'assets/images/icons/W.svg';
 import MIcon from 'assets/images/icons/M.svg';
 
@@ -515,14 +516,14 @@ const MyEvents: FC<any> = ({navigation}) => {
                   borderColor: activeEventDate === ALL ? whiteColor : lightGray5Color,
                   borderStyle: 'solid',
                   padding: 3,
-                  width: 55,
-                  height: 55,
+                  width: 63,
+                  height: 63,
                   // backgroundColor: lightGray5Color,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <CalendarSearchIcon width={26} height={26} />
-                <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === ALL ? whiteColor : grayColor}}>Today</Text>
+                <CalendarCheckIcon width={26} height={26} />
+                {/* <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === ALL ? whiteColor : grayColor}}>Today</Text> */}
               </View>
               <Text
                 style={{
@@ -551,13 +552,13 @@ const MyEvents: FC<any> = ({navigation}) => {
                   borderColor: activeEventDate === THIS_WEEKEND ? whiteColor : lightGray5Color,
                   borderStyle: 'solid',
                   padding: 3,
-                  width: 55,
-                  height: 55,
+                  width: 63,
+                  height: 63,
                   // backgroundColor: lightGray5Color,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <WIcon width={26} height={33} />
+                <WIcon />
                 {/* <CalendarSearchIcon width={26} height={26} />
                 <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>Weekend</Text> */}
               </View>
@@ -588,13 +589,12 @@ const MyEvents: FC<any> = ({navigation}) => {
                   borderColor: activeEventDate === THIS_MONTH ? whiteColor : lightGray5Color,
                   borderStyle: 'solid',
                   padding: 3,
-                  width: 55,
-                  height: 55,
-                  // backgroundColor: lightGray5Color,
+                  width: 63,
+                  height: 63,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <MIcon width={22} height={33} />
+                <MIcon />
                 {/* <CalendarSearchIcon width={26} height={26} />
                 <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_MONTH ? whiteColor : grayColor}}>Month</Text> */}
               </View>

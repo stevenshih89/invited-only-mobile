@@ -9,7 +9,7 @@ const useStyles = () =>
     container: {
       backgroundColor: blackColor,
       flex: 1,
-      paddingHorizontal: screenWidth / 19,
+      paddingHorizontal: screenWidth / 15.5,
     },
     wrapperHeaderButtonMyEvents: {
       marginTop: screenHeight / 43,

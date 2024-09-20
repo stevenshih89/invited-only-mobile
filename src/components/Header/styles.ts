@@ -63,14 +63,11 @@ const useStyles = () =>
       borderRadius: 50,
     },
     imageEventsJoining: {
-      width: 50,
-      height: 50,
+      width: 55,
+      height: 55,
       borderRadius: 50,
       alignItems: 'center',
       justifyContent: 'center',
-      // backgroundColor: lightGray5Color,
-      color: whiteColor,
-      opacity: 0.5,
     },
     addEventButton: {
       alignItems: 'center',
@@ -96,7 +93,7 @@ const useStyles = () =>
       flexDirection: 'row',
     },
     wrapperHeaderButtonsChat: {
-      marginTop: screenHeight / 43,
+      marginTop: screenHeight / 50,
       marginBottom: screenHeight / 30,
       justifyContent: 'flex-start',
       alignItems: 'center',
