@@ -60,6 +60,7 @@ const useStyles = () =>
       flex: 1,
     },
     linearGradient: {
+      flex: 1,
       padding: 7,
     },
     accountTypeWrapperPremium: {

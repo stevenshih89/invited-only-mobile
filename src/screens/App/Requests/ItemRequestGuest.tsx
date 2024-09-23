@@ -289,10 +289,11 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
                   </View>
                 )}
                 <LinearGradient
-                  colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.8)']}
+                  colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.8)', 'rgba(0, 0, 0, 0.8)']}
                   style={styles.linearGradient}
                   start={{x: 0, y: 0}}
-                  end={{x: 0, y: 1}}>
+                  end={{x: 0, y: 1}}
+                  locations={[0.3, 0.6, 1]}>
                   <TouchableOpacity activeOpacity={0.7} style={[styles.buttonContainer, {marginTop: 'auto'}]} onPress={goToEventInfo}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
                       <FastImage
