@@ -116,13 +116,13 @@ const IO: FC = (): JSX.Element => {
     return subscription;
   }, []);
 
-  const handleAutoSwipeRight = (uid: string) => {    
+  const handleAutoSwipeRight = (uid: string, isSort: boolean = true) => {
     if (cardRef.current) {
       cardRef.current.autoSwipeRight();
     }
-    setTimeout(() => {
+    if (isSort) {
       sortEvents(uid);
-    }, 500);
+    }
   };
 
   const handleAutoSwipeLeft = () => {
@@ -181,7 +181,7 @@ const IO: FC = (): JSX.Element => {
   const decrementSuperInvite = (uid?: string) => {
     try {
       if (counterSuperInvites > 0) {
-        if(userInfo?.accountType === 'host') {
+        if (userInfo?.accountType === 'host') {
           setIsVisibleSuperInvite(true);
           handleChangeListsEventsAfterSuperInvite(uid);
         }
@@ -206,12 +206,12 @@ const IO: FC = (): JSX.Element => {
     } catch (error) {
       console.log('error supert invite', error);
     }
-  }
+  };
 
   const handleOpenSuperInvite = async (item, uid?: string): void => {
     setActiveSuperInviteUser(item);
     decrementCounterSuperInvites(1);
-    decrementSuperInvite(uid)
+    decrementSuperInvite(uid);
   };
 
   const handleCloseSuperInvite = (): void => {
@@ -489,7 +489,7 @@ const IO: FC = (): JSX.Element => {
             requestsList: firestore.FieldValue.arrayUnion(userInvited),
           };
           decrementCounterSuperInvites(1);
-          decrementSuperInvite()
+          decrementSuperInvite();
         }
 
         await firestore()
@@ -546,20 +546,9 @@ const IO: FC = (): JSX.Element => {
 
   const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {
     if (type === 'accept') {
-      const item = events?.filter(j => {
-        return j?.info?.uid === uid;
-      });
-
-      const filter: any[] = events?.filter(i => i?.info?.uid !== uid);
-
-      setEvents([...filter]);
-      await onInvite(item[0]?.info?.uid, item[0]?.info?.id);
+      handleAutoSwipeRight(uid, false);
     } else {
-      // console.log('reject', events);
-      // console.log('uid', uid);
-      const filter: any[] = events?.filter(i => i?.info?.uid !== uid);
-      // console.log('filter events', filter);
-      setEvents(filter);
+      handleAutoSwipeLeft();
     }
   };
 
@@ -1377,7 +1366,9 @@ const IO: FC = (): JSX.Element => {
                   // @ts-ignore
                   cardHeight="100%"
                   onSwipedLeft={() => {
-                    onReject(item?.info?.uid, item?.info?.id);
+                    setTimeout(() => {
+                      onReject(item?.info?.uid, item?.info?.id);
+                    }, 500);
                     setTimeout(() => {
                       setCurrentEventCardPosition(prev => prev + 1);
                     }, 500);
