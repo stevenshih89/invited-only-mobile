@@ -21,6 +21,7 @@ import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import FastImage from 'react-native-fast-image';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
+import { INVITE_MATCH_STATUS } from 'constants/common';
 
 const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: any) => {
   const [hostInfo, setHostInfo] = useState([]);
@@ -101,7 +102,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           if (invUser.uid === item?.uid) {
             return {
               ...invUser,
-              status: 'invite_match',
+              status: INVITE_MATCH_STATUS,
             };
           }
           return invUser;

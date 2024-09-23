@@ -12,7 +12,7 @@ import functions from '@react-native-firebase/functions';
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
-import {ACCEPTED_STATUS, APPROVED_STATUS, screenHeight} from 'constants/common.ts';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, paymentPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
@@ -411,7 +411,7 @@ const IO: FC = (): JSX.Element => {
         if (matchedGuest) {
           data = {
             requestsList: firestore.FieldValue.arrayRemove(matchedGuest),
-            usersList: firestore.FieldValue.arrayUnion({...userInvited, status: 'invite_match'}),
+            usersList: firestore.FieldValue.arrayUnion({...userInvited, status: INVITE_MATCH_STATUS}),
           };
           matchedGuestData = {
             type: 'match',
@@ -457,7 +457,7 @@ const IO: FC = (): JSX.Element => {
             if (invUser?.uid === userHost?.uid) {
               return {
                 ...invUser,
-                status: 'invite_match',
+                status: INVITE_MATCH_STATUS,
               };
             }
             return invUser;
@@ -589,7 +589,7 @@ const IO: FC = (): JSX.Element => {
             event?.usersList?.find(
               j =>
                 j?.uid === user?.uid &&
-                (j?.status === 'invite_match' ||
+                (j?.status === INVITE_MATCH_STATUS ||
                   j?.status === APPROVED_STATUS ||
                   j?.status === ACCEPTED_STATUS ||
                   j?.status === 'notAccepted'),

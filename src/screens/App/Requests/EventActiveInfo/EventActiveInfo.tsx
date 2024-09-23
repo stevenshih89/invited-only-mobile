@@ -17,7 +17,7 @@ import {commonStackPath, eventEditingPath} from 'constants/pathLocations';
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
 import ModalUserProfileEvent from 'components/Modal/ModalUserProfileEvent/ModalUserProfileEvent.tsx';
-import {ACCEPTED_STATUS, APPROVED_STATUS, screenHeight, screenWidth} from 'constants/common';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight, screenWidth} from 'constants/common';
 import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {useFocusEffect} from '@react-navigation/native';
@@ -40,7 +40,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
 
-  const invitedGuests = usersListData?.filter(i => i?.status === 'invite_match');
+  const invitedGuests = usersListData?.filter(i => i?.status === INVITE_MATCH_STATUS);
   const approvedGuests = usersListData?.filter(i => i?.status === APPROVED_STATUS);
   const acceptedGuests = usersListData?.filter(i => i?.status === ACCEPTED_STATUS);
   const rejectedGuests = usersListData?.filter(i => i?.status === 'notAccepted');

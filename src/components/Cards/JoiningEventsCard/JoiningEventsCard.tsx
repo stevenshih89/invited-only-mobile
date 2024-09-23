@@ -16,7 +16,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventInfoPath} from 'constants/pathLocations';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {ACCEPTED_STATUS, APPROVED_STATUS, screenHeight} from 'constants/common';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import firestore from '@react-native-firebase/firestore';
 import {calculateAge} from 'helpers/calculateAge';
@@ -123,7 +123,7 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
     }
   };
 
-  const isInviteMatchStatus = status === 'invite_match';
+  const isInviteMatchStatus = status === INVITE_MATCH_STATUS;
   const isApprovedStatus = status === APPROVED_STATUS;
   const isAcceptedStatus = status === ACCEPTED_STATUS;
   const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;

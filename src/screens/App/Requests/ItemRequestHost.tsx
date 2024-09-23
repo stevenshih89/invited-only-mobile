@@ -23,7 +23,7 @@ import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
 import {getFontSize} from 'helpers/getFontSize';
-import {ACCEPTED_STATUS} from 'constants/common';
+import {ACCEPTED_STATUS, INVITE_MATCH_STATUS} from 'constants/common';
 
 const ItemRequestHost = ({
   item,
@@ -97,7 +97,7 @@ const ItemRequestHost = ({
       const userAccepted = {
         gender: item?.gender,
         name: item?.name,
-        status: 'invite_match',
+        status: INVITE_MATCH_STATUS,
         superInvite: false,
         uid: item?.uid,
         userPhoto: item?.userPhoto,

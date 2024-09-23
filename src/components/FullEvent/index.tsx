@@ -6,6 +6,7 @@ import {Image} from 'react-native';
 import {Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import firestore from '@react-native-firebase/firestore';
+import {INVITE_MATCH_STATUS} from 'constants/common';
 
 interface FullEventProps {
   activeEvent: any;
@@ -46,7 +47,7 @@ const FullEvent: FC<FullEventProps> = ({activeEvent, totalRequestsGuests, rightC
         }}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           {actualActiveEventData?.usersList?.map((item, index) => {
-            if (item.status === 'invite_match' && index < 2) {
+            if (item.status === INVITE_MATCH_STATUS && index < 2) {
               return (
                 <View key={item.uid} style={{alignItems: 'center', justifyContent: 'center'}}>
                   {index < 1 ? (

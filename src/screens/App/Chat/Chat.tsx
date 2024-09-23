@@ -30,7 +30,7 @@ import {useUser} from 'src/store/userStore';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
-import {ACCEPTED_STATUS, APPROVED_STATUS, screenHeight} from 'constants/common';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 
 type ItemProps = {
   title: string;
@@ -313,7 +313,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     switch (type) {
       case APPROVED_STATUS:
         return 'Approved'.toUpperCase();
-      case 'invite_match':
+      case INVITE_MATCH_STATUS:
         return 'Invite Match'.toUpperCase();
       case ACCEPTED_STATUS:
         return 'Accepted'.toUpperCase();
@@ -328,7 +328,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     switch (type) {
       case APPROVED_STATUS:
         return styles.textStatusPending;
-      case 'invite_match':
+      case INVITE_MATCH_STATUS:
         return styles.textStatusInviteMatch;
       case ACCEPTED_STATUS:
         return styles.textStatusInvitationAccepted;

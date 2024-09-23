@@ -11,5 +11,21 @@ const THIS_WEEKEND = 'this_weekend';
 const THIS_MONTH = 'this_month';
 const APPROVED_STATUS = 'approved';
 const ACCEPTED_STATUS = 'accepted';
+const INVITE_MATCH_STATUS = 'invite_match';
+const NOT_ACCEPTED_STATUS = 'notAccepted';
 
-export {isIos, isAndroid, screenWidth, screenHeight, ANY_DAY, TODAY, THIS_WEEKEND, ALL, THIS_MONTH, APPROVED_STATUS, ACCEPTED_STATUS};
+export {
+  isIos,
+  isAndroid,
+  screenWidth,
+  screenHeight,
+  ANY_DAY,
+  TODAY,
+  THIS_WEEKEND,
+  ALL,
+  THIS_MONTH,
+  APPROVED_STATUS,
+  ACCEPTED_STATUS,
+  INVITE_MATCH_STATUS,
+  NOT_ACCEPTED_STATUS,
+};

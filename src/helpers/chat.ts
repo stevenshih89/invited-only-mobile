@@ -1,6 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import {MatchData} from 'screens/App/IO/screens/Match/Match';
 import {showToast} from './showToast';
+import {INVITE_MATCH_STATUS} from 'constants/common';
 
 export const handleCreateChat = async (matchedData: MatchData) => {
   const querySnapshot = await firestore().collection('Events').doc(matchedData.eventId).get();
@@ -17,7 +18,7 @@ export const handleCreateChat = async (matchedData: MatchData) => {
       const newChats = {
         avatar: matchedData.imageUri,
         id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
-        invitedStatus: 'invite_match',
+        invitedStatus: INVITE_MATCH_STATUS,
         messages: [],
         name: matchedData.nameGuest,
         superInvite: matchedData?.superInvite,
@@ -39,7 +40,7 @@ export const handleCreateChat = async (matchedData: MatchData) => {
       const newChats = {
         avatar: matchedData.imageUri,
         id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
-        invitedStatus: 'invite_match',
+        invitedStatus: INVITE_MATCH_STATUS,
         messages: [],
         name: matchedData.nameGuest,
         superInvite: matchedData?.superInvite,
@@ -55,7 +56,7 @@ export const handleCreateChat = async (matchedData: MatchData) => {
           avatarGuest: matchedData.imageUri,
           avatarHost: matchedData?.userHostImageUri,
           chats: [newChats],
-          inviteStatus: 'invite_match',
+          inviteStatus: INVITE_MATCH_STATUS,
           nameGuest: matchedData.nameGuest,
           uidGuest: matchedData.uidGuest,
           uidHost: matchedData?.uidHost,

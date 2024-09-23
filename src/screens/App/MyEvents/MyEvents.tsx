@@ -17,7 +17,7 @@ import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsC
 import ModalCancelAttending from './ModalCancelAttending';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
 import {useUser} from '../../../store/userStore';
-import {ACCEPTED_STATUS, ALL, APPROVED_STATUS, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
+import {ACCEPTED_STATUS, ALL, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
@@ -422,7 +422,8 @@ const MyEvents: FC<any> = ({navigation}) => {
       const filterData = data?.filter(obj => {
         return obj?.usersList?.some(user => {
           return (
-            user?.uid === uid && (user?.status === 'invite_match' || user?.status === ACCEPTED_STATUS || user?.status === APPROVED_STATUS)
+            user?.uid === uid &&
+            (user?.status === INVITE_MATCH_STATUS || user?.status === ACCEPTED_STATUS || user?.status === APPROVED_STATUS)
           );
         });
       });
@@ -651,7 +652,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     placeName={item?.placeName}
                     invitingPeople={item?.usersList?.filter(i => i?.status !== 'notAccepted')}
                     accountConfirmed={user?.accountConfirmed}
-                    findAcceptedGuest={item?.usersList?.filter(item => item.status === 'invite_match')}
+                    findAcceptedGuest={item?.usersList?.filter(item => item.status === INVITE_MATCH_STATUS)}
                     totalRequestsGuests={item?.requestsList?.length}
                     item={item}
                   />

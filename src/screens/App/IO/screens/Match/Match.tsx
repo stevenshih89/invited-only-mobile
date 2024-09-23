@@ -6,7 +6,7 @@ import MessageText from 'assets/images/icons/message-text.svg';
 import CheckboxSelected from 'assets/images/icons/checkbox-selected.svg';
 import {Outfit500, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {APPROVED_STATUS, screenHeight} from 'constants/common';
+import {APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import {FC, useEffect} from 'react';
 import Animated, {useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay} from 'react-native-reanimated';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -145,7 +145,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
           const newChats = {
             avatar: matchData.imageUri,
             id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
-            invitedStatus: 'invite_match',
+            invitedStatus: INVITE_MATCH_STATUS,
             messages: [],
             name: matchData.nameGuest,
             superInvite: matchData?.superInvite,
@@ -182,7 +182,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             avatarGuest: matchData.imageUri,
             avatarHost: userHost?.photos[0]?.image,
             chats: [],
-            inviteStatus: 'invite_match',
+            inviteStatus: INVITE_MATCH_STATUS,
             nameGuest: matchData.nameGuest,
             uidGuest: matchData.uidGuest,
             uidHost: userHost?.uid,
@@ -191,7 +191,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
           const newChats = {
             avatar: matchData.imageUri,
             id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
-            invitedStatus: 'invite_match',
+            invitedStatus: INVITE_MATCH_STATUS,
             messages: [],
             name: matchData.nameGuest,
             superInvite: matchData?.superInvite === 'true' ? true : false,

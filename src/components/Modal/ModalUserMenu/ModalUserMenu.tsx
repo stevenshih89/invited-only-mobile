@@ -24,7 +24,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import ModalReport from '../ModalReport/ModalReport';
-import {ACCEPTED_STATUS, APPROVED_STATUS} from 'constants/common';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS} from 'constants/common';
 
 interface ModalUserMenuProps {
   isModalVisible: boolean;
@@ -320,7 +320,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     if (uid === hostUid && userGuest?.status === APPROVED_STATUS) {
       return 'Accept invitation';
     }
-    if (userGuest?.status === 'invite_match') {
+    if (userGuest?.status === INVITE_MATCH_STATUS) {
       return 'Approve guest';
     } else if (userGuest?.status === APPROVED_STATUS) {
       return 'Waiting for invitation accepted';
@@ -333,7 +333,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     if (uid === hostUid && userGuest?.status === APPROVED_STATUS) {
       return false;
     }
-    if (userGuest?.status === 'invite_match') {
+    if (userGuest?.status === INVITE_MATCH_STATUS) {
       return false;
     }
     return true;
@@ -353,7 +353,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       setModalVisible && setModalVisible(false);
       return;
     }
-    if (userGuest?.status === 'invite_match') {
+    if (userGuest?.status === INVITE_MATCH_STATUS) {
       handleApproveGuestFromHost();
       setModalVisible && setModalVisible(false);
       return;
@@ -367,7 +367,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         borderColor: whiteColor,
       };
     }
-    if (userGuest?.status === 'invite_match') {
+    if (userGuest?.status === INVITE_MATCH_STATUS) {
       return {
         backgroundColor: whiteColor,
         borderColor: whiteColor,
@@ -399,7 +399,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         color: whiteColor,
       };
     }
-    if (userGuest?.status === 'invite_match') {
+    if (userGuest?.status === INVITE_MATCH_STATUS) {
       return {
         color: black1Color,
       };
@@ -557,7 +557,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
             {userProfileItemCard}
             {/* gap */}
             <View style={{height: 24}} />
-            {(userGuest?.status === ACCEPTED_STATUS || userGuest?.status === 'invite_match' || userGuest?.status === 'notAccepted') &&
+            {(userGuest?.status === ACCEPTED_STATUS || userGuest?.status === INVITE_MATCH_STATUS || userGuest?.status === 'notAccepted') &&
             uid === hostUid ? null : (
               <View style={{width: '100%'}}>
                 <TouchableOpacity

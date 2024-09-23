@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
+import {INVITE_MATCH_STATUS} from 'constants/common';
 
 export const checkIsFullGuests = async (idEvent: string) => {
   const getEventData = await firestore().collection('Events').doc(idEvent).get();
@@ -6,7 +7,7 @@ export const checkIsFullGuests = async (idEvent: string) => {
 
   const data = getEventData.data();
   const allGuests = data?.male + data?.female;
-  const findAcceptedGuest = data?.usersList.filter(item => item.status === 'invite_match');
+  const findAcceptedGuest = data?.usersList.filter(item => item.status === INVITE_MATCH_STATUS);
   return {
     allGuests,
     findAcceptedGuest: findAcceptedGuest.length,

@@ -24,7 +24,7 @@ import {calculateAge} from 'helpers/calculateAge.ts';
 import {useFocusEffect} from '@react-navigation/native';
 import {sendNotification} from 'helpers/fcmHelper.ts';
 import ModalFullEvent from '../ModalFullEvent/index.tsx';
-import {ACCEPTED_STATUS, APPROVED_STATUS} from 'constants/common.ts';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS} from 'constants/common.ts';
 
 interface ModalUserProfileEventProps {
   isModalVisible?: boolean;
@@ -301,7 +301,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     if (!userGuest?.status) {
       return '';
     }
-    if (userGuest?.status === 'invite_match') {
+    if (userGuest?.status === INVITE_MATCH_STATUS) {
       return 'Approve guest';
     } else if (userGuest?.status === APPROVED_STATUS) {
       return 'Waiting for invitation accepted';
@@ -311,7 +311,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   };
 
   const getIsDisabledButton = () => {
-    if (userGuest?.status === 'invite_match') {
+    if (userGuest?.status === INVITE_MATCH_STATUS) {
       return false;
     }
     return true;
@@ -326,7 +326,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       }, 300);
       return;
     }
-    if (userGuest?.status === 'invite_match') {
+    if (userGuest?.status === INVITE_MATCH_STATUS) {
       handleApproveGuestFromHost();
       const newArray = usersList.map((i: any) => (i.uid === uid ? {...i, status: APPROVED_STATUS} : i));
 
@@ -337,7 +337,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   };
 
   const getButtonStyle = () => {
-    if (userGuest?.status === 'invite_match') {
+    if (userGuest?.status === INVITE_MATCH_STATUS) {
       return {
         backgroundColor: whiteColor,
         borderColor: whiteColor,
@@ -364,7 +364,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         color: whiteColor,
       };
     }
-    if (userGuest?.status === 'invite_match') {
+    if (userGuest?.status === INVITE_MATCH_STATUS) {
       return {
         color: black1Color,
       };
