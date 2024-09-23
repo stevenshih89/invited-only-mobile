@@ -102,6 +102,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       const updateUsersList: any = usersListData ? usersListData?.filter((i: any) => i?.uid !== uid) : [];
       const updateRequestsList: any = requestListData ? requestListData?.filter((i: any) => i?.uid !== uid) : [];
       const filterUsersList = usersList?.filter((i: any) => i?.uid !== uid);
+      setModalVisible && setModalVisible(false);
       setUsersListsData && setUsersListsData(filterUsersList);
 
       await firestore().collection('Events').doc(list?.id).update({
@@ -117,7 +118,6 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         ownerPhoto: rejectedUser?.userPhoto,
         status: 'REJECTED'.toUpperCase(),
       });
-      setModalVisible && setModalVisible(false);
     } catch (e) {
       showToast('inviteMatch', '', 'Error!');
       // console.log(e);

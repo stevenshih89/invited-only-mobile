@@ -586,7 +586,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
               <InfoIcon width={20} height={20} />
               <Text style={styles.textButton}>Block & Report</Text>
             </TouchableOpacity>
-            {userGuest?.status !== ACCEPTED_STATUS && (
+            {userGuest?.status === ACCEPTED_STATUS && (
               <TouchableOpacity
                 onPress={() => setCancelInvitationState(true)}
                 style={[styles.buttonFooter, {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>

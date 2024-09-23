@@ -24,6 +24,11 @@ export const handleCreateChat = async (matchedData: MatchData) => {
         uid: matchedData.uidGuest,
         hostUid: matchedData?.uidHost,
       };
+      const chatExist = prevChats.find((chat: {uid: string}) => chat.uid === matchedData.uidGuest);
+      if (chatExist) {
+        return;
+      }
+
       await firestore()
         .collection('messages')
         .doc(list?.id)
