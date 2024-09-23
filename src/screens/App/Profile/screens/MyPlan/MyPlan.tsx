@@ -53,10 +53,7 @@ const MyPlan = () => {
   const [loaderVisible, setLoaderVisible] = useState(false);
   const [userInfo, setUserInfo] = useState<any>({});
 
-  const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions)
-
-  console.log('currentSubscriptions', currentSubscriptions);
-  
+  const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions)  
   
   const fetchUserInfo = async () => {
     // setLoaderVisible(true)
@@ -141,7 +138,7 @@ const MyPlan = () => {
           <View style={{alignItems: 'center', flexDirection: 'row'}}>
             <FlashIcon width={18} height={18} />
             <Text style={{fontSize: RFValue(18, 812), marginLeft: 8, color: whiteColor, fontFamily: Satoshi700Italic}}>
-              Super Invite <Text style={{fontFamily: Satoshi400}}>({userInfo?.superInvites + userInfo?.weeklySuperInvites})</Text>
+              Super {userInfo.accountType === 'host'? 'Invite': 'Join'} <Text style={{fontFamily: Satoshi400}}>({userInfo?.superInvites + userInfo?.weeklySuperInvites})</Text>
             </Text>
           </View>
           <TouchableOpacity
@@ -364,4 +361,5 @@ const MyPlan = () => {
 };
 
 export default MyPlan;
+
 

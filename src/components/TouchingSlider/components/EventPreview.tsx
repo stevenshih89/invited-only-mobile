@@ -18,6 +18,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {showToast} from 'helpers/showToast';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import FastImage from 'react-native-fast-image';
+import { useCounterSuperEvents } from 'src/store/counterSuperInvites';
 
 const EventPreview: FC<{
   photos: any;
@@ -289,12 +290,20 @@ const EventPreview: FC<{
     );
   }
 
+  const {counterSuperInvites} = useCounterSuperEvents();
+
   const handleSuperJoin = () => {
-    superJoin();
-    setVisibleModalSuperJoin(true);
-    setTimeout(() => {
-      setVisibleModalSuperJoin(false);
-    }, 3000);
+    if(counterSuperInvites > 0) {
+      setVisibleModalSuperJoin(true);
+      setTimeout(() => {
+        superJoin();
+      }, 2000);
+      setTimeout(() => {
+        setVisibleModalSuperJoin(false);
+      }, 4000);
+    } else {
+      showToast('inviteMatch', "You don't have Super Joins", 'Super Join')
+    }
   };
 
   if (userAccountType === 'guest' || fromJoinEventsScreen) {

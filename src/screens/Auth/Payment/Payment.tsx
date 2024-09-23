@@ -292,8 +292,6 @@ const Payment: FC = (): JSX.Element => {
     return `Get ${duration} ${durationName} for ${fullPrice}`;
   };
 
-  console.log('currentSubscriptions', currentSubscriptions);
-
   const renderItem = ({item}: {item: PlanListItem}) => {
     
     const res = currentSubscriptions.activeSubscriptions.find((i: any) => i === item.identifier)

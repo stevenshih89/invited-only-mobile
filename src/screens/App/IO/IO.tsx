@@ -116,11 +116,13 @@ const IO: FC = (): JSX.Element => {
     return subscription;
   }, []);
 
-  const handleAutoSwipeRight = (uid: string) => {
+  const handleAutoSwipeRight = (uid: string) => {    
     if (cardRef.current) {
       cardRef.current.autoSwipeRight();
     }
-    sortEvents(uid);
+    setTimeout(() => {
+      sortEvents(uid);
+    }, 500);
   };
 
   const handleAutoSwipeLeft = () => {
@@ -176,13 +178,13 @@ const IO: FC = (): JSX.Element => {
     }, []),
   );
 
-  const handleOpenSuperInvite = async (item, uid?: string): void => {
-    setActiveSuperInviteUser(item);
-    decrementCounterSuperInvites(1);
+  const decrementSuperInvite = (uid?: string) => {
     try {
       if (counterSuperInvites > 0) {
-        setIsVisibleSuperInvite(true);
-        handleChangeListsEventsAfterSuperInvite(uid);
+        if(userInfo?.accountType === 'host') {
+          setIsVisibleSuperInvite(true);
+          handleChangeListsEventsAfterSuperInvite(uid);
+        }
         if (counterWeeklySuperInvitesRef.current > 0) {
           firestore()
             .collection('userInfo')
@@ -204,6 +206,12 @@ const IO: FC = (): JSX.Element => {
     } catch (error) {
       console.log('error supert invite', error);
     }
+  }
+
+  const handleOpenSuperInvite = async (item, uid?: string): void => {
+    setActiveSuperInviteUser(item);
+    decrementCounterSuperInvites(1);
+    decrementSuperInvite(uid)
   };
 
   const handleCloseSuperInvite = (): void => {
@@ -480,6 +488,8 @@ const IO: FC = (): JSX.Element => {
           data = {
             requestsList: firestore.FieldValue.arrayUnion(userInvited),
           };
+          decrementCounterSuperInvites(1);
+          decrementSuperInvite()
         }
 
         await firestore()
