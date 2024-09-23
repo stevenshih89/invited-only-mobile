@@ -1,10 +1,10 @@
-import React, {FC} from 'react';
+import React, {FC, useState} from 'react';
 import {Dimensions, ImageBackground, SafeAreaView, Text, TouchableOpacity, View, Linking, Alert} from 'react-native';
 import Background from 'assets/images/auth/background.png';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
 import ArrowRightBalck from 'assets/images/icons/arrow-right-balck.svg';
-import CheckCircle from 'assets/images/icons/check-circle.svg';
-import {black1Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import CheckBlack from 'assets/images/icons/Check-black.svg';
+import {black1Color, lightGray4Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Outfit500, Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -12,6 +12,8 @@ import {signUpPath} from 'constants/pathLocations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Onboard: FC = (): JSX.Element => {
+  const [isChecked, setChecked] = useState(false);
+  
   const navigation = useAppNavigation();
 
   const getId = async () => {
@@ -93,11 +95,12 @@ const Onboard: FC = (): JSX.Element => {
               }}
             />
             <TouchableOpacity
+              disabled={!isChecked}
               activeOpacity={0.7}
               hitSlop={{top: 26, bottom: 20}}
               onPress={() => navigation.navigate(signUpPath as never)}
               style={{
-                backgroundColor: whiteColor,
+                backgroundColor: isChecked? whiteColor: lightGray4Color,
                 borderRadius: 8,
                 paddingVertical: 16,
                 width: '100%',
@@ -119,7 +122,16 @@ const Onboard: FC = (): JSX.Element => {
             </TouchableOpacity>
 
             <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 40}}>
-              <CheckCircle />
+              <TouchableOpacity style={{
+                width: 24,
+                height: 24,
+                borderRadius: 2,
+                backgroundColor: whiteColor,
+                alignItems: 'center',
+                justifyContent:'center'
+              }} onPress={() => setChecked(!isChecked)}>
+                {isChecked && <CheckBlack width={14} height={14}/>}
+              </TouchableOpacity>
               <View style={{flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12}}>
                 <Text style={{fontFamily: Satoshi400, fontSize: RFValue(14, 812), color: whiteColor}}>
                   By creating account in you accept our{' '}
