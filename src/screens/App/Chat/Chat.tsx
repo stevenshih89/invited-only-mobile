@@ -30,7 +30,7 @@ import {useUser} from 'src/store/userStore';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
-import {screenHeight} from 'constants/common';
+import {ACCEPTED_STATUS, APPROVED_STATUS, screenHeight} from 'constants/common';
 
 type ItemProps = {
   title: string;
@@ -189,23 +189,23 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           </TouchableOpacity>
           <View style={styles.wrapperThreeDotsAndBadge}>
             <View style={[handleCheckTypeInvitedStyles(userStatus), {marginTop: 4}]}>
-              <Text style={[styles.textStatusInvite, {color: userStatus === 'accepted' ? blackColor : whiteColor}]}>
+              <Text style={[styles.textStatusInvite, {color: userStatus === ACCEPTED_STATUS ? blackColor : whiteColor}]}>
                 {handleCheckTypeInvitedText(userStatus)}
               </Text>
             </View>
             <View style={[styles.wrapperTextMessage, {flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between'}]}>
               {/* <View
                 style={{
-                  backgroundColor: inviteStatus === 'accepted' ? whiteColor : blackColor,
+                  backgroundColor: inviteStatus === ACCEPTED_STATUS ? whiteColor : blackColor,
                   borderRadius: 50,
                   paddingHorizontal: 10,
                   paddingVertical: 3,
                   borderColor: whiteColor,
                   borderStyle: 'solid',
-                  borderWidth: inviteStatus === 'accepted' ? 0 : 1,
+                  borderWidth: inviteStatus === ACCEPTED_STATUS ? 0 : 1,
                   marginBottom: 4,
                 }}>
-                <Text style={{fontSize: RFValue(9, 812), color: inviteStatus === 'accepted' ? blackColor : whiteColor}}>
+                <Text style={{fontSize: RFValue(9, 812), color: inviteStatus === ACCEPTED_STATUS ? blackColor : whiteColor}}>
                   {getTextByStatus(inviteStatus)}
                 </Text>
               </View> */}
@@ -311,11 +311,11 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   const handleCheckTypeInvitedText = (type: string) => {
     switch (type) {
-      case 'approved':
+      case APPROVED_STATUS:
         return 'Approved'.toUpperCase();
       case 'invite_match':
         return 'Invite Match'.toUpperCase();
-      case 'accepted':
+      case ACCEPTED_STATUS:
         return 'Accepted'.toUpperCase();
       case 'admin':
         return 'Admin'.toUpperCase();
@@ -326,11 +326,11 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   const handleCheckTypeInvitedStyles = (type: string) => {
     switch (type) {
-      case 'approved':
+      case APPROVED_STATUS:
         return styles.textStatusPending;
       case 'invite_match':
         return styles.textStatusInviteMatch;
-      case 'accepted':
+      case ACCEPTED_STATUS:
         return styles.textStatusInvitationAccepted;
       case 'admin':
         return styles.textStatusInviteMatch;

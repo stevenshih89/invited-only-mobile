@@ -24,6 +24,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import ModalReport from '../ModalReport/ModalReport';
+import {ACCEPTED_STATUS, APPROVED_STATUS} from 'constants/common';
 
 interface ModalUserMenuProps {
   isModalVisible: boolean;
@@ -262,7 +263,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
           return {
             // @ts-ignore
             ...user,
-            status: 'approved',
+            status: APPROVED_STATUS,
           };
         }
         return user;
@@ -292,7 +293,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
           return {
             // @ts-ignore
             ...userItem,
-            status: 'accepted',
+            status: ACCEPTED_STATUS,
           };
         }
         return userItem;
@@ -316,20 +317,20 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     if (!userGuest?.status) {
       return '';
     }
-    if (uid === hostUid && userGuest?.status === 'approved') {
+    if (uid === hostUid && userGuest?.status === APPROVED_STATUS) {
       return 'Accept invitation';
     }
     if (userGuest?.status === 'invite_match') {
       return 'Approve guest';
-    } else if (userGuest?.status === 'approved') {
+    } else if (userGuest?.status === APPROVED_STATUS) {
       return 'Waiting for invitation accepted';
-    } else if (userGuest?.status === 'accepted') {
+    } else if (userGuest?.status === ACCEPTED_STATUS) {
       return 'Guest Accepted';
     }
   };
 
   const getIsDisabledButton = () => {
-    if (uid === hostUid && userGuest?.status === 'approved') {
+    if (uid === hostUid && userGuest?.status === APPROVED_STATUS) {
       return false;
     }
     if (userGuest?.status === 'invite_match') {
@@ -347,7 +348,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     //   // }, 300);
     //   return;
     // }
-    if (uid === hostUid && userGuest?.status === 'approved') {
+    if (uid === hostUid && userGuest?.status === APPROVED_STATUS) {
       handleAcceptGuestFromGuest();
       setModalVisible && setModalVisible(false);
       return;
@@ -360,7 +361,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   };
 
   const getButtonStyle = () => {
-    if (uid === hostUid && userGuest?.status === 'approved') {
+    if (uid === hostUid && userGuest?.status === APPROVED_STATUS) {
       return {
         backgroundColor: whiteColor,
         borderColor: whiteColor,
@@ -372,13 +373,13 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         borderColor: whiteColor,
       };
     }
-    if (userGuest?.status === 'approved') {
+    if (userGuest?.status === APPROVED_STATUS) {
       return {
         backgroundColor: grayScale700,
         borderColor: grayScale700,
       };
     }
-    if (userGuest?.status === 'accepted') {
+    if (userGuest?.status === ACCEPTED_STATUS) {
       return {
         backgroundColor: black1Color,
         borderColor: whiteColor,
@@ -388,12 +389,12 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   };
 
   const getButtonTitleStyle = () => {
-    if (uid === hostUid && userGuest?.status === 'approved') {
+    if (uid === hostUid && userGuest?.status === APPROVED_STATUS) {
       return {
         color: blackColor,
       };
     }
-    if (userGuest?.status === 'approved') {
+    if (userGuest?.status === APPROVED_STATUS) {
       return {
         color: whiteColor,
       };
@@ -403,7 +404,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         color: black1Color,
       };
     }
-    if (userGuest?.status === 'accepted') {
+    if (userGuest?.status === ACCEPTED_STATUS) {
       return {
         color: whiteColor,
       };
@@ -556,7 +557,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
             {userProfileItemCard}
             {/* gap */}
             <View style={{height: 24}} />
-            {(userGuest?.status === 'accepted' || userGuest?.status === 'invite_match' || userGuest?.status === 'notAccepted') &&
+            {(userGuest?.status === ACCEPTED_STATUS || userGuest?.status === 'invite_match' || userGuest?.status === 'notAccepted') &&
             uid === hostUid ? null : (
               <View style={{width: '100%'}}>
                 <TouchableOpacity
@@ -570,7 +571,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
                   <Text style={[{fontFamily: Satoshi500, fontSize: RFValue(18, 812)}, getButtonTitleStyle()]}>
                     {getUserStatusButtonText()}
                   </Text>
-                  {userGuest?.status === 'accepted' && <CheckIcon style={{marginLeft: 10}} />}
+                  {userGuest?.status === ACCEPTED_STATUS && <CheckIcon style={{marginLeft: 10}} />}
                 </TouchableOpacity>
               </View>
             )}
@@ -581,11 +582,11 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setBlockAndReportState(true)}
-              style={[styles.buttonFooter, userGuest?.status === 'accepted' && {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
+              style={[styles.buttonFooter, userGuest?.status === ACCEPTED_STATUS && {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
               <InfoIcon width={20} height={20} />
               <Text style={styles.textButton}>Block & Report</Text>
             </TouchableOpacity>
-            {userGuest?.status !== 'accepted' && (
+            {userGuest?.status !== ACCEPTED_STATUS && (
               <TouchableOpacity
                 onPress={() => setCancelInvitationState(true)}
                 style={[styles.buttonFooter, {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>

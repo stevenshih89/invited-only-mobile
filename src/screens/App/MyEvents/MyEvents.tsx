@@ -17,7 +17,7 @@ import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsC
 import ModalCancelAttending from './ModalCancelAttending';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
 import {useUser} from '../../../store/userStore';
-import {ALL, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
+import {ACCEPTED_STATUS, ALL, APPROVED_STATUS, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
@@ -317,7 +317,7 @@ const MyEvents: FC<any> = ({navigation}) => {
           return {
             // @ts-ignore
             ...userItem,
-            status: 'accepted',
+            status: ACCEPTED_STATUS,
           };
         }
         return userItem;
@@ -348,10 +348,10 @@ const MyEvents: FC<any> = ({navigation}) => {
   //     let list = activeModalEvent?.list;
   //     const uid = user?.uid;
 
-  //     changeStatus(list?.usersList, uid, 'accepted');
+  //     changeStatus(list?.usersList, uid, ACCEPTED_STATUS);
   //     // console.log('handleAcceptInvitation');
 
-  //     // console.log('accepted', list?.usersList);
+  //     // console.log(ACCEPTED_STATUS, list?.usersList);
   //     await firestore().collection('Events').doc(list?.id).update({
   //       usersList: list?.usersList,
   //     });
@@ -421,7 +421,9 @@ const MyEvents: FC<any> = ({navigation}) => {
 
       const filterData = data?.filter(obj => {
         return obj?.usersList?.some(user => {
-          return user?.uid === uid && (user?.status === 'invite_match' || user?.status === 'accepted' || user?.status === 'approved');
+          return (
+            user?.uid === uid && (user?.status === 'invite_match' || user?.status === ACCEPTED_STATUS || user?.status === APPROVED_STATUS)
+          );
         });
       });
       setEventsJoiningData(filterData);
@@ -693,9 +695,9 @@ const MyEvents: FC<any> = ({navigation}) => {
                     estimeTime={item.hour}
                     numberOfGirlsInvited={item?.female + item?.femaleFriend}
                     host={{name: item?.name, image: item?.hostImage, hostUid: item?.uid}}
-                    joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
+                    joinedPeopleCount={item?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length}
                     status={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status}
-                    isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
+                    isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === ACCEPTED_STATUS}
                     handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
                     handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
                     handleAcceptInvitation={handleAcceptInvitation}
@@ -741,9 +743,9 @@ const MyEvents: FC<any> = ({navigation}) => {
                     estimeTime={item.hour}
                     numberOfGirlsInvited={item?.female + item?.femaleFriend}
                     host={{name: item?.name, image: item?.hostImage, hostUid: item?.uid}}
-                    joinedPeopleCount={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
+                    joinedPeopleCount={item?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length}
                     status={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status}
-                    isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === 'accepted'}
+                    isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === ACCEPTED_STATUS}
                     handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
                     handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
                     handleAcceptInvitation={handleAcceptInvitation}

@@ -22,6 +22,7 @@ import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 import {formatDate} from 'helpers/formatDate';
+import {ACCEPTED_STATUS} from 'constants/common';
 
 const EventsRequest = ({item, list}: any) => {
   // console.log('item', item);
@@ -70,7 +71,7 @@ const EventsRequest = ({item, list}: any) => {
 
   const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
     const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
-    const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+    const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
     if (eventIsFull) {
       return showToast('cancel', 'Go to my events', `Event Full: ${allPeople}/${allPeople} guests invited`);
@@ -104,7 +105,7 @@ const EventsRequest = ({item, list}: any) => {
   const handleSwipeHostCardReject = async (item: any): Promise<void> => {
     try {
       const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
-      const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+      const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
       if (eventIsFull) {
         return showToast('warning', 'Go to my events', `Event Full: ${eventIsFull}/${eventIsFull} guests invited`);

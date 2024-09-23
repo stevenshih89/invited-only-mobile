@@ -19,6 +19,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {errorColor, grayScale600, lightGray10Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
 import FastImage from 'react-native-fast-image';
 import FullEvent from 'components/FullEvent';
+import {ACCEPTED_STATUS} from 'constants/common';
 
 interface MyEventsCard {
   estimeTime?: string;
@@ -72,7 +73,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
   const navigation = useAppNavigation();
 
   const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
-  const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+  const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
@@ -121,8 +122,8 @@ const MyEventsCard: FC<MyEventsCard> = props => {
   }, []);
 
   const getEventStatus = () => {
-    if (date) {
-      const adjustedDate = moment(date, 'D/M/YYYY, HH:mm:ss').add(12, 'hours');
+    if (date && estimeTime) {
+      const adjustedDate = moment(`${date}, ${estimeTime}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
       if (adjustedDate.isBefore(moment())) {
         return {
           plateTitle: 'Expired',
@@ -141,7 +142,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     };
   };
 
-  const approvedPeople = invitingPeople?.filter(i => i?.status === 'accepted');
+  const approvedPeople = invitingPeople?.filter(i => i?.status === ACCEPTED_STATUS);
 
   return (
     <>
@@ -198,7 +199,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                       return (
                         <View key={index} style={[styles.userItemWrapper, {position: 'relative', right: indexRight}]}>
                           <Image style={styles.imageFakeGirl} source={{uri: i?.userPhoto}} />
-                          {i?.status === 'accepted' ? (
+                          {i?.status === ACCEPTED_STATUS ? (
                             <CheckCircle style={styles.iconStatus} width={18} height={18} />
                           ) : (
                             <ClockWhiteFill style={styles.iconStatus} width={18} height={18} />
@@ -300,7 +301,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                   return (
                     <View key={index} style={[styles.userItemWrapper, {position: 'relative', right: indexRight}]}>
                       <Image style={styles.imageFakeGirl} source={{uri: i?.userPhoto}} />
-                      {i?.status === 'accepted' ? (
+                      {i?.status === ACCEPTED_STATUS ? (
                         <CheckCircle style={styles.iconStatus} width={18} height={18} />
                       ) : (
                         <ClockWhiteFill style={styles.iconStatus} width={18} height={18} />

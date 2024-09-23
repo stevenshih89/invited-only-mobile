@@ -49,7 +49,7 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
     const infoUserUidDoc = await firestore().collection('userInfo').doc(uid).get();
     const infoUserUidSenderDoc = await firestore().collection('userInfo').doc(uidSender).get();
 
-    if (!infoUserUidDoc.exists || !infoUserUidSenderDoc.exists || !uid || !activeEvent) {
+    if (!infoUserUidDoc.exists || !infoUserUidSenderDoc.exists || !uid) {
       return;
     }
     const dataUserUid = infoUserUidDoc.data();
@@ -68,51 +68,55 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
       });
 
       const isHost = dataUserUidSender?.accountType?.toLowerCase() === 'host';
-      if (isHost) {
-        const eventsList = await firestore().collection('Events').where('uid', '==', uidSender).get();
-        if (!eventsList.empty) {
-          const eventsListData = eventsList.docs.map(doc => doc.data());
 
-          const filteredEvents =
-            eventsListData.filter(event => {
-              if (event.usersList.some(userItem => userItem.uid === uid) || event.requestsList.some(userItem => userItem.uid === uid)) {
-                return true;
-              }
-              return false;
-            }) || [];
+      const currSenderUid = isHost ? uidSender : uid;
+      const currUid = isHost ? uid : uidSender;
 
-          for (const event of filteredEvents) {
-            const userInUsersList = event.usersList.find(userItem => userItem.uid === uid);
-            const userInRequestsList = event.requestsList.find(userItem => userItem.uid === uid);
+      const eventsList = await firestore().collection('Events').where('uid', '==', currSenderUid).get();
+      if (!eventsList.empty) {
+        const eventsListData = eventsList.docs.map(doc => doc.data());
 
-            const data = {
-              usersList: userInUsersList ? firestore.FieldValue.arrayRemove(userInUsersList) : event.usersList,
-              requestsList: userInRequestsList ? firestore.FieldValue.arrayRemove(userInRequestsList) : event.requestsList,
-            };
+        const filteredEvents =
+          eventsListData.filter(event => {
+            if (
+              event.usersList.some(userItem => userItem.uid === currUid) ||
+              event.requestsList.some(userItem => userItem.uid === currUid)
+            ) {
+              return true;
+            }
+            return false;
+          }) || [];
 
-            await firestore().collection('Events').doc(event.id).update(data);
-          }
+        for (const event of filteredEvents) {
+          const userInUsersList = event.usersList.find(userItem => userItem.uid === currUid);
+          const userInRequestsList = event.requestsList.find(userItem => userItem.uid === currUid);
+
+          const data = {
+            usersList: userInUsersList ? firestore.FieldValue.arrayRemove(userInUsersList) : event.usersList,
+            requestsList: userInRequestsList ? firestore.FieldValue.arrayRemove(userInRequestsList) : event.requestsList,
+          };
+
+          await firestore().collection('Events').doc(event.id).update(data);
         }
-        const chatsList = await firestore().collection('messages').where('uidHost', '==', uidSender).get();
-        if (!chatsList.empty) {
-          const chatsListData = chatsList.docs.map(doc => ({id: doc.id, ...doc.data()}));
-          const filteredChats =
-            chatsListData.filter(chat => {
-              if (chat.chats.some(chatItem => chatItem.uid === uid)) {
-                return true;
-              }
-              return false;
-            }) || [];
+      }
+      const chatsList = await firestore().collection('messages').where('uidHost', '==', currSenderUid).get();
+      if (!chatsList.empty) {
+        const chatsListData = chatsList.docs.map(doc => ({id: doc.id, ...doc.data()}));
+        const filteredChats =
+          chatsListData.filter(chat => {
+            if (chat.chats.some(chatItem => chatItem.uid === currUid)) {
+              return true;
+            }
+            return false;
+          }) || [];
 
-          for (const chat of filteredChats) {
-            const removedChat = chat.chats.filter(chatItem => chatItem.uid !== uid);
+        for (const chat of filteredChats) {
+          const removedChat = chat.chats.filter(chatItem => chatItem.uid !== currUid);
 
-            await firestore().collection('messages').doc(chat.id).update({
-              chats: removedChat,
-            });
-          }
+          await firestore().collection('messages').doc(chat.id).update({
+            chats: removedChat,
+          });
         }
-      } else {
       }
 
       handleAutoSwipeLeft && handleAutoSwipeLeft();

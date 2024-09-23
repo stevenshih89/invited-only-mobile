@@ -11,12 +11,12 @@ import ProfileTwoUser from 'assets/images/icons/profile-2user.svg';
 import Users from 'assets/images/icons/Users.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
-import {blackColor, lightGray8Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors.ts';
+import {blackColor, grayScale600, lightGray8Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventInfoPath} from 'constants/pathLocations';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight} from 'constants/common';
+import {ACCEPTED_STATUS, APPROVED_STATUS, screenHeight} from 'constants/common';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import firestore from '@react-native-firebase/firestore';
 import {calculateAge} from 'helpers/calculateAge';
@@ -124,9 +124,9 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
   };
 
   const isInviteMatchStatus = status === 'invite_match';
-  const isApprovedStatus = status === 'approved';
-  const isAcceptedStatus = status === 'accepted';
-  const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+  const isApprovedStatus = status === APPROVED_STATUS;
+  const isAcceptedStatus = status === ACCEPTED_STATUS;
+  const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
   useFocusEffect(
     useCallback(() => {
@@ -203,6 +203,27 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
     } else {
       setUpdateEvent(null);
     }
+  };
+
+  const getEventStatus = () => {
+    if (date && hour) {
+      const adjustedDate = moment(`${date}, ${hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+      if (adjustedDate.isBefore(moment())) {
+        return {
+          plateTitle: 'Expired',
+          plateBackgroundColor: grayScale600,
+        };
+      }
+    }
+
+    if (eventIsFull) {
+      return {plateTitle: 'Full', plateBackgroundColor: lightGreenColor};
+    }
+
+    return {
+      plateTitle: 'Active',
+      plateBackgroundColor: lightGreenColor,
+    };
   };
 
   const deleteUserFromCanceled = async () => {
@@ -306,14 +327,14 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
                     <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginLeft: 16}}>
                       <View
                         style={{
-                          backgroundColor: lightGreenColor,
+                          backgroundColor: getEventStatus().plateBackgroundColor,
                           paddingHorizontal: 6,
                           paddingVertical: 4,
                           borderRadius: 5,
                           marginRight: 10,
                         }}>
                         <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>
-                          {eventIsFull ? 'Full' : 'Active'}
+                          {getEventStatus().plateTitle}
                         </Text>
                       </View>
                       <Text style={{fontFamily: Satoshi700, fontSize: RFValue(19, 812), color: whiteColor, marginRight: 8}}>

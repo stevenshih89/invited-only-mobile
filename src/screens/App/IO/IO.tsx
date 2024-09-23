@@ -12,7 +12,7 @@ import functions from '@react-native-firebase/functions';
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
-import {screenHeight} from 'constants/common.ts';
+import {ACCEPTED_STATUS, APPROVED_STATUS, screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, paymentPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
@@ -585,7 +585,16 @@ const IO: FC = (): JSX.Element => {
           if (event?.requestsList?.find(j => j?.uid === user?.uid)) {
             return false;
           }
-          if (event?.usersList?.find(j => j?.uid === user?.uid && j?.status === 'invite_match')) {
+          if (
+            event?.usersList?.find(
+              j =>
+                j?.uid === user?.uid &&
+                (j?.status === 'invite_match' ||
+                  j?.status === APPROVED_STATUS ||
+                  j?.status === ACCEPTED_STATUS ||
+                  j?.status === 'notAccepted'),
+            )
+          ) {
             return false;
           }
           return true;

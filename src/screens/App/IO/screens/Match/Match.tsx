@@ -6,7 +6,7 @@ import MessageText from 'assets/images/icons/message-text.svg';
 import CheckboxSelected from 'assets/images/icons/checkbox-selected.svg';
 import {Outfit500, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight} from 'constants/common';
+import {APPROVED_STATUS, screenHeight} from 'constants/common';
 import {FC, useEffect} from 'react';
 import Animated, {useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay} from 'react-native-reanimated';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -41,11 +41,11 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   const textOpacity = useSharedValue(0);
   const figurePositin = useSharedValue(-screenHeight * 0.34 - 100);
   const buttonPosition = useSharedValue(-1000);
-  
+
   const userHost = useUser((i: any) => i?.user);
 
   const name = userHost?.uid === matchData?.uidHost ? matchData?.nameGuest : matchData?.nameHost;
-  
+
   const words = `${name} `?.split(' ');
   const wordTranslations = words?.map(() => useSharedValue(widthScreen));
   const nameAnimation = useSharedValue(widthScreen);
@@ -241,7 +241,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
         if (user.uid === matchData.uidGuest) {
           return {
             ...user,
-            status: 'approved',
+            status: APPROVED_STATUS,
           };
         }
         return user;

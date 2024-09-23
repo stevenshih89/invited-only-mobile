@@ -17,8 +17,8 @@ import {
   paymentPath,
   settingsPath,
 } from 'constants/pathLocations';
-import {blackColor, grayColor, lightGray2Color, lightGray5Color, orangeColor, transparent60Color, whiteColor} from 'constants/colors.ts';
-import {screenHeight, THIS_WEEKEND, ALL, THIS_MONTH} from 'constants/common.ts';
+import {blackColor, lightGray2Color, lightGray5Color, orangeColor, transparent60Color, whiteColor} from 'constants/colors.ts';
+import {screenHeight, THIS_WEEKEND, ALL, THIS_MONTH, ACCEPTED_STATUS} from 'constants/common.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
 import {useChat} from '../../store/chatStore';
@@ -31,7 +31,6 @@ import LogoPrimary from 'assets/images/auth/logo-primary.svg';
 import Logo from 'assets/images/icons/logo.svg';
 import NotificationIcon from 'assets/images/icons/notification.svg';
 import AddIcon from 'assets/images/icons/add.svg';
-import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 import SettingsIcon from 'assets/images/icons/settings.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import CalendarCheckIcon from 'assets/images/icons/calendar-check.svg';
@@ -46,10 +45,10 @@ import JIcon from 'assets/images/icons/J.svg';
 import EventBG from 'assets/images/app/card-event-bg.png';
 import {EventContext} from 'contexts/EventContext';
 import {Satoshi500} from 'constants/fonts';
-import {useMyEvents} from '../../store/myEvents';
 import {useFocusEffect} from '@react-navigation/native';
 import {onUserProfileChangeSubscription} from 'helpers/userProfile';
 import {UserInfo} from 'src/types/userInfo';
+import moment from 'moment';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -280,21 +279,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 
   const isHost = userInfo?.isHost;
 
-  const isEventFinished = (eventDate: string) => {
-    const parts = eventDate.split('.');
-
-    const day = parseInt(parts[0]);
-    const month = parseInt(parts[1]) - 1;
-    const year = parseInt(parts[2]);
-
-    const inputDate = new Date(year, month, day);
-
-    const currentDate = new Date();
-
-    if (inputDate < currentDate) {
-      return true;
-    } else {
-      return false;
+  const isEventFinished = (eventDate: string, eventHour: string) => {
+    if (eventDate && eventHour) {
+      const adjustedDate = moment(`${eventDate}, ${eventHour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+      if (adjustedDate.isBefore(moment())) {
+        return true;
+      } else {
+        return false;
+      }
     }
   };
 
@@ -337,9 +329,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 {myEvents &&
                   myEvents.map((event: any, index: number) => {
                     const isActive = activeEvent?.id === event.id;
-                    const eventIsFinished = isEventFinished(event?.date);
+                    const eventIsFinished = isEventFinished(event?.date, event?.hour);
                     const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
-                    const eventIsFull = event?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+                    const eventIsFull = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
                     return (
                       <TouchableOpacity
@@ -544,9 +536,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
             </TouchableOpacity> */}
             {myEvents?.map((event: any, index: number) => {
               const isActive = activeEvent?.id === event.id;
-              const eventIsFinished = isEventFinished(event?.date);
+              const eventIsFinished = isEventFinished(event?.date, event?.hour);
               const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
-              const eventIsFull = event?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+              const eventIsFull = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
               return (
                 <TouchableOpacity
@@ -640,7 +632,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   renderItem={({item}) => (
                     <Item
                       activeEvent={item.id}
-                      filledTo={item?.usersList?.filter(i => i?.status === 'accepted')?.length}
+                      filledTo={item?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length}
                       allPeople={item.female + item.male}
                       image={item.photos[0]?.image}
                       girlInvitation={item.male + item.maleFriend}

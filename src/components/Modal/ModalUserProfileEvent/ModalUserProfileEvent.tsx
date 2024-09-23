@@ -24,6 +24,7 @@ import {calculateAge} from 'helpers/calculateAge.ts';
 import {useFocusEffect} from '@react-navigation/native';
 import {sendNotification} from 'helpers/fcmHelper.ts';
 import ModalFullEvent from '../ModalFullEvent/index.tsx';
+import {ACCEPTED_STATUS, APPROVED_STATUS} from 'constants/common.ts';
 
 interface ModalUserProfileEventProps {
   isModalVisible?: boolean;
@@ -249,7 +250,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       if (chat.uid === uid) {
         return {
           ...chat,
-          invitedStatus: 'approved',
+          invitedStatus: APPROVED_STATUS,
         };
       }
       return chat;
@@ -269,7 +270,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       if (user.uid === uid) {
         return {
           ...user,
-          status: 'approved',
+          status: APPROVED_STATUS,
         };
       }
       return user;
@@ -302,9 +303,9 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     }
     if (userGuest?.status === 'invite_match') {
       return 'Approve guest';
-    } else if (userGuest?.status === 'approved') {
+    } else if (userGuest?.status === APPROVED_STATUS) {
       return 'Waiting for invitation accepted';
-    } else if (userGuest?.status === 'accepted') {
+    } else if (userGuest?.status === ACCEPTED_STATUS) {
       return 'Guest Accepted';
     }
   };
@@ -327,10 +328,10 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     }
     if (userGuest?.status === 'invite_match') {
       handleApproveGuestFromHost();
-      const newArray = usersList.map((i: any) => (i.uid === uid ? {...i, status: 'approved'} : i));
+      const newArray = usersList.map((i: any) => (i.uid === uid ? {...i, status: APPROVED_STATUS} : i));
 
       setUsersListsData && setUsersListsData(newArray);
-      setUserGuest({...userGuest, status: 'approved'});
+      setUserGuest({...userGuest, status: APPROVED_STATUS});
       setModalVisible && setModalVisible(false);
     }
   };
@@ -342,13 +343,13 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         borderColor: whiteColor,
       };
     }
-    if (userGuest?.status === 'approved') {
+    if (userGuest?.status === APPROVED_STATUS) {
       return {
         backgroundColor: grayScale700,
         borderColor: grayScale700,
       };
     }
-    if (userGuest?.status === 'accepted') {
+    if (userGuest?.status === ACCEPTED_STATUS) {
       return {
         backgroundColor: black1Color,
         borderColor: whiteColor,
@@ -358,7 +359,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   };
 
   const getButtonTitleStyle = () => {
-    if (userGuest?.status === 'approved') {
+    if (userGuest?.status === APPROVED_STATUS) {
       return {
         color: whiteColor,
       };
@@ -368,7 +369,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         color: black1Color,
       };
     }
-    if (userGuest?.status === 'accepted') {
+    if (userGuest?.status === ACCEPTED_STATUS) {
       return {
         color: whiteColor,
       };
@@ -434,7 +435,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
                 <Text style={[{fontFamily: Satoshi500, fontSize: RFValue(18, 812)}, getButtonTitleStyle()]}>
                   {getUserStatusButtonText()}
                 </Text>
-                {userGuest?.status === 'accepted' && <CheckWhite style={{marginLeft: 10}} />}
+                {userGuest?.status === ACCEPTED_STATUS && <CheckWhite style={{marginLeft: 10}} />}
               </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={() => goToProfileView()} style={[styles.buttonFooter, {borderTopColor: 'transparent'}]}>

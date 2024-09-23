@@ -23,6 +23,7 @@ import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
 import {getFontSize} from 'helpers/getFontSize';
+import {ACCEPTED_STATUS} from 'constants/common';
 
 const ItemRequestHost = ({
   item,
@@ -86,7 +87,7 @@ const ItemRequestHost = ({
       return;
     }
     const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
-    const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+    const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
     if (eventIsFull) {
       return showToast('cancel', 'Go to my events', `Event Full: ${allPeople}/${allPeople} guests invited`);
@@ -148,7 +149,7 @@ const ItemRequestHost = ({
   const handleSwipeHostCardReject = async (item: any): Promise<void> => {
     try {
       const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
-      const eventIsFull = list?.usersList?.filter(i => i?.status === 'accepted')?.length === allPeople;
+      const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
       if (eventIsFull) {
         return showToast('warning', 'Go to my events', `Event Full: ${eventIsFull}/${eventIsFull} guests invited`);
