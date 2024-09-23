@@ -44,7 +44,7 @@ import HostPremium from 'components/Modal/ModalHostPremium/HostPremium';
 import {useRoute} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast';
-import { useSubscriptions } from 'src/store/subscriptionsStore';
+import {useSubscriptions} from 'src/store/subscriptionsStore';
 import ModalUpgradeSuccessful from 'components/Modal/ModalUpgradeSuccessful/ModalUpgradeSuccessful';
 import {getSubscriptions} from 'src/api/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -52,7 +52,7 @@ import {openLink} from 'helpers/links';
 
 interface PlanListItem {
   id: number;
-  identifier: string;
+  identifier?: string;
   title: string;
   duration: number;
   durationName: string;
@@ -131,7 +131,6 @@ const Payment: FC = (): JSX.Element => {
   const [plansList, setPlansList] = useState<PlanListItem[]>([
     {
       id: 0,
-      identifier: 'io_59_1w',
       title: 'FOR TRAVELLERS',
       duration: 1,
       durationName: 'week',
@@ -142,7 +141,6 @@ const Payment: FC = (): JSX.Element => {
     },
     {
       id: 1,
-      identifier: 'io_25_wk',
       title: 'SECURE YOUR SPOT',
       duration: 1,
       durationName: 'year',
@@ -153,7 +151,6 @@ const Payment: FC = (): JSX.Element => {
     },
     {
       id: 2,
-      identifier: 'io_29_3m',
       title: 'EARLY ACCESS',
       duration: 3,
       durationName: 'months',
@@ -163,13 +160,15 @@ const Payment: FC = (): JSX.Element => {
       weeksInPeriod: 13, // trust me this is true
     },
   ]);
+  console.log('planList', plansList);
+
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
   const [loaderVisible, setLoaderVisible] = useState(false);
   const [successfulPay, setSuccessfulPay] = useState(false);
   const [visibleHostPremium, setVsibleHostPremium] = useState(false);
   const [visibleUpgradeSuccessful, setVsibleUpgradeSuccessful] = useState(false);
 
-  const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions)
+  const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions);
 
   const updateUser = async () => {
     const user = auth().currentUser;
@@ -293,98 +292,96 @@ const Payment: FC = (): JSX.Element => {
   };
 
   const renderItem = ({item}: {item: PlanListItem}) => {
-    
-    const res = currentSubscriptions.activeSubscriptions.find((i: any) => i === item.identifier)
-    
-    if(!res) {
+    const isActiveSubscription = currentSubscriptions.activeSubscriptions.includes(item.identifier);
 
+    if (!isActiveSubscription) {
       let isActive = activePayment.id === item.id;
 
-      if(currentSubscriptions.activeSubscriptions.length > 1) {
-        isActive = true
+      if (currentSubscriptions.activeSubscriptions.length > 1) {
+        isActive = true;
       }
 
       const colors = isActive ? ['#977B4A', '#E5D291', '#A28453'] : [lightGray2Color, lightGray2Color, lightGray2Color];
 
-    return (
-      <TouchableOpacity
-        key={item.id}
-        disabled={isActive}
-        style={{
-          position: 'relative', 
-          marginTop: isActive ? 0 : 0, 
-          flex: 1, 
-          marginHorizontal: 3
-        }}
-        activeOpacity={0.7}
-        onPress={() => setActivePayment(item)}>
-        <LinearGradient
-          colors={colors}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
+      return (
+        <TouchableOpacity
+          key={item.id}
+          disabled={isActive}
           style={{
-            marginTop: 10,
-            borderRadius: 8,
-            borderWidth: 2,
-            borderStyle: 'solid',
-            borderColor: isActive ? whiteColor : 'transparent',
-            width: '100%',
-            // width: screenWidth / 3 - 25,
-            height: 180,
-            justifyContent: 'center',
-            paddingTop: isActive ? 26 : 20,
-            paddingBottom: isActive ? 34 : 20,
-            paddingHorizontal: 6,
-          }}>
-          <View style={{position: 'absolute', top: 10, right: 0, left: 0, zIndex: 10}}>
+            position: 'relative',
+            marginTop: isActive ? 0 : 0,
+            flex: 1,
+            marginHorizontal: 3,
+          }}
+          activeOpacity={0.7}
+          onPress={() => setActivePayment(item)}>
+          <LinearGradient
+            colors={colors}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            style={{
+              marginTop: 10,
+              borderRadius: 8,
+              borderWidth: 2,
+              borderStyle: 'solid',
+              borderColor: isActive ? whiteColor : 'transparent',
+              width: '100%',
+              // width: screenWidth / 3 - 25,
+              height: 180,
+              justifyContent: 'center',
+              paddingTop: isActive ? 26 : 20,
+              paddingBottom: isActive ? 34 : 20,
+              paddingHorizontal: 6,
+            }}>
+            <View style={{position: 'absolute', top: 10, right: 0, left: 0, zIndex: 10}}>
+              <View
+                style={{
+                  alignSelf: 'center',
+                  borderWidth: 2,
+                  borderStyle: 'solid',
+                  borderColor: whiteColor,
+                  borderRadius: 7,
+                  paddingHorizontal: 6,
+                  paddingVertical: 4,
+                  backgroundColor: blackColor,
+                }}>
+                <Text style={{fontFamily: Satoshi700, fontSize: RFValue(8, 812), color: whiteColor}}>{item.title}</Text>
+              </View>
+            </View>
+            <Text
+              style={{
+                fontFamily: Satoshi700,
+                fontSize: isActive ? RFValue(38, 812) : RFValue(26, 812),
+                color: isActive ? blackColor : whiteColor,
+                textAlign: 'center',
+              }}>
+              {item.duration}
+            </Text>
+            <Text
+              style={{
+                fontFamily: Satoshi500,
+                fontSize: RFValue(12, 812),
+                color: isActive ? blackColor : whiteColor,
+                textAlign: 'center',
+                marginTop: 6,
+              }}>
+              {item.description}
+            </Text>
             <View
               style={{
-                alignSelf: 'center',
-                borderWidth: 2,
-                borderStyle: 'solid',
-                borderColor: whiteColor,
-                borderRadius: 7,
-                paddingHorizontal: 6,
-                paddingVertical: 4,
-                backgroundColor: blackColor,
-              }}>
-              <Text style={{fontFamily: Satoshi700, fontSize: RFValue(8, 812), color: whiteColor}}>{item.title}</Text>
-            </View>
-          </View>
-          <Text
-            style={{
-              fontFamily: Satoshi700,
-              fontSize: isActive ? RFValue(38, 812) : RFValue(26, 812),
-              color: isActive ? blackColor : whiteColor,
-              textAlign: 'center',
-            }}>
-            {item.duration}
-          </Text>
-          <Text
-            style={{
-              fontFamily: Satoshi500,
-              fontSize: RFValue(12, 812),
-              color: isActive ? blackColor : whiteColor,
-              textAlign: 'center',
-              marginTop: 6,
-            }}>
-            {item.description}
-          </Text>
-          <View
-            style={{
-              width: '100%',
-              height: 1,
-              backgroundColor: isActive ? transparent60Color : transparentWhite56Color,
-              marginVertical: 9,
-            }}
-          />
-          <Text
-            style={{fontFamily: Satoshi700, fontSize: RFValue(16, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
-            {item.pricePerDuration}
-          </Text>
-        </LinearGradient>
-      </TouchableOpacity>
-    );
+                width: '100%',
+                height: 1,
+                backgroundColor: isActive ? transparent60Color : transparentWhite56Color,
+                marginVertical: 9,
+              }}
+            />
+            <Text
+              style={{fontFamily: Satoshi700, fontSize: RFValue(16, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
+              {item.pricePerDuration}
+            </Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      );
     }
   };
 
@@ -400,8 +397,27 @@ const Payment: FC = (): JSX.Element => {
       return;
     }
 
+    const getIdentifier = (offer: any) => {
+      let res;
+      switch (offer.identifier) {
+        case '$rc_weekly':
+          res = 'io_59_1w';
+          break;
+        case '$rc_annual':
+          res = 'io_25_wk';
+          break;
+        case '$rc_three_month':
+          res = 'io_29_3m';
+          break;
+        default:
+          '';
+      }
+      return res;
+    };
+
     const products = subscriptions.map((offer, idx) => ({
       id: idx,
+      identifier: getIdentifier(offer),
       title: plansList[idx].title,
       duration: plansList[idx].duration,
       durationName: plansList[idx].durationName,
@@ -419,7 +435,7 @@ const Payment: FC = (): JSX.Element => {
   return (
     <SafeAreaView style={{backgroundColor: black1Color}}>
       <Loader isVisible={loaderVisible} successfulPay={successfulPay} />
-      <ModalUpgradeSuccessful isVisible={visibleUpgradeSuccessful}/>
+      <ModalUpgradeSuccessful isVisible={visibleUpgradeSuccessful} />
       <HostPremium isVisible={visibleHostPremium} setVsibleHostPremium={setVsibleHostPremium} screen={checkNavig?.params?.screen} />
       <ScrollView>
         <View style={styles.container}>

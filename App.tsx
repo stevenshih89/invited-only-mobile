@@ -20,7 +20,7 @@ const App: FC = (): JSX.Element => {
       const activeSubscriptions = customerInfo.activeSubscriptions;
       
       if (activeSubscriptions.length > 0) {
-        return activeSubscriptions[0]; 
+        return customerInfo; 
       } else {
         return {activeSubscriptions: []};
       }
@@ -57,3 +57,4 @@ const App: FC = (): JSX.Element => {
 };
 
 export default App;
+

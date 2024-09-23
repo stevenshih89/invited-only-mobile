@@ -19,8 +19,9 @@ const ManageSubscription: FC = () => {
   const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions)
 
   const lastSubscriptionName = currentSubscriptions.activeSubscriptions.at(-1)
-  const lastSubscriptionData = currentSubscriptions.entitlements.all[lastSubscriptionName];
-
+  const lastSubscriptionData = currentSubscriptions.latestExpirationDate;
+  const purchaseDates = currentSubscriptions.allPurchaseDates[lastSubscriptionName]
+  
   useEffect(() => {
     switch (lastSubscriptionName) {
       case 'io_59_1w':
@@ -64,8 +65,8 @@ const ManageSubscription: FC = () => {
           {currentSubscriptions.activeSubscriptions.length && (
             <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi400, textAlign: 'center'}}>
               {`Your ${subscriptionName} subscription began on ${formateDateFun(
-                lastSubscriptionData.purchaseDate,
-              )}. It will renew on ${formateDateFun(lastSubscriptionData.expiresDate)}.`}
+                purchaseDates,
+              )}. It will renew on ${formateDateFun(lastSubscriptionData)}.`}
             </Text>
           )}
           <Text style={{color: whiteColor, marginVertical: 24, fontSize: RFValue(16, 812), fontFamily: Satoshi400, textAlign: 'center'}}>
