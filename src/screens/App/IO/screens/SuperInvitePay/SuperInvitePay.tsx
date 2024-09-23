@@ -57,7 +57,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
           .update({
             superInvites: superInvitesCurrent + superInvites,
           });
-        handleNext();
+        handleNext(superInvitesCurrent + superInvites);
       } catch (error: any) {
         // console.log('error updateSuperInvites', error);
       }
@@ -86,13 +86,13 @@ const SuperInvitePay: FC = (): JSX.Element => {
   ]);
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
 
-  const handleNext = async () => {
+  const handleNext = async (superInvites: number) => {
     const userId = auth().currentUser?.uid;
     navigation.navigate(IOPath as never);
     const userInfoDoc = await firestore().collection('userInfo').doc(userId).get();
     showToast(
       'inviteMatch',
-      `You have ${userInfoDoc?.data()?.superInvites} super ${userInfoDoc?.data()?.accountType === 'host' ? 'Invites' : 'Joins'}`,
+      `You have ${superInvites} super ${userInfoDoc?.data()?.accountType === 'host' ? 'Invites' : 'Joins'}`,
       'Let`s start swiping!',
       {ownerPhoto: userInfoDoc?.data()?.photos[0].image, status: 'SUCCESSFUL'},
     );
