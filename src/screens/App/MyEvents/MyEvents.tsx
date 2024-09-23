@@ -78,6 +78,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
   const [userInfo, setUserInfo] = useState<any>({});
+  const [hostInfo, setHostInfo] = useState<any>({});
 
   const {accountConfirmed} = useUserProfileChangeSubscription();
   useEffect(() => {
@@ -265,8 +266,23 @@ const MyEvents: FC<any> = ({navigation}) => {
     }, []),
   );
 
+  const fetchHostInfo = async (hostUid: string) => {
+    try {
+      const hostDoc = await firestore().collection('userInfo').doc(hostUid).get();
+      if (hostDoc.exists) {
+        setHostInfo(hostDoc.data());
+      }
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    if (activeModalEvent?.host?.hostUid) {
+      fetchHostInfo(activeModalEvent.host.hostUid);
+    }
+  }, [activeModalEvent]);
+
   const handleOpenCancelAttendingModal = (
-    eventInfo: {image: string; textCityName: string; date: string; numberOfGirlsInvited: string},
+    eventInfo: {list: any; host: any; image: string; textCityName: string; date: string; numberOfGirlsInvited: string},
     userInfo,
   ) => {
     setActiveModalEvent(eventInfo);
@@ -276,6 +292,8 @@ const MyEvents: FC<any> = ({navigation}) => {
 
   const handleOpenAcceptInvitationModal = (
     eventInfo: {
+      list: any;
+      host: any;
       image: string;
       textCityName: string;
       date: string;
@@ -502,7 +520,7 @@ const MyEvents: FC<any> = ({navigation}) => {
             </TouchableOpacity> */}
           </View>
         ) : (
-          <View style={{marginVertical: screenHeight / 50, height: 77, flexDirection: 'row'}}>
+          <View style={{marginVertical: screenHeight / 50, height: screenHeight / 9, flexDirection: 'row'}}>
             <TouchableOpacity
               style={styles.eventButton}
               activeOpacity={0.7}
@@ -764,6 +782,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         onClose={() => setIsVisibleCancelAttendingModal(false)}
         eventInfo={activeModalEvent}
         userInfo={activeUserInfo}
+        hostInfo={hostInfo}
       />
       <ModalAcceptInvitation
         handleRejectInvitation={handleRejectInvitation}
@@ -772,6 +791,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         onClose={() => setIsVisibleAcceptInvitationModal(false)}
         userInfo={activeUserInfo}
         eventInfo={activeModalEvent}
+        hostInfo={hostInfo}
       />
       {!userInfo?.accountConfirmed && !loading && (
         <ModalLockAccount

@@ -1,6 +1,14 @@
 import {ImageBackground, Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
-import {blackColor, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
+import {
+  blackColor,
+  lightGreenColor,
+  transparent10Color,
+  transparent60Color,
+  transparent80Color,
+  transparentGray90Color,
+  whiteColor,
+} from 'constants/colors';
 import CalendarBlank from 'assets/images/icons/CalendarBlank.svg';
 import Users from 'assets/images/icons/Users.svg';
 import UserIcon from 'assets/images/icons/user.svg';
@@ -23,10 +31,13 @@ const ModalAcceptInvitation: FC<{
   onClose: () => void;
   handleAcceptInvitation: () => void;
   handleRejectInvitation: () => void;
-  eventInfo: {host: any; id: number; image: string; textCityName: string; numberOfGirlsInvited: number; date: string};
+  eventInfo: {list: any; host: any; id: number; image: string; textCityName: string; numberOfGirlsInvited: number; date: string};
   userInfo: any;
-}> = ({isVisible, onClose, eventInfo, handleAcceptInvitation, handleRejectInvitation, userInfo}) => {
+  hostInfo: any;
+}> = ({isVisible, onClose, eventInfo, handleAcceptInvitation, handleRejectInvitation, hostInfo}) => {
   const navigation = useNavigation();
+  const approvedCount = eventInfo?.list?.usersList.filter((i: {status: string}) => i?.status === 'accepted')?.length;
+  const totalGuests = eventInfo?.list?.female + eventInfo?.list?.male;
 
   return (
     <Modal
@@ -46,7 +57,7 @@ const ModalAcceptInvitation: FC<{
       swipeDirection={['down']}>
       <View
         style={{
-          backgroundColor: blackColor,
+          backgroundColor: transparentGray90Color,
           borderTopLeftRadius: 30,
           borderTopRightRadius: 30,
           paddingBottom: 40,
@@ -57,7 +68,7 @@ const ModalAcceptInvitation: FC<{
         <ImageBackground
           source={{uri: eventInfo?.image}}
           resizeMode="cover"
-          style={{height: screenHeight / 5, paddingTop: screenHeight / 100}}
+          style={{height: screenHeight / 4, paddingTop: screenHeight / 100}}
           borderRadius={20}>
           <TouchableOpacity
             style={{
@@ -67,8 +78,8 @@ const ModalAcceptInvitation: FC<{
               alignItems: 'center',
               justifyContent: 'space-between',
               marginHorizontal: 14,
-              paddingVertical: 6,
-              paddingHorizontal: 12,
+              paddingHorizontal: 14,
+              paddingVertical: 10,
             }}
             activeOpacity={0.7}
             onPress={() =>
@@ -79,134 +90,147 @@ const ModalAcceptInvitation: FC<{
             }>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
               <View style={{flexDirection: 'row'}}>
-              {eventInfo?.host?.image && <Image style={{borderRadius: 100, width: 40, height: 40}} source={{uri: eventInfo?.host.image}} />}
-                <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 6}}>
-                  {userInfo?.accountType && (
-                    <View
-                      style={{
-                        borderColor: whiteColor,
-                        borderWidth: 1,
-                        borderStyle: 'solid',
-                        borderRadius: 4,
-                        paddingHorizontal: 6,
-                        paddingVertical: 2,
-                        backgroundColor: blackColor
-                      }}>
-                      <Text style={{textTransform: 'capitalize', color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(10, 812)}}>
-                        {userInfo?.accountType}
-                      </Text>
-                    </View>
-                  )}
-                  {userInfo?.premium && (
-                    <LinearGradient
-                    colors={['#977B4A', '#E5D291', '#A28453']}
-                    style={{
-                      marginLeft: 5,
-                      borderRadius: 4,
-                      paddingHorizontal: 12,
-                      paddingVertical: 2,
-                      backgroundColor: blackColor,
-                    }}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0}}>
-                    {true && (
-                      <Text
+                {eventInfo?.host?.image && (
+                  <Image style={{borderRadius: 100, width: 40, height: 40}} source={{uri: eventInfo?.host.image}} />
+                )}
+                <View style={{gap: 4, marginLeft: 10}}>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    {hostInfo?.accountType && (
+                      <View
                         style={{
-                          color: blackColor,
-                          fontSize: RFValue(10, 812),
-                          fontFamily: Satoshi400,
-                          fontWeight: 'bold',
+                          borderColor: whiteColor,
+                          borderWidth: 1,
+                          borderStyle: 'solid',
+                          borderRadius: 4,
+                          paddingHorizontal: 6,
+                          paddingVertical: 2,
+                          backgroundColor: blackColor,
                         }}>
-                        Premium
-                      </Text>
+                        <Text style={{textTransform: 'capitalize', color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(10, 812)}}>
+                          {hostInfo?.accountType}
+                        </Text>
+                      </View>
                     )}
-                  </LinearGradient>
-                  )}
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 6}}>
-                  <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>
-                    {userInfo?.name}
-                    {userInfo?.date && `, ${calculateAge(userInfo.date)}`}
-                  </Text>
-                  {userInfo?.accountConfirmed && <CheckStarIcon width={12} height={12} style={{marginLeft: 4}} />}
+                    {hostInfo?.accountPremium && (
+                      <LinearGradient
+                        colors={['#977B4A', '#E5D291', '#A28453']}
+                        style={{
+                          marginLeft: 5,
+                          borderRadius: 4,
+                          paddingHorizontal: 12,
+                          paddingVertical: 3,
+                          backgroundColor: blackColor,
+                        }}
+                        start={{x: 0, y: 0}}
+                        end={{x: 1, y: 0}}>
+                        {true && (
+                          <Text
+                            style={{
+                              color: blackColor,
+                              fontSize: RFValue(10, 812),
+                              fontFamily: Satoshi400,
+                              fontWeight: 'bold',
+                            }}>
+                            Premium
+                          </Text>
+                        )}
+                      </LinearGradient>
+                    )}
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={{fontFamily: Satoshi700, fontSize: RFValue(20, 812), color: whiteColor}}>
+                      {hostInfo?.name}
+                      {hostInfo?.date && `, ${calculateAge(hostInfo.date)}`}
+                    </Text>
+                    {hostInfo?.accountConfirmed && <CheckStarIcon width={15} height={15} style={{marginLeft: 8}} />}
+                  </View>
                 </View>
               </View>
               <ArrowRightIcon />
             </View>
           </TouchableOpacity>
           <View style={{marginTop: 'auto'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginLeft: 16}}>
-              <View style={{backgroundColor: lightGreenColor, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 5, marginRight: 10}}>
-                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>Active</Text>
-              </View>
-              <Text style={{fontFamily: Satoshi700, fontSize: RFValue(19, 812), color: whiteColor, marginRight: 8}}>
-                {eventInfo?.placeName}
-              </Text>
-              {userInfo?.accountConfirmed && <CheckStarIcon />}
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: screenHeight / 70, marginBottom: 10}}>
-              <View
-                style={{
-                  backgroundColor: transparent60Color,
-                  borderRadius: 50,
-                  paddingVertical: 8,
-                  paddingHorizontal: 12,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginRight: 2,
-                }}>
-                <UserIcon width={12} height={12} />
-                <Text
-                  style={{
-                    color: whiteColor,
-                    fontFamily: Satoshi400,
-                    fontSize: RFValue(10, 812),
-                    marginLeft: 6,
-                  }}>
-                  {eventInfo?.numberOfGirlsInvited} x Women invitation
+            <LinearGradient
+              colors={[transparent10Color, transparent60Color, transparent80Color]}
+              start={{x: 0, y: 0}}
+              end={{x: 0, y: 1}}
+              style={{borderTopRightRadius: 20, borderTopLeftRadius: 20}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginLeft: 16, marginTop: 30}}>
+                <View
+                  style={{backgroundColor: lightGreenColor, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 5, marginRight: 10}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>Active</Text>
+                </View>
+                <Text style={{fontFamily: Satoshi700, fontSize: RFValue(20, 812), color: whiteColor, marginRight: 8}}>
+                  {eventInfo?.host.name}
                 </Text>
+                {hostInfo?.accountConfirmed && <CheckStarIcon />}
               </View>
-              <View
-                style={{
-                  backgroundColor: transparent60Color,
-                  borderRadius: 50,
-                  paddingVertical: 8,
-                  paddingHorizontal: 12,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <CalendarBlank width={12} height={12} />
-                <Text
-                  style={{
-                    color: whiteColor,
-                    fontFamily: Satoshi400,
-                    fontSize: RFValue(10, 812),
-                    marginLeft: 6,
-                  }}>
-                  {moment(`${eventInfo?.date}`, 'D/M/YYYY, HH:mm:ss').format('DD MMMM YYYY')}
-                </Text>
+              <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: screenHeight / 70, marginBottom: 10}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10}}>
+                  <View
+                    style={{
+                      backgroundColor: transparent60Color,
+                      borderRadius: 50,
+                      paddingVertical: 8,
+                      paddingHorizontal: 12,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginRight: 2,
+                    }}>
+                    <UserIcon width={12} height={12} />
+                    <Text
+                      style={{
+                        color: whiteColor,
+                        fontFamily: Satoshi400,
+                        fontSize: RFValue(10, 812),
+                        marginLeft: 6,
+                      }}>
+                      {eventInfo?.numberOfGirlsInvited} x Guest invitation
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: transparent60Color,
+                      borderRadius: 50,
+                      paddingVertical: 8,
+                      paddingHorizontal: 12,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <CalendarBlank width={12} height={12} />
+                    <Text
+                      style={{
+                        color: whiteColor,
+                        fontFamily: Satoshi400,
+                        fontSize: RFValue(10, 812),
+                        marginLeft: 6,
+                      }}>
+                      {moment(`${eventInfo?.date}`, 'D/M/YYYY, HH:mm:ss').format('DD MMMM YYYY')}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: transparent60Color,
+                      borderRadius: 50,
+                      paddingVertical: 8,
+                      paddingHorizontal: 12,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <Users />
+                    <Text
+                      style={{
+                        color: whiteColor,
+                        fontFamily: Satoshi400,
+                        fontSize: RFValue(10, 812),
+                        marginLeft: 6,
+                      }}>
+                      {approvedCount}/{totalGuests}
+                    </Text>
+                  </View>
+                </View>
               </View>
-              <View
-                style={{
-                  backgroundColor: transparent60Color,
-                  borderRadius: 50,
-                  paddingVertical: 8,
-                  paddingHorizontal: 12,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <Users />
-                <Text
-                  style={{
-                    color: whiteColor,
-                    fontFamily: Satoshi400,
-                    fontSize: RFValue(10, 812),
-                    marginLeft: 6,
-                  }}>
-                  {eventInfo?.joinedPeopleCount}/{eventInfo?.allPeople}
-                </Text>
-              </View>
-            </View>
+            </LinearGradient>
           </View>
         </ImageBackground>
         <Text
@@ -217,7 +241,7 @@ const ModalAcceptInvitation: FC<{
             marginVertical: 20,
             textAlign: 'center',
           }}>
-          {`${eventInfo?.host.name} approved you as a guest!`}
+          {`${hostInfo?.name} approved you as a guest!`}
         </Text>
         <Button title="Accept Invitation" onPress={handleAcceptInvitation} />
         <Button buttonContatinerStyle={{marginTop: 14}} title="Reject Invitation" variant="transparent" onPress={handleRejectInvitation} />

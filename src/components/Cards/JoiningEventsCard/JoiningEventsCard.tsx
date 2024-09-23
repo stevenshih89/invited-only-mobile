@@ -49,22 +49,28 @@ interface JoiningEventsCardProps {
   isAcceptedInvitation: boolean;
   handleAcceptInvitation: any;
   handleGetEventsIJoining: any;
-  handleOpenCancelAttendingModal: (eventInfo: {
-    list: any;
-    host: any;
-    image: string;
-    textCityName: string;
-    date: string;
-    numberOfGirlsInvited: string;
-  }) => void;
-  handleOpenAcceptInvitationModal: (eventInfo: {
-    list: any;
-    host: any;
-    image: string;
-    textCityName: string;
-    date: string;
-    numberOfGirlsInvited: string;
-  }) => void;
+  handleOpenCancelAttendingModal: (
+    eventInfo: {
+      list: any;
+      host: any;
+      image: string;
+      textCityName: string;
+      date: string;
+      numberOfGirlsInvited: string;
+    },
+    userInfo: any,
+  ) => void;
+  handleOpenAcceptInvitationModal: (
+    eventInfo: {
+      list: any;
+      host: any;
+      image: string;
+      textCityName: string;
+      date: string;
+      numberOfGirlsInvited: string;
+    },
+    userInfo: any,
+  ) => void;
 }
 
 const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
@@ -310,6 +316,20 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
                                 {userInfo.accountType}
                               </Text>
                             </View>
+                          )}
+                          {userInfo?.accountPremium && (
+                            <LinearGradient
+                              colors={['#977B4A', '#E5D291', '#A28453']}
+                              style={{
+                                marginLeft: 6,
+                                borderRadius: 4,
+                                paddingHorizontal: 6,
+                                paddingVertical: 3,
+                              }}
+                              start={{x: 0, y: 0}}
+                              end={{x: 1, y: 0}}>
+                              <Text style={{color: blackColor, fontSize: RFValue(9, 812), fontFamily: Satoshi700}}>Premium</Text>
+                            </LinearGradient>
                           )}
                         </View>
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
