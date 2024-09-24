@@ -21,7 +21,7 @@ import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import FastImage from 'react-native-fast-image';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
-import { INVITE_MATCH_STATUS } from 'constants/common';
+import {INVITE_MATCH_STATUS} from 'constants/common';
 
 const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: any) => {
   const [hostInfo, setHostInfo] = useState([]);
@@ -269,31 +269,32 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
               }}
               resizeMode={FastImage.resizeMode.cover}>
               <View style={[styles.itemContentContainer, {justifyContent: item[0]?.isSuperInvite ? 'space-between' : 'flex-end'}]}>
-                {item[0]?.isSuperInvite && (
-                  <View style={{alignItems: 'flex-start'}}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        backgroundColor: whiteColor,
-                        borderRadius: 5,
-                        paddingHorizontal: 8,
-                        paddingVertical: 4,
-                        marginBottom: 'auto',
-                        marginTop: 10,
-                        marginHorizontal: 6,
-                      }}>
-                      <FlashFillBlack />
-                      <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>Super wants to join you</Text>
-                    </View>
-                  </View>
-                )}
                 <LinearGradient
                   colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.8)', 'rgba(0, 0, 0, 0.8)']}
                   style={styles.linearGradient}
                   start={{x: 0, y: 0}}
                   end={{x: 0, y: 1}}
                   locations={[0.3, 0.6, 1]}>
+                  {item[0]?.isSuperInvite && (
+                    <View style={{alignItems: 'flex-start'}}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          backgroundColor: whiteColor,
+                          borderRadius: 5,
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          marginBottom: 'auto',
+                          marginTop: 10,
+                        }}>
+                        <FlashFillBlack />
+                        <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>
+                          Super wants to join you
+                        </Text>
+                      </View>
+                    </View>
+                  )}
                   <TouchableOpacity activeOpacity={0.7} style={[styles.buttonContainer, {marginTop: 'auto'}]} onPress={goToEventInfo}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
                       <FastImage

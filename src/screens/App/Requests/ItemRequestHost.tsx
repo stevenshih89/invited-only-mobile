@@ -290,79 +290,81 @@ const ItemRequestHost = ({
           }}
           resizeMode={FastImage.resizeMode.cover}>
           <View style={[styles.itemContentContainer, {justifyContent: item?.superInvite ? 'space-between' : 'flex-end'}]}>
-            {item?.superInvite && (
-              <View style={{alignItems: 'flex-start'}}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    backgroundColor: whiteColor,
-                    borderRadius: 5,
-                    paddingHorizontal: 8,
-                    paddingVertical: 4,
-                    marginBottom: 'auto',
-                    marginTop: 10,
-                    marginHorizontal: 6,
-                  }}>
-                  <FlashFillBlack />
-                  <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>Super wants to join you</Text>
-                </View>
-              </View>
-            )}
             <LinearGradient
-              colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.8)']}
+              colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.8)', 'rgba(0, 0, 0, 0.8)']}
               style={styles.linearGradient}
               start={{x: 0, y: 0}}
-              end={{x: 0, y: 1}}>
-              {userInfo.accountType && (
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              end={{x: 0, y: 1}}
+              locations={[0.3, 0.8, 1]}>
+              {item?.superInvite && (
+                <View style={{alignItems: 'flex-start'}}>
                   <View
                     style={{
-                      marginTop: 'auto',
-                      alignSelf: 'flex-start',
-                      paddingHorizontal: 6,
-                      paddingVertical: 2,
-                      backgroundColor: userInfo.accountType === 'host' ? blackColor : whiteColor,
-                      borderRadius: 4,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      backgroundColor: whiteColor,
+                      borderRadius: 5,
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      marginBottom: 'auto',
+                      marginTop: 10,
                     }}>
-                    <Text
+                    <FlashFillBlack />
+                    <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>Super wants to join you</Text>
+                  </View>
+                </View>
+              )}
+              <View style={{marginTop: 'auto'}}>
+                {userInfo.accountType && (
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View
                       style={{
-                        textTransform: 'capitalize',
-                        fontFamily: Satoshi700,
-                        fontSize: RFValue(10, 812),
-                        color: userInfo.accountType === 'host' ? whiteColor : blackColor,
+                        marginTop: 'auto',
+                        alignSelf: 'flex-start',
+                        paddingHorizontal: 6,
+                        paddingVertical: 2,
+                        backgroundColor: userInfo.accountType === 'host' ? blackColor : whiteColor,
+                        borderRadius: 4,
                       }}>
-                      {userInfo.accountType}
+                      <Text
+                        style={{
+                          textTransform: 'capitalize',
+                          fontFamily: Satoshi700,
+                          fontSize: RFValue(10, 812),
+                          color: userInfo.accountType === 'host' ? whiteColor : blackColor,
+                        }}>
+                        {userInfo.accountType}
+                      </Text>
+                    </View>
+                    {userInfo?.accountPremium && (
+                      <LinearGradient
+                        colors={['#977B4A', '#E5D291', '#A28453']}
+                        style={styles.accountTypeWrapperPremium}
+                        start={{x: 0, y: 0}}
+                        end={{x: 1, y: 0}}>
+                        <Text style={styles.accountTypePremium}>Premium</Text>
+                      </LinearGradient>
+                    )}
+                  </View>
+                )}
+                <TouchableOpacity onPress={() => goToProfileView()} activeOpacity={0.7} style={styles.buttonContainer}>
+                  <View style={styles.nameContainer}>
+                    <Text style={[styles.nameText, {fontSize: getFontSize(item?.name)}]}>
+                      {item?.name}
+                      {`${userInfo?.date ? `, ${calculateAge(userInfo?.date)}` : ''}`}
                     </Text>
+                    {userInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} style={{marginLeft: 4}} />}
                   </View>
-                  {userInfo?.accountPremium && (
-                    <LinearGradient
-                      colors={['#977B4A', '#E5D291', '#A28453']}
-                      style={styles.accountTypeWrapperPremium}
-                      start={{x: 0, y: 0}}
-                      end={{x: 1, y: 0}}>
-                      <Text style={styles.accountTypePremium}>Premium</Text>
-                    </LinearGradient>
-                  )}
-                </View>
-              )}
-              <TouchableOpacity onPress={() => goToProfileView()} activeOpacity={0.7} style={styles.buttonContainer}>
-                <View style={styles.nameContainer}>
-                  <Text style={[styles.nameText, {fontSize: getFontSize(item?.name)}]}>
-                    {item?.name}
-                    {`${userInfo?.date ? `, ${calculateAge(userInfo?.date)}` : ''}`}
-                  </Text>
-                  {userInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} style={{marginLeft: 4}} />}
-                </View>
-              </TouchableOpacity>
-              {userInfo?.homeAddress && (
-                <View style={styles.locationContainer}>
-                  <View style={styles.locationRow}>
-                    <Home height={12} />
-                    <Text style={styles.locationText}>From {item?.homeAddress}</Text>
+                </TouchableOpacity>
+                {userInfo?.homeAddress && (
+                  <View style={styles.locationContainer}>
+                    <View style={styles.locationRow}>
+                      <Home height={12} />
+                      <Text style={styles.locationText}>From {item?.homeAddress}</Text>
+                    </View>
                   </View>
-                </View>
-              )}
+                )}
+              </View>
             </LinearGradient>
           </View>
         </FastImage>
