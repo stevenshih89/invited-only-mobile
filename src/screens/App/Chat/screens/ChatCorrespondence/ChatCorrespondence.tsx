@@ -91,6 +91,11 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   //   return findAcceptedGuest >= allGuests;
   // };
 
+  const handleCloseReport = () => {
+    setModalVisible(false);
+    navigation.goBack();
+  };
+
   useEffect(() => {
     if (title) {
       const name = title?.split(' ');
@@ -350,7 +355,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         const data = documentSnapshot.data()?.chats;
         const findChat = data?.filter(j => j?.id === id);
         setAllChats(data);
-        setMessages(findChat? findChat[0]?.messages: null);
+        setMessages(findChat ? findChat[0]?.messages : null);
       });
 
     return () => subscriber();
@@ -461,6 +466,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
           setModalVisible={setModalVisible}
           activeEvent={activeEvent}
           hostUid={hostUid}
+          handleCloseReport={handleCloseReport}
           checkIsFullGuestsFun={() => checkIsFullGuestsFun(activeEvent)}
           setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
         />
