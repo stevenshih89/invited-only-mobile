@@ -16,18 +16,21 @@ import {
   blackColor,
   gray1Color,
   lightGray2Color,
+  lightGray4Color,
   lightGray5Color,
   transparent60Color,
+  transparentWhite40Color,
   transparentWhite56Color,
   whiteColor,
 } from 'constants/colors.ts';
 
 //import icons
 import CheckIcon from 'assets/images/icons/check.svg';
-import CalendarIcon from 'assets/images/icons/calendar.svg';
-import UnlimitedIcon from 'assets/images/icons/unlimited.svg';
+import CalendarIcon from 'assets/images/icons/calendar-white.svg';
+import UnlimitedIcon from 'assets/images/icons/unlimited-new.svg';
 import IOIcon from 'assets/images/icons/io.svg';
 import FlashIcon from 'assets/images/icons/flash-white.svg';
+import Logo from 'assets/images/icons/logo.svg';
 import EyeIcon from 'assets/images/icons/eye.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import CloseCircleIcon from 'assets/images/icons/close-circle.svg';
@@ -103,7 +106,7 @@ const Payment: FC = (): JSX.Element => {
       icon: UnlimitedIcon,
     },
     {
-      title: 'Unlimited Swiped',
+      title: 'Unlimited Swipes',
       description: 'Enjoy limitless swipes for endless connections.',
       icon: IOIcon,
     },
@@ -131,7 +134,7 @@ const Payment: FC = (): JSX.Element => {
   const [plansList, setPlansList] = useState<PlanListItem[]>([
     {
       id: 0,
-      title: 'FOR TRAVELLERS',
+      title: 'BILLED WEEKLY',
       duration: 1,
       durationName: 'week',
       description: 'Week Access',
@@ -141,7 +144,7 @@ const Payment: FC = (): JSX.Element => {
     },
     {
       id: 1,
-      title: 'SECURE YOUR SPOT',
+      title: 'BILLED ANNUALLY',
       duration: 1,
       durationName: 'year',
       description: 'Year Access',
@@ -151,7 +154,7 @@ const Payment: FC = (): JSX.Element => {
     },
     {
       id: 2,
-      title: 'EARLY ACCESS',
+      title: 'BILLED 3 MONTH',
       duration: 3,
       durationName: 'months',
       description: 'Months Access',
@@ -160,7 +163,6 @@ const Payment: FC = (): JSX.Element => {
       weeksInPeriod: 13, // trust me this is true
     },
   ]);
-  console.log('planList', plansList);
 
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
   const [loaderVisible, setLoaderVisible] = useState(false);
@@ -304,7 +306,23 @@ const Payment: FC = (): JSX.Element => {
       const colors = isActive ? ['#977B4A', '#E5D291', '#A28453'] : [lightGray2Color, lightGray2Color, lightGray2Color];
 
       return (
-        <TouchableOpacity
+        <View style={{height: 200, flex: 1,}}>
+          {isActive && <View style={{position: 'absolute', top: 0, right: 0, left: 0, zIndex: 10}}>
+              <View
+                style={{
+                  alignSelf: 'center',
+                  borderWidth: 2,
+                  borderStyle: 'solid',
+                  borderColor: whiteColor,
+                  borderRadius: 7,
+                  paddingHorizontal: 6,
+                  paddingVertical: 4,
+                  backgroundColor: blackColor,
+                }}>
+                <Text style={{fontFamily: Satoshi700, fontSize: RFValue(8, 812), color: whiteColor}}>{item.title}</Text>
+              </View>
+            </View>}
+          <TouchableOpacity
           key={item.id}
           disabled={isActive}
           style={{
@@ -333,25 +351,10 @@ const Payment: FC = (): JSX.Element => {
               paddingBottom: isActive ? 34 : 20,
               paddingHorizontal: 6,
             }}>
-            <View style={{position: 'absolute', top: 10, right: 0, left: 0, zIndex: 10}}>
-              <View
-                style={{
-                  alignSelf: 'center',
-                  borderWidth: 2,
-                  borderStyle: 'solid',
-                  borderColor: whiteColor,
-                  borderRadius: 7,
-                  paddingHorizontal: 6,
-                  paddingVertical: 4,
-                  backgroundColor: blackColor,
-                }}>
-                <Text style={{fontFamily: Satoshi700, fontSize: RFValue(8, 812), color: whiteColor}}>{item.title}</Text>
-              </View>
-            </View>
             <Text
               style={{
                 fontFamily: Satoshi700,
-                fontSize: isActive ? RFValue(38, 812) : RFValue(26, 812),
+                fontSize: RFValue(24, 812),
                 color: isActive ? blackColor : whiteColor,
                 textAlign: 'center',
               }}>
@@ -370,17 +373,18 @@ const Payment: FC = (): JSX.Element => {
             <View
               style={{
                 width: '100%',
-                height: 1,
-                backgroundColor: isActive ? transparent60Color : transparentWhite56Color,
+                height: 0.5,
+                backgroundColor: isActive ? lightGray4Color : transparentWhite40Color,
                 marginVertical: 9,
               }}
             />
             <Text
-              style={{fontFamily: Satoshi700, fontSize: RFValue(16, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
+              style={{fontFamily: Satoshi700, fontSize: RFValue(12, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
               {item.pricePerDuration}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
+        </View>
       );
     }
   };
@@ -439,66 +443,17 @@ const Payment: FC = (): JSX.Element => {
       <HostPremium isVisible={visibleHostPremium} setVsibleHostPremium={setVsibleHostPremium} screen={checkNavig?.params?.screen} />
       <ScrollView>
         <View style={styles.container}>
-          <View style={{alignItems: 'flex-end', marginTop: 10}}>
+          <View style={{alignItems: 'center', marginTop: 24}}>
+            <Logo />
+          </View>
+          <View style={{alignItems: 'flex-end'}}>
             <TouchableOpacity activeOpacity={0.7} onPress={handleNext}>
               <CloseIcon width={25} height={25} />
             </TouchableOpacity>
           </View>
-          <Text style={styles.textGetASpot}>Early Access</Text>
-          <View
-            style={{
-              borderWidth: 1,
-              borderStyle: 'solid',
-              borderColor: whiteColor,
-              borderRadius: 15,
-              paddingVertical: 16,
-              paddingHorizontal: 20,
-            }}>
-            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(18, 812), color: whiteColor, textAlign: 'center', marginBottom: 8}}>
-              Host Premium
-            </Text>
-            <Text style={{fontFamily: Satoshi500, fontSize: RFValue(13, 812), color: whiteColor, textAlign: 'center'}}>
-              Get Access & Unlock all of our features. Secure your spot. Host Access is limited.
-            </Text>
-            <View style={styles.buttonWrapper} />
-          </View>
+          <Text style={styles.textGetASpot}>Get Premium </Text>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 30, flex: 1}}>
             {plansList.map(item => renderItem({item}))}
-          </View>
-          <View style={{width: '100%', height: 20, marginTop: 30, position: 'relative', justifyContent: 'center'}}>
-            <View
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 10,
-              }}>
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderStyle: 'solid',
-                  borderColor: whiteColor,
-                  borderRadius: 12,
-                  backgroundColor: blackColor,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%',
-                  paddingHorizontal: 10,
-                }}>
-                <Text style={{fontFamily: Satoshi700, fontSize: 9, color: whiteColor}}>{spotsLeft} SPOTS LEFT</Text>
-              </View>
-            </View>
-            <Progress.Bar
-              width={screenWidth - 48}
-              progress={convertProgress()}
-              color="#E5D291"
-              unfilledColor={backgroundColor}
-              borderColor={black1Color}
-            />
           </View>
           <Button buttonStyle={{marginTop: 20}} title={getButtonTitle()} onPress={getOfferings} />
           <View style={{width: '100%', height: 1, backgroundColor: gray1Color, marginTop: 16}}>
@@ -521,20 +476,23 @@ const Payment: FC = (): JSX.Element => {
           </TouchableOpacity>
           <View style={{marginTop: 16, alignItems: 'center'}}>
             <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
-              By tapping , your App Store will be charged, your subscription will auto-renew for the same price and package lenght untill
-              you cancel via App Store settings, and you agree to your Terms. More details can be found here:
-              <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
-                <Text style={{textDecorationLine: 'underline', fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor}}>
-                  Privacy policy,
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/terms-and-conditions')}>
-                <Text style={{textDecorationLine: 'underline', fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor}}>
-                  Terms and conditios
-                </Text>
-              </TouchableOpacity>
+              By tapping, your App Store will be charged, your subscription will auto-renew for the same price and package length until you
+              cancel via App Store settings, and you agree to your Terms. More details can be found here:
             </Text>
+
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
+                <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Privacy policy</Text>
+              </TouchableOpacity>
+
+              <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, marginHorizontal: 5}}>and</Text>
+
+              <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/terms-and-conditions')}>
+                <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Terms and conditions</Text>
+              </TouchableOpacity>
+            </View>
           </View>
+
           <View style={styles.listColumnWrapper}>
             <Text style={styles.textWhatYouGet}>What you get:</Text>
             <Text style={styles.textPremium}>Premium</Text>
