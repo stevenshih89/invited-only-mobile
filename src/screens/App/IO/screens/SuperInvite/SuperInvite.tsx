@@ -35,11 +35,11 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
 
   const resetFigurePosition = () => {
     figureTopPosition.value = withTiming(-screenHeight / 4.2, {
-      duration: 500,
+      duration: 0,
       easing: Easing.out(Easing.cubic),
     });
     figureBottomPosition.value = withTiming(screenHeight / 4.2, {
-      duration: 500,
+      duration: 0,
       easing: Easing.out(Easing.cubic),
     });
   };

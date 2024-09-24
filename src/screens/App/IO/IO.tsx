@@ -1,4 +1,4 @@
-import {SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity, Alert} from 'react-native';
+import {SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity, Alert, TouchableWithoutFeedback} from 'react-native';
 import React, {FC, useState, useEffect, useContext, useCallback, useRef} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
@@ -59,6 +59,7 @@ import {User, UserInfo} from 'src/types/userInfo';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
+import Animated, { Easing, useAnimatedStyle, useEvent, useSharedValue, withTiming } from 'react-native-reanimated';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -84,6 +85,8 @@ const IO: FC = (): JSX.Element => {
   const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
   const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
+  const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
+  const [currentEventInfo, setCurrentEventInfo] = useState(null)
 
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
@@ -106,6 +109,46 @@ const IO: FC = (): JSX.Element => {
   const counterWeeklySuperInvitesRef = useRef(0);
 
   const cardRef = useRef(null);
+
+  const handleSuperInvite = () => {    
+    if (counterSuperInvitesRef.current > 0 || counterWeeklySuperInvitesRef.current > 0) {
+      flipCoin();
+    } else {      
+      navigation.navigate('/super-invite-pay');
+    }
+  };
+
+  const rotation = useSharedValue(0);
+  const [flipped, setFlipped] = useState(false);
+
+  const flipCoin = () => {
+    rotation.value = withTiming(flipped ? 0 : 180, {
+      duration: 500,
+      easing: Easing.inOut(Easing.ease),
+    });
+    setFlipped(prev => !prev);
+  };
+
+  const frontAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotateY: `${rotation.value}deg`}],
+      opacity: rotation.value >= 90 && rotation.value <= 270 ? 0 : 1,
+    };
+  });
+
+  const backAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotateY: `${rotation.value}deg`}],
+      opacity: rotation.value >= 90 && rotation.value <= 270 ? 1 : 0,
+    };
+  });
+
+  useEffect(() => {
+    if (isVisibleSuperInvite) {
+      setFlipped(false); 
+    }
+  }, [isVisibleSuperInvite]);
+  
 
   useEffect(() => {
     const subscription = onUserProfileChangeSubscription(info => {
@@ -178,12 +221,25 @@ const IO: FC = (): JSX.Element => {
     }, []),
   );
 
-  const decrementSuperInvite = (uid?: string) => {
+  const decrementSuperInvite = (uid?: string, coinAnimationTiming = 0, visibleSuperInviteTiming = 0) => {
     try {
       if (counterSuperInvites > 0) {
+          setTimeout(() => {
+            rotation.value = withTiming(0, {
+              duration: 1,
+              easing: Easing.inOut(Easing.ease),
+              });
+          }, coinAnimationTiming);
         if (userInfo?.accountType === 'host') {
-          setIsVisibleSuperInvite(true);
-          handleChangeListsEventsAfterSuperInvite(uid);
+              setTimeout(() => {
+                setIsVisibleSuperInvite(true);
+              }, visibleSuperInviteTiming);
+              handleChangeListsEventsAfterSuperInvite(uid, 1000);
+        } else {
+          setTimeout(() => {
+            handleSuperJoin()
+          }, visibleSuperInviteTiming);
+          handleChangeListsEventsAfterSuperInvite(uid, 1000);
         }
         if (counterWeeklySuperInvitesRef.current > 0) {
           firestore()
@@ -208,10 +264,10 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const handleOpenSuperInvite = async (item, uid?: string): void => {
+  const handleOpenSuperInvite = async (item, uid?: string, coinAnimationTiming = 0, visibleSuperInviteTiming = 0): void => {    
     setActiveSuperInviteUser(item);
     decrementCounterSuperInvites(1);
-    decrementSuperInvite(uid);
+    decrementSuperInvite(uid, coinAnimationTiming, visibleSuperInviteTiming);
   };
 
   const handleCloseSuperInvite = (): void => {
@@ -525,7 +581,18 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const handleChangeListsEventsAfterSuperInvite = async (uid: string) => {
+  const handleSuperJoin = () => {    
+    if(counterSuperInvites > 0) {
+      setVisibleModalSuperJoin(true);
+      setTimeout(() => {
+        setVisibleModalSuperJoin(false);
+      }, 4000);
+    } else {
+      showToast('inviteMatch', "You don't have Super Joins", 'Super Join')
+    }
+  };
+
+  const handleChangeListsEventsAfterSuperInvite = async (uid: string, timeChange: number = 20) => {
     const item = eventsRef.current?.filter(j => {
       return j?.info?.uid === uid;
     });
@@ -543,7 +610,7 @@ const IO: FC = (): JSX.Element => {
 
     setTimeout(() => {
       setEvents(filter);
-    }, 20);
+    }, timeChange);
 
     eventsRef.current = filter;
 
@@ -816,42 +883,69 @@ const IO: FC = (): JSX.Element => {
                     <CloseIcon />
                   </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonFlash} onPress={handleOpenSuperInvite}>
-                  <View
-                    style={{
-                      backgroundColor: transparentWhite56Color,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 50,
-                      position: 'absolute',
-                      top: -1,
-                      left: -1,
-                    }}
-                  />
-                  <View
-                    style={{
-                      backgroundColor: transparentWhite56Color,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 50,
-                      position: 'absolute',
-                      right: -1,
-                      bottom: -1,
-                    }}
-                  />
-                  <View
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      backgroundColor: blackColor,
-                      borderRadius: 50,
-                      zIndex: 10,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <FlashIcon />
-                  </View>
-                </TouchableOpacity>
+                <TouchableWithoutFeedback onPress={() => {
+                  setCurrentEventInfo(event)
+                  handleSuperInviteBottom(event, event.uid)
+                }}>
+                    <View style={styles.buttonFlash}>
+                    <View
+                      style={{
+                        backgroundColor: transparentWhite56Color,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 50,
+                        position: 'absolute',
+                        top: -1,
+                        left: -1,
+                      }}
+                    />
+                    <View
+                      style={{
+                        backgroundColor: transparentWhite56Color,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 50,
+                        position: 'absolute',
+                        right: -1,
+                        bottom: -1,
+                      }}
+                    />
+                    <Animated.View
+                      style={[
+                        {
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: blackColor,
+                          borderRadius: 50,
+                          zIndex: 10,
+                          justifyContent: 'center',
+                          position: 'absolute',
+                          alignItems: 'center',
+                        },
+                        frontAnimatedStyle,
+                      ]}>
+                      <FlashIcon />
+                    </Animated.View>
+                    <Animated.View
+                      style={[
+                        {
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: blackColor,
+                          borderRadius: 50,
+                          zIndex: 10,
+                          position: 'absolute',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        },
+                        backAnimatedStyle,
+                      ]}>
+                      <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>
+                        {counterSuperInvites}
+                      </Text>
+                    </Animated.View>
+                    </View>
+                  </TouchableWithoutFeedback>
                 <TouchableOpacity
                   onPress={() => handleChangeListsEvents(event?.uid, 'accept')}
                   style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
@@ -916,6 +1010,11 @@ const IO: FC = (): JSX.Element => {
       allEventsLength.current = recommendedData.length;
     }, 2000);
   };
+
+  const handleSuperInviteBottom = (item: any, uid: string) => {
+    handleSuperInvite()
+    handleOpenSuperInvite(item, uid, 500, 400)
+}
 
   const sortEvents = (uid: string) => {
     if (uid) {
@@ -1125,7 +1224,8 @@ const IO: FC = (): JSX.Element => {
                       <CloseIcon />
                     </View>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.buttonFlash} onPress={() => handleOpenSuperInvite(item?._data)}>
+                  <TouchableWithoutFeedback onPress={() => handleSuperInviteBottom(item._data, uid)}>
+                    <View style={styles.buttonFlash}>
                     <View
                       style={{
                         backgroundColor: transparentWhite56Color,
@@ -1148,19 +1248,42 @@ const IO: FC = (): JSX.Element => {
                         bottom: -1,
                       }}
                     />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
+                    <Animated.View
+                      style={[
+                        {
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: blackColor,
+                          borderRadius: 50,
+                          zIndex: 10,
+                          justifyContent: 'center',
+                          position: 'absolute',
+                          alignItems: 'center',
+                        },
+                        frontAnimatedStyle,
+                      ]}>
                       <FlashIcon />
+                    </Animated.View>
+                    <Animated.View
+                      style={[
+                        {
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: blackColor,
+                          borderRadius: 50,
+                          zIndex: 10,
+                          position: 'absolute',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        },
+                        backAnimatedStyle,
+                      ]}>
+                      <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>
+                        {counterSuperInvites}
+                      </Text>
+                    </Animated.View>
                     </View>
-                  </TouchableOpacity>
+                  </TouchableWithoutFeedback>
                   <TouchableOpacity
                     onPress={() => {
                       handleAutoSwipeRight(item?._data?.id);
@@ -1332,6 +1455,7 @@ const IO: FC = (): JSX.Element => {
         : currentEventCardPosition > allEventsLength.current && allEventsLength.current)) ||
       !allEventsLength.current) &&
     !acceptModalVisible &&
+    !visibleModalSuperJoin &&
     !isVisibleMatch
   ) {
     return (
@@ -1346,6 +1470,7 @@ const IO: FC = (): JSX.Element => {
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
+      <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={currentEventInfo?.name} imageEvent={currentEventInfo? currentEventInfo.photos[0]?.image : ''} />
         <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
         <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos[0].image} />
         <ModalFullEvent
