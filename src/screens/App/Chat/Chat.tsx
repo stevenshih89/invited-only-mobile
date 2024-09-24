@@ -31,6 +31,7 @@ import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
 import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
+import FastImage from 'react-native-fast-image';
 
 type ItemProps = {
   title: string;
@@ -231,7 +232,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       <View style={styles.itemEventsJoining}>
         <View style={styles.wrapperItemEventsJoining}>
           <TouchableOpacity style={styles.fdrAiC}>
-            <Image resizeMode="cover" source={{uri: image}} style={{width: 50, height: 50, borderRadius: 50}} />
+            <FastImage resizeMode="cover" source={{uri: image}} style={{width: 50, height: 50, borderRadius: 50}}/>
             <View style={{marginLeft: 15}}>
               <View style={styles.fdrAiC}>
                 <Text style={styles.title}>{title}</Text>
@@ -292,8 +293,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             style={styles.chatItem}>
             <View style={{flexDirection: 'row'}}>
               <View>
-                <Image source={{uri: i?.avatar}} style={{width: 50, height: 50, borderRadius: 50}} />
-                {/* <View style={styles.greenCircleChat} /> */}
+                <FastImage source={{uri: i?.avatar}} style={{width: 50, height: 50, borderRadius: 50}}/>
               </View>
               <View style={{marginLeft: 15}}>
                 <Text style={styles.textNameChat}>{i?.name}</Text>

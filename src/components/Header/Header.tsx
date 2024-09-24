@@ -49,6 +49,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {onUserProfileChangeSubscription} from 'helpers/userProfile';
 import {UserInfo} from 'src/types/userInfo';
 import moment from 'moment';
+import FastImage from 'react-native-fast-image';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -77,7 +78,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const [userInfo, setUserInfo] = useState<any>(null);
   const [myEvents, setMyEvents] = useState<Array<any>>();
   const styles = useStyles();
-
+  
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
 
@@ -227,7 +228,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       }}
       style={styles.eventButton}>
       <View style={[styles.eventViewFlatList, {borderColor: activeEvent === selectedChat ? whiteColor : lightGray5Color}]}>
-        <Image source={{uri: image}} style={styles.imageEvent} />
+        <FastImage style={styles.imageEvent} source={{uri: image}} />
         {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
       </View>
       <Text style={styles.textButton}>{title}</Text>
@@ -356,7 +357,8 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                           }}>
                           {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                           {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                          <Image source={{uri: event?.photos[0]?.image}} style={{width: '100%', height: '100%', borderRadius: 50}} />
+                          <FastImage style={{width: '100%', height: '100%', borderRadius: 50}} source={{uri: event?.photos[0]?.image}} />           
+                          {/* <Image source={{uri: event?.photos[0]?.image}} style={{width: '100%', height: '100%', borderRadius: 50}} /> */}
                         </View>
                         <Text
                           style={{
