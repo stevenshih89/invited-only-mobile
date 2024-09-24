@@ -151,6 +151,30 @@ const IO: FC = (): JSX.Element => {
   
 
   useEffect(() => {
+    let unsubscribeEvent: any;
+    if (activeEvent?.id) {
+      unsubscribeEvent = firestore()
+        .collection('Events')
+        .doc(activeEvent?.id)
+        .onSnapshot(querySnapshot => {
+          if (!querySnapshot.exists) {
+            return setActiveEvent({});
+          }
+          const data = querySnapshot.data();
+          const prevStatusEvent = activeEvent?.statusEvent;
+          const currentStatusEvent = data?.statusEvent;
+
+          if (prevStatusEvent !== currentStatusEvent) {
+            setActiveEvent({...activeEvent, statusEvent: currentStatusEvent});
+          }
+        });
+    }
+    return () => {
+      unsubscribeEvent && unsubscribeEvent();
+    };
+  }, [activeEvent]);
+
+  useEffect(() => {
     const subscription = onUserProfileChangeSubscription(info => {
       setUserInfo((prev: UserInfo) => ({...prev, ...info}));
       setUser(info);
@@ -161,7 +185,7 @@ const IO: FC = (): JSX.Element => {
 
   const handleAutoSwipeRight = (uid: string, isSort: boolean = true) => {
     if (cardRef.current) {
-      cardRef.current.autoSwipeRight();
+      cardRef.current?.autoSwipeRight();
     }
     if (isSort) {
       sortEvents(uid);
@@ -170,7 +194,7 @@ const IO: FC = (): JSX.Element => {
 
   const handleAutoSwipeLeft = () => {
     if (cardRef.current) {
-      cardRef.current.autoSwipeLeft();
+      cardRef.current?.autoSwipeLeft();
     }
   };
 
@@ -1536,7 +1560,7 @@ const IO: FC = (): JSX.Element => {
               </View>
             );
           })}
-          {!activeEvent.eventReviewed && userInfo.accountType === 'host' && (
+          {!activeEvent.statusEvent && isHost && (
             <ModalLockAccount
               haveCode={false}
               isVisibleButton={false}
