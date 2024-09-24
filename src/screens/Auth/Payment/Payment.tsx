@@ -9,25 +9,22 @@ import firestore from '@react-native-firebase/firestore';
 import useStyles from 'screens/Auth/Payment/styles.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import Button from 'components/Button/Button.tsx';
-import {privacyPath, profilePath, securePrivacyPath, tutorialFlowPath} from 'constants/pathLocations.ts';
+import {profilePath, tutorialFlowPath} from 'constants/pathLocations.ts';
 import {
-  backgroundColor,
   black1Color,
   blackColor,
   gray1Color,
   lightGray2Color,
   lightGray4Color,
   lightGray5Color,
-  transparent60Color,
   transparentWhite40Color,
-  transparentWhite56Color,
   whiteColor,
 } from 'constants/colors.ts';
 
 //import icons
 import CheckIcon from 'assets/images/icons/check.svg';
 import CalendarIcon from 'assets/images/icons/calendar-white.svg';
-import UnlimitedIcon from 'assets/images/icons/unlimited-new.svg';
+import UnlimitedIcon from 'assets/images/icons/unlimited.svg';
 import IOIcon from 'assets/images/icons/io.svg';
 import FlashIcon from 'assets/images/icons/flash-white.svg';
 import Logo from 'assets/images/icons/logo.svg';
@@ -39,13 +36,11 @@ import Birthday from 'assets/images/icons/birthday.svg';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenWidth} from 'constants/common';
-import * as Progress from 'react-native-progress';
 import {SvgProps} from 'react-native-svg';
 import Purchases, {PurchasesPackage} from 'react-native-purchases';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import HostPremium from 'components/Modal/ModalHostPremium/HostPremium';
 import {useRoute} from '@react-navigation/native';
-import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
 import ModalUpgradeSuccessful from 'components/Modal/ModalUpgradeSuccessful/ModalUpgradeSuccessful';
@@ -306,8 +301,9 @@ const Payment: FC = (): JSX.Element => {
       const colors = isActive ? ['#977B4A', '#E5D291', '#A28453'] : [lightGray2Color, lightGray2Color, lightGray2Color];
 
       return (
-        <View style={{height: 200, flex: 1,}}>
-          {isActive && <View style={{position: 'absolute', top: 0, right: 0, left: 0, zIndex: 10}}>
+        <View style={{height: 200, flex: 1}}>
+          {isActive && (
+            <View style={{position: 'absolute', top: 0, right: 0, left: 0, zIndex: 10}}>
               <View
                 style={{
                   alignSelf: 'center',
@@ -321,69 +317,75 @@ const Payment: FC = (): JSX.Element => {
                 }}>
                 <Text style={{fontFamily: Satoshi700, fontSize: RFValue(8, 812), color: whiteColor}}>{item.title}</Text>
               </View>
-            </View>}
+            </View>
+          )}
           <TouchableOpacity
-          key={item.id}
-          disabled={isActive}
-          style={{
-            position: 'relative',
-            marginTop: isActive ? 0 : 0,
-            flex: 1,
-            marginHorizontal: 3,
-          }}
-          activeOpacity={0.7}
-          onPress={() => setActivePayment(item)}>
-          <LinearGradient
-            colors={colors}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
+            key={item.id}
+            disabled={isActive}
             style={{
-              marginTop: 10,
-              borderRadius: 8,
-              borderWidth: 2,
-              borderStyle: 'solid',
-              borderColor: isActive ? whiteColor : 'transparent',
-              width: '100%',
-              // width: screenWidth / 3 - 25,
-              height: 180,
-              justifyContent: 'center',
-              paddingTop: isActive ? 26 : 20,
-              paddingBottom: isActive ? 34 : 20,
-              paddingHorizontal: 6,
-            }}>
-            <Text
+              position: 'relative',
+              marginTop: isActive ? 0 : 0,
+              flex: 1,
+              marginHorizontal: 3,
+            }}
+            activeOpacity={0.7}
+            onPress={() => setActivePayment(item)}>
+            <LinearGradient
+              colors={colors}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
               style={{
-                fontFamily: Satoshi700,
-                fontSize: RFValue(24, 812),
-                color: isActive ? blackColor : whiteColor,
-                textAlign: 'center',
-              }}>
-              {item.duration}
-            </Text>
-            <Text
-              style={{
-                fontFamily: Satoshi500,
-                fontSize: RFValue(12, 812),
-                color: isActive ? blackColor : whiteColor,
-                textAlign: 'center',
-                marginTop: 6,
-              }}>
-              {item.description}
-            </Text>
-            <View
-              style={{
+                marginTop: 10,
+                borderRadius: 8,
+                borderWidth: 2,
+                borderStyle: 'solid',
+                borderColor: isActive ? whiteColor : 'transparent',
                 width: '100%',
-                height: 0.5,
-                backgroundColor: isActive ? lightGray4Color : transparentWhite40Color,
-                marginVertical: 9,
-              }}
-            />
-            <Text
-              style={{fontFamily: Satoshi700, fontSize: RFValue(12, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
-              {item.pricePerDuration}
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
+                // width: screenWidth / 3 - 25,
+                height: 180,
+                justifyContent: 'center',
+                paddingTop: isActive ? 26 : 20,
+                paddingBottom: isActive ? 34 : 20,
+                paddingHorizontal: 6,
+              }}>
+              <Text
+                style={{
+                  fontFamily: Satoshi700,
+                  fontSize: RFValue(24, 812),
+                  color: isActive ? blackColor : whiteColor,
+                  textAlign: 'center',
+                }}>
+                {item.duration}
+              </Text>
+              <Text
+                style={{
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(12, 812),
+                  color: isActive ? blackColor : whiteColor,
+                  textAlign: 'center',
+                  marginTop: 6,
+                }}>
+                {item.description}
+              </Text>
+              <View
+                style={{
+                  width: '100%',
+                  height: 0.5,
+                  backgroundColor: isActive ? lightGray4Color : transparentWhite40Color,
+                  marginVertical: 9,
+                }}
+              />
+              <Text
+                style={{
+                  fontFamily: Satoshi700,
+                  fontSize: RFValue(12, 812),
+                  color: isActive ? blackColor : whiteColor,
+                  textAlign: 'center',
+                }}>
+                {item.pricePerDuration}
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
       );
     }
