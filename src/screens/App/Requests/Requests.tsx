@@ -260,8 +260,9 @@ const Requests: FC = (): ReactElement => {
   if (
     isDateTimePassed(list?.date, list?.hour) &&
     !!userInfo?.accountConfirmed &&
-    userInfo?.accountType === 'host' &&
+    isHost &&
     list.eventReviewed &&
+    list.statusEvent &&
     !!myEventsList?.length &&
     !isVisibleMatch
   ) {

@@ -109,13 +109,28 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           ...doc.data(),
         }));
 
-        if (data.length > 0) {
-          setActiveEvent(data[0]);
+        const filterExpiredEvents = data.filter(event => {
+          if (event?.date && event?.hour) {
+            const adjustedDate = moment(`${event?.date}, ${event?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+            if (adjustedDate.isBefore(moment())) {
+              return false;
+            }
+            return true;
+          }
+          return false;
+        });
+
+        if (!filterExpiredEvents.length) {
+          setMyEvents([]);
+          setActiveEvent({});
+          setChat('');
+          return;
         }
 
-        setMyEvents(data);
-        setChat(data[0]?.id);
-        return data;
+        setActiveEvent(filterExpiredEvents[0]);
+        setMyEvents(filterExpiredEvents);
+        setChat(filterExpiredEvents[0]?.id);
+        return filterExpiredEvents;
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
@@ -127,6 +142,37 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       fetchMyEvents();
     }, [headerType]),
   );
+
+  // useEffect(() => {
+  //   let unsubscribeEvent: any;
+  //   const user = auth().currentUser;
+  //   if (activeEvent?.id && user) {
+  //     unsubscribeEvent = firestore()
+  //       .collection('Events')
+  //       .where('uid', '==', user.uid)
+  //       .onSnapshot(querySnapshot => {
+  //         if (!querySnapshot.empty && !myEvents?.length) {
+  //           return;
+  //         }
+  //         const data = querySnapshot.docs.map(doc => doc.data());
+  //         const prevMyEvents = myEvents || [];
+  //         const currentMyEvents = data;
+
+  //         const newMyEvents = prevMyEvents.map(eventItem => {
+  //           const currentEvent = currentMyEvents.find((currentEventItem: any) => currentEventItem.id === eventItem.id);
+
+  //           if (currentEvent?.eventReviewed !== eventItem.eventReviewed) {
+  //             return {eventItem, eventReviewed: currentEvent?.eventReviewed};
+  //           }
+  //           return eventItem;
+  //         });
+  //         setMyEvents(newMyEvents);
+  //       });
+  //   }
+  //   return () => {
+  //     unsubscribeEvent && unsubscribeEvent();
+  //   };
+  // }, [headerType]);
 
   const goToCreateEvent = async (): void => {
     if (!userInfo?.accountConfirmed) {
@@ -356,7 +402,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                           }}>
                           {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                           {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                          <Image source={{uri: event?.photos[0]?.image}} style={{width: '100%', height: '100%', borderRadius: 50}} />
+                          <Image source={{uri: event?.photos?.[0]?.image}} style={{width: '100%', height: '100%', borderRadius: 50}} />
                         </View>
                         <Text
                           style={{
