@@ -9,7 +9,7 @@ const useStyles = () => {
     textGetASpot: {
       color: whiteColor,
       fontFamily: Satoshi500,
-      fontSize: RFValue(34, 812),
+      fontSize: RFValue(48, 812),
       marginTop: screenHeight / 40,
       marginBottom: 30,
       textAlign: 'center',

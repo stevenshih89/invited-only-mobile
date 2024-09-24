@@ -132,9 +132,9 @@ const Onboard: FC = (): JSX.Element => {
               }} onPress={() => setChecked(!isChecked)}>
                 {isChecked && <CheckBlack width={14} height={14}/>}
               </TouchableOpacity>
-              <View style={{flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12}}>
+              <View style={{flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, justifyContent: 'center'}}>
                 <Text style={{fontFamily: Satoshi400, fontSize: RFValue(14, 812), color: whiteColor}}>
-                  By creating account in you accept our{' '}
+                  By signing up, you agree to
                 </Text>
                 <Text
                   style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}
