@@ -385,7 +385,13 @@ const IO: FC = (): JSX.Element => {
           rejectsList: firestore.FieldValue.arrayUnion({uid}),
         });
 
-      setEvents(prev => prev.filter(i => i?.info?.uid !== uid));
+      setTimeout(() => {
+        setEvents(prev =>
+          prev.filter(i => {
+            return isHost ? i?.info?.uid !== uid : i?.info?.id !== eventId;
+          }),
+        );
+      }, 300);
     } catch (error) {
       console.error(error);
     }
@@ -552,15 +558,22 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const filterEventsByBlockedUsers = async (events: any[]) => {
+  const filterEventsByBlockedUsers = async (eventsList: any[]) => {
     const user = auth().currentUser;
     if (!user) {
       return;
     }
     const blockedUsers = await firestore().collection('report').where('uidSender', '==', user?.uid).get();
+    const blockedMeUsers = await firestore().collection('report').where('uid', '==', user?.uid).get();
 
     const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
-    const filteredEvents = events.filter(event => !blockedUsersList.includes(event?.info?.uid));
+    const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
+    const filteredEvents = eventsList.filter(event => {
+      if (blockedUsersList.includes(event?.info?.uid) || blockedMeUsersList.includes(event?.info?.uid)) {
+        return false;
+      }
+      return true;
+    });
 
     return filteredEvents;
   };
@@ -929,13 +942,20 @@ const IO: FC = (): JSX.Element => {
 
     const blockedUsers = await firestore().collection('report').where('uidSender', '==', user?.uid).get();
 
+    const blockedMeUsers = await firestore().collection('report').where('uid', '==', user?.uid).get();
+
     const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
+    const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
 
     const data: any[] = [];
     const usersList = await users?._docs;
     usersList
       ?.filter(item => {
         if (blockedUsersList.includes(item?._data.uid)) {
+          return false;
+        }
+
+        if (blockedMeUsersList.includes(item?._data.uid)) {
           return false;
         }
 
