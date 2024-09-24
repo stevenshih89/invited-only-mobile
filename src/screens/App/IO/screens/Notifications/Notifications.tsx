@@ -12,6 +12,7 @@ import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {useFocusEffect} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast';
+import FastImage from 'react-native-fast-image';
 
 interface Notifications {
   body: string;
@@ -113,7 +114,7 @@ const Notifications: FC = (): ReactElement => {
                 flexDirection: 'row',
                 paddingVertical: 16,
               }}>
-              <Image source={{uri: images[item.uid]}} style={{width: 60, height: 60, borderRadius: 60}} />
+              <FastImage source={{uri: images[item.uid]}} style={{width: 60, height: 60, borderRadius: 60}}/>
               <View style={{marginLeft: 16, justifyContent: 'center', flex: 1}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1}}>
                   <Text
