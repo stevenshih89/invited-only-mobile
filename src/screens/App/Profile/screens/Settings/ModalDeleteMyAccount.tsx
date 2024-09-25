@@ -28,45 +28,12 @@ const ModalDeleteMyAccount: FC<{
 
   const userAge = calculateAge(userHost?.date);
   const handleDeleteAccount = async () => {
-    await auth().signOut();
-    try {
-      if(userHost.accountType === 'host') {
-        const docSnapshot = await firestore().collection('userInfo').doc(userHost.uid).get();
-        const docData = docSnapshot.data();
-      
-        if (docData?.eventsList.length > 0) {
-          for (const item of docData.eventsList) {
-            await firestore().collection('Events').doc(item).delete();
-            await firestore().collection('messages').doc(item).delete();
-          }
-        }
-      } else {
-        const docSnapshot = await firestore().collection('messages').where('uidGuest','==', userHost.uid).get()
-        if (!docSnapshot.empty) {
-          const deletePromises = docSnapshot.docs.map(doc => {
-            return firestore().collection('messages').doc(doc.id).delete();
-          });
-          await Promise.all(deletePromises);
-        } 
-      }
-      await messaging().deleteToken()
-      await firestore().collection('userInfo').doc(userHost.uid).delete();
-      await auth().currentUser?.delete();
-      showToast('inviteMatch', '', 'Your account has been deleted', {
-        ownerPhoto: userHost?.photos[0].image,
-        status: 'SUCCESSED',
-      });
-    } catch (e) {
-      // console.log('error delete', e);
-      if (e.code === 'auth/requires-recent-login') {
-        if (setIsVisibleConfirmPhoneModal) {
-          onClose();
-          sendVerificationCode();
-          setTimeout(() => {
-            setIsVisibleConfirmPhoneModal(true);
-          }, 1000);
-        }
-      }
+    if (setIsVisibleConfirmPhoneModal) {
+      onClose();
+      sendVerificationCode();
+      setTimeout(() => {
+        setIsVisibleConfirmPhoneModal(true);
+      }, 1000);
     }
   };
 

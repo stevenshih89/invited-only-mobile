@@ -104,7 +104,7 @@ const AccountSetting: FC = ({navigation, route}: any) => {
       const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
       setVerificationId(confirmation?.verificationId);
     } catch (error) {
-      // console.error('Failed to send verification code:', error);
+      console.error('Failed to send verification code:', error);
     }
   };
 
