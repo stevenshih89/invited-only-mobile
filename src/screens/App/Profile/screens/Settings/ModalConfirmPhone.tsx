@@ -8,6 +8,10 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
 import {CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell} from 'react-native-confirmation-code-field';
 import {screenHeight} from 'constants/common';
+import { useUser } from 'src/store/userStore';
+import { showToast } from 'helpers/showToast';
+import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 
 const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verificationId: string}> = ({
   isVisible,
@@ -15,6 +19,8 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
   verificationId,
 }) => {
   const [code, setCode] = useState<string>('');
+
+  const userHost = useUser((i: any) => i?.user);
 
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: code,
@@ -28,12 +34,35 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
     if (!verificationId || !code) return;
 
     try {
-      const credential = auth.PhoneAuthProvider.credential(verificationId, code);
-      await auth().currentUser?.reauthenticateWithCredential(credential);
+      if(userHost.accountType === 'host') {
+        const docSnapshot = await firestore().collection('userInfo').doc(userHost.uid).get();
+        const docData = docSnapshot.data();
+      
+        if (docData?.eventsList && docData?.eventsList.length > 0) {
+          for (const item of docData?.eventsList) {
+            await firestore().collection('Events').doc(item).delete();
+            await firestore().collection('messages').doc(item).delete();
+          }
+        }
+      } else {
+        const docSnapshot = await firestore().collection('messages').where('uidGuest','==', userHost.uid).get()
+        if (!docSnapshot.empty) {
+          const deletePromises = docSnapshot.docs.map(doc => {
+            return firestore().collection('messages').doc(doc.id).delete();
+          });
+          await Promise.all(deletePromises);
+        } 
+      }
+      await messaging().deleteToken()
       await auth().currentUser?.delete();
+      await firestore().collection('userInfo').doc(userHost.uid).delete();
       await auth().signOut();
-    } catch (error) {
-      // console.error('error reauthentication:', error);
+      showToast('inviteMatch', '', 'Your account has been deleted', {
+        ownerPhoto: userHost?.photos[0].image,
+        status: 'SUCCESSED',
+      });
+    } catch (e) {
+      console.log('error delete', e);
     }
   };
 
