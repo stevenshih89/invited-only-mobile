@@ -59,7 +59,7 @@ import {User, UserInfo} from 'src/types/userInfo';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
-import Animated, { Easing, useAnimatedStyle, useEvent, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {Easing, useAnimatedStyle, useEvent, useSharedValue, withTiming} from 'react-native-reanimated';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -86,7 +86,7 @@ const IO: FC = (): JSX.Element => {
   const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
-  const [currentEventInfo, setCurrentEventInfo] = useState(null)
+  const [currentEventInfo, setCurrentEventInfo] = useState(null);
 
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
@@ -110,10 +110,10 @@ const IO: FC = (): JSX.Element => {
 
   const cardRef = useRef(null);
 
-  const handleSuperInvite = () => {    
+  const handleSuperInvite = () => {
     if (counterSuperInvitesRef.current > 0 || counterWeeklySuperInvitesRef.current > 0) {
       flipCoin();
-    } else {      
+    } else {
       navigation.navigate('/super-invite-pay');
     }
   };
@@ -145,10 +145,9 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     if (isVisibleSuperInvite) {
-      setFlipped(false); 
+      setFlipped(false);
     }
   }, [isVisibleSuperInvite]);
-  
 
   useEffect(() => {
     let unsubscribeEvent: any;
@@ -248,20 +247,20 @@ const IO: FC = (): JSX.Element => {
   const decrementSuperInvite = (uid?: string, coinAnimationTiming = 0, visibleSuperInviteTiming = 0) => {
     try {
       if (counterSuperInvites > 0) {
-          setTimeout(() => {
-            rotation.value = withTiming(0, {
-              duration: 1,
-              easing: Easing.inOut(Easing.ease),
-              });
-          }, coinAnimationTiming);
+        setTimeout(() => {
+          rotation.value = withTiming(0, {
+            duration: 1,
+            easing: Easing.inOut(Easing.ease),
+          });
+        }, coinAnimationTiming);
         if (userInfo?.accountType === 'host') {
-              setTimeout(() => {
-                setIsVisibleSuperInvite(true);
-              }, visibleSuperInviteTiming);
-              handleChangeListsEventsAfterSuperInvite(uid, 1000);
+          setTimeout(() => {
+            setIsVisibleSuperInvite(true);
+          }, visibleSuperInviteTiming);
+          handleChangeListsEventsAfterSuperInvite(uid, 1000);
         } else {
           setTimeout(() => {
-            handleSuperJoin()
+            handleSuperJoin();
           }, visibleSuperInviteTiming);
           handleChangeListsEventsAfterSuperInvite(uid, 1000);
         }
@@ -288,7 +287,7 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const handleOpenSuperInvite = async (item, uid?: string, coinAnimationTiming = 0, visibleSuperInviteTiming = 0): void => {    
+  const handleOpenSuperInvite = async (item, uid?: string, coinAnimationTiming = 0, visibleSuperInviteTiming = 0): void => {
     setActiveSuperInviteUser(item);
     decrementCounterSuperInvites(1);
     decrementSuperInvite(uid, coinAnimationTiming, visibleSuperInviteTiming);
@@ -606,14 +605,14 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const handleSuperJoin = () => {    
-    if(counterSuperInvites > 0) {
+  const handleSuperJoin = () => {
+    if (counterSuperInvites > 0) {
       setVisibleModalSuperJoin(true);
       setTimeout(() => {
         setVisibleModalSuperJoin(false);
       }, 4000);
     } else {
-      showToast('inviteMatch', "You don't have Super Joins", 'Super Join')
+      showToast('inviteMatch', "You don't have Super Joins", 'Super Join');
     }
   };
 
@@ -675,7 +674,7 @@ const IO: FC = (): JSX.Element => {
     if (!user) {
       return;
     }
-
+    setLoading(true);
     let filteredEvents: any[] = [];
 
     try {
@@ -737,10 +736,10 @@ const IO: FC = (): JSX.Element => {
         ? filterDataByWeekMonth(enrichedEvents, 7)
         : filterDataByWeekMonth(enrichedEvents, 31);
 
-    if (!filterDataWM.length) {      
+    if (!filterDataWM.length) {
       return;
     }
-    
+
     filterDataWM?.map((event: any) => {
       const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
       const eventPhotos = event?.photos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
@@ -907,11 +906,12 @@ const IO: FC = (): JSX.Element => {
                     <CloseIcon />
                   </View>
                 </TouchableOpacity>
-                <TouchableWithoutFeedback onPress={() => {
-                  setCurrentEventInfo(event)
-                  handleSuperInviteBottom(event, event.uid)
-                }}>
-                    <View style={styles.buttonFlash}>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    setCurrentEventInfo(event);
+                    handleSuperInviteBottom(event, event.uid);
+                  }}>
+                  <View style={styles.buttonFlash}>
                     <View
                       style={{
                         backgroundColor: transparentWhite56Color,
@@ -968,8 +968,8 @@ const IO: FC = (): JSX.Element => {
                         {counterSuperInvites}
                       </Text>
                     </Animated.View>
-                    </View>
-                  </TouchableWithoutFeedback>
+                  </View>
+                </TouchableWithoutFeedback>
                 <TouchableOpacity
                   onPress={() => handleChangeListsEvents(event?.uid, 'accept')}
                   style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
@@ -1032,13 +1032,14 @@ const IO: FC = (): JSX.Element => {
       setEvents(recommendedData);
       eventsRef.current = recommendedData;
       allEventsLength.current = recommendedData.length;
+      setLoading(false);
     }, 2000);
   };
 
   const handleSuperInviteBottom = (item: any, uid: string) => {
-    handleSuperInvite()
-    handleOpenSuperInvite(item, uid, 500, 400)
-}
+    handleSuperInvite();
+    handleOpenSuperInvite(item, uid, 500, 400);
+  };
 
   const sortEvents = (uid: string) => {
     if (uid) {
@@ -1052,6 +1053,7 @@ const IO: FC = (): JSX.Element => {
   const getListForHost = async () => {
     const user = auth().currentUser;
     let users: any;
+    setLoading(true);
 
     if (activeEvent.male > 0 && activeEvent.female > 0) {
       users = await firestore().collection('userInfo').limit(20).get();
@@ -1250,62 +1252,62 @@ const IO: FC = (): JSX.Element => {
                   </TouchableOpacity>
                   <TouchableWithoutFeedback onPress={() => handleSuperInviteBottom(item._data, uid)}>
                     <View style={styles.buttonFlash}>
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        top: -1,
-                        left: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        right: -1,
-                        bottom: -1,
-                      }}
-                    />
-                    <Animated.View
-                      style={[
-                        {
+                      <View
+                        style={{
+                          backgroundColor: transparentWhite56Color,
                           width: '100%',
                           height: '100%',
-                          backgroundColor: blackColor,
                           borderRadius: 50,
-                          zIndex: 10,
-                          justifyContent: 'center',
                           position: 'absolute',
-                          alignItems: 'center',
-                        },
-                        frontAnimatedStyle,
-                      ]}>
-                      <FlashIcon />
-                    </Animated.View>
-                    <Animated.View
-                      style={[
-                        {
+                          top: -1,
+                          left: -1,
+                        }}
+                      />
+                      <View
+                        style={{
+                          backgroundColor: transparentWhite56Color,
                           width: '100%',
                           height: '100%',
-                          backgroundColor: blackColor,
                           borderRadius: 50,
-                          zIndex: 10,
                           position: 'absolute',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        },
-                        backAnimatedStyle,
-                      ]}>
-                      <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>
-                        {counterSuperInvites}
-                      </Text>
-                    </Animated.View>
+                          right: -1,
+                          bottom: -1,
+                        }}
+                      />
+                      <Animated.View
+                        style={[
+                          {
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: blackColor,
+                            borderRadius: 50,
+                            zIndex: 10,
+                            justifyContent: 'center',
+                            position: 'absolute',
+                            alignItems: 'center',
+                          },
+                          frontAnimatedStyle,
+                        ]}>
+                        <FlashIcon />
+                      </Animated.View>
+                      <Animated.View
+                        style={[
+                          {
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: blackColor,
+                            borderRadius: 50,
+                            zIndex: 10,
+                            position: 'absolute',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          },
+                          backAnimatedStyle,
+                        ]}>
+                        <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>
+                          {counterSuperInvites}
+                        </Text>
+                      </Animated.View>
                     </View>
                   </TouchableWithoutFeedback>
                   <TouchableOpacity
@@ -1365,6 +1367,7 @@ const IO: FC = (): JSX.Element => {
     allEventsLength.current = data.length;
     setEvents(data);
     eventsRef.current = data;
+    setLoading(false);
   };
 
   const requestUserPermission = async () => {
@@ -1411,7 +1414,7 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     isHost ? getListForHost() : getListForGuest();
-  }, [userInfo, userHost, activeEventDate]);
+  }, [userInfo, userHost, activeEvent?.id]);
 
   useEffect(() => {
     fetchMyEvents(true);
@@ -1494,7 +1497,11 @@ const IO: FC = (): JSX.Element => {
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
-      <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={currentEventInfo?.name} imageEvent={currentEventInfo? currentEventInfo.photos[0]?.image : ''} />
+        <SuperJoin
+          isVisibleMatch={visibleModalSuperJoin}
+          nameEvent={currentEventInfo?.name}
+          imageEvent={currentEventInfo ? currentEventInfo.photos[0]?.image : ''}
+        />
         <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
         <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos[0].image} />
         <ModalFullEvent
