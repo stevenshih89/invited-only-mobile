@@ -32,7 +32,16 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
 
   const handleConfirm = async () => {
     if (!verificationId || !code) return;
+    try {
+      const credential = auth.PhoneAuthProvider.credential(verificationId, code);
+      await auth().currentUser?.reauthenticateWithCredential(credential);
+      await deleteUser();
+    } catch (e) {
+      console.log('error credential', e);
+    }
+  };
 
+  const deleteUser = async () => {
     try {
       if(userHost.accountType === 'host') {
         const docSnapshot = await firestore().collection('userInfo').doc(userHost.uid).get();
@@ -40,7 +49,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
       
         if (docData?.eventsList && docData?.eventsList.length > 0) {
           for (const item of docData?.eventsList) {
-            await firestore().collection('Events').doc(item).delete();
+            // await firestore().collection('Events').doc(item).delete();
             await firestore().collection('messages').doc(item).delete();
           }
         }
@@ -64,7 +73,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
     } catch (e) {
       console.log('error delete', e);
     }
-  };
+  }
 
   return (
     <Modal

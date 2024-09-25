@@ -30,8 +30,10 @@ const ModalDeleteMyAccount: FC<{
   const handleDeleteAccount = async () => {
     if (setIsVisibleConfirmPhoneModal) {
       onClose();
-      await sendVerificationCode();
-      setIsVisibleConfirmPhoneModal(true);
+      sendVerificationCode();
+      setTimeout(() => {
+        setIsVisibleConfirmPhoneModal(true);
+      }, 1000);
     }
   };
 
