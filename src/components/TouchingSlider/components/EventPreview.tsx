@@ -309,10 +309,9 @@ const EventPreview: FC<{
   if (userAccountType === 'guest' || fromJoinEventsScreen) {
     return (
       <View style={[styles.container, {backgroundColor: transparentGray90Color, padding: 16, borderRadius: 16}]}>
-        <ImageBackground
+        <FastImage
           source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
           style={styles.imageBackground}
-          imageStyle={styles.imageStyle}
           resizeMode="cover">
           {/* {photos && photos.length > 1 && (
             <>
@@ -331,7 +330,7 @@ const EventPreview: FC<{
             <TouchableOpacity onPress={handleBack} style={styles.button} />
             <TouchableOpacity onPress={handleNext} style={styles.button} />
           </View>
-        </ImageBackground>
+        </FastImage>
         <View style={styles.textContainer}>
           <Text style={styles.text}>{placeName}</Text>
           <View style={styles.rowContainer}>
@@ -378,6 +377,7 @@ const useStyles = () => {
     imageBackground: {
       height: 150,
       overflow: 'hidden',
+      borderRadius: 10
     },
     imageStyle: {
       borderRadius: 10,

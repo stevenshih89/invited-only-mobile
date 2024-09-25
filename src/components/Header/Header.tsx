@@ -372,7 +372,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                           }}>
                           {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                           {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                          <FastImage style={{width: '100%', height: '100%', borderRadius: 50}} source={{uri: event?.photos?.[0]?.image}} />           
+                          <FastImage style={{width: '100%', height: '100%', borderRadius: 50}} source={{uri: event?.photos[0]?.image}} />           
                         </View>
                         <Text
                           style={{

@@ -174,7 +174,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             }}
             style={styles.wrapperItem}>
             <View>
-              <Image resizeMode="cover" style={[styles.imageUser, story && styles.story]} source={{uri: image}} />
+              <FastImage resizeMode="cover" style={[styles.imageUser, story && styles.story]} source={{uri: image}} />
               {online && <View style={styles.greenCircle} />}
             </View>
             <View style={styles.wrapperItemElements}>
