@@ -1,10 +1,9 @@
-import {Dispatch, FC, ReactElement, SetStateAction, useEffect, useState} from 'react';
-import {Alert, FlatList, Image, Text, View} from 'react-native';
+import {Dispatch, FC, ReactElement, SetStateAction, useState} from 'react';
+import {Alert, Image, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ImagePickerResponse, launchImageLibrary} from 'react-native-image-picker';
 import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
-import MaskInput from 'react-native-mask-input';
 import firestore from '@react-native-firebase/firestore';
 import uuid from 'react-native-uuid';
 import DatePicker from 'react-native-date-picker';
@@ -14,14 +13,13 @@ import useStyles from './styles.ts';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
 import {isIos} from 'constants/common';
-import {black1Color, gray1Color, orangeClose, toggleColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {gray1Color, orangeClose, toggleColor, whiteColor} from 'constants/colors';
 import {showToast} from 'helpers/showToast.ts';
 import {uploadImage} from 'helpers/uploadImage.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 
 //import icons
 import Plus from 'assets/images/icons/plus.svg';
-import Location from 'assets/images/icons/location.svg';
 import Calendar from 'assets/images/icons/calendar-new.svg';
 import Clock from 'assets/images/icons/clock-grey.svg';
 import Close from 'assets/images/icons/close.svg';
@@ -32,55 +30,41 @@ import moment from 'moment';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500} from 'constants/fonts.ts';
 import {Switch} from '@ant-design/react-native';
-import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
-import InstagramSlider from 'components/InstagramSlider/InstagramSlider.tsx';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 
 interface EventPreviewProps {
-  // isEditing?: boolean;
-  // setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
-  // prevImages: {image: null | string; id: number}[];
-  // prevActiveType: number;
-  // prevPlaceName?: string;
-  // prevName?: string;
-  // prevDescription?: string;
-  // prevDate?: string;
-  // prevHour?: string;
-  // prevAddress?: string;
-  // prevMeetingSpot?: string;
-  // female?: number;
-  // male?: number;
-  // id?: string;
-  // femaleFriend?: number;
-  // maleFriend?: number;
+  isEditing?: boolean;
+  setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
+  prevImages: {image: null | string; id: number}[];
+  prevActiveType: number;
+  prevPlaceName?: string;
+  prevName?: string;
+  prevDescription?: string;
+  prevDate?: string;
+  prevHour?: string;
+  prevAddress?: string;
+  prevMeetingSpot?: string;
+  female?: number;
+  male?: number;
+  id?: string;
+  femaleFriend?: number;
+  maleFriend?: number;
 }
 
-const EventPreview: FC<EventPreviewProps> = (
-  {
-    // isEditing,
-    // setIsVisibleSaveModal,
-    // prevImages,
-    // prevActiveType,
-    // prevPlaceName,
-    // prevName,
-    // prevDescription,
-    // prevDate,
-    // prevHour,
-    // prevAddress,
-    // prevMeetingSpot,
-    // female,
-    // male,
-    // femaleFriend,
-    // maleFriend,
-    // id,
-  },
-): ReactElement => {
-  // const eventTypes = [
-  //   {id: 0, label: 'Custom'},
-  //   {id: 1, label: 'Table'},
-  //   {id: 2, label: 'Club'},
-  //   {id: 3, label: 'Restaurant'},
-  // ];
+const EventPreview: FC<EventPreviewProps> = ({
+  isEditing,
+  setIsVisibleSaveModal,
+  female,
+  male,
+  femaleFriend,
+  maleFriend,
+  id,
+}): ReactElement => {
+  const eventTypes = [
+    {id: 0, label: 'Custom'},
+    {id: 1, label: 'Table'},
+    {id: 2, label: 'Club'},
+    {id: 3, label: 'Restaurant'},
+  ];
 
   const [photos, setImages] = useState<{image: null | string; id: number}[]>([
     {
@@ -105,7 +89,7 @@ const EventPreview: FC<EventPreviewProps> = (
     },
   ]);
 
-  const [activeType, setActiveType] = useState(eventTypes[0].id);
+  const [activeType] = useState(eventTypes[0].id);
   const [placeName, setPlaceName] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -192,6 +176,9 @@ const EventPreview: FC<EventPreviewProps> = (
   };
 
   const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
+    if (!userId) {
+      return;
+    }
     try {
       await firestore().collection('Events').doc(userId).update({
         photos: imageUrl,
@@ -202,21 +189,21 @@ const EventPreview: FC<EventPreviewProps> = (
     }
   };
 
-  const compareArrays = (arr1, arr2) => {
-    if (arr1.length !== arr2.length) {
-      return false;
-    }
+  // const compareArrays = (arr1, arr2) => {
+  //   if (arr1.length !== arr2.length) {
+  //     return false;
+  //   }
 
-    for (let i = 0; i < arr1.length; i++) {
-      for (let key in arr1[i]) {
-        if (arr1[i][key] !== arr2[i][key]) {
-          return false;
-        }
-      }
-    }
+  //   for (let i = 0; i < arr1.length; i++) {
+  //     for (let key in arr1[i]) {
+  //       if (arr1[i][key] !== arr2[i][key]) {
+  //         return false;
+  //       }
+  //     }
+  //   }
 
-    return true;
-  };
+  //   return true;
+  // };
 
   const handleSaveChanges = async () => {
     try {
@@ -252,7 +239,7 @@ const EventPreview: FC<EventPreviewProps> = (
       // @ts-ignore
       await firestore()
         .collection('Events')
-        .doc(uid)
+        .doc(`${uid}`)
         .set({
           activeType: activeType,
           female: female,
@@ -284,7 +271,7 @@ const EventPreview: FC<EventPreviewProps> = (
         .then(async () => {
           photos?.map(async (imagePath, index) => {
             await uploadImage(imagePath?.image, uid).then(img => imagesUri.push({id: index, image: img}));
-            await updatePhotosImage(uid, imagesUri).then(() => {
+            await updatePhotosImage(`${uid}`, imagesUri).then(() => {
               showToast('inviteMatch', 'Go to my events >', 'Event successfully created ');
               showToast('inviteMatch', 'Your event in review.', 'Estimate time review 2h');
               isEditing ? setIsVisibleSaveModal(true) : null;
@@ -497,11 +484,11 @@ const EventPreview: FC<EventPreviewProps> = (
                   mode="date"
                   open={open}
                   date={datePicker}
-                  onConfirm={date => {
-                    const data = moment(date).format('DD.MM.YYYY');
+                  onConfirm={dateItem => {
+                    const data = moment(dateItem).format('DD.MM.YYYY');
                     setOpen(false);
                     setDate(data);
-                    setDatePicker(date);
+                    setDatePicker(dateItem);
                   }}
                   onCancel={() => {
                     setOpen(false);
@@ -519,11 +506,11 @@ const EventPreview: FC<EventPreviewProps> = (
                   mode="time"
                   open={openHour}
                   date={hourPicker}
-                  onConfirm={date => {
+                  onConfirm={dateItem => {
                     setOpenHour(false);
-                    const time = moment(date).format('HH:mm');
+                    const time = moment(dateItem).format('HH:mm');
                     setHour(time);
-                    setHourPicker(date);
+                    setHourPicker(dateItem);
                   }}
                   onCancel={() => {
                     setOpenHour(false);

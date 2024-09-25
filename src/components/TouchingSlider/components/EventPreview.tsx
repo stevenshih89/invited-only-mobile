@@ -1,5 +1,5 @@
 import {Dispatch, FC, ReactElement, SetStateAction, useCallback, useState} from 'react';
-import {View, ImageBackground, TouchableOpacity, Text, StyleSheet, SafeAreaView} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, SafeAreaView} from 'react-native';
 // import components
 import {gray1Color, grayScale700, transparent60Color, transparentGray90Color, whiteColor} from 'constants/colors.ts';
 import User from 'assets/images/icons/user.svg';
@@ -18,7 +18,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {showToast} from 'helpers/showToast';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import FastImage from 'react-native-fast-image';
-import { useCounterSuperEvents } from 'src/store/counterSuperInvites';
+import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
 
 const EventPreview: FC<{
   photos: any;
@@ -51,12 +51,6 @@ const EventPreview: FC<{
   handleCreateEvent,
   name,
   isEditing,
-  id,
-  eventTypes,
-  description,
-  hour,
-  address,
-  meetingSpot,
   fromJoinEventsScreen,
   setIsVisibleSaveModal,
   onInvite,
@@ -71,7 +65,7 @@ const EventPreview: FC<{
   const [userAccountType, setUserAccountType] = useState('');
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
   const numberPhotos = imagesUser?.length;
-  
+
   function calculateAge(birthDateString: string) {
     const parts = birthDateString.split('.');
     const birthDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
@@ -83,26 +77,31 @@ const EventPreview: FC<{
     return age;
   }
 
+  const getUserPhotos = async () => {
+    try {
+      const user = auth().currentUser;
+      const userInfoDoc = await firestore().collection('userInfo').doc(user?.uid).get();
+
+      if (!userInfoDoc.exists) {
+        return;
+      }
+      setUserAccountType(userInfoDoc.data()?.accountType);
+      const dataName = userInfoDoc.data()?.name;
+      const dataAge = userInfoDoc.data()?.date;
+      setNameUser(dataName);
+      const resultAge = calculateAge(dataAge);
+      setUserAge(`${resultAge}`);
+      const userImage = userInfoDoc.data()?.photos?.find((item: {id: number}) => item.id === 0);
+      if (userImage) {
+        setImagesUser(userImage);
+      }
+    } catch (error) {
+      // console.log('errorGetUserPhotos', error);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
-      const getUserPhotos = async () => {
-        try {
-          const user = auth().currentUser;
-          const userInfoDoc = await firestore().collection('userInfo').doc(user?.uid).get();
-          setUserAccountType(userInfoDoc.data()?.accountType);
-          const nameUser = userInfoDoc.data()?.name;
-          const userAge = userInfoDoc.data()?.date;
-          setNameUser(nameUser);
-          const resultAge = calculateAge(userAge);
-          setUserAge(resultAge);
-          const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
-          if (userImage) {
-            setImagesUser(userImage);
-          }
-        } catch (error) {
-          // console.log('errorGetUserPhotos', error);
-        }
-      };
       getUserPhotos();
     }, []),
   );
@@ -120,6 +119,22 @@ const EventPreview: FC<{
       return setActive(numberPhotos - 1);
     }
     setActive(p => p - 1);
+  };
+
+  const {counterSuperInvites} = useCounterSuperEvents();
+
+  const handleSuperJoin = () => {
+    if (counterSuperInvites > 0) {
+      setVisibleModalSuperJoin(true);
+      setTimeout(() => {
+        superJoin();
+      }, 2000);
+      setTimeout(() => {
+        setVisibleModalSuperJoin(false);
+      }, 4000);
+    } else {
+      showToast('inviteMatch', "You don't have Super Joins", 'Super Join');
+    }
   };
 
   if (userAccountType === 'host' && !fromJoinEventsScreen) {
@@ -290,22 +305,6 @@ const EventPreview: FC<{
     );
   }
 
-  const {counterSuperInvites} = useCounterSuperEvents();
-
-  const handleSuperJoin = () => {
-    if(counterSuperInvites > 0) {
-      setVisibleModalSuperJoin(true);
-      setTimeout(() => {
-        superJoin();
-      }, 2000);
-      setTimeout(() => {
-        setVisibleModalSuperJoin(false);
-      }, 4000);
-    } else {
-      showToast('inviteMatch', "You don't have Super Joins", 'Super Join')
-    }
-  };
-
   if (userAccountType === 'guest' || fromJoinEventsScreen) {
     return (
       <View style={[styles.container, {backgroundColor: transparentGray90Color, padding: 16, borderRadius: 16}]}>
@@ -356,6 +355,7 @@ const EventPreview: FC<{
       </View>
     );
   }
+  return <></>;
 };
 
 const useStyles = () => {
@@ -377,7 +377,7 @@ const useStyles = () => {
     imageBackground: {
       height: 150,
       overflow: 'hidden',
-      borderRadius: 10
+      borderRadius: 10,
     },
     imageStyle: {
       borderRadius: 10,
