@@ -334,14 +334,15 @@ const IO: FC = (): JSX.Element => {
 
   function filterDataByWeekMonth(data: any, days: number) {
     const today = new Date();
-
     const nextWeek = new Date(today);
     nextWeek.setDate(today.getDate() + days);
-
     const filter = data.filter(item => {
+      if (!item || !item.date) {
+        return false;
+      }
       const parts = item.date.split('.');
       const itemDate = new Date(parts[2], parts[1] - 1, parts[0]);
-      if (isNaN(itemDate)) {
+      if (isNaN(itemDate.getTime())) {
         return false;
       }
       return itemDate >= today && itemDate <= nextWeek;
@@ -725,7 +726,6 @@ const IO: FC = (): JSX.Element => {
     const enrichedEvents = await enrichElementsWithPhotos(filteredEvents);
 
     const data: any[] = [];
-
     // const currentMonth = new Date().getMonth() + 1;
 
     // const currentWeek = getWeekNumber(currentDate);
@@ -737,10 +737,10 @@ const IO: FC = (): JSX.Element => {
         ? filterDataByWeekMonth(enrichedEvents, 7)
         : filterDataByWeekMonth(enrichedEvents, 31);
 
-    if (!filterDataWM.length) {
+    if (!filterDataWM.length) {      
       return;
     }
-
+    
     filterDataWM?.map((event: any) => {
       const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
       const eventPhotos = event?.photos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
