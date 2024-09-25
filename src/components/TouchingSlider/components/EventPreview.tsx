@@ -61,7 +61,7 @@ const EventPreview: FC<{
   setIsVisibleSaveModal,
   onInvite,
   superJoin,
-  handleAutoSwipeRight
+  handleAutoSwipeRight,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
@@ -71,7 +71,7 @@ const EventPreview: FC<{
   const [userAccountType, setUserAccountType] = useState('');
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
   const numberPhotos = imagesUser?.length;
-
+  
   function calculateAge(birthDateString: string) {
     const parts = birthDateString.split('.');
     const birthDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);

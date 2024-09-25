@@ -203,6 +203,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   hostUid,
   checkIsFullGuestsFun,
   setIsVisibleModalFullEvent,
+  handleCloseReport,
 }) => {
   const [removingState, setRemovingState] = useState<boolean>(false);
   const [blockAndReportState, setBlockAndReportState] = useState<boolean>(false);
@@ -338,6 +339,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     }
     return true;
   };
+
+  console.warn('dsadsadas');
 
   const handleActionPress = async () => {
     // const isFull = await checkIsFullGuestsFun();
@@ -597,6 +600,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
             <View>
               <RemovingUserModal />
               <ModalReport
+                handleCloseReport={handleCloseReport}
                 modalReport={blockAndReportState}
                 setModalReport={setBlockAndReportState}
                 uidSender={user.uid}

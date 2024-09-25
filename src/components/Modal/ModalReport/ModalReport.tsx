@@ -26,7 +26,15 @@ interface ModalReportProps {
   handleAutoSwipeLeft?: () => void;
 }
 
-const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid, activeEvent, handleAutoSwipeLeft}) => {
+const ModalReport: FC<ModalReportProps> = ({
+  modalReport,
+  setModalReport,
+  uidSender,
+  uid,
+  activeEvent,
+  handleAutoSwipeLeft,
+  handleCloseReport,
+}) => {
   const styles = useStyles();
 
   // const deleteChat = async (uidItem: string) => {
@@ -120,6 +128,8 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
       }
 
       handleAutoSwipeLeft && handleAutoSwipeLeft();
+
+      handleCloseReport && handleCloseReport();
 
       showToast('inviteMatch', `${dataUserUid?.name} was reported`, 'Thank you!', {
         ownerPhoto: dataUserUid?.photos[0].image,

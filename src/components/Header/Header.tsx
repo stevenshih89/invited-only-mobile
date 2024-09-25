@@ -110,13 +110,28 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           ...doc.data(),
         }));
 
-        if (data.length > 0) {
-          setActiveEvent(data[0]);
+        const filterExpiredEvents = data.filter(event => {
+          if (event?.date && event?.hour) {
+            const adjustedDate = moment(`${event?.date}, ${event?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+            if (adjustedDate.isBefore(moment())) {
+              return false;
+            }
+            return true;
+          }
+          return false;
+        });
+
+        if (!filterExpiredEvents.length) {
+          setMyEvents([]);
+          setActiveEvent({});
+          setChat('');
+          return;
         }
 
-        setMyEvents(data);
-        setChat(data[0]?.id);
-        return data;
+        setActiveEvent(filterExpiredEvents[0]);
+        setMyEvents(filterExpiredEvents);
+        setChat(filterExpiredEvents[0]?.id);
+        return filterExpiredEvents;
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
@@ -358,7 +373,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                           {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                           {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                           <FastImage style={{width: '100%', height: '100%', borderRadius: 50}} source={{uri: event?.photos[0]?.image}} />           
-                          {/* <Image source={{uri: event?.photos[0]?.image}} style={{width: '100%', height: '100%', borderRadius: 50}} /> */}
                         </View>
                         <Text
                           style={{
