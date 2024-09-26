@@ -60,6 +60,7 @@ import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import Animated, {Easing, useAnimatedStyle, useEvent, useSharedValue, withTiming} from 'react-native-reanimated';
+import ModalEventLocked from 'components/Modal/ModalEventLocked/ModalEventLocked';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -184,6 +185,7 @@ const IO: FC = (): JSX.Element => {
 
   const handleAutoSwipeRight = (uid: string, isSort: boolean = true) => {
     if (cardRef.current) {
+      // @ts-ignore
       cardRef.current?.autoSwipeRight();
     }
     if (isSort) {
@@ -193,11 +195,11 @@ const IO: FC = (): JSX.Element => {
 
   const handleAutoSwipeLeft = () => {
     if (cardRef.current) {
+      // @ts-ignore
       cardRef.current?.autoSwipeLeft();
     }
   };
 
-  let currentDate = new Date();
   const isHost = userHost?.accountType === 'host';
 
   const setRejectVisible = () => {
@@ -678,7 +680,7 @@ const IO: FC = (): JSX.Element => {
     let filteredEvents: any[] = [];
 
     try {
-      const querySnapshot = await firestore().collection('Events').get();
+      const querySnapshot = await firestore().collection('Events').where('statusEvent', '==', true).get();
       filteredEvents = querySnapshot?.docs
         ?.map((doc: any) => ({
           id: doc.id,
@@ -1567,12 +1569,9 @@ const IO: FC = (): JSX.Element => {
               </View>
             );
           })}
-          {!activeEvent.statusEvent && isHost && (
-            <ModalLockAccount
-              haveCode={false}
-              isVisibleButton={false}
-              text="Your event is under review. Thank you for your patience. You will be notified if your account is accepted"
-            />
+          {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && <ModalLockAccount haveCode={false} isVisibleButton={false} />}
+          {userInfo?.accountConfirmed && isHost && (
+            <ModalEventLocked eventReviewed={activeEvent?.eventReviewed} eventStatus={activeEvent?.statusEvent} />
           )}
           <ModalReport
             handleAutoSwipeLeft={handleAutoSwipeLeft}

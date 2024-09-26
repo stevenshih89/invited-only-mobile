@@ -11,6 +11,7 @@ import CalendarBlank from 'assets/images/icons/CalendarBlank.svg';
 import ProfileTwoUser from 'assets/images/icons/profile-2user.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
+import Bing from 'assets/images/icons/notification-bing.svg';
 import UsersIcon from 'assets/images/icons/Users.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
@@ -19,11 +20,12 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {errorColor, grayScale600, lightGray10Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
 import FastImage from 'react-native-fast-image';
 import FullEvent from 'components/FullEvent';
-import {ACCEPTED_STATUS} from 'constants/common';
+import {ACCEPTED_STATUS, screenHeight} from 'constants/common';
 
 interface MyEventsCard {
   estimeTime?: string;
-  activeState: boolean;
+  statusEvent: boolean;
+  eventReviewed: boolean;
   invitingPeople?: any[];
   list?: any;
   allPeople?: number;
@@ -44,7 +46,8 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     accountConfirmed,
     placeName,
     imageBg,
-    activeState,
+    statusEvent,
+    eventReviewed,
     estimeTime,
     date,
     invitingPeople,
@@ -78,8 +81,17 @@ const MyEventsCard: FC<MyEventsCard> = props => {
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
       <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 30}}>
-        <Clock width={24} height={24} style={{marginRight: 8}} />
+        <Clock width={28} height={28} style={{marginRight: 8}} />
         <Text style={styles.textEventInReview}>Event in review</Text>
+      </View>
+    </View>
+  );
+
+  const EventRejectedView = () => (
+    <View style={styles.eventInReviewView}>
+      <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: screenHeight / 15}}>
+        <Bing width={28} height={28} style={{marginRight: 8}} />
+        <Text style={styles.textEventInReview}>Event rejected by Admin</Text>
       </View>
     </View>
   );
@@ -103,7 +115,6 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     let differenceInMinutes = endTotalMinutes - startTotalMinutes;
 
     let hours = Math.floor(differenceInMinutes / 60);
-    let minutes = differenceInMinutes % 60;
 
     return hours;
     // return hours + ':' + (minutes < 10 ? '0' : '') + minutes;
@@ -178,7 +189,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
             style={styles.linearGradientCard}>
-            {activeState ? (
+            {statusEvent && eventReviewed && (
               <>
                 <View
                   style={{
@@ -235,9 +246,15 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                   </View>
                 </View>
               </>
-            ) : (
+            )}
+            {!eventReviewed && (
               <View style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>
                 <EventInReviewView />
+              </View>
+            )}
+            {eventReviewed && !statusEvent && (
+              <View style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>
+                <EventRejectedView />
               </View>
             )}
             <View style={{marginTop: 'auto'}}>
@@ -281,7 +298,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
           start={{x: 0, y: 0}}
           end={{x: 0, y: 1}}
           style={styles.linearGradientCard}>
-          {activeState ? (
+          {statusEvent ? (
             <View
               style={{
                 backgroundColor: approvedPeople?.length === allPeople ? errorColor : lightGray10Color,
@@ -373,7 +390,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
       </TouchableOpacity>
       {/* <ModalEventRemindes
       eventStarting={eventStarting}
-      activeState={activeState}
+      statusEvent={statusEvent}
       setEventStarting={setEventStarting}
       time={estimeTime}
       image={mainImageEvent}

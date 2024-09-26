@@ -660,7 +660,8 @@ const MyEvents: FC<any> = ({navigation}) => {
                   <MyEventsCard
                     imageBg={item?.photos}
                     list={item}
-                    activeState={item?.statusEvent}
+                    statusEvent={item?.statusEvent}
+                    eventReviewed={item?.eventReviewed}
                     allPeople={item?.female + item?.male}
                     date={item?.date}
                     textCityName={item?.name}
