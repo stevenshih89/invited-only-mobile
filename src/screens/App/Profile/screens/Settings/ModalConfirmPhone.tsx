@@ -37,7 +37,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
       await auth().currentUser?.reauthenticateWithCredential(credential);
       await deleteUser();
     } catch (e) {
-      console.log('error credential', e);
+      // console.log('error credential', e);
     }
   };
 
@@ -49,7 +49,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
       
         if (docData?.eventsList && docData?.eventsList.length > 0) {
           for (const item of docData?.eventsList) {
-            // await firestore().collection('Events').doc(item).delete();
+            await firestore().collection('Events').doc(item).delete();
             await firestore().collection('messages').doc(item).delete();
           }
         }
@@ -71,7 +71,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
         status: 'SUCCESSED',
       });
     } catch (e) {
-      console.log('error delete', e);
+      // console.log('error delete', e);
     }
   }
 

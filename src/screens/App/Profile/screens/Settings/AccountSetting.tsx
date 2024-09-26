@@ -26,6 +26,7 @@ import Geolocation from '@react-native-community/geolocation';
 import firestore from '@react-native-firebase/firestore';
 import chat from 'screens/App/Chat/Chat.tsx';
 import ModalConfirmPhone from './ModalConfirmPhone';
+import { showToast } from 'helpers/showToast';
 
 const AccountSetting: FC = ({navigation, route}: any) => {
   const locationState = route?.params?.params?.locationState;
@@ -101,10 +102,14 @@ const AccountSetting: FC = ({navigation, route}: any) => {
     const phoneNumber = auth().currentUser?.phoneNumber;
     if (!phoneNumber) return;
     try {
-      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);      
       setVerificationId(confirmation?.verificationId);
     } catch (error) {
       console.error('Failed to send verification code:', error);
+      if(error.code === 'auth/too-many-requests') {
+        setIsVisibleConfirmPhoneModal(false)
+        showToast('inviteMatch', 'We have blocked all requests from this device due to unusual activity. Try again later.', 'Failed')
+      }
     }
   };
 

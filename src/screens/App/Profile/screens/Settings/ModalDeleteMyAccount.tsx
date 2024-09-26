@@ -7,14 +7,9 @@ import type {Dispatch, FC, SetStateAction} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import auth from '@react-native-firebase/auth';
 import {useUser} from '../../../../../store/userStore';
 import {calculateAge} from 'helpers/calculateAge.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {confirmPhonePath} from 'constants/pathLocations';
-import {showToast} from 'helpers/showToast';
-import firestore from '@react-native-firebase/firestore';
-import messaging from '@react-native-firebase/messaging';
 
 const ModalDeleteMyAccount: FC<{
   isVisible: boolean;
@@ -30,10 +25,12 @@ const ModalDeleteMyAccount: FC<{
   const handleDeleteAccount = async () => {
     if (setIsVisibleConfirmPhoneModal) {
       onClose();
-      sendVerificationCode();
+      setTimeout( async() => {
+        await sendVerificationCode();
+      }, 1000);
       setTimeout(() => {
         setIsVisibleConfirmPhoneModal(true);
-      }, 1000);
+      }, 2000);
     }
   };
 
