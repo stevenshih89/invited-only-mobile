@@ -61,24 +61,30 @@ const Settings = () => {
   const settingsList = [
     {
       id: 0,
-      title: 'Account setting',
+      title: 'Account settings',
       icon: UserEdit,
       onPress: goToAccountSetting,
     },
     {
       id: 1,
-      title: 'Notification setting',
+      title: 'Notification settings',
       icon: Notification,
       onPress: goToNotificationSetting,
     },
     {
       id: 2,
-      title: 'Secure & Privacy',
+      title: 'Terms of use',
       icon: SecurePrivacy,
       onPress: goToSecurePrivacy,
     },
     {
       id: 3,
+      title: 'Privacy Policy',
+      icon: SecurePrivacy,
+      onPress: goToSecurePrivacy,
+    },
+    {
+      id: 4,
       title: 'Contact & FAQ',
       icon: Messages,
       onPress: goToContactAndFAQ,
