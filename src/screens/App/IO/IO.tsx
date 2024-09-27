@@ -161,11 +161,13 @@ const IO: FC = (): JSX.Element => {
             return setActiveEvent({});
           }
           const data = querySnapshot.data();
+          const prevEventReviewed = activeEvent?.eventReviewed;
+          const currentEventReviewed = data?.eventReviewed;
           const prevStatusEvent = activeEvent?.statusEvent;
           const currentStatusEvent = data?.statusEvent;
 
-          if (prevStatusEvent !== currentStatusEvent) {
-            setActiveEvent({...activeEvent, statusEvent: currentStatusEvent});
+          if (prevStatusEvent !== currentStatusEvent || prevEventReviewed !== currentEventReviewed) {
+            setActiveEvent({...activeEvent, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent});
           }
         });
     }
@@ -257,13 +259,13 @@ const IO: FC = (): JSX.Element => {
           setFlipped(prev => !prev);
         }, 500);
         if (userInfo?.accountType === 'host') {
-            setTimeout(() => {
-              setIsVisibleSuperInvite(true);
-            }, coinAnimationTimer);
-            await onInvite(item?.uid, item?.id, true);
+          setTimeout(() => {
+            setIsVisibleSuperInvite(true);
+          }, coinAnimationTimer);
+          await onInvite(item?.uid, item?.id, true);
         } else {
-            handleSuperJoin();
-            await onInvite(item?.uid, item?.id, true);
+          handleSuperJoin();
+          await onInvite(item?.uid, item?.id, true);
         }
         if (counterWeeklySuperInvitesRef.current > 0) {
           firestore()
@@ -848,7 +850,7 @@ const IO: FC = (): JSX.Element => {
                 <TouchableWithoutFeedback
                   onPress={() => {
                     setCurrentEventInfo(event);
-                    handleSuperInviteBottom(event, 0)
+                    handleSuperInviteBottom(event, 0);
                   }}>
                   <View style={styles.buttonFlash}>
                     <View
@@ -977,7 +979,7 @@ const IO: FC = (): JSX.Element => {
 
   const handleSuperInviteBottom = (item: any, coinAnimationTimer: number) => {
     handleSuperInvite();
-    handleOpenSuperInvite(item, coinAnimationTimer)
+    handleOpenSuperInvite(item, coinAnimationTimer);
   };
 
   const sortEvents = (uid: string) => {

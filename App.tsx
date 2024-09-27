@@ -6,7 +6,7 @@ import 'react-native-gesture-handler';
 import {black1Color} from 'constants/colors';
 import Purchases from 'react-native-purchases';
 import {NavigationContainer} from '@react-navigation/native';
-import { useSubscriptions } from 'src/store/subscriptionsStore';
+import {useSubscriptions} from 'src/store/subscriptionsStore';
 
 const App: FC = (): JSX.Element => {
   const IO_PUBLICK_RC_IOS = 'appl_zMgrNWXsDMnWsICHMLKNhAKHebg';
@@ -16,11 +16,10 @@ const App: FC = (): JSX.Element => {
   const getActiveSubscription = async () => {
     try {
       const customerInfo = await Purchases.getCustomerInfo();
-  
       const activeSubscriptions = customerInfo.activeSubscriptions;
-      
+
       if (activeSubscriptions.length > 0) {
-        return customerInfo; 
+        return customerInfo;
       } else {
         return {activeSubscriptions: []};
       }
@@ -38,10 +37,10 @@ const App: FC = (): JSX.Element => {
     }
 
     const getSubs = async () => {
-      const activeSubscription = await getActiveSubscription()
-      setCurrentSubscriptions(activeSubscription)
-    }
-    getSubs()
+      const activeSubscription = await getActiveSubscription();
+      setCurrentSubscriptions(activeSubscription);
+    };
+    getSubs();
   }, []);
 
   return (
@@ -57,4 +56,3 @@ const App: FC = (): JSX.Element => {
 };
 
 export default App;
-
