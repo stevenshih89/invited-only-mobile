@@ -136,14 +136,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   const flipCoin = () => {
     rotation.value = withTiming(flipped ? 0 : 180, {
-      duration: 300,
+      duration: 500,
       easing: Easing.inOut(Easing.ease),
     });
     setFlipped(prev => !prev);
     if (superInvites) {
-      setTimeout(() => {
-        handleOpenSuperInvite && handleOpenSuperInvite();
-      }, 300);
+      handleOpenSuperInvite && handleOpenSuperInvite();
     } else {
       goToMyProfileView();
     }
@@ -425,7 +423,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                         backAnimatedStyle,
                       ]}>
                       <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>
-                        {counterSuperInvites}
+                        {counterSuperInvites - 1}
                       </Text>
                     </Animated.View>
                   </TouchableWithoutFeedback>
