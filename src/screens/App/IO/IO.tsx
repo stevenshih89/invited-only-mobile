@@ -246,7 +246,7 @@ const IO: FC = (): JSX.Element => {
     }, []),
   );
 
-  const decrementSuperInvite = (uid?: string, coinAnimationTiming = 0, visibleSuperInviteTiming = 0) => {
+  const decrementSuperInvite = async (item: any[], coinAnimationTimer = 0) => {
     try {
       if (counterSuperInvites > 0) {
         setTimeout(() => {
@@ -254,17 +254,16 @@ const IO: FC = (): JSX.Element => {
             duration: 1,
             easing: Easing.inOut(Easing.ease),
           });
-        }, coinAnimationTiming);
+          setFlipped(prev => !prev);
+        }, 500);
         if (userInfo?.accountType === 'host') {
-          setTimeout(() => {
-            setIsVisibleSuperInvite(true);
-          }, visibleSuperInviteTiming);
-          handleChangeListsEventsAfterSuperInvite(uid, 1000);
+            setTimeout(() => {
+              setIsVisibleSuperInvite(true);
+            }, coinAnimationTimer);
+            await onInvite(item?.uid, item?.id, true);
         } else {
-          setTimeout(() => {
             handleSuperJoin();
-          }, visibleSuperInviteTiming);
-          handleChangeListsEventsAfterSuperInvite(uid, 1000);
+            await onInvite(item?.uid, item?.id, true);
         }
         if (counterWeeklySuperInvitesRef.current > 0) {
           firestore()
@@ -289,10 +288,10 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const handleOpenSuperInvite = async (item, uid?: string, coinAnimationTiming = 0, visibleSuperInviteTiming = 0): void => {
+  const handleOpenSuperInvite = (item: any[], coinAnimationTimer: number): void => {
     setActiveSuperInviteUser(item);
+    decrementSuperInvite(item, coinAnimationTimer);
     decrementCounterSuperInvites(1);
-    decrementSuperInvite(uid, coinAnimationTiming, visibleSuperInviteTiming);
   };
 
   const handleCloseSuperInvite = (): void => {
@@ -321,12 +320,6 @@ const IO: FC = (): JSX.Element => {
     }, [activeEvent]),
   );
 
-  // const getWeekNumber = date => {
-  //   let firstDayOfYear: Date = new Date(date.getFullYear(), 0, 1);
-  //   let pastDaysOfYear: number = (date - firstDayOfYear) / 86400000;
-  //   return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-  // };
-
   const handleReport = (uid: string, event?: any) => {
     const currEvent = isHost ? activeEvent : event;
     setReportedItem({uid, event: currEvent});
@@ -350,34 +343,6 @@ const IO: FC = (): JSX.Element => {
     });
     return filter;
   }
-
-  // const filterDataByWeekAndMonth = (data, week, month) => {
-  //   console.log('data', data, week, month);
-
-  //   const weekNumber: number = parseInt(week);
-  //   const monthNumber: number = parseInt(month);
-
-  //   const isInWeek = (dateString, weekNumber): boolean => {
-  //     const date: Date = new Date(dateString);
-  //     const targetWeek: 1 | 0 = new Date(date.getFullYear(), 0, 1).getDay() === 0 ? 0 : 1;
-  //     const currentWeek: number = Math.floor(
-  //       ((date - new Date(date.getFullYear(), 0, 1)) / 86400000 + new Date(date.getFullYear(), 0, 1).getDay() + 1) / 7,
-  //     );
-  //     return currentWeek === weekNumber - targetWeek;
-  //   };
-
-  //   const isInMonth = (dateString, monthNumber): boolean => {
-  //     const date: Date = new Date(dateString);
-  //     return date.getMonth() + 1 === monthNumber;
-  //   };
-
-  //   const filteredData = data?.filter(event => {
-  //     const eventDate = event?.date?.split('.').reverse().join('-');
-  //     return isInWeek(eventDate, weekNumber) && isInMonth(eventDate, monthNumber);
-  //   });
-
-  //   return filteredData;
-  // };
 
   const OverlayRight = () => {
     return (
@@ -576,8 +541,6 @@ const IO: FC = (): JSX.Element => {
           data = {
             requestsList: firestore.FieldValue.arrayUnion(userInvited),
           };
-          decrementCounterSuperInvites(1);
-          decrementSuperInvite();
         }
 
         await firestore()
@@ -600,7 +563,6 @@ const IO: FC = (): JSX.Element => {
             );
           });
       }
-
       setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
     } catch (error) {
       // console.log('eror invite', error);
@@ -616,31 +578,6 @@ const IO: FC = (): JSX.Element => {
     } else {
       showToast('inviteMatch', "You don't have Super Joins", 'Super Join');
     }
-  };
-
-  const handleChangeListsEventsAfterSuperInvite = async (uid: string, timeChange: number = 20) => {
-    const item = eventsRef.current?.filter(j => {
-      return j?.info?.uid === uid;
-    });
-    if (!item?.length) {
-      return;
-    }
-
-    const filter: any[] = eventsRef.current?.filter(i => i?.info?.uid !== uid);
-
-    if (filter.length === 0) {
-      setLastVisible(true);
-    }
-
-    setCurrentEventCardPosition(prev => prev + 1);
-
-    setTimeout(() => {
-      setEvents(filter);
-    }, timeChange);
-
-    eventsRef.current = filter;
-
-    await onInvite(item[0]?.info?.uid, item[0]?.info?.id, true);
   };
 
   const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {
@@ -911,7 +848,7 @@ const IO: FC = (): JSX.Element => {
                 <TouchableWithoutFeedback
                   onPress={() => {
                     setCurrentEventInfo(event);
-                    handleSuperInviteBottom(event, event.uid);
+                    handleSuperInviteBottom(event, 0)
                   }}>
                   <View style={styles.buttonFlash}>
                     <View
@@ -967,7 +904,7 @@ const IO: FC = (): JSX.Element => {
                         backAnimatedStyle,
                       ]}>
                       <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>
-                        {counterSuperInvites}
+                        {counterSuperInvites - 1}
                       </Text>
                     </Animated.View>
                   </View>
@@ -1038,9 +975,9 @@ const IO: FC = (): JSX.Element => {
     }, 2000);
   };
 
-  const handleSuperInviteBottom = (item: any, uid: string) => {
+  const handleSuperInviteBottom = (item: any, coinAnimationTimer: number) => {
     handleSuperInvite();
-    handleOpenSuperInvite(item, uid, 500, 400);
+    handleOpenSuperInvite(item, coinAnimationTimer)
   };
 
   const sortEvents = (uid: string) => {
@@ -1252,7 +1189,7 @@ const IO: FC = (): JSX.Element => {
                       <CloseIcon />
                     </View>
                   </TouchableOpacity>
-                  <TouchableWithoutFeedback onPress={() => handleSuperInviteBottom(item._data, uid)}>
+                  <TouchableWithoutFeedback onPress={() => handleSuperInviteBottom(item._data, 400)}>
                     <View style={styles.buttonFlash}>
                       <View
                         style={{
@@ -1441,7 +1378,7 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  if ((loading || (!userHost && userInfo.accountConfirmed)) && !isVisibleMatch) {
+  if ((loading || (!userHost && userInfo.accountConfirmed)) && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return <Loading text="Finding people near you..." userInfo={userInfo} />;
   }
 
