@@ -23,6 +23,7 @@ import ModalLogout from './LogoutModal';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {accountSettingPath, contactAndFAQPath, notificationSettingPath, securePrivacyPath} from 'constants/pathLocations';
 import {useUser} from '../../../../../store/userStore';
+import { openLink } from 'helpers/links';
 
 const Settings = () => {
   const [isVisibleLogoutModal, setIsVisibleLogoutModal] = useState(false);
@@ -50,35 +51,41 @@ const Settings = () => {
     navigation.navigate(contactAndFAQPath as never);
   };
 
-  const goToCRestorePurchase = () => {
-    // navigation.navigate(contactAndFAQPath as never);
+  const goToTermsOfUse = () => {
+    openLink('https://www.invitedonly.app/terms-and-conditions')
   };
 
-  const goToSecurePrivacy = () => {
-    navigation.navigate(securePrivacyPath as never);
+  const goToPrivacyPolicy = () => {
+    openLink('https://www.invitedonly.app/privacy-policy')
   };
 
   const settingsList = [
     {
       id: 0,
-      title: 'Account setting',
+      title: 'Account settings',
       icon: UserEdit,
       onPress: goToAccountSetting,
     },
     {
       id: 1,
-      title: 'Notification setting',
+      title: 'Notification settings',
       icon: Notification,
       onPress: goToNotificationSetting,
     },
     {
       id: 2,
-      title: 'Secure & Privacy',
+      title: 'Terms of use',
       icon: SecurePrivacy,
-      onPress: goToSecurePrivacy,
+      onPress: goToTermsOfUse,
     },
     {
       id: 3,
+      title: 'Privacy Policy',
+      icon: SecurePrivacy,
+      onPress: goToPrivacyPolicy,
+    },
+    {
+      id: 4,
       title: 'Contact & FAQ',
       icon: Messages,
       onPress: goToContactAndFAQ,
