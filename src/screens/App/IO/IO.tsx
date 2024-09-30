@@ -12,16 +12,16 @@ import functions from '@react-native-firebase/functions';
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
-import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common.ts';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight, screenWidth} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, paymentPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
 import {EventContext} from 'contexts/EventContext';
-import {blackColor, transparentWhite56Color, whiteColor} from 'constants/colors';
+import {black4Color, blackColor, lightGray18Color, lightGreenColor, transparentWhite56Color, whiteColor} from 'constants/colors';
 import {fcmHelper, getFcmToken, onMatchNotificationSubscription, sendNotification} from 'helpers/fcmHelper.ts';
-import {Satoshi400, Satoshi700} from 'constants/fonts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {useUser} from '../../../store/userStore';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 
@@ -41,6 +41,7 @@ import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import PersoneIcon from 'assets/images/icons/Users.svg';
+import LineImage from 'assets/images/app/Line.png'
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
@@ -62,6 +63,9 @@ import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import Animated, {Easing, useAnimatedStyle, useEvent, useSharedValue, withTiming} from 'react-native-reanimated';
 import ModalEventLocked from 'components/Modal/ModalEventLocked/ModalEventLocked';
 import { useGuestList } from 'src/store/guestListStore';
+import FastImage from 'react-native-fast-image';
+import LinearGradient from 'react-native-linear-gradient';
+import { convertToPmAmFormat } from 'helpers/convertToPmAmFormat';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -639,6 +643,13 @@ const IO: FC = (): JSX.Element => {
     return filteredEvents;
   };
 
+  function getFormateDate(date: string) {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const [day, month, year] = date.split(".");
+    const monthName = months[parseInt(month) - 1];
+    return `${day} ${monthName} ${year}`;
+  }
+
   const getListForGuest = async () => {
     const user = auth().currentUser;
     if (!user) {
@@ -695,9 +706,6 @@ const IO: FC = (): JSX.Element => {
     const enrichedEvents = await enrichElementsWithPhotos(filteredEvents);
 
     const data: any[] = [];
-    // const currentMonth = new Date().getMonth() + 1;
-
-    // const currentWeek = getWeekNumber(currentDate);
 
     const filterDataWM =
       activeEventDate === 'all'
@@ -733,20 +741,202 @@ const IO: FC = (): JSX.Element => {
               handleAutoSwipeRight={() => handleAutoSwipeRight(event?.id)}
               onInvite={() => onInvite(event?.uid, event?.id)}
               superJoin={() => onInvite(event?.uid, event?.id, true)}
+              confirmedEvent={event?.statusEvent}
+              uidUserEvent={event?.uid}
+              hourEvent={event?.hour}
+              usersListLength={event?.usersList.length}
+              usersList={event?.usersList}
+              handleAutoSwipeLeft={handleAutoSwipeLeft}
             />
             <View style={styles.bioWrapper}>
-              <Text style={styles.titleSection}>Host profile</Text>
+              <Text style={[styles.titleSection]}>Event details</Text>
+              <View style={{height: 640, backgroundColor: whiteColor, width: '100%', borderRadius: 20, marginTop: 18}}>
+                <View style={{padding: 10}}>
+                  <FastImage style={{height: 210, width: '100%', borderRadius: 20}} source={{uri: event?.photos[0].image}} />
+                  <View
+                    style={{
+                      paddingVertical: 4,
+                      paddingHorizontal: 6,
+                      borderRadius: 5,
+                      backgroundColor: lightGreenColor,
+                      alignSelf: 'flex-start',
+                      position: 'absolute',
+                      bottom: 24,
+                      left: 24,
+                    }}>
+                    <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500}}>Active</Text>
+                  </View>
+                </View>
+                <View style={{marginLeft: 23, marginTop: 28}}>
+                  <Text
+                    style={{
+                      color: lightGray18Color,
+                      fontSize: RFValue(16, 812),
+                      fontFamily: Satoshi400,
+                    }}>
+                    Name
+                  </Text>
+                  <Text
+                    style={{
+                      color: black4Color,
+                      fontSize: RFValue(21, 812),
+                      fontFamily: Satoshi700,
+                      marginTop: 5,
+                    }}>
+                    {event?.name}
+                  </Text>
+                </View>
+                <View style={{flexDirection: 'row', paddingHorizontal: 23, marginTop: 28, justifyContent: 'space-between'}}>
+                <View style={{}}>
+                  <View style={{marginBottom: 28}}>
+                    <Text
+                      style={{
+                        color: lightGray18Color,
+                        fontSize: RFValue(16, 812),
+                        fontFamily: Satoshi400,
+                      }}>
+                      Date
+                    </Text>
+                    <Text
+                      style={{
+                        color: black4Color,
+                        fontSize: RFValue(21, 812),
+                        fontFamily: Satoshi700,
+                        marginTop: 5,
+                      }}>
+                      {getFormateDate(event?.date)}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text
+                      style={{
+                        color: lightGray18Color,
+                        fontSize: RFValue(16, 812),
+                        fontFamily: Satoshi400,
+                      }}>
+                      Location
+                    </Text>
+                    <Text
+                      style={{
+                        color: black4Color,
+                        fontSize: RFValue(21, 812),
+                        fontFamily: Satoshi500,
+                        marginTop: 5,
+                      }}>
+                      {event?.address}
+                    </Text>
+                  </View>
+                </View>
+                <View style={{}}>
+                <View style={{marginBottom: 28}}>
+                    <Text
+                      style={{
+                        color: lightGray18Color,
+                        fontSize: RFValue(16, 812),
+                        fontFamily: Satoshi400,
+                      }}>
+                      Time
+                    </Text>
+                    <Text
+                      style={{
+                        color: black4Color,
+                        fontSize: RFValue(21, 812),
+                        fontFamily: Satoshi700,
+                        marginTop: 5,
+                      }}>
+                      {convertToPmAmFormat(event?.hour)}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text
+                      style={{
+                        color: lightGray18Color,
+                        fontSize: RFValue(16, 812),
+                        fontFamily: Satoshi400,
+                      }}>
+                      Invitations
+                    </Text>
+                    <Text
+                      style={{
+                        color: black4Color,
+                        fontSize: RFValue(21, 812),
+                        fontFamily: Satoshi500,
+                        marginTop: 5,
+                      }}>
+                      {event?.usersList.length}
+                    </Text>
+                  </View>
+                </View>
+                </View>
+                <View style={{width: '100%', alignItems: 'center', marginTop: 50, paddingHorizontal: 23}}>
+                  <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
+                </View>
+                <View style={{paddingHorizontal: 23}}>
+                <TouchableOpacity style={{
+                  height: 65, 
+                  width: '100%',
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  borderRadius: 18,
+                  backgroundColor: blackColor,
+                  marginTop: 25
+                  }}>
+                      <Text style={{
+                        color: whiteColor, 
+                        fontFamily: Satoshi700, 
+                        fontSize: RFValue(16, 812)
+                      }}>Join</Text>
+                </TouchableOpacity>
+                </View>
+              </View>
+              <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Place name</Text>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.placeName}</Text>
+              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 20}]}>
+                Event name
+              </Text>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.name}</Text>
+              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 20}]}>
+                Event description
+              </Text>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>
+                {event?.description}
+              </Text>
+              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+              <View style={{marginVertical: 34}}>
+                <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Address</Text>
+                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>
+                {event?.address}
+                 </Text>
+              </View>
+              <View>
+                {eventPhotos?.map((image: string) => (
+                  <Image source={{uri: image}} style={{width: '100%', height: screenHeight / 4, marginVertical: 10, borderRadius: 20}} />
+                ))}
+              </View>
               <TouchableOpacity // @ts-ignore
                 onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: event?.uid}})}
                 style={styles.wrapperHostProfile}>
                 <View style={{flexDirection: 'row'}}>
                   {event?.hostImage && (
                     <View style={{flexDirection: 'row'}}>
-                      <Image source={{uri: event?.hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
-                      {/*<View style={styles.greenCircle} />*/}
+                      <FastImage source={{uri: event?.hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
+                      <View style={{
+                        width: 11, 
+                        height: 11, 
+                        borderRadius: 11, 
+                        backgroundColor: lightGreenColor, 
+                        borderWidth: 1.25, 
+                        borderColor: blackColor,
+                        position: 'absolute',
+                        bottom: 3,
+                        right: 0
+                        }}></View>
                     </View>
                   )}
                   <View style={{marginLeft: 13}}>
+                    <View style={{flexDirection: 'row'}}>
                     <View
                       style={{
                         borderRadius: 4,
@@ -763,6 +953,30 @@ const IO: FC = (): JSX.Element => {
                         {event?.hostInfo.accountType}
                       </Text>
                     </View>
+                    <LinearGradient
+                    colors={['#977B4A', '#E5D291', '#A28453']}
+                    style={{
+                      marginLeft: 6,
+                      alignSelf: 'flex-start',
+                      borderRadius: 4,
+                      paddingHorizontal: 12,
+                      paddingVertical: 2,
+                      backgroundColor: blackColor,
+                    }}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}>
+                    {
+                      <Text
+                        style={{
+                          color: blackColor,
+                          fontSize: RFValue(10, 812),
+                          fontFamily: Satoshi700,
+                        }}>
+                        Premium
+                      </Text>
+                    }
+                  </LinearGradient>
+                    </View>
                     <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
                       <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
                         {event?.hostName}, {calculateAge(event?.hostInfo?.date)}
@@ -777,66 +991,6 @@ const IO: FC = (): JSX.Element => {
                   </Text>
                 </View>
               </TouchableOpacity>
-              <Text style={[styles.titleSection, {marginTop: 20}]}>Event details</Text>
-              <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}}>Place name</Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.placeName}</Text>
-              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
-                Event name
-              </Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{event?.name}</Text>
-              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
-                Event description
-              </Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>
-                {event?.description}
-              </Text>
-              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-              <View style={{marginTop: 28}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                  <CalendarIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{event?.date}</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                  <ClockIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{event?.hour}</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                  <LocationIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
-                    {event?.address}
-                  </Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                  <PeopleIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
-                    {event?.female + event?.femaleFriend}x girl
-                  </Text>
-                </View>
-              </View>
-              <View>
-                {eventPhotos?.map((image: string) => (
-                  <Image source={{uri: image}} style={{width: '100%', height: screenHeight / 4, marginVertical: 10, borderRadius: 20}} />
-                ))}
-              </View>
-              <Text style={styles.titleSection}>Already joined</Text>
-              <View>
-                <View style={styles.wrapperNumberPeople}>
-                  <Text style={styles.textUnderSubTitle}>Female</Text>
-                  <View style={styles.rowNumberPeople}>
-                    <Text style={styles.textNumberInvitedPeople}>{event?.female}</Text>
-                  </View>
-                </View>
-              </View>
-              <View>
-                <View style={[styles.wrapperNumberPeople, {marginTop: 12}]}>
-                  <Text style={styles.textUnderSubTitle}>Male</Text>
-                  <View style={styles.rowNumberPeople}>
-                    <Text style={styles.textNumberInvitedPeople}>{event?.male}</Text>
-                  </View>
-                </View>
-              </View>
               <View style={styles.wrapperButtonsFooter}>
                 <TouchableOpacity
                   onPress={() => handleChangeListsEvents(event?.uid, 'reject')}
@@ -1104,6 +1258,7 @@ const IO: FC = (): JSX.Element => {
                 location={item?._data.location}
                 joinEvents={item?._data.joinEvents}
                 online={item?._data.online}
+                date={item?._data.date}
               />
               <View style={styles.bioWrapper}>
                 <Text style={[styles.titleSection, bio && styles.mt31]}>My basics</Text>

@@ -4,6 +4,7 @@ const black1Color: string = '#0B0B0B';
 const black2Color: string = 'rgba(17, 17, 17, 1)';
 const black3Color: string = '#0F0F0F';
 const black2Color90: string = 'rgba(17, 17, 17, 0.9)';
+const black4Color: string = '#1A202C';
 const darkRedColor: string = '#891936';
 const darkRed2Color: string = '#9B314C';
 const deleteColor = '#CE2626';
@@ -42,6 +43,7 @@ const lightGray14Color: string = '#292929';
 const lightGray15Color: string = '#313131';
 const lightGray16Color: string = '#383838';
 const lightGray17Color: string = '#E6E6E6';
+const lightGray18Color: string = '#718096';
 const goldColor: string = '#977B4A';
 
 const orangeColor: string = '#FA9601';
@@ -88,6 +90,7 @@ export {
   lightGray15Color,
   lightGray16Color,
   lightGray17Color,
+  lightGray18Color,
   goldColor,
   grayColor,
   gray1Color,
@@ -99,4 +102,5 @@ export {
   deleteColor,
   black2Color90,
   black3Color,
+  black4Color
 };

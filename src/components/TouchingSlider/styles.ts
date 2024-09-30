@@ -50,14 +50,14 @@ const useStyles = () => {
       borderBottomRightRadius: 22,
     },
     linearGradientHeader: {
-      height: 125,
+      // height: 125,
       borderTopRightRadius: 22,
       borderTopLeftRadius: 22,
     },
     textName: {
       color: whiteColor,
       fontFamily: Satoshi700,
-      fontSize: RFValue(31, 812),
+      fontSize: RFValue(32, 812),
     },
     textYears: {
       color: whiteColor,

@@ -121,14 +121,14 @@ const useStyles = () => {
       backgroundColor: blackColor,
     },
     bioWrapper: {
-      marginTop: screenHeight / 27,
+      // marginTop: screenHeight / 27,
       borderRadius: 11,
       paddingVertical: screenHeight / 38,
     },
     titleSection: {
       color: whiteColor,
       fontFamily: Satoshi700,
-      fontSize: RFValue(16, 812),
+      fontSize: RFValue(18, 812),
     },
     textDescription: {
       color: whiteColor,
@@ -193,7 +193,7 @@ const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'flex-end',
       marginBottom: screenHeight / 17,
-      marginTop: screenHeight / 55,
+      marginTop: 34,
     },
     textHideNadSendReport: {
       textAlign: 'center',
