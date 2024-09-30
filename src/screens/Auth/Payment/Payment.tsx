@@ -44,7 +44,7 @@ import {useRoute} from '@react-navigation/native';
 import {showToast} from 'helpers/showToast';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
 import ModalUpgradeSuccessful from 'components/Modal/ModalUpgradeSuccessful/ModalUpgradeSuccessful';
-import {getSubscriptions} from 'src/api/purchase';
+import {getCustomerInfo, getSubscriptions} from 'src/api/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {openLink} from 'helpers/links';
 
@@ -245,6 +245,9 @@ const Payment: FC = (): JSX.Element => {
     setLoaderVisible(true);
     try {
       const {customerInfo} = await Purchases.purchasePackage(pack);
+
+      console.warn('customerInfo', customerInfo);
+
       setSuccessfulPay(true);
       setTimeout(() => {
         setLoaderVisible(false);
@@ -252,6 +255,8 @@ const Payment: FC = (): JSX.Element => {
       }, 1000);
       updateUser();
     } catch (e) {
+      console.error('error pay', e);
+
       setLoaderVisible(false);
     }
   };
@@ -382,7 +387,7 @@ const Payment: FC = (): JSX.Element => {
                   color: isActive ? blackColor : whiteColor,
                   textAlign: 'center',
                 }}>
-                {isActive? activePayment.fullPrice: item.pricePerDuration}
+                {isActive ? activePayment.fullPrice : item.pricePerDuration}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -433,7 +438,7 @@ const Payment: FC = (): JSX.Element => {
       priceString: offer.product.priceString,
       fullPrice: offer.product.priceString,
       package: offer,
-    }));    
+    }));
     setPlansList(products);
     setActivePayment(products[1]);
   }, [subscriptions]);
