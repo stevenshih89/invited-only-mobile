@@ -171,9 +171,10 @@ const Payment: FC = (): JSX.Element => {
     const user = auth().currentUser;
     if (user) {
       try {
-        const userInfoUpdate = await firestore().collection('userInfo').doc(user.uid);
-        userInfoUpdate.update({
+        await firestore().collection('userInfo').doc(user.uid).update({
           accountPremium: true,
+          accountConfirmed: true,
+          accountReviewed: true,
         });
       } catch (error: any) {
         console.log('error user premium update', error);
