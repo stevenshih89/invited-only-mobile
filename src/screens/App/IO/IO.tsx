@@ -1528,7 +1528,7 @@ const IO: FC = (): JSX.Element => {
                     }, 500);
                   }}
                   onSwipedRight={() => {
-                    setGuestsInvited(guestsInvited + 1)
+                    setGuestsInvited(prev => prev + 1)
                     onInvite(item?.info?.uid, item?.info?.id);
                     setTimeout(() => {
                       setCurrentEventCardPosition(prev => prev + 1);
