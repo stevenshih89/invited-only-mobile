@@ -1,4 +1,4 @@
-import {SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity, Alert, TouchableWithoutFeedback} from 'react-native';
+import {SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity, Alert, TouchableWithoutFeedback, AppState} from 'react-native';
 import React, {FC, useState, useEffect, useContext, useCallback, useRef} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
@@ -61,6 +61,7 @@ import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import Animated, {Easing, useAnimatedStyle, useEvent, useSharedValue, withTiming} from 'react-native-reanimated';
 import ModalEventLocked from 'components/Modal/ModalEventLocked/ModalEventLocked';
+import { useGuestList } from 'src/store/guestListStore';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -88,6 +89,7 @@ const IO: FC = (): JSX.Element => {
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
   const [currentEventInfo, setCurrentEventInfo] = useState(null);
+  const [appState, setAppState] = useState(AppState.currentState);
 
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
@@ -102,6 +104,8 @@ const IO: FC = (): JSX.Element => {
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
   const setRejectModalVisible = useAdminActions((i: any) => i?.setRejectModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
+
+  const {guestsInvited, setGuestsInvited} = useGuestList()  
 
   const allEventsLength = useRef(0);
 
@@ -149,6 +153,31 @@ const IO: FC = (): JSX.Element => {
       setFlipped(false);
     }
   }, [isVisibleSuperInvite]);
+
+  useEffect(() => {
+    setGuestsInvited(activeEvent?.usersList?.length)
+  },[activeEvent])
+
+  useEffect(() => {
+    const handleAppStateChange = async (nextAppState) => {
+      try {
+        if (nextAppState === 'active' || nextAppState === 'inactive') {          
+          await firestore().collection('userInfo').doc(userInfo.uid).update({
+            online: nextAppState === 'active'? true: false
+          })
+        }
+      } catch (error) {
+        console.log('error update online', error);
+      }
+      setAppState(nextAppState);
+    };
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+
+    return () => {
+      subscription.remove();
+    };
+  }, [appState, userInfo]);
 
   useEffect(() => {
     let unsubscribeEvent: any;
@@ -991,7 +1020,7 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const getListForHost = async () => {
+  const getListForHost = async () => {    
     const user = auth().currentUser;
     let users: any;
     setLoading(true);
@@ -1071,6 +1100,10 @@ const IO: FC = (): JSX.Element => {
                 handleAutoSwipeRight={() => handleAutoSwipeRight(item?._data?.id)}
                 isShowWantsJoin={findSuperJoin}
                 isPremium={accountPremium}
+                activeEvent={activeEvent}
+                location={item?._data.location}
+                joinEvents={item?._data.joinEvents}
+                online={item?._data.online}
               />
               <View style={styles.bioWrapper}>
                 <Text style={[styles.titleSection, bio && styles.mt31]}>My basics</Text>
@@ -1191,7 +1224,10 @@ const IO: FC = (): JSX.Element => {
                       <CloseIcon />
                     </View>
                   </TouchableOpacity>
-                  <TouchableWithoutFeedback onPress={() => handleSuperInviteBottom(item._data, 400)}>
+                  <TouchableWithoutFeedback onPress={() => {
+                    setGuestsInvited(guestsInvited + 1)
+                    handleSuperInviteBottom(item._data, 400)
+                  }}>
                     <View style={styles.buttonFlash}>
                       <View
                         style={{
@@ -1253,6 +1289,7 @@ const IO: FC = (): JSX.Element => {
                   </TouchableWithoutFeedback>
                   <TouchableOpacity
                     onPress={() => {
+                      setGuestsInvited(guestsInvited + 1)
                       handleAutoSwipeRight(item?._data?.id);
                     }}
                     style={styles.buttonCloseOrCheck}>
@@ -1305,7 +1342,7 @@ const IO: FC = (): JSX.Element => {
         });
       });
 
-    allEventsLength.current = data.length;
+    allEventsLength.current = data.length;    
     setEvents(data);
     eventsRef.current = data;
     setLoading(false);
@@ -1434,7 +1471,7 @@ const IO: FC = (): JSX.Element => {
       />
     );
   }
-
+  
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
@@ -1491,6 +1528,7 @@ const IO: FC = (): JSX.Element => {
                     }, 500);
                   }}
                   onSwipedRight={() => {
+                    setGuestsInvited(prev => prev + 1)
                     onInvite(item?.info?.uid, item?.info?.id);
                     setTimeout(() => {
                       setCurrentEventCardPosition(prev => prev + 1);

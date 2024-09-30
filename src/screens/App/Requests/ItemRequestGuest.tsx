@@ -22,6 +22,7 @@ import FastImage from 'react-native-fast-image';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
 import {INVITE_MATCH_STATUS} from 'constants/common';
+import { err } from 'react-native-svg';
 
 const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: any) => {
   const [hostInfo, setHostInfo] = useState([]);
@@ -31,7 +32,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
 
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const user = useUser((i: any) => i?.user);
+  const user = useUser((i: any) => i?.user);  
 
   const goToEventInfo = () => {
     navigation.navigate(commonStackPath, {screen: eventInfoPath, params: {list: list}});
@@ -140,11 +141,30 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
             );
             setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
           });
+          await updateJoinEvents()
       } catch (e) {
         // console.log(e);
         showToast('inviteMatch', '', "There's been an error");
       }
     });
+  };
+
+  const updateJoinEvents = async () => {
+    try {
+      const doc = firestore().collection('userInfo').doc(user.uid);
+      const data = (await doc.get()).data();
+      if (data?.joinEvents) {
+        doc.update({
+          joinEvents: data?.joinEvents + 1,
+        });
+      } else {
+        doc.update({
+          joinEvents: 1,
+        });
+      }
+    } catch (error) {
+      console.log('error joinEvents update', error);
+    }
   };
 
   const handleSwipeGuestCardReject = async (item: any): Promise<void> => {

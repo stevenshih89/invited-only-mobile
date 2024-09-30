@@ -3,7 +3,7 @@ import {INVITE_MATCH_STATUS} from 'constants/common';
 
 export const checkIsFullGuests = async (idEvent: string) => {
   const getEventData = await firestore().collection('Events').doc(idEvent).get();
-  console.warn('getEventData', idEvent, getEventData.data());
+  // console.warn('getEventData', idEvent, getEventData.data());
 
   const data = getEventData.data();
   const allGuests = data?.male + data?.female;
