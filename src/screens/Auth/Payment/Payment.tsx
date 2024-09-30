@@ -382,7 +382,7 @@ const Payment: FC = (): JSX.Element => {
                   color: isActive ? blackColor : whiteColor,
                   textAlign: 'center',
                 }}>
-                {item.pricePerDuration}
+                {isActive? activePayment.fullPrice: item.pricePerDuration}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -433,7 +433,7 @@ const Payment: FC = (): JSX.Element => {
       priceString: offer.product.priceString,
       fullPrice: offer.product.priceString,
       package: offer,
-    }));
+    }));    
     setPlansList(products);
     setActivePayment(products[1]);
   }, [subscriptions]);

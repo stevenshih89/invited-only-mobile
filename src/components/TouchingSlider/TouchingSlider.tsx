@@ -149,14 +149,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   const flipCoin = () => {
     rotation.value = withTiming(flipped ? 0 : 180, {
-      duration: 300,
+      duration: 500,
       easing: Easing.inOut(Easing.ease),
     });
     setFlipped(prev => !prev);
     if (superInvites) {
-      setTimeout(() => {
-        handleOpenSuperInvite && handleOpenSuperInvite();
-      }, 300);
+      handleOpenSuperInvite && handleOpenSuperInvite();
     } else {
       goToMyProfileView();
     }
@@ -273,10 +271,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   </View>
                 )}
               </View>
-              {isShowCardButtons && (
-                <View style={styles.wrapperRightButton}>
-                </View>
-              )}
             </View>
           </View>
         </LinearGradient>

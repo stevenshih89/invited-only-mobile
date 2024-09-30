@@ -78,7 +78,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const [userInfo, setUserInfo] = useState<any>(null);
   const [myEvents, setMyEvents] = useState<Array<any>>();
   const styles = useStyles();
-  
+
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
 
@@ -328,20 +328,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   </View>
                   <Text style={styles.textButton}>Create event</Text>
                 </TouchableOpacity>
-                {/*@ts-ignore*/}
-                {/* <TouchableOpacity
-                  onPress={() => {
-                    if (!userHost?.accountConfirmed) {
-                      return;
-                    }
-                    navigation.navigate(joinEventsPath);
-                  }}
-                  style={styles.eventButton}>
-                  <View style={styles.eventView}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: 24}}>J</Text>
-                  </View>
-                  <Text style={styles.textButton}>Join events</Text>
-                </TouchableOpacity> */}
                 {myEvents &&
                   myEvents.map((event: any, index: number) => {
                     const isActive = activeEvent?.id === event.id;
@@ -372,7 +358,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                           }}>
                           {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                           {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                          <FastImage style={{width: '100%', height: '100%', borderRadius: 50}} source={{uri: event?.photos[0]?.image}} />           
+                          <FastImage style={{width: '100%', height: '100%', borderRadius: 50}} source={{uri: event?.photos[0]?.image}} />
                         </View>
                         <Text
                           style={{
@@ -513,13 +499,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               </View>
               <Text style={styles.textButton}>Create event</Text>
             </TouchableOpacity>
-            {/*@ts-ignore*/}
-            {/* <TouchableOpacity style={styles.joinEventButton}>
-              <View style={styles.joinEventView}>
-                <CalendarSearchIcon width={26} height={26} />
-              </View>
-              <Text style={styles.textButton}>Join events</Text>
-            </TouchableOpacity> */}
           </View>
         );
       case 'myEvents':
@@ -535,22 +514,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
               </View>
               <Text style={styles.textButton}>Create event</Text>
             </TouchableOpacity>
-            {/*@ts-ignore*/}
-            {/* <TouchableOpacity
-              onPress={() => {
-                if (!userHost?.accountConfirmed) {
-                  return;
-                }
-                setActiveEvent('host');
-                navigation.navigate(joinEventsPathRequest);
-              }}
-              style={styles.eventButton}>
-              <View style={[styles.joinEventActive, {borderColor: activeEvent === 'host' ? whiteColor : lightGray5Color}]}>
-                <CalendarSearchIcon width={26} height={26} />
-              </View>
-              <Text style={styles.textButton}>Join events</Text>
-            </TouchableOpacity> */}
             {myEvents?.map((event: any, index: number) => {
+              if (event?.eventReviewed && !event?.statusEvent) {
+                return null;
+              }
               const isActive = activeEvent?.id === event.id;
               const eventIsFinished = isEventFinished(event?.date, event?.hour);
               const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
