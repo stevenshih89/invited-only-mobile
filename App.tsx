@@ -7,27 +7,12 @@ import {black1Color} from 'constants/colors';
 import Purchases from 'react-native-purchases';
 import {NavigationContainer} from '@react-navigation/native';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
+import {getActiveSubscription} from 'src/api/purchase';
 
 const App: FC = (): JSX.Element => {
   const IO_PUBLICK_RC_IOS = 'appl_zMgrNWXsDMnWsICHMLKNhAKHebg';
 
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
-
-  const getActiveSubscription = async () => {
-    try {
-      const customerInfo = await Purchases.getCustomerInfo();
-      const activeSubscriptions = customerInfo.activeSubscriptions;
-
-      if (activeSubscriptions.length > 0) {
-        return customerInfo;
-      } else {
-        return {activeSubscriptions: []};
-      }
-    } catch (error) {
-      console.log('error get subs', error);
-      return {activeSubscriptions: []};
-    }
-  };
 
   useEffect(() => {
     if (Platform.OS === 'ios') {

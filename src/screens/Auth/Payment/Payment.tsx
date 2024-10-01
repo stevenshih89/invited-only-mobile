@@ -44,7 +44,7 @@ import {useRoute} from '@react-navigation/native';
 import {showToast} from 'helpers/showToast';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
 import ModalUpgradeSuccessful from 'components/Modal/ModalUpgradeSuccessful/ModalUpgradeSuccessful';
-import {getCustomerInfo, getSubscriptions} from 'src/api/purchase';
+import {getActiveSubscription, getCustomerInfo, getSubscriptions} from 'src/api/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {openLink} from 'helpers/links';
 
@@ -166,6 +166,7 @@ const Payment: FC = (): JSX.Element => {
   const [visibleUpgradeSuccessful, setVsibleUpgradeSuccessful] = useState(false);
 
   const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions);
+  const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
 
   const updateUser = async () => {
     const user = auth().currentUser;
@@ -215,19 +216,25 @@ const Payment: FC = (): JSX.Element => {
     try {
       const purchaserInfo = await Purchases.restorePurchases();
 
+      console.warn(purchaserInfo);
+
       if (purchaserInfo.activeSubscriptions.length > 0) {
         switch (purchaserInfo.activeSubscriptions[0]) {
           case 'io_59_1w':
             showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', {status: 'success'});
-            navigation.navigate('/profile');
+
+            setCurrentSubscriptions({activeSubscriptions: ['io_59_1w']});
+            // navigation.navigate('/profile');
             break;
           case 'io_25_wk':
             showToast('inviteMatch', 'Annual subscription restored', 'Restore purchases', {status: 'success'});
-            navigation.navigate('/profile');
+            setCurrentSubscriptions({activeSubscriptions: ['io_25_wk']});
+            // navigation.navigate('/profile');
             break;
           case 'io_29_3m':
             showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', {status: 'success'});
-            navigation.navigate('/profile');
+            setCurrentSubscriptions({activeSubscriptions: ['io_29_3m']});
+            // navigation.navigate('/profile');
             break;
           default:
             break;
@@ -248,6 +255,9 @@ const Payment: FC = (): JSX.Element => {
       const {customerInfo} = await Purchases.purchasePackage(pack);
 
       console.warn('customerInfo', customerInfo);
+
+      const activeSubscription = await getActiveSubscription();
+      setCurrentSubscriptions(activeSubscription);
 
       setSuccessfulPay(true);
       setTimeout(() => {

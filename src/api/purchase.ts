@@ -3,6 +3,7 @@ import Purchases, {PurchasesPackage} from 'react-native-purchases';
 const enum Offering {
   SuperInvite = 'Super Invite',
   HostSubscription = 'Host subscription',
+  Pro = 'Pro',
 }
 
 const logError = (error: Error | string | unknown) => {
@@ -39,11 +40,15 @@ export const getCustomerInfo = async () => {
   try {
     const customerInfo = await Purchases.getCustomerInfo();
 
-    if (typeof customerInfo.entitlements.active[Offering.HostSubscription] === 'undefined') {
+    console.warn(JSON.stringify(customerInfo));
+    console.warn(JSON.stringify(customerInfo.activeSubscriptions));
+    if (typeof customerInfo.entitlements.active[Offering.Pro] === 'undefined') {
       throw 'no-subscription';
     }
 
-    const isActiveMySubscription = customerInfo.entitlements.active[Offering.HostSubscription].isActive;
+    const isActiveMySubscription = customerInfo.entitlements.active[Offering.Pro].isActive;
+
+    console.warn('isActiveMySubscription', isActiveMySubscription);
 
     console.warn(JSON.stringify(customerInfo));
 
@@ -51,5 +56,23 @@ export const getCustomerInfo = async () => {
   } catch (error) {
     console.error('getCustomerInfo:error ', error);
     throw error;
+  }
+};
+
+export const getActiveSubscription = async () => {
+  try {
+    const customerInfo = await Purchases.getCustomerInfo();
+    const activeSubscriptions = customerInfo.activeSubscriptions;
+
+    console.warn('activeSubscriptions', activeSubscriptions);
+
+    if (activeSubscriptions.length > 0) {
+      return customerInfo;
+    } else {
+      return {activeSubscriptions: []};
+    }
+  } catch (error) {
+    console.log('error get subs', error);
+    return {activeSubscriptions: []};
   }
 };
