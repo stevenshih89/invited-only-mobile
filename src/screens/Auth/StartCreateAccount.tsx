@@ -5,7 +5,7 @@ import {black1Color, blackColor, lightGray19Color, whiteColor} from 'constants/c
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {signUpPath} from 'constants/pathLocations';
+import {eulaPath} from 'constants/pathLocations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const StartCreateAccount: FC = (): JSX.Element => {
@@ -70,7 +70,7 @@ const StartCreateAccount: FC = (): JSX.Element => {
             <TouchableOpacity
               activeOpacity={0.7}
               hitSlop={{top: 26, bottom: 20}}
-              onPress={() => navigation.navigate(signUpPath as never)}
+              onPress={() => navigation.navigate(eulaPath as never)}
               style={{
                 backgroundColor: whiteColor,
                 borderRadius: 18,
