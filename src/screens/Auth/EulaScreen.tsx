@@ -1,7 +1,7 @@
-import React, {FC, useCallback} from 'react';
+import React, {FC, useCallback, useState} from 'react';
 import {FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowLeftArrow from 'assets/images/icons/arrow-left.svg';
-import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGray12Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -79,6 +79,8 @@ const dataEula = [
 const Eula: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
+  const [endReached, setEndReached] = useState(false)
+
   const renderItem = useCallback(
     (item: any) => (
       <View
@@ -110,6 +112,10 @@ const Eula: FC = (): JSX.Element => {
     [],
   );
 
+  const onEndReached = useCallback(() => {
+    setEndReached(true)
+  }, []);
+
   return (
     <View style={{flex: 1, backgroundColor: blackColor}}>
       <SafeAreaView style={{flex: 1}}>
@@ -138,7 +144,13 @@ const Eula: FC = (): JSX.Element => {
             </View>
             <View />
           </View>
-          <FlatList data={dataEula} keyExtractor={item => item.id.toString()} renderItem={({item}) => renderItem(item)} />
+          <FlatList 
+          data={dataEula} 
+          keyExtractor={item => item.id.toString()} 
+          renderItem={({item}) => renderItem(item)} 
+          onEndReached={onEndReached}
+          onEndReachedThreshold={0.1}
+          />
           <View style={{flexDirection: 'row'}}>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
@@ -151,11 +163,12 @@ const Eula: FC = (): JSX.Element => {
               <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Deny</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              disabled={!endReached}
               onPress={() => navigation.navigate(signUpPath as never)}
               style={{
                 flex: 1.5,
                 paddingVertical: 13,
-                backgroundColor: whiteColor,
+                backgroundColor: endReached? whiteColor: transparentWhite16Color,
                 borderRadius: 10,
                 marginTop: 24,
                 alignItems: 'center',
