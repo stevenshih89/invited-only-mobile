@@ -8,6 +8,7 @@ const commonStackPath = '/common-stack';
 // Screen paths
 const onboardPath: keyof RootStackParamList = '/onboard';
 const startCreateAccountPath: keyof RootStackParamList = '/start-create-account';
+const eulaPath: keyof RootStackParamList = '/eula';
 const signUpPath: keyof RootStackParamList = '/sign-up';
 const confirmPhonePath: keyof RootStackParamList = '/confirm-phone';
 const turnNotificationsPath: keyof RootStackParamList = '/turn-notifications';
@@ -113,5 +114,6 @@ export {
   addBuisnessPath,
   joinEventsPathRequest,
   manageSubscriptionPath,
-  startCreateAccountPath
+  startCreateAccountPath,
+  eulaPath
 };
