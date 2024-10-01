@@ -878,7 +878,9 @@ const IO: FC = (): JSX.Element => {
                   <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
                 </View>
                 <View style={{paddingHorizontal: 23}}>
-                <TouchableOpacity style={{
+                <TouchableOpacity 
+                onPress={() => handleAutoSwipeRight(event?.id)}
+                style={{
                   height: 65, 
                   width: '100%',
                   alignItems: 'center', 
