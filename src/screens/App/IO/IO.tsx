@@ -650,6 +650,11 @@ const IO: FC = (): JSX.Element => {
     return `${day} ${monthName} ${year}`;
   }
 
+  const getDataUserEvent = async (uid: string) => {
+    const getDoc = await firestore().collection('userInfo').doc(uid).get();
+    return getDoc.data();
+  };
+
   const getListForGuest = async () => {
     const user = auth().currentUser;
     if (!user) {
@@ -717,11 +722,12 @@ const IO: FC = (): JSX.Element => {
     if (!filterDataWM.length) {
       return;
     }
-
-    filterDataWM?.map((event: any) => {
+    
+    for (const event of filterDataWM) {
       const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
       const eventPhotos = event?.photos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
-
+      const userEventData = await getDataUserEvent(event?.uid);
+      
       data.push({
         component: (
           <View style={styles.wrapperFakeCard}>
@@ -872,7 +878,9 @@ const IO: FC = (): JSX.Element => {
                   <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
                 </View>
                 <View style={{paddingHorizontal: 23}}>
-                <TouchableOpacity style={{
+                <TouchableOpacity 
+                onPress={() => handleAutoSwipeRight(event?.id)}
+                style={{
                   height: 65, 
                   width: '100%',
                   alignItems: 'center', 
@@ -922,7 +930,7 @@ const IO: FC = (): JSX.Element => {
                   {event?.hostImage && (
                     <View style={{flexDirection: 'row'}}>
                       <FastImage source={{uri: event?.hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
-                      <View style={{
+                      {userEventData?.online && <View style={{
                         width: 11, 
                         height: 11, 
                         borderRadius: 11, 
@@ -932,7 +940,7 @@ const IO: FC = (): JSX.Element => {
                         position: 'absolute',
                         bottom: 3,
                         right: 0
-                        }}></View>
+                        }}></View>}
                     </View>
                   )}
                   <View style={{marginLeft: 13}}>
@@ -953,7 +961,7 @@ const IO: FC = (): JSX.Element => {
                         {event?.hostInfo.accountType}
                       </Text>
                     </View>
-                    <LinearGradient
+                    {userEventData?.accountPremium && <LinearGradient
                     colors={['#977B4A', '#E5D291', '#A28453']}
                     style={{
                       marginLeft: 6,
@@ -975,7 +983,7 @@ const IO: FC = (): JSX.Element => {
                         Premium
                       </Text>
                     }
-                  </LinearGradient>
+                  </LinearGradient>}
                     </View>
                     <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
                       <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
@@ -1144,8 +1152,8 @@ const IO: FC = (): JSX.Element => {
         ),
         info: event,
       });
-    });
-
+    };
+   
     const filteredData = data.filter(item => item.info && item.info.eventReviewed);
 
     const sortedByInterestsData = sortByInterests(sortByDate(filteredData)?.reverse(), userHost);
