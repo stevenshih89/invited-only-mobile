@@ -29,6 +29,7 @@ import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/us
 import {useAdminActions} from 'src/store/adminActions';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
+import FastImage from 'react-native-fast-image';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
@@ -303,6 +304,11 @@ const Requests: FC = (): ReactElement => {
     );
   }
 
+  const getUsersListAccepted = () => {
+    const filter = activeEvent?.usersList.filter(item => item.status === 'invite_match')
+    return filter.length
+  }
+
   return (
     <>
       <View style={styles.container}>
@@ -314,6 +320,57 @@ const Requests: FC = (): ReactElement => {
           setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
         />
         {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}
+        {userInfo?.accountType === 'host' && <View
+          style={{
+            width: '100%',
+            paddingHorizontal: 24,
+          }}>
+          <View
+            style={{
+              height: 65,
+              // width: '100%',
+              borderWidth: 1,
+              borderColor: whiteColor,
+              borderRadius: 12,
+              marginBottom: 18,
+              paddingHorizontal: 16,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+            <Text style={{fontSize: RFValue(16, 812), color: whiteColor, fontFamily: Satoshi500}}>Join Requests: {activeEvent?.requestsList.length}</Text>
+            <View>
+              <View style={{width: 1.25, height: 6, borderRadius: 2, backgroundColor: whiteColor}} />
+              <View style={{width: 1.25, height: 10, borderRadius: 2, backgroundColor: whiteColor, marginTop: 5}} />
+              <View style={{width: 1.25, height: 10, borderRadius: 2, backgroundColor: whiteColor, marginTop: 5}} />
+              <View style={{width: 1.25, height: 6, borderRadius: 2, backgroundColor: whiteColor, marginTop: 4}} />
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <FastImage
+                source={{uri: activeEvent?.photos[0].image}}
+                style={{width: 39, height: 39, borderRadius: 39, borderWidth: 1, borderColor: whiteColor, alignSelf: 'center'}}
+              />
+              <View style={{marginLeft: 10, alignItems: 'center'}}>
+                <Text
+                  style={{
+                    fontSize: RFValue(26, 812),
+                    color: whiteColor,
+                    fontFamily: Satoshi700,
+                  }}>
+                  {getUsersListAccepted()}/{activeEvent?.usersList.length}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: RFValue(12, 812),
+                    color: whiteColor,
+                    fontFamily: Satoshi500,
+                  }}>
+                  Guest List
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>}
         {totalQuantityGuests > 0 && (
           <FullEvent
             text={`Event is full: ${acceptQuantityGuest}/${totalQuantityGuests} Guests Accepted`}
