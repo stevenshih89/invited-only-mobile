@@ -15,6 +15,7 @@ export type RootStackParamList = {
   };
   '/onboard': undefined;
   '/sign-up': undefined;
+  '/start-create-account': undefined;
   '/confirm-phone'?: {
     phone: string;
   };

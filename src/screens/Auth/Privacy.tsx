@@ -18,18 +18,23 @@ const Privacy: FC = (): JSX.Element => {
   const privaciesList = [
     {
       id: 0,
-      title: 'Be yourself.',
-      subtitle: 'Make sure your photos, age, and bio are true to who you are.',
+      title: 'Be Respectful',
+      subtitle: 'Treat your guests with courtesy and professionalism at all times.',
     },
     {
       id: 1,
-      title: 'Play it cool.',
-      subtitle: 'Respect others and treat them as you would like to be treated.',
+      title: 'Ensure Safety',
+      subtitle: 'Maintain a safe environment and report inappropriate behavior immediately.',
     },
     {
       id: 2,
-      title: 'Be proactive.',
-      subtitle: 'Always report bad behavior.',
+      title: 'Honesty is Key',
+      subtitle: 'Be clear about your event and its purpose—no misleading details.',
+    },
+    {
+      id: 3,
+      title: 'Respect Privacy',
+      subtitle: 'Do not share personal information or media without consent.'
     },
   ];
 
@@ -87,7 +92,7 @@ const Privacy: FC = (): JSX.Element => {
                     fontFamily: Satoshi400,
                     fontSize: RFValue(18, 812),
                   }}>
-                  Please follow these House Rules
+                  Please follow these Host House Rules
                 </Text>
               </View>
               <View style={{width: '100%'}}>

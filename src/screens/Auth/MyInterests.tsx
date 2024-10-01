@@ -1,47 +1,42 @@
-import {isIos, screenHeight, screenWidth} from 'constants/common';
+import {isIos, screenHeight} from 'constants/common';
 import {FC, useContext, useState} from 'react';
-import {FlatList, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {FlatList, Image, ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import EightyIcon from 'assets/images/auth/progress/eighty.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import SearchIcon from 'assets/images/icons/search.svg';
-import {black1Color, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import CheckIcon from 'assets/images/icons/Check-black.svg';
+import BirthdayParty from 'assets/images/auth/interests/birthday-party.png'
+import Exclusive from 'assets/images/auth/interests/exclusive.png'
+import PoolParty from 'assets/images/auth/interests/pool-party.png'
+import Private from 'assets/images/auth/interests/private.png'
+import Restaurant from 'assets/images/auth/interests/restaurant.png'
+import VipTables from 'assets/images/auth/interests/vip-tables.png'
+import YachtParty from 'assets/images/auth/interests/yacht-party.png'
+import Concert from 'assets/images/auth/interests/concerts.png'
+import UserOne from 'assets/images/auth/interests/user-one.png'
+import UserTwo from 'assets/images/auth/interests/user-two.png'
+import {black1Color, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {myEmailPath} from 'constants/pathLocations';
 import {AuthContext} from 'contexts/AuthContext.tsx';
-import Input from 'components/Inputs/Input';
 import AuthProgress from 'components/AuthProgress';
 
 const MyInterests: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
-  const {onBoarding, setOnBoarding} = useContext(AuthContext);
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);  
 
-  const [search, setSearch] = useState<string>('');
   const [listOfInterests, setListOfInterests] = useState([
-    {id: 0, title: 'Bussiness', isSelected: false},
-    {id: 1, title: 'Traveling', isSelected: false},
-    {id: 2, title: 'Cooking', isSelected: false},
-    {id: 3, title: 'Music', isSelected: false},
-    {id: 4, title: 'Painitng', isSelected: false},
-    {id: 5, title: 'Gaming', isSelected: false},
-    {id: 6, title: 'Hiking', isSelected: false},
-    {id: 7, title: 'Yoga', isSelected: false},
-    {id: 8, title: 'Writing', isSelected: false},
-    {id: 9, title: 'Meditation', isSelected: false},
-    {id: 10, title: 'Fishing', isSelected: false},
-    {id: 11, title: 'Dancing', isSelected: false},
-    {id: 12, title: 'Clubs', isSelected: false},
-    {id: 13, title: 'Surfing', isSelected: false},
-    {id: 14, title: 'Creativity', isSelected: false},
-    {id: 15, title: 'Yacht', isSelected: false},
-    {id: 16, title: 'Gardering', isSelected: false},
-    {id: 17, title: 'Movies', isSelected: false},
-    {id: 18, title: 'Restaurans', isSelected: false},
-    {id: 19, title: 'Entrepreneur', isSelected: false},
+    {id: 0, title: 'Vip Tabes', isSelected: false, image: VipTables},
+    {id: 1, title: 'Concerts', isSelected: false, image: Concert},
+    {id: 2, title: 'Exclusive', isSelected: false, image: Exclusive},
+    {id: 3, title: 'YachtParty', isSelected: false, image: YachtParty},
+    {id: 4, title: 'PoolParty', isSelected: false, image: PoolParty},
+    {id: 5, title: 'Private', isSelected: false, image: Private},
+    {id: 6, title: 'BirthdayParty', isSelected: false, image: BirthdayParty},
+    {id: 7, title: 'Restaurant', isSelected: false, image: Restaurant},
   ]);
 
   const handleSelectInterest = (id: number) => {
@@ -68,10 +63,8 @@ const MyInterests: FC = (): JSX.Element => {
     navigation.navigate(myEmailPath as never);
   };
 
-  const list = search.length
-    ? listOfInterests.filter(interest => interest.title.toLowerCase().includes(search.toLowerCase()))
-    : listOfInterests;
-
+  const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
+  
   return (
     <KeyboardAvoidingView
       behavior={isIos ? 'padding' : 'height'}
@@ -103,7 +96,6 @@ const MyInterests: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                {/* <EightyIcon height={40} /> */}
                 <AuthProgress startPercentage={70} endPercentage={80} animationDuration={1000} />
               </View>
               <View
@@ -119,7 +111,7 @@ const MyInterests: FC = (): JSX.Element => {
                     fontSize: RFValue(34, 812),
                     marginBottom: 18,
                   }}>
-                  My interests
+                  Choose interests
                 </Text>
                 <Text
                   style={{
@@ -127,43 +119,105 @@ const MyInterests: FC = (): JSX.Element => {
                     fontFamily: Satoshi400,
                     fontSize: RFValue(17, 812),
                   }}>
-                  Choose up to <Text style={{fontWeight: '700'}}>3 things</Text> you love. It will help you match with people
+                  Choose up to <Text style={{fontWeight: '700'}}>3{accountType === 'host'? 'things': ' event types'}</Text> you love. It will help you match with people
                 </Text>
               </View>
-              <View style={{width: '100%'}}>
-                <Input
-                  value={search}
-                  onChange={val => setSearch(val)}
-                  InputIcon={() => <SearchIcon />}
-                  containerInnerStyle={{flexDirection: 'row-reverse', height: 48}}
-                  placeholder="Search interest"
-                />
-              </View>
-              <View style={{width: '100%', height: screenHeight / 2.3}}>
+              <View style={{width: '100%', height: screenHeight / 2}}>
                 <FlatList
-                  data={list}
-                  numColumns={3}
+                  data={listOfInterests}
+                  numColumns={2}
                   keyExtractor={({id}) => id.toString()}
                   bounces={false}
                   contentContainerStyle={{width: '100%'}}
-                  ItemSeparatorComponent={() => <View style={{height: 10, width: 10}} />}
-                  renderItem={({item: {id, title, isSelected}}) => (
-                    <View style={{paddingHorizontal: 5, maxWidth: screenWidth / 2 - 40, flex: 1}}>
+                  ItemSeparatorComponent={() => <View style={{height: 20, width: 20}} />}
+                  renderItem={({item: {id, title, isSelected, image}}) => (
+                    <View style={{paddingHorizontal: 5}}>
                       <TouchableOpacity
                         onPress={() => handleSelectInterest(id)}
                         activeOpacity={0.7}
                         style={{
                           flex: 1,
-                          borderRadius: 30,
-                          paddingVertical: 8,
-                          justifyContent: 'center',
+                          borderRadius: 12,
+                          width: 180,
                           alignItems: 'center',
                           borderWidth: 1,
                           borderStyle: 'solid',
-                          borderColor: isSelected ? whiteColor : 'transparent',
-                          backgroundColor: lightGray2Color,
+                          borderColor: isSelected ? whiteColor : blackColor,
                         }}>
-                        <Text style={{color: whiteColor, fontSize: RFValue(13, 812), fontFamily: Satoshi400}}>{title}</Text>
+                        <View style={{width: 178, height: 250, borderRadius: 12, overflow: 'hidden'}}>
+                          <ImageBackground source={image} style={{width: '100%', height: '100%', justifyContent: 'space-between'}}>
+                            <TouchableOpacity style={{
+                              backgroundColor: whiteColor,
+                              width: 20,
+                              height: 20,
+                              borderRadius: 20,
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              alignSelf: 'flex-end',
+                              marginRight: 11,
+                              marginTop: 16,
+                              opacity: isSelected? 1: 0.3
+                            }}>
+                              <CheckIcon />
+                            </TouchableOpacity>
+                            <View
+                              style={{
+                                backgroundColor: whiteColor,
+                                height: 40,
+                                width: '100%',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}>
+                              <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
+                                <Text style={{color: blackColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 16}}>{title}</Text>
+                                <View style={{flexDirection: 'row',}}>
+                                  <Image
+                                    source={UserOne}
+                                    style={{
+                                      width: 18,
+                                      height: 18,
+                                      borderRadius: 18,
+                                      borderWidth: 1,
+                                      borderColor: whiteColor,
+                                    }}
+                                  />
+                                  <Image
+                                    source={UserTwo}
+                                    style={{
+                                      width: 18,
+                                      height: 18,
+                                      borderRadius: 18,
+                                      borderWidth: 1,
+                                      borderColor: whiteColor,
+                                      transform: [{translateX: -8}],
+                                    }}
+                                  />
+                                  <View
+                                    style={{
+                                      width: 18,
+                                      height: 18,
+                                      backgroundColor: blackColor,
+                                      borderRadius: 18,
+                                      borderWidth: 1,
+                                      borderColor: whiteColor,
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      transform: [{translateX: -16}],
+                                    }}>
+                                    <Text
+                                      style={{
+                                        color: whiteColor,
+                                        fontSize: RFValue(6, 812),
+                                        fontFamily: Satoshi500,
+                                      }}>
+                                      40
+                                    </Text>
+                                  </View>
+                                </View>
+                              </View>
+                            </View>
+                          </ImageBackground>
+                        </View>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -172,6 +226,7 @@ const MyInterests: FC = (): JSX.Element => {
             </View>
             <View style={{marginBottom: 4}}>
               <Button
+                buttonStyle={{borderRadius: 18}}
                 disabled={listOfInterests.filter(interest => interest.isSelected).length < 3}
                 title={`Continue (${listOfInterests.filter(interest => interest.isSelected).length}/3)`}
                 onPress={() => handleNext()}
