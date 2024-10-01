@@ -23,7 +23,7 @@ const AuthContext = createContext<AuthContextData>(initialAuthContext);
 const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
   const [user, setUser] = useState<any>(initialAuthContext.user);
   const [onBoarding, setOnBoarding] = useState<any>(initialAuthContext.onBoarding);
-
+  
   const value = {
     user,
     setUser,
