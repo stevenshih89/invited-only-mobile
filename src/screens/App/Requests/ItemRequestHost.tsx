@@ -8,7 +8,7 @@ import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
 import useStyles from './styles';
-import {Satoshi700} from 'constants/fonts';
+import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {blackColor, lightRed1Color, whiteColor} from 'constants/colors';
 import {calculateAge} from 'helpers/calculateAge';
@@ -213,57 +213,6 @@ const ItemRequestHost = ({
     return userInfoDoc.data()?.fcmToken;
   };
 
-  // const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
-  //   const token = await getFcmTokenFromUser(forUserUid);
-
-  //   const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-  //     },
-  //     body: JSON.stringify({
-  //       to: token,
-  //       notification: {
-  //         title: title,
-  //         body: body,
-  //       },
-  //       data: {
-  //         status: mark,
-  //         image: userInfo?.photos[0].image,
-  //       },
-  //     }),
-  //   });
-
-  //   if (!response.ok) {
-  //     const error = await response.json();
-  //     // console.error('error sending notification:', error);
-  //   } else {
-  //     const data = await response.json();
-  //     const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
-  //     const userNotifications = userDoc.data()?.notifications;
-  //     const id = generateRandomId;
-  //     const notification = {
-  //       id,
-  //       title: title,
-  //       body: body,
-  //       mark: mark,
-  //       uid: userInfo?.uid,
-  //     };
-
-  //     try {
-  //       await firestore()
-  //         .collection('userInfo')
-  //         .doc(forUserUid)
-  //         .update({
-  //           notifications: [...userNotifications, notification],
-  //         });
-  //     } catch (error) {
-  //       // console.log('error update notifications', error);
-  //     }
-  //   }
-  // };
-
   return (
     <View style={styles.itemContainer}>
       <TinderCard
@@ -367,79 +316,16 @@ const ItemRequestHost = ({
               </View>
             </LinearGradient>
           </View>
-        </FastImage>
-        {/* <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: item.userPhoto}}>
-          <View style={[styles.itemContentContainer, {justifyContent: item?.superInvite ? 'space-between' : 'flex-end'}]}>
-            {item?.superInvite && (
-              <View style={{alignItems: 'flex-start'}}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    backgroundColor: whiteColor,
-                    borderRadius: 5,
-                    paddingHorizontal: 8,
-                    paddingVertical: 4,
-                    marginBottom: 'auto',
-                    marginTop: 10,
-                    marginHorizontal: 6,
-                  }}>
-                  <FlashFillBlack />
-                  <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>Super invite you</Text>
-                </View>
-              </View>
-            )}
-            <LinearGradient
-              colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.8)']}
-              style={styles.linearGradient}
-              start={{x: 0, y: 0}}
-              end={{x: 0, y: 1}}>
-              {userInfo.accountType && (
-                <View
-                  style={{
-                    marginTop: 'auto',
-                    marginLeft: 8,
-                    marginBottom: 2,
-                    alignSelf: 'flex-start',
-                    paddingHorizontal: 6,
-                    paddingVertical: 1,
-                    backgroundColor: userInfo.accountType === 'host' ? blackColor : whiteColor,
-                    borderRadius: 4,
-                    borderWidth: 1,
-                    borderStyle: 'solid',
-                    borderColor: userInfo.accountType === 'host' ? whiteColor : blackColor,
-                  }}>
-                  <Text
-                    style={{
-                      textTransform: 'capitalize',
-                      fontFamily: Satoshi700,
-                      fontSize: 10,
-                      color: userInfo.accountType === 'host' ? whiteColor : blackColor,
-                    }}>
-                    {userInfo.accountType}
-                  </Text>
-                </View>
-              )}
-              <TouchableOpacity onPress={() => goToProfileView()} activeOpacity={0.7} style={styles.buttonContainer}>
-                <View style={styles.nameContainer}>
-                  <Text style={styles.nameText}>
-                    {item?.name} {`${userInfo?.date ? `, ${calculateAge(userInfo?.date)}` : ''}`}
-                  </Text>
-                  {userInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} style={{marginLeft: 4}} />}
-                </View>
-                {userInfo?.address && (
-                  <View style={styles.locationContainer}>
-                    <View style={styles.locationRow}>
-                      <Home height={12} />
-                      <Text style={styles.locationText}>From {item?.address}</Text>
-                    </View>
-                    <ArrowRight height={12} />
-                  </View>
-                )}
-              </TouchableOpacity>
-            </LinearGradient>
+          <View style={{backgroundColor: whiteColor, height: 72, width: '100%', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20, paddingVertical: 17}}>
+            <TouchableOpacity
+            onPress={() => {
+              handleSwipeHostCardInvite(item)
+            }}
+            style={{backgroundColor: blackColor, paddingVertical: 12, borderRadius: 8, width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+              <Text style={{color: whiteColor, fontSize: RFValue(12, 812), fontFamily: Satoshi500}}>Invite</Text>
+            </TouchableOpacity>
           </View>
-        </ImageBackground> */}
+        </FastImage>
       </TinderCard>
     </View>
   );
