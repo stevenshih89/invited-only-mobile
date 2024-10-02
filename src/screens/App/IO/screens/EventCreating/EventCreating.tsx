@@ -45,6 +45,7 @@ const EventCreating: FC = () => {
   const [male, setMale] = useState<number>(0);
   const [femaleFriend, setFemaleFriend] = useState<number>(0);
   const [maleFriend, setMaleFriend] = useState<number>(0);
+  const [loaderVisible, setLoaderVisible] = useState<boolean>(false)
 
   const [myEvents, setMyEvents] = useState();
 
@@ -302,6 +303,7 @@ const EventCreating: FC = () => {
   };
 
   const handleCreateEvent = async () => {
+    setLoaderVisible(true)
     try {
       setLoading(true);
       const uid: string = uuid.v4() as string;
@@ -345,11 +347,12 @@ const EventCreating: FC = () => {
 
       isEditing ? setIsVisibleSaveModal(true) : null;
 
-      photos?.forEach(async (i, index) => {
-        const img = await uploadImage(i?.image, userHost.uid);
-        imagesUri.push({id: index, image: img});
-        await updatePhotosImage(uid, imagesUri);
-      });
+      await Promise.all(
+        photos.map(async (i, index) => {
+          const img = await uploadImage(i?.image, userHost.uid);
+          imagesUri.push({id: index, image: img});
+        })
+      );
 
       await firestore()
         .collection('userInfo')
@@ -359,6 +362,7 @@ const EventCreating: FC = () => {
         });
 
       setLoading(false);
+      setLoaderVisible(false)
 
       navigation.navigate(IOPath as never);
 
@@ -410,6 +414,7 @@ const EventCreating: FC = () => {
       //   });
     } catch (e) {
       setLoading(false);
+      setLoaderVisible(false)
       // console.log(e);
       showToast('inviteMatch', '', `${e}`);
     }
@@ -596,6 +601,7 @@ const EventCreating: FC = () => {
             handleCreateEvent={handleCreateEvent}
             name={name}
             setIsVisibleSaveModal={setIsVisibleSaveModal}
+            loaderVisible={loaderVisible}
           />
         )}
       </View>

@@ -19,6 +19,7 @@ import {showToast} from 'helpers/showToast';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import FastImage from 'react-native-fast-image';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
+import Loader from 'components/Modal/ModalLoader/Loader';
 
 const EventPreview: FC<{
   photos: any;
@@ -41,6 +42,7 @@ const EventPreview: FC<{
   onInvite: () => void;
   superJoin: () => void;
   handleAutoSwipeRight: () => void;
+  loaderVisible: boolean
 }> = ({
   photos,
   date,
@@ -56,6 +58,7 @@ const EventPreview: FC<{
   onInvite,
   superJoin,
   handleAutoSwipeRight,
+  loaderVisible
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
@@ -301,6 +304,7 @@ const EventPreview: FC<{
             />
           </View>
         </View>
+        <Loader isVisible={loaderVisible} successfulPay={false} />
       </SafeAreaView>
     );
   }

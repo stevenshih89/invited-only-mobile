@@ -329,7 +329,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   <Text style={styles.textButton}>Create event</Text>
                 </TouchableOpacity>
                 {myEvents &&
-                  myEvents.map((event: any, index: number) => {
+                  myEvents.map((event: any, index: number) => {                    
                     const isActive = activeEvent?.id === event.id;
                     const eventIsFinished = isEventFinished(event?.date, event?.hour);
                     const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
