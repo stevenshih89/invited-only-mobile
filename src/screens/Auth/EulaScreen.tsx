@@ -1,7 +1,7 @@
 import React, {FC, useCallback, useState} from 'react';
 import {FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowLeftArrow from 'assets/images/icons/arrow-left.svg';
-import {blackColor, lightGray12Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -9,70 +9,113 @@ import {signUpPath} from 'constants/pathLocations';
 
 const dataEula = [
   {
+    id:0,
+    title: '',
+    description: 'This End User License Agreement (“Agreement”) is a legal contract between you (“User”) and [Company Name] (“Licensor”), governing your use of the [App Name] software application (“the App”). By creating an account, downloading, or using the App, you agree to the terms outlined here. If you do not agree, do not use the App.'
+  },
+  {
     id: 1,
-    title: '1. Acceptance of Terms',
+    title: '1. LICENSE GRANT',
     description:
-      'Welcome to Tabler, an application ("the App") provided by Tabler Inc. ("the Company"). By using the App, you agree to comply with and be bound by the terms of this End-User License Agreement (EULA).',
+      'Subject to the terms of this Agreement, Licensor grants you a limited, non-exclusive, non-transferable, and revocable license to use the App on any Apple-branded devices running iOS or macOS that you own or control.',
   },
   {
     id: 2,
-    title: '2. License Grant',
+    title: '2. SUBSCRIPTION OPTIONS',
     description:
-      '2.1. Scope: The Company grants you a personal, non-exclusive, non-transferable license to use the App on your device, subject to the terms and conditions of this EULA.\n\n' +
-      '2.2. Restrictions: You may not modify, decompile, disassemble, reverse engineer, or attempt to access the source code of the App. You may not sublicense, rent, lease, sell, or distribute the App.',
+      'The App offers the following subscription types:\n\n' +
+      '    • Weekly Subscription: $69.99 per week\n\n' +
+      '    • Monthly Subscription: $99.99 per month\n\n' +
+      '    • Annual Subscription: $499.99 per year\n\n' +
+      'By subscribing, you agree to the applicable subscription fees.\n\n' +
+      '2.1 Automatic Renewal\n\n' +
+      'Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period. Renewal charges will be made to your Apple ID account at the rate associated with your selected subscription plan.\n\n' +
+      '2.2 Payment and Billing\n\n' +
+      'Payments will be charged to your Apple ID account upon confirmation of the subscription. Renewal payments are charged within 24 hours prior to the end of the current subscription period.\n\n' +
+      '2.3 Cancellation\n\n' +
+      'You can cancel your subscription at any time via your Apple App Store account settings. Canceling disables auto-renewal, but you will retain access until the current billing period ends. No refunds will be given for the remaining time of a subscription.'
   },
   {
     id: 3,
-    title: '3. User Content',
+    title: '3. USER-GENERATED CONTENT',
     description:
-      '3.1. Ownership: You retain ownership of any content you upload or submit through the App. By using the App, you grant the Company a worldwide, non-exclusive, royalty-free, sublicensable, and transferable license to use, reproduce, distribute, prepare derivative works of, and display your content in connection with the App.',
+      'Users can generate content within the App by interacting, messaging, and participating in events.\n\n' +
+      '3.1. No Tolerance for Objectionable Content\n\n' +
+      'We have a zero-tolerance policy for objectionable content, which includes but is not limited to:\n\n' +
+      '    • Hate speech, discriminatory remarks, or harassment\n\n' +
+      '    • Offensive, sexually explicit, or violent content\n\n' +
+      '    • Threats, abuse, or bullying\n\n' +
+      'Violations may result in immediate suspension or termination of your account.\n\n' +
+      '3.2 Responsibility for Content\n\n' +
+      'You are solely responsible for any content you upload or share in the App. By submitting content, you grant [Company Name] a license to use, modify, distribute, and display that content within the App.'
   },
   {
     id: 4,
-    title: '4. Privacy',
+    title: '4. CODE OF CONDUCT',
     description:
-      '4.1. Data Collection: The Company may collect and use information about your use of the App as described in our Privacy Policy.',
+      'While using the App, you agree to:\n\n' +
+      '    • Respect the rights of other users\n\n' +
+      '    • Avoid abusive language or behavior\n\n' +
+      '    • Refrain from posting misleading, harmful, or false information\n\n' +
+      'Failure to adhere to the Code of Conduct may result in account suspension or termination.'
   },
   {
     id: 5,
-    title: '5. Updates',
+    title: '5. BLOCKING ABUSIVE USERS',
     description:
-      'The Company may provide updates or enhancements to the App. You consent to these updates automatically as part of your use of the App.',
+      'You have the option to block users who engage in abusive or inappropriate behavior. Once blocked, they will be unable to interact with you through messaging or event invitations.'
   },
   {
     id: 6,
-    title: '6. Termination',
+    title: '6. PRIVACY POLICY',
     description:
-      'The Company may terminate or suspend your access to the App at its sole discretion, without notice, for any reason, including a breach of this EULA.',
+      'Please refer to our [Privacy Policy] for details on how we collect, use, and protect your personal information.',
   },
   {
     id: 7,
-    title: '7. Disclaimers',
+    title: '7. TERMINATION',
     description:
-      'The App is provided "as is" without warranties of any kind. The Company disclaims all warranties and shall not be liable for any damages or losses resulting from the use of the App.',
+      'This Agreement remains in effect until terminated by you or [Company Name]. You may terminate the Agreement by uninstalling the App or canceling your subscription as outlined in Section 2. Licensor reserves the right to terminate or suspend your account at any time for violations of this Agreement or if your actions are deemed harmful to the community.'
+
   },
   {
     id: 8,
-    title: '8. Content Responsibility',
+    title: '8. NO WARRANTY',
     description:
-      'The Company is not responsible for any content that users post, upload, or share on the App. Users are solely responsible for the content they submit. The Company does not endorse, verify, or guarantee the accuracy, quality, or legality of user-generated content.',
+      'The App is provided “AS IS” without warranties of any kind, express or implied. Licensor does not guarantee that the App will be error-free or uninterrupted.',
   },
   {
     id: 9,
-    title: '9. Governing Law and Jurisdiction',
+    title: '9. LIMITATION OF LIABILITY',
     description:
-      'This EULA is governed by and construed in accordance with the laws of the state of Florida, United States. Any legal action arising under or in connection with this EULA shall be subject to the exclusive jurisdiction of the state and federal courts located within Miami-Dade County, Florida.',
+      'In no event shall Licensor or its affiliates be liable for any indirect, incidental, special, or consequential damages, including loss of data or interruptions of service.',
   },
   {
     id: 10,
-    title: '10. Changes to EULA',
+    title: '10. GOVERNING LAW',
     description:
-      'The Company reserves the right to modify or update this EULA. You will be notified of any changes, and your continued use of the App after such modifications constitutes acceptance of the revised EULA.',
+      'This Agreement is governed by the laws of the State of Delaware, USA, without regard to its conflict of law provisions.',
   },
   {
     id: 11,
-    title: '11. Contact',
-    description: 'If you have any questions about this EULA, please contact us at legal@tablerapp.com.',
+    title: '11. APPLE REQUIREMENTS',
+    description: 'This Agreement is between you and [Company Name], not Apple, Inc. However, you acknowledge that Apple and its subsidiaries are third-party beneficiaries of this Agreement and may enforce its terms. You must also comply with the App Store Terms of Service.',
+  },
+  {
+    id: 12,
+    title: '12. CHANGES TO THE TERMS',
+    description: 'We reserve the right to modify or update this Agreement at any time. Changes will take effect upon posting to the App, and your continued use signifies acceptance of the new terms.',
+  },
+  {
+    id: 13,
+    title: '13. CONTACT INFORMATION',
+    description: 'If you have any questions or concerns about this Agreement, please contact us at [Insert Contact Information].',
+  },
+  {
+    id: 14,
+    title: 'ACCEPTANCE',
+    description: 'By clicking “Agree” or installing the App, you acknowledge that you have read and understood this Agreement and agree to its terms, including subscription fees, renewal policies, and usage guidelines.\n\n' +
+    'This combined EULA integrates both sets of terms while removing redundancies, providing clear guidance on subscription models, content policies, and user responsibilities.'
   },
 ];
 
