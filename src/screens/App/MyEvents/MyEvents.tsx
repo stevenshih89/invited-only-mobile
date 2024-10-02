@@ -12,13 +12,13 @@ import useStyles from 'screens/App/MyEvents/styles.ts';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard.tsx';
 import {useMyEvents} from '../../../store/myEvents';
 import {showToast} from 'helpers/showToast.ts';
-import {blackColor, grayColor, lightGray2Color, lightGray5Color, whiteColor} from 'constants/colors';
+import {blackColor, grayColor, lightGray20Color, lightGray2Color, lightGray5Color, lightGreenColor, whiteColor} from 'constants/colors';
 import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsCard';
 import ModalCancelAttending from './ModalCancelAttending';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
 import {useUser} from '../../../store/userStore';
 import {ACCEPTED_STATUS, ALL, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
-import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
@@ -29,14 +29,18 @@ import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 import CalendarCheckIcon from 'assets/images/icons/calendar-check.svg';
 import WIcon from 'assets/images/icons/W.svg';
 import MIcon from 'assets/images/icons/M.svg';
+import CheckStarWhite from 'assets/images/icons/check-star-white.svg'
 
 import Button from 'components/Button/Button';
-import {eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocations';
+import {commonStackPath, eventActiveInfoPath, eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocations';
 import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
 import {sendNotification} from 'helpers/fcmHelper';
 import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
+import FastImage from 'react-native-fast-image';
+import LinearGradient from 'react-native-linear-gradient';
+import { calculateAge } from 'helpers/calculateAge';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
@@ -77,12 +81,12 @@ const MyEvents: FC<any> = ({navigation}) => {
   const isHost = user?.accountType === 'host';
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
-  const [userInfo, setUserInfo] = useState<any>({});
+  const [userInfo, setUserInfo] = useState<any>();
   const [hostInfo, setHostInfo] = useState<any>({});
 
   const {accountConfirmed} = useUserProfileChangeSubscription();
   useEffect(() => {
-    if (!Object.keys(userInfo).length) {
+    if (userInfo && userInfo?.length) {
       return;
     }
 
@@ -481,6 +485,31 @@ const MyEvents: FC<any> = ({navigation}) => {
     };
   }, [setIsVisibleCancelAttendingModal, isVisibleCancelAttendingModal]);
 
+  const customButton = (item: any[]) => {
+    return (
+      <TouchableOpacity
+      onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: item}} as never)}
+      style={{
+        height: 65,
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 18,
+        backgroundColor: lightGray20Color,
+        marginTop: 25,
+      }}>
+      <Text
+        style={{
+          color: blackColor,
+          fontFamily: Satoshi700,
+          fontSize: RFValue(16, 812),
+        }}>
+        Manage Event
+      </Text>
+    </TouchableOpacity>
+    )
+  };
+  
   return (
     <>
       <View style={styles.container}>
@@ -635,48 +664,179 @@ const MyEvents: FC<any> = ({navigation}) => {
         <View style={{flex: 1, height: '100%'}}>
           {isHost ? (
             activeTab === MY_EVENTS ? (
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
-                data={myEventsData}
-                keyExtractor={item => item.id.toString()}
-                ListEmptyComponent={() => (
-                  <>
-                    {userInfo?.accountConfirmed && (
-                      <View style={{marginTop: screenHeight / 6}}>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
-                          Let's create an event
-                        </Text>
-                        <Text
-                          style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>
-                          Get started by creating an event to begin inviting guests.
-                        </Text>
-                        <Button title="Create event" onPress={goToCreateEvent} />
+              <>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <View style={{flexDirection: 'row'}}>
+                    <View style={{alignSelf: 'flex-start'}}>
+                      <FastImage style={{width: 50, height: 50, borderRadius: 50}} source={{uri: userInfo?.photos?.[0]?.image || ''}} />
+                      <View
+                        style={{
+                          position: 'absolute',
+                          bottom: 2,
+                          right: 0,
+                          width: 12,
+                          height: 12,
+                          borderRadius: 12,
+                          borderWidth: 1.25,
+                          borderColor: blackColor,
+                          backgroundColor: lightGreenColor,
+                        }}></View>
+                    </View>
+                    <View style={{marginLeft: 10, justifyContent: 'center'}}>
+                      <View style={{flexDirection: 'row'}}>
+                        <View
+                          style={{
+                            backgroundColor: blackColor,
+                            borderRadius: 5,
+                            paddingHorizontal: 12,
+                            paddingVertical: 2,
+                            alignSelf: 'flex-start',
+                            borderWidth: 1,
+                            borderColor: whiteColor,
+                          }}>
+                          {userInfo?.accountType === 'guest' && (
+                            <Text
+                              style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                              Guest
+                            </Text>
+                          )}
+                          {userInfo?.accountType === 'host' && (
+                            <Text
+                              style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                              Host
+                            </Text>
+                          )}
+                        </View>
+                        {(userInfo?.accountPremium || userInfo?.accountType === 'guest') && (
+                          <LinearGradient
+                            colors={['#977B4A', '#E5D291', '#A28453']}
+                            style={{
+                              marginLeft: 6,
+                              alignSelf: 'flex-start',
+                              borderRadius: 4,
+                              paddingHorizontal: 12,
+                              paddingVertical: 2,
+                              backgroundColor: blackColor,
+                            }}
+                            start={{x: 0, y: 0}}
+                            end={{x: 1, y: 0}}>
+                            {
+                              <Text
+                                style={{
+                                  color: blackColor,
+                                  fontSize: RFValue(10, 812),
+                                  fontFamily: Satoshi700,
+                                }}>
+                                Premium
+                              </Text>
+                            }
+                          </LinearGradient>
+                        )}
                       </View>
-                    )}
-                  </>
-                )}
-                renderItem={({item}) => (
-                  <MyEventsCard
-                    imageBg={item?.photos}
-                    list={item}
-                    statusEvent={item?.statusEvent}
-                    eventReviewed={item?.eventReviewed}
-                    allPeople={item?.female + item?.male}
-                    date={item?.date}
-                    textCityName={item?.name}
-                    placeName={item?.placeName}
-                    estimeTime={item?.hour}
-                    numberOfGirlsInvited={item?.female}
-                    placeName={item?.placeName}
-                    invitingPeople={item?.usersList?.filter(i => i?.status !== 'notAccepted')}
-                    accountConfirmed={user?.accountConfirmed}
-                    findAcceptedGuest={item?.usersList?.filter(item => item.status === INVITE_MATCH_STATUS)}
-                    totalRequestsGuests={item?.requestsList?.length}
-                    item={item}
-                  />
-                )}
-              />
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'flex-start',
+                        }}>
+                        <Text
+                          style={{
+                            color: whiteColor,
+                            fontFamily: Satoshi700,
+                            fontSize: RFValue(16, 812),
+                            marginTop: 4,
+                          }}>
+                          {userInfo?.name}
+                          {userInfo?.showAge ? <Text>,</Text> : null}
+                        </Text>
+                        {userInfo?.showAge && (
+                          <Text
+                            style={{
+                              color: whiteColor,
+                              fontFamily: Satoshi700,
+                              fontSize: RFValue(13, 812),
+                              marginTop: 5,
+                            }}>
+                            {' '}
+                            {calculateAge(userInfo?.date)}
+                          </Text>
+                        )}
+                        <View style={{marginLeft: 8}}>{userInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} />}</View>
+                      </View>
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        color: whiteColor,
+                        fontFamily: Satoshi700,
+                        fontSize: RFValue(26, 812),
+                      }}>
+                      {userInfo?.eventsList?.length}
+                    </Text>
+                    <Text
+                      style={{
+                        color: whiteColor,
+                        fontFamily: Satoshi500,
+                        fontSize: RFValue(12, 812),
+                      }}>
+                      Total events
+                    </Text>
+                  </View>
+                </View>
+                <FlatList
+                  showsVerticalScrollIndicator={false}
+                  style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
+                  data={myEventsData}
+                  keyExtractor={item => item.id.toString()}
+                  ListEmptyComponent={() => (
+                    <>
+                      {userInfo?.accountConfirmed && (
+                        <View style={{marginTop: screenHeight / 6}}>
+                          <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
+                            Let's create an event
+                          </Text>
+                          <Text
+                            style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>
+                            Get started by creating an event to begin inviting guests.
+                          </Text>
+                          <Button title="Create event" onPress={goToCreateEvent} />
+                        </View>
+                      )}
+                    </>
+                  )}
+                  renderItem={({item}) => (
+                    <MyEventsCard
+                      imageBg={item?.photos}
+                      list={item}
+                      statusEvent={item?.statusEvent}
+                      eventReviewed={item?.eventReviewed}
+                      allPeople={item?.female + item?.male}
+                      date={item?.date}
+                      textCityName={item?.name}
+                      placeName={item?.placeName}
+                      estimeTime={item?.hour}
+                      numberOfGirlsInvited={item?.female}
+                      placeName={item?.placeName}
+                      invitingPeople={item?.usersList?.filter(i => i?.status !== 'notAccepted')}
+                      accountConfirmed={user?.accountConfirmed}
+                      findAcceptedGuest={item?.usersList?.filter(item => item.status === INVITE_MATCH_STATUS)}
+                      totalRequestsGuests={item?.requestsList?.length}
+                      item={item}
+                      showGuestList={true}
+                      customButton={customButton(item)}
+                    />
+                  )}
+                />
+              </>
             ) : (
               <FlatList
                 showsVerticalScrollIndicator={false}

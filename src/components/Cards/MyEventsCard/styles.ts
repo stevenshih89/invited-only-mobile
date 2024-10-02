@@ -7,12 +7,16 @@ import {screenHeight, screenWidth} from 'constants/common.ts';
 const useStyles = () =>
   StyleSheet.create({
     container: {
-      borderRadius: 14,
+      borderRadius: 30,
       marginBottom: screenHeight / 50,
+      marginTop: 26,
+      backgroundColor: whiteColor
     },
     imageBackground: {
       height: 185,
-      borderRadius: 14,
+      borderRadius: 20,
+      margin: 9,
+      marginBottom: 0
     },
     linearGradientCard: {
       height: '100%',
