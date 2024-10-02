@@ -78,6 +78,7 @@ interface TouchingSliderProps {
   usersListLength?: number;
   usersList?: any[];
   handleAutoSwipeLeft: () => void;
+  item: any;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
@@ -116,7 +117,8 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   uidUserEvent,
   hourEvent,
   usersListLength,
-  usersList
+  usersList,
+  item
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
@@ -125,6 +127,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   const {counterSuperInvites} = useCounterSuperEvents();
   const {guestsInvited, setGuestsInvited} = useGuestList(); 
+  
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
     
   const [userEventInfo, setUserEventInfo] = useState()
@@ -238,15 +241,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
     <FastImage
       style={[styles.imageStyle, styles.container]}
       source={{
-        uri: isShowAccountInfo
-          ? accountType === 'guest'
-            ? photos?.[active]?.image
-              ? photos?.[active]?.image
-              : photos?.[active]
-            : eventPhotos && eventPhotos[0].image
-          : photos?.[active]?.image
-          ? photos?.[active]?.image
-          : photos?.[active],
+        uri: userInfo?.accountType === 'guest'? eventPhotos && eventPhotos[0]?.image: photos?.[active]?.image? photos?.[active]?.image : photos?.[active],
         headers: {Authorization: 'someAuthToken'},
         priority: FastImage.priority.normal,
       }}

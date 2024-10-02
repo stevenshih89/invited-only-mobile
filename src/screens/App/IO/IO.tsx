@@ -1165,6 +1165,8 @@ const IO: FC = (): JSX.Element => {
                 joinEvents={item?._data.joinEvents}
                 online={item?._data.online}
                 date={item?._data.date}
+                item={item?._data}
+                userInfo={userInfo}
               />
               <View style={styles.bioWrapper}>
                 <Text style={[styles.titleSection, bio && styles.mt31]}>My basics</Text>
@@ -1589,7 +1591,7 @@ const IO: FC = (): JSX.Element => {
                     }, 500);
                   }}
                   onSwipedRight={() => {
-                    setGuestsInvited(prev => prev + 1)
+                    setGuestsInvited(guestsInvited + 1)
                     onInvite(item?.info?.uid, item?.info?.id);
                     setTimeout(() => {
                       setCurrentEventCardPosition(prev => prev + 1);
