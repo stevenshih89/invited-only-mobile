@@ -66,6 +66,8 @@ import { useGuestList } from 'src/store/guestListStore';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import { convertToPmAmFormat } from 'helpers/convertToPmAmFormat';
+import { formateDateAbbreviated } from 'helpers/formateDateAbbreviated';
+import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -643,16 +645,34 @@ const IO: FC = (): JSX.Element => {
     return filteredEvents;
   };
 
-  function getFormateDate(date: string) {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const [day, month, year] = date.split(".");
-    const monthName = months[parseInt(month) - 1];
-    return `${day} ${monthName} ${year}`;
-  }
-
   const getDataUserEvent = async (uid: string) => {
     const getDoc = await firestore().collection('userInfo').doc(uid).get();
     return getDoc.data();
+  };
+
+  const customButton = (id: string) => {
+    return (
+      <TouchableOpacity
+        onPress={() => handleAutoSwipeRight(id)}
+        style={{
+          height: 65,
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 18,
+          backgroundColor: blackColor,
+          marginTop: 25,
+        }}>
+        <Text
+          style={{
+            color: whiteColor,
+            fontFamily: Satoshi700,
+            fontSize: RFValue(16, 812),
+          }}>
+          Join
+        </Text>
+      </TouchableOpacity>
+    );
   };
 
   const getListForGuest = async () => {
@@ -756,147 +776,25 @@ const IO: FC = (): JSX.Element => {
             />
             <View style={styles.bioWrapper}>
               <Text style={[styles.titleSection]}>Event details</Text>
-              <View style={{height: 640, backgroundColor: whiteColor, width: '100%', borderRadius: 20, marginTop: 18}}>
-                <View style={{padding: 10}}>
-                  <FastImage style={{height: 210, width: '100%', borderRadius: 20}} source={{uri: event?.photos[0].image}} />
-                  <View
-                    style={{
-                      paddingVertical: 4,
-                      paddingHorizontal: 6,
-                      borderRadius: 5,
-                      backgroundColor: lightGreenColor,
-                      alignSelf: 'flex-start',
-                      position: 'absolute',
-                      bottom: 24,
-                      left: 24,
-                    }}>
-                    <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500}}>Active</Text>
-                  </View>
-                </View>
-                <View style={{marginLeft: 23, marginTop: 28}}>
-                  <Text
-                    style={{
-                      color: lightGray18Color,
-                      fontSize: RFValue(16, 812),
-                      fontFamily: Satoshi400,
-                    }}>
-                    Name
-                  </Text>
-                  <Text
-                    style={{
-                      color: black4Color,
-                      fontSize: RFValue(21, 812),
-                      fontFamily: Satoshi700,
-                      marginTop: 5,
-                    }}>
-                    {event?.name}
-                  </Text>
-                </View>
-                <View style={{flexDirection: 'row', paddingHorizontal: 23, marginTop: 28, justifyContent: 'space-between'}}>
-                <View style={{}}>
-                  <View style={{marginBottom: 28}}>
-                    <Text
-                      style={{
-                        color: lightGray18Color,
-                        fontSize: RFValue(16, 812),
-                        fontFamily: Satoshi400,
-                      }}>
-                      Date
-                    </Text>
-                    <Text
-                      style={{
-                        color: black4Color,
-                        fontSize: RFValue(21, 812),
-                        fontFamily: Satoshi700,
-                        marginTop: 5,
-                      }}>
-                      {getFormateDate(event?.date)}
-                    </Text>
-                  </View>
-                  <View>
-                    <Text
-                      style={{
-                        color: lightGray18Color,
-                        fontSize: RFValue(16, 812),
-                        fontFamily: Satoshi400,
-                      }}>
-                      Location
-                    </Text>
-                    <Text
-                      style={{
-                        color: black4Color,
-                        fontSize: RFValue(21, 812),
-                        fontFamily: Satoshi500,
-                        marginTop: 5,
-                      }}>
-                      {event?.address}
-                    </Text>
-                  </View>
-                </View>
-                <View style={{}}>
-                <View style={{marginBottom: 28}}>
-                    <Text
-                      style={{
-                        color: lightGray18Color,
-                        fontSize: RFValue(16, 812),
-                        fontFamily: Satoshi400,
-                      }}>
-                      Time
-                    </Text>
-                    <Text
-                      style={{
-                        color: black4Color,
-                        fontSize: RFValue(21, 812),
-                        fontFamily: Satoshi700,
-                        marginTop: 5,
-                      }}>
-                      {convertToPmAmFormat(event?.hour)}
-                    </Text>
-                  </View>
-                  <View>
-                    <Text
-                      style={{
-                        color: lightGray18Color,
-                        fontSize: RFValue(16, 812),
-                        fontFamily: Satoshi400,
-                      }}>
-                      Invitations
-                    </Text>
-                    <Text
-                      style={{
-                        color: black4Color,
-                        fontSize: RFValue(21, 812),
-                        fontFamily: Satoshi500,
-                        marginTop: 5,
-                      }}>
-                      {event?.usersList.length}
-                    </Text>
-                  </View>
-                </View>
-                </View>
-                <View style={{width: '100%', alignItems: 'center', marginTop: 50, paddingHorizontal: 23}}>
-                  <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
-                </View>
-                <View style={{paddingHorizontal: 23}}>
-                <TouchableOpacity 
-                onPress={() => handleAutoSwipeRight(event?.id)}
-                style={{
-                  height: 65, 
-                  width: '100%',
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  borderRadius: 18,
-                  backgroundColor: blackColor,
-                  marginTop: 25
-                  }}>
-                      <Text style={{
-                        color: whiteColor, 
-                        fontFamily: Satoshi700, 
-                        fontSize: RFValue(16, 812)
-                      }}>Join</Text>
-                </TouchableOpacity>
-                </View>
-              </View>
+              <MyEventsCard
+                      imageBg={event?.photos}
+                      list={event}
+                      statusEvent={event?.statusEvent}
+                      eventReviewed={event?.eventReviewed}
+                      allPeople={event?.female + event?.male}
+                      date={event?.date}
+                      textCityName={event?.name}
+                      placeName={event?.placeName}
+                      estimeTime={event?.hour}
+                      numberOfGirlsInvited={event?.female}
+                      invitingPeople={event?.usersxwList?.filter(i => i?.status !== 'notAccepted')}
+                      accountConfirmed={user?.accountConfirmed}
+                      findAcceptedGuest={event?.usersList?.filter(event => event.status === INVITE_MATCH_STATUS)}
+                      totalRequestsGuests={event?.requestsList?.length}
+                      item={event}
+                      showGuestList={false}
+                      customButton={customButton(event.id)}
+                    />
               <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Place name</Text>
               <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.placeName}</Text>
               <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />

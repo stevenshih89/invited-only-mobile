@@ -1,26 +1,22 @@
 import React, {FC, useEffect, useState} from 'react';
-import {View, Text, ImageBackground, TouchableOpacity, Image} from 'react-native';
+import {View, Text, TouchableOpacity, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import moment from 'moment/moment';
 
 //import components
 import useStyles from 'components/Cards/MyEventsCard/styles.ts';
-import ClockWhiteFill from 'assets/images/icons/clock-white-fill.svg';
-import CheckCircle from 'assets/images/icons/check-circle.svg';
-import CalendarBlank from 'assets/images/icons/CalendarBlank.svg';
-import ProfileTwoUser from 'assets/images/icons/profile-2user.svg';
-import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
 import Bing from 'assets/images/icons/notification-bing.svg';
-import UsersIcon from 'assets/images/icons/Users.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
-import {Satoshi500, Satoshi700} from 'constants/fonts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {errorColor, grayScale600, lightGray10Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
+import {black4Color, blackColor, lightGray18Color, lightGray20Color, lightGreenColor, whiteColor} from 'constants/colors';
 import FastImage from 'react-native-fast-image';
 import FullEvent from 'components/FullEvent';
-import {ACCEPTED_STATUS, screenHeight} from 'constants/common';
+import {screenHeight, screenWidth} from 'constants/common';
+import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat';
+import {formateDateAbbreviated} from 'helpers/formateDateAbbreviated';
+import LineImage from 'assets/images/app/Line.png';
 
 interface MyEventsCard {
   estimeTime?: string;
@@ -38,31 +34,15 @@ interface MyEventsCard {
   findAcceptedGuest?: any[];
   totalRequestsGuests: number;
   item: any;
+  showGuestList: boolean;
+  customButton?: React.ReactNode;
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
-  const {
-    list,
-    accountConfirmed,
-    placeName,
-    imageBg,
-    statusEvent,
-    eventReviewed,
-    estimeTime,
-    date,
-    invitingPeople,
-    numberOfGirlsInvited,
-    allPeople,
-    textCityName,
-    totalRequestsGuests,
-    findAcceptedGuest,
-    item,
-  } = props;
+  const {list, placeName, imageBg, statusEvent, eventReviewed, estimeTime, allPeople, findAcceptedGuest, item, showGuestList, customButton} = props;
 
   const styles = useStyles();
 
-  const [eventStarting, setEventStarting] = useState<boolean>(true);
-  const [eventDate, setEventDate] = useState<string>('');
   const [mainImageEvent, setMainImageEvent] = useState('');
 
   useEffect(() => {
@@ -76,7 +56,6 @@ const MyEventsCard: FC<MyEventsCard> = props => {
   const navigation = useAppNavigation();
 
   const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
-  const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
@@ -96,72 +75,14 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     </View>
   );
 
-  const calculateTimeDifference = (start: string, end: string) => {
-    let startTime = start.split(':');
-    let endTime = end.split(':');
-
-    let startHour = parseInt(startTime[0], 10);
-    let startMinute = parseInt(startTime[1], 10);
-    let endHour = parseInt(endTime[0], 10);
-    let endMinute = parseInt(endTime[1], 10);
-
-    let startTotalMinutes = startHour * 60 + startMinute;
-    let endTotalMinutes = endHour * 60 + endMinute;
-
-    if (endTotalMinutes < startTotalMinutes) {
-      endTotalMinutes += 24 * 60;
-    }
-
-    let differenceInMinutes = endTotalMinutes - startTotalMinutes;
-
-    let hours = Math.floor(differenceInMinutes / 60);
-
-    return hours;
-    // return hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+  const getUsersListAccepted = () => {
+    const filter = item?.usersList.filter(item => item.status === 'invite_match');
+    return filter.length;
   };
-
-  useEffect(() => {
-    if (
-      // calculateTimeDifference(currentTime, estimeTime) === 0 ||
-      calculateTimeDifference(currentTime, estimeTime) >= 2 ||
-      calculateTimeDifference(currentTime, estimeTime) >= 12 ||
-      calculateTimeDifference(currentTime, estimeTime) >= 24
-    ) {
-      setEventDate(calculateTimeDifference(currentTime, estimeTime).toString());
-      setEventStarting(true);
-    }
-  }, []);
-
-  const getEventStatus = () => {
-    if (date && estimeTime) {
-      const adjustedDate = moment(`${date}, ${estimeTime}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-      if (adjustedDate.isBefore(moment())) {
-        return {
-          plateTitle: 'Expired',
-          plateBackgroundColor: grayScale600,
-        };
-      }
-    }
-
-    if (eventIsFull) {
-      return {plateTitle: 'Full', plateBackgroundColor: lightGreenColor};
-    }
-
-    return {
-      plateTitle: 'Active',
-      plateBackgroundColor: lightGreenColor,
-    };
-  };
-
-  const approvedPeople = invitingPeople?.filter(i => i?.status === ACCEPTED_STATUS);
 
   return (
     <>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: list}} as never);
-        }}
-        style={styles.container}>
+      <View style={styles.container}>
         <FastImage
           style={styles.imageBackground}
           source={{
@@ -189,64 +110,6 @@ const MyEventsCard: FC<MyEventsCard> = props => {
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
             style={styles.linearGradientCard}>
-            {statusEvent && eventReviewed && (
-              <>
-                <View
-                  style={{
-                    backgroundColor: approvedPeople?.length === allPeople ? errorColor : lightGray10Color,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    paddingVertical: 6,
-                    paddingHorizontal: 16,
-                    borderRadius: 10,
-                  }}>
-                  <View style={styles.userWrapper}>
-                    {invitingPeople?.map((i: any | boolean, index: number) => {
-                      const indexRight: number = 10 * (index + 1);
-                      if (index >= 3) {
-                        return;
-                      }
-                      return (
-                        <View key={index} style={[styles.userItemWrapper, {position: 'relative', right: indexRight}]}>
-                          <Image style={styles.imageFakeGirl} source={{uri: i?.userPhoto}} />
-                          {i?.status === ACCEPTED_STATUS ? (
-                            <CheckCircle style={styles.iconStatus} width={18} height={18} />
-                          ) : (
-                            <ClockWhiteFill style={styles.iconStatus} width={18} height={18} />
-                          )}
-                        </View>
-                      );
-                    })}
-                    <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: -16}}>
-                      {approvedPeople?.length === allPeople ? (
-                        <Text style={{color: whiteColor}}>{`Event is full: ${approvedPeople?.length}/${allPeople}`}</Text>
-                      ) : (
-                        <>
-                          <UsersIcon width={16} height={16} />
-                          <Text style={{color: whiteColor}}>
-                            {approvedPeople?.length}/{allPeople}
-                          </Text>
-                        </>
-                      )}
-                    </View>
-                  </View>
-                  <View style={styles.wrapperTextStartInviting}>
-                    <View
-                      style={{
-                        backgroundColor: getEventStatus().plateBackgroundColor,
-                        paddingHorizontal: 6,
-                        paddingVertical: 4,
-                        borderRadius: 5,
-                      }}>
-                      <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>
-                        {getEventStatus().plateTitle}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </>
-            )}
             {!eventReviewed && (
               <View style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>
                 <EventInReviewView />
@@ -257,151 +120,188 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                 <EventRejectedView />
               </View>
             )}
-            <View style={{marginTop: 'auto'}}>
-              <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10}}>
-                <Text style={{fontFamily: Satoshi700, fontSize: RFValue(19, 812), color: whiteColor, marginRight: 8}}>{placeName}</Text>
-                {accountConfirmed && <CheckStarIcon />}
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <View
-                  style={{
-                    backgroundColor: transparent60Color,
-                    borderRadius: 50,
-                    paddingVertical: 8,
-                    paddingHorizontal: 12,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginRight: 2,
-                  }}>
-                  <ProfileTwoUser />
-                  <Text style={styles.textUnderFooter}>{numberOfGirlsInvited} x Guest invitation</Text>
-                </View>
-                <View
-                  style={{
-                    backgroundColor: transparent60Color,
-                    borderRadius: 50,
-                    paddingVertical: 8,
-                    paddingHorizontal: 12,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <CalendarBlank />
-                  <Text style={styles.textUnderFooter}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD MMMM YYYY')}</Text>
-                </View>
-              </View>
+            <View
+              style={{
+                backgroundColor: lightGreenColor,
+                paddingHorizontal: 6,
+                paddingVertical: 4,
+                borderRadius: 5,
+                alignSelf: 'flex-start',
+                position: 'absolute',
+                bottom: 16,
+                left: 16,
+              }}>
+              <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500}}>Active</Text>
             </View>
           </LinearGradient>
         </FastImage>
-        {/* <ImageBackground borderRadius={14} source={{uri: mainImageEvent}} style={styles.imageBackground}>
-        <LinearGradient
-          colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
-          start={{x: 0, y: 0}}
-          end={{x: 0, y: 1}}
-          style={styles.linearGradientCard}>
-          {statusEvent ? (
-            <View
-              style={{
-                backgroundColor: approvedPeople?.length === allPeople ? errorColor : lightGray10Color,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                paddingVertical: 6,
-                paddingHorizontal: 16,
-                borderRadius: 10,
-              }}>
-              <View style={styles.userWrapper}>
-                {invitingPeople?.map((i: any | boolean, index: number) => {
-                  const indexRight: number = 10 * (index + 1);
-                  if (index >= 3) {
-                    return;
-                  }
-                  return (
-                    <View key={index} style={[styles.userItemWrapper, {position: 'relative', right: indexRight}]}>
-                      <Image style={styles.imageFakeGirl} source={{uri: i?.userPhoto}} />
-                      {i?.status === ACCEPTED_STATUS ? (
-                        <CheckCircle style={styles.iconStatus} width={18} height={18} />
-                      ) : (
-                        <ClockWhiteFill style={styles.iconStatus} width={18} height={18} />
-                      )}
-                    </View>
-                  );
-                })}
-                <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: -16}}>
-                  {approvedPeople?.length === allPeople ? (
-                    <Text style={{color: whiteColor}}>
-                      {`Event is full: ${approvedPeople?.length}/${allPeople} guests invited ${approvedPeople?.length}/${allPeople}`}
-                    </Text>
-                  ) : (
-                    <>
-                      <UsersIcon width={16} height={16} />
-                      <Text style={{color: whiteColor}}>
-                        {approvedPeople?.length}/{allPeople}
-                      </Text>
-                    </>
-                  )}
-                </View>
-              </View>
-              <View style={styles.wrapperTextStartInviting}>
-                <View style={{backgroundColor: lightGreenColor, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 5}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(11, 812)}}>Active</Text>
-                </View>
-              </View>
+        <View style={{paddingHorizontal: 18}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 28}}>
+            <View style={{alignSelf: 'flex-end'}}>
+              <Text
+                style={{
+                  color: lightGray18Color,
+                  fontSize: RFValue(16, 812),
+                  fontFamily: Satoshi400,
+                }}>
+                Name
+              </Text>
+              <Text
+                style={{
+                  color: black4Color,
+                  fontSize: RFValue(21, 812),
+                  fontFamily: Satoshi700,
+                  marginTop: 5,
+                }}>
+                {placeName}
+              </Text>
             </View>
-          ) : (
-            <View style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>
-              <EventInReviewView />
-            </View>
-          )}
-          <View style={{marginTop: 'auto'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10}}>
-              <Text style={{fontFamily: Satoshi700, fontSize: RFValue(19, 812), color: whiteColor, marginRight: 8}}>{placeName}</Text>
-              {accountConfirmed && <CheckStarIcon />}
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {showGuestList && (
               <View
                 style={{
-                  backgroundColor: transparent60Color,
-                  borderRadius: 50,
-                  paddingVertical: 8,
-                  paddingHorizontal: 12,
+                  borderWidth: 1,
+                  borderColor: blackColor,
+                  borderRadius: 10,
                   flexDirection: 'row',
+                  paddingHorizontal: 16,
+                  paddingVertical: 7,
                   alignItems: 'center',
-                  marginRight: 2,
                 }}>
-                <ProfileTwoUser />
-                <Text style={styles.textUnderFooter}>{numberOfGirlsInvited} x Guest invitation</Text>
+                <FastImage
+                  style={{width: 40, height: 40, borderRadius: 40}}
+                  source={{uri: item?.photos[0]?.image ? item?.photos[0]?.image : ''}}
+                />
+                <View style={{marginLeft: 10, alignItems: 'center'}}>
+                  <Text
+                    style={{
+                      fontSize: RFValue(26, 812),
+                      color: blackColor,
+                      fontFamily: Satoshi700,
+                    }}>
+                    {getUsersListAccepted()}/{item?.usersList.length}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: RFValue(12, 812),
+                      color: blackColor,
+                      fontFamily: Satoshi500,
+                    }}>
+                    Guest List
+                  </Text>
+                </View>
               </View>
-              <View
-                style={{
-                  backgroundColor: transparent60Color,
-                  borderRadius: 50,
-                  paddingVertical: 8,
-                  paddingHorizontal: 12,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <CalendarBlank />
-                <Text style={styles.textUnderFooter}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD MMMM YYYY')}</Text>
+            )}
+          </View>
+          <View style={{flexDirection: 'row', marginTop: 28, justifyContent: 'space-between'}}>
+            <View style={{}}>
+              <View style={{marginBottom: 28}}>
+                <Text
+                  style={{
+                    color: lightGray18Color,
+                    fontSize: RFValue(16, 812),
+                    fontFamily: Satoshi400,
+                  }}>
+                  Date
+                </Text>
+                <Text
+                  style={{
+                    color: black4Color,
+                    fontSize: RFValue(21, 812),
+                    fontFamily: Satoshi700,
+                    marginTop: 5,
+                  }}>
+                  {formateDateAbbreviated(item?.date)}
+                </Text>
+              </View>
+              <View>
+                <Text
+                  style={{
+                    color: lightGray18Color,
+                    fontSize: RFValue(16, 812),
+                    fontFamily: Satoshi400,
+                  }}>
+                  Location
+                </Text>
+                <Text
+                  style={{
+                    color: black4Color,
+                    fontSize: RFValue(21, 812),
+                    fontFamily: Satoshi500,
+                    marginTop: 5,
+                  }}>
+                  {item?.address}
+                </Text>
+              </View>
+            </View>
+            <View style={{}}>
+              <View style={{marginBottom: 28}}>
+                <Text
+                  style={{
+                    color: lightGray18Color,
+                    fontSize: RFValue(16, 812),
+                    fontFamily: Satoshi400,
+                  }}>
+                  Time
+                </Text>
+                <Text
+                  style={{
+                    color: black4Color,
+                    fontSize: RFValue(21, 812),
+                    fontFamily: Satoshi700,
+                    marginTop: 5,
+                  }}>
+                  {convertToPmAmFormat(item?.hour)}
+                </Text>
+              </View>
+              <View>
+                <Text
+                  style={{
+                    color: lightGray18Color,
+                    fontSize: RFValue(16, 812),
+                    fontFamily: Satoshi400,
+                  }}>
+                  Invitations
+                </Text>
+                <Text
+                  style={{
+                    color: black4Color,
+                    fontSize: RFValue(21, 812),
+                    fontFamily: Satoshi500,
+                    marginTop: 5,
+                  }}>
+                  {item?.usersList.length}
+                </Text>
               </View>
             </View>
           </View>
-        </LinearGradient>
-      </ImageBackground> */}
-      </TouchableOpacity>
-      {/* <ModalEventRemindes
-      eventStarting={eventStarting}
-      statusEvent={statusEvent}
-      setEventStarting={setEventStarting}
-      time={estimeTime}
-      image={mainImageEvent}
-      placeName={placeName}
-      joinedPeopleCount={invitingPeople?.length}
-      date={eventDate}
-      girlInvitation={numberOfGirlsInvited}
-      // handleAcceptInvitation={handleAcceptInvitation}
-      // handleGetEventsIJoining={handleGetEventsIJoining}
-      allPeople={allPeople}
-  /> */}
+          <View style={{width: '100%', alignItems: 'center', marginTop: 22, paddingHorizontal: 23}}>
+            <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
+          </View>
+          <View style={{marginBottom: 23}}>
+          {customButton ? customButton : null}
+            {/* <TouchableOpacity
+              onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: list}} as never)}
+              style={{
+                height: 65,
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 18,
+                backgroundColor: lightGray20Color,
+                marginTop: 25,
+              }}>
+              <Text
+                style={{
+                  color: blackColor,
+                  fontFamily: Satoshi700,
+                  fontSize: RFValue(16, 812),
+                }}>
+                Manage Event
+              </Text>
+            </TouchableOpacity> */}
+          </View>
+        </View>
+      </View>
     </>
   );
 };
