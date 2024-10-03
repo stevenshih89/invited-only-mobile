@@ -1,14 +1,14 @@
 import {Dispatch, FC, ReactElement, SetStateAction, useCallback, useState} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, SafeAreaView} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, SafeAreaView, ScrollView} from 'react-native';
 // import components
-import {gray1Color, grayScale700, transparent60Color, transparentGray90Color, whiteColor} from 'constants/colors.ts';
+import {gray1Color, grayScale700, lightGray20Color, transparent60Color, transparentGray90Color, whiteColor} from 'constants/colors.ts';
 import User from 'assets/images/icons/user.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
 import CheckStar from 'assets/images/icons/check-star-white.svg';
 import {screenWidth} from 'constants/common.ts';
-import {Satoshi500} from 'constants/fonts';
+import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import moment from 'moment/moment';
 import Button from 'components/Button/Button';
@@ -20,6 +20,7 @@ import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import FastImage from 'react-native-fast-image';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
 import Loader from 'components/Modal/ModalLoader/Loader';
+import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 
 const EventPreview: FC<{
   photos: any;
@@ -32,6 +33,7 @@ const EventPreview: FC<{
   meetingSpot: string;
   date: string;
   girls: number;
+  male: number;
   placeName: string;
   name: string;
   setCurrentCreateStap: Dispatch<SetStateAction<number>>;
@@ -58,7 +60,10 @@ const EventPreview: FC<{
   onInvite,
   superJoin,
   handleAutoSwipeRight,
-  loaderVisible
+  loaderVisible,
+  male,
+  address,
+  hour
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
@@ -140,12 +145,59 @@ const EventPreview: FC<{
     }
   };
 
+  const customButton = () => {
+    return (
+      <TouchableOpacity
+        disabled
+        style={{
+          height: 65,
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 18,
+          backgroundColor: lightGray20Color,
+          marginTop: 25,
+        }}>
+        <Text
+          style={{
+            color: whiteColor,
+            fontFamily: Satoshi700,
+            fontSize: RFValue(16, 812),
+          }}>
+          Join
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
   if (userAccountType === 'host' && !fromJoinEventsScreen) {
     return (
       // @ts-ignore
       <SafeAreaView style={{flex: 1}}>
         <View style={styles.container}>
-          <View style={{flex: 1, paddingHorizontal: 24, marginBottom: 24}}>
+          <ScrollView>
+          <MyEventsCard
+            imageBg={photos}
+            statusEvent={true}
+            eventReviewed={true}
+            allPeople={girls + male}
+            date={date}
+            placeName={placeName}
+            accountConfirmed={true}
+            findAcceptedGuest={[]}
+            item={{
+              usersList: [],
+              photos,
+              date,
+              address,
+              hour,
+            }}
+            showGuestList={true}
+            styleContainer={{marginTop: 0}}
+            customButton={customButton()}
+          />
+          </ScrollView>
+          {/* <View style={{flex: 1, paddingHorizontal: 24, marginBottom: 24}}>
             <FastImage
               style={{flex: 1, width: '100%', height: '100%', borderRadius: 20, overflow: 'hidden'}}
               source={{
@@ -182,12 +234,6 @@ const EventPreview: FC<{
                     }}
                     resizeMode={FastImage.resizeMode.cover}
                   />
-                  {/* <ImageBackground
-                    source={{uri: photos[0].image}}
-                    style={styles.imageBackground}
-                    imageStyle={styles.imageStyle}
-                    resizeMode="cover">
-                  </ImageBackground> */}
                   <Text style={{color: whiteColor, fontFamily: Satoshi500, fontWeight: 'bold', fontSize: RFValue(27, 812), marginTop: 10}}>
                     {name}
                   </Text>
@@ -220,72 +266,8 @@ const EventPreview: FC<{
                 </View>
               </View>
             </FastImage>
-            {/* <ImageBackground
-              style={{flex: 1, width: '100%', height: '100%', borderRadius: 20, overflow: 'hidden'}}
-              source={{uri: imagesUser?.image ? imagesUser?.image : ''}}
-              >
-              <View style={styles.wrapperBar}>
-                {[...Array(numberPhotos)].map((_, index) => (
-                  <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
-                ))}
-              </View>
-              <View style={styles.wrapperButtons}>
-                <TouchableOpacity onPress={handleBack} style={styles.button} />
-                <TouchableOpacity onPress={handleNext} style={styles.button} />
-              </View>
-              <View style={{width: 100, height: 50, flexDirection: 'row', marginLeft: 14, marginTop: 20, alignItems: 'center'}}>
-                <Text style={{fontSize: RFValue(14, 812), color: whiteColor, fontWeight: 'bold', fontFamily: Satoshi500, marginRight: 7}}>
-                  {nameUser}, {userAge}
-                </Text>
-                <CheckStar />
-              </View>
-              <View style={{width: '100%', position: 'absolute', padding: 12, bottom: 0}}>
-                <View style={styles.containerInfo}>
-                  <ImageBackground
-                    source={{uri: photos[0].image}}
-                    style={styles.imageBackground}
-                    imageStyle={styles.imageStyle}
-                    resizeMode="cover">
-                  </ImageBackground>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontWeight: 'bold', fontSize: RFValue(27, 812), marginTop: 10}}>
-                    {name}
-                  </Text>
-                  <View style={styles.textContainer}>
-                    <Text style={styles.text}>{placeName}</Text>
-                    <View style={styles.rowContainer}>
-                      <View style={styles.row}>
-                        <User />
-                        <Text style={styles.subText}>{girls} x Guest invitation</Text>
-                      </View>
-                      <View style={[styles.row, styles.marginLeft]}>
-                        <Calendar />
-                        <Text style={styles.subText}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
-                      </View>
-                    </View>
-                  </View>
-                  <View style={styles.centerContainer}>
-                    <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginRight]}>
-                      <FlashIcon />
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginLeft]}>
-                      <IOIcon />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            </ImageBackground> */}
-          </View>
-          {/* <Button onPress={handleCreateEvent} title={'Create event'} />
-          <View style={{width: '100%', alignItems: 'center', marginTop: 20}}>
-            <TouchableOpacity
-              onPress={() => {
-                setCurrentCreateStap(2);
-                setTabState('eventDetails');
-              }}>
-              <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Previous step</Text>
-            </TouchableOpacity>
           </View> */}
-          <View style={{flexDirection: 'row', width: '100%', paddingHorizontal: 16, alignItems: 'center', justifyContent: 'space-between'}}>
+          <View style={{flexDirection: 'row', marginTop: 28, width: '100%', paddingHorizontal: 16, alignItems: 'center', justifyContent: 'space-between'}}>
             <View style={{alignItems: 'center'}}>
               <TouchableOpacity
                 onPress={() => {
@@ -316,19 +298,6 @@ const EventPreview: FC<{
           source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
           style={styles.imageBackground}
           resizeMode="cover">
-          {/* {photos && photos.length > 1 && (
-            <>
-              <View style={styles.wrapperBar}>
-                {[...Array(photos.length)].map((_, index) => (
-                  <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
-                ))}
-              </View>
-              <View style={styles.wrapperButtons}>
-                <TouchableOpacity onPress={handleBack} style={styles.button} />
-                <TouchableOpacity onPress={handleNext} style={styles.button} />
-              </View>
-            </>
-          )} */}
           <View style={styles.wrapperButtons}>
             <TouchableOpacity onPress={handleBack} style={styles.button} />
             <TouchableOpacity onPress={handleNext} style={styles.button} />
