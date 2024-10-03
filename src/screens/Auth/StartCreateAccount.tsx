@@ -17,8 +17,7 @@ const StartCreateAccount: FC = (): JSX.Element => {
       if (value !== null) {
         return value;
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   };
 
   getId();
@@ -44,13 +43,12 @@ const StartCreateAccount: FC = (): JSX.Element => {
               paddingHorizontal: 24,
             }}>
             <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi500, fontSize: RFValue(28, 812)}}>
-            Host or Join VIP Tables
-            And Exclusive Events 
+              Host or Join VIP Tables And Exclusive Events
             </Text>
             <View
               style={{
                 alignItems: 'center',
-                marginTop: 17
+                marginTop: 17,
               }}>
               <Text
                 style={{
@@ -58,7 +56,7 @@ const StartCreateAccount: FC = (): JSX.Element => {
                   fontFamily: Satoshi500,
                   fontSize: RFValue(16, 812),
                   letterSpacing: 2,
-                  textAlign: 'center'
+                  textAlign: 'center',
                 }}>
                 Let’s find your next unforgettable event nearby or build your guest list.
               </Text>
@@ -80,7 +78,7 @@ const StartCreateAccount: FC = (): JSX.Element => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: 25,
-                marginTop: 25
+                marginTop: 25,
               }}>
               <Text
                 style={{
@@ -93,9 +91,9 @@ const StartCreateAccount: FC = (): JSX.Element => {
               </Text>
             </TouchableOpacity>
             <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginHorizontal: 40, justifyContent: 'center'}}>
-            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: lightGray19Color}}>
-                  By signing up or logging, I accept the IO
-                </Text>
+              <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: lightGray19Color}}>
+                By signing up or logging, I accept the IO
+              </Text>
               <View style={{flexDirection: 'row', marginLeft: 12, justifyContent: 'center'}}>
                 <Text
                   style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}

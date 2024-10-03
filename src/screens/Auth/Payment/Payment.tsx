@@ -357,7 +357,6 @@ const Payment: FC = (): JSX.Element => {
                 borderStyle: 'solid',
                 borderColor: isActive ? whiteColor : 'transparent',
                 width: '100%',
-                // width: screenWidth / 3 - 25,
                 height: 180,
                 justifyContent: 'center',
                 paddingTop: isActive ? 26 : 20,
@@ -398,7 +397,7 @@ const Payment: FC = (): JSX.Element => {
                   color: isActive ? blackColor : whiteColor,
                   textAlign: 'center',
                 }}>
-                {isActive ? activePayment.fullPrice : item.pricePerDuration}
+                {item.fullPrice}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
