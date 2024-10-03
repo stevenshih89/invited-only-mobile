@@ -96,7 +96,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
-  const fetchMyEvents = async () => {  
+  const fetchMyEvents = async () => {
     const user = auth().currentUser;
     if (user) {
       try {
@@ -112,7 +112,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           ...doc.data(),
         }));
 
-        const filterExpiredEvents = data.filter(event => {
+        const filteredEvents = data.filter(event => {
+          if (event?.isCancelled) {
+            return false;
+          }
           if (event?.date && event?.hour) {
             const adjustedDate = moment(`${event?.date}, ${event?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
             if (adjustedDate.isBefore(moment())) {
@@ -123,17 +126,17 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           return false;
         });
 
-        if (!filterExpiredEvents.length) {
+        if (!filteredEvents.length) {
           setMyEvents([]);
           setActiveEvent({});
           setChat('');
           return;
         }
 
-        setActiveEvent(filterExpiredEvents[indexEvent]);
-        setMyEvents(filterExpiredEvents);
-        setChat(filterExpiredEvents[indexEvent]?.id);
-        return filterExpiredEvents;
+        setActiveEvent(filteredEvents[indexEvent]);
+        setMyEvents(filteredEvents);
+        setChat(filteredEvents[indexEvent]?.id);
+        return filteredEvents;
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
@@ -241,7 +244,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     <TouchableOpacity
       onPress={() => {
         setChat(`${activeEvent}`);
-        setIndexEvent(index)
+        setIndexEvent(index);
       }}
       style={styles.eventButton}>
       <View style={[styles.eventViewFlatList, {borderColor: index === indexEvent ? whiteColor : lightGray5Color}]}>
@@ -331,7 +334,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   <Text style={styles.textButton}>Create event</Text>
                 </TouchableOpacity>
                 {myEvents &&
-                  myEvents.map((event: any, index: number) => {                    
+                  myEvents.map((event: any, index: number) => {
                     const isActive = index === indexEvent;
                     const eventIsFinished = isEventFinished(event?.date, event?.hour);
                     const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
@@ -347,7 +350,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                             return;
                           }
                           setActiveEvent(event);
-                          setIndexEvent(index)
+                          setIndexEvent(index);
                         }}>
                         <View
                           style={{
@@ -540,7 +543,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       showToast('inviteMatch', 'Create new event', `Event is ended: ${event?.date}`, {ownerPhoto: event.photos[0].image});
                     }
                     setActiveEvent(event);
-                    setIndexEvent(index)
+                    setIndexEvent(index);
                   }}>
                   <View
                     style={{
