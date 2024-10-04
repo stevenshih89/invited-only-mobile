@@ -83,6 +83,7 @@ const IO: FC = (): JSX.Element => {
   const [reportedItem, setReportedItem] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
   const [matchData, setMatchData] = useState<MatchData>({});
+  
   const [loading, setLoading] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
@@ -258,7 +259,7 @@ const IO: FC = (): JSX.Element => {
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(
       message => {
-        const data = message?.data;
+        const data = message?.data;        
         setMatchData(data);
         setIsVisibleMatch(true);
       },
@@ -484,9 +485,11 @@ const IO: FC = (): JSX.Element => {
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
+      
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
       const eventData = await firestore().collection('Events').doc(activeEventId).get();
+
       const event = eventData.data();
       if (!event) {
         return;
@@ -521,6 +524,19 @@ const IO: FC = (): JSX.Element => {
             eventId: activeEventId,
             superInvite: false,
             userHostImageUri: userHost?.photos[0]?.image,
+            joinEvents: guest?._data.joinEvents,
+            location: guest?._data.location,
+            premium: userInfo?.accountPremium,
+            dateHost: userInfo?.date,
+            dateGuest: guest?._data.date,
+            onlineGuest: guest?._data.online,
+            accountConfirmedHost: guest?._data.accountConfirmed,
+            accountConfirmedGuest: userInfo?.accountConfirmed,
+            usersListHost: eventData?._data.usersList,
+            accountTypeHost: userInfo?.accountType,
+            accountTypeGuest: guest?._data.accountType,
+            eventImage: eventData?._data.photos[0].image,
+            guestsInvited: eventData._data.usersList.length,
           };
         } else {
           data = {
@@ -533,6 +549,8 @@ const IO: FC = (): JSX.Element => {
           .update(data)
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
+              console.log('proverka host');
+              
               await handleCreateChat(matchedGuestData);
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
@@ -573,7 +591,20 @@ const IO: FC = (): JSX.Element => {
             eventId: activeEventId,
             superInvite: false,
             userHostImageUri: event?.hostImage,
-          };
+            joinEvents: userInfo?.joinEvents,
+            location: userInfo?.location,
+            premium: guest?._data.accountPremium, 
+            dateHost: guest?._data.date,
+            dateGuest: userInfo?.date,
+            onlineGuest: userInfo?.online,
+            accountConfirmedHost: userInfo?.accountConfirmed,
+            accountConfirmedGuest: userInfo?.accountConfirmed,
+            usersListHost: eventData?._data.usersList,
+            accountTypeHost: guest?._data.accountType,
+            accountTypeGuest: userInfo?.accountType,
+            eventImage: eventData?._data.photos[0].image,
+            guestsInvited: eventData._data.usersList.length,
+          };          
         } else {
           data = {
             requestsList: firestore.FieldValue.arrayUnion(userInvited),
@@ -586,6 +617,7 @@ const IO: FC = (): JSX.Element => {
           .update(data)
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
+              console.log('proverka guest');
               await handleCreateChat(matchedGuestData);
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
@@ -1629,6 +1661,7 @@ const IO: FC = (): JSX.Element => {
           />
         </View>
       </SafeAreaView>
+      {/* isVisibleMatch */}
       <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} />
     </>
   );

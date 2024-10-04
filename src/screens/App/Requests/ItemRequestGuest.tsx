@@ -28,8 +28,8 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
   const [hostInfo, setHostInfo] = useState([]);
   const [loading, setLoading] = useState(true);
   const [heightAnim] = useState(new Animated.Value(282));
-  const {photos, uid, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name} = list;
-
+  const {photos, uid, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name, usersList} = list;
+  
   const styles = useStyles();
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);  
@@ -109,6 +109,9 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           return invUser;
         });
 
+        console.log('item', item);
+        
+
         const matchedData = {
           type: 'match',
           name: event?.hostName,
@@ -120,6 +123,19 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           eventId: event?.id,
           superInvite: false,
           userHostImageUri: event?.hostImage,
+          joinEvents: user?.joinEvents,
+          location: user?.location,
+          premium: hostInfo?.accountPremium,
+          dateHost: hostInfo?.date,
+          dateGuest: user?.date,
+          onlineGuest: user?.online,
+          accountConfirmedHost: hostInfo?.accountConfirmed,
+          accountConfirmedGuest: user?.accountConfirmed,
+          usersListHost: usersList,
+          accountTypeHost: hostInfo?.accountType,
+          accountTypeGuest: user?.accountType,
+          eventImage: photos[0].image,
+          guestsInvited: usersList.length
         };
 
         await firestore()
