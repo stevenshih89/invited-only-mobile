@@ -21,11 +21,11 @@ const App: FC = (): JSX.Element => {
       }
     }
 
-    const getSubs = async () => {
+    const getSubscription = async () => {
       const activeSubscription = await getActiveSubscription();
       setCurrentSubscriptions(activeSubscription);
     };
-    getSubs();
+    getSubscription();
   }, []);
 
   return (

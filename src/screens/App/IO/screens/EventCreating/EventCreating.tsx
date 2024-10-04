@@ -45,7 +45,7 @@ const EventCreating: FC = () => {
   const [male, setMale] = useState<number>(0);
   const [femaleFriend, setFemaleFriend] = useState<number>(0);
   const [maleFriend, setMaleFriend] = useState<number>(0);
-  const [loaderVisible, setLoaderVisible] = useState<boolean>(false)
+  const [loaderVisible, setLoaderVisible] = useState<boolean>(false);
 
   const [myEvents, setMyEvents] = useState();
 
@@ -303,7 +303,7 @@ const EventCreating: FC = () => {
   };
 
   const handleCreateEvent = async () => {
-    setLoaderVisible(true)
+    setLoaderVisible(true);
     try {
       setLoading(true);
       const uid: string = uuid.v4() as string;
@@ -338,6 +338,7 @@ const EventCreating: FC = () => {
         hostName: userHost?.name,
         photos: photos,
         hostFcmToken: userHost?.fcmToken,
+        isCancelled: false,
       };
 
       await createEvent(uid, event);
@@ -351,7 +352,7 @@ const EventCreating: FC = () => {
         photos.map(async (i, index) => {
           const img = await uploadImage(i?.image, userHost.uid);
           imagesUri.push({id: index, image: img});
-        })
+        }),
       );
 
       await firestore()
@@ -362,7 +363,7 @@ const EventCreating: FC = () => {
         });
 
       setLoading(false);
-      setLoaderVisible(false)
+      setLoaderVisible(false);
 
       navigation.navigate(IOPath as never);
 
@@ -414,7 +415,7 @@ const EventCreating: FC = () => {
       //   });
     } catch (e) {
       setLoading(false);
-      setLoaderVisible(false)
+      setLoaderVisible(false);
       // console.log(e);
       showToast('inviteMatch', '', `${e}`);
     }

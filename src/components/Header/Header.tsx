@@ -70,7 +70,8 @@ type ItemProps = {
   activeEvent?: string;
   hour?: string;
   girlInvitation?: number | string;
-  icon: ReactNode;
+  icon?: ReactNode;
+  index?: number;
 };
 
 const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
@@ -91,7 +92,8 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const setRequestFilter = useRequest((i: any) => i?.setRequestFilter);
   const userHost = useUser((i: any) => i?.user);
 
-  const {setActiveEvent, activeEvent} = useContext(EventContext);
+  const {setActiveEvent, activeEvent, indexEvent, setIndexEvent} = useContext(EventContext);
+
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
   const fetchMyEvents = async () => {
@@ -110,7 +112,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           ...doc.data(),
         }));
 
-        const filterExpiredEvents = data.filter(event => {
+        const filteredEvents = data.filter(event => {
+          if (event?.isCancelled) {
+            return false;
+          }
           if (event?.date && event?.hour) {
             const adjustedDate = moment(`${event?.date}, ${event?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
             if (adjustedDate.isBefore(moment())) {
@@ -121,17 +126,17 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           return false;
         });
 
-        if (!filterExpiredEvents.length) {
+        if (!filteredEvents.length) {
           setMyEvents([]);
           setActiveEvent({});
           setChat('');
           return;
         }
 
-        setActiveEvent(filterExpiredEvents[0]);
-        setMyEvents(filterExpiredEvents);
-        setChat(filterExpiredEvents[0]?.id);
-        return filterExpiredEvents;
+        setActiveEvent(filteredEvents[indexEvent]);
+        setMyEvents(filteredEvents);
+        setChat(filteredEvents[indexEvent]?.id);
+        return filteredEvents;
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
@@ -141,7 +146,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   useFocusEffect(
     useCallback(() => {
       fetchMyEvents();
-    }, [headerType]),
+    }, [indexEvent]),
   );
 
   const goToCreateEvent = async (): void => {
@@ -235,14 +240,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     },
   ];
 
-  const Item = ({title, filledTo, numberBadge, image, allPeople, date, hour, girlInvitation, activeEvent}: ItemProps) => (
+  const Item = ({title, numberBadge, image, date, hour, girlInvitation, activeEvent, index}: ItemProps) => (
     <TouchableOpacity
       onPress={() => {
         setChat(`${activeEvent}`);
-        // setEventStarting(true);
+        setIndexEvent(index);
       }}
       style={styles.eventButton}>
-      <View style={[styles.eventViewFlatList, {borderColor: activeEvent === selectedChat ? whiteColor : lightGray5Color}]}>
+      <View style={[styles.eventViewFlatList, {borderColor: index === indexEvent ? whiteColor : lightGray5Color}]}>
         <FastImage style={styles.imageEvent} source={{uri: image}} />
         {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
       </View>
@@ -329,8 +334,8 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   <Text style={styles.textButton}>Create event</Text>
                 </TouchableOpacity>
                 {myEvents &&
-                  myEvents.map((event: any, index: number) => {                    
-                    const isActive = activeEvent?.id === event.id;
+                  myEvents.map((event: any, index: number) => {
+                    const isActive = index === indexEvent;
                     const eventIsFinished = isEventFinished(event?.date, event?.hour);
                     const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
                     const eventIsFull = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
@@ -345,6 +350,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                             return;
                           }
                           setActiveEvent(event);
+                          setIndexEvent(index);
                         }}>
                         <View
                           style={{
@@ -537,6 +543,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       showToast('inviteMatch', 'Create new event', `Event is ended: ${event?.date}`, {ownerPhoto: event.photos[0].image});
                     }
                     setActiveEvent(event);
+                    setIndexEvent(index);
                   }}>
                   <View
                     style={{
@@ -612,7 +619,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 <FlatList
                   data={myEvents}
                   horizontal={true}
-                  renderItem={({item}) => (
+                  renderItem={({item, index}) => (
                     <Item
                       activeEvent={item.id}
                       filledTo={item?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length}
@@ -623,6 +630,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       title={item.name}
                       date={item.date}
                       hour={item.hour}
+                      index={index}
                     />
                   )}
                   keyExtractor={item => item.id}

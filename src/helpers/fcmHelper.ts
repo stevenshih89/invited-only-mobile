@@ -148,13 +148,13 @@ export function registerListenerWithFCM() {
 }
 
 //method was called to display notification
-async function onDisplayNotification(title, body, data, setRejectVisible: () => void, setAcceptModalVisible: () => void) {  
+async function onDisplayNotification(title, body, data, setRejectVisible: () => void, setAcceptModalVisible: () => void) {
   showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image});
-  if(title === 'Your Account is Not Approved') {
-    setRejectVisible()
+  if (title === 'Your Account is Not Approved') {
+    setRejectVisible();
   }
-  if(title === 'Your account has been approved') {
-    setAcceptModalVisible()
+  if (title === 'Your account has been approved') {
+    setAcceptModalVisible();
   }
   // Request permissions (required for iOS)
   await notifee.requestPermission();
@@ -180,7 +180,11 @@ async function onDisplayNotification(title, body, data, setRejectVisible: () => 
 }
 
 // it would be called when the app in foreground state
-export function onMatchNotificationSubscription(handler: (message: FirebaseMessagingTypes.RemoteMessage) => void,  setRejectVisible: () => void, setAcceptModalVisible: () => void) {
+export function onMatchNotificationSubscription(
+  handler: (message: FirebaseMessagingTypes.RemoteMessage) => void,
+  setRejectVisible: () => void,
+  setAcceptModalVisible: () => void,
+) {
   return messaging().onMessage(async remoteMessage => {
     // console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
 
@@ -188,7 +192,13 @@ export function onMatchNotificationSubscription(handler: (message: FirebaseMessa
     if (remoteMessage.data?.type === 'match') {
       handler(remoteMessage);
     }
-    onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data, setRejectVisible, setAcceptModalVisible)
+    onDisplayNotification(
+      remoteMessage.notification?.title,
+      remoteMessage.notification?.body,
+      remoteMessage?.data,
+      setRejectVisible,
+      setAcceptModalVisible,
+    );
   });
 }
 
