@@ -7,21 +7,20 @@ import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
-import functions from '@react-native-firebase/functions';
 
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
-import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight, screenWidth} from 'constants/common.ts';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, paymentPath, userProfilePath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, myProfileViewPath, paymentPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
 import {EventContext} from 'contexts/EventContext';
-import {black4Color, blackColor, lightGray18Color, lightGreenColor, transparentWhite56Color, whiteColor} from 'constants/colors';
-import {fcmHelper, getFcmToken, onMatchNotificationSubscription, sendNotification} from 'helpers/fcmHelper.ts';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import {blackColor, lightGreenColor, transparentWhite56Color, whiteColor} from 'constants/colors';
+import {fcmHelper, onMatchNotificationSubscription, sendNotification} from 'helpers/fcmHelper.ts';
+import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {useUser} from '../../../store/userStore';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 
@@ -36,12 +35,8 @@ import SmokeIcon from 'assets/images/icons/smoke.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
-import PeopleIcon from 'assets/images/icons/profile-2user.svg';
-import CalendarIcon from 'assets/images/icons/calendar.svg';
-import ClockIcon from 'assets/images/icons/clock-white.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import PersoneIcon from 'assets/images/icons/Users.svg';
-import LineImage from 'assets/images/app/Line.png';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
@@ -50,9 +45,7 @@ import Match, {MatchData} from './screens/Match/Match';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
-import moment from 'moment';
 import {handleCreateChat} from 'helpers/chat';
-import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import FullEvent from 'components/FullEvent';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {onUserProfileChangeSubscription} from 'helpers/userProfile';
@@ -60,13 +53,11 @@ import {User, UserInfo} from 'src/types/userInfo';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
-import Animated, {Easing, useAnimatedStyle, useEvent, useSharedValue, withTiming} from 'react-native-reanimated';
+import Animated, {Easing, useAnimatedStyle, useSharedValue, withTiming} from 'react-native-reanimated';
 import ModalEventLocked from 'components/Modal/ModalEventLocked/ModalEventLocked';
 import {useGuestList} from 'src/store/guestListStore';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
-import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat';
-import {formateDateAbbreviated} from 'helpers/formateDateAbbreviated';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 
 const USERS_FETCHING_DELAY = 3000;
@@ -261,7 +252,7 @@ const IO: FC = (): JSX.Element => {
   useEffect(() => {
     const unsubscribe = onMatchNotificationSubscription(
       message => {
-        const data = message?.data;        
+        const data = message?.data;
         setMatchData(data);
         setIsVisibleMatch(true);
       },
@@ -487,13 +478,13 @@ const IO: FC = (): JSX.Element => {
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
-      
+
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
       const eventData = await firestore().collection('Events').doc(activeEventId).get();
 
       const event = eventData.data();
-      if (!event) {
+      if (!event || event?.statusEvent === false || event?.isCancelled === true) {
         return;
       }
 
@@ -508,6 +499,17 @@ const IO: FC = (): JSX.Element => {
       };
 
       if (isHost) {
+        const maxGuests = event?.male + event?.female;
+
+        const acceptedUsersList = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS);
+        console.warn('maxGuests', maxGuests, acceptedUsersList.length);
+
+        if (acceptedUsersList?.length >= maxGuests) {
+          showToast('inviteMatch', 'You have reached the maximum number of guests', 'Invite');
+          setIsVisibleModalFullEvent(true);
+          return;
+        }
+
         const matchedGuest = event.requestsList?.find(reqUser => reqUser?.uid === forUserUid && reqUser?.status === 'liked');
         let data = {};
         let matchedGuestData: MatchData;
@@ -552,7 +554,7 @@ const IO: FC = (): JSX.Element => {
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
               console.log('proverka host');
-              
+
               await handleCreateChat(matchedGuestData);
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
@@ -595,7 +597,7 @@ const IO: FC = (): JSX.Element => {
             userHostImageUri: event?.hostImage,
             joinEvents: userInfo?.joinEvents,
             location: userInfo?.location,
-            premium: guest?._data.accountPremium, 
+            premium: guest?._data.accountPremium,
             dateHost: guest?._data.date,
             dateGuest: userInfo?.date,
             onlineGuest: userInfo?.online,
@@ -606,7 +608,7 @@ const IO: FC = (): JSX.Element => {
             accountTypeGuest: userInfo?.accountType,
             eventImage: eventData?._data.photos[0].image,
             guestsInvited: eventData._data.usersList.length,
-          };          
+          };
         } else {
           data = {
             requestsList: firestore.FieldValue.arrayUnion(userInvited),
@@ -718,7 +720,7 @@ const IO: FC = (): JSX.Element => {
     let filteredEvents: any[] = [];
 
     try {
-      const querySnapshot = await firestore().collection('Events').where('statusEvent', '==', true).where('isCancelled', '==', false).get();
+      const querySnapshot = await firestore().collection('Events').where('statusEvent', '==', true).get();
 
       filteredEvents = querySnapshot?.docs
         ?.map((doc: any) => ({

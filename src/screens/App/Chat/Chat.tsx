@@ -232,7 +232,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       <View style={styles.itemEventsJoining}>
         <View style={styles.wrapperItemEventsJoining}>
           <TouchableOpacity style={styles.fdrAiC}>
-            <FastImage resizeMode="cover" source={{uri: image}} style={{width: 50, height: 50, borderRadius: 50}}/>
+            <FastImage resizeMode="cover" source={{uri: image}} style={{width: 50, height: 50, borderRadius: 50}} />
             <View style={{marginLeft: 15}}>
               <View style={styles.fdrAiC}>
                 <Text style={styles.title}>{title}</Text>
@@ -293,7 +293,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             style={styles.chatItem}>
             <View style={{flexDirection: 'row'}}>
               <View>
-                <FastImage source={{uri: i?.avatar}} style={{width: 50, height: 50, borderRadius: 50}}/>
+                <FastImage source={{uri: i?.avatar}} style={{width: 50, height: 50, borderRadius: 50}} />
               </View>
               <View style={{marginLeft: 15}}>
                 <Text style={styles.textNameChat}>{i?.name}</Text>

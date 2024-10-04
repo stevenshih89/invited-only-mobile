@@ -320,7 +320,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   const handleActionPress = async () => {
     const isFull = await checkIsFullGuestsFun();
     if (isFull) {
-      setModalVisible(false);
+      setModalVisible && setModalVisible(false);
       setTimeout(() => {
         setIsVisibleModalFullEvent(true);
       }, 300);
