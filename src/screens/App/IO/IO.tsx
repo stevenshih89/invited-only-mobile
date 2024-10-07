@@ -1675,7 +1675,6 @@ const IO: FC = (): JSX.Element => {
           />
         </View>
       </SafeAreaView>
-      {/* isVisibleMatch */}
       <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} />
     </>
   );
