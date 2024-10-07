@@ -166,7 +166,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
     navigation.navigate(commonStackPath, {screen: invitationCodePath});
   };
 
-  const handleNext = (): void => {
+  const handleNext = (): void => {        
     if (active === numberPhotos - 1) {
       return setActive(0);
     } else {
@@ -235,7 +235,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       showToast('inviteMatch', "You don't have Super Joins", 'Super Join');
     }
   };
-
+  
   return (
     // @ts-ignore
     <FastImage
@@ -243,7 +243,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       source={{
         uri:
           userInfo?.accountType === 'guest'
-            ? eventPhotos && eventPhotos[0]?.image
+            ? eventPhotos && eventPhotos[active]?.image
             : photos?.[active]?.image
             ? photos?.[active]?.image
             : photos?.[active],
@@ -265,6 +265,10 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             : null}
         </View>
       </LinearGradient>
+      <View style={styles.wrapperButtons}>
+        <TouchableOpacity onPress={handleBack} style={styles.button} />
+        <TouchableOpacity onPress={handleNext} style={styles.button} />
+      </View>
       {!isShowCardButtons && isShowAccountInfo && (
         <View
           style={{
@@ -631,11 +635,10 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
         </View>
       )}
-      {/* )} */}
-      {/* <View style={styles.wrapperButtons}>
+      <View style={styles.wrapperButtons}>
         <TouchableOpacity onPress={handleBack} style={styles.button} />
         <TouchableOpacity onPress={handleNext} style={styles.button} />
-      </View> */}
+      </View>
       {isShowCardButtons && (
         <View
           style={{
@@ -884,3 +887,4 @@ export default TouchingSlider;
 function setVisibleModalSuperJoin(arg0: boolean) {
   throw new Error('Function not implemented.');
 }
+
