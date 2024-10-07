@@ -1,5 +1,5 @@
 import {isIos, screenHeight, screenWidth} from 'constants/common';
-import {FC, useState, useContext} from 'react';
+import {FC, useState, useContext, useEffect} from 'react';
 import {
   Alert,
   ImageBackground,
@@ -56,7 +56,6 @@ const AddPhotos: FC = (): JSX.Element => {
     }
   ]);
   const {onBoarding, setOnBoarding} = useContext(AuthContext);  
-
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
     const result = await check(permission);
     switch (result) {

@@ -95,7 +95,11 @@ const EventsRequest = ({item, list}: any) => {
         requestsList: updateRequestsList,
       });
       showToast('inviteMatch', '', 'The request has been confirmed');
-      sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
+      const getDoc = await firestore().collection('userInfo').doc(item?.uid).get()
+      const docData = getDoc.data()
+      if(docData?.notificationSettings.joinedEvent) {
+        sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
+      }
     } catch (e) {
       // console.log(e);
       showToast('inviteMatch', '', "There's been an error");

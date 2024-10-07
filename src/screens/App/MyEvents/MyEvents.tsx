@@ -351,14 +351,18 @@ const MyEvents: FC<any> = ({navigation}) => {
         ownerPhoto: eventDataList?.hostImage,
         status: 'Joined'.toUpperCase(),
       });
-      await sendNotification(
-        eventDataList?.uid,
-        `${user?.name} accepted your invitation`,
-        'Invitation Accepted!',
-        'Accepted',
-        'Accepted'.toUpperCase(),
-        user,
-      );
+      const getDoc = await firestore().collection('userInfo').doc(eventDataList?.uid).get()
+      const docData = getDoc.data()
+      if(docData?.notificationSettings.myEvents) {
+        await sendNotification(
+          eventDataList?.uid,
+          `${user?.name} accepted your invitation`,
+          'Invitation Accepted!',
+          'Accepted',
+          'Accepted'.toUpperCase(),
+          user,
+        );
+      }
       setIsVisibleAcceptInvitationModal(false);
     } catch (e) {
       // console.log(e);
@@ -394,7 +398,11 @@ const MyEvents: FC<any> = ({navigation}) => {
         usersList: list?.usersList,
       });
       setIsVisibleAcceptInvitationModal(false);
-      await sendNotification(list?.uid, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+      const getDoc = await firestore().collection('userInfo').doc(list?.uid).get()
+      const docData = getDoc.data()
+      if(docData?.notificationSettings?.myEvents) {
+        await sendNotification(list?.uid, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+      }
       showToast('inviteMatch', `You rejected ${list?.placeName} event`, 'Not now', {
         ownerPhoto: list?.hostImage,
         status: 'REJECTED'.toUpperCase(),
@@ -425,7 +433,11 @@ const MyEvents: FC<any> = ({navigation}) => {
         usersList: list?.usersList,
       });
       setIsVisibleCancelAttendingModal(false);
-      await sendNotification(list?.uid, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+      const getDoc = await firestore().collection('userInfo').doc(list?.uid).get()
+      const docData = getDoc.data()
+      if(docData?.notificationSettings.myEvents) {
+        await sendNotification(list?.uid, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+      }
       showToast('inviteMatch', `You rejected ${list?.placeName} event`, 'Not now', {
         ownerPhoto: list?.hostImage,
         status: 'REJECTED'.toUpperCase(),

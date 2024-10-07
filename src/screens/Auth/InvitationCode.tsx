@@ -123,6 +123,8 @@ const InvitationCode: FC = (): JSX.Element => {
 
       let allImageUrl: any = [];
 
+      const isTurnNotifications = onBoarding.find(item => 'notifications' in item)
+
       await firestore()
         .collection('userInfo')
         .doc(`${userId}`)
@@ -139,6 +141,15 @@ const InvitationCode: FC = (): JSX.Element => {
           weeklySuperInvites: 5,
           superInvites: 0,
           lastUpdateSuperInvite: Date.now(),
+          notificationSettings: {
+            chat: isTurnNotifications.notifications,
+            joinedEvent: isTurnNotifications.notifications,
+            match: isTurnNotifications.notifications,
+            myEvents: isTurnNotifications.notifications,
+            requests: isTurnNotifications.notifications,
+            superInvite: isTurnNotifications.notifications,
+            superJoin: isTurnNotifications.notifications,
+          },
         })
         .then(async () => {
           // console.log('User added!');

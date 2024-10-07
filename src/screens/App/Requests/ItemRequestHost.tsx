@@ -146,14 +146,18 @@ const ItemRequestHost = ({
         .then(async () => {
           await handleCreateChat(matchedData);
           handleOpenMatch(matchedData);
-          await sendNotification(
-            item?.uid,
-            'New invite request',
-            `${userInfo?.name} wants to invite you!`,
-            'invite',
-            'Invite Request'.toUpperCase(),
-            userInfo,
-          );
+          const getDoc = await firestore().collection('userInfo').doc(item?.uid).get()
+          const docData = getDoc.data()
+          if(docData?.notificationSettings.requests) {
+            await sendNotification(
+              item?.uid,
+              'New invite request',
+              `${userInfo?.name} wants to invite you!`,
+              'invite',
+              'Invite Request'.toUpperCase(),
+              userInfo,
+            );
+          }
           setRequestsForHost(prev => ({
             ...prev,
             requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),

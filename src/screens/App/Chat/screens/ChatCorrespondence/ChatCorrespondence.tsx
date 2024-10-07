@@ -152,6 +152,9 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
       const findChat = allChats?.filter(i => i?.id === id);
 
+      const getDate = await firestore().collection('userInfo').doc(uid).get()
+      const docData = getDate.data()
+
       if (findChat && findChat.length > 0) {
         findChat[0].messages.push(updateData);
         if (typeof findChat[0].newMessages === 'number') {
@@ -162,7 +165,9 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         await doc.update({
           chats: [...allChats],
         });
-        await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
+        if(docData?.notificationSettings.chat) {
+          await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
+        }
       }
     } catch (e) {
       // console.log(e);

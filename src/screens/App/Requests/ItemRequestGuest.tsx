@@ -147,14 +147,18 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           .then(async () => {
             await handleCreateChat(matchedData);
             handleOpenMatch(matchedData);
-            await sendNotification(
-              event.uid,
-              'New join request',
-              `${user.name} wants to join you!`,
-              'invite',
-              'Join Request'.toUpperCase(),
-              user,
-            );
+            const getDoc = await firestore().collection('userInfo').doc(event.uid).get()
+              const docData = getDoc.data()
+            if(docData?.notificationSettings.joinedEvent) {
+              await sendNotification(
+                event.uid,
+                'New join request',
+                `${user.name} wants to join you!`,
+                'invite',
+                'Join Request'.toUpperCase(),
+                user,
+              );
+            }
             setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
           });
           await updateJoinEvents()
@@ -192,7 +196,11 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           usersList: firestore.FieldValue.arrayRemove(item),
         });
       showToast('inviteMatch', '', 'You reject invitation');
-      await sendNotification(uid, 'Not now.', `${item?.name} reject your invitation.`, 'rejected', 'Rejected'.toUpperCase(), user);
+      const getDoc = await firestore().collection('userInfo').doc(uid).get()
+      const docData = getDoc.data()
+      if(docData?.notificationSettings.myEvents) {
+        await sendNotification(uid, 'Not now.', `${item?.name} reject your invitation.`, 'rejected', 'Rejected'.toUpperCase(), user);
+      }
       setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
     } catch (e) {
       // console.log(e);

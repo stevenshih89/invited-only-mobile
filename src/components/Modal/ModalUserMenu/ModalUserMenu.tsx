@@ -267,6 +267,9 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       return;
     }
 
+    const getDoc = await firestore().collection('userInfo').doc(uid).get()
+    const uidData = getDoc.data()
+
     try {
       const updatedUsersList = eventData?.usersList?.map(user => {
         if (user.uid === uid) {
@@ -285,7 +288,9 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         ownerPhoto: userGuest?.imagePhoto,
         status: 'GUEST APPROVED',
       });
-      await sendNotification(uid, 'Request approved', 'Please confirm your attendence', 'Approve', 'Approved'.toUpperCase(), user);
+      if(uidData?.notificationSettings?.requests || uidData?.notificationSettings?.joinedEvent) {
+        await sendNotification(uid, 'Request approved', 'Please confirm your attendence', 'Approve', 'Approved'.toUpperCase(), user);
+      }
     } catch (e) {
       // console.log(e);
     }
@@ -304,6 +309,9 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       return;
     }
 
+    const getDoc = await firestore().collection('userInfo').doc(eventDataList?.uid).get()
+    const docData = getDoc.data()
+
     try {
       const updatedUsersList = eventDataList?.usersList?.map(userItem => {
         if (userItem.uid === user?.uid) {
@@ -318,14 +326,16 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       await firestore().collection('Events').doc(activeEvent).update({
         usersList: updatedUsersList,
       });
-      await sendNotification(
-        eventDataList?.uid,
-        'Invitation Accepted!',
-        `${user?.name} accepted your invitation`,
-        'Accepted',
-        'Accepted'.toUpperCase(),
-        user,
-      );
+      if(docData?.notificationSettings?.joinedEvent) {
+        await sendNotification(
+          eventDataList?.uid,
+          'Invitation Accepted!',
+          `${user?.name} accepted your invitation`,
+          'Accepted',
+          'Accepted'.toUpperCase(),
+          user,
+        );
+      }
     } catch (e) {
       // console.log(e);
     }

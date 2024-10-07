@@ -162,6 +162,8 @@ const VerifySocialProfile = () => {
 
       let allImageUrl: any = [];
 
+      const isTurnNotifications = onBoarding.find(item => 'notifications' in item)
+      
       await firestore()
         .collection('userInfo')
         .doc(`${userId}`)
@@ -179,6 +181,15 @@ const VerifySocialProfile = () => {
           superInvites: 0,
           socialNickname,
           lastUpdateSuperInvite: Date.now(),
+          notificationSettings: {
+            chat: isTurnNotifications.notifications,
+            joinedEvent: isTurnNotifications.notifications,
+            match: isTurnNotifications.notifications,
+            myEvents: isTurnNotifications.notifications,
+            requests: isTurnNotifications.notifications,
+            superInvite: isTurnNotifications.notifications,
+            superJoin: isTurnNotifications.notifications,
+          },
         })
         .then(async () => {
           // console.warn('User added!');
