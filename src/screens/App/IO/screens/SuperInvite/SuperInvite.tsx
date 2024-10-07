@@ -6,15 +6,15 @@ import {Outfit500, Satoshi700Italic} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Dispatch, FC, SetStateAction, useEffect} from 'react';
 import {screenHeight} from 'constants/common';
-import Animated, { useSharedValue, withTiming, Easing, useAnimatedStyle} from 'react-native-reanimated';
+import Animated, {useSharedValue, withTiming, Easing, useAnimatedStyle} from 'react-native-reanimated';
 import Close from 'assets/images/icons/close.svg';
 
-const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => void; activeSuperInviteUser: any, setLastVisible: Dispatch<SetStateAction<boolean>>}> = ({
-  isVisibleSuperInvite,
-  onCloseSuperInvite,
-  activeSuperInviteUser,
-  setLastVisible
-}) => {
+const SuperInvite: FC<{
+  isVisibleSuperInvite: boolean;
+  onCloseSuperInvite: () => void;
+  activeSuperInviteUser: any;
+  setLastVisible: Dispatch<SetStateAction<boolean>>;
+}> = ({isVisibleSuperInvite, onCloseSuperInvite, activeSuperInviteUser, setLastVisible}) => {
   const imageIndex = activeSuperInviteUser?.photos?.findIndex((photo: {id: number; image: string}) => photo.id === 0);
   const image = activeSuperInviteUser?.photos?.[imageIndex]?.image;
 
@@ -25,11 +25,11 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
   const animateFigure = () => {
     figureTopPosition.value = withTiming(0, {
       duration: 800,
-      easing: Easing.out(Easing.cubic)
+      easing: Easing.out(Easing.cubic),
     });
     figureBottomPosition.value = withTiming(0, {
       duration: 800,
-      easing: Easing.out(Easing.cubic)
+      easing: Easing.out(Easing.cubic),
     });
   };
 
@@ -45,15 +45,19 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
   };
 
   const figureTopStyle = useAnimatedStyle(() => ({
-    transform: [{
-      translateY: figureTopPosition.value
-    }]
+    transform: [
+      {
+        translateY: figureTopPosition.value,
+      },
+    ],
   }));
 
   const figureBottomStyle = useAnimatedStyle(() => ({
-    transform: [{
-      translateY: figureBottomPosition.value
-    }]
+    transform: [
+      {
+        translateY: figureBottomPosition.value,
+      },
+    ],
   }));
 
   useEffect(() => {
@@ -82,17 +86,20 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
         onPress={handleClose}
         style={{backgroundColor: blackColor, width: '100%', height: '100%', justifyContent: 'space-between'}}>
         <Animated.View
-          style={[{
-            backgroundColor: whiteColor,
-            height: screenHeight / 4.2,
-            width: 140,
-            marginLeft: 20,
-            borderBottomLeftRadius: 24,
-            borderBottomRightRadius: 24,
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            paddingBottom: 30,
-          }, figureTopStyle]}>
+          style={[
+            {
+              backgroundColor: whiteColor,
+              height: screenHeight / 4.2,
+              width: 140,
+              marginLeft: 20,
+              borderBottomLeftRadius: 24,
+              borderBottomRightRadius: 24,
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              paddingBottom: 30,
+            },
+            figureTopStyle,
+          ]}>
           <View style={{backgroundColor: blackColor, width: 100, height: 100, borderRadius: 100}} />
         </Animated.View>
         <View style={{alignItems: 'center'}}>
@@ -100,18 +107,18 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
             onPress={handleClose}
             activeOpacity={0.7}
             style={{
-            borderRadius: 100,
-            backgroundColor: transparentGray60Color,
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: 40,
-            height: 40,
-            alignSelf: 'flex-end',
-            marginRight: 20,
-            transform: [{translateY: -120}]
+              borderRadius: 100,
+              backgroundColor: transparentGray60Color,
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: 40,
+              height: 40,
+              alignSelf: 'flex-end',
+              marginRight: 20,
+              transform: [{translateY: -120}],
             }}>
-                <Close />
-              </TouchableOpacity>
+            <Close />
+          </TouchableOpacity>
           <View style={{alignItems: 'flex-end'}}>
             <Text style={{color: whiteColor, fontFamily: Outfit500, fontSize: RFValue(54, 812)}}>{activeSuperInviteUser?.name}</Text>
             <Text style={{color: whiteColor, fontFamily: Outfit500, fontSize: RFValue(10, 812), textTransform: 'capitalize'}}>
@@ -139,18 +146,21 @@ const SuperInvite: FC<{isVisibleSuperInvite: boolean; onCloseSuperInvite: () => 
           </View>
         </View>
         <Animated.View
-          style={[{
-            backgroundColor: whiteColor,
-            height: screenHeight / 4.2,
-            width: 140,
-            marginLeft: 'auto',
-            marginRight: 20,
-            borderTopLeftRadius: 24,
-            borderTopRightRadius: 24,
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            paddingBottom: 30,
-          }, figureBottomStyle]}>
+          style={[
+            {
+              backgroundColor: whiteColor,
+              height: screenHeight / 4.2,
+              width: 140,
+              marginLeft: 'auto',
+              marginRight: 20,
+              borderTopLeftRadius: 24,
+              borderTopRightRadius: 24,
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              paddingBottom: 30,
+            },
+            figureBottomStyle,
+          ]}>
           <View style={{backgroundColor: blackColor, width: 100, height: 100, borderRadius: 100}} />
         </Animated.View>
       </TouchableOpacity>

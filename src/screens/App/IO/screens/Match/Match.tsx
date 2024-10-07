@@ -1,14 +1,12 @@
 import {blackColor, lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
-import {Text, TouchableOpacity, View, SafeAreaView, Dimensions} from 'react-native';
+import {Text, TouchableOpacity, View, SafeAreaView} from 'react-native';
 import Modal from 'react-native-modal';
 import Close from 'assets/images/icons/close.svg';
-import MessageText from 'assets/images/icons/message-text.svg';
-import CheckboxSelected from 'assets/images/icons/checkbox-selected.svg';
-import {Outfit500, Satoshi500} from 'constants/fonts';
+import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight, screenWidth} from 'constants/common';
-import {FC, useContext, useEffect} from 'react';
-import Animated, {useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay} from 'react-native-reanimated';
+import {FC, useEffect} from 'react';
+import Animated, {useSharedValue, useAnimatedStyle, withTiming, withDelay} from 'react-native-reanimated';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {chatCorrespondencePath, commonStackPath} from 'constants/pathLocations';
 import {showToast} from 'helpers/showToast';
@@ -16,10 +14,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import MatchInfoCard from 'components/MatchInfoCard';
-import { calculateAge } from 'helpers/calculateAge';
-import { EventContext } from 'contexts/EventContext';
-
-const widthScreen = Dimensions.get('screen').width;
+import {calculateAge} from 'helpers/calculateAge';
 
 export interface MatchData {
   type?: string;
@@ -33,17 +28,17 @@ export interface MatchData {
   userHostImageUri?: string;
   joinEvents: number;
   location: string | null;
-  premium: boolean
-  dateHost: string
-  dateGuest: string,
-  onlineGuest: boolean,
-  accountConfirmedHost: boolean,
-  accountConfirmedGuest: boolean,
+  premium: boolean;
+  dateHost: string;
+  dateGuest: string;
+  onlineGuest: boolean;
+  accountConfirmedHost: boolean;
+  accountConfirmedGuest: boolean;
   usersListHost: [];
   accountTypeHost: string;
   accountTypeGuest: string;
   eventImage: string;
-  guestsInvited: number
+  guestsInvited: number;
 }
 
 const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: MatchData}> = ({
@@ -51,14 +46,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   onCloseMatch,
   matchData,
 }) => {
-  
   const userHost = useUser((i: any) => i?.user);
-
-  const name = userHost?.uid === matchData?.uidHost ? matchData?.nameGuest : matchData?.nameHost;
-
-  const words = `${name} `?.split(' ');
-  const wordTranslations = words?.map(() => useSharedValue(widthScreen));
-  const nameAnimation = useSharedValue(widthScreen);
 
   const navigation = useAppNavigation();
 
@@ -97,9 +85,9 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
     const uidForNotification = isEventHost ? matchData?.uidGuest : matchData?.uidHost;
     const ownerPhoto = isEventHost ? matchData?.imageUri : matchData?.userHostImageUri;
     if (uidForNotification) {
-      const getDoc = await firestore().collection('userInfo').doc(uidForNotification).get()
-      const docData = getDoc.data()
-      if(docData?.notificationSettings.match) {
+      const getDoc = await firestore().collection('userInfo').doc(uidForNotification).get();
+      const docData = getDoc.data();
+      if (docData?.notificationSettings.match) {
         await sendNotification(
           uidForNotification,
           'Say, Hi! 👋',
@@ -257,9 +245,9 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
       });
       await firestore().collection('Events').doc(matchData.eventId).update({usersList: updatedUsersList});
       if (matchData?.uidGuest) {
-        const getDoc = await firestore().collection('userInfo').doc(matchData?.uidGuest).get()
-        const docData = getDoc.data()
-        if(docData?.notificationSettings?.requests || docData?.notificationSettings?.joinedEvent) {
+        const getDoc = await firestore().collection('userInfo').doc(matchData?.uidGuest).get();
+        const docData = getDoc.data();
+        if (docData?.notificationSettings?.requests || docData?.notificationSettings?.joinedEvent) {
           await sendNotification(
             matchData?.uidGuest,
             'Request approved',
@@ -278,7 +266,6 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
     }
   };
 
- 
   // ANIMATED CARD
 
   const rotateCard1 = useSharedValue(0);
@@ -297,19 +284,19 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
 
   useEffect(() => {
     if (isVisibleMatch) {
-      rotateCard1.value = withDelay(800, withTiming(-15, { duration: 400 }));
-      marginRightCard1.value = withDelay(600, withTiming(screenWidth - 228 - ((228 / 100) * 15) - (24 * 1.5), { duration: 200 }));
-  
-      rotateCard2.value = withDelay(800, withTiming(15, { duration: 400 }));
-      marginLeftCard2.value = withDelay(600, withTiming(screenWidth - 228 - ((228 / 100) * 15) - (24 * 1.5), { duration: 200 }));
-      topCard2.value = withDelay(400, withTiming((screenHeight / 2) - 350, { duration: 200 }));
+      rotateCard1.value = withDelay(800, withTiming(-15, {duration: 400}));
+      marginRightCard1.value = withDelay(600, withTiming(screenWidth - 228 - (228 / 100) * 15 - 24 * 1.5, {duration: 200}));
 
-      whiteLineWidth.value = withTiming(117, {duration:400});
-      whiteLineZIndex.value = withTiming(800, {duration:400});
-      whiteLineTop.value = withTiming(-900, {duration: 400})
+      rotateCard2.value = withDelay(800, withTiming(15, {duration: 400}));
+      marginLeftCard2.value = withDelay(600, withTiming(screenWidth - 228 - (228 / 100) * 15 - 24 * 1.5, {duration: 200}));
+      topCard2.value = withDelay(400, withTiming(screenHeight / 2 - 350, {duration: 200}));
 
-      whiteLineBottom.value = withTiming(-1280, {duration:300});
-      whiteLineBottomWidth.value = withTiming(117, {duration:300})
+      whiteLineWidth.value = withTiming(117, {duration: 400});
+      whiteLineZIndex.value = withTiming(800, {duration: 400});
+      whiteLineTop.value = withTiming(-900, {duration: 400});
+
+      whiteLineBottom.value = withTiming(-1280, {duration: 300});
+      whiteLineBottomWidth.value = withTiming(117, {duration: 300});
     } else {
       rotateCard1.value = 0;
       marginRightCard1.value = screenWidth / 2 - 114 - 18;
@@ -317,18 +304,18 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
       rotateCard2.value = 0;
       marginLeftCard2.value = screenWidth / 2 - 114 - 18;
       topCard2.value = screenHeight / 2 - 280;
-      whiteLineWidth.value = 300
+      whiteLineWidth.value = 300;
     }
   }, [isVisibleMatch]);
-  
+
   const animatedStyleCard1 = useAnimatedStyle(() => ({
-    transform: [{ rotateZ: `${rotateCard1.value}deg` }],
+    transform: [{rotateZ: `${rotateCard1.value}deg`}],
     right: marginRightCard1.value,
     top: screenHeight / 2 - 280,
   }));
 
   const animatedStyleCard2 = useAnimatedStyle(() => ({
-    transform: [{ rotateZ: `${rotateCard2.value}deg` }],
+    transform: [{rotateZ: `${rotateCard2.value}deg`}],
     left: marginLeftCard2.value,
     top: topCard2.value,
   }));
@@ -336,13 +323,13 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   const animateWhiteLine = useAnimatedStyle(() => ({
     width: whiteLineWidth.value,
     zIndex: whiteLineZIndex.value,
-    top: whiteLineTop.value
-  }))
+    top: whiteLineTop.value,
+  }));
 
   const animateWhiteLineBottom = useAnimatedStyle(() => ({
     bottom: whiteLineBottom.value,
-    width: whiteLineBottomWidth.value
-  }))
+    width: whiteLineBottomWidth.value,
+  }));
 
   return (
     <View>
@@ -356,13 +343,16 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
         animationIn={'fadeIn'}
         animationInTiming={1}>
         <SafeAreaView style={{flex: 1, justifyContent: 'space-between'}}>
-        <Animated.View
-            style={[{
-              height: 2000,
-              backgroundColor: whiteColor,
-              position: 'absolute',
-              transform: [{rotateZ: '22deg'}],
-            },animateWhiteLine]}
+          <Animated.View
+            style={[
+              {
+                height: 2000,
+                backgroundColor: whiteColor,
+                position: 'absolute',
+                transform: [{rotateZ: '22deg'}],
+              },
+              animateWhiteLine,
+            ]}
             //animateWhiteLine
           />
           <TouchableOpacity
@@ -429,24 +419,26 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
               New Guest Connection!
             </Text>
             <View style={{flexDirection: 'row', marginVertical: 30}}>
-              {userHost?.accountType === 'host' && (<TouchableOpacity
-                onPress={handleApproveGuestFromHost}
-                style={{
-                  flex: 1,
-                  paddingVertical: 16,
-                  backgroundColor: whiteColor,
-                  borderRadius: 15,
-                }}>
-                <Text
+              {userHost?.accountType === 'host' && (
+                <TouchableOpacity
+                  onPress={handleApproveGuestFromHost}
                   style={{
-                    fontSize: RFValue(18, 812),
-                    color: blackColor,
-                    fontFamily: Satoshi500,
-                    textAlign: 'center',
+                    flex: 1,
+                    paddingVertical: 16,
+                    backgroundColor: whiteColor,
+                    borderRadius: 15,
                   }}>
-                  Approve guest
-                </Text>
-              </TouchableOpacity>)}
+                  <Text
+                    style={{
+                      fontSize: RFValue(18, 812),
+                      color: blackColor,
+                      fontFamily: Satoshi500,
+                      textAlign: 'center',
+                    }}>
+                    Approve guest
+                  </Text>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 onPress={handleCreateChat}
                 style={{
@@ -467,18 +459,20 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
                 </Text>
               </TouchableOpacity>
             </View>
-            
           </View>
         </SafeAreaView>
         <Animated.View
-              style={[{
-                height: 2000,
-                backgroundColor: whiteColor,
-                position: 'absolute',
-                transform: [{rotateZ: '22deg'}],
-                right: 0
-              }, animateWhiteLineBottom]}
-            />
+          style={[
+            {
+              height: 2000,
+              backgroundColor: whiteColor,
+              position: 'absolute',
+              transform: [{rotateZ: '22deg'}],
+              right: 0,
+            },
+            animateWhiteLineBottom,
+          ]}
+        />
       </Modal>
     </View>
   );

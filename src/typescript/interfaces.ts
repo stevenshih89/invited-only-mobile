@@ -30,3 +30,6 @@ export interface InputProps {
   required?: boolean;
   placeholderTextColor?: string;
 }
+
+
+export interface UserInfo

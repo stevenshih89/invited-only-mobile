@@ -282,7 +282,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   messages: i?.messages,
                   activeEvent: activeEvent,
                   id: i?.id,
-                  superInvite: false,
+                  superInvite: i?.superInvite,
                   invitedStatus: i?.invitedStatus,
                   uid: hostUid,
                   hostUid: hostUid,

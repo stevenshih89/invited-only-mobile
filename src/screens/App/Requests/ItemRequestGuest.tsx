@@ -22,17 +22,18 @@ import FastImage from 'react-native-fast-image';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
 import {INVITE_MATCH_STATUS} from 'constants/common';
-import { err } from 'react-native-svg';
+import {err} from 'react-native-svg';
 
 const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: any) => {
   const [hostInfo, setHostInfo] = useState([]);
   const [loading, setLoading] = useState(true);
   const [heightAnim] = useState(new Animated.Value(282));
-  const {photos, uid, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name, usersList} = list;
-  
+  const {photos, uid, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name, usersList} =
+    list;
+
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const user = useUser((i: any) => i?.user);  
+  const user = useUser((i: any) => i?.user);
 
   const goToEventInfo = () => {
     navigation.navigate(commonStackPath, {screen: eventInfoPath, params: {list: list}});
@@ -109,9 +110,6 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           return invUser;
         });
 
-        console.log('item', item);
-        
-
         const matchedData = {
           type: 'match',
           name: event?.hostName,
@@ -135,7 +133,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           accountTypeHost: hostInfo?.accountType,
           accountTypeGuest: user?.accountType,
           eventImage: photos[0].image,
-          guestsInvited: usersList.length
+          guestsInvited: usersList.length,
         };
 
         await firestore()
@@ -147,9 +145,9 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           .then(async () => {
             await handleCreateChat(matchedData);
             handleOpenMatch(matchedData);
-            const getDoc = await firestore().collection('userInfo').doc(event.uid).get()
-              const docData = getDoc.data()
-            if(docData?.notificationSettings.joinedEvent) {
+            const getDoc = await firestore().collection('userInfo').doc(event.uid).get();
+            const docData = getDoc.data();
+            if (docData?.notificationSettings.joinedEvent) {
               await sendNotification(
                 event.uid,
                 'New join request',
@@ -161,7 +159,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
             }
             setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
           });
-          await updateJoinEvents()
+        await updateJoinEvents();
       } catch (e) {
         // console.log(e);
         showToast('inviteMatch', '', "There's been an error");
@@ -196,9 +194,9 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           usersList: firestore.FieldValue.arrayRemove(item),
         });
       showToast('inviteMatch', '', 'You reject invitation');
-      const getDoc = await firestore().collection('userInfo').doc(uid).get()
-      const docData = getDoc.data()
-      if(docData?.notificationSettings.myEvents) {
+      const getDoc = await firestore().collection('userInfo').doc(uid).get();
+      const docData = getDoc.data();
+      if (docData?.notificationSettings.myEvents) {
         await sendNotification(uid, 'Not now.', `${item?.name} reject your invitation.`, 'rejected', 'Rejected'.toUpperCase(), user);
       }
       setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
