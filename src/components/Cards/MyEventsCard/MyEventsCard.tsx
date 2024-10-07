@@ -75,8 +75,6 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     return filter.length;
   };
 
-  console.warn(item?.date, item?.hour);
-
   const getEventStatus = () => {
     if (item?.isCancelled) {
       return {
