@@ -114,7 +114,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       // console.warn('usersListData', usersListData);
       const rejectedUser = usersListData.find((i: any) => i?.uid === uid);
       if (rejectedUser?.status !== 'notAccepted') {
-        if(docData?.notificationSettings.requests|| docData?.notificationSettings.joinedEvent) {
+        if(docData?.notificationSettings.requests || docData?.notificationSettings.joinedEvent) {
           await sendNotification(uid, `${userHost?.name} rejected your request`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), userHost);
         }
       }
