@@ -59,6 +59,7 @@ import {useGuestList} from 'src/store/guestListStore';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
+import moment from 'moment';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -724,7 +725,12 @@ const IO: FC = (): JSX.Element => {
     let filteredEvents: any[] = [];
 
     try {
-      const querySnapshot = await firestore().collection('Events').where('statusEvent', '==', true).get();
+      const querySnapshot = await firestore()
+        .collection('Events')
+        .where('statusEvent', '==', true)
+        .where('isCancelled', '==', false)
+        .limit(30)
+        .get();
 
       filteredEvents = querySnapshot?.docs
         ?.map((doc: any) => ({
@@ -747,6 +753,13 @@ const IO: FC = (): JSX.Element => {
           ) {
             return false;
           }
+          if (event?.date && event?.hour) {
+            const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+            if (adjustedDate.isBefore(moment())) {
+              return false;
+            }
+          }
+
           return true;
         });
     } catch (e: any) {
