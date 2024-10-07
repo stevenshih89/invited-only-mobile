@@ -596,6 +596,7 @@ const EventCreating: FC = () => {
             photos={photos}
             date={date}
             girls={female}
+            male={male}
             placeName={placeName}
             setCurrentCreateStap={setCurrentCreateStap}
             setTabState={setTabState}

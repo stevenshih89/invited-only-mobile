@@ -20,40 +20,23 @@ import LineImage from 'assets/images/app/Line.png';
 import moment from 'moment';
 
 interface MyEventsCard {
-  estimeTime?: string;
   statusEvent: boolean;
   eventReviewed: boolean;
-  invitingPeople?: any[];
-  list?: any;
   allPeople?: number;
-  textCityName?: string;
-  numberOfGirlsInvited?: string;
   date?: string;
   imageBg?: string;
   placeName?: string;
   accountConfirmed: boolean;
   findAcceptedGuest?: any[];
-  totalRequestsGuests: number;
   item: any;
   showGuestList: boolean;
   customButton?: React.ReactNode;
+  styleContainer?: any;
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
-  const {
-    list,
-    placeName,
-    imageBg,
-    statusEvent,
-    eventReviewed,
-    date,
-    estimeTime,
-    allPeople,
-    findAcceptedGuest,
-    item,
-    showGuestList,
-    customButton,
-  } = props;
+  
+  const {placeName, styleContainer, imageBg, statusEvent, eventReviewed, allPeople, findAcceptedGuest, item, showGuestList, customButton} = props;
 
   const styles = useStyles();
 
@@ -122,7 +105,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
 
   return (
     <>
-      <View style={styles.container}>
+      <View style={[styles.container, styleContainer]}>
         <FastImage
           style={styles.imageBackground}
           source={{
