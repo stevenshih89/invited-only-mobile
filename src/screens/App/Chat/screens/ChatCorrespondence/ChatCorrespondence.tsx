@@ -9,8 +9,6 @@ import {blackColor, lightGray3Color, transparentWhite40Color, whiteColor} from '
 import {isIos} from 'constants/common.ts';
 import ModalUserMenu from 'components/Modal/ModalUserMenu/ModalUserMenu.tsx';
 import ModalCancelOrConfirmInvitation from 'components/Modal/ModalCancelOrConfirmInvitation/ModalCancelOrConfirmInvitation.tsx';
-import Button from 'components/Button/Button.tsx';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 
 // Import icons
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -59,37 +57,9 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [currentUserName, setCurrentUserName] = useState('');
   const {image, title, online, activeEvent, id, superInvite, invitedStatus, uid, hostUid} = route?.params;
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
-  const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
-  const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
-  const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
 
   const clearChat = useRef(false);
   const user = useUser((i: any) => i?.user);
-
-  const [actualActiveEventData, setActualActiveEventData] = useState([]);
-
-  const getActiveEventData = async () => {
-    const getEventData = (await firestore().collection('Events').doc(activeEvent).get()).data();
-    if (getEventData) {
-      setActualActiveEventData(getEventData);
-      return getEventData;
-    }
-  };
-
-  // const checkIsFullGuestsFun = async activeEvent => {
-  //   const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(activeEvent);
-  //   setTotalQuantityGuests(allGuests);
-  //   setAcceptQuantityGuest(findAcceptedGuest);
-  //   setTotalRequestsGuests(totalRequestsGuests);
-  //   await getActiveEventData();
-
-  //   if (findAcceptedGuest >= allGuests) {
-  //     setTimeout(() => {
-  //       setIsVisibleModalFullEvent(true);
-  //     }, 500);
-  //   }
-  //   return findAcceptedGuest >= allGuests;
-  // };
 
   const handleCloseReport = () => {
     setModalVisible(false);
@@ -132,89 +102,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
 
-  const handleInvitationApproved = () => (
-    <View style={styles.wrapperInvitationApproved}>
-      <Text style={styles.textInvitationApproved}>Invitation approved!</Text>
-      <Button
-        onPress={() => setCancelInvitation(true)}
-        buttonTitleStyle={styles.buttonTitleStyle}
-        buttonStyle={{height: 36, borderRadius: 10, marginLeft: 34}}
-        title="Click to confirm >"
-      />
-    </View>
-  );
-
   const headerInsets = {
     paddingTop: insets.top,
     backgroundColor: blackColor,
     flex: 1,
     paddingBottom: 0,
   };
-
-  const generateRandomId = (length: number) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  };
-
-  const getFcmTokenFromUser = async (uid: string) => {
-    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-    return userInfoDoc.data()?.fcmToken;
-  };
-
-  // const sendNotificationInner = async (forUserUid: string, title: string, body: string) => {
-  //   // console.warn(forUserUid);
-
-  //   const token = await getFcmTokenFromUser(forUserUid);
-
-  //   // console.warn(token);
-
-  //   const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-  //     },
-  //     body: JSON.stringify({
-  //       to: token,
-  //       notification: {
-  //         title: title,
-  //         body: body,
-  //       },
-  //     }),
-  //   });
-
-  //   if (!response.ok) {
-  //     const error = await response.json();
-  //     // console.error('error sending notification:', error);
-  //   } else {
-  //     const data = await response.json();
-  //     const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
-  //     const userNotifications = userDoc.data()?.notifications;
-  //     const id = generateRandomId(8);
-  //     const notification = {
-  //       id,
-  //       title: title,
-  //       body: body,
-  //       mark: 'message',
-  //       uid: userData?.uid,
-  //     };
-  //     try {
-  //       await firestore()
-  //         .collection('userInfo')
-  //         .doc(forUserUid)
-  //         .update({
-  //           notifications: [...userNotifications, notification],
-  //         });
-  //     } catch (error) {
-  //       // console.log('error update notifications', error);
-  //     }
-  //   }
-  // };
 
   useEffect(() => {
     if (allChats && allChats.length > 0 && !clearChat.current) {
@@ -362,116 +255,118 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   }, [activeEvent]);
 
   return (
-    <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={styles.keyboardAvoid}>
-      <SafeAreaProvider style={headerInsets}>
-        <ModalFullEvent
-          actualActiveEventData={actualActiveEventData}
-          totalQuantityGuests={totalQuantityGuests}
-          acceptQuantityGuest={acceptQuantityGuest}
-          totalRequestsGuests={totalRequestsGuests}
-          isVisible={isVisibleModalFullEvent}
-          idEvent={activeEvent.id}
-          setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
-        />
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <View style={styles.fdrAlc}>
-              <TouchableOpacity
-                onPress={() => {
-                  handleBack();
-                  navigation.goBack();
-                }}>
-                <ArrowLeft />
-              </TouchableOpacity>
-              <View style={[styles.fdrAlc, {marginLeft: 16}]}>
-                <View>
-                  <Image source={{uri: image}} style={styles.userPhoto} />
-                  {online && <View style={styles.greenCircle} />}
-                </View>
-                <View style={styles.wrapperTitleOnline}>
+    <>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={styles.keyboardAvoid}>
+        <SafeAreaProvider style={headerInsets}>
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <View style={styles.fdrAlc}>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleBack();
+                    navigation.goBack();
+                  }}>
+                  <ArrowLeft />
+                </TouchableOpacity>
+                <View style={[styles.fdrAlc, {marginLeft: 16}]}>
                   <View>
-                    <View style={{flexDirection: 'row'}}>
-                      <View style={{backgroundColor: whiteColor, borderRadius: 4}}>
-                        <Text style={{paddingHorizontal: 9, paddingVertical: 2, fontWeight: 'bold', fontSize: RFValue(10, 812)}}>
-                          Guest
-                        </Text>
-                      </View>
-                      <LinearGradient
-                        colors={['#977B4A', '#E5D291', '#A28453']}
-                        style={{borderRadius: 4, marginLeft: 4}}
-                        start={{x: 0, y: 0}}
-                        end={{x: 1, y: 0}}>
-                        <Text style={{paddingHorizontal: 9, paddingVertical: 2, fontWeight: 'bold', fontSize: RFValue(10, 812)}}>
-                          Premium
-                        </Text>
-                      </LinearGradient>
-                    </View>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <Text style={styles.textNameUser}>
-                        {name}, {age}
-                      </Text>
-                      <CheckStar />
-                    </View>
+                    <Image source={{uri: image}} style={styles.userPhoto} />
+                    {online && <View style={styles.greenCircle} />}
                   </View>
-                  {online && <Text style={styles.textOnline}>Online</Text>}
+                  <View style={styles.wrapperTitleOnline}>
+                    <View>
+                      <View style={{flexDirection: 'row'}}>
+                        <View style={{backgroundColor: whiteColor, borderRadius: 4}}>
+                          <Text style={{paddingHorizontal: 9, paddingVertical: 2, fontWeight: 'bold', fontSize: RFValue(10, 812)}}>
+                            Guest
+                          </Text>
+                        </View>
+                        <LinearGradient
+                          colors={['#977B4A', '#E5D291', '#A28453']}
+                          style={{borderRadius: 4, marginLeft: 4}}
+                          start={{x: 0, y: 0}}
+                          end={{x: 1, y: 0}}>
+                          <Text style={{paddingHorizontal: 9, paddingVertical: 2, fontWeight: 'bold', fontSize: RFValue(10, 812)}}>
+                            Premium
+                          </Text>
+                        </LinearGradient>
+                      </View>
+                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Text style={styles.textNameUser}>
+                          {name}, {age}
+                        </Text>
+                        <CheckStar />
+                      </View>
+                    </View>
+                    {online && <Text style={styles.textOnline}>Online</Text>}
+                  </View>
                 </View>
               </View>
+              <TouchableOpacity onPress={() => setModalVisible(true)}>
+                <ThreeDots />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <ThreeDots />
-            </TouchableOpacity>
-          </View>
-          <FlatList
-            contentContainerStyle={{paddingBottom: 20}}
-            data={messages}
-            showsVerticalScrollIndicator={false}
-            renderItem={({item, index}) => {
-              const showDate = index === 0 || !moment(item.timestamp).isSame(moment(messages[index - 1].timestamp), 'day');
-              return <ChatMessage userAvatar={image} messageUser={item} showDate={showDate} />;
-            }}
-            keyExtractor={(item, index) => `${item.timestamp}${index}`}
-          />
-        </View>
-        {/*{handleInvitationApproved()}*/}
-        <View style={styles.footer}>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholderTextColor={transparentWhite40Color}
-              value={messageUser}
-              onChangeText={setMessageUser}
-              style={styles.textInput}
-              placeholder="Write your message"
+            <FlatList
+              contentContainerStyle={{paddingBottom: 20}}
+              data={messages}
+              showsVerticalScrollIndicator={false}
+              renderItem={({item, index}) => {
+                const showDate = index === 0 || !moment(item.timestamp).isSame(moment(messages[index - 1].timestamp), 'day');
+                return <ChatMessage userAvatar={image} messageUser={item} showDate={showDate} />;
+              }}
+              keyExtractor={(item, index) => `${item.timestamp}${index}`}
             />
-            <TouchableOpacity style={styles.buttonSend} onPress={handleSendMessage}>
-              <SendIcon />
-            </TouchableOpacity>
           </View>
-        </View>
-        <ModalCancelOrConfirmInvitation
-          cancelInvitation={cancelInvitation}
-          setCancelInvitation={setCancelInvitation}
-          typeModal="confirm"
-          title={'Namos Dubai'}
-          name={title}
-          imageBg={image}
-          data="12.11.2023"
-          girlInvitation={2}
-        />
-        <ModalUserMenu
-          uid={uid}
-          image={image}
-          title={title}
-          inviteStatus={invitedStatus}
-          isModalVisible={isModalVisible}
-          setModalVisible={setModalVisible}
-          activeEvent={activeEvent}
-          hostUid={hostUid}
-          handleCloseReport={handleCloseReport}
-          checkIsFullGuestsFun={() => checkIsFullGuestsFun(activeEvent)}
-          setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
-        />
-      </SafeAreaProvider>
-    </KeyboardAvoidingView>
+          {/*{handleInvitationApproved()}*/}
+          <View style={styles.footer}>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholderTextColor={transparentWhite40Color}
+                value={messageUser}
+                onChangeText={setMessageUser}
+                style={styles.textInput}
+                placeholder="Write your message"
+              />
+              <TouchableOpacity style={styles.buttonSend} onPress={handleSendMessage}>
+                <SendIcon />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <ModalCancelOrConfirmInvitation
+            cancelInvitation={cancelInvitation}
+            setCancelInvitation={setCancelInvitation}
+            typeModal="confirm"
+            title={'Namos Dubai'}
+            name={title}
+            imageBg={image}
+            data="12.11.2023"
+            girlInvitation={2}
+          />
+          {isModalVisible && (
+            <ModalUserMenu
+              uid={uid}
+              image={image}
+              title={title}
+              inviteStatus={invitedStatus}
+              isModalVisible={isModalVisible}
+              setModalVisible={setModalVisible}
+              activeEvent={activeEvent}
+              hostUid={hostUid}
+              handleCloseReport={handleCloseReport}
+              checkIsFullGuestsFun={() => checkIsFullGuests(activeEvent)}
+              setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
+            />
+          )}
+          {isVisibleModalFullEvent && (
+            <ModalFullEvent
+              isVisible={isVisibleModalFullEvent}
+              idEvent={activeEvent}
+              setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
+            />
+          )}
+        </SafeAreaProvider>
+      </KeyboardAvoidingView>
+    </>
   );
 };
 

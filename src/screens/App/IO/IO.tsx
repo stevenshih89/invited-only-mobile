@@ -7,21 +7,20 @@ import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
-import functions from '@react-native-firebase/functions';
 
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
-import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight, screenWidth} from 'constants/common.ts';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, joinEventsPath, myProfileViewPath, paymentPath, userProfilePath} from 'constants/pathLocations.ts';
+import {eventCreatingStackPath, myProfileViewPath, paymentPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
 import {EventContext} from 'contexts/EventContext';
-import {black4Color, blackColor, lightGray18Color, lightGreenColor, transparentWhite56Color, whiteColor} from 'constants/colors';
-import {fcmHelper, getFcmToken, onMatchNotificationSubscription, sendNotification} from 'helpers/fcmHelper.ts';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import {blackColor, lightGreenColor, transparentWhite56Color, whiteColor} from 'constants/colors';
+import {fcmHelper, onMatchNotificationSubscription, sendNotification} from 'helpers/fcmHelper.ts';
+import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {useUser} from '../../../store/userStore';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 
@@ -36,12 +35,8 @@ import SmokeIcon from 'assets/images/icons/smoke.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
-import PeopleIcon from 'assets/images/icons/profile-2user.svg';
-import CalendarIcon from 'assets/images/icons/calendar.svg';
-import ClockIcon from 'assets/images/icons/clock-white.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import PersoneIcon from 'assets/images/icons/Users.svg';
-import LineImage from 'assets/images/app/Line.png'
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
@@ -50,9 +45,7 @@ import Match, {MatchData} from './screens/Match/Match';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
-import moment from 'moment';
 import {handleCreateChat} from 'helpers/chat';
-import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import FullEvent from 'components/FullEvent';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {onUserProfileChangeSubscription} from 'helpers/userProfile';
@@ -60,13 +53,11 @@ import {User, UserInfo} from 'src/types/userInfo';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
-import Animated, {Easing, useAnimatedStyle, useEvent, useSharedValue, withTiming} from 'react-native-reanimated';
+import Animated, {Easing, useAnimatedStyle, useSharedValue, withTiming} from 'react-native-reanimated';
 import ModalEventLocked from 'components/Modal/ModalEventLocked/ModalEventLocked';
-import { useGuestList } from 'src/store/guestListStore';
+import {useGuestList} from 'src/store/guestListStore';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
-import { convertToPmAmFormat } from 'helpers/convertToPmAmFormat';
-import { formateDateAbbreviated } from 'helpers/formateDateAbbreviated';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 
 const USERS_FETCHING_DELAY = 3000;
@@ -83,7 +74,7 @@ const IO: FC = (): JSX.Element => {
   const [reportedItem, setReportedItem] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
   const [matchData, setMatchData] = useState<MatchData>({});
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
@@ -111,7 +102,7 @@ const IO: FC = (): JSX.Element => {
   const setRejectModalVisible = useAdminActions((i: any) => i?.setRejectModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
 
-  const {guestsInvited, setGuestsInvited} = useGuestList()  
+  const {guestsInvited, setGuestsInvited} = useGuestList();
 
   const allEventsLength = useRef(0);
 
@@ -161,16 +152,19 @@ const IO: FC = (): JSX.Element => {
   }, [isVisibleSuperInvite]);
 
   useEffect(() => {
-    setGuestsInvited(activeEvent?.usersList?.length)
-  },[activeEvent])
+    setGuestsInvited(activeEvent?.usersList?.length);
+  }, [activeEvent]);
 
   useEffect(() => {
-    const handleAppStateChange = async (nextAppState) => {
+    const handleAppStateChange = async nextAppState => {
       try {
-        if (nextAppState === 'active' || nextAppState === 'inactive') {          
-          await firestore().collection('userInfo').doc(userInfo.uid).update({
-            online: nextAppState === 'active'? true: false
-          })
+        if (nextAppState === 'active' || nextAppState === 'inactive') {
+          await firestore()
+            .collection('userInfo')
+            .doc(userInfo.uid)
+            .update({
+              online: nextAppState === 'active' ? true : false,
+            });
         }
       } catch (error) {
         console.log('error update online', error);
@@ -484,11 +478,13 @@ const IO: FC = (): JSX.Element => {
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
+
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
       const eventData = await firestore().collection('Events').doc(activeEventId).get();
+
       const event = eventData.data();
-      if (!event) {
+      if (!event || event?.statusEvent === false || event?.isCancelled === true) {
         return;
       }
 
@@ -503,6 +499,17 @@ const IO: FC = (): JSX.Element => {
       };
 
       if (isHost) {
+        const maxGuests = event?.male + event?.female;
+
+        const acceptedUsersList = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS);
+        console.warn('maxGuests', maxGuests, acceptedUsersList.length);
+
+        if (acceptedUsersList?.length >= maxGuests) {
+          showToast('inviteMatch', 'You have reached the maximum number of guests', 'Invite');
+          setIsVisibleModalFullEvent(true);
+          return;
+        }
+
         const matchedGuest = event.requestsList?.find(reqUser => reqUser?.uid === forUserUid && reqUser?.status === 'liked');
         let data = {};
         let matchedGuestData: MatchData;
@@ -521,6 +528,19 @@ const IO: FC = (): JSX.Element => {
             eventId: activeEventId,
             superInvite: false,
             userHostImageUri: userHost?.photos[0]?.image,
+            joinEvents: guest?._data.joinEvents,
+            location: guest?._data.location,
+            premium: userInfo?.accountPremium,
+            dateHost: userInfo?.date,
+            dateGuest: guest?._data.date,
+            onlineGuest: guest?._data.online,
+            accountConfirmedHost: guest?._data.accountConfirmed,
+            accountConfirmedGuest: userInfo?.accountConfirmed,
+            usersListHost: eventData?._data.usersList,
+            accountTypeHost: userInfo?.accountType,
+            accountTypeGuest: guest?._data.accountType,
+            eventImage: eventData?._data.photos[0].image,
+            guestsInvited: eventData._data.usersList.length,
           };
         } else {
           data = {
@@ -533,6 +553,8 @@ const IO: FC = (): JSX.Element => {
           .update(data)
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
+              console.log('proverka host');
+
               await handleCreateChat(matchedGuestData);
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
@@ -573,6 +595,19 @@ const IO: FC = (): JSX.Element => {
             eventId: activeEventId,
             superInvite: false,
             userHostImageUri: event?.hostImage,
+            joinEvents: userInfo?.joinEvents,
+            location: userInfo?.location,
+            premium: guest?._data.accountPremium,
+            dateHost: guest?._data.date,
+            dateGuest: userInfo?.date,
+            onlineGuest: userInfo?.online,
+            accountConfirmedHost: userInfo?.accountConfirmed,
+            accountConfirmedGuest: userInfo?.accountConfirmed,
+            usersListHost: eventData?._data.usersList,
+            accountTypeHost: guest?._data.accountType,
+            accountTypeGuest: userInfo?.accountType,
+            eventImage: eventData?._data.photos[0].image,
+            guestsInvited: eventData._data.usersList.length,
           };
         } else {
           data = {
@@ -586,6 +621,7 @@ const IO: FC = (): JSX.Element => {
           .update(data)
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
+              console.log('proverka guest');
               await handleCreateChat(matchedGuestData);
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
@@ -685,6 +721,7 @@ const IO: FC = (): JSX.Element => {
 
     try {
       const querySnapshot = await firestore().collection('Events').where('statusEvent', '==', true).get();
+
       filteredEvents = querySnapshot?.docs
         ?.map((doc: any) => ({
           id: doc.id,
@@ -742,12 +779,12 @@ const IO: FC = (): JSX.Element => {
     if (!filterDataWM.length) {
       return;
     }
-    
+
     for (const event of filterDataWM) {
       const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
       const eventPhotos = event?.photos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
       const userEventData = await getDataUserEvent(event?.uid);
-      
+
       data.push({
         component: (
           <View style={styles.wrapperFakeCard}>
@@ -777,24 +814,24 @@ const IO: FC = (): JSX.Element => {
             <View style={styles.bioWrapper}>
               <Text style={[styles.titleSection]}>Event details</Text>
               <MyEventsCard
-                      imageBg={event?.photos}
-                      list={event}
-                      statusEvent={event?.statusEvent}
-                      eventReviewed={event?.eventReviewed}
-                      allPeople={event?.female + event?.male}
-                      date={event?.date}
-                      textCityName={event?.name}
-                      placeName={event?.placeName}
-                      estimeTime={event?.hour}
-                      numberOfGirlsInvited={event?.female}
-                      invitingPeople={event?.usersxwList?.filter(i => i?.status !== 'notAccepted')}
-                      accountConfirmed={user?.accountConfirmed}
-                      findAcceptedGuest={event?.usersList?.filter(event => event.status === INVITE_MATCH_STATUS)}
-                      totalRequestsGuests={event?.requestsList?.length}
-                      item={event}
-                      showGuestList={false}
-                      customButton={customButton(event.id)}
-                    />
+                imageBg={event?.photos}
+                list={event}
+                statusEvent={event?.statusEvent}
+                eventReviewed={event?.eventReviewed}
+                allPeople={event?.female + event?.male}
+                date={event?.date}
+                textCityName={event?.name}
+                placeName={event?.placeName}
+                estimeTime={event?.hour}
+                numberOfGirlsInvited={event?.female}
+                invitingPeople={event?.usersxwList?.filter(i => i?.status !== 'notAccepted')}
+                accountConfirmed={user?.accountConfirmed}
+                findAcceptedGuest={event?.usersList?.filter(event => event.status === INVITE_MATCH_STATUS)}
+                totalRequestsGuests={event?.requestsList?.length}
+                item={event}
+                showGuestList={false}
+                customButton={customButton(event.id)}
+              />
               <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Place name</Text>
               <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.placeName}</Text>
               <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
@@ -812,9 +849,7 @@ const IO: FC = (): JSX.Element => {
               <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
               <View style={{marginVertical: 34}}>
                 <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Address</Text>
-                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>
-                {event?.address}
-                 </Text>
+                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.address}</Text>
               </View>
               <View>
                 {eventPhotos?.map((image: string) => (
@@ -828,60 +863,66 @@ const IO: FC = (): JSX.Element => {
                   {event?.hostImage && (
                     <View style={{flexDirection: 'row'}}>
                       <FastImage source={{uri: event?.hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
-                      {userEventData?.online && <View style={{
-                        width: 11, 
-                        height: 11, 
-                        borderRadius: 11, 
-                        backgroundColor: lightGreenColor, 
-                        borderWidth: 1.25, 
-                        borderColor: blackColor,
-                        position: 'absolute',
-                        bottom: 3,
-                        right: 0
-                        }}></View>}
+                      {userEventData?.online && (
+                        <View
+                          style={{
+                            width: 11,
+                            height: 11,
+                            borderRadius: 11,
+                            backgroundColor: lightGreenColor,
+                            borderWidth: 1.25,
+                            borderColor: blackColor,
+                            position: 'absolute',
+                            bottom: 3,
+                            right: 0,
+                          }}
+                        />
+                      )}
                     </View>
                   )}
                   <View style={{marginLeft: 13}}>
                     <View style={{flexDirection: 'row'}}>
-                    <View
-                      style={{
-                        borderRadius: 4,
-                        borderColor: whiteColor,
-                        borderWidth: 1,
-                        borderStyle: 'solid',
-                        alignSelf: 'flex-start',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        paddingHorizontal: 6,
-                        paddingVertical: 2,
-                      }}>
-                      <Text style={{color: whiteColor, textTransform: 'capitalize', fontFamily: Satoshi700, fontSize: RFValue(10, 812)}}>
-                        {event?.hostInfo.accountType}
-                      </Text>
-                    </View>
-                    {userEventData?.accountPremium && <LinearGradient
-                    colors={['#977B4A', '#E5D291', '#A28453']}
-                    style={{
-                      marginLeft: 6,
-                      alignSelf: 'flex-start',
-                      borderRadius: 4,
-                      paddingHorizontal: 12,
-                      paddingVertical: 2,
-                      backgroundColor: blackColor,
-                    }}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0}}>
-                    {
-                      <Text
+                      <View
                         style={{
-                          color: blackColor,
-                          fontSize: RFValue(10, 812),
-                          fontFamily: Satoshi700,
+                          borderRadius: 4,
+                          borderColor: whiteColor,
+                          borderWidth: 1,
+                          borderStyle: 'solid',
+                          alignSelf: 'flex-start',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          paddingHorizontal: 6,
+                          paddingVertical: 2,
                         }}>
-                        Premium
-                      </Text>
-                    }
-                  </LinearGradient>}
+                        <Text style={{color: whiteColor, textTransform: 'capitalize', fontFamily: Satoshi700, fontSize: RFValue(10, 812)}}>
+                          {event?.hostInfo.accountType}
+                        </Text>
+                      </View>
+                      {userEventData?.accountPremium && (
+                        <LinearGradient
+                          colors={['#977B4A', '#E5D291', '#A28453']}
+                          style={{
+                            marginLeft: 6,
+                            alignSelf: 'flex-start',
+                            borderRadius: 4,
+                            paddingHorizontal: 12,
+                            paddingVertical: 2,
+                            backgroundColor: blackColor,
+                          }}
+                          start={{x: 0, y: 0}}
+                          end={{x: 1, y: 0}}>
+                          {
+                            <Text
+                              style={{
+                                color: blackColor,
+                                fontSize: RFValue(10, 812),
+                                fontFamily: Satoshi700,
+                              }}>
+                              Premium
+                            </Text>
+                          }
+                        </LinearGradient>
+                      )}
                     </View>
                     <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
                       <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
@@ -1050,8 +1091,8 @@ const IO: FC = (): JSX.Element => {
         ),
         info: event,
       });
-    };
-   
+    }
+
     const filteredData = data.filter(item => item.info && item.info.eventReviewed);
 
     const sortedByInterestsData = sortByInterests(sortByDate(filteredData)?.reverse(), userHost);
@@ -1080,7 +1121,7 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const getListForHost = async () => {    
+  const getListForHost = async () => {
     const user = auth().currentUser;
     let users: any;
     setLoading(true);
@@ -1287,10 +1328,11 @@ const IO: FC = (): JSX.Element => {
                       <CloseIcon />
                     </View>
                   </TouchableOpacity>
-                  <TouchableWithoutFeedback onPress={() => {
-                    setGuestsInvited(guestsInvited + 1)
-                    handleSuperInviteBottom(item._data, 400)
-                  }}>
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      setGuestsInvited(guestsInvited + 1);
+                      handleSuperInviteBottom(item._data, 400);
+                    }}>
                     <View style={styles.buttonFlash}>
                       <View
                         style={{
@@ -1352,7 +1394,7 @@ const IO: FC = (): JSX.Element => {
                   </TouchableWithoutFeedback>
                   <TouchableOpacity
                     onPress={() => {
-                      setGuestsInvited(guestsInvited + 1)
+                      setGuestsInvited(guestsInvited + 1);
                       handleAutoSwipeRight(item?._data?.id);
                     }}
                     style={styles.buttonCloseOrCheck}>
@@ -1405,7 +1447,7 @@ const IO: FC = (): JSX.Element => {
         });
       });
 
-    allEventsLength.current = data.length;    
+    allEventsLength.current = data.length;
     setEvents(data);
     eventsRef.current = data;
     setLoading(false);
@@ -1534,7 +1576,7 @@ const IO: FC = (): JSX.Element => {
       />
     );
   }
-  
+
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
@@ -1591,7 +1633,7 @@ const IO: FC = (): JSX.Element => {
                     }, 500);
                   }}
                   onSwipedRight={() => {
-                    setGuestsInvited(guestsInvited + 1)
+                    setGuestsInvited(guestsInvited + 1);
                     onInvite(item?.info?.uid, item?.info?.id);
                     setTimeout(() => {
                       setCurrentEventCardPosition(prev => prev + 1);
@@ -1629,6 +1671,7 @@ const IO: FC = (): JSX.Element => {
           />
         </View>
       </SafeAreaView>
+      {/* isVisibleMatch */}
       <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} />
     </>
   );

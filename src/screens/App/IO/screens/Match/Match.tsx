@@ -1,4 +1,4 @@
-import {lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
 import {Text, TouchableOpacity, View, SafeAreaView, Dimensions} from 'react-native';
 import Modal from 'react-native-modal';
 import Close from 'assets/images/icons/close.svg';
@@ -6,8 +6,8 @@ import MessageText from 'assets/images/icons/message-text.svg';
 import CheckboxSelected from 'assets/images/icons/checkbox-selected.svg';
 import {Outfit500, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
-import {FC, useEffect} from 'react';
+import {APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight, screenWidth} from 'constants/common';
+import {FC, useContext, useEffect} from 'react';
 import Animated, {useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay} from 'react-native-reanimated';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {chatCorrespondencePath, commonStackPath} from 'constants/pathLocations';
@@ -15,6 +15,9 @@ import {showToast} from 'helpers/showToast';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
+import MatchInfoCard from 'components/MatchInfoCard';
+import { calculateAge } from 'helpers/calculateAge';
+import { EventContext } from 'contexts/EventContext';
 
 const widthScreen = Dimensions.get('screen').width;
 
@@ -28,6 +31,19 @@ export interface MatchData {
   eventId?: string;
   superInvite?: boolean;
   userHostImageUri?: string;
+  joinEvents: number;
+  location: string | null;
+  premium: boolean
+  dateHost: string
+  dateGuest: string,
+  onlineGuest: boolean,
+  accountConfirmedHost: boolean,
+  accountConfirmedGuest: boolean,
+  usersListHost: [];
+  accountTypeHost: string;
+  accountTypeGuest: string;
+  eventImage: string;
+  guestsInvited: number
 }
 
 const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: MatchData}> = ({
@@ -35,13 +51,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   onCloseMatch,
   matchData,
 }) => {
-  const opacityWrapper = useSharedValue(0);
-  const imagePosition = useSharedValue(-200 - widthScreen / 15.5);
-  const textSize = useSharedValue(0);
-  const textOpacity = useSharedValue(0);
-  const figurePositin = useSharedValue(-screenHeight * 0.34 - 100);
-  const buttonPosition = useSharedValue(-1000);
-
+  
   const userHost = useUser((i: any) => i?.user);
 
   const name = userHost?.uid === matchData?.uidHost ? matchData?.nameGuest : matchData?.nameHost;
@@ -106,21 +116,16 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   };
 
   const handleCreateChat = async () => {
-    // console.log('userHost?.uid', userHost?.uid);
-
     const querySnapshot = await firestore().collection('Events').doc(matchData.eventId).get();
     if (!querySnapshot.exists) {
       return;
     }
     const list = querySnapshot.data();
-    // console.log('list', list);
 
     try {
       const messageCollection = await firestore().collection('messages').doc(list?.id).get();
-      // console.log('messageCollection', messageCollection);
 
       const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === matchData.uidGuest)[0];
-      // console.log('chatCheck', chatCheck);
 
       const activeEvent = messageCollection?.data()?.activeEvent;
 
@@ -265,126 +270,71 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
     }
   };
 
-  const animatedOpacityWrapper = () => {
-    opacityWrapper.value = withTiming(1, {
-      duration: 1000,
-      easing: Easing.inOut(Easing.linear),
-    });
-  };
+ 
+  // ANIMATED CARD
 
-  const animatedImages = () => {
-    imagePosition.value = withTiming(0, {
-      duration: 800,
-      easing: Easing.bezier(0, 0.1, 0, 1),
-    });
-  };
+  const rotateCard1 = useSharedValue(0);
+  const marginRightCard1 = useSharedValue(screenWidth / 2 - 114 - 18);
 
-  const animatedText = () => {
-    textSize.value = withDelay(
-      750,
-      withTiming(46, {
-        duration: 800,
-        easing: Easing.bezier(0.25, 0.5, 0.25, 1),
-      }),
-    );
-  };
+  const whiteLineWidth = useSharedValue(300);
+  const whiteLineZIndex = useSharedValue(1200);
+  const whiteLineTop = useSharedValue(-1000);
 
-  const animTextOpacity = () => {
-    textOpacity.value = withDelay(
-      900,
-      withTiming(1, {
-        duration: 200,
-      }),
-    );
-  };
+  const whiteLineBottom = useSharedValue(-1000);
+  const whiteLineBottomWidth = useSharedValue(300);
 
-  const animateWords = () => {
-    setTimeout(() => {
-      wordTranslations?.forEach((wordTranslation, index) => {
-        wordTranslation.value = withDelay(
-          (index + 1) * 100,
-          withTiming(0, {
-            duration: 500,
-            easing: Easing.out(Easing.cubic),
-          }),
-        );
-      });
-    }, 300);
-  };
-
-  const animateName = () => {
-    setTimeout(() => {
-      nameAnimation.value = withDelay(
-        0,
-        withTiming(0, {
-          duration: 500,
-          easing: Easing.out(Easing.cubic),
-        }),
-      );
-    }, 300);
-  };
-
-  const animateFigure = () => {
-    figurePositin.value = withTiming(0, {
-      duration: 800,
-      easing: Easing.out(Easing.cubic),
-    });
-  };
-
-  const animateButtons = () => {
-    buttonPosition.value = withDelay(
-      800,
-      withTiming(0, {
-        duration: 800,
-        easing: Easing.out(Easing.cubic),
-      }),
-    );
-  };
+  const rotateCard2 = useSharedValue(0);
+  const marginLeftCard2 = useSharedValue(screenWidth / 2 - 114 - 18);
+  const topCard2 = useSharedValue(screenHeight / 2 - 280);
 
   useEffect(() => {
     if (isVisibleMatch) {
-      animatedOpacityWrapper();
-      animatedImages();
-      animatedText();
-      animTextOpacity();
-      animateWords();
-      animateName();
-      animateFigure();
-      animateButtons();
+      rotateCard1.value = withDelay(800, withTiming(-15, { duration: 400 }));
+      marginRightCard1.value = withDelay(600, withTiming(screenWidth - 228 - ((228 / 100) * 15) - (24 * 1.5), { duration: 200 }));
+  
+      rotateCard2.value = withDelay(800, withTiming(15, { duration: 400 }));
+      marginLeftCard2.value = withDelay(600, withTiming(screenWidth - 228 - ((228 / 100) * 15) - (24 * 1.5), { duration: 200 }));
+      topCard2.value = withDelay(400, withTiming((screenHeight / 2) - 350, { duration: 200 }));
+
+      whiteLineWidth.value = withTiming(117, {duration:400});
+      whiteLineZIndex.value = withTiming(800, {duration:400});
+      whiteLineTop.value = withTiming(-900, {duration: 400})
+
+      whiteLineBottom.value = withTiming(-1280, {duration:300});
+      whiteLineBottomWidth.value = withTiming(117, {duration:300})
+    } else {
+      rotateCard1.value = 0;
+      marginRightCard1.value = screenWidth / 2 - 114 - 18;
+
+      rotateCard2.value = 0;
+      marginLeftCard2.value = screenWidth / 2 - 114 - 18;
+      topCard2.value = screenHeight / 2 - 280;
+      whiteLineWidth.value = 300
     }
   }, [isVisibleMatch]);
-
-  const buttonAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{translateX: buttonPosition.value}],
+  
+  const animatedStyleCard1 = useAnimatedStyle(() => ({
+    transform: [{ rotateZ: `${rotateCard1.value}deg` }],
+    right: marginRightCard1.value,
+    top: screenHeight / 2 - 280,
   }));
 
-  const figureTopStyle = useAnimatedStyle(() => ({
-    top: figurePositin.value,
+  const animatedStyleCard2 = useAnimatedStyle(() => ({
+    transform: [{ rotateZ: `${rotateCard2.value}deg` }],
+    left: marginLeftCard2.value,
+    top: topCard2.value,
   }));
 
-  const figureBottomStyle = useAnimatedStyle(() => ({
-    bottom: figurePositin.value,
-  }));
+  const animateWhiteLine = useAnimatedStyle(() => ({
+    width: whiteLineWidth.value,
+    zIndex: whiteLineZIndex.value,
+    top: whiteLineTop.value
+  }))
 
-  const opacityWrapperStyle = useAnimatedStyle(() => ({
-    opacity: opacityWrapper.value,
-  }));
-
-  const textSizeStyle = useAnimatedStyle(() => ({
-    fontSize: textSize.value,
-  }));
-
-  const textOpacityStyle = useAnimatedStyle(() => ({
-    opacity: textOpacity.value,
-  }));
-
-  const leftImageStyle = useAnimatedStyle(() => ({
-    left: imagePosition.value,
-  }));
-
-  const rightImageStyle = useAnimatedStyle(() => ({
-    right: imagePosition.value,
-  }));
+  const animateWhiteLineBottom = useAnimatedStyle(() => ({
+    bottom: whiteLineBottom.value,
+    width: whiteLineBottomWidth.value
+  }))
 
   return (
     <View>
@@ -397,165 +347,130 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
         backdropTransitionInTiming={1000}
         animationIn={'fadeIn'}
         animationInTiming={1}>
-        <SafeAreaView style={{flex: 1}}>
-          <Animated.View
-            style={[
-              {
-                backgroundColor: whiteColor,
-                width: 141,
-                height: screenHeight * 0.3,
-                position: 'absolute',
-                borderBottomLeftRadius: 24,
-                borderBottomRightRadius: 24,
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-              },
-              figureTopStyle,
-            ]}>
-            <View
-              style={{
-                width: 106,
-                height: 106,
-                borderRadius: 100,
-                backgroundColor: 'black',
-                marginBottom: 38,
-              }}
+        <SafeAreaView style={{flex: 1, justifyContent: 'space-between'}}>
+        <Animated.View
+            style={[{
+              height: 2000,
+              backgroundColor: whiteColor,
+              position: 'absolute',
+              transform: [{rotateZ: '22deg'}],
+            },animateWhiteLine]}
+            //animateWhiteLine
+          />
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={handleCloseMatch}
+            style={{
+              borderRadius: 100,
+              backgroundColor: transparentGray60Color,
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: 40,
+              height: 40,
+              alignSelf: 'flex-end',
+            }}>
+            <Close />
+          </TouchableOpacity>
+          <Animated.View style={[{position: 'absolute', zIndex: 1000, alignSelf: 'center'}, animatedStyleCard1]}>
+            <MatchInfoCard
+              isProfile={false}
+              usersList={matchData.usersListHost}
+              accountType={matchData.accountTypeGuest}
+              image={matchData.imageUri}
+              imageEvent={matchData.eventImage}
+              online={matchData.onlineGuest}
+              premium={matchData.premium}
+              name={matchData.nameGuest}
+              age={calculateAge(matchData.dateGuest)}
+              confirmedAccount={matchData.accountConfirmedGuest}
+              joinEvents={matchData.joinEvents}
+              location={matchData.location}
+              guestsInvited={matchData.guestsInvited}
+              showHeaderInfo={false}
+              isGuest={true}
             />
           </Animated.View>
-          <Animated.View style={[{flex: 1, justifyContent: 'space-between'}, opacityWrapperStyle]}>
-            <View>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={handleCloseMatch}
-                style={{
-                  borderRadius: 100,
-                  backgroundColor: transparentGray60Color,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: 40,
-                  height: 40,
-                  alignSelf: 'flex-end',
-                }}>
-                <Close />
-              </TouchableOpacity>
-              {/* <LogoPrimary width={200} style={{ alignSelf: 'center', marginTop: screenHeight / 30 }} /> */}
-            </View>
-            <Animated.View style={[{flexDirection: 'column', marginTop: screenHeight / 20, width: '100%'}, opacityWrapperStyle]}>
-              <View style={{position: 'absolute', flexDirection: 'row', right: 0, top: -70}}>
-                {words?.map((word, index) => (
-                  <Animated.Text
-                    key={index}
-                    style={[
-                      {
-                        color: whiteColor,
-                        fontFamily: Outfit500,
-                        fontSize: RFValue(57, 812),
-                        letterSpacing: -6,
-                        textAlign: 'center',
-                        marginBottom: screenHeight / 20,
-                      },
-                      useAnimatedStyle(() => ({
-                        transform: [{translateX: wordTranslations[index].value}],
-                      })),
-                    ]}>
-                    {word}
-                  </Animated.Text>
-                ))}
-              </View>
-              <Text style={{color: whiteColor, position: 'absolute', right: 0, fontSize: RFValue(13, 812)}}>Guest</Text>
-              {matchData?.userHostImageUri && (
-                <Animated.Image
-                  source={{uri: matchData.userHostImageUri}}
-                  style={[{width: 200, height: 200, position: 'absolute', borderRadius: 100}, leftImageStyle]}
-                />
-              )}
-              {matchData?.imageUri && (
-                <Animated.Image
-                  source={{uri: matchData?.imageUri}}
-                  style={[{width: 200, height: 200, position: 'absolute', borderRadius: 100}, rightImageStyle]}
-                />
-              )}
-              <View style={{flexDirection: 'column', width: '100%', alignItems: 'center'}}>
-                <View style={{alignItems: 'center', width: '100%'}}>
-                  <View style={{height: 200, width: '100%'}} />
-                  <Animated.Text
-                    style={[
-                      {
-                        height: 100,
-                        color: whiteColor,
-                        fontFamily: Satoshi500,
-                        marginTop: 30,
-                      },
-                      textSizeStyle,
-                      textOpacityStyle,
-                    ]}>
-                    New invite match!
-                  </Animated.Text>
-                </View>
-              </View>
-              <View style={{flexDirection: 'row'}}>
-                <Animated.View style={buttonAnimatedStyle}>
-                  <TouchableOpacity
-                    onPress={handleCreateChat}
-                    style={{
-                      width: 70,
-                      height: 70,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderRadius: 100,
-                      backgroundColor: 'black',
-                      marginRight: 28,
-                    }}>
-                    <MessageText width={32} height={32} />
-                  </TouchableOpacity>
-                </Animated.View>
-                {userHost?.accountType === 'host' && (
-                  <Animated.View style={buttonAnimatedStyle}>
-                    <TouchableOpacity
-                      onPress={handleApproveGuestFromHost}
-                      style={{
-                        width: 70,
-                        height: 70,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderRadius: 100,
-                        backgroundColor: 'black',
-                        marginRight: 28,
-                      }}>
-                      <CheckboxSelected width={32} height={32} />
-                    </TouchableOpacity>
-                  </Animated.View>
-                )}
-              </View>
-            </Animated.View>
-            <View style={{alignItems: 'flex-end'}}>
-              <Animated.View
-                style={[
-                  {
-                    backgroundColor: whiteColor,
-                    width: 141,
-                    height: screenHeight * 0.3,
-                    position: 'absolute',
-                    borderTopLeftRadius: 24,
-                    borderTopRightRadius: 24,
-                    justifyContent: 'flex-start',
-                    alignItems: 'center',
-                  },
-                  figureBottomStyle,
-                ]}>
-                <View
-                  style={{
-                    width: 106,
-                    height: 106,
-                    borderRadius: 100,
-                    backgroundColor: 'black',
-                    marginTop: 38,
-                  }}
-                />
-              </Animated.View>
-            </View>
+
+          <Animated.View style={[{position: 'absolute', alignSelf: 'center'}, animatedStyleCard2]}>
+            <MatchInfoCard
+              isProfile={false}
+              usersList={matchData.usersListHost}
+              accountType={matchData.accountTypeHost}
+              image={matchData.userHostImageUri}
+              imageEvent={matchData.eventImage}
+              online={matchData.onlineGuest}
+              premium={matchData.premium}
+              name={matchData.nameHost}
+              age={calculateAge(matchData.dateHost)}
+              confirmedAccount={matchData.accountConfirmedGuest}
+              joinEvents={matchData.joinEvents}
+              location={matchData.location}
+              showHeaderInfo={true}
+              guestsInvited={matchData.guestsInvited}
+            />
           </Animated.View>
+          <View>
+            <Text
+              style={{
+                color: whiteColor,
+                fontSize: RFValue(38, 812),
+                fontFamily: Satoshi500,
+                textAlign: 'center',
+                marginTop: 35,
+              }}>
+              New Guest Connection!
+            </Text>
+            <View style={{flexDirection: 'row', marginVertical: 30}}>
+              <TouchableOpacity
+                onPress={handleApproveGuestFromHost}
+                style={{
+                  flex: 1,
+                  paddingVertical: 16,
+                  backgroundColor: whiteColor,
+                  borderRadius: 15,
+                }}>
+                <Text
+                  style={{
+                    fontSize: RFValue(18, 812),
+                    color: blackColor,
+                    fontFamily: Satoshi500,
+                    textAlign: 'center',
+                  }}>
+                  Approve guest
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleCreateChat}
+                style={{
+                  flex: 1,
+                  paddingVertical: 16,
+                  backgroundColor: whiteColor,
+                  borderRadius: 15,
+                  marginLeft: 12,
+                }}>
+                <Text
+                  style={{
+                    fontSize: RFValue(18, 812),
+                    color: blackColor,
+                    fontFamily: Satoshi500,
+                    textAlign: 'center',
+                  }}>
+                  Send message
+                </Text>
+              </TouchableOpacity>
+            </View>
+            
+          </View>
         </SafeAreaView>
+        <Animated.View
+              style={[{
+                height: 2000,
+                backgroundColor: whiteColor,
+                position: 'absolute',
+                transform: [{rotateZ: '22deg'}],
+                right: 0
+              }, animateWhiteLineBottom]}
+            />
       </Modal>
     </View>
   );

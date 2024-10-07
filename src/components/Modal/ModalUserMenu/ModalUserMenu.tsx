@@ -258,6 +258,15 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     if (!eventData?.usersList.length) {
       return;
     }
+    const isFullEvent = await checkIsFullGuestsFun();
+
+    if (isFullEvent) {
+      setModalVisible(false);
+      setIsVisibleModalFullEvent(true);
+      showToast('inviteMatch', 'You have reached the maximum number of guests', `${eventData?.placeName}`);
+      return;
+    }
+
     try {
       const updatedUsersList = eventData?.usersList?.map(user => {
         if (user.uid === uid) {
@@ -285,6 +294,13 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     const eventQuerySnapshot = await firestore().collection('Events').doc(activeEvent).get();
     const eventDataList = eventQuerySnapshot.data();
     if (!eventDataList?.usersList.length) {
+      return;
+    }
+
+    const isFullEvent = await checkIsFullGuestsFun();
+
+    if (isFullEvent) {
+      showToast('inviteMatch', 'Event is full', `${eventData?.placeName}`);
       return;
     }
 
@@ -339,8 +355,6 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     }
     return true;
   };
-
-  console.warn('dsadsadas');
 
   const handleActionPress = async () => {
     // const isFull = await checkIsFullGuestsFun();

@@ -16,7 +16,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 import {useUser} from 'src/store/userStore';
@@ -24,6 +24,7 @@ import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
 import {getFontSize} from 'helpers/getFontSize';
 import {ACCEPTED_STATUS, INVITE_MATCH_STATUS} from 'constants/common';
+import {EventContext} from 'contexts/EventContext';
 
 const ItemRequestHost = ({
   item,
@@ -36,12 +37,10 @@ const ItemRequestHost = ({
 }: any) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const [userInfo, setUserInfo] = useState({accountType: ''});
+  const [userInfo, setUserInfo] = useState({accountType: '', usersList: []});
 
   const user = useUser((state: any) => state.user);
   const [currentUserName, setCurrentUserName] = useState();
-
-  // // console.warn('item', item);
 
   const OverlayRight = () => {
     return (
@@ -79,19 +78,27 @@ const ItemRequestHost = ({
     );
   };
 
+  const {activeEvent} = useContext(EventContext);
+
   const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
-    const isFull = await checkIsFullGuestsFun();
-    if (isFull) {
-      setIsVisibleModalFullEvent();
-      fetchHostRequests();
+    const eventQuery = await firestore().collection('Events').doc(list?.id).get();
+    if (!eventQuery.exists) {
       return;
     }
-    const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
-    const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
+
+    const eventData = eventQuery.data();
+    const allPeople = eventData?.female + eventData?.male;
+    const eventIsFull = eventData?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
     if (eventIsFull) {
-      return showToast('cancel', 'Go to my events', `Event Full: ${allPeople}/${allPeople} guests invited`);
+      setIsVisibleModalFullEvent();
+      fetchHostRequests();
+      showToast('cancel', 'Go to my events', `Event Full: ${allPeople}/${allPeople} guests invited`);
+      return;
     }
+
+    const getDoc = await firestore().collection('userInfo').doc(item.uid).get();
+    const guest = getDoc.data();
 
     try {
       const userAccepted = {
@@ -114,6 +121,19 @@ const ItemRequestHost = ({
         eventId: list?.id,
         superInvite: false,
         userHostImageUri: user?.photos[0]?.image,
+        joinEvents: guest?.joinEvents,
+        location: guest?.location,
+        premium: user?.accountPremium,
+        dateHost: user?.date,
+        dateGuest: guest?.date,
+        onlineGuest: guest?.online,
+        accountConfirmedHost: guest?.accountConfirmed,
+        accountConfirmedGuest: user?.accountConfirmed,
+        usersListHost: activeEvent?.usersList,
+        accountTypeHost: userInfo?.accountType,
+        accountTypeGuest: guest?.accountType,
+        eventImage: activeEvent?.photos[0].image,
+        guestsInvited: activeEvent.usersList.length,
       };
 
       await firestore()
@@ -316,12 +336,28 @@ const ItemRequestHost = ({
               </View>
             </LinearGradient>
           </View>
-          <View style={{backgroundColor: whiteColor, height: 72, width: '100%', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20, paddingVertical: 17}}>
+          <View
+            style={{
+              backgroundColor: whiteColor,
+              height: 72,
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingHorizontal: 20,
+              paddingVertical: 17,
+            }}>
             <TouchableOpacity
-            onPress={() => {
-              handleSwipeHostCardInvite(item)
-            }}
-            style={{backgroundColor: blackColor, paddingVertical: 12, borderRadius: 8, width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+              onPress={() => {
+                handleSwipeHostCardInvite(item);
+              }}
+              style={{
+                backgroundColor: blackColor,
+                paddingVertical: 12,
+                borderRadius: 8,
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
               <Text style={{color: whiteColor, fontSize: RFValue(12, 812), fontFamily: Satoshi500}}>Invite</Text>
             </TouchableOpacity>
           </View>

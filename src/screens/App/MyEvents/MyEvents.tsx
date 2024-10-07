@@ -29,7 +29,7 @@ import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 import CalendarCheckIcon from 'assets/images/icons/calendar-check.svg';
 import WIcon from 'assets/images/icons/W.svg';
 import MIcon from 'assets/images/icons/M.svg';
-import CheckStarWhite from 'assets/images/icons/check-star-white.svg'
+import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 
 import Button from 'components/Button/Button';
 import {commonStackPath, eventActiveInfoPath, eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocations';
@@ -40,7 +40,7 @@ import {sendNotification} from 'helpers/fcmHelper';
 import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
-import { calculateAge } from 'helpers/calculateAge';
+import {calculateAge} from 'helpers/calculateAge';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
@@ -488,28 +488,28 @@ const MyEvents: FC<any> = ({navigation}) => {
   const customButton = (item: any[]) => {
     return (
       <TouchableOpacity
-      onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: item}} as never)}
-      style={{
-        height: 65,
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 18,
-        backgroundColor: lightGray20Color,
-        marginTop: 25,
-      }}>
-      <Text
+        onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: item}} as never)}
         style={{
-          color: blackColor,
-          fontFamily: Satoshi700,
-          fontSize: RFValue(16, 812),
+          height: 65,
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 18,
+          backgroundColor: lightGray20Color,
+          marginTop: 25,
         }}>
-        Manage Event
-      </Text>
-    </TouchableOpacity>
-    )
+        <Text
+          style={{
+            color: blackColor,
+            fontFamily: Satoshi700,
+            fontSize: RFValue(16, 812),
+          }}>
+          Manage Event
+        </Text>
+      </TouchableOpacity>
+    );
   };
-  
+
   return (
     <>
       <View style={styles.container}>
@@ -685,7 +685,8 @@ const MyEvents: FC<any> = ({navigation}) => {
                           borderWidth: 1.25,
                           borderColor: blackColor,
                           backgroundColor: lightGreenColor,
-                        }}></View>
+                        }}
+                      />
                     </View>
                     <View style={{marginLeft: 10, justifyContent: 'center'}}>
                       <View style={{flexDirection: 'row'}}>

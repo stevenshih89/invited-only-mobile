@@ -10,13 +10,14 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {black4Color, blackColor, lightGray18Color, lightGray20Color, lightGreenColor, whiteColor} from 'constants/colors';
+import {black4Color, blackColor, grayScale600, lightGray18Color, lightGray20Color, lightGreenColor, whiteColor} from 'constants/colors';
 import FastImage from 'react-native-fast-image';
 import FullEvent from 'components/FullEvent';
-import {screenHeight, screenWidth} from 'constants/common';
+import {ACCEPTED_STATUS, screenHeight, screenWidth} from 'constants/common';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat';
 import {formateDateAbbreviated} from 'helpers/formateDateAbbreviated';
 import LineImage from 'assets/images/app/Line.png';
+import moment from 'moment';
 
 interface MyEventsCard {
   statusEvent: boolean;
@@ -34,6 +35,7 @@ interface MyEventsCard {
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
+  
   const {placeName, styleContainer, imageBg, statusEvent, eventReviewed, allPeople, findAcceptedGuest, item, showGuestList, customButton} = props;
 
   const styles = useStyles();
@@ -41,16 +43,14 @@ const MyEventsCard: FC<MyEventsCard> = props => {
   const [mainImageEvent, setMainImageEvent] = useState('');
 
   useEffect(() => {
-    const filterImage = imageBg.filter(item => item.id < 1);
+    const filterImage = imageBg?.filter(item => item.id < 1);
 
     const cover = filterImage[0]?.image ?? '';
 
     setMainImageEvent(cover);
   }, [imageBg]);
 
-  const navigation = useAppNavigation();
-
-  const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
+  const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
@@ -73,6 +73,34 @@ const MyEventsCard: FC<MyEventsCard> = props => {
   const getUsersListAccepted = () => {
     const filter = item?.usersList.filter(item => item.status === 'invite_match');
     return filter.length;
+  };
+
+  const getEventStatus = () => {
+    if (list?.isCancelled) {
+      return {
+        plateTitle: 'Cancelled',
+        plateBackgroundColor: grayScale600,
+      };
+    }
+
+    if (date && estimeTime) {
+      const adjustedDate = moment(`${date}, ${estimeTime}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+      if (adjustedDate.isBefore(moment())) {
+        return {
+          plateTitle: 'Expired',
+          plateBackgroundColor: grayScale600,
+        };
+      }
+    }
+
+    if (eventIsFull) {
+      return {plateTitle: 'Full', plateBackgroundColor: lightGreenColor};
+    }
+
+    return {
+      plateTitle: 'Active',
+      plateBackgroundColor: lightGreenColor,
+    };
   };
 
   return (
@@ -117,7 +145,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
             )}
             <View
               style={{
-                backgroundColor: lightGreenColor,
+                backgroundColor: getEventStatus().plateBackgroundColor,
                 paddingHorizontal: 6,
                 paddingVertical: 4,
                 borderRadius: 5,
@@ -126,7 +154,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                 bottom: 16,
                 left: 16,
               }}>
-              <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500}}>Active</Text>
+              <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500}}>{getEventStatus().plateTitle}</Text>
             </View>
           </LinearGradient>
         </FastImage>
@@ -273,7 +301,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
             <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
           </View>
           <View style={{marginBottom: 23}}>
-          {customButton ? customButton : null}
+            {customButton ? customButton : null}
             {/* <TouchableOpacity
               onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: list}} as never)}
               style={{

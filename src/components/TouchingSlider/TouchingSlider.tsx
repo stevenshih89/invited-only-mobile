@@ -29,11 +29,11 @@ import {calculateAge} from 'helpers/calculateAge.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites/index.ts';
-import { useGuestList } from 'src/store/guestListStore/index.ts';
-import firestore from '@react-native-firebase/firestore'
-import { showToast } from 'helpers/showToast.ts';
+import {useGuestList} from 'src/store/guestListStore/index.ts';
+import firestore from '@react-native-firebase/firestore';
+import {showToast} from 'helpers/showToast.ts';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin.tsx';
-import { convertToPmAmFormat } from 'helpers/convertToPmAmFormat.ts';
+import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat.ts';
 
 interface Photo {
   url: string;
@@ -118,40 +118,40 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   hourEvent,
   usersListLength,
   usersList,
-  item
+  item,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
   const styles = useStyles();
-  const navigation = useAppNavigation();  
+  const navigation = useAppNavigation();
 
   const {counterSuperInvites} = useCounterSuperEvents();
-  const {guestsInvited, setGuestsInvited} = useGuestList(); 
-  
+  const {guestsInvited, setGuestsInvited} = useGuestList();
+
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
-    
-  const [userEventInfo, setUserEventInfo] = useState()
+
+  const [userEventInfo, setUserEventInfo] = useState();
 
   function getMonth() {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const [day, month, year] = date.split(".");
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const [day, month, year] = date.split('.');
     const monthName = months[parseInt(month) - 1];
     return `${monthName}`;
   }
-  
+
   const getUserEventInfo = async () => {
     try {
-      const getDoc = await firestore().collection('userInfo').doc(uidUserEvent).get()
-      setUserEventInfo(getDoc?.data())
+      const getDoc = await firestore().collection('userInfo').doc(uidUserEvent).get();
+      setUserEventInfo(getDoc?.data());
     } catch (error) {
       console.log('error getUserEventInfo', error);
     }
-  }
+  };
 
   useEffect(() => {
-    uidUserEvent? getUserEventInfo(): null
-  },[uidUserEvent])
-  
+    uidUserEvent ? getUserEventInfo() : null;
+  }, [uidUserEvent]);
+
   const handleSuperInvite = () => {
     if (counterSuperInvites - 1 >= 0) {
       flipCoin();
@@ -218,9 +218,9 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   });
 
   const getUsersListAccepted = () => {
-    const filter = activeEvent?.usersList.filter(item => item.status === 'invite_match')
-    return filter.length
-  }
+    const filter = activeEvent?.usersList.filter(item => item.status === 'invite_match');
+    return filter.length;
+  };
 
   const handleSuperJoin = () => {
     if (counterSuperInvites > 0) {
@@ -241,12 +241,17 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
     <FastImage
       style={[styles.imageStyle, styles.container]}
       source={{
-        uri: userInfo?.accountType === 'guest'? eventPhotos && eventPhotos[0]?.image: photos?.[active]?.image? photos?.[active]?.image : photos?.[active],
+        uri:
+          userInfo?.accountType === 'guest'
+            ? eventPhotos && eventPhotos[0]?.image
+            : photos?.[active]?.image
+            ? photos?.[active]?.image
+            : photos?.[active],
         headers: {Authorization: 'someAuthToken'},
         priority: FastImage.priority.normal,
       }}
       resizeMode={FastImage.resizeMode.cover}>
-      <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={eventPhotos ? eventPhotos[0].image: ''} />
+      <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={eventPhotos ? eventPhotos[0].image : ''} />
       <LinearGradient
         colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
         start={{x: 0, y: 1}}
@@ -287,7 +292,8 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     borderWidth: 1.25,
                     borderColor: blackColor,
                     backgroundColor: lightGreenColor,
-                  }}></View>
+                  }}
+                />
               )}
             </View>
             <View style={{marginLeft: 10, justifyContent: 'center'}}>
@@ -367,7 +373,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             </View>
           </View>
           <TouchableOpacity
-          onPress={() => handleAutoSwipeLeft()}
+            onPress={() => handleAutoSwipeLeft()}
             style={{
               width: 40,
               height: 40,
@@ -577,7 +583,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 14}}>
             <TouchableOpacity
               onPress={() => {
-                handleSuperJoin()
+                handleSuperJoin();
               }}
               style={{
                 flex: 1,
@@ -599,10 +605,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               </Text>
               <FlashIcon width={14} height={14} />
             </TouchableOpacity>
-            <View style={{width: 16}}></View>
+            <View style={{width: 16}} />
             <TouchableOpacity
               onPress={() => {
-                handleAutoSwipeRight && handleAutoSwipeRight()
+                handleAutoSwipeRight && handleAutoSwipeRight();
+                onInvite && onInvite();
               }}
               style={{
                 flex: 1,
@@ -660,7 +667,8 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                       borderWidth: 1.25,
                       borderColor: blackColor,
                       backgroundColor: lightGreenColor,
-                    }}></View>
+                    }}
+                  />
                 )}
               </View>
               <View style={{marginLeft: 10, justifyContent: 'center'}}>
@@ -825,10 +833,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                 </Text>
                 <FlashIcon width={14} height={14} />
               </TouchableOpacity>
-              <View style={{width: 16}}></View>
+              <View style={{width: 16}} />
               <TouchableOpacity
                 onPress={() => {
                   handleAutoSwipeRight && handleAutoSwipeRight();
+                  onInvite && onInvite();
                   setGuestsInvited(guestsInvited + 1);
                 }}
                 style={{
@@ -875,4 +884,3 @@ export default TouchingSlider;
 function setVisibleModalSuperJoin(arg0: boolean) {
   throw new Error('Function not implemented.');
 }
-
