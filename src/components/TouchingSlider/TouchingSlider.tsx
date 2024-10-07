@@ -166,7 +166,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
     navigation.navigate(commonStackPath, {screen: invitationCodePath});
   };
 
-  const handleNext = (): void => {    
+  const handleNext = (): void => {        
     if (active === numberPhotos - 1) {
       return setActive(0);
     } else {
@@ -265,6 +265,10 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             : null}
         </View>
       </LinearGradient>
+      <View style={styles.wrapperButtons}>
+        <TouchableOpacity onPress={handleBack} style={styles.button} />
+        <TouchableOpacity onPress={handleNext} style={styles.button} />
+      </View>
       {!isShowCardButtons && isShowAccountInfo && (
         <View
           style={{
