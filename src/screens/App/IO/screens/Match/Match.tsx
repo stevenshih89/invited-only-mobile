@@ -429,7 +429,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
               New Guest Connection!
             </Text>
             <View style={{flexDirection: 'row', marginVertical: 30}}>
-              <TouchableOpacity
+              {userHost?.accountType === 'host' && <TouchableOpacity
                 onPress={handleApproveGuestFromHost}
                 style={{
                   flex: 1,
@@ -446,7 +446,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
                   }}>
                   Approve guest
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity>}
               <TouchableOpacity
                 onPress={handleCreateChat}
                 style={{
