@@ -93,7 +93,7 @@ const IO: FC = (): JSX.Element => {
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
   const {activeEventDate} = useContext(EventsDate);
-
+  
   const userHost = useUser((i: any) => i?.user);
   const setUser = useUser((i: any) => i?.setUser);
 
@@ -775,7 +775,7 @@ const IO: FC = (): JSX.Element => {
         : activeEventDate === 'this_weekend'
         ? filterDataByWeekMonth(enrichedEvents, 7)
         : filterDataByWeekMonth(enrichedEvents, 31);
-
+    
     if (!filterDataWM.length) {
       return;
     }
@@ -1497,7 +1497,7 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     isHost ? getListForHost() : getListForGuest();
-  }, [userInfo, userHost, activeEvent?.id]);
+  }, [userInfo, userHost, activeEvent?.id, activeEventDate]);
 
   useEffect(() => {
     fetchMyEvents(true);
