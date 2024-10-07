@@ -139,6 +139,15 @@ const InvitationCode: FC = (): JSX.Element => {
           weeklySuperInvites: 5,
           superInvites: 0,
           lastUpdateSuperInvite: Date.now(),
+          notificationSettings: {
+            chat: true,
+            joinedEvent: true,
+            match: true,
+            myEvents: true,
+            requests: true,
+            superInvite: true,
+            superJoin: true,
+          },
         })
         .then(async () => {
           // console.log('User added!');

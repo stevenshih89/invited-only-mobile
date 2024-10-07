@@ -179,6 +179,15 @@ const VerifySocialProfile = () => {
           superInvites: 0,
           socialNickname,
           lastUpdateSuperInvite: Date.now(),
+          notificationSettings: {
+            chat: true,
+            joinedEvent: true,
+            match: true,
+            myEvents: true,
+            requests: true,
+            superInvite: true,
+            superJoin: true,
+          },
         })
         .then(async () => {
           // console.warn('User added!');

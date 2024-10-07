@@ -97,15 +97,19 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
     const uidForNotification = isEventHost ? matchData?.uidGuest : matchData?.uidHost;
     const ownerPhoto = isEventHost ? matchData?.imageUri : matchData?.userHostImageUri;
     if (uidForNotification) {
-      await sendNotification(
-        uidForNotification,
-        'Say, Hi! 👋',
-        'New invite match!',
-        'Invite Match',
-        'Invite Match'.toUpperCase(),
-        userHost,
-        isEventHost ? chatDataHost : chatDataGuest,
-      );
+      const getDoc = await firestore().collection('userInfo').doc(uidForNotification).get()
+      const docData = getDoc.data()
+      if(docData?.notificationSettings.match) {
+        await sendNotification(
+          uidForNotification,
+          'Say, Hi! 👋',
+          'New invite match!',
+          'Invite Match',
+          'Invite Match'.toUpperCase(),
+          userHost,
+          isEventHost ? chatDataHost : chatDataGuest,
+        );
+      }
     }
     showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {
       ownerPhoto: ownerPhoto,
@@ -253,14 +257,18 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
       });
       await firestore().collection('Events').doc(matchData.eventId).update({usersList: updatedUsersList});
       if (matchData?.uidGuest) {
-        await sendNotification(
-          matchData?.uidGuest,
-          'Request approved',
-          'Please confirm your attendence',
-          'Approve',
-          'Approved'.toUpperCase(),
-          userHost,
-        );
+        const getDoc = await firestore().collection('userInfo').doc(matchData?.uidGuest).get()
+        const docData = getDoc.data()
+        if(docData?.notificationSettings?.requests || docData?.notificationSettings?.joinedEvent) {
+          await sendNotification(
+            matchData?.uidGuest,
+            'Request approved',
+            'Please confirm your attendence',
+            'Approve',
+            'Approved'.toUpperCase(),
+            userHost,
+          );
+        }
         showToast('inviteMatch', `Waiting for ${matchData?.name} to accept your invitation`, 'Almost there!', {
           ownerPhoto: matchData?.imageUri,
           status: 'GUEST APPROVED',

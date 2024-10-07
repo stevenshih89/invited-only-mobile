@@ -109,10 +109,14 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         usersList: updateUsersList,
         requestsList: updateRequestsList,
       });
+      const getDate = await firestore().collection('userInfo').doc(uid).get()
+      const docData = getDate.data()
       // console.warn('usersListData', usersListData);
       const rejectedUser = usersListData.find((i: any) => i?.uid === uid);
       if (rejectedUser?.status !== 'notAccepted') {
-        await sendNotification(uid, `${userHost?.name} rejected your request`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), userHost);
+        if(docData?.notificationSettings.requests|| docData?.notificationSettings.joinedEvent) {
+          await sendNotification(uid, `${userHost?.name} rejected your request`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), userHost);
+        }
       }
       showToast('inviteMatch', `You rejected ${rejectedUser?.name}`, 'Not now', {
         ownerPhoto: rejectedUser?.userPhoto,
@@ -284,9 +288,13 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   const handleApproveGuestFromHost = async () => {
     try {
       if (uid) {
+        const getDate = await firestore().collection('userInfo').doc(uid).get()
+        const docData = getDate.data()
         await updateChatDocument();
         await updateEventDocument();
-        await sendNotification(uid, 'Please confirm your attendence', 'Request approved', 'Approve', 'Approved'.toUpperCase(), userInfo);
+        if(docData?.notificationSettings.requests) {
+          await sendNotification(uid, 'Please confirm your attendence', 'Request approved', 'Approve', 'Approved'.toUpperCase(), userInfo);
+        }
         showToast('inviteMatch', `Waiting for ${userGuest?.name} to accept your invitation`, 'Almost there!', {
           ownerPhoto: userGuest?.userPhoto,
           status: 'GUEST APPROVED',

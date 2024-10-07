@@ -559,14 +559,16 @@ const IO: FC = (): JSX.Element => {
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
             }
-            await sendNotification(
-              forUserUid,
-              'New invite request',
-              `${userInfo.name} wants to invite you!`,
-              'invite',
-              'Invite Request'.toUpperCase(),
-              userInfo,
-            );
+            if(guest?._data.notificationSettings?.match || guest?._data.notificationSettings?.superInvite) {
+              await sendNotification(
+                forUserUid,
+                'New invite request',
+                `${userInfo.name} wants to invite you!`,
+                'invite',
+                'Invite Request'.toUpperCase(),
+                userInfo,
+              );
+            }
           });
       } else {
         const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userHost?.uid && invUser?.status === 'liked');
@@ -626,14 +628,16 @@ const IO: FC = (): JSX.Element => {
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
             }
-            await sendNotification(
-              event.uid,
-              'New join request',
-              `${userInfo.name} wants to join you!`,
-              'invite',
-              'Join Request'.toUpperCase(),
-              userInfo,
-            );
+            if(guest?._data.notificationSettings?.match || guest?._data.notificationSettings?.superJoin) {
+              await sendNotification(
+                event.uid,
+                'New join request',
+                `${userInfo.name} wants to join you!`,
+                'invite',
+                'Join Request'.toUpperCase(),
+                userInfo,
+              );
+            }
           });
       }
       setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
