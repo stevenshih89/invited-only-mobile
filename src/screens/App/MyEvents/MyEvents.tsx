@@ -351,9 +351,9 @@ const MyEvents: FC<any> = ({navigation}) => {
         ownerPhoto: eventDataList?.hostImage,
         status: 'Joined'.toUpperCase(),
       });
-      const getDoc = await firestore().collection('userInfo').doc(eventDataList?.uid).get()
-      const docData = getDoc.data()
-      if(docData?.notificationSettings.myEvents) {
+      const getDoc = await firestore().collection('userInfo').doc(eventDataList?.uid).get();
+      const docData = getDoc.data();
+      if (docData?.notificationSettings.myEvents) {
         await sendNotification(
           eventDataList?.uid,
           `${user?.name} accepted your invitation`,
@@ -398,9 +398,9 @@ const MyEvents: FC<any> = ({navigation}) => {
         usersList: list?.usersList,
       });
       setIsVisibleAcceptInvitationModal(false);
-      const getDoc = await firestore().collection('userInfo').doc(list?.uid).get()
-      const docData = getDoc.data()
-      if(docData?.notificationSettings?.myEvents) {
+      const getDoc = await firestore().collection('userInfo').doc(list?.uid).get();
+      const docData = getDoc.data();
+      if (docData?.notificationSettings?.myEvents) {
         await sendNotification(list?.uid, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
       }
       showToast('inviteMatch', `You rejected ${list?.placeName} event`, 'Not now', {
@@ -433,9 +433,9 @@ const MyEvents: FC<any> = ({navigation}) => {
         usersList: list?.usersList,
       });
       setIsVisibleCancelAttendingModal(false);
-      const getDoc = await firestore().collection('userInfo').doc(list?.uid).get()
-      const docData = getDoc.data()
-      if(docData?.notificationSettings.myEvents) {
+      const getDoc = await firestore().collection('userInfo').doc(list?.uid).get();
+      const docData = getDoc.data();
+      if (docData?.notificationSettings.myEvents) {
         await sendNotification(list?.uid, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
       }
       showToast('inviteMatch', `You rejected ${list?.placeName} event`, 'Not now', {

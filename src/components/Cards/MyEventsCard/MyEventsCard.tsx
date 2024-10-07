@@ -35,8 +35,8 @@ interface MyEventsCard {
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
-  
-  const {placeName, styleContainer, imageBg, statusEvent, eventReviewed, allPeople, findAcceptedGuest, item, showGuestList, customButton} = props;
+  const {placeName, styleContainer, imageBg, statusEvent, eventReviewed, allPeople, findAcceptedGuest, item, showGuestList, customButton} =
+    props;
 
   const styles = useStyles();
 
@@ -50,7 +50,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     setMainImageEvent(cover);
   }, [imageBg]);
 
-  const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
+  const eventIsFull = item?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
@@ -71,20 +71,22 @@ const MyEventsCard: FC<MyEventsCard> = props => {
   );
 
   const getUsersListAccepted = () => {
-    const filter = item?.usersList.filter(item => item.status === 'invite_match');
+    const filter = item?.usersList.filter(user => user.status === 'invite_match');
     return filter.length;
   };
 
+  console.warn(item?.date, item?.hour);
+
   const getEventStatus = () => {
-    if (list?.isCancelled) {
+    if (item?.isCancelled) {
       return {
         plateTitle: 'Cancelled',
         plateBackgroundColor: grayScale600,
       };
     }
 
-    if (date && estimeTime) {
-      const adjustedDate = moment(`${date}, ${estimeTime}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+    if (item?.date && item?.hour) {
+      const adjustedDate = moment(`${item.date}, ${item.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
       if (adjustedDate.isBefore(moment())) {
         return {
           plateTitle: 'Expired',

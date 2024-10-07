@@ -1,5 +1,5 @@
 import React, {FC, useState, useEffect, useContext, useCallback} from 'react';
-import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
+import {View, Text, FlatList, TouchableOpacity} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';

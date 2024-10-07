@@ -44,7 +44,7 @@ const EventPreview: FC<{
   onInvite: () => void;
   superJoin: () => void;
   handleAutoSwipeRight: () => void;
-  loaderVisible: boolean
+  loaderVisible: boolean;
 }> = ({
   photos,
   date,
@@ -63,7 +63,7 @@ const EventPreview: FC<{
   loaderVisible,
   male,
   address,
-  hour
+  hour,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
@@ -176,26 +176,26 @@ const EventPreview: FC<{
       <SafeAreaView style={{flex: 1}}>
         <View style={styles.container}>
           <ScrollView>
-          <MyEventsCard
-            imageBg={photos}
-            statusEvent={true}
-            eventReviewed={true}
-            allPeople={girls + male}
-            date={date}
-            placeName={placeName}
-            accountConfirmed={true}
-            findAcceptedGuest={[]}
-            item={{
-              usersList: [],
-              photos,
-              date,
-              address,
-              hour,
-            }}
-            showGuestList={true}
-            styleContainer={{marginTop: 0}}
-            customButton={customButton()}
-          />
+            <MyEventsCard
+              imageBg={photos}
+              statusEvent={true}
+              eventReviewed={true}
+              allPeople={girls + male}
+              date={date}
+              placeName={placeName}
+              accountConfirmed={true}
+              findAcceptedGuest={[]}
+              item={{
+                usersList: [],
+                photos,
+                date,
+                address,
+                hour,
+              }}
+              showGuestList={true}
+              styleContainer={{marginTop: 0}}
+              customButton={customButton()}
+            />
           </ScrollView>
           {/* <View style={{flex: 1, paddingHorizontal: 24, marginBottom: 24}}>
             <FastImage
@@ -267,7 +267,15 @@ const EventPreview: FC<{
               </View>
             </FastImage>
           </View> */}
-          <View style={{flexDirection: 'row', marginTop: 28, width: '100%', paddingHorizontal: 16, alignItems: 'center', justifyContent: 'space-between'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 28,
+              width: '100%',
+              paddingHorizontal: 16,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
             <View style={{alignItems: 'center'}}>
               <TouchableOpacity
                 onPress={() => {

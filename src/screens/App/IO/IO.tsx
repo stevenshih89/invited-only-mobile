@@ -93,7 +93,7 @@ const IO: FC = (): JSX.Element => {
   const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
   const {activeEventDate} = useContext(EventsDate);
-  
+
   const userHost = useUser((i: any) => i?.user);
   const setUser = useUser((i: any) => i?.setUser);
 
@@ -559,7 +559,7 @@ const IO: FC = (): JSX.Element => {
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
             }
-            if(guest?._data.notificationSettings?.match || guest?._data.notificationSettings?.superInvite) {
+            if (guest?._data.notificationSettings?.match || guest?._data.notificationSettings?.superInvite) {
               await sendNotification(
                 forUserUid,
                 'New invite request',
@@ -628,7 +628,7 @@ const IO: FC = (): JSX.Element => {
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
             }
-            if(guest?._data.notificationSettings?.match || guest?._data.notificationSettings?.superJoin) {
+            if (guest?._data.notificationSettings?.match || guest?._data.notificationSettings?.superJoin) {
               await sendNotification(
                 event.uid,
                 'New join request',
@@ -779,7 +779,7 @@ const IO: FC = (): JSX.Element => {
         : activeEventDate === 'this_weekend'
         ? filterDataByWeekMonth(enrichedEvents, 7)
         : filterDataByWeekMonth(enrichedEvents, 31);
-    
+
     if (!filterDataWM.length) {
       return;
     }
