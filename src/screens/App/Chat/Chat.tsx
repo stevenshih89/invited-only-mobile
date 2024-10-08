@@ -58,6 +58,7 @@ type ItemEventsJoiningProps = {
   title: string;
   activeEvent: string;
   hostUid: string;
+  usersList: [];
 };
 
 interface ChatProps {
@@ -226,7 +227,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     );
   };
 
-  const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data, activeEvent, hostUid}: ItemEventsJoiningProps) => {
+  const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data, activeEvent, hostUid, usersList}: ItemEventsJoiningProps) => {
     const statusColor = handleCheckStatusStyles(status);
     return (
       <View style={styles.itemEventsJoining}>
@@ -268,6 +269,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           setHostMenu={setHostMenu}
           hostMenu={hostMenu}
           hostUid={hostUid}
+          usersList={usersList}
+          eventId={activeEvent}
         />
         {chats?.map((i: any) => (
           <TouchableOpacity
@@ -400,6 +403,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               title: eventData?.placeName,
               hostUid: eventData?.uid,
               activeEvent: chat?.activeEvent,
+              usersList: eventData?.usersList,
               chats: chat?.chats
                 .filter(chat => chat.uid === user?.uid)
                 .map(chat => ({...chat, avatar: eventData?.hostImage, name: eventData?.hostName})),
@@ -476,7 +480,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                 <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />
               </View>
             )}
-            renderItem={({item}) => {
+            renderItem={({item}) => {              
               return (
                 <ItemEventsJoining
                   image={item.image}
@@ -487,6 +491,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   girlInvitation={item.girlInvitation}
                   hostUid={item.hostUid}
                   status={item.status}
+                  usersList={item.usersList}
                 />
               );
             }}

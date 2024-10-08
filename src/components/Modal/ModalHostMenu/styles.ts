@@ -17,11 +17,11 @@ const useStyles = () => {
     imageBg: {},
     wrapper: {
       backgroundColor: black2Color,
-      height: '85%',
+      marginBottom: 30,
       borderTopLeftRadius: 30,
       borderTopRightRadius: 30,
       alignItems: 'center',
-      paddingHorizontal: screenWidth / 10.5,
+      paddingHorizontal: 24,
     },
     userPhoto: {
       width: 50,
@@ -51,7 +51,7 @@ const useStyles = () => {
     },
     textButton: {
       color: whiteColor,
-      fontFamily: Satoshi400,
+      fontFamily: Satoshi500,
       fontSize: RFValue(18, 812),
       marginLeft: 10,
     },
