@@ -337,7 +337,6 @@ const EventCreating: FC = () => {
         hostImage: userHost?.photos[0]?.image,
         hostName: userHost?.name,
         photos: photos,
-        hostFcmToken: userHost?.fcmToken,
         isCancelled: false,
       };
 
@@ -392,7 +391,6 @@ const EventCreating: FC = () => {
       //     hostImage: userHost?.photos[0]?.image,
       //     hostName: userHost?.name,
       //     photos: photos,
-      //     hostFcmToken: userHost?.fcmToken,
       //   })
       //   .then(async () => {
       //     showToast('inviteMatch', 'Go to my events >', 'Event successfully created ');

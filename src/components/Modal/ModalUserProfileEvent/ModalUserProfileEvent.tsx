@@ -24,7 +24,7 @@ import {calculateAge} from 'helpers/calculateAge.ts';
 import {useFocusEffect} from '@react-navigation/native';
 import {sendNotification} from 'helpers/fcmHelper.ts';
 import ModalFullEvent from '../ModalFullEvent/index.tsx';
-import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS} from 'constants/common.ts';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common.ts';
 
 interface ModalUserProfileEventProps {
   isModalVisible?: boolean;
@@ -109,13 +109,20 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         usersList: updateUsersList,
         requestsList: updateRequestsList,
       });
-      const getDate = await firestore().collection('userInfo').doc(uid).get()
-      const docData = getDate.data()
+      const getDate = await firestore().collection('userInfo').doc(uid).get();
+      const docData = getDate.data();
       // console.warn('usersListData', usersListData);
       const rejectedUser = usersListData.find((i: any) => i?.uid === uid);
-      if (rejectedUser?.status !== 'notAccepted') {
-        if(docData?.notificationSettings.requests || docData?.notificationSettings.joinedEvent) {
-          await sendNotification(uid, `${userHost?.name} rejected your request`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), userHost);
+      if (rejectedUser?.status !== NOT_ACCEPTED_STATUS) {
+        if (docData?.notificationSettings.requests || docData?.notificationSettings.joinedEvent) {
+          await sendNotification(
+            uid,
+            `${userHost?.name} rejected your request`,
+            'Not now.',
+            'Rejected',
+            'Rejected'.toUpperCase(),
+            userHost,
+          );
         }
       }
       showToast('inviteMatch', `You rejected ${rejectedUser?.name}`, 'Not now', {
@@ -288,11 +295,11 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   const handleApproveGuestFromHost = async () => {
     try {
       if (uid) {
-        const getDate = await firestore().collection('userInfo').doc(uid).get()
-        const docData = getDate.data()
+        const getDate = await firestore().collection('userInfo').doc(uid).get();
+        const docData = getDate.data();
         await updateChatDocument();
         await updateEventDocument();
-        if(docData?.notificationSettings.requests) {
+        if (docData?.notificationSettings.requests) {
           await sendNotification(uid, 'Please confirm your attendence', 'Request approved', 'Approve', 'Approved'.toUpperCase(), userInfo);
         }
         showToast('inviteMatch', `Waiting for ${userGuest?.name} to accept your invitation`, 'Almost there!', {

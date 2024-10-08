@@ -11,7 +11,7 @@ import auth from '@react-native-firebase/auth';
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
-import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common.ts';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, LIKED, NOT_ACCEPTED_STATUS, screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {eventCreatingStackPath, myProfileViewPath, paymentPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
@@ -60,6 +60,7 @@ import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import moment from 'moment';
+import {Event, EventData} from 'src/types/event';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -79,11 +80,10 @@ const IO: FC = (): JSX.Element => {
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
-  const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState();
   const [lastVisible, setLastVisible] = useState(false);
-  const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
-  const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
-  const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
+  const [totalQuantityGuests] = useState<number>(0);
+  const [acceptQuantityGuest] = useState<number>(0);
+  const [totalRequestsGuests] = useState<number>(0);
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
   const [currentEventInfo, setCurrentEventInfo] = useState(null);
@@ -157,7 +157,7 @@ const IO: FC = (): JSX.Element => {
   }, [activeEvent]);
 
   useEffect(() => {
-    const handleAppStateChange = async nextAppState => {
+    const handleAppStateChange = async (nextAppState: any) => {
       try {
         if (nextAppState === 'active' || nextAppState === 'inactive') {
           await firestore()
@@ -278,7 +278,7 @@ const IO: FC = (): JSX.Element => {
     }, []),
   );
 
-  const decrementSuperInvite = async (item: any[], coinAnimationTimer = 0) => {
+  const decrementSuperInvite = async (item: UserInfo, coinAnimationTimer = 0) => {
     try {
       if (counterSuperInvites > 0) {
         setTimeout(() => {
@@ -320,7 +320,7 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const handleOpenSuperInvite = (item: any[], coinAnimationTimer: number): void => {
+  const handleOpenSuperInvite = (item: UserInfo, coinAnimationTimer: number): void => {
     setActiveSuperInviteUser(item);
     decrementSuperInvite(item, coinAnimationTimer);
     decrementCounterSuperInvites(1);
@@ -362,12 +362,12 @@ const IO: FC = (): JSX.Element => {
     const today = new Date();
     const nextWeek = new Date(today);
     nextWeek.setDate(today.getDate() + days);
-    const filter = data.filter(item => {
+    const filter = data.filter((item: Event.Info) => {
       if (!item || !item.date) {
         return false;
       }
       const parts = item.date.split('.');
-      const itemDate = new Date(parts[2], parts[1] - 1, parts[0]);
+      const itemDate = new Date(+parts[2], +parts[1] - 1, +parts[0]);
       if (isNaN(itemDate.getTime())) {
         return false;
       }
@@ -407,10 +407,12 @@ const IO: FC = (): JSX.Element => {
       try {
         const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
 
+        const userInfoData = userInfoDoc.data() as UserInfo;
+
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
 
-          if (userInfoDoc.data().accountReviewed && !userInfoDoc.data().accountConfirmed) {
+          if (userInfoData.accountReviewed && !userInfoData.accountConfirmed) {
             setRejectModalVisible(true);
           }
         }
@@ -480,30 +482,35 @@ const IO: FC = (): JSX.Element => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
+      const guestData = guest.data() as UserInfo;
+
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
       const eventData = await firestore().collection('Events').doc(activeEventId).get();
 
-      const event = eventData.data();
+      if (!eventData.exists) {
+        return;
+      }
+
+      const event = eventData.data() as EventData;
       if (!event || event?.statusEvent === false || event?.isCancelled === true) {
         return;
       }
 
       const userInvited = {
-        gender: isHost ? guest.data()?.gender : userHost?.gender,
-        name: isHost ? guest.data()?.name : userHost?.name,
-        status: 'liked',
+        gender: isHost ? guestData?.gender : userHost?.gender,
+        name: isHost ? guestData?.name : userHost?.name,
+        status: LIKED,
         superInvite: superInvite ? superInvite : false,
-        uid: isHost ? guest.data()?.uid : userHost?.uid,
-        userPhoto: isHost ? guest.data()?.photos[0]?.image : userHost?.photos[0]?.image,
-        fcmToken: isHost ? guest.data()?.fcmToken : userHost?.fcmToken,
+        uid: isHost ? guestData?.uid : userHost?.uid,
+        userPhoto: isHost ? guestData?.photos[0]?.image : userHost?.photos[0]?.image,
+        fcmToken: isHost ? guestData?.fcmToken : userHost?.fcmToken,
       };
 
       if (isHost) {
         const maxGuests = event?.male + event?.female;
 
         const acceptedUsersList = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS);
-        console.warn('maxGuests', maxGuests, acceptedUsersList.length);
 
         if (acceptedUsersList?.length >= maxGuests) {
           showToast('inviteMatch', 'You have reached the maximum number of guests', 'Invite');
@@ -511,7 +518,7 @@ const IO: FC = (): JSX.Element => {
           return;
         }
 
-        const matchedGuest = event.requestsList?.find(reqUser => reqUser?.uid === forUserUid && reqUser?.status === 'liked');
+        const matchedGuest = event.requestsList?.find(reqUser => reqUser?.uid === forUserUid && reqUser?.status === LIKED);
         let data = {};
         let matchedGuestData: MatchData;
         if (matchedGuest) {
@@ -529,19 +536,19 @@ const IO: FC = (): JSX.Element => {
             eventId: activeEventId,
             superInvite: superInvite ? superInvite : false,
             userHostImageUri: userHost?.photos[0]?.image,
-            joinEvents: guest?._data.joinEvents,
-            location: guest?._data.location,
+            joinEvents: guestData.joinEvents,
+            location: guestData.location,
             premium: userInfo?.accountPremium,
             dateHost: userInfo?.date,
-            dateGuest: guest?._data.date,
-            onlineGuest: guest?._data.online,
-            accountConfirmedHost: guest?._data.accountConfirmed,
+            dateGuest: guestData.date,
+            onlineGuest: guestData.online,
+            accountConfirmedHost: guestData.accountConfirmed,
             accountConfirmedGuest: userInfo?.accountConfirmed,
-            usersListHost: eventData?._data.usersList,
+            usersListHost: event.usersList,
             accountTypeHost: userInfo?.accountType,
-            accountTypeGuest: guest?._data.accountType,
-            eventImage: eventData?._data.photos[0].image,
-            guestsInvited: eventData._data.usersList.length,
+            accountTypeGuest: guestData.accountType,
+            eventImage: event.photos[0].image,
+            guestsInvited: event.usersList.length,
           };
         } else {
           data = {
@@ -560,7 +567,7 @@ const IO: FC = (): JSX.Element => {
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
             }
-            if (guest?._data.notificationSettings?.match || guest?._data.notificationSettings?.superInvite) {
+            if (guestData.notificationSettings?.match || guestData.notificationSettings?.superInvite) {
               await sendNotification(
                 forUserUid,
                 'New invite request',
@@ -572,7 +579,7 @@ const IO: FC = (): JSX.Element => {
             }
           });
       } else {
-        const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userHost?.uid && invUser?.status === 'liked');
+        const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userHost?.uid && invUser?.status === LIKED);
         let data = {};
         let matchedGuestData: MatchData;
         if (matchedGuest) {
@@ -600,17 +607,17 @@ const IO: FC = (): JSX.Element => {
             userHostImageUri: event?.hostImage,
             joinEvents: userInfo?.joinEvents,
             location: userInfo?.location,
-            premium: guest?._data.accountPremium,
-            dateHost: guest?._data.date,
+            premium: guestData.accountPremium,
+            dateHost: guestData.date,
             dateGuest: userInfo?.date,
             onlineGuest: userInfo?.online,
             accountConfirmedHost: userInfo?.accountConfirmed,
             accountConfirmedGuest: userInfo?.accountConfirmed,
-            usersListHost: eventData?._data.usersList,
-            accountTypeHost: guest?._data.accountType,
+            usersListHost: event.usersList,
+            accountTypeHost: guestData.accountType,
             accountTypeGuest: userInfo?.accountType,
-            eventImage: eventData?._data.photos[0].image,
-            guestsInvited: eventData._data.usersList.length,
+            eventImage: event.photos[0].image,
+            guestsInvited: event.usersList.length,
           };
         } else {
           data = {
@@ -624,12 +631,11 @@ const IO: FC = (): JSX.Element => {
           .update(data)
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
-              console.log('proverka guest');
               await handleCreateChat(matchedGuestData);
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
             }
-            if (guest?._data.notificationSettings?.match || guest?._data.notificationSettings?.superJoin) {
+            if (guestData.notificationSettings?.match || guestData.notificationSettings?.superJoin) {
               await sendNotification(
                 event.uid,
                 'New join request',
@@ -738,17 +744,17 @@ const IO: FC = (): JSX.Element => {
           ...doc.data(),
         }))
         ?.filter(event => {
-          if (event?.requestsList?.find(j => j?.uid === user?.uid)) {
+          if (event?.requestsList?.find((j: Event.User) => j?.uid === user?.uid)) {
             return false;
           }
           if (
             event?.usersList?.find(
-              j =>
+              (j: Event.User) =>
                 j?.uid === user?.uid &&
                 (j?.status === INVITE_MATCH_STATUS ||
                   j?.status === APPROVED_STATUS ||
                   j?.status === ACCEPTED_STATUS ||
-                  j?.status === 'notAccepted'),
+                  j?.status === NOT_ACCEPTED_STATUS),
             )
           ) {
             return false;
@@ -774,7 +780,7 @@ const IO: FC = (): JSX.Element => {
         if (!doc?.exists) {
           return null;
         } else {
-          const userData = doc?.data();
+          const userData = doc?.data() as UserInfo;
           return {...element, userPhotos: userData?.photos, hostInfo: userData};
         }
       });
@@ -841,9 +847,9 @@ const IO: FC = (): JSX.Element => {
                 placeName={event?.placeName}
                 estimeTime={event?.hour}
                 numberOfGirlsInvited={event?.female}
-                invitingPeople={event?.usersxwList?.filter(i => i?.status !== 'notAccepted')}
-                accountConfirmed={user?.accountConfirmed}
-                findAcceptedGuest={event?.usersList?.filter(event => event.status === INVITE_MATCH_STATUS)}
+                invitingPeople={event?.usersList?.filter((i: Event.User) => i?.status !== NOT_ACCEPTED_STATUS)}
+                accountConfirmed={userInfo?.accountConfirmed}
+                findAcceptedGuest={event?.usersList?.filter((eventUser: Event.User) => eventUser.status === INVITE_MATCH_STATUS)}
                 totalRequestsGuests={event?.requestsList?.length}
                 item={event}
                 showGuestList={false}
@@ -1143,12 +1149,14 @@ const IO: FC = (): JSX.Element => {
     let users: any;
     setLoading(true);
 
+    const usersQuery = firestore().collection('userInfo');
+
     if (activeEvent.male > 0 && activeEvent.female > 0) {
-      users = await firestore().collection('userInfo').limit(20).get();
+      users = await usersQuery.where('uid', '!=', userHost?.uid).limit(20).get();
     } else if (activeEvent.male > 0) {
-      users = await firestore().collection('userInfo').where('gender', '==', 'man').limit(20).get();
+      users = await usersQuery.where('uid', '!=', userHost?.uid).where('gender', '==', 'man').limit(20).get();
     } else if (activeEvent.female > 0) {
-      users = await firestore().collection('userInfo').where('gender', '==', 'woman').limit(20).get();
+      users = await usersQuery.where('uid', '!=', userHost?.uid).where('gender', '==', 'woman').limit(20).get();
     }
 
     const getActualDataEvent = (await firestore().collection('Events').doc(activeEvent?.id).get()).data();
@@ -1163,7 +1171,7 @@ const IO: FC = (): JSX.Element => {
     const data: any[] = [];
     const usersList = await users?._docs;
     usersList
-      ?.filter(item => {
+      ?.filter((item: {_data: UserInfo}) => {
         if (blockedUsersList.includes(item?._data.uid)) {
           return false;
         }
@@ -1172,30 +1180,30 @@ const IO: FC = (): JSX.Element => {
           return false;
         }
 
-        if (getActualDataEvent?.rejectsList?.find(j => j?.uid === item?._data.uid)) {
+        if (getActualDataEvent?.rejectsList?.find((j: Event.RejectUser) => j?.uid === item?._data.uid)) {
           return false;
         }
 
-        if (getActualDataEvent?.usersList?.find(j => j?.uid === item?._data.uid)) {
-          return false;
-        }
-        if (item?._data?.uid === userHost?.uid) {
+        if (getActualDataEvent?.usersList?.find((j: Event.User) => j?.uid === item?._data.uid)) {
           return false;
         }
         return true;
       })
-      ?.map((item: any, index: number): void => {
+      ?.map((item: {_data: UserInfo}, index: number): void => {
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} =
           item?._data;
 
-        const findSuperJoin = getActualDataEvent?.requestsList.find(i => {
+        const findSuperJoin = getActualDataEvent?.requestsList.find((i: Event.User) => {
           if (item?._data.uid === i.uid && i.superInvite) {
             return true;
           }
         });
 
         setNameUser(name);
-        const girlPhotos = item?._data?.photos?.filter((item: User.Photo) => item.image !== null).map((image: User.Photo) => image?.image);
+        const girlPhotos: string[] = item?._data?.photos
+          ?.filter((userPhotos: User.Photo) => userPhotos.image !== null)
+          .map((image: User.Photo) => `${image?.image}`);
+
         const interests = item?._data?.interests?.map((i: User.Interests) => i?.title);
         const smoking = item?._data?.smoke?.title;
 
@@ -1227,7 +1235,7 @@ const IO: FC = (): JSX.Element => {
                 userInfo={userInfo}
               />
               <View style={styles.bioWrapper}>
-                <Text style={[styles.titleSection, bio && styles.mt31]}>My basics</Text>
+                <Text style={[styles.titleSection, bio ? styles.mt31 : {}]}>My basics</Text>
                 <View style={styles.wrapperTextTags}>
                   {gender && (
                     <Text style={[styles.textTagsAboutMe, styles.ml18]}>
@@ -1266,7 +1274,7 @@ const IO: FC = (): JSX.Element => {
                       <View style={{marginRight: 4}}>
                         <WineIcon />
                       </View>
-                      {alcohol?.title}
+                      {alcohol}
                     </Text>
                   )}
                   {smoking && (
@@ -1288,17 +1296,17 @@ const IO: FC = (): JSX.Element => {
                   <>
                     <Text style={[styles.titleSection, styles.mt31]}>My interests</Text>
                     <View style={styles.wrapperInterestsTags}>
-                      {interests?.map((interests: any, index: number) => (
-                        <View key={index} style={styles.interestsTags}>
-                          <Text style={styles.textTagsInterests}>{interests}</Text>
+                      {interests.map((interest: string | null, idx: number) => (
+                        <View key={idx} style={styles.interestsTags}>
+                          <Text style={styles.textTagsInterests}>{interest}</Text>
                         </View>
                       ))}
                     </View>
                   </>
                 )}
                 <View style={styles.wrapperImageSectionFaceGirl}>
-                  {girlPhotos?.map((photo: any, index: number) => (
-                    <Image key={index} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
+                  {girlPhotos?.map((photo: string, photoIndex: number) => (
+                    <Image key={photoIndex} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
                   ))}
                 </View>
                 <View style={styles.wrapperButtonsFooter}>
@@ -1480,14 +1488,14 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const sortByDate = (events: any) => {
-    events?.sort((a, b) => {
+  const sortByDate = (eventsForSort: {info: EventData}[]) => {
+    eventsForSort?.sort((a, b) => {
       let dateA: Date | any = new Date(a?.info?.date.split('.').reverse().join('-'));
       let dateB: Date | any = new Date(b?.info?.date.split('.').reverse().join('-'));
 
       return dateA - dateB;
     });
-    return events;
+    return eventsForSort;
   };
 
   const sortByInterests = (dataGuest: any, userHost: any) => {
@@ -1497,7 +1505,7 @@ const IO: FC = (): JSX.Element => {
       return [];
     }
 
-    const userInterests = userHost?.interests?.map(interest => interest?.title);
+    const userInterests = userHost?.interests?.map((interest: User.Interests) => interest?.title);
 
     const matchedGuests = filteredGuests?.sort(guest => {
       if (
@@ -1507,7 +1515,7 @@ const IO: FC = (): JSX.Element => {
       ) {
         return false;
       }
-      return guest?.info?.hostInfo.interests?.some(interest => userInterests?.includes(interest.title));
+      return guest?.info?.hostInfo.interests?.some((interest: User.Interests) => userInterests?.includes(interest.title));
     });
     return matchedGuests;
   };
@@ -1606,7 +1614,7 @@ const IO: FC = (): JSX.Element => {
         <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos[0].image} />
         <ModalFullEvent
           isVisible={isVisibleModalFullEvent}
-          idEvent={activeEvent.id}
+          idEvent={activeEvent?.id}
           setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
         />
         {totalQuantityGuests > 0 && (

@@ -8,7 +8,7 @@ import PeopleIcon from 'assets/images/icons/Users.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import MoreIcon from 'assets/images/icons/more-white.svg';
 import ClockFilledIcon from 'assets/images/icons/clock-white-fill.svg';
-import {FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {FlatList, Image, ImageBackground, Text, TouchableOpacity} from 'react-native';
 import {ScrollView, View} from 'react-native';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -17,33 +17,34 @@ import {commonStackPath, eventEditingPath} from 'constants/pathLocations';
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
 import ModalUserProfileEvent from 'components/Modal/ModalUserProfileEvent/ModalUserProfileEvent.tsx';
-import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight, screenWidth} from 'constants/common';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS, screenHeight, screenWidth} from 'constants/common';
 import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {useFocusEffect} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import {Event, EventData} from 'src/types/event';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
   const {list} = route?.params;
-  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name, id} = list;
+  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name, id} = list as EventData;
 
   const [usersListData, setUsersListsData] = useState<any>(usersList);
   const [activeTab, setActiveTab] = useState(GUEST_LIST);
 
   const [isModalVisible, setModalVisible] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<Event.User | null>(null);
   const [modalReport, setModalReport] = useState(false);
   const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
   const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
   const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
 
-  const invitedGuests = usersListData?.filter(i => i?.status === INVITE_MATCH_STATUS);
-  const approvedGuests = usersListData?.filter(i => i?.status === APPROVED_STATUS);
-  const acceptedGuests = usersListData?.filter(i => i?.status === ACCEPTED_STATUS);
-  const rejectedGuests = usersListData?.filter(i => i?.status === 'notAccepted');
+  const invitedGuests = usersListData?.filter((i: Event.User) => i?.status === INVITE_MATCH_STATUS);
+  const approvedGuests = usersListData?.filter((i: Event.User) => i?.status === APPROVED_STATUS);
+  const acceptedGuests = usersListData?.filter((i: Event.User) => i?.status === ACCEPTED_STATUS);
+  const rejectedGuests = usersListData?.filter((i: Event.User) => i?.status === NOT_ACCEPTED_STATUS);
 
   const maxGuests = female + male;
 

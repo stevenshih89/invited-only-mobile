@@ -24,7 +24,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import ModalReport from '../ModalReport/ModalReport';
-import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS} from 'constants/common';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common';
 
 interface ModalUserMenuProps {
   isModalVisible: boolean;
@@ -267,8 +267,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       return;
     }
 
-    const getDoc = await firestore().collection('userInfo').doc(uid).get()
-    const uidData = getDoc.data()
+    const getDoc = await firestore().collection('userInfo').doc(uid).get();
+    const uidData = getDoc.data();
 
     try {
       const updatedUsersList = eventData?.usersList?.map(user => {
@@ -288,7 +288,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         ownerPhoto: userGuest?.imagePhoto,
         status: 'GUEST APPROVED',
       });
-      if(uidData?.notificationSettings?.requests || uidData?.notificationSettings?.joinedEvent) {
+      if (uidData?.notificationSettings?.requests || uidData?.notificationSettings?.joinedEvent) {
         await sendNotification(uid, 'Request approved', 'Please confirm your attendence', 'Approve', 'Approved'.toUpperCase(), user);
       }
     } catch (e) {
@@ -309,8 +309,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       return;
     }
 
-    const getDoc = await firestore().collection('userInfo').doc(eventDataList?.uid).get()
-    const docData = getDoc.data()
+    const getDoc = await firestore().collection('userInfo').doc(eventDataList?.uid).get();
+    const docData = getDoc.data();
 
     try {
       const updatedUsersList = eventDataList?.usersList?.map(userItem => {
@@ -326,7 +326,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       await firestore().collection('Events').doc(activeEvent).update({
         usersList: updatedUsersList,
       });
-      if(docData?.notificationSettings?.joinedEvent) {
+      if (docData?.notificationSettings?.joinedEvent) {
         await sendNotification(
           eventDataList?.uid,
           'Invitation Accepted!',
@@ -584,7 +584,9 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
             {userProfileItemCard}
             {/* gap */}
             <View style={{height: 24}} />
-            {(userGuest?.status === ACCEPTED_STATUS || userGuest?.status === INVITE_MATCH_STATUS || userGuest?.status === 'notAccepted') &&
+            {(userGuest?.status === ACCEPTED_STATUS ||
+              userGuest?.status === INVITE_MATCH_STATUS ||
+              userGuest?.status === NOT_ACCEPTED_STATUS) &&
             uid === hostUid ? null : (
               <View style={{width: '100%'}}>
                 <TouchableOpacity
@@ -613,7 +615,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
               <InfoIcon width={20} height={20} />
               <Text style={styles.textButton}>Block & Report</Text>
             </TouchableOpacity>
-            {userGuest?.status !== 'notAccepted' && (
+            {userGuest?.status !== NOT_ACCEPTED_STATUS && (
               <TouchableOpacity
                 onPress={() => setCancelInvitationState(true)}
                 style={[styles.buttonFooter, {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>

@@ -9,6 +9,7 @@ const ALL = 'all';
 const TODAY = 'today';
 const THIS_WEEKEND = 'this_weekend';
 const THIS_MONTH = 'this_month';
+const LIKED = 'liked';
 const APPROVED_STATUS = 'approved';
 const ACCEPTED_STATUS = 'accepted';
 const INVITE_MATCH_STATUS = 'invite_match';
@@ -24,6 +25,7 @@ export {
   THIS_WEEKEND,
   ALL,
   THIS_MONTH,
+  LIKED,
   APPROVED_STATUS,
   ACCEPTED_STATUS,
   INVITE_MATCH_STATUS,

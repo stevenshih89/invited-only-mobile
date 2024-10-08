@@ -1,8 +1,8 @@
-import {ActivityIndicator, Alert, FlatList, Text, View, Image} from 'react-native';
+import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
 import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
 //import components
 import useStyles from './styles';
-import {blackColor, lightGray10Color, orangeClose, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGray10Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
@@ -21,16 +21,17 @@ import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount'
 import Loading from 'components/Loading/Loading';
 import moment from 'moment';
 import Match, {MatchData} from '../IO/screens/Match/Match';
-import {showToast} from 'helpers/showToast';
 import FullEvent from 'components/FullEvent';
 import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
-import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
+import {useUserProfileChangeSubscription} from 'helpers/userProfile';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import FastImage from 'react-native-fast-image';
-import {ACCEPTED_STATUS} from 'constants/common';
+import {ACCEPTED_STATUS, LIKED} from 'constants/common';
+import {Event, EventData} from 'src/types/event';
+import {UserInfo} from 'src/types/userInfo';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
@@ -41,9 +42,9 @@ const Requests: FC = (): ReactElement => {
   const {activeEvent} = useContext(EventContext);
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
-  const [userInfo, setUserInfoData] = useState<any>([]);
-  const [dataForGuest, setDataForGuest] = useState([]);
-  const [myEventsList, setMyEventsList] = useState([]);
+  const [userInfo, setUserInfoData] = useState<UserInfo>({});
+  const [dataForGuest, setDataForGuest] = useState<EventData[]>([]);
+  const [myEventsList, setMyEventsList] = useState<EventData[]>([]);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [matchData, setMatchData] = useState<MatchData>({});
@@ -59,11 +60,11 @@ const Requests: FC = (): ReactElement => {
 
   const {accountConfirmed} = useUserProfileChangeSubscription();
   useEffect(() => {
-    if (!Object.keys(userInfo).length) {
+    if (!Object.keys(userInfo)?.length) {
       return;
     }
 
-    setUserInfoData((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
+    setUserInfoData((prev: UserInfo) => ({...prev, accountConfirmed}));
   }, [accountConfirmed]);
 
   const handleCloseMatch = (): void => {
@@ -71,14 +72,14 @@ const Requests: FC = (): ReactElement => {
   };
 
   const fetchHostRequests = async () => {
-    const user = auth().currentUser;
-    if (user && activeEvent !== 'host') {
+    const currentUser = auth().currentUser;
+    if (currentUser && activeEvent !== 'host') {
       try {
         const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
-        const myEventsQuery = await firestore().collection('Events').where('uid', '==', user.uid).get();
+        const myEventsQuery = await firestore().collection('Events').where('uid', '==', currentUser.uid).get();
 
         if (!myEventsQuery.empty) {
-          const eventList = myEventsQuery?.docs.map(i => i?.data());
+          const eventList = myEventsQuery?.docs.map(i => i?.data()) as EventData[];
           setMyEventsList(eventList);
         } else {
           setMyEventsList([]);
@@ -92,7 +93,7 @@ const Requests: FC = (): ReactElement => {
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
       }
-    } else if (user && activeEvent === 'host') {
+    } else if (currentUser && activeEvent === 'host') {
       try {
         const querySnapshot = await firestore().collection('Events').get();
         const data = querySnapshot?.docs?.map(i => i?.data());
@@ -107,10 +108,10 @@ const Requests: FC = (): ReactElement => {
     }
   };
 
-  const filterByUid = (array, uid) => {
-    return array?.filter(item => {
+  const filterByUid = (array: EventData[], uid: string) => {
+    return array?.filter((item: EventData) => {
       if (Array?.isArray(item?.usersList)) {
-        return item?.usersList?.some(request => request?.uid === uid && request?.status === 'liked');
+        return item?.usersList?.some((request: Event.User) => request?.uid === uid && request?.status === LIKED);
       } else {
         return false;
       }
@@ -118,13 +119,16 @@ const Requests: FC = (): ReactElement => {
   };
 
   const fetchGuestRequests = async () => {
-    const user = auth().currentUser;
-    if (user && activeEvent) {
+    const currentUser = auth().currentUser;
+    if (currentUser && activeEvent) {
       try {
         const querySnapshot = await firestore().collection('Events').get();
-        const data = querySnapshot?.docs?.map(i => i?.data());
-        // // console.log('filter', filterByUid(data, user?.uid));
-        const filterUid = filterByUid(data, user?.uid);
+        if (querySnapshot.empty) {
+          return;
+        }
+        const data = querySnapshot?.docs?.map(i => i?.data()) as EventData[];
+        // // console.log('filter', filterByUid(data, currentUser?.uid));
+        const filterUid = filterByUid(data, currentUser?.uid);
 
         // // console.log('filterUid', filterUid);
         setDataForGuest(filterUid);
@@ -136,14 +140,14 @@ const Requests: FC = (): ReactElement => {
 
   const fetchUserInfo = async () => {
     setLoading(true);
-    const user = auth()?.currentUser;
-    if (user) {
+    const currentUser = auth()?.currentUser;
+    if (currentUser) {
       try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        const userInfoDoc = await firestore().collection('userInfo').doc(currentUser.uid).get();
         if (!userInfoDoc.exists) {
           return;
         }
-        const data = userInfoDoc.data();
+        const data = userInfoDoc.data() as UserInfo;
         setUserInfoData(data);
         setLoading(false);
       } catch (error: any) {
@@ -306,14 +310,14 @@ const Requests: FC = (): ReactElement => {
   }
 
   const getUsersListAccepted = () => {
-    const filter = activeEvent?.usersList.filter(item => item.status === ACCEPTED_STATUS);
+    const filter = activeEvent?.usersList.filter((item: Event.User) => item.status === ACCEPTED_STATUS);
     return filter.length;
   };
 
   return (
     <>
       <View style={styles.container}>
-        {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
+        {userInfo?.photos?.length && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos[0].image} />}
         <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
         <ModalFullEvent
           isVisible={isVisibleModalFullEvent}
@@ -422,7 +426,7 @@ const Requests: FC = (): ReactElement => {
                 // @ts-ignore
                 <ItemRequestGuest
                   list={item}
-                  item={item?.usersList?.filter(i => i?.uid === user?.uid)}
+                  item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
                   setDataForGuest={setDataForGuest}
                   handleOpenMatch={handleOpenMatch}
                 />

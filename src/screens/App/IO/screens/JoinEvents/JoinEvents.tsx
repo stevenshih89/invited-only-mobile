@@ -4,7 +4,7 @@ import {TinderCard} from 'rn-tinder-card-bn-digital';
 
 //import components
 import useStyles from 'screens/App/IO/screens/JoinEvents/styles.ts';
-import {screenHeight} from 'constants/common.ts';
+import {LIKED, screenHeight} from 'constants/common.ts';
 import Button from 'components/Button/Button.tsx';
 import {eventCreatingStackPath, userProfilePath} from 'constants/pathLocations.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
@@ -256,7 +256,7 @@ const JoinEvents = ({navigation}: any) => {
         name: userHost?.name,
         superInvite: false,
         uid: userHost?.uid,
-        status: 'liked',
+        status: LIKED,
         userPhoto: userHost?.photos[0]?.image,
       };
 

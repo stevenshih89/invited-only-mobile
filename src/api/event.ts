@@ -28,7 +28,6 @@ export type IOEvent = {
   hostImage: string;
   hostName: string;
   photos: IOEventPhoto[];
-  hostFcmToken: string;
 };
 
 export async function createEvent(uid: string, event: IOEvent): Promise<boolean> {

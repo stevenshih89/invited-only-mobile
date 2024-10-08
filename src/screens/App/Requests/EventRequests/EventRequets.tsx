@@ -1,28 +1,25 @@
-import {Alert, Image, ImageBackground, TouchableOpacity, View} from 'react-native';
+import {Alert, Image, View} from 'react-native';
 import {Text} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
-import Home from 'assets/images/icons/home.svg';
 import Calendar from 'assets/images/icons/calendar-white.svg';
 import User from 'assets/images/icons/user.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
-import FlashFilled from 'assets/images/icons/flash-filled.svg';
 import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
 import useStyles from './styles';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {blackColor, lightGray11Color, lightGreenColor, lightRed1Color, transparent60Color, whiteColor} from 'constants/colors';
-import {calculateAge} from 'helpers/calculateAge';
+import {blackColor, lightGray11Color, lightRed1Color, transparent60Color, whiteColor} from 'constants/colors';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
-import {useEffect, useId, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 import {formatDate} from 'helpers/formatDate';
-import {ACCEPTED_STATUS} from 'constants/common';
+import {ACCEPTED_STATUS, LIKED} from 'constants/common';
 
 const EventsRequest = ({item, list}: any) => {
   // console.log('item', item);
@@ -80,7 +77,7 @@ const EventsRequest = ({item, list}: any) => {
     const userAccepted = {
       gender: item?.gender,
       name: item?.name,
-      status: 'liked',
+      status: LIKED,
       superInvite: false,
       uid: item?.uid,
       userPhoto: item?.userPhoto,
@@ -95,9 +92,9 @@ const EventsRequest = ({item, list}: any) => {
         requestsList: updateRequestsList,
       });
       showToast('inviteMatch', '', 'The request has been confirmed');
-      const getDoc = await firestore().collection('userInfo').doc(item?.uid).get()
-      const docData = getDoc.data()
-      if(docData?.notificationSettings.joinedEvent) {
+      const getDoc = await firestore().collection('userInfo').doc(item?.uid).get();
+      const docData = getDoc.data();
+      if (docData?.notificationSettings.joinedEvent) {
         sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
       }
     } catch (e) {

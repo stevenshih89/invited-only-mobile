@@ -15,6 +15,7 @@ import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import MatchInfoCard from 'components/MatchInfoCard';
 import {calculateAge} from 'helpers/calculateAge';
+import {Event} from 'src/types/event';
 
 export interface MatchData {
   type?: string;
@@ -34,7 +35,7 @@ export interface MatchData {
   onlineGuest: boolean;
   accountConfirmedHost: boolean;
   accountConfirmedGuest: boolean;
-  usersListHost: [];
+  usersListHost: Event.User[];
   accountTypeHost: string;
   accountTypeGuest: string;
   eventImage: string;

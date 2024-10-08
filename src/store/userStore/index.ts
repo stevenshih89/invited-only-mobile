@@ -1,3 +1,4 @@
+import {UserInfo} from 'src/types/userInfo';
 import {create} from 'zustand';
 
 export const useUser = create(set => ({
@@ -7,6 +8,6 @@ export const useUser = create(set => ({
   email: '',
   setOnBoarding: (state: any) => set(() => ({onBoarding: state})),
   setPremium: (state: any) => set(() => ({premium: state})),
-  setUser: (state: any) => set(() => ({user: state})),
-  setEmail: (email: string) => set(() => ({ email })),
+  setUser: (state: UserInfo) => set(() => ({user: state})),
+  setEmail: (email: string) => set(() => ({email})),
 }));

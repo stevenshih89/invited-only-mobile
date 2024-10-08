@@ -17,7 +17,16 @@ import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsC
 import ModalCancelAttending from './ModalCancelAttending';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
 import {useUser} from '../../../store/userStore';
-import {ACCEPTED_STATUS, ALL, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight, THIS_MONTH, THIS_WEEKEND} from 'constants/common.ts';
+import {
+  ACCEPTED_STATUS,
+  ALL,
+  APPROVED_STATUS,
+  INVITE_MATCH_STATUS,
+  NOT_ACCEPTED_STATUS,
+  screenHeight,
+  THIS_MONTH,
+  THIS_WEEKEND,
+} from 'constants/common.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
@@ -25,7 +34,6 @@ import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import images
-import CalendarSearchIcon from 'assets/images/icons/calendar-search.svg';
 import CalendarCheckIcon from 'assets/images/icons/calendar-check.svg';
 import WIcon from 'assets/images/icons/W.svg';
 import MIcon from 'assets/images/icons/M.svg';
@@ -33,7 +41,6 @@ import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 
 import Button from 'components/Button/Button';
 import {commonStackPath, eventActiveInfoPath, eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocations';
-import {IOStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
 import {sendNotification} from 'helpers/fcmHelper';
@@ -45,7 +52,6 @@ import {calculateAge} from 'helpers/calculateAge';
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
   const MY_EVENTS = 'my_events';
-  const EVENTS_JOINING = 'events_joining';
 
   const [isVisibleCancelAttendingModal, setIsVisibleCancelAttendingModal] = useState<boolean>(false);
   const [isVisibleAcceptInvitationModal, setIsVisibleAcceptInvitationModal] = useState<boolean>(false);
@@ -111,47 +117,6 @@ const MyEvents: FC<any> = ({navigation}) => {
 
     return Math.floor(diffInHours);
   };
-
-  // const getFcmTokens = async (usersList: []) => {
-  //   let tokens: string[] = [];
-
-  //   const promises = usersList.map(async item => {
-  //     const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
-  //     // console.log('userInfo', userInfo);
-  //     return userInfo.data().fcmToken;
-  //   });
-
-  //   tokens = await Promise.all(promises);
-
-  //   return tokens;
-  // };
-
-  // const sendNotification = async (usersList: [], title: string, body: string) => {
-  //   const tokens = await getFcmTokens(usersList);
-
-  //   const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-  //     },
-  //     body: JSON.stringify({
-  //       registration_ids: tokens,
-  //       notification: {
-  //         title: title,
-  //         body: body,
-  //       },
-  //     }),
-  //   });
-
-  //   if (!response.ok) {
-  //     const error = await response.json();
-  //     // console.error('error sending notification:', error);
-  //   } else {
-  //     const data = await response.json();
-  //     // console.log('notification sent successfully:', data);
-  //   }
-  // };
 
   const generateRandomId = (length: number) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -393,7 +358,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     try {
       let list = activeModalEvent?.list;
       const uid = user?.uid;
-      changeStatus(list?.usersList, uid, 'notAccepted');
+      changeStatus(list?.usersList, uid, NOT_ACCEPTED_STATUS);
       await firestore().collection('Events').doc(list?.id).update({
         usersList: list?.usersList,
       });
@@ -427,7 +392,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       let list = activeModalEvent?.list;
       const uid = user?.uid;
 
-      changeStatus(list?.usersList, uid, 'notAccepted');
+      changeStatus(list?.usersList, uid, NOT_ACCEPTED_STATUS);
 
       await firestore().collection('Events').doc(list?.id).update({
         usersList: list?.usersList,
@@ -839,7 +804,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                       estimeTime={item?.hour}
                       numberOfGirlsInvited={item?.female}
                       placeName={item?.placeName}
-                      invitingPeople={item?.usersList?.filter(i => i?.status !== 'notAccepted')}
+                      invitingPeople={item?.usersList?.filter(i => i?.status !== NOT_ACCEPTED_STATUS)}
                       accountConfirmed={user?.accountConfirmed}
                       findAcceptedGuest={item?.usersList?.filter(item => item.status === INVITE_MATCH_STATUS)}
                       totalRequestsGuests={item?.requestsList?.length}
