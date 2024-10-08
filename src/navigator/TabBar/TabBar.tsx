@@ -1,4 +1,4 @@
-import React, {ReactElement} from 'react';
+import React, {ReactElement, useEffect, useState} from 'react';
 import {View, Text} from 'react-native';
 import Profile from 'assets/images/tab-bar/profile.svg';
 import ProfileActive from 'assets/images/tab-bar/profile-active.svg';
@@ -16,6 +16,8 @@ import styles from './styles';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Satoshi700 } from 'constants/fonts';
 import { useUser } from 'src/store/userStore';
+import firestore from '@react-native-firebase/firestore'
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS} from 'constants/common.ts';
 
 export const tabBarName = (focused: boolean, route: string): ReactElement => {
   const getLabel = (): string =>
@@ -30,9 +32,39 @@ export const tabBarName = (focused: boolean, route: string): ReactElement => {
 };
 
 export const tabIcon = (focused: boolean, route: string): ReactElement => {
-
   const userHost = useUser((i: any) => i?.user);
-  
+  const [eventsCount, setEventsCount] = useState(0);
+
+  const handleGetEventsIJoining = async events => {
+    try {
+      const uid = userHost?.uid;
+      const data = events?.docs?.map(i => i?.data());
+      const filterData = data?.filter(obj => {
+        return obj?.usersList?.some(user => {
+          return (
+            user?.uid === uid &&
+            (user?.status === INVITE_MATCH_STATUS || user?.status === ACCEPTED_STATUS || user?.status === APPROVED_STATUS)
+          );
+        });
+      });
+      return filterData?.length ? filterData?.length : 0;
+    } catch (e) {
+      console.error('error fetching events:', e);
+      return 0;
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = firestore()
+      .collection('Events')
+      .onSnapshot(async querySnapshot => {
+        const count = await handleGetEventsIJoining(querySnapshot);
+        setEventsCount(count);
+      });
+
+    return () => unsubscribe();
+  }, [userHost]);
+
   const getIcon = (): ReactElement =>
     ({
       [profilePath]: focused ? <ProfileActive /> : <Profile />,
@@ -45,24 +77,27 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
   return (
     <View style={[styles.iconWr, {borderTopColor: focused ? whiteColor : 'transparent'}]}>
       {getIcon()}
-      {(route === '/chat' || route === '/my-events') && <View style={{
-        backgroundColor: lightRedColor, 
-        position: 'absolute',
-        bottom: 0,
-        paddingHorizontal: 4.5,
-        paddingVertical: 1,
-        borderRadius: 33,
-        borderWidth: 1,
-        borderColor: blackColor,
-        right: -8
+      {(route === '/chat' || route === '/my-events') && (
+        <View style={{
+          backgroundColor: lightRedColor,
+          position: 'absolute',
+          bottom: 0,
+          paddingHorizontal: 4.5,
+          paddingVertical: 1,
+          borderRadius: 33,
+          borderWidth: 1,
+          borderColor: blackColor,
+          right: -8
         }}>
-        <Text style={{
-          fontSize: RFValue(10, 812),
-          fontFamily: Satoshi700,
-          color: whiteColor,
-        }}>{userHost?.eventsList?.length}</Text>
-      </View>}
+          <Text style={{
+            fontSize: RFValue(10, 812),
+            fontFamily: Satoshi700,
+            color: whiteColor,
+          }}>
+            {route === '/my-events' ? (userHost?.accountType === 'host' ? userHost?.eventsList?.length : eventsCount) : ''}
+          </Text>
+        </View>
+      )}
     </View>
-  )
-  
+  );
 };
