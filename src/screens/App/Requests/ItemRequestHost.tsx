@@ -5,6 +5,7 @@ import {TinderCard} from 'rn-tinder-card-bn-digital';
 import Home from 'assets/images/icons/home.svg';
 import Location from 'assets/images/icons/location.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
+import CloseIcon from 'assets/images/icons/close.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
 import useStyles from './styles';
@@ -16,7 +17,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 import {useUser} from 'src/store/userStore';
@@ -237,9 +238,19 @@ const ItemRequestHost = ({
     return userInfoDoc.data()?.fcmToken;
   };
 
+  const cardRef = useRef(null);
+
+  const handleAutoSwipeLeft = () => {
+    if (cardRef.current) {
+      // @ts-ignore
+      cardRef.current?.autoSwipeLeft();
+    }
+  };
+
   return (
     <View style={styles.itemContainer}>
       <TinderCard
+        ref={cardRef}
         // @ts-ignore
         cardWidth="100%"
         // @ts-ignore
@@ -287,6 +298,14 @@ const ItemRequestHost = ({
                   </View>
                 </View>
               )}
+              <TouchableOpacity  
+                onPress={() => {
+                  handleAutoSwipeLeft()
+                  handleSwipeHostCardReject(item)
+                }}
+                style={{width: 32, position: 'absolute', right: 4, top: 10, height: 32, backgroundColor: blackColor, borderRadius: 32, alignItems: 'center', justifyContent: 'center'}}>
+                <CloseIcon />
+              </TouchableOpacity>
               <View style={{marginTop: 'auto'}}>
                 {userInfo.accountType && (
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -294,7 +313,7 @@ const ItemRequestHost = ({
                       style={{
                         marginTop: 'auto',
                         alignSelf: 'flex-start',
-                        paddingHorizontal: 6,
+                        paddingHorizontal: 8,
                         paddingVertical: 2,
                         backgroundColor: userInfo.accountType === 'host' ? blackColor : whiteColor,
                         borderRadius: 4,
@@ -324,9 +343,8 @@ const ItemRequestHost = ({
                   <View style={styles.nameContainer}>
                     <Text style={[styles.nameText, {fontSize: getFontSize(item?.name)}]}>
                       {item?.name}
-                      {`${userInfo?.date ? `, ${calculateAge(userInfo?.date)}` : ''}`}
                     </Text>
-                    {userInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} style={{marginLeft: 4}} />}
+                    {userInfo?.accountConfirmed && <CheckStarWhite width={15} height={17} style={{marginLeft: 8, marginTop: 4}} />}
                   </View>
                 </TouchableOpacity>
                 {userInfo?.homeAddress && (

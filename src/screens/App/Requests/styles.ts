@@ -21,7 +21,7 @@ const useStyles = () =>
       height: 14,
     },
     imageBackground: {
-      borderRadius: 12,
+      borderRadius: 20,
       flex: 1,
       width: '100%',
       height: '100%',
@@ -82,7 +82,7 @@ const useStyles = () =>
     nameContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 8,
+      marginBottom: 3,
     },
     nameText: {
       color: whiteColor,
