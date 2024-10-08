@@ -34,6 +34,7 @@ import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin.tsx';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat.ts';
+import { getUsersListAccepted } from 'helpers/getUsersListAccepted.ts';
 
 interface Photo {
   url: string;
@@ -216,11 +217,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       opacity: rotation.value >= 90 && rotation.value <= 270 ? 1 : 0,
     };
   });
-
-  const getUsersListAccepted = () => {
-    const filter = activeEvent?.usersList.filter(item => item.status === 'invite_match');
-    return filter.length;
-  };
 
   const handleSuperJoin = () => {
     if (counterSuperInvites > 0) {
@@ -769,7 +765,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     color: blackColor,
                     fontFamily: Satoshi700,
                   }}>
-                  {getUsersListAccepted()}/{guestsInvited}
+                  {getUsersListAccepted(activeEvent?.usersList)}/{guestsInvited}
                 </Text>
                 <Text
                   style={{
