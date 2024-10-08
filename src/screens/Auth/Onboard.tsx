@@ -32,10 +32,6 @@ const Onboard: FC = (): JSX.Element => {
             alignItems: 'center',
           }}>
           <LogoPrimary />
-          <View style={{position: 'absolute', top: -180, right: 100, width: 6, height: 6, borderRadius: 6, backgroundColor: yellowColor}} />
-          <View
-            style={{position: 'absolute', bottom: -50, left: 170, width: 6, height: 6, borderRadius: 6, backgroundColor: lightGreen2Color}}
-          />
         </View>
         <View
           style={{
@@ -43,7 +39,6 @@ const Onboard: FC = (): JSX.Element => {
             alignItems: 'center',
             paddingHorizontal: 24,
           }}>
-          <View style={{position: 'absolute', top: -50, right: 50, width: 6, height: 6, borderRadius: 6, backgroundColor: orange2Color}} />
           <Text style={{marginRight: -34, color: whiteColor, fontFamily: Satoshi700, letterSpacing: 26, fontSize: RFValue(22, 812)}}>
             WELCOME
           </Text>
