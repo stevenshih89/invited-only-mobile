@@ -4,14 +4,14 @@ import {FlatList, Image, ImageBackground, Keyboard, KeyboardAvoidingView, SafeAr
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
-import BirthdayParty from 'assets/images/auth/interests/birthday-party.png'
-import Exclusive from 'assets/images/auth/interests/exclusive.png'
-import PoolParty from 'assets/images/auth/interests/pool-party.png'
-import Private from 'assets/images/auth/interests/private.png'
-import Restaurant from 'assets/images/auth/interests/restaurant.png'
-import VipTables from 'assets/images/auth/interests/vip-tables.png'
-import YachtParty from 'assets/images/auth/interests/yacht-party.png'
-import Concert from 'assets/images/auth/interests/concerts.png'
+import BirthdayParty from 'assets/images/auth/interests/birthday-party.jpg'
+import Exclusive from 'assets/images/auth/interests/exclusive.jpg'
+import PoolParty from 'assets/images/auth/interests/pool-party.jpg'
+import Private from 'assets/images/auth/interests/private.jpg'
+import Restaurant from 'assets/images/auth/interests/restaurant.jpg'
+import VipTables from 'assets/images/auth/interests/vip-tables.jpg'
+import YachtParty from 'assets/images/auth/interests/yacht-party.jpg'
+import Concert from 'assets/images/auth/interests/concerts.jpg'
 import UserOne from 'assets/images/auth/interests/user-one.png'
 import UserTwo from 'assets/images/auth/interests/user-two.png'
 import {black1Color, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
