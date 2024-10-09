@@ -59,6 +59,7 @@ type ItemEventsJoiningProps = {
   activeEvent: string;
   hostUid: string;
   usersList: [];
+  newMessages: number;
 };
 
 interface ChatProps {
@@ -227,7 +228,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     );
   };
 
-  const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data, activeEvent, hostUid, usersList}: ItemEventsJoiningProps) => {
+  const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data, activeEvent, hostUid, usersList, newMessages}: ItemEventsJoiningProps) => {        
     const statusColor = handleCheckStatusStyles(status);
     return (
       <View style={styles.itemEventsJoining}>
@@ -305,7 +306,14 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                 </Text>
               </View>
             </View>
-            <ChatIcon width={18} height={18} />
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+             <ChatIcon width={18} height={18} style={{marginRight: 10}}/>
+             {!!newMessages && (
+                <View style={styles.newMessage}>
+                  <Text style={styles.textCountNewMessages}>{newMessages}</Text>
+                </View>
+              )}
+            </View>
           </TouchableOpacity>
         ))}
       </View>
@@ -462,7 +470,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   id={item?.id}
                   uid={item?.uid}
                   hostUid={item?.hostUid}
-                  newMessages={item?.newMessages}
+                  newMessages={item?.newMessagesGuest}
                 />
               );
             }}
@@ -480,7 +488,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                 <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />
               </View>
             )}
-            renderItem={({item}) => {              
+            renderItem={({item}) => {                                       
               return (
                 <ItemEventsJoining
                   image={item.image}
@@ -492,6 +500,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   hostUid={item.hostUid}
                   status={item.status}
                   usersList={item.usersList}
+                  newMessages={item?.chats[0].newMessagesHost}
                 />
               );
             }}

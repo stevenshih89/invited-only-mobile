@@ -120,7 +120,7 @@ const BottomMenu: FC = (): JSX.Element => {
       <Tab.Screen name={profilePath} component={ProfileStackScreen} />
       <Tab.Screen name={requestsPath} component={RequestsStackScreen} />
       <Tab.Screen name={IOPath} component={IOStackNavigation} />
-      <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation} />
+      <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation}/>
       <Tab.Screen name={chatPath} component={ChatStackScreen} />
     </Tab.Navigator>
   );
