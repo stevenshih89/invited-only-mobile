@@ -1,6 +1,4 @@
 import firestore from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
-import {uploadImage} from 'helpers/uploadImage.ts';
 
 export type IOEventPhoto = {
   image: null | string;

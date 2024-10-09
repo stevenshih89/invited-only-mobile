@@ -34,7 +34,7 @@ export namespace User {
 
   export type AccountType = 'host' | 'guest';
   export type ChooseGuest = 'woman' | 'man' | 'any';
-  export type Gender = 'man' | 'woman';
+  export type Gender = 'man' | 'woman' | 'any';
   export interface Info {
     id: string;
     accountConfirmed: boolean;
