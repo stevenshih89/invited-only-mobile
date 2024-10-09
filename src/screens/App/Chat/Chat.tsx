@@ -462,7 +462,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   id={item?.id}
                   uid={item?.uid}
                   hostUid={item?.hostUid}
-                  newMessages={item?.newMessages}
+                  newMessages={item?.newMessagesGuest}
                 />
               );
             }}

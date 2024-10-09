@@ -124,8 +124,14 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     const findChat = allChats?.filter(i => i?.id === id);
 
     if (findChat && findChat.length > 0) {
-      if (typeof findChat[0].newMessages === 'number') {
-        findChat[0].newMessages = 0;
+      if(user?.accountType === 'host') {
+        if (typeof findChat[0].newMessagesGuest === 'number') {
+          findChat[0].newMessagesGuest = 0;
+        }
+      } else {
+        if (typeof findChat[0].newMessagesHost === 'number') {
+          findChat[0].newMessagesHost = 0;
+        }
       }
       await doc.update({
         chats: [...allChats],
@@ -157,10 +163,18 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
       if (findChat && findChat.length > 0) {
         findChat[0].messages.push(updateData);
-        if (typeof findChat[0].newMessages === 'number') {
-          findChat[0].newMessages = findChat[0].newMessages + 1;
+        if(user?.accountType === 'host') {
+          if (typeof findChat[0].newMessagesHost === 'number') {
+            findChat[0].newMessagesHost = findChat[0].newMessagesHost + 1;
+          } else {
+            findChat[0].newMessagesHost = 1;
+          }
         } else {
-          findChat[0].newMessages = 1;
+          if (typeof findChat[0].newMessagesGuest === 'number') {
+            findChat[0].newMessagesGuest = findChat[0].newMessagesGuest + 1;
+          } else {
+            findChat[0].newMessagesGuest = 1;
+          }
         }
         await doc.update({
           chats: [...allChats],

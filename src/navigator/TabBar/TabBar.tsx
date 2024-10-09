@@ -78,16 +78,18 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
         let newMessages = 0;
   
         const chatData = documentSnapshot.docs.map(i => i.data());
-        const filteredChats = chatData.filter(chatDataItem => {
-          console.log('chatDataItem', chatDataItem);
-          
+        const filteredChats = chatData.filter(chatDataItem => {          
           return userHost?.accountType === 'host'
             ? chatDataItem?.uidHost === userHost?.uid
             : chatDataItem?.uidGuest === userHost?.uid;
         });
         for (const item of filteredChats) {
           for (const messages of item.chats) {
-            newMessages += messages.newMessages;
+            if(userHost?.accountType === 'host') {
+              newMessages += messages.newMessagesGuest? messages.newMessagesGuest: 0;
+            } else {
+              newMessages += messages.newMessagesHost? messages.newMessagesHost: 0;
+            }
           }
         }
         setNewMessages(newMessages);
@@ -109,7 +111,7 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
   return (
     <View style={[styles.iconWr, {borderTopColor: focused ? whiteColor : 'transparent'}]}>
       {getIcon()}
-      {(route === '/chat' || route === '/my-events') && (
+      {((route === '/chat' && newMessage > 0) || ((eventsCount > 0 || userHost?.eventsList?.length > 0) && route === '/my-events')) && (
         <View style={{
           backgroundColor: lightRedColor,
           position: 'absolute',
