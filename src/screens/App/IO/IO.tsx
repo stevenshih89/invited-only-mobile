@@ -735,7 +735,7 @@ const IO: FC = (): JSX.Element => {
         .collection('Events')
         .where('statusEvent', '==', true)
         .where('isCancelled', '==', false)
-        .limit(30)
+        .limit(10)
         .get();
 
       filteredEvents = querySnapshot?.docs
@@ -1122,12 +1122,11 @@ const IO: FC = (): JSX.Element => {
 
     const recommendedData = (await filterEventsByBlockedUsers(sortedByInterestsData)) || [];
 
-    setTimeout(() => {
-      setEvents(recommendedData);
-      eventsRef.current = recommendedData;
-      allEventsLength.current = recommendedData.length;
-      setLoading(false);
-    }, 2000);
+    setEvents(recommendedData);
+    eventsRef.current = recommendedData;
+    allEventsLength.current = recommendedData.length;
+    setLoading(false);
+  
   };
 
   const handleSuperInviteBottom = (item: any, coinAnimationTimer: number) => {
@@ -1152,11 +1151,11 @@ const IO: FC = (): JSX.Element => {
     const usersQuery = firestore().collection('userInfo');
 
     if (activeEvent.male > 0 && activeEvent.female > 0) {
-      users = await usersQuery.where('uid', '!=', userHost?.uid).limit(20).get();
+      users = await usersQuery.where('uid', '!=', userHost?.uid).limit(10).get();
     } else if (activeEvent.male > 0) {
-      users = await usersQuery.where('uid', '!=', userHost?.uid).where('gender', '==', 'man').limit(20).get();
+      users = await usersQuery.where('uid', '!=', userHost?.uid).where('gender', '==', 'man').limit(10).get();
     } else if (activeEvent.female > 0) {
-      users = await usersQuery.where('uid', '!=', userHost?.uid).where('gender', '==', 'woman').limit(20).get();
+      users = await usersQuery.where('uid', '!=', userHost?.uid).where('gender', '==', 'woman').limit(10).get();
     }
 
     const getActualDataEvent = (await firestore().collection('Events').doc(activeEvent?.id).get()).data();

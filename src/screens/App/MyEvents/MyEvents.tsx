@@ -334,26 +334,6 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   };
 
-  // const handleAcceptInvitation = async () => {
-  //   try {
-  //     let list = activeModalEvent?.list;
-  //     const uid = user?.uid;
-
-  //     changeStatus(list?.usersList, uid, ACCEPTED_STATUS);
-  //     // console.log('handleAcceptInvitation');
-
-  //     // console.log(ACCEPTED_STATUS, list?.usersList);
-  //     await firestore().collection('Events').doc(list?.id).update({
-  //       usersList: list?.usersList,
-  //     });
-  //     setIsVisibleAcceptInvitationModal(false);
-  //     showToast('inviteMatch', '', `You accepted ${activeModalEvent.textCityName} event`);
-  //   } catch (e) {
-  //     showToast('inviteMatch', '', 'Error!');
-  //     // console.log(e);
-  //   }
-  // };
-
   const handleRejectInvitation = async () => {
     try {
       let list = activeModalEvent?.list;
@@ -502,28 +482,6 @@ const MyEvents: FC<any> = ({navigation}) => {
               onPress={() => setActiveTab(MY_EVENTS)}>
               <Text style={[styles.textMyEvents, {color: activeTab === MY_EVENTS ? blackColor : whiteColor}]}>My events</Text>
             </TouchableOpacity>
-            {/* <TouchableOpacity
-              style={[
-                styles.buttonEventsJoining,
-                {
-                  flex: 1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: activeTab === EVENTS_JOINING ? whiteColor : lightGray2Color,
-                },
-              ]}
-              onPress={() => setActiveTab(EVENTS_JOINING)}>
-              <Text
-                style={[
-                  {
-                    fontFamily: Satoshi400,
-                    fontSize: RFValue(16, 812),
-                    color: activeTab === EVENTS_JOINING ? blackColor : whiteColor,
-                  },
-                ]}>
-                Join Events
-              </Text>
-            </TouchableOpacity> */}
           </View>
         ) : (
           <View style={{marginVertical: screenHeight / 50, height: screenHeight / 9, flexDirection: 'row'}}>
@@ -545,12 +503,10 @@ const MyEvents: FC<any> = ({navigation}) => {
                   padding: 3,
                   width: 63,
                   height: 63,
-                  // backgroundColor: lightGray5Color,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
                 <CalendarCheckIcon width={26} height={26} />
-                {/* <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === ALL ? whiteColor : grayColor}}>Today</Text> */}
               </View>
               <Text
                 style={{
@@ -581,13 +537,10 @@ const MyEvents: FC<any> = ({navigation}) => {
                   padding: 3,
                   width: 63,
                   height: 63,
-                  // backgroundColor: lightGray5Color,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
                 <WIcon />
-                {/* <CalendarSearchIcon width={26} height={26} />
-                <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>Weekend</Text> */}
               </View>
               <Text
                 style={{
@@ -622,8 +575,6 @@ const MyEvents: FC<any> = ({navigation}) => {
                   alignItems: 'center',
                 }}>
                 <MIcon />
-                {/* <CalendarSearchIcon width={26} height={26} />
-                <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_MONTH ? whiteColor : grayColor}}>Month</Text> */}
               </View>
               <Text
                 style={{
