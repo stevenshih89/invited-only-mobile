@@ -34,6 +34,7 @@ export const tabBarName = (focused: boolean, route: string): ReactElement => {
 export const tabIcon = (focused: boolean, route: string): ReactElement => {
   const userHost = useUser((i: any) => i?.user);
   const [eventsCount, setEventsCount] = useState(0);
+  const [newMessage, setNewMessages] = useState(0);
 
   const handleGetEventsIJoining = async events => {
     try {
@@ -65,6 +66,37 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
     return () => unsubscribe();
   }, [userHost]);
 
+  useEffect(() => {
+    const unsubscribe = firestore()
+      .collection('messages')
+      .onSnapshot(async documentSnapshot => {
+        if (documentSnapshot.empty) {
+          setNewMessages(0);
+          return;
+        }
+  
+        let newMessages = 0;
+  
+        const chatData = documentSnapshot.docs.map(i => i.data());
+        const filteredChats = chatData.filter(chatDataItem => {
+          console.log('chatDataItem', chatDataItem);
+          
+          return userHost?.accountType === 'host'
+            ? chatDataItem?.uidHost === userHost?.uid
+            : chatDataItem?.uidGuest === userHost?.uid;
+        });
+        for (const item of filteredChats) {
+          for (const messages of item.chats) {
+            newMessages += messages.newMessages;
+          }
+        }
+        setNewMessages(newMessages);
+      });
+  
+    return () => unsubscribe();
+  }, [userHost]);
+  
+
   const getIcon = (): ReactElement =>
     ({
       [profilePath]: focused ? <ProfileActive /> : <Profile />,
@@ -94,10 +126,11 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
             fontFamily: Satoshi700,
             color: whiteColor,
           }}>
-            {route === '/my-events' ? (userHost?.accountType === 'host' ? userHost?.eventsList?.length : eventsCount) : ''}
+            {route === '/my-events' ? (userHost?.accountType === 'host' ? userHost?.eventsList?.length : eventsCount) : newMessage}
           </Text>
         </View>
       )}
     </View>
   );
 };
+
