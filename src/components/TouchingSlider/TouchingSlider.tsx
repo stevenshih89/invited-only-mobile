@@ -29,7 +29,6 @@ import {calculateAge} from 'helpers/calculateAge.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites/index.ts';
-import {useGuestList} from 'src/store/guestListStore/index.ts';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin.tsx';
@@ -127,7 +126,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   const navigation = useAppNavigation();
 
   const {counterSuperInvites} = useCounterSuperEvents();
-  const {guestsInvited, setGuestsInvited} = useGuestList();
 
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
 
@@ -203,20 +201,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       goToMyProfileView();
     }
   };
-
-  const frontAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{rotateY: `${rotation.value}deg`}],
-      opacity: rotation.value >= 90 && rotation.value <= 270 ? 0 : 1,
-    };
-  });
-
-  const backAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{rotateY: `${rotation.value}deg`}],
-      opacity: rotation.value >= 90 && rotation.value <= 270 ? 1 : 0,
-    };
-  });
 
   const handleSuperJoin = () => {
     if (counterSuperInvites > 0) {
@@ -386,17 +370,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </TouchableOpacity>
         </View>
       )}
-      {/* {hostInfo?.name && (
-        <View style={{flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 60, left: 16}}>
-          <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>{hostInfo.name}</Text>
-          {hostInfo?.date && (
-            <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 10}}>
-              , {calculateAge(hostInfo?.date)}
-            </Text>
-          )}
-          {hostInfo?.accountConfirmed && <CheckStarWhite width={18} height={18} />}
-        </View>
-      )} */}
       {isLocked && (
         <View style={styles.lockedWrapper}>
           <View style={styles.lockIconWr}>
@@ -416,22 +389,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
         </View>
       )}
-      {/* {isShowEventPreview ? (
-        <View style={styles.eventPreviewWr}>
-          <EventPreview
-            placeName={placeName}
-            date={date}
-            girls={girls}
-            photos={eventPhotos}
-            name={name}
-            flipCoin={flipCoin}
-            fromJoinEventsScreen={fromJoinEventsScreen}
-            onInvite={onInvite}
-            handleAutoSwipeRight={handleAutoSwipeRight}
-            superJoin={superJoin}
-          />
-        </View>
-      ) : ( */}
       <LinearGradient
         colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
         style={[styles.linearGradientFooter, {height: 222}]}
@@ -443,14 +400,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             <View style={{marginLeft: 10}}>{(confirmedEvent || confirmedAccount) && <CheckStarWhite width={25} height={25} />}</View>
           </View>
           <View style={styles.wrapperFooterCard}>
-            {/* <View>
-                {homeAddress && (
-                  <View style={[styles.infoTags, {marginTop: screenHeight / 37}]}>
-                    <HomeIcon />
-                    <Text style={styles.textInfoTags}>From {homeAddress}</Text>
-                  </View>
-                )}
-              </View> */}
           </View>
         </View>
       </LinearGradient>
@@ -765,7 +714,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     color: blackColor,
                     fontFamily: Satoshi700,
                   }}>
-                  {getUsersListAccepted(activeEvent?.usersList)}/{guestsInvited}
+                  {getUsersListAccepted(activeEvent?.usersList)}/{activeEvent?.female + activeEvent?.male}
                 </Text>
                 <Text
                   style={{
@@ -810,7 +759,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               <TouchableOpacity
                 onPress={() => {
                   handleSuperInvite();
-                  setGuestsInvited(guestsInvited + 1);
                 }}
                 style={{
                   flex: 1,
@@ -837,7 +785,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                 onPress={() => {
                   handleAutoSwipeRight && handleAutoSwipeRight();
                   onInvite && onInvite();
-                  setGuestsInvited(guestsInvited + 1);
                 }}
                 style={{
                   flex: 1,

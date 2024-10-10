@@ -133,7 +133,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           accountTypeHost: hostInfo?.accountType,
           accountTypeGuest: user?.accountType,
           eventImage: photos[0].image,
-          guestsInvited: usersList.length,
+          guestsInvited: male + female,
         };
 
         await firestore()

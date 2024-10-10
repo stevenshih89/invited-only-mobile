@@ -201,7 +201,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                       color: blackColor,
                       fontFamily: Satoshi700,
                     }}>
-                    {getUsersListAccepted()}/{item?.usersList.length}
+                    {getUsersListAccepted()}/{item?.male + item?.female}
                   </Text>
                   <Text
                     style={{
