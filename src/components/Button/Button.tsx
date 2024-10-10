@@ -7,6 +7,7 @@ import {Satoshi500} from 'constants/fonts';
 import {screenHeight} from 'constants/common';
 import {blackColor, grayColor, whiteColor} from 'constants/colors';
 import {TextStyle, ViewStyle} from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const Button: FC<ButtonProps> = ({
   title,
@@ -22,16 +23,15 @@ const Button: FC<ButtonProps> = ({
     ['default']: {
       container: buttonContatinerStyle,
       defaultRaw: {
-        borderRadius: 8,
+        borderRadius: 18,
         backgroundColor: whiteColor,
-        maxHeight: 56,
-        height: screenHeight / 15,
+        height: 64,
       } as ViewStyle,
       defaultRawText: {
         color: blackColor,
         fontFamily: Satoshi500,
         textAlign: 'center',
-        fontSize: 18,
+        fontSize: RFValue(16, 812),
         ...buttonTitleStyle,
       } as TextStyle,
       defaultDisabledRaw: {
@@ -48,17 +48,16 @@ const Button: FC<ButtonProps> = ({
     ['transparent']: {
       container: buttonContatinerStyle,
       defaultRaw: {
-        borderRadius: 8,
+        borderRadius: 18,
         backgroundColor: 'transparent',
         borderWidth: 0,
-        maxHeight: 56,
-        height: screenHeight / 15,
+        height: 64,
       },
       defaultRawText: {
         color: whiteColor,
         fontFamily: Satoshi500,
         textAlign: 'center',
-        fontSize: 18,
+        fontSize: RFValue(16, 812),
         ...buttonTitleStyle,
       },
       defaultHighlight: {

@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC} from 'react';
+import {FC, useContext} from 'react';
 import {FlatList, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
@@ -9,13 +9,16 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {codeVerifiedPath, pendingScreenPath, photoVerifiedPath, verifyFirstStepPath} from 'constants/pathLocations';
+import {verifyFirstStepPath} from 'constants/pathLocations';
 import {TouchableOpacity} from 'react-native';
+import { AuthContext } from 'contexts/AuthContext';
 
 const Privacy: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
-
-  const privaciesList = [
+  const {onBoarding} = useContext(AuthContext);
+  const objWithAccountType = onBoarding.find(obj => obj.hasOwnProperty("accountType"));
+  
+  const privaciesListHost = [
     {
       id: 0,
       title: 'Be Respectful',
@@ -35,6 +38,29 @@ const Privacy: FC = (): JSX.Element => {
       id: 3,
       title: 'Respect Privacy',
       subtitle: 'Do not share personal information or media without consent.'
+    },
+  ];
+
+  const privaciesListGuest = [
+    {
+      id: 0,
+      title: 'Be Polite',
+      subtitle: 'Treat the host and other guests with respect and courtesy.'
+    },
+    {
+      id: 1,
+      title: 'Follow Guidelines',
+      subtitle: "Adhere to the host's event rules and maintain appropriate behavior.",
+    },
+    {
+      id: 2,
+      title: 'Be Honest',
+      subtitle: 'Represent yourself truthfully when joining events.',
+    },
+    {
+      id: 3,
+      title: 'Respect Privacy',
+      subtitle: 'Do not share personal details or event content without permission.'
     },
   ];
 
@@ -92,12 +118,12 @@ const Privacy: FC = (): JSX.Element => {
                     fontFamily: Satoshi400,
                     fontSize: RFValue(18, 812),
                   }}>
-                  Please follow these Host House Rules
+                  Please follow these {objWithAccountType?.accountType === 'host'? 'Host': 'Guest'} House Rules
                 </Text>
               </View>
               <View style={{width: '100%'}}>
                 <FlatList
-                  data={privaciesList}
+                  data={objWithAccountType?.accountType === 'host'? privaciesListHost: privaciesListGuest}
                   keyExtractor={({id}) => id.toString()}
                   ItemSeparatorComponent={() => <View style={{height: 8}} />}
                   renderItem={({item: {title, subtitle}}) => (
@@ -115,7 +141,7 @@ const Privacy: FC = (): JSX.Element => {
               </View>
             </View>
             <View style={{marginBottom: 4}}>
-              <Button onPress={() => navigation.navigate(verifyFirstStepPath as never)} title="I agree, continue" />
+              <Button onPress={() => navigation.navigate(verifyFirstStepPath as never)} title="I Agree, Continue" />
             </View>
           </View>
         </SafeAreaView>

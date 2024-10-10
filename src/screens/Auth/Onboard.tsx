@@ -1,12 +1,13 @@
 import React, {FC} from 'react';
 import {Dimensions, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
-import {black1Color, blackColor, lightGray19Color, lightGreen2Color, orange2Color, whiteColor, yellowColor} from 'constants/colors';
+import {black1Color, black3Color, blackColor, lightGray19Color, lightGreen2Color, orange2Color, whiteColor, yellowColor} from 'constants/colors';
 import {Outfit500, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {startCreateAccountPath} from 'constants/pathLocations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Onboard: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -24,7 +25,7 @@ const Onboard: FC = (): JSX.Element => {
 
   // @ts-ignore
   return (
-    <View style={{flex: 1, backgroundColor: blackColor}}>
+    <LinearGradient colors={[black3Color, blackColor]} style={{flex: 1}}>
       <SafeAreaView style={{flex: 1}}>
         <View
           style={{
@@ -98,7 +99,7 @@ const Onboard: FC = (): JSX.Element => {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
-    </View>
+    </LinearGradient>
   );
 };
 
