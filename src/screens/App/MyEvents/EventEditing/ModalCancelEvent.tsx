@@ -2,7 +2,7 @@ import {ImageBackground, Text, View} from 'react-native';
 import Modal from 'react-native-modal';
 import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import TrashRed from 'assets/images/icons/trash-red.svg';
-import {FC, useEffect} from 'react';
+import {FC, useContext, useEffect} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -12,6 +12,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import auth from '@react-native-firebase/auth';
 import {useUser} from 'src/store/userStore';
+import {EventContext} from 'contexts/EventContext';
 
 const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined; nameEvent: string}> = ({
   id,
@@ -35,6 +36,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
 
   //   return tokens;
   // };
+  const {setActiveEvent} = useContext(EventContext);
 
   const userData = useUser((i: any) => i?.user);
 
@@ -160,7 +162,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
       // await firestore().collection('userInfo').doc(uidUser).update({
       //   eventsList: filterEvents,
       // });
-
+      setActiveEvent({});
       onClose();
       showToast('inviteMatch', 'Create new event', 'Event cancelled');
       navigation?.goBack();

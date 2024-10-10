@@ -64,6 +64,7 @@ const EventPreview: FC<{
   male,
   address,
   hour,
+  id,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
@@ -72,6 +73,7 @@ const EventPreview: FC<{
   const [userAge, setUserAge] = useState('');
   const [userAccountType, setUserAccountType] = useState('');
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
+  const [usersList, setUsersList] = useState([]);
   const numberPhotos = imagesUser?.length;
 
   function calculateAge(birthDateString: string) {
@@ -108,9 +110,21 @@ const EventPreview: FC<{
     }
   };
 
+  const getUsersList = async () => {
+    const eventInfoDoc = await firestore().collection('Events').doc(id).get();
+    if (!eventInfoDoc.exists) {
+      return;
+    }
+    const usersListData = eventInfoDoc.data()?.usersList;
+    setUsersList(usersListData);
+  };
+
   useFocusEffect(
     useCallback(() => {
       getUserPhotos();
+      if (isEditing) {
+        getUsersList();
+      }
     }, []),
   );
 
@@ -186,11 +200,13 @@ const EventPreview: FC<{
               accountConfirmed={true}
               findAcceptedGuest={[]}
               item={{
-                usersList: [],
+                usersList: usersList,
                 photos,
                 date,
                 address,
                 hour,
+                male: male,
+                female: girls,
               }}
               showGuestList={true}
               styleContainer={{marginTop: 0}}

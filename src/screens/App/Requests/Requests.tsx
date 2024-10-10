@@ -73,10 +73,20 @@ const Requests: FC = (): ReactElement => {
 
   const fetchHostRequests = async () => {
     const currentUser = auth().currentUser;
-    if (currentUser && activeEvent !== 'host') {
+
+    if (!currentUser || !activeEvent?.id) {
+      setMyEventsList([]);
+      setRequestsForHost([]);
+      return;
+    }
+    if (currentUser && activeEvent !== 'host' && activeEvent?.id) {
       try {
         const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
-        const myEventsQuery = await firestore().collection('Events').where('uid', '==', currentUser.uid).get();
+        const myEventsQuery = await firestore()
+          .collection('Events')
+          .where('uid', '==', currentUser.uid)
+          .where('isCancelled', '==', false)
+          .get();
 
         if (!myEventsQuery.empty) {
           const eventList = myEventsQuery?.docs.map(i => i?.data()) as EventData[];
@@ -95,7 +105,11 @@ const Requests: FC = (): ReactElement => {
       }
     } else if (currentUser && activeEvent === 'host') {
       try {
-        const querySnapshot = await firestore().collection('Events').get();
+        const querySnapshot = await firestore()
+          .collection('Events')
+          .where('statusEvent', '==', true)
+          .where('isCancelled', '==', false)
+          .get();
         const data = querySnapshot?.docs?.map(i => i?.data());
         if (data) {
           setRequestsForHost(data);
@@ -122,7 +136,11 @@ const Requests: FC = (): ReactElement => {
     const currentUser = auth().currentUser;
     if (currentUser && activeEvent) {
       try {
-        const querySnapshot = await firestore().collection('Events').get();
+        const querySnapshot = await firestore()
+          .collection('Events')
+          .where('statusEvent', '==', true)
+          .where('isCancelled', '==', false)
+          .get();
         if (querySnapshot.empty) {
           return;
         }
@@ -291,6 +309,7 @@ const Requests: FC = (): ReactElement => {
   if (
     !loading &&
     userInfo?.accountConfirmed &&
+    !!myEventsList?.length &&
     (isHost ? !requestsForHost?.requestsList?.length : !dataForGuest?.length) &&
     !isVisibleMatch
   ) {
@@ -310,14 +329,14 @@ const Requests: FC = (): ReactElement => {
   }
 
   const getUsersListAccepted = () => {
-    const filter = activeEvent?.usersList.filter((item: Event.User) => item.status === ACCEPTED_STATUS);
-    return filter.length;
+    const filteredUsers = activeEvent?.usersList?.filter((item: Event.User) => item.status === ACCEPTED_STATUS) || [];
+    return filteredUsers.length;
   };
 
   return (
     <>
       <View style={styles.container}>
-        {userInfo?.photos?.length && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos[0].image} />}
+        {userInfo?.photos?.length && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos?.[0].image} />}
         <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
         <ModalFullEvent
           isVisible={isVisibleModalFullEvent}
@@ -325,7 +344,7 @@ const Requests: FC = (): ReactElement => {
           setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
         />
         {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}
-        {userInfo?.accountType === 'host' && (
+        {userInfo?.accountType === 'host' && !!myEventsList?.length && (
           <View
             style={{
               width: '100%',
@@ -345,7 +364,7 @@ const Requests: FC = (): ReactElement => {
                 justifyContent: 'space-between',
               }}>
               <Text style={{fontSize: RFValue(16, 812), color: whiteColor, fontFamily: Satoshi500}}>
-                Join Requests: {activeEvent?.requestsList.length}
+                Join Requests: {activeEvent?.requestsList?.length}
               </Text>
               <View>
                 <View style={{width: 1.25, height: 6, borderRadius: 2, backgroundColor: whiteColor}} />
@@ -355,7 +374,7 @@ const Requests: FC = (): ReactElement => {
               </View>
               <View style={{flexDirection: 'row'}}>
                 <FastImage
-                  source={{uri: activeEvent?.photos[0].image}}
+                  source={{uri: activeEvent?.photos?.[0].image}}
                   style={{width: 39, height: 39, borderRadius: 39, borderWidth: 1, borderColor: whiteColor, alignSelf: 'center'}}
                 />
                 <View style={{marginLeft: 10, alignItems: 'center'}}>

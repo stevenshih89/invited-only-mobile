@@ -100,10 +100,12 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     const user = auth().currentUser;
     if (user) {
       try {
-        const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).get();
+        const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).where('isCancelled', '==', false).get();
 
         if (querySnapshot.empty) {
           setMyEvents([]);
+          setActiveEvent({});
+          setChat('');
           return;
         }
 
@@ -113,9 +115,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         }));
 
         const filteredEvents = data.filter(event => {
-          if (event?.isCancelled) {
-            return false;
-          }
           if (event?.date && event?.hour) {
             const adjustedDate = moment(`${event?.date}, ${event?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
             if (adjustedDate.isBefore(moment())) {

@@ -429,7 +429,7 @@ const IO: FC = (): JSX.Element => {
     const user = auth().currentUser;
     if (user) {
       try {
-        const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).get();
+        const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).where('isCancelled', '==', false).get();
 
         if (querySnapshot.empty) {
           setMyEvents([]);
@@ -1119,7 +1119,6 @@ const IO: FC = (): JSX.Element => {
     eventsRef.current = recommendedData;
     allEventsLength.current = recommendedData.length;
     setLoading(false);
-  
   };
 
   const handleSuperInviteBottom = (item: any, coinAnimationTimer: number) => {
