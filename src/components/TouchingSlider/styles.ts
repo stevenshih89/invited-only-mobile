@@ -12,14 +12,14 @@ const useStyles = () => {
       height: screenHeight * 0.661,
     },
     imageStyle: {
-      height: '100%',
+      height: '90%',
       borderRadius: 22,
     },
     wrapperBar: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: screenHeight / 30,
+      marginTop: 16,
       marginHorizontal: 10,
     },
     bar: {

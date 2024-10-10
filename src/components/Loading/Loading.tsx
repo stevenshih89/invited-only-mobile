@@ -8,6 +8,7 @@ import {screenHeight, screenWidth} from 'constants/common';
 import { blackColor, whiteColor } from 'constants/colors';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import FastImage from 'react-native-fast-image';
 
 interface LoadingProps {
   text?: string;
@@ -67,34 +68,31 @@ const Loading: FC<LoadingProps> = ({
   return (
     <View style={[styles.container, styleContainer]}>
       <View style={{alignItems: 'center', flex: 1}}>
-        {/* <View style={{flex:, backgroundColor: 'red', width: 400}}>
-
-        </View> */}
         <Animated.View
           style={[
             styles.firstCircle,
             animatedFirstCircleStyle,
-            {top: topPosition ? 0 : screenHeight / 2 - 390, height: topPosition ? 370 : 390, width: topPosition ? 370 : 390},
+            {top: topPosition ? 0 : screenHeight / 2 - 390, height: topPosition ? 360 : 380, width: topPosition ? 360 : 380},
           ]}
         />
         <Animated.View
           style={[
             styles.secondCircle,
             animatedSecondCircleStyle,
-            {top: topPosition ? 10 : screenHeight / 2 - 380, height: topPosition ? 350 : 370, width: topPosition ? 350 : 370},
+            {top: topPosition ? 10 : screenHeight / 2 - 380, height: topPosition ? 340 : 360, width: topPosition ? 340 : 360},
           ]}
         />
         <View
           style={[
             styles.whiteCircle,
-            {top: topPosition ? 35 : screenHeight / 2 - 365, height: topPosition ? 300 : 340, width: topPosition ? 300 : 340},
+            {top: topPosition ? 35 : screenHeight / 2 - 365, height: topPosition ? 290 : 330, width: topPosition ? 290 : 330},
           ]}>
-          {userInfo?.photos && <Image style={{width: 180, height: 180, borderRadius: 100}} source={{uri: userInfo?.photos[0]?.image}} />}
+          {userInfo?.photos && <FastImage resizeMode='cover' style={{width: 180, height: 180, borderRadius: 100}} source={{uri: userInfo?.photos[0]?.image}} />}
         </View>
         {text && (
           <>
             {wrapperText? <>
-              <View style={{position: 'absolute', top: screenHeight / 2 - 30}}>
+              <View style={{position: 'absolute', top: screenHeight / 2 - 40}}>
                 <Subtract />
               </View>
             <View style={{alignItems: 'center', position: 'absolute', top: screenHeight / 2 - 10}}>
@@ -103,14 +101,14 @@ const Loading: FC<LoadingProps> = ({
                 borderRadius: 17,
                 paddingHorizontal: 22,
                 paddingVertical: 11,
-                marginTop: 2
+                marginTop: -8
               }}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={{
                   color: blackColor,
-                  fontSize: RFValue(20, 812),
+                  fontSize: RFValue(18, 812),
                   fontFamily: Satoshi500,
-                  marginRight: 8
+                  textAlign: 'center',
                 }}>{text}</Text>
                 {showCheckIcon && <CheckStarIcon />}
                 </View>
@@ -138,3 +136,4 @@ const Loading: FC<LoadingProps> = ({
 };
 
 export default Loading;
+

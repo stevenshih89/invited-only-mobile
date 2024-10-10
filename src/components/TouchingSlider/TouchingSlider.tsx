@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 //import components
 import useStyles from 'components/TouchingSlider/styles.ts';
-import {black4Color, blackColor, gray1Color, grayColor, lightGreenColor, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
+import {black4Color, blackColor, gray1Color, grayColor, lightGreenColor, transparent60Color, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, invitationCodePath, superInvitePayPath} from 'constants/pathLocations';
@@ -35,6 +35,7 @@ import {showToast} from 'helpers/showToast.ts';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin.tsx';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat.ts';
 import { getUsersListAccepted } from 'helpers/getUsersListAccepted.ts';
+import { useScrollPosition } from 'src/store/scrollPosition/index.ts';
 
 interface Photo {
   url: string;
@@ -132,6 +133,8 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
 
   const [userEventInfo, setUserEventInfo] = useState();
+
+  const scrollPosition = useScrollPosition((i: any) => i?.scrollPosition);
 
   function getMonth() {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -231,7 +234,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       showToast('inviteMatch', "You don't have Super Joins", 'Super Join');
     }
   };
-  
+    
   return (
     // @ts-ignore
     <FastImage
@@ -247,20 +250,77 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
         priority: FastImage.priority.normal,
       }}
       resizeMode={FastImage.resizeMode.cover}>
-      <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={eventPhotos ? eventPhotos[0].image : ''} />
-      <LinearGradient
+        <LinearGradient
         colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
-        start={{x: 0, y: 1}}
-        end={{x: 0, y: 0}}
-        style={styles.linearGradientHeader}>
-        <View style={styles.wrapperBar}>
+        style={{
+          position: 'absolute',
+          bottom: 170,
+          left: 0,
+          right: 0,
+          height: 40,
+          zIndex: 1,
+        }}
+      />
+      <View style={{
+        height:90, 
+        width: 5, 
+        backgroundColor: transparentWhite56Color, 
+        borderRadius: 35,
+        position: 'absolute',
+        right: 16,
+        top: 180,
+        padding: 1.25,
+        }}>
+          <View style={{
+            height: 45,
+            width: 2.5,
+            backgroundColor: whiteColor,
+            borderRadius: 35,
+            transform: [{translateY: scrollPosition > 0 && scrollPosition < 270? scrollPosition / 7: 0}]
+          }}>
+
+          </View>
+        </View>
+        {accountType === 'guest' && <TouchableOpacity
+            onPress={() => handleAutoSwipeLeft()}
+            style={{
+              width: 50,
+              height: 50,
+              backgroundColor: transparent60Color,
+              borderRadius: 50,
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'absolute',
+              right: 16,
+              top: 16,
+              zIndex: 5000
+            }}>
+            <CloseIcon width={27} height={27} />
+          </TouchableOpacity>}
+      {accountType === 'host' && <TouchableOpacity
+            onPress={() => handleAutoSwipeLeft()}
+            style={{
+              width: 50,
+              height: 50,
+              backgroundColor: transparent60Color,
+              borderRadius: 50,
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'absolute',
+              right: 16, 
+              top: 46,
+              zIndex: 1000
+            }}>
+            <CloseIcon width={27} height={27} />
+          </TouchableOpacity>}
+      <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={eventPhotos ? eventPhotos[0].image : ''} />
+      {accountType === 'host' && <View style={styles.wrapperBar}>
           {numberPhotos > 1
             ? [...Array(numberPhotos)].map((_, index) => (
                 <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
               ))
             : null}
-        </View>
-      </LinearGradient>
+        </View>}
       <View style={styles.wrapperButtons}>
         <TouchableOpacity onPress={handleBack} style={styles.button} />
         <TouchableOpacity onPress={handleNext} style={styles.button} />
@@ -272,7 +332,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             justifyContent: 'space-between',
             alignItems: 'center',
             paddingHorizontal: 16,
-            marginTop: 25,
+            marginTop: 16,
           }}>
           <View style={{flexDirection: 'row'}}>
             <View style={{alignSelf: 'flex-start'}}>
@@ -372,31 +432,8 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               </View>
             </View>
           </View>
-          <TouchableOpacity
-            onPress={() => handleAutoSwipeLeft()}
-            style={{
-              width: 40,
-              height: 40,
-              backgroundColor: blackColor,
-              borderRadius: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <CloseIcon width={25} height={25} />
-          </TouchableOpacity>
         </View>
       )}
-      {/* {hostInfo?.name && (
-        <View style={{flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 60, left: 16}}>
-          <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>{hostInfo.name}</Text>
-          {hostInfo?.date && (
-            <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 10}}>
-              , {calculateAge(hostInfo?.date)}
-            </Text>
-          )}
-          {hostInfo?.accountConfirmed && <CheckStarWhite width={18} height={18} />}
-        </View>
-      )} */}
       {isLocked && (
         <View style={styles.lockedWrapper}>
           <View style={styles.lockIconWr}>
@@ -416,44 +453,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
         </View>
       )}
-      {/* {isShowEventPreview ? (
-        <View style={styles.eventPreviewWr}>
-          <EventPreview
-            placeName={placeName}
-            date={date}
-            girls={girls}
-            photos={eventPhotos}
-            name={name}
-            flipCoin={flipCoin}
-            fromJoinEventsScreen={fromJoinEventsScreen}
-            onInvite={onInvite}
-            handleAutoSwipeRight={handleAutoSwipeRight}
-            superJoin={superJoin}
-          />
-        </View>
-      ) : ( */}
-      <LinearGradient
-        colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
-        style={[styles.linearGradientFooter, {height: 222}]}
-        start={{x: 0, y: 0}}
-        end={{x: 0, y: 1}}>
-        <View style={styles.wrapperBio}>
+      <View style={[styles.wrapperBio, {position: 'absolute', bottom: 200}]}>
           <View style={styles.rowBioInfo}>
             <Text style={styles.textName}>{name}</Text>
             <View style={{marginLeft: 10}}>{(confirmedEvent || confirmedAccount) && <CheckStarWhite width={25} height={25} />}</View>
           </View>
-          <View style={styles.wrapperFooterCard}>
-            {/* <View>
-                {homeAddress && (
-                  <View style={[styles.infoTags, {marginTop: screenHeight / 37}]}>
-                    <HomeIcon />
-                    <Text style={styles.textInfoTags}>From {homeAddress}</Text>
-                  </View>
-                )}
-              </View> */}
-          </View>
         </View>
-      </LinearGradient>
       {isShowAccountInfo && (
         <View
           style={{
@@ -580,7 +585,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               </View>
             )}
           </View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 14}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <TouchableOpacity
               onPress={() => {
                 handleSuperJoin();
@@ -631,6 +636,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
         </View>
       )}
+      {/* Host */}
       <View style={styles.wrapperButtons}>
         <TouchableOpacity onPress={handleBack} style={styles.button} />
         <TouchableOpacity onPress={handleNext} style={styles.button} />
@@ -805,8 +811,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               </View>
             )}
           </View>
-          <View>
-            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', }}>
               <TouchableOpacity
                 onPress={() => {
                   handleSuperInvite();
@@ -858,7 +863,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               </TouchableOpacity>
             </View>
           </View>
-        </View>
       )}
       {isShowWantsJoin && (
         <View style={styles.wantToJoinWr}>
