@@ -55,7 +55,6 @@ import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import Animated, {Easing, useAnimatedStyle, useSharedValue, withTiming} from 'react-native-reanimated';
 import ModalEventLocked from 'components/Modal/ModalEventLocked/ModalEventLocked';
-import {useGuestList} from 'src/store/guestListStore';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
@@ -103,8 +102,6 @@ const IO: FC = (): JSX.Element => {
   const setRejectModalVisible = useAdminActions((i: any) => i?.setRejectModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
 
-  const {guestsInvited, setGuestsInvited} = useGuestList();
-
   const allEventsLength = useRef(0);
 
   const eventsRef = useRef<any[]>();
@@ -151,10 +148,6 @@ const IO: FC = (): JSX.Element => {
       setFlipped(false);
     }
   }, [isVisibleSuperInvite]);
-
-  useEffect(() => {
-    setGuestsInvited(activeEvent?.usersList?.length);
-  }, [activeEvent]);
 
   useEffect(() => {
     const handleAppStateChange = async (nextAppState: any) => {
@@ -548,7 +541,7 @@ const IO: FC = (): JSX.Element => {
             accountTypeHost: userInfo?.accountType,
             accountTypeGuest: guestData.accountType,
             eventImage: event.photos[0].image,
-            guestsInvited: event.usersList.length,
+            guestsInvited: event.male + event.female,
           };
         } else {
           data = {
@@ -617,7 +610,7 @@ const IO: FC = (): JSX.Element => {
             accountTypeHost: guestData.accountType,
             accountTypeGuest: userInfo?.accountType,
             eventImage: event.photos[0].image,
-            guestsInvited: event.usersList.length,
+            guestsInvited: event.male + event.female,
           };
         } else {
           data = {
@@ -1354,7 +1347,6 @@ const IO: FC = (): JSX.Element => {
                   </TouchableOpacity>
                   <TouchableWithoutFeedback
                     onPress={() => {
-                      setGuestsInvited(guestsInvited + 1);
                       handleSuperInviteBottom(item._data, 400);
                     }}>
                     <View style={styles.buttonFlash}>
@@ -1418,7 +1410,6 @@ const IO: FC = (): JSX.Element => {
                   </TouchableWithoutFeedback>
                   <TouchableOpacity
                     onPress={() => {
-                      setGuestsInvited(guestsInvited + 1);
                       handleAutoSwipeRight(item?._data?.id);
                     }}
                     style={styles.buttonCloseOrCheck}>
@@ -1657,7 +1648,6 @@ const IO: FC = (): JSX.Element => {
                     }, 500);
                   }}
                   onSwipedRight={() => {
-                    setGuestsInvited(guestsInvited + 1);
                     onInvite(item?.info?.uid, item?.info?.id);
                     setTimeout(() => {
                       setCurrentEventCardPosition(prev => prev + 1);

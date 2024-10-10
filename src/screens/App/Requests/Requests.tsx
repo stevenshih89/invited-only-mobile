@@ -365,7 +365,7 @@ const Requests: FC = (): ReactElement => {
                       color: whiteColor,
                       fontFamily: Satoshi700,
                     }}>
-                    {getUsersListAccepted()}/{activeEvent?.usersList.length}
+                    {getUsersListAccepted()}/{activeEvent?.male + activeEvent?.female}
                   </Text>
                   <Text
                     style={{
