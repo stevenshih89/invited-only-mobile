@@ -1,11 +1,11 @@
 import React, {FC} from 'react';
 import {ImageBackground, SafeAreaView, Text, TouchableOpacity, View, Linking, Alert} from 'react-native';
 import Background from 'assets/images/auth/bg-create-account.png';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {backgroundGradientColors, black1Color, lightGray19Color, whiteColor} from 'constants/colors';
-import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {eulaPath} from 'constants/pathLocations';
+import {eulaPath, signUpPath} from 'constants/pathLocations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -91,6 +91,22 @@ const StartCreateAccount: FC = (): JSX.Element => {
                 Create Account
               </Text>
             </TouchableOpacity>
+            <View style={{flexDirection: 'row', marginBottom: 25,}}>
+              <Text style={{
+                color: whiteColor,
+                fontFamily: Satoshi400,
+                fontSize: RFValue(14, 812),
+              }}>Have an account? </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate(signUpPath as never)}
+            >
+              <Text style={{
+                color: whiteColor,
+                fontFamily: Satoshi700,
+                fontSize: RFValue(14, 812),
+              }}>Sign In</Text>
+            </TouchableOpacity>
+            </View>
             <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginHorizontal: 40, justifyContent: 'center'}}>
               <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: lightGray19Color}}>
                 By signing up or logging, I accept the IO
