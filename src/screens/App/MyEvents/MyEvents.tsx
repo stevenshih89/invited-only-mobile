@@ -12,7 +12,7 @@ import useStyles from 'screens/App/MyEvents/styles.ts';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard.tsx';
 import {useMyEvents} from '../../../store/myEvents';
 import {showToast} from 'helpers/showToast.ts';
-import {blackColor, grayColor, lightGray20Color, lightGray2Color, lightGray5Color, lightGreenColor, whiteColor} from 'constants/colors';
+import {blackColor, grayColor, lightGray13Color, lightGray16Color, lightGray20Color, lightGray2Color, lightGray5Color, lightGreenColor, whiteColor} from 'constants/colors';
 import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsCard';
 import ModalCancelAttending from './ModalCancelAttending';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
@@ -24,6 +24,7 @@ import {
   INVITE_MATCH_STATUS,
   NOT_ACCEPTED_STATUS,
   screenHeight,
+  screenWidth,
   THIS_MONTH,
   THIS_WEEKEND,
 } from 'constants/common.ts';
@@ -38,6 +39,7 @@ import CalendarCheckIcon from 'assets/images/icons/calendar-check.svg';
 import WIcon from 'assets/images/icons/W.svg';
 import MIcon from 'assets/images/icons/M.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
+import AddIcon from 'assets/images/icons/add.svg';
 
 import Button from 'components/Button/Button';
 import {commonStackPath, eventActiveInfoPath, eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocations';
@@ -481,6 +483,28 @@ const MyEvents: FC<any> = ({navigation}) => {
               ]}
               onPress={() => setActiveTab(MY_EVENTS)}>
               <Text style={[styles.textMyEvents, {color: activeTab === MY_EVENTS ? blackColor : whiteColor}]}>My events</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                paddingVertical: screenWidth / 60,
+                paddingHorizontal: screenHeight / 70,
+                borderRadius: 8,
+                flex: 1,
+                alignItems: 'center',
+                marginLeft: 10,
+                borderWidth: 1,
+                borderColor: lightGray13Color,
+                flexDirection: 'row',
+                justifyContent: 'center'
+              }}
+              onPress={() => navigation.navigate(eventCreatingStackPath)}>
+                <AddIcon width={16} height={16}/>
+              <Text style={{
+                color: whiteColor,
+                fontFamily: Satoshi500,
+                fontSize: RFValue(16, 812),
+                marginLeft: 10
+              }}>Create event</Text>
             </TouchableOpacity>
           </View>
         ) : (
