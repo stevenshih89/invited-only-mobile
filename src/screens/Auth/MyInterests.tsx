@@ -1,19 +1,30 @@
-import {isIos, screenHeight} from 'constants/common';
+import {isIos, screenHeight, screenWidth} from 'constants/common';
 import {FC, useContext, useState} from 'react';
-import {FlatList, Image, ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {
+  FlatList,
+  Image,
+  ImageBackground,
+  Keyboard,
+  KeyboardAvoidingView,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
-import BirthdayParty from 'assets/images/auth/interests/birthday-party.jpg'
-import Exclusive from 'assets/images/auth/interests/exclusive.jpg'
-import PoolParty from 'assets/images/auth/interests/pool-party.jpg'
-import Private from 'assets/images/auth/interests/private.jpg'
-import Restaurant from 'assets/images/auth/interests/restaurant.jpg'
-import VipTables from 'assets/images/auth/interests/vip-tables.jpg'
-import YachtParty from 'assets/images/auth/interests/yacht-party.jpg'
-import Concert from 'assets/images/auth/interests/concerts.jpg'
-import UserOne from 'assets/images/auth/interests/user-one.png'
-import UserTwo from 'assets/images/auth/interests/user-two.png'
+import BirthdayParty from 'assets/images/auth/interests/birthday-party.jpg';
+import Exclusive from 'assets/images/auth/interests/exclusive.jpg';
+import PoolParty from 'assets/images/auth/interests/pool-party.jpg';
+import Private from 'assets/images/auth/interests/private.jpg';
+import Restaurant from 'assets/images/auth/interests/restaurant.jpg';
+import VipTables from 'assets/images/auth/interests/vip-tables.jpg';
+import YachtParty from 'assets/images/auth/interests/yacht-party.jpg';
+import Concert from 'assets/images/auth/interests/concerts.jpg';
+import UserOne from 'assets/images/auth/interests/user-one.png';
+import UserTwo from 'assets/images/auth/interests/user-two.png';
 import {black1Color, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -26,7 +37,7 @@ import AuthProgress from 'components/AuthProgress';
 const MyInterests: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
-  const {onBoarding, setOnBoarding} = useContext(AuthContext);  
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const [listOfInterests, setListOfInterests] = useState([
     {id: 0, title: 'Vip Tabes', isSelected: false, image: VipTables},
@@ -64,7 +75,7 @@ const MyInterests: FC = (): JSX.Element => {
   };
 
   const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
-  
+
   return (
     <KeyboardAvoidingView
       behavior={isIos ? 'padding' : 'height'}
@@ -119,7 +130,8 @@ const MyInterests: FC = (): JSX.Element => {
                     fontFamily: Satoshi400,
                     fontSize: RFValue(17, 812),
                   }}>
-                  Choose up to <Text style={{fontWeight: '700'}}>3{accountType === 'host'? 'things': ' event types'}</Text> you love. It will help you match with people
+                  Choose up to <Text style={{fontWeight: '700'}}>3{accountType === 'host' ? 'things' : ' event types'}</Text> you love. It
+                  will help you match with people
                 </Text>
               </View>
               <View style={{width: '100%', height: screenHeight / 2}}>
@@ -129,35 +141,36 @@ const MyInterests: FC = (): JSX.Element => {
                   keyExtractor={({id}) => id.toString()}
                   bounces={false}
                   contentContainerStyle={{width: '100%'}}
-                  ItemSeparatorComponent={() => <View style={{height: 20, width: 20}} />}
+                  ItemSeparatorComponent={() => <View style={{height: screenHeight * 0.021}} />}
                   renderItem={({item: {id, title, isSelected, image}}) => (
-                    <View style={{paddingHorizontal: 5}}>
                       <TouchableOpacity
                         onPress={() => handleSelectInterest(id)}
                         activeOpacity={0.7}
                         style={{
                           flex: 1,
                           borderRadius: 12,
-                          width: 180,
+                          width: '100%',
                           alignItems: 'center',
                           borderWidth: 1,
                           borderStyle: 'solid',
                           borderColor: isSelected ? whiteColor : blackColor,
+                          marginHorizontal: 2,
                         }}>
-                        <View style={{width: 178, height: 250, borderRadius: 12, overflow: 'hidden'}}>
+                        <View style={{width: '100%', height: screenHeight * 0.268, borderRadius: 12, overflow: 'hidden'}}>
                           <ImageBackground source={image} style={{width: '100%', height: '100%', justifyContent: 'space-between'}}>
-                            <TouchableOpacity style={{
-                              backgroundColor: whiteColor,
-                              width: 20,
-                              height: 20,
-                              borderRadius: 20,
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              alignSelf: 'flex-end',
-                              marginRight: 11,
-                              marginTop: 16,
-                              opacity: isSelected? 1: 0.3
-                            }}>
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: whiteColor,
+                                width: 20,
+                                height: 20,
+                                borderRadius: 20,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                alignSelf: 'flex-end',
+                                marginRight: 11,
+                                marginTop: 16,
+                                opacity: isSelected ? 1 : 0.3,
+                              }}>
                               <CheckIcon />
                             </TouchableOpacity>
                             <View
@@ -169,8 +182,10 @@ const MyInterests: FC = (): JSX.Element => {
                                 justifyContent: 'center',
                               }}>
                               <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
-                                <Text style={{color: blackColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 16}}>{title}</Text>
-                                <View style={{flexDirection: 'row',}}>
+                                <Text style={{color: blackColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 16}}>
+                                  {title}
+                                </Text>
+                                <View style={{flexDirection: 'row'}}>
                                   <Image
                                     source={UserOne}
                                     style={{
@@ -219,12 +234,11 @@ const MyInterests: FC = (): JSX.Element => {
                           </ImageBackground>
                         </View>
                       </TouchableOpacity>
-                    </View>
                   )}
                 />
               </View>
             </View>
-            <View style={{marginBottom: 4}}>
+            <View style={{}}>
               <Button
                 buttonStyle={{borderRadius: 18}}
                 disabled={listOfInterests.filter(interest => interest.isSelected).length < 3}

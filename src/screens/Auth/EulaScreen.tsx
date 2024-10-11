@@ -9,7 +9,7 @@ import {signUpPath} from 'constants/pathLocations';
 
 const dataEula = [
   {
-    id:0,
+    id: 0,
     title: '',
     description: 'This End User License Agreement (“Agreement”) is a legal contract between you (“User”) and [Company Name] (“Licensor”), governing your use of the [App Name] software application (“the App”). By creating an account, downloading, or using the App, you agree to the terms outlined here. If you do not agree, do not use the App.'
   },
@@ -92,27 +92,33 @@ const dataEula = [
   },
   {
     id: 10,
-    title: '10. GOVERNING LAW',
+    title: '10. Eligibility',
+    description:
+      'To use the App, you must be at least 18 years old and legally capable of entering into this Agreement.',
+  },
+  {
+    id: 11,
+    title: '11. GOVERNING LAW',
     description:
       'This Agreement is governed by the laws of the State of Delaware, USA, without regard to its conflict of law provisions.',
   },
   {
-    id: 11,
-    title: '11. APPLE REQUIREMENTS',
-    description: 'This Agreement is between you and [Company Name], not Apple, Inc. However, you acknowledge that Apple and its subsidiaries are third-party beneficiaries of this Agreement and may enforce its terms. You must also comply with the App Store Terms of Service.',
-  },
-  {
     id: 12,
-    title: '12. CHANGES TO THE TERMS',
-    description: 'We reserve the right to modify or update this Agreement at any time. Changes will take effect upon posting to the App, and your continued use signifies acceptance of the new terms.',
+    title: '12. APPLE REQUIREMENTS',
+    description: 'This Agreement is between you and Invited Only Inc., not Apple, Inc. However, you acknowledge that Apple and its subsidiaries are third-party beneficiaries of this Agreement and may enforce its terms. You must also comply with the App Store Terms of Service.',
   },
   {
     id: 13,
-    title: '13. CONTACT INFORMATION',
-    description: 'If you have any questions or concerns about this Agreement, please contact us at [Insert Contact Information].',
+    title: '13. CHANGES TO THE TERMS',
+    description: 'We reserve the right to modify or update this Agreement at any time. Changes will take effect upon posting to the App, and your continued use signifies acceptance of the new terms.',
   },
   {
     id: 14,
+    title: '14. CONTACT INFORMATION',
+    description: 'If you have any questions or concerns about this Agreement, please contact us at support@invitedonly.app.',
+  },
+  {
+    id: 15,
     title: 'ACCEPTANCE',
     description: 'By clicking “Agree” or installing the App, you acknowledge that you have read and understood this Agreement and agree to its terms, including subscription fees, renewal policies, and usage guidelines.\n\n' +
     'This combined EULA integrates both sets of terms while removing redundancies, providing clear guidance on subscription models, content policies, and user responsibilities.'

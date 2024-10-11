@@ -367,7 +367,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
               )}
             </View>
             <View style={{marginTop: screenHeight / 55}}>
-              <Text style={[styles.testBasics, {marginBottom: 14}]}>My interests</Text>
+              <Text style={[styles.testBasics, {marginBottom: 14}]}>Add more interests</Text>
               <FlatList
                 data={userInfo?.interests}
                 numColumns={3}

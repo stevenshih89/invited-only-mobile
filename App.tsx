@@ -3,7 +3,7 @@ import {Platform, StatusBar, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Main from 'src';
 import 'react-native-gesture-handler';
-import {black1Color} from 'constants/colors';
+import {blackColor} from 'constants/colors';
 import Purchases from 'react-native-purchases';
 import {NavigationContainer} from '@react-navigation/native';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
@@ -32,7 +32,7 @@ const App: FC = (): JSX.Element => {
     <SafeAreaProvider>
       <NavigationContainer>
         <StatusBar />
-        <View style={{flex: 1, backgroundColor: black1Color}}>
+        <View style={{flex: 1, backgroundColor: blackColor}}>
           <Main />
         </View>
       </NavigationContainer>

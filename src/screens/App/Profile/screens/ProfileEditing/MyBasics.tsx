@@ -103,46 +103,6 @@ const MyBasics: FC<{
           <ArrowRight />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleHeightModal(true)}>
-        <View style={styles.iconContainer}>
-          <Arrows />
-          <Text style={styles.text}>Height</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Text style={styles.subText}>{height ? `${height}cm` : 'Add'}</Text>
-          <ArrowRight />
-        </View>
-      </TouchableOpacity>
-      {/* <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer}>
-        <View style={styles.iconContainer}>
-          <Bookmark />
-          <Text style={styles.text}>Exercise</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Text style={styles.subText}>Add</Text>
-          <ArrowRight />
-        </View>
-      </TouchableOpacity> */}
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleAlcoholModal(true)}>
-        <View style={styles.iconContainer}>
-          <Wine />
-          <Text style={styles.text}>Drinking</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Text style={styles.subText}>{activeAlcoholItem ? activeAlcoholItem : 'Add'}</Text>
-          <ArrowRight />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleSmokeModal(true)}>
-        <View style={styles.iconContainer}>
-          <Smoke />
-          <Text style={styles.text}>Smoking</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Text style={styles.subText}>{activeSmokeItem?.title || 'Add'}</Text>
-          <ArrowRight />
-        </View>
-      </TouchableOpacity>
     </View>
   );
 };

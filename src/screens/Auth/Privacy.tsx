@@ -12,12 +12,15 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {verifyFirstStepPath} from 'constants/pathLocations';
 import {TouchableOpacity} from 'react-native';
 import { AuthContext } from 'contexts/AuthContext';
+import { useRoute } from '@react-navigation/native';
 
 const Privacy: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const {onBoarding} = useContext(AuthContext);
   const objWithAccountType = onBoarding.find(obj => obj.hasOwnProperty("accountType"));
-  
+  const route = useRoute();
+  const { screen, accountType} = route.params as { screen: string, accountType: string};
+      
   const privaciesListHost = [
     {
       id: 0,
@@ -65,88 +68,99 @@ const Privacy: FC = (): JSX.Element => {
   ];
 
   return (
-    <KeyboardAvoidingView
-      behavior={isIos ? 'padding' : 'height'}
-      keyboardVerticalOffset={15}
-      style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+    <SafeAreaView style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
+      <View
+        style={{
+          flex: 1,
+          paddingBottom: 0,
+          paddingHorizontal: 24,
+        }}>
+        <View style={{alignItems: 'center'}}>
+          <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              activeOpacity={0.7}
+              hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+              style={{
+                borderRadius: 50,
+                width: 40,
+                height: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: transparentWhite30Color,
+              }}>
+              <ArrowLeft />
+            </TouchableOpacity>
+            <LogoPrimary2 />
+            <View style={{width: 40}} />
+          </View>
           <View
             style={{
-              flex: 1,
-              justifyContent: 'space-between',
-              paddingBottom: 0,
-              paddingHorizontal: 24,
+              width: '100%',
+              marginBottom: screenHeight / 30,
+              marginTop: screenHeight / (screen ? 10 : 15),
             }}>
-            <View style={{alignItems: 'center'}}>
-              <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
-                <TouchableOpacity
-                  onPress={() => navigation.goBack()}
-                  activeOpacity={0.7}
-                  hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
-                  style={{
-                    borderRadius: 50,
-                    width: 40,
-                    height: 40,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: transparentWhite30Color,
-                  }}>
-                  <ArrowLeft />
-                </TouchableOpacity>
-                <LogoPrimary2 />
-                <View style={{width: 40}} />
-              </View>
-              <View
-                style={{
-                  width: '100%',
-                  marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 10,
-                }}>
-                <Text
-                  style={{
-                    color: whiteColor,
-                    fontFamily: Satoshi500,
-                    fontSize: RFValue(48, 812),
-                    marginBottom: 18,
-                  }}>
-                  Welcome
-                </Text>
-                <Text
-                  style={{
-                    color: whiteColor,
-                    fontFamily: Satoshi400,
-                    fontSize: RFValue(18, 812),
-                  }}>
-                  Please follow these {objWithAccountType?.accountType === 'host'? 'Host': 'Guest'} House Rules
-                </Text>
-              </View>
-              <View style={{width: '100%'}}>
-                <FlatList
-                  data={objWithAccountType?.accountType === 'host'? privaciesListHost: privaciesListGuest}
-                  keyExtractor={({id}) => id.toString()}
-                  ItemSeparatorComponent={() => <View style={{height: 8}} />}
-                  renderItem={({item: {title, subtitle}}) => (
-                    <View style={{width: '100%', padding: 20, backgroundColor: lightGray3Color, borderRadius: 10}}>
-                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <CheckIcon />
-                        <Text style={{color: whiteColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 8}}>{title}</Text>
-                      </View>
-                      <Text style={{color: lightGray4Color, fontSize: RFValue(14, 812), fontFamily: Satoshi400, marginTop: 10}}>
-                        {subtitle}
-                      </Text>
-                    </View>
-                  )}
-                />
-              </View>
-            </View>
-            <View style={{marginBottom: 4}}>
-              <Button onPress={() => navigation.navigate(verifyFirstStepPath as never)} title="I Agree, Continue" />
-            </View>
+            <Text
+              style={{
+                color: whiteColor,
+                fontFamily: Satoshi500,
+                fontSize: RFValue(48, 812),
+                marginBottom: 18,
+              }}>
+              Welcome
+            </Text>
+            <Text
+              style={{
+                color: whiteColor,
+                fontFamily: Satoshi400,
+                fontSize: RFValue(18, 812),
+              }}>
+              Please follow these{' '}
+              {objWithAccountType?.accountType
+                ? objWithAccountType?.accountType === 'host'
+                  ? 'Host'
+                  : 'Guest'
+                : accountType === 'host'
+                ? 'Host'
+                : 'Guest'}{' '}
+              House Rules
+            </Text>
           </View>
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          <View style={{width: '100%'}}>
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={
+                objWithAccountType?.accountType
+                  ? objWithAccountType?.accountType === 'host'
+                    ? privaciesListHost
+                    : privaciesListGuest
+                  : accountType === 'host'
+                  ? privaciesListHost
+                  : privaciesListGuest
+              }
+              keyExtractor={({id}) => id.toString()}
+              ItemSeparatorComponent={() => <View style={{height: 8}} />}
+              renderItem={({item: {title, subtitle}}) => (
+                <View style={{width: '100%', padding: 20, backgroundColor: lightGray3Color, borderRadius: 10}}>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <CheckIcon />
+                    <Text style={{color: whiteColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 8}}>{title}</Text>
+                  </View>
+                  <Text style={{color: lightGray4Color, fontSize: RFValue(14, 812), fontFamily: Satoshi400, marginTop: 10}}>
+                    {subtitle}
+                  </Text>
+                </View>
+              )}
+            />
+          </View>
+        </View>
+        {screen !== 'SafetyAndWellbeing' && (
+          <View style={{marginTop: 15}}>
+            <Button onPress={() => navigation.navigate(verifyFirstStepPath as never)} title="I Agree, Continue" />
+          </View>
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
 

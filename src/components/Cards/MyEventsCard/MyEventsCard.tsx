@@ -55,7 +55,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
 
   const EventInReviewView = () => (
     <View style={styles.eventInReviewView}>
-      <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 30}}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Clock width={28} height={28} style={{marginRight: 8}} />
         <Text style={styles.textEventInReview}>Event in review</Text>
       </View>
@@ -98,10 +98,11 @@ const MyEventsCard: FC<MyEventsCard> = props => {
       return {plateTitle: 'Full', plateBackgroundColor: lightGreenColor};
     }
 
-    return {
+    if(item?.statusEvent) return {
       plateTitle: 'Active',
       plateBackgroundColor: lightGreenColor,
     };
+    return null
   };
 
   return (
@@ -144,9 +145,9 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                 <EventRejectedView />
               </View>
             )}
-            <View
+            {getEventStatus() && <View
               style={{
-                backgroundColor: getEventStatus().plateBackgroundColor,
+                backgroundColor: getEventStatus()?.plateBackgroundColor,
                 paddingHorizontal: 6,
                 paddingVertical: 4,
                 borderRadius: 5,
@@ -155,8 +156,8 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                 bottom: 16,
                 left: 16,
               }}>
-              <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500}}>{getEventStatus().plateTitle}</Text>
-            </View>
+              <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500}}>{getEventStatus()?.plateTitle}</Text>
+            </View>}
           </LinearGradient>
         </FastImage>
         <View style={{paddingHorizontal: 18}}>
@@ -303,26 +304,6 @@ const MyEventsCard: FC<MyEventsCard> = props => {
           </View>
           <View style={{marginBottom: 23}}>
             {customButton ? customButton : null}
-            {/* <TouchableOpacity
-              onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: list}} as never)}
-              style={{
-                height: 65,
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 18,
-                backgroundColor: lightGray20Color,
-                marginTop: 25,
-              }}>
-              <Text
-                style={{
-                  color: blackColor,
-                  fontFamily: Satoshi700,
-                  fontSize: RFValue(16, 812),
-                }}>
-                Manage Event
-              </Text>
-            </TouchableOpacity> */}
           </View>
         </View>
       </View>

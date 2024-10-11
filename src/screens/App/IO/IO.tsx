@@ -20,7 +20,7 @@ import {calculateAge} from 'helpers/calculateAge';
 import {EventContext} from 'contexts/EventContext';
 import {blackColor, lightGreenColor, transparentWhite56Color, whiteColor} from 'constants/colors';
 import {fcmHelper, onMatchNotificationSubscription, sendNotification} from 'helpers/fcmHelper.ts';
-import {Satoshi400, Satoshi700} from 'constants/fonts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {useUser} from '../../../store/userStore';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 
@@ -60,6 +60,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import moment from 'moment';
 import {Event, EventData} from 'src/types/event';
+import { useScrollPosition } from 'src/store/scrollPosition';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -96,6 +97,8 @@ const IO: FC = (): JSX.Element => {
 
   const userHost = useUser((i: any) => i?.user);
   const setUser = useUser((i: any) => i?.setUser);
+
+  const setScrollPosition = useScrollPosition((i: any) => i?.setScrollPosition);
 
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
@@ -641,6 +644,7 @@ const IO: FC = (): JSX.Element => {
           });
       }
       setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
+      setScrollPosition(0)
     } catch (error) {
       // console.log('eror invite', error);
     }
@@ -826,6 +830,7 @@ const IO: FC = (): JSX.Element => {
               usersListLength={event?.usersList.length}
               usersList={event?.usersList}
               handleAutoSwipeLeft={handleAutoSwipeLeft}
+              accountType={userInfo?.accountType}
             />
             <View style={styles.bioWrapper}>
               <Text style={[styles.titleSection]}>Event details</Text>
@@ -1224,6 +1229,7 @@ const IO: FC = (): JSX.Element => {
                 date={item?._data.date}
                 item={item?._data}
                 userInfo={userInfo}
+                handleAutoSwipeLeft={handleAutoSwipeLeft}
               />
               <View style={styles.bioWrapper}>
                 <Text style={[styles.titleSection, bio ? styles.mt31 : {}]}>My basics</Text>
@@ -1537,37 +1543,26 @@ const IO: FC = (): JSX.Element => {
   };
 
   if ((loading || (!userHost && userInfo.accountConfirmed)) && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
-    return <Loading text="Finding people near you..." userInfo={userInfo} />;
+    return <Loading wrapperText={false} text="Finding guests near you ..." userInfo={userInfo} />;
   }
-
-  // if (activeEvent?.date && !isVisibleMatch) {
-  //   const [day, month, year] = activeEvent?.date?.split('.').map(Number);
-  //   const [hours, minutes] = activeEvent?.hour?.split(':').map(Number);
-
-  //   const isExpired = moment().isAfter(moment(`${year}-${month}-${day} ${hours}:${minutes}`));
-  //   if (isExpired) {
-  //     return (
-  //       <View style={{flex: 1}}>
-  //         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
-  //           {<Loading userInfo={activeEvent} topPosition={false} wrapperText={false} text={`Event Expired: ${activeEvent.date}`} />}
-  //         </View>
-  //       </View>
-  //     );
-  //   }
-  // }
 
   if (!loading && myEvents.length < 1 && userInfo.accountConfirmed && isHost && !isVisibleMatch && !acceptModalVisible) {
     return (
-      <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
+      <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
         <View style={{height: 370}}>
           <Loading userInfo={userInfo} topPosition={true} />
         </View>
         <View>
-          <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(14, 812), fontFamily: Satoshi400}}>
-            You don't have any active event. Get started by creating an event to begin inviting guests.
+          <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi500}}>
+            You don't have any active event.
+          </Text>
+          <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi500}}>
+            Get started by creating an event to begin inviting guests.
           </Text>
         </View>
-        <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 20, marginBottom: 30}} />
+        <View style={{paddingHorizontal: 24}}>
+          <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 20, marginBottom: 30}} />
+        </View>
       </View>
     );
   }
@@ -1584,12 +1579,19 @@ const IO: FC = (): JSX.Element => {
   ) {
     return (
       <Loading
-        text="Sorry, can't find any results. Please try adjusting your search parameters or try again later."
+        text="We're currently searching for exciting guests to join you. It may take some time!"
         userInfo={userInfo}
         wrapperText={false}
       />
     );
   }
+
+  
+
+  const handleScroll = (event) => {
+    const positionY = event.nativeEvent.contentOffset.y;
+    setScrollPosition(positionY)
+  };
 
   return (
     <>
@@ -1639,6 +1641,7 @@ const IO: FC = (): JSX.Element => {
                   // @ts-ignore
                   cardHeight="100%"
                   onSwipedLeft={() => {
+                    setScrollPosition(0)
                     setTimeout(() => {
                       onReject(item?.info?.uid, item?.info?.id);
                     }, 500);
@@ -1647,6 +1650,7 @@ const IO: FC = (): JSX.Element => {
                     }, 500);
                   }}
                   onSwipedRight={() => {
+                    setScrollPosition(0)
                     onInvite(item?.info?.uid, item?.info?.id);
                     setTimeout(() => {
                       setCurrentEventCardPosition(prev => prev + 1);
@@ -1657,7 +1661,10 @@ const IO: FC = (): JSX.Element => {
                   disableBottomSwipe={true}
                   disableTopSwipe={true}
                   cardStyle={styles.card}>
-                  <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
+                  <ScrollView
+                  onScroll={handleScroll}
+                  scrollEventThrottle={20}
+                  showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
                     {item.component}
                   </ScrollView>
                 </TinderCard>

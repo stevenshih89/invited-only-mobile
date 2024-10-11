@@ -25,7 +25,8 @@ const Button: FC<ButtonProps> = ({
       defaultRaw: {
         borderRadius: 18,
         backgroundColor: whiteColor,
-        height: 64,
+        height: screenHeight * 0.068,
+        maxHeight: 64
       } as ViewStyle,
       defaultRawText: {
         color: blackColor,
@@ -51,7 +52,8 @@ const Button: FC<ButtonProps> = ({
         borderRadius: 18,
         backgroundColor: 'transparent',
         borderWidth: 0,
-        height: 64,
+        height: screenHeight * 0.068,
+        maxHeight: 64
       },
       defaultRawText: {
         color: whiteColor,
