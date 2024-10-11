@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {black2Color, blackColor, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors.ts';
+import {black2Color, black2Color90, blackColor, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -10,12 +10,9 @@ const useStyles = () => {
       flex: 1,
     },
     wrapper: {
-      backgroundColor: black2Color,
-      // height: '60%',
-      borderTopLeftRadius: 30,
-      borderTopRightRadius: 30,
+      backgroundColor: black2Color90,
       alignItems: 'center',
-      paddingHorizontal: screenWidth / 10.5,
+      paddingHorizontal: 20,
     },
     wrapperCancelEvent: {
       backgroundColor: black2Color,
@@ -121,13 +118,11 @@ const useStyles = () => {
       marginTop: screenHeight / 85,
     },
     eventImage: {
-      marginTop: 5,
-      width: screenWidth - 32,
-      height: 220,
+      height: screenHeight * 0.23,
       borderRadius: 20,
       overflow: 'hidden',
       justifyContent: 'space-between',
-      padding: 16
+      padding: 20
     },
     fdr: {
       backgroundColor: transparent60Color, 
@@ -142,7 +137,6 @@ const useStyles = () => {
       margin: 0,
       justifyContent: 'flex-end',
       zIndex: 999,
-      marginBottom: 30
     },
   });
 };
