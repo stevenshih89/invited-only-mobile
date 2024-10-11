@@ -1,4 +1,4 @@
-import {isIos, screenHeight} from 'constants/common';
+import {isIos, screenHeight, screenWidth} from 'constants/common';
 import {FC, useContext, useState} from 'react';
 import {FlatList, Image, ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
@@ -129,22 +129,22 @@ const MyInterests: FC = (): JSX.Element => {
                   keyExtractor={({id}) => id.toString()}
                   bounces={false}
                   contentContainerStyle={{width: '100%'}}
-                  ItemSeparatorComponent={() => <View style={{height: 20, width: 20}} />}
+                  ItemSeparatorComponent={() => <View style={{height: screenHeight * 0.021}} />}
                   renderItem={({item: {id, title, isSelected, image}}) => (
-                    <View style={{paddingHorizontal: 5}}>
                       <TouchableOpacity
                         onPress={() => handleSelectInterest(id)}
                         activeOpacity={0.7}
                         style={{
                           flex: 1,
                           borderRadius: 12,
-                          width: 180,
+                          width: '100%',
                           alignItems: 'center',
                           borderWidth: 1,
                           borderStyle: 'solid',
                           borderColor: isSelected ? whiteColor : blackColor,
+                          marginHorizontal: 2,
                         }}>
-                        <View style={{width: 178, height: 250, borderRadius: 12, overflow: 'hidden'}}>
+                        <View style={{width: '100%', height: screenHeight * 0.268, borderRadius: 12, overflow: 'hidden'}}>
                           <ImageBackground source={image} style={{width: '100%', height: '100%', justifyContent: 'space-between'}}>
                             <TouchableOpacity style={{
                               backgroundColor: whiteColor,
@@ -219,12 +219,11 @@ const MyInterests: FC = (): JSX.Element => {
                           </ImageBackground>
                         </View>
                       </TouchableOpacity>
-                    </View>
                   )}
                 />
               </View>
             </View>
-            <View style={{marginBottom: 4}}>
+            <View style={{}}>
               <Button
                 buttonStyle={{borderRadius: 18}}
                 disabled={listOfInterests.filter(interest => interest.isSelected).length < 3}
