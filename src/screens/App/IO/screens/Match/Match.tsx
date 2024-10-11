@@ -1,4 +1,4 @@
-import {blackColor, lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
+import {black3Color, blackColor, lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
 import {Text, TouchableOpacity, View, SafeAreaView} from 'react-native';
 import Modal from 'react-native-modal';
 import Close from 'assets/images/icons/close.svg';
@@ -16,6 +16,7 @@ import {sendNotification} from 'helpers/fcmHelper';
 import MatchInfoCard from 'components/MatchInfoCard';
 import {calculateAge} from 'helpers/calculateAge';
 import {Event} from 'src/types/event';
+import LinearGradient from 'react-native-linear-gradient';
 
 export interface MatchData {
   type?: string;
@@ -286,10 +287,10 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   useEffect(() => {
     if (isVisibleMatch) {
       rotateCard1.value = withDelay(800, withTiming(-15, {duration: 400}));
-      marginRightCard1.value = withDelay(600, withTiming(screenWidth - 228 - (228 / 100) * 15 - 24 * 1.5, {duration: 200}));
+      marginRightCard1.value = withDelay(600, withTiming(screenWidth - (screenWidth * 0.53) - ((screenWidth/100) * 15) - 14, {duration: 200}));
 
       rotateCard2.value = withDelay(800, withTiming(15, {duration: 400}));
-      marginLeftCard2.value = withDelay(600, withTiming(screenWidth - 228 - (228 / 100) * 15 - 24 * 1.5, {duration: 200}));
+      marginLeftCard2.value = withDelay(600, withTiming(screenWidth - (screenWidth * 0.53) - ((screenWidth/100) * 15) - 14, {duration: 200}));
       topCard2.value = withDelay(400, withTiming(screenHeight / 2 - 350, {duration: 200}));
 
       whiteLineWidth.value = withTiming(117, {duration: 400});
@@ -333,7 +334,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   }));
 
   return (
-    <View>
+    <LinearGradient colors={[black3Color, blackColor]}>
       <Modal
         isVisible={isVisibleMatch}
         coverScreen
@@ -475,7 +476,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
           ]}
         />
       </Modal>
-    </View>
+    </LinearGradient>
   );
 };
 

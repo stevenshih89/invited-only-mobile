@@ -134,7 +134,7 @@ const ItemRequestHost = ({
         accountTypeHost: userInfo?.accountType,
         accountTypeGuest: guest?.accountType,
         eventImage: activeEvent?.photos[0].image,
-        guestsInvited: activeEvent.usersList.length,
+        guestsInvited: activeEvent?.male + activeEvent?.female,
       };
 
       await firestore()

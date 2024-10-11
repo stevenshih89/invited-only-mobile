@@ -29,7 +29,6 @@ import {calculateAge} from 'helpers/calculateAge.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites/index.ts';
-import {useGuestList} from 'src/store/guestListStore/index.ts';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin.tsx';
@@ -128,7 +127,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   const navigation = useAppNavigation();
 
   const {counterSuperInvites} = useCounterSuperEvents();
-  const {guestsInvited, setGuestsInvited} = useGuestList();
 
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
 
@@ -206,20 +204,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       goToMyProfileView();
     }
   };
-
-  const frontAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{rotateY: `${rotation.value}deg`}],
-      opacity: rotation.value >= 90 && rotation.value <= 270 ? 0 : 1,
-    };
-  });
-
-  const backAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{rotateY: `${rotation.value}deg`}],
-      opacity: rotation.value >= 90 && rotation.value <= 270 ? 1 : 0,
-    };
-  });
 
   const handleSuperJoin = () => {
     if (counterSuperInvites > 0) {
@@ -771,7 +755,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     color: blackColor,
                     fontFamily: Satoshi700,
                   }}>
-                  {getUsersListAccepted(activeEvent?.usersList)}/{guestsInvited}
+                  {getUsersListAccepted(activeEvent?.usersList)}/{activeEvent?.female + activeEvent?.male}
                 </Text>
                 <Text
                   style={{
@@ -815,7 +799,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               <TouchableOpacity
                 onPress={() => {
                   handleSuperInvite();
-                  setGuestsInvited(guestsInvited + 1);
                 }}
                 style={{
                   flex: 1,
@@ -842,7 +825,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                 onPress={() => {
                   handleAutoSwipeRight && handleAutoSwipeRight();
                   onInvite && onInvite();
-                  setGuestsInvited(guestsInvited + 1);
                 }}
                 style={{
                   flex: 1,

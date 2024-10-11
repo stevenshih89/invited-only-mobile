@@ -13,6 +13,7 @@ import LocationBlackIcon from 'assets/images/icons/location-black.svg';
 import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
+import { screenHeight, screenWidth } from 'constants/common';
 
 interface MatchInfoCardI {
   isProfile: boolean;
@@ -60,14 +61,25 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
     <FastImage
       style={[
         {
-          width: 228,
-          height: 400,
+          width: screenWidth * 0.53,
+          height: screenHeight * 0.42,
           borderRadius: 22,
           justifyContent: showHeaderInfo ? 'space-between' : 'flex-end',
         },
         styleContainer,
       ]}
       source={{uri: imageEvent && !isGuest ? imageEvent : image}}>
+      <LinearGradient
+        colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
+        style={{
+          position: 'absolute',
+          bottom: 68,
+          left: 0,
+          right: 0,
+          height: 40,
+          zIndex: 1,
+        }}
+      />
       {showHeaderInfo && (
         <View style={{flexDirection: 'row', padding: 15}}>
           <View style={{alignSelf: 'flex-start'}}>
@@ -180,25 +192,13 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
             fontSize: RFValue(20, 812),
           }}>
           {name}
-          <Text>,</Text>
         </Text>
-        {!isProfile && (
-          <Text
-            style={{
-              color: whiteColor,
-              fontFamily: Satoshi700,
-              fontSize: RFValue(16, 812),
-            }}>
-            {' '}
-            {age}
-          </Text>
-        )}
         <View style={{marginLeft: 5}}>{confirmedAccount && <CheckStarWhite width={15} height={15} />}</View>
       </View>
       <View
         style={{
           height: 68,
-          width: 228,
+          width: '100%',
           backgroundColor: whiteColor,
           paddingHorizontal: 10,
           paddingVertical: 8,
@@ -300,36 +300,38 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
               </View>
             </View>
           </View>
-          <View
-            style={{
-              borderWidth: 1,
-              borderColor: blackColor,
-              borderRadius: 6,
-              flexDirection: 'row',
-              paddingHorizontal: 8,
-              paddingVertical: 4,
-              alignItems: 'center',
-            }}>
-            <FastImage style={{width: 20, height: 20, borderRadius: 20}} source={{uri: imageEvent}} />
-            <View style={{marginLeft: 6, alignItems: 'center'}}>
-              <Text
-                style={{
-                  fontSize: RFValue(14, 812),
-                  color: blackColor,
-                  fontFamily: Satoshi700,
-                }}>
-                {getUsersListAccepted()}/{guestsInvited}
-              </Text>
-              <Text
-                style={{
-                  fontSize: RFValue(6, 812),
-                  color: blackColor,
-                  fontFamily: Satoshi500,
-                }}>
-                Guest List
-              </Text>
+          {isGuest && (
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: blackColor,
+                borderRadius: 6,
+                flexDirection: 'row',
+                paddingHorizontal: screenWidth > 400 ? 8 : 4,
+                paddingVertical: screenWidth > 400 ? 4 : 2,
+                alignItems: 'center',
+              }}>
+              <FastImage style={{width: 20, height: 20, borderRadius: 20}} source={{uri: imageEvent}} />
+              <View style={{marginLeft: 6, alignItems: 'center'}}>
+                <Text
+                  style={{
+                    fontSize: RFValue(14, 812),
+                    color: blackColor,
+                    fontFamily: Satoshi700,
+                  }}>
+                  {getUsersListAccepted()}/{guestsInvited}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: RFValue(6, 812),
+                    color: blackColor,
+                    fontFamily: Satoshi500,
+                  }}>
+                  Guest List
+                </Text>
+              </View>
             </View>
-          </View>
+          )}
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <CalendarCheckBlackIcon width={12} height={12} />

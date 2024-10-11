@@ -13,11 +13,12 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {black4Color, blackColor, grayScale600, lightGray18Color, lightGray20Color, lightGreenColor, whiteColor} from 'constants/colors';
 import FastImage from 'react-native-fast-image';
 import FullEvent from 'components/FullEvent';
-import {ACCEPTED_STATUS, screenHeight, screenWidth} from 'constants/common';
+import {ACCEPTED_STATUS, LIKED, NOT_ACCEPTED_STATUS, screenHeight, screenWidth} from 'constants/common';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat';
 import {formateDateAbbreviated} from 'helpers/formateDateAbbreviated';
 import LineImage from 'assets/images/app/Line.png';
 import moment from 'moment';
+import {Event} from '../../../types/event';
 
 interface MyEventsCard {
   statusEvent: boolean;
@@ -71,7 +72,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
   );
 
   const getUsersListAccepted = () => {
-    const filter = item?.usersList.filter(user => user.status === 'invite_match');
+    const filter = item?.usersList.filter((user: Event.User) => user.status === ACCEPTED_STATUS);
     return filter.length;
   };
 
@@ -202,7 +203,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                       color: blackColor,
                       fontFamily: Satoshi700,
                     }}>
-                    {getUsersListAccepted()}/{item?.usersList.length}
+                    {getUsersListAccepted()}/{item?.male + item?.female}
                   </Text>
                   <Text
                     style={{
@@ -293,7 +294,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                     fontFamily: Satoshi500,
                     marginTop: 5,
                   }}>
-                  {item?.usersList.length}
+                  {item?.usersList.filter((i: Event.User) => i.status !== LIKED && i.status !== NOT_ACCEPTED_STATUS).length}
                 </Text>
               </View>
             </View>

@@ -64,6 +64,7 @@ const EventPreview: FC<{
   male,
   address,
   hour,
+  id,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
@@ -72,6 +73,7 @@ const EventPreview: FC<{
   const [userAge, setUserAge] = useState('');
   const [userAccountType, setUserAccountType] = useState('');
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
+  const [usersList, setUsersList] = useState([]);
   const numberPhotos = imagesUser?.length;
 
   function calculateAge(birthDateString: string) {
@@ -108,9 +110,21 @@ const EventPreview: FC<{
     }
   };
 
+  const getUsersList = async () => {
+    const eventInfoDoc = await firestore().collection('Events').doc(id).get();
+    if (!eventInfoDoc.exists) {
+      return;
+    }
+    const usersListData = eventInfoDoc.data()?.usersList;
+    setUsersList(usersListData);
+  };
+
   useFocusEffect(
     useCallback(() => {
       getUserPhotos();
+      if (isEditing) {
+        getUsersList();
+      }
     }, []),
   );
 
@@ -186,87 +200,19 @@ const EventPreview: FC<{
               accountConfirmed={true}
               findAcceptedGuest={[]}
               item={{
-                usersList: [],
+                usersList: usersList,
                 photos,
                 date,
                 address,
                 hour,
+                male: male,
+                female: girls,
               }}
               showGuestList={true}
               styleContainer={{marginTop: 0}}
               customButton={customButton()}
             />
           </ScrollView>
-          {/* <View style={{flex: 1, paddingHorizontal: 24, marginBottom: 24}}>
-            <FastImage
-              style={{flex: 1, width: '100%', height: '100%', borderRadius: 20, overflow: 'hidden'}}
-              source={{
-                uri: imagesUser?.image ? imagesUser?.image : '',
-                headers: {Authorization: 'someAuthToken'},
-                priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.cover}>
-              <View style={styles.wrapperBar}>
-                {numberPhotos > 1
-                  ? [...Array(numberPhotos)].map((_, index) => (
-                      <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
-                    ))
-                  : null}
-              </View>
-              <View style={styles.wrapperButtons}>
-                <TouchableOpacity onPress={handleBack} style={styles.button} />
-                <TouchableOpacity onPress={handleNext} style={styles.button} />
-              </View>
-              <View style={{width: 100, height: 50, flexDirection: 'row', marginLeft: 14, marginTop: 20, alignItems: 'center'}}>
-                <Text style={{fontSize: RFValue(14, 812), color: whiteColor, fontWeight: 'bold', fontFamily: Satoshi500, marginRight: 7}}>
-                  {nameUser}, {userAge}
-                </Text>
-                <CheckStar />
-              </View>
-              <View style={{width: '100%', position: 'absolute', padding: 12, bottom: 0}}>
-                <View style={styles.containerInfo}>
-                  <FastImage
-                    style={styles.imageBackground}
-                    source={{
-                      uri: photos[0].image,
-                      headers: {Authorization: 'someAuthToken'},
-                      priority: FastImage.priority.normal,
-                    }}
-                    resizeMode={FastImage.resizeMode.cover}
-                  />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontWeight: 'bold', fontSize: RFValue(27, 812), marginTop: 10}}>
-                    {name}
-                  </Text>
-                  <View style={styles.textContainer}>
-                    <Text style={styles.text}>{placeName}</Text>
-                    <View style={styles.rowContainer}>
-                      <View style={styles.row}>
-                        <User />
-                        <Text style={styles.subText}>{girls} x Guest invitation</Text>
-                      </View>
-                      <View style={[styles.row, styles.marginLeft]}>
-                        <Calendar />
-                        <Text style={styles.subText}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
-                      </View>
-                    </View>
-                  </View>
-                  <View style={styles.centerContainer}>
-                    <TouchableOpacity activeOpacity={0.7} style={[styles.iconButton, styles.marginRight]}>
-                      <FlashIcon />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      style={[styles.iconButton, styles.marginLeft]}
-                      onPress={() => {
-                        onInvite();
-                      }}>
-                      <IOIcon />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            </FastImage>
-          </View> */}
           <View
             style={{
               flexDirection: 'row',
