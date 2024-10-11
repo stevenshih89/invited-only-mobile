@@ -145,8 +145,7 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
     <>
       <View style={{flex: 1, backgroundColor: blackColor, paddingHorizontal: 20}}>
         <SafeAreaView style={{borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
-          <View style={{backgroundColor: lightGray5Color, borderRadius: 10, padding: 20, marginTop: 34}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 26}}>
+        <View style={{flexDirection: 'row', padding: 20, backgroundColor: lightGray5Color, borderRadius: 10, marginVertical: 34, alignItems: 'center', justifyContent: 'space-between', marginBottom: 26}}>
               <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>All notifications</Text>
               <Switch
                 trackColor={{false: grayColor, true: toggleColor}}
@@ -154,18 +153,12 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
                 onValueChange={handleChangeAllNotification}
               />
             </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14}}>
-              <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Joined event</Text>
-              <Switch trackColor={{false: grayColor, true: toggleColor}} value={joinedEvent} onValueChange={setJoinedEvent} />
-            </View>
+          <View style={{backgroundColor: lightGray5Color, borderRadius: 10, padding: 20}}>
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                borderTopColor: transparentWhite16Color,
-                borderTopWidth: 1,
-                paddingTop: 14,
                 marginBottom: 14,
               }}>
               <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>My events</Text>
@@ -220,20 +213,7 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
                 paddingTop: 14,
                 marginBottom: 14,
               }}>
-              <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Super join</Text>
-              <Switch trackColor={{false: grayColor, true: toggleColor}} value={superJoin} onValueChange={setSuperJoin} />
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                borderTopColor: transparentWhite16Color,
-                borderTopWidth: 1,
-                paddingTop: 14,
-                marginBottom: 14,
-              }}>
-              <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Match</Text>
+              <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>New Connection</Text>
               <Switch trackColor={{false: grayColor, true: toggleColor}} value={match} onValueChange={setMatch} />
             </View>
           </View>
