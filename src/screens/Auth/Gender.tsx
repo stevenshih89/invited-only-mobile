@@ -4,7 +4,7 @@ import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, To
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import SixtyIcon from 'assets/images/auth/progress/sixty.svg';
-import {black1Color, lightGray3Color, transparentWhite16Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {black1Color, blackColor, lightGray3Color, transparentWhite16Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import CheckCircle from 'assets/images/icons/check-circle.svg';
 import CircleGray from 'assets/images/icons/circle-gray.svg';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
@@ -39,7 +39,7 @@ const Gender: FC = (): JSX.Element => {
     <KeyboardAvoidingView
       behavior={isIos ? 'padding' : 'height'}
       keyboardVerticalOffset={15}
-      style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
+      style={{flex: 1, paddingBottom: 0, backgroundColor: blackColor}}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
           <View

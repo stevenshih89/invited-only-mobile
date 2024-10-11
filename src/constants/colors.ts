@@ -4,6 +4,7 @@ const black1Color: string = '#0B0B0B';
 const black2Color: string = 'rgba(17, 17, 17, 1)';
 const black3Color: string = '#0F0F0F';
 const black2Color90: string = 'rgba(17, 17, 17, 0.9)';
+const black5Color: string = 'rgba(15, 15, 15, 1)';
 const black4Color: string = '#1A202C';
 const darkRedColor: string = '#891936';
 const darkRed2Color: string = '#9B314C';
@@ -49,9 +50,10 @@ const lightGray18Color: string = '#718096';
 const lightGray19Color: string = '#828282';
 const lightGray20Color: string = '#E8E8E8';
 const goldColor: string = '#977B4A';
+const backgroundGradientColors = [blackColor, black5Color];
 
 const orangeColor: string = '#FA9601';
-const orange2Color: string ='#FF7A2E';
+const orange2Color: string = '#FF7A2E';
 const orangeClose: string = '#F75555';
 
 const yellowColor: string = '#FFD920';
@@ -115,5 +117,7 @@ export {
   black2Color90,
   black3Color,
   black4Color,
-  lightGray20Color
+  lightGray20Color,
+  black5Color,
+  backgroundGradientColors,
 };

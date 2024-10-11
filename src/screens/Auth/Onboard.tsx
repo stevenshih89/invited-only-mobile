@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import {Dimensions, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
-import {black1Color, black3Color, blackColor, lightGray19Color, lightGreen2Color, orange2Color, whiteColor, yellowColor} from 'constants/colors';
+import {backgroundGradientColors, black1Color, lightGray19Color, whiteColor} from 'constants/colors';
 import {Outfit500, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -25,7 +25,7 @@ const Onboard: FC = (): JSX.Element => {
 
   // @ts-ignore
   return (
-    <LinearGradient colors={[black3Color, blackColor]} style={{flex: 1}}>
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
       <SafeAreaView style={{flex: 1}}>
         <View
           style={{

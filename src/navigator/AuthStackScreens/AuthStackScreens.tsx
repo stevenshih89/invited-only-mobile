@@ -67,8 +67,8 @@ const AuthStackScreens: FC = (): JSX.Element => {
     <NavigationContainer independent={true}>
       <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{headerShown: false}}>
         <AuthStack.Screen key={onboardPath} name={onboardPath} component={Onboard} />
-        <AuthStack.Screen key={startCreateAccountPath} name={startCreateAccountPath} component={StartCreateAccount}/>
-        <AuthStack.Screen key={eulaPath} name={eulaPath} component={Eula}/>
+        <AuthStack.Screen key={startCreateAccountPath} name={startCreateAccountPath} component={StartCreateAccount} />
+        <AuthStack.Screen key={eulaPath} name={eulaPath} component={Eula} />
         <AuthStack.Screen key={signUpPath} name={signUpPath} component={SignUp} />
         <AuthStack.Screen key={confirmPhonePath} name={confirmPhonePath} component={ConfirmPhone} />
         <AuthStack.Screen key={turnNotificationsPath} name={turnNotificationsPath} component={TurnNotifications} />

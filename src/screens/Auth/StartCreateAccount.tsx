@@ -1,12 +1,13 @@
 import React, {FC} from 'react';
 import {ImageBackground, SafeAreaView, Text, TouchableOpacity, View, Linking, Alert} from 'react-native';
 import Background from 'assets/images/auth/bg-create-account.png';
-import {black1Color, blackColor, lightGray19Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, black1Color, lightGray19Color, whiteColor} from 'constants/colors';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {eulaPath} from 'constants/pathLocations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LinearGradient from 'react-native-linear-gradient';
 
 const StartCreateAccount: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -33,7 +34,7 @@ const StartCreateAccount: FC = (): JSX.Element => {
 
   // @ts-ignore
   return (
-    <View style={{flex: 1, backgroundColor: blackColor}}>
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
       <ImageBackground source={Background} style={{flex: 1}} resizeMode="contain">
         <SafeAreaView style={{flex: 1}}>
           <View
@@ -111,7 +112,7 @@ const StartCreateAccount: FC = (): JSX.Element => {
           </View>
         </SafeAreaView>
       </ImageBackground>
-    </View>
+    </LinearGradient>
   );
 };
 
