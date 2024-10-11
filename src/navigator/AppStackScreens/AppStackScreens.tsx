@@ -36,6 +36,7 @@ import {
   verifySocialProfilePath,
   tutorialFlowPath,
   manageSubscriptionPath,
+  privacyPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -66,6 +67,7 @@ import SuperInvitePay from 'screens/App/IO/screens/SuperInvitePay/SuperInvitePay
 import VerifySocialProfile from 'screens/Auth/VerifySocialProfile';
 import ConfirmPhone from 'screens/Auth/ConfirmPhone';
 import TutorialsFlow from 'screens/Auth/TutorialsFlow/TutorialsFlow';
+import Privacy from 'screens/Auth/Privacy';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -455,7 +457,7 @@ const AppStackScreen = () => {
       <AppStack.Screen key={paymentPath} name={paymentPath} component={PaymentStackScreen} />
       <AppStack.Screen key={verifySocialProfilePath} name={verifySocialProfilePath} component={VerifySocialProfile} />
       <AppStack.Screen key={manageSubscriptionPath} name={manageSubscriptionPath} component={ManageSubscriptionScreen} />
-      {/* <AppStack.Screen key={tutorialFlowPath} name={tutorialFlowPath} component={TutorialsFlow} /> */}
+      <AppStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
     </AppStack.Navigator>
   );
 };
