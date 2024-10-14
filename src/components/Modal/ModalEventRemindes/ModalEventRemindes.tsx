@@ -18,12 +18,15 @@ import CalendarWhiteIcon from 'assets/images/icons/calendar-white.svg';
 import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import moment from 'moment/moment';
-import {blackColor, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
+import {black4Color, blackColor, lightGray18Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import LinearGradient from 'react-native-linear-gradient';
 import {calculateAge} from 'helpers/calculateAge';
 import auth from '@react-native-firebase/auth';
+import FastImage from 'react-native-fast-image';
+import { screenHeight } from 'constants/common';
+import { getUsersListAccepted } from 'helpers/getUsersListAccepted';
 
 interface HostI {
   name: string;
@@ -264,9 +267,10 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
     return (
       <Modal
         isVisible={eventStarting}
+        backdropOpacity={1}
         useNativeDriver={false}
         propagateSwipe={true}
-        backdropColor={'rgba(0, 0, 0, 0.94)'}
+        backdropColor={blackColor}
         testID={'bottom-half-modal-open-button'}
         onBackdropPress={() => {
           setEventStarting(false);
@@ -284,142 +288,101 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
         swipeDirection={['down']}>
         <View style={styles.wrapper}>
           <View style={styles.whiteLine} />
-          <View>
-            <ImageBackground
+          <View style={{width: '100%', backgroundColor: whiteColor, borderRadius: 30, padding: 9}}>
+          <View style={{width: '100%'}}>
+            <FastImage
               resizeMode="cover"
               source={{uri: currentEvent?.photos?.[0]?.image}}
-              style={[styles.eventImage, {justifyContent: !uid ? 'flex-end' : 'space-between'}]}>
-              {uid && (
-                <TouchableOpacity
+              style={[styles.eventImage]}>
+              <View
                   style={{
-                    backgroundColor: transparent60Color,
-                    alignItems: 'center',
-                    width: '100%',
-                    borderRadius: 20,
-                    flexDirection: 'row',
-                    paddingHorizontal: 14,
-                    paddingVertical: 10,
-                    justifyContent: 'space-between',
+                    paddingHorizontal: 6,
+                    paddingVertical: 4,
+                    backgroundColor: lightGreenColor,
+                    borderRadius: 5,
+                    alignSelf: 'flex-start',
                   }}>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Image style={{height: 40, width: 40, borderRadius: 40}} source={{uri: photoUser}} />
-                    <View>
-                      <View style={{flexDirection: 'row'}}>
-                        <View
-                          style={{
-                            backgroundColor: blackColor,
-                            marginLeft: 10,
-                            borderWidth: 1,
-                            borderRadius: 4.5,
-                            borderColor: whiteColor,
-                            paddingHorizontal: 10,
-                            paddingVertical: 2,
-                          }}>
-                          <Text style={{fontSize: RFValue(10, 812), color: whiteColor, fontFamily: Satoshi500}}>Host</Text>
-                        </View>
-                        {isPremium && (
-                          <LinearGradient
-                            colors={['#977B4A', '#E5D291', '#A28453']}
-                            start={{x: 0, y: 0}}
-                            end={{x: 1, y: 0}}
-                            style={{borderRadius: 4.5, paddingHorizontal: 10, paddingVertical: 2, marginLeft: 5}}>
-                            <Text style={{fontSize: RFValue(10, 812), color: blackColor, fontFamily: Satoshi500}}>Premium</Text>
-                          </LinearGradient>
-                        )}
-                      </View>
-                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Text
-                          style={{
-                            fontSize: RFValue(20, 812),
-                            marginLeft: 10,
-                            marginRight: 8,
-                            color: whiteColor,
-                            fontFamily: Satoshi400,
-                            fontWeight: 'bold',
-                          }}>
-                          {nameUser}, {ageUser}
-                        </Text>
-                        <CheckStarIcon />
-                      </View>
-                    </View>
-                  </View>
-                  <ArrowRightIcon />
-                </TouchableOpacity>
-              )}
-              <View>
-                <View style={{marginBottom: 12, flexDirection: 'row', alignItems: 'center'}}>
-                  {currentEvent?.activeState && (
-                    <View style={{backgroundColor: lightGreenColor, borderRadius: 5, paddingVertical: 4, paddingHorizontal: 6}}>
-                      <Text style={{fontSize: RFValue(12, 812), fontFamily: Satoshi500, color: whiteColor}}>Active</Text>
-                    </View>
-                  )}
                   <Text
                     style={{
-                      fontSize: RFValue(20, 812),
-                      marginHorizontal: 8,
-                      fontWeight: 'bold',
-                      fontFamily: Satoshi400,
                       color: whiteColor,
+                      fontFamily: Satoshi500,
+                      fontSize: RFValue(12, 812),
                     }}>
-                    {currentEvent?.placeName}
+                    Active
                   </Text>
-                  <CheckStarIcon />
                 </View>
-                <View style={styles.main}>
-                  <View style={styles.fdr}>
-                    <UserIcon />
-                    <Text style={styles.textGirlInvitation}>{currentEvent?.female} x Guest invitation </Text>
-                  </View>
-                  <View style={styles.fdr}>
-                    <CalendarIcon width={19} height={19} />
-                    <Text style={styles.textDate}>{moment(`${currentEvent?.date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
-                  </View>
-                  <View style={styles.fdr}>
-                    <UsersIcon width={19} height={19} />
-                    <Text style={styles.textCity}>
-                      {joinedPeopleCount}/{currentEvent?.female + currentEvent?.male}
-                    </Text>
-                  </View>
-                </View>
+            </FastImage>
+            <View style={{flexDirection: 'row', paddingHorizontal: 17, paddingVertical: 22, justifyContent: 'space-between', alignItems: 'flex-end'}}>
+              <View>
+                <Text
+                  style={{
+                    color: lightGray18Color,
+                    fontFamily: Satoshi400,
+                    fontSize: RFValue(16, 812),
+                  }}>
+                  Name
+                </Text>
+                <Text
+                  style={{
+                    color: black4Color,
+                    fontFamily: Satoshi700,
+                    fontSize: RFValue(20, 812),
+                    marginTop: 4
+                  }}>
+                  {currentEvent?.name}
+                </Text>
               </View>
-            </ImageBackground>
+              <View
+              style={{
+                borderWidth: 1,
+                borderColor: blackColor,
+                borderRadius: 10,
+                flexDirection: 'row',
+                paddingHorizontal: 16,
+                paddingVertical: 7,
+                alignItems: 'center',
+              }}>
+              <FastImage
+                style={{width: 40, height: 40, borderRadius: 40}}
+                source={{uri: currentEvent?.photos[0]?.image}}
+              />
+              <View style={{marginLeft: 10, alignItems: 'center'}}>
+                <Text
+                  style={{
+                    fontSize: RFValue(26, 812),
+                    color: blackColor,
+                    fontFamily: Satoshi700,
+                  }}>
+                  {getUsersListAccepted(currentEvent?.usersList)}/{currentEvent?.male + currentEvent?.female}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: RFValue(12, 812),
+                    color: blackColor,
+                    fontFamily: Satoshi500,
+                  }}>
+                  Guest List
+                </Text>
+              </View>
+            </View>
+            </View>
           </View>
-
+          </View>
           {!!hoursUntilEvent && <Text style={styles.textAreYouSure}>{`Event starting in ${hoursUntilEvent}h!`}</Text>}
-          {/* {hoursUntilEvent === 12 && (
-            <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : 'Event starting in 12h!'}</Text>
-          )}
-          {hoursUntilEvent === 2 && (
-            <Text style={styles.textAreYouSure}>{time === '0' ? 'Are you on the way?' : 'Event starting in 2h!'}</Text>
-          )} */}
           <Button
             onPress={async () => {
               if (time === '0') {
                 setEventStarting(false);
               } else {
-                // await handleAcceptInvitation();
-                // await handleGetEventsIJoining();
-                // showToast('success', 'Go to my events', `You confirmed ${currentEvent?.placeName} event`);
                 setEventStarting(false);
                 if (countMyEvent?.current) {
                   countMyEvent.current = countMyEvent.current + 1;
                 }
-                // setModalVisible(false);
               }
             }}
             title={time === '0' ? 'Im on my way' : 'Confirm'}
             buttonStyle={styles.button}
           />
-          {/* <Button
-            variant="transparent"
-            onPress={() => {
-              setEventStarting(false);
-              // setChatModal(true);
-              // setOnTheWayState(true);
-            }}
-            title="Go to my event"
-            buttonStyle={{width: '100%'}}
-          /> */}
         </View>
         <OnTheWayModal />
         <OpenChatModal />

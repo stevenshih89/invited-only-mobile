@@ -13,6 +13,7 @@ const useStyles = () => {
       backgroundColor: black2Color90,
       alignItems: 'center',
       paddingHorizontal: 20,
+      borderRadius: 30
     },
     wrapperCancelEvent: {
       backgroundColor: black2Color,
@@ -120,8 +121,7 @@ const useStyles = () => {
     eventImage: {
       height: screenHeight * 0.23,
       borderRadius: 20,
-      overflow: 'hidden',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-end',
       padding: 20
     },
     fdr: {

@@ -915,7 +915,7 @@ const MyEvents: FC<any> = ({navigation}) => {
           accountType={userInfo?.accountType}
         />
       )}
-      {hoursUntilEvent < 25 && hoursUntilEvent > 0 && (
+      { hoursUntilEvent < 25 && hoursUntilEvent > 0 && (
         <ModalEventRemindes
           currentEvent={currentEvent}
           uid={userInfo?.uid}
