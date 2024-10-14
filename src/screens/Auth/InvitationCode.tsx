@@ -9,7 +9,7 @@ import {verifySocialProfilePath} from 'constants/pathLocations.ts';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
-import {black1Color, errorColor, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, black1Color, errorColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Outfit500, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,6 +19,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from 'typescript/types';
+import LinearGradient from 'react-native-linear-gradient';
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
@@ -123,7 +124,7 @@ const InvitationCode: FC = (): JSX.Element => {
 
       let allImageUrl: any = [];
 
-      const isTurnNotifications = onBoarding.find(item => 'notifications' in item)
+      const isTurnNotifications = onBoarding.find(item => 'notifications' in item);
 
       await firestore()
         .collection('userInfo')
@@ -246,142 +247,141 @@ const InvitationCode: FC = (): JSX.Element => {
   }, [code]);
 
   return (
-    <KeyboardAvoidingView
-      behavior={isIos ? 'padding' : 'height'}
-      keyboardVerticalOffset={15}
-      style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'space-between',
-              paddingBottom: 0,
-              paddingHorizontal: 24,
-            }}>
-            <ScrollView showsVerticalScrollIndicator={false} style={{}}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginTop: 16,
-                  paddingVertical: 28,
-                  width: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                {!cameFromSummary && (
-                  <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    activeOpacity={0.7}
-                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
-                    style={{
-                      position: 'absolute',
-                      left: 0,
-                      borderRadius: 50,
-                      width: 40,
-                      height: 40,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: transparentWhite30Color,
-                    }}>
-                    <ArrowLeft />
-                  </TouchableOpacity>
-                )}
-                <LogoPrimary2 />
-              </View>
-              <View />
-              <View style={{marginTop: 64}}>
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'space-between',
+                paddingBottom: 0,
+                paddingHorizontal: 24,
+              }}>
+              <ScrollView showsVerticalScrollIndicator={false} style={{}}>
                 <View
                   style={{
-                    paddingHorizontal: 36,
-                    paddingTop: 30,
-                    borderColor: '#D9D9D9',
-                    borderRadius: 30,
-                    borderBottomLeftRadius: 8,
-                    borderBottomRightRadius: 8,
-                    borderBottomWidth: 0,
-                    borderWidth: 1,
+                    flexDirection: 'row',
+                    marginTop: 16,
+                    paddingVertical: 28,
+                    width: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}>
-                  <View style={{width: '100%'}}>
-                    <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi500, fontSize: RFValue(34, 812)}}>
-                      Do you have an invitation code?
+                  {!cameFromSummary && (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      activeOpacity={0.7}
+                      hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        borderRadius: 50,
+                        width: 40,
+                        height: 40,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        backgroundColor: transparentWhite30Color,
+                      }}>
+                      <ArrowLeft />
+                    </TouchableOpacity>
+                  )}
+                  <LogoPrimary2 />
+                </View>
+                <View />
+                <View style={{marginTop: 64}}>
+                  <View
+                    style={{
+                      paddingHorizontal: 36,
+                      paddingTop: 30,
+                      borderColor: '#D9D9D9',
+                      borderRadius: 30,
+                      borderBottomLeftRadius: 8,
+                      borderBottomRightRadius: 8,
+                      borderBottomWidth: 0,
+                      borderWidth: 1,
+                    }}>
+                    <View style={{width: '100%'}}>
+                      <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi500, fontSize: RFValue(34, 812)}}>
+                        Do you have an invitation code?
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        alignSelf: 'center',
+                        width: '95%',
+                        height: 1,
+                        borderWidth: 1,
+                        borderColor: 'rgba(255, 255, 255, 0.50)',
+                        borderStyle: 'dashed',
+                        marginVertical: 20,
+                      }}
+                    />
+                    <View style={{width: '100%', marginBottom: 40}}>
+                      <Input
+                        onPressFocus={() => setIsfocusInput(true)}
+                        onBlur={() => setIsfocusInput(false)}
+                        value={code}
+                        onChange={setCode}
+                        errorText="Incorrect invitation code"
+                        isError={invalidCode}
+                        containerStyle={{
+                          width: '100%',
+                          height: 60,
+                          marginBottom: 10,
+                          borderColor: invalidCode ? errorColor : '',
+                          borderWidth: 1,
+                          borderRadius: 10,
+                        }}
+                        placeholder="Enter your invitation code"
+                      />
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      borderColor: '#D9D9D9',
+                      borderRadius: 30,
+                      borderTopLeftRadius: 6,
+                      borderTopRightRadius: 8,
+                      borderTopWidth: 0,
+                      borderWidth: 1,
+                      paddingVertical: 26,
+                      position: 'relative',
+                    }}>
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: -1,
+                        alignSelf: 'center',
+                        width: '98%',
+                        height: 1,
+                        borderWidth: 1,
+                        borderColor: 'rgba(255, 255, 255, 0.50)',
+                        borderStyle: 'dashed',
+                      }}
+                    />
+                    <Text style={{color: whiteColor, fontFamily: Outfit500, textAlign: 'center', fontSize: RFValue(14, 812)}}>
+                      THIS APP IS FOR INVITED ONLY.
                     </Text>
                   </View>
-                  <View
-                    style={{
-                      alignSelf: 'center',
-                      width: '95%',
-                      height: 1,
-                      borderWidth: 1,
-                      borderColor: 'rgba(255, 255, 255, 0.50)',
-                      borderStyle: 'dashed',
-                      marginVertical: 20,
-                    }}
-                  />
-                  <View style={{width: '100%', marginBottom: 40}}>
-                    <Input
-                      onPressFocus={() => setIsfocusInput(true)}
-                      onBlur={() => setIsfocusInput(false)}
-                      value={code}
-                      onChange={setCode}
-                      errorText="Incorrect invitation code"
-                      isError={invalidCode}
-                      containerStyle={{
-                        width: '100%',
-                        height: 60,
-                        marginBottom: 10,
-                        borderColor: invalidCode ? errorColor : '',
-                        borderWidth: 1,
-                        borderRadius: 10,
-                      }}
-                      placeholder="Enter your invitation code"
-                    />
-                  </View>
                 </View>
-                <View
-                  style={{
-                    borderColor: '#D9D9D9',
-                    borderRadius: 30,
-                    borderTopLeftRadius: 6,
-                    borderTopRightRadius: 8,
-                    borderTopWidth: 0,
-                    borderWidth: 1,
-                    paddingVertical: 26,
-                    position: 'relative',
-                  }}>
-                  <View
-                    style={{
-                      position: 'absolute',
-                      top: -1,
-                      alignSelf: 'center',
-                      width: '98%',
-                      height: 1,
-                      borderWidth: 1,
-                      borderColor: 'rgba(255, 255, 255, 0.50)',
-                      borderStyle: 'dashed',
-                    }}
+              </ScrollView>
+              <View style={{marginBottom: 4, marginTop: isFocusInput ? 16 : 0}}>
+                <Button onPress={() => handleNext()} loading={loading} disabled={!code.length} title="Apply code" />
+                {!isFocusInput && cameFromSummary && (
+                  <Button
+                    onPress={() => navigation.navigate(verifySocialProfilePath as never)}
+                    buttonTitleStyle={{textDecorationLine: 'underline'}}
+                    title="I don't have a code"
+                    variant="transparent"
                   />
-                  <Text style={{color: whiteColor, fontFamily: Outfit500, textAlign: 'center', fontSize: RFValue(14, 812)}}>
-                    THIS APP IS FOR INVITED ONLY.
-                  </Text>
-                </View>
+                )}
               </View>
-            </ScrollView>
-            <View style={{marginBottom: 4, marginTop: isFocusInput ? 16 : 0}}>
-              <Button onPress={() => handleNext()} loading={loading} disabled={!code.length} title="Apply code" />
-              {!isFocusInput && cameFromSummary && (
-                <Button
-                  onPress={() => navigation.navigate(verifySocialProfilePath as never)}
-                  buttonTitleStyle={{textDecorationLine: 'underline'}}
-                  title="I don't have a code"
-                  variant="transparent"
-                />
-              )}
             </View>
-          </View>
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          </SafeAreaView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 };
 

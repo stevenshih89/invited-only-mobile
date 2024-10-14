@@ -597,24 +597,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         );
       case 'chat':
         return (
-          <View style={styles.wrapperHeaderButtonsChat}>
-            {isHost && (
-              <View style={styles.rowButtonsChat}>
-                <TouchableOpacity
-                  onPress={() => setTypeEvents(false)}
-                  style={[styles.buttonMyEvents, {backgroundColor: !typeEvents ? whiteColor : lightGray2Color}]}>
-                  <Text style={[styles.textMyEvents, {color: typeEvents ? whiteColor : blackColor}]}>My events</Text>
-                </TouchableOpacity>
-                {/* <TouchableOpacity
-                  onPress={() => setTypeEvents(true)}
-                  style={[styles.buttonEventsJoining, {backgroundColor: !typeEvents ? lightGray2Color : whiteColor}]}>
-                  <Text style={[styles.textEventsJoining, {color: !typeEvents ? whiteColor : blackColor}]}>Join events</Text>
-                </TouchableOpacity> */}
-              </View>
-            )}
-
+          <View style={[styles.wrapperHeaderButtonsChat, {marginTop: userHost?.accountType === 'host'? 0: screenHeight / 50}]}>
             {!typeEvents ? (
-              <View style={[styles.rowButtonsChat, {marginTop: screenHeight / 34}]}>
+              <View style={[styles.rowButtonsChat, {marginTop: 10}]}>
                 <FlatList
                   data={myEvents}
                   horizontal={true}

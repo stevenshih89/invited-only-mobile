@@ -1,19 +1,9 @@
-import {black1Color, lightGray15Color, lightGray2Color, whiteColor} from 'constants/colors';
-import {
-  FlatList,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import {backgroundGradientColors, lightGray15Color, lightGray2Color, whiteColor} from 'constants/colors';
+import {Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckCircle from 'assets/images/icons/check-circle.svg';
 import CircleGray from 'assets/images/icons/circle-gray.svg';
-import {isIos, screenHeight} from 'constants/common';
+import {screenHeight} from 'constants/common';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useContext, useState} from 'react';
@@ -27,8 +17,8 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {showToast} from 'helpers/showToast';
 import {AuthContext} from 'contexts/AuthContext';
-import {KeyboardAwareFlatList, KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {ScrollView} from 'react-native-gesture-handler';
+import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface Social {
   id: number;
@@ -162,8 +152,8 @@ const VerifySocialProfile = () => {
 
       let allImageUrl: any = [];
 
-      const isTurnNotifications = onBoarding.find(item => 'notifications' in item)
-      
+      const isTurnNotifications = onBoarding.find(item => 'notifications' in item);
+
       await firestore()
         .collection('userInfo')
         .doc(`${userId}`)
@@ -251,55 +241,57 @@ const VerifySocialProfile = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: black1Color}}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-        style={{flex: 1}}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{paddingHorizontal: 24, flex: 1, justifyContent: 'space-between'}}>
-            {!isFocusInput && (
-              <View style={{alignItems: 'center', marginTop: 16, paddingVertical: 28}}>
-                <LogoPrimary2 />
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
+      <SafeAreaView style={{flex: 1}}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+          style={{flex: 1}}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={{paddingHorizontal: 24, flex: 1, justifyContent: 'space-between'}}>
+              {!isFocusInput && (
+                <View style={{alignItems: 'center', marginTop: 16, paddingVertical: 28}}>
+                  <LogoPrimary2 />
+                </View>
+              )}
+              <View
+                style={{
+                  width: '100%',
+                  marginBottom: screenHeight / 28,
+                  marginTop: isFocusInput ? screenHeight / 40 : screenHeight / 14,
+                }}>
+                <Text
+                  style={{
+                    color: whiteColor,
+                    fontFamily: Satoshi500,
+                    fontSize: RFValue(38, 812),
+                    marginBottom: 18,
+                  }}>
+                  Please verify your social profile
+                </Text>
+                <Text
+                  style={{
+                    color: whiteColor,
+                    fontFamily: Satoshi400,
+                    fontSize: RFValue(16, 812),
+                  }}>
+                  Since you don't have an invitation code we need to check one of your social profile
+                </Text>
               </View>
-            )}
-            <View
-              style={{
-                width: '100%',
-                marginBottom: screenHeight / 28,
-                marginTop: isFocusInput ? screenHeight / 40 : screenHeight / 14,
-              }}>
-              <Text
-                style={{
-                  color: whiteColor,
-                  fontFamily: Satoshi500,
-                  fontSize: RFValue(38, 812),
-                  marginBottom: 18,
-                }}>
-                Please verify your social profile
-              </Text>
-              <Text
-                style={{
-                  color: whiteColor,
-                  fontFamily: Satoshi400,
-                  fontSize: RFValue(16, 812),
-                }}>
-                Since you don't have an invitation code we need to check one of your social profile
-              </Text>
+              <KeyboardAwareFlatList
+                enableAutomaticScroll={false}
+                data={socials}
+                ItemSeparatorComponent={() => <View style={{height: 8}} />}
+                renderItem={renderItem}
+              />
+              <View style={{marginVertical: 4}}>
+                <Button title="Continue" loading={loading} disabled={!socialNickname[openedSocial?.name]?.length} onPress={handleNext} />
+              </View>
             </View>
-            <KeyboardAwareFlatList
-              enableAutomaticScroll={false}
-              data={socials}
-              ItemSeparatorComponent={() => <View style={{height: 8}} />}
-              renderItem={renderItem}
-            />
-            <View style={{marginVertical: 4}}>
-              <Button title="Continue" loading={loading} disabled={!socialNickname[openedSocial?.name]?.length} onPress={handleNext} />
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 

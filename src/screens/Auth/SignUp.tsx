@@ -57,7 +57,7 @@ const SignUp: FC = (): JSX.Element => {
           <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
             <View
               style={{
-                paddingTop: screenHeight / 20,
+                paddingTop: screenHeight / 21,
                 flex: 1,
                 justifyContent: 'space-between',
                 paddingBottom: 0,
@@ -69,13 +69,13 @@ const SignUp: FC = (): JSX.Element => {
                 <View
                   style={{
                     marginBottom: screenHeight / 30,
-                    marginTop: screenHeight / 8,
+                    marginTop: screenHeight / 12,
                   }}>
                   <Text
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi500,
-                      fontSize: RFValue(48, 812),
+                      fontSize: RFValue(48, 932),
                       marginBottom: 8,
                     }}>
                     Your phone
@@ -84,7 +84,7 @@ const SignUp: FC = (): JSX.Element => {
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi400,
-                      fontSize: RFValue(16, 812),
+                      fontSize: RFValue(16, 932),
                     }}>
                     We protect our community by ensuring the authenticity of everyone in IO.
                   </Text>

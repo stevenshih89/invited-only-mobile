@@ -1,11 +1,9 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useContext, useEffect, useState} from 'react';
+import {FC, useContext, useState} from 'react';
 import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import ThirtyIcon from 'assets/images/auth/progress/thirty.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {black1Color, grayColor, lightGray2Color, toggleColor, transparentWhite30Color, whiteColor} from 'constants/colors';
-import Geolocation from '@react-native-community/geolocation';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
@@ -18,24 +16,8 @@ import AuthProgress from 'components/AuthProgress';
 
 const TurnNotifications: FC = (): JSX.Element => {
   const [notifications, setNotifications] = useState<boolean>(true);
-  const [showLocation, setShowLocation] = useState<boolean>(false);
+  const [showLocation] = useState<boolean>(false);
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
-
-  const getCurrentLocation = (): void => {
-    Geolocation.setRNConfiguration({
-      skipPermissionRequests: false,
-    });
-    Geolocation.getCurrentPosition(
-      position => console.log('position', position),
-      error => console.error(error),
-    );
-  };
-
-  useEffect(() => {
-    if (showLocation) {
-      getCurrentLocation();
-    }
-  }, [showLocation]);
 
   const navigation = useAppNavigation();
 
@@ -58,10 +40,6 @@ const TurnNotifications: FC = (): JSX.Element => {
     setNotifications(value);
   };
 
-  const handleLocationChange = (value: boolean): void => {
-    setShowLocation(value);
-  };
-
   return (
     <KeyboardAvoidingView
       behavior={isIos ? 'padding' : 'height'}
@@ -75,8 +53,9 @@ const TurnNotifications: FC = (): JSX.Element => {
               justifyContent: 'space-between',
               paddingBottom: 0,
               paddingHorizontal: 24,
+              paddingTop: screenHeight / 29,
             }}>
-            <View style={{alignItems: 'center'}}>
+            <View style={{}}>
               <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
                 <TouchableOpacity
                   onPress={() => navigation.goBack()}
@@ -93,7 +72,6 @@ const TurnNotifications: FC = (): JSX.Element => {
                   <ArrowLeft />
                 </TouchableOpacity>
                 <LogoPrimary2 />
-                {/* <ThirtyIcon height={40} /> */}
                 <AuthProgress startPercentage={20} endPercentage={30} animationDuration={1000} />
               </View>
               <View
@@ -105,7 +83,7 @@ const TurnNotifications: FC = (): JSX.Element => {
                   style={{
                     color: whiteColor,
                     fontFamily: Satoshi500,
-                    fontSize: RFValue(42, 812),
+                    fontSize: RFValue(48, 932),
                     marginBottom: 8,
                   }}>
                   Confirm access
@@ -114,7 +92,7 @@ const TurnNotifications: FC = (): JSX.Element => {
                   style={{
                     color: whiteColor,
                     fontFamily: Satoshi400,
-                    fontSize: RFValue(18, 812),
+                    fontSize: RFValue(18, 932),
                     opacity: 0.8,
                   }}>
                   To use Invited Only, please enable your notifications.
@@ -134,32 +112,12 @@ const TurnNotifications: FC = (): JSX.Element => {
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi400,
-                      fontSize: RFValue(20, 812),
+                      fontSize: RFValue(18, 932),
                     }}>
                     Notifications
                   </Text>
                   <Switch trackColor={{false: grayColor, true: toggleColor}} checked={notifications} onChange={handleNotificationsChange} />
                 </View>
-                {/* <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginTop: screenHeight / 90,
-                    backgroundColor: lightGray2Color,
-                    padding: 16,
-                    borderRadius: 10,
-                  }}>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi400,
-                      fontSize: RFValue(20, 812),
-                    }}>
-                    Location
-                  </Text>
-                  <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showLocation} onChange={handleLocationChange} />
-                </View> */}
               </View>
             </View>
             <View style={{marginBottom: 4}}>
@@ -168,7 +126,7 @@ const TurnNotifications: FC = (): JSX.Element => {
                 activeOpacity={0.7}
                 style={{paddingVertical: 16, alignItems: 'center', marginTop: 4}}
                 onPress={() => navigation.navigate(addPhotosPath as never)}>
-                <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontWeight: '500'}}>Skip</Text>
+                <Text style={{color: whiteColor, fontSize: RFValue(20, 932), fontWeight: '500'}}>Skip</Text>
               </TouchableOpacity>
             </View>
           </View>

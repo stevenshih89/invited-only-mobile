@@ -15,7 +15,7 @@ import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import {CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell} from 'react-native-confirmation-code-field';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {black1Color, black3Color, blackColor, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {chooseAccountTypePath} from 'constants/pathLocations';
@@ -58,7 +58,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   };
 
   useEffect(() => {
-    let timer;
+    let timer: any;
     if (resendTimer > 0) {
       timer = setInterval(() => {
         setResendTimer(prev => prev - 1);
@@ -106,142 +106,156 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      behavior={isIos ? 'padding' : 'height'}
-      keyboardVerticalOffset={15}
-      style={{flex: 1, backgroundColor: black1Color}}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={{flex: 1}}>
-          <LinearGradient colors={[black3Color, blackColor]} style={{flex: 1, justifyContent: 'space-between'}}>
-            <View style={{alignItems: 'center', paddingHorizontal: 24}}>
-              <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: 10}}>
-                <TouchableOpacity
-                  onPress={() => navigation.goBack()}
-                  activeOpacity={0.7}
-                  hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1}}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <SafeAreaView style={{flex: 1}}>
+            <View style={{flex: 1, justifyContent: 'space-between'}}>
+              <View style={{alignItems: 'center', paddingHorizontal: 24}}>
+                <View
                   style={{
-                    borderRadius: 50,
-                    width: 40,
-                    height: 40,
-                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    width: '100%',
                     alignItems: 'center',
-                    backgroundColor: transparentWhite30Color,
+                    justifyContent: 'space-between',
+                    marginTop: screenHeight / 29,
                   }}>
-                  <ArrowLeft />
-                </TouchableOpacity>
-                <LogoPrimary2 />
-                <View />
-              </View>
-              <View
-                style={{
-                  width: '100%',
-                  marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 14,
-                }}>
-                <Text
+                  <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    activeOpacity={0.7}
+                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                    style={{
+                      borderRadius: 50,
+                      width: 40,
+                      height: 40,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: transparentWhite30Color,
+                    }}>
+                    <ArrowLeft />
+                  </TouchableOpacity>
+                  <LogoPrimary2 />
+                  <View />
+                </View>
+                <View
                   style={{
-                    color: whiteColor,
-                    fontFamily: Satoshi500,
-                    fontSize: RFValue(34, 812),
-                    marginBottom: 18,
+                    width: '100%',
+                    marginBottom: screenHeight / 30,
+                    marginTop: screenHeight / 12,
                   }}>
-                  Phone number verification
-                </Text>
-                <Text
-                  style={{
-                    color: whiteColor,
-                    fontFamily: Satoshi400,
-                    fontSize: RFValue(18, 812),
-                  }}>
-                  Please enter the verification code sent to your mobile{' '}
                   <Text
                     style={{
                       color: whiteColor,
-                      fontFamily: Satoshi700,
-                      fontSize: RFValue(18, 812),
+                      fontFamily: Satoshi500,
+                      fontSize: RFValue(48, 932),
+                      marginBottom: 18,
                     }}>
-                    {mobilePhone.slice(-3)}
+                    Phone number verification
                   </Text>
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  width: '100%',
-                }}>
-                <CodeField
-                  ref={ref}
-                  {...props}
-                  value={code}
-                  onChangeText={setCode}
-                  cellCount={CELL_COUNT}
-                  keyboardType="number-pad"
-                  keyboardAppearance="dark"
-                  textContentType="oneTimeCode"
-                  renderCell={({index, symbol, isFocused}) => (
-                    <View
-                      key={index}
-                      style={{
-                        borderRadius: 10,
-                        backgroundColor: lightGray2Color,
-                        flex: 1,
-                        height: screenHeight / 18,
-                        marginHorizontal: 8,
-                      }}>
-                      <Text style={[styles.cell, isFocused && styles.focusCell]} onLayout={getCellOnLayoutHandler(index)}>
-                        {symbol || (isFocused ? <Cursor /> : '_')}
-                      </Text>
-                    </View>
-                  )}
-                />
-              </View>
-              <View
-                style={{
-                  width: '100%',
-                  alignItems: 'flex-start',
-                  flexDirection: 'row',
-                  marginTop: screenHeight / 60,
-                }}>
-                <Text
-                  style={{
-                    color: gray1Color,
-                    fontFamily: Satoshi500,
-                    fontSize: RFValue(13, 812),
-                  }}>
-                  Didn't receive the code?{' '}
-                </Text>
-                {!resendTimer ? (
-                  <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{bottom: 10, right: 20}}>
+                  <Text
+                    style={{
+                      color: whiteColor,
+                      fontFamily: Satoshi400,
+                      fontSize: RFValue(18, 932),
+                      opacity: 0.8,
+                    }}>
+                    Please enter the verification code sent to your mobile{' '}
                     <Text
                       style={{
                         color: whiteColor,
                         fontFamily: Satoshi700,
-                        fontSize: RFValue(13, 812),
+                        fontSize: RFValue(18, 932),
+                        opacity: 0.8,
                       }}>
-                      Resend Code
+                      {mobilePhone.slice(-3)}
                     </Text>
-                  </TouchableOpacity>
-                ) : (
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    width: '100%',
+                  }}>
+                  <CodeField
+                    ref={ref}
+                    {...props}
+                    value={code}
+                    onChangeText={setCode}
+                    cellCount={CELL_COUNT}
+                    keyboardType="number-pad"
+                    keyboardAppearance="dark"
+                    textContentType="oneTimeCode"
+                    renderCell={({index, symbol, isFocused}) => (
+                      <View
+                        key={index}
+                        style={{
+                          borderRadius: 10,
+                          backgroundColor: lightGray2Color,
+                          flex: 1,
+                          height: screenHeight / 18,
+                          marginHorizontal: 8,
+                        }}>
+                        <Text style={[styles.cell, isFocused && styles.focusCell]} onLayout={getCellOnLayoutHandler(index)}>
+                          {symbol || (isFocused ? <Cursor /> : '_')}
+                        </Text>
+                      </View>
+                    )}
+                  />
+                </View>
+                <View
+                  style={{
+                    width: '100%',
+                    alignItems: 'flex-start',
+                    flexDirection: 'row',
+                    marginTop: screenHeight / 60,
+                  }}>
                   <Text
                     style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi700,
-                      fontSize: RFValue(13, 812),
+                      color: gray1Color,
+                      fontFamily: Satoshi500,
+                      fontSize: RFValue(13, 932),
                     }}>
-                    Resend in {resendTimer}
+                    Didn't receive the code?{' '}
                   </Text>
-                )}
+                  {!resendTimer ? (
+                    <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{bottom: 10, right: 20}}>
+                      <Text
+                        style={{
+                          color: whiteColor,
+                          fontFamily: Satoshi700,
+                          fontSize: RFValue(13, 932),
+                          textDecorationLine: 'underline',
+                        }}>
+                        Resend Code
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <Text
+                      style={{
+                        color: whiteColor,
+                        fontFamily: Satoshi700,
+                        fontSize: RFValue(13, 932),
+                      }}>
+                      Resend in {resendTimer}
+                    </Text>
+                  )}
+                </View>
+              </View>
+              <View style={{paddingHorizontal: 38, marginBottom: 4}}>
+                <Button
+                  title="Verify"
+                  disabled={code.length < 6}
+                  loading={loadingConfirmation}
+                  onPress={() => handleConfirmPhoneNumber()}
+                />
               </View>
             </View>
-            <View style={{paddingHorizontal: 38, marginBottom: 4}}>
-              <Button title="Verify" disabled={code.length < 6} loading={loadingConfirmation} onPress={() => handleConfirmPhoneNumber()} />
-            </View>
-          </LinearGradient>
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-      <Loader isVisible={loadingConfirmation} textLoader="Please wait..." successfulPay={false} />
-    </KeyboardAvoidingView>
+          </SafeAreaView>
+        </TouchableWithoutFeedback>
+        <Loader isVisible={loadingConfirmation} textLoader="Please wait..." successfulPay={false} />
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 };
 
@@ -254,7 +268,7 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
     marginBottom: 'auto',
     marginVertical: 'auto',
-    fontSize: RFValue(16, 812),
+    fontSize: RFValue(16, 932),
     textAlign: 'center',
     color: whiteColor,
     fontFamily: Satoshi400,
