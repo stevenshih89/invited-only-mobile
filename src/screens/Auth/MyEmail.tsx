@@ -44,7 +44,7 @@ const MyEmail: FC = (): JSX.Element => {
       },
     ]);
     const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
-    navigation.navigate(privacyPath, {screen: '', accountType: accountType} as never);
+    navigation.navigate(privacyPath, {screen: 'MyEmail', accountType: accountType} as never);
   };
 
   const navigation = useAppNavigation();

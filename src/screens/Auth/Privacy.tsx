@@ -21,7 +21,6 @@ const Privacy: FC = (): JSX.Element => {
   const objWithAccountType = onBoarding.find(obj => obj.hasOwnProperty('accountType'));
   const route = useRoute();
   const {screen, accountType} = route.params as {screen: string; accountType: string};
-
   const privaciesListHost = [
     {
       id: 0,
