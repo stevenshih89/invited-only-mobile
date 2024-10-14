@@ -597,7 +597,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         );
       case 'chat':
         return (
-          <View style={styles.wrapperHeaderButtonsChat}>
+          <View style={[styles.wrapperHeaderButtonsChat, {marginTop: userHost?.accountType === 'host'? 0: screenHeight / 50}]}>
             {!typeEvents ? (
               <View style={[styles.rowButtonsChat, {marginTop: 10}]}>
                 <FlatList
