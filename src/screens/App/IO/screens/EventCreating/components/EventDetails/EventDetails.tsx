@@ -144,10 +144,16 @@ const EventDetails: FC<EventDetailsProps> = ({
   userHost,
 }): ReactElement => {
   const eventTypes = [
-    {id: 0, label: 'Custom'},
-    {id: 1, label: 'Table'},
-    {id: 2, label: 'Club'},
-    {id: 3, label: 'Restaurant'},
+    {id: 0, label: 'Vip Tables'},
+    {id: 1, label: 'Custom'},
+    {id: 2, label: 'Table'},
+    {id: 3, label: 'Concerts'},
+    {id: 4, label: 'Exclusive'},
+    {id: 5, label: 'Yacht Party'},
+    {id: 6, label: 'Pool Party'},
+    {id: 7, label: 'Private'},
+    {id: 8, label: 'Birthday Party'},
+    {id: 9, label: 'Restaurants'},
   ];
 
   const [modalAddPhotoVisible, setModalAddPhotoVisible] = useState(false);
@@ -416,7 +422,7 @@ const EventDetails: FC<EventDetailsProps> = ({
             errorText={placeNameEmpty ? 'Incorrect place name' : ''}
             containerInnerStyle={{borderColor: placeNameEmpty ? errorColor : '', borderWidth: placeNameEmpty ? 1 : 0}}
             placeholderTextColor={placeNameEmpty ? errorColor : transparentWhite30Color}
-            label="Place name"
+            label="Place name (Location)"
             labelStyle={styles.inputLabel}
             value={placeName}
             onChange={val => setPlaceName(val)}
@@ -663,14 +669,7 @@ const EventDetails: FC<EventDetailsProps> = ({
             labelStyle={styles.inputLabel}
             label="Meeting spot"
             onBlur={handleScroll}
-            // InputIcon={Location}
           />
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <Text style={{fontSize: RFValue(14, 812), fontFamily: Satoshi500, color: whiteColor}}>
-              Are you responsible for the pick up?
-            </Text>
-            <Switch trackColor={{false: gray1Color, true: toggleColor}} />
-          </View>
         </View>
         <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
           <View style={{alignItems: 'center', marginTop: 20}}>
@@ -679,18 +678,10 @@ const EventDetails: FC<EventDetailsProps> = ({
                 setTabState('invitedOnly');
                 setCurrentCreateStap(1);
               }}>
-              <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Back</Text>
+              <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Back</Text>
             </TouchableOpacity>
           </View>
           <Button
-            // disabled={
-            //   !placeName ||
-            //   !address ||
-            //   !name ||
-            //   !date ||
-            //   !hour ||
-            //   !photos[0].image
-            // }
             loading={loading}
             title={'Continue'}
             buttonStyle={styles.button}
