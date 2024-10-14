@@ -12,7 +12,6 @@ import Button from 'components/Button/Button.tsx';
 import {profilePath, tutorialFlowPath} from 'constants/pathLocations.ts';
 import {
   backgroundGradientColors,
-  black1Color,
   blackColor,
   gray1Color,
   lightGray2Color,
@@ -25,7 +24,6 @@ import {
 //import icons
 import CheckIcon from 'assets/images/icons/check.svg';
 import CalendarIcon from 'assets/images/icons/calendar-white.svg';
-import UnlimitedIcon from 'assets/images/icons/unlimited.svg';
 import IOIcon from 'assets/images/icons/io.svg';
 import FlashIcon from 'assets/images/icons/flash-white.svg';
 import Logo from 'assets/images/icons/logo.svg';
@@ -33,7 +31,7 @@ import EyeIcon from 'assets/images/icons/eye.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import CloseCircleIcon from 'assets/images/icons/close-circle.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
-import Birthday from 'assets/images/icons/birthday.svg';
+import UnlimitedIcon from 'assets/images/icons/unlimited-new.svg';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenWidth} from 'constants/common';
@@ -93,7 +91,7 @@ const Payment: FC = (): JSX.Element => {
   const whatGet: WhatGetItem[] = [
     {
       title: 'Unlimited Events Creation',
-      description: 'Create Unlimited VIP Tables and Events to Invite.',
+      description: 'Share Unlimited VIP Tables and Events to Invite.',
       icon: CalendarIcon,
     },
     {
@@ -102,8 +100,8 @@ const Payment: FC = (): JSX.Element => {
       icon: UnlimitedIcon,
     },
     {
-      title: 'Unlimited Swipes',
-      description: 'Enjoy limitless swipes for endless connections.',
+      title: 'Unlimited Guest Connections',
+      description: 'Enjoy endless connections to build your guests lists.',
       icon: IOIcon,
     },
     {
@@ -115,11 +113,6 @@ const Payment: FC = (): JSX.Element => {
       title: 'See who wants to join you',
       description: 'View interested guests who want to join you in real-time.',
       icon: EyeIcon,
-    },
-    {
-      title: 'Guest Mode (Join events)',
-      description: 'Join events anonymously using Guest Mode.',
-      icon: Birthday,
     },
   ];
 
@@ -495,19 +488,19 @@ const Payment: FC = (): JSX.Element => {
             </TouchableOpacity>
             <View style={{marginTop: 16, alignItems: 'center'}}>
               <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
-                By tapping, your App Store will be charged, your subscription will auto-renew for the same price and package length until
-                you cancel via App Store settings, and you agree to your Terms. More details can be found here:
+                By tapping, your App Store account will be charged. Your subscription will auto-renew for the same price and duration until
+                you cancel via your App Store settings. You also agree to the Terms. More details can be found here:
               </Text>
 
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
-                  <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Privacy policy</Text>
+                  <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Privacy Policy</Text>
                 </TouchableOpacity>
 
                 <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, marginHorizontal: 5}}>and</Text>
 
                 <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/terms-and-conditions')}>
-                  <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Terms and conditions</Text>
+                  <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Terms and Conditions</Text>
                 </TouchableOpacity>
               </View>
             </View>
