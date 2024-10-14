@@ -98,11 +98,13 @@ const MyEventsCard: FC<MyEventsCard> = props => {
       return {plateTitle: 'Full', plateBackgroundColor: lightGreenColor};
     }
 
-    if(item?.statusEvent) return {
-      plateTitle: 'Active',
-      plateBackgroundColor: lightGreenColor,
-    };
-    return null
+    if (item?.statusEvent) {
+      return {
+        plateTitle: 'Active',
+        plateBackgroundColor: lightGreenColor,
+      };
+    }
+    return null;
   };
 
   return (
@@ -145,19 +147,21 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                 <EventRejectedView />
               </View>
             )}
-            {getEventStatus() && <View
-              style={{
-                backgroundColor: getEventStatus()?.plateBackgroundColor,
-                paddingHorizontal: 6,
-                paddingVertical: 4,
-                borderRadius: 5,
-                alignSelf: 'flex-start',
-                position: 'absolute',
-                bottom: 16,
-                left: 16,
-              }}>
-              <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500}}>{getEventStatus()?.plateTitle}</Text>
-            </View>}
+            {getEventStatus() && (
+              <View
+                style={{
+                  backgroundColor: getEventStatus()?.plateBackgroundColor,
+                  paddingHorizontal: 6,
+                  paddingVertical: 4,
+                  borderRadius: 5,
+                  alignSelf: 'flex-start',
+                  position: 'absolute',
+                  bottom: 16,
+                  left: 16,
+                }}>
+                <Text style={{fontSize: RFValue(12, 812), color: whiteColor, fontFamily: Satoshi500}}>{getEventStatus()?.plateTitle}</Text>
+              </View>
+            )}
           </LinearGradient>
         </FastImage>
         <View style={{paddingHorizontal: 18}}>
@@ -302,9 +306,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
           <View style={{width: '100%', alignItems: 'center', marginTop: 22, paddingHorizontal: 23}}>
             <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
           </View>
-          <View style={{marginBottom: 23}}>
-            {customButton ? customButton : null}
-          </View>
+          <View style={{marginBottom: 23}}>{customButton ? customButton : null}</View>
         </View>
       </View>
     </>

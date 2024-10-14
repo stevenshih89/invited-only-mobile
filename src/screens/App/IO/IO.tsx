@@ -60,7 +60,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import moment from 'moment';
 import {Event, EventData} from 'src/types/event';
-import { useScrollPosition } from 'src/store/scrollPosition';
+import {useScrollPosition} from 'src/store/scrollPosition';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -644,7 +644,7 @@ const IO: FC = (): JSX.Element => {
           });
       }
       setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
-      setScrollPosition(0)
+      setScrollPosition(0);
     } catch (error) {
       // console.log('eror invite', error);
     }
@@ -1546,7 +1546,7 @@ const IO: FC = (): JSX.Element => {
     return <Loading wrapperText={false} text="Finding guests near you ..." userInfo={userInfo} />;
   }
 
-  if (!loading && myEvents.length < 1 && userInfo.accountConfirmed && isHost && !isVisibleMatch && !acceptModalVisible) {
+  if (!loading && !myEvents.length && userInfo.accountConfirmed && isHost && !isVisibleMatch && !acceptModalVisible) {
     return (
       <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
         <View style={{height: 370}}>
@@ -1586,11 +1586,9 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  
-
-  const handleScroll = (event) => {
+  const handleScroll = event => {
     const positionY = event.nativeEvent.contentOffset.y;
-    setScrollPosition(positionY)
+    setScrollPosition(positionY);
   };
 
   return (
@@ -1641,7 +1639,7 @@ const IO: FC = (): JSX.Element => {
                   // @ts-ignore
                   cardHeight="100%"
                   onSwipedLeft={() => {
-                    setScrollPosition(0)
+                    setScrollPosition(0);
                     setTimeout(() => {
                       onReject(item?.info?.uid, item?.info?.id);
                     }, 500);
@@ -1650,7 +1648,7 @@ const IO: FC = (): JSX.Element => {
                     }, 500);
                   }}
                   onSwipedRight={() => {
-                    setScrollPosition(0)
+                    setScrollPosition(0);
                     onInvite(item?.info?.uid, item?.info?.id);
                     setTimeout(() => {
                       setCurrentEventCardPosition(prev => prev + 1);
@@ -1662,9 +1660,10 @@ const IO: FC = (): JSX.Element => {
                   disableTopSwipe={true}
                   cardStyle={styles.card}>
                   <ScrollView
-                  onScroll={handleScroll}
-                  scrollEventThrottle={20}
-                  showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
+                    onScroll={handleScroll}
+                    scrollEventThrottle={20}
+                    showsVerticalScrollIndicator={false}
+                    style={{borderRadius: 22, height: screenHeight - 250}}>
                     {item.component}
                   </ScrollView>
                 </TinderCard>

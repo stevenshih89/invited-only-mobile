@@ -15,14 +15,14 @@ import {
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
-import BirthdayParty from 'assets/images/auth/interests/birthday-party.jpg';
-import Exclusive from 'assets/images/auth/interests/exclusive.jpg';
-import PoolParty from 'assets/images/auth/interests/pool-party.jpg';
-import Private from 'assets/images/auth/interests/private.jpg';
-import Restaurant from 'assets/images/auth/interests/restaurant.jpg';
-import VipTables from 'assets/images/auth/interests/vip-tables.jpg';
-import YachtParty from 'assets/images/auth/interests/yacht-party.jpg';
-import Concert from 'assets/images/auth/interests/concerts.jpg';
+import BirthdayParty from 'assets/images/auth/interests/birthday-party.png';
+import Exclusive from 'assets/images/auth/interests/exclusive.png';
+import PoolParty from 'assets/images/auth/interests/pool-party.png';
+import Private from 'assets/images/auth/interests/private.png';
+import Restaurant from 'assets/images/auth/interests/restaurant.png';
+import VipTables from 'assets/images/auth/interests/vip-tables.png';
+import YachtParty from 'assets/images/auth/interests/yacht-party.png';
+import Concert from 'assets/images/auth/interests/concerts.png';
 import UserOne from 'assets/images/auth/interests/user-one.png';
 import UserTwo from 'assets/images/auth/interests/user-two.png';
 import {backgroundGradientColors, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
@@ -41,7 +41,7 @@ const MyInterests: FC = (): JSX.Element => {
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const [listOfInterests, setListOfInterests] = useState([
-    {id: 0, title: 'Vip Tabes', isSelected: false, image: VipTables},
+    {id: 0, title: 'Vip Tables', isSelected: false, image: VipTables},
     {id: 1, title: 'Concerts', isSelected: false, image: Concert},
     {id: 2, title: 'Exclusive', isSelected: false, image: Exclusive},
     {id: 3, title: 'YachtParty', isSelected: false, image: YachtParty},
@@ -119,7 +119,7 @@ const MyInterests: FC = (): JSX.Element => {
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi500,
-                      fontSize: RFValue(34, 812),
+                      fontSize: RFValue(48, 932),
                       marginBottom: 18,
                     }}>
                     Choose interests
@@ -128,10 +128,10 @@ const MyInterests: FC = (): JSX.Element => {
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi400,
-                      fontSize: RFValue(17, 812),
+                      fontSize: RFValue(17, 932),
                     }}>
-                    Choose up to <Text style={{fontWeight: '700'}}>3{accountType === 'host' ? 'things' : ' event types'}</Text> you love. It
-                    will help you match with people
+                    Choose up to <Text style={{fontWeight: '700'}}>3 event types</Text> you love to help us find the right{' '}
+                    {accountType === 'host' ? 'guests for your events.' : 'events for you.'}
                   </Text>
                 </View>
                 <View style={{width: '100%', height: screenHeight / 2}}>
@@ -182,7 +182,7 @@ const MyInterests: FC = (): JSX.Element => {
                                 justifyContent: 'center',
                               }}>
                               <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
-                                <Text style={{color: blackColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 16}}>
+                                <Text style={{color: blackColor, fontSize: RFValue(14, 932), fontFamily: Satoshi700, marginLeft: 16}}>
                                   {title}
                                 </Text>
                                 <View style={{flexDirection: 'row'}}>
@@ -222,7 +222,7 @@ const MyInterests: FC = (): JSX.Element => {
                                     <Text
                                       style={{
                                         color: whiteColor,
-                                        fontSize: RFValue(6, 812),
+                                        fontSize: RFValue(6, 932),
                                         fontFamily: Satoshi500,
                                       }}>
                                       40

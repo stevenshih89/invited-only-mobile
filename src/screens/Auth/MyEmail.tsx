@@ -44,7 +44,9 @@ const MyEmail: FC = (): JSX.Element => {
       },
     ]);
     const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
-    navigation.navigate(privacyPath, {screen: 'MyEmail', accountType: accountType} as never);
+
+    // @ts-ignore
+    navigation.navigate(privacyPath, {screen: 'MyEmail', accountType: accountType});
   };
 
   const navigation = useAppNavigation();
@@ -104,6 +106,7 @@ const MyEmail: FC = (): JSX.Element => {
                       color: whiteColor,
                       fontFamily: Satoshi400,
                       fontSize: RFValue(18, 932),
+                      opacity: 0.8,
                     }}>
                     Don’t lose access to your account, verify your email
                   </Text>

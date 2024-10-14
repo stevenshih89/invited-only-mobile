@@ -65,7 +65,6 @@ const Gender: FC = (): JSX.Element => {
                     <ArrowLeft />
                   </TouchableOpacity>
                   <LogoPrimary2 />
-                  {/* <SixtyIcon height={40} /> */}
                   <AuthProgress startPercentage={50} endPercentage={60} animationDuration={1000} />
                 </View>
                 <View
@@ -78,7 +77,7 @@ const Gender: FC = (): JSX.Element => {
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi500,
-                      fontSize: RFValue(40, 932),
+                      fontSize: RFValue(48, 932),
                       marginBottom: 18,
                     }}>
                     Select your gender
@@ -88,6 +87,7 @@ const Gender: FC = (): JSX.Element => {
                       color: whiteColor,
                       fontFamily: Satoshi400,
                       fontSize: RFValue(18, 932),
+                      opacity: 0.8,
                     }}>
                     Choose the gender that best represents you.
                   </Text>

@@ -96,9 +96,9 @@ const Privacy: FC = (): JSX.Element => {
             <LogoPrimary2 />
             <View style={{width: 40}} />
           </View>
-          <View style={{marginBottom: screenHeight / 30, marginTop: screenHeight / (screen ? 10 : 15)}}>
-            <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>Welcome</Text>
-            <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>
+          <View style={{marginBottom: screenHeight / 30, marginTop: screenHeight / (screen ? 11.5 : 15)}}>
+            <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 932), marginBottom: 8}}>Welcome</Text>
+            <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932)}}>
               Please follow these{' '}
               {objWithAccountType?.accountType
                 ? objWithAccountType?.accountType === 'host'
@@ -128,9 +128,9 @@ const Privacy: FC = (): JSX.Element => {
               <View style={{width: '100%', padding: 20, backgroundColor: lightGray3Color, borderRadius: 10}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <CheckIcon />
-                  <Text style={{color: whiteColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 8}}>{title}</Text>
+                  <Text style={{color: whiteColor, fontSize: RFValue(16, 932), fontFamily: Satoshi700, marginLeft: 8}}>{title}</Text>
                 </View>
-                <Text style={{color: lightGray4Color, fontSize: RFValue(14, 812), fontFamily: Satoshi400, marginTop: 10}}>{subtitle}</Text>
+                <Text style={{color: lightGray4Color, fontSize: RFValue(14, 932), fontFamily: Satoshi400, marginTop: 10}}>{subtitle}</Text>
               </View>
             )}
           />

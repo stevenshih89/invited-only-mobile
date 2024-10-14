@@ -1,4 +1,4 @@
-import {isIos, screenHeight} from 'constants/common';
+import {isIos, screenHeight, screenWidth} from 'constants/common';
 import React, {FC, useContext, useState} from 'react';
 import {
   Alert,
@@ -35,9 +35,9 @@ const VerifySecondStep: FC = (): JSX.Element => {
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const name = onBoarding.find((item: {name: string}) => item?.name)?.name;
-  const isHost = onBoarding.find((item: {accountType: 'host' | 'guest'}) => item?.accountType)?.accountType === 'host' || false;
+  const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
 
-  const selfieSource = isHost ? MaleExampleSelfie : FemaleExampleSelfie;
+  const selfieSource = gender === 'man' ? MaleExampleSelfie : FemaleExampleSelfie;
 
   const openCamera = async () => {
     if (isIos) {
@@ -92,6 +92,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                 justifyContent: 'space-between',
                 paddingBottom: 0,
                 paddingHorizontal: 24,
+                paddingTop: screenHeight / 29,
               }}>
               <View style={{alignItems: 'center'}}>
                 <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -124,7 +125,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                           style={{
                             color: whiteColor,
                             fontFamily: Satoshi500,
-                            fontSize: RFValue(34, 812),
+                            fontSize: RFValue(34, 932),
                           }}>
                           Your photo
                         </Text>
@@ -132,7 +133,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                           style={{
                             color: whiteColor,
                             fontFamily: Satoshi400,
-                            fontSize: RFValue(16, 812),
+                            fontSize: RFValue(16, 932),
                           }}>
                           Make sure your face is clearly visible.
                         </Text>
@@ -166,7 +167,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                                     color: whiteColor,
                                     marginRight: 8,
                                     fontFamily: Satoshi500,
-                                    fontSize: RFValue(20, 812),
+                                    fontSize: RFValue(20, 932),
                                     alignSelf: 'center',
                                   }}>
                                   {name}
@@ -189,7 +190,8 @@ const VerifySecondStep: FC = (): JSX.Element => {
                           style={{
                             color: whiteColor,
                             fontFamily: Satoshi500,
-                            fontSize: RFValue(34, 812),
+                            fontSize: RFValue(48, 932),
+                            marginBottom: 8,
                           }}>
                           Verify yourself
                         </Text>
@@ -197,7 +199,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                           style={{
                             color: whiteColor,
                             fontFamily: Satoshi400,
-                            fontSize: RFValue(16, 812),
+                            fontSize: RFValue(18, 932),
                           }}>
                           Copy this position. Your face must be clearly visible.
                         </Text>
@@ -207,13 +209,20 @@ const VerifySecondStep: FC = (): JSX.Element => {
                           style={{
                             position: 'relative',
                             width: '100%',
-                            height: screenHeight / 2.5,
+                            height: screenWidth / 1.1,
                             alignSelf: 'center',
                           }}>
                           <ImageBackground
                             source={selfieSource}
                             style={{borderRadius: 100, width: '100%', height: '100%', justifyContent: 'flex-end'}}>
-                            <View style={{height: 36, width: '100%', justifyContent: 'center', position: 'relative', overflow: 'hidden'}}>
+                            <View
+                              style={{
+                                height: screenHeight / 20,
+                                width: '100%',
+                                justifyContent: 'center',
+                                position: 'relative',
+                                overflow: 'hidden',
+                              }}>
                               <View
                                 style={{
                                   position: 'absolute',
@@ -225,7 +234,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                                   opacity: 0.87,
                                 }}
                               />
-                              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 812), alignSelf: 'center'}}>
+                              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 932), alignSelf: 'center'}}>
                                 {name}
                               </Text>
                             </View>
@@ -236,7 +245,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                   )}
                 </View>
               </View>
-              {true ? (
+              {imageUri ? (
                 <View style={{marginBottom: 4}}>
                   <Button title="Submit" onPress={() => handleNext()} />
                   <Button

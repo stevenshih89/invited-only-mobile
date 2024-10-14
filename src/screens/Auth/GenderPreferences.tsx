@@ -86,7 +86,8 @@ const GenderPreferences: FC = (): JSX.Element => {
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi400,
-                      fontSize: RFValue(16, 932),
+                      fontSize: RFValue(18, 932),
+                      opacity: 0.8,
                     }}>
                     Select who you want to invite
                   </Text>

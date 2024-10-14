@@ -1,34 +1,27 @@
 import React, {FC, useEffect} from 'react';
-import {Image, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import useStyles from 'components/Loading/styles.ts';
 import Subtract from 'src/assets/images/icons/subtract.svg';
 import CheckStarIcon from 'src/assets/images/icons/check-star.svg';
 import Animated, {Easing, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming} from 'react-native-reanimated';
 import {screenHeight, screenWidth} from 'constants/common';
-import { blackColor, whiteColor } from 'constants/colors';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import {blackColor, whiteColor} from 'constants/colors';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 import FastImage from 'react-native-fast-image';
 
 interface LoadingProps {
   text?: string;
   userInfo: any;
-  topPosition: boolean;
-  wrapperText?:boolean;
+  topPosition?: boolean;
+  wrapperText?: boolean;
   styleContainer?: any;
   showCheckIcon?: boolean;
 }
 
-const Loading: FC<LoadingProps> = ({
-  text, 
-  userInfo, 
-  topPosition, 
-  wrapperText=true,
-  styleContainer, 
-  showCheckIcon = false
-}) => {
+const Loading: FC<LoadingProps> = ({text, userInfo, topPosition = false, wrapperText = true, styleContainer, showCheckIcon = false}) => {
   const styles = useStyles();
-  
+
   const firstCircleScale = useSharedValue(0.9);
   const secondCircleScale = useSharedValue(0.9);
 
@@ -87,47 +80,60 @@ const Loading: FC<LoadingProps> = ({
             styles.whiteCircle,
             {top: topPosition ? 35 : screenHeight / 2 - 365, height: topPosition ? 290 : 330, width: topPosition ? 290 : 330},
           ]}>
-          {userInfo?.photos && <FastImage resizeMode='cover' style={{width: 180, height: 180, borderRadius: 100}} source={{uri: userInfo?.photos[0]?.image}} />}
+          {userInfo?.photos && (
+            <FastImage resizeMode="cover" style={{width: 180, height: 180, borderRadius: 100}} source={{uri: userInfo?.photos[0]?.image}} />
+          )}
         </View>
         {text && (
           <>
-            {wrapperText? <>
-              <View style={{position: 'absolute', top: screenHeight / 2 - 40}}>
-                <Subtract />
-              </View>
-            <View style={{alignItems: 'center', position: 'absolute', top: screenHeight / 2 - 10}}>
-              <View style={{
-                backgroundColor: whiteColor,
-                borderRadius: 17,
-                paddingHorizontal: 22,
-                paddingVertical: 11,
-                marginTop: -8
-              }}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{
-                  color: blackColor,
-                  fontSize: RFValue(18, 812),
-                  fontFamily: Satoshi500,
-                  textAlign: 'center',
-                }}>{text}</Text>
-                {showCheckIcon && <CheckStarIcon />}
+            {wrapperText ? (
+              <>
+                <View style={{position: 'absolute', top: screenHeight / 2 - 40}}>
+                  <Subtract />
+                </View>
+                <View style={{alignItems: 'center', position: 'absolute', top: screenHeight / 2 - 10}}>
+                  <View
+                    style={{
+                      backgroundColor: whiteColor,
+                      borderRadius: 17,
+                      paddingHorizontal: 22,
+                      paddingVertical: 11,
+                      marginTop: -8,
+                    }}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Text
+                        style={{
+                          color: blackColor,
+                          fontSize: RFValue(18, 812),
+                          fontFamily: Satoshi500,
+                          textAlign: 'center',
+                        }}>
+                        {text}
+                      </Text>
+                      {showCheckIcon && <CheckStarIcon />}
+                    </View>
+                  </View>
+                </View>
+              </>
+            ) : (
+              <View style={{alignItems: 'center', position: 'absolute', top: screenHeight / 2 - 10}}>
+                <View
+                  style={{
+                    width: screenWidth - 32,
+                    marginTop: 20,
+                  }}>
+                  <Text
+                    style={{
+                      color: whiteColor,
+                      fontSize: RFValue(18, 812),
+                      fontFamily: Satoshi400,
+                      textAlign: 'center',
+                    }}>
+                    {text}
+                  </Text>
                 </View>
               </View>
-            </View></>: 
-              <View style={{alignItems: 'center', position: 'absolute', top: screenHeight / 2 - 10}}>
-              <View style={{
-                width: screenWidth - 32,
-                marginTop: 20
-              }}>
-                <Text style={{
-                    color: whiteColor,
-                    fontSize: RFValue(18, 812),
-                    fontFamily: Satoshi400,
-                    textAlign: 'center'
-                }}>{text}</Text>
-              </View>
-            </View>
-              }
+            )}
           </>
         )}
       </View>
@@ -136,4 +142,3 @@ const Loading: FC<LoadingProps> = ({
 };
 
 export default Loading;
-
