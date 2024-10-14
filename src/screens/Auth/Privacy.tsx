@@ -19,7 +19,7 @@ const Privacy: FC = (): JSX.Element => {
   const {onBoarding} = useContext(AuthContext);
   const objWithAccountType = onBoarding.find(obj => obj.hasOwnProperty("accountType"));
   const route = useRoute();
-  const { screen, accountType} = route.params as { screen: string, accountType: string};
+  const { screen, accountType} = route.params as { screen: string, accountType: string};  
       
   const privaciesListHost = [
     {
@@ -98,7 +98,7 @@ const Privacy: FC = (): JSX.Element => {
             style={{
               width: '100%',
               marginBottom: screenHeight / 30,
-              marginTop: screenHeight / (screen ? 10 : 15),
+              marginTop: screenHeight / (screen === 'MyEmail' ? 10 : 15),
             }}>
             <Text
               style={{

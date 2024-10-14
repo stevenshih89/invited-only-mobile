@@ -43,7 +43,7 @@ const MyEmail: FC = (): JSX.Element => {
         email: email,
       },
     ]);
-    navigation.navigate(privacyPath as never);
+    navigation.navigate(privacyPath as never, {screen: 'MyEmail'});
   };
 
   const navigation = useAppNavigation();
