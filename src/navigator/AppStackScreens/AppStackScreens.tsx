@@ -329,7 +329,7 @@ export const ChatStackScreen = () => {
         options={{
           headerShown: true,
           header: () => (
-            <Header typeEvents={typeEvents} setTypeEvents={setTypeEvents} headerType="chat" showHeaderTop={true} logoType="logo" />
+            <Header typeEvents={typeEvents} setTypeEvents={setTypeEvents} headerType="chat" showHeaderTop={true} logoType="logo" badge/>
           ),
         }}
         name={chatPath}

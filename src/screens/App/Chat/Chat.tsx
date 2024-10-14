@@ -27,11 +27,12 @@ import {blackColor, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import {useFocusEffect} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
 import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import FastImage from 'react-native-fast-image';
+import { getUsersListAccepted } from 'helpers/getUsersListAccepted';
 
 type ItemProps = {
   title: string;
@@ -431,8 +432,60 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     };
   }, [activeEvent, loading]);
 
+  console.log('eventData', eventData);
+  
+
   return (
     <View style={styles.container}>
+      {isHost && <View
+        style={{
+          paddingHorizontal: 16,
+          paddingVertical: 7,
+          borderWidth: 1,
+          borderColor: whiteColor,
+          borderRadius: 12,
+          width: '100%',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 18,
+        }}>
+        <View style={{flex: 1}}>
+          <Text
+            style={{
+              color: whiteColor,
+              fontFamily: Satoshi700,
+              fontSize: RFValue(18, 812),
+              textAlign: 'center',
+            }}>
+            Join Requests: {eventData?.requestsList?.length}
+          </Text>
+        </View>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <FastImage
+            source={{uri: eventData?.photos?.[0]?.image || ''}}
+            style={{width: 40, height: 40, borderRadius: 40, borderWidth: 1, borderColor: whiteColor}}
+          />
+          <View style={{alignItems: 'center', marginLeft: 12}}>
+            <Text
+              style={{
+                color: whiteColor,
+                fontFamily: Satoshi700,
+                fontSize: RFValue(26, 812),
+              }}>
+              {getUsersListAccepted(eventData?.usersList)}/{eventData?.male + eventData?.female}
+            </Text>
+            <Text
+              style={{
+                color: whiteColor,
+                fontFamily: Satoshi500,
+                fontSize: RFValue(12, 812),
+              }}>
+              Guest List
+            </Text>
+          </View>
+        </View>
+      </View>}
       {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
       <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
       {!loading ? (
@@ -488,7 +541,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                 <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />
               </View>
             )}
-            renderItem={({item}) => {                                       
+            renderItem={({item}) => {
               return (
                 <ItemEventsJoining
                   image={item.image}
