@@ -1,4 +1,4 @@
-import {blackColor, lightGray2Color, lightRedColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGray2Color, lightGreen2Color, lightGreenColor, lightRedColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import TrashRed from 'assets/images/icons/trash-red.svg';
@@ -8,6 +8,8 @@ import PeopleIcon from 'assets/images/icons/Users.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import MoreIcon from 'assets/images/icons/more-white.svg';
 import ClockFilledIcon from 'assets/images/icons/clock-white-fill.svg';
+import AcceptIcon from 'assets/images/icons/accept.svg'
+import CloseCircleFillIcon from 'assets/images/icons/close-circle-fill.svg'
 import {FlatList, Image, ImageBackground, Text, TouchableOpacity} from 'react-native';
 import {ScrollView, View} from 'react-native';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
@@ -23,6 +25,8 @@ import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {useFocusEffect} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import {Event, EventData} from 'src/types/event';
+import FastImage from 'react-native-fast-image';
+import { getUsersListAccepted } from 'helpers/getUsersListAccepted';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
@@ -91,38 +95,39 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
       case GUEST_LIST:
         return (
           <>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-              <Text style={{color: whiteColor, fontSize: RFValue(17, 812), fontFamily: Satoshi700}}>Your guests</Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  borderRadius: 10,
-                  paddingHorizontal: 12,
-                  paddingVertical: 7,
-                }}>
-                <PeopleIcon />
+            <View
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 7,
+                borderWidth: 1,
+                borderColor: whiteColor,
+                borderRadius: 12,
+                width: '100%',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <FastImage
+                source={{uri: photos[0]?.image}}
+                style={{width: 40, height: 40, borderRadius: 40, borderWidth: 1, borderColor: whiteColor}}
+              />
+              <View style={{alignItems: 'center'}}>
+                <Text
+                  style={{
+                    color: whiteColor,
+                    fontFamily: Satoshi700,
+                    fontSize: RFValue(28, 812),
+                  }}>
+                  {getUsersListAccepted(usersList)}/{male + female}
+                </Text>
                 <Text
                   style={{
                     color: whiteColor,
                     fontFamily: Satoshi500,
                     fontSize: RFValue(12, 812),
-                    marginLeft: 4,
-                  }}>{`${acceptedGuests.length}/${maxGuests}`}</Text>
-              </View>
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 6}}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{color: whiteColor, marginRight: 6, fontFamily: Satoshi500, fontSize: RFValue(15, 812)}}>Women</Text>
-                <View style={{backgroundColor: lightGray2Color, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(15, 812)}}>{female}</Text>
-                </View>
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 24}}>
-                <Text style={{color: whiteColor, marginRight: 6, fontFamily: Satoshi500, fontSize: RFValue(15, 812)}}>Men</Text>
-                <View style={{backgroundColor: lightGray2Color, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(15, 812)}}>{male}</Text>
-                </View>
+                  }}>
+                  Guest List
+                </Text>
               </View>
             </View>
             {!!invitedGuests.length && (
@@ -132,7 +137,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   marginTop: 14,
                 }}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Invite Match</Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>New Connection </Text>
                   <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
                     <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{invitedGuests.length}</Text>
                   </View>
@@ -144,26 +149,61 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   renderItem={({item}) => (
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <ImageBackground
-                          source={{uri: item?.userPhoto}}
-                          style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
-                          imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                          resizeMode="cover">
-                          <ClockFilledIcon width={20} height={20} />
-                        </ImageBackground>
-
+                        <View>
+                          <ImageBackground
+                            source={{uri: item?.userPhoto}}
+                            style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
+                            imageStyle={{width: 50, height: 50, borderRadius: 200}}
+                            resizeMode="cover"></ImageBackground>
+                          <View
+                            style={{
+                              borderWidth: 1,
+                              borderColor: blackColor,
+                              width: 10,
+                              height: 10,
+                              borderRadius: 10,
+                              backgroundColor: lightGreenColor,
+                              position: 'absolute',
+                              right: 0,
+                              bottom: 5,
+                            }}
+                          />
+                        </View>
                         <Text
-                          style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
+                          style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
                           {item?.name}
                         </Text>
-                        <FlashIcon width={13} height={13} />
+                        <View
+                          style={{paddingVertical: 4, paddingHorizontal: 7, backgroundColor: whiteColor, borderRadius: 10, marginLeft: 8}}>
+                          <Text
+                            style={{
+                              color: blackColor,
+                              fontFamily: Satoshi500,
+                              fontSize: RFValue(10, 812),
+                            }}>
+                            New
+                          </Text>
+                        </View>
                       </View>
                       <TouchableOpacity
+                        style={{
+                          backgroundColor: whiteColor,
+                          paddingVertical: 8,
+                          paddingHorizontal: 12,
+                          borderRadius: 10,
+                        }}
                         onPress={() => {
                           setModalVisible(true);
                           setUser(item);
                         }}>
-                        <MoreIcon />
+                        <Text
+                          style={{
+                            color: blackColor,
+                            fontFamily: Satoshi500,
+                            fontSize: RFValue(14, 812),
+                          }}>
+                          Manage
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -177,7 +217,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   marginTop: 14,
                 }}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Approved</Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Approved - Pending</Text>
                   <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
                     <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{invitedGuests.length}</Text>
                   </View>
@@ -189,26 +229,51 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   renderItem={({item}) => (
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <View>
                         <ImageBackground
                           source={{uri: item?.userPhoto}}
                           style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
                           imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                          resizeMode="cover">
-                          <ClockFilledIcon width={20} height={20} />
-                        </ImageBackground>
-
+                          resizeMode="cover"></ImageBackground>
+                          <View
+                            style={{
+                              borderWidth: 1,
+                              borderColor: blackColor,
+                              width: 10,
+                              height: 10,
+                              borderRadius: 10,
+                              backgroundColor: lightGreenColor,
+                              position: 'absolute',
+                              right: 0,
+                              bottom: 5,
+                            }}
+                          />
+                        </View>
                         <Text
-                          style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
+                          style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
                           {item?.name}
                         </Text>
-                        <FlashIcon width={13} height={13} />
+                        <ClockFilledIcon width={20} height={20} />
                       </View>
                       <TouchableOpacity
+                        style={{
+                          backgroundColor: whiteColor,
+                          paddingVertical: 8,
+                          paddingHorizontal: 12,
+                          borderRadius: 10,
+                        }}
                         onPress={() => {
                           setModalVisible(true);
                           setUser(item);
                         }}>
-                        <MoreIcon />
+                        <Text
+                          style={{
+                            color: blackColor,
+                            fontFamily: Satoshi500,
+                            fontSize: RFValue(14, 812),
+                          }}>
+                          Manage
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -237,25 +302,51 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   renderItem={({item}) => (
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <View>
                         <ImageBackground
                           source={{uri: item?.userPhoto}}
                           style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
                           imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                          resizeMode="cover">
-                          <CheckIcon width={20} height={20} />
-                        </ImageBackground>
+                          resizeMode="cover"></ImageBackground>
+                          <View
+                            style={{
+                              borderWidth: 1,
+                              borderColor: blackColor,
+                              width: 10,
+                              height: 10,
+                              borderRadius: 10,
+                              backgroundColor: lightGreenColor,
+                              position: 'absolute',
+                              right: 0,
+                              bottom: 5,
+                            }}
+                          />
+                        </View>
                         <Text
-                          style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
+                          style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
                           {item?.name}
                         </Text>
-                        <FlashIcon width={13} height={13} />
+                        <AcceptIcon />
                       </View>
                       <TouchableOpacity
+                        style={{
+                          backgroundColor: whiteColor,
+                          paddingVertical: 8,
+                          paddingHorizontal: 12,
+                          borderRadius: 10,
+                        }}
                         onPress={() => {
                           setModalVisible(true);
                           setUser(item);
                         }}>
-                        <MoreIcon />
+                        <Text
+                          style={{
+                            color: blackColor,
+                            fontFamily: Satoshi500,
+                            fontSize: RFValue(14, 812),
+                          }}>
+                          Manage
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -284,25 +375,51 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   renderItem={({item}) => (
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <View>
                         <ImageBackground
                           source={{uri: item?.userPhoto}}
                           style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
                           imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                          resizeMode="cover">
-                          <InfoCircleGray width={20} height={20} />
-                        </ImageBackground>
+                          resizeMode="cover"></ImageBackground>
+                          <View
+                            style={{
+                              borderWidth: 1,
+                              borderColor: blackColor,
+                              width: 10,
+                              height: 10,
+                              borderRadius: 10,
+                              backgroundColor: lightGreenColor,
+                              position: 'absolute',
+                              right: 0,
+                              bottom: 5,
+                            }}
+                          />
+                        </View>
                         <Text
-                          style={{color: whiteColor, marginRight: 4, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
+                          style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
                           {item?.name}
                         </Text>
-                        <FlashIcon width={13} height={13} />
+                        <CloseCircleFillIcon />
                       </View>
                       <TouchableOpacity
+                        style={{
+                          backgroundColor: whiteColor,
+                          paddingVertical: 8,
+                          paddingHorizontal: 12,
+                          borderRadius: 10,
+                        }}
                         onPress={() => {
                           setModalVisible(true);
                           setUser(item);
                         }}>
-                        <MoreIcon />
+                        <Text
+                          style={{
+                            color: blackColor,
+                            fontFamily: Satoshi500,
+                            fontSize: RFValue(14, 812),
+                          }}>
+                          Manage
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   )}
