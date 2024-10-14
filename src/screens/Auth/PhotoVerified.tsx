@@ -4,7 +4,7 @@ import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import Loader from 'assets/images/auth/loader.svg';
 import {Image, SafeAreaView, Text, View} from 'react-native';
-import {backgroundGradientColors, black1Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, whiteColor} from 'constants/colors';
 import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Animated, {Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
@@ -49,7 +49,7 @@ const PhotoVerified = () => {
 
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <SafeAreaView style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
+      <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
         <View style={{paddingHorizontal: 24, flex: 1, justifyContent: 'space-around'}}>
           <View style={{alignItems: 'center', transform: [{translateY: -20}]}}>
             <LogoPrimary2 />

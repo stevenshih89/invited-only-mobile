@@ -57,17 +57,17 @@ const SummaryInfo = () => {
                 </Text>
               </View>
             </View>
-            <View style={{alignItems: 'center', marginTop: 30}}>
+            <View style={{alignItems: 'center', marginTop: screenHeight / 40}}>
               {imageUser && (
                 <Image source={{uri: imageUser}} style={{width: screenWidth / 1.5, height: screenWidth / 1.5, borderRadius: 300}} />
               )}
             </View>
-            <View style={{flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: 20}}>
+            <View style={{flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: screenHeight / 40}}>
               <LogoSecondary2 />
               <View style={{borderWidth: 24, borderColor: whiteColor, borderStyle: 'solid', borderRadius: 100, width: 100, height: 100}} />
             </View>
           </View>
-          <View style={{marginVertical: 4}}>
+          <View style={{marginVertical: 'auto'}}>
             <Button title="Continue" onPress={handleNext} />
           </View>
         </View>

@@ -4,14 +4,7 @@ import {FlatList, SafeAreaView, Text, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import {
-  backgroundGradientColors,
-  black1Color,
-  lightGray3Color,
-  lightGray4Color,
-  transparentWhite30Color,
-  whiteColor,
-} from 'constants/colors';
+import {backgroundGradientColors, lightGray3Color, lightGray4Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
@@ -77,101 +70,73 @@ const Privacy: FC = (): JSX.Element => {
 
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <SafeAreaView style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
-        <View
-          style={{
-            flex: 1,
-            paddingBottom: 0,
-            paddingHorizontal: 24,
-          }}>
-          <View style={{alignItems: 'center'}}>
-            <View
+      <SafeAreaView style={{flex: 1}}>
+        <View style={{flex: 1, paddingHorizontal: 24}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingTop: screenHeight / 29,
+            }}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              activeOpacity={0.7}
+              hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
               style={{
-                flexDirection: 'row',
-                width: '100%',
+                borderRadius: 50,
+                width: 40,
+                height: 40,
+                justifyContent: 'center',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingTop: screenHeight / 29,
+                backgroundColor: transparentWhite30Color,
               }}>
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                activeOpacity={0.7}
-                hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
-                style={{
-                  borderRadius: 50,
-                  width: 40,
-                  height: 40,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: transparentWhite30Color,
-                }}>
-                <ArrowLeft />
-              </TouchableOpacity>
-              <LogoPrimary2 />
-              <View style={{width: 40}} />
-            </View>
-            <View
-              style={{
-                width: '100%',
-                marginBottom: screenHeight / 30,
-                marginTop: screenHeight / (screen ? 10 : 15),
-              }}>
-              <Text
-                style={{
-                  color: whiteColor,
-                  fontFamily: Satoshi500,
-                  fontSize: RFValue(48, 812),
-                  marginBottom: 18,
-                }}>
-                Welcome
-              </Text>
-              <Text
-                style={{
-                  color: whiteColor,
-                  fontFamily: Satoshi400,
-                  fontSize: RFValue(18, 812),
-                }}>
-                Please follow these{' '}
-                {objWithAccountType?.accountType
-                  ? objWithAccountType?.accountType === 'host'
-                    ? 'Host'
-                    : 'Guest'
-                  : accountType === 'host'
-                  ? 'Host'
-                  : 'Guest'}{' '}
-                House Rules
-              </Text>
-            </View>
-            <View style={{width: '100%'}}>
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                data={
-                  objWithAccountType?.accountType
-                    ? objWithAccountType?.accountType === 'host'
-                      ? privaciesListHost
-                      : privaciesListGuest
-                    : accountType === 'host'
-                    ? privaciesListHost
-                    : privaciesListGuest
-                }
-                keyExtractor={({id}) => id.toString()}
-                ItemSeparatorComponent={() => <View style={{height: 8}} />}
-                renderItem={({item: {title, subtitle}}) => (
-                  <View style={{width: '100%', padding: 20, backgroundColor: lightGray3Color, borderRadius: 10}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <CheckIcon />
-                      <Text style={{color: whiteColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 8}}>{title}</Text>
-                    </View>
-                    <Text style={{color: lightGray4Color, fontSize: RFValue(14, 812), fontFamily: Satoshi400, marginTop: 10}}>
-                      {subtitle}
-                    </Text>
-                  </View>
-                )}
-              />
-            </View>
+              <ArrowLeft />
+            </TouchableOpacity>
+            <LogoPrimary2 />
+            <View style={{width: 40}} />
           </View>
+          <View style={{marginBottom: screenHeight / 30, marginTop: screenHeight / (screen ? 10 : 15)}}>
+            <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>Welcome</Text>
+            <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>
+              Please follow these{' '}
+              {objWithAccountType?.accountType
+                ? objWithAccountType?.accountType === 'host'
+                  ? 'Host'
+                  : 'Guest'
+                : accountType === 'host'
+                ? 'Host'
+                : 'Guest'}{' '}
+              House Rules
+            </Text>
+          </View>
+          <FlatList
+            style={{flex: 1}}
+            showsVerticalScrollIndicator={false}
+            data={
+              objWithAccountType?.accountType
+                ? objWithAccountType?.accountType === 'host'
+                  ? privaciesListHost
+                  : privaciesListGuest
+                : accountType === 'host'
+                ? privaciesListHost
+                : privaciesListGuest
+            }
+            keyExtractor={({id}) => id.toString()}
+            ItemSeparatorComponent={() => <View style={{height: 8}} />}
+            renderItem={({item: {title, subtitle}}) => (
+              <View style={{width: '100%', padding: 20, backgroundColor: lightGray3Color, borderRadius: 10}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <CheckIcon />
+                  <Text style={{color: whiteColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 8}}>{title}</Text>
+                </View>
+                <Text style={{color: lightGray4Color, fontSize: RFValue(14, 812), fontFamily: Satoshi400, marginTop: 10}}>{subtitle}</Text>
+              </View>
+            )}
+          />
           {screen !== 'SafetyAndWellbeing' && (
-            <View style={{marginTop: 15}}>
+            <View style={{marginTop: 16}}>
               <Button onPress={() => navigation.navigate(verifyFirstStepPath as never)} title="I Agree, Continue" />
             </View>
           )}
