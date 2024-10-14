@@ -1,17 +1,19 @@
 import React, {FC, useCallback, useState} from 'react';
 import {FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowLeftArrow from 'assets/images/icons/arrow-left.svg';
-import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {signUpPath} from 'constants/pathLocations';
+import LinearGradient from 'react-native-linear-gradient';
 
 const dataEula = [
   {
     id: 0,
     title: '',
-    description: 'This End User License Agreement (“Agreement”) is a legal contract between you (“User”) and [Company Name] (“Licensor”), governing your use of the [App Name] software application (“the App”). By creating an account, downloading, or using the App, you agree to the terms outlined here. If you do not agree, do not use the App.'
+    description:
+      'This End User License Agreement (“Agreement”) is a legal contract between you (“User”) and [Company Name] (“Licensor”), governing your use of the [App Name] software application (“the App”). By creating an account, downloading, or using the App, you agree to the terms outlined here. If you do not agree, do not use the App.',
   },
   {
     id: 1,
@@ -33,7 +35,7 @@ const dataEula = [
       '2.2 Payment and Billing\n\n' +
       'Payments will be charged to your Apple ID account upon confirmation of the subscription. Renewal payments are charged within 24 hours prior to the end of the current subscription period.\n\n' +
       '2.3 Cancellation\n\n' +
-      'You can cancel your subscription at any time via your Apple App Store account settings. Canceling disables auto-renewal, but you will retain access until the current billing period ends. No refunds will be given for the remaining time of a subscription.'
+      'You can cancel your subscription at any time via your Apple App Store account settings. Canceling disables auto-renewal, but you will retain access until the current billing period ends. No refunds will be given for the remaining time of a subscription.',
   },
   {
     id: 3,
@@ -47,7 +49,7 @@ const dataEula = [
       '    • Threats, abuse, or bullying\n\n' +
       'Violations may result in immediate suspension or termination of your account.\n\n' +
       '3.2 Responsibility for Content\n\n' +
-      'You are solely responsible for any content you upload or share in the App. By submitting content, you grant [Company Name] a license to use, modify, distribute, and display that content within the App.'
+      'You are solely responsible for any content you upload or share in the App. By submitting content, you grant [Company Name] a license to use, modify, distribute, and display that content within the App.',
   },
   {
     id: 4,
@@ -57,26 +59,24 @@ const dataEula = [
       '    • Respect the rights of other users\n\n' +
       '    • Avoid abusive language or behavior\n\n' +
       '    • Refrain from posting misleading, harmful, or false information\n\n' +
-      'Failure to adhere to the Code of Conduct may result in account suspension or termination.'
+      'Failure to adhere to the Code of Conduct may result in account suspension or termination.',
   },
   {
     id: 5,
     title: '5. BLOCKING ABUSIVE USERS',
     description:
-      'You have the option to block users who engage in abusive or inappropriate behavior. Once blocked, they will be unable to interact with you through messaging or event invitations.'
+      'You have the option to block users who engage in abusive or inappropriate behavior. Once blocked, they will be unable to interact with you through messaging or event invitations.',
   },
   {
     id: 6,
     title: '6. PRIVACY POLICY',
-    description:
-      'Please refer to our [Privacy Policy] for details on how we collect, use, and protect your personal information.',
+    description: 'Please refer to our [Privacy Policy] for details on how we collect, use, and protect your personal information.',
   },
   {
     id: 7,
     title: '7. TERMINATION',
     description:
-      'This Agreement remains in effect until terminated by you or [Company Name]. You may terminate the Agreement by uninstalling the App or canceling your subscription as outlined in Section 2. Licensor reserves the right to terminate or suspend your account at any time for violations of this Agreement or if your actions are deemed harmful to the community.'
-
+      'This Agreement remains in effect until terminated by you or [Company Name]. You may terminate the Agreement by uninstalling the App or canceling your subscription as outlined in Section 2. Licensor reserves the right to terminate or suspend your account at any time for violations of this Agreement or if your actions are deemed harmful to the community.',
   },
   {
     id: 8,
@@ -93,24 +93,24 @@ const dataEula = [
   {
     id: 10,
     title: '10. Eligibility',
-    description:
-      'To use the App, you must be at least 18 years old and legally capable of entering into this Agreement.',
+    description: 'To use the App, you must be at least 18 years old and legally capable of entering into this Agreement.',
   },
   {
     id: 11,
     title: '11. GOVERNING LAW',
-    description:
-      'This Agreement is governed by the laws of the State of Delaware, USA, without regard to its conflict of law provisions.',
+    description: 'This Agreement is governed by the laws of the State of Delaware, USA, without regard to its conflict of law provisions.',
   },
   {
     id: 12,
     title: '12. APPLE REQUIREMENTS',
-    description: 'This Agreement is between you and Invited Only Inc., not Apple, Inc. However, you acknowledge that Apple and its subsidiaries are third-party beneficiaries of this Agreement and may enforce its terms. You must also comply with the App Store Terms of Service.',
+    description:
+      'This Agreement is between you and Invited Only Inc., not Apple, Inc. However, you acknowledge that Apple and its subsidiaries are third-party beneficiaries of this Agreement and may enforce its terms. You must also comply with the App Store Terms of Service.',
   },
   {
     id: 13,
     title: '13. CHANGES TO THE TERMS',
-    description: 'We reserve the right to modify or update this Agreement at any time. Changes will take effect upon posting to the App, and your continued use signifies acceptance of the new terms.',
+    description:
+      'We reserve the right to modify or update this Agreement at any time. Changes will take effect upon posting to the App, and your continued use signifies acceptance of the new terms.',
   },
   {
     id: 14,
@@ -120,15 +120,16 @@ const dataEula = [
   {
     id: 15,
     title: 'ACCEPTANCE',
-    description: 'By clicking “Agree” or installing the App, you acknowledge that you have read and understood this Agreement and agree to its terms, including subscription fees, renewal policies, and usage guidelines.\n\n' +
-    'This combined EULA integrates both sets of terms while removing redundancies, providing clear guidance on subscription models, content policies, and user responsibilities.'
+    description:
+      'By clicking “Agree” or installing the App, you acknowledge that you have read and understood this Agreement and agree to its terms, including subscription fees, renewal policies, and usage guidelines.\n\n' +
+      'This combined EULA integrates both sets of terms while removing redundancies, providing clear guidance on subscription models, content policies, and user responsibilities.',
   },
 ];
 
 const Eula: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
-  const [endReached, setEndReached] = useState(false)
+  const [endReached, setEndReached] = useState(false);
 
   const renderItem = useCallback(
     (item: any) => (
@@ -141,7 +142,7 @@ const Eula: FC = (): JSX.Element => {
           style={{
             color: whiteColor,
             fontFamily: Satoshi700,
-            fontSize: RFValue(18, 812),
+            fontSize: RFValue(18, 932),
             marginTop: 24,
             marginBottom: 16,
           }}>
@@ -151,7 +152,7 @@ const Eula: FC = (): JSX.Element => {
           style={{
             color: whiteColor,
             fontFamily: Satoshi400,
-            fontSize: RFValue(16, 812),
+            fontSize: RFValue(16, 932),
             marginBottom: 24,
           }}>
           {item.description}
@@ -162,11 +163,11 @@ const Eula: FC = (): JSX.Element => {
   );
 
   const onEndReached = useCallback(() => {
-    setEndReached(true)
+    setEndReached(true);
   }, []);
 
   return (
-    <View style={{flex: 1, backgroundColor: blackColor}}>
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
       <SafeAreaView style={{flex: 1}}>
         <View style={{flex: 1, paddingHorizontal: 24}}>
           <View
@@ -183,7 +184,7 @@ const Eula: FC = (): JSX.Element => {
               <Text
                 style={{
                   fontFamily: Satoshi700,
-                  fontSize: RFValue(24, 812),
+                  fontSize: RFValue(24, 932),
                   color: whiteColor,
                   textAlign: 'center',
                   marginBottom: 14,
@@ -193,12 +194,12 @@ const Eula: FC = (): JSX.Element => {
             </View>
             <View />
           </View>
-          <FlatList 
-          data={dataEula} 
-          keyExtractor={item => item.id.toString()} 
-          renderItem={({item}) => renderItem(item)} 
-          onEndReached={onEndReached}
-          onEndReachedThreshold={0.1}
+          <FlatList
+            data={dataEula}
+            keyExtractor={item => item.id.toString()}
+            renderItem={({item}) => renderItem(item)}
+            onEndReached={onEndReached}
+            onEndReachedThreshold={0.1}
           />
           <View style={{flexDirection: 'row'}}>
             <TouchableOpacity
@@ -209,7 +210,7 @@ const Eula: FC = (): JSX.Element => {
                 marginTop: 24,
                 alignItems: 'center',
               }}>
-              <Text style={{color: whiteColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Deny</Text>
+              <Text style={{color: whiteColor, fontSize: RFValue(20, 932), fontFamily: Satoshi500}}>Deny</Text>
             </TouchableOpacity>
             <TouchableOpacity
               disabled={!endReached}
@@ -217,17 +218,17 @@ const Eula: FC = (): JSX.Element => {
               style={{
                 flex: 1.5,
                 paddingVertical: 13,
-                backgroundColor: endReached? whiteColor: transparentWhite16Color,
+                backgroundColor: endReached ? whiteColor : transparentWhite16Color,
                 borderRadius: 10,
                 marginTop: 24,
                 alignItems: 'center',
               }}>
-              <Text style={{color: blackColor, fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Accept</Text>
+              <Text style={{color: blackColor, fontSize: RFValue(20, 932), fontFamily: Satoshi500}}>Accept</Text>
             </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
-    </View>
+    </LinearGradient>
   );
 };
 

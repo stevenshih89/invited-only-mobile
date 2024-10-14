@@ -17,7 +17,7 @@ import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import MaleExampleSelfie from 'assets/images/auth/example-selfie.png';
 import FemaleExampleSelfie from 'assets/images/auth/female-selfie-example.png';
 
-import {black1Color, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {PERMISSIONS, request} from 'react-native-permissions';
@@ -26,6 +26,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {photoVerifiedPath} from 'constants/pathLocations';
 import {launchCamera} from 'react-native-image-picker';
 import {AuthContext} from 'contexts/AuthContext.tsx';
+import LinearGradient from 'react-native-linear-gradient';
 
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -81,183 +82,182 @@ const VerifySecondStep: FC = (): JSX.Element => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={isIos ? 'padding' : 'height'}
-      keyboardVerticalOffset={15}
-      style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'space-between',
-              paddingBottom: 0,
-              paddingHorizontal: 24,
-            }}>
-            <View style={{alignItems: 'center'}}>
-              <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
-                <TouchableOpacity
-                  onPress={() => navigation.goBack()}
-                  activeOpacity={0.7}
-                  hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
-                  style={{
-                    borderRadius: 50,
-                    width: 40,
-                    height: 40,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: transparentWhite30Color,
-                  }}>
-                  <ArrowLeft />
-                </TouchableOpacity>
-                <LogoPrimary2 />
-                <View style={{width: 40}} />
-              </View>
-              <View style={{alignItems: 'center', width: '100%', marginTop: screenHeight / 16, marginBottom: screenHeight / 20}}>
-                {imageUri ? (
-                  <>
-                    <View
-                      style={{
-                        width: '100%',
-                        marginTop: screenHeight / 40,
-                      }}>
-                      <Text
-                        style={{
-                          color: whiteColor,
-                          fontFamily: Satoshi500,
-                          fontSize: RFValue(34, 812),
-                        }}>
-                        Your photo
-                      </Text>
-                      <Text
-                        style={{
-                          color: whiteColor,
-                          fontFamily: Satoshi400,
-                          fontSize: RFValue(16, 812),
-                        }}>
-                        Make sure your face is clearly visible.
-                      </Text>
-                    </View>
-                    <View style={{flexDirection: 'column', width: '100%', marginTop: 20}}>
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'space-between',
+                paddingBottom: 0,
+                paddingHorizontal: 24,
+              }}>
+              <View style={{alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+                  <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    activeOpacity={0.7}
+                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                    style={{
+                      borderRadius: 50,
+                      width: 40,
+                      height: 40,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: transparentWhite30Color,
+                    }}>
+                    <ArrowLeft />
+                  </TouchableOpacity>
+                  <LogoPrimary2 />
+                  <View style={{width: 40}} />
+                </View>
+                <View style={{alignItems: 'center', width: '100%', marginTop: screenHeight / 16, marginBottom: screenHeight / 20}}>
+                  {imageUri ? (
+                    <>
                       <View
                         style={{
-                          position: 'relative',
                           width: '100%',
-                          height: screenHeight / 2.5,
-                          alignSelf: 'center',
+                          marginTop: screenHeight / 40,
                         }}>
-                        <ImageBackground
-                          source={{uri: imageUri}}
-                          style={{borderRadius: 15, width: '100%', height: '100%', justifyContent: 'flex-end', overflow: 'hidden'}}>
-                          <View style={{height: 36, width: '100%', justifyContent: 'center', position: 'relative', overflow: 'hidden'}}>
-                            <View
-                              style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                bottom: -2,
-                                right: 0,
-                                backgroundColor: blackColor,
-                                opacity: 0.87,
-                              }}
-                            />
-                            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                              <Text
+                        <Text
+                          style={{
+                            color: whiteColor,
+                            fontFamily: Satoshi500,
+                            fontSize: RFValue(34, 812),
+                          }}>
+                          Your photo
+                        </Text>
+                        <Text
+                          style={{
+                            color: whiteColor,
+                            fontFamily: Satoshi400,
+                            fontSize: RFValue(16, 812),
+                          }}>
+                          Make sure your face is clearly visible.
+                        </Text>
+                      </View>
+                      <View style={{flexDirection: 'column', width: '100%', marginTop: 20}}>
+                        <View
+                          style={{
+                            position: 'relative',
+                            width: '100%',
+                            height: screenHeight / 2.5,
+                            alignSelf: 'center',
+                          }}>
+                          <ImageBackground
+                            source={{uri: imageUri}}
+                            style={{borderRadius: 15, width: '100%', height: '100%', justifyContent: 'flex-end', overflow: 'hidden'}}>
+                            <View style={{height: 36, width: '100%', justifyContent: 'center', position: 'relative', overflow: 'hidden'}}>
+                              <View
                                 style={{
-                                  color: whiteColor,
-                                  marginRight: 8,
-                                  fontFamily: Satoshi500,
-                                  fontSize: RFValue(20, 812),
-                                  alignSelf: 'center',
-                                }}>
+                                  position: 'absolute',
+                                  top: 0,
+                                  left: 0,
+                                  bottom: -2,
+                                  right: 0,
+                                  backgroundColor: blackColor,
+                                  opacity: 0.87,
+                                }}
+                              />
+                              <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                                <Text
+                                  style={{
+                                    color: whiteColor,
+                                    marginRight: 8,
+                                    fontFamily: Satoshi500,
+                                    fontSize: RFValue(20, 812),
+                                    alignSelf: 'center',
+                                  }}>
+                                  {name}
+                                </Text>
+                                <CheckStar width={18} height={18} />
+                              </View>
+                            </View>
+                          </ImageBackground>
+                        </View>
+                      </View>
+                    </>
+                  ) : (
+                    <>
+                      <View
+                        style={{
+                          width: '100%',
+                          marginTop: screenHeight / 40,
+                        }}>
+                        <Text
+                          style={{
+                            color: whiteColor,
+                            fontFamily: Satoshi500,
+                            fontSize: RFValue(34, 812),
+                          }}>
+                          Verify yourself
+                        </Text>
+                        <Text
+                          style={{
+                            color: whiteColor,
+                            fontFamily: Satoshi400,
+                            fontSize: RFValue(16, 812),
+                          }}>
+                          Copy this position. Your face must be clearly visible.
+                        </Text>
+                      </View>
+                      <View style={{flexDirection: 'column', width: '100%', marginTop: 20}}>
+                        <View
+                          style={{
+                            position: 'relative',
+                            width: '100%',
+                            height: screenHeight / 2.5,
+                            alignSelf: 'center',
+                          }}>
+                          <ImageBackground
+                            source={selfieSource}
+                            style={{borderRadius: 100, width: '100%', height: '100%', justifyContent: 'flex-end'}}>
+                            <View style={{height: 36, width: '100%', justifyContent: 'center', position: 'relative', overflow: 'hidden'}}>
+                              <View
+                                style={{
+                                  position: 'absolute',
+                                  top: 0,
+                                  left: 0,
+                                  bottom: -2,
+                                  right: 0,
+                                  backgroundColor: blackColor,
+                                  opacity: 0.87,
+                                }}
+                              />
+                              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 812), alignSelf: 'center'}}>
                                 {name}
                               </Text>
-                              <CheckStar width={18} height={18} />
                             </View>
-                          </View>
-                        </ImageBackground>
+                          </ImageBackground>
+                        </View>
                       </View>
-                    </View>
-                  </>
-                ) : (
-                  <>
-                    <View
-                      style={{
-                        width: '100%',
-                        marginTop: screenHeight / 40,
-                      }}>
-                      <Text
-                        style={{
-                          color: whiteColor,
-                          fontFamily: Satoshi500,
-                          fontSize: RFValue(34, 812),
-                        }}>
-                        Verify yourself
-                      </Text>
-                      <Text
-                        style={{
-                          color: whiteColor,
-                          fontFamily: Satoshi400,
-                          fontSize: RFValue(16, 812),
-                        }}>
-                        Copy this position. Your face must be clearly visible.
-                      </Text>
-                    </View>
-                    <View style={{flexDirection: 'column', width: '100%', marginTop: 20}}>
-                      <View
-                        style={{
-                          position: 'relative',
-                          width: '100%',
-                          height: screenHeight / 2.5,
-                          alignSelf: 'center',
-                        }}>
-                        <ImageBackground
-                          source={selfieSource}
-                          style={{borderRadius: 100, width: '100%', height: '100%', justifyContent: 'flex-end'}}>
-                          <View style={{height: 36, width: '100%', justifyContent: 'center', position: 'relative', overflow: 'hidden'}}>
-                            <View
-                              style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                bottom: -2,
-                                right: 0,
-                                backgroundColor: blackColor,
-                                opacity: 0.87,
-                              }}
-                            />
-                            <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 812), alignSelf: 'center'}}>
-                              {name}
-                            </Text>
-                          </View>
-                        </ImageBackground>
-                      </View>
-                    </View>
-                  </>
-                )}
+                    </>
+                  )}
+                </View>
               </View>
+              {true ? (
+                <View style={{marginBottom: 4}}>
+                  <Button title="Submit" onPress={() => handleNext()} />
+                  <Button
+                    onPress={async () => {
+                      setImageUri('');
+                      await openCamera();
+                    }}
+                    title="Retake photo"
+                    variant="transparent"
+                  />
+                </View>
+              ) : (
+                <View style={{marginBottom: 4}}>
+                  <Button onPress={openCamera} title="Take a photo" />
+                </View>
+              )}
             </View>
-            {imageUri ? (
-              <View style={{marginBottom: 4}}>
-                <Button title="Submit" onPress={() => handleNext()} />
-                <Button
-                  onPress={async () => {
-                    setImageUri('');
-                    await openCamera();
-                  }}
-                  title="Retake photo"
-                  variant="transparent"
-                />
-              </View>
-            ) : (
-              <View style={{marginBottom: 4}}>
-                <Button onPress={openCamera} title="Take a photo" />
-              </View>
-            )}
-          </View>
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          </SafeAreaView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 };
 
