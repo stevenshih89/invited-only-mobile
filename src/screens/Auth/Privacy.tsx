@@ -1,26 +1,34 @@
-import {isIos, screenHeight} from 'constants/common';
+import {screenHeight} from 'constants/common';
 import {FC, useContext} from 'react';
-import {FlatList, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
+import {FlatList, SafeAreaView, Text, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import {black1Color, lightGray3Color, lightGray4Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {
+  backgroundGradientColors,
+  black1Color,
+  lightGray3Color,
+  lightGray4Color,
+  transparentWhite30Color,
+  whiteColor,
+} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {verifyFirstStepPath} from 'constants/pathLocations';
 import {TouchableOpacity} from 'react-native';
-import { AuthContext } from 'contexts/AuthContext';
-import { useRoute } from '@react-navigation/native';
+import {AuthContext} from 'contexts/AuthContext';
+import {useRoute} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Privacy: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const {onBoarding} = useContext(AuthContext);
-  const objWithAccountType = onBoarding.find(obj => obj.hasOwnProperty("accountType"));
+  const objWithAccountType = onBoarding.find(obj => obj.hasOwnProperty('accountType'));
   const route = useRoute();
-  const { screen, accountType} = route.params as { screen: string, accountType: string};
-      
+  const {screen, accountType} = route.params as {screen: string; accountType: string};
+
   const privaciesListHost = [
     {
       id: 0,
@@ -40,7 +48,7 @@ const Privacy: FC = (): JSX.Element => {
     {
       id: 3,
       title: 'Respect Privacy',
-      subtitle: 'Do not share personal information or media without consent.'
+      subtitle: 'Do not share personal information or media without consent.',
     },
   ];
 
@@ -48,7 +56,7 @@ const Privacy: FC = (): JSX.Element => {
     {
       id: 0,
       title: 'Be Polite',
-      subtitle: 'Treat the host and other guests with respect and courtesy.'
+      subtitle: 'Treat the host and other guests with respect and courtesy.',
     },
     {
       id: 1,
@@ -63,104 +71,113 @@ const Privacy: FC = (): JSX.Element => {
     {
       id: 3,
       title: 'Respect Privacy',
-      subtitle: 'Do not share personal details or event content without permission.'
+      subtitle: 'Do not share personal details or event content without permission.',
     },
   ];
 
   return (
-    <SafeAreaView style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
-      <View
-        style={{
-          flex: 1,
-          paddingBottom: 0,
-          paddingHorizontal: 24,
-        }}>
-        <View style={{alignItems: 'center'}}>
-          <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              activeOpacity={0.7}
-              hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
+      <SafeAreaView style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
+        <View
+          style={{
+            flex: 1,
+            paddingBottom: 0,
+            paddingHorizontal: 24,
+          }}>
+          <View style={{alignItems: 'center'}}>
+            <View
               style={{
-                borderRadius: 50,
-                width: 40,
-                height: 40,
-                justifyContent: 'center',
+                flexDirection: 'row',
+                width: '100%',
                 alignItems: 'center',
-                backgroundColor: transparentWhite30Color,
+                justifyContent: 'space-between',
+                paddingTop: screenHeight / 29,
               }}>
-              <ArrowLeft />
-            </TouchableOpacity>
-            <LogoPrimary2 />
-            <View style={{width: 40}} />
-          </View>
-          <View
-            style={{
-              width: '100%',
-              marginBottom: screenHeight / 30,
-              marginTop: screenHeight / (screen ? 10 : 15),
-            }}>
-            <Text
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                activeOpacity={0.7}
+                hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                style={{
+                  borderRadius: 50,
+                  width: 40,
+                  height: 40,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: transparentWhite30Color,
+                }}>
+                <ArrowLeft />
+              </TouchableOpacity>
+              <LogoPrimary2 />
+              <View style={{width: 40}} />
+            </View>
+            <View
               style={{
-                color: whiteColor,
-                fontFamily: Satoshi500,
-                fontSize: RFValue(48, 812),
-                marginBottom: 18,
+                width: '100%',
+                marginBottom: screenHeight / 30,
+                marginTop: screenHeight / (screen ? 10 : 15),
               }}>
-              Welcome
-            </Text>
-            <Text
-              style={{
-                color: whiteColor,
-                fontFamily: Satoshi400,
-                fontSize: RFValue(18, 812),
-              }}>
-              Please follow these{' '}
-              {objWithAccountType?.accountType
-                ? objWithAccountType?.accountType === 'host'
-                  ? 'Host'
-                  : 'Guest'
-                : accountType === 'host'
-                ? 'Host'
-                : 'Guest'}{' '}
-              House Rules
-            </Text>
-          </View>
-          <View style={{width: '100%'}}>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              data={
-                objWithAccountType?.accountType
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(48, 812),
+                  marginBottom: 18,
+                }}>
+                Welcome
+              </Text>
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi400,
+                  fontSize: RFValue(18, 812),
+                }}>
+                Please follow these{' '}
+                {objWithAccountType?.accountType
                   ? objWithAccountType?.accountType === 'host'
+                    ? 'Host'
+                    : 'Guest'
+                  : accountType === 'host'
+                  ? 'Host'
+                  : 'Guest'}{' '}
+                House Rules
+              </Text>
+            </View>
+            <View style={{width: '100%'}}>
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                data={
+                  objWithAccountType?.accountType
+                    ? objWithAccountType?.accountType === 'host'
+                      ? privaciesListHost
+                      : privaciesListGuest
+                    : accountType === 'host'
                     ? privaciesListHost
                     : privaciesListGuest
-                  : accountType === 'host'
-                  ? privaciesListHost
-                  : privaciesListGuest
-              }
-              keyExtractor={({id}) => id.toString()}
-              ItemSeparatorComponent={() => <View style={{height: 8}} />}
-              renderItem={({item: {title, subtitle}}) => (
-                <View style={{width: '100%', padding: 20, backgroundColor: lightGray3Color, borderRadius: 10}}>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <CheckIcon />
-                    <Text style={{color: whiteColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 8}}>{title}</Text>
+                }
+                keyExtractor={({id}) => id.toString()}
+                ItemSeparatorComponent={() => <View style={{height: 8}} />}
+                renderItem={({item: {title, subtitle}}) => (
+                  <View style={{width: '100%', padding: 20, backgroundColor: lightGray3Color, borderRadius: 10}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <CheckIcon />
+                      <Text style={{color: whiteColor, fontSize: RFValue(14, 812), fontFamily: Satoshi700, marginLeft: 8}}>{title}</Text>
+                    </View>
+                    <Text style={{color: lightGray4Color, fontSize: RFValue(14, 812), fontFamily: Satoshi400, marginTop: 10}}>
+                      {subtitle}
+                    </Text>
                   </View>
-                  <Text style={{color: lightGray4Color, fontSize: RFValue(14, 812), fontFamily: Satoshi400, marginTop: 10}}>
-                    {subtitle}
-                  </Text>
-                </View>
-              )}
-            />
+                )}
+              />
+            </View>
           </View>
+          {screen !== 'SafetyAndWellbeing' && (
+            <View style={{marginTop: 15}}>
+              <Button onPress={() => navigation.navigate(verifyFirstStepPath as never)} title="I Agree, Continue" />
+            </View>
+          )}
         </View>
-        {screen !== 'SafetyAndWellbeing' && (
-          <View style={{marginTop: 15}}>
-            <Button onPress={() => navigation.navigate(verifyFirstStepPath as never)} title="I Agree, Continue" />
-          </View>
-        )}
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 

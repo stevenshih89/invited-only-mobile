@@ -11,7 +11,6 @@ import {
   transparentWhite56Color,
   whiteColor,
 } from 'constants/colors';
-import TenIcon from 'assets/images/auth/progress/ten.svg';
 import CheckCircle from 'assets/images/icons/check-circle.svg';
 import CircleGray from 'assets/images/icons/circle-gray.svg';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
@@ -38,7 +37,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
 
   const handleGoToBusiness = () => {
     navigation.navigate(addBuisnessPath as never);
-  }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -53,6 +52,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
               justifyContent: 'space-between',
               paddingBottom: 0,
               paddingHorizontal: 24,
+              paddingTop: screenHeight / 29,
             }}>
             <View style={{alignItems: 'center'}}>
               <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -72,19 +72,18 @@ const ChooseAccountType: FC = (): JSX.Element => {
                 </TouchableOpacity>
                 <LogoPrimary2 />
                 <AuthProgress startPercentage={0} endPercentage={10} animationDuration={1000} />
-                {/* <TenIcon height={40} /> */}
               </View>
               <View
                 style={{
                   width: '100%',
                   marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 8,
+                  marginTop: screenHeight / 11.5,
                 }}>
                 <Text
                   style={{
                     color: whiteColor,
                     fontFamily: Satoshi500,
-                    fontSize: RFValue(40, 812),
+                    fontSize: RFValue(48, 932),
                     marginBottom: 18,
                   }}>
                   Are you Host or Guest?
@@ -93,7 +92,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
                   style={{
                     color: whiteColor,
                     fontFamily: Satoshi400,
-                    fontSize: RFValue(18, 812),
+                    fontSize: RFValue(18, 932),
                   }}>
                   Select your account type
                 </Text>
@@ -116,10 +115,10 @@ const ChooseAccountType: FC = (): JSX.Element => {
                     paddingHorizontal: 20,
                     marginBottom: 8,
                   }}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>Host</Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Host</Text>
                   {accountType === HOST ? <CheckCircle /> : <CircleGray />}
                 </TouchableOpacity>
-                <Text style={{color: transparentWhite56Color, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>
+                <Text style={{color: transparentWhite56Color, fontFamily: Satoshi400, fontSize: RFValue(14, 932)}}>
                   You can create events and invite people
                 </Text>
                 <TouchableOpacity
@@ -140,10 +139,10 @@ const ChooseAccountType: FC = (): JSX.Element => {
                     marginBottom: 8,
                     marginTop: 16,
                   }}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>Guest</Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Guest</Text>
                   {accountType === GUEST ? <CheckCircle /> : <CircleGray />}
                 </TouchableOpacity>
-                <Text style={{color: transparentWhite56Color, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>
+                <Text style={{color: transparentWhite56Color, fontFamily: Satoshi400, fontSize: RFValue(14, 932)}}>
                   You can join events
                 </Text>
               </View>
@@ -151,9 +150,9 @@ const ChooseAccountType: FC = (): JSX.Element => {
             <View style={{marginBottom: 4}}>
               <Button onPress={() => handleNext()} title="Continue" />
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
-                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>Are you a bussiness?</Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 932)}}>Are you a bussiness?</Text>
                 <TouchableOpacity onPress={handleGoToBusiness} activeOpacity={0.7} style={{marginLeft: 4}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), textDecorationLine: 'underline'}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 932), textDecorationLine: 'underline'}}>
                     Click here to join
                   </Text>
                 </TouchableOpacity>
