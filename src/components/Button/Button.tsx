@@ -23,7 +23,7 @@ const Button: FC<ButtonProps> = ({
     ['default']: {
       container: buttonContatinerStyle,
       defaultRaw: {
-        borderRadius: 10,
+        borderRadius: 18,
         backgroundColor: whiteColor,
         height: screenHeight / 16.5,
         maxHeight: 64,
@@ -49,7 +49,7 @@ const Button: FC<ButtonProps> = ({
     ['transparent']: {
       container: buttonContatinerStyle,
       defaultRaw: {
-        borderRadius: 10,
+        borderRadius: 18,
         backgroundColor: 'transparent',
         borderWidth: 0,
         height: screenHeight / 16.5,
