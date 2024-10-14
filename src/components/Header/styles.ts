@@ -93,15 +93,13 @@ const useStyles = () =>
       flexDirection: 'row',
     },
     wrapperHeaderButtonsChat: {
-      marginTop: screenHeight / 50,
-      marginBottom: screenHeight / 30,
       justifyContent: 'flex-start',
       alignItems: 'center',
     },
     rowButtonsChat: {
       flexDirection: 'row',
       width: '100%',
-      marginBottom: 16,
+      marginBottom: 18,
     },
     buttonMyEvents: {
       backgroundColor: whiteColor,
