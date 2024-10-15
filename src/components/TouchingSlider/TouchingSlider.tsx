@@ -234,7 +234,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
         priority: FastImage.priority.normal,
       }}
       resizeMode={FastImage.resizeMode.cover}>
-        <LinearGradient
+      {!isProfile && <LinearGradient
         colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
         style={{
           position: 'absolute',
@@ -244,8 +244,8 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           height: 40,
           zIndex: 1,
         }}
-      />
-      <View style={{
+      />}
+      {!isProfile && <View style={{
         height:90, 
         width: 5, 
         backgroundColor: transparentWhite56Color, 
@@ -261,11 +261,9 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             backgroundColor: whiteColor,
             borderRadius: 35,
             transform: [{translateY: scrollPosition > 0 && scrollPosition < 270? scrollPosition / 7: 0}]
-          }}>
-
-          </View>
-        </View>
-        {accountType === 'guest' && <TouchableOpacity
+          }} />
+        </View>}
+        {accountType === 'guest' && !isProfile && <TouchableOpacity
             onPress={() => handleAutoSwipeLeft()}
             style={{
               width: 50,
@@ -281,7 +279,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             }}>
             <CloseIcon width={27} height={27} />
           </TouchableOpacity>}
-      {accountType === 'host' && <TouchableOpacity
+      {accountType === 'host' && !isProfile &&<TouchableOpacity
             onPress={() => handleAutoSwipeLeft()}
             style={{
               width: 50,
@@ -437,7 +435,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
         </View>
       )}
-      <View style={[styles.wrapperBio, {position: 'absolute', bottom: 200}]}>
+      <View style={[styles.wrapperBio, {position: 'absolute', bottom: isProfile? 80: 200}]}>
           <View style={styles.rowBioInfo}>
             <Text style={styles.textName}>{name}</Text>
             <View style={{marginLeft: 10}}>{(confirmedEvent || confirmedAccount) && <CheckStarWhite width={25} height={25} />}</View>
