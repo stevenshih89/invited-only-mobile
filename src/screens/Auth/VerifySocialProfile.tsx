@@ -208,8 +208,8 @@ const VerifySocialProfile = () => {
     }
   };
 
-  const checkErrors = async () => {    
-    if(!errorInput.length) {
+  const checkErrors = async (isError: boolean) => {    
+    if(!isError) {
       await handleRegisterUser(onBoarding);
       navigation.navigate(pendingScreenPath as never);
     }
@@ -240,7 +240,7 @@ const VerifySocialProfile = () => {
       }
     });
     setErrorInput(errors);
-    checkErrors();
+    checkErrors(!!errors.length);
   };
   
 
@@ -279,6 +279,7 @@ const VerifySocialProfile = () => {
         {isActive ? (
           <View style={{marginTop: 16}}>
             <Input
+              placeholder={`Enter a link to your ${item.title} profile`}
               onPressFocus={() => setIsFocusInput(true)}
               onBlur={() => setIsFocusInput(false)}
               value={socialNickname[item.name]}
@@ -339,7 +340,7 @@ const VerifySocialProfile = () => {
                 renderItem={renderItem}
               />
               <View style={{marginVertical: 4}}>
-                <Button title="Continue" loading={loading} disabled={!socialNickname[openedSocial?.name]?.length} onPress={handleNext} />
+                <Button title="Continue" loading={loading} disabled={!socialNickname[openedSocial?.name]?.length || !!errorInput.length} onPress={handleNext} />
               </View>
             </View>
           </TouchableWithoutFeedback>
