@@ -182,7 +182,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                   fontFamily: Satoshi700,
                   marginTop: 5,
                 }}>
-                {placeName}
+                {item?.name}
               </Text>
             </View>
             {showGuestList && (
@@ -258,7 +258,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                     fontFamily: Satoshi500,
                     marginTop: 5,
                   }}>
-                  {item?.address}
+                  {placeName}
                 </Text>
               </View>
             </View>

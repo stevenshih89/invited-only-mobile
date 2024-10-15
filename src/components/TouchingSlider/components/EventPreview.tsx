@@ -207,6 +207,7 @@ const EventPreview: FC<{
                 hour,
                 male: male,
                 female: girls,
+                name: name
               }}
               showGuestList={true}
               styleContainer={{marginTop: 0}}

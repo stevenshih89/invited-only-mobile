@@ -30,6 +30,7 @@ import moment from 'moment';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500} from 'constants/fonts.ts';
 import {Switch} from '@ant-design/react-native';
+import { eventTypes } from 'src/mocks/eventTypes.ts';
 
 interface EventPreviewProps {
   isEditing?: boolean;
@@ -59,13 +60,6 @@ const EventPreview: FC<EventPreviewProps> = ({
   maleFriend,
   id,
 }): ReactElement => {
-  const eventTypes = [
-    {id: 0, label: 'Custom'},
-    {id: 1, label: 'Table'},
-    {id: 2, label: 'Club'},
-    {id: 3, label: 'Restaurant'},
-  ];
-
   const [photos, setImages] = useState<{image: null | string; id: number}[]>([
     {
       id: 0,
