@@ -1,4 +1,4 @@
-import {backgroundGradientColors, lightGray15Color, lightGray2Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, errorColor, lightGray15Color, lightGray2Color, whiteColor} from 'constants/colors';
 import {Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckCircle from 'assets/images/icons/check-circle.svg';
@@ -6,7 +6,7 @@ import CircleGray from 'assets/images/icons/circle-gray.svg';
 import {screenHeight} from 'constants/common';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import Input from 'components/Inputs/Input';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -29,6 +29,8 @@ interface Social {
 const VerifySocialProfile = () => {
   const [openedSocial, setOpenedSocial] = useState<Social | null>(null);
   const [socialNickname, setSocialNickname] = useState<any>({});
+  const [errorInput, setErrorInput] = useState<number[]>([]);  
+  
   const navigation = useAppNavigation();
   const [loading, setLoading] = useState<boolean>(false);
   const [isFocusInput, setIsFocusInput] = useState<boolean>(false);
@@ -36,7 +38,11 @@ const VerifySocialProfile = () => {
   const {onBoarding} = useContext(AuthContext);
 
   const handleSocialNicknameChange = (value: string, social: string) => {
-    setSocialNickname({...socialNickname, [social]: value});
+    setSocialNickname(prev => ({ ...prev, [social]: value.trim() }));
+    const socialIndex = socials.findIndex(s => s.name === social);
+    if (errorInput.includes(socialIndex)) {
+      setErrorInput(prevErrors => prevErrors.filter(index => index !== socialIndex));
+    }
   };
 
   const socials: Social[] = [
@@ -202,13 +208,57 @@ const VerifySocialProfile = () => {
     }
   };
 
+  const checkErrors = async () => {    
+    if(!errorInput.length) {
+      await handleRegisterUser(onBoarding);
+      navigation.navigate(pendingScreenPath as never);
+    }
+  }
+
+  const validateSocialMediaLink = (links: Record<string, string>) => {
+    const errors: number[] = [];
+    Object.entries(links).forEach(([key, value]) => {
+      const regex = new RegExp(`^https://www\\.${key}\\.com/[a-zA-Z0-9._-]+/?$`);
+      const regexOther = new RegExp(`^https://www\\.[a-zA-Z0-9.-]+\\.com/[a-zA-Z0-9._-]+/?$`);
+      if (!regex.test(value)) {
+        switch (key) {
+          case 'instagram':
+            errors.push(0);
+            break;
+          case 'tiktok':
+            errors.push(1);
+            break;
+          case 'facebook':
+            errors.push(2);
+            break;
+          default:
+            break;
+        }
+      }
+      if (key === 'other' && !regexOther.test(value)) {
+        errors.push(3);
+      }
+    });
+    setErrorInput(errors);
+    checkErrors();
+  };
+  
+
+  const filterEmptySocialMediaLink = () => {
+    const filteredLinks = Object.fromEntries(
+      Object.entries(socialNickname).filter(([_, value]) => value.trim() !== "")
+    );
+    return filteredLinks
+  }
+
   const handleNext = async () => {
-    await handleRegisterUser(onBoarding);
-    navigation.navigate(pendingScreenPath as never);
+    const filterLink = filterEmptySocialMediaLink()
+    validateSocialMediaLink(filterLink)     
   };
 
-  const renderItem = ({item}: {item: Social}) => {
-    const isActive = openedSocial?.id === item.id;
+  const renderItem = ({item}: {item: Social}) => {    
+    const isActive = openedSocial?.id === item.id;       
+    const isError = errorInput.includes(item.id)    
     return (
       <TouchableOpacity
         onPress={() => setOpenedSocial(item)}
@@ -220,7 +270,7 @@ const VerifySocialProfile = () => {
           paddingBottom: isActive ? 0 : 16,
           borderWidth: 1,
           borderStyle: 'solid',
-          borderColor: isActive ? whiteColor : lightGray2Color,
+          borderColor: isError? errorColor: isActive ? whiteColor : lightGray2Color,
         }}>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(17, 812)}}>{item.title}</Text>
@@ -233,6 +283,10 @@ const VerifySocialProfile = () => {
               onBlur={() => setIsFocusInput(false)}
               value={socialNickname[item.name]}
               onChange={val => handleSocialNicknameChange(val, item.name)}
+              isError={isError}
+              errorText='Incorrect link'
+              inputStyle={{borderColor: 'red'}}
+              containerInnerStyle={{borderWidth: isError? 1: 0, borderColor: isError? errorColor: ''}}
             />
           </View>
         ) : null}
@@ -267,7 +321,7 @@ const VerifySocialProfile = () => {
                     fontSize: RFValue(38, 812),
                     marginBottom: 18,
                   }}>
-                  Please verify your social profile
+                  Provide a link for your social media
                 </Text>
                 <Text
                   style={{
