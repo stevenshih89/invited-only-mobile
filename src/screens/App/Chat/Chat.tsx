@@ -431,8 +431,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       guestSubscriber && guestSubscriber();
     };
   }, [activeEvent, loading]);
-
-  console.log('eventData', eventData);
   
   return (
     <View style={styles.container}>
