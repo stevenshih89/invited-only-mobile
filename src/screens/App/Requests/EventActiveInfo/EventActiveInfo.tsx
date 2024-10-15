@@ -1,4 +1,12 @@
-import {blackColor, lightGray2Color, lightGreen2Color, lightGreenColor, lightRedColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {
+  blackColor,
+  lightGray2Color,
+  lightGreen2Color,
+  lightGreenColor,
+  lightRedColor,
+  transparentWhite16Color,
+  whiteColor,
+} from 'constants/colors';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import TrashRed from 'assets/images/icons/trash-red.svg';
@@ -8,8 +16,8 @@ import PeopleIcon from 'assets/images/icons/Users.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import MoreIcon from 'assets/images/icons/more-white.svg';
 import ClockFilledIcon from 'assets/images/icons/clock-white-fill.svg';
-import AcceptIcon from 'assets/images/icons/accept.svg'
-import CloseCircleFillIcon from 'assets/images/icons/close-circle-fill.svg'
+import AcceptIcon from 'assets/images/icons/accept.svg';
+import CloseCircleFillIcon from 'assets/images/icons/close-circle-fill.svg';
 import {FlatList, Image, ImageBackground, Text, TouchableOpacity} from 'react-native';
 import {ScrollView, View} from 'react-native';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
@@ -26,7 +34,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import {Event, EventData} from 'src/types/event';
 import FastImage from 'react-native-fast-image';
-import { getUsersListAccepted } from 'helpers/getUsersListAccepted';
+import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
@@ -154,7 +162,8 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                             source={{uri: item?.userPhoto}}
                             style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
                             imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                            resizeMode="cover"></ImageBackground>
+                            resizeMode="cover"
+                          />
                           <View
                             style={{
                               borderWidth: 1,
@@ -230,11 +239,12 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <View>
-                        <ImageBackground
-                          source={{uri: item?.userPhoto}}
-                          style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
-                          imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                          resizeMode="cover"></ImageBackground>
+                          <ImageBackground
+                            source={{uri: item?.userPhoto}}
+                            style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
+                            imageStyle={{width: 50, height: 50, borderRadius: 200}}
+                            resizeMode="cover"
+                          />
                           <View
                             style={{
                               borderWidth: 1,
@@ -302,12 +312,13 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   renderItem={({item}) => (
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <View>
-                        <ImageBackground
-                          source={{uri: item?.userPhoto}}
-                          style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
-                          imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                          resizeMode="cover"></ImageBackground>
+                        <View>
+                          <ImageBackground
+                            source={{uri: item?.userPhoto}}
+                            style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
+                            imageStyle={{width: 50, height: 50, borderRadius: 200}}
+                            resizeMode="cover"
+                          />
                           <View
                             style={{
                               borderWidth: 1,
@@ -376,11 +387,12 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <View>
-                        <ImageBackground
-                          source={{uri: item?.userPhoto}}
-                          style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
-                          imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                          resizeMode="cover"></ImageBackground>
+                          <ImageBackground
+                            source={{uri: item?.userPhoto}}
+                            style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
+                            imageStyle={{width: 50, height: 50, borderRadius: 200}}
+                            resizeMode="cover"
+                          />
                           <View
                             style={{
                               borderWidth: 1,

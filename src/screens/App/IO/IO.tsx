@@ -25,6 +25,7 @@ import {useUser} from '../../../store/userStore';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 
 //import icons
+import LoaderIcon from 'assets/images/icons/loader.svg';
 import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
 import LocationIcon from 'assets/images/icons/location.svg';
 import TablerGenderIcon from 'assets/images/icons/tabler_gender-bigender.svg';
@@ -53,7 +54,7 @@ import {User, UserInfo} from 'src/types/userInfo';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
-import Animated, {Easing, useAnimatedStyle, useSharedValue, withTiming} from 'react-native-reanimated';
+import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalEventLocked from 'components/Modal/ModalEventLocked/ModalEventLocked';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
@@ -76,7 +77,8 @@ const IO: FC = (): JSX.Element => {
   const [reportedItem, setReportedItem] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
   const [matchData, setMatchData] = useState<MatchData>({});
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loadingUser, setLoadingUser] = useState<boolean>(true);
+  const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
@@ -112,6 +114,29 @@ const IO: FC = (): JSX.Element => {
   const counterWeeklySuperInvitesRef = useRef(0);
 
   const cardRef = useRef(null);
+
+  const rotationLoader = useSharedValue(0);
+  useEffect(() => {
+    if (loadingUser) {
+      rotationLoader.value = withRepeat(
+        withTiming(360, {
+          duration: 2000,
+          easing: Easing.linear,
+        }),
+        -1,
+      );
+    }
+
+    return () => {
+      cancelAnimation(rotationLoader);
+    };
+  }, [rotationLoader, loadingUser]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotate: `${rotationLoader.value}deg`}],
+    };
+  });
 
   const handleSuperInvite = () => {
     if (counterSuperInvitesRef.current > 0 || counterWeeklySuperInvitesRef.current > 0) {
@@ -396,7 +421,7 @@ const IO: FC = (): JSX.Element => {
   }
 
   const fetchUserInfo = async () => {
-    setLoading(true);
+    setLoadingUser(true);
     const user = auth().currentUser;
 
     if (user) {
@@ -420,12 +445,11 @@ const IO: FC = (): JSX.Element => {
           });
         }
       } catch (error: any) {
+        setLoadingUser(false);
         Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
-    setTimeout(() => {
-      setLoading(false);
-    }, USERS_FETCHING_DELAY);
+    setLoadingUser(false);
   };
 
   const fetchMyEvents = async (isFirstRender: boolean) => {
@@ -724,7 +748,7 @@ const IO: FC = (): JSX.Element => {
     if (!user) {
       return;
     }
-    setLoading(true);
+    setLoadingEvents(true);
     let filteredEvents: any[] = [];
 
     try {
@@ -1123,7 +1147,7 @@ const IO: FC = (): JSX.Element => {
     setEvents(recommendedData);
     eventsRef.current = recommendedData;
     allEventsLength.current = recommendedData.length;
-    setLoading(false);
+    setLoadingEvents(false);
   };
 
   const handleSuperInviteBottom = (item: any, coinAnimationTimer: number) => {
@@ -1143,7 +1167,7 @@ const IO: FC = (): JSX.Element => {
   const getListForHost = async () => {
     const user = auth().currentUser;
     let users: any;
-    setLoading(true);
+    setLoadingEvents(true);
 
     const usersQuery = firestore().collection('userInfo');
 
@@ -1470,7 +1494,7 @@ const IO: FC = (): JSX.Element => {
     allEventsLength.current = data.length;
     setEvents(data);
     eventsRef.current = data;
-    setLoading(false);
+    setLoadingEvents(false);
   };
 
   const requestUserPermission = async () => {
@@ -1542,47 +1566,35 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  if ((loading || (!userHost && userInfo.accountConfirmed)) && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
-    return <Loading wrapperText={false} text="Finding guests near you ..." userInfo={userInfo} />;
-  }
-
-  if (!loading && !myEvents.length && userInfo.accountConfirmed && isHost && !isVisibleMatch && !acceptModalVisible) {
+  if (loadingUser && !userInfo?.uid && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
-      <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
-        <View style={{height: 370}}>
-          <Loading userInfo={userInfo} topPosition={true} />
-        </View>
-        <View>
-          <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi500}}>
-            You don't have any active event.
-          </Text>
-          <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi500}}>
-            Get started by creating an event to begin inviting guests.
-          </Text>
-        </View>
-        <View style={{paddingHorizontal: 24}}>
-          <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 20, marginBottom: 30}} />
-        </View>
-      </View>
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
+        <Animated.View style={[animatedStyle]}>
+          <LoaderIcon />
+        </Animated.View>
+      </SafeAreaView>
     );
   }
 
-  if (
-    ((!loading &&
-      (isHost
-        ? currentEventCardPosition > allEventsLength.current && !lastVisible
-        : currentEventCardPosition > allEventsLength.current && allEventsLength.current)) ||
-      !allEventsLength.current) &&
-    !acceptModalVisible &&
-    !visibleModalSuperJoin &&
-    !isVisibleMatch
-  ) {
+  if (userInfo?.uid && loadingEvents && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
-      <Loading
-        text="We're currently searching for exciting guests to join you. It may take some time!"
-        userInfo={userInfo}
-        wrapperText={false}
-      />
+      <>
+        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && <ModalLockAccount haveCode isVisibleButton={false} />}
+      </>
+    );
+  }
+
+  if (userInfo?.uid && !loadingEvents && !events?.length && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+    return (
+      <>
+        <Loading
+          text={`We're currently searching for exciting ${isHost ? 'guests to join you' : 'events for you'}. It may take some time!`}
+          userInfo={userInfo}
+          wrapperText={false}
+        />
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && <ModalLockAccount haveCode isVisibleButton={false} />}
+      </>
     );
   }
 
@@ -1594,18 +1606,6 @@ const IO: FC = (): JSX.Element => {
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
-        <SuperJoin
-          isVisibleMatch={visibleModalSuperJoin}
-          nameEvent={currentEventInfo?.name}
-          imageEvent={currentEventInfo ? currentEventInfo.photos[0]?.image : ''}
-        />
-        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
-        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos[0].image} />
-        <ModalFullEvent
-          isVisible={isVisibleModalFullEvent}
-          idEvent={activeEvent?.id}
-          setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
-        />
         {totalQuantityGuests > 0 && (
           <FullEvent
             text={`Event is full: ${acceptQuantityGuest}/${totalQuantityGuests} Guests Accepted`}
@@ -1627,7 +1627,6 @@ const IO: FC = (): JSX.Element => {
             }
           />
         )}
-        {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
         <View style={styles.container}>
           {events?.map((item, index) => {
             return (
@@ -1670,7 +1669,19 @@ const IO: FC = (): JSX.Element => {
               </View>
             );
           })}
-          {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && <ModalLockAccount haveCode={false} isVisibleButton={false} />}
+          <SuperJoin
+            isVisibleMatch={visibleModalSuperJoin}
+            nameEvent={currentEventInfo?.name}
+            imageEvent={currentEventInfo ? currentEventInfo.photos[0]?.image : ''}
+          />
+          <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+          <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos?.[0].image} />
+          <ModalFullEvent
+            isVisible={isVisibleModalFullEvent}
+            idEvent={activeEvent?.id}
+            setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
+          />
+          {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && <ModalLockAccount haveCode isVisibleButton={false} />}
           {userInfo?.accountConfirmed && isHost && (
             <ModalEventLocked eventReviewed={activeEvent?.eventReviewed} eventStatus={activeEvent?.statusEvent} />
           )}

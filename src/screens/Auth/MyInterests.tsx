@@ -44,10 +44,10 @@ const MyInterests: FC = (): JSX.Element => {
     {id: 0, title: 'Vip Tables', isSelected: false, image: VipTables},
     {id: 1, title: 'Concerts', isSelected: false, image: Concert},
     {id: 2, title: 'Exclusive', isSelected: false, image: Exclusive},
-    {id: 3, title: 'YachtParty', isSelected: false, image: YachtParty},
-    {id: 4, title: 'PoolParty', isSelected: false, image: PoolParty},
+    {id: 3, title: 'Yacht Party', isSelected: false, image: YachtParty},
+    {id: 4, title: 'Pool Party', isSelected: false, image: PoolParty},
     {id: 5, title: 'Private', isSelected: false, image: Private},
-    {id: 6, title: 'BirthdayParty', isSelected: false, image: BirthdayParty},
+    {id: 6, title: 'Birthday Party', isSelected: false, image: BirthdayParty},
     {id: 7, title: 'Restaurant', isSelected: false, image: Restaurant},
   ]);
 
