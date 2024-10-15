@@ -7,10 +7,6 @@ import useStyles from 'screens/Auth/TutorialsFlow/styles.ts';
 import Stepper from 'components/Stepper/Stepper.tsx';
 import CreateEvent from 'screens/Auth/TutorialsFlow/components/CreateEvent/CreateEvent.tsx';
 import SwipeToInvite from 'screens/Auth/TutorialsFlow/components/SwipeToInvite/SwipeToInvite.tsx';
-import SeeHoWantsToJoinYou from 'screens/Auth/TutorialsFlow/components/SeeHoWantsToJoinYou/SeeHoWantsToJoinYou.tsx';
-import ApproveGuest from 'screens/Auth/TutorialsFlow/components/ApproveGuest/ApproveGuest.tsx';
-import MeetEnjoy from 'screens/Auth/TutorialsFlow/components/MeetEnjoy/MeetEnjoy.tsx';
-import JoinEvents from 'screens/Auth/TutorialsFlow/components/JoinEvents /JoinEvents.tsx';
 import Button from 'components/Button/Button.tsx';
 import {useUser} from '../../../store/userStore';
 import GetInviteMatch from './components/GetInviteMatch/GetInviteMatch';
@@ -34,7 +30,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
     <SwipeToInvite />,
   ];
 
-  const guestContent: ReactNode[] = [<SwipeToInvite />, <GetInviteMatch />, <SeeHoWantsToJoinYou />, <ApproveGuest />, <MeetEnjoy />];
+  const guestContent: ReactNode[] = [<SwipeToInvite />, <GetInviteMatch />];
 
   const content = accountTypeGuest ? guestContent : hostContent;
 
@@ -72,8 +68,6 @@ const TutorialsFlow: FC = (): JSX.Element => {
       <Stepper active={active} content={content} wrapperStyle={styles.wrapperStyle} />
       <View style={styles.wrapperBar}>
         {[...Array(content.length)].map((_, index) => (
-          accountTypeGuest?
-          <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />:
           <View key={index} style={[{
             backgroundColor: index === active ? whiteColor : gray1Color,
             width: 37,
