@@ -42,8 +42,9 @@ import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin.tsx';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat.ts';
-import {getUsersListAccepted} from 'helpers/getUsersListAccepted.ts';
-import {useScrollPosition} from 'src/store/scrollPosition/index.ts';
+import { getUsersListAccepted } from 'helpers/getUsersListAccepted.ts';
+import { useScrollPosition } from 'src/store/scrollPosition/index.ts';
+import { eventTypes } from 'src/mocks/eventTypes.ts';
 
 interface Photo {
   url: string;
@@ -89,6 +90,7 @@ interface TouchingSliderProps {
   usersList?: any[];
   handleAutoSwipeLeft: () => void;
   item: any;
+  activeType: number;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
@@ -129,6 +131,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   usersListLength,
   usersList,
   item,
+  activeType
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
@@ -505,7 +508,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   fontSize: RFValue(16, 812),
                   fontFamily: Satoshi700,
                 }}>
-                {name}
+                {placeName} - {eventTypes[activeType] && eventTypes[activeType].label}
               </Text>
               {hourEvent && (
                 <Text

@@ -868,6 +868,7 @@ const IO: FC = (): JSX.Element => {
               userInfo={userInfo}
               placeName={event?.placeName}
               girls={event?.female + event?.femaleFriend}
+              activeType={event?.activeType}
               date={event?.date}
               isShowEventPreview={true}
               isShowWantsJoin={false}
