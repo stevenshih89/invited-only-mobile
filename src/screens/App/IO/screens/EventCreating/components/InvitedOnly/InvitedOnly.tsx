@@ -118,7 +118,7 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
         <View style={styles.wrapperSelectYourDesiredCompany}>
-          <Text style={styles.textSelectYourDesiredCompany}>How many Guests would you like to invite</Text>
+          <Text style={styles.textSelectYourDesiredCompany}>How many Guests would you like to invite?</Text>
           <View>
             <View style={styles.rowFemale}>
               <Text style={styles.textPersonGender}>Female</Text>

@@ -36,6 +36,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {Switch} from '@ant-design/react-native';
 import ModalAddPhoto from './ModalAddPhoto.tsx';
+import { eventTypes } from 'src/mocks/eventTypes.ts';
 
 interface ImageType {
   image: null | string;
@@ -143,18 +144,6 @@ const EventDetails: FC<EventDetailsProps> = ({
   setOpenHour,
   userHost,
 }): ReactElement => {
-  const eventTypes = [
-    {id: 0, label: 'Vip Tables'},
-    {id: 1, label: 'Custom'},
-    {id: 2, label: 'Table'},
-    {id: 3, label: 'Concerts'},
-    {id: 4, label: 'Exclusive'},
-    {id: 5, label: 'Yacht Party'},
-    {id: 6, label: 'Pool Party'},
-    {id: 7, label: 'Private'},
-    {id: 8, label: 'Birthday Party'},
-    {id: 9, label: 'Restaurants'},
-  ];
 
   const [modalAddPhotoVisible, setModalAddPhotoVisible] = useState(false);
   const [photosId, setPhotosId] = useState();
@@ -379,7 +368,7 @@ const EventDetails: FC<EventDetailsProps> = ({
   const handleScroll = () => {
     Keyboard.dismiss();
   };
-
+    
   return (
     <View style={styles.root}>
       <KeyboardAwareScrollView

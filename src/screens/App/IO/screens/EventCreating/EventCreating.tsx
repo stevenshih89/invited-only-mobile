@@ -24,13 +24,7 @@ import {IOPath} from 'constants/pathLocations';
 import storage from '@react-native-firebase/storage';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import {createEvent, IOEvent} from 'src/api/event';
-
-const eventTypes = [
-  {id: 0, label: 'Custom'},
-  {id: 1, label: 'Table'},
-  {id: 2, label: 'Club'},
-  {id: 3, label: 'Restaurant'},
-];
+import { eventTypes } from 'src/mocks/eventTypes';
 
 const EventCreating: FC = () => {
   const INVITED_ONLY = 'invitedOnly';

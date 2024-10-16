@@ -40,7 +40,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
   const {list} = route?.params;
-  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name, id} = list as EventData;
+  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name, id, isCancelled} = list as EventData;
 
   const [usersListData, setUsersListsData] = useState<any>(usersList);
   const [activeTab, setActiveTab] = useState(GUEST_LIST);
@@ -79,14 +79,16 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   );
 
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity activeOpacity={0.7} onPress={() => setIsVisibleCancelModal(true)}>
-          <TrashRed style={{marginHorizontal: 20, marginVertical: 10}} />
-        </TouchableOpacity>
-      ),
-    });
-  }, []);
+    if (!isCancelled) {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity activeOpacity={0.7} onPress={() => setIsVisibleCancelModal(true)}>
+            <TrashRed style={{marginHorizontal: 20, marginVertical: 10}} />
+          </TouchableOpacity>
+        ),
+      });
+    }
+  }, [isCancelled]);
 
   const checkIsFullGuestsFun = async () => {
     const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(id);
@@ -438,13 +440,15 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                 />
               </View>
             )}
-            <Button
-              title="Edit event"
-              buttonStyle={{marginVertical: 34}}
-              onPress={() =>
-                navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})
-              }
-            />
+            {!isCancelled && (
+              <Button
+                title="Edit event"
+                buttonStyle={{marginVertical: 34}}
+                onPress={() =>
+                  navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})
+                }
+              />
+            )}
           </>
         );
       case EVENT_INFO:
@@ -521,14 +525,16 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                 }
               })}
             </View>
-            <TouchableOpacity
-              onPress={() => setIsVisibleCancelModal(true)}
-              activeOpacity={0.7}
-              style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%', paddingTop: 34}}
-              hitSlop={{bottom: 15}}>
-              <TrashRed />
-              <Text style={{color: lightRedColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 6}}>Cancel event</Text>
-            </TouchableOpacity>
+            {!isCancelled && (
+              <TouchableOpacity
+                onPress={() => setIsVisibleCancelModal(true)}
+                activeOpacity={0.7}
+                style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%', paddingTop: 34}}
+                hitSlop={{bottom: 15}}>
+                <TrashRed />
+                <Text style={{color: lightRedColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 6}}>Cancel event</Text>
+              </TouchableOpacity>
+            )}
           </View>
         );
     }
@@ -596,7 +602,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingTop: 20, paddingBottom: 50}} style={{flex: 1}}>
           {renderEventContent()}
         </ScrollView>
-        {activeTab === 'EVENT_INFO' && (
+        {activeTab === 'EVENT_INFO' && !isCancelled && (
           <Button
             title="Edit event"
             buttonStyle={{marginBottom: 28}}

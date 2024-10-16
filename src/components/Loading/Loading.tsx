@@ -110,7 +110,7 @@ const Loading: FC<LoadingProps> = ({text, userInfo, topPosition = false, wrapper
                         }}>
                         {text}
                       </Text>
-                      {showCheckIcon && <CheckStarIcon />}
+                      {showCheckIcon && <CheckStarIcon style={{marginLeft: 6}} />}
                     </View>
                   </View>
                 </View>
