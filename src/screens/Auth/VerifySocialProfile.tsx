@@ -274,6 +274,7 @@ const VerifySocialProfile = () => {
         {isActive ? (
           <View style={{marginTop: 16}}>
             <Input
+              placeholder={`Enter a link to your ${item.title} profile`}
               onPressFocus={() => setIsFocusInput(true)}
               onBlur={() => setIsFocusInput(false)}
               value={socialNickname[item.name]}
