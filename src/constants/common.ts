@@ -14,6 +14,7 @@ const APPROVED_STATUS = 'approved';
 const ACCEPTED_STATUS = 'accepted';
 const INVITE_MATCH_STATUS = 'invite_match';
 const NOT_ACCEPTED_STATUS = 'notAccepted';
+const CANCEL_STATUS = 'cancel';
 
 export {
   isIos,
@@ -30,4 +31,5 @@ export {
   ACCEPTED_STATUS,
   INVITE_MATCH_STATUS,
   NOT_ACCEPTED_STATUS,
+  CANCEL_STATUS
 };

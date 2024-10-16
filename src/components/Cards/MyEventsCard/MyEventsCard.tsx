@@ -6,6 +6,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import useStyles from 'components/Cards/MyEventsCard/styles.ts';
 import Clock from 'assets/images/icons/clock-white.svg';
 import Bing from 'assets/images/icons/notification-bing.svg';
+import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
@@ -19,6 +20,8 @@ import {formateDateAbbreviated} from 'helpers/formateDateAbbreviated';
 import LineImage from 'assets/images/app/Line.png';
 import moment from 'moment';
 import {Event} from '../../../types/event';
+import firestore from '@react-native-firebase/firestore'
+import { calculateAge } from 'helpers/calculateAge';
 
 interface MyEventsCard {
   statusEvent: boolean;
@@ -33,15 +36,26 @@ interface MyEventsCard {
   showGuestList: boolean;
   customButton?: React.ReactNode;
   styleContainer?: any;
+  showInfoTop: boolean;
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
-  const {placeName, styleContainer, imageBg, statusEvent, eventReviewed, allPeople, findAcceptedGuest, item, showGuestList, customButton} =
+  const {placeName, styleContainer, imageBg, statusEvent, eventReviewed, allPeople, findAcceptedGuest, item, showGuestList, customButton, showInfoTop = false} =
     props;
 
   const styles = useStyles();
+  const [userHostInfo, setUserHostInfo] = useState();
 
   const [mainImageEvent, setMainImageEvent] = useState('');
+
+  const getUserHostInfo = async () => {
+    const getDoc = await firestore().collection('userInfo').doc(item?.uid).get()
+    setUserHostInfo(getDoc.data())
+  }
+
+  useEffect(() => {
+    getUserHostInfo()
+  },[item])
 
   useEffect(() => {
     const filterImage = imageBg?.filter(item => item.id < 1);
@@ -118,6 +132,106 @@ const MyEventsCard: FC<MyEventsCard> = props => {
             priority: FastImage.priority.normal,
           }}
           resizeMode={FastImage.resizeMode.cover}>
+          {showInfoTop && (
+            <View style={{flexDirection: 'row', position: 'absolute', top: 16, left: 16}}>
+              <View style={{alignSelf: 'flex-start'}}>
+                <FastImage style={{width: 50, height: 50, borderRadius: 50}} source={{uri: userHostInfo?.photos?.[0]?.image || ''}} />
+                <View
+                  style={{
+                    position: 'absolute',
+                    bottom: 2,
+                    right: 0,
+                    width: 12,
+                    height: 12,
+                    borderRadius: 12,
+                    borderWidth: 1.25,
+                    borderColor: blackColor,
+                    backgroundColor: lightGreenColor,
+                  }}
+                />
+              </View>
+              <View style={{marginLeft: 10, justifyContent: 'center'}}>
+                <View style={{flexDirection: 'row'}}>
+                  <View
+                    style={{
+                      backgroundColor: blackColor,
+                      borderRadius: 5,
+                      paddingHorizontal: 12,
+                      paddingVertical: 2,
+                      alignSelf: 'flex-start',
+                      borderWidth: 1,
+                      borderColor: whiteColor,
+                    }}>
+                    {userHostInfo?.accountType === 'guest' && (
+                      <Text style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                        Guest
+                      </Text>
+                    )}
+                    {userHostInfo?.accountType === 'host' && (
+                      <Text style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                        Host
+                      </Text>
+                    )}
+                  </View>
+                  {(userHostInfo?.accountPremium || userHostInfo?.accountType === 'guest') && (
+                    <LinearGradient
+                      colors={['#977B4A', '#E5D291', '#A28453']}
+                      style={{
+                        marginLeft: 6,
+                        alignSelf: 'flex-start',
+                        borderRadius: 4,
+                        paddingHorizontal: 12,
+                        paddingVertical: 2,
+                        backgroundColor: blackColor,
+                      }}
+                      start={{x: 0, y: 0}}
+                      end={{x: 1, y: 0}}>
+                      {
+                        <Text
+                          style={{
+                            color: blackColor,
+                            fontSize: RFValue(10, 812),
+                            fontFamily: Satoshi700,
+                          }}>
+                          Premium
+                        </Text>
+                      }
+                    </LinearGradient>
+                  )}
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                  }}>
+                  <Text
+                    style={{
+                      color: whiteColor,
+                      fontFamily: Satoshi700,
+                      fontSize: RFValue(16, 812),
+                      marginTop: 4,
+                    }}>
+                    {userHostInfo?.name}
+                    {userHostInfo?.showAge ? <Text>,</Text> : null}
+                  </Text>
+                  {userHostInfo?.showAge && (
+                    <Text
+                      style={{
+                        color: whiteColor,
+                        fontFamily: Satoshi700,
+                        fontSize: RFValue(13, 812),
+                        marginTop: 5,
+                      }}>
+                      {' '}
+                      {calculateAge(userHostInfo?.date)}
+                    </Text>
+                  )}
+                  <View style={{marginLeft: 8}}>{userHostInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} />}</View>
+                </View>
+              </View>
+            </View>
+          )}
           {findAcceptedGuest?.length >= allPeople && (
             <FullEvent
               activeEvent={item}
@@ -182,7 +296,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                   fontFamily: Satoshi700,
                   marginTop: 5,
                 }}>
-                {placeName}
+                {item?.name}
               </Text>
             </View>
             {showGuestList && (
@@ -258,7 +372,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                     fontFamily: Satoshi500,
                     marginTop: 5,
                   }}>
-                  {item?.address}
+                  {item?.placeName}
                 </Text>
               </View>
             </View>
