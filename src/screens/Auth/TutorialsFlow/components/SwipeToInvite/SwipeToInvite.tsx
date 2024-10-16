@@ -14,11 +14,13 @@ const SwipeToInvite = () => {
   return (
     <View style={styles.container}>
       <View style={styles.wrapperImage}>
-        <Image resizeMode="stretch" style={styles.image} source={accountTypeGuest ? SwipeToJoinImage : SwipeToInviteImage} />
+        <Image resizeMode="contain" style={styles.image} source={accountTypeGuest ? SwipeToJoinImage : SwipeToInviteImage} />
       </View>
       <View style={styles.textWrapper}>
-        <Text style={styles.textSwipeToInvite}>{accountTypeGuest ? 'Swipe to join event' : 'Build your guest list'}</Text>
-        <Text style={styles.textSwipeRightToInvite}>Invite someone you’d love to have at your event! Dismiss anyone you’re not interested in inviting.</Text>
+        <Text style={styles.textSwipeToInvite}>{accountTypeGuest ? 'Join VIP Tables and exclusive events' : 'Build your guest list'}</Text>
+        <Text style={styles.textSwipeRightToInvite}>{accountTypeGuest? 'Discover premier events and unlock exclusive invitations.':
+        'Invite someone you’d love to have at your event! Dismiss anyone you’re not interested in inviting.'
+          }</Text>
       </View>
     </View>
   );
