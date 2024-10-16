@@ -18,13 +18,14 @@ import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
 import {EventContext} from 'contexts/EventContext';
-import {blackColor, lightGreenColor, transparentWhite56Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGreenColor, transparentWhite16Color, transparentWhite56Color, whiteColor} from 'constants/colors';
 import {fcmHelper, onMatchNotificationSubscription, sendNotification} from 'helpers/fcmHelper.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {useUser} from '../../../store/userStore';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 
 //import icons
+import LoaderIcon from 'assets/images/icons/loader.svg';
 import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
 import LocationIcon from 'assets/images/icons/location.svg';
 import TablerGenderIcon from 'assets/images/icons/tabler_gender-bigender.svg';
@@ -53,7 +54,7 @@ import {User, UserInfo} from 'src/types/userInfo';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
-import Animated, {Easing, useAnimatedStyle, useSharedValue, withTiming} from 'react-native-reanimated';
+import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalEventLocked from 'components/Modal/ModalEventLocked/ModalEventLocked';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
@@ -76,7 +77,8 @@ const IO: FC = (): JSX.Element => {
   const [reportedItem, setReportedItem] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
   const [matchData, setMatchData] = useState<MatchData>({});
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loadingUser, setLoadingUser] = useState<boolean>(true);
+  const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
@@ -112,6 +114,29 @@ const IO: FC = (): JSX.Element => {
   const counterWeeklySuperInvitesRef = useRef(0);
 
   const cardRef = useRef(null);
+
+  const rotationLoader = useSharedValue(0);
+  useEffect(() => {
+    if (loadingUser) {
+      rotationLoader.value = withRepeat(
+        withTiming(360, {
+          duration: 2000,
+          easing: Easing.linear,
+        }),
+        -1,
+      );
+    }
+
+    return () => {
+      cancelAnimation(rotationLoader);
+    };
+  }, [rotationLoader, loadingUser]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotate: `${rotationLoader.value}deg`}],
+    };
+  });
 
   const handleSuperInvite = () => {
     if (counterSuperInvitesRef.current > 0 || counterWeeklySuperInvitesRef.current > 0) {
@@ -396,7 +421,7 @@ const IO: FC = (): JSX.Element => {
   }
 
   const fetchUserInfo = async () => {
-    setLoading(true);
+    setLoadingUser(true);
     const user = auth().currentUser;
 
     if (user) {
@@ -420,12 +445,11 @@ const IO: FC = (): JSX.Element => {
           });
         }
       } catch (error: any) {
+        setLoadingUser(false);
         Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
-    setTimeout(() => {
-      setLoading(false);
-    }, USERS_FETCHING_DELAY);
+    setLoadingUser(false);
   };
 
   const fetchMyEvents = async (isFirstRender: boolean) => {
@@ -436,17 +460,35 @@ const IO: FC = (): JSX.Element => {
 
         if (querySnapshot.empty) {
           setMyEvents([]);
+          setMyEventsList([]);
+          setActiveEvent({});
           return;
         }
-        const data = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setMyEventsList(data);
-        setMyEvents(data);
-        isFirstRender && setActiveEvent(data[0]);
-        return data;
+        const data = querySnapshot.docs.map(doc => doc.data() as EventData);
+
+        const filteredData = data.filter((event: EventData) => {
+          if (event?.date && event?.hour) {
+            const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+            if (adjustedDate.isBefore(moment())) {
+              return false;
+            }
+          }
+          return true;
+        });
+        if (!filteredData.length) {
+          setMyEvents([]);
+          setMyEventsList([]);
+          setActiveEvent({});
+          return;
+        }
+
+        setMyEventsList(filteredData);
+        setMyEvents(filteredData);
+        isFirstRender && setActiveEvent(filteredData[0]);
       } catch (error: any) {
+        setMyEvents([]);
+        setMyEventsList([]);
+        setActiveEvent({});
         Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
@@ -724,7 +766,7 @@ const IO: FC = (): JSX.Element => {
     if (!user) {
       return;
     }
-    setLoading(true);
+    setLoadingEvents(true);
     let filteredEvents: any[] = [];
 
     try {
@@ -797,6 +839,8 @@ const IO: FC = (): JSX.Element => {
         : filterDataByWeekMonth(enrichedEvents, 31);
 
     if (!filterDataWM.length) {
+      setLoadingEvents(false);
+      setEvents([]);
       return;
     }
 
@@ -1123,7 +1167,7 @@ const IO: FC = (): JSX.Element => {
     setEvents(recommendedData);
     eventsRef.current = recommendedData;
     allEventsLength.current = recommendedData.length;
-    setLoading(false);
+    setLoadingEvents(false);
   };
 
   const handleSuperInviteBottom = (item: any, coinAnimationTimer: number) => {
@@ -1143,7 +1187,7 @@ const IO: FC = (): JSX.Element => {
   const getListForHost = async () => {
     const user = auth().currentUser;
     let users: any;
-    setLoading(true);
+    setLoadingEvents(true);
 
     const usersQuery = firestore().collection('userInfo');
 
@@ -1166,294 +1210,163 @@ const IO: FC = (): JSX.Element => {
 
     const data: any[] = [];
     const usersList = await users?._docs;
-    usersList
-      ?.filter((item: {_data: UserInfo}) => {
-        if (blockedUsersList.includes(item?._data.uid)) {
-          return false;
+    const filteredUsersList = usersList?.filter((item: {_data: UserInfo}) => {
+      if (blockedUsersList.includes(item?._data.uid)) {
+        return false;
+      }
+
+      if (blockedMeUsersList.includes(item?._data.uid)) {
+        return false;
+      }
+
+      if (getActualDataEvent?.rejectsList?.find((j: Event.RejectUser) => j?.uid === item?._data.uid)) {
+        return false;
+      }
+
+      if (getActualDataEvent?.usersList?.find((j: Event.User) => j?.uid === item?._data.uid)) {
+        return false;
+      }
+      return true;
+    });
+
+    if (!filteredUsersList?.length) {
+      setLoadingEvents(false);
+      setEvents([]);
+      return;
+    }
+
+    filteredUsersList?.map((item: {_data: UserInfo}, index: number): void => {
+      const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} =
+        item?._data;
+
+      const findSuperJoin = getActualDataEvent?.requestsList.find((i: Event.User) => {
+        if (item?._data.uid === i.uid && i.superInvite) {
+          return true;
         }
+      });
 
-        if (blockedMeUsersList.includes(item?._data.uid)) {
-          return false;
-        }
+      setNameUser(name);
+      const girlPhotos: string[] = item?._data?.photos
+        ?.filter((userPhotos: User.Photo) => userPhotos.image !== null)
+        .map((image: User.Photo) => `${image?.image}`);
 
-        if (getActualDataEvent?.rejectsList?.find((j: Event.RejectUser) => j?.uid === item?._data.uid)) {
-          return false;
-        }
+      const interests = item?._data?.interests?.map((i: User.Interests) => i?.title);
+      const smoking = item?._data?.smoke?.title;
 
-        if (getActualDataEvent?.usersList?.find((j: Event.User) => j?.uid === item?._data.uid)) {
-          return false;
-        }
-        return true;
-      })
-      ?.map((item: {_data: UserInfo}, index: number): void => {
-        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} =
-          item?._data;
+      const age: string = calculateAge(date);
 
-        const findSuperJoin = getActualDataEvent?.requestsList.find((i: Event.User) => {
-          if (item?._data.uid === i.uid && i.superInvite) {
-            return true;
-          }
-        });
-
-        setNameUser(name);
-        const girlPhotos: string[] = item?._data?.photos
-          ?.filter((userPhotos: User.Photo) => userPhotos.image !== null)
-          .map((image: User.Photo) => `${image?.image}`);
-
-        const interests = item?._data?.interests?.map((i: User.Interests) => i?.title);
-        const smoking = item?._data?.smoke?.title;
-
-        const age: string = calculateAge(date);
-
-        data.push({
-          component: (
-            <View key={index} style={styles.wrapperFakeCard}>
-              <TouchingSlider
-                name={name}
-                age={age}
-                homeAddress={homeAddress}
-                isShowInvitesTooltip={false}
-                isLocked={!userInfo?.accountConfirmed}
-                confirmedAccount={accountConfirmed}
-                onInvite={() => onInvite(uid, item?._data?.id)}
-                handleOpenSuperInvite={() => handleOpenSuperInvite(item?._data, uid)}
-                photos={girlPhotos}
-                accountType={accountType}
-                handleAutoSwipeRight={() => handleAutoSwipeRight(item?._data?.id)}
-                isShowWantsJoin={findSuperJoin}
-                isPremium={accountPremium}
-                activeEvent={activeEvent}
-                location={item?._data.location}
-                joinEvents={item?._data.joinEvents}
-                online={item?._data.online}
-                date={item?._data.date}
-                item={item?._data}
-                userInfo={userInfo}
-                handleAutoSwipeLeft={handleAutoSwipeLeft}
-              />
-              <View style={styles.bioWrapper}>
-                <Text style={[styles.titleSection, bio ? styles.mt31 : {}]}>My basics</Text>
-                <View style={styles.wrapperTextTags}>
-                  {gender && (
-                    <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                      <View style={{marginRight: 4}}>
-                        <TablerGenderIcon />
-                      </View>
-                      {gender}
-                    </Text>
-                  )}
-                  {address && (
-                    <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                      <View style={{marginRight: 4}}>
-                        <LocationIcon />
-                      </View>
-                      {address}
-                    </Text>
-                  )}
-                  {homeAddress && (
-                    <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                      <View style={{marginRight: 4}}>
-                        <HomeIcon />
-                      </View>
-                      {homeAddress}
-                    </Text>
-                  )}
-                  {height && (
-                    <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                      <View style={{marginRight: 4}}>
-                        <ArrowIcon />
-                      </View>
-                      {height} см
-                    </Text>
-                  )}
-                  {alcohol && (
-                    <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                      <View style={{marginRight: 4}}>
-                        <WineIcon />
-                      </View>
-                      {alcohol}
-                    </Text>
-                  )}
-                  {smoking && (
-                    <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                      <View style={{marginRight: 4}}>
-                        <SmokeIcon />
-                      </View>
-                      {smoking}
-                    </Text>
-                  )}
-                </View>
-                {bio && (
-                  <>
-                    <Text style={[styles.titleSection, styles.mt31]}>About me</Text>
-                    <Text style={styles.textDescription}>{bio}</Text>
-                  </>
+      data.push({
+        component: (
+          <View key={index} style={styles.wrapperFakeCard}>
+            <TouchingSlider
+              name={name}
+              age={age}
+              homeAddress={homeAddress}
+              isShowInvitesTooltip={false}
+              isLocked={!userInfo?.accountConfirmed}
+              confirmedAccount={accountConfirmed}
+              onInvite={() => onInvite(uid, item?._data?.id)}
+              handleOpenSuperInvite={() => handleOpenSuperInvite(item?._data, uid)}
+              photos={girlPhotos}
+              accountType={accountType}
+              handleAutoSwipeRight={() => handleAutoSwipeRight(item?._data?.id)}
+              isShowWantsJoin={findSuperJoin}
+              isPremium={accountPremium}
+              activeEvent={activeEvent}
+              location={item?._data.location}
+              joinEvents={item?._data.joinEvents}
+              online={item?._data.online}
+              date={item?._data.date}
+              item={item?._data}
+              userInfo={userInfo}
+              handleAutoSwipeLeft={handleAutoSwipeLeft}
+            />
+            <View style={styles.bioWrapper}>
+              <Text style={[styles.titleSection, bio ? styles.mt31 : {}]}>My basics</Text>
+              <View style={styles.wrapperTextTags}>
+                {gender && (
+                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                    <View style={{marginRight: 4}}>
+                      <TablerGenderIcon />
+                    </View>
+                    {gender}
+                  </Text>
                 )}
-                {!!interests?.length && (
-                  <>
-                    <Text style={[styles.titleSection, styles.mt31]}>My interests</Text>
-                    <View style={styles.wrapperInterestsTags}>
-                      {interests.map((interest: string | null, idx: number) => (
-                        <View key={idx} style={styles.interestsTags}>
-                          <Text style={styles.textTagsInterests}>{interest}</Text>
-                        </View>
-                      ))}
+                {address && (
+                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                    <View style={{marginRight: 4}}>
+                      <LocationIcon />
                     </View>
-                  </>
+                    {address}
+                  </Text>
                 )}
-                <View style={styles.wrapperImageSectionFaceGirl}>
-                  {girlPhotos?.map((photo: string, photoIndex: number) => (
-                    <Image key={photoIndex} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
-                  ))}
+                {homeAddress && (
+                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                    <View style={{marginRight: 4}}>
+                      <HomeIcon />
+                    </View>
+                    {homeAddress}
+                  </Text>
+                )}
+                {height && (
+                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                    <View style={{marginRight: 4}}>
+                      <ArrowIcon />
+                    </View>
+                    {height} см
+                  </Text>
+                )}
+                {alcohol && (
+                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                    <View style={{marginRight: 4}}>
+                      <WineIcon />
+                    </View>
+                    {alcohol}
+                  </Text>
+                )}
+                {smoking && (
+                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                    <View style={{marginRight: 4}}>
+                      <SmokeIcon />
+                    </View>
+                    {smoking}
+                  </Text>
+                )}
+              </View>
+              {bio && (
+                <>
+                  <Text style={[styles.titleSection, styles.mt31]}>About me</Text>
+                  <Text style={styles.textDescription}>{bio}</Text>
+                </>
+              )}
+              {!!interests?.length && (
+                <View
+                  style={{
+                    borderTopWidth: 1,
+                    borderStyle: 'solid',
+                    borderTopColor: transparentWhite16Color,
+                    marginTop: screenHeight / 44,
+                    paddingTop: screenHeight / 44,
+                  }}>
+                  <Text style={[styles.titleSection]}>My interests</Text>
+                  <View style={styles.wrapperInterestsTags}>
+                    {interests.map((interest: string | null, idx: number) => (
+                      <View key={idx} style={styles.interestsTags}>
+                        <Text style={styles.textTagsInterests}>{interest}</Text>
+                      </View>
+                    ))}
+                  </View>
                 </View>
-                <View style={styles.wrapperButtonsFooter}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      handleAutoSwipeLeft();
-                      setTimeout(() => {
-                        sortEvents(item?._data?.uid);
-                      }, 500);
-                    }}
-                    style={styles.buttonCloseOrCheck}>
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        top: -1,
-                        left: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        right: -1,
-                        bottom: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
-                      <CloseIcon />
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableWithoutFeedback
-                    onPress={() => {
-                      handleSuperInviteBottom(item._data, 400);
-                    }}>
-                    <View style={styles.buttonFlash}>
-                      <View
-                        style={{
-                          backgroundColor: transparentWhite56Color,
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: 50,
-                          position: 'absolute',
-                          top: -1,
-                          left: -1,
-                        }}
-                      />
-                      <View
-                        style={{
-                          backgroundColor: transparentWhite56Color,
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: 50,
-                          position: 'absolute',
-                          right: -1,
-                          bottom: -1,
-                        }}
-                      />
-                      <Animated.View
-                        style={[
-                          {
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: blackColor,
-                            borderRadius: 50,
-                            zIndex: 10,
-                            justifyContent: 'center',
-                            position: 'absolute',
-                            alignItems: 'center',
-                          },
-                          frontAnimatedStyle,
-                        ]}>
-                        <FlashIcon />
-                      </Animated.View>
-                      <Animated.View
-                        style={[
-                          {
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: blackColor,
-                            borderRadius: 50,
-                            zIndex: 10,
-                            position: 'absolute',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                          },
-                          backAnimatedStyle,
-                        ]}>
-                        <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>
-                          {counterSuperInvites}
-                        </Text>
-                      </Animated.View>
-                    </View>
-                  </TouchableWithoutFeedback>
-                  <TouchableOpacity
-                    onPress={() => {
-                      handleAutoSwipeRight(item?._data?.id);
-                    }}
-                    style={styles.buttonCloseOrCheck}>
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        top: -1,
-                        left: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        right: -1,
-                        bottom: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
-                      <CheckIcon />
-                    </View>
-                  </TouchableOpacity>
-                </View>
+              )}
+              <View
+                style={{
+                  borderTopWidth: 1,
+                  borderStyle: 'solid',
+                  borderTopColor: transparentWhite16Color,
+                  paddingTop: screenHeight / 34,
+                  marginTop: 10,
+                  marginBottom: screenHeight / 40,
+                }}>
                 <TouchableOpacity
                   onPress={() => {
                     handleReport(uid, activeEvent);
@@ -1461,16 +1374,176 @@ const IO: FC = (): JSX.Element => {
                   <Text style={styles.textHideNadSendReport}>Block and Report</Text>
                 </TouchableOpacity>
               </View>
+              <View style={styles.wrapperImageSectionFaceGirl}>
+                {girlPhotos?.map((photo: string, photoIndex: number) => (
+                  <Image key={photoIndex} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
+                ))}
+              </View>
+              <View style={styles.wrapperButtonsFooter}>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleAutoSwipeLeft();
+                    setTimeout(() => {
+                      sortEvents(item?._data?.uid);
+                    }, 500);
+                  }}
+                  style={styles.buttonCloseOrCheck}>
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      top: -1,
+                      left: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      right: -1,
+                      bottom: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: blackColor,
+                      borderRadius: 50,
+                      zIndex: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <CloseIcon />
+                  </View>
+                </TouchableOpacity>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    handleSuperInviteBottom(item._data, 400);
+                  }}>
+                  <View style={styles.buttonFlash}>
+                    <View
+                      style={{
+                        backgroundColor: transparentWhite56Color,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 50,
+                        position: 'absolute',
+                        top: -1,
+                        left: -1,
+                      }}
+                    />
+                    <View
+                      style={{
+                        backgroundColor: transparentWhite56Color,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 50,
+                        position: 'absolute',
+                        right: -1,
+                        bottom: -1,
+                      }}
+                    />
+                    <Animated.View
+                      style={[
+                        {
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: blackColor,
+                          borderRadius: 50,
+                          zIndex: 10,
+                          justifyContent: 'center',
+                          position: 'absolute',
+                          alignItems: 'center',
+                        },
+                        frontAnimatedStyle,
+                      ]}>
+                      <FlashIcon />
+                    </Animated.View>
+                    <Animated.View
+                      style={[
+                        {
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: blackColor,
+                          borderRadius: 50,
+                          zIndex: 10,
+                          position: 'absolute',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        },
+                        backAnimatedStyle,
+                      ]}>
+                      <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>
+                        {counterSuperInvites}
+                      </Text>
+                    </Animated.View>
+                  </View>
+                </TouchableWithoutFeedback>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleAutoSwipeRight(item?._data?.id);
+                  }}
+                  style={styles.buttonCloseOrCheck}>
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      top: -1,
+                      left: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      backgroundColor: transparentWhite56Color,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 50,
+                      position: 'absolute',
+                      right: -1,
+                      bottom: -1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: blackColor,
+                      borderRadius: 50,
+                      zIndex: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <CheckIcon />
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  handleReport(uid, activeEvent);
+                }}>
+                <Text style={styles.textHideNadSendReport}>Block and Report</Text>
+              </TouchableOpacity>
             </View>
-          ),
-          info: item?._data,
-        });
+          </View>
+        ),
+        info: item?._data,
       });
+    });
 
     allEventsLength.current = data.length;
     setEvents(data);
     eventsRef.current = data;
-    setLoading(false);
+    setLoadingEvents(false);
   };
 
   const requestUserPermission = async () => {
@@ -1516,7 +1589,9 @@ const IO: FC = (): JSX.Element => {
   };
 
   useEffect(() => {
-    isHost ? getListForHost() : getListForGuest();
+    if (userInfo?.uid) {
+      isHost ? getListForHost() : getListForGuest();
+    }
   }, [userInfo, userHost, activeEvent?.id, activeEventDate]);
 
   useEffect(() => {
@@ -1542,47 +1617,85 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  if ((loading || (!userHost && userInfo.accountConfirmed)) && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
-    return <Loading wrapperText={false} text="Finding guests near you ..." userInfo={userInfo} />;
+  if (loadingUser && !userInfo?.uid && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+    return (
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
+        <Animated.View style={[animatedStyle]}>
+          <LoaderIcon />
+        </Animated.View>
+      </SafeAreaView>
+    );
   }
 
-  if (!loading && !myEvents.length && userInfo.accountConfirmed && isHost && !isVisibleMatch && !acceptModalVisible) {
+  if (userInfo?.uid && acceptModalVisible) {
     return (
-      <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
-        <View style={{height: 370}}>
-          <Loading userInfo={userInfo} topPosition={true} />
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
+        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+      </SafeAreaView>
+    );
+  }
+
+  if (userInfo?.uid && rejectModalVisible) {
+    return (
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
+        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />
+      </SafeAreaView>
+    );
+  }
+
+  if (userInfo?.uid && loadingEvents && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+    return (
+      <>
+        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && <ModalLockAccount haveCode isVisibleButton={false} />}
+      </>
+    );
+  }
+
+  console.warn(userInfo?.uid, isHost, loadingEvents, myEvents.length, isVisibleMatch);
+
+  if (userInfo?.uid && isHost && !loadingEvents && myEvents.length <= 0 && !isVisibleMatch) {
+    return (
+      <>
+        <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
+          <View style={{height: 370}}>
+            <Loading userInfo={userInfo} topPosition={true} />
+          </View>
+          <View>
+            <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi500}}>
+              You don't have any active event.
+            </Text>
+            <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi500}}>
+              Get started by creating an event to begin inviting guests.
+            </Text>
+          </View>
+          <View style={{paddingHorizontal: 24}}>
+            <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 20, marginBottom: 30}} />
+          </View>
         </View>
-        <View>
-          <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi500}}>
-            You don't have any active event.
-          </Text>
-          <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi500}}>
-            Get started by creating an event to begin inviting guests.
-          </Text>
-        </View>
-        <View style={{paddingHorizontal: 24}}>
-          <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 20, marginBottom: 30}} />
-        </View>
-      </View>
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && <ModalLockAccount haveCode isVisibleButton={false} />}
+      </>
     );
   }
 
   if (
-    ((!loading &&
-      (isHost
-        ? currentEventCardPosition > allEventsLength.current && !lastVisible
-        : currentEventCardPosition > allEventsLength.current && allEventsLength.current)) ||
-      !allEventsLength.current) &&
-    !acceptModalVisible &&
+    userInfo?.uid &&
+    !loadingEvents &&
+    !events?.length &&
+    !isVisibleMatch &&
     !visibleModalSuperJoin &&
-    !isVisibleMatch
+    !isVisibleSuperInvite &&
+    !acceptModalVisible
   ) {
     return (
-      <Loading
-        text="We're currently searching for exciting guests to join you. It may take some time!"
-        userInfo={userInfo}
-        wrapperText={false}
-      />
+      <>
+        <Loading
+          text={`We're currently searching for exciting ${isHost ? 'guests to join you' : 'events for you'}. It may take some time!`}
+          userInfo={userInfo}
+          wrapperText={false}
+        />
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && <ModalLockAccount haveCode isVisibleButton={false} />}
+      </>
     );
   }
 
@@ -1594,18 +1707,6 @@ const IO: FC = (): JSX.Element => {
   return (
     <>
       <SafeAreaView style={styles.safeAreaView}>
-        <SuperJoin
-          isVisibleMatch={visibleModalSuperJoin}
-          nameEvent={currentEventInfo?.name}
-          imageEvent={currentEventInfo ? currentEventInfo.photos[0]?.image : ''}
-        />
-        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
-        <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos[0].image} />
-        <ModalFullEvent
-          isVisible={isVisibleModalFullEvent}
-          idEvent={activeEvent?.id}
-          setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
-        />
         {totalQuantityGuests > 0 && (
           <FullEvent
             text={`Event is full: ${acceptQuantityGuest}/${totalQuantityGuests} Guests Accepted`}
@@ -1627,7 +1728,6 @@ const IO: FC = (): JSX.Element => {
             }
           />
         )}
-        {!userInfo?.accountConfirmed && <ModalLockAccount isVisibleButton={false} />}
         <View style={styles.container}>
           {events?.map((item, index) => {
             return (
@@ -1670,7 +1770,17 @@ const IO: FC = (): JSX.Element => {
               </View>
             );
           })}
-          {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && <ModalLockAccount haveCode={false} isVisibleButton={false} />}
+          <SuperJoin
+            isVisibleMatch={visibleModalSuperJoin}
+            nameEvent={currentEventInfo?.name}
+            imageEvent={currentEventInfo ? currentEventInfo.photos[0]?.image : ''}
+          />
+          <ModalFullEvent
+            isVisible={isVisibleModalFullEvent}
+            idEvent={activeEvent?.id}
+            setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
+          />
+          {!userInfo?.accountReviewed && <ModalLockAccount haveCode isVisibleButton={false} />}
           {userInfo?.accountConfirmed && isHost && (
             <ModalEventLocked eventReviewed={activeEvent?.eventReviewed} eventStatus={activeEvent?.statusEvent} />
           )}

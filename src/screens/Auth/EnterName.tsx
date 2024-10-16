@@ -84,7 +84,7 @@ const EnterName: FC = (): JSX.Element => {
                   style={{
                     width: '100%',
                     marginBottom: screenHeight / 30,
-                    marginTop: screenHeight / 8,
+                    marginTop: screenHeight / 11.5,
                   }}>
                   <Text
                     style={{
@@ -118,7 +118,7 @@ const EnterName: FC = (): JSX.Element => {
                   />
                 </View>
               </View>
-              <View style={{marginBottom: 4}}>
+              <View style={{marginBottom: 16}}>
                 <Button disabled={name.length < 3 || errorInputName} onPress={() => handleNext()} title="Continue" />
               </View>
             </View>

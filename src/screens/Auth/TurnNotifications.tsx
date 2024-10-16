@@ -77,7 +77,7 @@ const TurnNotifications: FC = (): JSX.Element => {
               <View
                 style={{
                   marginBottom: screenHeight / 30,
-                  marginTop: screenHeight / 8,
+                  marginTop: screenHeight / 11.5,
                 }}>
                 <Text
                   style={{

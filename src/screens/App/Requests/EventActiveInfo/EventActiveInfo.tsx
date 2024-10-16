@@ -1,4 +1,12 @@
-import {blackColor, lightGray2Color, lightGreen2Color, lightGreenColor, lightRedColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {
+  blackColor,
+  lightGray2Color,
+  lightGreen2Color,
+  lightGreenColor,
+  lightRedColor,
+  transparentWhite16Color,
+  whiteColor,
+} from 'constants/colors';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
 import TrashRed from 'assets/images/icons/trash-red.svg';
@@ -8,8 +16,8 @@ import PeopleIcon from 'assets/images/icons/Users.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import MoreIcon from 'assets/images/icons/more-white.svg';
 import ClockFilledIcon from 'assets/images/icons/clock-white-fill.svg';
-import AcceptIcon from 'assets/images/icons/accept.svg'
-import CloseCircleFillIcon from 'assets/images/icons/close-circle-fill.svg'
+import AcceptIcon from 'assets/images/icons/accept.svg';
+import CloseCircleFillIcon from 'assets/images/icons/close-circle-fill.svg';
 import {FlatList, Image, ImageBackground, Text, TouchableOpacity} from 'react-native';
 import {ScrollView, View} from 'react-native';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
@@ -26,13 +34,13 @@ import {useFocusEffect} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import {Event, EventData} from 'src/types/event';
 import FastImage from 'react-native-fast-image';
-import { getUsersListAccepted } from 'helpers/getUsersListAccepted';
+import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
   const {list} = route?.params;
-  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name, id} = list as EventData;
+  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name, id, isCancelled} = list as EventData;
 
   const [usersListData, setUsersListsData] = useState<any>(usersList);
   const [activeTab, setActiveTab] = useState(GUEST_LIST);
@@ -71,14 +79,16 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   );
 
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity activeOpacity={0.7} onPress={() => setIsVisibleCancelModal(true)}>
-          <TrashRed style={{marginHorizontal: 20, marginVertical: 10}} />
-        </TouchableOpacity>
-      ),
-    });
-  }, []);
+    if (!isCancelled) {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity activeOpacity={0.7} onPress={() => setIsVisibleCancelModal(true)}>
+            <TrashRed style={{marginHorizontal: 20, marginVertical: 10}} />
+          </TouchableOpacity>
+        ),
+      });
+    }
+  }, [isCancelled]);
 
   const checkIsFullGuestsFun = async () => {
     const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(id);
@@ -154,7 +164,8 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                             source={{uri: item?.userPhoto}}
                             style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
                             imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                            resizeMode="cover"></ImageBackground>
+                            resizeMode="cover"
+                          />
                           <View
                             style={{
                               borderWidth: 1,
@@ -230,11 +241,12 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <View>
-                        <ImageBackground
-                          source={{uri: item?.userPhoto}}
-                          style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
-                          imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                          resizeMode="cover"></ImageBackground>
+                          <ImageBackground
+                            source={{uri: item?.userPhoto}}
+                            style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
+                            imageStyle={{width: 50, height: 50, borderRadius: 200}}
+                            resizeMode="cover"
+                          />
                           <View
                             style={{
                               borderWidth: 1,
@@ -302,12 +314,13 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   renderItem={({item}) => (
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <View>
-                        <ImageBackground
-                          source={{uri: item?.userPhoto}}
-                          style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
-                          imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                          resizeMode="cover"></ImageBackground>
+                        <View>
+                          <ImageBackground
+                            source={{uri: item?.userPhoto}}
+                            style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
+                            imageStyle={{width: 50, height: 50, borderRadius: 200}}
+                            resizeMode="cover"
+                          />
                           <View
                             style={{
                               borderWidth: 1,
@@ -376,11 +389,12 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <View>
-                        <ImageBackground
-                          source={{uri: item?.userPhoto}}
-                          style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
-                          imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                          resizeMode="cover"></ImageBackground>
+                          <ImageBackground
+                            source={{uri: item?.userPhoto}}
+                            style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
+                            imageStyle={{width: 50, height: 50, borderRadius: 200}}
+                            resizeMode="cover"
+                          />
                           <View
                             style={{
                               borderWidth: 1,
@@ -426,13 +440,15 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                 />
               </View>
             )}
-            <Button
-              title="Edit event"
-              buttonStyle={{marginVertical: 34}}
-              onPress={() =>
-                navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})
-              }
-            />
+            {!isCancelled && (
+              <Button
+                title="Edit event"
+                buttonStyle={{marginVertical: 34}}
+                onPress={() =>
+                  navigation.navigate(commonStackPath, {screen: eventEditingPath, params: {isEditingItems: list, isEditing: true}})
+                }
+              />
+            )}
           </>
         );
       case EVENT_INFO:
@@ -509,14 +525,16 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                 }
               })}
             </View>
-            <TouchableOpacity
-              onPress={() => setIsVisibleCancelModal(true)}
-              activeOpacity={0.7}
-              style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%', paddingTop: 34}}
-              hitSlop={{bottom: 15}}>
-              <TrashRed />
-              <Text style={{color: lightRedColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 6}}>Cancel event</Text>
-            </TouchableOpacity>
+            {!isCancelled && (
+              <TouchableOpacity
+                onPress={() => setIsVisibleCancelModal(true)}
+                activeOpacity={0.7}
+                style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%', paddingTop: 34}}
+                hitSlop={{bottom: 15}}>
+                <TrashRed />
+                <Text style={{color: lightRedColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 6}}>Cancel event</Text>
+              </TouchableOpacity>
+            )}
           </View>
         );
     }
@@ -584,7 +602,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingTop: 20, paddingBottom: 50}} style={{flex: 1}}>
           {renderEventContent()}
         </ScrollView>
-        {activeTab === 'EVENT_INFO' && (
+        {activeTab === 'EVENT_INFO' && !isCancelled && (
           <Button
             title="Edit event"
             buttonStyle={{marginBottom: 28}}
