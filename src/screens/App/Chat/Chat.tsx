@@ -32,7 +32,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
 import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import FastImage from 'react-native-fast-image';
-import { getUsersListAccepted } from 'helpers/getUsersListAccepted';
+import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
 
 type ItemProps = {
   title: string;
@@ -229,7 +229,18 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     );
   };
 
-  const ItemEventsJoining = ({title, chats, girlInvitation, image, status, data, activeEvent, hostUid, usersList, newMessages}: ItemEventsJoiningProps) => {        
+  const ItemEventsJoining = ({
+    title,
+    chats,
+    girlInvitation,
+    image,
+    status,
+    data,
+    activeEvent,
+    hostUid,
+    usersList,
+    newMessages,
+  }: ItemEventsJoiningProps) => {
     const statusColor = handleCheckStatusStyles(status);
     return (
       <View style={styles.itemEventsJoining}>
@@ -308,8 +319,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               </View>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-             <ChatIcon width={18} height={18} style={{marginRight: 10}}/>
-             {!!newMessages && (
+              <ChatIcon width={18} height={18} style={{marginRight: 10}} />
+              {!!newMessages && (
                 <View style={styles.newMessage}>
                   <Text style={styles.textCountNewMessages}>{newMessages}</Text>
                 </View>
@@ -431,58 +442,60 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       guestSubscriber && guestSubscriber();
     };
   }, [activeEvent, loading]);
-  
+
   return (
     <View style={styles.container}>
-      {isHost && eventData && <View
-        style={{
-          paddingHorizontal: 16,
-          paddingVertical: 7,
-          borderWidth: 1,
-          borderColor: whiteColor,
-          borderRadius: 12,
-          width: '100%',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 18,
-        }}>
-        <View style={{flex: 1}}>
-          <Text
-            style={{
-              color: whiteColor,
-              fontFamily: Satoshi700,
-              fontSize: RFValue(18, 812),
-              textAlign: 'center',
-            }}>
-            Join Requests: {eventData?.requestsList?.length}
-          </Text>
-        </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <FastImage
-            source={{uri: eventData?.photos?.[0]?.image || ''}}
-            style={{width: 40, height: 40, borderRadius: 40, borderWidth: 1, borderColor: whiteColor}}
-          />
-          <View style={{alignItems: 'center', marginLeft: 12}}>
+      {isHost && eventData && (
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingVertical: 7,
+            borderWidth: 1,
+            borderColor: whiteColor,
+            borderRadius: 12,
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 18,
+          }}>
+          <View style={{flex: 1}}>
             <Text
               style={{
                 color: whiteColor,
                 fontFamily: Satoshi700,
-                fontSize: RFValue(26, 812),
+                fontSize: RFValue(18, 812),
+                textAlign: 'center',
               }}>
-              {getUsersListAccepted(eventData?.usersList)}/{eventData?.male + eventData?.female}
-            </Text>
-            <Text
-              style={{
-                color: whiteColor,
-                fontFamily: Satoshi500,
-                fontSize: RFValue(12, 812),
-              }}>
-              Guest List
+              Join Requests: {eventData?.requestsList?.length}
             </Text>
           </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <FastImage
+              source={{uri: eventData?.photos?.[0]?.image || ''}}
+              style={{width: 40, height: 40, borderRadius: 40, borderWidth: 1, borderColor: whiteColor}}
+            />
+            <View style={{alignItems: 'center', marginLeft: 12}}>
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi700,
+                  fontSize: RFValue(26, 812),
+                }}>
+                {getUsersListAccepted(eventData?.usersList)}/{eventData?.male + eventData?.female}
+              </Text>
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(12, 812),
+                }}>
+                Guest List
+              </Text>
+            </View>
+          </View>
         </View>
-      </View>}
+      )}
       {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
       <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
       {!loading ? (
@@ -491,7 +504,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             showsVerticalScrollIndicator={false}
             data={messages?.chats}
             ListEmptyComponent={() => (
-              <View style={{height: '100%', marginTop: eventData? screenHeight * 0.06: screenHeight * 0.14}}>
+              <View style={{height: '100%', marginTop: eventData ? screenHeight * 0.06 : screenHeight * 0.14}}>
                 <View style={{flex: 1, justifyContent: 'center'}}>
                   <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                     You don't have any chat
