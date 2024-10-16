@@ -29,8 +29,8 @@ interface Social {
 const VerifySocialProfile = () => {
   const [openedSocial, setOpenedSocial] = useState<Social | null>(null);
   const [socialNickname, setSocialNickname] = useState<any>({});
-  const [errorInput, setErrorInput] = useState<number[]>([]);  
-  
+  const [errorInput, setErrorInput] = useState<number[]>([]);
+
   const navigation = useAppNavigation();
   const [loading, setLoading] = useState<boolean>(false);
   const [isFocusInput, setIsFocusInput] = useState<boolean>(false);
@@ -38,7 +38,7 @@ const VerifySocialProfile = () => {
   const {onBoarding} = useContext(AuthContext);
 
   const handleSocialNicknameChange = (value: string, social: string) => {
-    setSocialNickname(prev => ({ ...prev, [social]: value.trim() }));
+    setSocialNickname(prev => ({...prev, [social]: value.trim()}));
     const socialIndex = socials.findIndex(s => s.name === social);
     if (errorInput.includes(socialIndex)) {
       setErrorInput(prevErrors => prevErrors.filter(index => index !== socialIndex));
@@ -208,19 +208,19 @@ const VerifySocialProfile = () => {
     }
   };
 
-  const checkErrors = async () => {    
-    if(!errorInput.length) {
+  const checkErrors = async (errorInput: any) => {
+    if (!errorInput.length) {
       await handleRegisterUser(onBoarding);
       navigation.navigate(pendingScreenPath as never);
     }
-  }
+  };
 
   const validateSocialMediaLink = (links: Record<string, string>) => {
     const errors: number[] = [];
+    const simpleUrlRegex = new RegExp('^https?://[\\w.-]+\\.[a-zA-Z]{2,}(/\\S*)?$', 'i');
+
     Object.entries(links).forEach(([key, value]) => {
-      const regex = new RegExp(`^https://www\\.${key}\\.com/[a-zA-Z0-9._-]+/?$`);
-      const regexOther = new RegExp(`^https://www\\.[a-zA-Z0-9.-]+\\.com/[a-zA-Z0-9._-]+/?$`);
-      if (!regex.test(value)) {
+      if (!simpleUrlRegex.test(value)) {
         switch (key) {
           case 'instagram':
             errors.push(0);
@@ -231,34 +231,29 @@ const VerifySocialProfile = () => {
           case 'facebook':
             errors.push(2);
             break;
-          default:
+          case 'other':
+            errors.push(3);
             break;
         }
       }
-      if (key === 'other' && !regexOther.test(value)) {
-        errors.push(3);
-      }
     });
     setErrorInput(errors);
-    checkErrors();
+    checkErrors(errors);
   };
-  
 
   const filterEmptySocialMediaLink = () => {
-    const filteredLinks = Object.fromEntries(
-      Object.entries(socialNickname).filter(([_, value]) => value.trim() !== "")
-    );
-    return filteredLinks
-  }
-
-  const handleNext = async () => {
-    const filterLink = filterEmptySocialMediaLink()
-    validateSocialMediaLink(filterLink)     
+    const filteredLinks = Object.fromEntries(Object.entries(socialNickname).filter(([_, value]) => value.trim() !== ''));
+    return filteredLinks;
   };
 
-  const renderItem = ({item}: {item: Social}) => {    
-    const isActive = openedSocial?.id === item.id;       
-    const isError = errorInput.includes(item.id)    
+  const handleNext = async () => {
+    const filterLink = filterEmptySocialMediaLink();
+    validateSocialMediaLink(filterLink);
+  };
+
+  const renderItem = ({item}: {item: Social}) => {
+    const isActive = openedSocial?.id === item.id;
+    const isError = errorInput.includes(item.id);
     return (
       <TouchableOpacity
         onPress={() => setOpenedSocial(item)}
@@ -270,7 +265,7 @@ const VerifySocialProfile = () => {
           paddingBottom: isActive ? 0 : 16,
           borderWidth: 1,
           borderStyle: 'solid',
-          borderColor: isError? errorColor: isActive ? whiteColor : lightGray2Color,
+          borderColor: isError ? errorColor : isActive ? whiteColor : lightGray2Color,
         }}>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(17, 812)}}>{item.title}</Text>
@@ -279,14 +274,15 @@ const VerifySocialProfile = () => {
         {isActive ? (
           <View style={{marginTop: 16}}>
             <Input
+              placeholder={`Enter a link to your ${item.title} profile`}
               onPressFocus={() => setIsFocusInput(true)}
               onBlur={() => setIsFocusInput(false)}
               value={socialNickname[item.name]}
               onChange={val => handleSocialNicknameChange(val, item.name)}
               isError={isError}
-              errorText='Incorrect link'
+              errorText="Incorrect link"
               inputStyle={{borderColor: 'red'}}
-              containerInnerStyle={{borderWidth: isError? 1: 0, borderColor: isError? errorColor: ''}}
+              containerInnerStyle={{borderWidth: isError ? 1 : 0, borderColor: isError ? errorColor : ''}}
             />
           </View>
         ) : null}
@@ -339,7 +335,12 @@ const VerifySocialProfile = () => {
                 renderItem={renderItem}
               />
               <View style={{marginVertical: 4}}>
-                <Button title="Continue" loading={loading} disabled={!socialNickname[openedSocial?.name]?.length} onPress={handleNext} />
+                <Button
+                  title="Continue"
+                  loading={loading}
+                  disabled={!socialNickname[openedSocial?.name]?.length || errorInput.length}
+                  onPress={handleNext}
+                />
               </View>
             </View>
           </TouchableWithoutFeedback>

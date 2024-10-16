@@ -1,8 +1,10 @@
+import {ACCEPTED_STATUS} from 'constants/common';
+
 interface usersListI {
-    status: string
+  status: string;
 }
 
 export const getUsersListAccepted = (usersList: usersListI[]) => {
-    const filter = usersList?.filter(item => item.status === 'invite_match');
-    return filter?.length? filter.length: 0;
-  };
+  const filter = usersList?.filter(item => item.status === ACCEPTED_STATUS);
+  return filter?.length ? filter.length : 0;
+};
