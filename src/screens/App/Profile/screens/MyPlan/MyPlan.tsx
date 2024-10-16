@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {FC, useEffect, useState} from 'react';
 import {Tooltip, TooltipProps} from '@rneui/themed';
@@ -17,16 +17,50 @@ import CheckIcon from 'assets/images/icons/check.svg';
 import ArrowRightIcon from 'assets/images/icons/arrow-right-balck.svg';
 import ArrowRightWhiteIcon from 'assets/images/icons/arrow-right.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
-import FlashIcon from 'assets/images/icons/flash-filled.svg';
+import FlashIcon from 'assets/images/icons/flash-white.svg';
 import CloseIcon from 'assets/images/icons/close-circle.svg';
-import Calendar from 'assets/images/icons/calendar.svg';
-import Unlimited from 'assets/images/icons/unlimited.svg';
-import IO from 'assets/images/icons/io.svg';
-import Flash from 'assets/images/icons/flash.svg';
-import Eye from 'assets/images/icons/eye.svg';
+import CalendarIcon from 'assets/images/icons/calendar-white.svg';
+import UnlimitedIcon from 'assets/images/icons/unlimited-new.svg';
+import IOIcon from 'assets/images/icons/io.svg';
+import EyeIcon from 'assets/images/icons/eye.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import Loader from '../../../../../components/Modal/ModalLoader/Loader';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
+import { SvgProps } from 'react-native-svg';
+
+interface WhatGetItem {
+  title: string;
+  description: string;
+  icon: React.FC<SvgProps>;
+}
+
+const whatGet: WhatGetItem[] = [
+  {
+    title: 'Unlimited Events Creation',
+    description: 'Share Unlimited VIP Tables and Events to Invite.',
+    icon: CalendarIcon,
+  },
+  {
+    title: 'Unlimited Invitations',
+    description: 'Send Unlimited Invitations and Create Your Guest List',
+    icon: UnlimitedIcon,
+  },
+  {
+    title: 'Unlimited Guest Connections',
+    description: 'Enjoy endless connections to build your guests lists.',
+    icon: IOIcon,
+  },
+  {
+    title: '5 Super invites a week',
+    description: 'Send 5 super invites each week.',
+    icon: FlashIcon,
+  },
+  {
+    title: 'See who wants to join you',
+    description: 'View interested guests who want to join you in real-time.',
+    icon: EyeIcon,
+  },
+];
 
 const ControlledTooltip: FC<TooltipProps | any> = props => {
   const [open, setOpen] = useState(false);
@@ -216,12 +250,13 @@ const MyPlan = () => {
         <Text style={styles.textWhatYouGet}>What you {userInfo?.accountPremium ? 'have' : 'get'}:</Text>
         {!userInfo?.accountPremium && <Text style={styles.textPremium}>Premium</Text>}
       </View>
-      <View style={styles.itemInTheList}>
+      {whatGet.map(item => (
+        <View key={item.title} style={styles.itemInTheList}>
         <View style={styles.rowTextAndCheckCircleIcon}>
           <View style={styles.wrapperIcon}>
-            <Calendar />
+          <item.icon />
           </View>
-          <Text style={styles.textFromTheList}>Unlimited Events Creation</Text>
+          <Text style={styles.textFromTheList}>{item.title}</Text>
           <ControlledTooltip
             width={300}
             height={100}
@@ -230,10 +265,10 @@ const MyPlan = () => {
             popover={
               <View style={styles.tooltipWrapper}>
                 <View style={styles.rowTitleTooltip}>
-                  <Text style={styles.textUnlimitedEventsCreation}>Unlimited Events Creation</Text>
+                  <Text style={styles.textUnlimitedEventsCreation}>{item.title}</Text>
                   <CloseIcon />
                 </View>
-                <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
+                <Text style={styles.textHostAccessIsLimited}>{item.description}</Text>
               </View>
             }>
             <InfoCircleIcon />
@@ -241,131 +276,7 @@ const MyPlan = () => {
         </View>
         <CheckIcon />
       </View>
-      <View style={styles.itemInTheList}>
-        <View style={styles.rowTextAndCheckCircleIcon}>
-          <View style={styles.wrapperIcon}>
-            <Unlimited />
-          </View>
-          <Text style={styles.textFromTheList}>Unlimited Invitations</Text>
-          <ControlledTooltip
-            width={300}
-            height={100}
-            backgroundColor={lightGray5Color}
-            withOverlay={false}
-            popover={
-              <View style={styles.tooltipWrapper}>
-                <View style={styles.rowTitleTooltip}>
-                  <Text style={styles.textUnlimitedEventsCreation}>Unlimited Events Creation</Text>
-                  <CloseIcon />
-                </View>
-                <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
-              </View>
-            }>
-            <InfoCircleIcon />
-          </ControlledTooltip>
-        </View>
-        <CheckIcon />
-      </View>
-      <View style={styles.itemInTheList}>
-        <View style={styles.rowTextAndCheckCircleIcon}>
-          <View style={styles.wrapperIcon}>
-            <IO />
-          </View>
-          <Text style={styles.textFromTheList}>Unlimited Likes</Text>
-          <ControlledTooltip
-            width={300}
-            height={100}
-            backgroundColor={lightGray5Color}
-            withOverlay={false}
-            popover={
-              <View style={styles.tooltipWrapper}>
-                <View style={styles.rowTitleTooltip}>
-                  <Text style={styles.textUnlimitedEventsCreation}>Unlimited Events Creation</Text>
-                  <CloseIcon />
-                </View>
-                <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
-              </View>
-            }>
-            <InfoCircleIcon />
-          </ControlledTooltip>
-        </View>
-        <CheckIcon />
-      </View>
-      <View style={styles.itemInTheList}>
-        <View style={styles.rowTextAndCheckCircleIcon}>
-          <View style={styles.wrapperIcon}>
-            <Flash width={20} height={20} />
-          </View>
-          <Text style={styles.textFromTheList}>5 Super invites a week</Text>
-          <ControlledTooltip
-            width={300}
-            height={100}
-            backgroundColor={lightGray5Color}
-            withOverlay={false}
-            popover={
-              <View style={styles.tooltipWrapper}>
-                <View style={styles.rowTitleTooltip}>
-                  <Text style={styles.textUnlimitedEventsCreation}>Unlimited Events Creation</Text>
-                  <CloseIcon />
-                </View>
-                <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
-              </View>
-            }>
-            <InfoCircleIcon />
-          </ControlledTooltip>
-        </View>
-        <CheckIcon />
-      </View>
-      <View style={styles.itemInTheList}>
-        <View style={styles.rowTextAndCheckCircleIcon}>
-          <View style={styles.wrapperIcon}>
-            <Unlimited />
-          </View>
-          <Text style={styles.textFromTheList}>Join events</Text>
-          <ControlledTooltip
-            width={300}
-            height={100}
-            backgroundColor={lightGray5Color}
-            withOverlay={false}
-            popover={
-              <View style={styles.tooltipWrapper}>
-                <View style={styles.rowTitleTooltip}>
-                  <Text style={styles.textUnlimitedEventsCreation}>Unlimited Events Creation</Text>
-                  <CloseIcon />
-                </View>
-                <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
-              </View>
-            }>
-            <InfoCircleIcon />
-          </ControlledTooltip>
-        </View>
-        <CheckIcon />
-      </View>
-      <View style={styles.itemInTheList}>
-        <View style={styles.rowTextAndCheckCircleIcon}>
-          <View style={styles.wrapperIcon}>
-            <Eye />
-          </View>
-          <Text style={styles.textFromTheList}>See who wants to join you</Text>
-          <ControlledTooltip
-            width={300}
-            height={100}
-            backgroundColor={lightGray5Color}
-            withOverlay={false}
-            popover={
-              <View style={styles.tooltipWrapper}>
-                <View style={styles.rowTitleTooltip}>
-                  <Text style={styles.textUnlimitedEventsCreation}>Unlimited Events Creation</Text>
-                  <CloseIcon />
-                </View>
-                <Text style={styles.textHostAccessIsLimited}>Host access is limited. Get premium to start inviting.</Text>
-              </View>
-            }>
-            <InfoCircleIcon />
-          </ControlledTooltip>
-        </View>
-        <CheckIcon />
-      </View>
+      ))}
     </View>
   );
 };
