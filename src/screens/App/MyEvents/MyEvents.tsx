@@ -31,6 +31,7 @@ import {
   ACCEPTED_STATUS,
   ALL,
   APPROVED_STATUS,
+  CANCEL_STATUS,
   INVITE_MATCH_STATUS,
   NOT_ACCEPTED_STATUS,
   screenHeight,
@@ -479,6 +480,272 @@ const MyEvents: FC<any> = ({navigation}) => {
     );
   };
 
+  const changeStatusGuestUsersList = async (status: string, id: string, uidHost: string, placeName: string, date: string, hostPhoto: string) => {
+    const eventQuerySnapshot = await firestore().collection('Events').doc(id).get();
+    const eventDataList = eventQuerySnapshot.data();
+    if (!eventDataList?.usersList.length) {
+      return;
+    }
+
+    try {
+      const updatedUsersList = eventDataList?.usersList?.map(userItem => {
+        if (userItem.uid === user?.uid) {
+          return {
+
+            ...userItem,
+            status,
+          };
+        }
+        return userItem;
+      });
+      await firestore().collection('Events').doc(id).update({
+        usersList: updatedUsersList,
+      });
+      switch (status) {
+        case ACCEPTED_STATUS:
+          showToast('inviteMatch', `See you at ${date}`, 'You accept to this event!', {
+            ownerPhoto: hostPhoto,
+            status: 'Accept'.toUpperCase(),
+          });
+          await sendNotification(
+            uidHost,
+            `${user?.name} accepted your invitation`,
+            'Invitation Accepted!',
+            'Accepted',
+            'Accepted'.toUpperCase(),
+            user,
+          );
+          break;
+        case NOT_ACCEPTED_STATUS:
+          showToast('inviteMatch', `You rejected ${placeName} event`, 'Not now', {
+            ownerPhoto: hostPhoto,
+            status: 'REJECTED'.toUpperCase(),
+          });
+          await sendNotification(uidHost, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+          break;
+        case CANCEL_STATUS:
+          showToast('inviteMatch', `You rejected ${placeName} event`, 'Not now', {
+            ownerPhoto: hostPhoto,
+            status: 'REJECTED'.toUpperCase(),
+          });
+            await sendNotification(
+              uidHost,
+              `${user?.name} rejected your invitation`,
+              'Not now.',
+              'Rejected',
+              'Rejected'.toUpperCase(),
+              user,
+            );
+        default:
+          break;
+      }
+    } catch (e) {
+      console.log('error update status guest', e);
+    }
+  }
+
+  const customButtonsGuest = (id: string, usersList: any[], date: string, uidHost: string, placeName: string, hostPhoto: string) => {
+
+    const findUser = usersList.find(item => item.id === user?.id)
+    const status = findUser.status
+
+    return (
+      <>
+        {status === ACCEPTED_STATUS? 
+        <TouchableOpacity
+        onPress={() => changeStatusGuestUsersList(CANCEL_STATUS, id, uidHost, placeName, date, hostPhoto)}
+        style={{
+          height: 65,
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 18,
+          backgroundColor: lightGray20Color,
+          marginTop: 25,
+        }}>
+        <Text
+          style={{
+            color: blackColor,
+            fontFamily: Satoshi700,
+            fontSize: RFValue(16, 812),
+          }}>
+          Cancel attending
+        </Text>
+      </TouchableOpacity>:
+      <>
+      <TouchableOpacity
+        onPress={() => changeStatusGuestUsersList(ACCEPTED_STATUS, id, uidHost, placeName, date, hostPhoto)}
+        style={{
+          height: 65,
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 18,
+          backgroundColor: blackColor,
+          marginTop: 25,
+        }}>
+        <Text
+          style={{
+            color: whiteColor,
+            fontFamily: Satoshi700,
+            fontSize: RFValue(16, 812),
+          }}>
+           Accept invitation
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => changeStatusGuestUsersList(NOT_ACCEPTED_STATUS, id, uidHost, placeName, date, hostPhoto)}
+        style={{
+          height: 65,
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 18,
+          backgroundColor: lightGray20Color,
+          marginTop: 25,
+        }}>
+        <Text
+          style={{
+            color: blackColor,
+            fontFamily: Satoshi700,
+            fontSize: RFValue(16, 812),
+          }}>
+          Reject invitation
+        </Text>
+      </TouchableOpacity>
+      </>
+      }
+      </>
+    )
+  }
+
+  const UserInfoTop = ({ showTotalEvents = true }: { showTotalEvents?: boolean}) => {
+    return (
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <View style={{flexDirection: 'row'}}>
+        <View style={{alignSelf: 'flex-start'}}>
+          <FastImage style={{width: 50, height: 50, borderRadius: 50}} source={{uri: userInfo?.photos?.[0]?.image || ''}} />
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 2,
+              right: 0,
+              width: 12,
+              height: 12,
+              borderRadius: 12,
+              borderWidth: 1.25,
+              borderColor: blackColor,
+              backgroundColor: lightGreenColor,
+            }}
+          />
+        </View>
+        <View style={{marginLeft: 10, justifyContent: 'center'}}>
+          <View style={{flexDirection: 'row'}}>
+            <View
+              style={{
+                backgroundColor: blackColor,
+                borderRadius: 5,
+                paddingHorizontal: 12,
+                paddingVertical: 2,
+                alignSelf: 'flex-start',
+                borderWidth: 1,
+                borderColor: whiteColor,
+              }}>
+              {userInfo?.accountType === 'guest' && (
+                <Text style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                  Guest
+                </Text>
+              )}
+              {userInfo?.accountType === 'host' &&(
+                <Text style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                  Host
+                </Text>
+              )}
+            </View>
+            {(userInfo?.accountPremium || userInfo?.accountType === 'guest') && (
+              <LinearGradient
+                colors={['#977B4A', '#E5D291', '#A28453']}
+                style={{
+                  marginLeft: 6,
+                  alignSelf: 'flex-start',
+                  borderRadius: 4,
+                  paddingHorizontal: 12,
+                  paddingVertical: 2,
+                  backgroundColor: blackColor,
+                }}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0}}>
+                {
+                  <Text
+                    style={{
+                      color: blackColor,
+                      fontSize: RFValue(10, 812),
+                      fontFamily: Satoshi700,
+                    }}>
+                    Premium
+                  </Text>
+                }
+              </LinearGradient>
+            )}
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+            }}>
+            <Text
+              style={{
+                color: whiteColor,
+                fontFamily: Satoshi700,
+                fontSize: RFValue(16, 812),
+                marginTop: 4,
+              }}>
+              {userInfo?.name}
+              {userInfo?.showAge ? <Text>,</Text> : null}
+            </Text>
+            {userInfo?.showAge && (
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi700,
+                  fontSize: RFValue(13, 812),
+                  marginTop: 5,
+                }}>
+                {' '}
+                {calculateAge(userInfo?.date)}
+              </Text>
+            )}
+            <View style={{marginLeft: 8}}>{userInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} />}</View>
+          </View>
+        </View>
+      </View>
+      {showTotalEvents && <View
+        style={{
+          alignItems: 'center',
+        }}>
+        <Text
+          style={{
+            color: whiteColor,
+            fontFamily: Satoshi700,
+            fontSize: RFValue(26, 812),
+          }}>
+          {userInfo?.eventsList?.length? userInfo?.eventsList?.length : eventsJoiningData.length}
+        </Text>
+        <Text
+          style={{
+            color: whiteColor,
+            fontFamily: Satoshi500,
+            fontSize: RFValue(12, 812),
+          }}>
+          Total events
+        </Text>
+      </View>}
+      </View>
+    );
+  };
+  
+
   return (
     <>
       <View style={styles.container}>
@@ -521,243 +788,20 @@ const MyEvents: FC<any> = ({navigation}) => {
             </TouchableOpacity>
           </View>
         ) : (
-          <View style={{marginVertical: screenHeight / 50, height: screenHeight / 9, flexDirection: 'row'}}>
-            <TouchableOpacity
-              style={styles.eventButton}
-              activeOpacity={0.7}
-              onPress={() => {
-                if (!user?.accountConfirmed) {
-                  return;
-                }
-                setActiveEventDate(ALL);
-              }}>
-              <View
-                style={{
-                  borderRadius: 50,
-                  borderWidth: 1,
-                  borderColor: activeEventDate === ALL ? whiteColor : lightGray5Color,
-                  borderStyle: 'solid',
-                  padding: 3,
-                  width: 63,
-                  height: 63,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <CalendarCheckIcon width={26} height={26} />
-              </View>
-              <Text
-                style={{
-                  marginTop: screenHeight / 190,
-                  color: whiteColor,
-                  fontFamily: Satoshi500,
-                  fontSize: RFValue(13, 812),
-                  textAlign: 'center',
-                }}>
-                All
-              </Text>
+          <TouchableOpacity
+              style={[
+                styles.buttonMyEvents,
+                {alignItems: 'center', marginVertical: 20, backgroundColor: activeTab === MY_EVENTS ? whiteColor : lightGray2Color},
+              ]}
+              onPress={() => setActiveTab(MY_EVENTS)}>
+              <Text style={[styles.textMyEvents, {color: activeTab === MY_EVENTS ? blackColor : whiteColor}]}>My events</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.eventButton}
-              activeOpacity={0.7}
-              onPress={() => {
-                if (!user?.accountConfirmed) {
-                  return;
-                }
-                setActiveEventDate(THIS_WEEKEND);
-              }}>
-              <View
-                style={{
-                  borderRadius: 50,
-                  borderWidth: 1,
-                  borderColor: activeEventDate === THIS_WEEKEND ? whiteColor : lightGray5Color,
-                  borderStyle: 'solid',
-                  padding: 3,
-                  width: 63,
-                  height: 63,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <WIcon />
-              </View>
-              <Text
-                style={{
-                  marginTop: screenHeight / 190,
-                  color: whiteColor,
-                  fontFamily: Satoshi500,
-                  fontSize: RFValue(13, 812),
-                  textAlign: 'center',
-                }}>
-                This weekend
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.eventButton}
-              activeOpacity={0.7}
-              onPress={() => {
-                if (!user?.accountConfirmed) {
-                  return;
-                }
-                setActiveEventDate(THIS_MONTH);
-              }}>
-              <View
-                style={{
-                  borderRadius: 50,
-                  borderWidth: 1,
-                  borderColor: activeEventDate === THIS_MONTH ? whiteColor : lightGray5Color,
-                  borderStyle: 'solid',
-                  padding: 3,
-                  width: 63,
-                  height: 63,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <MIcon />
-              </View>
-              <Text
-                style={{
-                  marginTop: screenHeight / 190,
-                  color: whiteColor,
-                  fontFamily: Satoshi500,
-                  fontSize: RFValue(13, 812),
-                  textAlign: 'center',
-                }}>
-                This month
-              </Text>
-            </TouchableOpacity>
-          </View>
         )}
         <View style={{flex: 1, height: '100%'}}>
           {isHost ? (
             activeTab === MY_EVENTS ? (
               <>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                  <View style={{flexDirection: 'row'}}>
-                    <View style={{alignSelf: 'flex-start'}}>
-                      <FastImage style={{width: 50, height: 50, borderRadius: 50}} source={{uri: userInfo?.photos?.[0]?.image || ''}} />
-                      <View
-                        style={{
-                          position: 'absolute',
-                          bottom: 2,
-                          right: 0,
-                          width: 12,
-                          height: 12,
-                          borderRadius: 12,
-                          borderWidth: 1.25,
-                          borderColor: blackColor,
-                          backgroundColor: lightGreenColor,
-                        }}
-                      />
-                    </View>
-                    <View style={{marginLeft: 10, justifyContent: 'center'}}>
-                      <View style={{flexDirection: 'row'}}>
-                        <View
-                          style={{
-                            backgroundColor: blackColor,
-                            borderRadius: 5,
-                            paddingHorizontal: 12,
-                            paddingVertical: 2,
-                            alignSelf: 'flex-start',
-                            borderWidth: 1,
-                            borderColor: whiteColor,
-                          }}>
-                          {userInfo?.accountType === 'guest' && (
-                            <Text
-                              style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
-                              Guest
-                            </Text>
-                          )}
-                          {userInfo?.accountType === 'host' && (
-                            <Text
-                              style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
-                              Host
-                            </Text>
-                          )}
-                        </View>
-                        {(userInfo?.accountPremium || userInfo?.accountType === 'guest') && (
-                          <LinearGradient
-                            colors={['#977B4A', '#E5D291', '#A28453']}
-                            style={{
-                              marginLeft: 6,
-                              alignSelf: 'flex-start',
-                              borderRadius: 4,
-                              paddingHorizontal: 12,
-                              paddingVertical: 2,
-                              backgroundColor: blackColor,
-                            }}
-                            start={{x: 0, y: 0}}
-                            end={{x: 1, y: 0}}>
-                            {
-                              <Text
-                                style={{
-                                  color: blackColor,
-                                  fontSize: RFValue(10, 812),
-                                  fontFamily: Satoshi700,
-                                }}>
-                                Premium
-                              </Text>
-                            }
-                          </LinearGradient>
-                        )}
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'flex-start',
-                        }}>
-                        <Text
-                          style={{
-                            color: whiteColor,
-                            fontFamily: Satoshi700,
-                            fontSize: RFValue(16, 812),
-                            marginTop: 4,
-                          }}>
-                          {userInfo?.name}
-                          {userInfo?.showAge ? <Text>,</Text> : null}
-                        </Text>
-                        {userInfo?.showAge && (
-                          <Text
-                            style={{
-                              color: whiteColor,
-                              fontFamily: Satoshi700,
-                              fontSize: RFValue(13, 812),
-                              marginTop: 5,
-                            }}>
-                            {' '}
-                            {calculateAge(userInfo?.date)}
-                          </Text>
-                        )}
-                        <View style={{marginLeft: 8}}>{userInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} />}</View>
-                      </View>
-                    </View>
-                  </View>
-                  <View
-                    style={{
-                      alignItems: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        color: whiteColor,
-                        fontFamily: Satoshi700,
-                        fontSize: RFValue(26, 812),
-                      }}>
-                      {userInfo?.eventsList?.length}
-                    </Text>
-                    <Text
-                      style={{
-                        color: whiteColor,
-                        fontFamily: Satoshi500,
-                        fontSize: RFValue(12, 812),
-                      }}>
-                      Total events
-                    </Text>
-                  </View>
-                </View>
+                {<UserInfoTop showTotalEvents={true}/>}
                 <FlatList
                   showsVerticalScrollIndicator={false}
                   style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
@@ -854,6 +898,7 @@ const MyEvents: FC<any> = ({navigation}) => {
             )
           ) : (
             <View style={{flex: 1}}>
+              {<UserInfoTop showTotalEvents={true}/>}
               <FlatList
                 showsVerticalScrollIndicator={false}
                 data={eventsJoiningData}
@@ -871,32 +916,27 @@ const MyEvents: FC<any> = ({navigation}) => {
                 )}
                 ItemSeparatorComponent={() => <View style={{height: 10}} />}
                 renderItem={({item}) => (
-                  <JoiningEventsCard
-                    uid={item?.uid}
-                    activeState={item.statusEvent}
-                    allPeople={item?.female + item?.femaleFriend + item?.male + item?.maleFriend}
-                    date={item.date}
-                    oldName={item.oldName}
-                    oldHour={item.oldHour}
-                    dateNewViewed={item.dateNewViewed}
-                    nameNewViewed={item.nameNewViewed}
-                    hourNewViewed={item.hourNewViewed}
-                    hour={item?.hour}
-                    placeName={item?.placeName}
-                    list={item}
-                    image={item?.photos[0]?.image}
-                    textCityName={item.address}
-                    estimeTime={item.hour}
-                    numberOfGirlsInvited={item?.female + item?.femaleFriend}
-                    host={{name: item?.name, image: item?.hostImage, hostUid: item?.uid}}
-                    joinedPeopleCount={item?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length}
-                    status={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status}
-                    isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === ACCEPTED_STATUS}
-                    handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
-                    handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
-                    handleAcceptInvitation={handleAcceptInvitation}
-                    handleGetEventsIJoining={handleGetEventsIJoining}
-                  />
+                  <MyEventsCard
+                      imageBg={item?.photos}
+                      list={item}
+                      statusEvent={item?.statusEvent}
+                      eventReviewed={item?.eventReviewed}
+                      allPeople={item?.female + item?.male}
+                      date={item?.date}
+                      textCityName={item?.name}
+                      placeName={item?.placeName}
+                      estimeTime={item?.hour}
+                      numberOfGirlsInvited={item?.female}
+                      placeName={item?.placeName}
+                      invitingPeople={item?.usersList?.filter(i => i?.status !== NOT_ACCEPTED_STATUS)}
+                      accountConfirmed={user?.accountConfirmed}
+                      findAcceptedGuest={item?.usersList?.filter(item => item.status === INVITE_MATCH_STATUS)}
+                      totalRequestsGuests={item?.requestsList?.length}
+                      item={item}
+                      showGuestList={false}
+                      customButton={customButtonsGuest(item?.id, item?.usersList, item?.date, item?.uid, item?.placeName, item?.hostImage)}
+                      showInfoTop={true}
+                    />
                 )}
               />
             </View>

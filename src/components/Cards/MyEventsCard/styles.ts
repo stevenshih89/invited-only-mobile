@@ -13,10 +13,10 @@ const useStyles = () =>
       backgroundColor: whiteColor
     },
     imageBackground: {
-      height: 185,
+      height: screenHeight * 0.22,
       borderRadius: 20,
       margin: 9,
-      marginBottom: 0
+      marginBottom: 0,
     },
     linearGradientCard: {
       height: '100%',
