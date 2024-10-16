@@ -121,13 +121,13 @@ const EnterBirthday: FC = (): JSX.Element => {
                   style={{
                     width: '100%',
                     marginBottom: screenHeight / 26,
-                    marginTop: screenHeight / 14,
+                    marginTop: screenHeight / 11.5,
                   }}>
                   <Text
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi500,
-                      fontSize: RFValue(38, 812),
+                      fontSize: RFValue(48, 932),
                       marginBottom: 18,
                     }}>
                     Your birthday
@@ -136,14 +136,14 @@ const EnterBirthday: FC = (): JSX.Element => {
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi400,
-                      fontSize: RFValue(16, 812),
+                      fontSize: RFValue(18, 932),
                     }}>
                     Add your birthday. You can change it later.
                   </Text>
                 </View>
                 <View style={{width: '100%', flexDirection: 'row'}}>
                   <View style={{flex: 1, marginRight: 6}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 812)}}>Month</Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 932)}}>Month</Text>
                     <MaskInput
                       style={{
                         color: whiteColor,
@@ -164,7 +164,7 @@ const EnterBirthday: FC = (): JSX.Element => {
                     />
                   </View>
                   <View style={{flex: 1, marginHorizontal: 6}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 812)}}>Day</Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 932)}}>Day</Text>
                     <MaskInput
                       style={{
                         color: whiteColor,
@@ -186,7 +186,7 @@ const EnterBirthday: FC = (): JSX.Element => {
                     />
                   </View>
                   <View style={{flex: 1, marginLeft: 6}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 812)}}>Year</Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 932)}}>Year</Text>
                     <MaskInput
                       style={{
                         color: whiteColor,
@@ -215,7 +215,7 @@ const EnterBirthday: FC = (): JSX.Element => {
                     justifyContent: 'space-between',
                     marginTop: screenHeight / 26,
                   }}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>Show my age on my profile</Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 932)}}>Show my age on my profile</Text>
                   <Switch
                     trackColor={{false: grayColor, true: toggleColor}}
                     thumbTintColor={whiteColor}

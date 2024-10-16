@@ -25,7 +25,7 @@ import {
   transparentWhite30Color,
   whiteColor,
 } from 'constants/colors';
-import {Satoshi400, Satoshi700} from 'constants/fonts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -186,13 +186,13 @@ const AddPhotos: FC = (): JSX.Element => {
                   style={{
                     width: '100%',
                     marginBottom: screenHeight / 28,
-                    marginTop: screenHeight / 14,
+                    marginTop: screenHeight / 11.5,
                   }}>
                   <Text
                     style={{
                       color: whiteColor,
-                      fontFamily: Satoshi400,
-                      fontSize: RFValue(34, 812),
+                      fontFamily: Satoshi500,
+                      fontSize: RFValue(48, 932),
                       marginBottom: 18,
                     }}>
                     My photos
@@ -201,7 +201,7 @@ const AddPhotos: FC = (): JSX.Element => {
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi400,
-                      fontSize: RFValue(16, 812),
+                      fontSize: RFValue(18, 932),
                     }}>
                     Add your first photos. You can change these and add more later.
                   </Text>
@@ -242,7 +242,7 @@ const AddPhotos: FC = (): JSX.Element => {
                               paddingVertical: 5,
                               marginBottom: 10,
                             }}>
-                            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(12, 812), color: whiteColor}}>Main</Text>
+                            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(12, 932), color: whiteColor}}>Main</Text>
                           </View>
                         </ImageBackground>
                       </View>
@@ -271,7 +271,7 @@ const AddPhotos: FC = (): JSX.Element => {
                             paddingVertical: 5,
                             marginBottom: 10,
                           }}>
-                          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(12, 812), color: whiteColor}}>Main</Text>
+                          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(12, 932), color: whiteColor}}>Main</Text>
                         </View>
                       </TouchableOpacity>
                     )}

@@ -4,7 +4,16 @@ import LinearGradient from 'react-native-linear-gradient';
 
 //import components
 import useStyles from 'components/TouchingSlider/styles.ts';
-import {black4Color, blackColor, gray1Color, grayColor, lightGreenColor, transparent60Color, transparentWhite56Color, whiteColor} from 'constants/colors.ts';
+import {
+  black4Color,
+  blackColor,
+  gray1Color,
+  grayColor,
+  lightGreenColor,
+  transparent60Color,
+  transparentWhite56Color,
+  whiteColor,
+} from 'constants/colors.ts';
 import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, invitationCodePath, superInvitePayPath} from 'constants/pathLocations';
@@ -33,8 +42,8 @@ import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin.tsx';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat.ts';
-import { getUsersListAccepted } from 'helpers/getUsersListAccepted.ts';
-import { useScrollPosition } from 'src/store/scrollPosition/index.ts';
+import {getUsersListAccepted} from 'helpers/getUsersListAccepted.ts';
+import {useScrollPosition} from 'src/store/scrollPosition/index.ts';
 
 interface Photo {
   url: string;
@@ -168,7 +177,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
     navigation.navigate(commonStackPath, {screen: invitationCodePath});
   };
 
-  const handleNext = (): void => {        
+  const handleNext = (): void => {
     if (active === numberPhotos - 1) {
       return setActive(0);
     } else {
@@ -218,7 +227,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       showToast('inviteMatch', "You don't have Super Joins", 'Super Join');
     }
   };
-    
+
   return (
     // @ts-ignore
     <FastImage
@@ -234,7 +243,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
         priority: FastImage.priority.normal,
       }}
       resizeMode={FastImage.resizeMode.cover}>
-        <LinearGradient
+      <LinearGradient
         colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
         style={{
           position: 'absolute',
@@ -245,66 +254,73 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           zIndex: 1,
         }}
       />
-      <View style={{
-        height:90, 
-        width: 5, 
-        backgroundColor: transparentWhite56Color, 
-        borderRadius: 35,
-        position: 'absolute',
-        right: 16,
-        top: 180,
-        padding: 1.25,
+      <View
+        style={{
+          height: 90,
+          width: 5,
+          backgroundColor: transparentWhite56Color,
+          borderRadius: 35,
+          position: 'absolute',
+          right: 16,
+          top: 180,
+          padding: 1.25,
         }}>
-          <View style={{
+        <View
+          style={{
             height: 45,
             width: 2.5,
             backgroundColor: whiteColor,
             borderRadius: 35,
-            transform: [{translateY: scrollPosition > 0 && scrollPosition < 270? scrollPosition / 7: 0}]
+            transform: [{translateY: scrollPosition > 0 && scrollPosition < 270 ? scrollPosition / 7 : 0}],
+          }}
+        />
+      </View>
+      {accountType === 'guest' && (
+        <TouchableOpacity
+          onPress={() => handleAutoSwipeLeft()}
+          style={{
+            width: 50,
+            height: 50,
+            backgroundColor: transparent60Color,
+            borderRadius: 50,
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'absolute',
+            right: 16,
+            top: 16,
+            zIndex: 5000,
           }}>
-
-          </View>
-        </View>
-        {accountType === 'guest' && <TouchableOpacity
-            onPress={() => handleAutoSwipeLeft()}
-            style={{
-              width: 50,
-              height: 50,
-              backgroundColor: transparent60Color,
-              borderRadius: 50,
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'absolute',
-              right: 16,
-              top: 16,
-              zIndex: 5000
-            }}>
-            <CloseIcon width={27} height={27} />
-          </TouchableOpacity>}
-      {accountType === 'host' && <TouchableOpacity
-            onPress={() => handleAutoSwipeLeft()}
-            style={{
-              width: 50,
-              height: 50,
-              backgroundColor: transparent60Color,
-              borderRadius: 50,
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'absolute',
-              right: 16, 
-              top: 46,
-              zIndex: 1000
-            }}>
-            <CloseIcon width={27} height={27} />
-          </TouchableOpacity>}
+          <CloseIcon width={27} height={27} />
+        </TouchableOpacity>
+      )}
+      {accountType === 'host' && (
+        <TouchableOpacity
+          onPress={() => handleAutoSwipeLeft()}
+          style={{
+            width: 50,
+            height: 50,
+            backgroundColor: transparent60Color,
+            borderRadius: 50,
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'absolute',
+            right: 16,
+            top: 46,
+            zIndex: 1000,
+          }}>
+          <CloseIcon width={27} height={27} />
+        </TouchableOpacity>
+      )}
       <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={eventPhotos ? eventPhotos[0].image : ''} />
-      {accountType === 'host' && <View style={styles.wrapperBar}>
+      {accountType === 'host' && (
+        <View style={styles.wrapperBar}>
           {numberPhotos > 1
             ? [...Array(numberPhotos)].map((_, index) => (
                 <View key={index} style={[styles.bar, {backgroundColor: index === active ? whiteColor : gray1Color}]} />
               ))
             : null}
-        </View>}
+        </View>
+      )}
       <View style={styles.wrapperButtons}>
         <TouchableOpacity onPress={handleBack} style={styles.button} />
         <TouchableOpacity onPress={handleNext} style={styles.button} />
@@ -438,11 +454,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
         </View>
       )}
       <View style={[styles.wrapperBio, {position: 'absolute', bottom: 200}]}>
-          <View style={styles.rowBioInfo}>
-            <Text style={styles.textName}>{name}</Text>
-            <View style={{marginLeft: 10}}>{(confirmedEvent || confirmedAccount) && <CheckStarWhite width={25} height={25} />}</View>
-          </View>
+        <View style={styles.rowBioInfo}>
+          <Text style={styles.textName}>{name}</Text>
+          <View style={{marginLeft: 10}}>{(confirmedEvent || confirmedAccount) && <CheckStarWhite width={25} height={25} />}</View>
         </View>
+      </View>
       {isShowAccountInfo && (
         <View
           style={{
@@ -795,56 +811,56 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               </View>
             )}
           </View>
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', }}>
-              <TouchableOpacity
-                onPress={() => {
-                  handleSuperInvite();
-                }}
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <TouchableOpacity
+              onPress={() => {
+                handleSuperInvite();
+              }}
+              style={{
+                flex: 1,
+                height: 44,
+                backgroundColor: blackColor,
+                borderRadius: 12,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
                 style={{
-                  flex: 1,
-                  height: 44,
-                  backgroundColor: blackColor,
-                  borderRadius: 12,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  fontSize: RFValue(13, 812),
+                  color: whiteColor,
+                  fontFamily: Satoshi500,
+                  margin: 7,
                 }}>
-                <Text
-                  style={{
-                    fontSize: RFValue(13, 812),
-                    color: whiteColor,
-                    fontFamily: Satoshi500,
-                    margin: 7,
-                  }}>
-                  Super Invite
-                </Text>
-                <FlashIcon width={14} height={14} />
-              </TouchableOpacity>
-              <View style={{width: 16}} />
-              <TouchableOpacity
-                onPress={() => {
-                  handleAutoSwipeRight && handleAutoSwipeRight();
-                  onInvite && onInvite();
-                }}
+                Super Invite
+              </Text>
+              <FlashIcon width={14} height={14} />
+            </TouchableOpacity>
+            <View style={{width: 16}} />
+            <TouchableOpacity
+              onPress={() => {
+                handleAutoSwipeRight && handleAutoSwipeRight();
+                onInvite && onInvite();
+              }}
+              style={{
+                flex: 1,
+                height: 44,
+                backgroundColor: blackColor,
+                borderRadius: 12,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
                 style={{
-                  flex: 1,
-                  height: 44,
-                  backgroundColor: blackColor,
-                  borderRadius: 12,
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  fontSize: RFValue(13, 812),
+                  color: whiteColor,
+                  fontFamily: Satoshi500,
                 }}>
-                <Text
-                  style={{
-                    fontSize: RFValue(13, 812),
-                    color: whiteColor,
-                    fontFamily: Satoshi500,
-                  }}>
-                  Invite
-                </Text>
-              </TouchableOpacity>
-            </View>
+                Invite
+              </Text>
+            </TouchableOpacity>
           </View>
+        </View>
       )}
       {isShowWantsJoin && (
         <View style={styles.wantToJoinWr}>
@@ -866,7 +882,3 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 };
 
 export default TouchingSlider;
-function setVisibleModalSuperJoin(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}
-

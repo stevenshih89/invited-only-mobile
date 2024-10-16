@@ -465,18 +465,6 @@ const Requests: FC = (): ReactElement => {
                 <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
               </View>
             )}
-            {/* {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !list.eventReviewed && !!myEventsList?.length && (
-            <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
-            {
-              <Loading
-              userInfo={list}
-              topPosition={false}
-              wrapperText={false}
-              text={isDateTimePassed(list?.date, list?.hour) ? `Event Expired: ${list.date}` : `Event Start: ${list.date}`}
-              />
-              }
-              </View>
-              )} */}
           </>
         )}
       </View>
