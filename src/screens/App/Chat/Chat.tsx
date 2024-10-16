@@ -445,7 +445,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   return (
     <View style={styles.container}>
-      {isHost && eventData && (
+      {isHost && eventData?.uid && (
         <View
           style={{
             paddingHorizontal: 16,

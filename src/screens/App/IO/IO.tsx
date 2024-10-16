@@ -62,6 +62,7 @@ import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import moment from 'moment';
 import {Event, EventData} from 'src/types/event';
 import {useScrollPosition} from 'src/store/scrollPosition';
+import {getUsersForEvent} from 'src/api/user';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -763,7 +764,7 @@ const IO: FC = (): JSX.Element => {
 
   const getListForGuest = async () => {
     const user = auth().currentUser;
-    if (!user) {
+    if (!user?.uid) {
       return;
     }
     setLoadingEvents(true);
@@ -777,11 +778,14 @@ const IO: FC = (): JSX.Element => {
         .limit(10)
         .get();
 
+      if (querySnapshot.empty) {
+        setEvents([]);
+        setLoadingEvents(false);
+        return;
+      }
+
       filteredEvents = querySnapshot?.docs
-        ?.map((doc: any) => ({
-          id: doc.id,
-          ...doc.data(),
-        }))
+        ?.map(doc => doc.data() as EventData)
         ?.filter(event => {
           if (event?.requestsList?.find((j: Event.User) => j?.uid === user?.uid)) {
             return false;
@@ -804,11 +808,18 @@ const IO: FC = (): JSX.Element => {
               return false;
             }
           }
-
           return true;
         });
     } catch (e: any) {
       Alert.alert('Error', e.message || 'Something went wrong');
+    }
+
+    console.warn(filteredEvents.length, allEventsLength?.current);
+
+    if (!filteredEvents.length) {
+      setEvents([]);
+      setLoadingEvents(false);
+      return;
     }
 
     async function enrichElementsWithPhotos(elements) {
@@ -839,8 +850,8 @@ const IO: FC = (): JSX.Element => {
         : filterDataByWeekMonth(enrichedEvents, 31);
 
     if (!filterDataWM.length) {
-      setLoadingEvents(false);
       setEvents([]);
+      setLoadingEvents(false);
       return;
     }
 
@@ -895,26 +906,41 @@ const IO: FC = (): JSX.Element => {
                 totalRequestsGuests={event?.requestsList?.length}
                 item={event}
                 showGuestList={false}
-                customButton={customButton(event.id)}
+                customButton={customButton(event?.id)}
               />
               <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Place name</Text>
               <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.placeName}</Text>
-              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+              <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
               <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 20}]}>
                 Event name
               </Text>
               <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.name}</Text>
-              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
+              <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
               <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 20}]}>
                 Event description
               </Text>
               <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>
                 {event?.description}
               </Text>
-              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-              <View style={{marginVertical: 34}}>
+              <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
+              <View style={{marginVertical: 20}}>
                 <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Address</Text>
                 <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.address}</Text>
+              </View>
+              <View
+                style={{
+                  marginBottom: screenHeight / 40,
+                  borderStyle: 'solid',
+                  borderTopWidth: 1,
+                  borderTopColor: transparentWhite16Color,
+                  paddingTop: screenHeight / 40,
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleReport(event.uid, event.id);
+                  }}>
+                  <Text style={styles.textHideNadSendReport}>Block and Report</Text>
+                </TouchableOpacity>
               </View>
               <View>
                 {eventPhotos?.map((image: string) => (
@@ -1164,9 +1190,9 @@ const IO: FC = (): JSX.Element => {
 
     const recommendedData = (await filterEventsByBlockedUsers(sortedByInterestsData)) || [];
 
-    setEvents(recommendedData);
     eventsRef.current = recommendedData;
     allEventsLength.current = recommendedData.length;
+    setEvents(recommendedData);
     setLoadingEvents(false);
   };
 
@@ -1186,17 +1212,23 @@ const IO: FC = (): JSX.Element => {
 
   const getListForHost = async () => {
     const user = auth().currentUser;
-    let users: any;
+
+    if (!user?.uid || !activeEvent?.id) {
+      return;
+    }
     setLoadingEvents(true);
+    let users;
 
-    const usersQuery = firestore().collection('userInfo');
+    try {
+      users = await getUsersForEvent(userInfo?.uid, activeEvent?.male, activeEvent?.female);
+    } catch (error) {
+      console.error(error);
+    }
 
-    if (activeEvent.male > 0 && activeEvent.female > 0) {
-      users = await usersQuery.where('uid', '!=', userHost?.uid).limit(10).get();
-    } else if (activeEvent.male > 0) {
-      users = await usersQuery.where('uid', '!=', userHost?.uid).where('gender', '==', 'man').limit(10).get();
-    } else if (activeEvent.female > 0) {
-      users = await usersQuery.where('uid', '!=', userHost?.uid).where('gender', '==', 'woman').limit(10).get();
+    if (users?.empty) {
+      setLoadingEvents(false);
+      setEvents([]);
+      return;
     }
 
     const getActualDataEvent = (await firestore().collection('Events').doc(activeEvent?.id).get()).data();
@@ -1209,21 +1241,22 @@ const IO: FC = (): JSX.Element => {
     const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
 
     const data: any[] = [];
-    const usersList = await users?._docs;
-    const filteredUsersList = usersList?.filter((item: {_data: UserInfo}) => {
-      if (blockedUsersList.includes(item?._data.uid)) {
+    const usersList = users?.docs.map(doc => doc.data());
+
+    const filteredUsersList = usersList?.filter((item: UserInfo) => {
+      if (blockedUsersList.includes(item?.uid)) {
         return false;
       }
 
-      if (blockedMeUsersList.includes(item?._data.uid)) {
+      if (blockedMeUsersList.includes(item?.uid)) {
         return false;
       }
 
-      if (getActualDataEvent?.rejectsList?.find((j: Event.RejectUser) => j?.uid === item?._data.uid)) {
+      if (getActualDataEvent?.rejectsList?.find((j: Event.RejectUser) => j?.uid === item?.uid)) {
         return false;
       }
 
-      if (getActualDataEvent?.usersList?.find((j: Event.User) => j?.uid === item?._data.uid)) {
+      if (getActualDataEvent?.usersList?.find((j: Event.User) => j?.uid === item?.uid)) {
         return false;
       }
       return true;
@@ -1235,23 +1268,22 @@ const IO: FC = (): JSX.Element => {
       return;
     }
 
-    filteredUsersList?.map((item: {_data: UserInfo}, index: number): void => {
-      const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} =
-        item?._data;
+    filteredUsersList?.map((item: UserInfo, index: number): void => {
+      const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} = item;
 
       const findSuperJoin = getActualDataEvent?.requestsList.find((i: Event.User) => {
-        if (item?._data.uid === i.uid && i.superInvite) {
+        if (item.uid === i.uid && i.superInvite) {
           return true;
         }
       });
 
       setNameUser(name);
-      const girlPhotos: string[] = item?._data?.photos
+      const girlPhotos: string[] = item?.photos
         ?.filter((userPhotos: User.Photo) => userPhotos.image !== null)
         .map((image: User.Photo) => `${image?.image}`);
 
-      const interests = item?._data?.interests?.map((i: User.Interests) => i?.title);
-      const smoking = item?._data?.smoke?.title;
+      const interests = item?.interests?.map((i: User.Interests) => i?.title);
+      const smoking = item?.smoke?.title;
 
       const age: string = calculateAge(date);
 
@@ -1265,19 +1297,19 @@ const IO: FC = (): JSX.Element => {
               isShowInvitesTooltip={false}
               isLocked={!userInfo?.accountConfirmed}
               confirmedAccount={accountConfirmed}
-              onInvite={() => onInvite(uid, item?._data?.id)}
-              handleOpenSuperInvite={() => handleOpenSuperInvite(item?._data, uid)}
+              onInvite={() => onInvite(uid, item?.id)}
+              handleOpenSuperInvite={() => handleOpenSuperInvite(item, uid)}
               photos={girlPhotos}
               accountType={accountType}
-              handleAutoSwipeRight={() => handleAutoSwipeRight(item?._data?.id)}
+              handleAutoSwipeRight={() => handleAutoSwipeRight(item?.id)}
               isShowWantsJoin={findSuperJoin}
               isPremium={accountPremium}
               activeEvent={activeEvent}
-              location={item?._data.location}
-              joinEvents={item?._data.joinEvents}
-              online={item?._data.online}
-              date={item?._data.date}
-              item={item?._data}
+              location={item.location}
+              joinEvents={item.joinEvents}
+              online={item.online}
+              date={item.date}
+              item={item}
               userInfo={userInfo}
               handleAutoSwipeLeft={handleAutoSwipeLeft}
             />
@@ -1384,7 +1416,7 @@ const IO: FC = (): JSX.Element => {
                   onPress={() => {
                     handleAutoSwipeLeft();
                     setTimeout(() => {
-                      sortEvents(item?._data?.uid);
+                      sortEvents(item?.uid);
                     }, 500);
                   }}
                   style={styles.buttonCloseOrCheck}>
@@ -1425,7 +1457,7 @@ const IO: FC = (): JSX.Element => {
                 </TouchableOpacity>
                 <TouchableWithoutFeedback
                   onPress={() => {
-                    handleSuperInviteBottom(item._data, 400);
+                    handleSuperInviteBottom(item, 400);
                   }}>
                   <View style={styles.buttonFlash}>
                     <View
@@ -1488,7 +1520,7 @@ const IO: FC = (): JSX.Element => {
                 </TouchableWithoutFeedback>
                 <TouchableOpacity
                   onPress={() => {
-                    handleAutoSwipeRight(item?._data?.id);
+                    handleAutoSwipeRight(item?.id);
                   }}
                   style={styles.buttonCloseOrCheck}>
                   <View
@@ -1536,13 +1568,13 @@ const IO: FC = (): JSX.Element => {
             </View>
           </View>
         ),
-        info: item?._data,
+        info: item,
       });
     });
 
     allEventsLength.current = data.length;
-    setEvents(data);
     eventsRef.current = data;
+    setEvents(data);
     setLoadingEvents(false);
   };
 
@@ -1651,8 +1683,6 @@ const IO: FC = (): JSX.Element => {
       </>
     );
   }
-
-  console.warn(userInfo?.uid, isHost, loadingEvents, myEvents.length, isVisibleMatch);
 
   if (userInfo?.uid && isHost && !loadingEvents && myEvents.length <= 0 && !isVisibleMatch) {
     return (
