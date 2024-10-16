@@ -292,6 +292,8 @@ const Payment: FC = (): JSX.Element => {
     }
   };
 
+  console.warn(plansList);
+
   const getButtonTitle = () => {
     const {duration, durationName, fullPrice} = activePayment;
 
