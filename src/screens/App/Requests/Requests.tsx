@@ -424,13 +424,13 @@ const Requests: FC = (): ReactElement => {
           <FlatList
             // @ts-ignore
             data={isHost ? list?.requestsList : list}
-            numColumns={2}
+            // numColumns={2}
             showsVerticalScrollIndicator={false}
             keyExtractor={({uid, name}) => `${uid}${name}`}
             contentContainerStyle={styles.listContentContainer}
             extraData={isHost ? list?.requestsList : list}
-            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-            renderItem={({item}) => {
+            // ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+            renderItem={({item, index}) => {
               return isHost ? (
                 <ItemRequestHost
                   list={list}
@@ -448,6 +448,7 @@ const Requests: FC = (): ReactElement => {
                   item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
                   setDataForGuest={setDataForGuest}
                   handleOpenMatch={handleOpenMatch}
+                  index={index}
                 />
               );
             }}

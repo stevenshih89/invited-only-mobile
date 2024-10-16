@@ -1,4 +1,4 @@
-import {blackColor, lightRed1Color, transparent60Color, whiteColor} from 'constants/colors';
+import {black4Color, blackColor, grayColor, lightGreenColor, lightRed1Color, transparent60Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import moment from 'moment';
 import {Animated, Image, ImageBackground, Text, TouchableOpacity, View} from 'react-native';
@@ -9,7 +9,8 @@ import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
 import User from 'assets/images/icons/user.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
-import {FC, useEffect, useState} from 'react';
+import CloseIcon from 'assets/images/icons/close.svg';
+import {FC, useEffect, useRef, useState} from 'react';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, eventInfoPath} from 'constants/pathLocations';
 import firestore from '@react-native-firebase/firestore';
@@ -21,14 +22,31 @@ import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import FastImage from 'react-native-fast-image';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
-import {INVITE_MATCH_STATUS} from 'constants/common';
+import {INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import {err} from 'react-native-svg';
+import { calculateAge } from 'helpers/calculateAge';
+import { convertToPmAmFormat } from 'helpers/convertToPmAmFormat';
+import Button from 'components/Button/Button';
+import { color } from '@rneui/base';
 
-const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: any) => {
+const eventTypes = [
+  { id: 0, label: 'Vip Tables' },
+  { id: 1, label: 'Custom' },
+  { id: 2, label: 'Table' },
+  { id: 3, label: 'Concerts' },
+  { id: 4, label: 'Exclusive' },
+  { id: 5, label: 'Yacht Party' },
+  { id: 6, label: 'Pool Party' },
+  { id: 7, label: 'Private' },
+  { id: 8, label: 'Birthday Party' },
+  { id: 9, label: 'Restaurants' },
+];
+
+const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, index}: any) => {
   const [hostInfo, setHostInfo] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [heightAnim] = useState(new Animated.Value(282));
-  const {photos, uid, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name, usersList} =
+  const [heightAnim] = useState(new Animated.Value(screenHeight * 0.40));
+  const {photos, uid, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name, usersList, activeType} =
     list;
 
   const styles = useStyles();
@@ -85,6 +103,16 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
         </View>
       </View>
     );
+  };
+
+  const cardRef = useRef(null);
+
+  const handleAutoSwipeRight = () => {
+      cardRef.current?.autoSwipeRight();
+  };
+
+  const handleAutoSwipeLeft = () => {
+      cardRef.current?.autoSwipeLeft();
   };
 
   const handleSwipeGuestCardInvite = async (item: any): Promise<void> => {
@@ -210,70 +238,12 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
     getHostInfo(uid);
   }, []);
 
-  // const generateRandomId = (length: number) => {
-  //   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  //   let result = '';
-  //   const charactersLength = characters.length;
-  //   for (let i = 0; i < length; i++) {
-  //     result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  //   }
-  //   return result;
-  // };
-
-  // const getFcmTokenFromUser = async (uid: string) => {
-  //   const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-  //   return userInfoDoc.data()?.fcmToken;
-  // };
-
-  // const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
-  //   const token = await getFcmTokenFromUser(forUserUid);
-
-  //   const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-  //     },
-  //     body: JSON.stringify({
-  //       to: token,
-  //       notification: {
-  //         title: title,
-  //         body: body,
-  //       },
-  //       data: {
-  //         status: mark,
-  //         image: user.photos[0].image,
-  //       },
-  //     }),
-  //   });
-
-  //   if (!response.ok) {
-  //     const error = await response.json();
-  //     // console.error('error sending notification:', error);
-  //   } else {
-  //     const data = await response.json();
-  //     const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
-  //     const userNotifications = userDoc.data()?.notifications;
-  //     const id = generateRandomId(8);
-  //     const notification = {
-  //       id,
-  //       title: title,
-  //       body: body,
-  //       mark: mark,
-  //       uid: user?.uid,
-  //     };
-  //     try {
-  //       await firestore()
-  //         .collection('userInfo')
-  //         .doc(forUserUid)
-  //         .update({
-  //           notifications: [...userNotifications, notification],
-  //         });
-  //     } catch (error) {
-  //       // console.log('error update notifications', error);
-  //     }
-  //   }
-  // };
+  function getMonth() {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const [day, month, year] = date.split('.');
+    const monthName = months[parseInt(month) - 1];
+    return `${monthName}`;
+  }
 
   if (item[0]?.uid !== user?.uid) {
     return null;
@@ -286,8 +256,9 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
           <ActivityIndicator color={whiteColor} size="small" />
         </View>
       ) : (
-        <Animated.View style={[styles.itemContainer, {height: heightAnim}]}>
+        <Animated.View style={[styles.itemContainer, {height: heightAnim, marginTop: index? 30: 0}]}>
           <TinderCard
+            ref={cardRef}
             // @ts-ignore
             cardWidth="100%"
             // @ts-ignore
@@ -311,105 +282,225 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch}: an
               }}
               resizeMode={FastImage.resizeMode.cover}>
               <View style={[styles.itemContentContainer, {justifyContent: item[0]?.isSuperInvite ? 'space-between' : 'flex-end'}]}>
-                <LinearGradient
-                  colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.8)', 'rgba(0, 0, 0, 0.8)']}
-                  style={styles.linearGradient}
-                  start={{x: 0, y: 0}}
-                  end={{x: 0, y: 1}}
-                  locations={[0.3, 0.6, 1]}>
-                  {item[0]?.isSuperInvite && (
-                    <View style={{alignItems: 'flex-start'}}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          backgroundColor: whiteColor,
-                          borderRadius: 5,
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          marginBottom: 'auto',
-                          marginTop: 10,
-                        }}>
-                        <FlashFillBlack />
-                        <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>
-                          Super wants to join you
-                        </Text>
-                      </View>
-                    </View>
-                  )}
-                  <TouchableOpacity activeOpacity={0.7} style={[styles.buttonContainer, {marginTop: 'auto'}]} onPress={goToEventInfo}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                      <FastImage
-                        style={{width: 26, height: 26, borderRadius: 20}}
-                        source={{
-                          uri: hostInfo?.photos[0]?.image,
-                          headers: {Authorization: 'someAuthToken'},
-                          priority: FastImage.priority.normal,
-                        }}
-                        resizeMode={FastImage.resizeMode.cover}
-                      />
-                      {/* <Image source={{uri: hostInfo?.photos[0]?.image}} style={{width: 25, height: 25, borderRadius: 20}} /> */}
-                      <View style={{marginLeft: 8}}>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(10, 812)}}>{hostInfo?.name}</Text>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(8, 812), textTransform: 'capitalize'}}>
-                          {hostInfo?.accountType}
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 6}}>
-                      <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(20, 812), flexShrink: 1}}>
-                        {placeName}
-                      </Text>
-                      {hostInfo?.accountConfirmed && <CheckStarWhite style={{marginLeft: 4}} />}
-                    </View>
+                {item[0]?.isSuperInvite && (
+                  <View
+                    style={{
+                      zIndex: 1000,
+                      position: 'absolute',
+                      top: screenHeight * 0.2 - 40,
+                      left: 17,
+                    }}>
                     <View
                       style={{
                         flexDirection: 'row',
                         alignItems: 'center',
-                        alignSelf: 'flex-start',
-                        marginBottom: 6,
-                        backgroundColor: transparent60Color,
-                        borderRadius: 50,
+                        backgroundColor: whiteColor,
+                        borderRadius: 5,
+                        paddingHorizontal: 8,
                         paddingVertical: 4,
-                        paddingHorizontal: 6,
+                        marginBottom: 'auto',
                       }}>
-                      <User width={10} height={10} />
-                      <Text
-                        style={{
-                          color: whiteColor,
-                          fontFamily: Satoshi400,
-                          fontSize: RFValue(10, 812),
-                          marginLeft: 4,
-                        }}>{`${female + femaleFriend} x Guest invitation `}</Text>
+                      <FlashFillBlack />
+                      <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>Super invite you</Text>
                     </View>
-                    <View
+                  </View>
+                )}
+                <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} style={styles.linearGradient}>
+                  <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <View style={{flexDirection: 'row'}}>
+                      <View style={{alignSelf: 'flex-start'}}>
+                        <FastImage style={{width: 50, height: 50, borderRadius: 50}} source={{uri: hostInfo?.photos?.[0]?.image || ''}} />
+                        <View
+                          style={{
+                            position: 'absolute',
+                            bottom: 2,
+                            right: 0,
+                            width: 12,
+                            height: 12,
+                            borderRadius: 12,
+                            borderWidth: 1.25,
+                            borderColor: blackColor,
+                            backgroundColor: lightGreenColor,
+                          }}
+                        />
+                      </View>
+                      <View style={{marginLeft: 10, justifyContent: 'center'}}>
+                        <View style={{flexDirection: 'row'}}>
+                          <View
+                            style={{
+                              backgroundColor: blackColor,
+                              borderRadius: 5,
+                              paddingHorizontal: 12,
+                              paddingVertical: 2,
+                              alignSelf: 'flex-start',
+                              borderWidth: 1,
+                              borderColor: whiteColor,
+                            }}>
+                            {hostInfo?.accountType === 'guest' && (
+                              <Text
+                                style={{
+                                  color: whiteColor,
+                                  fontSize: RFValue(10, 812),
+                                  fontFamily: Satoshi700,
+                                  textTransform: 'capitalize',
+                                }}>
+                                Guest
+                              </Text>
+                            )}
+                            {hostInfo?.accountType === 'host' && (
+                              <Text
+                                style={{
+                                  color: whiteColor,
+                                  fontSize: RFValue(10, 812),
+                                  fontFamily: Satoshi700,
+                                  textTransform: 'capitalize',
+                                }}>
+                                Host
+                              </Text>
+                            )}
+                          </View>
+                          {(hostInfo?.accountPremium || hostInfo?.accountType === 'guest') && (
+                            <LinearGradient
+                              colors={['#977B4A', '#E5D291', '#A28453']}
+                              style={{
+                                marginLeft: 6,
+                                alignSelf: 'flex-start',
+                                borderRadius: 4,
+                                paddingHorizontal: 12,
+                                paddingVertical: 2,
+                                backgroundColor: blackColor,
+                              }}
+                              start={{x: 0, y: 0}}
+                              end={{x: 1, y: 0}}>
+                              {
+                                <Text
+                                  style={{
+                                    color: blackColor,
+                                    fontSize: RFValue(10, 812),
+                                    fontFamily: Satoshi700,
+                                  }}>
+                                  Premium
+                                </Text>
+                              }
+                            </LinearGradient>
+                          )}
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'flex-start',
+                          }}>
+                          <Text
+                            style={{
+                              color: whiteColor,
+                              fontFamily: Satoshi700,
+                              fontSize: RFValue(16, 812),
+                              marginTop: 4,
+                            }}>
+                            {hostInfo?.name}
+                            {hostInfo?.showAge ? <Text>,</Text> : null}
+                          </Text>
+                          {hostInfo?.showAge && (
+                            <Text
+                              style={{
+                                color: whiteColor,
+                                fontFamily: Satoshi700,
+                                fontSize: RFValue(13, 812),
+                                marginTop: 5,
+                              }}>
+                              {' '}
+                              {calculateAge(hostInfo?.date)}
+                            </Text>
+                          )}
+                          <View style={{marginLeft: 8}}>{hostInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} />}</View>
+                        </View>
+                      </View>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => handleAutoSwipeLeft()}
                       style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        alignSelf: 'flex-start',
+                        width: 50,
+                        height: 50,
                         backgroundColor: transparent60Color,
                         borderRadius: 50,
-                        paddingVertical: 4,
-                        paddingHorizontal: 6,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 5000,
                       }}>
-                      <Calendar width={10} height={10} />
-                      <Text
-                        style={{
-                          color: whiteColor,
-                          fontFamily: Satoshi400,
-                          fontSize: RFValue(10, 812),
-                          marginLeft: 4,
-                        }}>
-                        {moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD MMMM YYYY')}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
+                      <CloseIcon width={27} height={27} />
+                    </TouchableOpacity>
+                  </View>
                 </LinearGradient>
+                <View style={{backgroundColor: whiteColor, height: screenHeight * 0.18, paddingHorizontal: 16, paddingVertical: 12, justifyContent: 'space-between'}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                    }}>
+                    <View
+                      style={{
+                        width: 54,
+                        height: 54,
+                        borderWidth: 1,
+                        borderColor: blackColor,
+                        borderRadius: 10,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          color: blackColor,
+                          fontSize: RFValue(22, 812),
+                          fontFamily: Satoshi700,
+                        }}>
+                        {date.split('.')[0]}
+                      </Text>
+                      <Text
+                        style={{
+                          color: blackColor,
+                          fontSize: RFValue(10, 812),
+                          fontFamily: Satoshi500,
+                        }}>
+                        {getMonth()}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        marginLeft: 27,
+                      }}>
+                      <Text
+                        style={{
+                          color: black4Color,
+                          fontSize: RFValue(16, 812),
+                          fontFamily: Satoshi700,
+                        }}>
+                        {name} - {eventTypes[activeType].label}
+                      </Text>
+                      {hour && (
+                        <Text
+                          style={{
+                            color: grayColor,
+                            fontSize: RFValue(16, 812),
+                            fontFamily: Satoshi500,
+                            marginVertical: 4,
+                          }}>
+                          {date.split('.')[0]} {getMonth()} - {convertToPmAmFormat(hour)}{' '}
+                        </Text>
+                      )}
+                      <Text
+                        style={{
+                          color: black4Color,
+                          fontSize: RFValue(14, 812),
+                          fontFamily: Satoshi500,
+                        }}>
+                        Guest Invitation : {usersList.length}
+                      </Text>
+                    </View>
+                  </View>
+                  <Button onPress={handleAutoSwipeRight} title='Join' buttonStyle={{backgroundColor: blackColor}} buttonTitleStyle={{color: whiteColor}}/>
+                </View>
               </View>
             </FastImage>
-            {/* <ImageBackground style={styles.imageBackground} resizeMode="cover" source={{uri: photos[0]?.image}}> */}
-
-            {/* </ImageBackground> */}
           </TinderCard>
         </Animated.View>
       )}

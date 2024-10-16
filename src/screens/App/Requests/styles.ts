@@ -11,9 +11,8 @@ const useStyles = () =>
       backgroundColor: blackColor,
     },
     itemContainer: {
-      height: 282,
       flex: 1,
-      maxWidth: '50%',
+      width: '100%',
       paddingHorizontal: 7,
       borderRadius: 12,
     },
@@ -61,7 +60,7 @@ const useStyles = () =>
     },
     linearGradient: {
       flex: 1,
-      padding: 7,
+      padding: 17,
     },
     accountTypeWrapperPremium: {
       marginLeft: 6,
