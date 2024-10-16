@@ -83,14 +83,13 @@ const MyEmail: FC = (): JSX.Element => {
                     <ArrowLeft />
                   </TouchableOpacity>
                   <LogoPrimary2 />
-                  {/* <NinetyIcon height={40} /> */}
                   <AuthProgress startPercentage={80} endPercentage={90} animationDuration={1000} />
                 </View>
                 <View
                   style={{
                     width: '100%',
                     marginBottom: screenHeight / 30,
-                    marginTop: screenHeight / 14,
+                    marginTop: screenHeight / 11.5,
                   }}>
                   <Text
                     style={{

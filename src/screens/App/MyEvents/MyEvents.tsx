@@ -12,7 +12,17 @@ import useStyles from 'screens/App/MyEvents/styles.ts';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard.tsx';
 import {useMyEvents} from '../../../store/myEvents';
 import {showToast} from 'helpers/showToast.ts';
-import {blackColor, grayColor, lightGray13Color, lightGray16Color, lightGray20Color, lightGray2Color, lightGray5Color, lightGreenColor, whiteColor} from 'constants/colors';
+import {
+  blackColor,
+  grayColor,
+  lightGray13Color,
+  lightGray16Color,
+  lightGray20Color,
+  lightGray2Color,
+  lightGray5Color,
+  lightGreenColor,
+  whiteColor,
+} from 'constants/colors';
 import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsCard';
 import ModalCancelAttending from './ModalCancelAttending';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
@@ -495,16 +505,19 @@ const MyEvents: FC<any> = ({navigation}) => {
                 borderWidth: 1,
                 borderColor: lightGray13Color,
                 flexDirection: 'row',
-                justifyContent: 'center'
+                justifyContent: 'center',
               }}
               onPress={() => navigation.navigate(eventCreatingStackPath)}>
-                <AddIcon width={16} height={16}/>
-              <Text style={{
-                color: whiteColor,
-                fontFamily: Satoshi500,
-                fontSize: RFValue(16, 812),
-                marginLeft: 10
-              }}>Create event</Text>
+              <AddIcon width={16} height={16} />
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(16, 812),
+                  marginLeft: 10,
+                }}>
+                Create event
+              </Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -915,7 +928,7 @@ const MyEvents: FC<any> = ({navigation}) => {
           accountType={userInfo?.accountType}
         />
       )}
-      { hoursUntilEvent < 25 && hoursUntilEvent > 0 && (
+      {hoursUntilEvent < 25 && hoursUntilEvent > 0 && (
         <ModalEventRemindes
           currentEvent={currentEvent}
           uid={userInfo?.uid}

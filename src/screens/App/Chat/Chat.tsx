@@ -73,7 +73,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const [messages, setMessages] = useState([]);
   const [DATAEventsJoining, setDATAEventsJoining] = useState([]);
   const [userInfo, setUserInfo] = useState<any>({});
-  const [eventData, setEventData] = useState<any>({});
+  const [eventData, setEventData] = useState<any>();
 
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
@@ -431,13 +431,10 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       guestSubscriber && guestSubscriber();
     };
   }, [activeEvent, loading]);
-
-  console.log('eventData', eventData);
   
-
   return (
     <View style={styles.container}>
-      {isHost && <View
+      {isHost && eventData && <View
         style={{
           paddingHorizontal: 16,
           paddingVertical: 7,
@@ -494,7 +491,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             showsVerticalScrollIndicator={false}
             data={messages?.chats}
             ListEmptyComponent={() => (
-              <View style={{height: '100%', marginTop: 60}}>
+              <View style={{height: '100%', marginTop: eventData? screenHeight * 0.06: screenHeight * 0.14}}>
                 <View style={{flex: 1, justifyContent: 'center'}}>
                   <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                     You don't have any chat

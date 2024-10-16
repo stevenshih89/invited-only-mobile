@@ -71,8 +71,16 @@ const Gender: FC = (): JSX.Element => {
                   style={{
                     width: '100%',
                     marginBottom: screenHeight / 26,
-                    marginTop: screenHeight / 14,
+                    marginTop: screenHeight / 11.5,
                   }}>
+                  <Text
+                    style={{
+                      color: whiteColor,
+                      fontFamily: Satoshi500,
+                      fontSize: RFValue(48, 932),
+                    }}>
+                    Select your
+                  </Text>
                   <Text
                     style={{
                       color: whiteColor,
@@ -80,7 +88,7 @@ const Gender: FC = (): JSX.Element => {
                       fontSize: RFValue(48, 932),
                       marginBottom: 18,
                     }}>
-                    Select your gender
+                    gender
                   </Text>
                   <Text
                     style={{
