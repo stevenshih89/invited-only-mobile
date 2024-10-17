@@ -10,7 +10,7 @@ import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {genderPreferencesPath, myInterestsPath} from 'constants/pathLocations';
+import {myInterestsPath} from 'constants/pathLocations';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import AuthProgress from 'components/AuthProgress';
 import LinearGradient from 'react-native-linear-gradient';
@@ -27,10 +27,9 @@ const Gender: FC = (): JSX.Element => {
     const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
     const isHost = accountType.toLowerCase() === 'host';
     const data = isHost ? {gender: gender} : {gender: gender, chooseGuest: 'any'};
-    const nextPath = isHost ? genderPreferencesPath : myInterestsPath;
 
     setOnBoarding([...onBoarding, data]);
-    navigation.navigate(nextPath as never);
+    navigation.navigate(myInterestsPath as never);
   };
 
   const navigation = useAppNavigation();
