@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
@@ -15,22 +15,29 @@
                         <viewControllerLayoutGuide type="top" id="lwq-AX-6XW"/>
                         <viewControllerLayoutGuide type="bottom" id="Md7-2K-T8n"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleAspectFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <view key="view" contentMode="scaleAspectFill" insetsLayoutMarginsFromSafeArea="NO" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="LaunchImage" translatesAutoresizingMaskIntoConstraints="NO" id="otf-B5-4rP">
-                                <rect key="frame" x="128" y="10" width="118" height="647"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Splash screen" translatesAutoresizingMaskIntoConstraints="NO" id="f1Y-MU-umq">
+                                <rect key="frame" x="0.0" y="50" width="375" height="728"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchImage" translatesAutoresizingMaskIntoConstraints="NO" id="KB1-E3-mWc">
+                                <rect key="frame" x="67.666666666666686" y="342" width="240" height="128"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="118" id="Cu7-kf-ha7"/>
-                                    <constraint firstAttribute="width" secondItem="otf-B5-4rP" secondAttribute="height" multiplier="118:647" id="r1V-fi-4tQ"/>
+                                    <constraint firstAttribute="width" constant="240" id="3nR-bG-T2v"/>
+                                    <constraint firstAttribute="height" constant="128" id="CO0-tn-Vxa"/>
                                 </constraints>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.035294122990000003" green="0.035294115539999997" blue="0.03529411927" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
-                            <constraint firstItem="otf-B5-4rP" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" constant="128" id="gjj-1y-mHL"/>
-                            <constraint firstAttribute="trailing" secondItem="otf-B5-4rP" secondAttribute="trailing" constant="129" id="uEQ-tM-tYI"/>
+                            <constraint firstItem="Md7-2K-T8n" firstAttribute="top" secondItem="f1Y-MU-umq" secondAttribute="bottom" id="38g-hs-e8W"/>
+                            <constraint firstAttribute="trailing" secondItem="f1Y-MU-umq" secondAttribute="trailing" id="4Jr-SX-ghc"/>
+                            <constraint firstItem="KB1-E3-mWc" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="5P9-Vw-OTK"/>
+                            <constraint firstItem="f1Y-MU-umq" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="Zgb-X8-KiV"/>
+                            <constraint firstItem="f1Y-MU-umq" firstAttribute="top" secondItem="lwq-AX-6XW" secondAttribute="bottom" id="qj3-fo-v6e"/>
+                            <constraint firstItem="KB1-E3-mWc" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="wvq-CK-mFt"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -40,6 +47,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchImage" width="335" height="320.5"/>
+        <image name="LaunchImage" width="223.33332824707031" height="213.66667175292969"/>
+        <image name="Splash screen" width="430" height="932"/>
     </resources>
 </document>
