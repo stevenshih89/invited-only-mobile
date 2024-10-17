@@ -129,6 +129,8 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
     }
   };
 
+  console.warn(placeName, status);
+
   const isInviteMatchStatus = status === INVITE_MATCH_STATUS;
   const isApprovedStatus = status === APPROVED_STATUS;
   const isAcceptedStatus = status === ACCEPTED_STATUS;

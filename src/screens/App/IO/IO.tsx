@@ -217,16 +217,15 @@ const IO: FC = (): JSX.Element => {
           const currentEventReviewed = data?.eventReviewed;
           const prevStatusEvent = activeEvent?.statusEvent;
           const currentStatusEvent = data?.statusEvent;
-
           if (prevStatusEvent !== currentStatusEvent || prevEventReviewed !== currentEventReviewed) {
-            setActiveEvent({...activeEvent, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent});
+            setActiveEvent(prev => ({...prev, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent}));
           }
         });
     }
     return () => {
       unsubscribeEvent && unsubscribeEvent();
     };
-  }, [activeEvent]);
+  }, [activeEvent?.id]);
 
   useEffect(() => {
     const subscription = onUserProfileChangeSubscription(info => {
@@ -371,7 +370,7 @@ const IO: FC = (): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       setCurrentEventCardPosition(1);
-    }, [activeEvent]),
+    }, [activeEvent?.id]),
   );
 
   const handleReport = (uid: string, event?: any) => {
@@ -485,7 +484,9 @@ const IO: FC = (): JSX.Element => {
 
         setMyEventsList(filteredData);
         setMyEvents(filteredData);
-        isFirstRender && setActiveEvent(filteredData[0]);
+        if (!myEvents.length) {
+          setActiveEvent(filteredData[0]);
+        }
       } catch (error: any) {
         setMyEvents([]);
         setMyEventsList([]);
@@ -761,6 +762,7 @@ const IO: FC = (): JSX.Element => {
       </TouchableOpacity>
     );
   };
+  console.warn(activeEvent);
 
   const getListForGuest = async () => {
     const user = auth().currentUser;
@@ -1213,8 +1215,9 @@ const IO: FC = (): JSX.Element => {
 
   const getListForHost = async () => {
     const user = auth().currentUser;
+    console.warn(userInfo?.uid, user?.uid, activeEvent?.id);
 
-    if (!user?.uid || !activeEvent?.id) {
+    if (!user?.uid || !activeEvent?.id || !userInfo?.uid) {
       return;
     }
     setLoadingEvents(true);
@@ -1226,17 +1229,19 @@ const IO: FC = (): JSX.Element => {
       console.error(error);
     }
 
+    console.warn(users?.empty);
+
     if (users?.empty) {
       setLoadingEvents(false);
       setEvents([]);
       return;
     }
 
-    const getActualDataEvent = (await firestore().collection('Events').doc(activeEvent?.id).get()).data();
+    const getActualDataEvent = (await firestore().collection('Events').doc(activeEvent.id).get()).data();
 
-    const blockedUsers = await firestore().collection('report').where('uidSender', '==', user?.uid).get();
+    const blockedUsers = await firestore().collection('report').where('uidSender', '==', user.uid).get();
 
-    const blockedMeUsers = await firestore().collection('report').where('uid', '==', user?.uid).get();
+    const blockedMeUsers = await firestore().collection('report').where('uid', '==', user.uid).get();
 
     const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
     const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
@@ -1262,6 +1267,8 @@ const IO: FC = (): JSX.Element => {
       }
       return true;
     });
+
+    console.warn(filteredUsersList);
 
     if (!filteredUsersList?.length) {
       setLoadingEvents(false);
@@ -1649,6 +1656,8 @@ const IO: FC = (): JSX.Element => {
       navigation.navigate(eventCreatingStackPath);
     }
   };
+
+  console.warn(activeEvent?.usersList);
 
   if (loadingUser && !userInfo?.uid && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (

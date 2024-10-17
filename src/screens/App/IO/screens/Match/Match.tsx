@@ -89,7 +89,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
     if (uidForNotification) {
       const getDoc = await firestore().collection('userInfo').doc(uidForNotification).get();
       const docData = getDoc.data();
-      if (docData?.notificationSettings.match) {
+      if (docData?.notificationSettings?.match) {
         await sendNotification(
           uidForNotification,
           'Say, Hi! 👋',
@@ -287,10 +287,13 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   useEffect(() => {
     if (isVisibleMatch) {
       rotateCard1.value = withDelay(800, withTiming(-15, {duration: 400}));
-      marginRightCard1.value = withDelay(600, withTiming(screenWidth - (screenWidth * 0.53) - ((screenWidth/100) * 15) - 14, {duration: 200}));
+      marginRightCard1.value = withDelay(
+        600,
+        withTiming(screenWidth - screenWidth * 0.53 - (screenWidth / 100) * 15 - 14, {duration: 200}),
+      );
 
       rotateCard2.value = withDelay(800, withTiming(15, {duration: 400}));
-      marginLeftCard2.value = withDelay(600, withTiming(screenWidth - (screenWidth * 0.53) - ((screenWidth/100) * 15) - 14, {duration: 200}));
+      marginLeftCard2.value = withDelay(600, withTiming(screenWidth - screenWidth * 0.53 - (screenWidth / 100) * 15 - 14, {duration: 200}));
       topCard2.value = withDelay(400, withTiming(screenHeight / 2 - 350, {duration: 200}));
 
       whiteLineWidth.value = withTiming(117, {duration: 400});

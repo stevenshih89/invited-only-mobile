@@ -19,12 +19,12 @@ import EventPreview from 'components/TouchingSlider/components/EventPreview';
 import Check from 'src/assets/images/icons/Check-black.svg';
 import uuid from 'react-native-uuid';
 import {useUser} from 'src/store/userStore';
-import {uploadImage} from 'helpers/uploadImage.ts';
+// import {uploadImage} from 'helpers/uploadImage.ts';
 import {IOPath} from 'constants/pathLocations';
 import storage from '@react-native-firebase/storage';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import {createEvent, IOEvent} from 'src/api/event';
-import { eventTypes } from 'src/mocks/eventTypes';
+import {eventTypes} from 'src/mocks/eventTypes';
 
 const EventCreating: FC = () => {
   const INVITED_ONLY = 'invitedOnly';
@@ -273,23 +273,19 @@ const EventCreating: FC = () => {
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
     if (imagePath) {
-      if (
-        imagePath ===
-        'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805'
-      ) {
+      if (imagePath.includes('https://')) {
         return imagePath;
       } else {
-        const uploadUri = Platform.OS === 'ios' ? imagePath.replace('file://', '') : imagePath;
-        const filename = `${userId}_${new Date().getTime()}`; // or another unique naming convention
+        const uploadUri = Platform.OS === 'ios' ? imagePath : `file://${imagePath}`;
+        const filename = `${userId}_${new Date().getTime()}`;
         const storageRef = storage().ref(`images/${filename}`);
-        const task = storageRef.putFile(uploadUri);
         try {
-          await task;
-          // Get the URL to the uploaded image
+          await storageRef.putFile(uploadUri);
           const url = await storageRef.getDownloadURL();
+
           return url;
         } catch (e) {
-          // console.error(e);
+          console.error('Error uploading image:', e);
           return null;
         }
       }

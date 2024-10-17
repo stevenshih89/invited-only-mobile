@@ -130,7 +130,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                     fontFamily: Satoshi700,
                     fontSize: RFValue(28, 812),
                   }}>
-                  {getUsersListAccepted(usersList)}/{male + female}
+                  {acceptedGuests.length}/{male + female}
                 </Text>
                 <Text
                   style={{
@@ -142,300 +142,320 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                 </Text>
               </View>
             </View>
+            <View
+              style={{
+                marginTop: 26,
+              }}>
               <View
                 style={{
-                  marginTop: 26,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: invitedGuests.length ? 16 : 0,
                 }}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: invitedGuests.length? 16: 0}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>New Connection</Text>
-                  <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{invitedGuests.length}</Text>
-                  </View>
+                <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>New Connection</Text>
+                <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{invitedGuests.length}</Text>
                 </View>
-                <FlatList
-                  scrollEnabled={false}
-                  data={invitedGuests}
-                  ItemSeparatorComponent={() => <View style={{height: 16}} />}
-                  renderItem={({item}) => (
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <View>
-                          <ImageBackground
-                            source={{uri: item?.userPhoto}}
-                            style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
-                            imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                            resizeMode="cover"
-                          />
-                          <View
-                            style={{
-                              borderWidth: 1,
-                              borderColor: blackColor,
-                              width: 10,
-                              height: 10,
-                              borderRadius: 10,
-                              backgroundColor: lightGreenColor,
-                              position: 'absolute',
-                              right: 0,
-                              bottom: 5,
-                            }}
-                          />
-                        </View>
-                        <Text
-                          style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
-                          {item?.name}
-                        </Text>
+              </View>
+              <FlatList
+                scrollEnabled={false}
+                data={invitedGuests}
+                ItemSeparatorComponent={() => <View style={{height: 16}} />}
+                renderItem={({item}) => (
+                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <View>
+                        <ImageBackground
+                          source={{uri: item?.userPhoto}}
+                          style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
+                          imageStyle={{width: 50, height: 50, borderRadius: 200}}
+                          resizeMode="cover"
+                        />
                         <View
-                          style={{paddingVertical: 4, paddingHorizontal: 7, backgroundColor: whiteColor, borderRadius: 10, marginLeft: 8}}>
-                          <Text
-                            style={{
-                              color: blackColor,
-                              fontFamily: Satoshi500,
-                              fontSize: RFValue(10, 812),
-                            }}>
-                            New
-                          </Text>
-                        </View>
+                          style={{
+                            borderWidth: 1,
+                            borderColor: blackColor,
+                            width: 10,
+                            height: 10,
+                            borderRadius: 10,
+                            backgroundColor: lightGreenColor,
+                            position: 'absolute',
+                            right: 0,
+                            bottom: 5,
+                          }}
+                        />
                       </View>
-                      <TouchableOpacity
-                        style={{
-                          backgroundColor: whiteColor,
-                          paddingVertical: 8,
-                          paddingHorizontal: 12,
-                          borderRadius: 10,
-                        }}
-                        onPress={() => {
-                          setModalVisible(true);
-                          setUser(item);
-                        }}>
+                      <Text style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
+                        {item?.name}
+                      </Text>
+                      <View
+                        style={{paddingVertical: 4, paddingHorizontal: 7, backgroundColor: whiteColor, borderRadius: 10, marginLeft: 8}}>
                         <Text
                           style={{
                             color: blackColor,
                             fontFamily: Satoshi500,
-                            fontSize: RFValue(14, 812),
+                            fontSize: RFValue(10, 812),
                           }}>
-                          Manage
+                          New
                         </Text>
-                      </TouchableOpacity>
+                      </View>
                     </View>
-                  )}
-                />
-              </View>
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: whiteColor,
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                        borderRadius: 10,
+                      }}
+                      onPress={() => {
+                        setModalVisible(true);
+                        setUser(item);
+                      }}>
+                      <Text
+                        style={{
+                          color: blackColor,
+                          fontFamily: Satoshi500,
+                          fontSize: RFValue(14, 812),
+                        }}>
+                        Manage
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            </View>
+            <View
+              style={{
+                borderTopWidth: 1,
+                borderStyle: 'solid',
+                borderTopColor: transparentWhite16Color,
+                paddingTop: 14,
+                marginTop: 14,
+              }}>
               <View
                 style={{
-                  borderTopWidth: 1,
-                  borderStyle: 'solid',
-                  borderTopColor: transparentWhite16Color,
-                  paddingTop: 14,
-                  marginTop: 14,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: approvedGuests.length ? 16 : 0,
                 }}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: approvedGuests.length? 16: 0}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Approved - Pending</Text>
-                  <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{approvedGuests.length}</Text>
-                  </View>
+                <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Approved - Pending</Text>
+                <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{approvedGuests.length}</Text>
                 </View>
-                <FlatList
-                  scrollEnabled={false}
-                  data={approvedGuests}
-                  ItemSeparatorComponent={() => <View style={{height: 16}} />}
-                  renderItem={({item}) => (
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <View>
-                          <ImageBackground
-                            source={{uri: item?.userPhoto}}
-                            style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
-                            imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                            resizeMode="cover"
-                          />
-                          <View
-                            style={{
-                              borderWidth: 1,
-                              borderColor: blackColor,
-                              width: 10,
-                              height: 10,
-                              borderRadius: 10,
-                              backgroundColor: lightGreenColor,
-                              position: 'absolute',
-                              right: 0,
-                              bottom: 5,
-                            }}
-                          />
-                        </View>
-                        <Text
-                          style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
-                          {item?.name}
-                        </Text>
-                        <ClockFilledIcon width={20} height={20} />
-                      </View>
-                      <TouchableOpacity
-                        style={{
-                          backgroundColor: whiteColor,
-                          paddingVertical: 8,
-                          paddingHorizontal: 12,
-                          borderRadius: 10,
-                        }}
-                        onPress={() => {
-                          setModalVisible(true);
-                          setUser(item);
-                        }}>
-                        <Text
-                          style={{
-                            color: blackColor,
-                            fontFamily: Satoshi500,
-                            fontSize: RFValue(14, 812),
-                          }}>
-                          Manage
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                />
               </View>
+              <FlatList
+                scrollEnabled={false}
+                data={approvedGuests}
+                ItemSeparatorComponent={() => <View style={{height: 16}} />}
+                renderItem={({item}) => (
+                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <View>
+                        <ImageBackground
+                          source={{uri: item?.userPhoto}}
+                          style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
+                          imageStyle={{width: 50, height: 50, borderRadius: 200}}
+                          resizeMode="cover"
+                        />
+                        <View
+                          style={{
+                            borderWidth: 1,
+                            borderColor: blackColor,
+                            width: 10,
+                            height: 10,
+                            borderRadius: 10,
+                            backgroundColor: lightGreenColor,
+                            position: 'absolute',
+                            right: 0,
+                            bottom: 5,
+                          }}
+                        />
+                      </View>
+                      <Text style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
+                        {item?.name}
+                      </Text>
+                      <ClockFilledIcon width={20} height={20} />
+                    </View>
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: whiteColor,
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                        borderRadius: 10,
+                      }}
+                      onPress={() => {
+                        setModalVisible(true);
+                        setUser(item);
+                      }}>
+                      <Text
+                        style={{
+                          color: blackColor,
+                          fontFamily: Satoshi500,
+                          fontSize: RFValue(14, 812),
+                        }}>
+                        Manage
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            </View>
+            <View
+              style={{
+                borderTopWidth: 1,
+                borderStyle: 'solid',
+                borderTopColor: transparentWhite16Color,
+                paddingTop: 14,
+                marginTop: 14,
+              }}>
               <View
                 style={{
-                  borderTopWidth: 1,
-                  borderStyle: 'solid',
-                  borderTopColor: transparentWhite16Color,
-                  paddingTop: 14,
-                  marginTop: 14,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: acceptedGuests.length ? 16 : 0,
                 }}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: acceptedGuests.length? 16: 0}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Accepted</Text>
-                  <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{acceptedGuests.length}</Text>
-                  </View>
+                <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Accepted</Text>
+                <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{acceptedGuests.length}</Text>
                 </View>
-                <FlatList
-                  scrollEnabled={false}
-                  data={acceptedGuests}
-                  ItemSeparatorComponent={() => <View style={{height: 16}} />}
-                  renderItem={({item}) => (
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <View>
-                          <ImageBackground
-                            source={{uri: item?.userPhoto}}
-                            style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
-                            imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                            resizeMode="cover"
-                          />
-                          <View
-                            style={{
-                              borderWidth: 1,
-                              borderColor: blackColor,
-                              width: 10,
-                              height: 10,
-                              borderRadius: 10,
-                              backgroundColor: lightGreenColor,
-                              position: 'absolute',
-                              right: 0,
-                              bottom: 5,
-                            }}
-                          />
-                        </View>
-                        <Text
-                          style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
-                          {item?.name}
-                        </Text>
-                        <AcceptIcon />
-                      </View>
-                      <TouchableOpacity
-                        style={{
-                          backgroundColor: whiteColor,
-                          paddingVertical: 8,
-                          paddingHorizontal: 12,
-                          borderRadius: 10,
-                        }}
-                        onPress={() => {
-                          setModalVisible(true);
-                          setUser(item);
-                        }}>
-                        <Text
-                          style={{
-                            color: blackColor,
-                            fontFamily: Satoshi500,
-                            fontSize: RFValue(14, 812),
-                          }}>
-                          Manage
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                />
               </View>
+              <FlatList
+                scrollEnabled={false}
+                data={acceptedGuests}
+                ItemSeparatorComponent={() => <View style={{height: 16}} />}
+                renderItem={({item}) => (
+                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <View>
+                        <ImageBackground
+                          source={{uri: item?.userPhoto}}
+                          style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
+                          imageStyle={{width: 50, height: 50, borderRadius: 200}}
+                          resizeMode="cover"
+                        />
+                        <View
+                          style={{
+                            borderWidth: 1,
+                            borderColor: blackColor,
+                            width: 10,
+                            height: 10,
+                            borderRadius: 10,
+                            backgroundColor: lightGreenColor,
+                            position: 'absolute',
+                            right: 0,
+                            bottom: 5,
+                          }}
+                        />
+                      </View>
+                      <Text style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
+                        {item?.name}
+                      </Text>
+                      <AcceptIcon />
+                    </View>
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: whiteColor,
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                        borderRadius: 10,
+                      }}
+                      onPress={() => {
+                        setModalVisible(true);
+                        setUser(item);
+                      }}>
+                      <Text
+                        style={{
+                          color: blackColor,
+                          fontFamily: Satoshi500,
+                          fontSize: RFValue(14, 812),
+                        }}>
+                        Manage
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            </View>
+            <View
+              style={{
+                borderTopWidth: 1,
+                borderStyle: 'solid',
+                borderTopColor: transparentWhite16Color,
+                paddingTop: 14,
+                marginTop: 14,
+              }}>
               <View
                 style={{
-                  borderTopWidth: 1,
-                  borderStyle: 'solid',
-                  borderTopColor: transparentWhite16Color,
-                  paddingTop: 14,
-                  marginTop: 14,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: rejectedGuests.length ? 16 : 0,
                 }}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: rejectedGuests.length? 16: 0}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Not accepted</Text>
-                  <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{rejectedGuests.length}</Text>
-                  </View>
+                <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(15, 812)}}>Not accepted</Text>
+                <View style={{paddingHorizontal: 12, paddingVertical: 7, backgroundColor: lightGray2Color, borderRadius: 10}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(12, 812)}}>{rejectedGuests.length}</Text>
                 </View>
-                <FlatList
-                  scrollEnabled={false}
-                  data={rejectedGuests}
-                  ItemSeparatorComponent={() => <View style={{height: 16}} />}
-                  renderItem={({item}) => (
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <View>
-                          <ImageBackground
-                            source={{uri: item?.userPhoto}}
-                            style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
-                            imageStyle={{width: 50, height: 50, borderRadius: 200}}
-                            resizeMode="cover"
-                          />
-                          <View
-                            style={{
-                              borderWidth: 1,
-                              borderColor: blackColor,
-                              width: 10,
-                              height: 10,
-                              borderRadius: 10,
-                              backgroundColor: lightGreenColor,
-                              position: 'absolute',
-                              right: 0,
-                              bottom: 5,
-                            }}
-                          />
-                        </View>
-                        <Text
-                          style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
-                          {item?.name}
-                        </Text>
-                        <CloseCircleFillIcon />
-                      </View>
-                      <TouchableOpacity
-                        style={{
-                          backgroundColor: whiteColor,
-                          paddingVertical: 8,
-                          paddingHorizontal: 12,
-                          borderRadius: 10,
-                        }}
-                        onPress={() => {
-                          setModalVisible(true);
-                          setUser(item);
-                        }}>
-                        <Text
-                          style={{
-                            color: blackColor,
-                            fontFamily: Satoshi500,
-                            fontSize: RFValue(14, 812),
-                          }}>
-                          Manage
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                />
               </View>
+              <FlatList
+                scrollEnabled={false}
+                data={rejectedGuests}
+                ItemSeparatorComponent={() => <View style={{height: 16}} />}
+                renderItem={({item}) => (
+                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <View>
+                        <ImageBackground
+                          source={{uri: item?.userPhoto}}
+                          style={{justifyContent: 'center', alignItems: 'center', width: 50, height: 50}}
+                          imageStyle={{width: 50, height: 50, borderRadius: 200}}
+                          resizeMode="cover"
+                        />
+                        <View
+                          style={{
+                            borderWidth: 1,
+                            borderColor: blackColor,
+                            width: 10,
+                            height: 10,
+                            borderRadius: 10,
+                            backgroundColor: lightGreenColor,
+                            position: 'absolute',
+                            right: 0,
+                            bottom: 5,
+                          }}
+                        />
+                      </View>
+                      <Text style={{color: whiteColor, marginRight: 8, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 14}}>
+                        {item?.name}
+                      </Text>
+                      <CloseCircleFillIcon />
+                    </View>
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: whiteColor,
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                        borderRadius: 10,
+                      }}
+                      onPress={() => {
+                        setModalVisible(true);
+                        setUser(item);
+                      }}>
+                      <Text
+                        style={{
+                          color: blackColor,
+                          fontFamily: Satoshi500,
+                          fontSize: RFValue(14, 812),
+                        }}>
+                        Manage
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            </View>
           </View>
         );
       case EVENT_INFO:

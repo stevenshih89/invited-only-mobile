@@ -42,9 +42,9 @@ import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin.tsx';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat.ts';
-import { getUsersListAccepted } from 'helpers/getUsersListAccepted.ts';
-import { useScrollPosition } from 'src/store/scrollPosition/index.ts';
-import { eventTypes } from 'src/mocks/eventTypes.ts';
+import {getUsersListAccepted} from 'helpers/getUsersListAccepted.ts';
+import {useScrollPosition} from 'src/store/scrollPosition/index.ts';
+import {eventTypes} from 'src/mocks/eventTypes.ts';
 
 interface Photo {
   url: string;
@@ -131,7 +131,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   usersListLength,
   usersList,
   item,
-  activeType
+  activeType,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
@@ -233,7 +233,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   return (
     // @ts-ignore
-<FastImage
+    <FastImage
       style={[styles.imageStyle, styles.container]}
       source={{
         uri:
@@ -246,67 +246,78 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
         priority: FastImage.priority.normal,
       }}
       resizeMode={FastImage.resizeMode.cover}>
-      {!isProfile && <LinearGradient
-        colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
-        style={{
-          position: 'absolute',
-          bottom: 170,
-          left: 0,
-          right: 0,
-          height: 40,
-          zIndex: 1,
-        }}
-      />}
-      {!isProfile && <View style={{
-        height:90, 
-        width: 5, 
-        backgroundColor: transparentWhite56Color, 
-        borderRadius: 35,
-        position: 'absolute',
-        right: 16,
-        top: 180,
-        padding: 1.25,
-        }}>
-          <View style={{
-            height: 45,
-            width: 2.5,
-            backgroundColor: whiteColor,
+      {!isProfile && (
+        <LinearGradient
+          colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
+          style={{
+            position: 'absolute',
+            bottom: 170,
+            left: 0,
+            right: 0,
+            height: 40,
+            zIndex: 1,
+          }}
+        />
+      )}
+      {!isProfile && (
+        <View
+          style={{
+            height: 90,
+            width: 5,
+            backgroundColor: transparentWhite56Color,
             borderRadius: 35,
-            transform: [{translateY: scrollPosition > 0 && scrollPosition < 270? scrollPosition / 7: 0}]
-          }} />
-        </View>}
-        {accountType === 'guest' && !isProfile && <TouchableOpacity
-            onPress={() => handleAutoSwipeLeft()}
+            position: 'absolute',
+            right: 16,
+            top: 180,
+            padding: 1.25,
+          }}>
+          <View
             style={{
-              width: 50,
-              height: 50,
-              backgroundColor: transparent60Color,
-              borderRadius: 50,
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'absolute',
-              right: 16,
-              top: 16,
-              zIndex: 5000
-            }}>
-            <CloseIcon width={27} height={27} />
-          </TouchableOpacity>}
-      {accountType === 'host' && !isProfile &&<TouchableOpacity
-            onPress={() => handleAutoSwipeLeft()}
-            style={{
-              width: 50,
-              height: 50,
-              backgroundColor: transparent60Color,
-              borderRadius: 50,
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'absolute',
-              right: 16, 
-              top: 46,
-              zIndex: 1000
-            }}>
-            <CloseIcon width={27} height={27} />
-          </TouchableOpacity>}
+              height: 45,
+              width: 2.5,
+              backgroundColor: whiteColor,
+              borderRadius: 35,
+              transform: [{translateY: scrollPosition > 0 && scrollPosition < 270 ? scrollPosition / 7 : 0}],
+            }}
+          />
+        </View>
+      )}
+      {accountType === 'guest' && !isProfile && (
+        <TouchableOpacity
+          onPress={() => handleAutoSwipeLeft()}
+          style={{
+            width: 50,
+            height: 50,
+            backgroundColor: transparent60Color,
+            borderRadius: 50,
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'absolute',
+            right: 16,
+            top: 16,
+            zIndex: 5000,
+          }}>
+          <CloseIcon width={27} height={27} />
+        </TouchableOpacity>
+      )}
+      {accountType === 'host' && !isProfile && (
+        <TouchableOpacity
+          onPress={() => handleAutoSwipeLeft()}
+          style={{
+            width: 50,
+            height: 50,
+            backgroundColor: transparent60Color,
+            borderRadius: 50,
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'absolute',
+            right: 16,
+            top: 46,
+            zIndex: 1000,
+          }}>
+          <CloseIcon width={27} height={27} />
+        </TouchableOpacity>
+      )}
       <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={eventPhotos ? eventPhotos[0].image : ''} />
       {accountType === 'host' && (
         <View style={styles.wrapperBar}>
@@ -449,12 +460,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
         </View>
       )}
-      <View style={[styles.wrapperBio, {position: 'absolute', bottom: isProfile? 80: 200}]}>
-          <View style={styles.rowBioInfo}>
-            <Text style={styles.textName}>{name}</Text>
-            <View style={{marginLeft: 10}}>{(confirmedEvent || confirmedAccount) && <CheckStarWhite width={25} height={25} />}</View>
-          </View>
+      <View style={[styles.wrapperBio, {position: 'absolute', bottom: isProfile ? 80 : 200}]}>
+        <View style={styles.rowBioInfo}>
+          <Text style={styles.textName}>{name}</Text>
+          <View style={{marginLeft: 10}}>{(confirmedEvent || confirmedAccount) && <CheckStarWhite width={25} height={25} />}</View>
         </View>
+      </View>
       {isShowAccountInfo && (
         <View
           style={{

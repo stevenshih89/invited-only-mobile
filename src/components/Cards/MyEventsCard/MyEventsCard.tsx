@@ -20,8 +20,8 @@ import {formateDateAbbreviated} from 'helpers/formateDateAbbreviated';
 import LineImage from 'assets/images/app/Line.png';
 import moment from 'moment';
 import {Event} from '../../../types/event';
-import firestore from '@react-native-firebase/firestore'
-import { calculateAge } from 'helpers/calculateAge';
+import firestore from '@react-native-firebase/firestore';
+import {calculateAge} from 'helpers/calculateAge';
 
 interface MyEventsCard {
   statusEvent: boolean;
@@ -40,8 +40,19 @@ interface MyEventsCard {
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
-  const {placeName, styleContainer, imageBg, statusEvent, eventReviewed, allPeople, findAcceptedGuest, item, showGuestList, customButton, showInfoTop = false} =
-    props;
+  const {
+    placeName,
+    styleContainer,
+    imageBg,
+    statusEvent,
+    eventReviewed,
+    allPeople,
+    findAcceptedGuest,
+    item,
+    showGuestList,
+    customButton,
+    showInfoTop = false,
+  } = props;
 
   const styles = useStyles();
   const [userHostInfo, setUserHostInfo] = useState();
@@ -49,13 +60,13 @@ const MyEventsCard: FC<MyEventsCard> = props => {
   const [mainImageEvent, setMainImageEvent] = useState('');
 
   const getUserHostInfo = async () => {
-    const getDoc = await firestore().collection('userInfo').doc(item?.uid).get()
-    setUserHostInfo(getDoc.data())
-  }
+    const getDoc = await firestore().collection('userInfo').doc(item?.uid).get();
+    setUserHostInfo(getDoc.data());
+  };
 
   useEffect(() => {
-    getUserHostInfo()
-  },[item])
+    getUserHostInfo();
+  }, [item]);
 
   useEffect(() => {
     const filterImage = imageBg?.filter(item => item.id < 1);

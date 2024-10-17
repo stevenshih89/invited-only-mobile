@@ -15,8 +15,8 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {commonStackPath, eventEditingPath} from 'constants/pathLocations';
 import {ACCEPTED_STATUS} from 'constants/common';
 import FastImage from 'react-native-fast-image';
-import { useUser } from 'src/store/userStore';
-import { getUsersListAccepted } from 'helpers/getUsersListAccepted';
+import {useUser} from 'src/store/userStore';
+import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
 
 interface ModalFullEvent {
   isVisible: boolean;
@@ -109,7 +109,14 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
                 </View>
               )}
             </FastImage>
-            <View style={{flexDirection: 'row', paddingHorizontal: 17, paddingVertical: 22, justifyContent: 'space-between', alignItems: 'flex-end'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                paddingHorizontal: 17,
+                paddingVertical: 22,
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+              }}>
               <View>
                 <Text
                   style={{
@@ -124,44 +131,41 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
                     color: black4Color,
                     fontFamily: Satoshi700,
                     fontSize: RFValue(20, 812),
-                    marginTop: 4
+                    marginTop: 4,
                   }}>
                   {actualActiveEventData?.name}
                 </Text>
               </View>
               <View
-              style={{
-                borderWidth: 1,
-                borderColor: blackColor,
-                borderRadius: 10,
-                flexDirection: 'row',
-                paddingHorizontal: 16,
-                paddingVertical: 7,
-                alignItems: 'center',
-              }}>
-              <FastImage
-                style={{width: 40, height: 40, borderRadius: 40}}
-                source={{uri: user?.photos[0]?.image}}
-              />
-              <View style={{marginLeft: 10, alignItems: 'center'}}>
-                <Text
-                  style={{
-                    fontSize: RFValue(26, 812),
-                    color: blackColor,
-                    fontFamily: Satoshi700,
-                  }}>
-                  {getUsersListAccepted(actualActiveEventData?.usersList)}/{actualActiveEventData?.male + actualActiveEventData?.female}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: RFValue(12, 812),
-                    color: blackColor,
-                    fontFamily: Satoshi500,
-                  }}>
-                  Guest List
-                </Text>
+                style={{
+                  borderWidth: 1,
+                  borderColor: blackColor,
+                  borderRadius: 10,
+                  flexDirection: 'row',
+                  paddingHorizontal: 16,
+                  paddingVertical: 7,
+                  alignItems: 'center',
+                }}>
+                <FastImage style={{width: 40, height: 40, borderRadius: 40}} source={{uri: user?.photos[0]?.image}} />
+                <View style={{marginLeft: 10, alignItems: 'center'}}>
+                  <Text
+                    style={{
+                      fontSize: RFValue(26, 812),
+                      color: blackColor,
+                      fontFamily: Satoshi700,
+                    }}>
+                    {getUsersListAccepted(actualActiveEventData?.usersList)}/{actualActiveEventData?.male + actualActiveEventData?.female}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: RFValue(12, 812),
+                      color: blackColor,
+                      fontFamily: Satoshi500,
+                    }}>
+                    Guest List
+                  </Text>
+                </View>
               </View>
-            </View>
             </View>
           </View>
           <Text
@@ -171,7 +175,7 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
               fontSize: RFValue(30, 812),
               textAlign: 'center',
               marginTop: 20,
-              width: '90%'
+              width: '90%',
             }}>{`Change guest list from ${totalQuantityGuestsProps ? totalQuantityGuestsProps : totalQuantityGuests} to ${
             totalQuantityGuestsProps ? totalQuantityGuestsProps : totalQuantityGuests + 1
           }?`}</Text>
