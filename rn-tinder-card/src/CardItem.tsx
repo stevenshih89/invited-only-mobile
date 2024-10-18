@@ -64,6 +64,7 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
       OverlayLabelTop,
       OverlayLabelBottom,
       children,
+      disableVerticalSwipe, 
     },
     ref
   ) => {
@@ -89,7 +90,10 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
       },
       onActive: ({ translationX, translationY }, ctx) => {
         translateX.value = translationX + ctx.startX;
-        translateY.value = translationY + ctx.startY;
+
+        if (!disableVerticalSwipe) {
+          translateY.value = translationY + ctx.startY;
+        }
       },
       onEnd: ({ velocityX, velocityY, translationX, translationY }) => {
         const positiveX = Math.abs(translationX);
@@ -106,8 +110,9 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
           translateYRange ?? []
         );
 
-        if (!destX && !destY) resetPosition(translateX, translateY);
-        else if (
+        if (disableVerticalSwipe || (!destX && !destY)) {
+          resetPosition(translateX, translateY);
+        } else if (
           positiveY > positiveX &&
           destY &&
           !disableTopSwipe &&
@@ -127,7 +132,7 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
             velocity: velocityY,
           });
           onSwipedBottom && runOnJS(onSwipedBottom)();
-        } else
+        } else {
           updatePosition(
             destX,
             translateX,
@@ -139,6 +144,7 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
             onSwipedRight,
             onSwipedLeft
           );
+        }
 
         if (scaleValue !== 1)
           scale.value = withTiming(1, {
@@ -146,6 +152,7 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
           });
       },
     });
+
 
     const animatedStyle = useAnimatedStyle(() => {
       const translationX = interpolate(
@@ -327,6 +334,7 @@ CardItem.defaultProps = {
   disableLeftSwipe: false,
   disableTopSwipe: false,
   disableBottomSwipe: false,
+  disableVerticalSwipe: false,
   //* Rotation Animation Props
   inputRotationRange: [-windowWidth, 0, windowWidth],
   outputRotationRange: [-10, 0, 10],

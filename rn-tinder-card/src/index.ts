@@ -61,6 +61,7 @@ export type TinderCardOptions = PropsWithChildren<{
   disableLeftSwipe?: boolean;
   disableTopSwipe?: boolean;
   disableBottomSwipe?: boolean;
+  disableVerticalSwipe?: boolean;
 
   /*
   The style of the card.
