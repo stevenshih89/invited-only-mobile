@@ -260,6 +260,7 @@ const ItemRequestHost = ({
         OverlayLabelRight={OverlayRight}
         OverlayLabelLeft={OverlayLeft}
         disableBottomSwipe={true}
+        disableVerticalSwipe={true}
         inputOverlayLabelRightOpacityRange={[0, 40]}
         inputOverlayLabelLeftOpacityRange={[0, -40]}
         translateXRange={[-70, 0, 70]}
