@@ -23,7 +23,7 @@ import Button from 'components/Button/Button.tsx';
 import {useChat} from '../../../store/chatStore';
 import {EventContext} from 'contexts/EventContext.tsx';
 import moment from 'moment/moment';
-import {blackColor, whiteColor} from 'constants/colors';
+import {blackColor, grayScale700, lightGray3Color, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import {useFocusEffect} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
@@ -53,6 +53,7 @@ type ItemProps = {
 type ItemEventsJoiningProps = {
   chats: [{id: string; image: any; name: string; lastMessage: string}] | any;
   girlInvitation: number;
+  maleInvitation: number;
   data: string;
   status: string;
   image: any;
@@ -61,6 +62,7 @@ type ItemEventsJoiningProps = {
   hostUid: string;
   usersList: [];
   newMessages: number;
+  statusEvent: string;
 };
 
 interface ChatProps {
@@ -233,6 +235,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     title,
     chats,
     girlInvitation,
+    maleInvitation,
     image,
     status,
     data,
@@ -240,36 +243,59 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     hostUid,
     usersList,
     newMessages,
-  }: ItemEventsJoiningProps) => {
+    statusEvent
+  }: ItemEventsJoiningProps) => {    
     const statusColor = handleCheckStatusStyles(status);
+
+    const checkIsFullEvent = () => {
+      const acceptEvent = usersList.filter(item => item?.status === ACCEPTED_STATUS)
+      return acceptEvent.length >= (girlInvitation + maleInvitation)
+    }
+
     return (
       <View style={styles.itemEventsJoining}>
         <View style={styles.wrapperItemEventsJoining}>
+            <View
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: 0,
+                backgroundColor: whiteColor,
+                borderRadius: 5,
+                paddingHorizontal: 8,
+                paddingVertical: 4,
+              }}>
+              <Text style={{fontSize: RFValue(12, 812), fontFamily: Satoshi700, color: blackColor}}>
+              {statusEvent && !checkIsFullEvent()? 'ACTIVE': 'FULL'}
+              </Text>
+            </View>
           <TouchableOpacity style={styles.fdrAiC}>
             <FastImage resizeMode="cover" source={{uri: image}} style={{width: 50, height: 50, borderRadius: 50}} />
             <View style={{marginLeft: 15}}>
               <View style={styles.fdrAiC}>
                 <Text style={styles.title}>{title}</Text>
+
                 <View style={{backgroundColor: statusColor, borderRadius: 4}}>
                   <View style={[handleCheckTypeInvitedStyles(status)]}>
                     <Text style={styles.textStatusInvite}>{handleCheckTypeInvitedText(status)}</Text>
                   </View>
-                  {/*<Text style={[styles.textStatus]}>{status}</Text>*/}
+                  {/* <Text style={[styles.textStatus]}>{status}</Text> */}
                 </View>
               </View>
               <View style={{flexDirection: 'row', marginTop: 10}}>
                 <View style={styles.fdrAiC}>
-                  <PersonIcon width={14} height={14} />
-                  <Text style={styles.textDescriptionUnderTitle}>{girlInvitation} x Guest invitation </Text>
+                  {/* <PersonIcon width={14} height={14} /> */}
+                  <Text style={styles.textDescriptionUnderTitle}>Guest invitation {girlInvitation + maleInvitation}</Text>
                 </View>
+                <View style={{width: 1, height: '100%', backgroundColor: grayScale700, marginHorizontal: 12}} />
                 <View style={styles.fdrAiC}>
-                  <CalendarIcon style={{marginLeft: 10}} width={14} height={14} />
+                  {/* <CalendarIcon style={{marginLeft: 10}} width={14} height={14} /> */}
                   <Text style={styles.textDescriptionUnderTitle}>{moment(`${data}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
                 </View>
               </View>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setHostMenu(true)}>
+          <TouchableOpacity style={{position: 'absolute', right: 0, bottom: -5}} onPress={() => setHostMenu(true)}>
             <ThreeDoths />
           </TouchableOpacity>
         </View>
@@ -311,20 +337,22 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               <View>
                 <FastImage source={{uri: i?.avatar}} style={{width: 50, height: 50, borderRadius: 50}} />
               </View>
-              <View style={{marginLeft: 15}}>
+              <View style={{marginLeft: 15, flex: 1}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={styles.textNameChat}>{i?.name}</Text>
+                <ChatIcon width={18} height={18} style={{position: 'absolute', right: 0, top: 0}} />
+                </View>
+                <View>
                 <Text style={styles.textDescription}>
                   {i?.messages[i?.messages.length - 1] && i?.messages[i?.messages.length - 1]?.message}
                 </Text>
-              </View>
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <ChatIcon width={18} height={18} style={{marginRight: 10}} />
-              {!!newMessages && (
+                {!!newMessages && (
                 <View style={styles.newMessage}>
                   <Text style={styles.textCountNewMessages}>{newMessages}</Text>
                 </View>
               )}
+                </View>
+              </View>
             </View>
           </TouchableOpacity>
         ))}
@@ -416,7 +444,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             const eventData = eventQuery.data();
             const data = {
               id: chat?.id,
-              girlInvitation: eventData?.female + eventData?.femaleFriend,
+              girlInvitation: eventData?.female,
+              maleInvitation: eventData?.male,
               data: eventData?.date,
               status: eventData?.activeType,
               image: eventData?.photos[0]?.image,
@@ -424,6 +453,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               hostUid: eventData?.uid,
               activeEvent: chat?.activeEvent,
               usersList: eventData?.usersList,
+              statusEvent: eventData?.statusEvent,
               chats: chat?.chats
                 .filter(chat => chat.uid === user?.uid)
                 .map(chat => ({...chat, avatar: eventData?.hostImage, name: eventData?.hostName})),
@@ -551,7 +581,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                 <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />
               </View>
             )}
-            renderItem={({item}) => {
+            renderItem={({item}) => {              
               return (
                 <ItemEventsJoining
                   image={item.image}
@@ -560,10 +590,12 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   data={item.data}
                   activeEvent={item.activeEvent}
                   girlInvitation={item.girlInvitation}
+                  maleInvitation={item.maleInvitation}
                   hostUid={item.hostUid}
                   status={item.status}
                   usersList={item.usersList}
                   newMessages={item?.chats[0].newMessagesHost}
+                  statusEvent={item?.statusEvent}
                 />
               );
             }}
