@@ -61,6 +61,7 @@ type ItemEventsJoiningProps = {
   hostUid: string;
   usersList: [];
   newMessages: number;
+  hostImage: string
 };
 
 interface ChatProps {
@@ -240,6 +241,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     hostUid,
     usersList,
     newMessages,
+    hostImage
   }: ItemEventsJoiningProps) => {
     const statusColor = handleCheckStatusStyles(status);
     return (
@@ -284,6 +286,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           hostUid={hostUid}
           usersList={usersList}
           eventId={activeEvent}
+          hostImage={hostImage}
         />
         {chats?.map((i: any) => (
           <TouchableOpacity
@@ -420,7 +423,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               data: eventData?.date,
               status: eventData?.activeType,
               image: eventData?.photos[0]?.image,
-              title: eventData?.placeName,
+              hostImage: eventData?.hostImage,
+              title: eventData?.name,
               hostUid: eventData?.uid,
               activeEvent: chat?.activeEvent,
               usersList: eventData?.usersList,
@@ -564,6 +568,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   status={item.status}
                   usersList={item.usersList}
                   newMessages={item?.chats[0].newMessagesHost}
+                  hostImage={item?.hostImage}
                 />
               );
             }}
