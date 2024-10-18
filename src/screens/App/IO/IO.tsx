@@ -293,11 +293,9 @@ const IO: FC = (): JSX.Element => {
     setCounterSuperInvites(currentSuperInvites + currentWeeklySuperInvites);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      getSuperInvites();
-    }, []),
-  );
+  useEffect(() => {
+    getSuperInvites();
+  },[])
 
   const decrementSuperInvite = async (item: UserInfo, coinAnimationTimer = 0) => {
     try {
@@ -416,7 +414,6 @@ const IO: FC = (): JSX.Element => {
   function hasWeekPassed(previousTimestamp: number) {
     const currentTimestamp = Date.now();
     const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
-
     return currentTimestamp - previousTimestamp >= oneWeekInMilliseconds;
   }
 
