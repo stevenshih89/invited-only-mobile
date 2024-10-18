@@ -168,8 +168,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   const handleSuperInvite = () => {
     if (counterSuperInvites - 1 >= 0) {
-      flipCoin();
-      // changeEventList();
+      handleOpenSuperInvite && handleOpenSuperInvite();
     } else {
       navigation.navigate('/super-invite-pay');
     }
@@ -193,28 +192,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       return setActive(numberPhotos - 1);
     }
     setActive(p => p - 1);
-  };
-
-  const goToMyProfileView = () => {
-    // @ts-ignore
-    navigation.navigate(superInvitePayPath);
-  };
-
-  //animation
-  const rotation = useSharedValue(0);
-  const [flipped, setFlipped] = useState(false);
-
-  const flipCoin = () => {
-    rotation.value = withTiming(flipped ? 0 : 180, {
-      duration: 500,
-      easing: Easing.inOut(Easing.ease),
-    });
-    setFlipped(prev => !prev);
-    if (superInvites) {
-      handleOpenSuperInvite && handleOpenSuperInvite();
-    } else {
-      goToMyProfileView();
-    }
   };
 
   const handleSuperJoin = () => {
