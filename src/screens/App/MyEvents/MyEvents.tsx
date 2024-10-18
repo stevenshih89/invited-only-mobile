@@ -571,7 +571,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     const findUser = usersList.find(item => item.uid === user?.uid);
     console.warn(findUser);
 
-    const status = findUser.status;
+    const status = findUser?.status;
 
     console.warn(status, id, placeName);
 

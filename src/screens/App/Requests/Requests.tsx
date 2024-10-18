@@ -14,7 +14,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {eventCreatingStackPath, IOPath} from 'constants/pathLocations';
+import {eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocations';
 import {EventContext} from 'contexts/EventContext';
 import {useUser} from '../../../store/userStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
@@ -191,6 +191,17 @@ const Requests: FC = (): ReactElement => {
     setTotalRequestsGuests(totalRequestsGuests);
     setAcceptQuantityGuest(findAcceptedGuest);
     return findAcceptedGuest >= allGuests;
+  };
+
+  const goToCreateEvent = (): void => {
+    if (!userInfo?.accountConfirmed) {
+      return;
+    }
+    if (!userInfo.accountPremium) {
+      navigation.navigate(paymentPath as never);
+    } else {
+      navigation.navigate(eventCreatingStackPath);
+    }
   };
 
   useFocusEffect(
@@ -463,7 +474,7 @@ const Requests: FC = (): ReactElement => {
                 <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
                   Get started by creating an event to begin inviting guests.
                 </Text>
-                <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
+                <Button title="Create event" onPress={goToCreateEvent} />
               </View>
             )}
           </>

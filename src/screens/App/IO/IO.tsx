@@ -80,6 +80,7 @@ const IO: FC = (): JSX.Element => {
   const [matchData, setMatchData] = useState<MatchData>({});
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
+  const [loadingMyEvents, setLoadingMyEvents] = useState<boolean>(true);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
@@ -295,7 +296,7 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     getSuperInvites();
-  },[])
+  }, []);
 
   const decrementSuperInvite = async (item: UserInfo, coinAnimationTimer = 0) => {
     try {
@@ -453,12 +454,15 @@ const IO: FC = (): JSX.Element => {
     const user = auth().currentUser;
     if (user) {
       try {
+        setLoadingMyEvents(true);
         const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).where('isCancelled', '==', false).get();
 
         if (querySnapshot.empty) {
           setMyEvents([]);
           setMyEventsList([]);
           setActiveEvent({});
+          setLoadingMyEvents(false);
+          setLoadingEvents(false);
           return;
         }
         const data = querySnapshot.docs.map(doc => doc.data() as EventData);
@@ -476,6 +480,8 @@ const IO: FC = (): JSX.Element => {
           setMyEvents([]);
           setMyEventsList([]);
           setActiveEvent({});
+          setLoadingMyEvents(false);
+          setLoadingEvents(false);
           return;
         }
 
@@ -484,10 +490,13 @@ const IO: FC = (): JSX.Element => {
         if (!myEvents.length) {
           setActiveEvent(filteredData[0]);
         }
+        setLoadingMyEvents(false);
       } catch (error: any) {
         setMyEvents([]);
         setMyEventsList([]);
         setActiveEvent({});
+        setLoadingMyEvents(false);
+        setLoadingEvents(false);
         Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
@@ -1625,6 +1634,17 @@ const IO: FC = (): JSX.Element => {
     return matchedGuests;
   };
 
+  const goToCreateEvent = (): void => {
+    if (!userHost?.accountConfirmed) {
+      return;
+    }
+    if (!userInfo.accountPremium) {
+      navigation.navigate(paymentPath as never);
+    } else {
+      navigation.navigate(eventCreatingStackPath);
+    }
+  };
+
   useEffect(() => {
     if (userInfo?.uid) {
       isHost ? getListForHost() : getListForGuest();
@@ -1642,19 +1662,6 @@ const IO: FC = (): JSX.Element => {
       fetchUserInfo();
     }, []),
   );
-
-  const goToCreateEvent = (): void => {
-    if (!userHost?.accountConfirmed) {
-      return;
-    }
-    if (!userInfo.accountPremium) {
-      navigation.navigate(paymentPath as never);
-    } else {
-      navigation.navigate(eventCreatingStackPath);
-    }
-  };
-
-  console.warn(activeEvent?.usersList);
 
   if (loadingUser && !userInfo?.uid && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
@@ -1686,16 +1693,18 @@ const IO: FC = (): JSX.Element => {
     return (
       <>
         <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
-        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && <ModalLockAccount haveCode isVisibleButton={false} />}
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+        )}
       </>
     );
   }
 
-  if (userInfo?.uid && isHost && !loadingEvents && myEvents.length <= 0 && !isVisibleMatch) {
+  if (userInfo?.uid && isHost && !loadingEvents && !loadingMyEvents && myEvents.length <= 0 && !isVisibleMatch) {
     return (
       <>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
-          <View style={{height: 370}}>
+          <View style={{height: 370, marginTop: screenHeight / 18}}>
             <Loading userInfo={userInfo} topPosition={true} />
           </View>
           <View>
@@ -1706,11 +1715,13 @@ const IO: FC = (): JSX.Element => {
               Get started by creating an event to begin inviting guests.
             </Text>
           </View>
-          <View style={{paddingHorizontal: 24}}>
+          <View style={{paddingHorizontal: 24, marginTop: screenHeight / 30}}>
             <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 20, marginBottom: 30}} />
           </View>
         </View>
-        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && <ModalLockAccount haveCode isVisibleButton={false} />}
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+        )}
       </>
     );
   }
@@ -1731,7 +1742,9 @@ const IO: FC = (): JSX.Element => {
           userInfo={userInfo}
           wrapperText={false}
         />
-        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && <ModalLockAccount haveCode isVisibleButton={false} />}
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+        )}
       </>
     );
   }
@@ -1817,7 +1830,9 @@ const IO: FC = (): JSX.Element => {
             idEvent={activeEvent?.id}
             setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
           />
-          {!userInfo?.accountReviewed && <ModalLockAccount haveCode isVisibleButton={false} />}
+          {!userInfo?.accountReviewed && (
+            <ModalLockAccount haveCode accountType={userInfo?.accountType} isPremium={userInfo?.accountPremium} isVisibleButton={true} />
+          )}
           {userInfo?.accountConfirmed && isHost && (
             <ModalEventLocked eventReviewed={activeEvent?.eventReviewed} eventStatus={activeEvent?.statusEvent} />
           )}

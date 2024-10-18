@@ -243,32 +243,32 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     hostUid,
     usersList,
     newMessages,
-    statusEvent
-  }: ItemEventsJoiningProps) => {    
+    statusEvent,
+  }: ItemEventsJoiningProps) => {
     const statusColor = handleCheckStatusStyles(status);
 
     const checkIsFullEvent = () => {
-      const acceptEvent = usersList.filter(item => item?.status === ACCEPTED_STATUS)
-      return acceptEvent.length >= (girlInvitation + maleInvitation)
-    }
+      const acceptEvent = usersList.filter(item => item?.status === ACCEPTED_STATUS);
+      return acceptEvent.length >= girlInvitation + maleInvitation;
+    };
 
     return (
       <View style={styles.itemEventsJoining}>
         <View style={styles.wrapperItemEventsJoining}>
-            <View
-              style={{
-                position: 'absolute',
-                right: 0,
-                top: 0,
-                backgroundColor: whiteColor,
-                borderRadius: 5,
-                paddingHorizontal: 8,
-                paddingVertical: 4,
-              }}>
-              <Text style={{fontSize: RFValue(12, 812), fontFamily: Satoshi700, color: blackColor}}>
-              {statusEvent && !checkIsFullEvent()? 'ACTIVE': 'FULL'}
-              </Text>
-            </View>
+          <View
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: 0,
+              backgroundColor: whiteColor,
+              borderRadius: 5,
+              paddingHorizontal: 8,
+              paddingVertical: 4,
+            }}>
+            <Text style={{fontSize: RFValue(12, 812), fontFamily: Satoshi700, color: blackColor}}>
+              {statusEvent && !checkIsFullEvent() ? 'ACTIVE' : 'FULL'}
+            </Text>
+          </View>
           <TouchableOpacity style={styles.fdrAiC}>
             <FastImage resizeMode="cover" source={{uri: image}} style={{width: 50, height: 50, borderRadius: 50}} />
             <View style={{marginLeft: 15}}>
@@ -339,18 +339,18 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               </View>
               <View style={{marginLeft: 15, flex: 1}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={styles.textNameChat}>{i?.name}</Text>
-                <ChatIcon width={18} height={18} style={{position: 'absolute', right: 0, top: 0}} />
+                  <Text style={styles.textNameChat}>{i?.name}</Text>
+                  <ChatIcon width={18} height={18} style={{position: 'absolute', right: 0, top: 0}} />
                 </View>
                 <View>
-                <Text style={styles.textDescription}>
-                  {i?.messages[i?.messages.length - 1] && i?.messages[i?.messages.length - 1]?.message}
-                </Text>
-                {!!newMessages && (
-                <View style={styles.newMessage}>
-                  <Text style={styles.textCountNewMessages}>{newMessages}</Text>
-                </View>
-              )}
+                  <Text style={styles.textDescription}>
+                    {i?.messages[i?.messages.length - 1] && i?.messages[i?.messages.length - 1]?.message}
+                  </Text>
+                  {!!newMessages && (
+                    <View style={styles.newMessage}>
+                      <Text style={styles.textCountNewMessages}>{newMessages}</Text>
+                    </View>
+                  )}
                 </View>
               </View>
             </View>
@@ -534,7 +534,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             showsVerticalScrollIndicator={false}
             data={messages?.chats}
             ListEmptyComponent={() => (
-              <View style={{height: '100%', marginTop: eventData ? screenHeight * 0.06 : screenHeight * 0.14}}>
+              <View style={{height: '100%', marginTop: eventData ? screenHeight * 0.06 : screenHeight / 5.5}}>
                 <View style={{flex: 1, justifyContent: 'center'}}>
                   <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                     You don't have any chat
@@ -581,7 +581,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                 <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />
               </View>
             )}
-            renderItem={({item}) => {              
+            renderItem={({item}) => {
               return (
                 <ItemEventsJoining
                   image={item.image}
