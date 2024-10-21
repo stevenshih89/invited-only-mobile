@@ -151,7 +151,7 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
   return (
     <View style={[styles.iconWr, {borderTopColor: focused ? whiteColor : 'transparent'}]}>
       {getIcon()}
-      {((route === '/chat' && newMessage > 0) || ((eventsCount > 0 || eventsCountHost > 0) && route === '/my-events')) && (
+      {((route === '/chat' && newMessage > 0) || ((eventsCount > 0) && route === '/my-events')) && (
         <View style={{
           backgroundColor: lightRedColor,
           position: 'absolute',
