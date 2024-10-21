@@ -409,6 +409,11 @@ const MyEvents: FC<any> = ({navigation}) => {
 
   const handleGetEventsIJoining = async events => {
     try {
+      if (!events) {
+        setEventsJoiningData([]);
+        setEventsImJoining([]);
+        return;
+      }
       const uid = user?.uid;
       const data = events?.docs?.map(i => i?.data());
 
@@ -437,6 +442,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         .where('uid', '==', `${user?.uid}`)
         .onSnapshot(querySnapshot => {
           if (querySnapshot.empty) {
+            setMyEventsData([]);
             return;
           }
           const data = querySnapshot?.docs?.map(i => i?.data());

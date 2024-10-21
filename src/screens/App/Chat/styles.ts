@@ -4,8 +4,6 @@ import {
   grayScale700,
   lightGray11Color,
   lightGray15Color,
-  lightGray6Color,
-  lightGrayColor,
   lightGreenColor,
   lightRedColor,
   whiteColor,

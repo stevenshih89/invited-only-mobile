@@ -29,7 +29,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
 
   const guestContent: ReactNode[] = [<SwipeToInvite />, <GetInviteMatch />];
 
-  const content = true ? guestContent : hostContent;
+  const content = accountTypeGuest ? guestContent : hostContent;
 
   const setOnBoarding = useUser((i: any) => i?.setOnBoarding);
   const navigation = useAppNavigation();

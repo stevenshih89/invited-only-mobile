@@ -551,6 +551,7 @@ const IO: FC = (): JSX.Element => {
         uid: isHost ? guestData?.uid : userHost?.uid,
         userPhoto: isHost ? guestData?.photos[0]?.image : userHost?.photos[0]?.image,
         fcmToken: isHost ? guestData?.fcmToken : userHost?.fcmToken,
+        createdAt: moment().format('YYYY-MM-DD'),
       };
 
       if (isHost) {
@@ -570,7 +571,10 @@ const IO: FC = (): JSX.Element => {
         if (matchedGuest) {
           data = {
             requestsList: firestore.FieldValue.arrayRemove(matchedGuest),
-            usersList: firestore.FieldValue.arrayUnion({...userInvited, status: INVITE_MATCH_STATUS}),
+            usersList: firestore.FieldValue.arrayUnion({
+              ...userInvited,
+              status: INVITE_MATCH_STATUS,
+            }),
           };
           matchedGuestData = {
             type: 'match',
