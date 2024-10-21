@@ -49,6 +49,7 @@ const settingsPath: keyof RootStackParamList = '/settings';
 const accountSettingPath: keyof RootStackParamList = '/account-setting';
 const securePrivacyPath: keyof RootStackParamList = '/secure-privacy';
 const phoneChangePath: keyof RootStackParamList = '/phone-change';
+const emailChangePath: keyof RootStackParamList = '/email-change';
 const notificationSettingPath: keyof RootStackParamList = '/notification-setting';
 const contactAndFAQPath: keyof RootStackParamList = '/contact-and-faq';
 const photoVerifiedPath: keyof RootStackParamList = '/photo-verified';
@@ -115,5 +116,6 @@ export {
   joinEventsPathRequest,
   manageSubscriptionPath,
   startCreateAccountPath,
-  eulaPath
+  eulaPath,
+  emailChangePath
 };
