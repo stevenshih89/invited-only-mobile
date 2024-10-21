@@ -110,30 +110,7 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
             return;
           }
           const data = querySnapshot?.docs?.map(i => i?.data());
-          const sortedData = data.sort((a, b) => {
-            if (a.isCancelled && !b.isCancelled) {
-              return 1;
-            }
-            if (!a.isCancelled && b.isCancelled) {
-              return -1;
-            }
-
-            if (a?.date && a?.hour && b?.date && b?.hour) {
-              const adjustedDateA = moment(`${a.date}, ${a.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-              const adjustedDateB = moment(`${b.date}, ${b.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-              const now = moment();
-
-              if (adjustedDateA.isBefore(now) && !adjustedDateB.isBefore(now)) {
-                return 1;
-              }
-              if (!adjustedDateA.isBefore(now) && adjustedDateB.isBefore(now)) {
-                return -1;
-              }
-            }
-
-            return 0;
-          });
-          const filterEvents = sortedData.filter(item => !item.isCancelled) 
+          const filterEvents = data.filter(item => !item.isCancelled) 
           setEventsCountHost(filterEvents.length)
         });
     }
