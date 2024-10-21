@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import {ImageBackground, SafeAreaView, Text, TouchableOpacity, View, Linking, Alert} from 'react-native';
 import Background from 'assets/images/auth/bg-create-account.png';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {backgroundGradientColors, lightGray19Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, black1Color, lightGray19Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {eulaPath, signUpPath} from 'constants/pathLocations';
@@ -69,11 +69,13 @@ const StartCreateAccount: FC = (): JSX.Element => {
               <View style={{width: 36, height: 5, borderRadius: 55, backgroundColor: lightGray19Color}} />
               <View style={{width: 36, height: 5, borderRadius: 55, backgroundColor: whiteColor, marginLeft: 5}} />
             </View>
-            <Button
-              buttonStyle={{width: '100%', marginBottom: screenHeight / 58, marginTop: screenHeight / 39}}
-              title="Create Account"
-              onPress={() => navigation.navigate(eulaPath as never)}
-            />
+            <View style={{
+              width: '100%',
+              marginBottom: screenHeight / 58,
+              marginTop: screenHeight / 39,
+            }}>
+              <Button onPress={() => navigation.navigate(eulaPath as never)} title='Get Access'/>
+            </View>
             <View style={{flexDirection: 'row', width: '100%', justifyContent: 'center', marginBottom: screenHeight / 39}}>
               <Text
                 style={{
@@ -120,3 +122,4 @@ const StartCreateAccount: FC = (): JSX.Element => {
 };
 
 export default StartCreateAccount;
+
