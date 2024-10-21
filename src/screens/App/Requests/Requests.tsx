@@ -2,7 +2,7 @@ import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
 import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
 //import components
 import useStyles from './styles';
-import {blackColor, lightGray10Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGray10Color, transparentGray70Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
@@ -29,7 +29,7 @@ import {useAdminActions} from 'src/store/adminActions';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import FastImage from 'react-native-fast-image';
-import {ACCEPTED_STATUS, LIKED} from 'constants/common';
+import {ACCEPTED_STATUS, LIKED, screenHeight} from 'constants/common';
 import {Event, EventData} from 'src/types/event';
 import {UserInfo} from 'src/types/userInfo';
 
@@ -248,49 +248,6 @@ const Requests: FC = (): ReactElement => {
     );
   }
 
-  if (isHost && !requestsForHost.eventReviewed && myEventsList?.length) {
-    const totalGuests = requestsForHost.female + requestsForHost.male;
-    const acceptedGuests = 0;
-
-    return (
-      <View style={styles.container}>
-        <View
-          style={{
-            marginTop: 18,
-            marginHorizontal: 23,
-            backgroundColor: lightGray10Color,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            borderRadius: 10,
-            padding: 10,
-          }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Clock width={32} height={32} />
-            <Text
-              style={{
-                marginLeft: 6,
-                color: whiteColor,
-                fontFamily: Satoshi700,
-                fontSize: RFValue(12, 812),
-              }}>
-              Event under review
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <PersoneIcon width={16} height={16} />
-            <Text
-              style={{
-                fontFamily: Satoshi500,
-                fontSize: RFValue(12, 812),
-                color: whiteColor,
-                marginLeft: 2,
-              }}>{`${acceptedGuests}/${totalGuests}`}</Text>
-          </View>
-        </View>
-      </View>
-    );
-  }
 
   if (
     isDateTimePassed(list?.date, list?.hour) &&
@@ -320,6 +277,7 @@ const Requests: FC = (): ReactElement => {
   if (
     !loading &&
     userInfo?.accountConfirmed &&
+    requestsForHost.eventReviewed &&
     !!myEventsList?.length &&
     (isHost ? !requestsForHost?.requestsList?.length : !dataForGuest?.length) &&
     !isVisibleMatch
@@ -355,7 +313,7 @@ const Requests: FC = (): ReactElement => {
           setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
         />
         {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}
-        {userInfo?.accountType === 'host' && !!myEventsList?.length && (
+        {userInfo?.accountType === 'host' && (
           <View
             style={{
               width: '100%',
@@ -431,6 +389,35 @@ const Requests: FC = (): ReactElement => {
             }
           />
         )}
+        {isHost && !requestsForHost.eventReviewed && !!myEventsList?.length && (
+          <View style={styles.container}>
+            <View style={{paddingHorizontal: 30, marginTop: 7}}>
+              <FastImage
+                style={{
+                  width: '100%',
+                  height: screenHeight * 0.22,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 20,
+                }}
+                source={{uri: activeEvent?.photos[0].image}}>
+                <View style={{width: '100%', height: '100%', backgroundColor: transparentGray70Color, position: 'absolute'}} />
+                <View style={{flexDirection: 'row'}}>
+                  <Clock width={32} height={32} />
+                  <Text
+                    style={{
+                      color: whiteColor,
+                      fontFamily: Satoshi500,
+                      fontSize: RFValue(26, 812),
+                      marginLeft: 10,
+                    }}>
+                    Event in review
+                  </Text>
+                </View>
+              </FastImage>
+            </View>
+          </View>
+        )}
         {expressionForHost || expressionForGuest ? (
           <FlatList
             // @ts-ignore
@@ -486,3 +473,4 @@ const Requests: FC = (): ReactElement => {
 };
 
 export default Requests;
+
