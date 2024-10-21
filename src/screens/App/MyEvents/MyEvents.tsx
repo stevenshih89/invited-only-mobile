@@ -565,6 +565,28 @@ const MyEvents: FC<any> = ({navigation}) => {
 
     return (
       <>
+        {status !== ACCEPTED_STATUS && status !== APPROVED_STATUS && (
+          <TouchableOpacity
+          disabled
+          style={{
+            height: 65,
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 18,
+            backgroundColor: lightGray20Color,
+            marginTop: 25,
+          }}>
+          <Text
+            style={{
+              color: blackColor,
+              fontFamily: Satoshi700,
+              fontSize: RFValue(16, 812),
+            }}>
+            Waiting for invitation approval
+          </Text>
+        </TouchableOpacity>
+        )}
         {status === ACCEPTED_STATUS && (
           <TouchableOpacity
             onPress={() => changeStatusGuestUsersList(CANCEL_STATUS, id, uidHost, placeName, date, hostPhoto)}
