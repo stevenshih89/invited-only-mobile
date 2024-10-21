@@ -836,12 +836,12 @@ const MyEvents: FC<any> = ({navigation}) => {
           {isHost ? (
             activeTab === MY_EVENTS ? (
               <>
-                {<UserInfoTop showTotalEvents={true} />}
                 <FlatList
                   showsVerticalScrollIndicator={false}
                   style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
                   data={myEventsData}
                   keyExtractor={item => item.id.toString()}
+                  ListHeaderComponent={<UserInfoTop showTotalEvents={true} />}  
                   ListEmptyComponent={() => (
                     <>
                       {userInfo?.accountConfirmed && (
@@ -933,11 +933,11 @@ const MyEvents: FC<any> = ({navigation}) => {
             )
           ) : (
             <View style={{flex: 1}}>
-              {<UserInfoTop showTotalEvents={true} />}
               <FlatList
                 showsVerticalScrollIndicator={false}
                 data={eventsJoiningData}
                 style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
+                ListHeaderComponent={<UserInfoTop showTotalEvents={true} />}
                 ListEmptyComponent={() => (
                   <View style={{marginTop: screenHeight / 6}}>
                     <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>

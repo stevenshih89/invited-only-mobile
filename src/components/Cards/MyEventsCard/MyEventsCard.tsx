@@ -423,7 +423,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                     fontFamily: Satoshi500,
                     marginTop: 5,
                   }}>
-                  {item?.usersList.filter((i: Event.User) => i.status !== LIKED && i.status !== NOT_ACCEPTED_STATUS).length}
+                  {item?.male + item?.female}
                 </Text>
               </View>
             </View>
