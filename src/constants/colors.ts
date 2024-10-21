@@ -22,6 +22,7 @@ const transparentWhite30Color: string = 'rgba(255, 255, 255, 0.3)';
 const transparentWhite40Color: string = 'rgba(255, 255, 255, 0.4)';
 const transparentWhite16Color: string = 'rgba(255, 255, 255, 0.16)';
 const transparentGray60Color: string = 'rgba(37, 37, 37, 0.6)';
+const transparentGray70Color: string = 'rgba(15, 15, 15, 0.7)';
 const transparentWhite56Color: string = 'rgba(255, 255, 255, 0.56)';
 const transparentGray90Color: string = 'rgba(15, 15, 15, 0.9)';
 const lightGrayColor: string = '#252525';
@@ -79,6 +80,7 @@ export {
   transparentWhite40Color,
   transparentWhite16Color,
   transparentGray60Color,
+  transparentGray70Color,
   transparentWhite56Color,
   transparentGray90Color,
   transparent80Color,
@@ -121,3 +123,4 @@ export {
   black5Color,
   backgroundGradientColors,
 };
+
