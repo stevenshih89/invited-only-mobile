@@ -11,7 +11,17 @@ import auth from '@react-native-firebase/auth';
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
-import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, LIKED, NOT_ACCEPTED_STATUS, screenHeight} from 'constants/common.ts';
+import {
+  ACCEPTED_STATUS,
+  ALL,
+  APPROVED_STATUS,
+  INVITE_MATCH_STATUS,
+  LIKED,
+  NOT_ACCEPTED_STATUS,
+  screenHeight,
+  THIS_MONTH,
+  THIS_WEEK,
+} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {eventCreatingStackPath, myProfileViewPath, paymentPath, userProfilePath} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
@@ -63,6 +73,8 @@ import moment from 'moment';
 import {Event, EventData} from 'src/types/event';
 import {useScrollPosition} from 'src/store/scrollPosition';
 import {getUsersForEvent} from 'src/api/user';
+import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
+import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
 
 const USERS_FETCHING_DELAY = 3000;
 
@@ -73,7 +85,7 @@ const IO: FC = (): JSX.Element => {
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [events, setEvents] = useState<any[]>([]);
 
-  const [myEvents, setMyEventsList] = useState([]);
+  const [myEventsList, setMyEventsList] = useState([]);
   const [nameUser, setNameUser] = useState<string>('');
   const [reportedItem, setReportedItem] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
@@ -95,7 +107,7 @@ const IO: FC = (): JSX.Element => {
 
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
-  const {setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
+  const {myEvents, setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
 
   const {activeEventDate} = useContext(EventsDate);
 
@@ -450,12 +462,17 @@ const IO: FC = (): JSX.Element => {
     setLoadingUser(false);
   };
 
-  const fetchMyEvents = async (isFirstRender: boolean) => {
+  const fetchMyEvents = async () => {
     const user = auth().currentUser;
     if (user) {
       try {
         setLoadingMyEvents(true);
-        const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).where('isCancelled', '==', false).get();
+        const querySnapshot = await firestore()
+          .collection('Events')
+          .where('uid', '==', user.uid)
+          .where('isCancelled', '==', false)
+          .orderBy('createdAt', 'desc')
+          .get();
 
         if (querySnapshot.empty) {
           setMyEvents([]);
@@ -487,8 +504,10 @@ const IO: FC = (): JSX.Element => {
 
         setMyEventsList(filteredData);
         setMyEvents(filteredData);
-        if (!myEvents.length) {
-          setActiveEvent(filteredData[0]);
+        console.warn(myEvents.length, activeEvent?.id, filteredData);
+
+        if (!myEvents.length && !activeEvent?.id) {
+          setActiveEvent(myEvents[0]);
         }
         setLoadingMyEvents(false);
       } catch (error: any) {
@@ -497,6 +516,8 @@ const IO: FC = (): JSX.Element => {
         setActiveEvent({});
         setLoadingMyEvents(false);
         setLoadingEvents(false);
+        console.error(error);
+
         Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
@@ -504,12 +525,14 @@ const IO: FC = (): JSX.Element => {
 
   const onReject = async (uid: string, eventId: string) => {
     const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
+
+    const rejectUid = isHost ? uid : userInfo?.uid;
     try {
       await firestore()
         .collection('Events')
         .doc(activeEventId)
         .update({
-          rejectsList: firestore.FieldValue.arrayUnion({uid}),
+          rejectsList: firestore.FieldValue.arrayUnion({uid: rejectUid}),
         });
 
       setTimeout(() => {
@@ -551,7 +574,7 @@ const IO: FC = (): JSX.Element => {
         uid: isHost ? guestData?.uid : userHost?.uid,
         userPhoto: isHost ? guestData?.photos[0]?.image : userHost?.photos[0]?.image,
         fcmToken: isHost ? guestData?.fcmToken : userHost?.fcmToken,
-        createdAt: moment().format('YYYY-MM-DD'),
+        createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
       };
 
       if (isHost) {
@@ -772,7 +795,6 @@ const IO: FC = (): JSX.Element => {
       </TouchableOpacity>
     );
   };
-  console.warn(activeEvent);
 
   const getListForGuest = async () => {
     const user = auth().currentUser;
@@ -814,6 +836,9 @@ const IO: FC = (): JSX.Element => {
           ) {
             return false;
           }
+          if (event?.rejectsList?.find((j: Event.RejectUser) => j?.uid === userInfo?.uid)) {
+            return false;
+          }
           if (event?.date && event?.hour) {
             const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
             if (adjustedDate.isBefore(moment())) {
@@ -825,8 +850,6 @@ const IO: FC = (): JSX.Element => {
     } catch (e: any) {
       Alert.alert('Error', e.message || 'Something went wrong');
     }
-
-    console.warn(filteredEvents.length, allEventsLength?.current);
 
     if (!filteredEvents.length) {
       setEvents([]);
@@ -854,20 +877,28 @@ const IO: FC = (): JSX.Element => {
 
     const data: any[] = [];
 
-    const filterDataWM =
-      activeEventDate === 'all'
-        ? enrichedEvents
-        : activeEventDate === 'this_weekend'
-        ? filterDataByWeekMonth(enrichedEvents, 7)
-        : filterDataByWeekMonth(enrichedEvents, 31);
+    const filterEventByDate = () => {
+      if (activeEventDate === ALL) {
+        return enrichedEvents;
+      }
+      if (activeEventDate === THIS_WEEK) {
+        return filterEventsByThisWeek(enrichedEvents);
+      }
+      if (activeEventDate === THIS_MONTH) {
+        return filterEventsByThisMonth(enrichedEvents);
+      }
+      return enrichedEvents;
+    };
 
-    if (!filterDataWM.length) {
+    const filteredDataEvents = filterEventByDate();
+
+    if (!filteredDataEvents.length) {
       setEvents([]);
       setLoadingEvents(false);
       return;
     }
 
-    for (const event of filterDataWM) {
+    for (const event of filteredDataEvents) {
       const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
       const eventPhotos = event?.photos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
       const userEventData = await getDataUserEvent(event?.uid);
@@ -1225,7 +1256,6 @@ const IO: FC = (): JSX.Element => {
 
   const getListForHost = async () => {
     const user = auth().currentUser;
-    console.warn(userInfo?.uid, user?.uid, activeEvent?.id);
 
     if (!user?.uid || !activeEvent?.id || !userInfo?.uid) {
       return;
@@ -1233,13 +1263,13 @@ const IO: FC = (): JSX.Element => {
     setLoadingEvents(true);
     let users;
 
+    console.warn(activeEvent?.id);
+
     try {
       users = await getUsersForEvent(userInfo?.uid, activeEvent?.male, activeEvent?.female);
     } catch (error) {
       console.error(error);
     }
-
-    console.warn(users?.empty);
 
     if (users?.empty) {
       setLoadingEvents(false);
@@ -1258,6 +1288,8 @@ const IO: FC = (): JSX.Element => {
 
     const data: any[] = [];
     const usersList = users?.docs.map(doc => doc.data());
+
+    console.warn(usersList);
 
     const filteredUsersList = usersList?.filter((item: UserInfo) => {
       if (blockedUsersList.includes(item?.uid)) {
@@ -1649,20 +1681,30 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  useEffect(() => {
-    if (userInfo?.uid) {
-      isHost ? getListForHost() : getListForGuest();
-    }
-  }, [userInfo, userHost, activeEvent?.id, activeEventDate]);
+  const handleScroll = event => {
+    const positionY = event.nativeEvent.contentOffset.y;
+    setScrollPosition(positionY);
+  };
 
   useEffect(() => {
-    fetchMyEvents(true);
+    if (userInfo?.uid) {
+      if (isHost && activeEvent?.id) {
+        getListForHost();
+      }
+      if (!isHost) {
+        getListForGuest();
+      }
+    }
+  }, [userInfo, userHost, activeEvent?.id, activeEventDate, myEvents]);
+
+  useEffect(() => {
+    // fetchMyEvents(true);
     requestUserPermission();
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      fetchMyEvents(false);
+      // fetchMyEvents(false);
       fetchUserInfo();
     }, []),
   );
@@ -1704,7 +1746,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isHost && !loadingEvents && !loadingMyEvents && myEvents.length <= 0 && !isVisibleMatch) {
+  if (userInfo?.uid && isHost && !loadingEvents && !loadingMyEvents && !myEvents.length && !isVisibleMatch) {
     return (
       <>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
@@ -1752,11 +1794,6 @@ const IO: FC = (): JSX.Element => {
       </>
     );
   }
-
-  const handleScroll = event => {
-    const positionY = event.nativeEvent.contentOffset.y;
-    setScrollPosition(positionY);
-  };
 
   return (
     <>

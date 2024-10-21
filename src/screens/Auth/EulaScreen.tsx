@@ -120,7 +120,7 @@ const Eula: FC = (): JSX.Element => {
     {
       id: 14,
       title: '14. CONTACT INFORMATION',
-      description: 'If you have any questions or concerns about this Agreement, please contact us at support@invitedonly.app.',
+      description: 'If you have any questions or concerns about this Agreement, please contact us at support@invitedonly.io.',
     },
     {
       id: 15,

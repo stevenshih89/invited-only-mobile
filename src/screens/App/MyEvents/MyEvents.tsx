@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {FlatList} from 'react-native';
@@ -12,43 +12,26 @@ import useStyles from 'screens/App/MyEvents/styles.ts';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard.tsx';
 import {useMyEvents} from '../../../store/myEvents';
 import {showToast} from 'helpers/showToast.ts';
-import {
-  blackColor,
-  grayColor,
-  lightGray13Color,
-  lightGray16Color,
-  lightGray20Color,
-  lightGray2Color,
-  lightGray5Color,
-  lightGreenColor,
-  whiteColor,
-} from 'constants/colors';
+import {blackColor, lightGray13Color, lightGray20Color, lightGray2Color, lightGreenColor, whiteColor} from 'constants/colors';
 import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsCard';
 import ModalCancelAttending from './ModalCancelAttending';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
 import {useUser} from '../../../store/userStore';
 import {
   ACCEPTED_STATUS,
-  ALL,
   APPROVED_STATUS,
   CANCEL_STATUS,
   INVITE_MATCH_STATUS,
   NOT_ACCEPTED_STATUS,
   screenHeight,
   screenWidth,
-  THIS_MONTH,
-  THIS_WEEKEND,
 } from 'constants/common.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
-import {EventsDate} from 'contexts/EventsDate.tsx';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import images
-import CalendarCheckIcon from 'assets/images/icons/calendar-check.svg';
-import WIcon from 'assets/images/icons/W.svg';
-import MIcon from 'assets/images/icons/M.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import AddIcon from 'assets/images/icons/add.svg';
 
@@ -99,7 +82,6 @@ const MyEvents: FC<any> = ({navigation}) => {
   const user = useUser((i: any) => i?.user);
   const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
   const isHost = user?.accountType === 'host';
-  const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
   const [userInfo, setUserInfo] = useState<any>();
   const [hostInfo, setHostInfo] = useState<any>({});
@@ -809,7 +791,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                 flexDirection: 'row',
                 justifyContent: 'center',
               }}
-              onPress={() => navigation.navigate(eventCreatingStackPath)}>
+              onPress={goToCreateEvent}>
               <AddIcon width={16} height={16} />
               <Text
                 style={{

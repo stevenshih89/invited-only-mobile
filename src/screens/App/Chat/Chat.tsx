@@ -16,14 +16,11 @@ import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 //import icons
 import FlashField from 'assets/images/icons/flash.svg';
 import ThreeDoths from 'assets/images/icons/more-white.svg';
-import PersonIcon from 'assets/images/icons/profile-2user.svg';
-import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
 import Button from 'components/Button/Button.tsx';
-import {useChat} from '../../../store/chatStore';
 import {EventContext} from 'contexts/EventContext.tsx';
 import moment from 'moment/moment';
-import {blackColor, grayScale700, lightGray3Color, whiteColor} from 'constants/colors';
+import {blackColor, grayScale700, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import {useFocusEffect} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
@@ -83,10 +80,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const {myEvents} = useContext(EventContext);
 
-  const activeEvent = useChat((i: any) => i?.activeEvent);
-  const setChat = useChat((i: any) => i.setActiveEvent);
+  const {activeEvent} = useContext(EventContext);
   const user = useUser((i: any) => i?.user);
 
   const isHost = user?.accountType?.toLowerCase() === 'host';
@@ -117,7 +112,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   const fetchEventData = async () => {
     setLoading(true);
-    const eventDataDoc = await firestore().collection('Events').doc(activeEvent).get();
+    const eventDataDoc = await firestore().collection('Events').doc(activeEvent?.id).get();
     if (eventDataDoc.exists) {
       const data = eventDataDoc.data();
       setEventData(data);
@@ -128,7 +123,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   useFocusEffect(
     useCallback(() => {
       fetchEventData();
-    }, [activeEvent]),
+    }, [activeEvent?.id]),
   );
 
   useFocusEffect(
@@ -168,7 +163,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   title: title,
                   online: false,
                   messages: messagesItem,
-                  activeEvent: activeEvent,
+                  activeEvent: activeEvent?.id,
                   id: id,
                   superInvite: superInvite,
                   invitedStatus: invitedStatus,
@@ -309,7 +304,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           hostMenu={hostMenu}
           hostUid={hostUid}
           usersList={usersList}
-          eventId={activeEvent}
+          eventId={activeEvent?.id}
         />
         {chats?.map((i: any) => (
           <TouchableOpacity
@@ -322,7 +317,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   title: i?.name,
                   online: true,
                   messages: i?.messages,
-                  activeEvent: activeEvent,
+                  activeEvent: activeEvent?.id,
                   id: i?.id,
                   superInvite: i?.superInvite,
                   invitedStatus: i?.invitedStatus,
@@ -412,7 +407,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     if (isHost) {
       hostSubscriber = firestore()
         .collection('messages')
-        .doc(activeEvent)
+        .doc(activeEvent?.id)
         .onSnapshot(documentSnapshot => {
           if (!documentSnapshot.exists) {
             return setMessages([]);
@@ -437,7 +432,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           const mappedChats: any = [];
 
           for (const chat of filteredChats) {
-            const eventQuery = await firestore().collection('Events').doc(chat?.activeEvent).get();
+            const eventQuery = await firestore().collection('Events').doc(chat?.activeEvent?.id).get();
             if (!eventQuery.exists) {
               continue;
             }
@@ -451,7 +446,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               image: eventData?.photos[0]?.image,
               title: eventData?.placeName,
               hostUid: eventData?.uid,
-              activeEvent: chat?.activeEvent,
+              activeEvent: chat?.activeEvent?.id,
               usersList: eventData?.usersList,
               statusEvent: eventData?.statusEvent,
               chats: chat?.chats
@@ -471,7 +466,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       hostSubscriber && hostSubscriber();
       guestSubscriber && guestSubscriber();
     };
-  }, [activeEvent, loading]);
+  }, [activeEvent?.id, loading]);
 
   return (
     <View style={styles.container}>
@@ -588,7 +583,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   title={item.title}
                   chats={item.chats}
                   data={item.data}
-                  activeEvent={item.activeEvent}
+                  activeEvent={item.activeEvent?.id}
                   girlInvitation={item.girlInvitation}
                   maleInvitation={item.maleInvitation}
                   hostUid={item.hostUid}

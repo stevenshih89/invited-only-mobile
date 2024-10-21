@@ -18,7 +18,7 @@ import {
   settingsPath,
 } from 'constants/pathLocations';
 import {blackColor, lightGray2Color, lightGray5Color, orangeColor, transparent60Color, whiteColor} from 'constants/colors.ts';
-import {screenHeight, THIS_WEEKEND, ALL, THIS_MONTH, ACCEPTED_STATUS} from 'constants/common.ts';
+import {screenHeight, THIS_WEEK, ALL, THIS_MONTH, ACCEPTED_STATUS} from 'constants/common.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
 import {useChat} from '../../store/chatStore';
@@ -72,6 +72,7 @@ type ItemProps = {
   girlInvitation?: number | string;
   icon?: ReactNode;
   index?: number;
+  value?: string;
 };
 
 const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
@@ -83,13 +84,9 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
 
-  const selectedChat = useChat((i: any) => i?.activeEvent);
   const setChat = useChat((i: any) => i.setActiveEvent);
   const eventFilter = useChat((i: any) => i?.eventFilter);
 
-  const requestFilter = useRequest((i: any) => i?.requestFilter);
-  const setEventFilter = useChat((i: any) => i?.setEventFilter);
-  const setRequestFilter = useRequest((i: any) => i?.setRequestFilter);
   const userHost = useUser((i: any) => i?.user);
 
   const {setActiveEvent, activeEvent, indexEvent, setIndexEvent} = useContext(EventContext);
@@ -100,7 +97,12 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     const user = auth().currentUser;
     if (user) {
       try {
-        const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).where('isCancelled', '==', false).get();
+        const querySnapshot = await firestore()
+          .collection('Events')
+          .where('uid', '==', user.uid)
+          .where('isCancelled', '==', false)
+          .orderBy('createdAt', 'desc')
+          .get();
 
         if (querySnapshot.empty) {
           setMyEvents([]);
@@ -187,55 +189,23 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
       title: 'All',
-      allPeople: 4,
-      filledTo: 3,
+      value: ALL,
       image: CalendarIcon,
-      numberBadge: 0,
-      date: '12.12.12',
       icon: <CalendarCheckIcon width={26} height={26} color={whiteColor} />,
     },
     {
       id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'This weekend',
-      allPeople: 0,
-      filledTo: 0,
+      title: 'This week',
+      value: THIS_WEEK,
       image: EventBG,
-      numberBadge: 0,
-      date: '12.12.12',
       icon: <WIcon color={whiteColor} />,
     },
     {
       id: '58694a0f-3da1-471f-bd96-145571e29d72',
       title: 'This month',
-      allPeople: 4,
-      filledTo: 2,
+      value: THIS_MONTH,
       image: EventBG,
-      numberBadge: 0,
-      date: '12.12.12',
       icon: <MIcon color={whiteColor} />,
-    },
-  ];
-
-  const DATARequestGuest = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'All',
-      allPeople: 4,
-      filledTo: 3,
-      image: CalendarIcon,
-      numberBadge: 0,
-      date: '12.12.12',
-      icon: <CalendarCheckIcon width={26} height={26} color={whiteColor} />,
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Join events',
-      allPeople: 0,
-      filledTo: 0,
-      image: EventBG,
-      numberBadge: 0,
-      date: '12.12.12',
-      icon: <JIcon />,
     },
   ];
 
@@ -263,26 +233,15 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     </TouchableOpacity>
   );
 
-  const ItemEventsJoining = ({title, image, date, icon}: ItemProps) => (
-    <TouchableOpacity onPress={() => setEventFilter(title)} style={styles.eventButton}>
-      <View style={[styles.eventViewFlatList, {borderColor: eventFilter === title ? whiteColor : lightGray5Color}]}>
-        <View style={styles.imageEventsJoining}>{icon}</View>
-      </View>
-      <Text style={styles.textButton}>{title}</Text>
-      <ModalEventRemindes
-        eventStarting={eventStarting}
-        setEventStarting={setEventStarting}
-        time="24h"
-        image={image}
-        city={title}
-        date={date}
-      />
-    </TouchableOpacity>
-  );
-
-  const ItemRequests = ({title, icon, numberBadge, image, date}: ItemProps) => (
-    <TouchableOpacity onPress={() => setRequestFilter(title)} style={styles.eventButton}>
-      <View style={[styles.eventViewFlatList, {borderColor: requestFilter === title ? whiteColor : lightGray5Color}]}>
+  const ItemEventsJoining = ({title, image, date, icon, value}: ItemProps) => (
+    <TouchableOpacity
+      onPress={() => {
+        if (userInfo?.accountConfirmed) {
+          setActiveEventDate(value);
+        }
+      }}
+      style={styles.eventButton}>
+      <View style={[styles.eventViewFlatList, {borderColor: activeEventDate === value ? whiteColor : lightGray5Color}]}>
         <View style={styles.imageEventsJoining}>{icon}</View>
       </View>
       <Text style={styles.textButton}>{title}</Text>
@@ -422,26 +381,21 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                     if (!userHost?.accountConfirmed) {
                       return;
                     }
-                    setActiveEventDate(THIS_WEEKEND);
+                    setActiveEventDate(THIS_WEEK);
                   }}>
                   <View
                     style={{
                       borderRadius: 50,
                       borderWidth: 1,
-                      borderColor: activeEventDate === THIS_WEEKEND ? whiteColor : lightGray5Color,
+                      borderColor: activeEventDate === THIS_WEEK ? whiteColor : lightGray5Color,
                       borderStyle: 'solid',
                       padding: 3,
                       width: 63,
                       height: 63,
-                      // backgroundColor: lightGray5Color,
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    {/* <CalendarSearchIcon width={26} height={26} /> */}
                     <WIcon />
-                    {/* <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_WEEKEND ? whiteColor : grayColor}}>
-                      Weekend
-                    </Text> */}
                   </View>
                   <Text
                     style={{
@@ -451,7 +405,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       fontSize: RFValue(13, 812),
                       textAlign: 'center',
                     }}>
-                    This weekend
+                    This week
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -472,13 +426,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       padding: 3,
                       width: 63,
                       height: 63,
-                      // backgroundColor: lightGray5Color,
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
                     <MIcon />
-                    {/* <CalendarSearchIcon width={26} height={26} /> */}
-                    {/* <Text style={{fontSize: RFValue(6, 812), color: activeEventDate === THIS_MONTH ? whiteColor : grayColor}}>Month</Text> */}
                   </View>
                   <Text
                     style={{
@@ -582,15 +533,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
             horizontal={true}
             style={{marginTop: screenHeight / 50, marginBottom: 25}}
             renderItem={({item}) => (
-              <ItemRequests
-                filledTo={item.filledTo}
-                allPeople={item.allPeople}
-                image={item.image}
-                numberBadge={item.numberBadge}
-                title={item.title}
-                date={item.date}
-                icon={item.icon}
-              />
+              <ItemEventsJoining image={item.image} title={item.title} date={item.date} icon={item.icon} value={item.value} />
             )}
             keyExtractor={item => item.id}
           />
@@ -598,7 +541,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
       case 'chat':
         return (
           <View style={[styles.wrapperHeaderButtonsChat, {marginTop: userHost?.accountType === 'host' ? 0 : screenHeight / 50}]}>
-            {!typeEvents ? (
+            {isHost ? (
               <View style={[styles.rowButtonsChat, {marginTop: 10}]}>
                 <FlatList
                   data={myEvents}
@@ -626,15 +569,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   data={DATAEventsJoining}
                   horizontal={true}
                   renderItem={({item}) => (
-                    <ItemEventsJoining
-                      filledTo={item.filledTo}
-                      allPeople={item.allPeople}
-                      image={item.image}
-                      numberBadge={item.numberBadge}
-                      title={item.title}
-                      date={item.date}
-                      icon={item.icon}
-                    />
+                    <ItemEventsJoining image={item.image} title={item.title} date={item.date} icon={item.icon} value={item.value} />
                   )}
                   keyExtractor={item => item.id}
                 />
