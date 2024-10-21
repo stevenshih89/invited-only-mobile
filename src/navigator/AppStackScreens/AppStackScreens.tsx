@@ -37,6 +37,7 @@ import {
   tutorialFlowPath,
   manageSubscriptionPath,
   privacyPath,
+  emailChangePath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -68,6 +69,7 @@ import VerifySocialProfile from 'screens/Auth/VerifySocialProfile';
 import ConfirmPhone from 'screens/Auth/ConfirmPhone';
 import TutorialsFlow from 'screens/Auth/TutorialsFlow/TutorialsFlow';
 import Privacy from 'screens/Auth/Privacy';
+import EmailChange from 'screens/App/Profile/screens/Settings/EmailChange';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -263,6 +265,19 @@ const CommonStackScreen = () => {
           headerShown: true,
         }}
         component={PhoneChange}
+      />
+      <CommonStack.Screen
+        key={emailChangePath}
+        name={emailChangePath}
+        options={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+          headerBackTitleVisible: false,
+          headerTitle: 'Email',
+          headerShown: true,
+        }}
+        component={EmailChange}
       />
       <CommonStack.Screen
         key={notificationSettingPath}
