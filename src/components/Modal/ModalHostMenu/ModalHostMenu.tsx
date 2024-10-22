@@ -32,7 +32,10 @@ import { calculateAge } from 'helpers/calculateAge';
 import {userProfilePath} from 'constants/pathLocations.ts';
 import { formatDate } from 'helpers/formatDate';
 import { getUsersListAccepted } from 'helpers/getUsersListAccepted';
-import { screenWidth } from 'constants/common';
+import { ACCEPTED_STATUS, APPROVED_STATUS, screenWidth } from 'constants/common';
+import { useUser } from 'src/store/userStore';
+import { showToast } from 'helpers/showToast';
+import { sendNotification } from 'helpers/fcmHelper';
 
 interface HostMenu {
   hostMenu?: boolean;
@@ -40,7 +43,7 @@ interface HostMenu {
   image?: any;
   imageBg?: any;
   name?: string;
-  data?: string;
+  date?: string;
   girlInvitation?: number;
   hostUid?: string;
   usersList: [];
@@ -48,12 +51,15 @@ interface HostMenu {
   hostImage: string;
 }
 
-const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMenu, image, name, imageBg, hostUid, usersList, eventId, hostImage}) => {
+const ModalHostMenu: FC<HostMenu> = ({girlInvitation, date, hostMenu, setHostMenu, image, name, imageBg, hostUid, usersList, eventId, hostImage}) => {
   const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const navigation = useAppNavigation();
   const styles = useStyles();
   const [hostData, setHostData] = useState<any>();
+  const [status, setStatus] = useState('')
+
+  const user = useUser((i: any) => i?.user);
 
   const getHostData = async () => {
     if (!hostUid) {
@@ -87,6 +93,155 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
   useEffect(() => {
     getHostData();
   }, [hostUid]);
+
+  const getStatus = async () => {
+    try {
+      const eventQuerySnapshot = await firestore().collection('Events').doc(eventId).get();
+      const eventDataList = eventQuerySnapshot.data();
+      
+      if (!eventDataList || !eventDataList?.usersList.length) {
+        return;
+      }
+      
+      const findUser = eventDataList.usersList.find(item => item.uid === user?.uid);
+      if (findUser) {
+        setStatus(findUser?.status);
+      }
+    } catch (error) {
+
+    }
+  };
+  
+  useEffect(() => {
+    getStatus();
+  }, [hostUid]);
+  
+  const changeStatusGuestUsersList = async () => {
+    try {
+      const eventQuerySnapshot = await firestore().collection('Events').doc(eventId).get();
+      const eventDataList = eventQuerySnapshot.data();
+  
+      if (!eventDataList?.usersList.length) {
+        return;
+      }
+  
+      const updatedUsersList = eventDataList.usersList.map(userItem => {
+        if (userItem.uid === user?.uid) {
+          return {
+            ...userItem,
+            status: ACCEPTED_STATUS,
+          };
+        }
+        return userItem;
+      });
+      setStatus(ACCEPTED_STATUS);
+      await firestore().collection('Events').doc(eventId).update({
+        usersList: updatedUsersList,
+      });
+      getStatus()
+      showToast('inviteMatch', `See you at ${date}`, 'You accept to this event!', {
+        ownerPhoto: hostImage,
+        status: 'Accept'.toUpperCase(),
+      });
+  
+      if (hostUid) {
+        await sendNotification(
+          hostUid,
+          `${user?.name} accepted your invitation`,
+          'Invitation Accepted!',
+          'Accepted',
+          'Accepted'.toUpperCase(),
+          user,
+        );
+      }
+    } catch (e) {
+
+    }
+  };
+  
+
+  const CustomButtonsGuest: FC = () => {
+    return (
+      <>
+        {status !== ACCEPTED_STATUS && status !== APPROVED_STATUS && (
+          <View style={{paddingHorizontal: 14}}>
+            <TouchableOpacity
+          disabled
+          style={{
+            height: 65,
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 18,
+            backgroundColor: lightGray20Color,
+            marginBottom: 15,
+          }}>
+          <Text
+            style={{
+              color: blackColor,
+              fontFamily: Satoshi700,
+              fontSize: RFValue(16, 812),
+            }}>
+            Waiting for invitation approval
+          </Text>
+        </TouchableOpacity>
+          </View>
+        )}
+        {status === ACCEPTED_STATUS && (
+          <View style={{paddingHorizontal: 14}}>
+          <TouchableOpacity
+            disabled
+            style={{
+              width: '100%',
+              paddingVertical: 21,
+              marginBottom: 15,
+              borderRadius: 18,
+              borderWidth: 1,
+              borderColor: blackColor,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <CheckIcon width={16} height={16}/>
+            <Text
+              style={{
+                color: blackColor,
+                fontFamily: Satoshi500,
+                fontSize: RFValue(16, 812),
+                marginLeft: 11
+              }}>
+              Attending
+            </Text>
+          </TouchableOpacity>
+        </View>
+        )}
+        {status === APPROVED_STATUS && (
+          <View style={{paddingHorizontal: 14}}>
+            <TouchableOpacity
+              onPress={() => changeStatusGuestUsersList()}
+              style={{
+                height: 65,
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 18,
+                backgroundColor: blackColor,
+                marginBottom: 15,
+              }}>
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi700,
+                  fontSize: RFValue(16, 812),
+                }}>
+                Accept invitation
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </>
+    );
+  };
 
   return (
     <Modal
@@ -223,73 +378,7 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
           <View style={{width: '100%', alignItems: 'center', marginBottom: 22, paddingHorizontal: 23}}>
             <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
           </View>
-          <View style={{paddingHorizontal: 14}}>
-            <TouchableOpacity
-              disabled
-              style={{
-                width: '100%',
-                paddingVertical: 21,
-                marginBottom: 14,
-                backgroundColor: lightGray20Color,
-                borderRadius: 18,
-              }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  color: blackColor,
-                  fontFamily: Satoshi500,
-                  fontSize: RFValue(16, 812),
-                }}>
-                Waiting for invitation approval
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{paddingHorizontal: 14}}>
-            <TouchableOpacity
-              style={{
-                width: '100%',
-                paddingVertical: 21,
-                marginBottom: 14,
-                backgroundColor: blackColor,
-                borderRadius: 18,
-              }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  color: whiteColor,
-                  fontFamily: Satoshi500,
-                  fontSize: RFValue(16, 812),
-                }}>
-                Accept invitation
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{paddingHorizontal: 14}}>
-            <TouchableOpacity
-              disabled
-              style={{
-                width: '100%',
-                paddingVertical: 21,
-                marginBottom: 14,
-                borderRadius: 18,
-                borderWidth: 1,
-                borderColor: blackColor,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <CheckIcon width={16} height={16}/>
-              <Text
-                style={{
-                  color: blackColor,
-                  fontFamily: Satoshi500,
-                  fontSize: RFValue(16, 812),
-                  marginLeft: 11
-                }}>
-                Attending
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <CustomButtonsGuest />
         </View>
         <View style={{width: '100%', marginTop: 34}}>
           <TouchableOpacity style={styles.buttonEvent}>
@@ -315,7 +404,7 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
       <ModalReport modalReport={modalReport} setModalReport={setModalReport} />
       <ModalCancelOrConfirmInvitation
         girlInvitation={girlInvitation}
-        data={data}
+        data={date}
         imageBg={imageBg}
         name={name}
         typeModal="cancel"

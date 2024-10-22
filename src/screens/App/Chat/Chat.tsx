@@ -53,7 +53,7 @@ type ItemProps = {
 type ItemEventsJoiningProps = {
   chats: [{id: string; image: any; name: string; lastMessage: string}] | any;
   girlInvitation: number;
-  data: string;
+  date: string;
   status: string;
   image: any;
   title: string;
@@ -236,7 +236,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     girlInvitation,
     image,
     status,
-    data,
+    date,
     activeEvent,
     hostUid,
     usersList,
@@ -266,7 +266,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                 </View>
                 <View style={styles.fdrAiC}>
                   <CalendarIcon style={{marginLeft: 10}} width={14} height={14} />
-                  <Text style={styles.textDescriptionUnderTitle}>{moment(`${data}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
+                  <Text style={styles.textDescriptionUnderTitle}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
                 </View>
               </View>
             </View>
@@ -277,7 +277,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
         </View>
         <ModalHostMenu
           girlInvitation={girlInvitation}
-          data={data}
+          date={date}
           image={image}
           imageBg={image}
           name={title}
@@ -561,7 +561,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   image={item.image}
                   title={item.title}
                   chats={item.chats}
-                  data={item.data}
+                  date={item.date}
                   activeEvent={item.activeEvent}
                   girlInvitation={item.girlInvitation}
                   hostUid={item.hostUid}
