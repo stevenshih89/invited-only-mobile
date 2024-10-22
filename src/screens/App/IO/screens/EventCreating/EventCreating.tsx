@@ -25,6 +25,8 @@ import storage from '@react-native-firebase/storage';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import {createEvent, IOEvent} from 'src/api/event';
 import {eventTypes} from 'src/mocks/eventTypes';
+import {EventData, Event} from 'src/types/event';
+import moment from 'moment';
 
 const EventCreating: FC = () => {
   const INVITED_ONLY = 'invitedOnly';
@@ -62,7 +64,7 @@ const EventCreating: FC = () => {
   const [openHour, setOpenHour] = useState(false);
   const userHost = useUser((i: any) => i?.user);
 
-  const [photos, setImages] = useState<{image: null | string; id: number}[]>([
+  const [photos, setImages] = useState<Event.Photo[]>([
     {
       id: 0,
       image:
@@ -77,14 +79,6 @@ const EventCreating: FC = () => {
       id: 2,
       image:
         'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805',
-    },
-    {
-      id: 3,
-      image: null,
-    },
-    {
-      id: 4,
-      image: null,
     },
   ]);
 
@@ -272,16 +266,21 @@ const EventCreating: FC = () => {
   };
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
+    console.warn('imagePath', imagePath);
+
     if (imagePath) {
       if (imagePath.includes('https://')) {
         return imagePath;
       } else {
         const uploadUri = Platform.OS === 'ios' ? imagePath : `file://${imagePath}`;
+        console.warn('uploadUri', uploadUri);
+
         const filename = `${userId}_${new Date().getTime()}`;
         const storageRef = storage().ref(`images/${filename}`);
         try {
           await storageRef.putFile(uploadUri);
           const url = await storageRef.getDownloadURL();
+          console.warn('url', url);
 
           return url;
         } catch (e) {
@@ -298,14 +297,16 @@ const EventCreating: FC = () => {
       setLoading(true);
       const uid: string = uuid.v4() as string;
       const user = auth().currentUser;
-
+      if (!user) {
+        return;
+      }
       if (photos[0] === null) {
         Alert.alert('Please add the main picture');
       }
 
       let imagesUri: any[] = [];
 
-      const event: IOEvent = {
+      const event: EventData = {
         activeType: activeType,
         female: female,
         name: name,
@@ -326,23 +327,22 @@ const EventCreating: FC = () => {
         eventReviewed: false,
         hostImage: userHost?.photos[0]?.image,
         hostName: userHost?.name,
-        photos: photos,
+        photos: imagesUri,
         isCancelled: false,
+        createdAt: moment().format('YYYY-MM-DD'),
       };
-
-      await createEvent(uid, event);
 
       showToast('inviteMatch', 'Go to my events >', 'Event successfully created ');
       showToast('inviteMatch', 'Your event in review.', 'Estimate time review 2h');
 
       isEditing ? setIsVisibleSaveModal(true) : null;
 
-      await Promise.all(
-        photos.map(async (i, index) => {
-          const img = await uploadImage(i?.image, userHost.uid);
-          imagesUri.push({id: index, image: img});
-        }),
-      );
+      for (const i of photos) {
+        const img = await uploadImage(i?.image, userHost.uid);
+        imagesUri.push({id: i?.id, image: img});
+      }
+
+      await createEvent(uid, event);
 
       await firestore()
         .collection('userInfo')
@@ -355,56 +355,9 @@ const EventCreating: FC = () => {
       setLoaderVisible(false);
 
       navigation.navigate(IOPath as never);
-
-      // await firestore()
-      //   .collection('Events')
-      //   .doc(uid)
-      //   .set({
-      //     activeType: activeType,
-      //     female: female,
-      //     name: name,
-      //     description: description,
-      //     date: date,
-      //     hour: hour,
-      //     address: address,
-      //     meetingSpot: meetingSpot,
-      //     male: male,
-      //     femaleFriend: femaleFriend,
-      //     maleFriend: maleFriend,
-      //     placeName: placeName,
-      //     id: uid,
-      //     uid: user?.uid,
-      //     requestsList: [],
-      //     usersList: [],
-      //     statusEvent: false,
-      //     eventReviewed: false,
-      //     hostImage: userHost?.photos[0]?.image,
-      //     hostName: userHost?.name,
-      //     photos: photos,
-      //   })
-      //   .then(async () => {
-      //     showToast('inviteMatch', 'Go to my events >', 'Event successfully created ');
-      //     showToast('inviteMatch', 'Your event in review.', 'Estimate time review 2h');
-      //     isEditing ? setIsVisibleSaveModal(true) : null;
-      //     setLoading(false);
-      //     navigation.navigate(IOPath as never);
-      //     photos?.map(async (i, index) => {
-      //       await uploadImage(i?.image, userHost.uid)
-      //         .then(img => imagesUri.push({id: index, image: img}))
-      //         .catch(e => console.log('error uploadImage', e));
-      //       await updatePhotosImage(uid, imagesUri);
-      //     });
-      //     await firestore()
-      //       .collection('userInfo')
-      //       .doc(user?.uid)
-      //       .update({
-      //         eventsList: firestore.FieldValue.arrayUnion(uid),
-      //       });
-      //   });
     } catch (e) {
       setLoading(false);
       setLoaderVisible(false);
-      // console.log(e);
       showToast('inviteMatch', '', `${e}`);
     }
   };

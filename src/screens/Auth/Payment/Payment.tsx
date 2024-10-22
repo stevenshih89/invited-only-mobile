@@ -301,9 +301,25 @@ const Payment: FC = (): JSX.Element => {
   };
 
   const renderItem = ({item}: {item: PlanListItem}) => {
-    const isActiveSubscription = currentSubscriptions.activeSubscriptions.includes(item.identifier);
+    let isRender = true
 
-    if (!isActiveSubscription) {
+    if (item.identifier === 'io_59_1w') {
+      if (
+        currentSubscriptions.activeSubscriptions.includes('io_59_1w') ||
+        currentSubscriptions.activeSubscriptions.includes('io_29_3m') ||
+        currentSubscriptions.activeSubscriptions.includes('io_25_wk')
+      ) {
+        isRender = false;
+      }
+    }
+
+    if (item.identifier === 'io_29_3m') {
+      if (currentSubscriptions.activeSubscriptions.includes('io_29_3m') || currentSubscriptions.activeSubscriptions.includes('io_25_wk')) {
+        isRender = false;
+      }
+    }
+
+    if (isRender) {
       let isActive = activePayment.id === item.id;
 
       if (currentSubscriptions.activeSubscriptions.length > 1) {

@@ -3,8 +3,6 @@ import {Text} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
 import Home from 'assets/images/icons/home.svg';
-import Location from 'assets/images/icons/location.svg';
-import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
@@ -12,7 +10,6 @@ import useStyles from './styles';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {blackColor, lightRed1Color, whiteColor} from 'constants/colors';
-import {calculateAge} from 'helpers/calculateAge';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {showToast} from 'helpers/showToast.ts';
@@ -24,12 +21,11 @@ import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
 import {getFontSize} from 'helpers/getFontSize';
-import {ACCEPTED_STATUS, INVITE_MATCH_STATUS} from 'constants/common';
+import {ACCEPTED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import {EventContext} from 'contexts/EventContext';
 
 const ItemRequestHost = ({
   item,
-  list,
   setRequestsForHost,
   handleOpenMatch,
   checkIsFullGuestsFun,
@@ -42,6 +38,7 @@ const ItemRequestHost = ({
 
   const user = useUser((state: any) => state.user);
   const [currentUserName, setCurrentUserName] = useState();
+  const {activeEvent} = useContext(EventContext);
 
   const OverlayRight = () => {
     return (
@@ -79,10 +76,8 @@ const ItemRequestHost = ({
     );
   };
 
-  const {activeEvent} = useContext(EventContext);
-
   const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
-    const eventQuery = await firestore().collection('Events').doc(list?.id).get();
+    const eventQuery = await firestore().collection('Events').doc(activeEvent?.id).get();
     if (!eventQuery.exists) {
       return;
     }
@@ -119,7 +114,7 @@ const ItemRequestHost = ({
         uidGuest: item?.uid,
         nameGuest: item?.name,
         nameHost: currentUserName,
-        eventId: list?.id,
+        eventId: activeEvent?.id,
         superInvite: false,
         userHostImageUri: user?.photos[0]?.image,
         joinEvents: guest?.joinEvents,
@@ -139,7 +134,7 @@ const ItemRequestHost = ({
 
       await firestore()
         .collection('Events')
-        .doc(list?.id)
+        .doc(activeEvent?.id)
         .update({
           requestsList: firestore.FieldValue.arrayRemove(item),
           usersList: firestore.FieldValue.arrayUnion(userAccepted),
@@ -147,9 +142,9 @@ const ItemRequestHost = ({
         .then(async () => {
           await handleCreateChat(matchedData);
           handleOpenMatch(matchedData);
-          const getDoc = await firestore().collection('userInfo').doc(item?.uid).get()
-          const docData = getDoc.data()
-          if(docData?.notificationSettings.requests) {
+          const getDoc = await firestore().collection('userInfo').doc(item?.uid).get();
+          const docData = getDoc.data();
+          if (docData?.notificationSettings.requests) {
             await sendNotification(
               item?.uid,
               'New invite request',
@@ -159,10 +154,7 @@ const ItemRequestHost = ({
               userInfo,
             );
           }
-          setRequestsForHost(prev => ({
-            ...prev,
-            requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),
-          }));
+          setRequestsForHost(prev => prev.filter((i: any) => i?.uid !== item?.uid));
         });
       checkIsFullGuestsFun();
     } catch (e) {
@@ -173,21 +165,13 @@ const ItemRequestHost = ({
 
   const handleSwipeHostCardReject = async (item: any): Promise<void> => {
     try {
-      const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
-      const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
-
-      if (eventIsFull) {
-        return showToast('warning', 'Go to my events', `Event Full: ${eventIsFull}/${eventIsFull} guests invited`);
-      }
-
-      const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
-      await firestore().collection('Events').doc(list?.id).update({
-        requestsList: updateRequestsList,
-      });
-      setRequestsForHost(prev => ({
-        ...prev,
-        requestsList: prev.requestsList.filter((i: any) => i?.uid !== item?.uid),
-      }));
+      await firestore()
+        .collection('Events')
+        .doc(activeEvent?.id)
+        .update({
+          requestsList: firestore.FieldValue.arrayRemove(item),
+        });
+      setRequestsForHost(prev => prev.filter((i: any) => i?.uid !== item?.uid));
     } catch (e) {
       // console.log(e);
     }
@@ -223,21 +207,6 @@ const ItemRequestHost = ({
     });
   };
 
-  const generateRandomId = (length: number) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  };
-
-  const getFcmTokenFromUser = async (uid: string) => {
-    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-    return userInfoDoc.data()?.fcmToken;
-  };
-
   const cardRef = useRef(null);
 
   const handleAutoSwipeLeft = () => {
@@ -248,7 +217,13 @@ const ItemRequestHost = ({
   };
 
   return (
-    <View style={styles.itemContainer}>
+    <View
+      style={{
+        paddingHorizontal: 7,
+        borderRadius: 12,
+        width: '50%',
+        height: screenHeight / 3.7,
+      }}>
       <TinderCard
         ref={cardRef}
         // @ts-ignore
@@ -260,6 +235,7 @@ const ItemRequestHost = ({
         OverlayLabelRight={OverlayRight}
         OverlayLabelLeft={OverlayLeft}
         disableBottomSwipe={true}
+        disableVerticalSwipe={true}
         inputOverlayLabelRightOpacityRange={[0, 40]}
         inputOverlayLabelLeftOpacityRange={[0, -40]}
         translateXRange={[-70, 0, 70]}
@@ -298,12 +274,22 @@ const ItemRequestHost = ({
                   </View>
                 </View>
               )}
-              <TouchableOpacity  
+              <TouchableOpacity
                 onPress={() => {
-                  handleAutoSwipeLeft()
-                  handleSwipeHostCardReject(item)
+                  handleAutoSwipeLeft();
+                  handleSwipeHostCardReject(item);
                 }}
-                style={{width: 32, position: 'absolute', right: 4, top: 10, height: 32, backgroundColor: blackColor, borderRadius: 32, alignItems: 'center', justifyContent: 'center'}}>
+                style={{
+                  width: 32,
+                  position: 'absolute',
+                  right: 4,
+                  top: 10,
+                  height: 32,
+                  backgroundColor: blackColor,
+                  borderRadius: 32,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
                 <CloseIcon />
               </TouchableOpacity>
               <View style={{marginTop: 'auto'}}>
@@ -341,9 +327,7 @@ const ItemRequestHost = ({
                 )}
                 <TouchableOpacity onPress={() => goToProfileView()} activeOpacity={0.7} style={styles.buttonContainer}>
                   <View style={styles.nameContainer}>
-                    <Text style={[styles.nameText, {fontSize: getFontSize(item?.name)}]}>
-                      {item?.name}
-                    </Text>
+                    <Text style={[styles.nameText, {fontSize: getFontSize(item?.name)}]}>{item?.name}</Text>
                     {userInfo?.accountConfirmed && <CheckStarWhite width={15} height={17} style={{marginLeft: 8, marginTop: 4}} />}
                   </View>
                 </TouchableOpacity>

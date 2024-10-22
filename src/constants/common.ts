@@ -4,10 +4,12 @@ const isIos: boolean = Platform.OS === 'ios';
 const isAndroid: boolean = Platform.OS === 'android';
 const screenWidth: number = Dimensions.get('window').width;
 const screenHeight: number = Dimensions.get('window').height;
+const HOST = 'host';
+const GUEST = 'guest';
 const ANY_DAY = 'any_day';
 const ALL = 'all';
 const TODAY = 'today';
-const THIS_WEEKEND = 'this_weekend';
+const THIS_WEEK = 'this_week';
 const THIS_MONTH = 'this_month';
 const LIKED = 'liked';
 const APPROVED_STATUS = 'approved';
@@ -23,7 +25,7 @@ export {
   screenHeight,
   ANY_DAY,
   TODAY,
-  THIS_WEEKEND,
+  THIS_WEEK,
   ALL,
   THIS_MONTH,
   LIKED,
@@ -31,5 +33,7 @@ export {
   ACCEPTED_STATUS,
   INVITE_MATCH_STATUS,
   NOT_ACCEPTED_STATUS,
-  CANCEL_STATUS
+  CANCEL_STATUS,
+  HOST,
+  GUEST,
 };

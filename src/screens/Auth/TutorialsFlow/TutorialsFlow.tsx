@@ -15,7 +15,7 @@ import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
 import {AuthContext} from 'contexts/AuthContext';
-import { screenWidth } from 'constants/common';
+import {screenWidth} from 'constants/common';
 
 const TutorialsFlow: FC = (): JSX.Element => {
   const [active, setActive] = useState<number>(0);
@@ -25,10 +25,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
 
   const styles = useStyles();
 
-  const hostContent: ReactNode[] = [
-    <CreateEvent />,
-    <SwipeToInvite />,
-  ];
+  const hostContent: ReactNode[] = [<CreateEvent />, <SwipeToInvite />];
 
   const guestContent: ReactNode[] = [<SwipeToInvite />, <GetInviteMatch />];
 
@@ -46,7 +43,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
   };
 
   const handleNext = () => {
-    if (active === content.length - 1) {      
+    if (active === content.length - 1) {
       return handleCloseTutorialFlow();
     }
     setActive(p => p + 1);
@@ -68,13 +65,18 @@ const TutorialsFlow: FC = (): JSX.Element => {
       <Stepper active={active} content={content} wrapperStyle={styles.wrapperStyle} />
       <View style={styles.wrapperBar}>
         {[...Array(content.length)].map((_, index) => (
-          <View key={index} style={[{
-            backgroundColor: index === active ? whiteColor : gray1Color,
-            width: 37,
-            height: 4.5,
-            marginHorizontal: screenWidth / 150,
-            borderRadius: 57,
-          }]} />
+          <View
+            key={index}
+            style={[
+              {
+                backgroundColor: index === active ? whiteColor : gray1Color,
+                width: 37,
+                height: 4.5,
+                marginHorizontal: screenWidth / 150,
+                borderRadius: 57,
+              },
+            ]}
+          />
         ))}
       </View>
       <View style={styles.wrapperButtons}>

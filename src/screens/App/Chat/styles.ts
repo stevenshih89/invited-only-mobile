@@ -4,8 +4,6 @@ import {
   grayScale700,
   lightGray11Color,
   lightGray15Color,
-  lightGray6Color,
-  lightGrayColor,
   lightGreenColor,
   lightRedColor,
   whiteColor,
@@ -137,13 +135,13 @@ const useStyles = () => {
     },
     textNameChat: {
       color: whiteColor,
-      fontFamily: Satoshi400,
-      fontSize: RFValue(16, 812),
+      fontFamily: Satoshi700,
+      fontSize: RFValue(18, 812),
     },
     textDescription: {
       color: whiteColor,
       fontFamily: Satoshi400,
-      fontSize: RFValue(12, 812),
+      fontSize: RFValue(16, 812),
       opacity: 0.7,
       marginTop: 5,
     },
@@ -172,8 +170,7 @@ const useStyles = () => {
     textDescriptionUnderTitle: {
       color: whiteColor,
       fontFamily: Satoshi400,
-      fontSize: RFValue(12, 812),
-      marginLeft: 6,
+      fontSize: RFValue(16, 812),
     },
     itemEventsJoining: {
       backgroundColor: lightGray11Color,
@@ -206,6 +203,9 @@ const useStyles = () => {
       backgroundColor: grayScale700,
       borderRadius: 40,
       justifyContent: 'center',
+      position: 'absolute',
+      right: 0,
+      bottom: 0,
     },
     wrapperTextMessage: {
       // marginTop: screenHeight / 80,

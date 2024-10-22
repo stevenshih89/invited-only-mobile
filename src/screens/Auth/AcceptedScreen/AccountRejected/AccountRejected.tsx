@@ -41,7 +41,7 @@ const PendingScreen: FC = (): JSX.Element => {
             <Text style={styles.textNeedAHelp}>Need a help?</Text>
             <View style={styles.wrapperSupportInfo}>
               <IoIcon />
-              <Text style={styles.textSupport}>Support@invitedonly.com</Text>
+              <Text style={styles.textSupport}>support@invitedonly.io</Text>
             </View>
           </View>
         </View>

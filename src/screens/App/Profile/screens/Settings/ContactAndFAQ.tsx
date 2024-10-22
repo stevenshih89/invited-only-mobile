@@ -34,7 +34,7 @@ const ContactAndFAQ = () => {
       id: 3,
       title: 'How do I report a bug or issue?',
       description: "If you encounter any issues, please report them through the app's 'Feedback' section or contact our support team at ",
-      linkText: 'support@exampleapp.com.',
+      linkText: 'support@invitedonly.io.',
     },
     {
       id: 4,
@@ -79,7 +79,7 @@ const ContactAndFAQ = () => {
               <IOLogo width={20} height={20} />
             </View>
             <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812), marginLeft: 6, flex: 1}}>
-              support@invitedonly.com
+              support@invitedonly.io
             </Text>
           </View>
         </View>

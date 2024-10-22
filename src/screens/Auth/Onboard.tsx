@@ -9,6 +9,8 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {startCreateAccountPath} from 'constants/pathLocations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
+import { screenHeight } from 'constants/common';
+import Button from 'components/Button/Button';
 
 const Onboard: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -76,31 +78,13 @@ const Onboard: FC = (): JSX.Element => {
             <View style={{width: 36, height: 5, borderRadius: 55, backgroundColor: whiteColor}} />
             <View style={{width: 36, height: 5, borderRadius: 55, backgroundColor: lightGray19Color, marginLeft: 5}} />
           </View>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            hitSlop={{top: 26, bottom: 20}}
-            onPress={() => navigation.navigate(startCreateAccountPath as never)}
-            style={{
-              backgroundColor: whiteColor,
-              borderRadius: 18,
-              paddingVertical: 21,
-              width: '100%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: Dimensions.get('window').height / 30,
-              marginTop: 45,
-            }}>
-            <Text
-              style={{
-                color: black1Color,
-                fontFamily: Satoshi500,
-                fontSize: RFValue(16, 812),
-                marginRight: 4,
-              }}>
-              Get Access
-            </Text>
-          </TouchableOpacity>
+          <View style={{
+            marginBottom: Dimensions.get('window').height / 30,
+            marginTop: 45,
+            width: '100%'
+          }}>
+            <Button onPress={() => navigation.navigate(startCreateAccountPath as never)} title='Get Access'/>
+          </View>
         </View>
       </SafeAreaView>
     </LinearGradient>

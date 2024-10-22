@@ -86,9 +86,11 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               const age = calculateAge(userInfoDoc.data().date);
               setAge(age);
             } else {
+              console.error('No user data found in Firestore');
               Alert.alert('Error', 'No user data found in Firestore');
             }
           } catch (error: any) {
+            console.error(error);
             Alert.alert('Error', error.message || 'Something went wrong');
           }
         }

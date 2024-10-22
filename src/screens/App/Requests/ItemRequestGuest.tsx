@@ -1,61 +1,47 @@
 import {black4Color, blackColor, grayColor, lightGreenColor, lightRed1Color, transparent60Color, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import moment from 'moment';
-import {Animated, Image, ImageBackground, Text, TouchableOpacity, View} from 'react-native';
+import {Satoshi500, Satoshi700} from 'constants/fonts';
+import {Animated, Text, TouchableOpacity, View} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
 import useStyles from './styles';
 import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
-import User from 'assets/images/icons/user.svg';
-import Calendar from 'assets/images/icons/calendar.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import {FC, useEffect, useRef, useState} from 'react';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {commonStackPath, eventInfoPath} from 'constants/pathLocations';
 import firestore from '@react-native-firebase/firestore';
 import {ActivityIndicator} from '@ant-design/react-native';
 import {showToast} from 'helpers/showToast.ts';
 import {useUser} from '../../../store/userStore';
 import LinearGradient from 'react-native-linear-gradient';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import FastImage from 'react-native-fast-image';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
 import {INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
-import {err} from 'react-native-svg';
-import { calculateAge } from 'helpers/calculateAge';
-import { convertToPmAmFormat } from 'helpers/convertToPmAmFormat';
+import {calculateAge} from 'helpers/calculateAge';
+import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat';
 import Button from 'components/Button/Button';
-import { color } from '@rneui/base';
 
 const eventTypes = [
-  { id: 0, label: 'Vip Tables' },
-  { id: 1, label: 'Custom' },
-  { id: 2, label: 'Table' },
-  { id: 3, label: 'Concerts' },
-  { id: 4, label: 'Exclusive' },
-  { id: 5, label: 'Yacht Party' },
-  { id: 6, label: 'Pool Party' },
-  { id: 7, label: 'Private' },
-  { id: 8, label: 'Birthday Party' },
-  { id: 9, label: 'Restaurants' },
+  {id: 0, label: 'Vip Tables'},
+  {id: 1, label: 'Custom'},
+  {id: 2, label: 'Table'},
+  {id: 3, label: 'Concerts'},
+  {id: 4, label: 'Exclusive'},
+  {id: 5, label: 'Yacht Party'},
+  {id: 6, label: 'Pool Party'},
+  {id: 7, label: 'Private'},
+  {id: 8, label: 'Birthday Party'},
+  {id: 9, label: 'Restaurants'},
 ];
 
 const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, index}: any) => {
   const [hostInfo, setHostInfo] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [heightAnim] = useState(new Animated.Value(screenHeight * 0.40));
-  const {photos, uid, placeName, meetingSpot, description, hour, date, address, female, femaleFriend, male, maleFriend, name, usersList, activeType} =
-    list;
+  const [heightAnim] = useState(new Animated.Value(screenHeight * 0.4));
+  const {photos, uid, hour, date, female, male, name, usersList, activeType} = list;
 
   const styles = useStyles();
-  const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
-
-  const goToEventInfo = () => {
-    navigation.navigate(commonStackPath, {screen: eventInfoPath, params: {list: list}});
-  };
 
   const getHostInfo = async uid => {
     try {
@@ -108,11 +94,11 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
   const cardRef = useRef(null);
 
   const handleAutoSwipeRight = () => {
-      cardRef.current?.autoSwipeRight();
+    cardRef.current?.autoSwipeRight();
   };
 
   const handleAutoSwipeLeft = () => {
-      cardRef.current?.autoSwipeLeft();
+    cardRef.current?.autoSwipeLeft();
   };
 
   const handleSwipeGuestCardInvite = async (item: any): Promise<void> => {
@@ -256,7 +242,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
           <ActivityIndicator color={whiteColor} size="small" />
         </View>
       ) : (
-        <Animated.View style={[styles.itemContainer, {height: heightAnim, marginTop: index? 30: 0}]}>
+        <Animated.View style={[styles.itemContainer, {height: heightAnim, marginTop: index ? 30 : 0}]}>
           <TinderCard
             ref={cardRef}
             // @ts-ignore
@@ -268,6 +254,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
             OverlayLabelRight={OverlayRight}
             OverlayLabelLeft={OverlayLeft}
             disableBottomSwipe={true}
+            disableVerticalSwipe={true}
             inputOverlayLabelRightOpacityRange={[0, 40]}
             inputOverlayLabelLeftOpacityRange={[0, -40]}
             translateXRange={[-70, 0, 70]}
@@ -432,7 +419,14 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
                     </TouchableOpacity>
                   </View>
                 </LinearGradient>
-                <View style={{backgroundColor: whiteColor, height: screenHeight * 0.18, paddingHorizontal: 16, paddingVertical: 12, justifyContent: 'space-between'}}>
+                <View
+                  style={{
+                    backgroundColor: whiteColor,
+                    height: screenHeight * 0.18,
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    justifyContent: 'space-between',
+                  }}>
                   <View
                     style={{
                       flexDirection: 'row',
@@ -497,7 +491,12 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
                       </Text>
                     </View>
                   </View>
-                  <Button onPress={handleAutoSwipeRight} title='Join' buttonStyle={{backgroundColor: blackColor}} buttonTitleStyle={{color: whiteColor}}/>
+                  <Button
+                    onPress={handleAutoSwipeRight}
+                    title="Join"
+                    buttonStyle={{backgroundColor: blackColor}}
+                    buttonTitleStyle={{color: whiteColor}}
+                  />
                 </View>
               </View>
             </FastImage>

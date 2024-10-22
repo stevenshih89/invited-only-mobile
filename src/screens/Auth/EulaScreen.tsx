@@ -1,7 +1,7 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowLeftArrow from 'assets/images/icons/arrow-left.svg';
-import {backgroundGradientColors, blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, black1Color, blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -9,6 +9,7 @@ import {signUpPath} from 'constants/pathLocations';
 import LinearGradient from 'react-native-linear-gradient';
 import {getSubscriptions} from 'src/api/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
+import { screenHeight } from 'constants/common';
 
 interface PlanListItem {
   id: number;
@@ -120,7 +121,7 @@ const Eula: FC = (): JSX.Element => {
     {
       id: 14,
       title: '14. CONTACT INFORMATION',
-      description: 'If you have any questions or concerns about this Agreement, please contact us at support@invitedonly.app.',
+      description: 'If you have any questions or concerns about this Agreement, please contact us at support@invitedonly.io.',
     },
     {
       id: 15,
@@ -328,17 +329,29 @@ const Eula: FC = (): JSX.Element => {
               <Text style={{color: whiteColor, fontSize: RFValue(20, 932), fontFamily: Satoshi500}}>Deny</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              disabled={!endReached}
+              activeOpacity={0.7}
+              hitSlop={{top: 26, bottom: 20}}
               onPress={() => navigation.navigate(signUpPath as never)}
               style={{
-                flex: 1.5,
-                paddingVertical: 13,
-                backgroundColor: endReached ? whiteColor : transparentWhite16Color,
-                borderRadius: 10,
-                marginTop: 24,
+                flex: 1.7,
+                backgroundColor: whiteColor,
+                borderRadius: 18,
+                height: screenHeight / 14,
+                flexDirection: 'row',
                 alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: screenHeight / 39,
+                maxHeight: 64,
               }}>
-              <Text style={{color: blackColor, fontSize: RFValue(20, 932), fontFamily: Satoshi500}}>Accept</Text>
+              <Text
+                style={{
+                  color: black1Color,
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(16, 812),
+                  marginRight: 4,
+                }}>
+                Accept
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -348,3 +361,5 @@ const Eula: FC = (): JSX.Element => {
 };
 
 export default Eula;
+
+

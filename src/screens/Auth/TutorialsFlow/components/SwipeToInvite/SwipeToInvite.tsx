@@ -18,9 +18,11 @@ const SwipeToInvite = () => {
       </View>
       <View style={styles.textWrapper}>
         <Text style={styles.textSwipeToInvite}>{accountTypeGuest ? 'Join VIP Tables and exclusive events' : 'Build your guest list'}</Text>
-        <Text style={styles.textSwipeRightToInvite}>{accountTypeGuest? 'Discover premier events and unlock exclusive invitations.':
-        'Invite someone you’d love to have at your event! Dismiss anyone you’re not interested in inviting.'
-          }</Text>
+        <Text style={styles.textSwipeRightToInvite}>
+          {accountTypeGuest
+            ? 'Discover premier events and unlock exclusive invitations.'
+            : 'Invite someone you’d love to have at your event! Dismiss anyone you’re not interested in inviting.'}
+        </Text>
       </View>
     </View>
   );

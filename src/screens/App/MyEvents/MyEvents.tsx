@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {FlatList} from 'react-native';
@@ -12,43 +12,26 @@ import useStyles from 'screens/App/MyEvents/styles.ts';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard.tsx';
 import {useMyEvents} from '../../../store/myEvents';
 import {showToast} from 'helpers/showToast.ts';
-import {
-  blackColor,
-  grayColor,
-  lightGray13Color,
-  lightGray16Color,
-  lightGray20Color,
-  lightGray2Color,
-  lightGray5Color,
-  lightGreenColor,
-  whiteColor,
-} from 'constants/colors';
+import {blackColor, lightGray13Color, lightGray20Color, lightGray2Color, lightGreenColor, whiteColor} from 'constants/colors';
 import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsCard';
 import ModalCancelAttending from './ModalCancelAttending';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
 import {useUser} from '../../../store/userStore';
 import {
   ACCEPTED_STATUS,
-  ALL,
   APPROVED_STATUS,
   CANCEL_STATUS,
   INVITE_MATCH_STATUS,
   NOT_ACCEPTED_STATUS,
   screenHeight,
   screenWidth,
-  THIS_MONTH,
-  THIS_WEEKEND,
 } from 'constants/common.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
-import {EventsDate} from 'contexts/EventsDate.tsx';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import images
-import CalendarCheckIcon from 'assets/images/icons/calendar-check.svg';
-import WIcon from 'assets/images/icons/W.svg';
-import MIcon from 'assets/images/icons/M.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import AddIcon from 'assets/images/icons/add.svg';
 
@@ -99,7 +82,6 @@ const MyEvents: FC<any> = ({navigation}) => {
   const user = useUser((i: any) => i?.user);
   const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
   const isHost = user?.accountType === 'host';
-  const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
   const [userInfo, setUserInfo] = useState<any>();
   const [hostInfo, setHostInfo] = useState<any>({});
@@ -409,6 +391,11 @@ const MyEvents: FC<any> = ({navigation}) => {
 
   const handleGetEventsIJoining = async events => {
     try {
+      if (!events) {
+        setEventsJoiningData([]);
+        setEventsImJoining([]);
+        return;
+      }
       const uid = user?.uid;
       const data = events?.docs?.map(i => i?.data());
 
@@ -437,6 +424,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         .where('uid', '==', `${user?.uid}`)
         .onSnapshot(querySnapshot => {
           if (querySnapshot.empty) {
+            setMyEventsData([]);
             return;
           }
           const data = querySnapshot?.docs?.map(i => i?.data());
@@ -571,12 +559,34 @@ const MyEvents: FC<any> = ({navigation}) => {
     const findUser = usersList.find(item => item.uid === user?.uid);
     console.warn(findUser);
 
-    const status = findUser.status;
+    const status = findUser?.status;
 
     console.warn(status, id, placeName);
 
     return (
       <>
+        {status !== ACCEPTED_STATUS && status !== APPROVED_STATUS && (
+          <TouchableOpacity
+          disabled
+          style={{
+            height: 65,
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 18,
+            backgroundColor: lightGray20Color,
+            marginTop: 25,
+          }}>
+          <Text
+            style={{
+              color: blackColor,
+              fontFamily: Satoshi700,
+              fontSize: RFValue(16, 812),
+            }}>
+            Waiting for invitation approval
+          </Text>
+        </TouchableOpacity>
+        )}
         {status === ACCEPTED_STATUS && (
           <TouchableOpacity
             onPress={() => changeStatusGuestUsersList(CANCEL_STATUS, id, uidHost, placeName, date, hostPhoto)}
@@ -803,7 +813,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                 flexDirection: 'row',
                 justifyContent: 'center',
               }}
-              onPress={() => navigation.navigate(eventCreatingStackPath)}>
+              onPress={goToCreateEvent}>
               <AddIcon width={16} height={16} />
               <Text
                 style={{
@@ -830,12 +840,12 @@ const MyEvents: FC<any> = ({navigation}) => {
           {isHost ? (
             activeTab === MY_EVENTS ? (
               <>
-                {<UserInfoTop showTotalEvents={true} />}
                 <FlatList
                   showsVerticalScrollIndicator={false}
                   style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
                   data={myEventsData}
                   keyExtractor={item => item.id.toString()}
+                  ListHeaderComponent={<UserInfoTop showTotalEvents={true} />}  
                   ListEmptyComponent={() => (
                     <>
                       {userInfo?.accountConfirmed && (
@@ -927,11 +937,11 @@ const MyEvents: FC<any> = ({navigation}) => {
             )
           ) : (
             <View style={{flex: 1}}>
-              {<UserInfoTop showTotalEvents={true} />}
               <FlatList
                 showsVerticalScrollIndicator={false}
                 data={eventsJoiningData}
                 style={{flex: 1, backgroundColor: 'transparent', height: '100%', marginBottom: screenHeight / 10}}
+                ListHeaderComponent={<UserInfoTop showTotalEvents={true} />}
                 ListEmptyComponent={() => (
                   <View style={{marginTop: screenHeight / 6}}>
                     <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>

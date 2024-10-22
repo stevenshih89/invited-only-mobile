@@ -1,8 +1,8 @@
-import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
+import {ActivityIndicator, FlatList, Text, View} from 'react-native';
 import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
 //import components
 import useStyles from './styles';
-import {blackColor, lightGray10Color, whiteColor} from 'constants/colors';
+import {blackColor, transparentGray70Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
@@ -14,11 +14,10 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {eventCreatingStackPath, IOPath} from 'constants/pathLocations';
+import {eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocations';
 import {EventContext} from 'contexts/EventContext';
 import {useUser} from '../../../store/userStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
-import Loading from 'components/Loading/Loading';
 import moment from 'moment';
 import Match, {MatchData} from '../IO/screens/Match/Match';
 import FullEvent from 'components/FullEvent';
@@ -29,9 +28,12 @@ import {useAdminActions} from 'src/store/adminActions';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import FastImage from 'react-native-fast-image';
-import {ACCEPTED_STATUS, LIKED} from 'constants/common';
+import {ACCEPTED_STATUS, ALL, LIKED, screenHeight, THIS_MONTH, THIS_WEEK} from 'constants/common';
 import {Event, EventData} from 'src/types/event';
 import {UserInfo} from 'src/types/userInfo';
+import {EventsDate} from 'contexts/EventsDate';
+import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
+import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
@@ -39,12 +41,13 @@ const Requests: FC = (): ReactElement => {
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
 
-  const {activeEvent} = useContext(EventContext);
+  const {activeEvent, myEvents} = useContext(EventContext);
+  const {activeEventDate} = useContext(EventsDate);
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
   const [userInfo, setUserInfoData] = useState<UserInfo>({});
   const [dataForGuest, setDataForGuest] = useState<EventData[]>([]);
-  const [myEventsList, setMyEventsList] = useState<EventData[]>([]);
+
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [matchData, setMatchData] = useState<MatchData>({});
@@ -55,6 +58,7 @@ const Requests: FC = (): ReactElement => {
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
+  const currentUser = auth().currentUser;
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -71,95 +75,63 @@ const Requests: FC = (): ReactElement => {
     setIsVisibleMatch(false);
   };
 
-  const fetchHostRequests = async () => {
-    const currentUser = auth().currentUser;
-
-    if (!currentUser || !activeEvent?.id) {
-      setMyEventsList([]);
+  const fetchHostRequests = async querySnapshot => {
+    if (!querySnapshot.exists) {
       setRequestsForHost([]);
       return;
     }
-    if (currentUser && activeEvent !== 'host' && activeEvent?.id) {
-      try {
-        const querySnapshot = await firestore().collection('Events').doc(activeEvent.id).get();
-        const myEventsQuery = await firestore()
-          .collection('Events')
-          .where('uid', '==', currentUser.uid)
-          .where('isCancelled', '==', false)
-          .get();
-
-        if (!myEventsQuery.empty) {
-          const eventList = myEventsQuery?.docs.map(i => i?.data()) as EventData[];
-          setMyEventsList(eventList);
-        } else {
-          setMyEventsList([]);
-        }
-
-        if (querySnapshot.exists) {
-          setRequestsForHost(querySnapshot.data());
-        } else {
-          setRequestsForHost([]);
-        }
-      } catch (error: any) {
-        Alert.alert('Error', error.message || 'Something went wrong');
-      }
-    } else if (currentUser && activeEvent === 'host') {
-      try {
-        const querySnapshot = await firestore()
-          .collection('Events')
-          .where('statusEvent', '==', true)
-          .where('isCancelled', '==', false)
-          .get();
-        const data = querySnapshot?.docs?.map(i => i?.data());
-        if (data) {
-          setRequestsForHost(data);
-        } else {
-          setRequestsForHost([]);
-        }
-      } catch (error: any) {
-        Alert.alert('Error', error.message || 'Something went wrong');
-      }
+    const data = querySnapshot.data();
+    if (!data?.requestsList?.length) {
+      setRequestsForHost([]);
+      return;
     }
+
+    const sortedRequests = data?.requestsList?.sort((a: Event.User, b: Event.User) => {
+      return moment(a?.createdAt, 'YYYY-MM-DD HH:mm:ss').isAfter(moment(b?.createdAt, 'YYYY-MM-DD HH:mm:ss')) ? 1 : -1;
+    });
+
+    setRequestsForHost(sortedRequests);
   };
 
   const filterByUid = (array: EventData[], uid: string) => {
     return array?.filter((item: EventData) => {
       if (Array?.isArray(item?.usersList)) {
-        return item?.usersList?.some((request: Event.User) => request?.uid === uid && request?.status === LIKED);
+        return item?.usersList?.some((userItem: Event.User) => userItem?.uid === uid && userItem?.status === LIKED);
       } else {
         return false;
       }
     });
   };
 
-  const fetchGuestRequests = async () => {
-    const currentUser = auth().currentUser;
-    if (currentUser && activeEvent) {
-      try {
-        const querySnapshot = await firestore()
-          .collection('Events')
-          .where('statusEvent', '==', true)
-          .where('isCancelled', '==', false)
-          .get();
-        if (querySnapshot.empty) {
-          return;
-        }
-        const data = querySnapshot?.docs?.map(i => i?.data()) as EventData[];
-        // // console.log('filter', filterByUid(data, currentUser?.uid));
-        const filterUid = filterByUid(data, currentUser?.uid);
-
-        // // console.log('filterUid', filterUid);
-        setDataForGuest(filterUid);
-      } catch (error: any) {
-        Alert.alert('Error', error.message || 'Something went wrong');
-      }
+  const fetchGuestRequests = async querySnapshot => {
+    if (querySnapshot.empty) {
+      setDataForGuest([]);
+      return;
     }
+    const data = querySnapshot?.docs?.map(i => i?.data()) as EventData[];
+    const filteredRequestsByUid = filterByUid(data, currentUser?.uid);
+
+    const filterEventByDate = () => {
+      if (activeEventDate === ALL) {
+        return filteredRequestsByUid;
+      }
+      if (activeEventDate === THIS_WEEK) {
+        return filterEventsByThisWeek(filteredRequestsByUid);
+      }
+      if (activeEventDate === THIS_MONTH) {
+        return filterEventsByThisMonth(filteredRequestsByUid);
+      }
+      return filteredRequestsByUid;
+    };
+
+    const filteredRequestsByDate = filterEventByDate();
+
+    setDataForGuest(filteredRequestsByDate);
   };
 
   const fetchUserInfo = async () => {
-    setLoading(true);
-    const currentUser = auth()?.currentUser;
     if (currentUser) {
+      setLoading(true);
       try {
         const userInfoDoc = await firestore().collection('userInfo').doc(currentUser.uid).get();
         if (!userInfoDoc.exists) {
@@ -169,7 +141,6 @@ const Requests: FC = (): ReactElement => {
         setUserInfoData(data);
         setLoading(false);
       } catch (error: any) {
-        // console.log('Error', error.message || 'Something went wrong');
         setLoading(false);
       }
     }
@@ -193,40 +164,77 @@ const Requests: FC = (): ReactElement => {
     return findAcceptedGuest >= allGuests;
   };
 
+  const goToCreateEvent = (): void => {
+    if (!userInfo?.accountConfirmed) {
+      return;
+    }
+    if (!userInfo.accountPremium) {
+      navigation.navigate(paymentPath as never);
+    } else {
+      navigation.navigate(eventCreatingStackPath);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
       fetchUserInfo();
-      checkIsFullGuestsFun();
+      if (isHost) {
+        checkIsFullGuestsFun();
+      }
     }, []),
   );
 
   useFocusEffect(
     useCallback(() => {
-      isHost ? fetchHostRequests() : fetchGuestRequests();
-    }, [activeEvent, isHost]),
+      let subcribeHostRequests: any;
+      let subcribeGuestRequests: any;
+      if (!currentUser) {
+        return;
+      }
+      if (isHost) {
+        if (!activeEvent?.id) {
+          setRequestsForHost([]);
+          return;
+        }
+        subcribeHostRequests = firestore()
+          .collection('Events')
+          .doc(activeEvent?.id)
+          .onSnapshot(querySnapshot => {
+            fetchHostRequests(querySnapshot);
+          });
+      }
+      if (!isHost) {
+        subcribeGuestRequests = firestore()
+          .collection('Events')
+          .where('statusEvent', '==', true)
+          .where('isCancelled', '==', false)
+          .onSnapshot(querySnapshot => {
+            fetchGuestRequests(querySnapshot);
+          });
+      }
+
+      return () => {
+        subcribeHostRequests && subcribeHostRequests();
+        subcribeGuestRequests && subcribeGuestRequests();
+      };
+    }, [activeEvent?.id, isHost, activeEventDate]),
   );
 
-  const expressionForHost = isHost && !!requestsForHost?.requestsList?.length;
+  const expressionForHost = isHost && !!requestsForHost?.length;
   const expressionForGuest = !isHost && !!dataForGuest.length;
 
-  function isDateTimePassed(dateString: string, timeString: string) {
-    if (typeof dateString !== 'string' || typeof timeString !== 'string') {
-      return false;
-    }
-
-    const [day, month, year] = dateString.split('.').map(Number);
-    const [hours, minutes] = timeString.split(':').map(Number);
-
-    const dateTime = moment(`${year}-${month}-${day} ${hours}:${minutes}`, 'YYYY-MM-DD HH:mm');
-
-    const dateTimeWithAddedHours = dateTime.add(12, 'hours');
-    const isExpired = moment().isAfter(dateTimeWithAddedHours);
-
-    return isExpired;
-  }
-
   if (loading && !list && !isVisibleMatch) {
-    return <ActivityIndicator style={styles.container} />;
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: blackColor,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <ActivityIndicator />
+      </View>
+    );
   }
 
   if (!userInfo?.accountConfirmed && !loading && !rejectModalVisible && !acceptModalVisible) {
@@ -237,70 +245,33 @@ const Requests: FC = (): ReactElement => {
     );
   }
 
-  if (isHost && !requestsForHost.eventReviewed && myEventsList?.length) {
-    const totalGuests = requestsForHost.female + requestsForHost.male;
-    const acceptedGuests = 0;
-
+  if (isHost && !activeEvent?.eventReviewed) {
     return (
       <View style={styles.container}>
-        <View
-          style={{
-            marginTop: 18,
-            marginHorizontal: 23,
-            backgroundColor: lightGray10Color,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            borderRadius: 10,
-            padding: 10,
-          }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Clock width={32} height={32} />
-            <Text
-              style={{
-                marginLeft: 6,
-                color: whiteColor,
-                fontFamily: Satoshi700,
-                fontSize: RFValue(12, 812),
-              }}>
-              Event under review
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <PersoneIcon width={16} height={16} />
-            <Text
-              style={{
-                fontFamily: Satoshi500,
-                fontSize: RFValue(12, 812),
-                color: whiteColor,
-                marginLeft: 2,
-              }}>{`${acceptedGuests}/${totalGuests}`}</Text>
-          </View>
-        </View>
-      </View>
-    );
-  }
-
-  if (
-    isDateTimePassed(list?.date, list?.hour) &&
-    !!userInfo?.accountConfirmed &&
-    isHost &&
-    list.eventReviewed &&
-    list.statusEvent &&
-    !!myEventsList?.length &&
-    !isVisibleMatch
-  ) {
-    return (
-      <View style={styles.container}>
-        <View style={{flex: 1, width: '100%', backgroundColor: blackColor, paddingHorizontal: 24}}>
-          {
-            <Loading
-              userInfo={list}
-              topPosition={false}
-              wrapperText={false}
-              text={isDateTimePassed(list?.date, list?.hour) ? `Event Expired: ${list.date}` : `Event Start: ${list.date}`}
-            />
-          }
+        <View style={{paddingHorizontal: 30, marginTop: 7}}>
+          <FastImage
+            style={{
+              width: '100%',
+              height: screenHeight * 0.22,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 20,
+            }}
+            source={{uri: activeEvent?.photos?.[0].image}}>
+            <View style={{width: '100%', height: '100%', backgroundColor: transparentGray70Color, position: 'absolute'}} />
+            <View style={{flexDirection: 'row'}}>
+              <Clock width={32} height={32} />
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(26, 812),
+                  marginLeft: 10,
+                }}>
+                Event in review
+              </Text>
+            </View>
+          </FastImage>
         </View>
       </View>
     );
@@ -309,8 +280,7 @@ const Requests: FC = (): ReactElement => {
   if (
     !loading &&
     userInfo?.accountConfirmed &&
-    !!myEventsList?.length &&
-    (isHost ? !requestsForHost?.requestsList?.length : !dataForGuest?.length) &&
+    (isHost ? !!activeEvent?.id && !requestsForHost?.length : !dataForGuest?.length) &&
     !isVisibleMatch
   ) {
     return (
@@ -343,8 +313,7 @@ const Requests: FC = (): ReactElement => {
           idEvent={activeEvent.id}
           setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
         />
-        {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} />}
-        {userInfo?.accountType === 'host' && !!myEventsList?.length && (
+        {userInfo?.accountType === 'host' && !!activeEvent?.id && (
           <View
             style={{
               width: '100%',
@@ -423,17 +392,19 @@ const Requests: FC = (): ReactElement => {
         {expressionForHost || expressionForGuest ? (
           <FlatList
             // @ts-ignore
-            data={isHost ? list?.requestsList : list}
-            // numColumns={2}
+            data={list}
+            numColumns={isHost ? 2 : 1}
             showsVerticalScrollIndicator={false}
             keyExtractor={({uid, name}) => `${uid}${name}`}
             contentContainerStyle={styles.listContentContainer}
-            extraData={isHost ? list?.requestsList : list}
-            // ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+            extraData={list}
+            style={{
+              width: '100%',
+            }}
+            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
             renderItem={({item, index}) => {
               return isHost ? (
                 <ItemRequestHost
-                  list={list}
                   item={item}
                   setRequestsForHost={setRequestsForHost}
                   handleOpenMatch={handleOpenMatch}
@@ -455,7 +426,7 @@ const Requests: FC = (): ReactElement => {
           />
         ) : (
           <>
-            {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEventsList?.length && !loading && (
+            {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEvents?.length && !loading && (
               <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
                 <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                   Let’s create an event
@@ -463,7 +434,7 @@ const Requests: FC = (): ReactElement => {
                 <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
                   Get started by creating an event to begin inviting guests.
                 </Text>
-                <Button title="Create event" onPress={() => navigation.navigate(eventCreatingStackPath as never)} />
+                <Button title="Create event" onPress={goToCreateEvent} />
               </View>
             )}
           </>

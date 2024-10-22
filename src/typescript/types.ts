@@ -20,6 +20,7 @@ export type RootStackParamList = {
   '/confirm-phone'?: {
     phone: string;
   };
+  '/email-change': undefined;
   '/turn-notifications': undefined;
   '/choose-account-type': undefined;
   '/enter-name': undefined;

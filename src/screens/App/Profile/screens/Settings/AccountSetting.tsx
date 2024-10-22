@@ -19,7 +19,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Switch} from '@ant-design/react-native';
 import {FC, useEffect, useState} from 'react';
 import ModalDeleteMyAccount from './ModalDeleteMyAccount';
-import {phoneChangePath} from 'constants/pathLocations';
+import {phoneChangePath, emailChangePath} from 'constants/pathLocations';
 import {useUser} from '../../../../../store/userStore';
 import auth from '@react-native-firebase/auth';
 import Geolocation from '@react-native-community/geolocation';
@@ -162,7 +162,7 @@ const AccountSetting: FC = ({navigation, route}: any) => {
               </View>
               <TouchableOpacity
                 activeOpacity={0.7}
-                // onPress={() => navigation.navigate(phoneChangePath as never)}
+                onPress={() => navigation.navigate(emailChangePath as never)}
                 style={{flexDirection: 'row', alignItems: 'center'}}
                 hitSlop={{top: 20, left: 10, right: 10, bottom: 10}}>
                 <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>Change</Text>

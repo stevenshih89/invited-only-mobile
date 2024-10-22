@@ -18,6 +18,7 @@ import { Satoshi700 } from 'constants/fonts';
 import { useUser } from 'src/store/userStore';
 import firestore from '@react-native-firebase/firestore'
 import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS} from 'constants/common.ts';
+import moment from 'moment';
 
 export const tabBarName = (focused: boolean, route: string): ReactElement => {
   const getLabel = (): string =>
@@ -34,6 +35,7 @@ export const tabBarName = (focused: boolean, route: string): ReactElement => {
 export const tabIcon = (focused: boolean, route: string): ReactElement => {
   const userHost = useUser((i: any) => i?.user);
   const [eventsCount, setEventsCount] = useState(0);
+  const [eventsCountHost, setEventsCountHost] = useState(0)
   const [newMessage, setNewMessages] = useState(0);
 
   const handleGetEventsIJoining = async events => {
@@ -44,7 +46,7 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
         return obj?.usersList?.some(user => {
           return (
             user?.uid === uid &&
-            (user?.status === INVITE_MATCH_STATUS || user?.status === ACCEPTED_STATUS || user?.status === APPROVED_STATUS)
+            (user?.status === APPROVED_STATUS)
           );
         });
       });
@@ -97,7 +99,22 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
   
     return () => unsubscribe();
   }, [userHost]);
-  
+
+  useEffect(() => {
+    if (userHost?.uid) {
+      firestore()
+        .collection('Events')
+        .where('uid', '==', `${userHost?.uid}`)
+        .onSnapshot(querySnapshot => {
+          if (querySnapshot.empty) {
+            return;
+          }
+          const data = querySnapshot?.docs?.map(i => i?.data());
+          const filterEvents = data.filter(item => !item.isCancelled) 
+          setEventsCountHost(filterEvents.length)
+        });
+    }
+  },[])
 
   const getIcon = (): ReactElement =>
     ({
@@ -111,7 +128,7 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
   return (
     <View style={[styles.iconWr, {borderTopColor: focused ? whiteColor : 'transparent'}]}>
       {getIcon()}
-      {((route === '/chat' && newMessage > 0) || ((eventsCount > 0 || userHost?.eventsList?.length > 0) && route === '/my-events')) && (
+      {((route === '/chat' && newMessage > 0) || ((eventsCount > 0) && route === '/my-events')) && (
         <View style={{
           backgroundColor: lightRedColor,
           position: 'absolute',
@@ -128,7 +145,7 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
             fontFamily: Satoshi700,
             color: whiteColor,
           }}>
-            {route === '/my-events' ? (userHost?.accountType === 'host' ? userHost?.eventsList?.length : eventsCount) : newMessage}
+            {route === '/my-events' ? (userHost?.accountType === 'host' ? eventsCountHost: eventsCount) : newMessage}
           </Text>
         </View>
       )}

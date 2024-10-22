@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
+import {EventData} from 'src/types/event';
 
 export type IOEventPhoto = {
   image: null | string;
@@ -28,7 +29,7 @@ export type IOEvent = {
   photos: IOEventPhoto[];
 };
 
-export async function createEvent(uid: string, event: IOEvent): Promise<boolean> {
+export async function createEvent(uid: string, event: EventData): Promise<boolean> {
   await firestore().collection('Events').doc(uid).set(event);
   return true;
 }
