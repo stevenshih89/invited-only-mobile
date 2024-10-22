@@ -24,14 +24,7 @@ import {getFontSize} from 'helpers/getFontSize';
 import {ACCEPTED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import {EventContext} from 'contexts/EventContext';
 
-const ItemRequestHost = ({
-  item,
-  setRequestsForHost,
-  handleOpenMatch,
-  checkIsFullGuestsFun,
-  setIsVisibleModalFullEvent,
-  fetchHostRequests,
-}: any) => {
+const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibleModalFullEvent, fetchHostRequests}: any) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState({accountType: '', usersList: []});
@@ -156,7 +149,6 @@ const ItemRequestHost = ({
           }
           setRequestsForHost(prev => prev.filter((i: any) => i?.uid !== item?.uid));
         });
-      checkIsFullGuestsFun();
     } catch (e) {
       // console.log(e);
       showToast('inviteMatch', '', "There's been an error");

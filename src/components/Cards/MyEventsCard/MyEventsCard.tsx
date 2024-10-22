@@ -7,14 +7,12 @@ import useStyles from 'components/Cards/MyEventsCard/styles.ts';
 import Clock from 'assets/images/icons/clock-white.svg';
 import Bing from 'assets/images/icons/notification-bing.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {black4Color, blackColor, grayScale600, lightGray18Color, lightGray20Color, lightGreenColor, whiteColor} from 'constants/colors';
+import {black4Color, blackColor, grayScale600, lightGray18Color, lightGreenColor, whiteColor} from 'constants/colors';
 import FastImage from 'react-native-fast-image';
 import FullEvent from 'components/FullEvent';
-import {ACCEPTED_STATUS, LIKED, NOT_ACCEPTED_STATUS, screenHeight, screenWidth} from 'constants/common';
+import {ACCEPTED_STATUS, screenHeight, screenWidth} from 'constants/common';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat';
 import {formateDateAbbreviated} from 'helpers/formateDateAbbreviated';
 import LineImage from 'assets/images/app/Line.png';
@@ -23,7 +21,7 @@ import {Event} from '../../../types/event';
 import firestore from '@react-native-firebase/firestore';
 import {calculateAge} from 'helpers/calculateAge';
 
-interface MyEventsCard {
+interface MyEventsCardProps {
   statusEvent: boolean;
   eventReviewed: boolean;
   allPeople?: number;
@@ -39,7 +37,7 @@ interface MyEventsCard {
   showInfoTop: boolean;
 }
 
-const MyEventsCard: FC<MyEventsCard> = props => {
+const MyEventsCard: FC<MyEventsCardProps> = props => {
   const {
     placeName,
     styleContainer,

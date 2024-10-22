@@ -52,7 +52,6 @@ import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
 import Match, {MatchData} from './screens/Match/Match';
-// import ModalSuperInvite from 'components/Modal/ModalSuperInvite';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
@@ -76,20 +75,17 @@ import {getUsersForEvent} from 'src/api/user';
 import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
 
-const USERS_FETCHING_DELAY = 3000;
-
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [events, setEvents] = useState<any[]>([]);
-
-  const [myEventsList, setMyEventsList] = useState([]);
   const [nameUser, setNameUser] = useState<string>('');
   const [reportedItem, setReportedItem] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
   const [matchData, setMatchData] = useState<MatchData>({});
+  const [myEventsList, setMyEventsList] = useState<any[]>([]);
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
   const [loadingMyEvents, setLoadingMyEvents] = useState<boolean>(true);
@@ -115,21 +111,19 @@ const IO: FC = (): JSX.Element => {
   const setUser = useUser((i: any) => i?.setUser);
 
   const setScrollPosition = useScrollPosition((i: any) => i?.setScrollPosition);
-
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
   const setRejectModalVisible = useAdminActions((i: any) => i?.setRejectModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
 
   const allEventsLength = useRef(0);
-
   const eventsRef = useRef<any[]>();
   const counterSuperInvitesRef = useRef(0);
   const counterWeeklySuperInvitesRef = useRef(0);
-
   const cardRef = useRef(null);
 
   const rotationLoader = useSharedValue(0);
+
   useEffect(() => {
     if (loadingUser) {
       rotationLoader.value = withRepeat(
@@ -390,24 +384,6 @@ const IO: FC = (): JSX.Element => {
     setModalReport(true);
   };
 
-  function filterDataByWeekMonth(data: any, days: number) {
-    const today = new Date();
-    const nextWeek = new Date(today);
-    nextWeek.setDate(today.getDate() + days);
-    const filter = data.filter((item: Event.Info) => {
-      if (!item || !item.date) {
-        return false;
-      }
-      const parts = item.date.split('.');
-      const itemDate = new Date(+parts[2], +parts[1] - 1, +parts[0]);
-      if (isNaN(itemDate.getTime())) {
-        return false;
-      }
-      return itemDate >= today && itemDate <= nextWeek;
-    });
-    return filter;
-  }
-
   const OverlayRight = () => {
     return (
       <View style={[styles.overlayLabelContainerInvite]}>
@@ -478,12 +454,12 @@ const IO: FC = (): JSX.Element => {
           setMyEvents([]);
           setMyEventsList([]);
           setActiveEvent({});
-          setLoadingMyEvents(false);
           setLoadingEvents(false);
+          setLoadingMyEvents(false);
           return;
         }
-        const data = querySnapshot.docs.map(doc => doc.data() as EventData);
 
+        const data = querySnapshot.docs.map(doc => doc.data() as EventData);
         const filteredData = data.filter((event: EventData) => {
           if (event?.date && event?.hour) {
             const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
@@ -497,25 +473,22 @@ const IO: FC = (): JSX.Element => {
           setMyEvents([]);
           setMyEventsList([]);
           setActiveEvent({});
-          setLoadingMyEvents(false);
           setLoadingEvents(false);
+          setLoadingMyEvents(false);
           return;
         }
-
-        setMyEventsList(filteredData);
         setMyEvents(filteredData);
-        console.warn(myEvents.length, activeEvent?.id, filteredData);
-
-        if (!myEvents.length && !activeEvent?.id) {
-          setActiveEvent(myEvents[0]);
+        setMyEventsList(filteredData);
+        if (!myEvents.length && !activeEvent?.id && filteredData.length) {
+          setActiveEvent(filteredData[0]);
         }
         setLoadingMyEvents(false);
       } catch (error: any) {
         setMyEvents([]);
         setMyEventsList([]);
         setActiveEvent({});
-        setLoadingMyEvents(false);
         setLoadingEvents(false);
+        setLoadingMyEvents(false);
         console.error(error);
 
         Alert.alert('Error', error.message || 'Something went wrong');
@@ -1263,8 +1236,6 @@ const IO: FC = (): JSX.Element => {
     setLoadingEvents(true);
     let users;
 
-    console.warn(activeEvent?.id);
-
     try {
       users = await getUsersForEvent(userInfo?.uid, activeEvent?.male, activeEvent?.female);
     } catch (error) {
@@ -1289,8 +1260,6 @@ const IO: FC = (): JSX.Element => {
     const data: any[] = [];
     const usersList = users?.docs.map(doc => doc.data());
 
-    console.warn(usersList);
-
     const filteredUsersList = usersList?.filter((item: UserInfo) => {
       if (blockedUsersList.includes(item?.uid)) {
         return false;
@@ -1309,8 +1278,6 @@ const IO: FC = (): JSX.Element => {
       }
       return true;
     });
-
-    console.warn(filteredUsersList);
 
     if (!filteredUsersList?.length) {
       setLoadingEvents(false);
@@ -1688,28 +1655,29 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     if (userInfo?.uid) {
-      if (isHost && activeEvent?.id) {
+      if (isHost && activeEvent?.id && !loadingMyEvents) {
         getListForHost();
       }
       if (!isHost) {
         getListForGuest();
       }
     }
-  }, [userInfo, userHost, activeEvent?.id, activeEventDate, myEvents]);
+  }, [userInfo, userHost, activeEvent?.id, activeEventDate, myEvents, loadingMyEvents]);
 
   useEffect(() => {
-    // fetchMyEvents(true);
     requestUserPermission();
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      // fetchMyEvents(false);
+      if (userInfo?.uid && isHost) {
+        fetchMyEvents();
+      }
       fetchUserInfo();
-    }, []),
+    }, [userInfo?.uid]),
   );
 
-  if (loadingUser && !userInfo?.uid && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+  if ((loadingUser || loadingMyEvents) && !userInfo?.uid && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
         <Animated.View style={[animatedStyle]}>
@@ -1746,7 +1714,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isHost && !loadingEvents && !loadingMyEvents && !myEvents.length && !isVisibleMatch) {
+  if (userInfo?.uid && isHost && !loadingEvents && !myEvents.length && !isVisibleMatch) {
     return (
       <>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
