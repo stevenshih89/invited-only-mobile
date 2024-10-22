@@ -22,6 +22,7 @@ import moment from 'moment';
 import {Event} from '../../../types/event';
 import firestore from '@react-native-firebase/firestore';
 import {calculateAge} from 'helpers/calculateAge';
+import { eventTypes } from 'src/mocks/eventTypes';
 
 interface MyEventsCard {
   statusEvent: boolean;
@@ -29,19 +30,19 @@ interface MyEventsCard {
   allPeople?: number;
   date?: string;
   imageBg?: string;
-  placeName?: string;
   accountConfirmed: boolean;
   findAcceptedGuest?: any[];
   item: any;
   showGuestList: boolean;
   customButton?: React.ReactNode;
   styleContainer?: any;
-  showInfoTop: boolean;
+  showInfoTop?: boolean;
+  showDotLine?: boolean;
+  showEventType?: boolean;
 }
 
 const MyEventsCard: FC<MyEventsCard> = props => {
   const {
-    placeName,
     styleContainer,
     imageBg,
     statusEvent,
@@ -52,6 +53,8 @@ const MyEventsCard: FC<MyEventsCard> = props => {
     showGuestList,
     customButton,
     showInfoTop = false,
+    showDotLine = true,
+    showEventType = false
   } = props;
 
   const styles = useStyles();
@@ -289,9 +292,9 @@ const MyEventsCard: FC<MyEventsCard> = props => {
             )}
           </LinearGradient>
         </FastImage>
-        <View style={{paddingHorizontal: 18}}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 28}}>
-            <View style={{alignSelf: 'flex-end'}}>
+        <View style={{paddingHorizontal: 18, flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, marginBottom: 14, alignItems: 'flex-end'}}>
+          <View style={{}}>
+            <View style={{}}>
               <Text
                 style={{
                   color: lightGray18Color,
@@ -310,6 +313,67 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                 {item?.name}
               </Text>
             </View>
+            <View style={{marginVertical: 28}}>
+              <Text
+                style={{
+                  color: lightGray18Color,
+                  fontSize: RFValue(16, 812),
+                  fontFamily: Satoshi400,
+                }}>
+                Date
+              </Text>
+              <Text
+                style={{
+                  color: black4Color,
+                  fontSize: RFValue(21, 812),
+                  fontFamily: Satoshi700,
+                  marginTop: 5,
+                }}>
+                {formateDateAbbreviated(item?.date)}
+              </Text>
+            </View>
+            <View>
+                <Text
+                  style={{
+                    color: lightGray18Color,
+                    fontSize: RFValue(16, 812),
+                    fontFamily: Satoshi400,
+                  }}>
+                  Location
+                </Text>
+                <Text
+                  style={{
+                    color: black4Color,
+                    fontSize: RFValue(21, 812),
+                    fontFamily: Satoshi500,
+                    marginTop: 5,
+                  }}>
+                  {item?.placeName}
+                </Text>
+              </View>
+          </View>
+          <View style={{}}>
+          {showEventType && (
+            <View style={{}}>
+            <Text
+              style={{
+                color: lightGray18Color,
+                fontSize: RFValue(16, 812),
+                fontFamily: Satoshi400,
+              }}>
+              Event type
+            </Text>
+            <Text
+              style={{
+                color: black4Color,
+                fontSize: RFValue(21, 812),
+                fontFamily: Satoshi700,
+                marginTop: 5,
+              }}>
+              {eventTypes[item?.activeType].label}
+            </Text>
+          </View>
+          )}
             {showGuestList && (
               <View
                 style={{
@@ -345,50 +409,8 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                 </View>
               </View>
             )}
-          </View>
-          <View style={{flexDirection: 'row', marginTop: 28, justifyContent: 'space-between'}}>
-            <View style={{}}>
-              <View style={{marginBottom: 28}}>
-                <Text
-                  style={{
-                    color: lightGray18Color,
-                    fontSize: RFValue(16, 812),
-                    fontFamily: Satoshi400,
-                  }}>
-                  Date
-                </Text>
-                <Text
-                  style={{
-                    color: black4Color,
-                    fontSize: RFValue(21, 812),
-                    fontFamily: Satoshi700,
-                    marginTop: 5,
-                  }}>
-                  {formateDateAbbreviated(item?.date)}
-                </Text>
-              </View>
-              <View>
-                <Text
-                  style={{
-                    color: lightGray18Color,
-                    fontSize: RFValue(16, 812),
-                    fontFamily: Satoshi400,
-                  }}>
-                  Location
-                </Text>
-                <Text
-                  style={{
-                    color: black4Color,
-                    fontSize: RFValue(21, 812),
-                    fontFamily: Satoshi500,
-                    marginTop: 5,
-                  }}>
-                  {item?.placeName}
-                </Text>
-              </View>
-            </View>
-            <View style={{}}>
-              <View style={{marginBottom: 28}}>
+            <View style={{alignSelf: showGuestList? 'flex-end': 'flex-start'}}>
+            <View style={{marginVertical: 28}}>
                 <Text
                   style={{
                     color: lightGray18Color,
@@ -407,7 +429,7 @@ const MyEventsCard: FC<MyEventsCard> = props => {
                   {convertToPmAmFormat(item?.hour)}
                 </Text>
               </View>
-              <View>
+              <View style={{}}>
                 <Text
                   style={{
                     color: lightGray18Color,
@@ -428,11 +450,11 @@ const MyEventsCard: FC<MyEventsCard> = props => {
               </View>
             </View>
           </View>
-          <View style={{width: '100%', alignItems: 'center', marginTop: 22, paddingHorizontal: 23}}>
-            <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
-          </View>
-          <View style={{marginBottom: 23}}>{customButton ? customButton : null}</View>
         </View>
+        {showDotLine && <View style={{width: '100%', alignItems: 'center', paddingHorizontal: 20, marginTop: 9}}>
+            <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
+          </View>}
+          <View style={{marginBottom: 20, paddingHorizontal: 24}}>{customButton ? customButton : null}</View>
       </View>
     </>
   );

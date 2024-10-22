@@ -865,23 +865,15 @@ const MyEvents: FC<any> = ({navigation}) => {
                   renderItem={({item}) => (
                     <MyEventsCard
                       imageBg={item?.photos}
-                      list={item}
                       statusEvent={item?.statusEvent}
                       eventReviewed={item?.eventReviewed}
                       allPeople={item?.female + item?.male}
                       date={item?.date}
-                      textCityName={item?.name}
-                      placeName={item?.placeName}
-                      estimeTime={item?.hour}
-                      numberOfGirlsInvited={item?.female}
-                      placeName={item?.placeName}
-                      invitingPeople={item?.usersList?.filter(i => i?.status !== NOT_ACCEPTED_STATUS)}
                       accountConfirmed={user?.accountConfirmed}
                       findAcceptedGuest={item?.usersList?.filter(item => item.status === INVITE_MATCH_STATUS)}
-                      totalRequestsGuests={item?.requestsList?.length}
                       item={item}
                       showGuestList={true}
-                      customButton={customButton(item)}
+                      customButton={customButton(item)} 
                     />
                   )}
                 />
