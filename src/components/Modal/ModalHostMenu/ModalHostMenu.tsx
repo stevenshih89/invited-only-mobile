@@ -15,10 +15,12 @@ import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import ArrowRightIcon from 'assets/images/icons/arrow-right.svg'
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ChatActiveIcon from 'assets/images/tab-bar/chat-active.svg';
-import InfoIcon from 'assets/images/icons/info-circle-outline.svg';
+import UserWarnIcon from 'assets/images/icons/user-warn.svg';
 import CloseIcon from 'assets/images/icons/close-circle-red.svg';
+import CheckIcon  from 'assets/images/icons/Check-black.svg';
+import LineImage from 'assets/images/app/Line.png';
 import {chatCorrespondencePath, commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
-import {blackColor, deleteColor, gray1Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors.ts';
+import {blackColor, deleteColor, gray1Color, lightGray18Color, lightGray20Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 import firestore from '@react-native-firebase/firestore';
 import { color } from '@rneui/base';
@@ -30,6 +32,10 @@ import { calculateAge } from 'helpers/calculateAge';
 import {userProfilePath} from 'constants/pathLocations.ts';
 import { formatDate } from 'helpers/formatDate';
 import { getUsersListAccepted } from 'helpers/getUsersListAccepted';
+import { ACCEPTED_STATUS, APPROVED_STATUS, screenWidth } from 'constants/common';
+import { useUser } from 'src/store/userStore';
+import { showToast } from 'helpers/showToast';
+import { sendNotification } from 'helpers/fcmHelper';
 
 interface HostMenu {
   hostMenu?: boolean;
@@ -37,19 +43,23 @@ interface HostMenu {
   image?: any;
   imageBg?: any;
   name?: string;
-  data?: string;
+  date?: string;
   girlInvitation?: number;
   hostUid?: string;
   usersList: [];
   eventId: string;
+  hostImage: string;
 }
 
-const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMenu, image, name, imageBg, hostUid, usersList, eventId}) => {
+const ModalHostMenu: FC<HostMenu> = ({girlInvitation, date, hostMenu, setHostMenu, image, name, imageBg, hostUid, usersList, eventId, hostImage}) => {
   const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const navigation = useAppNavigation();
   const styles = useStyles();
   const [hostData, setHostData] = useState<any>();
+  const [status, setStatus] = useState('')
+
+  const user = useUser((i: any) => i?.user);
 
   const getHostData = async () => {
     if (!hostUid) {
@@ -84,6 +94,155 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
     getHostData();
   }, [hostUid]);
 
+  const getStatus = async () => {
+    try {
+      const eventQuerySnapshot = await firestore().collection('Events').doc(eventId).get();
+      const eventDataList = eventQuerySnapshot.data();
+      
+      if (!eventDataList || !eventDataList?.usersList.length) {
+        return;
+      }
+      
+      const findUser = eventDataList.usersList.find(item => item.uid === user?.uid);
+      if (findUser) {
+        setStatus(findUser?.status);
+      }
+    } catch (error) {
+
+    }
+  };
+  
+  useEffect(() => {
+    getStatus();
+  }, [hostUid]);
+  
+  const changeStatusGuestUsersList = async () => {
+    try {
+      const eventQuerySnapshot = await firestore().collection('Events').doc(eventId).get();
+      const eventDataList = eventQuerySnapshot.data();
+  
+      if (!eventDataList?.usersList.length) {
+        return;
+      }
+  
+      const updatedUsersList = eventDataList.usersList.map(userItem => {
+        if (userItem.uid === user?.uid) {
+          return {
+            ...userItem,
+            status: ACCEPTED_STATUS,
+          };
+        }
+        return userItem;
+      });
+      setStatus(ACCEPTED_STATUS);
+      await firestore().collection('Events').doc(eventId).update({
+        usersList: updatedUsersList,
+      });
+      getStatus()
+      showToast('inviteMatch', `See you at ${date}`, 'You accept to this event!', {
+        ownerPhoto: hostImage,
+        status: 'Accept'.toUpperCase(),
+      });
+  
+      if (hostUid) {
+        await sendNotification(
+          hostUid,
+          `${user?.name} accepted your invitation`,
+          'Invitation Accepted!',
+          'Accepted',
+          'Accepted'.toUpperCase(),
+          user,
+        );
+      }
+    } catch (e) {
+
+    }
+  };
+  
+
+  const CustomButtonsGuest: FC = () => {
+    return (
+      <>
+        {status !== ACCEPTED_STATUS && status !== APPROVED_STATUS && (
+          <View style={{paddingHorizontal: 14}}>
+            <TouchableOpacity
+          disabled
+          style={{
+            height: 65,
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 18,
+            backgroundColor: lightGray20Color,
+            marginBottom: 15,
+          }}>
+          <Text
+            style={{
+              color: blackColor,
+              fontFamily: Satoshi700,
+              fontSize: RFValue(16, 812),
+            }}>
+            Waiting for invitation approval
+          </Text>
+        </TouchableOpacity>
+          </View>
+        )}
+        {status === ACCEPTED_STATUS && (
+          <View style={{paddingHorizontal: 14}}>
+          <TouchableOpacity
+            disabled
+            style={{
+              width: '100%',
+              paddingVertical: 21,
+              marginBottom: 15,
+              borderRadius: 18,
+              borderWidth: 1,
+              borderColor: blackColor,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <CheckIcon width={16} height={16}/>
+            <Text
+              style={{
+                color: blackColor,
+                fontFamily: Satoshi500,
+                fontSize: RFValue(16, 812),
+                marginLeft: 11
+              }}>
+              Attending
+            </Text>
+          </TouchableOpacity>
+        </View>
+        )}
+        {status === APPROVED_STATUS && (
+          <View style={{paddingHorizontal: 14}}>
+            <TouchableOpacity
+              onPress={() => changeStatusGuestUsersList()}
+              style={{
+                height: 65,
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 18,
+                backgroundColor: blackColor,
+                marginBottom: 15,
+              }}>
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi700,
+                  fontSize: RFValue(16, 812),
+                }}>
+                Accept invitation
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </>
+    );
+  };
+
   return (
     <Modal
       isVisible={hostMenu}
@@ -101,28 +260,14 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
       swipeDirection={['down']}>
       <View style={styles.wrapper}>
         <View style={styles.whiteLine} />
-        <FastImage
-          source={{uri: imageBg}}
-          style={{width: '100%', height: 220, borderRadius: 20, padding: 14, justifyContent: 'space-between'}}>
-          <TouchableOpacity // @ts-ignore
-            onPress={() => {
-              navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: hostUid}});
-              setHostMenu(false);
-            }}
-            style={{
-              backgroundColor: transparent60Color,
-              paddingHorizontal: 14,
-              paddingVertical: 10,
-              borderRadius: 20,
-              marginTop: 14,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
+        <View style={{width: '100%', padding: 9, backgroundColor: whiteColor, borderRadius: 30}}>
+          <FastImage
+            source={{uri: imageBg}}
+            style={{width: '100%', height: 220, borderRadius: 20, padding: 16, justifyContent: 'space-between'}}>
             <View style={{flexDirection: 'row'}}>
               {hostData?.photos[0].image && (
                 <View style={{flexDirection: 'row'}}>
-                  <FastImage source={{uri: image}} style={{width: 40, height: 40, borderRadius: 50}} />
+                  <FastImage source={{uri: hostImage}} style={{width: 50, height: 50, borderRadius: 50}} />
                   {hostData?.online && (
                     <View
                       style={{
@@ -186,71 +331,55 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
                   )}
                 </View>
                 <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
-                    {hostData?.name}, {calculateAge(hostData?.date)}
+                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812), marginRight: 6}}>
+                    {hostData?.name}, <Text style={{fontSize: RFValue(12, 812)}}>{calculateAge(hostData?.date)}</Text>
                   </Text>
                   {hostData?.accountConfirmed && <CheckStarWhite />}
                 </View>
               </View>
             </View>
-            <View>
+            <View
+              style={{
+                paddingHorizontal: 6,
+                paddingVertical: 4,
+                backgroundColor: lightGreenColor,
+                borderRadius: 5,
+                alignSelf: 'flex-start',
+              }}>
               <Text
                 style={{
                   color: whiteColor,
-                  fontFamily: Satoshi400,
-                  fontSize: RFValue(16, 812),
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(12, 812),
                 }}>
-                <ArrowRightIcon width={14} height={14} />
+                Active
               </Text>
             </View>
-          </TouchableOpacity>
-          <View>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <View
-                style={{
-                  paddingHorizontal: 6,
-                  paddingVertical: 4,
-                  backgroundColor: lightGreenColor,
-                  borderRadius: 5,
-                }}>
-                <Text
-                  style={{
-                    color: whiteColor,
-                    fontFamily: Satoshi500,
-                    fontSize: RFValue(12, 812),
-                  }}>
-                  Active
-                </Text>
-              </View>
-              <Text
-                style={{
-                  color: whiteColor,
-                  fontFamily: Satoshi700,
-                  fontSize: RFValue(20, 812),
-                  marginHorizontal: 8,
-                }}>
-                {name}
-              </Text>
-              <CheckStarWhite />
-            </View>
-            <View style={{width: '100%'}}>
-              <View style={{flexDirection: 'row', marginTop: 10}}>
-              <View style={{flexDirection: 'row', marginHorizontal: 2, alignItems: 'center', paddingVertical: 8, paddingHorizontal: 12, backgroundColor: transparent60Color, borderRadius: 100}}>
-                  <UserIcon width={12} height={12} />
-                  <Text style={{color: 'white', fontSize: RFValue(11, 812), fontFamily: Satoshi400}}> {girlInvitation}x Women invitation</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 8, paddingHorizontal: 12, backgroundColor: transparent60Color, borderRadius: 100}}>
-                  <CalendarIcon width={12} height={12} />
-                  <Text style={{color: 'white',fontSize: RFValue(11, 812), fontFamily: Satoshi400}}> {formatDate(data)}</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 8, paddingHorizontal: 12, backgroundColor: transparent60Color, borderRadius: 100}}>
-                  <Users width={12} height={12}/>
-                  <Text style={{color: 'white', fontSize: RFValue(11, 812), fontFamily: Satoshi400}}> {getUsersListAccepted(usersList)}/{usersList?.length}</Text>
-                </View>
-              </View>
-            </View>
+          </FastImage>
+          <View style={{paddingHorizontal: 17, marginVertical: 22}}>
+            <Text
+              style={{
+                color: lightGray18Color,
+                fontFamily: Satoshi500,
+                fontSize: RFValue(16, 812),
+                marginBottom: 4,
+              }}>
+              Name
+            </Text>
+            <Text
+              style={{
+                color: blackColor,
+                fontFamily: Satoshi700,
+                fontSize: RFValue(20, 812),
+              }}>
+              {name}
+            </Text>
           </View>
-        </FastImage>
+          <View style={{width: '100%', alignItems: 'center', marginBottom: 22, paddingHorizontal: 23}}>
+            <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
+          </View>
+          <CustomButtonsGuest />
+        </View>
         <View style={{width: '100%', marginTop: 34}}>
           <TouchableOpacity style={styles.buttonEvent}>
             <CalendarIcon style={styles.iconButton} width={18} height={18} />
@@ -261,8 +390,8 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
             <Text style={styles.textButton}>Host profile</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setModalReport(true)} style={styles.buttonEvent}>
-            <InfoIcon style={styles.iconButton} width={18} height={18} />
-            <Text style={styles.textButton}>Report</Text>
+            <UserWarnIcon style={styles.iconButton} width={18} height={18} />
+            <Text style={styles.textButton}>Block & Report</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setCancelInvitation(true)}
@@ -275,7 +404,7 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, data, hostMenu, setHostMen
       <ModalReport modalReport={modalReport} setModalReport={setModalReport} />
       <ModalCancelOrConfirmInvitation
         girlInvitation={girlInvitation}
-        data={data}
+        data={date}
         imageBg={imageBg}
         name={name}
         typeModal="cancel"

@@ -50,8 +50,8 @@ type ItemProps = {
 type ItemEventsJoiningProps = {
   chats: [{id: string; image: any; name: string; lastMessage: string}] | any;
   girlInvitation: number;
+  date: string;
   maleInvitation: number;
-  data: string;
   status: string;
   image: any;
   title: string;
@@ -59,6 +59,7 @@ type ItemEventsJoiningProps = {
   hostUid: string;
   usersList: [];
   newMessages: number;
+  hostImage: string
   statusEvent: string;
 };
 
@@ -233,11 +234,12 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     maleInvitation,
     image,
     status,
-    data,
+    date,
     activeEvent,
     hostUid,
     usersList,
     newMessages,
+    hostImage,
     statusEvent,
   }: ItemEventsJoiningProps) => {
     const statusColor = handleCheckStatusStyles(status);
@@ -284,8 +286,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                 </View>
                 <View style={{width: 1, height: '100%', backgroundColor: grayScale700, marginHorizontal: 12}} />
                 <View style={styles.fdrAiC}>
-                  {/* <CalendarIcon style={{marginLeft: 10}} width={14} height={14} /> */}
-                  <Text style={styles.textDescriptionUnderTitle}>{moment(`${data}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
+                  <CalendarIcon style={{marginLeft: 10}} width={14} height={14} />
+                  <Text style={styles.textDescriptionUnderTitle}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
                 </View>
               </View>
             </View>
@@ -296,7 +298,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
         </View>
         <ModalHostMenu
           girlInvitation={girlInvitation}
-          data={data}
+          date={date}
           image={image}
           imageBg={image}
           name={title}
@@ -304,6 +306,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           hostMenu={hostMenu}
           hostUid={hostUid}
           usersList={usersList}
+          hostImage={hostImage}
           eventId={activeEvent?.id}
         />
         {chats?.map((i: any) => (
@@ -444,7 +447,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               data: eventData?.date,
               status: eventData?.activeType,
               image: eventData?.photos[0]?.image,
-              title: eventData?.placeName,
+              hostImage: eventData?.hostImage,
+              title: eventData?.name,
               hostUid: eventData?.uid,
               activeEvent: chat?.activeEvent?.id,
               usersList: eventData?.usersList,
@@ -582,7 +586,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   image={item.image}
                   title={item.title}
                   chats={item.chats}
-                  data={item.data}
+                  date={item.date}
                   activeEvent={item.activeEvent?.id}
                   girlInvitation={item.girlInvitation}
                   maleInvitation={item.maleInvitation}
@@ -590,6 +594,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   status={item.status}
                   usersList={item.usersList}
                   newMessages={item?.chats[0].newMessagesHost}
+                  hostImage={item?.hostImage}
                   statusEvent={item?.statusEvent}
                 />
               );
