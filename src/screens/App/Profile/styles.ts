@@ -57,6 +57,12 @@ const useStyles = () =>
       fontSize: RFValue(24, 812),
       fontFamily: Satoshi700,
     },
+    ageText: {
+      color: whiteColor,
+      fontSize: RFValue(18, 812),
+      fontFamily: Satoshi700,
+      marginTop: 5
+    },
     checkStarIcon: {
       marginLeft: 6,
     },
@@ -66,7 +72,6 @@ const useStyles = () =>
     },
     flatListContainer: {
       height: 40,
-      marginTop: 34,
     },
     flatListItemSeparator: {
       width: 10,
@@ -77,11 +82,11 @@ const useStyles = () =>
       alignItems: 'center',
       paddingHorizontal: 12,
       paddingVertical: 6,
-      maxHeight: 30,
+      maxHeight: 34,
     },
     tabButtonText: {
       fontFamily: Satoshi400,
-      fontSize: RFValue(14, 812),
+      fontSize: RFValue(16, 812),
     },
     tabButtonActive: {
       backgroundColor: whiteColor,
@@ -108,6 +113,7 @@ const useStyles = () =>
       paddingVertical: 6,
       paddingLeft: 14,
       paddingRight: 33,
+      borderRadius: 10
     },
     accountTypeWrapper: {
       marginTop: 12,
@@ -115,25 +121,25 @@ const useStyles = () =>
       borderRadius: 4,
       paddingHorizontal: 12,
       paddingVertical: 2,
-      backgroundColor: whiteColor,
+      borderWidth: 1,
+      borderColor: whiteColor
     },
     accountTypeWrapperPremium: {
       marginTop: 12,
       marginLeft: 6,
-      borderRadius: 4,
+      borderRadius: 5,
       paddingHorizontal: 12,
       paddingVertical: 2,
       backgroundColor: blackColor,
     },
     accountTypeText: {
-      color: blackColor,
-      fontSize: RFValue(12, 812),
-      fontFamily: Satoshi400,
-      fontWeight: 'bold',
+      color: whiteColor,
+      fontSize: RFValue(14, 812),
+      fontFamily: Satoshi700,
     },
     accountTypePremium: {
       color: blackColor,
-      fontSize: RFValue(12, 812),
+      fontSize: RFValue(14, 812),
       fontFamily: Satoshi400,
       fontWeight: 'bold',
     },
