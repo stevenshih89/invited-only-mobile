@@ -930,6 +930,7 @@ const IO: FC = (): JSX.Element => {
               usersList={event?.usersList}
               handleAutoSwipeLeft={handleAutoSwipeLeft}
               accountType={userInfo?.accountType}
+              isPreview={false}
             />
             <View style={styles.bioWrapper}>
               <Text style={[styles.titleSection]}>Event details</Text>
@@ -1362,6 +1363,7 @@ const IO: FC = (): JSX.Element => {
               item={item}
               userInfo={userInfo}
               handleAutoSwipeLeft={handleAutoSwipeLeft}
+              isPreview={false}
             />
             <View style={styles.bioWrapper}>
               <Text style={[styles.titleSection, bio ? styles.mt31 : {}]}>My basics</Text>
