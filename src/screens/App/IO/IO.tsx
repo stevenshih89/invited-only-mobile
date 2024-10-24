@@ -74,6 +74,7 @@ import {useScrollPosition} from 'src/store/scrollPosition';
 import {getUsersForEvent} from 'src/api/user';
 import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
+import { updateGuestEventsList } from 'helpers/updateGuestEventsList';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -520,7 +521,7 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
+  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {    
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
@@ -610,6 +611,7 @@ const IO: FC = (): JSX.Element => {
               console.log('proverka host');
 
               await handleCreateChat(matchedGuestData);
+              await updateGuestEventsList(activeEventId, forUserUid)
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
             }
@@ -678,6 +680,7 @@ const IO: FC = (): JSX.Element => {
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
               await handleCreateChat(matchedGuestData);
+              await updateGuestEventsList(activeEventId, userInfo?.uid)
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
             }

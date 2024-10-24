@@ -20,6 +20,7 @@ import {INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import {calculateAge} from 'helpers/calculateAge';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat';
 import Button from 'components/Button/Button';
+import { updateGuestEventsList } from 'helpers/updateGuestEventsList';
 
 const eventTypes = [
   {id: 0, label: 'Vip Tables'},
@@ -158,6 +159,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
           })
           .then(async () => {
             await handleCreateChat(matchedData);
+            await updateGuestEventsList(event?.id, user?.uid)
             handleOpenMatch(matchedData);
             const getDoc = await firestore().collection('userInfo').doc(event.uid).get();
             const docData = getDoc.data();
