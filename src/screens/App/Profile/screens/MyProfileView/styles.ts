@@ -2,7 +2,7 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
 //import components
-import {blackColor, lightGray5Color, lightGray6Color, lightGrayColor, lightRed1Color, whiteColor} from 'constants/colors.ts';
+import {blackColor, lightGray16Color, lightGray5Color, lightGray6Color, lightGrayColor, lightRed1Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi400, Satoshi700, Satoshi500} from 'constants/fonts.ts';
 
 const screenHeight: number = Dimensions.get('window').height;
@@ -222,7 +222,10 @@ const useStyles = () => {
       justifyContent: 'center',
     },
     basicsWrapper: {
-      marginTop: 38
+      marginTop: 38,
+      paddingBottom: 14,
+      borderBottomWidth: 1,
+      borderColor: lightGray16Color
     },
     testBasics: {
       color: whiteColor,
@@ -231,7 +234,10 @@ const useStyles = () => {
       fontSize: RFValue(18, 812)
     },
     wrapperAboutMe: {
-      marginTop: screenHeight / 55
+      marginTop: screenHeight / 55,
+      paddingBottom: 14,
+      borderBottomWidth: 1,
+      borderColor: lightGray16Color
     },
     textAboutMe: {
       marginTop: 14,

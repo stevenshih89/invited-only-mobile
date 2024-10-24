@@ -121,6 +121,7 @@ const Profile: FC = () => {
     // @ts-ignore
     navigation.navigate(myProfileViewPath, {
       isShowEditButton: true,
+      isPreview: false
     });
   };
 

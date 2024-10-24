@@ -1,7 +1,7 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowLeftArrow from 'assets/images/icons/arrow-left.svg';
-import {backgroundGradientColors, black1Color, blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, black1Color, blackColor, lightGray16Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -329,12 +329,13 @@ const Eula: FC = (): JSX.Element => {
               <Text style={{color: whiteColor, fontSize: RFValue(20, 932), fontFamily: Satoshi500}}>Deny</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              disabled={!endReached}
               activeOpacity={0.7}
               hitSlop={{top: 26, bottom: 20}}
               onPress={() => navigation.navigate(signUpPath as never)}
               style={{
                 flex: 1.7,
-                backgroundColor: whiteColor,
+                backgroundColor: endReached? whiteColor: lightGray16Color,
                 borderRadius: 18,
                 height: screenHeight / 14,
                 flexDirection: 'row',

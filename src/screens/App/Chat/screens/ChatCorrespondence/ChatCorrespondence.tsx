@@ -61,10 +61,20 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const clearChat = useRef(false);
   const user = useUser((i: any) => i?.user);
 
+  const flatListRef = useRef<FlatList>(null);  
+
   const handleCloseReport = () => {
     setModalVisible(false);
     navigation.goBack();
   };
+
+  const scrollToEnd = () => {
+    setTimeout(() => {
+      flatListRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
+  
+
 
   useEffect(() => {
     if (title) {
@@ -126,7 +136,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     const findChat = allChats?.filter(i => i?.id === id);
 
     if (findChat && findChat.length > 0) {
-      if(user?.accountType === 'host') {
+      if (user?.accountType === 'host') {
         if (typeof findChat[0].newMessagesGuest === 'number') {
           findChat[0].newMessagesGuest = 0;
         }
@@ -160,12 +170,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
       const findChat = allChats?.filter(i => i?.id === id);
 
-      const getDate = await firestore().collection('userInfo').doc(uid).get()
-      const docData = getDate.data()
+      const getDate = await firestore().collection('userInfo').doc(uid).get();
+      const docData = getDate.data();
 
       if (findChat && findChat.length > 0) {
         findChat[0].messages.push(updateData);
-        if(user?.accountType === 'host') {
+        if (user?.accountType === 'host') {
           if (typeof findChat[0].newMessagesHost === 'number') {
             findChat[0].newMessagesHost = findChat[0].newMessagesHost + 1;
           } else {
@@ -178,17 +188,24 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             findChat[0].newMessagesGuest = 1;
           }
         }
+        setMessageUser('');
         await doc.update({
           chats: [...allChats],
         });
-        if(docData?.notificationSettings.chat) {
-          await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
+        if (docData?.notificationSettings.chat) {
+          await sendNotification(
+            uid,
+            `${currentUserName} sent you a new message`,
+            'Invited Only',
+            'message',
+            'Message'.toUpperCase(),
+            user,
+          );
         }
       }
     } catch (e) {
       // console.log(e);
     }
-    setMessageUser('');
   };
 
   const getFormattedTime = timestamp => {
@@ -336,6 +353,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                 return <ChatMessage userAvatar={image} messageUser={item} showDate={showDate} />;
               }}
               keyExtractor={(item, index) => `${item.timestamp}${index}`}
+              ref={flatListRef}
+              onContentSizeChange={scrollToEnd} 
             />
           </View>
           {/*{handleInvitationApproved()}*/}
@@ -347,6 +366,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                 onChangeText={setMessageUser}
                 style={styles.textInput}
                 placeholder="Write your message"
+                onFocus={scrollToEnd}
               />
               <TouchableOpacity style={styles.buttonSend} onPress={handleSendMessage}>
                 <SendIcon />

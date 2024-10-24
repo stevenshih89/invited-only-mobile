@@ -14,12 +14,12 @@ import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import icons
+import CalendarIcon from 'assets/images/icons/calendar.svg';
 import FlashField from 'assets/images/icons/flash.svg';
 import ThreeDoths from 'assets/images/icons/more-white.svg';
 import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
 import Button from 'components/Button/Button.tsx';
 import {EventContext} from 'contexts/EventContext.tsx';
-import moment from 'moment/moment';
 import {blackColor, grayScale700, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import {useFocusEffect} from '@react-navigation/native';
@@ -27,9 +27,21 @@ import {useUser} from 'src/store/userStore';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
-import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
+import {
+  ACCEPTED_STATUS,
+  ALL,
+  APPROVED_STATUS,
+  CANCEL_STATUS,
+  INVITE_MATCH_STATUS,
+  screenHeight,
+  THIS_MONTH,
+  THIS_WEEK,
+} from 'constants/common';
 import FastImage from 'react-native-fast-image';
 import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
+import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
+import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
+import {EventsDate} from 'contexts/EventsDate';
 
 type ItemProps = {
   title: string;
@@ -59,7 +71,7 @@ type ItemEventsJoiningProps = {
   hostUid: string;
   usersList: [];
   newMessages: number;
-  hostImage: string
+  hostImage: string;
   statusEvent: string;
 };
 
@@ -78,6 +90,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
+
+  const {activeEventDate} = useContext(EventsDate);
 
   const styles = useStyles();
   const navigation = useAppNavigation();
@@ -149,8 +163,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   }: ItemProps) => {
     const userStatus = eventData?.usersList?.find(i => i?.uid === uid)?.status;
 
-    // console.warn('userStatus', userStatus);
-
     return (
       <View style={styles.item}>
         <View style={{flexDirection: 'row', height: 75, width: '100%', justifyContent: 'space-between'}}>
@@ -196,21 +208,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               </Text>
             </View>
             <View style={[styles.wrapperTextMessage, {flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between'}]}>
-              {/* <View
-                style={{
-                  backgroundColor: inviteStatus === ACCEPTED_STATUS ? whiteColor : blackColor,
-                  borderRadius: 50,
-                  paddingHorizontal: 10,
-                  paddingVertical: 3,
-                  borderColor: whiteColor,
-                  borderStyle: 'solid',
-                  borderWidth: inviteStatus === ACCEPTED_STATUS ? 0 : 1,
-                  marginBottom: 4,
-                }}>
-                <Text style={{fontSize: RFValue(9, 812), color: inviteStatus === ACCEPTED_STATUS ? blackColor : whiteColor}}>
-                  {getTextByStatus(inviteStatus)}
-                </Text>
-              </View> */}
               {!!newMessages && (
                 <View style={styles.newMessage}>
                   <Text style={styles.textCountNewMessages}>{newMessages}</Text>
@@ -276,19 +273,13 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   <View style={[handleCheckTypeInvitedStyles(status)]}>
                     <Text style={styles.textStatusInvite}>{handleCheckTypeInvitedText(status)}</Text>
                   </View>
-                  {/* <Text style={[styles.textStatus]}>{status}</Text> */}
                 </View>
               </View>
               <View style={{flexDirection: 'row', marginTop: 10}}>
                 <View style={styles.fdrAiC}>
-                  {/* <PersonIcon width={14} height={14} /> */}
                   <Text style={styles.textDescriptionUnderTitle}>Guest invitation {girlInvitation + maleInvitation}</Text>
                 </View>
                 <View style={{width: 1, height: '100%', backgroundColor: grayScale700, marginHorizontal: 12}} />
-                <View style={styles.fdrAiC}>
-                  <CalendarIcon style={{marginLeft: 10}} width={14} height={14} />
-                  <Text style={styles.textDescriptionUnderTitle}>{moment(`${date}`, 'D/M/YYYY, HH:mm:ss').format('DD.MM.YYYY')}</Text>
-                </View>
               </View>
             </View>
           </TouchableOpacity>
@@ -307,7 +298,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           hostUid={hostUid}
           usersList={usersList}
           hostImage={hostImage}
-          eventId={activeEvent?.id}
+          eventId={activeEvent}
         />
         {chats?.map((i: any) => (
           <TouchableOpacity
@@ -320,7 +311,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   title: i?.name,
                   online: true,
                   messages: i?.messages,
-                  activeEvent: activeEvent?.id,
+                  activeEvent: activeEvent,
                   id: i?.id,
                   superInvite: i?.superInvite,
                   invitedStatus: i?.invitedStatus,
@@ -366,6 +357,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
         return 'Invite Match'.toUpperCase();
       case ACCEPTED_STATUS:
         return 'Accepted'.toUpperCase();
+      case CANCEL_STATUS:
+        return 'Cancelled'.toUpperCase();
       case 'admin':
         return 'Admin'.toUpperCase();
       default:
@@ -378,6 +371,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       case APPROVED_STATUS:
         return styles.textStatusPending;
       case INVITE_MATCH_STATUS:
+        return styles.textStatusInviteMatch;
+      case CANCEL_STATUS:
         return styles.textStatusInviteMatch;
       case ACCEPTED_STATUS:
         return styles.textStatusInvitationAccepted;
@@ -435,22 +430,23 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           const mappedChats: any = [];
 
           for (const chat of filteredChats) {
-            const eventQuery = await firestore().collection('Events').doc(chat?.activeEvent?.id).get();
+            const eventQuery = await firestore().collection('Events').doc(chat?.activeEvent).get();
             if (!eventQuery.exists) {
               continue;
             }
             const eventData = eventQuery.data();
             const data = {
-              id: chat?.id,
+              id: chat?.activeEvent,
               girlInvitation: eventData?.female,
               maleInvitation: eventData?.male,
-              data: eventData?.date,
+              date: eventData?.date,
+              hour: eventData?.hour,
               status: eventData?.activeType,
               image: eventData?.photos[0]?.image,
               hostImage: eventData?.hostImage,
               title: eventData?.name,
               hostUid: eventData?.uid,
-              activeEvent: chat?.activeEvent?.id,
+              activeEvent: chat?.activeEvent,
               usersList: eventData?.usersList,
               statusEvent: eventData?.statusEvent,
               chats: chat?.chats
@@ -460,7 +456,21 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             mappedChats.push(data);
           }
 
-          setDATAEventsJoining(mappedChats);
+          const filterEventByDate = () => {
+            if (activeEventDate === ALL) {
+              return mappedChats;
+            }
+            if (activeEventDate === THIS_WEEK) {
+              return filterEventsByThisWeek(mappedChats);
+            }
+            if (activeEventDate === THIS_MONTH) {
+              return filterEventsByThisMonth(mappedChats);
+            }
+            return mappedChats;
+          };
+
+          const filteredDataEvents = filterEventByDate();
+          setDATAEventsJoining(filteredDataEvents);
           setLoading(false);
         });
       // handleBuildGuestEventsData();
@@ -470,7 +480,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       hostSubscriber && hostSubscriber();
       guestSubscriber && guestSubscriber();
     };
-  }, [activeEvent?.id, loading]);
+  }, [activeEvent?.id, loading, activeEventDate]);
 
   return (
     <View style={styles.container}>
@@ -546,8 +556,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               </View>
             )}
             renderItem={({item}) => {
-              // console.log('item', item);
-
               return (
                 <Item
                   inviteStatus={item?.invitedStatus}
@@ -587,7 +595,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
                   title={item.title}
                   chats={item.chats}
                   date={item.date}
-                  activeEvent={item.activeEvent?.id}
+                  activeEvent={item.activeEvent}
                   girlInvitation={item.girlInvitation}
                   maleInvitation={item.maleInvitation}
                   hostUid={item.hostUid}
