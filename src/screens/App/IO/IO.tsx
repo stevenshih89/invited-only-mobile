@@ -15,6 +15,7 @@ import {
   ACCEPTED_STATUS,
   ALL,
   APPROVED_STATUS,
+  CANCEL_STATUS,
   INVITE_MATCH_STATUS,
   LIKED,
   NOT_ACCEPTED_STATUS,
@@ -840,7 +841,8 @@ const IO: FC = (): JSX.Element => {
                 (j?.status === INVITE_MATCH_STATUS ||
                   j?.status === APPROVED_STATUS ||
                   j?.status === ACCEPTED_STATUS ||
-                  j?.status === NOT_ACCEPTED_STATUS),
+                  j?.status === NOT_ACCEPTED_STATUS ||
+                  j?.status === CANCEL_STATUS),
             )
           ) {
             return false;

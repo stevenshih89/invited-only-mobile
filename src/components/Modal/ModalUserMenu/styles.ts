@@ -8,7 +8,7 @@ const useStyles = () => {
   return StyleSheet.create({
     wrapper: {
       backgroundColor: black2Color,
-      height: '55%',
+      height: '60%',
       borderTopLeftRadius: 30,
       borderTopRightRadius: 30,
       alignItems: 'center',

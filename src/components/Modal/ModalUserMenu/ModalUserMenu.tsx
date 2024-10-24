@@ -196,7 +196,6 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   isModalVisible,
   setModalVisible,
   title,
-  inviteStatus,
   image,
   uid,
   activeEvent,
@@ -208,6 +207,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   const [removingState, setRemovingState] = useState<boolean>(false);
   const [blockAndReportState, setBlockAndReportState] = useState<boolean>(false);
   const [cancelInvitationState, setCancelInvitationState] = useState<boolean>(false);
+  const [deleteChatState, setDeleteChatState] = useState<boolean>(false);
   const [reportState, setReportState] = useState('Fake profile');
   const [usersList, setUserList] = useState([]);
   const [eventData, setEventData] = useState({usersList: []});
@@ -662,6 +662,55 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     );
   };
 
+  const DeleteChatModal = () => {
+    return (
+      <Modal
+        isVisible={deleteChatState}
+        useNativeDriver={false}
+        propagateSwipe={true}
+        backdropColor={'rgba(0, 0, 0, 0.94)'}
+        testID={'bottom-half-modal-open-button'}
+        onBackdropPress={() => setDeleteChatState(false)}
+        onSwipeComplete={() => setDeleteChatState(false)}
+        style={{
+          margin: 0,
+          justifyContent: 'flex-end',
+          zIndex: 999,
+        }}
+        swipeDirection={['down']}>
+        <View style={styles.wrapperModal}>
+          <View style={styles.whiteLine} />
+
+          <View>
+            <Image source={{uri: image}} style={styles.userPhoto} />
+            {/*{online && <View style={styles.greenCircle} />}*/}
+            <View style={styles.greenCircle} />
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
+            <Text style={styles.title}>{title}</Text>
+            <FlashIcon width={19} height={19} />
+          </View>
+          <Text style={styles.textAreYouSure}>Are you sure you want to delete chat?</Text>
+          <Button
+            onPress={() => {
+              showToast('inviteMatch', `${title} was removed!`);
+            }}
+            title="Yes, delete chat"
+            buttonStyle={{width: '100%', marginTop: 37, marginBottom: 6}}
+          />
+          <Button
+            variant="transparent"
+            onPress={() => {
+              setDeleteChatState(false);
+            }}
+            title="Cancel"
+            buttonStyle={{width: '100%'}}
+          />
+        </View>
+      </Modal>
+    );
+  };
+
   const userProfileItemCard = (
     <View style={{flexDirection: 'row', alignItems: 'center', width: '100%'}}>
       {image && <Image style={{borderRadius: 100, width: 62, height: 62}} source={{uri: image}} />}
@@ -746,6 +795,12 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
                 <Text style={[styles.textButton, {color: errorColor}]}>Cancel invitation</Text>
               </TouchableOpacity>
             )}
+            <TouchableOpacity
+              onPress={() => setCancelInvitationState(true)}
+              style={[styles.buttonFooter, {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
+              <CloseIcon width={20} height={20} />
+              <Text style={[styles.textButton, {color: errorColor}]}>Delete chat</Text>
+            </TouchableOpacity>
             <View>
               <RemovingUserModal />
               <ModalReport
@@ -764,6 +819,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
                 setModalVisible={setModalVisible}
               /> */}
               <CancelInvitationModal />
+              <DeleteChatModal />
             </View>
           </View>
         </Modal>

@@ -51,7 +51,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [messages, setMessages] = useState([]);
   const [allChats, setAllChats] = useState([]);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
-  const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
+  const [cancelInvitationModal, setCancelInvitationModal] = useState<boolean>(false);
   const [name, setName] = useState('');
   const [age, setAge] = useState();
   const [currentUserName, setCurrentUserName] = useState('');
@@ -61,7 +61,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const clearChat = useRef(false);
   const user = useUser((i: any) => i?.user);
 
-  const flatListRef = useRef<FlatList>(null);  
+  const flatListRef = useRef<FlatList>(null);
 
   const handleCloseReport = () => {
     setModalVisible(false);
@@ -70,11 +70,9 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
   const scrollToEnd = () => {
     setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
+      flatListRef.current?.scrollToEnd({animated: true});
     }, 100);
   };
-  
-
 
   useEffect(() => {
     if (title) {
@@ -354,7 +352,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               }}
               keyExtractor={(item, index) => `${item.timestamp}${index}`}
               ref={flatListRef}
-              onContentSizeChange={scrollToEnd} 
+              onContentSizeChange={scrollToEnd}
             />
           </View>
           {/*{handleInvitationApproved()}*/}
@@ -374,8 +372,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             </View>
           </View>
           <ModalCancelOrConfirmInvitation
-            cancelInvitation={cancelInvitation}
-            setCancelInvitation={setCancelInvitation}
+            cancelInvitation={cancelInvitationModal}
+            setCancelInvitation={setCancelInvitationModal}
             typeModal="confirm"
             title={'Namos Dubai'}
             name={title}

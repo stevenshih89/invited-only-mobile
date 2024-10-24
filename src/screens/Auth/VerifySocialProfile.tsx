@@ -172,7 +172,6 @@ const VerifySocialProfile = () => {
           accountConfirmed: false,
           accountReviewed: false,
           accountPremium: false,
-          notifications: [],
           weeklySuperInvites: 5,
           superInvites: 0,
           socialNickname,

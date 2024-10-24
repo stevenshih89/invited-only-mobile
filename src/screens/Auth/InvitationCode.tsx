@@ -138,7 +138,6 @@ const InvitationCode: FC = (): JSX.Element => {
           accountConfirmed: true,
           accountReviewed: true,
           accountPremium: false,
-          notifications: [],
           weeklySuperInvites: 5,
           superInvites: 0,
           lastUpdateSuperInvite: Date.now(),

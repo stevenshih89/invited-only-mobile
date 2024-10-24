@@ -27,6 +27,7 @@ import {createEvent, IOEvent} from 'src/api/event';
 import {eventTypes} from 'src/mocks/eventTypes';
 import {EventData, Event} from 'src/types/event';
 import moment from 'moment';
+import {sendNotification} from 'helpers/fcmHelper';
 
 const EventCreating: FC = () => {
   const INVITED_ONLY = 'invitedOnly';
@@ -151,7 +152,7 @@ const EventCreating: FC = () => {
     return users;
   };
 
-  const sendNotification = async (title: string, body: string, mark: string) => {
+  const sendNotificationInner = async (title: string, body: string, mark: string) => {
     const users = await getFcmTokens(isEditingItem?.usersList);
 
     for (const user of users) {
@@ -175,8 +176,6 @@ const EventCreating: FC = () => {
         // console.error('error sending notification:', error);
       } else {
         const data = await response.json();
-        const userDoc = await firestore().collection('userInfo').doc(user.uid).get();
-        const userNotifications = userDoc.data()?.notifications || [];
         const id = generateRandomId(8);
         const notification = {
           id,
@@ -187,14 +186,9 @@ const EventCreating: FC = () => {
         };
 
         try {
-          await firestore()
-            .collection('userInfo')
-            .doc(user.uid)
-            .update({
-              notifications: [...userNotifications, notification],
-            });
+          await firestore().collection('userInfo').doc(user.uid).collection('notifications').add(notification);
         } catch (error) {
-          // console.log('error update notifications', error);
+          console.error('error add notification', error);
         }
       }
     }
@@ -220,7 +214,7 @@ const EventCreating: FC = () => {
       });
       navigation?.goBack();
       showToast('inviteMatch', 'Continue swiping👋', 'Event updated');
-      sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details', 'update');
+      // sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details', 'update');
     } catch (e) {
       // console.log(e);
     }

@@ -188,8 +188,6 @@ const EventsRequest = ({item, list}: any) => {
       // console.error('error sending notification:', error);
     } else {
       const data = await response.json();
-      const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
-      const userNotifications = userDoc.data()?.notifications;
       const id = generateRandomId;
       const notification = {
         id,
@@ -200,14 +198,9 @@ const EventsRequest = ({item, list}: any) => {
       };
 
       try {
-        await firestore()
-          .collection('userInfo')
-          .doc(forUserUid)
-          .update({
-            notifications: [...userNotifications, notification],
-          });
+        await firestore().collection('userInfo').doc(forUserUid).collection('notifications').add(notification);
       } catch (error) {
-        // console.log('error update notifications', error);
+        console.error('error add notification', error);
       }
     }
   };

@@ -254,8 +254,6 @@ export const sendNotification = async (
     // console.error('Error calling Firebase Function:', error);
   }
 
-  const userDoc = await firestore().collection('userInfo').doc(forUserUid).get();
-  const userNotifications = userDoc.data()?.notifications;
   const id = generateRandomId(8);
   const notification = {
     id,
@@ -267,13 +265,8 @@ export const sendNotification = async (
   // console.log('notification', notification);
 
   try {
-    await firestore()
-      .collection('userInfo')
-      .doc(forUserUid)
-      .update({
-        notifications: [...userNotifications, notification],
-      });
+    await firestore().collection('userInfo').doc(forUserUid).collection('notifications').add(notification);
   } catch (error) {
-    // console.log('error update notifications', error);
+    console.error('error add notification', error);
   }
 };

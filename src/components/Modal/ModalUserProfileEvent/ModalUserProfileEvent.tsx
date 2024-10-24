@@ -24,7 +24,8 @@ import {calculateAge} from 'helpers/calculateAge.ts';
 import {useFocusEffect} from '@react-navigation/native';
 import {sendNotification} from 'helpers/fcmHelper.ts';
 import ModalFullEvent from '../ModalFullEvent/index.tsx';
-import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common.ts';
+import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common.ts';
+import {Event} from 'src/types/event.ts';
 
 interface ModalUserProfileEventProps {
   isModalVisible?: boolean;
@@ -91,48 +92,102 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     }, [uid]),
   );
 
-  const handleCancelInvitation = async () => {
-    try {
-      const eventQuery = await firestore().collection('Events').doc(list?.id).get();
-      if (!eventQuery.exists || !uid) {
-        return;
-      }
-      const usersListData = [...eventQuery?.data()?.usersList];
-      const requestListData = [...eventQuery?.data()?.requestsList];
-      const updateUsersList: any = usersListData ? usersListData?.filter((i: any) => i?.uid !== uid) : [];
-      const updateRequestsList: any = requestListData ? requestListData?.filter((i: any) => i?.uid !== uid) : [];
-      const filterUsersList = usersList?.filter((i: any) => i?.uid !== uid);
-      setModalVisible && setModalVisible(false);
-      setUsersListsData && setUsersListsData(filterUsersList);
+  const changeStatusGuestUsersList = async ({
+    status,
+    id,
+    uidHost,
+    placeName,
+    date,
+    hostPhoto,
+  }: {
+    status: string;
+    id: string;
+    uidHost: string;
+    placeName: string;
+    date?: string;
+    hostPhoto: string;
+  }) => {
+    const eventQuerySnapshot = await firestore().collection('Events').doc(id).get();
+    const eventDataList = eventQuerySnapshot.data();
+    if (!eventDataList?.usersList.length) {
+      return;
+    }
 
-      await firestore().collection('Events').doc(list?.id).update({
-        usersList: updateUsersList,
-        requestsList: updateRequestsList,
+    try {
+      const currentUid = userInfo?.uid === list?.hostUid ? uid : userInfo?.uid;
+
+      const updatedUsersList = eventDataList?.usersList?.map((userItem: Event.User) => {
+        if (userItem.uid === currentUid) {
+          return {
+            ...userItem,
+            status,
+          };
+        }
+        return userItem;
       });
-      const getDate = await firestore().collection('userInfo').doc(uid).get();
-      const docData = getDate.data();
-      // console.warn('usersListData', usersListData);
-      const rejectedUser = usersListData.find((i: any) => i?.uid === uid);
-      if (rejectedUser?.status !== NOT_ACCEPTED_STATUS) {
-        if (docData?.notificationSettings.requests || docData?.notificationSettings.joinedEvent) {
+      await firestore().collection('Events').doc(id).update({
+        usersList: updatedUsersList,
+      });
+      switch (status) {
+        case ACCEPTED_STATUS:
+          showToast('inviteMatch', `See you at ${date}`, 'You accept to this event!', {
+            ownerPhoto: hostPhoto,
+            status: 'Accept'.toUpperCase(),
+          });
           await sendNotification(
-            uid,
-            `${userHost?.name} rejected your request`,
+            uidHost,
+            `${userInfo?.name} accepted your invitation`,
+            'Invitation Accepted!',
+            'Accepted',
+            'Accepted'.toUpperCase(),
+            userInfo,
+          );
+          break;
+        case NOT_ACCEPTED_STATUS:
+          showToast('inviteMatch', `You rejected ${placeName} event`, 'Not now', {
+            ownerPhoto: hostPhoto,
+            status: 'REJECTED'.toUpperCase(),
+          });
+          await sendNotification(
+            uidHost,
+            `${userInfo?.name} rejected your invitation`,
             'Not now.',
             'Rejected',
             'Rejected'.toUpperCase(),
-            userHost,
+            userInfo,
           );
-        }
+          break;
+        case CANCEL_STATUS:
+          showToast('inviteMatch', `You rejected ${placeName} event`, 'Not now', {
+            ownerPhoto: hostPhoto,
+            status: 'REJECTED'.toUpperCase(),
+          });
+          await sendNotification(
+            uidHost,
+            `${userInfo?.name} rejected your invitation`,
+            'Not now.',
+            'Rejected',
+            'Rejected'.toUpperCase(),
+            userInfo,
+          );
+          break;
+        default:
+          break;
       }
-      showToast('inviteMatch', `You rejected ${rejectedUser?.name}`, 'Not now', {
-        ownerPhoto: rejectedUser?.userPhoto,
-        status: 'REJECTED'.toUpperCase(),
-      });
     } catch (e) {
-      showToast('inviteMatch', '', 'Error!');
-      // console.log(e);
+      console.log('error update status guest', e);
     }
+  };
+
+  const handleCancelInvitation = async () => {
+    changeStatusGuestUsersList({
+      status: CANCEL_STATUS,
+      id: list?.id,
+      uidHost: list?.uid,
+      placeName: list?.placeName,
+      hostPhoto: image,
+    });
+    setModalVisible && setModalVisible(false);
   };
 
   const handleCreateChat = async () => {
@@ -371,6 +426,9 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         borderWidth: 1,
       };
     }
+    return {
+      height: 0,
+    };
   };
 
   const getButtonTitleStyle = () => {

@@ -4,7 +4,7 @@ export namespace Event {
     image: string;
   }
 
-  export type UserStatus = 'accepted' | 'notAccepted' | 'invite_match' | 'approved' | 'liked';
+  export type UserStatus = 'accepted' | 'notAccepted' | 'invite_match' | 'approved' | 'liked' | 'cancel';
   export type Gender = 'man' | 'woman' | 'any';
   export interface User {
     uid: string;
