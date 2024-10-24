@@ -61,10 +61,20 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const clearChat = useRef(false);
   const user = useUser((i: any) => i?.user);
 
+  const flatListRef = useRef<FlatList>(null);  
+
   const handleCloseReport = () => {
     setModalVisible(false);
     navigation.goBack();
   };
+
+  const scrollToEnd = () => {
+    setTimeout(() => {
+      flatListRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
+  
+
 
   useEffect(() => {
     if (title) {
@@ -178,6 +188,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             findChat[0].newMessagesGuest = 1;
           }
         }
+        setMessageUser('');
         await doc.update({
           chats: [...allChats],
         });
@@ -195,7 +206,6 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     } catch (e) {
       // console.log(e);
     }
-    setMessageUser('');
   };
 
   const getFormattedTime = timestamp => {
@@ -343,6 +353,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                 return <ChatMessage userAvatar={image} messageUser={item} showDate={showDate} />;
               }}
               keyExtractor={(item, index) => `${item.timestamp}${index}`}
+              ref={flatListRef}
+              onContentSizeChange={scrollToEnd} 
             />
           </View>
           {/*{handleInvitationApproved()}*/}
@@ -354,6 +366,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                 onChangeText={setMessageUser}
                 style={styles.textInput}
                 placeholder="Write your message"
+                onFocus={scrollToEnd}
               />
               <TouchableOpacity style={styles.buttonSend} onPress={handleSendMessage}>
                 <SendIcon />
