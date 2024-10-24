@@ -52,7 +52,6 @@ import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
 import SuperInvite from './screens/SuperInvite/SuperInvite';
 import Match, {MatchData} from './screens/Match/Match';
-// import ModalSuperInvite from 'components/Modal/ModalSuperInvite';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
@@ -76,20 +75,17 @@ import {getUsersForEvent} from 'src/api/user';
 import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
 
-const USERS_FETCHING_DELAY = 3000;
-
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [events, setEvents] = useState<any[]>([]);
-
-  const [myEventsList, setMyEventsList] = useState([]);
   const [nameUser, setNameUser] = useState<string>('');
   const [reportedItem, setReportedItem] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
   const [matchData, setMatchData] = useState<MatchData>({});
+  const [myEventsList, setMyEventsList] = useState<any[]>([]);
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
   const [loadingMyEvents, setLoadingMyEvents] = useState<boolean>(true);
@@ -115,21 +111,19 @@ const IO: FC = (): JSX.Element => {
   const setUser = useUser((i: any) => i?.setUser);
 
   const setScrollPosition = useScrollPosition((i: any) => i?.setScrollPosition);
-
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
   const setRejectModalVisible = useAdminActions((i: any) => i?.setRejectModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
 
   const allEventsLength = useRef(0);
-
   const eventsRef = useRef<any[]>();
   const counterSuperInvitesRef = useRef(0);
   const counterWeeklySuperInvitesRef = useRef(0);
-
   const cardRef = useRef(null);
 
   const rotationLoader = useSharedValue(0);
+
   useEffect(() => {
     if (loadingUser) {
       rotationLoader.value = withRepeat(
@@ -249,13 +243,10 @@ const IO: FC = (): JSX.Element => {
     return subscription;
   }, []);
 
-  const handleAutoSwipeRight = (uid: string, isSort: boolean = true) => {
+  const handleAutoSwipeRight = () => {
     if (cardRef.current) {
       // @ts-ignore
-      cardRef.current?.autoSwipeRight();
-    }
-    if (isSort) {
-      sortEvents(uid);
+      cardRef.current?.localSwipeRight();
     }
   };
 
@@ -263,6 +254,31 @@ const IO: FC = (): JSX.Element => {
     if (cardRef.current) {
       // @ts-ignore
       cardRef.current?.autoSwipeLeft();
+    }
+  };
+
+  const handleSwipeCardRight = () => {
+    if (cardRef.current) {
+      // @ts-ignore
+      cardRef.current?.swipeCardRight();
+    }
+  };
+
+  const handleSwipeCardLeft = () => {
+    if (cardRef.current) {
+      // @ts-ignore
+      cardRef.current?.swipeCardLeft();
+    }
+  };
+
+  const handleInvite = ({uid, id, withSwipe, superInvite}: {uid: string; id: string; withSwipe: boolean; superInvite?: boolean}) => {
+    setScrollPosition(0);
+    onInvite(uid, id, superInvite);
+    setTimeout(() => {
+      setCurrentEventCardPosition(prev => prev + 1);
+    }, 500);
+    if (withSwipe) {
+      handleSwipeCardRight();
     }
   };
 
@@ -390,24 +406,6 @@ const IO: FC = (): JSX.Element => {
     setModalReport(true);
   };
 
-  function filterDataByWeekMonth(data: any, days: number) {
-    const today = new Date();
-    const nextWeek = new Date(today);
-    nextWeek.setDate(today.getDate() + days);
-    const filter = data.filter((item: Event.Info) => {
-      if (!item || !item.date) {
-        return false;
-      }
-      const parts = item.date.split('.');
-      const itemDate = new Date(+parts[2], +parts[1] - 1, +parts[0]);
-      if (isNaN(itemDate.getTime())) {
-        return false;
-      }
-      return itemDate >= today && itemDate <= nextWeek;
-    });
-    return filter;
-  }
-
   const OverlayRight = () => {
     return (
       <View style={[styles.overlayLabelContainerInvite]}>
@@ -478,12 +476,12 @@ const IO: FC = (): JSX.Element => {
           setMyEvents([]);
           setMyEventsList([]);
           setActiveEvent({});
-          setLoadingMyEvents(false);
           setLoadingEvents(false);
+          setLoadingMyEvents(false);
           return;
         }
-        const data = querySnapshot.docs.map(doc => doc.data() as EventData);
 
+        const data = querySnapshot.docs.map(doc => doc.data() as EventData);
         const filteredData = data.filter((event: EventData) => {
           if (event?.date && event?.hour) {
             const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
@@ -497,25 +495,22 @@ const IO: FC = (): JSX.Element => {
           setMyEvents([]);
           setMyEventsList([]);
           setActiveEvent({});
-          setLoadingMyEvents(false);
           setLoadingEvents(false);
+          setLoadingMyEvents(false);
           return;
         }
-
-        setMyEventsList(filteredData);
         setMyEvents(filteredData);
-        console.warn(myEvents.length, activeEvent?.id, filteredData);
-
-        if (!myEvents.length && !activeEvent?.id) {
-          setActiveEvent(myEvents[0]);
+        setMyEventsList(filteredData);
+        if (!myEvents.length && !activeEvent?.id && filteredData.length) {
+          setActiveEvent(filteredData[0]);
         }
         setLoadingMyEvents(false);
       } catch (error: any) {
         setMyEvents([]);
         setMyEventsList([]);
         setActiveEvent({});
-        setLoadingMyEvents(false);
         setLoadingEvents(false);
+        setLoadingMyEvents(false);
         console.error(error);
 
         Alert.alert('Error', error.message || 'Something went wrong');
@@ -634,7 +629,7 @@ const IO: FC = (): JSX.Element => {
           .update(data)
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
-              console.log('proverka host');
+              console.warn('proverka host');
 
               await handleCreateChat(matchedGuestData);
               setMatchData(matchedGuestData);
@@ -720,12 +715,24 @@ const IO: FC = (): JSX.Element => {
             }
           });
       }
-      setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
+      setEvents(prev => {
+        console.warn(isHost, forUserUid, eventId);
+
+        const newl = prev.filter(i => {
+          console.warn(i?.info?.uid, i?.info?.id, eventId);
+
+          return isHost ? i?.info?.uid !== forUserUid : i?.info?.id !== eventId;
+        });
+        console.warn(newl.length);
+        return newl;
+      });
       setScrollPosition(0);
     } catch (error) {
       // console.log('eror invite', error);
     }
   };
+
+  console.warn(events.length);
 
   const handleSuperJoin = () => {
     if (counterSuperInvites > 0) {
@@ -774,7 +781,7 @@ const IO: FC = (): JSX.Element => {
   const customButton = (id: string) => {
     return (
       <TouchableOpacity
-        onPress={() => handleAutoSwipeRight(id)}
+        onPress={() => handleAutoSwipeRight()}
         style={{
           height: 65,
           width: '100%',
@@ -920,9 +927,9 @@ const IO: FC = (): JSX.Element => {
               eventPhotos={event?.photos}
               photos={currUserPhotos}
               name={event?.name}
-              handleAutoSwipeRight={() => handleAutoSwipeRight(event?.id)}
-              onInvite={() => onInvite(event?.uid, event?.id)}
-              superJoin={() => onInvite(event?.uid, event?.id, true)}
+              handleAutoSwipeRight={() => handleAutoSwipeRight()}
+              onInvite={() => handleInvite({uid: event?.uid, id: event?.id, withSwipe: true})}
+              superJoin={() => handleInvite({uid: event?.uid, id: event?.id, withSwipe: true, superInvite: true})}
               confirmedEvent={event?.statusEvent}
               uidUserEvent={event?.uid}
               hourEvent={event?.hour}
@@ -931,6 +938,8 @@ const IO: FC = (): JSX.Element => {
               handleAutoSwipeLeft={handleAutoSwipeLeft}
               accountType={userInfo?.accountType}
               isPreview={false}
+              setCurrentEventCardPosition={setCurrentEventCardPosition}
+              setScrollPosition={setScrollPosition}
             />
             <View style={styles.bioWrapper}>
               <Text style={[styles.titleSection]}>Event details</Text>
@@ -1178,7 +1187,7 @@ const IO: FC = (): JSX.Element => {
                   </View>
                 </TouchableWithoutFeedback>
                 <TouchableOpacity
-                  onPress={() => handleChangeListsEvents(event?.uid, 'accept')}
+                  onPress={() => handleInvite({uid: event?.uid, id: event?.id, withSwipe: true})}
                   style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
                   <View
                     style={{
@@ -1246,15 +1255,6 @@ const IO: FC = (): JSX.Element => {
     handleOpenSuperInvite(item, coinAnimationTimer);
   };
 
-  const sortEvents = (uid: string) => {
-    if (uid) {
-      const res = eventsRef.current?.filter(item => item.info.uid !== uid);
-      eventsRef.current = res;
-      setEvents(res);
-      setCurrentEventCardPosition(prev => prev + 1);
-    }
-  };
-
   const getListForHost = async () => {
     const user = auth().currentUser;
 
@@ -1263,8 +1263,6 @@ const IO: FC = (): JSX.Element => {
     }
     setLoadingEvents(true);
     let users;
-
-    console.warn(activeEvent?.id);
 
     try {
       users = await getUsersForEvent(userInfo?.uid, activeEvent?.male, activeEvent?.female);
@@ -1290,8 +1288,6 @@ const IO: FC = (): JSX.Element => {
     const data: any[] = [];
     const usersList = users?.docs.map(doc => doc.data());
 
-    console.warn(usersList);
-
     const filteredUsersList = usersList?.filter((item: UserInfo) => {
       if (blockedUsersList.includes(item?.uid)) {
         return false;
@@ -1310,8 +1306,6 @@ const IO: FC = (): JSX.Element => {
       }
       return true;
     });
-
-    console.warn(filteredUsersList);
 
     if (!filteredUsersList?.length) {
       setLoadingEvents(false);
@@ -1348,11 +1342,10 @@ const IO: FC = (): JSX.Element => {
               isShowInvitesTooltip={false}
               isLocked={!userInfo?.accountConfirmed}
               confirmedAccount={accountConfirmed}
-              onInvite={() => onInvite(uid, item?.id)}
+              onInvite={() => handleInvite({uid, id: item?.id, withSwipe: true})}
               handleOpenSuperInvite={() => handleOpenSuperInvite(item, uid)}
               photos={girlPhotos}
               accountType={accountType}
-              handleAutoSwipeRight={() => handleAutoSwipeRight(item?.id)}
               isShowWantsJoin={findSuperJoin}
               isPremium={accountPremium}
               activeEvent={activeEvent}
@@ -1467,9 +1460,6 @@ const IO: FC = (): JSX.Element => {
                 <TouchableOpacity
                   onPress={() => {
                     handleAutoSwipeLeft();
-                    setTimeout(() => {
-                      sortEvents(item?.uid);
-                    }, 500);
                   }}
                   style={styles.buttonCloseOrCheck}>
                   <View
@@ -1572,7 +1562,7 @@ const IO: FC = (): JSX.Element => {
                 </TouchableWithoutFeedback>
                 <TouchableOpacity
                   onPress={() => {
-                    handleAutoSwipeRight(item?.id);
+                    handleInvite({uid: item?.uid, id: item?.id, withSwipe: true});
                   }}
                   style={styles.buttonCloseOrCheck}>
                   <View
@@ -1690,28 +1680,29 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     if (userInfo?.uid) {
-      if (isHost && activeEvent?.id) {
+      if (isHost && activeEvent?.id && !loadingMyEvents) {
         getListForHost();
       }
       if (!isHost) {
         getListForGuest();
       }
     }
-  }, [userInfo, userHost, activeEvent?.id, activeEventDate, myEvents]);
+  }, [userInfo, userHost, activeEvent?.id, activeEventDate, myEvents, loadingMyEvents]);
 
   useEffect(() => {
-    // fetchMyEvents(true);
     requestUserPermission();
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      // fetchMyEvents(false);
+      if (userInfo?.uid && isHost) {
+        fetchMyEvents();
+      }
       fetchUserInfo();
-    }, []),
+    }, [userInfo?.uid]),
   );
 
-  if (loadingUser && !userInfo?.uid && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+  if ((loadingUser || loadingMyEvents) && !userInfo?.uid && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
         <Animated.View style={[animatedStyle]}>
@@ -1748,7 +1739,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isHost && !loadingEvents && !loadingMyEvents && !myEvents.length && !isVisibleMatch) {
+  if (userInfo?.uid && isHost && !loadingEvents && !myEvents.length && !isVisibleMatch) {
     return (
       <>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
@@ -1841,11 +1832,7 @@ const IO: FC = (): JSX.Element => {
                     }, 500);
                   }}
                   onSwipedRight={() => {
-                    setScrollPosition(0);
-                    onInvite(item?.info?.uid, item?.info?.id);
-                    setTimeout(() => {
-                      setCurrentEventCardPosition(prev => prev + 1);
-                    }, 500);
+                    handleInvite({uid: item?.info?.uid, id: item?.info?.id, withSwipe: false});
                   }}
                   OverlayLabelRight={OverlayRight}
                   OverlayLabelLeft={OverlayLeft}

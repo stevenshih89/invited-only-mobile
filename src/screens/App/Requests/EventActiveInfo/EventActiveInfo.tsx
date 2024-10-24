@@ -37,12 +37,31 @@ import firestore from '@react-native-firebase/firestore';
 import {Event, EventData} from 'src/types/event';
 import FastImage from 'react-native-fast-image';
 import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
+import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
+import { useUser } from 'src/store/userStore';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
   const {list} = route?.params;
-  const {usersList, photos, placeName, description, hour, date, female, femaleFriend, male, name, id, isCancelled} = list as EventData;
+  const {
+    usersList,
+    photos,
+    placeName,
+    description,
+    hour,
+    date,
+    female,
+    femaleFriend,
+    male,
+    name,
+    id,
+    isCancelled,
+    statusEvent,
+    eventReviewed,
+    requestsList,
+    address
+  } = list as EventData;
 
   const [usersListData, setUsersListsData] = useState<any>(usersList);
   const [activeTab, setActiveTab] = useState(GUEST_LIST);
@@ -60,7 +79,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const acceptedGuests = usersListData?.filter((i: Event.User) => i?.status === ACCEPTED_STATUS);
   const rejectedGuests = usersListData?.filter((i: Event.User) => i?.status === NOT_ACCEPTED_STATUS);
 
-  const maxGuests = female + male;
+  const userInfo = useUser((i: any) => i?.user);
 
   const [isVisibleCancelModal, setIsVisibleCancelModal] = useState(false);
 
@@ -460,72 +479,61 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
         );
       case EVENT_INFO:
         return (
-          <View style={{backgroundColor: blackColor, borderRadius: 10, paddingBottom: 20}}>
+          <View style={{backgroundColor: blackColor, borderRadius: 10, paddingBottom: 34}}>
             <View style={{paddingTop: 0}}>
-              <View>
-                {photos.length > 0 && (
-                  <Image
-                    source={{
-                      uri: photos[0].image,
-                    }}
-                    style={{width: '100%', height: 216, borderRadius: 20}}
-                    resizeMode="cover"
-                  />
-                )}
-              </View>
-              <Text style={[{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812), marginTop: 20}]}>Event details</Text>
-              <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}}>Place name</Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{placeName}</Text>
-              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
+              <Text style={[{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812), marginBottom: 17}]}>
+                Event details
+              </Text>
+              <MyEventsCard
+                imageBg={photos}
+                statusEvent={statusEvent}
+                eventReviewed={eventReviewed}
+                allPeople={female + male}
+                date={date}
+                textCityName={name}
+                placeName={placeName}
+                estimeTime={hour}
+                numberOfGirlsInvited={female}
+                accountConfirmed={userInfo?.accountConfirmed}
+                findAcceptedGuest={usersList?.filter(item => item.status === INVITE_MATCH_STATUS)}
+                totalRequestsGuests={requestsList?.length}
+                item={list}
+                showGuestList={false}
+                showDotLine={false}
+                showEventType={true}
+                styleContainer={{marginTop: 0, marginBottom: 0}}
+              />
+              <Text style={{marginTop: 17, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Place name</Text>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{placeName}</Text>
+              <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
+              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 20}]}>
                 Event name
               </Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{name}</Text>
-              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812)}, {marginTop: 20}]}>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{name}</Text>
+              <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
+              {description && 
+              <>
+                <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 20}]}>
                 Event description
               </Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812)}}>{description}</Text>
-              <View style={{width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14}} />
-              <View style={{marginTop: 28}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                  <CalendarIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{date}</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                  <ClockIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>{hour}</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
-                  <PeopleIcon width={16} height={16} />
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6}}>
-                    {female + femaleFriend}x girl
-                  </Text>
-                </View>
-              </View>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{description}</Text>
+              <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
+              </>}
+              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 34}]}>Address</Text>
+              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{address}</Text>
               {photos?.map((i, index) => {
-                if (photos[index].image) {
+                if (photos[index].image && index > 0) {
                   return (
                     <Image
                       key={index}
                       source={{uri: i?.image}}
-                      style={{width: '100%', height: 216, borderRadius: 20, marginBottom: 34}}
+                      style={{width: '100%', height: 216, borderRadius: 20, marginTop: 34}}
                       resizeMode="cover"
                     />
                   );
                 }
               })}
             </View>
-            {!isCancelled && (
-              <TouchableOpacity
-                onPress={() => setIsVisibleCancelModal(true)}
-                activeOpacity={0.7}
-                style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%', paddingTop: 34}}
-                hitSlop={{bottom: 15}}>
-                <TrashRed />
-                <Text style={{color: lightRedColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812), marginLeft: 6}}>Cancel event</Text>
-              </TouchableOpacity>
-            )}
           </View>
         );
     }
@@ -538,13 +546,12 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
         <View
           style={{
             marginTop: screenHeight / 43,
-            marginBottom: screenHeight / 30,
             alignItems: 'center',
             flexDirection: 'row',
             borderTopColor: transparentWhite16Color,
             borderTopWidth: 1,
             borderStyle: 'solid',
-            paddingTop: 20,
+            paddingVertical: 17,
           }}>
           <TouchableOpacity
             style={[
@@ -590,7 +597,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingTop: 20, paddingBottom: 50}} style={{flex: 1}}>
+        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
           {renderEventContent()}
         </ScrollView>
         {activeTab === 'EVENT_INFO' && !isCancelled && (

@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useContext, useEffect} from 'react';
 import {Dimensions, Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
 import WelcomeBcg from 'assets/images/auth/welcome-background.png';
@@ -11,9 +11,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import { screenHeight } from 'constants/common';
 import Button from 'components/Button/Button';
+import { AuthContext } from 'contexts/AuthContext';
 
 const Onboard: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
+  
+  const {setOnBoarding} = useContext(AuthContext);
+
+  useEffect(() => {
+    setOnBoarding([])
+  },[])
 
   const getId = async () => {
     try {

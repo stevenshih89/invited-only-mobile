@@ -1,4 +1,4 @@
-import {ActivityIndicator, FlatList, Text, View} from 'react-native';
+import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
 import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
 //import components
 import useStyles from './styles';
@@ -28,7 +28,7 @@ import {useAdminActions} from 'src/store/adminActions';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import FastImage from 'react-native-fast-image';
-import {ACCEPTED_STATUS, ALL, LIKED, screenHeight, THIS_MONTH, THIS_WEEK} from 'constants/common';
+import {ALL, LIKED, screenHeight, THIS_MONTH, THIS_WEEK} from 'constants/common';
 import {Event, EventData} from 'src/types/event';
 import {UserInfo} from 'src/types/userInfo';
 import {EventsDate} from 'contexts/EventsDate';
@@ -41,7 +41,7 @@ const Requests: FC = (): ReactElement => {
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
 
-  const {activeEvent, myEvents} = useContext(EventContext);
+  const {activeEvent, myEvents, setMyEvents, setActiveEvent} = useContext(EventContext);
   const {activeEventDate} = useContext(EventsDate);
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
@@ -51,6 +51,7 @@ const Requests: FC = (): ReactElement => {
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [matchData, setMatchData] = useState<MatchData>({});
+  const [loadingMyEvents, setLoadingMyEvents] = useState<boolean>(true);
   const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
   const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
   const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
@@ -155,13 +156,10 @@ const Requests: FC = (): ReactElement => {
   };
 
   const checkIsFullGuestsFun = async () => {
-    const {allGuests, findAcceptedGuest, totalRequestsGuests} = await checkIsFullGuests(activeEvent?.id);
-    if (findAcceptedGuest >= allGuests) {
-      setTotalQuantityGuests(allGuests);
-    }
-    setTotalRequestsGuests(totalRequestsGuests);
+    const {allGuests, findAcceptedGuest, totalRequestsGuests: requeststCount} = await checkIsFullGuests(activeEvent?.id);
+    setTotalQuantityGuests(allGuests);
+    setTotalRequestsGuests(requeststCount);
     setAcceptQuantityGuest(findAcceptedGuest);
-    return findAcceptedGuest >= allGuests;
   };
 
   const goToCreateEvent = (): void => {
@@ -175,12 +173,60 @@ const Requests: FC = (): ReactElement => {
     }
   };
 
+  const fetchMyEvents = async () => {
+    const user = auth().currentUser;
+    if (user) {
+      try {
+        const querySnapshot = await firestore()
+          .collection('Events')
+          .where('uid', '==', user.uid)
+          .where('isCancelled', '==', false)
+          .orderBy('createdAt', 'desc')
+          .get();
+
+        if (querySnapshot.empty) {
+          setMyEvents([]);
+          setActiveEvent({});
+          setLoadingMyEvents(false);
+          return;
+        }
+
+        const data = querySnapshot.docs.map(doc => doc.data() as EventData);
+        const filteredData = data.filter((event: EventData) => {
+          if (event?.date && event?.hour) {
+            const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+            if (adjustedDate.isBefore(moment())) {
+              return false;
+            }
+          }
+          return true;
+        });
+        if (!filteredData.length) {
+          setMyEvents([]);
+          setActiveEvent({});
+          setLoadingMyEvents(false);
+          return;
+        }
+        setMyEvents(filteredData);
+        if (!myEvents.length && !activeEvent?.id) {
+          setActiveEvent(filteredData[0]);
+        }
+        setLoadingMyEvents(false);
+      } catch (error: any) {
+        setMyEvents([]);
+        setActiveEvent({});
+        setLoadingMyEvents(false);
+        console.error(error);
+
+        Alert.alert('Error', error.message || 'Something went wrong');
+      }
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
       fetchUserInfo();
-      if (isHost) {
-        checkIsFullGuestsFun();
-      }
+      fetchMyEvents();
     }, []),
   );
 
@@ -201,6 +247,7 @@ const Requests: FC = (): ReactElement => {
           .doc(activeEvent?.id)
           .onSnapshot(querySnapshot => {
             fetchHostRequests(querySnapshot);
+            checkIsFullGuestsFun();
           });
       }
       if (!isHost) {
@@ -220,10 +267,7 @@ const Requests: FC = (): ReactElement => {
     }, [activeEvent?.id, isHost, activeEventDate]),
   );
 
-  const expressionForHost = isHost && !!requestsForHost?.length;
-  const expressionForGuest = !isHost && !!dataForGuest.length;
-
-  if (loading && !list && !isVisibleMatch) {
+  if ((loading || loadingMyEvents) && !list.length && !isVisibleMatch) {
     return (
       <View
         style={{
@@ -237,7 +281,7 @@ const Requests: FC = (): ReactElement => {
     );
   }
 
-  if (!userInfo?.accountConfirmed && !loading && !rejectModalVisible && !acceptModalVisible) {
+  if (userInfo?.uid && !userInfo?.accountConfirmed && !loading && !rejectModalVisible && !acceptModalVisible) {
     return (
       <View style={styles.container}>
         <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} />
@@ -245,7 +289,23 @@ const Requests: FC = (): ReactElement => {
     );
   }
 
-  if (isHost && !activeEvent?.eventReviewed) {
+  if (!!userInfo?.accountConfirmed && isHost && !myEvents?.length && !loading && !loadingMyEvents) {
+    return (
+      <View style={styles.container}>
+        <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
+          <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
+            Let’s create an event
+          </Text>
+          <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
+            Get started by creating an event to begin inviting guests.
+          </Text>
+          <Button title="Create event" onPress={goToCreateEvent} />
+        </View>
+      </View>
+    );
+  }
+
+  if (isHost && !activeEvent?.eventReviewed && myEvents?.length && !loadingMyEvents) {
     return (
       <View style={styles.container}>
         <View style={{paddingHorizontal: 30, marginTop: 7}}>
@@ -277,32 +337,6 @@ const Requests: FC = (): ReactElement => {
     );
   }
 
-  if (
-    !loading &&
-    userInfo?.accountConfirmed &&
-    (isHost ? !!activeEvent?.id && !requestsForHost?.length : !dataForGuest?.length) &&
-    !isVisibleMatch
-  ) {
-    return (
-      <View style={styles.container}>
-        <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
-          <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
-            You don't have any requests
-          </Text>
-          <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
-            Get started by swiping to {isHost ? 'invite guests' : 'join events and begin receiving event requests.'}
-          </Text>
-          <Button title="Start swiping" onPress={() => navigation.navigate(IOPath as never)} />
-        </View>
-      </View>
-    );
-  }
-
-  const getUsersListAccepted = () => {
-    const filteredUsers = activeEvent?.usersList?.filter((item: Event.User) => item.status === ACCEPTED_STATUS) || [];
-    return filteredUsers.length;
-  };
-
   return (
     <>
       <View style={styles.container}>
@@ -333,7 +367,7 @@ const Requests: FC = (): ReactElement => {
                 justifyContent: 'space-between',
               }}>
               <Text style={{fontSize: RFValue(16, 812), color: whiteColor, fontFamily: Satoshi500}}>
-                Join Requests: {activeEvent?.requestsList?.length}
+                Join Requests: {totalRequestsGuests}
               </Text>
               <View>
                 <View style={{width: 1.25, height: 6, borderRadius: 2, backgroundColor: whiteColor}} />
@@ -353,7 +387,7 @@ const Requests: FC = (): ReactElement => {
                       color: whiteColor,
                       fontFamily: Satoshi700,
                     }}>
-                    {getUsersListAccepted()}/{activeEvent?.male + activeEvent?.female}
+                    {acceptQuantityGuest}/{totalQuantityGuests}
                   </Text>
                   <Text
                     style={{
@@ -368,7 +402,7 @@ const Requests: FC = (): ReactElement => {
             </View>
           </View>
         )}
-        {totalQuantityGuests > 0 && (
+        {isHost && activeEvent?.id && acceptQuantityGuest >= totalQuantityGuests && (
           <FullEvent
             text={`Event is full: ${acceptQuantityGuest}/${totalQuantityGuests} Guests Accepted`}
             activeEvent={activeEvent}
@@ -389,56 +423,52 @@ const Requests: FC = (): ReactElement => {
             }
           />
         )}
-        {expressionForHost || expressionForGuest ? (
-          <FlatList
-            // @ts-ignore
-            data={list}
-            numColumns={isHost ? 2 : 1}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={({uid, name}) => `${uid}${name}`}
-            contentContainerStyle={styles.listContentContainer}
-            extraData={list}
-            style={{
-              width: '100%',
-            }}
-            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-            renderItem={({item, index}) => {
-              return isHost ? (
-                <ItemRequestHost
-                  item={item}
-                  setRequestsForHost={setRequestsForHost}
-                  handleOpenMatch={handleOpenMatch}
-                  checkIsFullGuestsFun={checkIsFullGuestsFun}
-                  setIsVisibleModalFullEvent={() => setIsVisibleModalFullEvent(true)}
-                  fetchHostRequests={fetchHostRequests}
-                />
-              ) : (
-                // @ts-ignore
-                <ItemRequestGuest
-                  list={item}
-                  item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
-                  setDataForGuest={setDataForGuest}
-                  handleOpenMatch={handleOpenMatch}
-                  index={index}
-                />
-              );
-            }}
-          />
-        ) : (
-          <>
-            {!!userInfo?.accountConfirmed && userInfo?.accountType === 'host' && !myEvents?.length && !loading && (
-              <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
-                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
-                  Let’s create an event
+        <FlatList
+          // @ts-ignore
+          data={list}
+          numColumns={isHost ? 2 : 1}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={({uid, name}) => `${uid}${name}`}
+          contentContainerStyle={styles.listContentContainer}
+          extraData={list}
+          style={{
+            width: '100%',
+          }}
+          ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+          renderItem={({item, index}) => {
+            return isHost ? (
+              <ItemRequestHost
+                item={item}
+                setRequestsForHost={setRequestsForHost}
+                handleOpenMatch={handleOpenMatch}
+                setIsVisibleModalFullEvent={() => setIsVisibleModalFullEvent(true)}
+                fetchHostRequests={fetchHostRequests}
+              />
+            ) : (
+              // @ts-ignore
+              <ItemRequestGuest
+                list={item}
+                item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
+                setDataForGuest={setDataForGuest}
+                handleOpenMatch={handleOpenMatch}
+                index={index}
+              />
+            );
+          }}
+          ListEmptyComponent={() => {
+            return (
+              <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 16, marginTop: screenHeight / 10}}>
+                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 932), marginBottom: 18}}>
+                  You don't have any requests
                 </Text>
-                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
-                  Get started by creating an event to begin inviting guests.
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932), marginBottom: 34}}>
+                  Get started by swiping to {isHost ? 'invite guests' : 'join events and begin receiving event requests.'}
                 </Text>
-                <Button title="Create event" onPress={goToCreateEvent} />
+                <Button title="Start swiping" onPress={() => navigation.navigate(IOPath as never)} />
               </View>
-            )}
-          </>
-        )}
+            );
+          }}
+        />
       </View>
       <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} />
     </>

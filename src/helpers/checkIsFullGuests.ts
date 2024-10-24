@@ -10,6 +10,6 @@ export const checkIsFullGuests = async (idEvent: string) => {
   return {
     allGuests,
     findAcceptedGuest: findAcceptedGuest.length,
-    totalRequestsGuests: data?.requestsList.length,
+    totalRequestsGuests: data?.requestsList?.length,
   };
 };

@@ -86,13 +86,14 @@ interface TouchingSliderProps {
   scrollPositionPreview: number;
   isPreview: boolean;
   eventsCreated: number
+  setCurrentEventCardPosition: (value: number) => void;
+  setScrollPosition: (value: number) => void;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
   photos,
   handleOpenSuperInvite,
   onInvite,
-  handleAutoSwipeRight,
   handleAutoSwipeLeft,
   isShowCardButtons = true,
   isShowLocation = false,
@@ -124,6 +125,8 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   scrollPositionPreview,
   isPreview = true,
   eventsCreated,
+  setCurrentEventCardPosition,
+  setScrollPosition,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
@@ -598,8 +601,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             <View style={{width: 16}} />
             <TouchableOpacity
               onPress={() => {
-                handleAutoSwipeRight && handleAutoSwipeRight();
                 onInvite && onInvite();
+                // setCurrentEventCardPosition &&
+                //   setTimeout(() => {
+                //     setCurrentEventCardPosition(prev => prev + 1);
+                //   }, 500);
               }}
               style={{
                 flex: 1,
@@ -964,7 +970,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             <View style={{width: 16}} />
             <TouchableOpacity
               onPress={() => {
-                handleAutoSwipeRight && handleAutoSwipeRight();
                 onInvite && onInvite();
               }}
               style={{

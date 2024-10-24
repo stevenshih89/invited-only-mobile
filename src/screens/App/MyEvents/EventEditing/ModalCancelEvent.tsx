@@ -1,4 +1,4 @@
-import {ImageBackground, Text, View} from 'react-native';
+import {Alert, ImageBackground, Text, View} from 'react-native';
 import Modal from 'react-native-modal';
 import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import TrashRed from 'assets/images/icons/trash-red.svg';
@@ -13,6 +13,8 @@ import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import auth from '@react-native-firebase/auth';
 import {useUser} from 'src/store/userStore';
 import {EventContext} from 'contexts/EventContext';
+import moment from 'moment';
+import {EventData} from 'src/types/event';
 
 const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined; nameEvent: string}> = ({
   id,
@@ -22,21 +24,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
   nameEvent,
 }) => {
   const navigation = useAppNavigation();
-
-  // const getFcmTokens = async (usersList: []) => {
-  //   let tokens: string[] = [];
-
-  //   const promises = usersList.map(async (item) => {
-  //     const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
-  //     // console.log('userInfo', userInfo);
-  //     return userInfo.data().fcmToken;
-  //   });
-
-  //   tokens = await Promise.all(promises);
-
-  //   return tokens;
-  // };
-  const {setActiveEvent} = useContext(EventContext);
+  const {setActiveEvent, setMyEvents, myEvents, activeEvent} = useContext(EventContext);
 
   const userData = useUser((i: any) => i?.user);
 
@@ -146,6 +134,50 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
     //   // console.log('notification sent successfully:', data);
     // }
   };
+
+  // const fetchMyEvents = async () => {
+  //   const user = auth().currentUser;
+  //   if (user) {
+  //     try {
+  //       const querySnapshot = await firestore()
+  //         .collection('Events')
+  //         .where('uid', '==', user.uid)
+  //         .where('isCancelled', '==', false)
+  //         .orderBy('createdAt', 'desc')
+  //         .get();
+
+  //       if (querySnapshot.empty) {
+  //         setMyEvents([]);
+  //         setActiveEvent({});
+  //         return;
+  //       }
+
+  //       const data = querySnapshot.docs.map(doc => doc.data() as EventData);
+  //       const filteredData = data.filter((event: EventData) => {
+  //         if (event?.date && event?.hour) {
+  //           const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+  //           if (adjustedDate.isBefore(moment())) {
+  //             return false;
+  //           }
+  //         }
+  //         return true;
+  //       });
+  //       if (!filteredData.length) {
+  //         setMyEvents([]);
+  //         setActiveEvent({});
+  //         return;
+  //       }
+  //       setMyEvents(filteredData);
+  //       setActiveEvent(filteredData[0]);
+  //     } catch (error: any) {
+  //       setMyEvents([]);
+  //       setActiveEvent({});
+  //       console.error(error);
+
+  //       Alert.alert('Error', error.message || 'Something went wrong');
+  //     }
+  //   }
+  // };
 
   const handleCancelEvent = async () => {
     // const uidUser = auth().currentUser?.uid;
