@@ -19,13 +19,14 @@ const Gender: FC = (): JSX.Element => {
   const MAN = 'man';
   const WOMAN = 'woman';
   const NONBINARY = 'nonbinary';
-  const [gender, setGender] = useState<string>(MAN);
-
+  
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
+  const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
+  const isHost = accountType.toLowerCase() === 'host';
+
+  const [gender, setGender] = useState<string>(isHost? MAN: WOMAN);
 
   const handleNext = () => {
-    const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
-    const isHost = accountType.toLowerCase() === 'host';
     const data = isHost ? {gender: gender} : {gender: gender, chooseGuest: 'any'};
 
     setOnBoarding([...onBoarding, data]);
@@ -100,7 +101,8 @@ const Gender: FC = (): JSX.Element => {
                   </Text>
                 </View>
                 <View style={{width: '100%'}}>
-                  <TouchableOpacity
+                  {isHost? <>
+                    <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => setGender(MAN)}
                     style={{
@@ -140,6 +142,48 @@ const Gender: FC = (): JSX.Element => {
                     <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Woman</Text>
                     {gender === WOMAN ? <CheckCircle /> : <CircleGray />}
                   </TouchableOpacity>
+                  </>: <>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => setGender(WOMAN)}
+                    style={{
+                      width: '100%',
+                      height: screenHeight / 14,
+                      backgroundColor: gender === WOMAN ? transparentWhite16Color : lightGray3Color,
+                      borderRadius: 10,
+                      borderColor: whiteColor,
+                      borderStyle: 'solid',
+                      borderWidth: gender === WOMAN ? 0.5 : 0,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      paddingHorizontal: 20,
+                      marginBottom: 8,
+                    }}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Woman</Text>
+                    {gender === WOMAN ? <CheckCircle /> : <CircleGray />}
+                  </TouchableOpacity>
+                    <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => setGender(MAN)}
+                    style={{
+                      width: '100%',
+                      height: screenHeight / 14,
+                      backgroundColor: gender === MAN ? transparentWhite16Color : lightGray3Color,
+                      borderRadius: 10,
+                      borderColor: whiteColor,
+                      borderStyle: 'solid',
+                      borderWidth: gender === MAN ? 0.5 : 0,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      paddingHorizontal: 20,
+                      marginBottom: 8,
+                    }}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Man</Text>
+                    {gender === MAN ? <CheckCircle /> : <CircleGray />}
+                  </TouchableOpacity>
+                  </>}
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => setGender(NONBINARY)}

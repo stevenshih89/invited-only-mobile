@@ -74,7 +74,7 @@ const StartCreateAccount: FC = (): JSX.Element => {
               marginBottom: screenHeight / 58,
               marginTop: screenHeight / 39,
             }}>
-              <Button onPress={() => navigation.navigate(eulaPath as never)} title='Get Access'/>
+              <Button onPress={() => navigation.navigate(eulaPath as never)} title='Create Account'/>
             </View>
             <View style={{flexDirection: 'row', width: '100%', justifyContent: 'center', marginBottom: screenHeight / 39}}>
               <Text
