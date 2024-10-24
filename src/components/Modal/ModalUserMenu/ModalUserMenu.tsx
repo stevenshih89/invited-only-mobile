@@ -24,7 +24,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import ModalReport from '../ModalReport/ModalReport';
-import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common';
+import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common';
 
 interface ModalUserMenuProps {
   isModalVisible: boolean;
@@ -295,6 +295,129 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       // console.log(e);
     }
   };
+
+  const changeStatusGuestUsersList = async ({
+    status,
+    id,
+    uidHost,
+    placeName,
+    date,
+    hostPhoto,
+  }: {
+    status: string;
+    id: string;
+    uidHost: string;
+    placeName: string;
+    date?: string;
+    hostPhoto: string;
+  }) => {
+    const eventQuerySnapshot = await firestore().collection('Events').doc(id).get();
+    const eventDataList = eventQuerySnapshot.data();
+    if (!eventDataList?.usersList.length) {
+      return;
+    }
+
+    try {
+      const currentUid = user?.uid === hostUid ? uid : user?.uid;
+
+      const updatedUsersList = eventDataList?.usersList?.map(userItem => {
+        if (userItem.uid === currentUid) {
+          return {
+            ...userItem,
+            status,
+          };
+        }
+        return userItem;
+      });
+      await firestore().collection('Events').doc(id).update({
+        usersList: updatedUsersList,
+      });
+      switch (status) {
+        case ACCEPTED_STATUS:
+          showToast('inviteMatch', `See you at ${date}`, 'You accept to this event!', {
+            ownerPhoto: hostPhoto,
+            status: 'Accept'.toUpperCase(),
+          });
+          await sendNotification(
+            uidHost,
+            `${user?.name} accepted your invitation`,
+            'Invitation Accepted!',
+            'Accepted',
+            'Accepted'.toUpperCase(),
+            user,
+          );
+          break;
+        case NOT_ACCEPTED_STATUS:
+          showToast('inviteMatch', `You rejected ${placeName} event`, 'Not now', {
+            ownerPhoto: hostPhoto,
+            status: 'REJECTED'.toUpperCase(),
+          });
+          await sendNotification(uidHost, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+          break;
+        case CANCEL_STATUS:
+          showToast('inviteMatch', `You rejected ${placeName} event`, 'Not now', {
+            ownerPhoto: hostPhoto,
+            status: 'REJECTED'.toUpperCase(),
+          });
+          await sendNotification(uidHost, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+        default:
+          break;
+      }
+    } catch (e) {
+      console.log('error update status guest', e);
+    }
+  };
+
+  const handleCancelInvitation = async () => {
+    try {
+      const eventQuery = await firestore().collection('Events').doc(activeEvent).get();
+      if (!eventQuery.exists || !uid) {
+        return;
+      }
+      const usersListData = [...eventQuery?.data()?.usersList];
+      const requestListData = [...eventQuery?.data()?.requestsList];
+      const updateUsersList: any = usersListData ? usersListData?.filter((i: any) => i?.uid !== uid) : [];
+      const updateRequestsList: any = requestListData ? requestListData?.filter((i: any) => i?.uid !== uid) : [];
+      setModalVisible && setModalVisible(false);
+
+      await firestore().collection('Events').doc(activeEvent).update({
+        usersList: updateUsersList,
+        requestsList: updateRequestsList,
+      });
+
+      const chatDoc = await firestore().collection('messages').doc(activeEvent).get();
+      const chatData = chatDoc.data();
+
+      if (chatData?.chats?.length) {
+        await firestore()
+          .collection('messages')
+          .doc(activeEvent)
+          .update({
+            chats: chatData?.chats?.filter((i: any) => i?.uid !== uid),
+          });
+      }
+
+      const getDate = await firestore().collection('userInfo').doc(uid).get();
+      const docData = getDate.data();
+
+      const rejectedUser = usersListData.find((i: any) => i?.uid === uid);
+      if (rejectedUser?.status !== NOT_ACCEPTED_STATUS) {
+        if (docData?.notificationSettings.requests || docData?.notificationSettings.joinedEvent) {
+          await sendNotification(uid, `${user?.name} rejected your request`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+        }
+      }
+      setCancelInvitationState(false);
+      setModalVisible(false);
+      navigation.goBack();
+      showToast('inviteMatch', `You rejected ${rejectedUser?.name}`, 'Not now', {
+        ownerPhoto: rejectedUser?.userPhoto,
+        status: 'REJECTED'.toUpperCase(),
+      });
+    } catch (e) {
+      showToast('inviteMatch', '', 'Error!');
+    }
+  };
+
   const handleAcceptGuestFromGuest = async () => {
     const eventQuerySnapshot = await firestore().collection('Events').doc(activeEvent).get();
     const eventDataList = eventQuerySnapshot.data();
@@ -367,14 +490,6 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   };
 
   const handleActionPress = async () => {
-    // const isFull = await checkIsFullGuestsFun();
-    // if (isFull) {
-    //   setModalVisible(false);
-    //   // setTimeout(() => {
-    //   //   setIsVisibleModalFullEvent(true)
-    //   // }, 300);
-    //   return;
-    // }
     if (uid === hostUid && userGuest?.status === APPROVED_STATUS) {
       handleAcceptGuestFromGuest();
       setModalVisible && setModalVisible(false);
@@ -413,6 +528,9 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         borderWidth: 1,
       };
     }
+    return {
+      height: 0,
+    };
   };
 
   const getButtonTitleStyle = () => {
@@ -520,8 +638,13 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
           <Button
             onPress={() => {
               showToast('inviteMatch', `${title} was removed!`);
-              setCancelInvitationState(false);
-              setModalVisible(false);
+              changeStatusGuestUsersList({
+                status: CANCEL_STATUS,
+                id: activeEvent,
+                uidHost: uid,
+                placeName: eventData?.placeName,
+                hostPhoto: image,
+              });
             }}
             title="Yes, cancel invitation"
             buttonStyle={{width: '100%', marginTop: 37, marginBottom: 6}}
@@ -615,7 +738,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
               <InfoIcon width={20} height={20} />
               <Text style={styles.textButton}>Block & Report</Text>
             </TouchableOpacity>
-            {userGuest?.status !== NOT_ACCEPTED_STATUS && (
+            {userGuest?.status !== NOT_ACCEPTED_STATUS && userGuest?.status !== CANCEL_STATUS && (
               <TouchableOpacity
                 onPress={() => setCancelInvitationState(true)}
                 style={[styles.buttonFooter, {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>

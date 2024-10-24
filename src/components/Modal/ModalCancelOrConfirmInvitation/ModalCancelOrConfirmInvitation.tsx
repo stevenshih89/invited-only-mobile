@@ -3,8 +3,8 @@ import {View, Text, Image} from 'react-native';
 import PersonIcon from 'assets/images/icons/profile-2user.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import Modal from 'react-native-modal';
-import firestore from '@react-native-firebase/firestore'
-import auth from '@react-native-firebase/auth'
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 //import components
 import useStyles from 'components/Modal/ModalCancelOrConfirmInvitation/styles.ts';
@@ -23,7 +23,7 @@ interface ModalCancelInvitationProps {
   girlInvitation?: number;
   data?: string;
   typeModal: 'cancel' | 'confirm';
-  eventId: string
+  eventId: string;
 }
 
 const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
@@ -36,7 +36,7 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
   setCancelInvitation,
   cancelInvitation,
   typeModal = 'cancel',
-  eventId
+  eventId,
 }) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
@@ -44,20 +44,22 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
   const handleUnmatchEvent = async () => {
     try {
       const user = auth().currentUser;
-    await firestore().collection('messages').doc(eventId).delete()
-    const getDoc = await firestore().collection('Events').doc(eventId).get()
-    const data = getDoc.data()
-    await firestore().collection('Events').doc(eventId).update({
-      usersList: data?.usersList.filter(item => item.uid !== user?.uid)
-    })
-    setCancelInvitation(false);
-    setHostMenu(false);
-    showToast('inviteMatch', 'You cancelled invitation');
+      await firestore().collection('messages').doc(eventId).delete();
+      const getDoc = await firestore().collection('Events').doc(eventId).get();
+      const data = getDoc.data();
+      await firestore()
+        .collection('Events')
+        .doc(eventId)
+        .update({
+          usersList: data?.usersList.filter(item => item.uid !== user?.uid),
+        });
+      setCancelInvitation(false);
+      setHostMenu(false);
+      showToast('inviteMatch', 'You cancelled invitation');
     } catch (error) {
       console.log('error unmatch', error);
-      
     }
-  }
+  };
 
   return (
     <Modal
@@ -96,7 +98,7 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
         <Button
           onPress={() => {
             if (typeModal === 'cancel') {
-              handleUnmatchEvent()
+              handleUnmatchEvent();
             } else {
               setCancelInvitation(false);
               showToast('inviteMatch', 'Go to my events >', 'Successfully! See you on Nammos Dubai');

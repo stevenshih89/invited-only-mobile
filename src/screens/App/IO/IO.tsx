@@ -243,13 +243,10 @@ const IO: FC = (): JSX.Element => {
     return subscription;
   }, []);
 
-  const handleAutoSwipeRight = (uid: string, isSort: boolean = true) => {
+  const handleAutoSwipeRight = () => {
     if (cardRef.current) {
       // @ts-ignore
-      cardRef.current?.autoSwipeRight();
-    }
-    if (isSort) {
-      sortEvents(uid);
+      cardRef.current?.localSwipeRight();
     }
   };
 
@@ -257,6 +254,31 @@ const IO: FC = (): JSX.Element => {
     if (cardRef.current) {
       // @ts-ignore
       cardRef.current?.autoSwipeLeft();
+    }
+  };
+
+  const handleSwipeCardRight = () => {
+    if (cardRef.current) {
+      // @ts-ignore
+      cardRef.current?.swipeCardRight();
+    }
+  };
+
+  const handleSwipeCardLeft = () => {
+    if (cardRef.current) {
+      // @ts-ignore
+      cardRef.current?.swipeCardLeft();
+    }
+  };
+
+  const handleInvite = ({uid, id, withSwipe, superInvite}: {uid: string; id: string; withSwipe: boolean; superInvite?: boolean}) => {
+    setScrollPosition(0);
+    onInvite(uid, id, superInvite);
+    setTimeout(() => {
+      setCurrentEventCardPosition(prev => prev + 1);
+    }, 500);
+    if (withSwipe) {
+      handleSwipeCardRight();
     }
   };
 
@@ -607,7 +629,7 @@ const IO: FC = (): JSX.Element => {
           .update(data)
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
-              console.log('proverka host');
+              console.warn('proverka host');
 
               await handleCreateChat(matchedGuestData);
               setMatchData(matchedGuestData);
@@ -693,12 +715,24 @@ const IO: FC = (): JSX.Element => {
             }
           });
       }
-      setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
+      setEvents(prev => {
+        console.warn(isHost, forUserUid, eventId);
+
+        const newl = prev.filter(i => {
+          console.warn(i?.info?.uid, i?.info?.id, eventId);
+
+          return isHost ? i?.info?.uid !== forUserUid : i?.info?.id !== eventId;
+        });
+        console.warn(newl.length);
+        return newl;
+      });
       setScrollPosition(0);
     } catch (error) {
       // console.log('eror invite', error);
     }
   };
+
+  console.warn(events.length);
 
   const handleSuperJoin = () => {
     if (counterSuperInvites > 0) {
@@ -747,7 +781,7 @@ const IO: FC = (): JSX.Element => {
   const customButton = (id: string) => {
     return (
       <TouchableOpacity
-        onPress={() => handleAutoSwipeRight(id)}
+        onPress={() => handleAutoSwipeRight()}
         style={{
           height: 65,
           width: '100%',
@@ -893,9 +927,9 @@ const IO: FC = (): JSX.Element => {
               eventPhotos={event?.photos}
               photos={currUserPhotos}
               name={event?.name}
-              handleAutoSwipeRight={() => handleAutoSwipeRight(event?.id)}
-              onInvite={() => onInvite(event?.uid, event?.id)}
-              superJoin={() => onInvite(event?.uid, event?.id, true)}
+              handleAutoSwipeRight={() => handleAutoSwipeRight()}
+              onInvite={() => handleInvite({uid: event?.uid, id: event?.id, withSwipe: true})}
+              superJoin={() => handleInvite({uid: event?.uid, id: event?.id, withSwipe: true, superInvite: true})}
               confirmedEvent={event?.statusEvent}
               uidUserEvent={event?.uid}
               hourEvent={event?.hour}
@@ -903,6 +937,8 @@ const IO: FC = (): JSX.Element => {
               usersList={event?.usersList}
               handleAutoSwipeLeft={handleAutoSwipeLeft}
               accountType={userInfo?.accountType}
+              setCurrentEventCardPosition={setCurrentEventCardPosition}
+              setScrollPosition={setScrollPosition}
             />
             <View style={styles.bioWrapper}>
               <Text style={[styles.titleSection]}>Event details</Text>
@@ -1150,7 +1186,7 @@ const IO: FC = (): JSX.Element => {
                   </View>
                 </TouchableWithoutFeedback>
                 <TouchableOpacity
-                  onPress={() => handleChangeListsEvents(event?.uid, 'accept')}
+                  onPress={() => handleInvite({uid: event?.uid, id: event?.id, withSwipe: true})}
                   style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
                   <View
                     style={{
@@ -1216,15 +1252,6 @@ const IO: FC = (): JSX.Element => {
   const handleSuperInviteBottom = (item: any, coinAnimationTimer: number) => {
     handleSuperInvite();
     handleOpenSuperInvite(item, coinAnimationTimer);
-  };
-
-  const sortEvents = (uid: string) => {
-    if (uid) {
-      const res = eventsRef.current?.filter(item => item.info.uid !== uid);
-      eventsRef.current = res;
-      setEvents(res);
-      setCurrentEventCardPosition(prev => prev + 1);
-    }
   };
 
   const getListForHost = async () => {
@@ -1314,11 +1341,10 @@ const IO: FC = (): JSX.Element => {
               isShowInvitesTooltip={false}
               isLocked={!userInfo?.accountConfirmed}
               confirmedAccount={accountConfirmed}
-              onInvite={() => onInvite(uid, item?.id)}
+              onInvite={() => handleInvite({uid, id: item?.id, withSwipe: true})}
               handleOpenSuperInvite={() => handleOpenSuperInvite(item, uid)}
               photos={girlPhotos}
               accountType={accountType}
-              handleAutoSwipeRight={() => handleAutoSwipeRight(item?.id)}
               isShowWantsJoin={findSuperJoin}
               isPremium={accountPremium}
               activeEvent={activeEvent}
@@ -1432,9 +1458,6 @@ const IO: FC = (): JSX.Element => {
                 <TouchableOpacity
                   onPress={() => {
                     handleAutoSwipeLeft();
-                    setTimeout(() => {
-                      sortEvents(item?.uid);
-                    }, 500);
                   }}
                   style={styles.buttonCloseOrCheck}>
                   <View
@@ -1537,7 +1560,7 @@ const IO: FC = (): JSX.Element => {
                 </TouchableWithoutFeedback>
                 <TouchableOpacity
                   onPress={() => {
-                    handleAutoSwipeRight(item?.id);
+                    handleInvite({uid: item?.uid, id: item?.id, withSwipe: true});
                   }}
                   style={styles.buttonCloseOrCheck}>
                   <View
@@ -1807,11 +1830,7 @@ const IO: FC = (): JSX.Element => {
                     }, 500);
                   }}
                   onSwipedRight={() => {
-                    setScrollPosition(0);
-                    onInvite(item?.info?.uid, item?.info?.id);
-                    setTimeout(() => {
-                      setCurrentEventCardPosition(prev => prev + 1);
-                    }, 500);
+                    handleInvite({uid: item?.info?.uid, id: item?.info?.id, withSwipe: false});
                   }}
                   OverlayLabelRight={OverlayRight}
                   OverlayLabelLeft={OverlayLeft}

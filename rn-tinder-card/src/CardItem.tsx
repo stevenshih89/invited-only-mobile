@@ -64,7 +64,7 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
       OverlayLabelTop,
       OverlayLabelBottom,
       children,
-      disableVerticalSwipe, 
+      disableVerticalSwipe,
     },
     ref
   ) => {
@@ -153,7 +153,6 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
       },
     });
 
-
     const animatedStyle = useAnimatedStyle(() => {
       const translationX = interpolate(
         translateX.value,
@@ -181,6 +180,50 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
         ],
       };
     });
+    const swipeCardRight = useCallback(() => {
+      translateY.value = withSpring(0, userConfig);
+      const destX = snapPoint(windowWidth, 100, translateXRange ?? []);
+
+      updatePosition(
+        destX,
+        translateX,
+        translateY,
+        cardWidth,
+        100,
+        disableRightSwipe,
+        disableLeftSwipe
+      );
+    }, [
+      translateY,
+      translateX,
+      translateXRange,
+      cardWidth,
+      disableRightSwipe,
+      disableLeftSwipe,
+    ]);
+
+    const swipeCardLeft = useCallback(() => {
+      translateY.value = withSpring(0, userConfig);
+      const destX = snapPoint(-windowWidth, -100, translateXRange ?? []);
+
+      updatePosition(
+        destX,
+        translateX,
+        translateY,
+        cardWidth,
+
+        -100,
+        disableRightSwipe,
+        disableLeftSwipe
+      );
+    }, [
+      translateY,
+      translateX,
+      translateXRange,
+      cardWidth,
+      disableRightSwipe,
+      disableLeftSwipe,
+    ]);
 
     const swipeRight = useCallback(() => {
       translateY.value = withSpring(0, userConfig);
@@ -259,6 +302,8 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
       swipeBottom: () => swipeBottom(),
       autoSwipeRight: () => swipeRight(),
       autoSwipeLeft: () => swipeLeft(),
+      swipeCardRight: () => swipeCardRight(),
+      swipeCardLeft: () => swipeCardLeft(),
     }));
 
     return (

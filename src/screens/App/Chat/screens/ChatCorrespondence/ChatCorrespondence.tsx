@@ -126,7 +126,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     const findChat = allChats?.filter(i => i?.id === id);
 
     if (findChat && findChat.length > 0) {
-      if(user?.accountType === 'host') {
+      if (user?.accountType === 'host') {
         if (typeof findChat[0].newMessagesGuest === 'number') {
           findChat[0].newMessagesGuest = 0;
         }
@@ -160,12 +160,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
       const findChat = allChats?.filter(i => i?.id === id);
 
-      const getDate = await firestore().collection('userInfo').doc(uid).get()
-      const docData = getDate.data()
+      const getDate = await firestore().collection('userInfo').doc(uid).get();
+      const docData = getDate.data();
 
       if (findChat && findChat.length > 0) {
         findChat[0].messages.push(updateData);
-        if(user?.accountType === 'host') {
+        if (user?.accountType === 'host') {
           if (typeof findChat[0].newMessagesHost === 'number') {
             findChat[0].newMessagesHost = findChat[0].newMessagesHost + 1;
           } else {
@@ -181,8 +181,15 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         await doc.update({
           chats: [...allChats],
         });
-        if(docData?.notificationSettings.chat) {
-          await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
+        if (docData?.notificationSettings.chat) {
+          await sendNotification(
+            uid,
+            `${currentUserName} sent you a new message`,
+            'Invited Only',
+            'message',
+            'Message'.toUpperCase(),
+            user,
+          );
         }
       }
     } catch (e) {
