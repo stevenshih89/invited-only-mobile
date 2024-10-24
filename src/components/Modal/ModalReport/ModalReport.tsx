@@ -22,7 +22,6 @@ interface ModalReportProps {
   setModalReport?: any;
   uidSender?: string;
   uid?: string;
-  activeEvent?: string;
   handleAutoSwipeLeft?: () => void;
 }
 
@@ -31,7 +30,6 @@ const ModalReport: FC<ModalReportProps> = ({
   setModalReport,
   uidSender,
   uid,
-  activeEvent,
   handleAutoSwipeLeft,
   handleCloseReport,
 }) => {

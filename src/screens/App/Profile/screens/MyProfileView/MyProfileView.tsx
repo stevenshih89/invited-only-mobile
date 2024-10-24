@@ -1,12 +1,12 @@
-import {Dispatch, FC, SetStateAction, useCallback, useEffect, useState} from 'react';
+import {Dispatch, FC, SetStateAction, useCallback, useContext, useEffect, useState} from 'react';
 import InstagramSLider from 'components/InstagramSlider/InstagramSlider';
 import {blackColor, lightGray5Color, lightGray6Color, lightGrayColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {screenHeight, screenWidth} from 'constants/common';
 import Man from 'assets/images/app/man-rectangle.png';
-import {Alert, FlatList, Image, SafeAreaView, ScrollView, Text, View} from 'react-native';
+import {Alert, FlatList, Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider';
 import PersonIcon from 'assets/images/icons/person.svg';
-import LocationIcon from 'assets/images/icons/location.svg';
+import LocationIcon from 'assets/images/icons/home.svg';
 import TablerGenderIcon from 'assets/images/icons/tabler_gender-bigender.svg';
 import HomeIcon from 'assets/images/icons/home.svg';
 import ArrowIcon from 'assets/images/icons/arrow-3.svg';
@@ -35,7 +35,6 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {profileEditingPath} from 'constants/pathLocations';
 import ModalUserProfile from 'components/Modal/ModalUserProfile/ModalUserProfile.tsx';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 import {ActivityIndicator} from 'react-native';
 import {calculateAge} from 'helpers/calculateAge';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -44,6 +43,8 @@ import {useUser} from '../../../../../store/userStore';
 import {useFocusEffect, useRoute} from '@react-navigation/native';
 import {User} from 'src/types/userInfo';
 import {pipe} from 'helpers/pipe';
+import { EventContext } from 'contexts/EventContext';
+import ModalReport from 'components/Modal/ModalReport/ModalReport';
 
 interface MyProfileViewProps {
   isShowEditButton?: boolean;
@@ -61,7 +62,8 @@ const processUserPhotos = pipe<string[]>(filterPhotos, mapPhotos);
 const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible, isShowInstagramPhotos = true}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>({});
-
+  const [scrollPosition, setScrollPosition] = useState(0);
+  
   const [photosList, setPhotosList] = useState<string[]>([]);
 
   const route = useRoute();
@@ -70,6 +72,11 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
   const styles = useStyles();
   const navigation = useAppNavigation();
   const userHost = useUser((i: any) => i?.user);
+
+  // const [reportedItem, setReportedItem] = useState<string>('');
+  const [modalReport, setModalReport] = useState<boolean>(false);
+
+  const {activeEvent} = useContext(EventContext);
 
   const goToProfileEditing = (): void => {
     navigation.navigate(profileEditingPath as never);
@@ -145,13 +152,34 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
     }
   };
 
+  const handleScroll = event => {
+    const positionY = event.nativeEvent.contentOffset.y;
+    setScrollPosition(positionY);
+  };
+
+  // const isHost = userHost?.accountType === 'host';
+
+  const handleReport = () => {
+    // const currEvent = isHost ? activeEvent : event;
+    // setReportedItem({uid, event: currEvent});
+    setModalReport(true);
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: blackColor}}>
+      <ModalReport
+            modalReport={modalReport}
+            setModalReport={setModalReport}
+            uidSender={userHost?.uid}
+            uid={route?.params?.uid}
+          />
       <View style={{flex: 1, paddingTop: screenHeight / 48, paddingHorizontal: 20}}>
         <ScrollView
+          onScroll={handleScroll}
+          scrollEventThrottle={20}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{paddingTop: 20, paddingBottom: 70}}
+          contentContainerStyle={{paddingTop: 20, paddingBottom: 58}}
           style={{flex: 1, borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
           <View style={styles.wrapperFakeCard}>
             <TouchingSlider
@@ -163,96 +191,18 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
               isShowInvitesTooltip={false}
               name={userInfo?.name}
               accountType={userInfo?.accountType}
-              // homeAddress={userInfo?.homeAddress}
-              homeAddress={userInfo?.location}
+              location={userInfo?.location}
               age={userInfo?.showAge ? userAge : ''}
               isShowLocation={true}
               isPremium={userInfo?.accountPremium}
               isProfile={true}
+              isPreview={route?.params?.isPreview}
+              scrollPositionPreview={scrollPosition}
+              eventsCreated={userInfo?.eventsList?.length}
+              joinEvents={userInfo?.joinEvents}
             />
-            {/* {isShowEditButton && <Button title="Edit" buttonStyle={{marginTop: 20}} onPress={goToProfileEditing} />} */}
-            {/* <View style={styles.bioWrapper}>
-              {userInfo?.bio && (
-                <>
-                  <Text style={styles.titleSection}>Bio</Text>
-                  <Text style={styles.textDescription}>{userInfo?.bio}</Text>
-                </>
-              )}
-              <Text style={[styles.titleSection, styles.mt31]}>About me</Text>
-              <View style={styles.wrapperTextTags}>
-                <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
-                  <PersonIcon />
-                  {` ${userInfo?.accountType}`}
-                </Text>
-                <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
-                  <TablerGenderIcon />
-                  {` ${userInfo?.gender}`}
-                </Text>
-                {userInfo?.address && (
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <LocationIcon /> {userInfo?.address}
-                  </Text>
-                )}
-                {userInfo?.homeAddress && (
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <HomeIcon /> {userInfo?.homeAddress}
-                  </Text>
-                )}
-                {userInfo?.height && (
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <ArrowIcon /> {`${userInfo?.height}cm`}
-                  </Text>
-                )}
-                {userInfo?.alcohol?.title && userInfo?.showAlcohol && (
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <WineIcon /> {userInfo?.alcohol?.title}
-                  </Text>
-                )}
-                {userInfo?.smoke?.title && (
-                  <Text style={[styles.textTagsAboutMe, {marginLeft: screenWidth / 33}]}>
-                    <SmokeIcon /> {`${userInfo?.smoke?.title}`}
-                  </Text>
-                )}
-              </View>
-              {!!userInfo?.interests?.length && (
-                <>
-                  <Text style={[styles.titleSection, styles.mt31]}>Interests</Text>
-                  <View style={{width: '100%'}}>
-                    <FlatList
-                      data={userInfo?.interests}
-                      numColumns={3}
-                      keyExtractor={({id}) => id.toString()}
-                      scrollEnabled={false}
-                      contentContainerStyle={{width: '100%'}}
-                      ItemSeparatorComponent={() => <View style={{height: 10, width: 10}} />}
-                      renderItem={({item: {title}}) => (
-                        <View style={{paddingHorizontal: 5, maxWidth: screenWidth / 2 - 40, flex: 1}}>
-                          <View
-                            style={{
-                              flex: 1,
-                              borderRadius: 30,
-                              paddingVertical: 8,
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              backgroundColor: lightGrayColor,
-                            }}>
-                            <Text style={{color: whiteColor, fontSize: RFValue(13, 812), fontFamily: Satoshi400}}>{title}</Text>
-                          </View>
-                        </View>
-                      )}
-                    />
-                  </View>
-                </>
-              )}
-              <View style={styles.wrapperImageSectionFaceGirl}>
-                {photosList?.map((photo: any, index: number) => {
-                  return <Image key={index.toString()} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />;
-                })}
-              </View>
-              {isShowInstagramPhotos && <InstagramSLider photosList={photosList} />}
-            </View> */}
             <View style={styles.basicsWrapper}>
-              {/* <Text style={styles.testBasics}>My basics</Text> */}
+              {!isShowEditButton&& <Text style={styles.testBasics}>My basics</Text>}
               {isShowEditButton && <Button onPress={goToProfileEditing} title={'Edit profile'} />}
               <View style={styles.wrapperTextTags}>
                 {userInfo?.work?.title && (
@@ -263,14 +213,6 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                     {userInfo?.work.title}
                   </Text>
                 )}
-                {userInfo?.accountType && (
-                  <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
-                    <View style={{width: 20}}>
-                      <PersonIcon />
-                    </View>
-                    {` ${userInfo?.accountType}`}
-                  </Text>
-                )}
                 {userInfo?.gender && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
                     <View style={{width: 20}}>
@@ -279,36 +221,12 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                     {` ${userInfo?.gender}`}
                   </Text>
                 )}
-                {/* {userInfo?.date && (
-                  <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
-                    <View style={{width: 20}}>
-                      <Cake />
-                    </View>
-                    {` ${userInfo?.date}`}
-                  </Text>
-                )} */}
                 {userInfo?.location && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
                     <View style={{width: 20}}>
                       <LocationIcon />
                     </View>
                     {'Live in ' + userInfo?.location}
-                  </Text>
-                )}
-                {userInfo?.homeAddress && (
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <View style={{width: 20}}>
-                      <HomeIcon />
-                    </View>
-                    {userInfo?.homeAddress}
-                  </Text>
-                )}
-                {userInfo?.height && (
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <View style={{width: 20}}>
-                      <ArrowIcon />
-                    </View>
-                    {`${userInfo?.height}cm`}
                   </Text>
                 )}
                 {userInfo?.alcohol && userInfo?.showAlcohol && (
@@ -329,45 +247,12 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 )}
               </View>
             </View>
-            <View style={styles.wrapperAboutMe}>
-              <Text style={styles.testBasics}>About me</Text>
-              {userInfo?.bio && <Text style={styles.textAboutMe}>{userInfo?.bio}</Text>}
-              {userInfo?.showLanguages && (
-                <View style={{marginTop: screenHeight / 55}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>Languages</Text>
-                  <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-                    {userInfo?.languages?.length > 0 ? (
-                      userInfo?.languages?.map(item => (
-                        <View
-                          style={{
-                            borderColor: lightGrayColor,
-                            borderWidth: 1,
-                            padding: 8,
-                            borderRadius: 30,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            marginTop: 14,
-                            marginRight: 4,
-                          }}>
-                          {getFlag(item.flag)}
-                          <Text
-                            style={{
-                              fontSize: RFValue(16, 812),
-                              color: whiteColor,
-                              fontFamily: Satoshi400,
-                              marginLeft: 10,
-                            }}>{` ${item.title}`}</Text>
-                        </View>
-                      ))
-                    ) : (
-                      <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}> No languages ​​selected</Text>
-                    )}
-                  </View>
-                </View>
-              )}
-            </View>
+            {userInfo?.bio && <View style={styles.wrapperAboutMe}>
+                <Text style={styles.testBasics}>About me</Text>
+                <Text style={styles.textAboutMe}>{userInfo?.bio}</Text>
+            </View>}
             <View style={{marginTop: screenHeight / 55}}>
-              <Text style={[styles.testBasics, {marginBottom: 14}]}>Add more interests</Text>
+              <Text style={[styles.testBasics, {marginBottom: 14}]}>My interests</Text>
               <FlatList
                 data={userInfo?.interests}
                 numColumns={3}
@@ -386,7 +271,6 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                         alignItems: 'center',
                         borderWidth: 1,
                         borderColor: lightGrayColor,
-                        // backgroundColor: lightGrayColor,
                       }}>
                       <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>{title}</Text>
                     </View>
@@ -394,6 +278,16 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 )}
               />
             </View>
+            {!isShowEditButton && photosList.length > 1 && <TouchableOpacity onPress={handleReport} style={{marginTop: 34}}>
+              <Text style={{
+                fontSize: RFValue(16,812),
+                color: whiteColor,
+                fontFamily: Satoshi700,
+                textAlign: 'center'
+              }}>
+                Block and Report
+              </Text>
+            </TouchableOpacity>}
             <View>
               {photosList?.map((item, index) => {
                 return index !== 0 && item ? (
@@ -405,25 +299,16 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 ) : null;
               })}
             </View>
-            <View style={styles.wrapperAboutMe}>
-              {/* <Text style={styles.testBasics}>{userInfo?.name} location</Text>
-              <Text style={styles.textAboutMe}>{typeof(userInfo?.location) === 'string'?userInfo?.location: 'Location not specified'}, 2.4 km away</Text>
-              <View
-                style={{
-                  paddingHorizontal: 18,
-                  // marginTop: 14,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  alignSelf: 'flex-start',
-                  paddingVertical: 8,
-                  borderRadius: 400,
-                  borderWidth: 1,
-                  borderColor: lightGray5Color,
-                }}>
-
-                <Text style={styles.textLocation}>Lives in {typeof(userInfo?.location) === 'string'?userInfo?.location: 'Location not specified'}</Text>
-              </View> */}
-            </View>
+            {!isShowEditButton && <TouchableOpacity onPress={handleReport} style={{marginTop: 34}}>
+              <Text style={{
+                fontSize: RFValue(16,812),
+                color: whiteColor,
+                fontFamily: Satoshi700,
+                textAlign: 'center'
+              }}>
+                Block and Report
+              </Text>
+            </TouchableOpacity>}
           </View>
           <ModalUserProfile title={'Alex'} image={Man} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
         </ScrollView>
