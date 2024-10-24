@@ -25,14 +25,7 @@ interface ModalReportProps {
   handleAutoSwipeLeft?: () => void;
 }
 
-const ModalReport: FC<ModalReportProps> = ({
-  modalReport,
-  setModalReport,
-  uidSender,
-  uid,
-  handleAutoSwipeLeft,
-  handleCloseReport,
-}) => {
+const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid, handleAutoSwipeLeft, handleCloseReport}) => {
   const styles = useStyles();
 
   // const deleteChat = async (uidItem: string) => {

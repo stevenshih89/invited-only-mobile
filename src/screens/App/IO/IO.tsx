@@ -243,20 +243,6 @@ const IO: FC = (): JSX.Element => {
     return subscription;
   }, []);
 
-  const handleAutoSwipeRight = () => {
-    if (cardRef.current) {
-      // @ts-ignore
-      cardRef.current?.localSwipeRight();
-    }
-  };
-
-  const handleAutoSwipeLeft = () => {
-    if (cardRef.current) {
-      // @ts-ignore
-      cardRef.current?.autoSwipeLeft();
-    }
-  };
-
   const handleSwipeCardRight = () => {
     if (cardRef.current) {
       // @ts-ignore
@@ -271,13 +257,49 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const handleInvite = ({uid, id, withSwipe, superInvite}: {uid: string; id: string; withSwipe: boolean; superInvite?: boolean}) => {
+  const handleFilterEvent = ({uid, id, withSwipeAnimation}: {uid: string; id: string; withSwipeAnimation: boolean}) => {
+    setScrollPosition(0);
+    setEvents(prev =>
+      prev.filter(i => {
+        return isHost ? i?.info?.uid !== uid : i?.info?.id !== id;
+      }),
+    );
+    setTimeout(() => {
+      setCurrentEventCardPosition(prev => prev + 1);
+    }, 100);
+    if (withSwipeAnimation) {
+      handleSwipeCardLeft();
+    }
+  };
+
+  const handleReject = ({uid, id, withSwipeAnimation}: {uid: string; id: string; withSwipeAnimation: boolean}) => {
+    setScrollPosition(0);
+    onReject(uid, id);
+    setTimeout(() => {
+      setCurrentEventCardPosition(prev => prev + 1);
+    }, 500);
+    if (withSwipeAnimation) {
+      handleSwipeCardLeft();
+    }
+  };
+
+  const handleInvite = ({
+    uid,
+    id,
+    withSwipeAnimation,
+    superInvite,
+  }: {
+    uid: string;
+    id: string;
+    withSwipeAnimation: boolean;
+    superInvite?: boolean;
+  }) => {
     setScrollPosition(0);
     onInvite(uid, id, superInvite);
     setTimeout(() => {
       setCurrentEventCardPosition(prev => prev + 1);
     }, 500);
-    if (withSwipe) {
+    if (withSwipeAnimation) {
       handleSwipeCardRight();
     }
   };
@@ -715,24 +737,12 @@ const IO: FC = (): JSX.Element => {
             }
           });
       }
-      setEvents(prev => {
-        console.warn(isHost, forUserUid, eventId);
-
-        const newl = prev.filter(i => {
-          console.warn(i?.info?.uid, i?.info?.id, eventId);
-
-          return isHost ? i?.info?.uid !== forUserUid : i?.info?.id !== eventId;
-        });
-        console.warn(newl.length);
-        return newl;
-      });
+      setEvents(prev => prev.filter(i => (isHost ? i?.info?.uid !== forUserUid : i?.info?.id !== eventId)));
       setScrollPosition(0);
     } catch (error) {
       // console.log('eror invite', error);
     }
   };
-
-  console.warn(events.length);
 
   const handleSuperJoin = () => {
     if (counterSuperInvites > 0) {
@@ -742,14 +752,6 @@ const IO: FC = (): JSX.Element => {
       }, 4000);
     } else {
       showToast('inviteMatch', "You don't have Super Joins", 'Super Join');
-    }
-  };
-
-  const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {
-    if (type === 'accept') {
-      handleAutoSwipeRight(uid, false);
-    } else {
-      handleAutoSwipeLeft();
     }
   };
 
@@ -778,10 +780,10 @@ const IO: FC = (): JSX.Element => {
     return getDoc.data();
   };
 
-  const customButton = (id: string) => {
+  const customButton = (id: string, uid: string) => {
     return (
       <TouchableOpacity
-        onPress={() => handleAutoSwipeRight()}
+        onPress={() => handleInvite({uid, id, withSwipeAnimation: true})}
         style={{
           height: 65,
           width: '100%',
@@ -927,15 +929,14 @@ const IO: FC = (): JSX.Element => {
               eventPhotos={event?.photos}
               photos={currUserPhotos}
               name={event?.name}
-              handleAutoSwipeRight={() => handleAutoSwipeRight()}
-              onInvite={() => handleInvite({uid: event?.uid, id: event?.id, withSwipe: true})}
-              superJoin={() => handleInvite({uid: event?.uid, id: event?.id, withSwipe: true, superInvite: true})}
+              onReject={() => handleReject({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
+              onInvite={() => handleInvite({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
+              superJoin={() => handleInvite({uid: event?.uid, id: event?.id, withSwipeAnimation: true, superInvite: true})}
               confirmedEvent={event?.statusEvent}
               uidUserEvent={event?.uid}
               hourEvent={event?.hour}
               usersListLength={event?.usersList.length}
               usersList={event?.usersList}
-              handleAutoSwipeLeft={handleAutoSwipeLeft}
               accountType={userInfo?.accountType}
               isPreview={false}
               setCurrentEventCardPosition={setCurrentEventCardPosition}
@@ -960,7 +961,7 @@ const IO: FC = (): JSX.Element => {
                 totalRequestsGuests={event?.requestsList?.length}
                 item={event}
                 showGuestList={false}
-                customButton={customButton(event?.id)}
+                customButton={customButton(event?.id, event?.uid)}
               />
               <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Place name</Text>
               <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.placeName}</Text>
@@ -1085,7 +1086,7 @@ const IO: FC = (): JSX.Element => {
               </TouchableOpacity>
               <View style={styles.wrapperButtonsFooter}>
                 <TouchableOpacity
-                  onPress={() => handleChangeListsEvents(event?.uid, 'reject')}
+                  onPress={() => handleReject({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
                   style={[styles.buttonCloseOrCheck, {marginLeft: 1}]}>
                   <View
                     style={{
@@ -1187,7 +1188,7 @@ const IO: FC = (): JSX.Element => {
                   </View>
                 </TouchableWithoutFeedback>
                 <TouchableOpacity
-                  onPress={() => handleInvite({uid: event?.uid, id: event?.id, withSwipe: true})}
+                  onPress={() => handleInvite({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
                   style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
                   <View
                     style={{
@@ -1342,7 +1343,8 @@ const IO: FC = (): JSX.Element => {
               isShowInvitesTooltip={false}
               isLocked={!userInfo?.accountConfirmed}
               confirmedAccount={accountConfirmed}
-              onInvite={() => handleInvite({uid, id: item?.id, withSwipe: true})}
+              onReject={() => handleReject({uid, id: item?.id, withSwipeAnimation: true})}
+              onInvite={() => handleInvite({uid, id: item?.id, withSwipeAnimation: true})}
               handleOpenSuperInvite={() => handleOpenSuperInvite(item, uid)}
               photos={girlPhotos}
               accountType={accountType}
@@ -1355,7 +1357,6 @@ const IO: FC = (): JSX.Element => {
               date={item.date}
               item={item}
               userInfo={userInfo}
-              handleAutoSwipeLeft={handleAutoSwipeLeft}
               isPreview={false}
             />
             <View style={styles.bioWrapper}>
@@ -1458,9 +1459,7 @@ const IO: FC = (): JSX.Element => {
               </View>
               <View style={styles.wrapperButtonsFooter}>
                 <TouchableOpacity
-                  onPress={() => {
-                    handleAutoSwipeLeft();
-                  }}
+                  onPress={() => handleReject({uid, id: item?.id, withSwipeAnimation: true})}
                   style={styles.buttonCloseOrCheck}>
                   <View
                     style={{
@@ -1497,10 +1496,7 @@ const IO: FC = (): JSX.Element => {
                     <CloseIcon />
                   </View>
                 </TouchableOpacity>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    handleSuperInviteBottom(item, 400);
-                  }}>
+                <TouchableWithoutFeedback onPress={() => handleSuperInviteBottom(item, 400)}>
                   <View style={styles.buttonFlash}>
                     <View
                       style={{
@@ -1561,9 +1557,7 @@ const IO: FC = (): JSX.Element => {
                   </View>
                 </TouchableWithoutFeedback>
                 <TouchableOpacity
-                  onPress={() => {
-                    handleInvite({uid: item?.uid, id: item?.id, withSwipe: true});
-                  }}
+                  onPress={() => handleInvite({uid: item?.uid, id: item?.id, withSwipeAnimation: true})}
                   style={styles.buttonCloseOrCheck}>
                   <View
                     style={{
@@ -1601,10 +1595,7 @@ const IO: FC = (): JSX.Element => {
                   </View>
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity
-                onPress={() => {
-                  handleReport(uid, activeEvent);
-                }}>
+              <TouchableOpacity onPress={() => handleReport(uid, activeEvent)}>
                 <Text style={styles.textHideNadSendReport}>Block and Report</Text>
               </TouchableOpacity>
             </View>
@@ -1822,18 +1813,8 @@ const IO: FC = (): JSX.Element => {
                   cardWidth="100%"
                   // @ts-ignore
                   cardHeight="100%"
-                  onSwipedLeft={() => {
-                    setScrollPosition(0);
-                    setTimeout(() => {
-                      onReject(item?.info?.uid, item?.info?.id);
-                    }, 500);
-                    setTimeout(() => {
-                      setCurrentEventCardPosition(prev => prev + 1);
-                    }, 500);
-                  }}
-                  onSwipedRight={() => {
-                    handleInvite({uid: item?.info?.uid, id: item?.info?.id, withSwipe: false});
-                  }}
+                  onSwipedLeft={() => handleReject({uid: item?.info?.uid, id: item?.info?.id, withSwipeAnimation: false})}
+                  onSwipedRight={() => handleInvite({uid: item?.info?.uid, id: item?.info?.id, withSwipeAnimation: false})}
                   OverlayLabelRight={OverlayRight}
                   OverlayLabelLeft={OverlayLeft}
                   disableBottomSwipe={true}
@@ -1867,7 +1848,7 @@ const IO: FC = (): JSX.Element => {
             <ModalEventLocked eventReviewed={activeEvent?.eventReviewed} eventStatus={activeEvent?.statusEvent} />
           )}
           <ModalReport
-            handleAutoSwipeLeft={handleAutoSwipeLeft}
+            handleAutoSwipeLeft={() => handleFilterEvent({uid: reportedItem?.uid, id: reportedItem?.event?.id, withSwipeAnimation: false})}
             modalReport={modalReport}
             setModalReport={setModalReport}
             uidSender={userHost?.uid}

@@ -23,15 +23,19 @@ import {handleCreateChat} from 'helpers/chat';
 import {getFontSize} from 'helpers/getFontSize';
 import {ACCEPTED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import {EventContext} from 'contexts/EventContext';
+import {Event} from 'src/types/event';
+import {User} from 'src/types/userInfo';
+import {MatchData} from '../IO/screens/Match/Match';
 
-const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibleModalFullEvent, fetchHostRequests}: any) => {
+const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fetchHostRequests}: any) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const [userInfo, setUserInfo] = useState({accountType: '', usersList: []});
+  const [userInfo, setUserInfo] = useState<Partial<User.Info>>({accountType: 'host'});
 
   const user = useUser((state: any) => state.user);
   const [currentUserName, setCurrentUserName] = useState();
   const {activeEvent} = useContext(EventContext);
+  const cardRef = useRef(null);
 
   const OverlayRight = () => {
     return (
@@ -69,7 +73,35 @@ const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibl
     );
   };
 
-  const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
+  const handleSwipeCardRight = () => {
+    if (cardRef.current) {
+      // @ts-ignore
+      cardRef.current?.swipeCardRight();
+    }
+  };
+
+  const handleSwipeCardLeft = () => {
+    if (cardRef.current) {
+      // @ts-ignore
+      cardRef.current?.swipeCardLeft();
+    }
+  };
+
+  const handleInvite = ({userItem, withSwipeAnimation}: {userItem: Event.User; withSwipeAnimation: boolean}) => {
+    onInvite(userItem);
+    if (withSwipeAnimation) {
+      handleSwipeCardRight();
+    }
+  };
+
+  const handleReject = ({userItem, withSwipeAnimation}: {userItem: Event.User; withSwipeAnimation: boolean}) => {
+    onReject(userItem);
+    if (withSwipeAnimation) {
+      handleSwipeCardLeft();
+    }
+  };
+
+  const onInvite = async (userItem: Event.User): Promise<void> => {
     const eventQuery = await firestore().collection('Events').doc(activeEvent?.id).get();
     if (!eventQuery.exists) {
       return;
@@ -77,7 +109,7 @@ const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibl
 
     const eventData = eventQuery.data();
     const allPeople = eventData?.female + eventData?.male;
-    const eventIsFull = eventData?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
+    const eventIsFull = eventData?.usersList?.filter((i: Event.User) => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
     if (eventIsFull) {
       setIsVisibleModalFullEvent();
@@ -86,26 +118,26 @@ const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibl
       return;
     }
 
-    const getDoc = await firestore().collection('userInfo').doc(item.uid).get();
+    const getDoc = await firestore().collection('userInfo').doc(userItem.uid).get();
     const guest = getDoc.data();
 
     try {
       const userAccepted = {
-        gender: item?.gender,
-        name: item?.name,
+        gender: userItem?.gender,
+        name: userItem?.name,
         status: INVITE_MATCH_STATUS,
         superInvite: false,
-        uid: item?.uid,
-        userPhoto: item?.userPhoto,
+        uid: userItem?.uid,
+        userPhoto: userItem?.userPhoto,
       };
 
       const matchedData = {
         type: 'match',
-        name: item?.name,
-        imageUri: item?.userPhoto,
+        name: userItem?.name,
+        imageUri: userItem?.userPhoto,
         uidHost: user?.uid,
-        uidGuest: item?.uid,
-        nameGuest: item?.name,
+        uidGuest: userItem?.uid,
+        nameGuest: userItem?.name,
         nameHost: currentUserName,
         eventId: activeEvent?.id,
         superInvite: false,
@@ -129,17 +161,17 @@ const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibl
         .collection('Events')
         .doc(activeEvent?.id)
         .update({
-          requestsList: firestore.FieldValue.arrayRemove(item),
+          requestsList: firestore.FieldValue.arrayRemove(userItem),
           usersList: firestore.FieldValue.arrayUnion(userAccepted),
         })
         .then(async () => {
-          await handleCreateChat(matchedData);
+          await handleCreateChat(matchedData as MatchData);
           handleOpenMatch(matchedData);
-          const getDoc = await firestore().collection('userInfo').doc(item?.uid).get();
+          const getDoc = await firestore().collection('userInfo').doc(userItem?.uid).get();
           const docData = getDoc.data();
           if (docData?.notificationSettings.requests) {
             await sendNotification(
-              item?.uid,
+              userItem?.uid,
               'New invite request',
               `${userInfo?.name} wants to invite you!`,
               'invite',
@@ -147,7 +179,6 @@ const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibl
               userInfo,
             );
           }
-          setRequestsForHost(prev => prev.filter((i: any) => i?.uid !== item?.uid));
         });
     } catch (e) {
       // console.log(e);
@@ -155,17 +186,18 @@ const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibl
     }
   };
 
-  const handleSwipeHostCardReject = async (item: any): Promise<void> => {
+  const onReject = async (userItem: Event.User): Promise<void> => {
     try {
       await firestore()
         .collection('Events')
         .doc(activeEvent?.id)
         .update({
-          requestsList: firestore.FieldValue.arrayRemove(item),
+          requestsList: firestore.FieldValue.arrayRemove(userItem),
+          rejectsList: firestore.FieldValue.arrayUnion({uid: userItem?.uid}),
         });
-      setRequestsForHost(prev => prev.filter((i: any) => i?.uid !== item?.uid));
     } catch (e) {
-      // console.log(e);
+      console.error(e);
+      showToast('inviteMatch', '', "There's been an error");
     }
   };
 
@@ -175,7 +207,7 @@ const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibl
       try {
         const userInfoDoc = await firestore().collection('userInfo').doc(item.uid).get();
         if (userInfoDoc.exists) {
-          setUserInfo(userInfoDoc.data());
+          setUserInfo(userInfoDoc.data() as User.Info);
         }
         const currentUserInfo = await firestore().collection('userInfo').doc(currentUserUid).get();
         setCurrentUserName(currentUserInfo.data()?.name);
@@ -199,15 +231,6 @@ const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibl
     });
   };
 
-  const cardRef = useRef(null);
-
-  const handleAutoSwipeLeft = () => {
-    if (cardRef.current) {
-      // @ts-ignore
-      cardRef.current?.autoSwipeLeft();
-    }
-  };
-
   return (
     <View
       style={{
@@ -222,8 +245,8 @@ const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibl
         cardWidth="100%"
         // @ts-ignore
         cardHeight="100%"
-        onSwipedRight={() => handleSwipeHostCardInvite(item)}
-        onSwipedLeft={() => handleSwipeHostCardReject(item)}
+        onSwipedRight={() => handleInvite({userItem: item, withSwipeAnimation: false})}
+        onSwipedLeft={() => handleReject({userItem: item, withSwipeAnimation: false})}
         OverlayLabelRight={OverlayRight}
         OverlayLabelLeft={OverlayLeft}
         disableBottomSwipe={true}
@@ -268,8 +291,7 @@ const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibl
               )}
               <TouchableOpacity
                 onPress={() => {
-                  handleAutoSwipeLeft();
-                  handleSwipeHostCardReject(item);
+                  handleReject({userItem: item, withSwipeAnimation: true});
                 }}
                 style={{
                   width: 32,
@@ -346,7 +368,7 @@ const ItemRequestHost = ({item, setRequestsForHost, handleOpenMatch, setIsVisibl
             }}>
             <TouchableOpacity
               onPress={() => {
-                handleSwipeHostCardInvite(item);
+                handleInvite({userItem: item, withSwipeAnimation: true});
               }}
               style={{
                 backgroundColor: blackColor,

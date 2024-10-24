@@ -20,6 +20,7 @@ import {INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import {calculateAge} from 'helpers/calculateAge';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat';
 import Button from 'components/Button/Button';
+import {Event} from 'src/types/event';
 
 const eventTypes = [
   {id: 0, label: 'Vip Tables'},
@@ -38,6 +39,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
   const [hostInfo, setHostInfo] = useState([]);
   const [loading, setLoading] = useState(true);
   const [heightAnim] = useState(new Animated.Value(screenHeight * 0.4));
+  const cardRef = useRef(null);
   const {photos, uid, hour, date, female, male, name, usersList, activeType} = list;
 
   const styles = useStyles();
@@ -91,17 +93,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
     );
   };
 
-  const cardRef = useRef(null);
-
-  const handleAutoSwipeRight = () => {
-    cardRef.current?.autoSwipeRight();
-  };
-
-  const handleAutoSwipeLeft = () => {
-    cardRef.current?.autoSwipeLeft();
-  };
-
-  const handleSwipeGuestCardInvite = async (item: any): Promise<void> => {
+  const onInvite = async (userItem: Event.User): Promise<void> => {
     Animated.timing(heightAnim, {
       toValue: 0,
       duration: 300,
@@ -115,7 +107,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
 
       try {
         const updatedUsersList = event.usersList?.map(invUser => {
-          if (invUser.uid === item?.uid) {
+          if (invUser.uid === userItem?.uid) {
             return {
               ...invUser,
               status: INVITE_MATCH_STATUS,
@@ -127,10 +119,10 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
         const matchedData = {
           type: 'match',
           name: event?.hostName,
-          imageUri: item?.userPhoto,
+          imageUri: userItem?.userPhoto,
           uidHost: event?.uid,
-          uidGuest: item?.uid,
-          nameGuest: item?.name,
+          uidGuest: userItem?.uid,
+          nameGuest: userItem?.name,
           nameHost: hostInfo?.name,
           eventId: event?.id,
           superInvite: false,
@@ -171,7 +163,6 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
                 user,
               );
             }
-            setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
           });
         await updateJoinEvents();
       } catch (e) {
@@ -199,24 +190,52 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
     }
   };
 
-  const handleSwipeGuestCardReject = async (item: any): Promise<void> => {
+  const onReject = async (userItem: Event.User): Promise<void> => {
     try {
       await firestore()
         .collection('Events')
         .doc(list?.id)
         .update({
-          usersList: firestore.FieldValue.arrayRemove(item),
+          usersList: firestore.FieldValue.arrayRemove(userItem),
+          rejectsList: firestore.FieldValue.arrayUnion({uid: userItem.uid}),
         });
       showToast('inviteMatch', '', 'You reject invitation');
       const getDoc = await firestore().collection('userInfo').doc(uid).get();
       const docData = getDoc.data();
       if (docData?.notificationSettings.myEvents) {
-        await sendNotification(uid, 'Not now.', `${item?.name} reject your invitation.`, 'rejected', 'Rejected'.toUpperCase(), user);
+        await sendNotification(uid, 'Not now.', `${userItem?.name} reject your invitation.`, 'rejected', 'Rejected'.toUpperCase(), user);
       }
-      setDataForGuest(prev => prev.filter((i: any) => i.uid !== item?.uid));
     } catch (e) {
-      // console.log(e);
+      console.error(e);
       showToast('inviteMatch', '', "There's been an error");
+    }
+  };
+
+  const handleSwipeCardRight = () => {
+    if (cardRef.current) {
+      // @ts-ignore
+      cardRef.current?.swipeCardRight();
+    }
+  };
+
+  const handleSwipeCardLeft = () => {
+    if (cardRef.current) {
+      // @ts-ignore
+      cardRef.current?.swipeCardLeft();
+    }
+  };
+
+  const handleInvite = ({userItem, withSwipeAnimation}: {userItem: Event.User; withSwipeAnimation: boolean}) => {
+    onInvite(userItem);
+    if (withSwipeAnimation) {
+      handleSwipeCardRight();
+    }
+  };
+
+  const handleReject = ({userItem, withSwipeAnimation}: {userItem: Event.User; withSwipeAnimation: boolean}) => {
+    onReject(userItem);
+    if (withSwipeAnimation) {
+      handleSwipeCardLeft();
     }
   };
 
@@ -249,8 +268,8 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
             cardWidth="100%"
             // @ts-ignore
             cardHeight="100%"
-            onSwipedRight={() => handleSwipeGuestCardInvite(item[0])}
-            onSwipedLeft={() => handleSwipeGuestCardReject(item[0])}
+            onSwipedRight={() => handleInvite({userItem: item[0], withSwipeAnimation: false})}
+            onSwipedLeft={() => handleReject({userItem: item[0], withSwipeAnimation: false})}
             OverlayLabelRight={OverlayRight}
             OverlayLabelLeft={OverlayLeft}
             disableBottomSwipe={true}
@@ -405,7 +424,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
                       </View>
                     </View>
                     <TouchableOpacity
-                      onPress={() => handleAutoSwipeLeft()}
+                      onPress={() => handleReject({userItem: item[0], withSwipeAnimation: true})}
                       style={{
                         width: 50,
                         height: 50,
@@ -492,7 +511,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
                     </View>
                   </View>
                   <Button
-                    onPress={handleAutoSwipeRight}
+                    onPress={() => handleInvite({userItem: item[0], withSwipeAnimation: true})}
                     title="Join"
                     buttonStyle={{backgroundColor: blackColor}}
                     buttonTitleStyle={{color: whiteColor}}

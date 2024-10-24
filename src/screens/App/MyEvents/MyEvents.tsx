@@ -559,11 +559,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
   const customButtonsGuest = (id: string, usersList: any[], date: string, uidHost: string, placeName: string, hostPhoto: string) => {
     const findUser = usersList.find(item => item.uid === user?.uid);
-    console.warn(findUser);
-
     const status = findUser?.status;
-
-    console.warn(status, id, placeName);
 
     return (
       <>
