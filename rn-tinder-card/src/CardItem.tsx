@@ -98,7 +98,6 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
       onEnd: ({ velocityX, velocityY, translationX, translationY }) => {
         const positiveX = Math.abs(translationX);
         const positiveY = Math.abs(translationY);
-
         const destX = snapPoint(
           translateX.value,
           velocityX,
@@ -109,30 +108,7 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
           velocityY,
           translateYRange ?? []
         );
-
-        if (disableVerticalSwipe || (!destX && !destY)) {
-          resetPosition(translateX, translateY);
-        } else if (
-          positiveY > positiveX &&
-          destY &&
-          !disableTopSwipe &&
-          Math.sign(translationY) === -1
-        ) {
-          translateY.value = withSpring(-windowHeight, {
-            velocity: velocityY,
-          });
-          onSwipedTop && runOnJS(onSwipedTop)();
-        } else if (
-          positiveY > positiveX &&
-          destY &&
-          !disableBottomSwipe &&
-          Math.sign(translationY) === 1
-        ) {
-          translateY.value = withSpring(windowHeight, {
-            velocity: velocityY,
-          });
-          onSwipedBottom && runOnJS(onSwipedBottom)();
-        } else {
+        if (positiveX > positiveY) {
           updatePosition(
             destX,
             translateX,
@@ -144,8 +120,23 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
             onSwipedRight,
             onSwipedLeft
           );
+        } else if (!disableVerticalSwipe && destY) {
+          if (positiveY > positiveX && Math.sign(translationY) === -1 && !disableTopSwipe) {
+            translateY.value = withSpring(-windowHeight, {
+              velocity: velocityY,
+            });
+            onSwipedTop && runOnJS(onSwipedTop)();
+          } else if (positiveY > positiveX && Math.sign(translationY) === 1 && !disableBottomSwipe) {
+            translateY.value = withSpring(windowHeight, {
+              velocity: velocityY,
+            });
+            onSwipedBottom && runOnJS(onSwipedBottom)();
+          } else {
+            resetPosition(translateX, translateY);
+          }
+        } else {
+          resetPosition(translateX, translateY);
         }
-
         if (scaleValue !== 1)
           scale.value = withTiming(1, {
             easing: Easing.inOut(Easing.ease),
