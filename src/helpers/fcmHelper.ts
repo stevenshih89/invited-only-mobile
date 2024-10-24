@@ -149,7 +149,11 @@ export function registerListenerWithFCM() {
 
 //method was called to display notification
 async function onDisplayNotification(title, body, data, setRejectVisible: () => void, setAcceptModalVisible: () => void) {
-  showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image});
+  const params = data.params;
+  const paramsParse = JSON.parse(params);  
+  const path = paramsParse.path;
+  
+  showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image, path, params: paramsParse.eventInfo});
   if (title === 'Your Account is Not Approved') {
     setRejectVisible();
   }
@@ -243,15 +247,16 @@ export const sendNotification = async (
   if (params) {
     notificationData.data.params = params;
   }
+
   try {
     const result = await functions().httpsCallable('sendNotification')(notificationData);
     if (result.data.success) {
       // console.warn('Notification sent successfully', result.data.data);
     } else {
-      // console.error('Error sending notification:', result.data.error);
+      console.error('Error sending notification:', result.data.error);
     }
   } catch (error) {
-    // console.error('Error calling Firebase Function:', error);
+    console.error('Error calling Firebase Function:', error);
   }
 
   const id = generateRandomId(8);

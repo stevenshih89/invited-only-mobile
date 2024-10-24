@@ -487,14 +487,17 @@ const MyEvents: FC<any> = ({navigation}) => {
     );
   };
 
-  const changeStatusGuestUsersList = async (
+  const changeStatusGuestUsersList = async (     
     status: string,
     id: string,
     uidHost: string,
     placeName: string,
     date: string,
     hostPhoto: string,
-  ) => {
+    item: any
+  ) => {    
+    console.log('changeStatusGuestUsersList');
+
     const eventQuerySnapshot = await firestore().collection('Events').doc(id).get();
     const eventDataList = eventQuerySnapshot.data();
     if (!eventDataList?.usersList.length) {
@@ -527,6 +530,7 @@ const MyEvents: FC<any> = ({navigation}) => {
             'Accepted',
             'Accepted'.toUpperCase(),
             user,
+            JSON.stringify({ path: 'guestsList', eventInfo: item})
           );
           break;
         case NOT_ACCEPTED_STATUS:
@@ -550,7 +554,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   };
 
-  const customButtonsGuest = (id: string, usersList: any[], date: string, uidHost: string, placeName: string, hostPhoto: string) => {
+  const customButtonsGuest = (id: string, usersList: any[], date: string, uidHost: string, placeName: string, hostPhoto: string, item: any) => {
     const findUser = usersList.find(item => item.uid === user?.uid);
     const status = findUser?.status;
 
@@ -603,7 +607,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         {status === APPROVED_STATUS && (
           <>
             <TouchableOpacity
-              onPress={() => changeStatusGuestUsersList(ACCEPTED_STATUS, id, uidHost, placeName, date, hostPhoto)}
+              onPress={() => changeStatusGuestUsersList(ACCEPTED_STATUS, id, uidHost, placeName, date, hostPhoto, item)}
               style={{
                 height: 65,
                 width: '100%',
@@ -956,7 +960,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     totalRequestsGuests={item?.requestsList?.length}
                     item={item}
                     showGuestList={false}
-                    customButton={customButtonsGuest(item?.id, item?.usersList, item?.date, item?.uid, item?.placeName, item?.hostImage)}
+                    customButton={customButtonsGuest(item?.id, item?.usersList, item?.date, item?.uid, item?.placeName, item?.hostImage, item)}
                     showInfoTop={true}
                   />
                 )}
