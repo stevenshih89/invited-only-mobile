@@ -293,14 +293,19 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   };
 
   const handleApproveGuestFromHost = async () => {
+    console.log('uid', uid);
+
+    
     try {
       if (uid) {
         const getDate = await firestore().collection('userInfo').doc(uid).get();
         const docData = getDate.data();
         await updateChatDocument();
         await updateEventDocument();
+        console.log('docData?.notificationSettings.requests', docData?.notificationSettings.requests);
+        
         if (docData?.notificationSettings.requests) {
-          await sendNotification(uid, 'Please confirm your attendence', 'Request approved', 'Approve', 'Approved'.toUpperCase(), userInfo);
+          await sendNotification(uid, 'Please confirm your attendence', 'Request approved', 'Approve', 'Approved'.toUpperCase(), userInfo, JSON.stringify({path: 'myEvents'}));
         }
         showToast('inviteMatch', `Waiting for ${userGuest?.name} to accept your invitation`, 'Almost there!', {
           ownerPhoto: userGuest?.userPhoto,
@@ -308,7 +313,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         });
       }
     } catch (e) {
-      // console.log(e);
+
     }
   };
 

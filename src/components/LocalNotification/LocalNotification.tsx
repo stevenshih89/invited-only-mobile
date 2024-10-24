@@ -23,12 +23,12 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {screenWidth} from 'constants/common';
 import {useNavigation} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {chatCorrespondencePath, commonStackPath, invitationCodePath} from 'constants/pathLocations';
+import {chatCorrespondencePath, commonStackPath, eventActiveInfoPath, invitationCodePath, myEventsPath, requestsPath} from 'constants/pathLocations';
 
 const LocalNotification = () => {
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const handlePress = (path: string, params?: any) => {
+  const handlePress = (path: string, params?: any) => {    
     switch (path) {
       case 'invitationCode':
         navigation.navigate(commonStackPath, {screen: invitationCodePath});
@@ -39,6 +39,27 @@ const LocalNotification = () => {
           screen: chatCorrespondencePath,
           params,
         });
+        break;
+      case 'requests':
+        // @ts-ignore
+        navigation.navigate(requestsPath, {
+          screen: requestsPath,
+          params,
+        });
+        break;
+      case 'myEvents':
+        // @ts-ignore
+        navigation.navigate(myEventsPath, {
+          screen: myEventsPath,
+          params,
+        });
+        break;
+      case 'guestsList':
+        // @ts-ignore
+        navigation.navigate(commonStackPath, {
+          screen: eventActiveInfoPath, 
+          params: {list: params}} as never
+        )
         break;
       default:
         break;
@@ -176,3 +197,4 @@ const LocalNotification = () => {
 };
 
 export default LocalNotification;
+

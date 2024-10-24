@@ -520,7 +520,7 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
+  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {    
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
@@ -689,6 +689,7 @@ const IO: FC = (): JSX.Element => {
                 'invite',
                 'Join Request'.toUpperCase(),
                 userInfo,
+                JSON.stringify({path: 'requests'})
               );
             }
           });
