@@ -4,7 +4,7 @@ import SafetyAndWellbeing from './screens/SafetyAndWellbeing/SafetyAndWellbeing'
 import MyPlan from './screens/MyPlan/MyPlan';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import EditBlack from 'assets/images/icons/edit-black.svg';
-import {FC, useCallback, useState} from 'react';
+import {FC, useCallback, useEffect, useState} from 'react';
 import Button from 'components/Button/Button';
 import useStyles from './styles';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -13,7 +13,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {Alert} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
-import {transparentGray60Color, whiteColor} from 'constants/colors';
+import {lightGray9Color, transparentGray60Color, transparentWhite30Color, transparentWhite40Color, transparentWhite56Color, whiteColor} from 'constants/colors';
 import {calculateAge} from 'helpers/calculateAge';
 import Payment from 'screens/Auth/Payment/Payment';
 import Svg, {Circle, G} from 'react-native-svg';
@@ -23,12 +23,15 @@ import FastImage from 'react-native-fast-image';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { Satoshi400, Satoshi700 } from 'constants/fonts';
 
 const Profile: FC = () => {
   const [activeTabId, setActiveTabId] = useState(0);
   const [percentage, setPercentage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({} as any);
+  const [totalGuests, setTotalGuests] = useState(0)  
 
   const [mainImage, setMainImage] = useState({id: 0, image: ''} as any);
 
@@ -37,9 +40,9 @@ const Profile: FC = () => {
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
 
   const tabList = [
-    {id: 0, title: 'My Plan'},
-    {id: 1, title: 'Safety & Wellbeing'},
-    {id: 2, title: 'Invitations'},
+    {id: 0, title: 'My plan'},
+    {id: 1, title: 'Safety'},
+    {id: 2, title: 'App Invitations'},
   ];
 
   const calculateCompleteness = profile => {
@@ -122,6 +125,24 @@ const Profile: FC = () => {
     });
   };
 
+  const getGuestList = async () => {    
+    let totalParticipants = 0
+    try {
+      for (const eventId of userInfo?.eventsList) { 
+        const eventDoc = await firestore().collection('Events').doc(eventId).get()
+        const data = eventDoc.data()
+        totalParticipants += data?.male + data?.female
+      }
+      setTotalGuests(totalParticipants)
+    } catch (error) {
+      
+    }
+  }
+
+  useEffect(() => {
+    getGuestList()
+  },[userInfo])
+
   const userAge = calculateAge(userInfo?.date);
 
   if (loading || !userInfo) {
@@ -178,7 +199,6 @@ const Profile: FC = () => {
                 resizeMode={FastImage.resizeMode.cover}
               />
             ) : (
-              // <Image source={{uri: mainImage?.image}} style={styles.profileImage} />
               <View style={[styles.profileImage, {backgroundColor: whiteColor}]} />
             )}
             <View style={[styles.buttonContainer, {position: 'absolute', bottom: 0, zIndex: 20}]}>
@@ -198,7 +218,8 @@ const Profile: FC = () => {
           </View>
           <View style={styles.nameContainer}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.showAge ? `, ${userAge}` : ''}`}</Text>
+              <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.showAge ? ',' : ''}`}</Text>
+              <Text style={styles.ageText}>{` ${userInfo?.showAge ? `${userAge}` : ''}`}</Text>
               {userInfo?.accountConfirmed && <CheckStarWhite style={styles.checkStarIcon} />}
             </View>
             <View style={{flexDirection: 'row'}}>
@@ -206,24 +227,65 @@ const Profile: FC = () => {
                 {userInfo?.accountType?.toLowerCase() === 'host' && <Text style={styles.accountTypeText}>Host</Text>}
                 {userInfo?.accountType?.toLowerCase() === 'guest' && <Text style={styles.accountTypeText}>Guest</Text>}
               </View>
-              {(userInfo?.accountType?.toLowerCase() === 'guest' ||
-                (userInfo?.accountType?.toLowerCase() === 'host' && userInfo?.accountPremium)) && (
-                <LinearGradient
-                  colors={['#977B4A', '#E5D291', '#A28453']}
-                  style={styles.accountTypeWrapperPremium}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}>
-                  {true && <Text style={styles.accountTypePremium}>Premium</Text>}
-                </LinearGradient>
-              )}
+              {(userInfo?.accountType?.toLowerCase() === 'host' && userInfo?.accountPremium) ||
+                (userInfo?.accountType?.toLowerCase() === 'guest' && (
+                  <LinearGradient
+                    colors={['#977B4A', '#E5D291', '#A28453']}
+                    style={styles.accountTypeWrapperPremium}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}>
+                    {true && <Text style={styles.accountTypePremium}>Premium</Text>}
+                  </LinearGradient>
+                ))}
             </View>
           </View>
           <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} />
         </View>
+        {userInfo?.accountType === 'host' && <View style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 19, marginTop: 30, marginBottom: 18, alignSelf: 'center'}}>
+          <View style={{alignItems: 'center'}}>
+            <Text
+              style={{
+                color: whiteColor,
+                fontSize: RFValue(20, 812),
+                fontFamily: Satoshi700,
+              }}>
+              {userInfo?.eventsList?.length}
+            </Text>
+            <Text
+              style={{
+                color: whiteColor,
+                fontSize: RFValue(14, 812),
+                fontFamily: Satoshi400,
+                marginTop: 4.5,
+              }}>
+              Total Events
+            </Text>
+          </View>
+          <View style={{width: 1, borderRadius: 1, height: 36, backgroundColor: whiteColor, marginHorizontal: 57}} />
+          <View style={{alignItems: 'center'}}>
+            <Text
+              style={{
+                color: whiteColor,
+                fontSize: RFValue(20, 812),
+                fontFamily: Satoshi700,
+              }}>
+              {totalGuests}
+            </Text>
+            <Text
+              style={{
+                color: whiteColor,
+                fontSize: RFValue(14, 812),
+                fontFamily: Satoshi400,
+                marginTop: 4.5,
+              }}>
+              Guest List
+            </Text>
+          </View>
+        </View>}
         <FlatList
           keyExtractor={item => item.id.toString()}
           data={tabList}
-          style={styles.flatListContainer}
+          style={[styles.flatListContainer, {marginTop: userInfo?.accountType === 'guest'? 34: 0}]}
           contentContainerStyle={{paddingLeft: 20}}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
@@ -231,13 +293,25 @@ const Profile: FC = () => {
           ItemSeparatorComponent={() => <View style={styles.flatListItemSeparator} />}
           renderItem={({item: {id, title}}) => {
             const isActive = activeTabId === id;
+            const isDisabled = id === 2 && !userInfo?.accountConfirmed;
             return (
               <TouchableOpacity
-                disabled={id === 2 && !userInfo?.accountConfirmed}
+                disabled={isDisabled}
                 activeOpacity={0.7}
                 onPress={() => setActiveTabId(id)}
-                style={[styles.tabButton, isActive ? styles.tabButtonActive : styles.tabButtonInactive]}>
-                <Text style={[styles.tabButtonText, isActive ? styles.tabButtonTextActive : styles.tabButtonTextInactive]}>{title}</Text>
+                style={[
+                  styles.tabButton,
+                  isActive ? styles.tabButtonActive : styles.tabButtonInactive,
+                  {backgroundColor: isDisabled ? transparentWhite40Color : isActive ? whiteColor : lightGray9Color},
+                ]}>
+                <Text
+                  style={[
+                    styles.tabButtonText,
+                    isActive ? styles.tabButtonTextActive : styles.tabButtonTextInactive,
+                    {color: isDisabled ? transparentWhite30Color : isActive ? lightGray9Color : whiteColor},
+                  ]}>
+                  {title}
+                </Text>
               </TouchableOpacity>
             );
           }}

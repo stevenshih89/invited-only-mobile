@@ -18,6 +18,7 @@ import ArrowRightIcon from 'assets/images/icons/arrow-right-balck.svg';
 import ArrowRightWhiteIcon from 'assets/images/icons/arrow-right.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import FlashIcon from 'assets/images/icons/flash-white.svg';
+import FlashFillIcon from 'assets/images/icons/flash-filled.svg'
 import CloseIcon from 'assets/images/icons/close-circle.svg';
 import CalendarIcon from 'assets/images/icons/calendar-white.svg';
 import UnlimitedIcon from 'assets/images/icons/unlimited-new.svg';
@@ -27,6 +28,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import Loader from '../../../../../components/Modal/ModalLoader/Loader';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
 import { SvgProps } from 'react-native-svg';
+import { screenHeight } from 'constants/common';
 
 interface WhatGetItem {
   title: string;
@@ -159,9 +161,10 @@ const MyPlan = () => {
             backgroundColor: transparentGray90Color,
             flexDirection: 'row',
             justifyContent: 'space-between',
+            borderRadius: 18,
           }}>
           <View style={{alignItems: 'center', flexDirection: 'row'}}>
-            <FlashIcon width={18} height={18} />
+            <FlashFillIcon width={18} height={18} />
             <Text style={{fontSize: RFValue(18, 812), marginLeft: 8, color: whiteColor, fontFamily: Satoshi700Italic}}>
               Super {userInfo.accountType === 'host' ? 'Invite' : 'Join'}{' '}
               <Text style={{fontFamily: Satoshi400}}>({userInfo?.superInvites + userInfo?.weeklySuperInvites})</Text>
@@ -212,7 +215,8 @@ const MyPlan = () => {
                       start={{x: 0, y: 0}}
                       end={{x: 1, y: 0}}
                       style={{
-                        paddingVertical: 9,
+                        height: screenHeight / 14,
+                        maxHeight: 60,
                         borderRadius: 18,
                         flexDirection: 'row',
                         justifyContent: 'center',
@@ -220,7 +224,6 @@ const MyPlan = () => {
                         width: '100%',
                       }}>
                       <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
-                      <ArrowRightIcon width={16} height={16} />
                     </LinearGradient>
                   </TouchableOpacity>
                 ) : (
@@ -237,9 +240,15 @@ const MyPlan = () => {
                   colors={['#977B4A', '#E5D291', '#A28453']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0}}
-                  style={{paddingVertical: 16, borderRadius: 18, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                  style={{
+                    height: screenHeight / 14,
+                    maxHeight: 60,
+                    borderRadius: 18,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
                   <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
-                  <ArrowRightIcon width={16} height={16} />
                 </LinearGradient>
               </TouchableOpacity>
             )}
@@ -247,35 +256,35 @@ const MyPlan = () => {
         )}
       </View>
       <View style={styles.listColumnWrapper}>
-        <Text style={styles.textWhatYouGet}>What you {userInfo?.accountPremium ? 'have' : 'get'}:</Text>
-        {!userInfo?.accountPremium && <Text style={styles.textPremium}>Premium</Text>}
+        <Text style={styles.textWhatYouGet}>What you get:</Text>
+        <Text style={styles.textPremium}>Premium</Text>
       </View>
       {whatGet.map(item => (
         <View key={item.title} style={styles.itemInTheList}>
-        <View style={styles.rowTextAndCheckCircleIcon}>
-          <View style={styles.wrapperIcon}>
-          <item.icon />
-          </View>
-          <Text style={styles.textFromTheList}>{item.title}</Text>
-          <ControlledTooltip
-            width={300}
-            height={100}
-            backgroundColor={lightGray5Color}
-            withOverlay={false}
-            popover={
-              <View style={styles.tooltipWrapper}>
-                <View style={styles.rowTitleTooltip}>
-                  <Text style={styles.textUnlimitedEventsCreation}>{item.title}</Text>
-                  <CloseIcon />
+          <View style={styles.rowTextAndCheckCircleIcon}>
+            <View style={styles.wrapperIcon}>
+              <item.icon />
+            </View>
+            <Text style={styles.textFromTheList}>{item.title}</Text>
+            <ControlledTooltip
+              width={300}
+              height={100}
+              backgroundColor={lightGray5Color}
+              withOverlay={false}
+              popover={
+                <View style={styles.tooltipWrapper}>
+                  <View style={styles.rowTitleTooltip}>
+                    <Text style={styles.textUnlimitedEventsCreation}>{item.title}</Text>
+                    <CloseIcon />
+                  </View>
+                  <Text style={styles.textHostAccessIsLimited}>{item.description}</Text>
                 </View>
-                <Text style={styles.textHostAccessIsLimited}>{item.description}</Text>
-              </View>
-            }>
-            <InfoCircleIcon />
-          </ControlledTooltip>
+              }>
+              <InfoCircleIcon />
+            </ControlledTooltip>
+          </View>
+          <CheckIcon />
         </View>
-        <CheckIcon />
-      </View>
       ))}
     </View>
   );
