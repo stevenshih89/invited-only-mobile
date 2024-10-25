@@ -234,7 +234,7 @@ const MyPlan = () => {
               </View>
               {currentSubscriptions.activeSubscriptions.length > 0 && <ArrowRightWhiteIcon />}
             </TouchableOpacity>
-            {currentSubscriptions.activeSubscriptions.length > 0 && currentSubscriptions.activeSubscriptions.length < 3 && (
+            {currentSubscriptions.activeSubscriptions.length > 0 && currentSubscriptions.activeSubscriptions.length < 3 && !currentSubscriptions.activeSubscriptions.includes('io_25_wk') && (
               <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24}}>
                 <LinearGradient
                   colors={['#977B4A', '#E5D291', '#A28453']}
