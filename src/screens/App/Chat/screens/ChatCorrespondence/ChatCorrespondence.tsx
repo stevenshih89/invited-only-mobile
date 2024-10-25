@@ -225,10 +225,6 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     }
   };
 
-  useEffect(() => {
-    // console.warn('messages', messages);
-  }, [messages]);
-
   const goToProfileView = (currentUid: string) => {
     setModalVisible(false);
     // @ts-ignore
@@ -284,9 +280,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       .doc(activeEvent)
       .onSnapshot(documentSnapshot => {
         const data = documentSnapshot.data()?.chats;
-        const findChat = data?.filter(j => j?.id === id);
+        const findChat = data?.find(j => j?.id === id);
+        if (!findChat) {
+          navigation.goBack();
+        }
         setAllChats(data);
-        setMessages(findChat ? findChat[0]?.messages : null);
+        setMessages(findChat ? findChat?.messages : null);
       });
 
     return () => subscriber();

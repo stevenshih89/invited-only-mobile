@@ -601,9 +601,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             </TouchableOpacity>
             <View style={{width: 16}} />
             <TouchableOpacity
-              onPress={() => {
-                onInvite && onInvite();
-              }}
+              onPress={() => onInvite && onInvite()}
               style={{
                 flex: 1,
                 height: 44,
@@ -965,9 +963,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             </TouchableOpacity>
             <View style={{width: 16}} />
             <TouchableOpacity
-              onPress={() => {
-                onInvite && onInvite();
-              }}
+              onPress={() => onInvite && onInvite()}
               style={{
                 flex: 1,
                 height: 44,

@@ -591,7 +591,6 @@ const IO: FC = (): JSX.Element => {
         superInvite: superInvite ? superInvite : false,
         uid: isHost ? guestData?.uid : userHost?.uid,
         userPhoto: isHost ? guestData?.photos[0]?.image : userHost?.photos[0]?.image,
-        fcmToken: isHost ? guestData?.fcmToken : userHost?.fcmToken,
         createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
       };
       const acceptedUsersList = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS);
@@ -780,7 +779,7 @@ const IO: FC = (): JSX.Element => {
       setEvents(prev => prev.filter(i => (isHost ? i?.info?.uid !== forUserUid : i?.info?.id !== eventId)));
       setScrollPosition(0);
     } catch (error) {
-      // console.log('eror invite', error);
+      console.error(error);
     }
   };
 
@@ -1662,10 +1661,8 @@ const IO: FC = (): JSX.Element => {
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission();
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
     if (enabled) {
-      // // console.log('Authorization status:', authStatus);
-      fcmHelper(userInfo?.uid).then();
+      await fcmHelper();
     }
   };
 
