@@ -246,7 +246,7 @@ export const sendNotification = async (
   };
   if (params) {
     notificationData.data.params = params;
-  }
+  }  
 
   try {
     const result = await functions().httpsCallable('sendNotification')(notificationData);
@@ -259,6 +259,8 @@ export const sendNotification = async (
     console.error('Error calling Firebase Function:', error);
   }
 
+  const paramsParse = JSON.parse(notificationData.data.params);
+  
   const id = generateRandomId(8);
   const notification = {
     id,
@@ -266,6 +268,8 @@ export const sendNotification = async (
     body: body,
     mark: mark,
     uid: userInfo?.uid,
+    path: paramsParse['path'] ? paramsParse['path'] : null,
+    data: paramsParse['data'] ? paramsParse['data'] : null,
   };
   // console.log('notification', notification);
 
