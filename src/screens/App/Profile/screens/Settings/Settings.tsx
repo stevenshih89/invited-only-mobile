@@ -24,12 +24,16 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {accountSettingPath, contactAndFAQPath, notificationSettingPath, securePrivacyPath} from 'constants/pathLocations';
 import {useUser} from '../../../../../store/userStore';
 import { openLink } from 'helpers/links';
+import { showToast } from 'helpers/showToast';
+import Purchases from 'react-native-purchases';
+import { useSubscriptions } from 'src/store/subscriptionsStore';
 
 const Settings = () => {
   const [isVisibleLogoutModal, setIsVisibleLogoutModal] = useState(false);
 
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
+  const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
 
   const openLogoutModal = () => {
     setIsVisibleLogoutModal(true);
@@ -57,6 +61,43 @@ const Settings = () => {
 
   const goToPrivacyPolicy = () => {
     openLink('https://www.invitedonly.app/privacy-policy')
+  };
+
+  const restorePurchases = async () => {
+    try {
+      const purchaserInfo = await Purchases.restorePurchases();
+
+      console.warn(purchaserInfo);
+
+      if (purchaserInfo.activeSubscriptions.length > 0) {
+        switch (purchaserInfo.activeSubscriptions[0]) {
+          case 'io_59_1w':
+            showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', {status: 'success'});
+
+            setCurrentSubscriptions({activeSubscriptions: ['io_59_1w']});
+            // navigation.navigate('/profile');
+            break;
+          case 'io_25_wk':
+            showToast('inviteMatch', 'Annual subscription restored', 'Restore purchases', {status: 'success'});
+            setCurrentSubscriptions({activeSubscriptions: ['io_25_wk']});
+            // navigation.navigate('/profile');
+            break;
+          case 'io_29_3m':
+            showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', {status: 'success'});
+            setCurrentSubscriptions({activeSubscriptions: ['io_29_3m']});
+            // navigation.navigate('/profile');
+            break;
+          default:
+            break;
+        }
+        // console.log('purchases restore', purchaserInfo.activeSubscriptions[0]);
+      } else {
+        // console.log('purchases not found');
+        showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', {status: 'fail'});
+      }
+    } catch (e) {
+      // console.error('error restore purchases', e);
+    }
   };
 
   const settingsList = [
@@ -90,12 +131,12 @@ const Settings = () => {
       icon: Messages,
       onPress: goToContactAndFAQ,
     },
-    // {
-    //   id: 4,
-    //   title: 'Restore purchase',
-    //   icon: RestorePurchase,
-    //   onPress: goToCRestorePurchase,
-    // },
+    {
+      id: 4,
+      title: 'Restore purchase',
+      icon: RestorePurchase,
+      onPress: restorePurchases,
+    },
     {
       id: 5,
       title: 'Log out',

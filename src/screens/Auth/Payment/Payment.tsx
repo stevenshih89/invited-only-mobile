@@ -206,42 +206,42 @@ const Payment: FC = (): JSX.Element => {
     }, 1000);
   };
 
-  const restorePurchases = async () => {
-    try {
-      const purchaserInfo = await Purchases.restorePurchases();
+  // const restorePurchases = async () => {
+  //   try {
+  //     const purchaserInfo = await Purchases.restorePurchases();
 
-      console.warn(purchaserInfo);
+  //     console.warn(purchaserInfo);
 
-      if (purchaserInfo.activeSubscriptions.length > 0) {
-        switch (purchaserInfo.activeSubscriptions[0]) {
-          case 'io_59_1w':
-            showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', {status: 'success'});
+  //     if (purchaserInfo.activeSubscriptions.length > 0) {
+  //       switch (purchaserInfo.activeSubscriptions[0]) {
+  //         case 'io_59_1w':
+  //           showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', {status: 'success'});
 
-            setCurrentSubscriptions({activeSubscriptions: ['io_59_1w']});
-            // navigation.navigate('/profile');
-            break;
-          case 'io_25_wk':
-            showToast('inviteMatch', 'Annual subscription restored', 'Restore purchases', {status: 'success'});
-            setCurrentSubscriptions({activeSubscriptions: ['io_25_wk']});
-            // navigation.navigate('/profile');
-            break;
-          case 'io_29_3m':
-            showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', {status: 'success'});
-            setCurrentSubscriptions({activeSubscriptions: ['io_29_3m']});
-            // navigation.navigate('/profile');
-            break;
-          default:
-            break;
-        }
-        // console.log('purchases restore', purchaserInfo.activeSubscriptions[0]);
-      } else {
-        // console.log('purchases not found');
-        showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', {status: 'fail'});
-      }
-    } catch (e) {
-      // console.error('error restore purchases', e);
-    }
-  };
+  //           setCurrentSubscriptions({activeSubscriptions: ['io_59_1w']});
+  //           // navigation.navigate('/profile');
+  //           break;
+  //         case 'io_25_wk':
+  //           showToast('inviteMatch', 'Annual subscription restored', 'Restore purchases', {status: 'success'});
+  //           setCurrentSubscriptions({activeSubscriptions: ['io_25_wk']});
+  //           // navigation.navigate('/profile');
+  //           break;
+  //         case 'io_29_3m':
+  //           showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', {status: 'success'});
+  //           setCurrentSubscriptions({activeSubscriptions: ['io_29_3m']});
+  //           // navigation.navigate('/profile');
+  //           break;
+  //         default:
+  //           break;
+  //       }
+  //       // console.log('purchases restore', purchaserInfo.activeSubscriptions[0]);
+  //     } else {
+  //       // console.log('purchases not found');
+  //       showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', {status: 'fail'});
+  //     }
+  //   } catch (e) {
+  //     // console.error('error restore purchases', e);
+  //   }
+  // };
 
   const pay = async (pack: PurchasesPackage) => {
     setLoaderVisible(true);
@@ -486,7 +486,7 @@ const Payment: FC = (): JSX.Element => {
               {plansList.map(item => renderItem({item}))}
             </View>
             <Button buttonStyle={{marginTop: 20}} title={getButtonTitle()} onPress={getOfferings} />
-            <View style={{width: '100%', height: 1, backgroundColor: gray1Color, marginTop: 16}}>
+            {/* <View style={{width: '100%', height: 1, backgroundColor: gray1Color, marginTop: 16}}>
               <Text
                 style={{
                   backgroundColor: blackColor,
@@ -500,10 +500,10 @@ const Payment: FC = (): JSX.Element => {
                 }}>
                 or
               </Text>
-            </View>
-            <TouchableOpacity onPress={restorePurchases} style={{marginTop: 8, alignItems: 'center'}}>
+            </View> */}
+            {/* <TouchableOpacity onPress={restorePurchases} style={{marginTop: 8, alignItems: 'center'}}>
               <Text style={{fontSize: RFValue(14), color: whiteColor, fontFamily: Satoshi500}}>Restore purchases</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <View style={{marginTop: 16, alignItems: 'center'}}>
               <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
                 By tapping, your App Store account will be charged. Your subscription will auto-renew for the same price and duration until
