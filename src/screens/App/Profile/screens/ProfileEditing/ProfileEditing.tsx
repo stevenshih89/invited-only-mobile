@@ -148,26 +148,14 @@ const ProfileEditing: FC = (): ReactElement => {
   ]);
 
   const [listOfInterests, setListOfInterests] = useState([
-    {id: 0, title: 'Bussiness', isSelected: false},
-    {id: 1, title: 'Traveling', isSelected: false},
-    {id: 2, title: 'Cooking', isSelected: false},
-    {id: 3, title: 'Music', isSelected: false},
-    {id: 4, title: 'Painitng', isSelected: false},
-    {id: 5, title: 'Gaming', isSelected: false},
-    {id: 6, title: 'Hiking', isSelected: false},
-    {id: 7, title: 'Yoga', isSelected: false},
-    {id: 8, title: 'Writing', isSelected: false},
-    {id: 9, title: 'Meditation', isSelected: false},
-    {id: 10, title: 'Fishing', isSelected: false},
-    {id: 11, title: 'Dancing', isSelected: false},
-    {id: 12, title: 'Clubs', isSelected: false},
-    {id: 13, title: 'Surfing', isSelected: false},
-    {id: 14, title: 'Creativity', isSelected: false},
-    {id: 15, title: 'Yacht', isSelected: false},
-    {id: 16, title: 'Gardering', isSelected: false},
-    {id: 17, title: 'Movies', isSelected: false},
-    {id: 18, title: 'Restaurans', isSelected: false},
-    {id: 19, title: 'Entrepreneur', isSelected: false},
+    {id: 0, title: 'Vip Tables', isSelected: false,},
+    {id: 1, title: 'Concerts', isSelected: false,},
+    {id: 2, title: 'Exclusive', isSelected: false,},
+    {id: 3, title: 'Yacht Party', isSelected: false,},
+    {id: 4, title: 'Pool Party', isSelected: false,},
+    {id: 5, title: 'Private', isSelected: false,},
+    {id: 6, title: 'Birthday Party', isSelected: false, },
+    {id: 7, title: 'Restaurant', isSelected: false,}
   ]);
 
   const [listOfWorks] = useState([
