@@ -13,7 +13,6 @@ export namespace Event {
     status: UserStatus;
     superInvite: boolean;
     userPhoto: string;
-    fcmToken?: string;
   }
   export interface RejectUser {
     uid: string;

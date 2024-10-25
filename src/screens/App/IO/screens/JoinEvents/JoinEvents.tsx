@@ -251,7 +251,6 @@ const JoinEvents = ({navigation}: any) => {
       const activeEvent = list?.id;
 
       const userLiked = {
-        fcmToken: userHost?.fcmToken,
         gender: userHost?.gender,
         name: userHost?.name,
         superInvite: false,

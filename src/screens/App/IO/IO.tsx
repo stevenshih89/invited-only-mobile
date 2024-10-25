@@ -584,8 +584,6 @@ const IO: FC = (): JSX.Element => {
         return;
       }
 
-      const guestToken = guestData?.fcmToken || '';
-
       const userInvited = {
         gender: isHost ? guestData?.gender : userHost?.gender,
         name: isHost ? guestData?.name : userHost?.name,
@@ -593,7 +591,6 @@ const IO: FC = (): JSX.Element => {
         superInvite: superInvite ? superInvite : false,
         uid: isHost ? guestData?.uid : userHost?.uid,
         userPhoto: isHost ? guestData?.photos[0]?.image : userHost?.photos[0]?.image,
-        fcmToken: isHost ? guestToken : userHost?.fcmToken,
         createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
       };
 
