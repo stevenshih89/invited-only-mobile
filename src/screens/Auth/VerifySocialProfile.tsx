@@ -69,18 +69,22 @@ const VerifySocialProfile = () => {
   ];
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
-    const uploadUri = Platform.OS === 'ios' ? imagePath.replace('file://', '') : imagePath;
-    const filename = `${userId}_${new Date().getTime()}`; // or another unique naming convention
-    const storageRef = storage().ref(`images/${filename}`);
-    const task = storageRef.putFile(uploadUri);
-    try {
-      await task;
-      // Get the URL to the uploaded image
-      const url = await storageRef.getDownloadURL();
-      return url;
-    } catch (e) {
-      // console.error(e);
-      return null;
+    if (imagePath) {
+      if (imagePath.includes('https://')) {
+        return imagePath;
+      } else {
+        const uploadUri = Platform.OS === 'ios' ? imagePath : `file://${imagePath}`;
+        const filename = `${userId}_${new Date().getTime()}`;
+        const storageRef = storage().ref(`images/${filename}`);
+        try {
+          await storageRef.putFile(uploadUri);
+          const url = await storageRef.getDownloadURL();
+          return url;
+        } catch (e) {
+          console.error('Error uploading image:', e);
+          return null;
+        }
+      }
     }
   };
 
@@ -152,56 +156,71 @@ const VerifySocialProfile = () => {
       });
 
       const userId = await AsyncStorage.getItem('uid');
-      const imageUri = mergedObject?.imageUser;
+      const imageUri = mergedObject?.imageUser || '';
 
-      const photos = mergedObject?.photos?.map(i => i?.image);
-
-      let allImageUrl: any = [];
+      console.warn(imageUri);
+      const photos = mergedObject?.photos;
 
       const isTurnNotifications = onBoarding.find(item => 'notifications' in item);
+      let photosList = [];
+
+      let facePhoto = '';
+
+      console.warn('photos', photos, mergedObject);
+
+      const userData = {
+        ...mergedObject,
+        uid: userId,
+        codeForInvitingOtherUsers: generateInviteCode(),
+        registrationDate: formattedDate,
+        phoneNumber: phoneNumber,
+        accountConfirmed: false,
+        accountReviewed: false,
+        accountPremium: false,
+        notifications: [],
+        weeklySuperInvites: 5,
+        superInvites: 0,
+        socialNickname,
+        lastUpdateSuperInvite: Date.now(),
+        facePhoto: facePhoto,
+        photos: photosList,
+        notificationSettings: {
+          chat: isTurnNotifications.notifications,
+          joinedEvent: isTurnNotifications.notifications,
+          match: isTurnNotifications.notifications,
+          myEvents: isTurnNotifications.notifications,
+          requests: isTurnNotifications.notifications,
+          superInvite: isTurnNotifications.notifications,
+          superJoin: isTurnNotifications.notifications,
+        },
+      };
+
+      for (const i of photos) {
+        if (i?.image) {
+          const img = await uploadImage(i.image, userId);
+          console.warn('img', img);
+          photosList.push({id: i?.id, image: img});
+        }
+      }
+      if (imageUri) {
+        const facePhotoImg = await uploadImage(imageUri, userId);
+        if (facePhotoImg) {
+          facePhoto = facePhotoImg;
+        }
+      }
+
+      console.warn(userData);
 
       await firestore()
         .collection('userInfo')
         .doc(`${userId}`)
-        .set({
-          ...mergedObject,
-          uid: userId,
-          codeForInvitingOtherUsers: generateInviteCode(),
-          registrationDate: formattedDate,
-          phoneNumber: phoneNumber,
-          accountConfirmed: false,
-          accountReviewed: false,
-          accountPremium: false,
-          weeklySuperInvites: 5,
-          superInvites: 0,
-          socialNickname,
-          lastUpdateSuperInvite: Date.now(),
-          notificationSettings: {
-            chat: isTurnNotifications.notifications,
-            joinedEvent: isTurnNotifications.notifications,
-            match: isTurnNotifications.notifications,
-            myEvents: isTurnNotifications.notifications,
-            requests: isTurnNotifications.notifications,
-            superInvite: isTurnNotifications.notifications,
-            superJoin: isTurnNotifications.notifications,
-          },
-        })
-        .then(async () => {
-          // console.warn('User added!');
-
-          photos?.map(async (i: any, index: number) => {
-            await uploadImage(i, userId).then(async image => {
-              allImageUrl.push({image: image, id: index});
-            });
-            await updatePhotosImage(userId, allImageUrl);
-          });
-          await uploadImage(imageUri, userId).then(async image => {
-            await updateUserProfileImage(userId, image);
-          });
+        .set(userData)
+        .finally(() => {
+          setLoading(false);
         });
-      setLoading(false);
     } catch (e) {
-      // console.log(e);
+      console.error(e);
+
       showToast('inviteMatch', '', `${e}`);
       setLoading(false);
     }

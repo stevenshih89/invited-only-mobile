@@ -9,7 +9,7 @@ import {verifySocialProfilePath} from 'constants/pathLocations.ts';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
-import {backgroundGradientColors, black1Color, errorColor, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, errorColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Outfit500, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -35,40 +35,22 @@ const InvitationCode: FC = (): JSX.Element => {
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
-    const uploadUri = Platform.OS === 'ios' ? imagePath.replace('file://', '') : imagePath;
-    const filename = `${userId}_${new Date().getTime()}`;
-    const storageRef = storage().ref(`images/${filename}`);
-    const task = storageRef.putFile(uploadUri);
-    try {
-      await task;
-      // Get the URL to the uploaded image
-      const url = await storageRef.getDownloadURL();
-      return url;
-    } catch (e) {
-      // console.error(e);
-      return null;
-    }
-  };
-
-  const updateUserProfileImage = async (userId: string | null, imageUrl: string) => {
-    try {
-      await firestore().collection('userInfo').doc(userId).update({
-        facePhoto: imageUrl,
-      });
-      // console.log('User profile image updated successfully.');
-    } catch (e) {
-      // console.error('Error updating user profile image: ', e);
-    }
-  };
-
-  const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
-    try {
-      await firestore().collection('userInfo').doc(userId).update({
-        photos: imageUrl,
-      });
-      // console.log('User profile image updated successfully.');
-    } catch (e) {
-      // console.error('Error updating user profile image: ', e);
+    if (imagePath) {
+      if (imagePath.includes('https://')) {
+        return imagePath;
+      } else {
+        const uploadUri = Platform.OS === 'ios' ? imagePath : `file://${imagePath}`;
+        const filename = `${userId}_${new Date().getTime()}`;
+        const storageRef = storage().ref(`images/${filename}`);
+        try {
+          await storageRef.putFile(uploadUri);
+          const url = await storageRef.getDownloadURL();
+          return url;
+        } catch (e) {
+          console.error('Error uploading image:', e);
+          return null;
+        }
+      }
     }
   };
 
@@ -120,51 +102,60 @@ const InvitationCode: FC = (): JSX.Element => {
       const userId = await AsyncStorage.getItem('uid');
       const imageUri = mergedObject?.imageUser;
 
-      const photos = mergedObject?.photos?.map(i => i?.image);
-
-      let allImageUrl: any = [];
+      const photos = mergedObject?.photos;
 
       const isTurnNotifications = onBoarding.find(item => 'notifications' in item);
+
+      let photosList = [];
+
+      let facePhoto = '';
+      const userData = {
+        ...mergedObject,
+        uid: userId,
+        codeForInvitingOtherUsers: generateInviteCode(),
+        registrationDate: formattedDate,
+        phoneNumber: phoneNumber,
+        accountConfirmed: true,
+        accountReviewed: true,
+        accountPremium: false,
+        notifications: [],
+        weeklySuperInvites: 5,
+        photos: photosList,
+        facePhoto: facePhoto,
+        superInvites: 0,
+        lastUpdateSuperInvite: Date.now(),
+        notificationSettings: {
+          chat: isTurnNotifications.notifications,
+          joinedEvent: isTurnNotifications.notifications,
+          match: isTurnNotifications.notifications,
+          myEvents: isTurnNotifications.notifications,
+          requests: isTurnNotifications.notifications,
+          superInvite: isTurnNotifications.notifications,
+          superJoin: isTurnNotifications.notifications,
+        },
+      };
+
+      for (const i of photos) {
+        if (i?.image) {
+          const img = await uploadImage(i.image, userId);
+          console.warn('img', img);
+          photosList.push({id: i?.id, image: img});
+        }
+      }
+
+      const facePhotoImg = await uploadImage(imageUri, userId);
+
+      if (facePhotoImg) {
+        facePhoto = facePhotoImg;
+      }
 
       await firestore()
         .collection('userInfo')
         .doc(`${userId}`)
-        .set({
-          ...mergedObject,
-          uid: userId,
-          codeForInvitingOtherUsers: generateInviteCode(),
-          registrationDate: formattedDate,
-          phoneNumber: phoneNumber,
-          accountConfirmed: true,
-          accountReviewed: true,
-          accountPremium: false,
-          weeklySuperInvites: 5,
-          superInvites: 0,
-          lastUpdateSuperInvite: Date.now(),
-          notificationSettings: {
-            chat: isTurnNotifications.notifications,
-            joinedEvent: isTurnNotifications.notifications,
-            match: isTurnNotifications.notifications,
-            myEvents: isTurnNotifications.notifications,
-            requests: isTurnNotifications.notifications,
-            superInvite: isTurnNotifications.notifications,
-            superJoin: isTurnNotifications.notifications,
-          },
-        })
-        .then(async () => {
-          // console.log('User added!');
-
-          photos?.map(async (i: any, index: number) => {
-            await uploadImage(i, userId).then(async image => {
-              allImageUrl.push({image: image, id: index});
-            });
-            await updatePhotosImage(userId, allImageUrl);
-          });
-          await uploadImage(imageUri, userId).then(async image => {
-            await updateUserProfileImage(userId, image);
-          });
+        .set(userData)
+        .finally(() => {
+          setLoading(false);
         });
-      setLoading(false);
     } catch (e) {
       // console.log(e);
       showToast('inviteMatch', '', `${e}`);

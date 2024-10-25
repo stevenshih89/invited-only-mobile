@@ -28,22 +28,6 @@ interface ModalReportProps {
 const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid, handleAutoSwipeLeft, handleCloseReport}) => {
   const styles = useStyles();
 
-  // const deleteChat = async (uidItem: string) => {
-  //   try {
-  //     const chat = await firestore().collection('messages').doc(activeEvent).get();
-
-  //     const chatsList = chat.data()?.chats;
-
-  //     const updatedChats = chatsList.filter((chatItem: {uid: string}) => chatItem.uid !== uidItem);
-
-  //     firestore().collection('messages').doc(activeEvent).update({
-  //       chats: updatedChats,
-  //     });
-  //   } catch (error) {
-  //     console.log('error delete messages', error);
-  //   }
-  // };
-
   const handleSendReport = async (typeReport: string): Promise<void> => {
     const infoUserUidDoc = await firestore().collection('userInfo').doc(uid).get();
     const infoUserUidSenderDoc = await firestore().collection('userInfo').doc(uidSender).get();

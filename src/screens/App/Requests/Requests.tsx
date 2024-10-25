@@ -267,6 +267,8 @@ const Requests: FC = (): ReactElement => {
     }, [activeEvent?.id, isHost, activeEventDate]),
   );
 
+  const numColumns = isHost ? 2 : 1;
+
   if ((loading || loadingMyEvents) && !list.length && !isVisibleMatch) {
     return (
       <View
@@ -426,7 +428,7 @@ const Requests: FC = (): ReactElement => {
         <FlatList
           // @ts-ignore
           data={list}
-          numColumns={isHost ? 2 : 1}
+          numColumns={numColumns}
           showsVerticalScrollIndicator={false}
           keyExtractor={({uid, name}) => `${uid}${name}`}
           contentContainerStyle={styles.listContentContainer}

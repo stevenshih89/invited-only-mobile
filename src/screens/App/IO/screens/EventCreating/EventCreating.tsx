@@ -260,22 +260,16 @@ const EventCreating: FC = () => {
   };
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
-    console.warn('imagePath', imagePath);
-
     if (imagePath) {
       if (imagePath.includes('https://')) {
         return imagePath;
       } else {
         const uploadUri = Platform.OS === 'ios' ? imagePath : `file://${imagePath}`;
-        console.warn('uploadUri', uploadUri);
-
         const filename = `${userId}_${new Date().getTime()}`;
         const storageRef = storage().ref(`images/${filename}`);
         try {
           await storageRef.putFile(uploadUri);
           const url = await storageRef.getDownloadURL();
-          console.warn('url', url);
-
           return url;
         } catch (e) {
           console.error('Error uploading image:', e);

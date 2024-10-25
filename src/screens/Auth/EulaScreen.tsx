@@ -1,7 +1,7 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowLeftArrow from 'assets/images/icons/arrow-left.svg';
-import {backgroundGradientColors, black1Color, blackColor, lightGray16Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, black1Color, lightGray16Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -9,7 +9,7 @@ import {signUpPath} from 'constants/pathLocations';
 import LinearGradient from 'react-native-linear-gradient';
 import {getSubscriptions} from 'src/api/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
-import { screenHeight } from 'constants/common';
+import {screenHeight} from 'constants/common';
 
 interface PlanListItem {
   id: number;
@@ -121,7 +121,7 @@ const Eula: FC = (): JSX.Element => {
     {
       id: 14,
       title: '14. CONTACT INFORMATION',
-      description: 'If you have any questions or concerns about this Agreement, please contact us at support@invitedonly.io.',
+      description: 'If you have any questions or concerns about this Agreement, please contact us at support@invitedonly.app.',
     },
     {
       id: 15,
@@ -335,7 +335,7 @@ const Eula: FC = (): JSX.Element => {
               onPress={() => navigation.navigate(signUpPath as never)}
               style={{
                 flex: 1.7,
-                backgroundColor: endReached? whiteColor: lightGray16Color,
+                backgroundColor: endReached ? whiteColor : lightGray16Color,
                 borderRadius: 18,
                 height: screenHeight / 14,
                 flexDirection: 'row',
@@ -362,5 +362,3 @@ const Eula: FC = (): JSX.Element => {
 };
 
 export default Eula;
-
-

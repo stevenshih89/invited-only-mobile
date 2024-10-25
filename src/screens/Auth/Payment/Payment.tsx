@@ -301,7 +301,7 @@ const Payment: FC = (): JSX.Element => {
   };
 
   const renderItem = ({item}: {item: PlanListItem}) => {
-    let isRender = true
+    let isRender = true;
 
     if (item.identifier === 'io_59_1w') {
       if (
@@ -514,15 +514,12 @@ const Payment: FC = (): JSX.Element => {
                 <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
                   <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Privacy Policy</Text>
                 </TouchableOpacity>
-
                 <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, marginHorizontal: 5}}>and</Text>
-
-                <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/terms-and-conditions')}>
-                  <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Terms and Conditions</Text>
+                <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/terms-of-service-eula')}>
+                  <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Terms of Service / EULA</Text>
                 </TouchableOpacity>
               </View>
             </View>
-
             <View style={styles.listColumnWrapper}>
               <Text style={styles.textWhatYouGet}>What you get:</Text>
               <Text style={styles.textPremium}>Premium</Text>

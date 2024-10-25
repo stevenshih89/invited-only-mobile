@@ -21,12 +21,12 @@ import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import ModalLogout from './LogoutModal';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {accountSettingPath, contactAndFAQPath, notificationSettingPath, securePrivacyPath} from 'constants/pathLocations';
+import {accountSettingPath, contactAndFAQPath, notificationSettingPath} from 'constants/pathLocations';
 import {useUser} from '../../../../../store/userStore';
-import { openLink } from 'helpers/links';
-import { showToast } from 'helpers/showToast';
+import {openLink} from 'helpers/links';
+import {showToast} from 'helpers/showToast';
 import Purchases from 'react-native-purchases';
-import { useSubscriptions } from 'src/store/subscriptionsStore';
+import {useSubscriptions} from 'src/store/subscriptionsStore';
 
 const Settings = () => {
   const [isVisibleLogoutModal, setIsVisibleLogoutModal] = useState(false);
@@ -56,11 +56,11 @@ const Settings = () => {
   };
 
   const goToTermsOfUse = () => {
-    openLink('https://www.invitedonly.app/terms-and-conditions')
+    openLink('https://www.invitedonly.app/terms-of-service-eula');
   };
 
   const goToPrivacyPolicy = () => {
-    openLink('https://www.invitedonly.app/privacy-policy')
+    openLink('https://www.invitedonly.app/privacy-policy');
   };
 
   const restorePurchases = async () => {
@@ -115,7 +115,7 @@ const Settings = () => {
     },
     {
       id: 2,
-      title: 'Terms of use',
+      title: 'Terms of Service / EULA',
       icon: SecurePrivacy,
       onPress: goToTermsOfUse,
     },
