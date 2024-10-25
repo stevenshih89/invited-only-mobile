@@ -565,12 +565,12 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {    
+  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
       const guestData = guest.data() as UserInfo;
-      
+
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
       const eventData = await firestore().collection('Events').doc(activeEventId).get();
@@ -594,15 +594,16 @@ const IO: FC = (): JSX.Element => {
         fcmToken: isHost ? guestData?.fcmToken : userHost?.fcmToken,
         createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
       };
-
+      const acceptedUsersList = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS);
       if (isHost) {
         const maxGuests = event?.male + event?.female;
-
-        const acceptedUsersList = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS);
 
         if (acceptedUsersList?.length >= maxGuests) {
           showToast('inviteMatch', 'You have reached the maximum number of guests', 'Invite');
           setIsVisibleModalFullEvent(true);
+          setLoadingEvents(true);
+          setEvents(prev => [...prev]);
+          setLoadingEvents(false);
           return;
         }
 
@@ -652,8 +653,6 @@ const IO: FC = (): JSX.Element => {
           .update(data)
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
-              console.warn('proverka host');
-
               await handleCreateChat(matchedGuestData);
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
@@ -662,85 +661,84 @@ const IO: FC = (): JSX.Element => {
               await sendNotification(
                 forUserUid,
                 'New invite request',
-                `${userInfo.name} ${superInvite?'Super': 'wants to'} invite you!`,
+                `${userInfo.name} ${superInvite ? 'Super' : 'wants to'} invite you!`,
                 'invite',
                 'Invite Request'.toUpperCase(),
                 userInfo,
-                JSON.stringify({path: 'requests'})
+                JSON.stringify({path: 'requests'}),
               );
             }
           });
       } else {
-        const userAccepted = getUserAcceptedEvent(event)        
-        if (userAccepted < (event.male + event.female)) {
+        if (acceptedUsersList?.length < event.male + event.female) {
           const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userHost?.uid && invUser?.status === LIKED);
-        let data = {};
-        let matchedGuestData: MatchData;
-        if (matchedGuest) {
-          const updatedUsersList = event?.usersList?.map(invUser => {
-            if (invUser?.uid === userHost?.uid) {
-              return {
-                ...invUser,
-                status: INVITE_MATCH_STATUS,
-              };
-            }
-            return invUser;
-          });
-          data = {
-            usersList: updatedUsersList,
-          };
-          matchedGuestData = {
-            type: 'match',
-            nameHost: event?.hostName,
-            nameGuest: matchedGuest?.name,
-            imageUri: matchedGuest?.userPhoto,
-            uidHost: event?.uid,
-            uidGuest: matchedGuest?.uid,
-            eventId: activeEventId,
-            superInvite: superInvite ? superInvite : false,
-            userHostImageUri: event?.hostImage,
-            joinEvents: userInfo?.joinEvents,
-            location: userInfo?.location,
-            premium: guestData.accountPremium,
-            dateHost: guestData.date,
-            dateGuest: userInfo?.date,
-            onlineGuest: userInfo?.online,
-            accountConfirmedHost: userInfo?.accountConfirmed,
-            accountConfirmedGuest: userInfo?.accountConfirmed,
-            usersListHost: event.usersList,
-            accountTypeHost: guestData.accountType,
-            accountTypeGuest: userInfo?.accountType,
-            eventImage: event.photos[0].image,
-            guestsInvited: event.male + event.female,
-          };
-        } else {
-          data = {
-            requestsList: firestore.FieldValue.arrayUnion(userInvited),
-          };
-        }
+          let data = {};
+          let matchedGuestData: MatchData;
+          if (matchedGuest) {
+            const updatedUsersList = event?.usersList?.map(invUser => {
+              if (invUser?.uid === userHost?.uid) {
+                return {
+                  ...invUser,
+                  status: INVITE_MATCH_STATUS,
+                };
+              }
+              return invUser;
+            });
+            data = {
+              usersList: updatedUsersList,
+            };
+            matchedGuestData = {
+              type: 'match',
+              nameHost: event?.hostName,
+              nameGuest: matchedGuest?.name,
+              imageUri: matchedGuest?.userPhoto,
+              uidHost: event?.uid,
+              uidGuest: matchedGuest?.uid,
+              eventId: activeEventId,
+              superInvite: superInvite ? superInvite : false,
+              userHostImageUri: event?.hostImage,
+              joinEvents: userInfo?.joinEvents,
+              location: userInfo?.location,
+              premium: guestData.accountPremium,
+              dateHost: guestData.date,
+              dateGuest: userInfo?.date,
+              onlineGuest: userInfo?.online,
+              accountConfirmedHost: userInfo?.accountConfirmed,
+              accountConfirmedGuest: userInfo?.accountConfirmed,
+              usersListHost: event.usersList,
+              accountTypeHost: guestData.accountType,
+              accountTypeGuest: userInfo?.accountType,
+              eventImage: event.photos[0].image,
+              guestsInvited: event.male + event.female,
+            };
+          } else {
+            data = {
+              requestsList: firestore.FieldValue.arrayUnion(userInvited),
+            };
+          }
 
-        await firestore()
-          .collection('Events')
-          .doc(activeEventId)
-          .update(data)
-          .then(async () => {
-            if (matchedGuest && matchedGuestData) {
-              await handleCreateChat(matchedGuestData);
-              setMatchData(matchedGuestData);
-              setIsVisibleMatch(true);
-            }
-            if (guestData.notificationSettings?.match || guestData.notificationSettings?.superJoin) {
-              await sendNotification(
-                event.uid,
-                'New join request',
-                `${userInfo.name} wants to join you!`,
-                'invite',
-                'Join Request'.toUpperCase(),
-                userInfo,
-                JSON.stringify({path: 'requests'})
-              );
-            }
-          });
+          await firestore()
+            .collection('Events')
+            .doc(activeEventId)
+            .update(data)
+            .then(async () => {
+              if (matchedGuest && matchedGuestData) {
+                await handleCreateChat(matchedGuestData);
+                setMatchData(matchedGuestData);
+                setIsVisibleMatch(true);
+              }
+              if (guestData.notificationSettings?.match || guestData.notificationSettings?.superJoin) {
+                await sendNotification(
+                  event.uid,
+                  'New join request',
+                  `${userInfo.name} wants to join you!`,
+                  'invite',
+                  'Join Request'.toUpperCase(),
+                  userInfo,
+                  JSON.stringify({path: 'requests'}),
+                );
+              }
+            });
         } else {
           const matchedGuestData = {
             type: 'match',
@@ -767,16 +765,16 @@ const IO: FC = (): JSX.Element => {
             guestsInvited: event.male + event.female,
           };
 
-          showToast(
-            'inviteMatch', 
-            `Chat with ${event.hostName} to find a solution`, 
-            "The event is full: You can't join", 
-            { ownerPhoto: event.hostImage,
-              status: 'FULL',
-              path: 'chatCreate',
-              params: matchedGuestData
-            }
-          )
+          showToast('inviteMatch', `Chat with ${event.hostName} to find a solution`, "The event is full: You can't join", {
+            ownerPhoto: event.hostImage,
+            status: 'FULL',
+            path: 'chatCreate',
+            params: matchedGuestData,
+          });
+          setLoadingEvents(true);
+          setEvents(prev => [...prev]);
+          setLoadingEvents(false);
+          return;
         }
       }
       setEvents(prev => prev.filter(i => (isHost ? i?.info?.uid !== forUserUid : i?.info?.id !== eventId)));
@@ -786,12 +784,12 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const getUserAcceptedEvent = (event: any) => {    
-    if(event) {
-      const userAccepted = event.usersList.filter(item => item.usersList.status === ACCEPTED_STATUS)
-      return userAccepted.length
+  const getUserAcceptedEvent = (event: any) => {
+    if (event) {
+      const userAccepted = event.usersList.filter(item => item.usersList.status === ACCEPTED_STATUS);
+      return userAccepted.length;
     }
-  }
+  };
 
   const handleSuperJoin = () => {
     if (counterSuperInvites > 0) {
