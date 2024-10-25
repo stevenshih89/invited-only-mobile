@@ -153,7 +153,7 @@ async function onDisplayNotification(title, body, data, setRejectVisible: () => 
   const paramsParse = JSON.parse(params);
   const path = paramsParse.path;
 
-  showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image, path, params: paramsParse.eventInfo});
+  showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image, path, params: paramsParse.data});
   if (title === 'Your Account is Not Approved') {
     setRejectVisible();
   }
@@ -214,7 +214,7 @@ export const sendNotification = async (
   status: string,
   userInfo: any,
   params?: any,
-) => {
+) => {  
   const generateRandomId = (length: number) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';

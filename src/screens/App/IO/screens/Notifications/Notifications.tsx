@@ -94,13 +94,6 @@ const Notifications: FC = (): ReactElement => {
       case 'invitationCode':
         navigation.navigate(commonStackPath, {screen: invitationCodePath});
         break;
-      // case 'chat':
-      //   // @ts-ignore
-      //   navigation.navigate(chatCorrespondencePath, {
-      //     screen: chatCorrespondencePath,
-      //     data,
-      //   });
-      //   break;
       case 'requests':
         // @ts-ignore
         navigation.navigate(requestsPath, {
@@ -120,36 +113,6 @@ const Notifications: FC = (): ReactElement => {
           params: {list: data},
         } as never);
         break;
-      // case 'chatCreate':
-      //   // @ts-ignore
-      //   try {
-      //   await handleCreateChat(params)
-      //   const querySnapshot = await firestore().collection('Events').doc(params.eventId).get();
-      //   if (!querySnapshot.exists) {
-      //     return;
-      //   }
-      //   const list = querySnapshot.data();
-      //   const messageCollection = await firestore().collection('messages').doc(list?.id).get();
-      //   const activeEvent = messageCollection?.data()?.activeEvent;
-      //   navigation.navigate(commonStackPath, {
-      //     screen: chatCorrespondencePath,
-      //     params: {
-      //       image: params.userHostImageUri,
-      //       title: params?.nameHost,
-      //       online: true,
-      //       messages: [],
-      //       activeEvent: activeEvent,
-      //       id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
-      //       superInvite: params?.superInvite,
-      //       invitedStatus: INVITE_MATCH_STATUS,
-      //       uid: params.uidGuest,
-      //       hostUid: params.uidHost
-      //     },
-      //   })
-      //   } catch (error) {
-
-      //   }
-      //   break;
       default:
         break;
     }
