@@ -1616,11 +1616,8 @@ const IO: FC = (): JSX.Element => {
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission();
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    console.warn('authStatus', authStatus, enabled, messaging.AuthorizationStatus.AUTHORIZED, messaging.AuthorizationStatus.PROVISIONAL);
-
     if (enabled) {
-      // // console.log('Authorization status:', authStatus);
-      fcmHelper();
+      await fcmHelper();
     }
   };
 

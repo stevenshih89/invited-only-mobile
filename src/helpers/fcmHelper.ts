@@ -150,9 +150,9 @@ export function registerListenerWithFCM() {
 //method was called to display notification
 async function onDisplayNotification(title, body, data, setRejectVisible: () => void, setAcceptModalVisible: () => void) {
   const params = data.params;
-  const paramsParse = JSON.parse(params);  
+  const paramsParse = JSON.parse(params);
   const path = paramsParse.path;
-  
+
   showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image, path, params: paramsParse.eventInfo});
   if (title === 'Your Account is Not Approved') {
     setRejectVisible();
