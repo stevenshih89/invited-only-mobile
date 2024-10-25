@@ -565,7 +565,7 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {    
+  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
@@ -584,6 +584,8 @@ const IO: FC = (): JSX.Element => {
         return;
       }
 
+      const guestToken = guestData?.fcmToken || '';
+
       const userInvited = {
         gender: isHost ? guestData?.gender : userHost?.gender,
         name: isHost ? guestData?.name : userHost?.name,
@@ -591,7 +593,7 @@ const IO: FC = (): JSX.Element => {
         superInvite: superInvite ? superInvite : false,
         uid: isHost ? guestData?.uid : userHost?.uid,
         userPhoto: isHost ? guestData?.photos[0]?.image : userHost?.photos[0]?.image,
-        fcmToken: isHost ? guestData?.fcmToken : userHost?.fcmToken,
+        fcmToken: isHost ? guestToken : userHost?.fcmToken,
         createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
       };
 
@@ -734,7 +736,7 @@ const IO: FC = (): JSX.Element => {
                 'invite',
                 'Join Request'.toUpperCase(),
                 userInfo,
-                JSON.stringify({path: 'requests'})
+                JSON.stringify({path: 'requests'}),
               );
             }
           });
@@ -742,7 +744,7 @@ const IO: FC = (): JSX.Element => {
       setEvents(prev => prev.filter(i => (isHost ? i?.info?.uid !== forUserUid : i?.info?.id !== eventId)));
       setScrollPosition(0);
     } catch (error) {
-      // console.log('eror invite', error);
+      console.error(error);
     }
   };
 
@@ -1617,10 +1619,11 @@ const IO: FC = (): JSX.Element => {
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission();
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    console.warn('authStatus', authStatus, enabled, messaging.AuthorizationStatus.AUTHORIZED, messaging.AuthorizationStatus.PROVISIONAL);
 
     if (enabled) {
       // // console.log('Authorization status:', authStatus);
-      fcmHelper(userInfo?.uid).then();
+      fcmHelper();
     }
   };
 
