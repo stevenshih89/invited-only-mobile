@@ -570,7 +570,7 @@ const IO: FC = (): JSX.Element => {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
       const guestData = guest.data() as UserInfo;
-
+      
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
       const eventData = await firestore().collection('Events').doc(activeEventId).get();
@@ -662,15 +662,18 @@ const IO: FC = (): JSX.Element => {
               await sendNotification(
                 forUserUid,
                 'New invite request',
-                `${userInfo.name} wants to invite you!`,
+                `${userInfo.name} ${superInvite?'Super': 'wants to'} invite you!`,
                 'invite',
                 'Invite Request'.toUpperCase(),
                 userInfo,
+                JSON.stringify({path: 'requests'})
               );
             }
           });
       } else {
-        const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userHost?.uid && invUser?.status === LIKED);
+        const userAccepted = getUserAcceptedEvent(event)        
+        if (userAccepted < (event.male + event.female)) {
+          const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userHost?.uid && invUser?.status === LIKED);
         let data = {};
         let matchedGuestData: MatchData;
         if (matchedGuest) {
@@ -738,6 +741,43 @@ const IO: FC = (): JSX.Element => {
               );
             }
           });
+        } else {
+          const matchedGuestData = {
+            type: 'match',
+            nameHost: event?.hostName,
+            nameGuest: userInfo?.name,
+            imageUri: userInfo?.photos[0].image,
+            uidHost: userInfo?.uid,
+            uidGuest: event?.uid,
+            eventId: activeEventId,
+            superInvite: superInvite ? superInvite : false,
+            userHostImageUri: event?.hostImage,
+            joinEvents: userInfo?.joinEvents,
+            location: userInfo?.location,
+            premium: userInfo.accountPremium,
+            dateHost: userInfo.date,
+            dateGuest: userInfo?.date,
+            onlineGuest: userInfo?.online,
+            accountConfirmedHost: userInfo?.accountConfirmed,
+            accountConfirmedGuest: userInfo?.accountConfirmed,
+            usersListHost: event.usersList,
+            accountTypeHost: userInfo.accountType,
+            accountTypeGuest: userInfo?.accountType,
+            eventImage: event.photos[0].image,
+            guestsInvited: event.male + event.female,
+          };
+
+          showToast(
+            'inviteMatch', 
+            `Chat with ${event.hostName} to find a solution`, 
+            "The event is full: You can't join", 
+            { ownerPhoto: event.hostImage,
+              status: 'FULL',
+              path: 'chatCreate',
+              params: matchedGuestData
+            }
+          )
+        }
       }
       setEvents(prev => prev.filter(i => (isHost ? i?.info?.uid !== forUserUid : i?.info?.id !== eventId)));
       setScrollPosition(0);
@@ -745,6 +785,13 @@ const IO: FC = (): JSX.Element => {
       // console.log('eror invite', error);
     }
   };
+
+  const getUserAcceptedEvent = (event: any) => {    
+    if(event) {
+      const userAccepted = event.usersList.filter(item => item.usersList.status === ACCEPTED_STATUS)
+      return userAccepted.length
+    }
+  }
 
   const handleSuperJoin = () => {
     if (counterSuperInvites > 0) {

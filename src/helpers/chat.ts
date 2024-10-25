@@ -63,7 +63,7 @@ export const handleCreateChat = async (matchedData: MatchData) => {
         });
     }
   } catch (e) {
-    // console.log(e);
+    console.log('error create chat', e);
     showToast('inviteMatch', '', 'Error!');
   }
 };
