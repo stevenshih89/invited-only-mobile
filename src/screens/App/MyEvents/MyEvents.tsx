@@ -530,7 +530,7 @@ const MyEvents: FC<any> = ({navigation}) => {
             'Accepted',
             'Accepted'.toUpperCase(),
             user,
-            JSON.stringify({ path: 'guestsList', eventInfo: item})
+            JSON.stringify({ path: 'guestsList', data: item})
           );
           break;
         case NOT_ACCEPTED_STATUS:

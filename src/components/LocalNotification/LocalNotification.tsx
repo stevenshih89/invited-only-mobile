@@ -30,9 +30,7 @@ import firestore from '@react-native-firebase/firestore';
 const LocalNotification = () => {
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const handlePress = async (path: string, params?: any) => {
-    console.log('params', params);
-    
+  const handlePress = async (path: string, params?: any) => {    
     switch (path) {
       case 'invitationCode':
         navigation.navigate(commonStackPath, {screen: invitationCodePath});

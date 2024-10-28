@@ -717,7 +717,6 @@ const IO: FC = (): JSX.Element => {
               requestsList: firestore.FieldValue.arrayUnion(userInvited),
             };
           }
-
           await firestore()
             .collection('Events')
             .doc(activeEventId)

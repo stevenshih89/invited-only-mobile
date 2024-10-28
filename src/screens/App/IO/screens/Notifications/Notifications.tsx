@@ -2,7 +2,7 @@ import {FlatList, Image, ImageBackground, Text, TouchableOpacity, View} from 're
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import ClockOrange from 'assets/images/icons/clock-orange.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
+import {chatCorrespondencePath, commonStackPath, eventActiveInfoPath, invitationCodePath, myEventsPath, requestsPath} from 'constants/pathLocations';
 import useStyles from './styles';
 import {FC, ReactElement, useCallback, useEffect, useState} from 'react';
 import {useUser} from '../../../../../store/userStore';
@@ -20,6 +20,8 @@ interface Notifications {
   mark: string;
   title: string;
   uid: string;
+  path?: string;
+  data?: any;
 }
 
 type NotificationImage = {[key: string]: string};
@@ -52,6 +54,7 @@ const clearNotifications = async (uid: string): Promise<void> => {
 const Notifications: FC = (): ReactElement => {
   const [notifications, setNotifications] = useState<Notifications[]>([]);
   const [images, setImages] = useState<NotificationImage>({});
+  const navigation = useAppNavigation();
 
   const styles = useStyles();
   const user = useUser((i: any) => i?.user);
@@ -86,6 +89,35 @@ const Notifications: FC = (): ReactElement => {
     showToast('inviteMatch', 'Notifications have been read', 'Notifications', {status: 'success', ownerPhoto: user?.photos[0].image});
   };
 
+  const handleNavigate = async (path: string, data: any) => {
+    switch (path) {
+      case 'invitationCode':
+        navigation.navigate(commonStackPath, {screen: invitationCodePath});
+        break;
+      case 'requests':
+        // @ts-ignore
+        navigation.navigate(requestsPath, {
+          screen: requestsPath
+        });
+        break;
+      case 'myEvents':
+        // @ts-ignore
+        navigation.navigate(myEventsPath, {
+          screen: myEventsPath
+        });
+        break;
+      case 'guestsList':
+        // @ts-ignore
+        navigation.navigate(commonStackPath, {
+          screen: eventActiveInfoPath,
+          params: {list: data},
+        } as never);
+        break;
+      default:
+        break;
+    }
+  }
+
   return (
     <View style={styles.root}>
       <View
@@ -114,7 +146,7 @@ const Notifications: FC = (): ReactElement => {
         data={notifications}
         keyExtractor={item => item.id}
         renderItem={({item}) => (
-          <View>
+          <TouchableOpacity disabled={!item?.path} onPress={() => handleNavigate(item.path, item.data)}>
             <View
               style={{
                 width: '100%',
@@ -162,7 +194,7 @@ const Notifications: FC = (): ReactElement => {
                 marginTop: 8,
               }}
             />
-          </View>
+          </TouchableOpacity>
         )}
       />
       {/* <ScrollView
