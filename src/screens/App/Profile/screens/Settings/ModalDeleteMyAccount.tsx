@@ -9,7 +9,7 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useUser} from '../../../../../store/userStore';
 import {calculateAge} from 'helpers/calculateAge.ts';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import firestore from '@react-native-firebase/firestore';
 
 const ModalDeleteMyAccount: FC<{
   isVisible: boolean;
@@ -19,10 +19,9 @@ const ModalDeleteMyAccount: FC<{
 }> = ({isVisible, onClose, setIsVisibleConfirmPhoneModal, sendVerificationCode}) => {
   const userHost = useUser((i: any) => i?.user);
 
-  const navigation = useAppNavigation();
-
   const userAge = calculateAge(userHost?.date);
-  const handleDeleteAccount = async () => {
+
+  const handleDeleteAccount = async () => {        
     if (setIsVisibleConfirmPhoneModal) {
       onClose();
       setTimeout( async() => {
