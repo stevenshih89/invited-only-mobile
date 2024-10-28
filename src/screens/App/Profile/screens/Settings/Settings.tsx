@@ -134,7 +134,7 @@ const Settings = () => {
     {
       id: 4,
       title: 'Restore purchase',
-      icon: RestorePurchase,
+      // icon: RestorePurchase,
       onPress: restorePurchases,
     },
     {
@@ -166,7 +166,7 @@ const Settings = () => {
                   style={{padding: 20, backgroundColor: lightGray5Color, borderRadius: 10}}>
                   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <View
+                      {Icon && <View
                         style={{
                           width: 32,
                           height: 32,
@@ -176,7 +176,7 @@ const Settings = () => {
                           borderRadius: 100,
                         }}>
                         {item?.title !== 'Log out' ? <Icon width={16} height={16} /> : <LogoutRed width={16} height={16} />}
-                      </View>
+                      </View>}
                       <Text
                         style={{
                           color: item?.title === 'Log out' ? '#CE2626' : whiteColor,
