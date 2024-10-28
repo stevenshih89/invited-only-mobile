@@ -1,4 +1,4 @@
-import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {FC, useEffect, useState} from 'react';
 import {Tooltip, TooltipProps} from '@rneui/themed';
@@ -18,7 +18,7 @@ import ArrowRightIcon from 'assets/images/icons/arrow-right-balck.svg';
 import ArrowRightWhiteIcon from 'assets/images/icons/arrow-right.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import FlashIcon from 'assets/images/icons/flash-white.svg';
-import FlashFillIcon from 'assets/images/icons/flash-filled.svg'
+import FlashFillIcon from 'assets/images/icons/flash-filled.svg';
 import CloseIcon from 'assets/images/icons/close-circle.svg';
 import CalendarIcon from 'assets/images/icons/calendar-white.svg';
 import UnlimitedIcon from 'assets/images/icons/unlimited-new.svg';
@@ -27,42 +27,14 @@ import EyeIcon from 'assets/images/icons/eye.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import Loader from '../../../../../components/Modal/ModalLoader/Loader';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
-import { SvgProps } from 'react-native-svg';
-import { screenHeight } from 'constants/common';
+import {SvgProps} from 'react-native-svg';
+import {screenHeight} from 'constants/common';
 
 interface WhatGetItem {
   title: string;
   description: string;
   icon: React.FC<SvgProps>;
 }
-
-const whatGet: WhatGetItem[] = [
-  {
-    title: 'Unlimited Events Creation',
-    description: 'Share Unlimited VIP Tables and Events to Invite.',
-    icon: CalendarIcon,
-  },
-  {
-    title: 'Unlimited Invitations',
-    description: 'Send Unlimited Invitations and Create Your Guest List',
-    icon: UnlimitedIcon,
-  },
-  {
-    title: 'Unlimited Guest Connections',
-    description: 'Enjoy endless connections to build your guests lists.',
-    icon: IOIcon,
-  },
-  {
-    title: '5 Super invites a week',
-    description: 'Send 5 super invites each week.',
-    icon: FlashIcon,
-  },
-  {
-    title: 'See who wants to join you',
-    description: 'View interested guests who want to join you in real-time.',
-    icon: EyeIcon,
-  },
-];
 
 const ControlledTooltip: FC<TooltipProps | any> = props => {
   const [open, setOpen] = useState(false);
@@ -84,6 +56,34 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
 const MyPlan = () => {
   const [loaderVisible, setLoaderVisible] = useState(false);
   const [userInfo, setUserInfo] = useState<any>({});
+
+  const whatGet: WhatGetItem[] = [
+    {
+      title: `Unlimited Events ${userInfo.accountType === 'host' ? 'Creation' : 'Attendance'}`,
+      description: 'Share Unlimited VIP Tables and Events to Invite.',
+      icon: CalendarIcon,
+    },
+    {
+      title: 'Unlimited Invitations',
+      description: 'Send Unlimited Invitations and Create Your Guest List',
+      icon: UnlimitedIcon,
+    },
+    {
+      title: 'Unlimited Guest Connections',
+      description: 'Enjoy endless connections to build your guests lists.',
+      icon: IOIcon,
+    },
+    {
+      title: '5 Super invites a week',
+      description: 'Send 5 super invites each week.',
+      icon: FlashIcon,
+    },
+    {
+      title: 'See who wants to join you',
+      description: 'View interested guests who want to join you in real-time.',
+      icon: EyeIcon,
+    },
+  ];
 
   const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions);
 
@@ -234,24 +234,26 @@ const MyPlan = () => {
               </View>
               {currentSubscriptions.activeSubscriptions.length > 0 && <ArrowRightWhiteIcon />}
             </TouchableOpacity>
-            {currentSubscriptions.activeSubscriptions.length > 0 && currentSubscriptions.activeSubscriptions.length < 3 && !currentSubscriptions.activeSubscriptions.includes('io_25_wk') && (
-              <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24}}>
-                <LinearGradient
-                  colors={['#977B4A', '#E5D291', '#A28453']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}
-                  style={{
-                    height: screenHeight / 14,
-                    maxHeight: 60,
-                    borderRadius: 18,
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            )}
+            {currentSubscriptions.activeSubscriptions.length > 0 &&
+              currentSubscriptions.activeSubscriptions.length < 3 &&
+              !currentSubscriptions.activeSubscriptions.includes('io_25_wk') && (
+                <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24}}>
+                  <LinearGradient
+                    colors={['#977B4A', '#E5D291', '#A28453']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
+                    style={{
+                      height: screenHeight / 14,
+                      maxHeight: 60,
+                      borderRadius: 18,
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              )}
           </>
         )}
       </View>

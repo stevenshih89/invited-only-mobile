@@ -344,7 +344,7 @@ export const ChatStackScreen = () => {
         options={{
           headerShown: true,
           header: () => (
-            <Header typeEvents={typeEvents} setTypeEvents={setTypeEvents} headerType="chat" showHeaderTop={true} logoType="logo" badge/>
+            <Header typeEvents={typeEvents} setTypeEvents={setTypeEvents} headerType="chat" showHeaderTop={true} logoType="logo" badge />
           ),
         }}
         name={chatPath}
@@ -439,26 +439,23 @@ const PaymentStackScreen = () => {
 };
 
 const ManageSubscriptionScreen = () => {
-
   const styles = useStyles();
 
   return (
     <EventCreatingStack.Navigator
-    screenOptions={{
-      headerStyle: styles.headerStyle,
-      headerTitleStyle: styles.headerTitleStyle,
-      headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
-      headerBackTitleVisible: false,
-      headerTitle: 'Manage Subscription',
-      headerShown: true,
-    }}
-      initialRouteName={manageSubscriptionPath}
-      >
+      screenOptions={{
+        headerStyle: styles.headerStyle,
+        headerTitleStyle: styles.headerTitleStyle,
+        headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+        headerBackTitleVisible: false,
+        headerTitle: 'Manage Subscription',
+        headerShown: true,
+      }}
+      initialRouteName={manageSubscriptionPath}>
       <EventCreatingStack.Screen key={manageSubscriptionPath} name={manageSubscriptionPath} component={ManageSubscription} />
     </EventCreatingStack.Navigator>
   );
 };
-
 
 const AppStackScreen = () => {
   return (
