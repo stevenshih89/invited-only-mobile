@@ -19,7 +19,7 @@ const EnterBirthday: FC = (): JSX.Element => {
   const [month, setMonth] = useState<string>('');
   const [day, setDay] = useState<string>('');
   const [year, setYear] = useState<string>('');
-  const [showAge, setShowAge] = useState<boolean>(true);
+  const [showAge, setShowAge] = useState<boolean>(false);
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
@@ -83,6 +83,11 @@ const EnterBirthday: FC = (): JSX.Element => {
     setOnBoarding([...onBoarding, {showAge: showAge, date: `${month}.${day}.${year}`}]);
     navigation.navigate(genderPath as never);
   };
+
+  const handleSkip = () => {
+    setOnBoarding([...onBoarding, {showAge: false, date: ''}]);
+    navigation.navigate(genderPath as never);
+  }
 
   const navigation = useAppNavigation();
 
@@ -225,8 +230,9 @@ const EnterBirthday: FC = (): JSX.Element => {
                   />
                 </View>
               </View>
-              <View style={{marginBottom: 4}}>
+              <View style={{}}>
                 <Button disabled={month.length < 2 || day.length < 2 || year.length < 4} onPress={() => handleNext()} title="Continue" />
+                <Button title="Skip" onPress={handleSkip} variant="transparent" />
               </View>
             </View>
           </SafeAreaView>

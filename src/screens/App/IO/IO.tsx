@@ -1120,7 +1120,7 @@ const IO: FC = (): JSX.Element => {
                     </View>
                     <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
                       <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
-                        {event?.hostName}, {calculateAge(event?.hostInfo?.date)}
+                        {event?.hostName}{event?.hostInfo?.date && ", " + calculateAge(event?.hostInfo?.date)}
                       </Text>
                       {event?.hostInfo?.accountConfirmed && <CheckStarWhite />}
                     </View>

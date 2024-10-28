@@ -403,7 +403,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     marginTop: 4,
                   }}>
                   {userEventInfo?.name}
-                  {userEventInfo?.showAge ? <Text>,</Text> : null}
+                  {userEventInfo?.date ? <Text>,</Text> : null}
                 </Text>
                 {!isProfile && userEventInfo?.showAge && (
                   <Text
@@ -859,7 +859,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     {name}
                     {age ? <Text>,</Text> : null}
                   </Text>
-                  {!isProfile && (
+                  {!isProfile && age && (
                     <Text
                       style={{
                         color: blackColor,

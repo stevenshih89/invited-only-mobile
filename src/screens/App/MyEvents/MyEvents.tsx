@@ -735,9 +735,9 @@ const MyEvents: FC<any> = ({navigation}) => {
                   marginTop: 4,
                 }}>
                 {userInfo?.name}
-                {userInfo?.showAge ? <Text>,</Text> : null}
+                {userInfo?.date ? <Text>,</Text> : null}
               </Text>
-              {userInfo?.showAge && (
+              {userInfo?.date && (
                 <Text
                   style={{
                     color: whiteColor,
