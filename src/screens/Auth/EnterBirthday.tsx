@@ -84,6 +84,11 @@ const EnterBirthday: FC = (): JSX.Element => {
     navigation.navigate(genderPath as never);
   };
 
+  const handleSkip = () => {
+    setOnBoarding([...onBoarding, {showAge: false, date: ''}]);
+    navigation.navigate(genderPath as never);
+  }
+
   const navigation = useAppNavigation();
 
   return (
@@ -227,7 +232,7 @@ const EnterBirthday: FC = (): JSX.Element => {
               </View>
               <View style={{}}>
                 <Button disabled={month.length < 2 || day.length < 2 || year.length < 4} onPress={() => handleNext()} title="Continue" />
-                <Button title="Skip" onPress={() => navigation.navigate(genderPath as never)} variant="transparent" />
+                <Button title="Skip" onPress={handleSkip} variant="transparent" />
               </View>
             </View>
           </SafeAreaView>
