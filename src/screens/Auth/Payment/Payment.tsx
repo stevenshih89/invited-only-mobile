@@ -133,13 +133,13 @@ const Payment: FC = (): JSX.Element => {
     },
     {
       id: 1,
-      title: 'BILLED ANNUALLY',
+      title: 'BILLED 1 MONTH',
       duration: 1,
-      durationName: 'year',
-      description: 'Year',
+      durationName: 'month',
+      description: 'Month',
       pricePerDuration: '$25/wk',
-      fullPrice: '$1300',
-      weeksInPeriod: 52,
+      fullPrice: '$99',
+      weeksInPeriod: 4,
     },
     {
       id: 2,
@@ -313,8 +313,8 @@ const Payment: FC = (): JSX.Element => {
       }
     }
 
-    if (item.identifier === 'io_29_3m') {
-      if (currentSubscriptions.activeSubscriptions.includes('io_29_3m') || currentSubscriptions.activeSubscriptions.includes('io_25_wk')) {
+    if (item.identifier === 'io_25_wk') {
+      if (currentSubscriptions.activeSubscriptions.includes('io_25_wk') || currentSubscriptions.activeSubscriptions.includes('io_29_3m')) {
         isRender = false;
       }
     }

@@ -78,7 +78,7 @@ const Settings = () => {
             // navigation.navigate('/profile');
             break;
           case 'io_25_wk':
-            showToast('inviteMatch', 'Annual subscription restored', 'Restore purchases', {status: 'success'});
+            showToast('inviteMatch', 'Month subscription restored', 'Restore purchases', {status: 'success'});
             setCurrentSubscriptions({activeSubscriptions: ['io_25_wk']});
             // navigation.navigate('/profile');
             break;

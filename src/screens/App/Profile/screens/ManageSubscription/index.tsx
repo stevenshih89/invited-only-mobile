@@ -28,10 +28,10 @@ const ManageSubscription: FC = () => {
         setSubscriptionName('weekly');
         break;
       case 'io_29_3m':
-        setSubscriptionName('month');
+        setSubscriptionName('3 months');
         break;
       case 'io_25_wk':
-        setSubscriptionName('yearly');
+        setSubscriptionName('month');
         break;
       default:
         break;
@@ -83,7 +83,7 @@ const ManageSubscription: FC = () => {
           </Text>
           <SafetyAndWellbeing wellbeingShow={false} />
         </View>
-        {currentSubscriptions.activeSubscriptions.length < 3 && !currentSubscriptions.activeSubscriptions.includes('io_25_wk') && (
+        {currentSubscriptions.activeSubscriptions.length < 3 && !currentSubscriptions.activeSubscriptions.includes('io_29_3m') && (
           <TouchableOpacity onPress={goToMyPaymentPath} style={{marginTop: 24}}>
             <LinearGradient
               colors={['#977B4A', '#E5D291', '#A28453']}
