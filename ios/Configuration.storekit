@@ -1,4 +1,14 @@
 {
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
   "identifier" : "B941B22F",
   "nonRenewingSubscriptions" : [
 
@@ -137,7 +147,10 @@
           "recurringSubscriptionPeriod" : "P1W",
           "referenceName" : "Weekly",
           "subscriptionGroupID" : "97D1B37B",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         },
         {
           "adHocOffers" : [
@@ -162,7 +175,10 @@
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Annual",
           "subscriptionGroupID" : "97D1B37B",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         },
         {
           "adHocOffers" : [
@@ -187,7 +203,10 @@
           "recurringSubscriptionPeriod" : "P3M",
           "referenceName" : "Months ",
           "subscriptionGroupID" : "97D1B37B",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         }
       ]
     }
@@ -197,7 +216,7 @@
     "privateKey" : "MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgdLXb4+RU2pTR5FQYRn+KLoHeDQfb4JwMYW9kOtkytoSgCgYIKoZIzj0DAQehRANCAAQB+lOn/oHrW1XPvlqwIJZt7ST5SDOp2JbxtX4I44ysCl0+eO7veXq+jk7uMgE8tpZ5yFrkXFKNASy3p59fNyEH"
   },
   "version" : {
-    "major" : 3,
+    "major" : 4,
     "minor" : 0
   }
 }

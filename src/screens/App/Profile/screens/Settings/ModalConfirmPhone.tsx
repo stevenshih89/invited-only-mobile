@@ -8,8 +8,8 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
 import {CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell} from 'react-native-confirmation-code-field';
 import {screenHeight} from 'constants/common';
-import { useUser } from 'src/store/userStore';
-import { showToast } from 'helpers/showToast';
+import {useUser} from 'src/store/userStore';
+import {showToast} from 'helpers/showToast';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 
@@ -31,7 +31,9 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
   const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
 
   const handleConfirm = async () => {
-    if (!verificationId || !code) return;
+    if (!verificationId || !code) {
+      return;
+    }
     try {
       const credential = auth.PhoneAuthProvider.credential(verificationId, code);
       await auth().currentUser?.reauthenticateWithCredential(credential);
@@ -43,10 +45,10 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
 
   const deleteUser = async () => {
     try {
-      if(userHost.accountType === 'host') {
+      if (userHost.accountType === 'host') {
         const docSnapshot = await firestore().collection('userInfo').doc(userHost.uid).get();
         const docData = docSnapshot.data();
-      
+
         if (docData?.eventsList && docData?.eventsList.length > 0) {
           for (const item of docData?.eventsList) {
             await firestore().collection('Events').doc(item).delete();
@@ -78,7 +80,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
           console.log('error delete messages', error);
         }
       }
-      await messaging().deleteToken()
+      await messaging().deleteToken();
       await auth().currentUser?.delete();
       await firestore().collection('userInfo').doc(userHost.uid).delete();
       await auth().signOut();
@@ -89,7 +91,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
     } catch (e) {
       console.log('error delete', e);
     }
-  }
+  };
 
   return (
     <Modal

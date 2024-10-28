@@ -585,17 +585,22 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 
   const [countNotifications, setCountNotifications] = useState(0);
 
-  const getCountNotifications = async () => {
-    try {
-      const getDoc = await firestore().collection('userInfo').doc(userHost?.uid).get();
-      const notifications = getDoc?.data()?.notifications;
-      setCountNotifications(notifications.length);
-    } catch (error) {}
+  const getCountNotifications = () => {
+    return firestore()
+      .collection('userInfo')
+      .doc(userHost?.uid)
+      .collection('notifications')
+      .onSnapshot(querySnapshot => {
+        setCountNotifications(querySnapshot.docs.length);
+      });
   };
 
   useFocusEffect(
     useCallback(() => {
-      getCountNotifications();
+      const unsubscribe = getCountNotifications();
+      if (unsubscribe) {
+        return () => unsubscribe();
+      }
     }, []),
   );
 

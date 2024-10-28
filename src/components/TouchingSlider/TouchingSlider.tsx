@@ -14,26 +14,20 @@ import {
   transparentWhite56Color,
   whiteColor,
 } from 'constants/colors.ts';
-import {screenHeight} from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {commonStackPath, invitationCodePath, superInvitePayPath} from 'constants/pathLocations';
-import EventPreview from './components/EventPreview.tsx';
+import {commonStackPath, invitationCodePath} from 'constants/pathLocations';
 
 //import icons
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import CheckStarBlackIcon from 'assets/images/icons/check-star.svg';
 import CalendarCheckBlackIcon from 'assets/images/icons/calendar-check-black.svg';
-import LocationBlackIcon from 'assets/images/icons/location-black.svg';
-import HomeIcon from 'assets/images/icons/home.svg';
+import LocationBlackIcon from 'assets/images/icons/location-fill-black.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import FlashBlackIcon from 'assets/images/icons/flash-black.svg';
 import FlashFilledBlackIcon from 'assets/images/icons/flash-filled-black.svg';
-import IOIcon from 'assets/images/icons/io-logo.svg';
 import Lock from 'assets/images/icons/lock.svg';
 import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
-import Animated, {useAnimatedStyle, useSharedValue, withTiming, Easing} from 'react-native-reanimated';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {calculateAge} from 'helpers/calculateAge.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
@@ -50,13 +44,11 @@ interface Photo {
   url: string;
 }
 
-const superInvites = 1;
-
 interface TouchingSliderProps {
   photos: Photo[];
   handleOpenSuperInvite?: () => void;
   onInvite?: () => void;
-  handleAutoSwipeRight?: () => void;
+  onReject?: () => void;
   superJoin?: () => void;
   isShowCardButtons?: boolean;
   isShowLocation?: boolean;
@@ -88,39 +80,37 @@ interface TouchingSliderProps {
   hourEvent?: string;
   usersListLength?: number;
   usersList?: any[];
-  handleAutoSwipeLeft: () => void;
   item: any;
   activeType: number;
+  scrollPositionPreview: number;
+  isPreview: boolean;
+  eventsCreated: number;
+  setCurrentEventCardPosition: (value: number) => void;
+  setScrollPosition: (value: number) => void;
 }
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
   photos,
   handleOpenSuperInvite,
   onInvite,
-  handleAutoSwipeRight,
-  handleAutoSwipeLeft,
+  onReject,
   isShowCardButtons = true,
   isShowLocation = false,
   isShowAccountInfo = true,
   isShowWantsJoin = false,
   isShowInvitesTooltip = true,
   isLocked = false,
-  isShowEventPreview = false,
   name = '',
   age = '',
-  homeAddress = '',
   location,
   date = '',
-  girls = '',
   placeName = '',
   eventPhotos,
   confirmedAccount = false,
   confirmedEvent = false,
   accountType,
-  hostInfo,
   userInfo,
   isPremium,
-  fromJoinEventsScreen = false,
   isProfile,
   superJoin,
   activeEvent,
@@ -130,11 +120,14 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   hourEvent,
   usersListLength,
   usersList,
-  item,
   activeType,
+  scrollPositionPreview,
+  isPreview = true,
+  eventsCreated,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
+
   const styles = useStyles();
   const navigation = useAppNavigation();
 
@@ -223,20 +216,20 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
         priority: FastImage.priority.normal,
       }}
       resizeMode={FastImage.resizeMode.cover}>
-      {!isProfile && (
+      {(!isProfile || isPreview) && (
         <LinearGradient
           colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
           style={{
             position: 'absolute',
-            bottom: 170,
+            bottom: !isProfile ? 170 : 107,
             left: 0,
             right: 0,
-            height: 40,
+            height: !isProfile ? 40 : 136,
             zIndex: 1,
           }}
         />
       )}
-      {!isProfile && (
+      {(!isProfile || isPreview) && (
         <View
           style={{
             height: 90,
@@ -248,20 +241,32 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             top: 180,
             padding: 1.25,
           }}>
-          <View
-            style={{
-              height: 45,
-              width: 2.5,
-              backgroundColor: whiteColor,
-              borderRadius: 35,
-              transform: [{translateY: scrollPosition > 0 && scrollPosition < 270 ? scrollPosition / 7 : 0}],
-            }}
-          />
+          {!isProfile ? (
+            <View
+              style={{
+                height: 45,
+                width: 2.5,
+                backgroundColor: whiteColor,
+                borderRadius: 35,
+                transform: [{translateY: scrollPosition > 0 && scrollPosition < 270 ? scrollPosition / 7 : 0}],
+              }}
+            />
+          ) : (
+            <View
+              style={{
+                height: 45,
+                width: 2.5,
+                backgroundColor: whiteColor,
+                borderRadius: 35,
+                transform: [{translateY: scrollPositionPreview > 0 && scrollPositionPreview < 270 ? scrollPositionPreview / 7 : 0}],
+              }}
+            />
+          )}
         </View>
       )}
       {accountType === 'guest' && !isProfile && (
         <TouchableOpacity
-          onPress={() => handleAutoSwipeLeft()}
+          onPress={() => onReject && onReject()}
           style={{
             width: 50,
             height: 50,
@@ -279,7 +284,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       )}
       {accountType === 'host' && !isProfile && (
         <TouchableOpacity
-          onPress={() => handleAutoSwipeLeft()}
+          onPress={() => onReject && onReject()}
           style={{
             width: 50,
             height: 50,
@@ -437,7 +442,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
         </View>
       )}
-      <View style={[styles.wrapperBio, {position: 'absolute', bottom: isProfile ? 80 : 200}]}>
+      <View style={[styles.wrapperBio, {position: 'absolute', zIndex: 1000, bottom: isProfile ? 120 : 200}]}>
         <View style={styles.rowBioInfo}>
           <Text style={styles.textName}>{name}</Text>
           <View style={{marginLeft: 10}}>{(confirmedEvent || confirmedAccount) && <CheckStarWhite width={25} height={25} />}</View>
@@ -596,10 +601,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             </TouchableOpacity>
             <View style={{width: 16}} />
             <TouchableOpacity
-              onPress={() => {
-                handleAutoSwipeRight && handleAutoSwipeRight();
-                onInvite && onInvite();
-              }}
+              onPress={() => onInvite && onInvite()}
               style={{
                 flex: 1,
                 height: 44,
@@ -625,6 +627,145 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
         <TouchableOpacity onPress={handleBack} style={styles.button} />
         <TouchableOpacity onPress={handleNext} style={styles.button} />
       </View>
+      {isPreview && (
+        <View
+          style={{
+            height: 107,
+            width: '100%',
+            backgroundColor: whiteColor,
+            position: 'absolute',
+            bottom: 0,
+            paddingHorizontal: 16,
+            paddingVertical: 14,
+            justifyContent: 'space-between',
+          }}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+            <View style={{flexDirection: 'row'}}>
+              <View style={{alignSelf: 'flex-start'}}>
+                <FastImage style={{width: 50, height: 50, borderRadius: 50}} source={{uri: photos?.[0] ? photos?.[0] : ''}} />
+                {online && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      bottom: 2,
+                      right: 0,
+                      width: 12,
+                      height: 12,
+                      borderRadius: 12,
+                      borderWidth: 1.25,
+                      borderColor: blackColor,
+                      backgroundColor: lightGreenColor,
+                    }}
+                  />
+                )}
+              </View>
+              <View style={{marginLeft: 10, justifyContent: 'center'}}>
+                <View style={{flexDirection: 'row'}}>
+                  <View
+                    style={{
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      borderColor: blackColor,
+                      paddingHorizontal: 12,
+                      paddingVertical: 2,
+                      alignSelf: 'flex-start',
+                    }}>
+                    {accountType === 'guest' && (
+                      <Text style={{color: blackColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                        Guest
+                      </Text>
+                    )}
+                    {accountType === 'host' && (
+                      <Text style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                        Host
+                      </Text>
+                    )}
+                  </View>
+                  {(isPremium || accountType === 'guest') && (
+                    <LinearGradient
+                      colors={['#977B4A', '#E5D291', '#A28453']}
+                      style={{
+                        marginLeft: 6,
+                        alignSelf: 'flex-start',
+                        borderRadius: 4,
+                        paddingHorizontal: 12,
+                        paddingVertical: 2,
+                        backgroundColor: blackColor,
+                      }}
+                      start={{x: 0, y: 0}}
+                      end={{x: 1, y: 0}}>
+                      {(isPremium || accountType === 'guest') && (
+                        <Text
+                          style={{
+                            color: blackColor,
+                            fontSize: RFValue(10, 812),
+                            fontFamily: Satoshi700,
+                          }}>
+                          Premium
+                        </Text>
+                      )}
+                    </LinearGradient>
+                  )}
+                </View>
+                <View style={styles.rowBioInfo}>
+                  <Text
+                    style={{
+                      color: blackColor,
+                      fontFamily: Satoshi700,
+                      fontSize: RFValue(16, 812),
+                      marginTop: 4,
+                    }}>
+                    {name}
+                    {age ? <Text>,</Text> : null}
+                  </Text>
+                  {(!isProfile || isPreview) && (
+                    <Text
+                      style={{
+                        color: blackColor,
+                        fontFamily: Satoshi700,
+                        fontSize: RFValue(14, 812),
+                        marginTop: 4,
+                      }}>
+                      {' '}
+                      {age}
+                    </Text>
+                  )}
+                  <View style={{marginLeft: 8}}>{confirmedAccount && <CheckStarBlackIcon width={14} height={14} />}</View>
+                </View>
+              </View>
+            </View>
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
+            <CalendarCheckBlackIcon width={15} height={15} />
+            <Text
+              style={{
+                fontSize: RFValue(14, 812),
+                color: black4Color,
+                fontFamily: Satoshi500,
+                marginLeft: 10,
+                marginRight: 15,
+              }}>
+              {accountType === 'host'
+                ? `Events created: ${eventsCreated ? eventsCreated : 0}`
+                : `Join Events: ${joinEvents ? joinEvents : 0}`}
+            </Text>
+            {isShowLocation && location && (
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <LocationBlackIcon width={15} height={15} />
+                <Text
+                  style={{
+                    fontSize: RFValue(14, 812),
+                    color: black4Color,
+                    fontFamily: Satoshi500,
+                    marginLeft: 5,
+                  }}>
+                  {location}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      )}
       {isShowCardButtons && (
         <View
           style={{
@@ -822,10 +963,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             </TouchableOpacity>
             <View style={{width: 16}} />
             <TouchableOpacity
-              onPress={() => {
-                handleAutoSwipeRight && handleAutoSwipeRight();
-                onInvite && onInvite();
-              }}
+              onPress={() => onInvite && onInvite()}
               style={{
                 flex: 1,
                 height: 44,

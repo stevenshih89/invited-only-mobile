@@ -31,15 +31,22 @@ const fetchImage = async (uid: string): Promise<string> => {
 };
 
 const fetchNotifications = async (uid: string): Promise<Notifications[]> => {
-  const dataDoc = await firestore().collection('userInfo').doc(uid).get();
-  const notifications = (dataDoc?.data()?.notifications || []) as Notifications[];
+  const notificationsQuery = await firestore().collection('userInfo').doc(uid).collection('notifications').get();
+  const notifications = notificationsQuery.docs.map(doc => doc.data()) as Notifications[];
   return notifications.reverse();
 };
 
 const clearNotifications = async (uid: string): Promise<void> => {
-  await firestore().collection('userInfo').doc(uid).update({
-    notifications: [],
-  });
+  await firestore()
+    .collection('userInfo')
+    .doc(uid)
+    .collection('notifications')
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.docs.forEach(doc => {
+        doc.ref.delete();
+      });
+    });
 };
 
 const Notifications: FC = (): ReactElement => {
@@ -114,7 +121,7 @@ const Notifications: FC = (): ReactElement => {
                 flexDirection: 'row',
                 paddingVertical: 16,
               }}>
-              <FastImage source={{uri: images[item.uid]}} style={{width: 60, height: 60, borderRadius: 60}}/>
+              <FastImage source={{uri: images[item.uid]}} style={{width: 60, height: 60, borderRadius: 60}} />
               <View style={{marginLeft: 16, justifyContent: 'center', flex: 1}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1}}>
                   <Text

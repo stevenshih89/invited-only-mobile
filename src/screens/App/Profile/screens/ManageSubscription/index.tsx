@@ -83,7 +83,7 @@ const ManageSubscription: FC = () => {
           </Text>
           <SafetyAndWellbeing wellbeingShow={false} />
         </View>
-        {currentSubscriptions.activeSubscriptions.length < 3 && (
+        {currentSubscriptions.activeSubscriptions.length < 3 && !currentSubscriptions.activeSubscriptions.includes('io_25_wk') && (
           <TouchableOpacity onPress={goToMyPaymentPath} style={{marginTop: 24}}>
             <LinearGradient
               colors={['#977B4A', '#E5D291', '#A28453']}

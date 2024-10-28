@@ -24,7 +24,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import ModalReport from '../ModalReport/ModalReport';
-import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common';
+import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common';
 
 interface ModalUserMenuProps {
   isModalVisible: boolean;
@@ -39,164 +39,10 @@ interface ModalUserMenuProps {
   setIsVisibleModalFullEvent: Dispatch<SetStateAction<boolean>>;
 }
 
-// const BlockAndReportModal = ({blockAndReportState, setBlockAndReportState, reportState, setReportState, setModalVisible}) => {
-//   return (
-//     <Modal
-//       isVisible={blockAndReportState}
-//       useNativeDriver={false}
-//       propagateSwipe={true}
-//       backdropColor={'rgba(0, 0, 0, 0.94)'}
-//       testID={'bottom-half-modal-open-button'}
-//       onBackdropPress={() => setBlockAndReportState(false)}
-//       onSwipeComplete={() => setBlockAndReportState(false)}
-//       style={{
-//         margin: 0,
-//         justifyContent: 'flex-end',
-//         zIndex: 999,
-//       }}
-//       swipeDirection={['down']}>
-//       <View
-//         style={{
-//           backgroundColor: black2Color,
-//           height: '75%',
-//           borderTopLeftRadius: 30,
-//           borderTopRightRadius: 30,
-//           alignItems: 'center',
-//           paddingHorizontal: screenWidth / 30,
-//         }}>
-//         <View
-//           style={{
-//             backgroundColor: whiteColor,
-//             height: 2,
-//             width: 40,
-//             marginTop: screenHeight / 50,
-//             marginBottom: screenHeight / 48,
-//             borderRadius: 10,
-//           }}
-//         />
-//         <Text style={{marginTop: screenHeight / 38, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812)}}>Report</Text>
-//         <TouchableOpacity
-//           style={{
-//             backgroundColor: reportState === 'Fake profile' ? '#313131' : 'transparent',
-//             borderRadius: 10,
-//             paddingVertical: 16,
-//             paddingHorizontal: 20,
-//             width: '100%',
-//           }}
-//           onPress={() => {
-//             setReportState('Fake profile');
-//           }}>
-//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Fake profile</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity
-//           style={{
-//             backgroundColor: reportState === 'Rude or abusive behaviator' ? '#313131' : 'transparent',
-//             borderRadius: 10,
-//             paddingVertical: 16,
-//             paddingHorizontal: 20,
-//             width: '100%',
-//           }}
-//           onPress={() => {
-//             setReportState('Rude or abusive behaviator');
-//           }}>
-//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Rude or abusive behaviator</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity
-//           style={{
-//             backgroundColor: reportState === 'Inappropriate content' ? '#313131' : 'transparent',
-//             borderRadius: 10,
-//             paddingVertical: 16,
-//             paddingHorizontal: 20,
-//             width: '100%',
-//           }}
-//           onPress={() => {
-//             setReportState('Inappropriate content');
-//           }}>
-//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Inappropriate content</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity
-//           style={{
-//             backgroundColor: reportState === 'Scam or commercial' ? '#313131' : 'transparent',
-//             borderRadius: 10,
-//             paddingVertical: 16,
-//             paddingHorizontal: 20,
-//             width: '100%',
-//           }}
-//           onPress={() => {
-//             setReportState('Scam or commercial');
-//           }}>
-//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Scam or commercial</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity
-//           style={{
-//             backgroundColor: reportState === 'Identity-based hate' ? '#313131' : 'transparent',
-//             borderRadius: 10,
-//             paddingVertical: 16,
-//             paddingHorizontal: 20,
-//             width: '100%',
-//           }}
-//           onPress={() => {
-//             setReportState('Identity-based hate');
-//           }}>
-//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Identity-based hate</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity
-//           style={{
-//             backgroundColor: reportState === 'Off IO behaviator' ? '#313131' : 'transparent',
-//             borderRadius: 10,
-//             paddingVertical: 16,
-//             paddingHorizontal: 20,
-//             width: '100%',
-//           }}
-//           onPress={() => {
-//             setReportState('Off IO behaviator');
-//           }}>
-//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Off IO behaviator</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity
-//           style={{
-//             backgroundColor: reportState === 'Underage' ? '#313131' : 'transparent',
-//             borderRadius: 10,
-//             paddingVertical: 16,
-//             paddingHorizontal: 20,
-//             width: '100%',
-//           }}
-//           onPress={() => {
-//             setReportState('Underage');
-//           }}>
-//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>Underage</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity
-//           style={{
-//             backgroundColor: reportState === 'I`m just not interested' ? '#313131' : 'transparent',
-//             borderRadius: 10,
-//             paddingVertical: 16,
-//             paddingHorizontal: 20,
-//             width: '100%',
-//           }}
-//           onPress={() => {
-//             setReportState('I`m just not interested');
-//           }}>
-//           <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>I`m just not interested</Text>
-//         </TouchableOpacity>
-//         <Button
-//           title="Send"
-//           buttonStyle={{width: '100%'}}
-//           onPress={() => {
-//             setModalVisible(false);
-//             setBlockAndReportState(false);
-//           }}
-//         />
-//       </View>
-//     </Modal>
-//   );
-// };
-
 const ModalUserMenu: FC<ModalUserMenuProps> = ({
   isModalVisible,
   setModalVisible,
   title,
-  inviteStatus,
   image,
   uid,
   activeEvent,
@@ -208,8 +54,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   const [removingState, setRemovingState] = useState<boolean>(false);
   const [blockAndReportState, setBlockAndReportState] = useState<boolean>(false);
   const [cancelInvitationState, setCancelInvitationState] = useState<boolean>(false);
-  const [reportState, setReportState] = useState('Fake profile');
-  const [usersList, setUserList] = useState([]);
+  const [deleteChatState, setDeleteChatState] = useState<boolean>(false);
   const [eventData, setEventData] = useState({usersList: []});
   const styles = useStyles();
 
@@ -258,9 +103,9 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     if (!eventData?.usersList.length) {
       return;
     }
-    const isFullEvent = await checkIsFullGuestsFun();
+    const {allGuests, findAcceptedGuest} = await checkIsFullGuestsFun();
 
-    if (isFullEvent) {
+    if (findAcceptedGuest >= allGuests) {
       setModalVisible(false);
       setIsVisibleModalFullEvent(true);
       showToast('inviteMatch', 'You have reached the maximum number of guests', `${eventData?.placeName}`);
@@ -295,6 +140,95 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       // console.log(e);
     }
   };
+
+  const changeStatusGuestUsersList = async ({
+    status,
+    id,
+    uidHost,
+    placeName,
+    date,
+    hostPhoto,
+  }: {
+    status: string;
+    id: string;
+    uidHost: string;
+    placeName: string;
+    date?: string;
+    hostPhoto: string;
+  }) => {
+    const eventQuerySnapshot = await firestore().collection('Events').doc(id).get();
+    const eventDataList = eventQuerySnapshot.data();
+    if (!eventDataList?.usersList.length) {
+      return;
+    }
+
+    try {
+      const currentUid = user?.uid === hostUid ? uid : user?.uid;
+
+      const updatedUsersList = eventDataList?.usersList?.map(userItem => {
+        if (userItem.uid === currentUid) {
+          return {
+            ...userItem,
+            status,
+          };
+        }
+        return userItem;
+      });
+      await firestore().collection('Events').doc(id).update({
+        usersList: updatedUsersList,
+      });
+      switch (status) {
+        case ACCEPTED_STATUS:
+          showToast('inviteMatch', `See you at ${date}`, 'You accept to this event!', {
+            ownerPhoto: hostPhoto,
+            status: 'Accept'.toUpperCase(),
+          });
+          await sendNotification(
+            uidHost,
+            `${user?.name} accepted your invitation`,
+            'Invitation Accepted!',
+            'Accepted',
+            'Accepted'.toUpperCase(),
+            user,
+          );
+          break;
+        case NOT_ACCEPTED_STATUS:
+          showToast('inviteMatch', `You rejected ${placeName} event`, 'Not now', {
+            ownerPhoto: hostPhoto,
+            status: 'REJECTED'.toUpperCase(),
+          });
+          await sendNotification(uidHost, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+          break;
+        case CANCEL_STATUS:
+          showToast('inviteMatch', `You rejected ${placeName} event`, 'Not now', {
+            ownerPhoto: hostPhoto,
+            status: 'REJECTED'.toUpperCase(),
+          });
+          await sendNotification(uidHost, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+        default:
+          break;
+      }
+    } catch (e) {
+      console.log('error update status guest', e);
+    }
+  };
+
+  const handleDeleteChat = async () => {
+    try {
+      const messageCollection = await firestore().collection('messages').doc(activeEvent).get();
+      const data = messageCollection.data();
+      const currentUid = user?.uid === hostUid ? uid : user?.uid;
+      const updatedChats = data?.chats?.filter((i: any) => i?.uid !== currentUid);
+      await firestore().collection('messages').doc(activeEvent).update({
+        chats: updatedChats,
+      });
+      showToast('inviteMatch', `${title} was removed!`);
+      navigation.goBack();
+    } catch (e) {
+      console.error('error delete chat', e);
+    }
+  };
+
   const handleAcceptGuestFromGuest = async () => {
     const eventQuerySnapshot = await firestore().collection('Events').doc(activeEvent).get();
     const eventDataList = eventQuerySnapshot.data();
@@ -367,14 +301,6 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   };
 
   const handleActionPress = async () => {
-    // const isFull = await checkIsFullGuestsFun();
-    // if (isFull) {
-    //   setModalVisible(false);
-    //   // setTimeout(() => {
-    //   //   setIsVisibleModalFullEvent(true)
-    //   // }, 300);
-    //   return;
-    // }
     if (uid === hostUid && userGuest?.status === APPROVED_STATUS) {
       handleAcceptGuestFromGuest();
       setModalVisible && setModalVisible(false);
@@ -413,6 +339,9 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         borderWidth: 1,
       };
     }
+    return {
+      height: 0,
+    };
   };
 
   const getButtonTitleStyle = () => {
@@ -520,8 +449,13 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
           <Button
             onPress={() => {
               showToast('inviteMatch', `${title} was removed!`);
-              setCancelInvitationState(false);
-              setModalVisible(false);
+              changeStatusGuestUsersList({
+                status: CANCEL_STATUS,
+                id: activeEvent,
+                uidHost: uid,
+                placeName: eventData?.placeName,
+                hostPhoto: image,
+              });
             }}
             title="Yes, cancel invitation"
             buttonStyle={{width: '100%', marginTop: 37, marginBottom: 6}}
@@ -530,6 +464,57 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
             variant="transparent"
             onPress={() => {
               setCancelInvitationState(false);
+            }}
+            title="Cancel"
+            buttonStyle={{width: '100%'}}
+          />
+        </View>
+      </Modal>
+    );
+  };
+
+  const DeleteChatModal = () => {
+    return (
+      <Modal
+        isVisible={deleteChatState}
+        useNativeDriver={false}
+        propagateSwipe={true}
+        backdropColor={'rgba(0, 0, 0, 0.94)'}
+        testID={'bottom-half-modal-open-button'}
+        onBackdropPress={() => setDeleteChatState(false)}
+        onSwipeComplete={() => setDeleteChatState(false)}
+        style={{
+          margin: 0,
+          justifyContent: 'flex-end',
+          zIndex: 999,
+        }}
+        swipeDirection={['down']}>
+        <View style={styles.wrapperModal}>
+          <View style={styles.whiteLine} />
+
+          <View>
+            <Image source={{uri: image}} style={styles.userPhoto} />
+            {/*{online && <View style={styles.greenCircle} />}*/}
+            <View style={styles.greenCircle} />
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
+            <Text style={styles.title}>{title}</Text>
+            <FlashIcon width={19} height={19} />
+          </View>
+          <Text style={styles.textAreYouSure}>Are you sure you want to delete chat?</Text>
+          <Button
+            onPress={() => {
+              handleDeleteChat();
+              setDeleteChatState(false);
+              showToast('inviteMatch', `${title} was removed!`);
+            }}
+            title="Yes, delete chat"
+            buttonStyle={{width: '100%', marginTop: 37, marginBottom: 6}}
+          />
+          <Button
+            variant="transparent"
+            onPress={() => {
+              setDeleteChatState(false);
             }}
             title="Cancel"
             buttonStyle={{width: '100%'}}
@@ -615,7 +600,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
               <InfoIcon width={20} height={20} />
               <Text style={styles.textButton}>Block & Report</Text>
             </TouchableOpacity>
-            {userGuest?.status !== NOT_ACCEPTED_STATUS && (
+            {userGuest?.status !== NOT_ACCEPTED_STATUS && userGuest?.status !== CANCEL_STATUS && (
               <TouchableOpacity
                 onPress={() => setCancelInvitationState(true)}
                 style={[styles.buttonFooter, {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
@@ -623,6 +608,12 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
                 <Text style={[styles.textButton, {color: errorColor}]}>Cancel invitation</Text>
               </TouchableOpacity>
             )}
+            <TouchableOpacity
+              onPress={() => setDeleteChatState(true)}
+              style={[styles.buttonFooter, {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
+              <CloseIcon width={20} height={20} />
+              <Text style={[styles.textButton, {color: errorColor}]}>Delete chat</Text>
+            </TouchableOpacity>
             <View>
               <RemovingUserModal />
               <ModalReport
@@ -641,6 +632,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
                 setModalVisible={setModalVisible}
               /> */}
               <CancelInvitationModal />
+              <DeleteChatModal />
             </View>
           </View>
         </Modal>

@@ -20,15 +20,19 @@ import {blackColor, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {screenWidth} from 'constants/common';
+import {INVITE_MATCH_STATUS, screenWidth} from 'constants/common';
 import {useNavigation} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {chatCorrespondencePath, commonStackPath, invitationCodePath} from 'constants/pathLocations';
+import {chatCorrespondencePath, commonStackPath, eventActiveInfoPath, invitationCodePath, myEventsPath, requestsPath} from 'constants/pathLocations';
+import { handleCreateChat } from 'helpers/chat';
+import firestore from '@react-native-firebase/firestore';
 
 const LocalNotification = () => {
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const handlePress = (path: string, params?: any) => {
+  const handlePress = async (path: string, params?: any) => {
+    console.log('params', params);
+    
     switch (path) {
       case 'invitationCode':
         navigation.navigate(commonStackPath, {screen: invitationCodePath});
@@ -39,6 +43,57 @@ const LocalNotification = () => {
           screen: chatCorrespondencePath,
           params,
         });
+        break;
+      case 'requests':
+        // @ts-ignore
+        navigation.navigate(requestsPath, {
+          screen: requestsPath,
+          params,
+        });
+        break;
+      case 'myEvents':
+        // @ts-ignore
+        navigation.navigate(myEventsPath, {
+          screen: myEventsPath,
+          params,
+        });
+        break;
+      case 'guestsList':
+        // @ts-ignore
+        navigation.navigate(commonStackPath, {
+          screen: eventActiveInfoPath,
+          params: {list: params},
+        } as never);
+        break;
+      case 'chatCreate':
+        // @ts-ignore
+        try {
+        await handleCreateChat(params)
+        const querySnapshot = await firestore().collection('Events').doc(params.eventId).get();
+        if (!querySnapshot.exists) {
+          return;
+        }
+        const list = querySnapshot.data();
+        const messageCollection = await firestore().collection('messages').doc(list?.id).get();
+        const activeEvent = messageCollection?.data()?.activeEvent;
+        navigation.navigate(commonStackPath, {
+          screen: chatCorrespondencePath,
+          params: {
+            image: params.userHostImageUri,
+            title: params?.nameHost,
+            online: true,
+            messages: [],
+            activeEvent: activeEvent,
+            id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
+            superInvite: params?.superInvite,
+            invitedStatus: INVITE_MATCH_STATUS,
+            uid: params.uidGuest,
+            hostUid: params.uidHost
+          },
+        })
+        } catch (error) {
+
+        }
         break;
       default:
         break;
@@ -176,3 +231,4 @@ const LocalNotification = () => {
 };
 
 export default LocalNotification;
+

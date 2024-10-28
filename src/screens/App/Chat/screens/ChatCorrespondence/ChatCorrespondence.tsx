@@ -51,19 +51,29 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [messages, setMessages] = useState([]);
   const [allChats, setAllChats] = useState([]);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
-  const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
+  const [cancelInvitationModal, setCancelInvitationModal] = useState<boolean>(false);
   const [name, setName] = useState('');
   const [age, setAge] = useState();
   const [currentUserName, setCurrentUserName] = useState('');
   const {image, title, online, activeEvent, id, superInvite, invitedStatus, uid, hostUid} = route?.params;
+  console.log('route?.params', route?.params);
+  
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
 
   const clearChat = useRef(false);
   const user = useUser((i: any) => i?.user);
 
+  const flatListRef = useRef<FlatList>(null);
+
   const handleCloseReport = () => {
     setModalVisible(false);
     navigation.goBack();
+  };
+
+  const scrollToEnd = () => {
+    setTimeout(() => {
+      flatListRef.current?.scrollToEnd({animated: true});
+    }, 100);
   };
 
   useEffect(() => {
@@ -126,7 +136,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     const findChat = allChats?.filter(i => i?.id === id);
 
     if (findChat && findChat.length > 0) {
-      if(user?.accountType === 'host') {
+      if (user?.accountType === 'host') {
         if (typeof findChat[0].newMessagesGuest === 'number') {
           findChat[0].newMessagesGuest = 0;
         }
@@ -160,12 +170,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
       const findChat = allChats?.filter(i => i?.id === id);
 
-      const getDate = await firestore().collection('userInfo').doc(uid).get()
-      const docData = getDate.data()
+      const getDate = await firestore().collection('userInfo').doc(uid).get();
+      const docData = getDate.data();
 
       if (findChat && findChat.length > 0) {
         findChat[0].messages.push(updateData);
-        if(user?.accountType === 'host') {
+        if (user?.accountType === 'host') {
           if (typeof findChat[0].newMessagesHost === 'number') {
             findChat[0].newMessagesHost = findChat[0].newMessagesHost + 1;
           } else {
@@ -178,17 +188,24 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             findChat[0].newMessagesGuest = 1;
           }
         }
+        setMessageUser('');
         await doc.update({
           chats: [...allChats],
         });
-        if(docData?.notificationSettings.chat) {
-          await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
+        if (docData?.notificationSettings.chat) {
+          await sendNotification(
+            uid,
+            `${currentUserName} sent you a new message`,
+            'Invited Only',
+            'message',
+            'Message'.toUpperCase(),
+            user,
+          );
         }
       }
     } catch (e) {
       // console.log(e);
     }
-    setMessageUser('');
   };
 
   const getFormattedTime = timestamp => {
@@ -207,10 +224,6 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       return messageDate.format('MMMM D [at] h:mm');
     }
   };
-
-  useEffect(() => {
-    // console.warn('messages', messages);
-  }, [messages]);
 
   const goToProfileView = (currentUid: string) => {
     setModalVisible(false);
@@ -267,9 +280,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       .doc(activeEvent)
       .onSnapshot(documentSnapshot => {
         const data = documentSnapshot.data()?.chats;
-        const findChat = data?.filter(j => j?.id === id);
+        const findChat = data?.find(j => j?.id === id);
+        if (!findChat) {
+          navigation.goBack();
+        }
         setAllChats(data);
-        setMessages(findChat ? findChat[0]?.messages : null);
+        setMessages(findChat ? findChat?.messages : null);
       });
 
     return () => subscriber();
@@ -336,6 +352,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                 return <ChatMessage userAvatar={image} messageUser={item} showDate={showDate} />;
               }}
               keyExtractor={(item, index) => `${item.timestamp}${index}`}
+              ref={flatListRef}
+              onContentSizeChange={scrollToEnd}
             />
           </View>
           {/*{handleInvitationApproved()}*/}
@@ -347,6 +365,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                 onChangeText={setMessageUser}
                 style={styles.textInput}
                 placeholder="Write your message"
+                onFocus={scrollToEnd}
               />
               <TouchableOpacity style={styles.buttonSend} onPress={handleSendMessage}>
                 <SendIcon />
@@ -354,8 +373,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             </View>
           </View>
           <ModalCancelOrConfirmInvitation
-            cancelInvitation={cancelInvitation}
-            setCancelInvitation={setCancelInvitation}
+            cancelInvitation={cancelInvitationModal}
+            setCancelInvitation={setCancelInvitationModal}
             typeModal="confirm"
             title={'Namos Dubai'}
             name={title}

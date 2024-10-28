@@ -90,7 +90,6 @@ export interface UserInfo extends User.Info {
   smoke?: User.Smoke;
   work?: User.Work;
   languges?: User.Languages[];
-  notifications: User.Notification[];
   socialNickname: User.SocialNickname;
   notificationSettings: User.NotificationSettings;
 }

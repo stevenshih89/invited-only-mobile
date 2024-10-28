@@ -93,17 +93,17 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
         await sendNotification(
           uidForNotification,
           'Say, Hi! 👋',
-          'New invite match!',
-          'Invite Match',
-          'Invite Match'.toUpperCase(),
+          'New connection!',
+          'Connection',
+          'Connection'.toUpperCase(),
           userHost,
           isEventHost ? chatDataHost : chatDataGuest,
         );
       }
     }
-    showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {
+    showToast('inviteMatch', 'Say, Hi! 👋', 'New connection!', {
       ownerPhoto: ownerPhoto,
-      status: 'INVITE MATCH',
+      status: 'CONNECTION',
       path: 'chat',
       params: isEventHost ? chatDataHost : chatDataGuest,
     });

@@ -165,8 +165,6 @@ const MyEvents: FC<any> = ({navigation}) => {
         // console.error('error sending notification:', error);
       } else {
         const data = await response.json();
-        const userDoc = await firestore().collection('userInfo').doc(user.uid).get();
-        const userNotifications = userDoc.data()?.notifications || [];
         const id = generateRandomId(8);
         const notification = {
           id,
@@ -176,14 +174,9 @@ const MyEvents: FC<any> = ({navigation}) => {
           uid: userData?.uid,
         };
         try {
-          await firestore()
-            .collection('userInfo')
-            .doc(user.uid)
-            .update({
-              notifications: [...userNotifications, notification],
-            });
+          await firestore().collection('userInfo').doc(user.uid).collection('notifications').add(notification);
         } catch (error) {
-          // console.log('error update notifications', error);
+          console.error('error add notification', error);
         }
       }
     }
@@ -415,57 +408,59 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   };
 
-  useEffect(() => {
-    let myEventsSubscribe: any;
-    let eventsJoiningSubscribe: any;
-    if (user?.uid) {
-      myEventsSubscribe = firestore()
-        .collection('Events')
-        .where('uid', '==', `${user?.uid}`)
-        .onSnapshot(querySnapshot => {
-          if (querySnapshot.empty) {
-            setMyEventsData([]);
-            return;
-          }
-          const data = querySnapshot?.docs?.map(i => i?.data());
-          const sortedData = data.sort((a, b) => {
-            if (a.isCancelled && !b.isCancelled) {
-              return 1;
+  useFocusEffect(
+    useCallback(() => {
+      let myEventsSubscribe: any;
+      let eventsJoiningSubscribe: any;
+      if (user?.uid) {
+        myEventsSubscribe = firestore()
+          .collection('Events')
+          .where('uid', '==', `${user?.uid}`)
+          .onSnapshot(querySnapshot => {
+            if (querySnapshot.empty) {
+              setMyEventsData([]);
+              return;
             }
-            if (!a.isCancelled && b.isCancelled) {
-              return -1;
-            }
-
-            if (a?.date && a?.hour && b?.date && b?.hour) {
-              const adjustedDateA = moment(`${a.date}, ${a.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-              const adjustedDateB = moment(`${b.date}, ${b.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-              const now = moment();
-
-              if (adjustedDateA.isBefore(now) && !adjustedDateB.isBefore(now)) {
+            const data = querySnapshot?.docs?.map(i => i?.data());
+            const sortedData = data.sort((a, b) => {
+              if (a.isCancelled && !b.isCancelled) {
                 return 1;
               }
-              if (!adjustedDateA.isBefore(now) && adjustedDateB.isBefore(now)) {
+              if (!a.isCancelled && b.isCancelled) {
                 return -1;
               }
-            }
 
-            return 0;
+              if (a?.date && a?.hour && b?.date && b?.hour) {
+                const adjustedDateA = moment(`${a.date}, ${a.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+                const adjustedDateB = moment(`${b.date}, ${b.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+                const now = moment();
+
+                if (adjustedDateA.isBefore(now) && !adjustedDateB.isBefore(now)) {
+                  return 1;
+                }
+                if (!adjustedDateA.isBefore(now) && adjustedDateB.isBefore(now)) {
+                  return -1;
+                }
+              }
+
+              return 0;
+            });
+            setMyEventsData(sortedData);
           });
-          setMyEventsData(sortedData);
+      }
+
+      eventsJoiningSubscribe = firestore()
+        .collection('Events')
+        .onSnapshot(querySnapshot => {
+          handleGetEventsIJoining(querySnapshot);
         });
-    }
 
-    eventsJoiningSubscribe = firestore()
-      .collection('Events')
-      .onSnapshot(querySnapshot => {
-        handleGetEventsIJoining(querySnapshot);
-      });
-
-    return () => {
-      myEventsSubscribe && myEventsSubscribe();
-      eventsJoiningSubscribe && eventsJoiningSubscribe();
-    };
-  }, [setIsVisibleCancelAttendingModal, isVisibleCancelAttendingModal]);
+      return () => {
+        myEventsSubscribe && myEventsSubscribe();
+        eventsJoiningSubscribe && eventsJoiningSubscribe();
+      };
+    }, [setIsVisibleCancelAttendingModal, isVisibleCancelAttendingModal]),
+  );
 
   const customButton = (item: any[]) => {
     return (
@@ -492,14 +487,17 @@ const MyEvents: FC<any> = ({navigation}) => {
     );
   };
 
-  const changeStatusGuestUsersList = async (
+  const changeStatusGuestUsersList = async (     
     status: string,
     id: string,
     uidHost: string,
     placeName: string,
     date: string,
     hostPhoto: string,
-  ) => {
+    item: any
+  ) => {    
+    console.log('changeStatusGuestUsersList');
+
     const eventQuerySnapshot = await firestore().collection('Events').doc(id).get();
     const eventDataList = eventQuerySnapshot.data();
     if (!eventDataList?.usersList.length) {
@@ -532,6 +530,7 @@ const MyEvents: FC<any> = ({navigation}) => {
             'Accepted',
             'Accepted'.toUpperCase(),
             user,
+            JSON.stringify({ path: 'guestsList', eventInfo: item})
           );
           break;
         case NOT_ACCEPTED_STATUS:
@@ -555,37 +554,33 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   };
 
-  const customButtonsGuest = (id: string, usersList: any[], date: string, uidHost: string, placeName: string, hostPhoto: string) => {
+  const customButtonsGuest = (id: string, usersList: any[], date: string, uidHost: string, placeName: string, hostPhoto: string, item: any) => {
     const findUser = usersList.find(item => item.uid === user?.uid);
-    console.warn(findUser);
-
     const status = findUser?.status;
-
-    console.warn(status, id, placeName);
 
     return (
       <>
         {status !== ACCEPTED_STATUS && status !== APPROVED_STATUS && (
           <TouchableOpacity
-          disabled
-          style={{
-            height: 65,
-            width: '100%',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 18,
-            backgroundColor: lightGray20Color,
-            marginTop: 25,
-          }}>
-          <Text
+            disabled
             style={{
-              color: blackColor,
-              fontFamily: Satoshi700,
-              fontSize: RFValue(16, 812),
+              height: 65,
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 18,
+              backgroundColor: lightGray20Color,
+              marginTop: 25,
             }}>
-            Waiting for invitation approval
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={{
+                color: blackColor,
+                fontFamily: Satoshi700,
+                fontSize: RFValue(16, 812),
+              }}>
+              Waiting for invitation approval
+            </Text>
+          </TouchableOpacity>
         )}
         {status === ACCEPTED_STATUS && (
           <TouchableOpacity
@@ -612,7 +607,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         {status === APPROVED_STATUS && (
           <>
             <TouchableOpacity
-              onPress={() => changeStatusGuestUsersList(ACCEPTED_STATUS, id, uidHost, placeName, date, hostPhoto)}
+              onPress={() => changeStatusGuestUsersList(ACCEPTED_STATUS, id, uidHost, placeName, date, hostPhoto, item)}
               style={{
                 height: 65,
                 width: '100%',
@@ -845,7 +840,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                   style={{flex: 1, height: '100%', marginBottom: screenHeight / 10}}
                   data={myEventsData}
                   keyExtractor={item => item.id.toString()}
-                  ListHeaderComponent={<UserInfoTop showTotalEvents={true} />}  
+                  ListHeaderComponent={<UserInfoTop showTotalEvents={true} />}
                   ListEmptyComponent={() => (
                     <>
                       {userInfo?.accountConfirmed && (
@@ -873,7 +868,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                       findAcceptedGuest={item?.usersList?.filter(item => item.status === INVITE_MATCH_STATUS)}
                       item={item}
                       showGuestList={true}
-                      customButton={customButton(item)} 
+                      customButton={customButton(item)}
                     />
                   )}
                 />
@@ -965,7 +960,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     totalRequestsGuests={item?.requestsList?.length}
                     item={item}
                     showGuestList={false}
-                    customButton={customButtonsGuest(item?.id, item?.usersList, item?.date, item?.uid, item?.placeName, item?.hostImage)}
+                    customButton={customButtonsGuest(item?.id, item?.usersList, item?.date, item?.uid, item?.placeName, item?.hostImage, item)}
                     showInfoTop={true}
                   />
                 )}

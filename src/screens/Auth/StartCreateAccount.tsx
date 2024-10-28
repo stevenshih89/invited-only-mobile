@@ -69,12 +69,13 @@ const StartCreateAccount: FC = (): JSX.Element => {
               <View style={{width: 36, height: 5, borderRadius: 55, backgroundColor: lightGray19Color}} />
               <View style={{width: 36, height: 5, borderRadius: 55, backgroundColor: whiteColor, marginLeft: 5}} />
             </View>
-            <View style={{
-              width: '100%',
-              marginBottom: screenHeight / 58,
-              marginTop: screenHeight / 39,
-            }}>
-              <Button onPress={() => navigation.navigate(eulaPath as never)} title='Get Access'/>
+            <View
+              style={{
+                width: '100%',
+                marginBottom: screenHeight / 58,
+                marginTop: screenHeight / 39,
+              }}>
+              <Button onPress={() => navigation.navigate(eulaPath as never)} title="Create Account" />
             </View>
             <View style={{flexDirection: 'row', width: '100%', justifyContent: 'center', marginBottom: screenHeight / 39}}>
               <Text
@@ -103,8 +104,8 @@ const StartCreateAccount: FC = (): JSX.Element => {
               <View style={{flexDirection: 'row', marginLeft: 12, justifyContent: 'center'}}>
                 <Text
                   style={{fontFamily: Satoshi700, fontSize: RFValue(14, 932), color: whiteColor}}
-                  onPress={() => openLink('https://www.invitedonly.app/terms-and-conditions')}>
-                  Terms of Use
+                  onPress={() => openLink('https://www.invitedonly.app/terms-of-service-eula')}>
+                  Terms of Service / EULA
                 </Text>
                 <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 932), color: lightGray19Color}}> and </Text>
                 <Text
@@ -122,4 +123,3 @@ const StartCreateAccount: FC = (): JSX.Element => {
 };
 
 export default StartCreateAccount;
-

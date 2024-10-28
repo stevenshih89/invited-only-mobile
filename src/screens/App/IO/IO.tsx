@@ -15,6 +15,7 @@ import {
   ACCEPTED_STATUS,
   ALL,
   APPROVED_STATUS,
+  CANCEL_STATUS,
   INVITE_MATCH_STATUS,
   LIKED,
   NOT_ACCEPTED_STATUS,
@@ -244,20 +245,64 @@ const IO: FC = (): JSX.Element => {
     return subscription;
   }, []);
 
-  const handleAutoSwipeRight = (uid: string, isSort: boolean = true) => {
+  const handleSwipeCardRight = () => {
     if (cardRef.current) {
       // @ts-ignore
-      cardRef.current?.autoSwipeRight();
-    }
-    if (isSort) {
-      sortEvents(uid);
+      cardRef.current?.swipeCardRight();
     }
   };
 
-  const handleAutoSwipeLeft = () => {
+  const handleSwipeCardLeft = () => {
     if (cardRef.current) {
       // @ts-ignore
-      cardRef.current?.autoSwipeLeft();
+      cardRef.current?.swipeCardLeft();
+    }
+  };
+
+  const handleFilterEvent = ({uid, id, withSwipeAnimation}: {uid: string; id: string; withSwipeAnimation: boolean}) => {
+    setScrollPosition(0);
+    setEvents(prev =>
+      prev.filter(i => {
+        return isHost ? i?.info?.uid !== uid : i?.info?.id !== id;
+      }),
+    );
+    setTimeout(() => {
+      setCurrentEventCardPosition(prev => prev + 1);
+    }, 100);
+    if (withSwipeAnimation) {
+      handleSwipeCardLeft();
+    }
+  };
+
+  const handleReject = ({uid, id, withSwipeAnimation}: {uid: string; id: string; withSwipeAnimation: boolean}) => {
+    setScrollPosition(0);
+    onReject(uid, id);
+    setTimeout(() => {
+      setCurrentEventCardPosition(prev => prev + 1);
+    }, 500);
+    if (withSwipeAnimation) {
+      handleSwipeCardLeft();
+    }
+  };
+
+  const handleInvite = ({
+    uid,
+    id,
+    withSwipeAnimation,
+    superInvite,
+  }: {
+    uid: string;
+    id: string;
+    withSwipeAnimation: boolean;
+    superInvite?: boolean;
+  }) => {
+    setScrollPosition(0);
+    onInvite(uid, id, superInvite);
+    setTimeout(() => {
+      setCurrentEventCardPosition(prev => prev + 1);
+    }, 500);
+    if (withSwipeAnimation) {
+      handleSwipeCardRight();
     }
   };
 
@@ -547,18 +592,18 @@ const IO: FC = (): JSX.Element => {
         superInvite: superInvite ? superInvite : false,
         uid: isHost ? guestData?.uid : userHost?.uid,
         userPhoto: isHost ? guestData?.photos[0]?.image : userHost?.photos[0]?.image,
-        fcmToken: isHost ? guestData?.fcmToken : userHost?.fcmToken,
         createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
       };
-
+      const acceptedUsersList = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS);
       if (isHost) {
         const maxGuests = event?.male + event?.female;
-
-        const acceptedUsersList = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS);
 
         if (acceptedUsersList?.length >= maxGuests) {
           showToast('inviteMatch', 'You have reached the maximum number of guests', 'Invite');
           setIsVisibleModalFullEvent(true);
+          setLoadingEvents(true);
+          setEvents(prev => [...prev]);
+          setLoadingEvents(false);
           return;
         }
 
@@ -608,8 +653,6 @@ const IO: FC = (): JSX.Element => {
           .update(data)
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
-              console.log('proverka host');
-
               await handleCreateChat(matchedGuestData);
               await updateGuestEventsList(activeEventId, forUserUid)
               setMatchData(matchedGuestData);
@@ -619,87 +662,133 @@ const IO: FC = (): JSX.Element => {
               await sendNotification(
                 forUserUid,
                 'New invite request',
-                `${userInfo.name} wants to invite you!`,
+                `${userInfo.name} ${superInvite ? 'Super' : 'wants to'} invite you!`,
                 'invite',
                 'Invite Request'.toUpperCase(),
                 userInfo,
+                JSON.stringify({path: 'requests'}),
               );
             }
           });
       } else {
-        const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userHost?.uid && invUser?.status === LIKED);
-        let data = {};
-        let matchedGuestData: MatchData;
-        if (matchedGuest) {
-          const updatedUsersList = event?.usersList?.map(invUser => {
-            if (invUser?.uid === userHost?.uid) {
-              return {
-                ...invUser,
-                status: INVITE_MATCH_STATUS,
-              };
-            }
-            return invUser;
-          });
-          data = {
-            usersList: updatedUsersList,
-          };
-          matchedGuestData = {
+        if (acceptedUsersList?.length < event.male + event.female) {
+          const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userHost?.uid && invUser?.status === LIKED);
+          let data = {};
+          let matchedGuestData: MatchData;
+          if (matchedGuest) {
+            const updatedUsersList = event?.usersList?.map(invUser => {
+              if (invUser?.uid === userHost?.uid) {
+                return {
+                  ...invUser,
+                  status: INVITE_MATCH_STATUS,
+                };
+              }
+              return invUser;
+            });
+            data = {
+              usersList: updatedUsersList,
+            };
+            matchedGuestData = {
+              type: 'match',
+              nameHost: event?.hostName,
+              nameGuest: matchedGuest?.name,
+              imageUri: matchedGuest?.userPhoto,
+              uidHost: event?.uid,
+              uidGuest: matchedGuest?.uid,
+              eventId: activeEventId,
+              superInvite: superInvite ? superInvite : false,
+              userHostImageUri: event?.hostImage,
+              joinEvents: userInfo?.joinEvents,
+              location: userInfo?.location,
+              premium: guestData.accountPremium,
+              dateHost: guestData.date,
+              dateGuest: userInfo?.date,
+              onlineGuest: userInfo?.online,
+              accountConfirmedHost: userInfo?.accountConfirmed,
+              accountConfirmedGuest: userInfo?.accountConfirmed,
+              usersListHost: event.usersList,
+              accountTypeHost: guestData.accountType,
+              accountTypeGuest: userInfo?.accountType,
+              eventImage: event.photos[0].image,
+              guestsInvited: event.male + event.female,
+            };
+          } else {
+            data = {
+              requestsList: firestore.FieldValue.arrayUnion(userInvited),
+            };
+          }
+
+          await firestore()
+            .collection('Events')
+            .doc(activeEventId)
+            .update(data)
+            .then(async () => {
+              if (matchedGuest && matchedGuestData) {
+                await handleCreateChat(matchedGuestData);
+                setMatchData(matchedGuestData);
+                setIsVisibleMatch(true);
+              }
+              if (guestData.notificationSettings?.match || guestData.notificationSettings?.superJoin) {
+                await sendNotification(
+                  event.uid,
+                  'New join request',
+                  `${userInfo.name} wants to join you!`,
+                  'invite',
+                  'Join Request'.toUpperCase(),
+                  userInfo,
+                  JSON.stringify({path: 'requests'}),
+                );
+              }
+            });
+        } else {
+          const matchedGuestData = {
             type: 'match',
             nameHost: event?.hostName,
-            nameGuest: matchedGuest?.name,
-            imageUri: matchedGuest?.userPhoto,
-            uidHost: event?.uid,
-            uidGuest: matchedGuest?.uid,
+            nameGuest: userInfo?.name,
+            imageUri: userInfo?.photos[0].image,
+            uidHost: userInfo?.uid,
+            uidGuest: event?.uid,
             eventId: activeEventId,
             superInvite: superInvite ? superInvite : false,
             userHostImageUri: event?.hostImage,
             joinEvents: userInfo?.joinEvents,
             location: userInfo?.location,
-            premium: guestData.accountPremium,
-            dateHost: guestData.date,
+            premium: userInfo.accountPremium,
+            dateHost: userInfo.date,
             dateGuest: userInfo?.date,
             onlineGuest: userInfo?.online,
             accountConfirmedHost: userInfo?.accountConfirmed,
             accountConfirmedGuest: userInfo?.accountConfirmed,
             usersListHost: event.usersList,
-            accountTypeHost: guestData.accountType,
+            accountTypeHost: userInfo.accountType,
             accountTypeGuest: userInfo?.accountType,
             eventImage: event.photos[0].image,
             guestsInvited: event.male + event.female,
           };
-        } else {
-          data = {
-            requestsList: firestore.FieldValue.arrayUnion(userInvited),
-          };
-        }
 
-        await firestore()
-          .collection('Events')
-          .doc(activeEventId)
-          .update(data)
-          .then(async () => {
-            if (matchedGuest && matchedGuestData) {
-              await handleCreateChat(matchedGuestData);
-              await updateGuestEventsList(activeEventId, userInfo?.uid)
-              setMatchData(matchedGuestData);
-              setIsVisibleMatch(true);
-            }
-            if (guestData.notificationSettings?.match || guestData.notificationSettings?.superJoin) {
-              await sendNotification(
-                event.uid,
-                'New join request',
-                `${userInfo.name} wants to join you!`,
-                'invite',
-                'Join Request'.toUpperCase(),
-                userInfo,
-              );
-            }
+          showToast('inviteMatch', `Chat with ${event.hostName} to find a solution`, "The event is full: You can't join", {
+            ownerPhoto: event.hostImage,
+            status: 'FULL',
+            path: 'chatCreate',
+            params: matchedGuestData,
           });
+          setLoadingEvents(true);
+          setEvents(prev => [...prev]);
+          setLoadingEvents(false);
+          return;
+        }
       }
-      setEvents(prev => prev.filter(i => i?.info?.uid !== forUserUid));
+      setEvents(prev => prev.filter(i => (isHost ? i?.info?.uid !== forUserUid : i?.info?.id !== eventId)));
       setScrollPosition(0);
     } catch (error) {
-      // console.log('eror invite', error);
+      console.error(error);
+    }
+  };
+
+  const getUserAcceptedEvent = (event: any) => {
+    if (event) {
+      const userAccepted = event.usersList.filter(item => item.usersList.status === ACCEPTED_STATUS);
+      return userAccepted.length;
     }
   };
 
@@ -711,14 +800,6 @@ const IO: FC = (): JSX.Element => {
       }, 4000);
     } else {
       showToast('inviteMatch', "You don't have Super Joins", 'Super Join');
-    }
-  };
-
-  const handleChangeListsEvents = async (uid: string, type: string): Promise<void> => {
-    if (type === 'accept') {
-      handleAutoSwipeRight(uid, false);
-    } else {
-      handleAutoSwipeLeft();
     }
   };
 
@@ -747,10 +828,10 @@ const IO: FC = (): JSX.Element => {
     return getDoc.data();
   };
 
-  const customButton = (id: string) => {
+  const customButton = (id: string, uid: string) => {
     return (
       <TouchableOpacity
-        onPress={() => handleAutoSwipeRight(id)}
+        onPress={() => handleInvite({uid, id, withSwipeAnimation: true})}
         style={{
           height: 65,
           width: '100%',
@@ -807,7 +888,8 @@ const IO: FC = (): JSX.Element => {
                 (j?.status === INVITE_MATCH_STATUS ||
                   j?.status === APPROVED_STATUS ||
                   j?.status === ACCEPTED_STATUS ||
-                  j?.status === NOT_ACCEPTED_STATUS),
+                  j?.status === NOT_ACCEPTED_STATUS ||
+                  j?.status === CANCEL_STATUS),
             )
           ) {
             return false;
@@ -896,16 +978,18 @@ const IO: FC = (): JSX.Element => {
               eventPhotos={event?.photos}
               photos={currUserPhotos}
               name={event?.name}
-              handleAutoSwipeRight={() => handleAutoSwipeRight(event?.id)}
-              onInvite={() => onInvite(event?.uid, event?.id)}
-              superJoin={() => onInvite(event?.uid, event?.id, true)}
+              onReject={() => handleReject({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
+              onInvite={() => handleInvite({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
+              superJoin={() => handleInvite({uid: event?.uid, id: event?.id, withSwipeAnimation: true, superInvite: true})}
               confirmedEvent={event?.statusEvent}
               uidUserEvent={event?.uid}
               hourEvent={event?.hour}
               usersListLength={event?.usersList.length}
               usersList={event?.usersList}
-              handleAutoSwipeLeft={handleAutoSwipeLeft}
               accountType={userInfo?.accountType}
+              isPreview={false}
+              setCurrentEventCardPosition={setCurrentEventCardPosition}
+              setScrollPosition={setScrollPosition}
             />
             <View style={styles.bioWrapper}>
               <Text style={[styles.titleSection]}>Event details</Text>
@@ -926,7 +1010,7 @@ const IO: FC = (): JSX.Element => {
                 totalRequestsGuests={event?.requestsList?.length}
                 item={event}
                 showGuestList={false}
-                customButton={customButton(event?.id)}
+                customButton={customButton(event?.id, event?.uid)}
               />
               <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Place name</Text>
               <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.placeName}</Text>
@@ -1051,7 +1135,7 @@ const IO: FC = (): JSX.Element => {
               </TouchableOpacity>
               <View style={styles.wrapperButtonsFooter}>
                 <TouchableOpacity
-                  onPress={() => handleChangeListsEvents(event?.uid, 'reject')}
+                  onPress={() => handleReject({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
                   style={[styles.buttonCloseOrCheck, {marginLeft: 1}]}>
                   <View
                     style={{
@@ -1153,7 +1237,7 @@ const IO: FC = (): JSX.Element => {
                   </View>
                 </TouchableWithoutFeedback>
                 <TouchableOpacity
-                  onPress={() => handleChangeListsEvents(event?.uid, 'accept')}
+                  onPress={() => handleInvite({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
                   style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
                   <View
                     style={{
@@ -1219,15 +1303,6 @@ const IO: FC = (): JSX.Element => {
   const handleSuperInviteBottom = (item: any, coinAnimationTimer: number) => {
     handleSuperInvite();
     handleOpenSuperInvite(item, coinAnimationTimer);
-  };
-
-  const sortEvents = (uid: string) => {
-    if (uid) {
-      const res = eventsRef.current?.filter(item => item.info.uid !== uid);
-      eventsRef.current = res;
-      setEvents(res);
-      setCurrentEventCardPosition(prev => prev + 1);
-    }
   };
 
   const getListForHost = async () => {
@@ -1317,11 +1392,11 @@ const IO: FC = (): JSX.Element => {
               isShowInvitesTooltip={false}
               isLocked={!userInfo?.accountConfirmed}
               confirmedAccount={accountConfirmed}
-              onInvite={() => onInvite(uid, item?.id)}
+              onReject={() => handleReject({uid, id: item?.id, withSwipeAnimation: true})}
+              onInvite={() => handleInvite({uid, id: item?.id, withSwipeAnimation: true})}
               handleOpenSuperInvite={() => handleOpenSuperInvite(item, uid)}
               photos={girlPhotos}
               accountType={accountType}
-              handleAutoSwipeRight={() => handleAutoSwipeRight(item?.id)}
               isShowWantsJoin={findSuperJoin}
               isPremium={accountPremium}
               activeEvent={activeEvent}
@@ -1331,7 +1406,7 @@ const IO: FC = (): JSX.Element => {
               date={item.date}
               item={item}
               userInfo={userInfo}
-              handleAutoSwipeLeft={handleAutoSwipeLeft}
+              isPreview={false}
             />
             <View style={styles.bioWrapper}>
               <Text style={[styles.titleSection, bio ? styles.mt31 : {}]}>My basics</Text>
@@ -1433,12 +1508,7 @@ const IO: FC = (): JSX.Element => {
               </View>
               <View style={styles.wrapperButtonsFooter}>
                 <TouchableOpacity
-                  onPress={() => {
-                    handleAutoSwipeLeft();
-                    setTimeout(() => {
-                      sortEvents(item?.uid);
-                    }, 500);
-                  }}
+                  onPress={() => handleReject({uid, id: item?.id, withSwipeAnimation: true})}
                   style={styles.buttonCloseOrCheck}>
                   <View
                     style={{
@@ -1475,10 +1545,7 @@ const IO: FC = (): JSX.Element => {
                     <CloseIcon />
                   </View>
                 </TouchableOpacity>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    handleSuperInviteBottom(item, 400);
-                  }}>
+                <TouchableWithoutFeedback onPress={() => handleSuperInviteBottom(item, 400)}>
                   <View style={styles.buttonFlash}>
                     <View
                       style={{
@@ -1539,9 +1606,7 @@ const IO: FC = (): JSX.Element => {
                   </View>
                 </TouchableWithoutFeedback>
                 <TouchableOpacity
-                  onPress={() => {
-                    handleAutoSwipeRight(item?.id);
-                  }}
+                  onPress={() => handleInvite({uid: item?.uid, id: item?.id, withSwipeAnimation: true})}
                   style={styles.buttonCloseOrCheck}>
                   <View
                     style={{
@@ -1579,10 +1644,7 @@ const IO: FC = (): JSX.Element => {
                   </View>
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity
-                onPress={() => {
-                  handleReport(uid, activeEvent);
-                }}>
+              <TouchableOpacity onPress={() => handleReport(uid, activeEvent)}>
                 <Text style={styles.textHideNadSendReport}>Block and Report</Text>
               </TouchableOpacity>
             </View>
@@ -1601,10 +1663,8 @@ const IO: FC = (): JSX.Element => {
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission();
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
     if (enabled) {
-      // // console.log('Authorization status:', authStatus);
-      fcmHelper(userInfo?.uid).then();
+      await fcmHelper();
     }
   };
 
@@ -1800,22 +1860,8 @@ const IO: FC = (): JSX.Element => {
                   cardWidth="100%"
                   // @ts-ignore
                   cardHeight="100%"
-                  onSwipedLeft={() => {
-                    setScrollPosition(0);
-                    setTimeout(() => {
-                      onReject(item?.info?.uid, item?.info?.id);
-                    }, 500);
-                    setTimeout(() => {
-                      setCurrentEventCardPosition(prev => prev + 1);
-                    }, 500);
-                  }}
-                  onSwipedRight={() => {
-                    setScrollPosition(0);
-                    onInvite(item?.info?.uid, item?.info?.id);
-                    setTimeout(() => {
-                      setCurrentEventCardPosition(prev => prev + 1);
-                    }, 500);
-                  }}
+                  onSwipedLeft={() => handleReject({uid: item?.info?.uid, id: item?.info?.id, withSwipeAnimation: false})}
+                  onSwipedRight={() => handleInvite({uid: item?.info?.uid, id: item?.info?.id, withSwipeAnimation: false})}
                   OverlayLabelRight={OverlayRight}
                   OverlayLabelLeft={OverlayLeft}
                   disableBottomSwipe={true}
@@ -1849,7 +1895,7 @@ const IO: FC = (): JSX.Element => {
             <ModalEventLocked eventReviewed={activeEvent?.eventReviewed} eventStatus={activeEvent?.statusEvent} />
           )}
           <ModalReport
-            handleAutoSwipeLeft={handleAutoSwipeLeft}
+            handleAutoSwipeLeft={() => handleFilterEvent({uid: reportedItem?.uid, id: reportedItem?.event?.id, withSwipeAnimation: false})}
             modalReport={modalReport}
             setModalReport={setModalReport}
             uidSender={userHost?.uid}

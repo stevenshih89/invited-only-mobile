@@ -12,30 +12,39 @@ import Users from 'assets/images/icons/Users.svg';
 import UserIconWhite from 'assets/images/icons/user-white.svg';
 import UserIcon from 'assets/images/icons/user.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
-import ArrowRightIcon from 'assets/images/icons/arrow-right.svg'
+import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ChatActiveIcon from 'assets/images/tab-bar/chat-active.svg';
 import UserWarnIcon from 'assets/images/icons/user-warn.svg';
 import CloseIcon from 'assets/images/icons/close-circle-red.svg';
-import CheckIcon  from 'assets/images/icons/Check-black.svg';
+import CheckIcon from 'assets/images/icons/Check-black.svg';
 import LineImage from 'assets/images/app/Line.png';
 import {chatCorrespondencePath, commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
-import {blackColor, deleteColor, gray1Color, lightGray18Color, lightGray20Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors.ts';
+import {
+  blackColor,
+  deleteColor,
+  gray1Color,
+  lightGray18Color,
+  lightGray20Color,
+  lightGreenColor,
+  transparent60Color,
+  whiteColor,
+} from 'constants/colors.ts';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 import firestore from '@react-native-firebase/firestore';
-import { color } from '@rneui/base';
+import {color} from '@rneui/base';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
-import { calculateAge } from 'helpers/calculateAge';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import {calculateAge} from 'helpers/calculateAge';
 import {userProfilePath} from 'constants/pathLocations.ts';
-import { formatDate } from 'helpers/formatDate';
-import { getUsersListAccepted } from 'helpers/getUsersListAccepted';
-import { ACCEPTED_STATUS, APPROVED_STATUS, screenWidth } from 'constants/common';
-import { useUser } from 'src/store/userStore';
-import { showToast } from 'helpers/showToast';
-import { sendNotification } from 'helpers/fcmHelper';
+import {formatDate} from 'helpers/formatDate';
+import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
+import {ACCEPTED_STATUS, APPROVED_STATUS, screenWidth} from 'constants/common';
+import {useUser} from 'src/store/userStore';
+import {showToast} from 'helpers/showToast';
+import {sendNotification} from 'helpers/fcmHelper';
 
 interface HostMenu {
   hostMenu?: boolean;
@@ -51,13 +60,25 @@ interface HostMenu {
   hostImage: string;
 }
 
-const ModalHostMenu: FC<HostMenu> = ({girlInvitation, date, hostMenu, setHostMenu, image, name, imageBg, hostUid, usersList, eventId, hostImage}) => {
+const ModalHostMenu: FC<HostMenu> = ({
+  girlInvitation,
+  date,
+  hostMenu,
+  setHostMenu,
+  image,
+  name,
+  imageBg,
+  hostUid,
+  usersList,
+  eventId,
+  hostImage,
+}) => {
   const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const navigation = useAppNavigation();
   const styles = useStyles();
   const [hostData, setHostData] = useState<any>();
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState('');
 
   const user = useUser((i: any) => i?.user);
 
@@ -98,33 +119,31 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, date, hostMenu, setHostMen
     try {
       const eventQuerySnapshot = await firestore().collection('Events').doc(eventId).get();
       const eventDataList = eventQuerySnapshot.data();
-      
+
       if (!eventDataList || !eventDataList?.usersList.length) {
         return;
       }
-      
+
       const findUser = eventDataList.usersList.find(item => item.uid === user?.uid);
       if (findUser) {
         setStatus(findUser?.status);
       }
-    } catch (error) {
-
-    }
+    } catch (error) {}
   };
-  
+
   useEffect(() => {
     getStatus();
   }, [hostUid]);
-  
+
   const changeStatusGuestUsersList = async () => {
     try {
       const eventQuerySnapshot = await firestore().collection('Events').doc(eventId).get();
       const eventDataList = eventQuerySnapshot.data();
-  
+
       if (!eventDataList?.usersList.length) {
         return;
       }
-  
+
       const updatedUsersList = eventDataList.usersList.map(userItem => {
         if (userItem.uid === user?.uid) {
           return {
@@ -138,12 +157,12 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, date, hostMenu, setHostMen
       await firestore().collection('Events').doc(eventId).update({
         usersList: updatedUsersList,
       });
-      getStatus()
+      getStatus();
       showToast('inviteMatch', `See you at ${date}`, 'You accept to this event!', {
         ownerPhoto: hostImage,
         status: 'Accept'.toUpperCase(),
       });
-  
+
       if (hostUid) {
         await sendNotification(
           hostUid,
@@ -154,11 +173,8 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, date, hostMenu, setHostMen
           user,
         );
       }
-    } catch (e) {
-
-    }
+    } catch (e) {}
   };
-  
 
   const CustomButtonsGuest: FC = () => {
     return (
@@ -166,54 +182,54 @@ const ModalHostMenu: FC<HostMenu> = ({girlInvitation, date, hostMenu, setHostMen
         {status !== ACCEPTED_STATUS && status !== APPROVED_STATUS && (
           <View style={{paddingHorizontal: 14}}>
             <TouchableOpacity
-          disabled
-          style={{
-            height: 65,
-            width: '100%',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 18,
-            backgroundColor: lightGray20Color,
-            marginBottom: 15,
-          }}>
-          <Text
-            style={{
-              color: blackColor,
-              fontFamily: Satoshi700,
-              fontSize: RFValue(16, 812),
-            }}>
-            Waiting for invitation approval
-          </Text>
-        </TouchableOpacity>
+              disabled
+              style={{
+                height: 65,
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 18,
+                backgroundColor: lightGray20Color,
+                marginBottom: 15,
+              }}>
+              <Text
+                style={{
+                  color: blackColor,
+                  fontFamily: Satoshi700,
+                  fontSize: RFValue(16, 812),
+                }}>
+                Waiting for invitation approval
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
         {status === ACCEPTED_STATUS && (
           <View style={{paddingHorizontal: 14}}>
-          <TouchableOpacity
-            disabled
-            style={{
-              width: '100%',
-              paddingVertical: 21,
-              marginBottom: 15,
-              borderRadius: 18,
-              borderWidth: 1,
-              borderColor: blackColor,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <CheckIcon width={16} height={16}/>
-            <Text
+            <TouchableOpacity
+              disabled
               style={{
-                color: blackColor,
-                fontFamily: Satoshi500,
-                fontSize: RFValue(16, 812),
-                marginLeft: 11
+                width: '100%',
+                paddingVertical: 21,
+                marginBottom: 15,
+                borderRadius: 18,
+                borderWidth: 1,
+                borderColor: blackColor,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}>
-              Attending
-            </Text>
-          </TouchableOpacity>
-        </View>
+              <CheckIcon width={16} height={16} />
+              <Text
+                style={{
+                  color: blackColor,
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(16, 812),
+                  marginLeft: 11,
+                }}>
+                Attending
+              </Text>
+            </TouchableOpacity>
+          </View>
         )}
         {status === APPROVED_STATUS && (
           <View style={{paddingHorizontal: 14}}>

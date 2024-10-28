@@ -1,22 +1,5 @@
-import {
-  black3Color,
-  blackColor,
-  gray1Color,
-  lightGray2Color,
-  lightGreen2Color,
-  lightGreenColor,
-  lightRedColor,
-  transparentWhite16Color,
-  whiteColor,
-} from 'constants/colors';
-import CalendarIcon from 'assets/images/icons/calendar.svg';
-import ClockIcon from 'assets/images/icons/clock-white.svg';
+import {black3Color, blackColor, lightGray2Color, lightGreenColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import TrashRed from 'assets/images/icons/trash-red.svg';
-import CheckIcon from 'assets/images/icons/check-circle.svg';
-import InfoCircleGray from 'assets/images/icons/info-circle-white.svg';
-import PeopleIcon from 'assets/images/icons/Users.svg';
-import FlashIcon from 'assets/images/icons/flash.svg';
-import MoreIcon from 'assets/images/icons/more-white.svg';
 import ClockFilledIcon from 'assets/images/icons/clock-white-fill.svg';
 import AcceptIcon from 'assets/images/icons/accept.svg';
 import CloseCircleFillIcon from 'assets/images/icons/close-circle-fill.svg';
@@ -36,9 +19,8 @@ import {useFocusEffect} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import {Event, EventData} from 'src/types/event';
 import FastImage from 'react-native-fast-image';
-import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
-import { useUser } from 'src/store/userStore';
+import {useUser} from 'src/store/userStore';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
@@ -60,7 +42,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
     statusEvent,
     eventReviewed,
     requestsList,
-    address
+    address,
   } = list as EventData;
 
   const [usersListData, setUsersListsData] = useState<any>(usersList);
@@ -481,9 +463,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
         return (
           <View style={{backgroundColor: blackColor, borderRadius: 10, paddingBottom: 34}}>
             <View style={{paddingTop: 0}}>
-              <Text style={[{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812), marginBottom: 17}]}>
-                Event details
-              </Text>
+              <Text style={[{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812), marginBottom: 17}]}>Event details</Text>
               <MyEventsCard
                 imageBg={photos}
                 statusEvent={statusEvent}
@@ -511,15 +491,18 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
               </Text>
               <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{name}</Text>
               <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
-              {description && 
-              <>
-                <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 20}]}>
-                Event description
+              {description && (
+                <>
+                  <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 20}]}>
+                    Event description
+                  </Text>
+                  <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{description}</Text>
+                  <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
+                </>
+              )}
+              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 34}]}>
+                Address
               </Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{description}</Text>
-              <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
-              </>}
-              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 34}]}>Address</Text>
               <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{address}</Text>
               {photos?.map((i, index) => {
                 if (photos[index].image && index > 0) {

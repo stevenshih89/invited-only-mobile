@@ -88,8 +88,6 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
         // console.error('error sending notification:', error);
       } else {
         const data = await response.json();
-        const userDoc = await firestore().collection('userInfo').doc(user.uid).get();
-        const userNotifications = userDoc.data()?.notifications || [];
         const id = generateRandomId(8);
         const notification = {
           id,
@@ -100,14 +98,9 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
         };
 
         try {
-          await firestore()
-            .collection('userInfo')
-            .doc(user.uid)
-            .update({
-              notifications: [...userNotifications, notification],
-            });
+          await firestore().collection('userInfo').doc(user.uid).collection('notifications').add(notification);
         } catch (error) {
-          // console.log('error update notifications', error);
+          console.error('error add notification', error);
         }
       }
     }
