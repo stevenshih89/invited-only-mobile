@@ -139,7 +139,7 @@ const MyPlan = () => {
       case 'io_29_3m':
         text = '3 month access';
         break;
-      case 'io_25_wk':
+      case 'io_99_1m':
         text = '1 month access';
         break;
       default:

@@ -30,7 +30,7 @@ const ManageSubscription: FC = () => {
       case 'io_29_3m':
         setSubscriptionName('3 months');
         break;
-      case 'io_25_wk':
+      case 'io_99_1m':
         setSubscriptionName('month');
         break;
       default:

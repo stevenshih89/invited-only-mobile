@@ -132,16 +132,6 @@ const Payment: FC = (): JSX.Element => {
       weeksInPeriod: 1,
     },
     {
-      id: 1,
-      title: 'BILLED 1 MONTH',
-      duration: 1,
-      durationName: 'month',
-      description: 'Month',
-      pricePerDuration: '$25/wk',
-      fullPrice: '$99',
-      weeksInPeriod: 4,
-    },
-    {
       id: 2,
       title: 'BILLED 3 MONTH',
       duration: 3,
@@ -150,6 +140,16 @@ const Payment: FC = (): JSX.Element => {
       pricePerDuration: '$29/wk',
       fullPrice: '$357',
       weeksInPeriod: 13, // trust me this is true
+    },
+    {
+      id: 1,
+      title: 'BILLED 1 MONTH',
+      duration: 1,
+      durationName: 'month',
+      description: 'Month',
+      pricePerDuration: '$25/wk',
+      fullPrice: '$99',
+      weeksInPeriod: 4,
     },
   ]);
 
@@ -206,43 +206,6 @@ const Payment: FC = (): JSX.Element => {
     }, 1000);
   };
 
-  // const restorePurchases = async () => {
-  //   try {
-  //     const purchaserInfo = await Purchases.restorePurchases();
-
-  //     console.warn(purchaserInfo);
-
-  //     if (purchaserInfo.activeSubscriptions.length > 0) {
-  //       switch (purchaserInfo.activeSubscriptions[0]) {
-  //         case 'io_59_1w':
-  //           showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', {status: 'success'});
-
-  //           setCurrentSubscriptions({activeSubscriptions: ['io_59_1w']});
-  //           // navigation.navigate('/profile');
-  //           break;
-  //         case 'io_25_wk':
-  //           showToast('inviteMatch', 'Annual subscription restored', 'Restore purchases', {status: 'success'});
-  //           setCurrentSubscriptions({activeSubscriptions: ['io_25_wk']});
-  //           // navigation.navigate('/profile');
-  //           break;
-  //         case 'io_29_3m':
-  //           showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', {status: 'success'});
-  //           setCurrentSubscriptions({activeSubscriptions: ['io_29_3m']});
-  //           // navigation.navigate('/profile');
-  //           break;
-  //         default:
-  //           break;
-  //       }
-  //       // console.log('purchases restore', purchaserInfo.activeSubscriptions[0]);
-  //     } else {
-  //       // console.log('purchases not found');
-  //       showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', {status: 'fail'});
-  //     }
-  //   } catch (e) {
-  //     // console.error('error restore purchases', e);
-  //   }
-  // };
-
   const pay = async (pack: PurchasesPackage) => {
     setLoaderVisible(true);
     try {
@@ -277,7 +240,7 @@ const Payment: FC = (): JSX.Element => {
           pay(product);
         }
 
-        if (activePayment.durationName === 'year') {
+        if (activePayment.durationName === 'month') {
           const product = offeringsHostSubscription.availablePackages[1];
           pay(product);
         }
@@ -307,14 +270,14 @@ const Payment: FC = (): JSX.Element => {
       if (
         currentSubscriptions.activeSubscriptions.includes('io_59_1w') ||
         currentSubscriptions.activeSubscriptions.includes('io_29_3m') ||
-        currentSubscriptions.activeSubscriptions.includes('io_25_wk')
+        currentSubscriptions.activeSubscriptions.includes('io_99_1m')
       ) {
         isRender = false;
       }
     }
 
-    if (item.identifier === 'io_25_wk') {
-      if (currentSubscriptions.activeSubscriptions.includes('io_25_wk') || currentSubscriptions.activeSubscriptions.includes('io_29_3m')) {
+    if (item.identifier === 'io_99_1m') {
+      if (currentSubscriptions.activeSubscriptions.includes('io_99_1m') || currentSubscriptions.activeSubscriptions.includes('io_29_3m')) {
         isRender = false;
       }
     }
@@ -436,8 +399,8 @@ const Payment: FC = (): JSX.Element => {
         case '$rc_weekly':
           res = 'io_59_1w';
           break;
-        case '$rc_annual':
-          res = 'io_25_wk';
+        case '$rc_monthly':
+          res = 'io_99_1m';
           break;
         case '$rc_three_month':
           res = 'io_29_3m';
@@ -448,7 +411,7 @@ const Payment: FC = (): JSX.Element => {
       return res;
     };
 
-    const products = subscriptions.map((offer, idx) => ({
+    const products = subscriptions.map((offer, idx) => ({      
       id: idx,
       identifier: getIdentifier(offer),
       title: plansList[idx].title,
