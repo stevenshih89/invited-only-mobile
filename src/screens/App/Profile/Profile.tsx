@@ -229,8 +229,7 @@ const Profile: FC = () => {
                 {userInfo?.accountType?.toLowerCase() === 'host' && <Text style={styles.accountTypeText}>Host</Text>}
                 {userInfo?.accountType?.toLowerCase() === 'guest' && <Text style={styles.accountTypeText}>Guest</Text>}
               </View>
-              {(userInfo?.accountType?.toLowerCase() === 'host' && userInfo?.accountPremium) ||
-                (userInfo?.accountType?.toLowerCase() === 'guest' && (
+              {(userInfo?.accountType?.toLowerCase() === 'host' && userInfo?.accountPremium) && (
                   <LinearGradient
                     colors={['#977B4A', '#E5D291', '#A28453']}
                     style={styles.accountTypeWrapperPremium}
@@ -238,7 +237,7 @@ const Profile: FC = () => {
                     end={{x: 1, y: 0}}>
                     {true && <Text style={styles.accountTypePremium}>Premium</Text>}
                   </LinearGradient>
-                ))}
+                )}
             </View>
           </View>
           <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} />
