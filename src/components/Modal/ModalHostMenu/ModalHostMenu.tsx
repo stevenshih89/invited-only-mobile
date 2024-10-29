@@ -19,7 +19,7 @@ import UserWarnIcon from 'assets/images/icons/user-warn.svg';
 import CloseIcon from 'assets/images/icons/close-circle-red.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
 import LineImage from 'assets/images/app/Line.png';
-import {chatCorrespondencePath, commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
+import {chatCorrespondencePath, commonStackPath, eventActiveInfoPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {
   blackColor,
   deleteColor,
@@ -79,8 +79,18 @@ const ModalHostMenu: FC<HostMenu> = ({
   const styles = useStyles();
   const [hostData, setHostData] = useState<any>();
   const [status, setStatus] = useState('');
+  const [eventData, setEventData] = useState();
 
   const user = useUser((i: any) => i?.user);
+
+  useEffect(() => {
+    const getEventData = async () => {
+      const getDoc = await firestore().collection('Events').doc(eventId).get()
+      const data = getDoc.data()
+      setEventData(data)
+    }
+    getEventData()
+  },[eventData])
 
   const getHostData = async () => {
     if (!hostUid) {
@@ -98,6 +108,12 @@ const ModalHostMenu: FC<HostMenu> = ({
     const hostData = hostQuery.data();
     setHostData(hostData);
   };
+
+  const goToEventInfo = () => {    
+    setHostMenu(false)
+    navigation.navigate(commonStackPath, 
+      {screen: eventActiveInfoPath, params: {list: eventData, isGuest: true}} as never)
+  }
 
   const goToProfileView = (currentUid: string) => {
     setHostMenu(false);
@@ -397,7 +413,7 @@ const ModalHostMenu: FC<HostMenu> = ({
           <CustomButtonsGuest />
         </View>
         <View style={{width: '100%', marginTop: 34}}>
-          <TouchableOpacity style={styles.buttonEvent}>
+          <TouchableOpacity onPress={goToEventInfo} style={styles.buttonEvent}>
             <CalendarIcon style={styles.iconButton} width={18} height={18} />
             <Text style={styles.textButton}>Event information</Text>
           </TouchableOpacity>
