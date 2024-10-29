@@ -283,9 +283,9 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
                     fontSize: RFValue(12, 812),
                   }}>
                   {name}
-                  <Text>,</Text>
+                  {!isProfile && age && <Text>,</Text>}
                 </Text>
-                {!isProfile && (
+                {!isProfile && age && (
                   <Text
                     style={{
                       color: blackColor,

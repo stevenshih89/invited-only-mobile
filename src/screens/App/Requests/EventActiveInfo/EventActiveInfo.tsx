@@ -25,7 +25,7 @@ import {useUser} from 'src/store/userStore';
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
-  const {list} = route?.params;
+  const {list} = route?.params;  
   const {
     usersList,
     photos,

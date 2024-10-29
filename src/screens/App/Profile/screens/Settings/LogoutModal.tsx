@@ -30,7 +30,7 @@ const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
       setUser([]);
       setHookUser(null);
       await AsyncStorage.removeItem('uid');
-      await messaging().deleteToken()
+      await messaging().deleteToken();
       onClose();
     } catch (error) {
       console.log('error log out', error);

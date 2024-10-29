@@ -56,12 +56,28 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
           }
         }
       } else {
-        const docSnapshot = await firestore().collection('messages').where('uidGuest', '==', userHost.uid).get();
-        if (!docSnapshot.empty) {
-          const deletePromises = docSnapshot.docs.map(doc => {
-            return firestore().collection('messages').doc(doc.id).delete();
-          });
-          await Promise.all(deletePromises);
+        const eventsListGuest = userHost?.eventsListVisit
+        try {
+          if (eventsListGuest && eventsListGuest.length > 0) {
+            const deletePromises = eventsListGuest.map(async (id: string) => {
+              const docMessages = firestore().collection('messages').doc(id);
+              const docData = await docMessages.get();
+              if (docData.exists) {
+                const messages = docData?.data().chats;
+                if (messages && messages.length > 0) {
+                  const filteredChats = messages.filter(item => item.uid !== userHost?.uid);
+                  if (filteredChats.length !== messages.length) {
+                    await docMessages.update({
+                      chats: filteredChats
+                    });
+                  }
+                }
+              }
+            });
+            await Promise.all(deletePromises);
+          }
+        } catch (error) {
+          console.log('error delete messages', error);
         }
       }
       await messaging().deleteToken();
@@ -73,7 +89,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
         status: 'SUCCESSED',
       });
     } catch (e) {
-      // console.log('error delete', e);
+      console.log('error delete', e);
     }
   };
 

@@ -6,7 +6,16 @@ import useStyles from 'navigator/BottomMenu/styles.ts';
 import {IOStackNavigation, MyEventsStackNavigation, ChatStackScreen} from 'navigator/AppStackScreens/AppStackScreens.tsx';
 import {whiteColor} from 'constants/colors.ts';
 import {createStackNavigator} from '@react-navigation/stack';
-import {IOPath, chatPath, joinEventsPathRequest, myEventsPath, myProfileViewPath, profileEditingPath, profilePath, requestsPath} from 'constants/pathLocations';
+import {
+  IOPath,
+  chatPath,
+  joinEventsPathRequest,
+  myEventsPath,
+  myProfileViewPath,
+  profileEditingPath,
+  profilePath,
+  requestsPath,
+} from 'constants/pathLocations';
 import Requests from 'screens/App/Requests/Requests';
 import Header from 'components/Header/Header';
 import {tabBarName, tabIcon} from 'navigator/TabBar/TabBar';
@@ -120,7 +129,7 @@ const BottomMenu: FC = (): JSX.Element => {
       <Tab.Screen name={profilePath} component={ProfileStackScreen} />
       <Tab.Screen name={requestsPath} component={RequestsStackScreen} />
       <Tab.Screen name={IOPath} component={IOStackNavigation} />
-      <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation}/>
+      <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation} />
       <Tab.Screen name={chatPath} component={ChatStackScreen} />
     </Tab.Navigator>
   );

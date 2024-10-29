@@ -218,7 +218,7 @@ const Profile: FC = () => {
           </View>
           <View style={styles.nameContainer}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.showAge ? ',' : ''}`}</Text>
+              <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.date ? ',' : ''}`}</Text>
               <Text style={styles.ageText}>{` ${userInfo?.showAge ? `${userAge}` : ''}`}</Text>
               {userInfo?.accountConfirmed && <CheckStarWhite style={styles.checkStarIcon} />}
             </View>

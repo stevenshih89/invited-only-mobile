@@ -23,6 +23,7 @@ import {handleCreateChat} from 'helpers/chat';
 import {getFontSize} from 'helpers/getFontSize';
 import {ACCEPTED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import {EventContext} from 'contexts/EventContext';
+import { updateGuestEventsList } from 'helpers/updateGuestEventsList';
 import {Event} from 'src/types/event';
 import {User} from 'src/types/userInfo';
 import {MatchData} from '../IO/screens/Match/Match';
@@ -166,6 +167,7 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
         })
         .then(async () => {
           await handleCreateChat(matchedData as MatchData);
+          await updateGuestEventsList(activeEvent?.id, guest?.uid)
           handleOpenMatch(matchedData);
           const getDoc = await firestore().collection('userInfo').doc(userItem?.uid).get();
           const docData = getDoc.data();

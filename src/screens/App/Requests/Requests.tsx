@@ -267,8 +267,6 @@ const Requests: FC = (): ReactElement => {
     }, [activeEvent?.id, isHost, activeEventDate]),
   );
 
-  const numColumns = isHost ? 2 : 1;
-
   if ((loading || loadingMyEvents) && !list.length && !isVisibleMatch) {
     return (
       <View
@@ -425,52 +423,101 @@ const Requests: FC = (): ReactElement => {
             }
           />
         )}
-        <FlatList
-          // @ts-ignore
-          data={list}
-          numColumns={numColumns}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={({uid, name}) => `${uid}${name}`}
-          contentContainerStyle={styles.listContentContainer}
-          extraData={list}
-          style={{
-            width: '100%',
-          }}
-          ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-          renderItem={({item, index}) => {
-            return isHost ? (
-              <ItemRequestHost
-                item={item}
-                setRequestsForHost={setRequestsForHost}
-                handleOpenMatch={handleOpenMatch}
-                setIsVisibleModalFullEvent={() => setIsVisibleModalFullEvent(true)}
-                fetchHostRequests={fetchHostRequests}
-              />
-            ) : (
-              // @ts-ignore
-              <ItemRequestGuest
-                list={item}
-                item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
-                setDataForGuest={setDataForGuest}
-                handleOpenMatch={handleOpenMatch}
-                index={index}
-              />
-            );
-          }}
-          ListEmptyComponent={() => {
-            return (
-              <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 16, marginTop: screenHeight / 10}}>
-                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 932), marginBottom: 18}}>
-                  You don't have any requests
-                </Text>
-                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932), marginBottom: 34}}>
-                  Get started by swiping to {isHost ? 'invite guests' : 'join events and begin receiving event requests.'}
-                </Text>
-                <Button title="Start swiping" onPress={() => navigation.navigate(IOPath as never)} />
-              </View>
-            );
-          }}
-        />
+        {isHost ? (
+          <FlatList
+            // @ts-ignore
+            data={list}
+            numColumns={2}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={({uid, name}) => `${uid}${name}`}
+            contentContainerStyle={styles.listContentContainer}
+            extraData={list}
+            style={{
+              width: '100%',
+            }}
+            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+            renderItem={({item, index}) => {
+              return isHost ? (
+                <ItemRequestHost
+                  item={item}
+                  setRequestsForHost={setRequestsForHost}
+                  handleOpenMatch={handleOpenMatch}
+                  setIsVisibleModalFullEvent={() => setIsVisibleModalFullEvent(true)}
+                  fetchHostRequests={fetchHostRequests}
+                />
+              ) : (
+                // @ts-ignore
+                <ItemRequestGuest
+                  list={item}
+                  item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
+                  setDataForGuest={setDataForGuest}
+                  handleOpenMatch={handleOpenMatch}
+                  index={index}
+                />
+              );
+            }}
+            ListEmptyComponent={() => {
+              return (
+                <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 16, marginTop: screenHeight / 10}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 932), marginBottom: 18}}>
+                    You don't have any requests
+                  </Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932), marginBottom: 34}}>
+                    Get started by swiping to {isHost ? 'invite guests' : 'join events and begin receiving event requests.'}
+                  </Text>
+                  <Button title="Start swiping" onPress={() => navigation.navigate(IOPath as never)} />
+                </View>
+              );
+            }}
+          />
+        ) : (
+          <FlatList
+            // @ts-ignore
+            data={list}
+            numColumns={1}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={({uid, name}) => `${uid}${name}`}
+            contentContainerStyle={styles.listContentContainer}
+            extraData={list}
+            style={{
+              width: '100%',
+            }}
+            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+            renderItem={({item, index}) => {
+              return isHost ? (
+                <ItemRequestHost
+                  item={item}
+                  setRequestsForHost={setRequestsForHost}
+                  handleOpenMatch={handleOpenMatch}
+                  setIsVisibleModalFullEvent={() => setIsVisibleModalFullEvent(true)}
+                  fetchHostRequests={fetchHostRequests}
+                />
+              ) : (
+                // @ts-ignore
+                <ItemRequestGuest
+                  list={item}
+                  item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
+                  setDataForGuest={setDataForGuest}
+                  handleOpenMatch={handleOpenMatch}
+                  index={index}
+                />
+              );
+            }}
+            ListEmptyComponent={() => {
+              return (
+                <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 16, marginTop: screenHeight / 10}}>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 932), marginBottom: 18}}>
+                    You don't have any requests
+                  </Text>
+                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932), marginBottom: 34}}>
+                    Get started by swiping to {isHost ? 'invite guests' : 'join events and begin receiving event requests.'}
+                  </Text>
+                  <Button title="Start swiping" onPress={() => navigation.navigate(IOPath as never)} />
+                </View>
+              );
+            }}
+          />
+        )}
       </View>
       <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} />
     </>

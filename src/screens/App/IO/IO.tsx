@@ -75,6 +75,7 @@ import {useScrollPosition} from 'src/store/scrollPosition';
 import {getUsersForEvent} from 'src/api/user';
 import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
+import { updateGuestEventsList } from 'helpers/updateGuestEventsList';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -565,7 +566,7 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
+  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {    
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
@@ -653,6 +654,7 @@ const IO: FC = (): JSX.Element => {
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
               await handleCreateChat(matchedGuestData);
+              await updateGuestEventsList(activeEventId, forUserUid)
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
             }
@@ -715,7 +717,6 @@ const IO: FC = (): JSX.Element => {
               requestsList: firestore.FieldValue.arrayUnion(userInvited),
             };
           }
-
           await firestore()
             .collection('Events')
             .doc(activeEventId)
@@ -1119,7 +1120,7 @@ const IO: FC = (): JSX.Element => {
                     </View>
                     <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
                       <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
-                        {event?.hostName}, {calculateAge(event?.hostInfo?.date)}
+                        {event?.hostName}{event?.hostInfo?.date && ", " + calculateAge(event?.hostInfo?.date)}
                       </Text>
                       {event?.hostInfo?.accountConfirmed && <CheckStarWhite />}
                     </View>
