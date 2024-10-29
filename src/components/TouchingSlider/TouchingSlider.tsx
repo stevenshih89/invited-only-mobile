@@ -661,27 +661,38 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
               </View>
               <View style={{marginLeft: 10, justifyContent: 'center'}}>
                 <View style={{flexDirection: 'row'}}>
-                  <View
-                    style={{
-                      borderRadius: 5,
-                      borderWidth: 1,
-                      borderColor: blackColor,
-                      paddingHorizontal: 12,
-                      paddingVertical: 2,
-                      alignSelf: 'flex-start',
-                    }}>
-                    {accountType === 'guest' && (
+                  {accountType === 'guest' ? (
+                    <View
+                      style={{
+                        borderRadius: 5,
+                        borderWidth: 1,
+                        borderColor: blackColor,
+                        paddingHorizontal: 12,
+                        paddingVertical: 2,
+                        alignSelf: 'flex-start',
+                      }}>
                       <Text style={{color: blackColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
                         Guest
                       </Text>
-                    )}
-                    {accountType === 'host' && (
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        borderRadius: 5,
+                        borderWidth: 1,
+                        borderColor: blackColor,
+                        backgroundColor: blackColor,
+                        paddingHorizontal: 12,
+                        paddingVertical: 2,
+                        alignSelf: 'flex-start',
+                      }}>
                       <Text style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
-                        Host
+                          Host
                       </Text>
-                    )}
-                  </View>
-                  {(isPremium || accountType === 'guest') && (
+                    </View>
+                  )}
+
+                  {(isPremium) && (
                     <LinearGradient
                       colors={['#977B4A', '#E5D291', '#A28453']}
                       style={{
@@ -694,7 +705,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                       }}
                       start={{x: 0, y: 0}}
                       end={{x: 1, y: 0}}>
-                      {(isPremium || accountType === 'guest') && (
+                      {(isPremium) && (
                         <Text
                           style={{
                             color: blackColor,
