@@ -239,6 +239,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     hostImage,
     statusEvent,
   }: ItemEventsJoiningProps) => {
+
     const statusColor = handleCheckStatusStyles(status);
 
     const checkIsFullEvent = () => {
