@@ -132,24 +132,24 @@ const Payment: FC = (): JSX.Element => {
       weeksInPeriod: 1,
     },
     {
-      id: 2,
-      title: 'BILLED 3 MONTH',
-      duration: 3,
-      durationName: 'months',
-      description: 'Months',
-      pricePerDuration: '$29/wk',
-      fullPrice: '$357',
-      weeksInPeriod: 13, // trust me this is true
-    },
-    {
       id: 1,
-      title: 'BILLED 1 MONTH',
+      title: 'BILLED MONTHLY',
       duration: 1,
       durationName: 'month',
       description: 'Month',
-      pricePerDuration: '$25/wk',
-      fullPrice: '$99',
+      pricePerDuration: '$32/wk',
+      fullPrice: '$129',
       weeksInPeriod: 4,
+    },
+    {
+      id: 2,
+      title: 'BILLED 3 MONTHS',
+      duration: 3,
+      durationName: 'months',
+      description: 'Months',
+      pricePerDuration: '$26/wk',
+      fullPrice: '$349',
+      weeksInPeriod: 13, // trust me this is true
     },
   ]);
 
@@ -234,6 +234,8 @@ const Payment: FC = (): JSX.Element => {
       const offerings = await Purchases.getOfferings();
       if (offerings.current !== null) {
         const offeringsHostSubscription = offerings.all['Host subscription'];
+        console.log('offeringsHostSubscription', offeringsHostSubscription);
+        
 
         if (activePayment.durationName === 'week') {
           const product = offeringsHostSubscription.availablePackages[0];
@@ -259,13 +261,13 @@ const Payment: FC = (): JSX.Element => {
 
   const getButtonTitle = () => {
     const {duration, durationName, fullPrice} = activePayment;
-
-    return `Get ${duration} ${durationName} for ${fullPrice}`;
+    const formattedPrice = fullPrice.split(",")[0];
+    return `Get ${duration} ${durationName} for ${formattedPrice}`;
   };
 
   const renderItem = ({item}: {item: PlanListItem}) => {
     let isRender = true;
-
+    const formattedPrice = item.fullPrice.split(",")[0];
     if (item.identifier === 'io_59_1w') {
       if (
         currentSubscriptions.activeSubscriptions.includes('io_59_1w') ||
@@ -372,7 +374,7 @@ const Payment: FC = (): JSX.Element => {
                   color: isActive ? blackColor : whiteColor,
                   textAlign: 'center',
                 }}>
-                {item.fullPrice}
+                {formattedPrice}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -384,6 +386,7 @@ const Payment: FC = (): JSX.Element => {
   const checkNavig = useRoute();
 
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  
   useEffect(() => {
     getSubscriptions().then(setSubscriptions);
   }, []);
@@ -411,7 +414,13 @@ const Payment: FC = (): JSX.Element => {
       return res;
     };
 
-    const products = subscriptions.map((offer, idx) => ({      
+    const modifiedSubscriptions = [
+      subscriptions[0],
+      subscriptions[2],
+      subscriptions[1],
+    ];
+    
+    const products = modifiedSubscriptions.map((offer, idx) => ({      
       id: idx,
       identifier: getIdentifier(offer),
       title: plansList[idx].title,
@@ -423,7 +432,7 @@ const Payment: FC = (): JSX.Element => {
       priceString: offer.product.priceString,
       fullPrice: offer.product.priceString,
       package: offer,
-    }));
+    }));    
     setPlansList(products);
     setActivePayment(products[1]);
   }, [subscriptions]);
@@ -448,7 +457,7 @@ const Payment: FC = (): JSX.Element => {
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 30, flex: 1}}>
               {plansList.map(item => renderItem({item}))}
             </View>
-            <Button buttonStyle={{marginTop: 20}} title={getButtonTitle()} onPress={getOfferings} />
+            <Button buttonTitleStyle={{fontSize: RFValue(16, 812)}} buttonStyle={{marginTop: 20}} title={getButtonTitle()} onPress={getOfferings} />
             {/* <View style={{width: '100%', height: 1, backgroundColor: gray1Color, marginTop: 16}}>
               <Text
                 style={{
@@ -479,7 +488,7 @@ const Payment: FC = (): JSX.Element => {
                 </TouchableOpacity>
                 <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, marginHorizontal: 5}}>and</Text>
                 <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/terms-of-service-eula')}>
-                  <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Terms of Service / EULA</Text>
+                  <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Terms and Conditions (EULA)</Text>
                 </TouchableOpacity>
               </View>
             </View>
