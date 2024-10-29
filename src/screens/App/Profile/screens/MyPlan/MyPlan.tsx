@@ -139,8 +139,8 @@ const MyPlan = () => {
       case 'io_29_3m':
         text = '3 month access';
         break;
-      case 'io_25_wk':
-        text = '1 year access';
+      case 'io_99_1m':
+        text = '1 month access';
         break;
       default:
         text = 'Basic';
@@ -234,26 +234,24 @@ const MyPlan = () => {
               </View>
               {currentSubscriptions.activeSubscriptions.length > 0 && <ArrowRightWhiteIcon />}
             </TouchableOpacity>
-            {currentSubscriptions.activeSubscriptions.length > 0 &&
-              currentSubscriptions.activeSubscriptions.length < 3 &&
-              !currentSubscriptions.activeSubscriptions.includes('io_25_wk') && (
-                <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24}}>
-                  <LinearGradient
-                    colors={['#977B4A', '#E5D291', '#A28453']}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0}}
-                    style={{
-                      height: screenHeight / 14,
-                      maxHeight: 60,
-                      borderRadius: 18,
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              )}
+            {currentSubscriptions.activeSubscriptions.length > 0 && currentSubscriptions.activeSubscriptions.length < 3 && !currentSubscriptions.activeSubscriptions.includes('io_29_3m') && (
+              <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24}}>
+                <LinearGradient
+                  colors={['#977B4A', '#E5D291', '#A28453']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}
+                  style={{
+                    height: screenHeight / 14,
+                    maxHeight: 60,
+                    borderRadius: 18,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            )}
           </>
         )}
       </View>

@@ -146,13 +146,13 @@ const Eula: FC = (): JSX.Element => {
     },
     {
       id: 1,
-      title: 'BILLED ANNUALLY',
+      title: 'BILLED 1 MONTH',
       duration: 1,
-      durationName: 'year',
-      description: 'Year',
+      durationName: 'month',
+      description: 'Month',
       pricePerDuration: '$25/wk',
-      fullPrice: '$1300',
-      weeksInPeriod: 52,
+      fullPrice: '$99',
+      weeksInPeriod: 4,
     },
     {
       id: 2,
@@ -182,7 +182,7 @@ const Eula: FC = (): JSX.Element => {
             res = 'io_59_1w';
             break;
           case '$rc_annual':
-            res = 'io_25_wk';
+            res = 'io_99_1m';
             break;
           case '$rc_three_month':
             res = 'io_29_3m';
@@ -211,8 +211,8 @@ const Eula: FC = (): JSX.Element => {
         newData[2].description =
           'The App offers the following subscription types:\n\n' +
           `    • Weekly Subscription: ${products.find(product => product.identifier === 'io_59_1w')?.fullPrice} per week\n\n` +
-          `    • Monthly Subscription: ${products.find(product => product.identifier === 'io_29_3m')?.fullPrice} per month\n\n` +
-          `    • Annual Subscription: ${products.find(product => product.identifier === 'io_25_wk')?.fullPrice} per year\n\n` +
+          `    • 1 Month Subscription: ${products.find(product => product.identifier === 'io_29_3m')?.fullPrice} per 3 month\n\n` +
+          `    • 3 Months Subscription: ${products.find(product => product.identifier === 'io_99_1m')?.fullPrice} per 1 month\n\n` +
           'By subscribing, you agree to the applicable subscription fees.\n\n' +
           '2.1 Automatic Renewal\n\n' +
           'Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period. Renewal charges will be made to your Apple ID account at the rate associated with your selected subscription plan.\n\n' +

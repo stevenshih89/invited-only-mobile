@@ -147,10 +147,7 @@
           "recurringSubscriptionPeriod" : "P1W",
           "referenceName" : "Weekly",
           "subscriptionGroupID" : "97D1B37B",
-          "type" : "RecurringSubscription",
-          "winbackOffers" : [
-
-          ]
+          "type" : "RecurringSubscription"
         },
         {
           "adHocOffers" : [
@@ -159,7 +156,7 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "25",
+          "displayPrice" : "99",
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "A2C2B4E6",
@@ -171,14 +168,11 @@
               "locale" : "en_US"
             }
           ],
-          "productID" : "io_25_wk",
-          "recurringSubscriptionPeriod" : "P1Y",
-          "referenceName" : "Annual",
+          "productID" : "io_99_1m",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Month",
           "subscriptionGroupID" : "97D1B37B",
-          "type" : "RecurringSubscription",
-          "winbackOffers" : [
-
-          ]
+          "type" : "RecurringSubscription"
         },
         {
           "adHocOffers" : [
@@ -201,12 +195,9 @@
           ],
           "productID" : "io_29_3m",
           "recurringSubscriptionPeriod" : "P3M",
-          "referenceName" : "Months ",
+          "referenceName" : "3 Months ",
           "subscriptionGroupID" : "97D1B37B",
-          "type" : "RecurringSubscription",
-          "winbackOffers" : [
-
-          ]
+          "type" : "RecurringSubscription"
         }
       ]
     }
@@ -216,7 +207,7 @@
     "privateKey" : "MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgdLXb4+RU2pTR5FQYRn+KLoHeDQfb4JwMYW9kOtkytoSgCgYIKoZIzj0DAQehRANCAAQB+lOn/oHrW1XPvlqwIJZt7ST5SDOp2JbxtX4I44ysCl0+eO7veXq+jk7uMgE8tpZ5yFrkXFKNASy3p59fNyEH"
   },
   "version" : {
-    "major" : 4,
+    "major" : 3,
     "minor" : 0
   }
 }
