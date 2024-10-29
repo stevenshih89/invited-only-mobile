@@ -251,7 +251,7 @@ const Profile: FC = () => {
                 fontSize: RFValue(20, 812),
                 fontFamily: Satoshi700,
               }}>
-              {userInfo?.eventsList?.length? userInfo?.eventsList?.length: 0}
+              {userInfo?.eventsList?.length || 0}
             </Text>
             <Text
               style={{
