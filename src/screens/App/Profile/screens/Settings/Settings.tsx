@@ -134,7 +134,7 @@ const Settings = () => {
     {
       id: 4,
       title: 'Restore purchase',
-      // icon: RestorePurchase,
+      icon: RestorePurchase,
       onPress: restorePurchases,
     },
     {
