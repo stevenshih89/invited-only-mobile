@@ -259,8 +259,18 @@ export const sendNotification = async (
     console.error('Error calling Firebase Function:', error);
   }
 
-  const paramsParse = JSON.parse(notificationData.data.params);
-  
+  let paramsParse;
+  if (typeof notificationData.data.params === 'string') {
+    try {
+      paramsParse = JSON.parse(notificationData.data.params);
+    } catch (error) {
+      console.error('error parsing params:', error);
+      paramsParse = {};
+    }
+  } else {
+    paramsParse = notificationData.data.params || {};
+  }
+
   const id = generateRandomId(8);
   const notification = {
     id,
@@ -279,3 +289,4 @@ export const sendNotification = async (
     console.error('error add notification', error);
   }
 };
+
