@@ -13,7 +13,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {Alert} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
-import {lightGray9Color, transparentGray60Color, transparentWhite30Color, transparentWhite40Color, transparentWhite56Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGray9Color, transparentGray60Color, transparentWhite30Color, transparentWhite40Color, transparentWhite56Color, whiteColor} from 'constants/colors';
 import {calculateAge} from 'helpers/calculateAge';
 import Payment from 'screens/Auth/Payment/Payment';
 import Svg, {Circle, G} from 'react-native-svg';
@@ -25,6 +25,7 @@ import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Satoshi400, Satoshi700 } from 'constants/fonts';
+import { getEventsIJoining } from 'helpers/getEventsIJoining';
 
 const Profile: FC = () => {
   const [activeTabId, setActiveTabId] = useState(0);
@@ -32,7 +33,7 @@ const Profile: FC = () => {
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({} as any);
   const [totalGuests, setTotalGuests] = useState(0)  
-
+  const [eventsCount, setEventsCount] = useState(0);
   const [mainImage, setMainImage] = useState({id: 0, image: ''} as any);
 
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
@@ -142,6 +143,17 @@ const Profile: FC = () => {
   }
 
   useEffect(() => {
+    const unsubscribe = firestore()
+      .collection('Events')
+      .onSnapshot(async querySnapshot => {
+        const count = await getEventsIJoining(querySnapshot, userInfo?.uid);
+        setEventsCount(count);
+      });
+
+    return () => unsubscribe();
+  }, [userInfo]);
+
+  useEffect(() => {
     getGuestList()
   },[userInfo])
 
@@ -221,28 +233,44 @@ const Profile: FC = () => {
           <View style={styles.nameContainer}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={styles.nameText}>{`${userInfo?.name}${userInfo?.date ? ',' : ''}`}</Text>
-              <Text style={styles.ageText}>{` ${userInfo?.showAge ? `${userAge}` : ''}`}</Text>
+              <Text style={styles.ageText}>{` ${`${userAge}`}`}</Text>
               {userInfo?.accountConfirmed && <CheckStarWhite style={styles.checkStarIcon} />}
             </View>
             <View style={{flexDirection: 'row'}}>
-              <View style={styles.accountTypeWrapper}>
-                {userInfo?.accountType?.toLowerCase() === 'host' && <Text style={styles.accountTypeText}>Host</Text>}
-                {userInfo?.accountType?.toLowerCase() === 'guest' && <Text style={styles.accountTypeText}>Guest</Text>}
+              <View
+                style={[
+                  styles.accountTypeWrapper,
+                  {
+                    backgroundColor: userInfo?.accountType === 'host' ? blackColor : whiteColor,
+                  },
+                ]}>
+                <Text style={[styles.accountTypeText, {color: userInfo?.accountType === 'host' ? whiteColor : blackColor}]}>
+                  {userInfo?.accountType === 'host' ? 'Host' : 'Guest'}
+                </Text>
               </View>
-              {(userInfo?.accountType?.toLowerCase() === 'host' && userInfo?.accountPremium) && (
-                  <LinearGradient
-                    colors={['#977B4A', '#E5D291', '#A28453']}
-                    style={styles.accountTypeWrapperPremium}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0}}>
-                    {true && <Text style={styles.accountTypePremium}>Premium</Text>}
-                  </LinearGradient>
-                )}
+              {userInfo?.accountType?.toLowerCase() === 'host' && userInfo?.accountPremium && (
+                <LinearGradient
+                  colors={['#977B4A', '#E5D291', '#A28453']}
+                  style={styles.accountTypeWrapperPremium}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}>
+                  {true && <Text style={styles.accountTypePremium}>Premium</Text>}
+                </LinearGradient>
+              )}
             </View>
           </View>
           <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} />
         </View>
-        {userInfo?.accountType === 'host' && <View style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 19, marginTop: 30, marginBottom: 18, alignSelf: 'center'}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingVertical: 19,
+            marginTop: 30,
+            // justifyContent: 'space-between',
+            // padding: 20
+            alignSelf: 'center',
+          }}>
           <View style={{alignItems: 'center'}}>
             <Text
               style={{
@@ -250,7 +278,7 @@ const Profile: FC = () => {
                 fontSize: RFValue(20, 812),
                 fontFamily: Satoshi700,
               }}>
-              {userInfo?.eventsList?.length || 0}
+              {userInfo?.accountType === 'host'? userInfo?.eventsList?.length || 0: eventsCount ?? 0}
             </Text>
             <Text
               style={{
@@ -259,7 +287,7 @@ const Profile: FC = () => {
                 fontFamily: Satoshi400,
                 marginTop: 4.5,
               }}>
-              Total Events
+              {userInfo?.accountType === 'host' ? 'Total Events' : 'Events List'}
             </Text>
           </View>
           <View style={{width: 1, borderRadius: 1, height: 36, backgroundColor: whiteColor, marginHorizontal: 57}} />
@@ -270,7 +298,7 @@ const Profile: FC = () => {
                 fontSize: RFValue(20, 812),
                 fontFamily: Satoshi700,
               }}>
-              {totalGuests}
+              {userInfo?.accountType === 'host'? totalGuests: userInfo?.joinEvents ?? 0}
             </Text>
             <Text
               style={{
@@ -279,14 +307,14 @@ const Profile: FC = () => {
                 fontFamily: Satoshi400,
                 marginTop: 4.5,
               }}>
-              Guest List
+              {userInfo?.accountType === 'host' ? 'Guest List' : 'Total Events Attended'}
             </Text>
           </View>
-        </View>}
+        </View>
         <FlatList
           keyExtractor={item => item.id.toString()}
           data={tabList}
-          style={[styles.flatListContainer, {marginTop: userInfo?.accountType === 'guest'? 34: 0}]}
+          style={[styles.flatListContainer, {marginTop: 18}]}
           contentContainerStyle={{paddingLeft: 20}}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
