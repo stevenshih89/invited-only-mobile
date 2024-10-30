@@ -19,6 +19,7 @@ import { useUser } from 'src/store/userStore';
 import firestore from '@react-native-firebase/firestore'
 import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS} from 'constants/common.ts';
 import moment from 'moment';
+import { getEventsIJoining } from 'helpers/getEventsIJoining';
 
 export const tabBarName = (focused: boolean, route: string): ReactElement => {
   const getLabel = (): string =>
@@ -38,30 +39,11 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
   const [eventsCountHost, setEventsCountHost] = useState(0)
   const [newMessage, setNewMessages] = useState(0);
 
-  const handleGetEventsIJoining = async events => {
-    try {
-      const uid = userHost?.uid;
-      const data = events?.docs?.map(i => i?.data());
-      const filterData = data?.filter(obj => {
-        return obj?.usersList?.some(user => {
-          return (
-            user?.uid === uid &&
-            (user?.status === APPROVED_STATUS)
-          );
-        });
-      });
-      return filterData?.length ? filterData?.length : 0;
-    } catch (e) {
-      console.error('error fetching events:', e);
-      return 0;
-    }
-  };
-
   useEffect(() => {
     const unsubscribe = firestore()
       .collection('Events')
       .onSnapshot(async querySnapshot => {
-        const count = await handleGetEventsIJoining(querySnapshot);
+        const count = await getEventsIJoining(querySnapshot, userHost?.uid);
         setEventsCount(count);
       });
 
