@@ -170,20 +170,20 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
           await updateGuestEventsList(activeEvent?.id, guest?.uid)
           handleOpenMatch(matchedData);
           const getDoc = await firestore().collection('userInfo').doc(userItem?.uid).get();
-          const docData = getDoc.data();
+          const docData = getDoc.data();          
           if (docData?.notificationSettings.requests) {
             await sendNotification(
               userItem?.uid,
               'New invite request',
-              `${userInfo?.name} wants to invite you!`,
+              `${user?.name} wants to invite you!`,
               'invite',
               'Invite Request'.toUpperCase(),
-              userInfo,
+              user,
             );
           }
         });
     } catch (e) {
-      // console.log(e);
+      // console.log('error invite', e);
       showToast('inviteMatch', '', "There's been an error");
     }
   };

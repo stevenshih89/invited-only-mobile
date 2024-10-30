@@ -13,6 +13,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast';
 import FastImage from 'react-native-fast-image';
+import { handleCreateChat } from 'helpers/chat';
 
 interface Notifications {
   body: string;
@@ -90,6 +91,8 @@ const Notifications: FC = (): ReactElement => {
   };
 
   const handleNavigate = async (path: string, data: any) => {
+    console.log('data', data);
+    
     switch (path) {
       case 'invitationCode':
         navigation.navigate(commonStackPath, {screen: invitationCodePath});
@@ -97,13 +100,13 @@ const Notifications: FC = (): ReactElement => {
       case 'requests':
         // @ts-ignore
         navigation.navigate(requestsPath, {
-          screen: requestsPath
+          screen: requestsPath,
         });
         break;
       case 'myEvents':
         // @ts-ignore
         navigation.navigate(myEventsPath, {
-          screen: myEventsPath
+          screen: myEventsPath,
         });
         break;
       case 'guestsList':
@@ -112,6 +115,13 @@ const Notifications: FC = (): ReactElement => {
           screen: eventActiveInfoPath,
           params: {list: data},
         } as never);
+        break;
+      case 'chat':
+        // @ts-ignore
+        navigation.navigate(chatCorrespondencePath, {
+          screen: chatCorrespondencePath,
+          params: data,
+        });
         break;
       default:
         break;
