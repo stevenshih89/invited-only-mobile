@@ -43,13 +43,12 @@ const EnterBirthday: FC = (): JSX.Element => {
       setMonth(`0${month}`);
     }
   };
-  
+
   const checkDay = () => {
     if (day.length === 1 && Number(day) >= 1 && Number(day) <= 9) {
       setDay(`0${day}`);
     }
   };
-  
 
   const handleDayChange = (input: string): void => {
     const numericInput = input.replace(/[^0-9]/g, '');
@@ -87,7 +86,7 @@ const EnterBirthday: FC = (): JSX.Element => {
   const handleSkip = () => {
     setOnBoarding([...onBoarding, {showAge: false, date: ''}]);
     navigation.navigate(genderPath as never);
-  }
+  };
 
   const navigation = useAppNavigation();
 
@@ -144,7 +143,7 @@ const EnterBirthday: FC = (): JSX.Element => {
                       fontFamily: Satoshi400,
                       fontSize: RFValue(18, 932),
                     }}>
-                    Add your birthday. You can change it later.
+                    {`Add your birthday. You can change it later (optional)`}
                   </Text>
                 </View>
                 <View style={{width: '100%', flexDirection: 'row'}}>

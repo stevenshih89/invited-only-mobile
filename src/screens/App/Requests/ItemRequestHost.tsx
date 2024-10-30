@@ -121,7 +121,9 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
 
     const getDoc = await firestore().collection('userInfo').doc(userItem.uid).get();
     const guest = getDoc.data();
-
+    if (!guest) {
+      return;
+    }
     try {
       const userAccepted = {
         gender: userItem?.gender,
@@ -183,7 +185,7 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
           }
         });
     } catch (e) {
-      // console.log('error invite', e);
+      console.error('error invite', e);
       showToast('inviteMatch', '', "There's been an error");
     }
   };

@@ -236,9 +236,9 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       return;
     }
 
-    const isFullEvent = await checkIsFullGuestsFun();
+    const {allGuests, findAcceptedGuest} = await checkIsFullGuestsFun();
 
-    if (isFullEvent) {
+    if (findAcceptedGuest >= allGuests) {
       showToast('inviteMatch', 'Event is full', `${eventData?.placeName}`);
       return;
     }
@@ -278,6 +278,9 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     if (!userGuest?.status) {
       return '';
     }
+    if (uid === hostUid && userGuest?.status === INVITE_MATCH_STATUS) {
+      return 'Waiting for invitation approved';
+    }
     if (uid === hostUid && userGuest?.status === APPROVED_STATUS) {
       return 'Accept invitation';
     }
@@ -291,6 +294,9 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   };
 
   const getIsDisabledButton = () => {
+    if (uid === hostUid && userGuest?.status === INVITE_MATCH_STATUS) {
+      return true;
+    }
     if (uid === hostUid && userGuest?.status === APPROVED_STATUS) {
       return false;
     }
@@ -318,6 +324,13 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       return {
         backgroundColor: whiteColor,
         borderColor: whiteColor,
+      };
+    }
+    if (uid === hostUid && userGuest?.status === INVITE_MATCH_STATUS) {
+      return {
+        backgroundColor: black1Color,
+        borderColor: whiteColor,
+        borderWidth: 1,
       };
     }
     if (userGuest?.status === INVITE_MATCH_STATUS) {
@@ -348,6 +361,11 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     if (uid === hostUid && userGuest?.status === APPROVED_STATUS) {
       return {
         color: blackColor,
+      };
+    }
+    if (uid === hostUid && userGuest?.status === INVITE_MATCH_STATUS) {
+      return {
+        color: whiteColor,
       };
     }
     if (userGuest?.status === APPROVED_STATUS) {
@@ -569,10 +587,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
             {userProfileItemCard}
             {/* gap */}
             <View style={{height: 24}} />
-            {(userGuest?.status === ACCEPTED_STATUS ||
-              userGuest?.status === INVITE_MATCH_STATUS ||
-              userGuest?.status === NOT_ACCEPTED_STATUS) &&
-            uid === hostUid ? null : (
+            {(userGuest?.status === ACCEPTED_STATUS || userGuest?.status === NOT_ACCEPTED_STATUS) && uid === hostUid ? null : (
               <View style={{width: '100%'}}>
                 <TouchableOpacity
                   disabled={getIsDisabledButton()}
@@ -624,13 +639,6 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
                 uid={uid}
                 activeEvent={activeEvent}
               />
-              {/* <BlockAndReportModal
-                setBlockAndReportState={setBlockAndReportState}
-                blockAndReportState={blockAndReportState}
-                reportState={reportState}
-                setReportState={setReportState}
-                setModalVisible={setModalVisible}
-              /> */}
               <CancelInvitationModal />
               <DeleteChatModal />
             </View>

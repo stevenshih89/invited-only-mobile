@@ -42,6 +42,7 @@ import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
 import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {EventsDate} from 'contexts/EventsDate';
+import {getUserData} from 'helpers/getUserData';
 
 type ItemProps = {
   title: string;
@@ -435,6 +436,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               continue;
             }
             const eventData = eventQuery.data();
+            const {photos: hostPhotos} = await getUserData(eventData?.uid);
             const data = {
               id: chat?.activeEvent,
               girlInvitation: eventData?.female,
@@ -451,7 +453,11 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               statusEvent: eventData?.statusEvent,
               chats: chat?.chats
                 .filter(chat => chat.uid === user?.uid)
-                .map(chat => ({...chat, avatar: eventData?.hostImage, name: eventData?.hostName})),
+                .map(chat => ({
+                  ...chat,
+                  avatar: hostPhotos.length ? hostPhotos[0]?.image : eventData?.hostImage,
+                  name: eventData?.hostName,
+                })),
             };
             mappedChats.push(data);
           }
