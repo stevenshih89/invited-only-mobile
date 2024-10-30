@@ -235,7 +235,6 @@ const Payment: FC = (): JSX.Element => {
       if (offerings.current !== null) {
         const offeringsHostSubscription = offerings.all['Host subscription'];
         console.log('offeringsHostSubscription', offeringsHostSubscription);
-        
 
         if (activePayment.durationName === 'week') {
           const product = offeringsHostSubscription.availablePackages[0];
@@ -257,17 +256,15 @@ const Payment: FC = (): JSX.Element => {
     }
   };
 
-  console.warn(plansList);
-
   const getButtonTitle = () => {
     const {duration, durationName, fullPrice} = activePayment;
-    const formattedPrice = fullPrice.split(",")[0];
+    const formattedPrice = fullPrice;
     return `Get ${duration} ${durationName} for ${formattedPrice}`;
   };
 
   const renderItem = ({item}: {item: PlanListItem}) => {
     let isRender = true;
-    const formattedPrice = item.fullPrice.split(",")[0];
+    const formattedPrice = item.fullPrice;
     if (item.identifier === 'io_59_1w') {
       if (
         currentSubscriptions.activeSubscriptions.includes('io_59_1w') ||
@@ -295,23 +292,21 @@ const Payment: FC = (): JSX.Element => {
 
       return (
         <View style={{height: 200, flex: 1}}>
-          {isActive && (
-            <View style={{position: 'absolute', top: 0, right: 0, left: 0, zIndex: 10}}>
-              <View
-                style={{
-                  alignSelf: 'center',
-                  borderWidth: 2,
-                  borderStyle: 'solid',
-                  borderColor: whiteColor,
-                  borderRadius: 7,
-                  paddingHorizontal: 6,
-                  paddingVertical: 4,
-                  backgroundColor: blackColor,
-                }}>
-                <Text style={{fontFamily: Satoshi700, fontSize: RFValue(8, 812), color: whiteColor}}>{item.title}</Text>
-              </View>
+          <View style={{position: 'absolute', top: 0, right: 0, left: 0, zIndex: 10}}>
+            <View
+              style={{
+                alignSelf: 'center',
+                borderWidth: 2,
+                borderStyle: 'solid',
+                borderColor: whiteColor,
+                borderRadius: 7,
+                paddingHorizontal: 6,
+                paddingVertical: 4,
+                backgroundColor: blackColor,
+              }}>
+              <Text style={{fontFamily: Satoshi700, fontSize: RFValue(8, 812), color: whiteColor}}>{item.title}</Text>
             </View>
-          )}
+          </View>
           <TouchableOpacity
             key={item.id}
             disabled={isActive}
@@ -386,7 +381,7 @@ const Payment: FC = (): JSX.Element => {
   const checkNavig = useRoute();
 
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
-  
+
   useEffect(() => {
     getSubscriptions().then(setSubscriptions);
   }, []);
@@ -414,13 +409,9 @@ const Payment: FC = (): JSX.Element => {
       return res;
     };
 
-    const modifiedSubscriptions = [
-      subscriptions[0],
-      subscriptions[2],
-      subscriptions[1],
-    ];
-    
-    const products = modifiedSubscriptions.map((offer, idx) => ({      
+    const modifiedSubscriptions = [subscriptions[0], subscriptions[2], subscriptions[1]];
+
+    const products = modifiedSubscriptions.map((offer, idx) => ({
       id: idx,
       identifier: getIdentifier(offer),
       title: plansList[idx].title,
@@ -432,7 +423,7 @@ const Payment: FC = (): JSX.Element => {
       priceString: offer.product.priceString,
       fullPrice: offer.product.priceString,
       package: offer,
-    }));    
+    }));
     setPlansList(products);
     setActivePayment(products[1]);
   }, [subscriptions]);
@@ -457,7 +448,12 @@ const Payment: FC = (): JSX.Element => {
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 30, flex: 1}}>
               {plansList.map(item => renderItem({item}))}
             </View>
-            <Button buttonTitleStyle={{fontSize: RFValue(16, 812)}} buttonStyle={{marginTop: 20}} title={getButtonTitle()} onPress={getOfferings} />
+            <Button
+              buttonTitleStyle={{fontSize: RFValue(16, 812)}}
+              buttonStyle={{marginTop: 20}}
+              title={getButtonTitle()}
+              onPress={getOfferings}
+            />
             {/* <View style={{width: '100%', height: 1, backgroundColor: gray1Color, marginTop: 16}}>
               <Text
                 style={{

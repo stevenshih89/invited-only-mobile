@@ -162,7 +162,8 @@ const Eula: FC = (): JSX.Element => {
       description: 'Months',
       pricePerDuration: '$29/wk',
       fullPrice: '$357',
-      weeksInPeriod: 13, // trust me this is true
+      weeksInPeriod: 13,
+      identifier: 'io_29_3m',
     },
   ]);
   const [loading, setLoading] = useState(false);
@@ -181,7 +182,7 @@ const Eula: FC = (): JSX.Element => {
           case '$rc_weekly':
             res = 'io_59_1w';
             break;
-          case '$rc_annual':
+          case '$rc_monthly':
             res = 'io_99_1m';
             break;
           case '$rc_three_month':
@@ -193,26 +194,31 @@ const Eula: FC = (): JSX.Element => {
         return res;
       };
 
-      const products = subscriptionsList.map((offer, idx) => ({
-        id: idx,
-        identifier: getIdentifier(offer),
-        title: plansList[idx].title,
-        duration: plansList[idx].duration,
-        durationName: plansList[idx].durationName,
-        description: plansList[idx].description,
-        pricePerDuration:
-          getSymbolFromCurrency(offer.product.currencyCode) + (offer.product.price / plansList[idx].weeksInPeriod).toFixed(2) + '/wk',
-        priceString: offer.product.priceString,
-        fullPrice: offer.product.priceString,
-        package: offer,
-      }));
+      const products = subscriptionsList.map((offer, idx) => {
+        return {
+          id: idx,
+          identifier: getIdentifier(offer),
+          title: plansList[idx].title,
+          duration: plansList[idx].duration,
+          durationName: plansList[idx].durationName,
+          description: plansList[idx].description,
+          pricePerDuration:
+            getSymbolFromCurrency(offer.product.currencyCode) + (offer.product.price / plansList[idx].weeksInPeriod).toFixed(2) + '/wk',
+          priceString: offer.product.priceString,
+          fullPrice: offer.product.priceString,
+          package: offer,
+        };
+      });
+
+      products.forEach(item => console.warn(item));
+
       setDataEula(prev => {
         const newData = [...prev];
         newData[2].description =
           'The App offers the following subscription types:\n\n' +
           `    • Weekly Subscription: ${products.find(product => product.identifier === 'io_59_1w')?.fullPrice} per week\n\n` +
-          `    • 1 Month Subscription: ${products.find(product => product.identifier === 'io_29_3m')?.fullPrice} per 3 month\n\n` +
-          `    • 3 Months Subscription: ${products.find(product => product.identifier === 'io_99_1m')?.fullPrice} per 1 month\n\n` +
+          `    • 1 Month Subscription: ${products.find(product => product.identifier === 'io_99_1m')?.fullPrice} per 1 month\n\n` +
+          `    • 3 Months Subscription: ${products.find(product => product.identifier === 'io_29_3m')?.fullPrice} per 3 months\n\n` +
           'By subscribing, you agree to the applicable subscription fees.\n\n' +
           '2.1 Automatic Renewal\n\n' +
           'Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period. Renewal charges will be made to your Apple ID account at the rate associated with your selected subscription plan.\n\n' +
