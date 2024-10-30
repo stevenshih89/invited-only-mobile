@@ -56,7 +56,6 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [age, setAge] = useState();
   const [currentUserName, setCurrentUserName] = useState('');
   const {image, title, online, activeEvent, id, superInvite, invitedStatus, uid, hostUid} = route?.params;
-  console.log('route?.params', route?.params);
   
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
 
