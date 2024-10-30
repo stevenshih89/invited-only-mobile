@@ -76,6 +76,7 @@ import {getUsersForEvent} from 'src/api/user';
 import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
 import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
+import {getUserData} from 'helpers/getUserData';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -958,7 +959,13 @@ const IO: FC = (): JSX.Element => {
     for (const event of filteredDataEvents) {
       const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
       const eventPhotos = event?.photos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
-      const userEventData = await getDataUserEvent(event?.uid);
+      const {
+        online: userEventOnline,
+        accountPremium: userEventAccountPremium,
+        photos: userEventPhotos,
+        date: userEventDate,
+        accountConfirmed: userEventAccountConfirmed,
+      } = await getUserData(event?.uid);
 
       data.push({
         component: (
@@ -1056,8 +1063,11 @@ const IO: FC = (): JSX.Element => {
                 <View style={{flexDirection: 'row'}}>
                   {event?.hostImage && (
                     <View style={{flexDirection: 'row'}}>
-                      <FastImage source={{uri: event?.hostImage}} style={{width: 40, height: 40, borderRadius: 50}} />
-                      {userEventData?.online && (
+                      <FastImage
+                        source={{uri: userEventPhotos?.[0]?.image || event?.hostImage}}
+                        style={{width: 40, height: 40, borderRadius: 50}}
+                      />
+                      {userEventOnline && (
                         <View
                           style={{
                             width: 11,
@@ -1092,7 +1102,7 @@ const IO: FC = (): JSX.Element => {
                           {event?.hostInfo.accountType}
                         </Text>
                       </View>
-                      {userEventData?.accountPremium && (
+                      {userEventAccountPremium && (
                         <LinearGradient
                           colors={['#977B4A', '#E5D291', '#A28453']}
                           style={{
@@ -1121,9 +1131,9 @@ const IO: FC = (): JSX.Element => {
                     <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
                       <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
                         {event?.hostName}
-                        {event?.hostInfo?.date && ', ' + calculateAge(event?.hostInfo?.date)}
+                        {userEventDate && ', ' + calculateAge(userEventDate)}
                       </Text>
-                      {event?.hostInfo?.accountConfirmed && <CheckStarWhite />}
+                      {userEventAccountConfirmed && <CheckStarWhite />}
                     </View>
                   </View>
                 </View>
