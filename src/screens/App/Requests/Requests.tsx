@@ -34,6 +34,7 @@ import {UserInfo} from 'src/types/userInfo';
 import {EventsDate} from 'contexts/EventsDate';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
 import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
+import {getUserData} from 'helpers/getUserData';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
@@ -91,7 +92,19 @@ const Requests: FC = (): ReactElement => {
       return moment(a?.createdAt, 'YYYY-MM-DD HH:mm:ss').isAfter(moment(b?.createdAt, 'YYYY-MM-DD HH:mm:ss')) ? 1 : -1;
     });
 
-    setRequestsForHost(sortedRequests);
+    const mappedRequests = [];
+    for (const request of sortedRequests) {
+      if (!request?.uid) {
+        continue;
+      }
+      const {photos} = await getUserData(request.uid);
+      mappedRequests.push({
+        ...request,
+        userPhoto: photos?.[0]?.image || request?.userPhoto,
+      });
+    }
+
+    setRequestsForHost(mappedRequests);
   };
 
   const filterByUid = (array: EventData[], uid: string) => {

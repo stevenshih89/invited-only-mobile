@@ -407,11 +407,24 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       hostSubscriber = firestore()
         .collection('messages')
         .doc(activeEvent?.id)
-        .onSnapshot(documentSnapshot => {
+        .onSnapshot(async documentSnapshot => {
           if (!documentSnapshot.exists) {
             return setMessages([]);
           }
-          setMessages(documentSnapshot.data());
+          const data = documentSnapshot.data();
+          const mappedMessagesData = [];
+          for (const chat of data.chats) {
+            if (!chat?.uid) {
+              continue;
+            }
+            const {photos} = await getUserData(chat?.uid);
+            mappedMessagesData.push({
+              ...chat,
+              avatar: photos?.[0]?.image || chat?.avatar,
+            });
+          }
+
+          setMessages({...data, chats: mappedMessagesData});
           setLoading(false);
         });
     } else {

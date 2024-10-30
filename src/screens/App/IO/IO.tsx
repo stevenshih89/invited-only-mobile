@@ -75,7 +75,7 @@ import {useScrollPosition} from 'src/store/scrollPosition';
 import {getUsersForEvent} from 'src/api/user';
 import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
-import { updateGuestEventsList } from 'helpers/updateGuestEventsList';
+import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -566,7 +566,7 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {    
+  const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
 
@@ -654,7 +654,7 @@ const IO: FC = (): JSX.Element => {
           .then(async () => {
             if (matchedGuest && matchedGuestData) {
               await handleCreateChat(matchedGuestData);
-              await updateGuestEventsList(activeEventId, forUserUid)
+              await updateGuestEventsList(activeEventId, forUserUid);
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
             }
@@ -1120,7 +1120,8 @@ const IO: FC = (): JSX.Element => {
                     </View>
                     <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
                       <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
-                        {event?.hostName}{event?.hostInfo?.date && ", " + calculateAge(event?.hostInfo?.date)}
+                        {event?.hostName}
+                        {event?.hostInfo?.date && ', ' + calculateAge(event?.hostInfo?.date)}
                       </Text>
                       {event?.hostInfo?.accountConfirmed && <CheckStarWhite />}
                     </View>
@@ -1780,7 +1781,7 @@ const IO: FC = (): JSX.Element => {
     return (
       <>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
-          <View style={{height: 370, marginTop: screenHeight / 18}}>
+          <View style={{height: 370, marginTop: screenHeight / 26}}>
             <Loading userInfo={userInfo} topPosition={true} />
           </View>
           <View>
@@ -1791,7 +1792,7 @@ const IO: FC = (): JSX.Element => {
               Get started by creating an event to begin inviting guests.
             </Text>
           </View>
-          <View style={{paddingHorizontal: 24, marginTop: screenHeight / 30}}>
+          <View style={{paddingHorizontal: 24, marginTop: 'auto', marginBottom: screenHeight / 14}}>
             <Button onPress={goToCreateEvent} title={'Create event'} buttonStyle={{marginTop: 20, marginBottom: 30}} />
           </View>
         </View>

@@ -21,11 +21,12 @@ import {Event, EventData} from 'src/types/event';
 import FastImage from 'react-native-fast-image';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import {useUser} from 'src/store/userStore';
+import {getUserData} from 'helpers/getUserData';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
-  const {list, isGuest} = route?.params;  
+  const {list, isGuest} = route?.params;
   const {
     usersList,
     photos,
@@ -46,7 +47,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   } = list as EventData;
 
   const [usersListData, setUsersListsData] = useState<any>(usersList);
-  const [activeTab, setActiveTab] = useState(isGuest? EVENT_INFO: GUEST_LIST);
+  const [activeTab, setActiveTab] = useState(isGuest ? EVENT_INFO : GUEST_LIST);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [user, setUser] = useState<Event.User | null>(null);
@@ -70,10 +71,20 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
       const unsubscribe = firestore()
         .collection('Events')
         .doc(id)
-        .onSnapshot(querySnapshot => {
+        .onSnapshot(async querySnapshot => {
           if (querySnapshot.exists) {
             const data = querySnapshot.data();
-            setUsersListsData(data?.usersList);
+            const mappedUsersList: Event.User[] = [];
+            for (const user of data?.usersList) {
+              if (user?.uid) {
+                const {photos} = await getUserData(user.uid);
+                mappedUsersList.push({
+                  ...user,
+                  userPhoto: photos?.[0]?.image || user?.userPhoto,
+                });
+              }
+            }
+            setUsersListsData(mappedUsersList);
           }
         });
 
@@ -462,17 +473,24 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
       case EVENT_INFO:
         return (
           <View style={{backgroundColor: blackColor, borderRadius: 10, paddingBottom: 34}}>
-            <View style={{
-                paddingTop: isGuest? 17: 0, 
-                marginTop: isGuest? 17: 0, 
-                borderTopWidth: isGuest? 1: 0,
-                borderTopColor: transparentWhite16Color,}}>
-              <Text style={[{
-                color: whiteColor, 
-                fontFamily: Satoshi700, 
-                fontSize: RFValue(18, 812), 
-                marginBottom: 17, 
-                }]}>Event details</Text>
+            <View
+              style={{
+                paddingTop: isGuest ? 17 : 0,
+                marginTop: isGuest ? 17 : 0,
+                borderTopWidth: isGuest ? 1 : 0,
+                borderTopColor: transparentWhite16Color,
+              }}>
+              <Text
+                style={[
+                  {
+                    color: whiteColor,
+                    fontFamily: Satoshi700,
+                    fontSize: RFValue(18, 812),
+                    marginBottom: 17,
+                  },
+                ]}>
+                Event details
+              </Text>
               <MyEventsCard
                 imageBg={photos}
                 statusEvent={statusEvent}
@@ -535,64 +553,66 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
     <>
       <View style={{backgroundColor: blackColor, flex: 1, paddingHorizontal: 20}}>
         <ModalFullEvent isVisible={isVisibleModalFullEvent} idEvent={id} setIsVisibleModalFullEvent={setIsVisibleModalFullEvent} />
-        {!isGuest && <View
-          style={{
-            marginTop: screenHeight / 43,
-            alignItems: 'center',
-            flexDirection: 'row',
-            borderTopColor: transparentWhite16Color,
-            borderTopWidth: 1,
-            borderStyle: 'solid',
-            paddingVertical: 17,
-          }}>
-          <TouchableOpacity
-            style={[
-              {backgroundColor: whiteColor, paddingVertical: screenWidth / 60, paddingHorizontal: screenHeight / 70, borderRadius: 8},
-              {flex: 1, alignItems: 'center', backgroundColor: activeTab === GUEST_LIST ? whiteColor : lightGray2Color},
-            ]}
-            onPress={() => setActiveTab(GUEST_LIST)}>
-            <Text
+        {!isGuest && (
+          <View
+            style={{
+              marginTop: screenHeight / 43,
+              alignItems: 'center',
+              flexDirection: 'row',
+              borderTopColor: transparentWhite16Color,
+              borderTopWidth: 1,
+              borderStyle: 'solid',
+              paddingVertical: 17,
+            }}>
+            <TouchableOpacity
+              style={[
+                {backgroundColor: whiteColor, paddingVertical: screenWidth / 60, paddingHorizontal: screenHeight / 70, borderRadius: 8},
+                {flex: 1, alignItems: 'center', backgroundColor: activeTab === GUEST_LIST ? whiteColor : lightGray2Color},
+              ]}
+              onPress={() => setActiveTab(GUEST_LIST)}>
+              <Text
+                style={[
+                  {
+                    fontFamily: Satoshi500,
+                    fontSize: RFValue(16, 812),
+                    color: activeTab === GUEST_LIST ? blackColor : whiteColor,
+                  },
+                ]}>
+                Guests list
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               style={[
                 {
-                  fontFamily: Satoshi500,
-                  fontSize: RFValue(16, 812),
-                  color: activeTab === GUEST_LIST ? blackColor : whiteColor,
+                  paddingVertical: screenHeight / 130,
+                  paddingHorizontal: screenWidth / 32,
+                  borderRadius: 8,
+                  marginLeft: screenWidth / 65,
+                  flexDirection: 'row',
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: activeTab === EVENT_INFO ? whiteColor : lightGray2Color,
                 },
-              ]}>
-              Guests list
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              {
-                paddingVertical: screenHeight / 130,
-                paddingHorizontal: screenWidth / 32,
-                borderRadius: 8,
-                marginLeft: screenWidth / 65,
-                flexDirection: 'row',
-                flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: activeTab === EVENT_INFO ? whiteColor : lightGray2Color,
-              },
-            ]}
-            onPress={() => setActiveTab(EVENT_INFO)}>
-            <Text
-              style={[
-                {
-                  fontFamily: Satoshi400,
-                  fontSize: RFValue(16, 812),
-                  color: activeTab === EVENT_INFO ? blackColor : whiteColor,
-                },
-              ]}>
-              Event info
-            </Text>
-          </TouchableOpacity>
-        </View>}
+              ]}
+              onPress={() => setActiveTab(EVENT_INFO)}>
+              <Text
+                style={[
+                  {
+                    fontFamily: Satoshi400,
+                    fontSize: RFValue(16, 812),
+                    color: activeTab === EVENT_INFO ? blackColor : whiteColor,
+                  },
+                ]}>
+                Event info
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
           {renderEventContent()}
         </ScrollView>
-        {activeTab === 'EVENT_INFO' && !isCancelled && !isGuest &&(
+        {activeTab === 'EVENT_INFO' && !isCancelled && !isGuest && (
           <Button
             title="Edit event"
             buttonStyle={{marginBottom: 28}}
