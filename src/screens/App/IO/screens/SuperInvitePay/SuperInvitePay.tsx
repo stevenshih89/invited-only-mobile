@@ -30,6 +30,7 @@ import {showToast} from 'helpers/showToast';
 import {getSuperInvites} from 'src/api/purchase';
 
 import getSymbolFromCurrency from 'currency-symbol-map';
+import { useUser } from 'src/store/userStore';
 
 interface PlanListItem {
   id: number;
@@ -43,6 +44,8 @@ interface PlanListItem {
 const SuperInvitePay: FC = (): JSX.Element => {
   const styles = useStyles();
   const navigation = useAppNavigation();
+
+  const user = useUser((i: any) => i?.user);
 
   const updateSuperInvites = async (superInvites: number) => {
     const user = auth().currentUser;
@@ -197,7 +200,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
               textAlign: 'center',
               marginTop: 6,
             }}>
-            Super Invites
+            Super {user?.accountType === 'host'? 'Invites': 'Joins'}
           </Text>
           <View
             style={{
@@ -281,14 +284,17 @@ const SuperInvitePay: FC = (): JSX.Element => {
           <View style={{width: '100%', alignItems: 'center'}}>
             <FlashIcon width={45} height={45} />
           </View>
-          <Text style={styles.textGetASpot}>Super invite</Text>
+          <Text style={styles.textGetASpot}>
+          Super {user?.accountType === 'host'? 'Invite': 'Join'}
+          </Text>
           <View
             style={{
               paddingVertical: 16,
               paddingHorizontal: 20,
             }}>
             <Text style={{fontFamily: Satoshi500, fontSize: RFValue(16, 812), color: whiteColor, textAlign: 'center'}}>
-              A <Text style={{fontWeight: 'bold'}}>Super Invite</Text> increases your chances of getting your guest by x4!
+              A <Text style={{fontWeight: 'bold'}}>
+              Super {user?.accountType === 'host'? 'Invite': 'Join'}</Text> increases your chances of getting your guest by x4!
             </Text>
             <View style={styles.buttonWrapper} />
           </View>
@@ -311,7 +317,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
           </View>
           <Button
             buttonStyle={{marginTop: 20}}
-            title={`Get ${activePayment.quantity} super invites for ${activePayment.priceString}`}
+            title={`Get ${activePayment.quantity} super ${user?.accountType === 'host'? 'invites': 'joins'} for ${activePayment.priceString}`}
             onPress={getOfferings}
           />
         </View>
