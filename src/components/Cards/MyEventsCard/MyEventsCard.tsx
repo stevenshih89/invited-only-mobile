@@ -20,7 +20,7 @@ import moment from 'moment';
 import {Event} from '../../../types/event';
 import firestore from '@react-native-firebase/firestore';
 import {calculateAge} from 'helpers/calculateAge';
-import { eventTypes } from 'src/mocks/eventTypes';
+import {eventTypes} from 'src/mocks/eventTypes';
 
 interface MyEventsCardProps {
   statusEvent: boolean;
@@ -52,7 +52,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
     customButton,
     showInfoTop = false,
     showDotLine = true,
-    showEventType = false
+    showEventType = false,
   } = props;
 
   const styles = useStyles();
@@ -290,7 +290,15 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
             )}
           </LinearGradient>
         </FastImage>
-        <View style={{paddingHorizontal: 18, flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, marginBottom: 14, alignItems: 'flex-end'}}>
+        <View
+          style={{
+            paddingHorizontal: 18,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: 20,
+            marginBottom: 14,
+            alignItems: 'flex-end',
+          }}>
           <View style={{}}>
             <View style={{}}>
               <Text
@@ -331,47 +339,47 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
               </Text>
             </View>
             <View>
+              <Text
+                style={{
+                  color: lightGray18Color,
+                  fontSize: RFValue(16, 812),
+                  fontFamily: Satoshi400,
+                }}>
+                Location
+              </Text>
+              <Text
+                style={{
+                  color: black4Color,
+                  fontSize: RFValue(21, 812),
+                  fontFamily: Satoshi500,
+                  marginTop: 5,
+                }}>
+                {item?.placeName}
+              </Text>
+            </View>
+          </View>
+          <View style={{}}>
+            {showEventType && (
+              <View style={{}}>
                 <Text
                   style={{
                     color: lightGray18Color,
                     fontSize: RFValue(16, 812),
                     fontFamily: Satoshi400,
                   }}>
-                  Location
+                  Event type
                 </Text>
                 <Text
                   style={{
                     color: black4Color,
                     fontSize: RFValue(21, 812),
-                    fontFamily: Satoshi500,
+                    fontFamily: Satoshi700,
                     marginTop: 5,
                   }}>
-                  {item?.placeName}
+                  {eventTypes[item?.activeType].label}
                 </Text>
               </View>
-          </View>
-          <View style={{}}>
-          {showEventType && (
-            <View style={{}}>
-            <Text
-              style={{
-                color: lightGray18Color,
-                fontSize: RFValue(16, 812),
-                fontFamily: Satoshi400,
-              }}>
-              Event type
-            </Text>
-            <Text
-              style={{
-                color: black4Color,
-                fontSize: RFValue(21, 812),
-                fontFamily: Satoshi700,
-                marginTop: 5,
-              }}>
-              {eventTypes[item?.activeType].label}
-            </Text>
-          </View>
-          )}
+            )}
             {showGuestList && (
               <View
                 style={{
@@ -407,8 +415,8 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
                 </View>
               </View>
             )}
-            <View style={{alignSelf: showGuestList? 'flex-end': 'flex-start'}}>
-            <View style={{marginVertical: 28}}>
+            <View style={{alignSelf: showGuestList ? 'flex-end' : 'flex-start'}}>
+              <View style={{marginVertical: 28}}>
                 <Text
                   style={{
                     color: lightGray18Color,
@@ -449,10 +457,12 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
             </View>
           </View>
         </View>
-        {showDotLine && <View style={{width: '100%', alignItems: 'center', paddingHorizontal: 20, marginTop: 9}}>
+        {showDotLine && (
+          <View style={{width: '100%', alignItems: 'center', paddingHorizontal: 20, marginTop: 9}}>
             <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
-          </View>}
-          <View style={{marginBottom: 20, paddingHorizontal: 24}}>{customButton ? customButton : null}</View>
+          </View>
+        )}
+        <View style={{marginBottom: 20, paddingHorizontal: 24}}>{customButton ? customButton : null}</View>
       </View>
     </>
   );
