@@ -243,12 +243,12 @@ const Payment: FC = (): JSX.Element => {
         }
 
         if (activePayment.durationName === 'month') {
-          const product = offeringsHostSubscription.availablePackages[1];
+          const product = offeringsHostSubscription.availablePackages[2];
           pay(product);
         }
 
         if (activePayment.durationName === 'months') {
-          const product = offeringsHostSubscription.availablePackages[2];
+          const product = offeringsHostSubscription.availablePackages[1];
           pay(product);
         }
       }
