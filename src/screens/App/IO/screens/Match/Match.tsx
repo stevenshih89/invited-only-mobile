@@ -49,7 +49,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   matchData,
 }) => {
   const userHost = useUser((i: any) => i?.user);
-
+  
   const navigation = useAppNavigation();
 
   const handleCloseMatch = async () => {
@@ -97,7 +97,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
           'Connection',
           'Connection'.toUpperCase(),
           userHost,
-          isEventHost ? chatDataHost : chatDataGuest,
+          JSON.stringify({path: 'chat', data: isEventHost ? chatDataGuest: chatDataHost})
         );
       }
     }
