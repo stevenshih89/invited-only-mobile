@@ -37,6 +37,7 @@ interface MyEventsCardProps {
   showInfoTop?: boolean;
   showDotLine?: boolean;
   showEventType?: boolean;
+  isMyEvents?: boolean
 }
 
 const MyEventsCard: FC<MyEventsCardProps> = props => {
@@ -53,6 +54,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
     showInfoTop = false,
     showDotLine = true,
     showEventType = false,
+    isMyEvents = false
   } = props;
 
   const styles = useStyles();
@@ -312,7 +314,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
               <Text
                 style={{
                   color: black4Color,
-                  fontSize: RFValue(21, 812),
+                  fontSize: item.name.length > 10? RFValue(18, 812): RFValue(21, 812),
                   fontFamily: Satoshi700,
                   marginTop: 5,
                 }}>
@@ -331,7 +333,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
               <Text
                 style={{
                   color: black4Color,
-                  fontSize: RFValue(21, 812),
+                  fontSize: item.name.length > 10? RFValue(18, 812): RFValue(21, 812),
                   fontFamily: Satoshi700,
                   marginTop: 5,
                 }}>
@@ -350,7 +352,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
               <Text
                 style={{
                   color: black4Color,
-                  fontSize: RFValue(21, 812),
+                  fontSize: item.name.length > 10? RFValue(18, 812): RFValue(21, 812),
                   fontFamily: Satoshi500,
                   marginTop: 5,
                 }}>
@@ -398,7 +400,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
                 <View style={{marginLeft: 10, alignItems: 'center'}}>
                   <Text
                     style={{
-                      fontSize: RFValue(26, 812),
+                      fontSize: item.name.length > 10? RFValue(22, 812): RFValue(26, 812),
                       color: blackColor,
                       fontFamily: Satoshi700,
                     }}>
@@ -406,7 +408,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
                   </Text>
                   <Text
                     style={{
-                      fontSize: RFValue(12, 812),
+                      fontSize: item.name.length > 10? RFValue(10, 812): RFValue(12, 812),
                       color: blackColor,
                       fontFamily: Satoshi500,
                     }}>
@@ -415,7 +417,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
                 </View>
               </View>
             )}
-            <View style={{alignSelf: showGuestList ? 'flex-end' : 'flex-start'}}>
+            <View style={{alignSelf: showGuestList && !isMyEvents ? 'flex-end' : 'flex-start'}}>
               <View style={{marginVertical: 28}}>
                 <Text
                   style={{
@@ -428,7 +430,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
                 <Text
                   style={{
                     color: black4Color,
-                    fontSize: RFValue(21, 812),
+                    fontSize: item.name.length > 10? RFValue(18, 812): RFValue(21, 812),
                     fontFamily: Satoshi700,
                     marginTop: 5,
                   }}>
@@ -447,7 +449,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
                 <Text
                   style={{
                     color: black4Color,
-                    fontSize: RFValue(21, 812),
+                    fontSize: item.name.length > 10? RFValue(18, 812): RFValue(21, 812),
                     fontFamily: Satoshi500,
                     marginTop: 5,
                   }}>
