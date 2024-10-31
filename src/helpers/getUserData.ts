@@ -12,6 +12,8 @@ interface UserData {
   date: string;
   gender: string | undefined;
   uid: string;
+  superInvites: number;
+  weeklySuperInvites: number;
 }
 
 export const getUserData = async (userUid: string): Promise<UserData> => {
@@ -26,13 +28,14 @@ export const getUserData = async (userUid: string): Promise<UserData> => {
     date: '',
     gender: undefined,
     uid: '',
+    superInvites: 0,
+    weeklySuperInvites: 0,
   };
   try {
     const userQuery = await firestore().collection('userInfo').doc(userUid).get();
 
     if (userQuery.exists) {
       const data = userQuery.data();
-
       return {
         accountConfirmed: data?.accountConfirmed || false,
         accountPremium: data?.accountPremium || false,
@@ -44,6 +47,8 @@ export const getUserData = async (userUid: string): Promise<UserData> => {
         date: data?.date || '',
         gender: data?.gender,
         uid: userQuery.id,
+        superInvites: data?.superInvites,
+        weeklySuperInvites: data?.weeklySuperInvites,
       };
     } else {
       return deaultValues;

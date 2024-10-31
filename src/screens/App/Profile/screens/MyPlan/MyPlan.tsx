@@ -61,49 +61,44 @@ const MyPlan = () => {
   const whatGet: WhatGetItem[] = [
     {
       title: `Unlimited Events ${userInfo.accountType === 'host' ? 'Creation' : 'Attendance'}`,
-      titleDescription: userInfo.accountType === 'host'? 
-      'Unlimited Events Creation':
-      'Unlimited swipe (join)',
-      description: userInfo.accountType === 'host'? 
-      'Share Unlimited VIP Tables and Events to Invite.': 
-      'Swipe through unlimited events and connections. Join now and explore endless possibilities!',
+      titleDescription: userInfo.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited swipe (join)',
+      description:
+        userInfo.accountType === 'host'
+          ? 'Share Unlimited VIP Tables and Events to Invite.'
+          : 'Swipe through unlimited events and connections. Join now and explore endless possibilities!',
       icon: CalendarIcon,
     },
     {
       title: 'Unlimited Invitations',
-      titleDescription: userInfo.accountType === 'host'? 
-      'Unlimited Invitations':
-      'Unlimited invitations (getting invites)',
-      description: userInfo?.accountType === 'host'? 
-      'Send Unlimited Invitations and Create Your Guest List': 
-      'Receive endless event invitations. Join now and never miss out!',
+      titleDescription: userInfo.accountType === 'host' ? 'Unlimited Invitations' : 'Unlimited invitations (getting invites)',
+      description:
+        userInfo?.accountType === 'host'
+          ? 'Send Unlimited Invitations and Create Your Guest List'
+          : 'Receive endless event invitations. Join now and never miss out!',
       icon: UnlimitedIcon,
     },
     {
-      title: `Unlimited ${userInfo.accountType === 'host'? 'Guest': ''}Connections`,
-      titleDescription: userInfo.accountType === 'host'? 
-      'Unlimited Events Creation':
-      'Unlimited join offers',
-      description: userInfo.accountType === 'host'? 
-      'Enjoy endless connections to build your guests lists.': 
-      'Get unlimited opportunities to join exclusive events. Let`s start right now!',
+      title: `Unlimited ${userInfo.accountType === 'host' ? 'Guest' : ''}Connections`,
+      titleDescription: userInfo.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited join offers',
+      description:
+        userInfo.accountType === 'host'
+          ? 'Enjoy endless connections to build your guests lists.'
+          : 'Get unlimited opportunities to join exclusive events. Let`s start right now!',
       icon: IOIcon,
     },
     {
-      title: `5 Super ${userInfo.accountType === 'host'? 'Invites': 'Join'} each week.`,
-      titleDescription: userInfo.accountType === 'host'? 
-      'Unlimited Events Creation':
-      '5 Super join a week',
-      description: `Send 5 super ${userInfo.accountType === 'host'? 'Invites': 'Join'} each week.`,
+      title: `5 Super ${userInfo.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
+      titleDescription: userInfo.accountType === 'host' ? 'Unlimited Events Creation' : '5 Super join a week',
+      description: `Send 5 super ${userInfo.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
       icon: FlashIcon,
     },
     {
-      title: `See Who Wants to ${userInfo.accountType === 'host'? 'Join': 'Invite'} You`,
-      titleDescription: userInfo.accountType === 'host'? 
-      'Unlimited Events Creation':
-      'Unlimited Events Join',
-      description: userInfo.accountType === 'host'? 'View interested guests who want to join you in real-time.':
-      'View interested hosts who want to invite you in real-time.',
+      title: `See Who Wants to ${userInfo.accountType === 'host' ? 'Join' : 'Invite'} You`,
+      titleDescription: userInfo.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited Events Join',
+      description:
+        userInfo.accountType === 'host'
+          ? 'View interested guests who want to join you in real-time.'
+          : 'View interested hosts who want to invite you in real-time.',
       icon: EyeIcon,
     },
   ];
@@ -257,24 +252,26 @@ const MyPlan = () => {
               </View>
               {currentSubscriptions.activeSubscriptions.length > 0 && <ArrowRightWhiteIcon />}
             </TouchableOpacity>
-            {currentSubscriptions.activeSubscriptions.length > 0 && currentSubscriptions.activeSubscriptions.length < 3 && !currentSubscriptions.activeSubscriptions.includes('io_29_3m') && (
-              <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24}}>
-                <LinearGradient
-                  colors={['#977B4A', '#E5D291', '#A28453']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}
-                  style={{
-                    height: screenHeight / 14,
-                    maxHeight: 60,
-                    borderRadius: 18,
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            )}
+            {currentSubscriptions.activeSubscriptions.length > 0 &&
+              currentSubscriptions.activeSubscriptions.length < 3 &&
+              !currentSubscriptions.activeSubscriptions.includes('io_29_3m') && (
+                <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24}}>
+                  <LinearGradient
+                    colors={['#977B4A', '#E5D291', '#A28453']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
+                    style={{
+                      height: screenHeight / 14,
+                      maxHeight: 60,
+                      borderRadius: 18,
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              )}
           </>
         )}
       </View>

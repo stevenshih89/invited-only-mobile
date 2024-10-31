@@ -30,7 +30,8 @@ import {showToast} from 'helpers/showToast';
 import {getSuperInvites} from 'src/api/purchase';
 
 import getSymbolFromCurrency from 'currency-symbol-map';
-import { useUser } from 'src/store/userStore';
+import {useUser} from 'src/store/userStore';
+import {getUserData} from 'helpers/getUserData';
 
 interface PlanListItem {
   id: number;
@@ -46,26 +47,44 @@ const SuperInvitePay: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
   const user = useUser((i: any) => i?.user);
+  const [loadingPurchasing, setLoadingPurchasing] = useState(false);
+
+  const [userData, setUserData] = useState({});
 
   const updateSuperInvites = async (superInvites: number) => {
     const user = auth().currentUser;
 
     if (user) {
       try {
-        const userInfoDoc = (await firestore().collection('userInfo').doc(user.uid).get()).data();
-        const superInvitesCurrent = userInfoDoc?.superInvites;
+        const {superInvites: superInvitesCurrent, weeklySuperInvites: weeklySuperInvitesCurrent} = userData;
+
         await firestore()
           .collection('userInfo')
           .doc(user.uid)
           .update({
-            superInvites: superInvitesCurrent + superInvites,
+            superInvites: firestore.FieldValue.increment(superInvites),
           });
-        handleNext(superInvitesCurrent + superInvites);
+        handleNext(superInvitesCurrent + weeklySuperInvitesCurrent + superInvites);
       } catch (error: any) {
+        setLoadingPurchasing(false);
+        showToast('inviteMatch', '', "There's been an error");
         // console.log('error updateSuperInvites', error);
       }
     }
   };
+
+  const fetchUserData = async () => {
+    const currentUser = auth().currentUser;
+    if (!currentUser?.uid) {
+      return;
+    }
+    const userInfo = await getUserData(currentUser?.uid);
+    setUserData(userInfo);
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   const [plansList, setPlansList] = useState<PlanListItem[]>([
     {
@@ -90,14 +109,13 @@ const SuperInvitePay: FC = (): JSX.Element => {
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
 
   const handleNext = async (superInvites: number) => {
-    const userId = auth().currentUser?.uid;
     navigation.navigate(IOPath as never);
-    const userInfoDoc = await firestore().collection('userInfo').doc(userId).get();
+    setLoadingPurchasing(false);
     showToast(
       'inviteMatch',
-      `You have ${superInvites} super ${userInfoDoc?.data()?.accountType === 'host' ? 'Invites' : 'Joins'}`,
-      'Let`s start swiping!',
-      {ownerPhoto: userInfoDoc?.data()?.photos[0].image, status: 'SUCCESSFUL'},
+      `You have ${superInvites} super ${userData?.accountType === 'host' ? 'Invites' : 'Joins'}`,
+      "Let's start swiping!",
+      {ownerPhoto: userData?.photos[0].image, status: 'SUCCESSFUL'},
     );
   };
 
@@ -111,11 +129,19 @@ const SuperInvitePay: FC = (): JSX.Element => {
       updateSuperInvites(superInvites);
       // console.log('pay successful');
     } catch (e) {
+      setLoadingPurchasing(false);
+      showToast('inviteMatch', '', "There's been an error");
       // console.log('pay error', e);
     }
   };
 
   const getOfferings = async () => {
+    if (!userData?.uid) {
+      setLoadingPurchasing(false);
+      showToast('inviteMatch', '', "There's been an error");
+      return;
+    }
+    setLoadingPurchasing(true);
     try {
       const offerings = await Purchases.getOfferings();
       if (offerings.current !== null) {
@@ -137,7 +163,8 @@ const SuperInvitePay: FC = (): JSX.Element => {
         }
       }
     } catch (e) {
-      // console.log('offering ger error', e);
+      setLoadingPurchasing(false);
+      showToast('inviteMatch', '', "There's been an error");
     }
   };
 
@@ -187,7 +214,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
             paddingBottom: isActive ? 34 : 20,
             paddingHorizontal: 6,
           }}>
-          <View style={{position: 'absolute', top: 10, right: 0, left: 0, zIndex: 10}}></View>
+          <View style={{position: 'absolute', top: 10, right: 0, left: 0, zIndex: 10}} />
           <Text
             style={{fontFamily: Satoshi700, fontSize: RFValue(26, 812), color: isActive ? blackColor : whiteColor, textAlign: 'center'}}>
             {item.quantity}
@@ -200,7 +227,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
               textAlign: 'center',
               marginTop: 6,
             }}>
-            Super {user?.accountType === 'host'? 'Invites': 'Joins'}
+            Super {user?.accountType === 'host' ? 'Invites' : 'Joins'}
           </Text>
           <View
             style={{
@@ -284,17 +311,15 @@ const SuperInvitePay: FC = (): JSX.Element => {
           <View style={{width: '100%', alignItems: 'center'}}>
             <FlashIcon width={45} height={45} />
           </View>
-          <Text style={styles.textGetASpot}>
-          Super {user?.accountType === 'host'? 'Invite': 'Join'}
-          </Text>
+          <Text style={styles.textGetASpot}>Super {user?.accountType === 'host' ? 'Invite' : 'Join'}</Text>
           <View
             style={{
               paddingVertical: 16,
               paddingHorizontal: 20,
             }}>
             <Text style={{fontFamily: Satoshi500, fontSize: RFValue(16, 812), color: whiteColor, textAlign: 'center'}}>
-              A <Text style={{fontWeight: 'bold'}}>
-              Super {user?.accountType === 'host'? 'Invite': 'Join'}</Text> increases your chances of getting your guest by x4!
+              A <Text style={{fontWeight: 'bold'}}>Super {user?.accountType === 'host' ? 'Invite' : 'Join'}</Text> increases your chances of
+              getting your guest by x4!
             </Text>
             <View style={styles.buttonWrapper} />
           </View>
@@ -316,8 +341,11 @@ const SuperInvitePay: FC = (): JSX.Element => {
             />
           </View>
           <Button
+            loading={loadingPurchasing}
             buttonStyle={{marginTop: 20}}
-            title={`Get ${activePayment.quantity} super ${user?.accountType === 'host'? 'invites': 'joins'} for ${activePayment.priceString}`}
+            title={`Get ${activePayment.quantity} super ${user?.accountType === 'host' ? 'invites' : 'joins'} for ${
+              activePayment.priceString
+            }`}
             onPress={getOfferings}
           />
         </View>
