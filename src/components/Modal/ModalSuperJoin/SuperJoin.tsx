@@ -21,7 +21,7 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
   const figurePositin = useSharedValue(-screenHeight * 0.34 - 100);
   const buttonPosition = useSharedValue(-1000);
 
-  const words = 'La la la la'?.split(' ');
+  const words = nameEvent?.split(' ');
   const wordTranslations = words?.map(() => useSharedValue(widthScreen));
   const nameAnimation = useSharedValue(widthScreen);
 
@@ -172,10 +172,10 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
             </View>
             <Animated.View
               style={[
-                {flexDirection: 'column', marginTop: screenHeight / 20, paddingHorizontal: 50, alignItems: 'center', width: '100%'},
+                {flexDirection: 'column', marginTop: screenHeight / 20, paddingHorizontal: 20, alignItems: 'center', width: '100%'},
                 opacityWrapperStyle,
               ]}>
-              <View style={{marginTop: -50, width: screenWidth / 2.5, flexWrap: 'wrap', flexDirection: 'row', alignSelf: 'flex-end'}}>
+              <View style={{marginTop: -50, flexWrap: 'wrap', flexDirection: 'row', alignSelf: 'flex-end'}}>
                 {words?.map((word, index) => (
                   <Animated.Text
                     key={index}
@@ -183,7 +183,7 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
                       {
                         color: whiteColor,
                         fontFamily: Outfit500,
-                        fontSize: RFValue(42, 812),
+                        fontSize: nameEvent.length > 10? RFValue(36, 812): RFValue(42, 812),
                         letterSpacing: -5,
                         lineHeight: 55,
                         // textAlign: 'center',
