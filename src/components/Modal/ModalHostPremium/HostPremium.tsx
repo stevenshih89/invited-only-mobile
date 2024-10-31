@@ -53,6 +53,19 @@ const HostPremium: FC<LoaderProps> = ({isVisible, setVsibleHostPremium, screen})
     getUserInfo();
   }, []);
 
+  const getSize = () => {
+    let size
+    if(userInfo?.name.length) {
+      if (userInfo?.name.length <= 8) size = 68
+      if (userInfo?.name.length  > 8 && userInfo?.name.length  <= 12) size = 52
+      if (userInfo?.name.length  > 12 && userInfo?.name.length  <= 16) size = 38
+      if (userInfo?.name.length  > 16) size = 24
+    } else {
+      size = 68
+    }
+    return size
+  }
+
   return (
     <Modal isVisible={isVisible} coverScreen animationInTiming={1} backdropColor={blackColor} backdropOpacity={1} style={{margin: 0}}>
       <SafeAreaView style={{flex: 1,}}>
@@ -77,8 +90,8 @@ const HostPremium: FC<LoaderProps> = ({isVisible, setVsibleHostPremium, screen})
                 <Image style={{width: 300, height: 300, borderRadius: 300}} source={{uri: userInfo.photos[0].image}} />
               )}
             </LinearGradient>
-              <View style={{justifyContent: 'center', width: '100%'}}>
-                <Text style={{color: whiteColor, fontSize: RFValue(68, 812), fontFamily: Satoshi500}}>{userInfo?.name ?? ''}</Text>
+              <View style={{justifyContent: 'center', width: '100%', alignItems: 'center'}}>
+                <Text style={{color: whiteColor, fontSize: RFValue(getSize() ?? 68, 812), fontFamily: Satoshi500, marginBottom: 8}}>{userInfo?.name ?? ''}</Text>
                 <View style={{flexDirection: 'row'}}>
                   <View
                     style={{
