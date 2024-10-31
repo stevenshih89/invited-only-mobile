@@ -29,7 +29,7 @@ const Eula: FC = (): JSX.Element => {
       id: 0,
       title: '',
       description:
-        'This End User License Agreement (“Agreement”) is a legal contract between you (“User”) and [Company Name] (“Licensor”), governing your use of the [App Name] software application (“the App”). By creating an account, downloading, or using the App, you agree to the terms outlined here. If you do not agree, do not use the App.',
+        'This End User License Agreement (“Agreement”) is a legal contract between you (“User”) and Invited Only Inc. (“Licensor”), governing your use of the Invited Only Inc. software application (“the App”). By creating an account, downloading, or using the App, you agree to the terms outlined here. If you do not agree, do not use the App.',
     },
     {
       id: 1,
@@ -54,7 +54,7 @@ const Eula: FC = (): JSX.Element => {
         '    • Threats, abuse, or bullying\n\n' +
         'Violations may result in immediate suspension or termination of your account.\n\n' +
         '3.2 Responsibility for Content\n\n' +
-        'You are solely responsible for any content you upload or share in the App. By submitting content, you grant [Company Name] a license to use, modify, distribute, and display that content within the App.',
+        'You are solely responsible for any content you upload or share in the App. By submitting content, you grant Invited Only Inc. a non-exclusive, worldwide, royalty-free license to use, modify, distribute, and display that content within the App.',
     },
     {
       id: 4,
@@ -75,13 +75,14 @@ const Eula: FC = (): JSX.Element => {
     {
       id: 6,
       title: '6. PRIVACY POLICY',
-      description: 'Please refer to our [Privacy Policy] for details on how we collect, use, and protect your personal information.',
+      description:
+        'Please refer to our Privacy Policy for details on how we collect, use, and protect your personal information. Your privacy and data security are our top priorities.',
     },
     {
       id: 7,
       title: '7. TERMINATION',
       description:
-        'This Agreement remains in effect until terminated by you or [Company Name]. You may terminate the Agreement by uninstalling the App or canceling your subscription as outlined in Section 2. Licensor reserves the right to terminate or suspend your account at any time for violations of this Agreement or if your actions are deemed harmful to the community.',
+        'This Agreement remains in effect until terminated by you or Invited Only Inc. You may terminate this Agreement by uninstalling the App or canceling your subscription as outlined in Section 2. Licensor reserves the right to terminate or suspend your account at any time for violations of this Agreement or any activity deemed harmful to the App’s community.',
     },
     {
       id: 8,
