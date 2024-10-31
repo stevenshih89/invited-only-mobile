@@ -23,6 +23,7 @@ import {
 } from 'constants/colors.ts';
 
 //import icons
+import LoaderIcon from 'assets/images/icons/loader.svg';
 import FlashIcon from 'assets/images/icons/flash-filled.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import Purchases, {PurchasesPackage} from 'react-native-purchases';
@@ -32,6 +33,7 @@ import {getSuperInvites} from 'src/api/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {useUser} from 'src/store/userStore';
 import {getUserData} from 'helpers/getUserData';
+import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 
 interface PlanListItem {
   id: number;
@@ -48,8 +50,33 @@ const SuperInvitePay: FC = (): JSX.Element => {
 
   const user = useUser((i: any) => i?.user);
   const [loadingPurchasing, setLoadingPurchasing] = useState(false);
+  const [loadingPurchaseList, setLoadingPurchaseList] = useState(true);
+
+  const rotationLoader = useSharedValue(0);
 
   const [userData, setUserData] = useState({});
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotate: `${rotationLoader.value}deg`}],
+    };
+  });
+
+  useEffect(() => {
+    if (loadingPurchaseList) {
+      rotationLoader.value = withRepeat(
+        withTiming(360, {
+          duration: 2000,
+          easing: Easing.linear,
+        }),
+        -1,
+      );
+    }
+
+    return () => {
+      cancelAnimation(rotationLoader);
+    };
+  }, [rotationLoader, loadingPurchaseList]);
 
   const updateSuperInvites = async (superInvites: number) => {
     const user = auth().currentUser;
@@ -168,6 +195,37 @@ const SuperInvitePay: FC = (): JSX.Element => {
     }
   };
 
+  const fetchSuperInvites = async () => {
+    setLoadingPurchaseList(true);
+    await getSuperInvites()
+      .then(response => {
+        if (response?.length) {
+          const products = response.map((offer, idx) => ({
+            id: idx,
+            quantity: plansList[idx].quantity,
+            priceEach: getSymbolFromCurrency(offer.product.currencyCode) + (offer.product.price / plansList[idx].quantity).toFixed(2),
+            priceString: offer.product.priceString,
+            save: plansList[idx].save,
+            package: offer,
+          }));
+          setPlansList(products);
+          setActivePayment(products[1]);
+          setLoadingPurchaseList(false);
+        } else {
+          setLoadingPurchaseList(false);
+          showToast('inviteMatch', '', "Can't find any purchase");
+        }
+      })
+      .catch(() => {
+        setLoadingPurchaseList(false);
+        showToast('inviteMatch', '', "Can't find any purchase");
+      });
+  };
+
+  useEffect(() => {
+    fetchSuperInvites();
+  }, [userData?.uid]);
+
   const renderItem = ({item}: {item: PlanListItem}) => {
     const isActive = activePayment.id === item.id;
 
@@ -257,28 +315,15 @@ const SuperInvitePay: FC = (): JSX.Element => {
     );
   };
 
-  const [superInvites, setSuperInvites] = useState<any[]>([]);
-
-  useEffect(() => {
-    getSuperInvites().then(setSuperInvites);
-  }, []);
-
-  useEffect(() => {
-    if (!superInvites.length) {
-      return;
-    }
-
-    const products = superInvites.map((offer, idx) => ({
-      id: idx,
-      quantity: plansList[idx].quantity,
-      priceEach: getSymbolFromCurrency(offer.product.currencyCode) + (offer.product.price / plansList[idx].quantity).toFixed(2),
-      priceString: offer.product.priceString,
-      save: plansList[idx].save,
-      package: offer,
-    }));
-    setPlansList(products);
-    setActivePayment(products[1]);
-  }, [superInvites]);
+  if (loadingPurchaseList) {
+    return (
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
+        <Animated.View style={[animatedStyle]}>
+          <LoaderIcon />
+        </Animated.View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={{backgroundColor: black1Color, flex: 1, justifyContent: 'center'}}>

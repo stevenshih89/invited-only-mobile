@@ -32,7 +32,9 @@ const HostPremium: FC<LoaderProps> = ({isVisible, setVsibleHostPremium, screen})
     if (screen === 'pending') {
       navigation.navigate(tutorialFlowPath as never);
       setVsibleHostPremium(false);
-    } else navigation.navigate(profilePath as never);
+    } else {
+      navigation.navigate(profilePath as never);
+    }
     // const userId = auth().currentUser?.uid;
     // navigation.navigate(profilePath as never);
     // const userInfoDoc = await firestore().collection('userInfo').doc(userId).get();
@@ -51,24 +53,32 @@ const HostPremium: FC<LoaderProps> = ({isVisible, setVsibleHostPremium, screen})
 
   useEffect(() => {
     getUserInfo();
-  }, []);
+  }, [userInfo]);
 
   const getSize = () => {
-    let size
-    if(userInfo?.name.length) {
-      if (userInfo?.name.length <= 8) size = 68
-      if (userInfo?.name.length  > 8 && userInfo?.name.length  <= 12) size = 52
-      if (userInfo?.name.length  > 12 && userInfo?.name.length  <= 16) size = 38
-      if (userInfo?.name.length  > 16) size = 24
+    let size;
+    if (userInfo?.name?.length) {
+      if (userInfo?.name?.length <= 8) {
+        size = 68;
+      }
+      if (userInfo?.name?.length > 8 && userInfo?.name?.length <= 12) {
+        size = 52;
+      }
+      if (userInfo?.name?.length > 12 && userInfo?.name?.length <= 16) {
+        size = 38;
+      }
+      if (userInfo?.name?.length > 16) {
+        size = 24;
+      }
     } else {
-      size = 68
+      size = 68;
     }
-    return size
-  }
+    return size;
+  };
 
   return (
     <Modal isVisible={isVisible} coverScreen animationInTiming={1} backdropColor={blackColor} backdropOpacity={1} style={{margin: 0}}>
-      <SafeAreaView style={{flex: 1,}}>
+      <SafeAreaView style={{flex: 1}}>
         <View style={{flex: 1, padding: 24, justifyContent: 'space-between', alignItems: 'center'}}>
           <View style={{}}>
             <LogoIcon />
@@ -90,53 +100,55 @@ const HostPremium: FC<LoaderProps> = ({isVisible, setVsibleHostPremium, screen})
                 <Image style={{width: 300, height: 300, borderRadius: 300}} source={{uri: userInfo.photos[0].image}} />
               )}
             </LinearGradient>
-              <View style={{justifyContent: 'center', width: '100%', alignItems: 'center'}}>
-                <Text style={{color: whiteColor, fontSize: RFValue(getSize() ?? 68, 812), fontFamily: Satoshi500, marginBottom: 8}}>{userInfo?.name ?? ''}</Text>
-                <View style={{flexDirection: 'row'}}>
-                  <View
+            <View style={{justifyContent: 'center', width: '100%', alignItems: 'center'}}>
+              <Text style={{color: whiteColor, fontSize: RFValue(getSize() ?? 68, 812), fontFamily: Satoshi500, marginBottom: 8}}>
+                {userInfo?.name ?? ''}
+              </Text>
+              <View style={{flexDirection: 'row'}}>
+                <View
+                  style={{
+                    borderWidth: 1,
+                    borderColor: whiteColor,
+                    borderRadius: 4,
+                    paddingHorizontal: 12,
+                    paddingVertical: 2,
+                    backgroundColor: blackColor,
+                  }}>
+                  <Text
                     style={{
-                      borderWidth: 1,
-                      borderColor: whiteColor,
-                      borderRadius: 4,
-                      paddingHorizontal: 12,
-                      paddingVertical: 2,
-                      backgroundColor: blackColor,
+                      color: whiteColor,
+                      fontSize: RFValue(12, 812),
+                      fontFamily: Satoshi400,
+                      fontWeight: 'bold',
                     }}>
+                    {userInfo?.accountType === 'host' ? 'Host' : 'Guest'}
+                  </Text>
+                </View>
+                <LinearGradient
+                  colors={['#977B4A', '#E5D291', '#A28453']}
+                  style={{
+                    marginLeft: 5,
+                    borderRadius: 4,
+                    paddingHorizontal: 12,
+                    paddingVertical: 2,
+                    backgroundColor: blackColor,
+                  }}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}>
+                  {true && (
                     <Text
                       style={{
-                        color: whiteColor,
+                        color: blackColor,
                         fontSize: RFValue(12, 812),
                         fontFamily: Satoshi400,
                         fontWeight: 'bold',
                       }}>
-                      {userInfo?.accountType === 'host' ? 'Host' : 'Guest'}
+                      Premium
                     </Text>
-                  </View>
-                  <LinearGradient
-                    colors={['#977B4A', '#E5D291', '#A28453']}
-                    style={{
-                      marginLeft: 5,
-                      borderRadius: 4,
-                      paddingHorizontal: 12,
-                      paddingVertical: 2,
-                      backgroundColor: blackColor,
-                    }}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0}}>
-                    {true && (
-                      <Text
-                        style={{
-                          color: blackColor,
-                          fontSize: RFValue(12, 812),
-                          fontFamily: Satoshi400,
-                          fontWeight: 'bold',
-                        }}>
-                        Premium
-                      </Text>
-                    )}
-                  </LinearGradient>
-                </View>
+                  )}
+                </LinearGradient>
               </View>
+            </View>
           </View>
           <Button onPress={handleNext} buttonStyle={{width: '100%'}} title={'Continue'} />
         </View>
