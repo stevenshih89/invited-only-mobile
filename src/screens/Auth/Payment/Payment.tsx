@@ -182,6 +182,8 @@ const Payment: FC = (): JSX.Element => {
     navigation.navigate(profilePath as never);
   };
 
+  
+
   const convertProgress = () => {
     return ((spotsLeft - minProgress) / (maxProgress - minProgress)) * (1 - 0) + 0;
   };
@@ -428,6 +430,43 @@ const Payment: FC = (): JSX.Element => {
     setActivePayment(products[1]);
   }, [subscriptions]);
 
+  const restorePurchases = async () => {
+    try {
+      const purchaserInfo = await Purchases.restorePurchases();
+
+      console.warn(purchaserInfo);
+
+      if (purchaserInfo.activeSubscriptions.length > 0) {
+        switch (purchaserInfo.activeSubscriptions[0]) {
+          case 'io_59_1w':
+            showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', {status: 'success'});
+
+            setCurrentSubscriptions({activeSubscriptions: ['io_59_1w']});
+            // navigation.navigate('/profile');
+            break;
+          case 'io_99_1m':
+            showToast('inviteMatch', 'Month subscription restored', 'Restore purchases', {status: 'success'});
+            setCurrentSubscriptions({activeSubscriptions: ['io_99_1m']});
+            // navigation.navigate('/profile');
+            break;
+          case 'io_29_3m':
+            showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', {status: 'success'});
+            setCurrentSubscriptions({activeSubscriptions: ['io_29_3m']});
+            // navigation.navigate('/profile');
+            break;
+          default:
+            break;
+        }
+        // console.log('purchases restore', purchaserInfo.activeSubscriptions[0]);
+      } else {
+        // console.log('purchases not found');
+        showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', {status: 'fail'});
+      }
+    } catch (e) {
+      // console.error('error restore purchases', e);
+    }
+  };
+
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
       <SafeAreaView style={{flex: 1}}>
@@ -469,10 +508,20 @@ const Payment: FC = (): JSX.Element => {
                 or
               </Text>
             </View> */}
-            {/* <TouchableOpacity onPress={restorePurchases} style={{marginTop: 8, alignItems: 'center'}}>
-              <Text style={{fontSize: RFValue(14), color: whiteColor, fontFamily: Satoshi500}}>Restore purchases</Text>
-            </TouchableOpacity> */}
-            <View style={{marginTop: 16, alignItems: 'center'}}>
+            <TouchableOpacity
+              onPress={restorePurchases}
+              style={{
+                marginTop: 12,
+                alignItems: 'center',
+                borderWidth: 1,
+                borderRadius: 18,
+                borderColor: whiteColor,
+                height: 38,
+                justifyContent: 'center',
+              }}>
+              <Text style={{fontSize: RFValue(16), color: whiteColor, fontFamily: Satoshi500}}>Restore purchases</Text>
+            </TouchableOpacity>
+            <View style={{marginTop: 12, alignItems: 'center'}}>
               <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
                 By tapping, your App Store account will be charged. Your subscription will auto-renew for the same price and duration until
                 you cancel via your App Store settings. You also agree to the Terms. More details can be found here:
