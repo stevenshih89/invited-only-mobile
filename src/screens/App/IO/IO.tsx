@@ -567,6 +567,27 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
+  const updateSuperJoinsUser = async () => {
+    try {
+      const getDoc = await firestore().collection('userInfo').doc(userInfo.uid).get();
+    const data = getDoc.data()
+
+    if(data?.weeklySuperInvites && data?.weeklySuperInvites > 0) {
+      await firestore().collection('userInfo').doc(userInfo.uid).update({
+        weeklySuperInvites: data?.weeklySuperInvites - 1
+      })
+    } else {
+      if(data?.superInvites && data.superInvites > 0) {
+        await firestore().collection('userInfo').doc(userInfo.uid).update({
+          superInvites: data?.superInvites - 1
+        })
+      }
+    }
+    } catch (error) {
+      console.log('error update guest super joins', error);
+    }
+  }
+
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
     try {
       const guest = await firestore().collection('userInfo').doc(forUserUid).get();
@@ -723,6 +744,9 @@ const IO: FC = (): JSX.Element => {
             .doc(activeEventId)
             .update(data)
             .then(async () => {
+              if(superInvite) {
+                await updateSuperJoinsUser()
+              }
               if (matchedGuest && matchedGuestData) {
                 await handleCreateChat(matchedGuestData);
                 setMatchData(matchedGuestData);
