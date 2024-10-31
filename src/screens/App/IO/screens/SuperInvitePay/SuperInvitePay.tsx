@@ -51,6 +51,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
   const user = useUser((i: any) => i?.user);
   const [loadingPurchasing, setLoadingPurchasing] = useState(false);
   const [loadingPurchaseList, setLoadingPurchaseList] = useState(true);
+  const [purchaseListError, setPurchaseListError] = useState(false);
 
   const rotationLoader = useSharedValue(0);
 
@@ -211,13 +212,16 @@ const SuperInvitePay: FC = (): JSX.Element => {
           setPlansList(products);
           setActivePayment(products[1]);
           setLoadingPurchaseList(false);
+          setPurchaseListError(false);
         } else {
           setLoadingPurchaseList(false);
+          setPurchaseListError(true);
           showToast('inviteMatch', '', "Can't find any purchase");
         }
       })
       .catch(() => {
         setLoadingPurchaseList(false);
+        setPurchaseListError(true);
         showToast('inviteMatch', '', "Can't find any purchase");
       });
   };
@@ -369,7 +373,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
             <View style={styles.buttonWrapper} />
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 30}}>
-            {plansList.map(item => renderItem({item}))}
+            {!purchaseListError && plansList.map(item => renderItem({item}))}
           </View>
           <View style={{width: '100%', height: 20, marginTop: 30, position: 'relative', justifyContent: 'center'}}>
             <View
@@ -387,10 +391,15 @@ const SuperInvitePay: FC = (): JSX.Element => {
           </View>
           <Button
             loading={loadingPurchasing}
+            disabled={purchaseListError}
             buttonStyle={{marginTop: 20}}
-            title={`Get ${activePayment.quantity} super ${user?.accountType === 'host' ? 'invites' : 'joins'} for ${
-              activePayment.priceString
-            }`}
+            title={
+              purchaseListError
+                ? "Can't find any purchase"
+                : `Get ${activePayment.quantity} super ${user?.accountType === 'host' ? 'invites' : 'joins'} for ${
+                    activePayment.priceString
+                  }`
+            }
             onPress={getOfferings}
           />
         </View>
