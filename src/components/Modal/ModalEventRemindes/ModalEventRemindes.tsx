@@ -326,7 +326,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                   style={{
                     color: black4Color,
                     fontFamily: Satoshi700,
-                    fontSize: RFValue(20, 812),
+                    fontSize: currentEvent?.name.length > 10? RFValue(16, 812): RFValue(20, 812),
                     marginTop: 4
                   }}>
                   {currentEvent?.name}
@@ -349,7 +349,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               <View style={{marginLeft: 10, alignItems: 'center'}}>
                 <Text
                   style={{
-                    fontSize: RFValue(26, 812),
+                    fontSize: currentEvent?.name.length > 10? RFValue(22, 812): RFValue(26, 812),
                     color: blackColor,
                     fontFamily: Satoshi700,
                   }}>
@@ -357,7 +357,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                 </Text>
                 <Text
                   style={{
-                    fontSize: RFValue(12, 812),
+                    fontSize: currentEvent?.name.length > 10? RFValue(10, 812): RFValue(12, 812),
                     color: blackColor,
                     fontFamily: Satoshi500,
                   }}>

@@ -15,6 +15,8 @@ import {useUser} from 'src/store/userStore';
 import {EventContext} from 'contexts/EventContext';
 import moment from 'moment';
 import {EventData} from 'src/types/event';
+import { ACCEPTED_STATUS } from 'constants/common';
+import { sendNotification } from 'helpers/fcmHelper';
 
 const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined; nameEvent: string}> = ({
   id,
@@ -57,76 +59,76 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
     return usersList;
   };
 
-  const sendNotification = async (title: string, body: string, mark: string) => {
-    const usersList = await getUsersList();
-    const users = await getFcmTokens(usersList);
+  // const sendNotification = async (title: string, body: string, mark: string) => {
+  //   const usersList = await getUsersList();
+  //   const users = await getFcmTokens(usersList);
 
-    for (const user of users) {
-      // console.log('const user of users', user);
+  //   for (const user of users) {
+  //     // console.log('const user of users', user);
 
-      const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-        },
-        body: JSON.stringify({
-          to: user.token,
-          notification: {
-            title: title,
-            body: body,
-          },
-          data: {
-            status: mark,
-            image: image,
-          },
-        }),
-      });
+  //     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
+  //       },
+  //       body: JSON.stringify({
+  //         to: user.token,
+  //         notification: {
+  //           title: title,
+  //           body: body,
+  //         },
+  //         data: {
+  //           status: mark,
+  //           image: image,
+  //         },
+  //       }),
+  //     });
 
-      if (!response.ok) {
-        const error = await response.json();
-        // console.error('error sending notification:', error);
-      } else {
-        const data = await response.json();
-        const id = generateRandomId(8);
-        const notification = {
-          id,
-          title: title,
-          body: body,
-          mark: mark,
-          uid: userData?.uid,
-        };
+  //     if (!response.ok) {
+  //       const error = await response.json();
+  //       // console.error('error sending notification:', error);
+  //     } else {
+  //       const data = await response.json();
+  //       const id = generateRandomId(8);
+  //       const notification = {
+  //         id,
+  //         title: title,
+  //         body: body,
+  //         mark: mark,
+  //         uid: userData?.uid,
+  //       };
 
-        try {
-          await firestore().collection('userInfo').doc(user.uid).collection('notifications').add(notification);
-        } catch (error) {
-          console.error('error add notification', error);
-        }
-      }
-    }
-    // const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
-    //   },
-    //   body: JSON.stringify({
-    //     registration_ids: tokens,
-    //     notification: {
-    //       title: title,
-    //       body: body
-    //     }
-    //   })
-    // });
+  //       try {
+  //         await firestore().collection('userInfo').doc(user.uid).collection('notifications').add(notification);
+  //       } catch (error) {
+  //         console.error('error add notification', error);
+  //       }
+  //     }
+  //   }
+  //   // const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+  //   //   method: 'POST',
+  //   //   headers: {
+  //   //     'Content-Type': 'application/json',
+  //   //     'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
+  //   //   },
+  //   //   body: JSON.stringify({
+  //   //     registration_ids: tokens,
+  //   //     notification: {
+  //   //       title: title,
+  //   //       body: body
+  //   //     }
+  //   //   })
+  //   // });
 
-    // if (!response.ok) {
-    //   const error = await response.json();
-    //   // console.error('error sending notification:', error);
-    // } else {
-    //   const data = await response.json();
-    //   // console.log('notification sent successfully:', data);
-    // }
-  };
+  //   // if (!response.ok) {
+  //   //   const error = await response.json();
+  //   //   // console.error('error sending notification:', error);
+  //   // } else {
+  //   //   const data = await response.json();
+  //   //   // console.log('notification sent successfully:', data);
+  //   // }
+  // };
 
   // const fetchMyEvents = async () => {
   //   const user = auth().currentUser;
@@ -172,6 +174,34 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
   //   }
   // };
 
+  interface usersListI {
+    status: string;
+  }
+
+  const getUsersListAccepted = (usersList: usersListI[]) => {
+    const filter = usersList?.filter(item => item.status === ACCEPTED_STATUS);
+    return filter;
+  };
+
+  const sendNotificationAcceptedUser = async () => {
+    const usersList = await getUsersList();
+    const usersAccepted = getUsersListAccepted(usersList)
+    for (const user of usersAccepted) {
+      try {
+        await sendNotification(
+          user.uid,
+          'Event cancelled',
+          `${nameEvent} event has been cancelled`,
+          'Cancel',
+          'Event',
+          userData,
+        );
+      } catch (error) {
+        console.error(`error sendNotificationAcceptedUser`, error);
+      }
+    }
+  }
+
   const handleCancelEvent = async () => {
     // const uidUser = auth().currentUser?.uid;
     try {
@@ -180,6 +210,9 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
       await firestore().collection('Events').doc(id).update({
         isCancelled: true,
       });
+
+      await sendNotificationAcceptedUser()
+      
       // const userInfo = await firestore().collection('userInfo').doc(uidUser).get();
       // const eventList = userInfo?.data()?.eventsList;
 
