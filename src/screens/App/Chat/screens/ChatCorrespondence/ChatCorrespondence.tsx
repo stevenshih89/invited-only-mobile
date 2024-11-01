@@ -57,6 +57,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [currentUserName, setCurrentUserName] = useState('');
   const {image, title, online, activeEvent, id, superInvite, invitedStatus, uid, hostUid} = route?.params;
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
+  const [isPremium, setIsPremium] = useState<boolean>(false)
 
   const clearChat = useRef(false);
   const user = useUser((i: any) => i?.user);
@@ -90,6 +91,9 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
             const currentUserInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
             setCurrentUserName(currentUserInfoDoc?.data()?.name);
+            if(userInfoDoc.exists && userInfoDoc.data().accountPremium) {
+              setIsPremium(true)
+            }
             if (userInfoDoc.exists) {
               const age = calculateAge(userInfoDoc.data().date);
               setAge(age);
@@ -316,7 +320,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                             Guest
                           </Text>
                         </View>
-                        <LinearGradient
+                        {isPremium && <LinearGradient
                           colors={['#977B4A', '#E5D291', '#A28453']}
                           style={{borderRadius: 4, marginLeft: 4}}
                           start={{x: 0, y: 0}}
@@ -324,7 +328,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                           <Text style={{paddingHorizontal: 9, paddingVertical: 2, fontWeight: 'bold', fontSize: RFValue(10, 812)}}>
                             Premium
                           </Text>
-                        </LinearGradient>
+                        </LinearGradient>}
                       </View>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <Text style={styles.textNameUser}>
