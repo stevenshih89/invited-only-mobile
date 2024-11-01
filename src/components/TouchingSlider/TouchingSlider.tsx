@@ -368,7 +368,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     </Text>
                   )}
                 </View>
-                {(userEventInfo?.accountPremium || accountType === 'guest') && (
+                {userEventInfo?.accountPremium && (
                   <LinearGradient
                     colors={['#977B4A', '#E5D291', '#A28453']}
                     style={{
@@ -833,7 +833,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                       </Text>
                     )}
                   </View>
-                  {(isPremium || accountType === 'guest') && (
+                  {isPremium && (
                     <LinearGradient
                       colors={['#977B4A', '#E5D291', '#A28453']}
                       style={{

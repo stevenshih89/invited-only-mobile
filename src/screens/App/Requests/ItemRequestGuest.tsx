@@ -367,7 +367,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
                               </Text>
                             )}
                           </View>
-                          {(hostInfo?.accountPremium || hostInfo?.accountType === 'guest') && (
+                          {hostInfo?.accountPremium && (
                             <LinearGradient
                               colors={['#977B4A', '#E5D291', '#A28453']}
                               style={{
