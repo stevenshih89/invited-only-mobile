@@ -78,7 +78,7 @@ const MyPlan = () => {
       icon: UnlimitedIcon,
     },
     {
-      title: `Unlimited ${userInfo.accountType === 'host' ? 'Guest' : ''}Connections`,
+      title: `Unlimited ${userInfo.accountType === 'host' ? 'Guest' : ''} Connections`,
       titleDescription: userInfo.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited join offers',
       description:
         userInfo.accountType === 'host'
