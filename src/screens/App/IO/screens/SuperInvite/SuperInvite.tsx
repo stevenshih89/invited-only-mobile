@@ -8,6 +8,7 @@ import {Dispatch, FC, SetStateAction, useEffect} from 'react';
 import {screenHeight} from 'constants/common';
 import Animated, {useSharedValue, withTiming, Easing, useAnimatedStyle} from 'react-native-reanimated';
 import Close from 'assets/images/icons/close.svg';
+import FastImage from 'react-native-fast-image';
 
 const SuperInvite: FC<{
   isVisibleSuperInvite: boolean;
@@ -125,7 +126,7 @@ const SuperInvite: FC<{
               {activeSuperInviteUser?.accountType}
             </Text>
             {image && (
-              <Image
+              <FastImage
                 source={{uri: image}}
                 style={{width: screenHeight / 4.5, height: screenHeight / 4.5, borderRadius: 100, marginTop: -8}}
               />
