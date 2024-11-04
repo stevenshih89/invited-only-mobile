@@ -78,7 +78,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [eventsJoiningData, setEventsJoiningData] = useState([]);
   const [hoursUntilEvent, setHoursUntilEvent] = useState<number>();
   const [currentEvent, setCurrentEvent] = useState();
-
+  
   const user = useUser((i: any) => i?.user);
   const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
   const isHost = user?.accountType === 'host';
@@ -182,6 +182,33 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   };
 
+  interface usersListI {
+    status: string;
+  }
+
+  const getUsersListAccepted = (usersList: usersListI[]) => {
+    const filter = usersList?.filter(item => item.status === ACCEPTED_STATUS);
+    return filter;
+  };
+
+  const sendNotificationAcceptedUser = async (item, hourToEvent: number) => {
+    const usersAccepted = getUsersListAccepted(item.usersList)
+    for (const user of usersAccepted) {
+      try {
+        await sendNotification(
+          user.uid,
+          'Event starting',
+          `${item.name} event starting in ${hourToEvent}h!`,
+          'Event Reminders',
+          'Event',
+          userInfo,
+        );
+      } catch (error) {
+        console.error(`error sendNotificationAcceptedUser`, error);
+      }
+    }
+  }
+
   const checkTimeEvent = item => {
     if (item) {
       const res = calculateHoursUntilEvent(item.date, item.hour);
@@ -189,13 +216,14 @@ const MyEvents: FC<any> = ({navigation}) => {
       setCurrentEvent(item);
       setVisibleModalEventRemindes(true);
       if (res < 25) {
-        sendNotificationInner(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
+        sendNotificationAcceptedUser(item, res)
+        // sendNotificationInner(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
       }
       countMyEvent.current = countMyEvent.current + 1;
     }
   };
 
-  useEffect(() => {
+  useEffect(() => {    
     if (myEventsData && myEventsData.length > countMyEvent.current) {
       checkTimeEvent(myEventsData[countMyEvent.current]);
     }

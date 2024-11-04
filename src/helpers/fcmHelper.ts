@@ -149,10 +149,17 @@ export function registerListenerWithFCM() {
 
 //method was called to display notification
 async function onDisplayNotification(title, body, data, setRejectVisible: () => void, setAcceptModalVisible: () => void) {
-  const params = data.params;
-  const paramsParse = JSON.parse(params);
-  const path = paramsParse.path;
-
+ try {
+  let paramsParse = {};
+    if (data.params && typeof data.params === 'string') {
+      try {
+        paramsParse = JSON.parse(data.params);
+      } catch (error) {
+        paramsParse = {}
+      }
+    }
+  const path = paramsParse.path || null;
+  
   showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image, path, params: paramsParse.data});
   if (title === 'Your Account is Not Approved') {
     setRejectVisible();
@@ -162,25 +169,9 @@ async function onDisplayNotification(title, body, data, setRejectVisible: () => 
   }
   // Request permissions (required for iOS)
   await notifee.requestPermission();
-  // Create a channel (required for Android)
-  const channelId = await notifee.createChannel({
-    id: 'default',
-    name: 'Default Channel',
-  });
-
-  // Display a notification
-  // await notifee.displayNotification({
-  //   title: title,
-  //   body: body,
-  //   data: data,
-  //   android: {
-  //     channelId,
-  //     // pressAction is needed if you want the notification to open the app when pressed
-  //     pressAction: {
-  //       id: 'default',
-  //     },
-  //   },
-  // });
+ } catch (error) {
+  console.log('error onDisplayNotification', error);
+ }
 }
 
 // it would be called when the app in foreground state

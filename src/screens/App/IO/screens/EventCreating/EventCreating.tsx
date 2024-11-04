@@ -13,7 +13,7 @@ import ModalSaveEventChanges from 'screens/App/MyEvents/EventEditing/ModalSaveEv
 import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
 import {showToast} from 'helpers/showToast.ts';
 import auth from '@react-native-firebase/auth';
-import {screenWidth} from 'constants/common';
+import {ACCEPTED_STATUS, screenWidth} from 'constants/common';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import EventPreview from 'components/TouchingSlider/components/EventPreview';
 import Check from 'src/assets/images/icons/Check-black.svg';
@@ -194,6 +194,33 @@ const EventCreating: FC = () => {
     }
   };
 
+  interface usersListI {
+    status: string;
+  }
+
+  const getUsersListAccepted = (usersList: usersListI[]) => {
+    const filter = usersList?.filter(item => item.status === ACCEPTED_STATUS);
+    return filter;
+  };
+
+  const sendNotificationAcceptedUser = async () => {
+    const usersAccepted = getUsersListAccepted(isEditingItem?.usersList)
+    for (const user of usersAccepted) {
+      try {
+        await sendNotification(
+          user.uid,
+          'Event update',
+          `${isEditingItem?.name} event has been updated`,
+          'Event Reminders',
+          'Event',
+          userHost,
+        );
+      } catch (error) {
+        console.error(`error sendNotificationAcceptedUser`, error);
+      }
+    }
+  }
+
   const handleSaveChanges = async () => {
     try {
       const id = isEditingItem?.id;
@@ -219,6 +246,7 @@ const EventCreating: FC = () => {
         params: {list: data},
       } as never);
       showToast('inviteMatch', 'Continue swiping👋', 'Event updated');
+      await sendNotificationAcceptedUser()
       // sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details', 'update');
     } catch (e) {
       console.log('error update event', e);
