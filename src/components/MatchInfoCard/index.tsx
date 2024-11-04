@@ -120,7 +120,7 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
                   </Text>
                 )}
               </View>
-              {(premium || accountType === 'guest') && (
+              {premium && (
                 <LinearGradient
                   colors={['#977B4A', '#E5D291', '#A28453']}
                   style={{
@@ -244,7 +244,7 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
                     </Text>
                   )}
                 </View>
-                {(premium || accountType === 'guest') && (
+                {premium && (
                   <LinearGradient
                     colors={['#977B4A', '#E5D291', '#A28453']}
                     style={{

@@ -19,7 +19,7 @@ import UserWarnIcon from 'assets/images/icons/user-warn.svg';
 import CloseIcon from 'assets/images/icons/close-circle-red.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
 import LineImage from 'assets/images/app/Line.png';
-import {chatCorrespondencePath, commonStackPath, eventActiveInfoPath, myProfileViewPath} from 'constants/pathLocations.ts';
+import {commonStackPath, eventActiveInfoPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {
   blackColor,
   deleteColor,

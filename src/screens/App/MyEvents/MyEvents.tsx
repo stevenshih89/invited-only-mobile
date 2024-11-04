@@ -723,7 +723,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                   </Text>
                 )}
               </View>
-              {(userInfo?.accountPremium || userInfo?.accountType === 'guest') && (
+              {userInfo?.accountPremium && (
                 <LinearGradient
                   colors={['#977B4A', '#E5D291', '#A28453']}
                   style={{

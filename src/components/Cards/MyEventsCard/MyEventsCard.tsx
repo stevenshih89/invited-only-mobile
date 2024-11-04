@@ -187,7 +187,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
                       </Text>
                     )}
                   </View>
-                  {(userHostInfo?.accountPremium || userHostInfo?.accountType === 'guest') && (
+                  {userHostInfo?.accountPremium && (
                     <LinearGradient
                       colors={['#977B4A', '#E5D291', '#A28453']}
                       style={{
