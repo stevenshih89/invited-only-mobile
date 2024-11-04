@@ -20,7 +20,7 @@ import Check from 'src/assets/images/icons/Check-black.svg';
 import uuid from 'react-native-uuid';
 import {useUser} from 'src/store/userStore';
 // import {uploadImage} from 'helpers/uploadImage.ts';
-import {IOPath} from 'constants/pathLocations';
+import {commonStackPath, eventActiveInfoPath, IOPath} from 'constants/pathLocations';
 import storage from '@react-native-firebase/storage';
 import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import {createEvent, IOEvent} from 'src/api/event';
@@ -212,11 +212,16 @@ const EventCreating: FC = () => {
         meetingSpot,
         photos,
       });
-      navigation?.goBack();
+      const getDoc = await firestore().collection('Events').doc(id).get()
+      const data = getDoc.data()
+      navigation.navigate(commonStackPath, {
+        screen: eventActiveInfoPath,
+        params: {list: data},
+      } as never);
       showToast('inviteMatch', 'Continue swiping👋', 'Event updated');
       // sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details', 'update');
     } catch (e) {
-      // console.log(e);
+      console.log('error update event', e);
     }
   };
 
