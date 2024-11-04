@@ -868,6 +868,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                       findAcceptedGuest={item?.usersList?.filter(item => item.status === INVITE_MATCH_STATUS)}
                       item={item}
                       showGuestList={true}
+                      isMyEvents={true}
                       customButton={customButton(item)}
                     />
                   )}
