@@ -182,8 +182,6 @@ const Payment: FC = (): JSX.Element => {
     navigation.navigate(profilePath as never);
   };
 
-  
-
   const convertProgress = () => {
     return ((spotsLeft - minProgress) / (maxProgress - minProgress)) * (1 - 0) + 0;
   };
@@ -212,8 +210,6 @@ const Payment: FC = (): JSX.Element => {
     setLoaderVisible(true);
     try {
       const {customerInfo} = await Purchases.purchasePackage(pack);
-
-      console.warn('customerInfo', customerInfo);
 
       const activeSubscription = await getActiveSubscription();
       setCurrentSubscriptions(activeSubscription);
@@ -257,31 +253,43 @@ const Payment: FC = (): JSX.Element => {
       console.log('error', e);
     }
   };
+  const getButtonDisabled = () => {
+    return currentSubscriptions.activeSubscriptions.includes(activePayment.identifier);
+  };
 
   const getButtonTitle = () => {
-    const {duration, durationName, fullPrice} = activePayment;
+    const {duration, durationName, fullPrice, identifier} = activePayment;
+    if (currentSubscriptions.activeSubscriptions.includes(identifier)) {
+      return 'Current Plan';
+    }
+
     const formattedPrice = fullPrice;
     return `Get ${duration} ${durationName} for ${formattedPrice}`;
   };
 
+  console.warn(currentSubscriptions);
+
   const renderItem = ({item}: {item: PlanListItem}) => {
     let isRender = true;
     const formattedPrice = item.fullPrice;
-    if (item.identifier === 'io_59_1w') {
-      if (
-        currentSubscriptions.activeSubscriptions.includes('io_59_1w') ||
-        currentSubscriptions.activeSubscriptions.includes('io_29_3m') ||
-        currentSubscriptions.activeSubscriptions.includes('io_99_1m')
-      ) {
-        isRender = false;
-      }
-    }
+    const isCurrentSubscription = currentSubscriptions.activeSubscriptions.includes(item.identifier);
+    console.warn('isCurrentSubscription', isCurrentSubscription);
 
-    if (item.identifier === 'io_99_1m') {
-      if (currentSubscriptions.activeSubscriptions.includes('io_99_1m') || currentSubscriptions.activeSubscriptions.includes('io_29_3m')) {
-        isRender = false;
-      }
-    }
+    // if (item.identifier === 'io_59_1w') {
+    //   if (
+    // currentSubscriptions.activeSubscriptions.includes('io_59_1w') ||
+    // currentSubscriptions.activeSubscriptions.includes('io_29_3m') ||
+    // currentSubscriptions.activeSubscriptions.includes('io_99_1m')
+    //   ) {
+    //     isRender = false;
+    //   }
+    // }
+
+    // if (item.identifier === 'io_99_1m') {
+    //   if (currentSubscriptions.activeSubscriptions.includes('io_99_1m') || currentSubscriptions.activeSubscriptions.includes('io_29_3m')) {
+    //     isRender = false;
+    //   }
+    // }
 
     if (isRender) {
       let isActive = activePayment.id === item.id;
@@ -294,6 +302,11 @@ const Payment: FC = (): JSX.Element => {
 
       return (
         <View style={{height: 200, flex: 1}}>
+          {isCurrentSubscription && (
+            <View style={{position: 'absolute', top: -26, width: '100%'}}>
+              <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(16, 932), fontFamily: Satoshi700}}>Current Plan</Text>
+            </View>
+          )}
           <View style={{position: 'absolute', top: 0, right: 0, left: 0, zIndex: 10}}>
             <View
               style={{
@@ -321,7 +334,7 @@ const Payment: FC = (): JSX.Element => {
             activeOpacity={0.7}
             onPress={() => setActivePayment(item)}>
             <LinearGradient
-              colors={colors}
+              colors={isCurrentSubscription && isActive ? [whiteColor, whiteColor] : colors}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 0}}
               style={{
@@ -476,14 +489,17 @@ const Payment: FC = (): JSX.Element => {
         <ScrollView>
           <View style={styles.container}>
             <View style={{alignItems: 'center', marginTop: 24}}>
-              <Logo />
+              <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 932)}}>Select a plan</Text>
             </View>
             <View style={{alignItems: 'flex-end'}}>
               <TouchableOpacity activeOpacity={0.7} onPress={handleNext}>
                 <CloseIcon width={25} height={25} />
               </TouchableOpacity>
             </View>
-            <Text style={styles.textGetASpot}>Get Premium </Text>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+              <Logo />
+              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(46, 932), marginLeft: 14}}>Premium </Text>
+            </View>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 30, flex: 1}}>
               {plansList.map(item => renderItem({item}))}
             </View>
@@ -492,22 +508,8 @@ const Payment: FC = (): JSX.Element => {
               buttonStyle={{marginTop: 20}}
               title={getButtonTitle()}
               onPress={getOfferings}
+              disabled={getButtonDisabled()}
             />
-            {/* <View style={{width: '100%', height: 1, backgroundColor: gray1Color, marginTop: 16}}>
-              <Text
-                style={{
-                  backgroundColor: blackColor,
-                  borderRadius: 20,
-                  color: whiteColor,
-                  position: 'absolute',
-                  fontFamily: Satoshi400,
-                  padding: 5,
-                  top: -15,
-                  left: screenWidth / 2 - 40,
-                }}>
-                or
-              </Text>
-            </View> */}
             <TouchableOpacity
               onPress={restorePurchases}
               style={{
@@ -524,9 +526,11 @@ const Payment: FC = (): JSX.Element => {
             <View style={{marginTop: 12, alignItems: 'center'}}>
               <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
                 By tapping, your App Store account will be charged. Your subscription will auto-renew for the same price and duration until
-                you cancel via your App Store settings. You also agree to the Terms. More details can be found here:
+                you cancel via your App Store settings. You also agree to the Terms.
               </Text>
-
+              <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
+                More details can be found here:
+              </Text>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
                   <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Privacy Policy</Text>

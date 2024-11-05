@@ -13,26 +13,31 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {Alert} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
-import {blackColor, lightGray9Color, transparentGray60Color, transparentWhite30Color, transparentWhite40Color, transparentWhite56Color, whiteColor} from 'constants/colors';
+import {
+  blackColor,
+  lightGray9Color,
+  transparentGray60Color,
+  transparentWhite30Color,
+  transparentWhite40Color,
+  whiteColor,
+} from 'constants/colors';
 import {calculateAge} from 'helpers/calculateAge';
-import Payment from 'screens/Auth/Payment/Payment';
 import Svg, {Circle, G} from 'react-native-svg';
-import {screenHeight} from 'constants/common';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { Satoshi400, Satoshi700 } from 'constants/fonts';
-import { getEventsIJoining } from 'helpers/getEventsIJoining';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {Satoshi400, Satoshi700} from 'constants/fonts';
+import {getEventsIJoining} from 'helpers/getEventsIJoining';
 
 const Profile: FC = () => {
   const [activeTabId, setActiveTabId] = useState(0);
   const [percentage, setPercentage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({} as any);
-  const [totalGuests, setTotalGuests] = useState(0)  
+  const [totalGuests, setTotalGuests] = useState(0);
   const [eventsCount, setEventsCount] = useState(0);
   const [mainImage, setMainImage] = useState({id: 0, image: ''} as any);
 
@@ -122,25 +127,23 @@ const Profile: FC = () => {
     // @ts-ignore
     navigation.navigate(myProfileViewPath, {
       isShowEditButton: true,
-      isPreview: false
+      isPreview: false,
     });
   };
 
-  const getGuestList = async () => {    
-    let totalParticipants = 0
+  const getGuestList = async () => {
+    let totalParticipants = 0;
     try {
-      for (const eventId of userInfo?.eventsList) { 
-        const eventDoc = await firestore().collection('Events').doc(eventId).get()
-        if(eventDoc.exists) {
-          const data = eventDoc.data()
-          totalParticipants += data?.male + data?.female
+      for (const eventId of userInfo?.eventsList) {
+        const eventDoc = await firestore().collection('Events').doc(eventId).get();
+        if (eventDoc.exists) {
+          const data = eventDoc.data();
+          totalParticipants += data?.male + data?.female;
         }
       }
-      setTotalGuests(totalParticipants)
-    } catch (error) {
-      
-    }
-  }
+      setTotalGuests(totalParticipants);
+    } catch (error) {}
+  };
 
   useEffect(() => {
     const unsubscribe = firestore()
@@ -154,8 +157,8 @@ const Profile: FC = () => {
   }, [userInfo]);
 
   useEffect(() => {
-    getGuestList()
-  },[userInfo])
+    getGuestList();
+  }, [userInfo]);
 
   const userAge = calculateAge(userInfo?.date);
 
@@ -278,7 +281,7 @@ const Profile: FC = () => {
                 fontSize: RFValue(20, 812),
                 fontFamily: Satoshi700,
               }}>
-              {userInfo?.accountType === 'host'? userInfo?.eventsList?.length || 0: eventsCount ?? 0}
+              {userInfo?.accountType === 'host' ? userInfo?.eventsList?.length || 0 : eventsCount ?? 0}
             </Text>
             <Text
               style={{
@@ -298,7 +301,7 @@ const Profile: FC = () => {
                 fontSize: RFValue(20, 812),
                 fontFamily: Satoshi700,
               }}>
-              {userInfo?.accountType === 'host'? totalGuests: userInfo?.joinEvents ?? 0}
+              {userInfo?.accountType === 'host' ? totalGuests : userInfo?.joinEvents ?? 0}
             </Text>
             <Text
               style={{

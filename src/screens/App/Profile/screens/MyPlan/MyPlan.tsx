@@ -203,81 +203,30 @@ const MyPlan = () => {
           </TouchableOpacity>
         </View>
         {userInfo?.accountType === 'host' && (
-          <>
-            <TouchableOpacity
-              disabled={!currentSubscriptions.activeSubscriptions.length}
-              onPress={goToManagePath}
-              style={{
-                padding: 24,
-                borderRadius: 18,
-                backgroundColor: black2Color90,
-                marginTop: 34,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '100%',
-              }}>
-              <View style={{width: '100%'}}>
-                <View style={{flexDirection: 'row'}}>
-                  <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi700}}>Current plan: </Text>
-                  {currentSubscriptions.activeSubscriptions.length ? (
-                    getCurrentPlan()
-                  ) : (
-                    <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>Basic</Text>
-                  )}
-                </View>
-                {!currentSubscriptions.activeSubscriptions.length ? (
-                  <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24, width: '100%'}}>
-                    <LinearGradient
-                      colors={['#977B4A', '#E5D291', '#A28453']}
-                      start={{x: 0, y: 0}}
-                      end={{x: 1, y: 0}}
-                      style={{
-                        height: screenHeight / 14,
-                        maxHeight: 60,
-                        borderRadius: 18,
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        width: '100%',
-                      }}>
-                      <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                ) : (
-                  <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginTop: 8}}>
-                    Manage subscription
-                  </Text>
-                )}
-              </View>
-              {currentSubscriptions.activeSubscriptions.length > 0 && <ArrowRightWhiteIcon />}
+          <View style={{width: '100%'}}>
+            <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24, width: '100%'}}>
+              <LinearGradient
+                colors={['#977B4A', '#E5D291', '#A28453']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0}}
+                style={{
+                  height: screenHeight / 14,
+                  maxHeight: 60,
+                  borderRadius: 18,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '100%',
+                }}>
+                <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Subscriptions</Text>
+              </LinearGradient>
             </TouchableOpacity>
-            {currentSubscriptions.activeSubscriptions.length > 0 &&
-              currentSubscriptions.activeSubscriptions.length < 3 &&
-              !currentSubscriptions.activeSubscriptions.includes('io_29_3m') && (
-                <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24}}>
-                  <LinearGradient
-                    colors={['#977B4A', '#E5D291', '#A28453']}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0}}
-                    style={{
-                      height: screenHeight / 14,
-                      maxHeight: 60,
-                      borderRadius: 18,
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              )}
-          </>
+          </View>
         )}
       </View>
       <View style={styles.listColumnWrapper}>
-        <Text style={styles.textWhatYouGet}>What you get:</Text>
-        <Text style={styles.textPremium}>Premium</Text>
+        <Text style={styles.textWhatYouGet}>What you {userInfo?.accountType === 'host' ? 'get' : 'have'}:</Text>
+        {userInfo?.accountType === 'host' && <Text style={styles.textPremium}>Premium</Text>}
       </View>
       {whatGet.map(item => (
         <View key={item.title} style={styles.itemInTheList}>

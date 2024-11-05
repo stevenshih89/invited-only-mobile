@@ -59,7 +59,7 @@ export const getCustomerInfo = async () => {
   }
 };
 
-export const getActiveSubscription = async () => {
+export const getActiveSubscription = async (): Promise<{activeSubscriptions: string[]}> => {
   try {
     const customerInfo = await Purchases.getCustomerInfo();
     console.warn('cust', customerInfo);

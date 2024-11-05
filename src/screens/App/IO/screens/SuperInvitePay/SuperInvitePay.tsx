@@ -95,7 +95,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
         handleNext(superInvitesCurrent + weeklySuperInvitesCurrent + superInvites);
       } catch (error: any) {
         setLoadingPurchasing(false);
-        showToast('inviteMatch', '', "There's been an error");
+        showToast('inviteMatch', '', 'Failed to update super invites / joins');
         // console.log('error updateSuperInvites', error);
       }
     }
@@ -158,7 +158,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
       // console.log('pay successful');
     } catch (e) {
       setLoadingPurchasing(false);
-      showToast('inviteMatch', '', "There's been an error");
+      showToast('inviteMatch', '', 'Failed to purchase');
       // console.log('pay error', e);
     }
   };
@@ -192,7 +192,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
       }
     } catch (e) {
       setLoadingPurchasing(false);
-      showToast('inviteMatch', '', "There's been an error");
+      showToast('inviteMatch', '', 'Failed to get offerings');
     }
   };
 
@@ -222,7 +222,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
       .catch(() => {
         setLoadingPurchaseList(false);
         setPurchaseListError(true);
-        showToast('inviteMatch', '', "Can't find any purchase");
+        showToast('inviteMatch', '', "Error: Can't find any purchase");
       });
   };
 
