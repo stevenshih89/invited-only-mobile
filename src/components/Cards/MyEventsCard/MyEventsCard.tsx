@@ -38,6 +38,7 @@ interface MyEventsCardProps {
   showDotLine?: boolean;
   showEventType?: boolean;
   isMyEvents?: boolean
+  isReview?: boolean 
 }
 
 const MyEventsCard: FC<MyEventsCardProps> = props => {
@@ -54,9 +55,10 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
     showInfoTop = false,
     showDotLine = true,
     showEventType = false,
-    isMyEvents = false
+    isMyEvents = false,
+    isReview,
   } = props;
-
+  
   const styles = useStyles();
   const [userHostInfo, setUserHostInfo] = useState();
 
@@ -261,7 +263,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
             />
           )}
           <LinearGradient
-            colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
+            colors={isReview? ['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.00)']: ['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
             style={styles.linearGradientCard}>
