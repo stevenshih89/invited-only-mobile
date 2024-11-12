@@ -45,6 +45,7 @@ const EventPreview: FC<{
   superJoin: () => void;
   handleAutoSwipeRight: () => void;
   loaderVisible: boolean;
+  isReview?: boolean
 }> = ({
   photos,
   date,
@@ -65,6 +66,7 @@ const EventPreview: FC<{
   address,
   hour,
   id,
+  isReview
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
@@ -75,7 +77,7 @@ const EventPreview: FC<{
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
   const [usersList, setUsersList] = useState([]);
   const numberPhotos = imagesUser?.length;
-
+  
   function calculateAge(birthDateString: string) {
     const parts = birthDateString.split('.');
     const birthDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
@@ -213,6 +215,7 @@ const EventPreview: FC<{
               showGuestList={true}
               styleContainer={{marginTop: 0}}
               customButton={customButton()}
+              isReview={isReview}
             />
           </ScrollView>
           <View

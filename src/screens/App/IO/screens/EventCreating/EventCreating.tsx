@@ -96,8 +96,6 @@ const EventCreating: FC = () => {
   const isEditing = (route?.params as {isEditing?: boolean})?.isEditing;
   const isEditingItem = (route?.params as {isEditingItems?: any})?.isEditingItems;
 
-  // console.log('isEditingItem', isEditingItem);
-
   useEffect(() => {
     if (isEditing) {
       navigation.setOptions({
@@ -566,6 +564,7 @@ const EventCreating: FC = () => {
             name={name}
             setIsVisibleSaveModal={setIsVisibleSaveModal}
             loaderVisible={loaderVisible}
+            isReview={isEditingItem.eventReviewed}
           />
         )}
       </View>
