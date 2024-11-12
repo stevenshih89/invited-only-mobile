@@ -31,10 +31,17 @@ const ChooseAccountType: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
   const handleNext = async () => {
-    setOnBoarding([...onBoarding, {accountType: accountType}]);
+    const index = onBoarding.findIndex(item => item.accountType !== undefined);
+    if (index > -1) {
+      const updatedOnBoarding = [...onBoarding];
+      updatedOnBoarding[index] = { accountType: accountType };
+      setOnBoarding(updatedOnBoarding);
+    } else {
+      setOnBoarding([...onBoarding, { accountType: accountType }]);
+    }
     navigation.navigate(enterNamePath as never);
   };
-
+  
   const handleGoToBusiness = () => {
     navigation.navigate(addBuisnessPath as never);
   };
