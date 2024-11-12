@@ -23,7 +23,8 @@
     "@react-native-community/push-notification-ios": "^1.11.0",
     "@react-native-community/segmented-control": "^2.2.2",
     "@react-native-community/slider": "^4.5.0",
-    "@react-native-firebase/app": "^19.0.1",
+    "@react-native-firebase/analytics": "^19.3.0",
+    "@react-native-firebase/app": "^19.3.0",
     "@react-native-firebase/auth": "^19.0.1",
     "@react-native-firebase/firestore": "^19.0.1",
     "@react-native-firebase/functions": "^19.0.1",
@@ -69,6 +70,7 @@
     "react-native-swiper": "^1.6.0",
     "react-native-toast-message": "^2.2.0",
     "react-native-uuid": "^2.0.2",
+    "react-native-ux-cam": "^6.0.1",
     "react-native-vector-icons": "^10.0.3",
     "rn-tinder-card-bn-digital": "file:rn-tinder-card",
     "zustand": "^4.5.2"

@@ -43,6 +43,8 @@ import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
 import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {EventsDate} from 'contexts/EventsDate';
 import {getUserData} from 'helpers/getUserData';
+import analytics from '@react-native-firebase/analytics';
+import { chatsScreen } from 'constants/analitycs';
 
 type ItemProps = {
   title: string;
@@ -145,6 +147,9 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   useFocusEffect(
     useCallback(() => {
       fetchUserInfo();
+      analytics().logScreenView({
+        screen_name: chatsScreen,
+      });
     }, []),
   );
 

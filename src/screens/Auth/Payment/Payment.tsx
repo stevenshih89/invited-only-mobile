@@ -46,6 +46,8 @@ import ModalUpgradeSuccessful from 'components/Modal/ModalUpgradeSuccessful/Moda
 import {getActiveSubscription, getSubscriptions} from 'src/api/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {openLink} from 'helpers/links';
+import analytics from '@react-native-firebase/analytics';
+import {paymentScreen} from 'constants/analitycs';
 
 interface PlanListItem {
   id: number;
@@ -190,6 +192,9 @@ const Payment: FC = (): JSX.Element => {
     const timer = setTimeout(() => {
       setSpotsLeft(generateRandomProgress());
     }, 1000);
+    analytics().logScreenView({
+      screen_name: paymentScreen,
+    });
     return () => clearTimeout(timer);
   }, []);
 

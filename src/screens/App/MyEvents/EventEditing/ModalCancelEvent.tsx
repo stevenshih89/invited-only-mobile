@@ -15,9 +15,9 @@ import {useUser} from 'src/store/userStore';
 import {EventContext} from 'contexts/EventContext';
 import moment from 'moment';
 import {EventData} from 'src/types/event';
-import { ACCEPTED_STATUS } from 'constants/common';
-import { sendNotification } from 'helpers/fcmHelper';
-
+import {ACCEPTED_STATUS} from 'constants/common';
+import {sendNotification} from 'helpers/fcmHelper';
+import analytics from '@react-native-firebase/analytics';
 const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined; nameEvent: string}> = ({
   id,
   isVisible,
@@ -185,22 +185,15 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
 
   const sendNotificationAcceptedUser = async () => {
     const usersList = await getUsersList();
-    const usersAccepted = getUsersListAccepted(usersList)
+    const usersAccepted = getUsersListAccepted(usersList);
     for (const user of usersAccepted) {
       try {
-        await sendNotification(
-          user.uid,
-          'Event cancelled',
-          `${nameEvent} event has been cancelled`,
-          'Cancel',
-          'Event',
-          userData,
-        );
+        await sendNotification(user.uid, 'Event cancelled', `${nameEvent} event has been cancelled`, 'Cancel', 'Event', userData);
       } catch (error) {
-        console.error(`error sendNotificationAcceptedUser`, error);
+        console.error('error sendNotificationAcceptedUser', error);
       }
     }
-  }
+  };
 
   const handleCancelEvent = async () => {
     // const uidUser = auth().currentUser?.uid;
@@ -210,9 +203,12 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
       await firestore().collection('Events').doc(id).update({
         isCancelled: true,
       });
+      analytics().logEvent('modal_cancelled_event', {
+        eventId: id,
+      });
 
-      await sendNotificationAcceptedUser()
-      
+      await sendNotificationAcceptedUser();
+
       // const userInfo = await firestore().collection('userInfo').doc(uidUser).get();
       // const eventList = userInfo?.data()?.eventsList;
 

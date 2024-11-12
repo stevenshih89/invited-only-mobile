@@ -1,0 +1,13 @@
+export const chatsScreen = 'chats_screen';
+export const chatCorrespondenceScreen = 'chat_correspondence_screen';
+export const requestsScreen = 'requests_screen';
+export const paymentScreen = 'payment_screen';
+export const IOscreen = 'io_screen';
+export const myEventsScreen = 'my_events_screen';
+export const profileScreen = 'profile_screen';
+export const settingsScreen = 'settings_screen';
+export const profileEditing = 'profile_editing';
+export const guest = 'guest';
+export const host = 'host';
+export const joinEvent = 'join_event';
+export const inviteUser = 'invite_user';

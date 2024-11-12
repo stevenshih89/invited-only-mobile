@@ -29,6 +29,8 @@ import {sendNotification} from 'helpers/fcmHelper';
 import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
+import analytics from '@react-native-firebase/analytics';
+import {chatCorrespondenceScreen} from 'constants/analitycs';
 
 interface MessageProps {
   message: {
@@ -57,7 +59,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [currentUserName, setCurrentUserName] = useState('');
   const {image, title, online, activeEvent, id, superInvite, invitedStatus, uid, hostUid} = route?.params;
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
-  const [isPremium, setIsPremium] = useState<boolean>(false)
+  const [isPremium, setIsPremium] = useState<boolean>(false);
 
   const clearChat = useRef(false);
   const user = useUser((i: any) => i?.user);
@@ -91,8 +93,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
             const currentUserInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
             setCurrentUserName(currentUserInfoDoc?.data()?.name);
-            if(userInfoDoc.exists && userInfoDoc.data().accountPremium) {
-              setIsPremium(true)
+            if (userInfoDoc.exists && userInfoDoc.data().accountPremium) {
+              setIsPremium(true);
             }
             if (userInfoDoc.exists) {
               const age = calculateAge(userInfoDoc.data().date);
@@ -108,6 +110,9 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         }
       };
       fetchUserInfo();
+      analytics().logScreenView({
+        screen_name: chatCorrespondenceScreen,
+      });
     }
   }, [uid]);
 
@@ -193,6 +198,10 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         setMessageUser('');
         await doc.update({
           chats: [...allChats],
+        });
+        analytics().logEvent(`${chatCorrespondenceScreen}_send_message`, {
+          hostUid: user?.uid,
+          guestUid: uid,
         });
         if (docData?.notificationSettings.chat) {
           await sendNotification(
@@ -320,15 +329,17 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                             Guest
                           </Text>
                         </View>
-                        {isPremium && <LinearGradient
-                          colors={['#977B4A', '#E5D291', '#A28453']}
-                          style={{borderRadius: 4, marginLeft: 4}}
-                          start={{x: 0, y: 0}}
-                          end={{x: 1, y: 0}}>
-                          <Text style={{paddingHorizontal: 9, paddingVertical: 2, fontWeight: 'bold', fontSize: RFValue(10, 812)}}>
-                            Premium
-                          </Text>
-                        </LinearGradient>}
+                        {isPremium && (
+                          <LinearGradient
+                            colors={['#977B4A', '#E5D291', '#A28453']}
+                            style={{borderRadius: 4, marginLeft: 4}}
+                            start={{x: 0, y: 0}}
+                            end={{x: 1, y: 0}}>
+                            <Text style={{paddingHorizontal: 9, paddingVertical: 2, fontWeight: 'bold', fontSize: RFValue(10, 812)}}>
+                              Premium
+                            </Text>
+                          </LinearGradient>
+                        )}
                       </View>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <Text style={styles.textNameUser}>

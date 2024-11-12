@@ -23,10 +23,12 @@ import {handleCreateChat} from 'helpers/chat';
 import {getFontSize} from 'helpers/getFontSize';
 import {ACCEPTED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import {EventContext} from 'contexts/EventContext';
-import { updateGuestEventsList } from 'helpers/updateGuestEventsList';
+import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
 import {Event} from 'src/types/event';
 import {User} from 'src/types/userInfo';
 import {MatchData} from '../IO/screens/Match/Match';
+import analytics from '@react-native-firebase/analytics';
+import {inviteUser, joinEvent, requestsScreen} from 'constants/analitycs';
 
 const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fetchHostRequests}: any) => {
   const styles = useStyles();
@@ -168,11 +170,14 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
           usersList: firestore.FieldValue.arrayUnion(userAccepted),
         })
         .then(async () => {
+          analytics().logEvent(`${requestsScreen}_${inviteUser}`, {
+            eventId: activeEvent?.id,
+          });
           await handleCreateChat(matchedData as MatchData);
-          await updateGuestEventsList(activeEvent?.id, guest?.uid)
+          await updateGuestEventsList(activeEvent?.id, guest?.uid);
           handleOpenMatch(matchedData);
           const getDoc = await firestore().collection('userInfo').doc(userItem?.uid).get();
-          const docData = getDoc.data();          
+          const docData = getDoc.data();
           if (docData?.notificationSettings.requests) {
             await sendNotification(
               userItem?.uid,
@@ -199,6 +204,9 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
           requestsList: firestore.FieldValue.arrayRemove(userItem),
           rejectsList: firestore.FieldValue.arrayUnion({uid: userItem?.uid}),
         });
+      analytics().logEvent(`${requestsScreen}_reject_${inviteUser}`, {
+        eventId: activeEvent?.id,
+      });
     } catch (e) {
       console.error(e);
       showToast('inviteMatch', '', "There's been an error");

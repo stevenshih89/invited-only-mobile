@@ -7,7 +7,7 @@ import Button from 'components/Button/Button.tsx';
 import {screenHeight} from 'constants/common.ts';
 import PersonIcon from 'assets/images/icons/person.svg';
 import {ScrollView} from 'react-native-gesture-handler';
-
+import analytics from '@react-native-firebase/analytics';
 interface InvitedOnlyProps {
   setTabState: Dispatch<SetStateAction<string>>;
   setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
@@ -54,6 +54,9 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
       setFemaleFriend(prevFemaleFriend ?? 0);
       setMaleFriend(prevMaleFriend ?? 0);
     }
+    analytics().logScreenView({
+      screen_name: 'event_creating_invited_only_screen',
+    });
   }, []);
 
   const styles = useStyles();

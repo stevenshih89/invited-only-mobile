@@ -45,7 +45,7 @@ import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import {calculateAge} from 'helpers/calculateAge';
 import moment from 'moment';
-
+import analytics from '@react-native-firebase/analytics';
 const MyEvents: FC<any> = ({navigation}) => {
   const styles = useStyles();
   const MY_EVENTS = 'my_events';
@@ -78,7 +78,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [eventsJoiningData, setEventsJoiningData] = useState([]);
   const [hoursUntilEvent, setHoursUntilEvent] = useState<number>();
   const [currentEvent, setCurrentEvent] = useState();
-  
+
   const user = useUser((i: any) => i?.user);
   const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
   const isHost = user?.accountType === 'host';
@@ -192,7 +192,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   };
 
   const sendNotificationAcceptedUser = async (item, hourToEvent: number) => {
-    const usersAccepted = getUsersListAccepted(item.usersList)
+    const usersAccepted = getUsersListAccepted(item.usersList);
     for (const user of usersAccepted) {
       try {
         await sendNotification(
@@ -204,10 +204,10 @@ const MyEvents: FC<any> = ({navigation}) => {
           userInfo,
         );
       } catch (error) {
-        console.error(`error sendNotificationAcceptedUser`, error);
+        console.error('error sendNotificationAcceptedUser', error);
       }
     }
-  }
+  };
 
   const checkTimeEvent = item => {
     if (item) {
@@ -216,14 +216,14 @@ const MyEvents: FC<any> = ({navigation}) => {
       setCurrentEvent(item);
       setVisibleModalEventRemindes(true);
       if (res < 25) {
-        sendNotificationAcceptedUser(item, res)
+        sendNotificationAcceptedUser(item, res);
         // sendNotificationInner(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
       }
       countMyEvent.current = countMyEvent.current + 1;
     }
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     if (myEventsData && myEventsData.length > countMyEvent.current) {
       checkTimeEvent(myEventsData[countMyEvent.current]);
     }
@@ -249,6 +249,9 @@ const MyEvents: FC<any> = ({navigation}) => {
   useFocusEffect(
     useCallback(() => {
       fetchUserInfo();
+      analytics().logScreenView({
+        screen_name: 'my_events_screen',
+      });
     }, []),
   );
 
@@ -359,6 +362,9 @@ const MyEvents: FC<any> = ({navigation}) => {
       await firestore().collection('Events').doc(list?.id).update({
         usersList: list?.usersList,
       });
+      analytics().logEvent('event_rejected_invitation', {
+        eventId: list?.id,
+      });
       setIsVisibleAcceptInvitationModal(false);
       const getDoc = await firestore().collection('userInfo').doc(list?.uid).get();
       const docData = getDoc.data();
@@ -393,6 +399,9 @@ const MyEvents: FC<any> = ({navigation}) => {
 
       await firestore().collection('Events').doc(list?.id).update({
         usersList: list?.usersList,
+      });
+      analytics().logEvent('event_cancelled_attending', {
+        eventId: list?.id,
       });
       setIsVisibleCancelAttendingModal(false);
       const getDoc = await firestore().collection('userInfo').doc(list?.uid).get();
@@ -515,15 +524,15 @@ const MyEvents: FC<any> = ({navigation}) => {
     );
   };
 
-  const changeStatusGuestUsersList = async (     
+  const changeStatusGuestUsersList = async (
     status: string,
     id: string,
     uidHost: string,
     placeName: string,
     date: string,
     hostPhoto: string,
-    item: any
-  ) => {    
+    item: any,
+  ) => {
     console.log('changeStatusGuestUsersList');
 
     const eventQuerySnapshot = await firestore().collection('Events').doc(id).get();
@@ -558,7 +567,7 @@ const MyEvents: FC<any> = ({navigation}) => {
             'Accepted',
             'Accepted'.toUpperCase(),
             user,
-            JSON.stringify({ path: 'guestsList', data: item})
+            JSON.stringify({path: 'guestsList', data: item}),
           );
           break;
         case NOT_ACCEPTED_STATUS:
@@ -582,7 +591,15 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   };
 
-  const customButtonsGuest = (id: string, usersList: any[], date: string, uidHost: string, placeName: string, hostPhoto: string, item: any) => {
+  const customButtonsGuest = (
+    id: string,
+    usersList: any[],
+    date: string,
+    uidHost: string,
+    placeName: string,
+    hostPhoto: string,
+    item: any,
+  ) => {
     const findUser = usersList.find(item => item.uid === user?.uid);
     const status = findUser?.status;
 
@@ -989,7 +1006,15 @@ const MyEvents: FC<any> = ({navigation}) => {
                     totalRequestsGuests={item?.requestsList?.length}
                     item={item}
                     showGuestList={false}
-                    customButton={customButtonsGuest(item?.id, item?.usersList, item?.date, item?.uid, item?.placeName, item?.hostImage, item)}
+                    customButton={customButtonsGuest(
+                      item?.id,
+                      item?.usersList,
+                      item?.date,
+                      item?.uid,
+                      item?.placeName,
+                      item?.hostImage,
+                      item,
+                    )}
                     showInfoTop={true}
                   />
                 )}

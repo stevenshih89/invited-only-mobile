@@ -77,6 +77,9 @@ import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
 import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
 import {getUserData} from 'helpers/getUserData';
+import analytics from '@react-native-firebase/analytics';
+import {inviteUser, IOscreen, joinEvent} from 'constants/analitycs';
+import RNUxcam from 'react-native-ux-cam';
 
 const IO: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -349,6 +352,10 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     getSuperInvites();
+    analytics().logScreenView({
+      screen_name: IOscreen,
+    });
+    RNUxcam.tagScreenName(IOscreen);
   }, []);
 
   const decrementSuperInvite = async (item: UserInfo, coinAnimationTimer = 0) => {
@@ -547,6 +554,17 @@ const IO: FC = (): JSX.Element => {
     const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
     const rejectUid = isHost ? uid : userInfo?.uid;
+    if (isHost) {
+      analytics().logEvent(`${IOscreen}_reject_${inviteUser}`, {
+        hostUid: userHost?.uid,
+        guestUid: uid,
+      });
+    } else {
+      analytics().logEvent(`${IOscreen}_reject_${joinEvent}`, {
+        hostUid: eventId,
+        guestUid: userInfo?.uid,
+      });
+    }
     try {
       await firestore()
         .collection('Events')
@@ -570,23 +588,29 @@ const IO: FC = (): JSX.Element => {
   const updateSuperJoinsUser = async () => {
     try {
       const getDoc = await firestore().collection('userInfo').doc(userInfo.uid).get();
-    const data = getDoc.data()
+      const data = getDoc.data();
 
-    if(data?.weeklySuperInvites && data?.weeklySuperInvites > 0) {
-      await firestore().collection('userInfo').doc(userInfo.uid).update({
-        weeklySuperInvites: data?.weeklySuperInvites - 1
-      })
-    } else {
-      if(data?.superInvites && data.superInvites > 0) {
-        await firestore().collection('userInfo').doc(userInfo.uid).update({
-          superInvites: data?.superInvites - 1
-        })
+      if (data?.weeklySuperInvites && data?.weeklySuperInvites > 0) {
+        await firestore()
+          .collection('userInfo')
+          .doc(userInfo.uid)
+          .update({
+            weeklySuperInvites: data?.weeklySuperInvites - 1,
+          });
+      } else {
+        if (data?.superInvites && data.superInvites > 0) {
+          await firestore()
+            .collection('userInfo')
+            .doc(userInfo.uid)
+            .update({
+              superInvites: data?.superInvites - 1,
+            });
+        }
       }
-    }
     } catch (error) {
       console.log('error update guest super joins', error);
     }
-  }
+  };
 
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
     try {
@@ -674,6 +698,10 @@ const IO: FC = (): JSX.Element => {
           .doc(activeEventId)
           .update(data)
           .then(async () => {
+            analytics().logEvent(`${IOscreen}_${inviteUser}`, {
+              hostUid: userHost?.uid,
+              guestUid: forUserUid,
+            });
             if (matchedGuest && matchedGuestData) {
               await handleCreateChat(matchedGuestData);
               await updateGuestEventsList(activeEventId, forUserUid);
@@ -744,8 +772,12 @@ const IO: FC = (): JSX.Element => {
             .doc(activeEventId)
             .update(data)
             .then(async () => {
-              if(superInvite) {
-                await updateSuperJoinsUser()
+              analytics().logEvent(`${IOscreen}_${joinEvent}`, {
+                hostUid: event?.uid,
+                guestUid: userInfo?.uid,
+              });
+              if (superInvite) {
+                await updateSuperJoinsUser();
               }
               if (matchedGuest && matchedGuestData) {
                 await handleCreateChat(matchedGuestData);
@@ -845,11 +877,6 @@ const IO: FC = (): JSX.Element => {
     });
 
     return filteredEvents;
-  };
-
-  const getDataUserEvent = async (uid: string) => {
-    const getDoc = await firestore().collection('userInfo').doc(uid).get();
-    return getDoc.data();
   };
 
   const customButton = (id: string, uid: string) => {
