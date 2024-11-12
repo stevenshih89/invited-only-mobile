@@ -423,48 +423,9 @@ const Requests: FC = (): ReactElement => {
     );
   }
 
-  if (isHost && !activeEvent?.eventReviewed && myEvents?.length && !loadingMyEvents) {
+  const headerInfoEvent = () => {
     return (
-      <View style={styles.container}>
-        <View style={{paddingHorizontal: 30, marginTop: 7}}>
-          <FastImage
-            style={{
-              width: '100%',
-              height: screenHeight * 0.22,
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: 20,
-            }}
-            source={{uri: activeEvent?.photos?.[0].image}}>
-            <View style={{width: '100%', height: '100%', backgroundColor: transparentGray70Color, position: 'absolute'}} />
-            <View style={{flexDirection: 'row'}}>
-              <Clock width={32} height={32} />
-              <Text
-                style={{
-                  color: whiteColor,
-                  fontFamily: Satoshi500,
-                  fontSize: RFValue(26, 812),
-                  marginLeft: 10,
-                }}>
-                Event in review
-              </Text>
-            </View>
-          </FastImage>
-        </View>
-      </View>
-    );
-  }
-
-  return (
-    <>
-      <View style={styles.container}>
-        {userInfo?.photos?.length && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos?.[0].image} />}
-        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
-        <ModalFullEvent
-          isVisible={isVisibleModalFullEvent}
-          idEvent={activeEvent.id}
-          setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
-        />
+      <>
         {userInfo?.accountType === 'host' && !!activeEvent?.id && (
           <View
             style={{
@@ -520,6 +481,54 @@ const Requests: FC = (): ReactElement => {
             </View>
           </View>
         )}
+      </>
+    )
+  }
+
+  if (isHost && !activeEvent?.eventReviewed && myEvents?.length && !loadingMyEvents) {
+    return (
+      <View style={styles.container}>
+        {headerInfoEvent()}
+        <View style={{paddingHorizontal: 30}}>
+          <FastImage
+            style={{
+              width: '100%',
+              height: screenHeight * 0.22,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 20,
+            }}
+            source={{uri: activeEvent?.photos?.[0].image}}>
+            <View style={{width: '100%', height: '100%', backgroundColor: transparentGray70Color, position: 'absolute'}} />
+            <View style={{flexDirection: 'row'}}>
+              <Clock width={32} height={32} />
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(26, 812),
+                  marginLeft: 10,
+                }}>
+                Event in review
+              </Text>
+            </View>
+          </FastImage>
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <>
+      <View style={styles.container}>
+        {userInfo?.photos?.length && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos?.[0].image} />}
+        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+        <ModalFullEvent
+          isVisible={isVisibleModalFullEvent}
+          idEvent={activeEvent.id}
+          setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
+        />
+        {headerInfoEvent()}
         {isHost && activeEvent?.id && acceptQuantityGuest >= totalQuantityGuests && (
           <FullEvent
             text={`Event is full: ${acceptQuantityGuest}/${totalQuantityGuests} Guests Accepted`}
