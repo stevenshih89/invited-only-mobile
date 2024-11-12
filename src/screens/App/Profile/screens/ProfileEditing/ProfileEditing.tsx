@@ -1,6 +1,6 @@
-import {blackColor, lightGray6Color, transparentWhite16Color} from 'constants/colors';
+import {blackColor, transparentWhite16Color} from 'constants/colors';
 import {FC, ReactElement, useEffect, useMemo, useState} from 'react';
-import {Alert, SafeAreaView, ScrollView, View} from 'react-native';
+import {Alert, SafeAreaView, View} from 'react-native';
 import MyPhotos from './MyPhotos';
 import MyInterests from './MyInterests';
 import {isIos, screenHeight} from 'constants/common';
@@ -21,6 +21,8 @@ import ModalLocation from './ModalLocation';
 import ModalHomeAdress from './ModalHomeAdress';
 import {showToast} from 'helpers/showToast';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {profileScreen} from 'constants/analitycs';
+import analytics from '@react-native-firebase/analytics';
 
 const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleSmokeModal, setIsVisibleSmokeModal] = useState<boolean>(false);
@@ -148,98 +150,98 @@ const ProfileEditing: FC = (): ReactElement => {
   ]);
 
   const [listOfInterests, setListOfInterests] = useState([
-    {id: 0, title: 'Vip Tables', isSelected: false,},
-    {id: 1, title: 'Concerts', isSelected: false,},
-    {id: 2, title: 'Exclusive', isSelected: false,},
-    {id: 3, title: 'Yacht Party', isSelected: false,},
-    {id: 4, title: 'Pool Party', isSelected: false,},
-    {id: 5, title: 'Private', isSelected: false,},
-    {id: 6, title: 'Birthday Party', isSelected: false, },
-    {id: 7, title: 'Restaurant', isSelected: false,}
+    {id: 0, title: 'Vip Tables', isSelected: false},
+    {id: 1, title: 'Concerts', isSelected: false},
+    {id: 2, title: 'Exclusive', isSelected: false},
+    {id: 3, title: 'Yacht Party', isSelected: false},
+    {id: 4, title: 'Pool Party', isSelected: false},
+    {id: 5, title: 'Private', isSelected: false},
+    {id: 6, title: 'Birthday Party', isSelected: false},
+    {id: 7, title: 'Restaurant', isSelected: false},
   ]);
 
-  const [listOfWorks] = useState([
-    {
-      id: 0,
-      title: 'Hospitality and Tourism',
-    },
-    {
-      id: 1,
-      title: 'Real Estate & Property Management',
-    },
-    {
-      id: 2,
-      title: 'Financial Services',
-    },
-    {
-      id: 3,
-      title: 'Retail & E-commerce',
-    },
-    {
-      id: 4,
-      title: 'Construction & Engineering',
-    },
-    {
-      id: 5,
-      title: 'Information Technology',
-    },
-    {
-      id: 6,
-      title: 'Healthcare & Medical Services',
-    },
-    {
-      id: 7,
-      title: 'Education & Training',
-    },
-    {
-      id: 8,
-      title: 'Oil & Gas Industry',
-    },
-    {
-      id: 9,
-      title: 'Media & Entertainment',
-    },
-    {
-      id: 10,
-      title: 'Logistics & Transportation',
-    },
-    {
-      id: 11,
-      title: 'Legal Services',
-    },
-    {
-      id: 12,
-      title: 'Fashion & Luxury Goods',
-    },
-    {
-      id: 13,
-      title: 'Advertising & Marketing',
-    },
-    {
-      id: 14,
-      title: 'Renewable Energy & Sustainability',
-    },
-    {
-      id: 15,
-      title: 'Consulting and Advisory Services',
-    },
-    {
-      id: 16,
-      title: 'Telecommunications',
-    },
-    {
-      id: 17,
-      title: 'Aerospace & Aviation',
-    },
-    {
-      id: 18,
-      title: 'Food & Beverage Industry',
-    },
-    {
-      id: 19,
-      title: 'Government & Public Sector',
-    },
-  ]);
+  // const [listOfWorks] = useState([
+  //   {
+  //     id: 0,
+  //     title: 'Hospitality and Tourism',
+  //   },
+  //   {
+  //     id: 1,
+  //     title: 'Real Estate & Property Management',
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'Financial Services',
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'Retail & E-commerce',
+  //   },
+  //   {
+  //     id: 4,
+  //     title: 'Construction & Engineering',
+  //   },
+  //   {
+  //     id: 5,
+  //     title: 'Information Technology',
+  //   },
+  //   {
+  //     id: 6,
+  //     title: 'Healthcare & Medical Services',
+  //   },
+  //   {
+  //     id: 7,
+  //     title: 'Education & Training',
+  //   },
+  //   {
+  //     id: 8,
+  //     title: 'Oil & Gas Industry',
+  //   },
+  //   {
+  //     id: 9,
+  //     title: 'Media & Entertainment',
+  //   },
+  //   {
+  //     id: 10,
+  //     title: 'Logistics & Transportation',
+  //   },
+  //   {
+  //     id: 11,
+  //     title: 'Legal Services',
+  //   },
+  //   {
+  //     id: 12,
+  //     title: 'Fashion & Luxury Goods',
+  //   },
+  //   {
+  //     id: 13,
+  //     title: 'Advertising & Marketing',
+  //   },
+  //   {
+  //     id: 14,
+  //     title: 'Renewable Energy & Sustainability',
+  //   },
+  //   {
+  //     id: 15,
+  //     title: 'Consulting and Advisory Services',
+  //   },
+  //   {
+  //     id: 16,
+  //     title: 'Telecommunications',
+  //   },
+  //   {
+  //     id: 17,
+  //     title: 'Aerospace & Aviation',
+  //   },
+  //   {
+  //     id: 18,
+  //     title: 'Food & Beverage Industry',
+  //   },
+  //   {
+  //     id: 19,
+  //     title: 'Government & Public Sector',
+  //   },
+  // ]);
 
   const uploadImage = async (imagePath: string | null, userId: string | null) => {
     if (imagePath === null) {
@@ -369,6 +371,9 @@ const ProfileEditing: FC = (): ReactElement => {
   useEffect(() => {
     fetchUserInfo();
     // // console.log('fetchUserInfo');
+    analytics().logScreenView({
+      screen_name: `${profileScreen}_${profileEditing}`,
+    });
   }, [setShowGender, setActiveGenderItem]);
 
   const fetchImages = async (user: any) => {

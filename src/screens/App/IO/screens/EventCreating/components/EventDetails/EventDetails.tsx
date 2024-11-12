@@ -36,7 +36,8 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {Switch} from '@ant-design/react-native';
 import ModalAddPhoto from './ModalAddPhoto.tsx';
-import { eventTypes } from 'src/mocks/eventTypes.ts';
+import {eventTypes} from 'src/mocks/eventTypes.ts';
+import analytics from '@react-native-firebase/analytics';
 
 interface ImageType {
   image: null | string;
@@ -144,7 +145,6 @@ const EventDetails: FC<EventDetailsProps> = ({
   setOpenHour,
   userHost,
 }): ReactElement => {
-
   const [modalAddPhotoVisible, setModalAddPhotoVisible] = useState(false);
   const [photosId, setPhotosId] = useState();
   const [addressEmpty, setAddressEmpty] = useState(false);
@@ -183,6 +183,9 @@ const EventDetails: FC<EventDetailsProps> = ({
       setAddress(prevAddress ?? '');
       setMeetingSpot(prevMeetingSpot ?? '');
     }
+    analytics().logScreenView({
+      screen_name: 'event_creating_event_details_screen',
+    });
   }, []);
 
   const styles = useStyles();
@@ -368,7 +371,7 @@ const EventDetails: FC<EventDetailsProps> = ({
   const handleScroll = () => {
     Keyboard.dismiss();
   };
-    
+
   return (
     <View style={styles.root}>
       <KeyboardAwareScrollView

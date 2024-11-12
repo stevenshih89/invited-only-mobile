@@ -1,13 +1,5 @@
-import {
-  blackColor,
-  darkRed2Color,
-  lightGray5Color,
-  lightGray6Color,
-  lightRed1Color,
-  transparentWhite16Color,
-  whiteColor,
-} from 'constants/colors';
-import {useState} from 'react';
+import {blackColor, lightGray5Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {useEffect, useState} from 'react';
 import {FlatList, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import LogoutIcon from 'assets/images/icons/logout.svg';
 import UserEdit from 'assets/images/icons/user-edit.svg';
@@ -27,6 +19,8 @@ import {openLink} from 'helpers/links';
 import {showToast} from 'helpers/showToast';
 import Purchases from 'react-native-purchases';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
+import analytics from '@react-native-firebase/analytics';
+import {settingsScreen} from 'constants/analitycs';
 
 const Settings = () => {
   const [isVisibleLogoutModal, setIsVisibleLogoutModal] = useState(false);
@@ -34,6 +28,12 @@ const Settings = () => {
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
+
+  useEffect(() => {
+    analytics().logScreenView({
+      screen_name: settingsScreen,
+    });
+  }, []);
 
   const openLogoutModal = () => {
     setIsVisibleLogoutModal(true);
@@ -166,17 +166,19 @@ const Settings = () => {
                   style={{padding: 20, backgroundColor: lightGray5Color, borderRadius: 10}}>
                   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      {Icon && <View
-                        style={{
-                          width: 32,
-                          height: 32,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          backgroundColor: blackColor,
-                          borderRadius: 100,
-                        }}>
-                        {item?.title !== 'Log out' ? <Icon width={16} height={16} /> : <LogoutRed width={16} height={16} />}
-                      </View>}
+                      {Icon && (
+                        <View
+                          style={{
+                            width: 32,
+                            height: 32,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: blackColor,
+                            borderRadius: 100,
+                          }}>
+                          {item?.title !== 'Log out' ? <Icon width={16} height={16} /> : <LogoutRed width={16} height={16} />}
+                        </View>
+                      )}
                       <Text
                         style={{
                           color: item?.title === 'Log out' ? '#CE2626' : whiteColor,

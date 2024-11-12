@@ -1,12 +1,11 @@
 import {Dispatch, FC, ReactElement, SetStateAction, useCallback, useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, SafeAreaView, ScrollView} from 'react-native';
 // import components
-import {gray1Color, grayScale700, lightGray20Color, transparent60Color, transparentGray90Color, whiteColor} from 'constants/colors.ts';
+import {grayScale700, lightGray20Color, transparent60Color, transparentGray90Color, whiteColor} from 'constants/colors.ts';
 import User from 'assets/images/icons/user.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
-import CheckStar from 'assets/images/icons/check-star-white.svg';
 import {screenWidth} from 'constants/common.ts';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -21,7 +20,7 @@ import FastImage from 'react-native-fast-image';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
-
+import analytics from '@react-native-firebase/analytics';
 const EventPreview: FC<{
   photos: any;
   isEditing: boolean | undefined;
@@ -125,6 +124,9 @@ const EventPreview: FC<{
       if (isEditing) {
         getUsersList();
       }
+      analytics().logScreenView({
+        screen_name: 'event_creating_event_preview_screen',
+      });
     }, []),
   );
 
@@ -208,7 +210,7 @@ const EventPreview: FC<{
                 male: male,
                 female: girls,
                 name: name,
-                placeName
+                placeName,
               }}
               showGuestList={true}
               styleContainer={{marginTop: 0}}

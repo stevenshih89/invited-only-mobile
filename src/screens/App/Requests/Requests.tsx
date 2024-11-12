@@ -35,6 +35,8 @@ import {EventsDate} from 'contexts/EventsDate';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
 import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {getUserData} from 'helpers/getUserData';
+import analytics from '@react-native-firebase/analytics';
+import {requestsScreen} from 'constants/analitycs';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
@@ -240,6 +242,9 @@ const Requests: FC = (): ReactElement => {
     useCallback(() => {
       fetchUserInfo();
       fetchMyEvents();
+      analytics().logScreenView({
+        screen_name: `${requestsScreen}`,
+      });
     }, []),
   );
 

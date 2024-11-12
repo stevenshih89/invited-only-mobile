@@ -20,8 +20,11 @@ import {INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import {calculateAge} from 'helpers/calculateAge';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat';
 import Button from 'components/Button/Button';
-import { updateGuestEventsList } from 'helpers/updateGuestEventsList';
+import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
 import {Event} from 'src/types/event';
+import analytics from '@react-native-firebase/analytics';
+import { joinEvent } from 'constants/analitycs';
+import { requestsScreen } from 'constants/analitycs';
 
 const eventTypes = [
   {id: 0, label: 'Vip Tables'},
@@ -150,8 +153,11 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
             usersList: updatedUsersList,
           })
           .then(async () => {
+            analytics().logEvent(`${requestsScreen}_${joinEvent}`, {
+              eventId: list?.id,
+            });
             await handleCreateChat(matchedData);
-            await updateGuestEventsList(event?.id, user?.uid)
+            await updateGuestEventsList(event?.id, user?.uid);
             handleOpenMatch(matchedData);
             const getDoc = await firestore().collection('userInfo').doc(event.uid).get();
             const docData = getDoc.data();
@@ -201,6 +207,9 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
           usersList: firestore.FieldValue.arrayRemove(userItem),
           rejectsList: firestore.FieldValue.arrayUnion({uid: userItem.uid}),
         });
+      analytics().logEvent(`${requestsScreen}_reject_${joinEvent}`, {
+        eventId: list?.id,
+      });
       showToast('inviteMatch', '', 'You reject invitation');
       const getDoc = await firestore().collection('userInfo').doc(uid).get();
       const docData = getDoc.data();

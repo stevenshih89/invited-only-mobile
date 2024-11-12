@@ -16,6 +16,7 @@ import EightPlusIcon from 'assets/images/icons/18+.svg';
 import EmojiSadIcon from 'assets/images/icons/emoji-sad.svg';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
+import analytics from '@react-native-firebase/analytics';
 
 interface ModalReportProps {
   modalReport?: boolean;
@@ -48,6 +49,12 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
         photoSender: dataUserUidSender?.photos[0].image,
         phone: dataUserUid?.phoneNumber,
         phoneSender: dataUserUidSender?.phoneNumber,
+      });
+
+      analytics().logEvent('report_user', {
+        typeReport: typeReport,
+        uid: uid,
+        uidSender: uidSender,
       });
 
       const isHost = dataUserUidSender?.accountType?.toLowerCase() === 'host';

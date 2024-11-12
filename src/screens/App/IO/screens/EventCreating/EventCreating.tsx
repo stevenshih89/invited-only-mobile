@@ -28,7 +28,7 @@ import {eventTypes} from 'src/mocks/eventTypes';
 import {EventData, Event} from 'src/types/event';
 import moment from 'moment';
 import {sendNotification} from 'helpers/fcmHelper';
-
+import analytics from '@react-native-firebase/analytics';
 const EventCreating: FC = () => {
   const INVITED_ONLY = 'invitedOnly';
   const EVENT_DETAILS = 'eventDetails';
@@ -204,7 +204,7 @@ const EventCreating: FC = () => {
   };
 
   const sendNotificationAcceptedUser = async () => {
-    const usersAccepted = getUsersListAccepted(isEditingItem?.usersList)
+    const usersAccepted = getUsersListAccepted(isEditingItem?.usersList);
     for (const user of usersAccepted) {
       try {
         await sendNotification(
@@ -216,10 +216,10 @@ const EventCreating: FC = () => {
           userHost,
         );
       } catch (error) {
-        console.error(`error sendNotificationAcceptedUser`, error);
+        console.error('error sendNotificationAcceptedUser', error);
       }
     }
-  }
+  };
 
   const handleSaveChanges = async () => {
     try {
@@ -239,14 +239,17 @@ const EventCreating: FC = () => {
         meetingSpot,
         photos,
       });
-      const getDoc = await firestore().collection('Events').doc(id).get()
-      const data = getDoc.data()
+      analytics().logEvent('event_saved_changes', {
+        eventId: id,
+      });
+      const getDoc = await firestore().collection('Events').doc(id).get();
+      const data = getDoc.data();
       navigation.navigate(commonStackPath, {
         screen: eventActiveInfoPath,
         params: {list: data},
       } as never);
       showToast('inviteMatch', 'Continue swiping👋', 'Event updated');
-      await sendNotificationAcceptedUser()
+      await sendNotificationAcceptedUser();
       // sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details', 'update');
     } catch (e) {
       console.log('error update event', e);
