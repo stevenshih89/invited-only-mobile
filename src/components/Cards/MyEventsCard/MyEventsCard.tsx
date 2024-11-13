@@ -149,7 +149,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
           }}
           resizeMode={FastImage.resizeMode.cover}>
           {showInfoTop && (
-            <View style={{flexDirection: 'row', position: 'absolute', top: 16, left: 16}}>
+            <View style={{flexDirection: 'row', position: 'absolute', top: 16, left: 16, zIndex: 1000}}>
               <View style={{alignSelf: 'flex-start'}}>
                 <FastImage style={{width: 50, height: 50, borderRadius: 50}} source={{uri: userHostInfo?.photos?.[0]?.image || ''}} />
                 <View
