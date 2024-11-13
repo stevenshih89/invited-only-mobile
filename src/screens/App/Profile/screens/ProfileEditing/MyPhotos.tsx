@@ -1,6 +1,6 @@
 import {isIos, screenHeight, screenWidth} from 'constants/common';
-import {FC} from 'react';
-import {Alert, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {FC, useEffect, useRef, useState} from 'react';
+import {Alert, ImageBackground, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Close from 'assets/images/icons/close.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import Plus from 'assets/images/icons/plus.svg';
@@ -10,6 +10,11 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
 import {useUser} from '../../../../../store/userStore';
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { Gesture, GestureDetector, GestureHandlerRootView, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
+import firestore from '@react-native-firebase/firestore';
+import ModalReplacePhoto from './ModalReplacePhoto';
+import { showToast } from 'helpers/showToast';
 
 interface MyPhotosProps {
   images: {id: number; image: string | null}[];
@@ -19,6 +24,7 @@ interface MyPhotosProps {
 const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
   const userHost = useUser((i: any) => i?.user);
   const isConfirmed = userHost?.accountConfirmed;
+  const [visibleModalReplace, setVisibleModalReplace] = useState(false)
 
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
     const result = await check(permission);
@@ -46,8 +52,6 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
       return;
     }
 
-    // console.log('imageId', imageId);
-
     launchImageLibrary(
       {
         mediaType: 'photo',
@@ -71,8 +75,6 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
             }
             return img;
           });
-          // console.log('newImages', newImages);
-
           setImages(newImages);
         }
       },
@@ -89,6 +91,50 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
     setImages(newImages);
   };
 
+  useEffect(() => {
+    const unsubscribe = firestore()
+      .collection('userInfo')
+      .doc(userHost.uid)
+      .onSnapshot((docSnapshot) => {
+        const data = docSnapshot.data();
+        const updatedPhotos = data?.photos || [];
+        setImages(updatedPhotos);
+      });
+    return () => unsubscribe();
+  }, []);
+
+  const replaceImage = async () => {
+    if(selectImage && activeImage) {
+      try {
+        const getDoc = await firestore().collection('userInfo').doc(userHost.uid).get();
+        const data = getDoc.data();
+        const photos = data?.photos
+        if((activeImage === 1 && !photos[selectImage - 1].image) || (selectImage === 1 && !photos[activeImage - 1].image)) {
+          showToast('inviteMatch', 'You cannot change the main image to an empty one', 'Error')
+          setVisibleModalReplace(false)
+          setActiveImage(0)
+          setSelectImage(0)
+          return
+        }
+        const temp = photos[activeImage - 1].image;
+        photos[activeImage - 1].image = photos[selectImage - 1].image;
+        photos[selectImage - 1].image = temp;
+        await firestore().collection('userInfo').doc(userHost.uid).update({
+          photos
+        })
+        setVisibleModalReplace(false)
+        setActiveImage(0)
+        setSelectImage(0)
+        showToast('inviteMatch', 'Image successfully replaced', 'Success')
+      } catch (error) {
+        console.log('error replace photo', error);
+        setVisibleModalReplace(false)
+        setActiveImage(0)
+        setSelectImage(0)
+      }
+    }
+  }
+
   const mainImage = images[images.findIndex(item => item.id === 0)];
   const secondImage = images[images.findIndex(item => item.id === 1)];
   const thirdImage = images[images.findIndex(item => item.id === 2)];
@@ -96,8 +142,144 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
   const fifthImage = images[images.findIndex(item => item.id === 4)];
   const sixthImage = images[images.findIndex(item => item.id === 5)];
 
+  const viewRef1 = useRef(null);
+  const viewRef2 = useRef(null);
+  const viewRef3 = useRef(null);
+  const viewRef4 = useRef(null);
+  const viewRef5 = useRef(null);
+  const viewRef6 = useRef(null);
+
+  const [layout, setLayout] = useState([]);
+  
+  const [activeImage, setActiveImage] = useState(0);
+  
+  const [selectImage, setSelectImage] = useState<number>(0);
+
+  const offsetX1 = useSharedValue<number>(0);
+  const offsetY1 = useSharedValue<number>(0);
+
+  const offsetX2 = useSharedValue<number>(0);
+  const offsetY2 = useSharedValue<number>(0);
+
+  const offsetX3 = useSharedValue<number>(0);
+  const offsetY3 = useSharedValue<number>(0);
+
+  const offsetX4 = useSharedValue<number>(0);
+  const offsetY4 = useSharedValue<number>(0);
+
+  const offsetX5 = useSharedValue<number>(0);
+  const offsetY5 = useSharedValue<number>(0);
+
+  const offsetX6 = useSharedValue<number>(0);
+  const offsetY6 = useSharedValue<number>(0);
+
+  const MIN_DISTANCE_THRESHOLD = 50;
+
+  const handleChange = (offsetX: number, offsetY: number, imageId: number) => {
+    const activeItem = layout.find(item => item.imageId === imageId);
+  
+    if (!activeItem) return;
+  
+    const activeItemPositionX = activeItem.x + offsetX;
+    const activeItemPositionY = activeItem.y + offsetY;
+  
+    const initialDistance = Math.sqrt(
+      Math.pow(activeItem.x - activeItemPositionX, 2) +
+      Math.pow(activeItem.y - activeItemPositionY, 2)
+    );
+  
+    if (initialDistance < MIN_DISTANCE_THRESHOLD) {
+      setSelectImage(0);
+      return;
+    }
+  
+    let closestImageId = imageId;
+    let minDistance = Infinity;
+  
+    layout.forEach(item => {
+      if (item.imageId !== imageId) {
+        const distance = Math.sqrt(
+          Math.pow(item.x - activeItemPositionX, 2) +
+          Math.pow(item.y - activeItemPositionY, 2)
+        );
+  
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestImageId = item.imageId;
+        }
+      }
+    });
+    setSelectImage(closestImageId);
+  };
+  
+  const createTapGesture = (imageId: number, offsetX: Animated.SharedValue<number>, offsetY: Animated.SharedValue<number>) => {
+    return Gesture.Pan()
+      .onBegin(() => {
+        runOnJS(setActiveImage)(imageId);
+      })
+      .onChange((event) => {
+        offsetX.value = event.translationX;
+        offsetY.value = event.translationY;
+        runOnJS(handleChange)(offsetX.value, offsetY.value, imageId);
+      })
+      .onFinalize(() => {
+        offsetX.value = withSpring(0);
+        offsetY.value = withSpring(0);
+        // runOnJS(replaceImage)();
+        if(selectImage) {
+          runOnJS(setVisibleModalReplace)(true);
+        } else {
+          runOnJS(setActiveImage)(0);
+          runOnJS(setSelectImage)(0);
+        }
+      });
+  };
+  
+  const createAnimatedStyle = (offsetX, offsetY, id) => useAnimatedStyle(() => ({
+    transform: [
+      { translateX: offsetX.value },
+      { translateY: offsetY.value },
+      { 
+        scale: withSpring(
+          activeImage === 0 || activeImage === id? 1 : selectImage === id ? 1 : 0.8,
+          { damping: 15, stiffness: 100 }
+        )
+      }
+    ],
+  }));
+  
+  const animatedStyles1 = createAnimatedStyle(offsetX1, offsetY1, 1);
+  const animatedStyles2 = createAnimatedStyle(offsetX2, offsetY2, 2);
+  const animatedStyles3 = createAnimatedStyle(offsetX3, offsetY3, 3);
+  const animatedStyles4 = createAnimatedStyle(offsetX4, offsetY4, 4);
+  const animatedStyles5 = createAnimatedStyle(offsetX5, offsetY5, 5);
+  const animatedStyles6 = createAnimatedStyle(offsetX6, offsetY6, 6);
+
+  const handleLayout = (imageId: number) => {
+    const viewRefs = [
+      viewRef1,
+      viewRef2,
+      viewRef3,
+      viewRef4,
+      viewRef5,
+      viewRef6,
+    ];
+  
+    const ref = viewRefs[imageId - 1];
+  
+    if (ref && ref.current) {
+      ref.current.measure((x, y, width, height, pageX, pageY) => {
+        setLayout((prev) => [
+          ...prev,
+          { imageId, x: pageX, y: pageY, width, height },
+        ]);
+      });
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
+      <ModalReplacePhoto isVisible={visibleModalReplace} onClose={() => setVisibleModalReplace(false)} replaceImage={replaceImage}/>
       <Text style={styles.title}>My photos</Text>
       {isConfirmed && (
         <View style={styles.verifiedContainer}>
@@ -106,7 +288,12 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
         </View>
       )}
       <View style={styles.photosContainer}>
-        <View style={styles.photoContainer}>
+        <GestureDetector gesture={createTapGesture(1, offsetX1, offsetY1)}>
+        <Animated.View 
+          ref={viewRef1}
+          style={[styles.photoContainer, animatedStyles1]}
+          onLayout={_ => handleLayout(1)}
+        >
           {mainImage?.image ? (
             <View style={styles.imageContainer}>
               <ImageBackground resizeMode="cover" source={{uri: mainImage.image}} style={styles.imageBackground}>
@@ -127,11 +314,16 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
           <View style={styles.labelContainer}>
             <Text style={styles.labelText}>Main</Text>
           </View>
-        </View>
+        </Animated.View>
+        </GestureDetector>
         <View style={{flex: 1}}>
-          <View style={[styles.imageContainer, {marginBottom: 6}]}>
+        <GestureDetector gesture={createTapGesture(2, offsetX2, offsetY2)}>
+          <Animated.View
+            ref={viewRef2}
+            onLayout={_ => handleLayout(2)} 
+            style={[styles.imageContainer, animatedStyles2]}>
             {secondImage?.image ? (
-              <View style={styles.imageContainer}>
+              <View style={[styles.imageContainer]}>
                 <ImageBackground resizeMode="cover" source={{uri: secondImage.image}} style={styles.imageBackground}>
                   <TouchableOpacity
                     activeOpacity={0.7}
@@ -150,8 +342,13 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
             <View style={styles.labelContainer}>
               <Text style={styles.labelText}>02</Text>
             </View>
-          </View>
-          <View style={[styles.imageContainer, {marginTop: 6}]}>
+          </Animated.View>
+          </GestureDetector>
+          <GestureDetector gesture={createTapGesture(3, offsetX3, offsetY3)}>
+          <Animated.View
+            ref={viewRef3}
+            onLayout={_ => handleLayout(3)} 
+            style={[styles.imageContainer, animatedStyles3, {marginTop: 8}]}>
             {thirdImage?.image ? (
               <View style={styles.imageContainer}>
                 <ImageBackground resizeMode="cover" source={{uri: thirdImage.image}} style={styles.imageBackground}>
@@ -172,11 +369,16 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
             <View style={styles.labelContainer}>
               <Text style={styles.labelText}>03</Text>
             </View>
-          </View>
+          </Animated.View>
+          </GestureDetector>
         </View>
       </View>
       <View style={{flexDirection: 'row', marginTop: 8}}>
-        <View style={[styles.imageContainer]}>
+      <GestureDetector gesture={createTapGesture(4, offsetX4, offsetY4)}>
+        <Animated.View
+         ref={viewRef4}
+         onLayout={_ => handleLayout(4)} 
+         style={[styles.imageContainer, animatedStyles4]}>
           <View style={{height: screenHeight / 7, width: '94%'}}>
             {fourthImage?.image ? (
               <View style={[styles.imageContainer, {width: '94%'}]}>
@@ -206,8 +408,13 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
               <Text style={styles.labelText}>04</Text>
             </View>
           </View>
-        </View>
-        <View style={[styles.imageContainer]}>
+        </Animated.View>
+      </GestureDetector>
+      <GestureDetector gesture={createTapGesture(5, offsetX5, offsetY5)}>
+        <Animated.View
+         ref={viewRef5}
+         onLayout={_ => handleLayout(5)} 
+         style={[styles.imageContainer, animatedStyles5]}>
           <View style={{height: screenHeight / 7, width: '94%'}}>
             {fifthImage?.image ? (
               <View style={[styles.imageContainer, {width: '94%'}]}>
@@ -237,8 +444,13 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
               <Text style={styles.labelText}>05</Text>
             </View>
           </View>
-        </View>
-        <View style={[styles.imageContainer]}>
+        </Animated.View>
+        </GestureDetector>
+        <GestureDetector gesture={createTapGesture(6, offsetX6, offsetY6)}>
+        <Animated.View
+         ref={viewRef6}
+         onLayout={_ => handleLayout(6)} 
+         style={[styles.imageContainer, animatedStyles6]}>
           {sixthImage?.image ? (
             <View style={[styles.imageContainer, {width: '94%'}]}>
               <ImageBackground
@@ -266,9 +478,10 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
           <View style={styles.labelContainer}>
             <Text style={styles.labelText}>06</Text>
           </View>
-        </View>
+        </Animated.View>
+        </GestureDetector>
       </View>
-    </View>
+    </GestureHandlerRootView>
   );
 };
 
@@ -325,7 +538,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     position: 'absolute',
     bottom: 6,
-    // marginTop: 10,
   },
   labelText: {
     fontFamily: Satoshi700,
