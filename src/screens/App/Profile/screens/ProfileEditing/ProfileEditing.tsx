@@ -21,7 +21,7 @@ import ModalLocation from './ModalLocation';
 import ModalHomeAdress from './ModalHomeAdress';
 import {showToast} from 'helpers/showToast';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {profileScreen} from 'constants/analitycs';
+import {profileEditing, profileScreen} from 'constants/analitycs';
 import analytics from '@react-native-firebase/analytics';
 
 const ProfileEditing: FC = (): ReactElement => {
@@ -57,6 +57,10 @@ const ProfileEditing: FC = (): ReactElement => {
   const [activeSmokeItem, setActiveSmokeItem] = useState<{id: number; title: string} | null>(null);
   const [showHeight, setShowHeight] = useState(false);
   const [height, setHeight] = useState<string | null>(null);
+  const [saveBtnInterestsVisible, setSaveBtnInterestsVisible] = useState(false)
+  const [oldListInterests, setOldListInterests] = useState<{}[]>([])
+  const [saveBtnBioVisible, setSaveBtnBiosVisible] = useState(false)
+  const [oldBio, setOldBio] = useState('')
 
   const bithdate = useMemo(() => `${month.length ? `${month}.` : ''}${day.length ? `${day}.` : ''}${year}`, [isVisibleBirthdayModal, year]);
   const heightsList = useMemo(() => Array.from({length: 61}, (_, i) => ({id: i, value: i + 150, label: `${i + 150} cm`})), []);
@@ -159,89 +163,22 @@ const ProfileEditing: FC = (): ReactElement => {
     {id: 6, title: 'Birthday Party', isSelected: false},
     {id: 7, title: 'Restaurant', isSelected: false},
   ]);
-
-  // const [listOfWorks] = useState([
-  //   {
-  //     id: 0,
-  //     title: 'Hospitality and Tourism',
-  //   },
-  //   {
-  //     id: 1,
-  //     title: 'Real Estate & Property Management',
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'Financial Services',
-  //   },
-  //   {
-  //     id: 3,
-  //     title: 'Retail & E-commerce',
-  //   },
-  //   {
-  //     id: 4,
-  //     title: 'Construction & Engineering',
-  //   },
-  //   {
-  //     id: 5,
-  //     title: 'Information Technology',
-  //   },
-  //   {
-  //     id: 6,
-  //     title: 'Healthcare & Medical Services',
-  //   },
-  //   {
-  //     id: 7,
-  //     title: 'Education & Training',
-  //   },
-  //   {
-  //     id: 8,
-  //     title: 'Oil & Gas Industry',
-  //   },
-  //   {
-  //     id: 9,
-  //     title: 'Media & Entertainment',
-  //   },
-  //   {
-  //     id: 10,
-  //     title: 'Logistics & Transportation',
-  //   },
-  //   {
-  //     id: 11,
-  //     title: 'Legal Services',
-  //   },
-  //   {
-  //     id: 12,
-  //     title: 'Fashion & Luxury Goods',
-  //   },
-  //   {
-  //     id: 13,
-  //     title: 'Advertising & Marketing',
-  //   },
-  //   {
-  //     id: 14,
-  //     title: 'Renewable Energy & Sustainability',
-  //   },
-  //   {
-  //     id: 15,
-  //     title: 'Consulting and Advisory Services',
-  //   },
-  //   {
-  //     id: 16,
-  //     title: 'Telecommunications',
-  //   },
-  //   {
-  //     id: 17,
-  //     title: 'Aerospace & Aviation',
-  //   },
-  //   {
-  //     id: 18,
-  //     title: 'Food & Beverage Industry',
-  //   },
-  //   {
-  //     id: 19,
-  //     title: 'Government & Public Sector',
-  //   },
-  // ]);
+  
+  const areArraysEqual = () => {
+    if (listOfInterests.length !== oldListInterests.length) return false;
+    
+    return listOfInterests.every((item, index) => {
+        return item.isSelected === oldListInterests[index].isSelected
+    });
+  }
+  useEffect(() => {
+    const arrayEqual = areArraysEqual()    
+    if(!arrayEqual && listOfInterests.length && oldListInterests.length) {
+      setSaveBtnInterestsVisible(true)
+    } else {
+      setSaveBtnInterestsVisible(false)
+    }
+  },[listOfInterests, oldListInterests])
 
   const uploadImage = async (imagePath: string | null, userId: string | null) => {
     if (imagePath === null) {
@@ -281,11 +218,21 @@ const ProfileEditing: FC = (): ReactElement => {
       return {...interest, isSelected};
     });
     setListOfInterests(newListOfInterests);
+    setOldListInterests(newListOfInterests);
   };
 
   const setDefaultBio = (userBio: string) => {
     setBio(userBio);
+    setOldBio(userBio)
   };
+
+  useEffect(() => {
+    if(oldBio !== bio) {
+      setSaveBtnBiosVisible(true)
+    } else {
+      setSaveBtnBiosVisible(false)
+    }
+  },[bio, oldBio])
 
   const fetchUserInfo = async () => {
     setInterestsLoading(true);
@@ -409,11 +356,21 @@ const ProfileEditing: FC = (): ReactElement => {
     // // console.log('allImagesUrl', allImagesUrl);
   };
 
-  const saveUserInfo = async (title?: 'string') => {
+  const SAVE_FIELD_INTERESTS = 'interests'
+  const SAVE_FIELD_BIO = 'bio'
+
+  const saveUserInfo = async (title?: 'string', saveField?: string) => {
     setLoadingSave(true);
     const user = auth().currentUser;
     if (user) {
-      const reqInterests = listOfInterests.reduce((acc: any[], curr) => {
+      const reqInterestsNew = listOfInterests.reduce((acc: any[], curr) => {
+        if (curr.isSelected) {
+          acc.push({id: curr.id, title: curr.title});
+        }
+        return acc;
+      }, []);
+
+      const reqInterestsOld = oldListInterests.reduce((acc: any[], curr) => {
         if (curr.isSelected) {
           acc.push({id: curr.id, title: curr.title});
         }
@@ -425,8 +382,8 @@ const ProfileEditing: FC = (): ReactElement => {
           .collection('userInfo')
           .doc(user.uid)
           .update({
-            interests: reqInterests,
-            bio: bio,
+            interests: saveField === SAVE_FIELD_INTERESTS? reqInterestsNew: reqInterestsOld,
+            bio: saveField === SAVE_FIELD_BIO? bio: oldBio,
             work: {title: textNameWork, description: textDescription},
             showWork,
             date: `${day}.${month}.${year}`,
@@ -446,6 +403,19 @@ const ProfileEditing: FC = (): ReactElement => {
           .then(() => {
             if (title && typeof title === 'string') {
               showToast('inviteMatch', 'Your profile is updated', `${title} successfully changed!`, {
+                ownerPhoto: images[0].image,
+                status: 'UPDATED',
+              });
+            } else {
+              if(saveField === SAVE_FIELD_INTERESTS) {
+                setSaveBtnInterestsVisible(false)
+                setOldListInterests(listOfInterests)
+              }
+              if(saveField === SAVE_FIELD_BIO) {
+                setSaveBtnBiosVisible(false)
+                setOldBio(bio)
+              }
+              showToast('inviteMatch', 'Your profile is updated', 'success!', {
                 ownerPhoto: images[0].image,
                 status: 'UPDATED',
               });
@@ -477,7 +447,9 @@ const ProfileEditing: FC = (): ReactElement => {
             style={{flex: 1, borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
             <MyPhotos images={images} setImages={setImages} />
             <MyInterests listOfInterests={listOfInterests} setListOfInterests={setListOfInterests} loading={interestsLoading} />
+            {saveBtnInterestsVisible && <Button title="Save" buttonStyle={{marginTop: 20}} onPress={() => saveUserInfo('', SAVE_FIELD_INTERESTS)} loading={loadingSave} />}
             <MyBio bio={bio} setBio={setBio} />
+            {saveBtnBioVisible && <Button title="Save" buttonStyle={{marginTop: 20}} onPress={() => saveUserInfo('', SAVE_FIELD_BIO)} loading={loadingSave} />}
             <MyBasics
               // activeWorkItem={activeWorkItem}
               work={textNameWork}
@@ -497,7 +469,7 @@ const ProfileEditing: FC = (): ReactElement => {
               setIsVisibleHomeAddressModal={setIsVisibleHomeAddressModal}
             />
             <LanguagesKnow />
-            <Button title="Save" buttonStyle={{marginTop: 34}} onPress={saveUserInfo} loading={loadingSave} />
+            {/* <Button title="Save" buttonStyle={{marginTop: 34}} onPress={saveUserInfo} loading={loadingSave} /> */}
           </KeyboardAwareScrollView>
         </View>
       </SafeAreaView>
