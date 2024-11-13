@@ -21,7 +21,7 @@ import ModalLocation from './ModalLocation';
 import ModalHomeAdress from './ModalHomeAdress';
 import {showToast} from 'helpers/showToast';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {profileScreen} from 'constants/analitycs';
+import {profileEditing, profileScreen} from 'constants/analitycs';
 import analytics from '@react-native-firebase/analytics';
 
 const ProfileEditing: FC = (): ReactElement => {
