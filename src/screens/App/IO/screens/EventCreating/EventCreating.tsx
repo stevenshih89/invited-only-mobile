@@ -567,7 +567,7 @@ const EventCreating: FC = () => {
             name={name}
             setIsVisibleSaveModal={setIsVisibleSaveModal}
             loaderVisible={loaderVisible}
-            isReview={isEditingItem.eventReviewed}
+            isReview={isEditingItem?.eventReviewed}
           />
         )}
       </View>
