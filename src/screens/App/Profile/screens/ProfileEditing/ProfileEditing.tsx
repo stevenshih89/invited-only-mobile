@@ -31,7 +31,8 @@ const ProfileEditing: FC = (): ReactElement => {
   const [isVisibleWorkModal, setIsVisibleWorkModal] = useState<boolean>(false);
   const [isVisibleAlcoholModal, setIsVisibleAlcoholModal] = useState<boolean>(false);
   const [isVisibleBirthdayModal, setIsVisibleBirthdayModal] = useState<boolean>(false);
-  const [loadingSave, setLoadingSave] = useState<boolean>(false);
+  const [loadingSaveInterests, setLoadingSaveInterests] = useState<boolean>(false);
+  const [loadingSaveBoi, setLoadingSaveBio] = useState<boolean>(false);
   const [interestsLoading, setInterestsLoading] = useState<boolean>(false);
   const [isVisibleLocationModal, setIsVisibleLocationModal] = useState<boolean>(false);
   const [isVisibleHomeAddressModal, setIsVisibleHomeAddressModal] = useState<boolean>(false);
@@ -59,7 +60,7 @@ const ProfileEditing: FC = (): ReactElement => {
   const [height, setHeight] = useState<string | null>(null);
   const [saveBtnInterestsVisible, setSaveBtnInterestsVisible] = useState(false)
   const [oldListInterests, setOldListInterests] = useState<{}[]>([])
-  const [saveBtnBioVisible, setSaveBtnBiosVisible] = useState(false)
+  const [saveBtnBioVisible, setSaveBtnBiosVisible] = useState<boolean>(false);
   const [oldBio, setOldBio] = useState('')
 
   const bithdate = useMemo(() => `${month.length ? `${month}.` : ''}${day.length ? `${day}.` : ''}${year}`, [isVisibleBirthdayModal, year]);
@@ -356,11 +357,22 @@ const ProfileEditing: FC = (): ReactElement => {
     // // console.log('allImagesUrl', allImagesUrl);
   };
 
+  const checkSaveField = (saveField: string, status: boolean) => {
+    if(saveField === SAVE_FIELD_INTERESTS) {
+      setLoadingSaveInterests(status);
+    }
+    if(saveField === SAVE_FIELD_BIO) {
+      setLoadingSaveBio(status);
+    }
+  }
+
   const SAVE_FIELD_INTERESTS = 'interests'
   const SAVE_FIELD_BIO = 'bio'
 
   const saveUserInfo = async (title?: 'string', saveField?: string) => {
-    setLoadingSave(true);
+    if(saveField) {
+      checkSaveField(saveField, true)
+    }
     const user = auth().currentUser;
     if (user) {
       const reqInterestsNew = listOfInterests.reduce((acc: any[], curr) => {
@@ -427,9 +439,13 @@ const ProfileEditing: FC = (): ReactElement => {
       } catch (error: any) {
         // console.log(error?.message);
         // Alert.alert('Error', error.message || 'Something went wrong');
-        setLoadingSave(false);
+        if(saveField) {
+          checkSaveField(saveField, false);
+        }
       }
-      setLoadingSave(false);
+      if(saveField) {
+        checkSaveField(saveField, false);
+      }
     }
   };
 
@@ -447,9 +463,9 @@ const ProfileEditing: FC = (): ReactElement => {
             style={{flex: 1, borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
             <MyPhotos images={images} setImages={setImages} />
             <MyInterests listOfInterests={listOfInterests} setListOfInterests={setListOfInterests} loading={interestsLoading} />
-            {saveBtnInterestsVisible && <Button title="Save" buttonStyle={{marginTop: 20}} onPress={() => saveUserInfo('', SAVE_FIELD_INTERESTS)} loading={loadingSave} />}
+            {saveBtnInterestsVisible && <Button title="Save" buttonStyle={{marginTop: 20}} onPress={() => saveUserInfo('', SAVE_FIELD_INTERESTS)} loading={loadingSaveInterests} />}
             <MyBio bio={bio} setBio={setBio} />
-            {saveBtnBioVisible && <Button title="Save" buttonStyle={{marginTop: 20}} onPress={() => saveUserInfo('', SAVE_FIELD_BIO)} loading={loadingSave} />}
+            {saveBtnBioVisible && <Button title="Save" buttonStyle={{marginTop: 20}} onPress={() => saveUserInfo('', SAVE_FIELD_BIO)} loading={loadingSaveBoi} />}
             <MyBasics
               // activeWorkItem={activeWorkItem}
               work={textNameWork}
