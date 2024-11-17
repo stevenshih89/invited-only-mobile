@@ -328,25 +328,23 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             }}
             key={i?.id}
             style={styles.chatItem}>
-            <View style={{flexDirection: 'row'}}>
-              <View>
-                <FastImage source={{uri: i?.avatar}} style={{width: 50, height: 50, borderRadius: 50}} />
-              </View>
-              <View style={{marginLeft: 15, flex: 1}}>
+            <View style={{flexDirection: 'row', flex: 1, justifyContent: 'space-between'}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={styles.textNameChat}>{i?.name}</Text>
-                  <ChatIcon width={18} height={18} style={{position: 'absolute', right: 0, top: 0}} />
+                  <FastImage source={{uri: i?.avatar}} style={{width: 50, height: 50, borderRadius: 50}} />
+                  <View style={{marginLeft: 12}}>
+                    <Text style={styles.textNameChat}>{i?.name}</Text>
+                    <Text style={styles.textDescription}>
+                      {i?.messages[i?.messages.length - 1] && i?.messages[i?.messages.length - 1]?.message}
+                    </Text>
+                  </View>
                 </View>
-                <View>
-                  <Text style={styles.textDescription}>
-                    {i?.messages[i?.messages.length - 1] && i?.messages[i?.messages.length - 1]?.message}
-                  </Text>
-                  {!!newMessages && (
-                    <View style={styles.newMessage}>
-                      <Text style={styles.textCountNewMessages}>{newMessages}</Text>
-                    </View>
-                  )}
-                </View>
+              <View style={{alignItems: 'center', justifyContent: 'space-between'}}>
+                <ChatIcon width={18} height={18} style={{marginTop: 5}} />
+                {!!newMessages && (
+                  <View style={styles.newMessage}>
+                    <Text style={styles.textCountNewMessages}>{newMessages}</Text>
+                  </View>
+                )}
               </View>
             </View>
           </TouchableOpacity>

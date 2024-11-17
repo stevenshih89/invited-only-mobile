@@ -129,8 +129,10 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       await firestore().collection('Events').doc(activeEvent).update({
         usersList: updatedUsersList,
       });
+      console.log('userGuest', userGuest);
+      
       showToast('inviteMatch', `Waiting for ${userGuest?.name} to accept your invitation`, 'Almost there!', {
-        ownerPhoto: userGuest?.imagePhoto,
+        ownerPhoto: userGuest?.userPhoto,
         status: 'GUEST APPROVED',
       });
       if (uidData?.notificationSettings?.requests || uidData?.notificationSettings?.joinedEvent) {
