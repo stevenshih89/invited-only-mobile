@@ -203,9 +203,6 @@ const useStyles = () => {
       backgroundColor: grayScale700,
       borderRadius: 40,
       justifyContent: 'center',
-      position: 'absolute',
-      right: 0,
-      bottom: 0,
     },
     wrapperTextMessage: {
       // marginTop: screenHeight / 80,
