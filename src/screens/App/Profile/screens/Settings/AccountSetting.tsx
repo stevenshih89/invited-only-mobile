@@ -113,6 +113,9 @@ const AccountSetting: FC = ({navigation, route}: any) => {
     }
   };
 
+  console.log('userPhone', userPhone);
+  
+
   return (
     <>
       <View style={{backgroundColor: blackColor, flex: 1, paddingHorizontal: 20}}>
@@ -127,7 +130,7 @@ const AccountSetting: FC = ({navigation, route}: any) => {
                 {/*<AEFlag />*/}
                 <Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi700, marginLeft: 4}}>
                   {userPhone?.slice(0, 4)}
-                  <Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi400}}> {userPhone?.slice(4, -1)}</Text>
+                  <Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi400}}> {userPhone?.slice(4, userPhone.length)}</Text>
                 </Text>
               </View>
               <TouchableOpacity

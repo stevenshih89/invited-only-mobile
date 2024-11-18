@@ -207,15 +207,15 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
               <View style={styles.wrapperTextTags}>
                 {userInfo?.work?.title && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
-                    <View style={{width: 20}}>
+                    <View style={{width: 20, alignItems: 'center', justifyContent: 'center'}}>
                       <Job />
                     </View>
-                    {userInfo?.work.title}
+                    {' ' + userInfo?.work.title}
                   </Text>
                 )}
                 {userInfo?.gender && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18, {textTransform: 'capitalize'}]}>
-                    <View style={{width: 20}}>
+                    <View style={{width: 20, alignItems: 'center', justifyContent: 'center'}}>
                       <Gender />
                     </View>
                     {` ${userInfo?.gender}`}
@@ -223,26 +223,26 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 )}
                 {userInfo?.location && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <View style={{width: 20}}>
+                    <View style={{width: 20, alignItems: 'center', justifyContent: 'center'}}>
                       <LocationIcon />
                     </View>
-                    {'Live in ' + userInfo?.location}
+                    {' Live in ' + userInfo?.location}
                   </Text>
                 )}
                 {userInfo?.alcohol && userInfo?.showAlcohol && (
                   <Text style={[styles.textTagsAboutMe, styles.ml18]}>
-                    <View style={{width: 20}}>
+                    <View style={{width: 20, alignItems: 'center', justifyContent: 'center'}}>
                       <WineIcon />
                     </View>
-                    {userInfo?.alcohol}
+                    {' ' + userInfo?.alcohol}
                   </Text>
                 )}
                 {userInfo?.smoke?.title && (
                   <Text style={[styles.textTagsAboutMe, {marginLeft: screenWidth / 33}]}>
-                    <View style={{width: 20}}>
+                    <View style={{width: 20, alignItems: 'center', justifyContent: 'center'}}>
                       <SmokeIcon />
                     </View>
-                    {`${userInfo?.smoke?.title}`}
+                    {` ${userInfo?.smoke?.title}`}
                   </Text>
                 )}
               </View>

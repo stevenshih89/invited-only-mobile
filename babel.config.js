@@ -17,6 +17,7 @@ module.exports = {
           helpers: './src/helpers',
           api: './src/api',
           contexts: './src/contexts',
+          redux: './src/redux',
         },
       },
     ],

@@ -19,6 +19,7 @@ import {showToast} from 'helpers/showToast';
 import {AuthContext} from 'contexts/AuthContext';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
 
 interface Social {
   id: number;
@@ -173,6 +174,7 @@ const VerifySocialProfile = () => {
         uid: userId,
         codeForInvitingOtherUsers: generateInviteCode(),
         registrationDate: formattedDate,
+        createdAt: moment().format('YYYY-MM-DD'),
         phoneNumber: phoneNumber,
         accountConfirmed: false,
         accountReviewed: false,

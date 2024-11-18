@@ -8,8 +8,6 @@ import {screenHeight} from 'constants/common';
 import {FC, useEffect} from 'react';
 import Animated, {useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay} from 'react-native-reanimated';
 
-const widthScreen = Dimensions.get('screen').width;
-
 const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: string}> = ({isVisibleMatch, nameEvent, imageEvent}) => {
   const opacityWrapper = useSharedValue(0);
   const imagePosition = useSharedValue(-200);
@@ -17,6 +15,7 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
   const textOpacity = useSharedValue(0);
   const figurePositin = useSharedValue(-screenHeight * 0.34 - 100);
   const buttonPosition = useSharedValue(-1000);
+  const widthScreen = Dimensions.get('screen').width;
 
   const animatedOpacityWrapper = () => {
     opacityWrapper.value = withTiming(1, {
@@ -145,11 +144,9 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
                       {
                         color: whiteColor,
                         fontFamily: Outfit500,
-                        fontSize: nameEvent?.length > 10? RFValue(36, 812): RFValue(42, 812),
+                        fontSize: nameEvent?.length > 10 ? RFValue(36, 812): RFValue(42, 812),
                         letterSpacing: -5,
                         lineHeight: 55,
-                        // textAlign: 'center',
-                        // marginBottom: screenHeight / 20,
                       },
                     ]}>
                     {nameEvent}
