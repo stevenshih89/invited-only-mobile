@@ -210,7 +210,6 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
               fontFamily: Satoshi400,
               color: whiteColor,
             }}
-            placeholder="English"
             placeholderTextColor={whiteColor}
           />
         </View>
