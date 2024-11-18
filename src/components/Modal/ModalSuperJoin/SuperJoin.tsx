@@ -1,13 +1,10 @@
-import {blackColor, lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
-import {Text, TouchableOpacity, View, SafeAreaView, Dimensions} from 'react-native';
+import {blackColor, whiteColor} from 'constants/colors';
+import {Text, View, SafeAreaView, Dimensions} from 'react-native';
 import Modal from 'react-native-modal';
-import FakePlaceCircle from 'assets/images/app/fake-place-circle.png';
 import Flash from 'assets/images/icons/flash-filled.svg';
-import MessageText from 'assets/images/icons/message-text.svg';
-import CheckboxSelected from 'assets/images/icons/checkbox-selected.svg';
-import {Outfit500, Satoshi500, Satoshi700Italic} from 'constants/fonts';
+import {Outfit500, Satoshi700Italic} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight, screenWidth} from 'constants/common';
+import {screenHeight} from 'constants/common';
 import {FC, useEffect} from 'react';
 import Animated, {useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay} from 'react-native-reanimated';
 
@@ -20,10 +17,6 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
   const textOpacity = useSharedValue(0);
   const figurePositin = useSharedValue(-screenHeight * 0.34 - 100);
   const buttonPosition = useSharedValue(-1000);
-
-  const words = nameEvent?.split(' ');
-  const wordTranslations = words?.map(() => useSharedValue(widthScreen));
-  const nameAnimation = useSharedValue(widthScreen);
 
   const animatedOpacityWrapper = () => {
     opacityWrapper.value = withTiming(1, {
@@ -58,32 +51,6 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
     );
   };
 
-  const animateWords = () => {
-    setTimeout(() => {
-      wordTranslations?.forEach((wordTranslation, index) => {
-        wordTranslation.value = withDelay(
-          (index + 1) * 100,
-          withTiming(0, {
-            duration: 500,
-            easing: Easing.out(Easing.cubic),
-          }),
-        );
-      });
-    }, 300);
-  };
-
-  const animateName = () => {
-    setTimeout(() => {
-      nameAnimation.value = withDelay(
-        0,
-        withTiming(0, {
-          duration: 500,
-          easing: Easing.out(Easing.cubic),
-        }),
-      );
-    }, 300);
-  };
-
   const animateFigure = () => {
     figurePositin.value = withTiming(0, {
       duration: 800,
@@ -107,8 +74,6 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
       animatedImages();
       animatedText();
       animTextOpacity();
-      animateWords();
-      animateName();
       animateFigure();
       animateButtons();
     }
@@ -127,7 +92,6 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
   }));
 
   const leftImageStyle = useAnimatedStyle(() => ({
-    // left: imagePosition.value,
     transform: [{translateX: imagePosition.value}],
   }));
 
@@ -137,7 +101,6 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
         isVisible={isVisibleMatch}
         coverScreen
         backdropOpacity={1}
-        // onBackdropPress={onCloseMatch}
         backdropColor={blackColor}
         backdropTransitionInTiming={1000}
         animationIn={'fadeIn'}
@@ -176,26 +139,21 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
                 opacityWrapperStyle,
               ]}>
               <View style={{marginTop: -50, flexWrap: 'wrap', flexDirection: 'row', alignSelf: 'flex-end'}}>
-                {words?.map((word, index) => (
-                  <Animated.Text
-                    key={index}
+              <Text
+
                     style={[
                       {
                         color: whiteColor,
                         fontFamily: Outfit500,
-                        fontSize: nameEvent.length > 10? RFValue(36, 812): RFValue(42, 812),
+                        fontSize: nameEvent?.length > 10? RFValue(36, 812): RFValue(42, 812),
                         letterSpacing: -5,
                         lineHeight: 55,
                         // textAlign: 'center',
                         // marginBottom: screenHeight / 20,
                       },
-                      useAnimatedStyle(() => ({
-                        transform: [{translateX: wordTranslations[index].value}],
-                      })),
                     ]}>
-                    {word}
-                  </Animated.Text>
-                ))}
+                    {nameEvent}
+                  </Text>
                 <Text style={{color: whiteColor, position: 'absolute', right: 0, bottom: -10, fontSize: RFValue(13, 812)}}>Event</Text>
               </View>
               <View>
@@ -240,3 +198,4 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
 };
 
 export default SuperInvite;
+
