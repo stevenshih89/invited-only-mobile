@@ -7,23 +7,19 @@ import LocalNotification from 'components/LocalNotification/LocalNotification.ts
 import {EventProvider} from 'contexts/EventContext';
 import {EventsDateProvider} from 'contexts/EventsDate';
 import Navigator from './navigator';
-import {Provider} from 'react-redux';
-import {store} from 'redux/store';
 
 const Main = () => {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <View style={{flex: 1, backgroundColor: 'transparent'}}>
-        <Provider store={store}>
-          <AuthProvider>
-            <EventProvider>
-              <EventsDateProvider>
-                <Navigator />
-                <LocalNotification />
-              </EventsDateProvider>
-            </EventProvider>
-          </AuthProvider>
-        </Provider>
+        <AuthProvider>
+          <EventProvider>
+            <EventsDateProvider>
+              <Navigator />
+              <LocalNotification />
+            </EventsDateProvider>
+          </EventProvider>
+        </AuthProvider>
       </View>
     </GestureHandlerRootView>
   );
