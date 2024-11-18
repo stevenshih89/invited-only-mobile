@@ -43,13 +43,14 @@ import JIcon from 'assets/images/icons/J.svg';
 
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
-import {EventContext} from 'contexts/EventContext';
 import {Satoshi500} from 'constants/fonts';
 import {useFocusEffect} from '@react-navigation/native';
 import {onUserProfileChangeSubscription} from 'helpers/userProfile';
 import {UserInfo} from 'src/types/userInfo';
 import moment from 'moment';
 import FastImage from 'react-native-fast-image';
+import {EventData} from 'src/types/event';
+import {useMyEvents} from 'src/store/myEvents';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -73,23 +74,23 @@ type ItemProps = {
   icon?: ReactNode;
   index?: number;
   value?: string;
+  event?: EventData;
 };
 
-const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
+const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
   const [eventStarting, setEventStarting] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>(null);
-  const [myEvents, setMyEvents] = useState<Array<any>>();
+  // const [myEvents, setMyEvents] = useState<Array<any>>();
   const styles = useStyles();
 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
 
   const setChat = useChat((i: any) => i.setActiveEvent);
-  const eventFilter = useChat((i: any) => i?.eventFilter);
 
-  const userHost = useUser((i: any) => i?.user);
+  const userData = useUser((i: any) => i?.user);
 
-  const {setActiveEvent, activeEvent, indexEvent, setIndexEvent} = useContext(EventContext);
+  const {setActiveEvent, activeEvent, myEvents, setMyEvents, setLoadingMyEvents} = useMyEvents(state => state);
 
   const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
 
@@ -97,6 +98,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     const user = auth().currentUser;
     if (user) {
       try {
+        setLoadingMyEvents(true);
         const querySnapshot = await firestore()
           .collection('Events')
           .where('uid', '==', user.uid)
@@ -106,15 +108,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
 
         if (querySnapshot.empty) {
           setMyEvents([]);
+          console.warn('Header_fetchMyEvents_querySnapshot_empty');
           setActiveEvent({});
           setChat('');
+          setLoadingMyEvents(false);
           return;
         }
 
-        const data = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const data = querySnapshot.docs.map(doc => doc.data() as EventData);
 
         const filteredEvents = data.filter(event => {
           if (event?.date && event?.hour) {
@@ -126,29 +127,47 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
           }
           return false;
         });
+        console.warn('Header_fetchMyEvents', filteredEvents);
 
         if (!filteredEvents.length) {
           setMyEvents([]);
+          console.warn('Header_fetchMyEvents_filteredEvents_empty');
           setActiveEvent({});
           setChat('');
+          setLoadingMyEvents(false);
           return;
         }
 
-        setActiveEvent(filteredEvents[indexEvent]);
         setMyEvents(filteredEvents);
-        setChat(filteredEvents[indexEvent]?.id);
-        return filteredEvents;
+
+        // if (!activeEvent?.id) {
+        //   console.warn('Header_fetchMyEvents_activeEvent_empty');
+        //   setActiveEvent(filteredEvents[0]);
+        //   setChat(filteredEvents[0]?.id);
+        //   return;
+        // }
+        console.warn('Header_fetchMyEvents_activeEvent', activeEvent);
+
+        const currentEvent = filteredEvents.find((event: EventData) => event?.id === activeEvent?.id);
+        const eventIndex = currentEvent ? filteredEvents.findIndex((event: any) => event?.id === currentEvent?.id) : 0;
+
+        console.warn('Header_fetchMyEvents_currentEvent', currentEvent);
+
+        console.warn('Header_fetchMyEvents', filteredEvents[eventIndex]);
+
+        setActiveEvent(filteredEvents[eventIndex]);
+        setChat(filteredEvents[eventIndex]?.id);
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
+      } finally {
+        setLoadingMyEvents(false);
       }
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchMyEvents();
-    }, [indexEvent]),
-  );
+  useEffect(() => {
+    fetchMyEvents();
+  }, [headerType, userData?.uid]);
 
   const goToCreateEvent = async (): void => {
     if (!userInfo?.accountConfirmed) {
@@ -209,14 +228,14 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
     },
   ];
 
-  const Item = ({title, numberBadge, image, date, hour, girlInvitation, activeEvent, index}: ItemProps) => (
+  const Item = ({title, numberBadge, image, date, hour, girlInvitation, event, index}: ItemProps) => (
     <TouchableOpacity
       onPress={() => {
-        setChat(`${activeEvent}`);
-        setIndexEvent(index);
+        setChat(`${event.id}`);
+        setActiveEvent(event);
       }}
       style={styles.eventButton}>
-      <View style={[styles.eventViewFlatList, {borderColor: index === indexEvent ? whiteColor : lightGray5Color}]}>
+      <View style={[styles.eventViewFlatList, {borderColor: activeEvent?.id === event?.id ? whiteColor : lightGray5Color}]}>
         <FastImage style={styles.imageEvent} source={{uri: image}} />
         {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
       </View>
@@ -293,7 +312,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                 </TouchableOpacity>
                 {myEvents &&
                   myEvents.map((event: any, index: number) => {
-                    const isActive = index === indexEvent;
+                    const isActive = activeEvent?.id === event?.id;
                     const eventIsFinished = isEventFinished(event?.date, event?.hour);
                     const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
                     const eventIsFull = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
@@ -304,11 +323,10 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                         style={styles.eventButton}
                         activeOpacity={0.7}
                         onPress={() => {
-                          if (!userHost?.accountConfirmed) {
+                          if (!userData?.accountConfirmed) {
                             return;
                           }
                           setActiveEvent(event);
-                          setIndexEvent(index);
                         }}>
                         <View
                           style={{
@@ -344,7 +362,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   style={styles.eventButton}
                   activeOpacity={0.7}
                   onPress={() => {
-                    if (!userHost?.accountConfirmed) {
+                    if (!userData?.accountConfirmed) {
                       return;
                     }
                     setActiveEventDate(ALL);
@@ -378,7 +396,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   style={styles.eventButton}
                   activeOpacity={0.7}
                   onPress={() => {
-                    if (!userHost?.accountConfirmed) {
+                    if (!userData?.accountConfirmed) {
                       return;
                     }
                     setActiveEventDate(THIS_WEEK);
@@ -412,7 +430,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   style={styles.eventButton}
                   activeOpacity={0.7}
                   onPress={() => {
-                    if (!userHost?.accountConfirmed) {
+                    if (!userData?.accountConfirmed) {
                       return;
                     }
                     setActiveEventDate(THIS_MONTH);
@@ -485,7 +503,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   style={styles.eventButton}
                   activeOpacity={0.7}
                   onPress={() => {
-                    if (!userHost?.accountConfirmed) {
+                    if (!userData?.accountConfirmed) {
                       return;
                     }
 
@@ -493,7 +511,6 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                       showToast('inviteMatch', 'Create new event', `Event is ended: ${event?.date}`, {ownerPhoto: event.photos[0].image});
                     }
                     setActiveEvent(event);
-                    setIndexEvent(index);
                   }}>
                   <View
                     style={{
@@ -540,7 +557,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
         );
       case 'chat':
         return (
-          <View style={[styles.wrapperHeaderButtonsChat, {marginTop: userHost?.accountType === 'host' ? 0 : screenHeight / 50}]}>
+          <View style={[styles.wrapperHeaderButtonsChat, {marginTop: userData?.accountType === 'host' ? 0 : screenHeight / 50}]}>
             {isHost ? (
               <View style={[styles.rowButtonsChat, {marginTop: 10}]}>
                 <FlatList
@@ -548,7 +565,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
                   horizontal={true}
                   renderItem={({item, index}) => (
                     <Item
-                      activeEvent={item.id}
+                      event={item}
                       filledTo={item?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length}
                       allPeople={item.female + item.male}
                       image={item.photos[0]?.image}
@@ -588,7 +605,7 @@ const Header: FC<HeaderTypeProps> = ({typeEvents, setTypeEvents, badge, logoType
   const getCountNotifications = () => {
     return firestore()
       .collection('userInfo')
-      .doc(userHost?.uid)
+      .doc(userData?.uid)
       .collection('notifications')
       .onSnapshot(querySnapshot => {
         setCountNotifications(querySnapshot.docs.length);

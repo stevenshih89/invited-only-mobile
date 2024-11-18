@@ -1,17 +1,12 @@
-import {blackColor, lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
-import {Text, TouchableOpacity, View, SafeAreaView, Dimensions} from 'react-native';
+import {blackColor, whiteColor} from 'constants/colors';
+import {Text, View, SafeAreaView, Dimensions} from 'react-native';
 import Modal from 'react-native-modal';
-import FakePlaceCircle from 'assets/images/app/fake-place-circle.png';
 import Flash from 'assets/images/icons/flash-filled.svg';
-import MessageText from 'assets/images/icons/message-text.svg';
-import CheckboxSelected from 'assets/images/icons/checkbox-selected.svg';
-import {Outfit500, Satoshi500, Satoshi700Italic} from 'constants/fonts';
+import {Outfit500, Satoshi700Italic} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight, screenWidth} from 'constants/common';
+import {screenHeight} from 'constants/common';
 import {FC, useEffect} from 'react';
 import Animated, {useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay} from 'react-native-reanimated';
-
-const widthScreen = Dimensions.get('screen').width;
 
 const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: string}> = ({isVisibleMatch, nameEvent, imageEvent}) => {
   const opacityWrapper = useSharedValue(0);
@@ -20,6 +15,7 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
   const textOpacity = useSharedValue(0);
   const figurePositin = useSharedValue(-screenHeight * 0.34 - 100);
   const buttonPosition = useSharedValue(-1000);
+  const widthScreen = Dimensions.get('screen').width;
 
   const words = nameEvent?.split(' ');
   const wordTranslations = words?.map(() => useSharedValue(widthScreen));
@@ -183,7 +179,7 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
                       {
                         color: whiteColor,
                         fontFamily: Outfit500,
-                        fontSize: nameEvent.length > 10? RFValue(36, 812): RFValue(42, 812),
+                        fontSize: nameEvent.length > 10 ? RFValue(36, 812) : RFValue(42, 812),
                         letterSpacing: -5,
                         lineHeight: 55,
                         // textAlign: 'center',

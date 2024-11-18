@@ -24,7 +24,7 @@ const EventProvider: FC<EventProviderProps> = ({children}) => {
     activeEvent,
     setActiveEvent,
     indexEvent,
-    setIndexEvent
+    setIndexEvent,
   };
 
   return <EventContext.Provider value={value}>{children}</EventContext.Provider>;

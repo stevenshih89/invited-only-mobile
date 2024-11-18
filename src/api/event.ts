@@ -1,5 +1,6 @@
-import firestore from '@react-native-firebase/firestore';
+import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import {EventData} from 'src/types/event';
+import auth from '@react-native-firebase/auth';
 
 export type IOEventPhoto = {
   image: null | string;
@@ -33,3 +34,33 @@ export async function createEvent(uid: string, event: EventData): Promise<boolea
   await firestore().collection('Events').doc(uid).set(event);
   return true;
 }
+
+interface GetEventsParams {
+  lastVisible: FirebaseFirestoreTypes.QueryDocumentSnapshot | null;
+  limit?: number | null;
+  excludeUids: string[];
+}
+
+export const getEvents = async ({limit = 10, lastVisible, excludeUids}: GetEventsParams) => {
+  const currentUser = auth().currentUser;
+  if (!currentUser) {
+    throw new Error('User not found');
+  }
+  let query = firestore().collection('Events').where('statusEvent', '==', true).where('isCancelled', '==', false);
+
+  if (excludeUids?.length) {
+    query = query.where('uid', 'not-in', excludeUids);
+  }
+
+  query = query.orderBy('createdAt', 'desc');
+
+  if (lastVisible) {
+    query = query.startAfter(lastVisible);
+  }
+
+  if (limit === null) {
+    return query.get();
+  }
+
+  return query.limit(limit).get();
+};

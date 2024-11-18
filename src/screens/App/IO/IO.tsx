@@ -80,8 +80,11 @@ import {getUserData} from 'helpers/getUserData';
 import analytics from '@react-native-firebase/analytics';
 import {inviteUser, IOscreen, joinEvent} from 'constants/analitycs';
 import RNUxcam from 'react-native-ux-cam';
+import {getEvents} from 'src/api/event';
+import {useMyEvents} from 'src/store/myEvents';
 
 const IO: FC = (): JSX.Element => {
+  const EVENTS_LOADING_LIMIT = 4;
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
@@ -91,10 +94,7 @@ const IO: FC = (): JSX.Element => {
   const [reportedItem, setReportedItem] = useState<string>('');
   const [userInfo, setUserInfo] = useState<any>({});
   const [matchData, setMatchData] = useState<MatchData>({});
-  const [myEventsList, setMyEventsList] = useState<any[]>([]);
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
-  const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
-  const [loadingMyEvents, setLoadingMyEvents] = useState<boolean>(true);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const [activeSuperInviteUser, setActiveSuperInviteUser] = useState<any>({});
   const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
@@ -109,7 +109,7 @@ const IO: FC = (): JSX.Element => {
 
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
-  const {myEvents, setMyEvents, setActiveEvent, activeEvent} = useContext(EventContext);
+  const {loadingCardsList, setLoadingCardsList, myEvents, loadingMyEvents, activeEvent} = useMyEvents();
 
   const {activeEventDate} = useContext(EventsDate);
 
@@ -127,6 +127,8 @@ const IO: FC = (): JSX.Element => {
   const counterSuperInvitesRef = useRef(0);
   const counterWeeklySuperInvitesRef = useRef(0);
   const cardRef = useRef(null);
+  const endReachedRef = useRef<boolean>(false);
+  const lastVisibleRef = useRef<any>(null);
 
   const rotationLoader = useSharedValue(0);
 
@@ -223,7 +225,9 @@ const IO: FC = (): JSX.Element => {
         .doc(activeEvent?.id)
         .onSnapshot(querySnapshot => {
           if (!querySnapshot.exists) {
-            return setActiveEvent({});
+            console.warn('IO_useEffect_activeEvent_querySnapshot', querySnapshot);
+
+            // dispatch(setActiveEvent({}));
           }
           const data = querySnapshot.data();
           const prevEventReviewed = activeEvent?.eventReviewed;
@@ -231,7 +235,9 @@ const IO: FC = (): JSX.Element => {
           const prevStatusEvent = activeEvent?.statusEvent;
           const currentStatusEvent = data?.statusEvent;
           if (prevStatusEvent !== currentStatusEvent || prevEventReviewed !== currentEventReviewed) {
-            setActiveEvent(prev => ({...prev, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent}));
+            console.warn('IO_useEffect_activeEvent', activeEvent?.id);
+
+            // dispatch(setActiveEvent({...activeEvent, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent}));
           }
         });
     }
@@ -496,7 +502,6 @@ const IO: FC = (): JSX.Element => {
     const user = auth().currentUser;
     if (user) {
       try {
-        setLoadingMyEvents(true);
         const querySnapshot = await firestore()
           .collection('Events')
           .where('uid', '==', user.uid)
@@ -505,11 +510,7 @@ const IO: FC = (): JSX.Element => {
           .get();
 
         if (querySnapshot.empty) {
-          setMyEvents([]);
-          setMyEventsList([]);
-          setActiveEvent({});
-          setLoadingEvents(false);
-          setLoadingMyEvents(false);
+          setLoadingCardsList(false);
           return;
         }
 
@@ -524,25 +525,11 @@ const IO: FC = (): JSX.Element => {
           return true;
         });
         if (!filteredData.length) {
-          setMyEvents([]);
-          setMyEventsList([]);
-          setActiveEvent({});
-          setLoadingEvents(false);
-          setLoadingMyEvents(false);
+          setLoadingCardsList(false);
           return;
         }
-        setMyEvents(filteredData);
-        setMyEventsList(filteredData);
-        if (!myEvents.length && !activeEvent?.id && filteredData.length) {
-          setActiveEvent(filteredData[0]);
-        }
-        setLoadingMyEvents(false);
       } catch (error: any) {
-        setMyEvents([]);
-        setMyEventsList([]);
-        setActiveEvent({});
-        setLoadingEvents(false);
-        setLoadingMyEvents(false);
+        setLoadingCardsList(false);
         console.error(error);
 
         Alert.alert('Error', error.message || 'Something went wrong');
@@ -647,9 +634,9 @@ const IO: FC = (): JSX.Element => {
         if (acceptedUsersList?.length >= maxGuests) {
           showToast('inviteMatch', 'You have reached the maximum number of guests', 'Invite');
           setIsVisibleModalFullEvent(true);
-          setLoadingEvents(true);
+          setLoadingCardsList(true);
           setEvents(prev => [...prev]);
-          setLoadingEvents(false);
+          setLoadingCardsList(false);
           return;
         }
 
@@ -828,9 +815,9 @@ const IO: FC = (): JSX.Element => {
             path: 'chatCreate',
             params: matchedGuestData,
           });
-          setLoadingEvents(true);
+          setLoadingCardsList(true);
           setEvents(prev => [...prev]);
-          setLoadingEvents(false);
+          setLoadingCardsList(false);
           return;
         }
       }
@@ -859,25 +846,25 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const filterEventsByBlockedUsers = async (eventsList: any[]) => {
-    const user = auth().currentUser;
-    if (!user) {
-      return;
-    }
-    const blockedUsers = await firestore().collection('report').where('uidSender', '==', user?.uid).get();
-    const blockedMeUsers = await firestore().collection('report').where('uid', '==', user?.uid).get();
+  // const filterEventsByBlockedUsers = async (eventsList: any[]) => {
+  //   const user = auth().currentUser;
+  //   if (!user) {
+  //     return;
+  //   }
+  //   const blockedUsers = await firestore().collection('report').where('uidSender', '==', user?.uid).get();
+  //   const blockedMeUsers = await firestore().collection('report').where('uid', '==', user?.uid).get();
 
-    const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
-    const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
-    const filteredEvents = eventsList.filter(event => {
-      if (blockedUsersList.includes(event?.info?.uid) || blockedMeUsersList.includes(event?.info?.uid)) {
-        return false;
-      }
-      return true;
-    });
+  //   const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
+  //   const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
+  //   const filteredEvents = eventsList.filter(event => {
+  //     if (blockedUsersList.includes(event?.info?.uid) || blockedMeUsersList.includes(event?.info?.uid)) {
+  //       return false;
+  //     }
+  //     return true;
+  //   });
 
-    return filteredEvents;
-  };
+  //   return filteredEvents;
+  // };
 
   const customButton = (id: string, uid: string) => {
     return (
@@ -904,29 +891,47 @@ const IO: FC = (): JSX.Element => {
     );
   };
 
-  const getListForGuest = async () => {
+  const getListForGuest = async (refresh?: boolean) => {
     const user = auth().currentUser;
     if (!user?.uid) {
       return;
     }
-    setLoadingEvents(true);
+    if (!refresh) {
+      setLoadingCardsList(true);
+    }
     let filteredEvents: any[] = [];
 
     try {
-      const querySnapshot = await firestore()
-        .collection('Events')
-        .where('statusEvent', '==', true)
-        .where('isCancelled', '==', false)
-        .limit(10)
-        .get();
+      const blockedUsers = await firestore().collection('report').where('uidSender', '==', user.uid).get();
 
-      if (querySnapshot.empty) {
+      const blockedMeUsers = await firestore().collection('report').where('uid', '==', user.uid).get();
+
+      const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
+      const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
+
+      const uniqueBlockedUsers = [...new Set([...blockedUsersList, ...blockedMeUsersList])];
+      const eventsQuery = await getEvents({
+        limit: EVENTS_LOADING_LIMIT,
+        lastVisible: lastVisibleRef.current,
+        excludeUids: uniqueBlockedUsers,
+      });
+
+      if (!eventsQuery || !('docs' in eventsQuery) || eventsQuery.empty) {
         setEvents([]);
-        setLoadingEvents(false);
+        setLoadingCardsList(false);
+        endReachedRef.current = true;
         return;
       }
 
-      filteredEvents = querySnapshot?.docs
+      if (eventsQuery.docs.length > 0) {
+        lastVisibleRef.current = eventsQuery.docs[eventsQuery.docs.length - 1];
+      }
+
+      if (eventsQuery.docs.length < EVENTS_LOADING_LIMIT) {
+        endReachedRef.current = true;
+      }
+
+      filteredEvents = eventsQuery?.docs
         ?.map(doc => doc.data() as EventData)
         ?.filter(event => {
           if (event?.requestsList?.find((j: Event.User) => j?.uid === user?.uid)) {
@@ -957,13 +962,8 @@ const IO: FC = (): JSX.Element => {
           return true;
         });
     } catch (e: any) {
+      console.error(e);
       Alert.alert('Error', e.message || 'Something went wrong');
-    }
-
-    if (!filteredEvents.length) {
-      setEvents([]);
-      setLoadingEvents(false);
-      return;
     }
 
     async function enrichElementsWithPhotos(elements) {
@@ -1000,12 +1000,6 @@ const IO: FC = (): JSX.Element => {
     };
 
     const filteredDataEvents = filterEventByDate();
-
-    if (!filteredDataEvents.length) {
-      setEvents([]);
-      setLoadingEvents(false);
-      return;
-    }
 
     for (const event of filteredDataEvents) {
       const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
@@ -1349,16 +1343,21 @@ const IO: FC = (): JSX.Element => {
       });
     }
 
-    const filteredData = data.filter(item => item.info && item.info.eventReviewed);
+    const sortedByInterestsData = sortByInterests(sortByDate(data)?.reverse(), userHost);
 
-    const sortedByInterestsData = sortByInterests(sortByDate(filteredData)?.reverse(), userHost);
-
-    const recommendedData = (await filterEventsByBlockedUsers(sortedByInterestsData)) || [];
-
-    eventsRef.current = recommendedData;
-    allEventsLength.current = recommendedData.length;
-    setEvents(recommendedData);
-    setLoadingEvents(false);
+    setEvents(prevEvents => {
+      if (refresh) {
+        const updatedEvents = [...prevEvents.reverse(), ...sortedByInterestsData].reverse();
+        eventsRef.current = updatedEvents;
+        allEventsLength.current = updatedEvents.length;
+        return updatedEvents;
+      } else {
+        eventsRef.current = sortedByInterestsData;
+        allEventsLength.current = sortedByInterestsData.length;
+        return sortedByInterestsData;
+      }
+    });
+    setLoadingCardsList(false);
   };
 
   const handleSuperInviteBottom = (item: any, coinAnimationTimer: number) => {
@@ -1366,65 +1365,71 @@ const IO: FC = (): JSX.Element => {
     handleOpenSuperInvite(item, coinAnimationTimer);
   };
 
-  const getListForHost = async () => {
+  const getListForHost = async (refresh?: boolean) => {
     const user = auth().currentUser;
+    console.warn(activeEvent?.id);
 
     if (!user?.uid || !activeEvent?.id || !userInfo?.uid) {
       return;
     }
-    setLoadingEvents(true);
+    if (!refresh) {
+      setLoadingCardsList(true);
+    }
     let users;
-
+    let getActualDataEvent: EventData | null = null;
     try {
-      users = await getUsersForEvent(userInfo?.uid, activeEvent?.male, activeEvent?.female);
+      const eventQuery = await firestore().collection('Events').doc(activeEvent.id).get();
+      if (!eventQuery.exists) {
+        setLoadingCardsList(false);
+        setEvents([]);
+        endReachedRef.current = true;
+        return;
+      }
+      getActualDataEvent = eventQuery.data() as EventData;
+
+      const blockedUsers = await firestore().collection('report').where('uidSender', '==', user.uid).get();
+
+      const blockedMeUsers = await firestore().collection('report').where('uid', '==', user.uid).get();
+
+      const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
+      const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
+
+      const uniqueEventIds = getActualDataEvent?.rejectsList?.map((j: Event.RejectUser) => j?.uid) || [];
+      const uniqueUsersListIds = getActualDataEvent?.usersList?.map((j: Event.User) => j?.uid) || [];
+      const allUniqueIds = [
+        ...new Set([...blockedUsersList, ...blockedMeUsersList, ...uniqueEventIds, ...uniqueUsersListIds, userInfo?.uid]),
+      ];
+
+      users = await getUsersForEvent({
+        excludeUids: allUniqueIds,
+        male: activeEvent?.male,
+        female: activeEvent?.female,
+        limit: EVENTS_LOADING_LIMIT,
+        lastVisible: lastVisibleRef.current,
+      });
     } catch (error) {
       console.error(error);
     }
 
-    if (users?.empty) {
-      setLoadingEvents(false);
+    if (!users || !('docs' in users) || users?.empty) {
+      setLoadingCardsList(false);
       setEvents([]);
+      endReachedRef.current = true;
       return;
     }
 
-    const getActualDataEvent = (await firestore().collection('Events').doc(activeEvent.id).get()).data();
+    if (users?.docs?.length > 0) {
+      lastVisibleRef.current = users.docs[users.docs.length - 1];
+    }
 
-    const blockedUsers = await firestore().collection('report').where('uidSender', '==', user.uid).get();
-
-    const blockedMeUsers = await firestore().collection('report').where('uid', '==', user.uid).get();
-
-    const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
-    const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
+    if (users.docs.length < EVENTS_LOADING_LIMIT) {
+      endReachedRef.current = true;
+    }
 
     const data: any[] = [];
     const usersList = users?.docs.map(doc => doc.data());
 
-    const filteredUsersList = usersList?.filter((item: UserInfo) => {
-      if (blockedUsersList.includes(item?.uid)) {
-        return false;
-      }
-
-      if (blockedMeUsersList.includes(item?.uid)) {
-        return false;
-      }
-
-      if (getActualDataEvent?.rejectsList?.find((j: Event.RejectUser) => j?.uid === item?.uid)) {
-        return false;
-      }
-
-      if (getActualDataEvent?.usersList?.find((j: Event.User) => j?.uid === item?.uid)) {
-        return false;
-      }
-      return true;
-    });
-
-    if (!filteredUsersList?.length) {
-      setLoadingEvents(false);
-      setEvents([]);
-      return;
-    }
-
-    filteredUsersList?.map((item: UserInfo, index: number): void => {
+    usersList?.map((item: UserInfo, index: number): void => {
       const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} = item;
 
       const findSuperJoin = getActualDataEvent?.requestsList.find((i: Event.User) => {
@@ -1717,8 +1722,19 @@ const IO: FC = (): JSX.Element => {
 
     allEventsLength.current = data.length;
     eventsRef.current = data;
-    setEvents(data);
-    setLoadingEvents(false);
+    setEvents(prevEvents => {
+      if (refresh) {
+        const updatedEvents = [...prevEvents.reverse(), ...data].reverse();
+        eventsRef.current = updatedEvents;
+        allEventsLength.current = updatedEvents.length;
+        return updatedEvents;
+      } else {
+        eventsRef.current = data;
+        allEventsLength.current = data.length;
+        return data;
+      }
+    });
+    setLoadingCardsList(false);
   };
 
   const requestUserPermission = async () => {
@@ -1779,14 +1795,54 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     if (userInfo?.uid) {
-      if (isHost && activeEvent?.id && !loadingMyEvents) {
-        getListForHost();
-      }
       if (!isHost) {
         getListForGuest();
       }
     }
-  }, [userInfo, userHost, activeEvent?.id, activeEventDate, myEvents, loadingMyEvents]);
+  }, [userInfo, activeEventDate]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (activeEvent?.id) {
+        lastVisibleRef.current = null;
+        endReachedRef.current = false;
+      }
+    }, [activeEvent?.id]),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (userInfo?.uid) {
+        if (isHost && activeEvent?.id && !loadingMyEvents && !lastVisibleRef.current && !endReachedRef.current) {
+          getListForHost();
+        }
+      }
+    }, [userInfo, activeEvent?.id, loadingMyEvents]),
+  );
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (userInfo?.uid && !isHost) {
+  //       lastVisibleRef.current = null;
+  //       endReachedRef.current = false;
+  //     }
+  //   }, [activeEventDate]),
+  // );
+
+  useEffect(() => {
+    if (userInfo?.uid) {
+      if (isHost) {
+        if (events?.length <= 2 && lastVisibleRef.current && !endReachedRef.current) {
+          getListForHost(true);
+        }
+      }
+      if (!isHost) {
+        if (events?.length <= 2 && lastVisibleRef.current && !endReachedRef.current) {
+          getListForGuest(true);
+        }
+      }
+    }
+  }, [events]);
 
   useEffect(() => {
     requestUserPermission();
@@ -1827,7 +1883,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && loadingEvents && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+  if (userInfo?.uid && loadingCardsList && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <>
         <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
@@ -1838,7 +1894,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isHost && !loadingEvents && !myEvents.length && !isVisibleMatch) {
+  if (userInfo?.uid && isHost && !loadingCardsList && !myEvents.length && !isVisibleMatch) {
     return (
       <>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
@@ -1866,7 +1922,7 @@ const IO: FC = (): JSX.Element => {
 
   if (
     userInfo?.uid &&
-    !loadingEvents &&
+    !loadingCardsList &&
     !events?.length &&
     !isVisibleMatch &&
     !visibleModalSuperJoin &&
@@ -1939,11 +1995,7 @@ const IO: FC = (): JSX.Element => {
               </View>
             );
           })}
-          <SuperJoin
-            isVisibleMatch={visibleModalSuperJoin}
-            nameEvent={currentEventInfo?.name}
-            imageEvent={currentEventInfo ? currentEventInfo.photos[0]?.image : ''}
-          />
+
           <ModalFullEvent
             isVisible={isVisibleModalFullEvent}
             idEvent={activeEvent?.id}
@@ -1963,12 +2015,22 @@ const IO: FC = (): JSX.Element => {
             uid={reportedItem?.uid}
             activeEvent={reportedItem?.event?.id}
           />
-          <SuperInvite
-            isVisibleSuperInvite={isVisibleSuperInvite}
-            activeSuperInviteUser={activeSuperInviteUser}
-            onCloseSuperInvite={handleCloseSuperInvite}
-            setLastVisible={setLastVisible}
-          />
+          {visibleModalSuperJoin && (
+            <SuperJoin
+              isVisibleMatch={visibleModalSuperJoin}
+              nameEvent={currentEventInfo?.name}
+              imageEvent={currentEventInfo ? currentEventInfo.photos[0]?.image : ''}
+            />
+          )}
+
+          {isVisibleSuperInvite && (
+            <SuperInvite
+              isVisibleSuperInvite={isVisibleSuperInvite}
+              activeSuperInviteUser={activeSuperInviteUser}
+              onCloseSuperInvite={handleCloseSuperInvite}
+              setLastVisible={setLastVisible}
+            />
+          )}
         </View>
       </SafeAreaView>
       <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} />

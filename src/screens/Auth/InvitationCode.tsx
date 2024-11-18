@@ -20,6 +20,7 @@ import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from 'typescript/types';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
 
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
@@ -114,6 +115,7 @@ const InvitationCode: FC = (): JSX.Element => {
         uid: userId,
         codeForInvitingOtherUsers: generateInviteCode(),
         registrationDate: formattedDate,
+        createdAt: moment().format('YYYY-MM-DD'),
         phoneNumber: phoneNumber,
         accountConfirmed: true,
         accountReviewed: true,

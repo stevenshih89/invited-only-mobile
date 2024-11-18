@@ -37,6 +37,7 @@ import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {getUserData} from 'helpers/getUserData';
 import analytics from '@react-native-firebase/analytics';
 import {requestsScreen} from 'constants/analitycs';
+import {useMyEvents} from 'src/store/myEvents';
 
 const Requests: FC = (): ReactElement => {
   const styles = useStyles();
@@ -44,7 +45,8 @@ const Requests: FC = (): ReactElement => {
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
 
-  const {activeEvent, myEvents, setMyEvents, setActiveEvent} = useContext(EventContext);
+  const {activeEvent, myEvents, loadingMyEvents} = useMyEvents(state => state);
+
   const {activeEventDate} = useContext(EventsDate);
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
@@ -54,7 +56,6 @@ const Requests: FC = (): ReactElement => {
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [matchData, setMatchData] = useState<MatchData>({});
-  const [loadingMyEvents, setLoadingMyEvents] = useState<boolean>(true);
   const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
   const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
   const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
@@ -188,60 +189,9 @@ const Requests: FC = (): ReactElement => {
     }
   };
 
-  const fetchMyEvents = async () => {
-    const user = auth().currentUser;
-    if (user) {
-      try {
-        const querySnapshot = await firestore()
-          .collection('Events')
-          .where('uid', '==', user.uid)
-          .where('isCancelled', '==', false)
-          .orderBy('createdAt', 'desc')
-          .get();
-
-        if (querySnapshot.empty) {
-          setMyEvents([]);
-          setActiveEvent({});
-          setLoadingMyEvents(false);
-          return;
-        }
-
-        const data = querySnapshot.docs.map(doc => doc.data() as EventData);
-        const filteredData = data.filter((event: EventData) => {
-          if (event?.date && event?.hour) {
-            const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-            if (adjustedDate.isBefore(moment())) {
-              return false;
-            }
-          }
-          return true;
-        });
-        if (!filteredData.length) {
-          setMyEvents([]);
-          setActiveEvent({});
-          setLoadingMyEvents(false);
-          return;
-        }
-        setMyEvents(filteredData);
-        if (!myEvents.length && !activeEvent?.id) {
-          setActiveEvent(filteredData[0]);
-        }
-        setLoadingMyEvents(false);
-      } catch (error: any) {
-        setMyEvents([]);
-        setActiveEvent({});
-        setLoadingMyEvents(false);
-        console.error(error);
-
-        Alert.alert('Error', error.message || 'Something went wrong');
-      }
-    }
-  };
-
   useFocusEffect(
     useCallback(() => {
       fetchUserInfo();
-      fetchMyEvents();
       analytics().logScreenView({
         screen_name: `${requestsScreen}`,
       });
@@ -487,8 +437,8 @@ const Requests: FC = (): ReactElement => {
           </View>
         )}
       </>
-    )
-  }
+    );
+  };
 
   if (isHost && !activeEvent?.eventReviewed && myEvents?.length && !loadingMyEvents) {
     return (
