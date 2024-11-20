@@ -149,29 +149,29 @@ export function registerListenerWithFCM() {
 
 //method was called to display notification
 async function onDisplayNotification(title, body, data, setRejectVisible: () => void, setAcceptModalVisible: () => void) {
- try {
-  let paramsParse = {};
+  try {
+    let paramsParse = {};
     if (data.params && typeof data.params === 'string') {
       try {
         paramsParse = JSON.parse(data.params);
       } catch (error) {
-        paramsParse = {}
+        paramsParse = {};
       }
     }
-  const path = paramsParse.path || null;
-  
-  showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image, path, params: paramsParse.data});
-  if (title === 'Your Account is Not Approved') {
-    setRejectVisible();
+    const path = paramsParse.path || null;
+
+    showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image, path, params: paramsParse.data});
+    if (title === 'Your Account is Not Approved') {
+      setRejectVisible();
+    }
+    if (title === 'Your account has been approved') {
+      setAcceptModalVisible();
+    }
+    // Request permissions (required for iOS)
+    await notifee.requestPermission();
+  } catch (error) {
+    console.log('error onDisplayNotification', error);
   }
-  if (title === 'Your account has been approved') {
-    setAcceptModalVisible();
-  }
-  // Request permissions (required for iOS)
-  await notifee.requestPermission();
- } catch (error) {
-  console.log('error onDisplayNotification', error);
- }
 }
 
 // it would be called when the app in foreground state
@@ -205,7 +205,7 @@ export const sendNotification = async (
   status: string,
   userInfo: any,
   params?: any,
-) => {  
+) => {
   const generateRandomId = (length: number) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -237,12 +237,12 @@ export const sendNotification = async (
   };
   if (params) {
     notificationData.data.params = params;
-  }  
+  }
 
   try {
     const result = await functions().httpsCallable('sendNotification')(notificationData);
     if (result.data.success) {
-      // console.warn('Notification sent successfully', result.data.data);
+      console.warn('Notification sent successfully', result.data.data);
     } else {
       console.error('Error sending notification:', result.data.error);
     }
@@ -269,8 +269,8 @@ export const sendNotification = async (
     body: body,
     mark: mark,
     uid: userInfo?.uid,
-    path: paramsParse['path'] ? paramsParse['path'] : null,
-    data: paramsParse['data'] ? paramsParse['data'] : null,
+    path: paramsParse.path ? paramsParse.path : null,
+    data: paramsParse.data ? paramsParse.data : null,
   };
   // console.log('notification', notification);
 
@@ -280,4 +280,3 @@ export const sendNotification = async (
     console.error('error add notification', error);
   }
 };
-

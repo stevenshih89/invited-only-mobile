@@ -8,6 +8,8 @@ import Purchases from 'react-native-purchases';
 import {NavigationContainer} from '@react-navigation/native';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
 import {getActiveSubscription} from 'src/api/purchase';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import RNUxcam from 'react-native-ux-cam';
 
 RNUxcam.optIntoSchematicRecordings();
@@ -25,6 +27,20 @@ const App: FC = (): JSX.Element => {
 
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
 
+  const handleUpdateUserSubscriptions = async (activeSubscription: any[]) => {
+    try {
+      const currentUser = auth().currentUser;
+
+      const isPremium =
+        activeSubscription?.includes('io_59_1w') || activeSubscription?.includes('io_29_3m') || activeSubscription?.includes('io_99_1m');
+      await firestore().collection('userInfo').doc(currentUser?.uid).update({
+        accountPremium: isPremium,
+      });
+    } catch (e) {
+      console.error('handleUpdateUserSubscriptions:error ', e);
+    }
+  };
+
   useEffect(() => {
     if (Platform.OS === 'ios') {
       if (IO_PUBLICK_RC_IOS) {
@@ -34,6 +50,7 @@ const App: FC = (): JSX.Element => {
 
     const getSubscription = async () => {
       const activeSubscription = await getActiveSubscription();
+      handleUpdateUserSubscriptions(activeSubscription.activeSubscriptions);
       setCurrentSubscriptions(activeSubscription);
     };
     getSubscription();

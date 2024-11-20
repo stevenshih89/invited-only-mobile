@@ -28,7 +28,6 @@ import {eventCreatingStackPath, myProfileViewPath, paymentPath, userProfilePath}
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
-import {EventContext} from 'contexts/EventContext';
 import {blackColor, lightGreenColor, transparentWhite16Color, transparentWhite56Color, whiteColor} from 'constants/colors';
 import {fcmHelper, onMatchNotificationSubscription, sendNotification} from 'helpers/fcmHelper.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
@@ -122,7 +121,6 @@ const IO: FC = (): JSX.Element => {
   const setRejectModalVisible = useAdminActions((i: any) => i?.setRejectModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
 
-  const allEventsLength = useRef(0);
   const eventsRef = useRef<any[]>();
   const counterSuperInvitesRef = useRef(0);
   const counterWeeklySuperInvitesRef = useRef(0);
@@ -891,7 +889,36 @@ const IO: FC = (): JSX.Element => {
     );
   };
 
-  const getListForGuest = async (refresh?: boolean) => {
+  async function enrichElementsWithPhotos(elements) {
+    const promises = elements?.map(async element => {
+      const docRef = firestore().collection('userInfo').doc(element?.uid);
+      const doc = await docRef?.get();
+
+      if (!doc?.exists) {
+        return null;
+      } else {
+        const userData = doc?.data() as UserInfo;
+        return {...element, userPhotos: userData?.photos, hostInfo: userData};
+      }
+    });
+
+    return Promise.all(promises);
+  }
+
+  const filterEventByDate = list => {
+    if (activeEventDate === ALL) {
+      return list;
+    }
+    if (activeEventDate === THIS_WEEK) {
+      return filterEventsByThisWeek(list);
+    }
+    if (activeEventDate === THIS_MONTH) {
+      return filterEventsByThisMonth(list);
+    }
+    return list;
+  };
+
+  const getCardsListForGuest = async (refresh?: boolean) => {
     const user = auth().currentUser;
     if (!user?.uid) {
       return;
@@ -966,40 +993,13 @@ const IO: FC = (): JSX.Element => {
       Alert.alert('Error', e.message || 'Something went wrong');
     }
 
-    async function enrichElementsWithPhotos(elements) {
-      const promises = elements?.map(async element => {
-        const docRef = firestore().collection('userInfo').doc(element?.uid);
-        const doc = await docRef?.get();
-
-        if (!doc?.exists) {
-          return null;
-        } else {
-          const userData = doc?.data() as UserInfo;
-          return {...element, userPhotos: userData?.photos, hostInfo: userData};
-        }
-      });
-
-      return Promise.all(promises);
-    }
+    console.warn('getCardsListForGuest_1', filteredEvents?.length, refresh);
 
     const enrichedEvents = await enrichElementsWithPhotos(filteredEvents);
 
     const data: any[] = [];
 
-    const filterEventByDate = () => {
-      if (activeEventDate === ALL) {
-        return enrichedEvents;
-      }
-      if (activeEventDate === THIS_WEEK) {
-        return filterEventsByThisWeek(enrichedEvents);
-      }
-      if (activeEventDate === THIS_MONTH) {
-        return filterEventsByThisMonth(enrichedEvents);
-      }
-      return enrichedEvents;
-    };
-
-    const filteredDataEvents = filterEventByDate();
+    const filteredDataEvents = filterEventByDate(enrichedEvents);
 
     for (const event of filteredDataEvents) {
       const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
@@ -1349,11 +1349,9 @@ const IO: FC = (): JSX.Element => {
       if (refresh) {
         const updatedEvents = [...prevEvents.reverse(), ...sortedByInterestsData].reverse();
         eventsRef.current = updatedEvents;
-        allEventsLength.current = updatedEvents.length;
         return updatedEvents;
       } else {
         eventsRef.current = sortedByInterestsData;
-        allEventsLength.current = sortedByInterestsData.length;
         return sortedByInterestsData;
       }
     });
@@ -1365,7 +1363,7 @@ const IO: FC = (): JSX.Element => {
     handleOpenSuperInvite(item, coinAnimationTimer);
   };
 
-  const getListForHost = async (refresh?: boolean) => {
+  const getCardsListForHost = async (refresh?: boolean) => {
     const user = auth().currentUser;
     console.warn(activeEvent?.id);
 
@@ -1720,17 +1718,14 @@ const IO: FC = (): JSX.Element => {
       });
     });
 
-    allEventsLength.current = data.length;
     eventsRef.current = data;
     setEvents(prevEvents => {
       if (refresh) {
         const updatedEvents = [...prevEvents.reverse(), ...data].reverse();
         eventsRef.current = updatedEvents;
-        allEventsLength.current = updatedEvents.length;
         return updatedEvents;
       } else {
         eventsRef.current = data;
-        allEventsLength.current = data.length;
         return data;
       }
     });
@@ -1793,17 +1788,9 @@ const IO: FC = (): JSX.Element => {
     setScrollPosition(positionY);
   };
 
-  useEffect(() => {
-    if (userInfo?.uid) {
-      if (!isHost) {
-        getListForGuest();
-      }
-    }
-  }, [userInfo, activeEventDate]);
-
   useFocusEffect(
     useCallback(() => {
-      if (activeEvent?.id) {
+      if (isHost && activeEvent?.id) {
         lastVisibleRef.current = null;
         endReachedRef.current = false;
       }
@@ -1812,37 +1799,54 @@ const IO: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
-      if (userInfo?.uid) {
-        if (isHost && activeEvent?.id && !loadingMyEvents && !lastVisibleRef.current && !endReachedRef.current) {
-          getListForHost();
-        }
+      if (!isHost && activeEventDate) {
+        console.warn('useFocusEffect_getCardsListForGuest', events?.length, lastVisibleRef.current, endReachedRef.current);
+
+        lastVisibleRef.current = null;
+        endReachedRef.current = false;
       }
-    }, [userInfo, activeEvent?.id, loadingMyEvents]),
+    }, [activeEventDate]),
   );
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (userInfo?.uid && !isHost) {
-  //       lastVisibleRef.current = null;
-  //       endReachedRef.current = false;
-  //     }
-  //   }, [activeEventDate]),
-  // );
+  useFocusEffect(
+    useCallback(() => {
+      if (userInfo?.uid) {
+        if (isHost && activeEvent?.id && !loadingMyEvents && !lastVisibleRef.current && !endReachedRef.current) {
+          getCardsListForHost();
+        }
+      }
+    }, [userInfo?.uid, activeEvent?.id, loadingMyEvents]),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (userInfo?.uid) {
+        if (!isHost && activeEventDate && !lastVisibleRef.current && !endReachedRef.current) {
+          console.warn('useEffect_getCardsListForGuest', events?.length, lastVisibleRef.current, endReachedRef.current);
+          getCardsListForGuest();
+        }
+      }
+    }, [userInfo?.uid, activeEventDate]),
+  );
 
   useEffect(() => {
     if (userInfo?.uid) {
       if (isHost) {
         if (events?.length <= 2 && lastVisibleRef.current && !endReachedRef.current) {
-          getListForHost(true);
+          getCardsListForHost(true);
         }
       }
       if (!isHost) {
         if (events?.length <= 2 && lastVisibleRef.current && !endReachedRef.current) {
-          getListForGuest(true);
+          console.warn('getCardsListForGuest', events?.length, lastVisibleRef.current, endReachedRef.current);
+
+          getCardsListForGuest(true);
         }
       }
     }
   }, [events]);
+
+  console.warn('events', events.length, endReachedRef.current, lastVisibleRef.current);
 
   useEffect(() => {
     requestUserPermission();

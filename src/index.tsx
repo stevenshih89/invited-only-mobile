@@ -24,4 +24,5 @@ const Main = () => {
     </GestureHandlerRootView>
   );
 };
+
 export default Main;
