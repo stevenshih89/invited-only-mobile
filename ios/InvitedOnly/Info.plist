@@ -43,9 +43,17 @@
 			<key>CFBundleURLName</key>
 			<string/>
 			<key>CFBundleURLSchemes</key>
-			<array/>
+			<array>
+				<string>fb1308810593462090</string>
+			</array>
 		</dict>
 	</array>
+	<key>FacebookAppID</key>
+	<string>1308810593462090</string>
+	<key>FacebookClientToken</key>
+	<string>6ceff211c1c9843e9822adcf5be51f7d</string>
+	<key>FacebookDisplayName</key>
+	<string>Invited Only</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -61,6 +69,10 @@
 	<string>Access to your Camera is required to pass verification and add photos to the profile and events.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Access to your Photos is required to add photos to the profile and events.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Location access is required to provide location-based features.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location access is required to provide location-based features while using the app.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Satoshi-Bold.ttf</string>

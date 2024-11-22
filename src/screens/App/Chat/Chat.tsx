@@ -44,7 +44,8 @@ import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {EventsDate} from 'contexts/EventsDate';
 import {getUserData} from 'helpers/getUserData';
 import analytics from '@react-native-firebase/analytics';
-import { chatsScreen } from 'constants/analitycs';
+import {chatsScreen} from 'constants/analitycs';
+import {useMyEvents} from 'src/store/myEvents';
 
 type ItemProps = {
   title: string;
@@ -99,7 +100,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const styles = useStyles();
   const navigation = useAppNavigation();
 
-  const {activeEvent} = useContext(EventContext);
+  // const {activeEvent} = useContext(EventContext);
+  const {activeEvent} = useMyEvents();
   const user = useUser((i: any) => i?.user);
 
   const isHost = user?.accountType?.toLowerCase() === 'host';
@@ -329,15 +331,15 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             key={i?.id}
             style={styles.chatItem}>
             <View style={{flexDirection: 'row', flex: 1, justifyContent: 'space-between'}}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <FastImage source={{uri: i?.avatar}} style={{width: 50, height: 50, borderRadius: 50}} />
-                  <View style={{marginLeft: 12}}>
-                    <Text style={styles.textNameChat}>{i?.name}</Text>
-                    <Text style={styles.textDescription}>
-                      {i?.messages[i?.messages.length - 1] && i?.messages[i?.messages.length - 1]?.message}
-                    </Text>
-                  </View>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <FastImage source={{uri: i?.avatar}} style={{width: 50, height: 50, borderRadius: 50}} />
+                <View style={{marginLeft: 12}}>
+                  <Text style={styles.textNameChat}>{i?.name}</Text>
+                  <Text style={styles.textDescription}>
+                    {i?.messages[i?.messages.length - 1] && i?.messages[i?.messages.length - 1]?.message}
+                  </Text>
                 </View>
+              </View>
               <View style={{alignItems: 'center', justifyContent: 'space-between'}}>
                 <ChatIcon width={18} height={18} style={{marginTop: 5}} />
                 {!!newMessages && (
@@ -561,76 +563,79 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
       {!loading ? (
         !typeEvents ? (
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={messages?.chats}
-            ListEmptyComponent={() => (
-              <View style={{height: '100%', marginTop: eventData ? screenHeight * 0.06 : screenHeight / 5.5}}>
-                <View style={{flex: 1, justifyContent: 'center'}}>
+          <View style={{flex: 1}}>
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={messages?.chats}
+              contentContainerStyle={{flexGrow: 1}}
+              ListEmptyComponent={() => (
+                <View style={{justifyContent: 'center', flex: 1}}>
                   <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
                     You don't have any chat
                   </Text>
                   <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>
-                    Get started by swiping to {isHost ? 'invite guests' : 'join events and begin receiving messages.'}
+                    Get started to {isHost ? 'invite guests' : 'join events and begin receiving messages.'}
                   </Text>
-                  <Button title="Start swiping" onPress={() => navigation.navigate(IOPath as never)} />
+                  <Button title={isHost ? 'Invite guests' : 'Join events'} onPress={() => navigation.navigate(IOPath as never)} />
                 </View>
-              </View>
-            )}
-            renderItem={({item}) => {
-              return (
-                <Item
-                  inviteStatus={item?.invitedStatus}
-                  story={item?.story}
-                  online={item?.online}
-                  title={item?.name}
-                  message={item?.messages ? item?.messages[item?.messages?.length - 1]?.message : []}
-                  messages={item?.messages}
-                  image={item?.avatar}
-                  superInvite={item?.superInvite}
-                  invitedStatus={item?.invitedStatus}
-                  id={item?.id}
-                  uid={item?.uid}
-                  hostUid={item?.hostUid}
-                  newMessages={item?.newMessagesGuest}
-                />
-              );
-            }}
-            keyExtractor={(item, index) => index.toString()}
-          />
+              )}
+              renderItem={({item}) => {
+                return (
+                  <Item
+                    inviteStatus={item?.invitedStatus}
+                    story={item?.story}
+                    online={item?.online}
+                    title={item?.name}
+                    message={item?.messages ? item?.messages[item?.messages?.length - 1]?.message : []}
+                    messages={item?.messages}
+                    image={item?.avatar}
+                    superInvite={item?.superInvite}
+                    invitedStatus={item?.invitedStatus}
+                    id={item?.id}
+                    uid={item?.uid}
+                    hostUid={item?.hostUid}
+                    newMessages={item?.newMessagesGuest}
+                  />
+                );
+              }}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
         ) : (
-          <FlatList
-            data={DATAEventsJoining}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{marginBottom: 20, marginHorizontal: 5}}
-            ListEmptyComponent={() => (
-              <View style={{height: '100%', marginTop: screenHeight / 8}}>
-                <Text style={styles.textYouNeedToJoin}>You need to join an event</Text>
-                <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
-                <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />
-              </View>
-            )}
-            renderItem={({item}) => {
-              return (
-                <ItemEventsJoining
-                  image={item.image}
-                  title={item.title}
-                  chats={item.chats}
-                  date={item.date}
-                  activeEvent={item.activeEvent}
-                  girlInvitation={item.girlInvitation}
-                  maleInvitation={item.maleInvitation}
-                  hostUid={item.hostUid}
-                  status={item.status}
-                  usersList={item.usersList}
-                  newMessages={item?.chats[0].newMessagesHost}
-                  hostImage={item?.hostImage}
-                  statusEvent={item?.statusEvent}
-                />
-              );
-            }}
-            keyExtractor={(item, index) => index.toString()}
-          />
+          <View style={{flex: 1}}>
+            <FlatList
+              data={DATAEventsJoining}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{flexGrow: 1, marginBottom: 20, marginHorizontal: 5}}
+              ListEmptyComponent={() => (
+                <View style={{justifyContent: 'center', flex: 1}}>
+                  <Text style={styles.textYouNeedToJoin}>You need to join an event</Text>
+                  <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
+                  <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />
+                </View>
+              )}
+              renderItem={({item}) => {
+                return (
+                  <ItemEventsJoining
+                    image={item.image}
+                    title={item.title}
+                    chats={item.chats}
+                    date={item.date}
+                    activeEvent={item.activeEvent}
+                    girlInvitation={item.girlInvitation}
+                    maleInvitation={item.maleInvitation}
+                    hostUid={item.hostUid}
+                    status={item.status}
+                    usersList={item.usersList}
+                    newMessages={item?.chats[0].newMessagesHost}
+                    hostImage={item?.hostImage}
+                    statusEvent={item?.statusEvent}
+                  />
+                );
+              }}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
         )
       ) : null}
       {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton={false} />}

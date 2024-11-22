@@ -59,6 +59,7 @@ const checkingSpots: keyof RootStackParamList = '/checking-spots';
 const superInvitePayPath: keyof RootStackParamList = '/super-invite-pay';
 const addBuisnessPath: keyof RootStackParamList = '/add-biusness';
 const joinEventsPathRequest: keyof RootStackParamList = '/join-event-request';
+const earlyAccessPath: keyof RootStackParamList = '/early-access';
 
 export {
   bottomTabsStackPath,
@@ -117,5 +118,6 @@ export {
   manageSubscriptionPath,
   startCreateAccountPath,
   eulaPath,
-  emailChangePath
+  emailChangePath,
+  earlyAccessPath,
 };

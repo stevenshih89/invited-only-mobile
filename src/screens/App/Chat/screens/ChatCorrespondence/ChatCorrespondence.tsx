@@ -57,6 +57,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [name, setName] = useState('');
   const [age, setAge] = useState();
   const [currentUserName, setCurrentUserName] = useState('');
+  const [userAccountType, setUserAccountType] = useState('');
   const {image, title, online, activeEvent, id, superInvite, invitedStatus, uid, hostUid} = route?.params;
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [isPremium, setIsPremium] = useState<boolean>(false);
@@ -87,18 +88,17 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   useEffect(() => {
     if (uid) {
       const fetchUserInfo = async () => {
-        const user = auth().currentUser;
-        if (user) {
+        const currentUser = auth().currentUser;
+        if (currentUser) {
           try {
             const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-            const currentUserInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
-            setCurrentUserName(currentUserInfoDoc?.data()?.name);
-            if (userInfoDoc.exists && userInfoDoc.data().accountPremium) {
-              setIsPremium(true);
-            }
+            setCurrentUserName(user?.name);
+
             if (userInfoDoc.exists) {
-              const age = calculateAge(userInfoDoc.data().date);
+              const age = calculateAge(userInfoDoc.data()?.date);
               setAge(age);
+              setUserAccountType(userInfoDoc.data()?.accountType);
+              setIsPremium(userInfoDoc.data()?.accountPremium);
             } else {
               console.error('No user data found in Firestore');
               Alert.alert('Error', 'No user data found in Firestore');
@@ -236,6 +236,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     }
   };
 
+  const getUserAccountTypeTitle = () =>
+    ({
+      host: 'Host',
+      guest: 'Guest',
+    }[userAccountType]);
+
   const goToProfileView = (currentUid: string) => {
     setModalVisible(false);
     // @ts-ignore
@@ -326,7 +332,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                       <View style={{flexDirection: 'row'}}>
                         <View style={{backgroundColor: whiteColor, borderRadius: 4}}>
                           <Text style={{paddingHorizontal: 9, paddingVertical: 2, fontWeight: 'bold', fontSize: RFValue(10, 812)}}>
-                            Guest
+                            {getUserAccountTypeTitle()}
                           </Text>
                         </View>
                         {isPremium && (

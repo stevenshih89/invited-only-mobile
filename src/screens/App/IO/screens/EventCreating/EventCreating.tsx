@@ -246,7 +246,7 @@ const EventCreating: FC = () => {
         screen: eventActiveInfoPath,
         params: {list: data},
       } as never);
-      showToast('inviteMatch', 'Continue swiping👋', 'Event updated');
+      showToast('inviteMatch', 'Continue invite👋', 'Event updated');
       await sendNotificationAcceptedUser();
       // sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details', 'update');
     } catch (e) {

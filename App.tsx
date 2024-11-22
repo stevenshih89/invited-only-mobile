@@ -30,6 +30,11 @@ const App: FC = (): JSX.Element => {
   const handleUpdateUserSubscriptions = async (activeSubscription: any[]) => {
     try {
       const currentUser = auth().currentUser;
+      console.warn('currentUser', currentUser);
+
+      if (!currentUser) {
+        return;
+      }
 
       const isPremium =
         activeSubscription?.includes('io_59_1w') || activeSubscription?.includes('io_29_3m') || activeSubscription?.includes('io_99_1m');
@@ -50,7 +55,7 @@ const App: FC = (): JSX.Element => {
 
     const getSubscription = async () => {
       const activeSubscription = await getActiveSubscription();
-      handleUpdateUserSubscriptions(activeSubscription.activeSubscriptions);
+      await handleUpdateUserSubscriptions(activeSubscription.activeSubscriptions);
       setCurrentSubscriptions(activeSubscription);
     };
     getSubscription();

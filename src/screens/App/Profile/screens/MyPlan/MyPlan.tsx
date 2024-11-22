@@ -224,37 +224,69 @@ const MyPlan = () => {
           </View>
         )}
       </View>
-      <View style={styles.listColumnWrapper}>
-        <Text style={styles.textWhatYouGet}>What you {userInfo?.accountType === 'host' ? 'get' : 'have'}:</Text>
-        {userInfo?.accountType === 'host' && <Text style={styles.textPremium}>Premium</Text>}
-      </View>
-      {whatGet.map(item => (
-        <View key={item.title} style={styles.itemInTheList}>
-          <View style={styles.rowTextAndCheckCircleIcon}>
-            <View style={styles.wrapperIcon}>
-              <item.icon />
-            </View>
-            <Text style={styles.textFromTheList}>{item.title}</Text>
-            <ControlledTooltip
-              width={300}
-              height={100}
-              backgroundColor={lightGray5Color}
-              withOverlay={false}
-              popover={
-                <View style={styles.tooltipWrapper}>
-                  <View style={styles.rowTitleTooltip}>
-                    <Text style={styles.textUnlimitedEventsCreation}>{item.titleDescription}</Text>
-                    <CloseIcon />
-                  </View>
-                  <Text style={styles.textHostAccessIsLimited}>{item.description}</Text>
-                </View>
-              }>
-              <InfoCircleIcon />
-            </ControlledTooltip>
+      {userInfo?.accountType === 'host' ? (
+        <View>
+          <View style={styles.listColumnWrapper}>
+            <Text style={styles.textWhatYouGet}>What you {userInfo?.accountType === 'host' ? 'get' : 'have'}:</Text>
+            {userInfo?.accountType === 'host' && <Text style={styles.textPremium}>Premium</Text>}
           </View>
-          <CheckIcon />
+          {whatGet.map(item => (
+            <View key={item.title} style={styles.itemInTheList}>
+              <View style={styles.rowTextAndCheckCircleIcon}>
+                <View style={styles.wrapperIcon}>
+                  <item.icon />
+                </View>
+                <Text style={styles.textFromTheList}>{item.title}</Text>
+                <ControlledTooltip
+                  width={300}
+                  height={100}
+                  backgroundColor={lightGray5Color}
+                  withOverlay={false}
+                  popover={
+                    <View style={styles.tooltipWrapper}>
+                      <View style={styles.rowTitleTooltip}>
+                        <Text style={styles.textUnlimitedEventsCreation}>{item.titleDescription}</Text>
+                        <CloseIcon />
+                      </View>
+                      <Text style={styles.textHostAccessIsLimited}>{item.description}</Text>
+                    </View>
+                  }>
+                  <InfoCircleIcon />
+                </ControlledTooltip>
+              </View>
+              <CheckIcon />
+            </View>
+          ))}
         </View>
-      ))}
+      ) : (
+        <View>
+          <LinearGradient
+            colors={['#977B4A', '#E5D291', '#A28453']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            style={{
+              paddingTop: 24,
+              paddingHorizontal: 24,
+              paddingBottom: 10,
+              borderRadius: 10,
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+            }}>
+            <Text style={{fontSize: RFValue(16, 812), fontFamily: Satoshi700}}>CONGRATULATIONS!</Text>
+            <Text style={{fontSize: RFValue(16, 812), fontFamily: Satoshi400, marginTop: 8}}>
+              YOU GOT <Text style={{fontFamily: Satoshi700}}>PREMIUM ACCESS</Text> FOR <Text style={{fontFamily: Satoshi700}}>FREE</Text>
+            </Text>
+            <Text style={{fontFamily: Satoshi400, fontSize: RFValue(14, 932), color: blackColor, marginTop: 8}}>
+              Enjoy Exclusive Offers And Make The Most If It!
+            </Text>
+            <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 932), color: blackColor, marginTop: 8}}>
+              *Only for a limited time
+            </Text>
+          </LinearGradient>
+        </View>
+      )}
     </View>
   );
 };

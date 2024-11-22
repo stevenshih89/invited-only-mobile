@@ -17,9 +17,18 @@ interface LoadingProps {
   wrapperText?: boolean;
   styleContainer?: any;
   showCheckIcon?: boolean;
+  styleInnerContainer?: any;
 }
 
-const Loading: FC<LoadingProps> = ({text, userInfo, topPosition = false, wrapperText = true, styleContainer, showCheckIcon = false}) => {
+const Loading: FC<LoadingProps> = ({
+  text,
+  userInfo,
+  topPosition = false,
+  wrapperText = true,
+  styleContainer,
+  showCheckIcon = false,
+  styleInnerContainer,
+}) => {
   const styles = useStyles();
 
   const firstCircleScale = useSharedValue(0.9);
@@ -60,7 +69,7 @@ const Loading: FC<LoadingProps> = ({text, userInfo, topPosition = false, wrapper
 
   return (
     <View style={[styles.container, styleContainer]}>
-      <View style={{alignItems: 'center', flex: 1}}>
+      <View style={[{alignItems: 'center', flex: 1}, styleInnerContainer]}>
         <Animated.View
           style={[
             styles.firstCircle,

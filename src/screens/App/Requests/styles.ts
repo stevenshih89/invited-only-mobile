@@ -29,6 +29,7 @@ const useStyles = () =>
     listContentContainer: {
       paddingHorizontal: 13,
       paddingBottom: screenHeight / 7,
+      flexGrow: 1,
     },
     superLikeContainer: {
       backgroundColor: darkRedColor,

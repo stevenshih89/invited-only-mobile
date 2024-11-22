@@ -24,7 +24,14 @@ import {
   THIS_WEEK,
 } from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {eventCreatingStackPath, myProfileViewPath, paymentPath, userProfilePath} from 'constants/pathLocations.ts';
+import {
+  earlyAccessPath,
+  commonStackPath,
+  eventCreatingStackPath,
+  myProfileViewPath,
+  paymentPath,
+  userProfilePath,
+} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
@@ -1772,6 +1779,10 @@ const IO: FC = (): JSX.Element => {
     return matchedGuests;
   };
 
+  const handleGoToEarlyAccess = () => {
+    navigation.navigate(commonStackPath, {screen: earlyAccessPath} as never);
+  };
+
   const goToCreateEvent = (): void => {
     if (!userHost?.accountConfirmed) {
       return;
@@ -1895,6 +1906,67 @@ const IO: FC = (): JSX.Element => {
           <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
         )}
       </>
+    );
+  }
+  if (userInfo?.uid && !isHost) {
+    return (
+      <View style={{flex: 1, backgroundColor: blackColor, paddingHorizontal: 24}}>
+        <Loading
+          // text={`We're currently searching for exciting ${isHost ? 'guests to join you' : 'events for you'}. It may take some time!`}
+          topPosition={true}
+          userInfo={userInfo}
+          wrapperText={false}
+          styleInnerContainer={{flex: 0}}
+          styleContainer={{flex: 0}}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            top: screenHeight / 2.2,
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              color: whiteColor,
+              fontWeight: '700',
+              fontSize: RFValue(22, 932),
+              letterSpacing: 22,
+              fontFamily: Satoshi500,
+              textAlign: 'center',
+              marginRight: -22,
+            }}>
+            WELCOME
+          </Text>
+          <Text
+            style={{
+              fontFamily: Satoshi700,
+              fontSize: RFValue(18, 932),
+              color: whiteColor,
+              marginTop: screenHeight / 50,
+            }}>
+            Soon, Everything Changes.
+          </Text>
+          <Text
+            style={{
+              fontFamily: Satoshi400,
+              fontSize: RFValue(18, 932),
+              color: whiteColor,
+              textAlign: 'center',
+              marginTop: screenHeight / 50,
+            }}>
+            Be the first to access exclusive offers and vIP events. stay tuned - something extraordinary is coming.
+          </Text>
+          <TouchableOpacity style={{marginTop: screenHeight / 50}} onPress={handleGoToEarlyAccess}>
+            <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812), textDecorationLine: 'underline'}}>
+              IO Invitations
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     );
   }
 
@@ -2022,7 +2094,7 @@ const IO: FC = (): JSX.Element => {
           {visibleModalSuperJoin && (
             <SuperJoin
               isVisibleMatch={visibleModalSuperJoin}
-              nameEvent={currentEventInfo?.name}
+              nameEvent={currentEventInfo?.name || currentEventInfo?.placeName}
               imageEvent={currentEventInfo ? currentEventInfo.photos[0]?.image : ''}
             />
           )}

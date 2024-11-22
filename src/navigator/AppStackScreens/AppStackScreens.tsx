@@ -34,10 +34,10 @@ import {
   paymentPath,
   superInvitePayPath,
   verifySocialProfilePath,
-  tutorialFlowPath,
   manageSubscriptionPath,
   privacyPath,
   emailChangePath,
+  earlyAccessPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -66,10 +66,9 @@ import Payment from 'screens/Auth/Payment/Payment';
 import ManageSubscription from 'screens/App/Profile/screens/ManageSubscription';
 import SuperInvitePay from 'screens/App/IO/screens/SuperInvitePay/SuperInvitePay';
 import VerifySocialProfile from 'screens/Auth/VerifySocialProfile';
-import ConfirmPhone from 'screens/Auth/ConfirmPhone';
-import TutorialsFlow from 'screens/Auth/TutorialsFlow/TutorialsFlow';
 import Privacy from 'screens/Auth/Privacy';
 import EmailChange from 'screens/App/Profile/screens/Settings/EmailChange';
+import EarlyAccess from 'screens/App/IO/screens/EarlyAccess/EarlyAccess';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -131,7 +130,7 @@ export const MyEventsStackNavigation: FC = () => {
       <Stack.Screen
         options={{
           headerShown: true,
-          header: () => <Header logoType="logo" headerType="myEvents" />,
+          header: () => <Header logoType="logo" headerType="myEvents" badge />,
         }}
         name={myEventsPath}
         key={myEventsPath}
@@ -305,6 +304,7 @@ const CommonStackScreen = () => {
         }}
         component={ContactAndFAQ}
       />
+      <CommonStack.Screen key={earlyAccessPath} name={earlyAccessPath} options={{headerShown: false}} component={EarlyAccess} />
     </CommonStack.Navigator>
   );
 };

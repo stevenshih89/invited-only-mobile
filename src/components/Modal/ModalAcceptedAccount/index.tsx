@@ -1,14 +1,13 @@
-import React, {FC, useContext} from 'react';
-import {View, Text, Image, TouchableOpacity, SafeAreaView} from 'react-native';
+import React, {FC} from 'react';
+import {View, Text, SafeAreaView} from 'react-native';
 import Modal from 'react-native-modal';
 import {blackColor, whiteColor} from 'constants/colors';
 import Logo from 'assets/images/icons/logo.svg';
-import SafetyAndWellbeing from 'screens/App/Profile/screens/SafetyAndWellbeing/SafetyAndWellbeing';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 import Loading from 'components/Loading/Loading';
 import Button from 'components/Button/Button';
-import {IOPath, profilePath} from 'constants/pathLocations';
+import {commonStackPath, earlyAccessPath} from 'constants/pathLocations';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 
@@ -23,7 +22,8 @@ const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userI
   const navigation = useNavigation();
 
   const handleContinue = async () => {
-    navigation.navigate(profilePath as never);
+    navigation.navigate(commonStackPath, {screen: earlyAccessPath} as never);
+
     setIsVisible(false);
     try {
       await firestore().collection('userInfo').doc(userInfo?.uid).update({

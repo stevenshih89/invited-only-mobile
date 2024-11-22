@@ -1,4 +1,4 @@
-import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
+import {ActivityIndicator, FlatList, Text, View} from 'react-native';
 import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
 //import components
 import useStyles from './styles';
@@ -15,7 +15,6 @@ import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocations';
-import {EventContext} from 'contexts/EventContext';
 import {useUser} from '../../../store/userStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import moment from 'moment';
@@ -239,103 +238,107 @@ const Requests: FC = (): ReactElement => {
     switch (isHost) {
       case true:
         return (
-          <FlatList
-            // @ts-ignore
-            data={list}
-            numColumns={2}
-            key={'2'}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={({uid, name}) => `${uid}${name}`}
-            contentContainerStyle={styles.listContentContainer}
-            extraData={list}
-            style={{
-              width: '100%',
-            }}
-            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-            renderItem={({item, index}) => {
-              return isHost ? (
-                <ItemRequestHost
-                  item={item}
-                  setRequestsForHost={setRequestsForHost}
-                  handleOpenMatch={handleOpenMatch}
-                  setIsVisibleModalFullEvent={() => setIsVisibleModalFullEvent(true)}
-                  fetchHostRequests={fetchHostRequests}
-                />
-              ) : (
-                // @ts-ignore
-                <ItemRequestGuest
-                  list={item}
-                  item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
-                  setDataForGuest={setDataForGuest}
-                  handleOpenMatch={handleOpenMatch}
-                  index={index}
-                />
-              );
-            }}
-            ListEmptyComponent={() => {
-              return (
-                <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 16, marginTop: screenHeight / 10}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 932), marginBottom: 18}}>
-                    You don't have any requests
-                  </Text>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932), marginBottom: 34}}>
-                    Get started by swiping to {isHost ? 'invite guests' : 'join events and begin receiving event requests.'}
-                  </Text>
-                  <Button title="Start swiping" onPress={() => navigation.navigate(IOPath as never)} />
-                </View>
-              );
-            }}
-          />
+          <View style={{flex: 1}}>
+            <FlatList
+              // @ts-ignore
+              data={list}
+              numColumns={2}
+              key={'2'}
+              showsVerticalScrollIndicator={false}
+              keyExtractor={({uid, name}) => `${uid}${name}`}
+              contentContainerStyle={styles.listContentContainer}
+              extraData={list}
+              style={{
+                width: '100%',
+              }}
+              ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+              renderItem={({item, index}) => {
+                return isHost ? (
+                  <ItemRequestHost
+                    item={item}
+                    setRequestsForHost={setRequestsForHost}
+                    handleOpenMatch={handleOpenMatch}
+                    setIsVisibleModalFullEvent={() => setIsVisibleModalFullEvent(true)}
+                    fetchHostRequests={fetchHostRequests}
+                  />
+                ) : (
+                  // @ts-ignore
+                  <ItemRequestGuest
+                    list={item}
+                    item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
+                    setDataForGuest={setDataForGuest}
+                    handleOpenMatch={handleOpenMatch}
+                    index={index}
+                  />
+                );
+              }}
+              ListEmptyComponent={() => {
+                return (
+                  <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 16}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 932), marginBottom: 18}}>
+                      You don't have any requests
+                    </Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932), marginBottom: 34}}>
+                      Get started to {isHost ? 'invite guests' : 'join events and begin receiving event requests.'}
+                    </Text>
+                    <Button title={isHost ? 'Invite guests' : 'Join events'} onPress={() => navigation.navigate(IOPath as never)} />
+                  </View>
+                );
+              }}
+            />
+          </View>
         );
       case false:
         return (
-          <FlatList
-            // @ts-ignore
-            data={list}
-            numColumns={1}
-            key={'1'}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={({uid, name}) => `${uid}${name}`}
-            contentContainerStyle={styles.listContentContainer}
-            extraData={list}
-            style={{
-              width: '100%',
-            }}
-            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-            renderItem={({item, index}) => {
-              return isHost ? (
-                <ItemRequestHost
-                  item={item}
-                  setRequestsForHost={setRequestsForHost}
-                  handleOpenMatch={handleOpenMatch}
-                  setIsVisibleModalFullEvent={() => setIsVisibleModalFullEvent(true)}
-                  fetchHostRequests={fetchHostRequests}
-                />
-              ) : (
-                // @ts-ignore
-                <ItemRequestGuest
-                  list={item}
-                  item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
-                  setDataForGuest={setDataForGuest}
-                  handleOpenMatch={handleOpenMatch}
-                  index={index}
-                />
-              );
-            }}
-            ListEmptyComponent={() => {
-              return (
-                <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 16, marginTop: screenHeight / 10}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 932), marginBottom: 18}}>
-                    You don't have any requests
-                  </Text>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932), marginBottom: 34}}>
-                    Get started by swiping to {isHost ? 'invite guests' : 'join events and begin receiving event requests.'}
-                  </Text>
-                  <Button title="Start swiping" onPress={() => navigation.navigate(IOPath as never)} />
-                </View>
-              );
-            }}
-          />
+          <View style={{flex: 1}}>
+            <FlatList
+              // @ts-ignore
+              data={list}
+              numColumns={1}
+              key={'1'}
+              showsVerticalScrollIndicator={false}
+              keyExtractor={({uid, name}) => `${uid}${name}`}
+              contentContainerStyle={styles.listContentContainer}
+              extraData={list}
+              style={{
+                width: '100%',
+              }}
+              ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+              renderItem={({item, index}) => {
+                return isHost ? (
+                  <ItemRequestHost
+                    item={item}
+                    setRequestsForHost={setRequestsForHost}
+                    handleOpenMatch={handleOpenMatch}
+                    setIsVisibleModalFullEvent={() => setIsVisibleModalFullEvent(true)}
+                    fetchHostRequests={fetchHostRequests}
+                  />
+                ) : (
+                  // @ts-ignore
+                  <ItemRequestGuest
+                    list={item}
+                    item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
+                    setDataForGuest={setDataForGuest}
+                    handleOpenMatch={handleOpenMatch}
+                    index={index}
+                  />
+                );
+              }}
+              ListEmptyComponent={() => {
+                return (
+                  <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 16}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 932), marginBottom: 18}}>
+                      You don't have any requests
+                    </Text>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932), marginBottom: 34}}>
+                      Get started to {isHost ? 'invite guests' : 'join events and begin receiving event requests.'}
+                    </Text>
+                    <Button title={isHost ? 'Invite guests' : 'Join events'} onPress={() => navigation.navigate(IOPath as never)} />
+                  </View>
+                );
+              }}
+            />
+          </View>
         );
     }
   };

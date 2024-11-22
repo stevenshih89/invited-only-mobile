@@ -138,19 +138,18 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
                 opacityWrapperStyle,
               ]}>
               <View style={{marginTop: -50, flexWrap: 'wrap', flexDirection: 'row', alignSelf: 'flex-end'}}>
-              <Text
-
-                    style={[
-                      {
-                        color: whiteColor,
-                        fontFamily: Outfit500,
-                        fontSize: nameEvent?.length > 10 ? RFValue(36, 812): RFValue(42, 812),
-                        letterSpacing: -5,
-                        lineHeight: 55,
-                      },
-                    ]}>
-                    {nameEvent}
-                  </Text>
+                <Text
+                  style={[
+                    {
+                      color: whiteColor,
+                      fontFamily: Outfit500,
+                      fontSize: nameEvent?.length > 10 ? RFValue(36, 812) : RFValue(42, 812),
+                      letterSpacing: -5,
+                      lineHeight: 55,
+                    },
+                  ]}>
+                  {nameEvent}
+                </Text>
                 <Text style={{color: whiteColor, position: 'absolute', right: 0, bottom: -10, fontSize: RFValue(13, 812)}}>Event</Text>
               </View>
               <View>
@@ -195,4 +194,3 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
 };
 
 export default SuperInvite;
-

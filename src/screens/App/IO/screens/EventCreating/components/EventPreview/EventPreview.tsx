@@ -30,7 +30,7 @@ import moment from 'moment';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500} from 'constants/fonts.ts';
 import {Switch} from '@ant-design/react-native';
-import { eventTypes } from 'src/mocks/eventTypes.ts';
+import {eventTypes} from 'src/mocks/eventTypes.ts';
 
 interface EventPreviewProps {
   isEditing?: boolean;
@@ -290,8 +290,8 @@ const EventPreview: FC<EventPreviewProps> = ({
   return (
     <View style={styles.root}>
       <KeyboardAwareScrollView
-        showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainerContent}
         style={styles.scrollView}>
         {/* <View style={styles.eventTypeWr}>

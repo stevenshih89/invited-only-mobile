@@ -69,4 +69,5 @@ export type RootStackParamList = {
   '/summary-info': undefined;
   '/verify-social-profile': undefined;
   '/checking-spots': undefined;
+  '/early-access': undefined;
 };

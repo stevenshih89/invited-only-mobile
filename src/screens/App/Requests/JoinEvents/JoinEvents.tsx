@@ -118,9 +118,9 @@ const JoinEvents: FC = (): ReactElement => {
               marginBottom: 40,
               marginTop: 20,
             }}>
-            Get started by swiping to join events and begin receiving event requests.
+            Get started to join events and begin receiving event requests.
           </Text>
-          <Button title="Start swiping" />
+          <Button title="Join events" />
         </View>
       )}
     </View>

@@ -11,6 +11,7 @@ import useStyles from 'components/Header/styles.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {
   commonStackPath,
+  earlyAccessPath,
   eventCreatingStackPath,
   notificationsPath,
   notificationsStackPath,
@@ -165,6 +166,10 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
     }
   };
 
+  const handleGoToEarlyAccess = () => {
+    navigation.navigate(commonStackPath, {screen: earlyAccessPath} as never);
+  };
+
   useEffect(() => {
     fetchMyEvents();
   }, [headerType, userData?.uid]);
@@ -207,7 +212,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   const DATAEventsJoining = [
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'All',
+      title: 'Upcoming Events',
       value: ALL,
       image: CalendarIcon,
       icon: <CalendarCheckIcon width={26} height={26} color={whiteColor} />,
@@ -350,7 +355,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                             fontSize: RFValue(13, 812),
                             textAlign: 'center',
                           }}>
-                          {event?.name}
+                          {event?.name || event?.placeName}
                         </Text>
                       </TouchableOpacity>
                     );
@@ -389,7 +394,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                       fontSize: RFValue(13, 812),
                       textAlign: 'center',
                     }}>
-                    All
+                    Upcoming Events
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -538,7 +543,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                       fontSize: RFValue(13, 812),
                       textAlign: 'center',
                     }}>
-                    {event?.name}
+                    {event?.name || event?.placeName}
                   </Text>
                 </TouchableOpacity>
               );
@@ -571,7 +576,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                       image={item.photos[0]?.image}
                       girlInvitation={item.male + item.maleFriend}
                       numberBadge={item.numberBadge}
-                      title={item.name}
+                      title={item.name || item.placeName}
                       date={item.date}
                       hour={item.hour}
                       index={index}
@@ -630,6 +635,13 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         <View style={styles.wrapperHeader}>
           {logoType === 'logo' ? <Logo width={157} height={32} /> : <LogoPrimary width={157} height={32} />}
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {userInfo?.accountType && !isHost && headerType !== 'profile' && (
+              <TouchableOpacity style={{marginRight: 10}} onPress={handleGoToEarlyAccess}>
+                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812), textDecorationLine: 'underline'}}>
+                  IO Invitations
+                </Text>
+              </TouchableOpacity>
+            )}
             {badge && (
               <TouchableOpacity onPress={goToNotifications} activeOpacity={0.7} style={{paddingRight: 6}}>
                 <NotificationIcon width={32} height={32} />

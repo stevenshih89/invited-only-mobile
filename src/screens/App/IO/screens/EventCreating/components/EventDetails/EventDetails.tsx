@@ -149,7 +149,7 @@ const EventDetails: FC<EventDetailsProps> = ({
   const [photosId, setPhotosId] = useState();
   const [addressEmpty, setAddressEmpty] = useState(false);
   const [placeNameEmpty, setPlaceNameEmpty] = useState(false);
-  const [eventNameEmpty, setEventNameEmpty] = useState(false);
+  const [eventNameEmpty] = useState(false);
   const [dateEmpty, setDateEmpty] = useState(false);
   const [hourEmpty, setHourEmpty] = useState(false);
 
@@ -160,9 +160,7 @@ const EventDetails: FC<EventDetailsProps> = ({
     if (placeName) {
       setPlaceNameEmpty(false);
     }
-    if (name) {
-      setEventNameEmpty(false);
-    }
+
     if (date) {
       setDateEmpty(false);
     }
@@ -272,10 +270,6 @@ const EventDetails: FC<EventDetailsProps> = ({
     }
     if (!placeName) {
       setPlaceNameEmpty(true);
-      hasEmptyField = true;
-    }
-    if (!name) {
-      setEventNameEmpty(true);
       hasEmptyField = true;
     }
     if (!date) {
@@ -566,11 +560,11 @@ const EventDetails: FC<EventDetailsProps> = ({
         <View style={styles.eventDetailsWr}>
           <Text style={styles.eventDetailsTitle}>Event details</Text>
           <Input
-            required
-            isError={eventNameEmpty}
-            errorText={eventNameEmpty ? 'Incorrect event name' : ''}
-            containerInnerStyle={{borderColor: eventNameEmpty ? errorColor : '', borderWidth: eventNameEmpty ? 1 : 0}}
-            placeholderTextColor={eventNameEmpty ? errorColor : transparentWhite30Color}
+            required={false}
+            isError={false}
+            errorText={''}
+            containerInnerStyle={{borderColor: '', borderWidth: 0}}
+            placeholderTextColor={transparentWhite30Color}
             value={name}
             onChange={val => setName(val)}
             placeholder="Enter event name (Or just the place name)"

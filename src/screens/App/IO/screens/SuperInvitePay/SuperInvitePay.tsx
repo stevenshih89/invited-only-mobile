@@ -142,7 +142,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
     showToast(
       'inviteMatch',
       `You have ${superInvites} super ${userData?.accountType === 'host' ? 'Invites' : 'Joins'}`,
-      "Let's start swiping!",
+      `Let's start ${userData?.accountType === 'host' ? 'invite' : 'join'}!`,
       {ownerPhoto: userData?.photos[0].image, status: 'SUCCESSFUL'},
     );
   };

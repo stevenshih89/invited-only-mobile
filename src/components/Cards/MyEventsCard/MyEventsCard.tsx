@@ -21,6 +21,7 @@ import {Event} from '../../../types/event';
 import firestore from '@react-native-firebase/firestore';
 import {calculateAge} from 'helpers/calculateAge';
 import {eventTypes} from 'src/mocks/eventTypes';
+import {useUser} from 'src/store/userStore';
 
 interface MyEventsCardProps {
   statusEvent: boolean;
@@ -37,8 +38,8 @@ interface MyEventsCardProps {
   showInfoTop?: boolean;
   showDotLine?: boolean;
   showEventType?: boolean;
-  isMyEvents?: boolean
-  isReview?: boolean 
+  isMyEvents?: boolean;
+  isReview?: boolean;
 }
 
 const MyEventsCard: FC<MyEventsCardProps> = props => {
@@ -58,7 +59,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
     isMyEvents = false,
     isReview,
   } = props;
-  
+
   const styles = useStyles();
   const [userHostInfo, setUserHostInfo] = useState();
 
@@ -69,6 +70,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
     setUserHostInfo(getDoc.data());
   };
 
+  const {user} = useUser(state => state);
   useEffect(() => {
     getUserHostInfo();
   }, [item]);
@@ -178,16 +180,9 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
                       borderWidth: 1,
                       borderColor: whiteColor,
                     }}>
-                    {userHostInfo?.accountType === 'guest' && (
-                      <Text style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
-                        Guest
-                      </Text>
-                    )}
-                    {userHostInfo?.accountType === 'host' && (
-                      <Text style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
-                        Host
-                      </Text>
-                    )}
+                    <Text style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                      {userHostInfo?.accountType === 'guest' ? 'Guest' : 'Host'}
+                    </Text>
                   </View>
                   {userHostInfo?.accountPremium && (
                     <LinearGradient
@@ -263,7 +258,11 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
             />
           )}
           <LinearGradient
-            colors={isReview? ['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.00)']: ['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
+            colors={
+              isReview || user?.accountType === 'host'
+                ? ['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.00)']
+                : ['rgba(0, 0, 0, 0.60)', 'rgba(0, 0, 0, 0.00)']
+            }
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
             style={styles.linearGradientCard}>
@@ -304,25 +303,27 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
             alignItems: 'flex-end',
           }}>
           <View style={{}}>
-            <View style={{}}>
-              <Text
-                style={{
-                  color: lightGray18Color,
-                  fontSize: RFValue(16, 812),
-                  fontFamily: Satoshi400,
-                }}>
-                Name
-              </Text>
-              <Text
-                style={{
-                  color: black4Color,
-                  fontSize: item.name.length > 10 || item.placeName.length > 10? RFValue(18, 812): RFValue(21, 812),
-                  fontFamily: Satoshi700,
-                  marginTop: 5,
-                }}>
-                {item?.name}
-              </Text>
-            </View>
+            {item?.name && (
+              <View style={{}}>
+                <Text
+                  style={{
+                    color: lightGray18Color,
+                    fontSize: RFValue(16, 812),
+                    fontFamily: Satoshi400,
+                  }}>
+                  Name
+                </Text>
+                <Text
+                  style={{
+                    color: black4Color,
+                    fontSize: item.name.length > 10 || item.placeName.length > 10 ? RFValue(18, 812) : RFValue(21, 812),
+                    fontFamily: Satoshi700,
+                    marginTop: 5,
+                  }}>
+                  {item?.name}
+                </Text>
+              </View>
+            )}
             <View style={{marginVertical: 28}}>
               <Text
                 style={{
@@ -335,7 +336,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
               <Text
                 style={{
                   color: black4Color,
-                  fontSize: item.name.length > 10 || item.placeName.length > 10? RFValue(18, 812): RFValue(21, 812),
+                  fontSize: item.name.length > 10 || item.placeName.length > 10 ? RFValue(18, 812) : RFValue(21, 812),
                   fontFamily: Satoshi700,
                   marginTop: 5,
                 }}>
@@ -354,8 +355,8 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
               <Text
                 style={{
                   color: black4Color,
-                  fontSize: item.name.length > 10 || item.placeName.length > 10? RFValue(18, 812): RFValue(21, 812),
-                  fontFamily: Satoshi500,
+                  fontSize: item.name.length > 10 || item.placeName.length > 10 ? RFValue(18, 812) : RFValue(21, 812),
+                  fontFamily: Satoshi700,
                   marginTop: 5,
                 }}>
                 {item?.placeName}
@@ -402,7 +403,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
                 <View style={{marginLeft: 10, alignItems: 'center'}}>
                   <Text
                     style={{
-                      fontSize: item.name.length > 10 || item.placeName.length > 10? RFValue(22, 812): RFValue(26, 812),
+                      fontSize: item.name.length > 10 || item.placeName.length > 10 ? RFValue(22, 812) : RFValue(26, 812),
                       color: blackColor,
                       fontFamily: Satoshi700,
                     }}>
@@ -410,7 +411,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
                   </Text>
                   <Text
                     style={{
-                      fontSize: item.name.length > 10 || item.placeName.length > 10? RFValue(10, 812): RFValue(12, 812),
+                      fontSize: item.name.length > 10 || item.placeName.length > 10 ? RFValue(10, 812) : RFValue(12, 812),
                       color: blackColor,
                       fontFamily: Satoshi500,
                     }}>
@@ -432,7 +433,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
                 <Text
                   style={{
                     color: black4Color,
-                    fontSize: item.name.length > 10 || item.placeName.length > 10? RFValue(18, 812): RFValue(21, 812),
+                    fontSize: item.name.length > 10 || item.placeName.length > 10 ? RFValue(18, 812) : RFValue(21, 812),
                     fontFamily: Satoshi700,
                     marginTop: 5,
                   }}>
@@ -451,8 +452,8 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
                 <Text
                   style={{
                     color: black4Color,
-                    fontSize: item.name.length > 10 || item.placeName.length > 10? RFValue(18, 812): RFValue(21, 812),
-                    fontFamily: Satoshi500,
+                    fontSize: item.name.length > 10 || item.placeName.length > 10 ? RFValue(18, 812) : RFValue(21, 812),
+                    fontFamily: Satoshi700,
                     marginTop: 5,
                   }}>
                   {item?.male + item?.female}

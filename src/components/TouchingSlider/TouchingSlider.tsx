@@ -300,7 +300,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           <CloseIcon width={27} height={27} />
         </TouchableOpacity>
       )}
-      <SuperJoin isVisibleMatch={visibleModalSuperJoin} nameEvent={name} imageEvent={eventPhotos ? eventPhotos[0].image : ''} />
+      <SuperJoin
+        isVisibleMatch={visibleModalSuperJoin}
+        nameEvent={name || placeName}
+        imageEvent={eventPhotos ? eventPhotos[0].image : ''}
+      />
       {accountType === 'host' && (
         <View style={styles.wrapperBar}>
           {numberPhotos > 1
@@ -687,12 +691,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                         alignSelf: 'flex-start',
                       }}>
                       <Text style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
-                          Host
+                        Host
                       </Text>
                     </View>
                   )}
 
-                  {(isPremium) && (
+                  {isPremium && (
                     <LinearGradient
                       colors={['#977B4A', '#E5D291', '#A28453']}
                       style={{
@@ -705,7 +709,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                       }}
                       start={{x: 0, y: 0}}
                       end={{x: 1, y: 0}}>
-                      {(isPremium) && (
+                      {isPremium && (
                         <Text
                           style={{
                             color: blackColor,

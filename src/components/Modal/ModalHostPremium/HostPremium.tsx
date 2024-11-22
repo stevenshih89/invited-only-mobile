@@ -35,10 +35,6 @@ const HostPremium: FC<LoaderProps> = ({isVisible, setVsibleHostPremium, screen})
     } else {
       navigation.navigate(profilePath as never);
     }
-    // const userId = auth().currentUser?.uid;
-    // navigation.navigate(profilePath as never);
-    // const userInfoDoc = await firestore().collection('userInfo').doc(userId).get();
-    // showToast('inviteMatch', `You have ${userInfoDoc?.data()?.superInvites} super ${userInfo?.accountType === 'host'? 'Invites': 'Joins'}`, 'Let`s start swiping!', {ownerPhoto: userInfo?.photos[0].image, status: 'SUCCESSFUL'})
   };
 
   const getUserInfo = async () => {
