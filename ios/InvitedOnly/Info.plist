@@ -73,6 +73,8 @@
 	<string>Location access is required to provide location-based features.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location access is required to provide location-based features while using the app.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Access to your data is required to provide personalized ads.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Satoshi-Bold.ttf</string>

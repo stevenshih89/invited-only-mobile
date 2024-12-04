@@ -1,3 +1,4 @@
+import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {FC, useEffect, useState} from 'react';
@@ -259,33 +260,38 @@ const MyPlan = () => {
           ))}
         </View>
       ) : (
-        <View>
-          <LinearGradient
-            colors={['#977B4A', '#E5D291', '#A28453']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            style={{
-              paddingTop: 24,
-              paddingHorizontal: 24,
-              paddingBottom: 10,
-              borderRadius: 10,
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '100%',
-            }}>
-            <Text style={{fontSize: RFValue(16, 812), fontFamily: Satoshi700}}>CONGRATULATIONS!</Text>
-            <Text style={{fontSize: RFValue(16, 812), fontFamily: Satoshi400, marginTop: 8}}>
-              YOU GOT <Text style={{fontFamily: Satoshi700}}>PREMIUM ACCESS</Text> FOR <Text style={{fontFamily: Satoshi700}}>FREE</Text>
-            </Text>
-            <Text style={{fontFamily: Satoshi400, fontSize: RFValue(14, 932), color: blackColor, marginTop: 8}}>
-              Enjoy Exclusive Offers And Make The Most If It!
-            </Text>
-            <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 932), color: blackColor, marginTop: 8}}>
-              *Only for a limited time
-            </Text>
-          </LinearGradient>
-        </View>
+        <>
+          {userInfo?.accountConfirmed && (
+            <View>
+              <LinearGradient
+                colors={['#977B4A', '#E5D291', '#A28453']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0}}
+                style={{
+                  paddingTop: 24,
+                  paddingHorizontal: 24,
+                  paddingBottom: 10,
+                  borderRadius: 10,
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '100%',
+                }}>
+                <Text style={{fontSize: RFValue(16, 812), fontFamily: Satoshi700}}>CONGRATULATIONS!</Text>
+                <Text style={{fontSize: RFValue(16, 812), fontFamily: Satoshi400, marginTop: 8}}>
+                  YOU GOT <Text style={{fontFamily: Satoshi700}}>PREMIUM ACCESS</Text> FOR{' '}
+                  <Text style={{fontFamily: Satoshi700}}>FREE</Text>
+                </Text>
+                <Text style={{fontFamily: Satoshi400, fontSize: RFValue(14, 932), color: blackColor, marginTop: 8}}>
+                  Enjoy Exclusive Offers And Make The Most If It!
+                </Text>
+                <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 932), color: blackColor, marginTop: 8}}>
+                  *Only for a limited time
+                </Text>
+              </LinearGradient>
+            </View>
+          )}
+        </>
       )}
     </View>
   );

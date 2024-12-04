@@ -8,7 +8,6 @@ import {
   enterBirthdayPath,
   enterNamePath,
   genderPath,
-  genderPreferencesPath,
   pendingScreenPath,
   invitationCodePath,
   myEmailPath,
@@ -40,7 +39,6 @@ import EnterName from 'screens/Auth/EnterName';
 import AddPhotos from 'screens/Auth/AddPhotos';
 import EnterBirthday from 'screens/Auth/EnterBirthday';
 import Gender from 'screens/Auth/Gender';
-import GenderPreferences from 'screens/Auth/GenderPreferences';
 import MyInterests from 'screens/Auth/MyInterests';
 import MyEmail from 'screens/Auth/MyEmail';
 import ConnectSocialMedia from 'screens/Auth/ConnectSocialMedia';
@@ -78,7 +76,6 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={addPhotosPath} name={addPhotosPath} component={AddPhotos} />
         <AuthStack.Screen key={enterBirthdayPath} name={enterBirthdayPath} component={EnterBirthday} />
         <AuthStack.Screen key={genderPath} name={genderPath} component={Gender} />
-        <AuthStack.Screen key={genderPreferencesPath} name={genderPreferencesPath} component={GenderPreferences} />
         <AuthStack.Screen key={myInterestsPath} name={myInterestsPath} component={MyInterests} />
         <AuthStack.Screen key={myEmailPath} name={myEmailPath} component={MyEmail} />
         <AuthStack.Screen key={connectSocialMediaPath} name={connectSocialMediaPath} component={ConnectSocialMedia} />

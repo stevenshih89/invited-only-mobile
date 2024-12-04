@@ -13,8 +13,6 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		386CF159E650D7A9B9939931 /* Pods_InvitedOnly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8322A5EEA3011B7769DAFB9 /* Pods_InvitedOnly.framework */; };
 		50A9F8E1C4E84A9C8272D7CB /* Satoshi-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F357F377E84610A1B93819 /* Satoshi-BoldItalic.ttf */; };
-		5CA9AF542CEF852300F7A188 /* FacebookBasics in Frameworks */ = {isa = PBXBuildFile; productRef = 5CA9AF532CEF852300F7A188 /* FacebookBasics */; };
-		5CA9AF562CEF852300F7A188 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5CA9AF552CEF852300F7A188 /* FacebookCore */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8452CE6DCF56660B6148B16A /* Pods_InvitedOnly_InvitedOnlyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCE91967811DAC37B59D232B /* Pods_InvitedOnly_InvitedOnlyTests.framework */; };
 		BCCC8BC0B5054E7BA00B93E5 /* Satoshi-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5E3661FDAE824C2DBB70B6D2 /* Satoshi-Regular.ttf */; };
@@ -79,10 +77,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5CA9AF542CEF852300F7A188 /* FacebookBasics in Frameworks */,
 				386CF159E650D7A9B9939931 /* Pods_InvitedOnly.framework in Frameworks */,
 				C757797A2C4EACC9003D297B /* StoreKit.framework in Frameworks */,
-				5CA9AF562CEF852300F7A188 /* FacebookCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,9 +256,6 @@
 				Base,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
-			packageReferences = (
-				5CA9AF522CEF852300F7A188 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
-			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -535,7 +528,7 @@
 				CODE_SIGN_ENTITLEMENTS = InvitedOnly/InvitedOnly.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7K4NCK54JF;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = InvitedOnly/Info.plist;
@@ -543,7 +536,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.6.2;
+				MARKETING_VERSION = 0.6.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -574,14 +567,14 @@
 				CODE_SIGN_ENTITLEMENTS = InvitedOnly/InvitedOnly.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7K4NCK54JF;
 				INFOPLIST_FILE = InvitedOnly/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.6.2;
+				MARKETING_VERSION = 0.6.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -798,30 +791,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		5CA9AF522CEF852300F7A188 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 14.1.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		5CA9AF532CEF852300F7A188 /* FacebookBasics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5CA9AF522CEF852300F7A188 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
-			productName = FacebookBasics;
-		};
-		5CA9AF552CEF852300F7A188 /* FacebookCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5CA9AF522CEF852300F7A188 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
-			productName = FacebookCore;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }

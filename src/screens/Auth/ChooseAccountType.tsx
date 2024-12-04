@@ -1,6 +1,6 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useContext, useState} from 'react';
-import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {FC, useContext, useEffect, useState} from 'react';
+import {AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {
@@ -20,6 +20,10 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {addBuisnessPath, enterNamePath} from 'constants/pathLocations';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import AuthProgress from 'components/AuthProgress';
+import moment from 'moment';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import analytics from '@react-native-firebase/analytics';
 
 const ChooseAccountType: FC = (): JSX.Element => {
   const HOST = 'host';
@@ -30,18 +34,47 @@ const ChooseAccountType: FC = (): JSX.Element => {
 
   const navigation = useAppNavigation();
 
+  useEffect(() => {
+    let subscription: any;
+
+    const handleAppClose = async () => {
+      await firestore()
+        .collection('unfinishedRegistrationUsers')
+        .doc(auth()?.currentUser?.uid)
+        .set({
+          accountType,
+          phoneNumber: auth()?.currentUser?.phoneNumber,
+          createdAt: moment().format('YYYY-MM-DD'),
+          screen: 'choose-account-type',
+        });
+      analytics().logEvent('choose_account_type_app_closed', {
+        onBoarding: onBoarding,
+      });
+    };
+
+    subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'background') {
+        handleAppClose();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
   const handleNext = async () => {
     const index = onBoarding.findIndex(item => item.accountType !== undefined);
     if (index > -1) {
       const updatedOnBoarding = [...onBoarding];
-      updatedOnBoarding[index] = { accountType: accountType };
+      updatedOnBoarding[index] = {accountType: accountType};
       setOnBoarding(updatedOnBoarding);
     } else {
-      setOnBoarding([...onBoarding, { accountType: accountType }]);
+      setOnBoarding([...onBoarding, {accountType: accountType}]);
     }
     navigation.navigate(enterNamePath as never);
   };
-  
+
   const handleGoToBusiness = () => {
     navigation.navigate(addBuisnessPath as never);
   };

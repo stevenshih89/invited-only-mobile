@@ -1898,27 +1898,34 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && loadingCardsList && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+  if (
+    userInfo?.uid &&
+    !isHost &&
+    !userInfo?.accountReviewed &&
+    !userInfo?.accountConfirmed &&
+    !isVisibleMatch &&
+    !visibleModalSuperJoin &&
+    !isVisibleSuperInvite &&
+    !acceptModalVisible
+  ) {
     return (
       <>
-        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        <Loading
+          text={`We're currently searching for exciting ${isHost ? 'guests to join you' : 'events for you'}. It may take some time!`}
+          userInfo={userInfo}
+          wrapperText={false}
+        />
         {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
           <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
         )}
       </>
     );
   }
+
   if (userInfo?.uid && !isHost) {
     return (
       <View style={{flex: 1, backgroundColor: blackColor, paddingHorizontal: 24}}>
-        <Loading
-          // text={`We're currently searching for exciting ${isHost ? 'guests to join you' : 'events for you'}. It may take some time!`}
-          topPosition={true}
-          userInfo={userInfo}
-          wrapperText={false}
-          styleInnerContainer={{flex: 0}}
-          styleContainer={{flex: 0}}
-        />
+        <Loading topPosition={true} userInfo={userInfo} wrapperText={false} styleInnerContainer={{flex: 0}} styleContainer={{flex: 0}} />
         <View
           style={{
             position: 'absolute',
@@ -1958,15 +1965,28 @@ const IO: FC = (): JSX.Element => {
               textAlign: 'center',
               marginTop: screenHeight / 50,
             }}>
-            Be the first to access exclusive offers and vIP events. stay tuned - something extraordinary is coming.
+            Be the first to access exclusive offers and VIP events. stay tuned - something extraordinary is coming.
           </Text>
-          <TouchableOpacity style={{marginTop: screenHeight / 50}} onPress={handleGoToEarlyAccess}>
-            <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812), textDecorationLine: 'underline'}}>
-              IO Invitations
-            </Text>
-          </TouchableOpacity>
+          {userInfo?.accountConfirmed && (
+            <TouchableOpacity style={{marginTop: screenHeight / 50}} onPress={handleGoToEarlyAccess}>
+              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812), textDecorationLine: 'underline'}}>
+                IO Invitations
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
+    );
+  }
+
+  if (userInfo?.uid && loadingCardsList && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+    return (
+      <>
+        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+        )}
+      </>
     );
   }
 

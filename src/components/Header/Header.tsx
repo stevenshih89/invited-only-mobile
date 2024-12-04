@@ -18,13 +18,12 @@ import {
   paymentPath,
   settingsPath,
 } from 'constants/pathLocations';
-import {blackColor, lightGray2Color, lightGray5Color, orangeColor, transparent60Color, whiteColor} from 'constants/colors.ts';
+import {lightGray5Color, orangeColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight, THIS_WEEK, ALL, THIS_MONTH, ACCEPTED_STATUS} from 'constants/common.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
 import {useChat} from '../../store/chatStore';
 import {useUser} from '../../store/userStore';
-import {useRequest} from '../../store/requestsStore';
 import {showToast} from 'helpers/showToast.ts';
 
 //import icons
@@ -40,7 +39,6 @@ import InfoCircleOrangeIcon from 'assets/images/icons/info-circle-orange.svg';
 
 import WIcon from 'assets/images/icons/W.svg';
 import MIcon from 'assets/images/icons/M.svg';
-import JIcon from 'assets/images/icons/J.svg';
 
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
@@ -635,7 +633,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         <View style={styles.wrapperHeader}>
           {logoType === 'logo' ? <Logo width={157} height={32} /> : <LogoPrimary width={157} height={32} />}
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            {userInfo?.accountType && !isHost && headerType !== 'profile' && (
+            {userInfo?.accountType && userInfo?.accountConfirmed && !isHost && headerType !== 'profile' && (
               <TouchableOpacity style={{marginRight: 10}} onPress={handleGoToEarlyAccess}>
                 <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812), textDecorationLine: 'underline'}}>
                   IO Invitations

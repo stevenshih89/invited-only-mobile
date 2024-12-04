@@ -1,10 +1,12 @@
 import {isIos, screenHeight, screenWidth} from 'constants/common';
-import {FC, useState, useContext} from 'react';
+import {FC, useState, useContext, useEffect} from 'react';
 import {
   Alert,
+  AppState,
   ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -34,6 +36,12 @@ import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import AuthProgress from 'components/AuthProgress';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
+import analytics from '@react-native-firebase/analytics';
+import {showToast} from 'helpers/showToast';
 
 const AddPhotos: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -63,6 +71,7 @@ const AddPhotos: FC = (): JSX.Element => {
       image: null,
     },
   ]);
+  const [isLoading, setIsLoading] = useState(false);
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
     const result = await check(permission);
@@ -79,6 +88,59 @@ const AddPhotos: FC = (): JSX.Element => {
     }
 
     return result;
+  };
+
+  useEffect(() => {
+    let subscription: any;
+
+    const name = onBoarding.find((item: any) => item.name)?.name;
+    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
+
+    const handleAppClose = async () => {
+      await firestore()
+        .collection('unfinishedRegistrationUsers')
+        .doc(auth()?.currentUser?.uid)
+        .set({
+          name,
+          accountType,
+          phoneNumber: auth()?.currentUser?.phoneNumber,
+          createdAt: moment().format('YYYY-MM-DD'),
+          screen: 'add-photos',
+        });
+      analytics().logEvent('add_photos_app_closed', {
+        onBoarding: onBoarding,
+      });
+    };
+
+    subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'background') {
+        handleAppClose();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  const uploadImage = async (imagePath: string, userId: string | null) => {
+    if (imagePath) {
+      if (imagePath.includes('https://')) {
+        return imagePath;
+      } else {
+        const uploadUri = Platform.OS === 'ios' ? imagePath : `file://${imagePath}`;
+        const filename = `${userId}_${new Date().getTime()}`;
+        const storageRef = storage().ref(`user_photos/${filename}`);
+        try {
+          await storageRef.putFile(uploadUri);
+          const url = await storageRef.getDownloadURL();
+          return url;
+        } catch (e) {
+          console.error('Error uploading image:', e);
+          return null;
+        }
+      }
+    }
   };
 
   const openLibrary = async (imageId: number): Promise<void> => {
@@ -138,13 +200,35 @@ const AddPhotos: FC = (): JSX.Element => {
   }
 
   const handleNext = async () => {
-    if (!hasPhoto(photos)) {
+    const currentUser = auth()?.currentUser;
+    if (!hasPhoto(photos) || !currentUser?.uid) {
       return;
     }
+    setIsLoading(true);
+    let photosList = [];
+    try {
+      for (const i of photos) {
+        if (i?.image) {
+          const img = await uploadImage(i.image, currentUser?.uid);
+          photosList.push({id: i?.id, image: img});
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
 
-    setOnBoarding([...onBoarding, {photos: photos}]);
-    navigation.navigate(enterBirthdayPath as never);
+    if (photosList.length) {
+      const onBoardingWithUserPhotos = onBoarding.filter((onboardItem: any) => !onboardItem.photos).concat([{photos: photosList}]);
+      setOnBoarding(onBoardingWithUserPhotos);
+      navigation.navigate(enterBirthdayPath as never);
+    } else {
+      showToast('inviteMatch', '', 'Failed to upload photos');
+    }
   };
+
+  console.warn(onBoarding);
 
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
@@ -365,7 +449,7 @@ const AddPhotos: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => handleNext()} title="Continue" disabled={!photos[0].image} />
+                <Button onPress={handleNext} loading={isLoading} title="Continue" disabled={!photos[0].image} />
               </View>
             </View>
           </SafeAreaView>

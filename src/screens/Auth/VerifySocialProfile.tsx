@@ -1,5 +1,15 @@
 import {backgroundGradientColors, errorColor, lightGray15Color, lightGray2Color, whiteColor} from 'constants/colors';
-import {Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {
+  AppState,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckCircle from 'assets/images/icons/check-circle.svg';
 import CircleGray from 'assets/images/icons/circle-gray.svg';
@@ -14,13 +24,12 @@ import {pendingScreenPath} from 'constants/pathLocations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
 import {showToast} from 'helpers/showToast';
 import {AuthContext} from 'contexts/AuthContext';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
-
+import analytics from '@react-native-firebase/analytics';
 interface Social {
   id: number;
   title: string;
@@ -69,47 +78,44 @@ const VerifySocialProfile = () => {
     },
   ];
 
-  const uploadImage = async (imagePath: string, userId: string | null) => {
-    if (imagePath) {
-      if (imagePath.includes('https://')) {
-        return imagePath;
-      } else {
-        const uploadUri = Platform.OS === 'ios' ? imagePath : `file://${imagePath}`;
-        const filename = `${userId}_${new Date().getTime()}`;
-        const storageRef = storage().ref(`images/${filename}`);
-        try {
-          await storageRef.putFile(uploadUri);
-          const url = await storageRef.getDownloadURL();
-          return url;
-        } catch (e) {
-          console.error('Error uploading image:', e);
-          return null;
-        }
+  useEffect(() => {
+    let subscription: any;
+
+    const name = onBoarding.find((item: any) => item.name)?.name;
+    const email = onBoarding.find((item: any) => item.email)?.email;
+    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
+    const date = onBoarding.find((item: any) => item.date)?.date;
+    const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
+
+    const handleAppClose = async () => {
+      await firestore()
+        .collection('unfinishedRegistrationUsers')
+        .doc(auth()?.currentUser?.uid)
+        .set({
+          name,
+          email,
+          accountType,
+          date,
+          gender,
+          phoneNumber: auth()?.currentUser?.phoneNumber,
+          createdAt: moment().format('YYYY-MM-DD'),
+          screen: 'verify-social-profile',
+        });
+      analytics().logEvent('verify_social_profile_app_closed', {
+        onBoarding: onBoarding,
+      });
+    };
+
+    subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'background') {
+        handleAppClose();
       }
-    }
-  };
+    });
 
-  const updateUserProfileImage = async (userId: string | null, imageUrl: string) => {
-    try {
-      await firestore().collection('userInfo').doc(userId).update({
-        facePhoto: imageUrl,
-      });
-      // console.log('User profile image updated successfully.');
-    } catch (e) {
-      // console.error('Error updating user profile image: ', e);
-    }
-  };
-
-  const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
-    try {
-      await firestore().collection('userInfo').doc(userId).update({
-        photos: imageUrl,
-      });
-      // console.log('User profile image updated successfully.');
-    } catch (e) {
-      // console.error('Error updating user profile image: ', e);
-    }
-  };
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const generateInviteCode = () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -157,19 +163,14 @@ const VerifySocialProfile = () => {
       });
 
       const userId = await AsyncStorage.getItem('uid');
-      const imageUri = mergedObject?.imageUser || '';
+      const facePhoto = mergedObject?.facePhoto || '';
 
-      console.warn(imageUri);
       const photos = mergedObject?.photos;
 
       const isTurnNotifications = onBoarding.find(item => 'notifications' in item);
-      let photosList = [];
 
-      let facePhoto = '';
-
-      console.warn('photos', photos, mergedObject);
-
-      const userData = {
+      const isTurnedNotifications = isTurnNotifications?.notifications ?? false;
+      const newUserData = {
         ...mergedObject,
         uid: userId,
         codeForInvitingOtherUsers: generateInviteCode(),
@@ -185,44 +186,28 @@ const VerifySocialProfile = () => {
         socialNickname,
         lastUpdateSuperInvite: Date.now(),
         facePhoto: facePhoto,
-        photos: photosList,
+        photos: photos,
         notificationSettings: {
-          chat: isTurnNotifications.notifications,
-          joinedEvent: isTurnNotifications.notifications,
-          match: isTurnNotifications.notifications,
-          myEvents: isTurnNotifications.notifications,
-          requests: isTurnNotifications.notifications,
-          superInvite: isTurnNotifications.notifications,
-          superJoin: isTurnNotifications.notifications,
+          chat: isTurnedNotifications,
+          joinedEvent: isTurnedNotifications,
+          match: isTurnedNotifications,
+          myEvents: isTurnedNotifications,
+          requests: isTurnedNotifications,
+          superInvite: isTurnedNotifications,
+          superJoin: isTurnedNotifications,
         },
       };
-
-      for (const i of photos) {
-        if (i?.image) {
-          const img = await uploadImage(i.image, userId);
-          console.warn('img', img);
-          photosList.push({id: i?.id, image: img});
-        }
-      }
-      if (imageUri) {
-        const facePhotoImg = await uploadImage(imageUri, userId);
-        if (facePhotoImg) {
-          facePhoto = facePhotoImg;
-        }
-      }
-
-      console.warn(userData);
 
       await firestore()
         .collection('userInfo')
         .doc(`${userId}`)
-        .set(userData)
+        .set(newUserData)
         .finally(() => {
           setLoading(false);
         });
+      await firestore().collection('unfinishedRegistrationUsers').doc(`${userId}`).delete();
     } catch (e) {
       console.error(e);
-
       showToast('inviteMatch', '', `${e}`);
       setLoading(false);
     }

@@ -1,6 +1,16 @@
 import {isIos} from 'constants/common';
 import {FC, useContext, useEffect, useState} from 'react';
-import {Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {
+  AppState,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
@@ -21,7 +31,7 @@ import {RouteProp, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from 'typescript/types';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
-
+import analytics from '@react-native-firebase/analytics';
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
   const [invalidCode, setInvalidCode] = useState(false);
@@ -54,6 +64,45 @@ const InvitationCode: FC = (): JSX.Element => {
       }
     }
   };
+
+  useEffect(() => {
+    let subscription: any;
+    if (cameFromSummary) {
+      const name = onBoarding.find((item: any) => item.name)?.name;
+      const email = onBoarding.find((item: any) => item.email)?.email;
+      const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
+      const date = onBoarding.find((item: any) => item.date)?.date;
+      const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
+
+      const handleAppClose = async () => {
+        await firestore()
+          .collection('unfinishedRegistrationUsers')
+          .doc(auth()?.currentUser?.uid)
+          .set({
+            name,
+            email,
+            accountType,
+            date,
+            gender,
+            phoneNumber: auth()?.currentUser?.phoneNumber,
+            createdAt: moment().format('YYYY-MM-DD'),
+            screen: 'invitation-code',
+          });
+        analytics().logEvent('invitation_code_app_closed', {
+          onBoarding: onBoarding,
+        });
+      };
+
+      subscription = AppState.addEventListener('change', nextAppState => {
+        if (nextAppState === 'background') {
+          handleAppClose();
+        }
+      });
+    }
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const generateInviteCode = () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -101,16 +150,14 @@ const InvitationCode: FC = (): JSX.Element => {
       });
 
       const userId = await AsyncStorage.getItem('uid');
-      const imageUri = mergedObject?.imageUser;
+      const facePhoto = mergedObject?.facePhoto;
 
       const photos = mergedObject?.photos;
 
-      const isTurnNotifications = onBoarding.find(item => 'notifications' in item);
+      const isTurnNotifications = onBoarding.find((item: any) => 'notifications' in item);
 
-      let photosList = [];
-
-      let facePhoto = '';
-      const userData = {
+      const isTurnedNotifications = isTurnNotifications?.notifications ?? false;
+      const newUserData = {
         ...mergedObject,
         uid: userId,
         codeForInvitingOtherUsers: generateInviteCode(),
@@ -122,44 +169,31 @@ const InvitationCode: FC = (): JSX.Element => {
         accountPremium: false,
         notifications: [],
         weeklySuperInvites: 5,
-        photos: photosList,
-        facePhoto: facePhoto,
         superInvites: 0,
+        facePhoto: facePhoto,
+        photos: photos,
         lastUpdateSuperInvite: Date.now(),
         notificationSettings: {
-          chat: isTurnNotifications.notifications,
-          joinedEvent: isTurnNotifications.notifications,
-          match: isTurnNotifications.notifications,
-          myEvents: isTurnNotifications.notifications,
-          requests: isTurnNotifications.notifications,
-          superInvite: isTurnNotifications.notifications,
-          superJoin: isTurnNotifications.notifications,
+          chat: isTurnedNotifications,
+          joinedEvent: isTurnedNotifications,
+          match: isTurnedNotifications,
+          myEvents: isTurnedNotifications,
+          requests: isTurnedNotifications,
+          superInvite: isTurnedNotifications,
+          superJoin: isTurnedNotifications,
         },
       };
-
-      for (const i of photos) {
-        if (i?.image) {
-          const img = await uploadImage(i.image, userId);
-          console.warn('img', img);
-          photosList.push({id: i?.id, image: img});
-        }
-      }
-
-      const facePhotoImg = await uploadImage(imageUri, userId);
-
-      if (facePhotoImg) {
-        facePhoto = facePhotoImg;
-      }
 
       await firestore()
         .collection('userInfo')
         .doc(`${userId}`)
-        .set(userData)
+        .set(newUserData)
         .finally(() => {
           setLoading(false);
         });
+      await firestore().collection('unfinishedRegistrationUsers').doc(`${userId}`).delete();
     } catch (e) {
-      // console.log(e);
+      console.error(e);
       showToast('inviteMatch', '', `${e}`);
       setLoading(false);
     }

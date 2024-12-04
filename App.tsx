@@ -11,6 +11,8 @@ import {getActiveSubscription} from 'src/api/purchase';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import RNUxcam from 'react-native-ux-cam';
+import {requestTrackingPermission} from 'react-native-tracking-transparency';
+import {Settings} from 'react-native-fbsdk-next';
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
@@ -32,7 +34,7 @@ const App: FC = (): JSX.Element => {
       const currentUser = auth().currentUser;
       console.warn('currentUser', currentUser);
 
-      if (!currentUser) {
+      if (!currentUser?.uid) {
         return;
       }
 
@@ -45,8 +47,17 @@ const App: FC = (): JSX.Element => {
       console.error('handleUpdateUserSubscriptions:error ', e);
     }
   };
+  const initializeTracking = async () => {
+    const trackingStatus = await requestTrackingPermission();
+    if (trackingStatus === 'authorized') {
+      Settings.setAdvertiserTrackingEnabled(true);
+    } else {
+      Settings.setAdvertiserTrackingEnabled(false);
+    }
+  };
 
   useEffect(() => {
+    initializeTracking();
     if (Platform.OS === 'ios') {
       if (IO_PUBLICK_RC_IOS) {
         Purchases.configure({apiKey: IO_PUBLICK_RC_IOS, usesStoreKit2IfAvailable: false});

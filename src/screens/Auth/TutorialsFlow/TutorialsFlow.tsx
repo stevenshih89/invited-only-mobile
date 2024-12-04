@@ -4,7 +4,6 @@ import {View, SafeAreaView, TouchableOpacity, Text} from 'react-native';
 //import components
 import {gray1Color, whiteColor} from 'constants/colors.ts';
 import useStyles from 'screens/Auth/TutorialsFlow/styles.ts';
-import Stepper from 'components/Stepper/Stepper.tsx';
 import CreateEvent from 'screens/Auth/TutorialsFlow/components/CreateEvent/CreateEvent.tsx';
 import SwipeToInvite from 'screens/Auth/TutorialsFlow/components/SwipeToInvite/SwipeToInvite.tsx';
 import Button from 'components/Button/Button.tsx';
@@ -21,7 +20,8 @@ const TutorialsFlow: FC = (): JSX.Element => {
   const [active, setActive] = useState<number>(0);
 
   const {setUser, onBoarding} = useContext(AuthContext);
-  const accountTypeGuest = onBoarding[0]?.accountType === 'guest';
+  const accountType = onBoarding.find((item: {accountType: string}) => item?.accountType);
+  const accountTypeGuest = accountType?.accountType === 'guest';
 
   const styles = useStyles();
 
@@ -62,7 +62,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
           <Text style={{fontFamily: Satoshi500, fontSize: RFValue(15, 812), color: whiteColor}}>Skip</Text>
         </TouchableOpacity>
       </View>
-      <Stepper active={active} content={content} wrapperStyle={styles.wrapperStyle} />
+      <View style={styles.wrapperStyle}>{content[active]}</View>
       <View style={styles.wrapperBar}>
         {[...Array(content.length)].map((_, index) => (
           <View

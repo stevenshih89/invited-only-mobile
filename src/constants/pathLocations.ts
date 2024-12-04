@@ -17,7 +17,6 @@ const enterNamePath: keyof RootStackParamList = '/enter-name';
 const addPhotosPath: keyof RootStackParamList = '/add-photos';
 const enterBirthdayPath: keyof RootStackParamList = '/enter-birthday';
 const genderPath: keyof RootStackParamList = '/gender';
-const genderPreferencesPath: keyof RootStackParamList = '/gender-preferences';
 const myInterestsPath: keyof RootStackParamList = '/my-interests';
 const myEmailPath: keyof RootStackParamList = '/my-email';
 const connectSocialMediaPath: keyof RootStackParamList = '/connect-social-media';
@@ -77,7 +76,6 @@ export {
   addPhotosPath,
   enterBirthdayPath,
   genderPath,
-  genderPreferencesPath,
   myInterestsPath,
   myEmailPath,
   connectSocialMediaPath,

@@ -1,6 +1,6 @@
 import {screenHeight} from 'constants/common';
-import {FC, useContext} from 'react';
-import {FlatList, SafeAreaView, Text, View} from 'react-native';
+import {FC, useContext, useEffect} from 'react';
+import {AppState, FlatList, SafeAreaView, Text, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -14,6 +14,10 @@ import {TouchableOpacity} from 'react-native';
 import {AuthContext} from 'contexts/AuthContext';
 import {useRoute} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import analytics from '@react-native-firebase/analytics';
 
 const Privacy: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -66,6 +70,47 @@ const Privacy: FC = (): JSX.Element => {
       subtitle: 'Do not share personal details or event content without permission.',
     },
   ];
+
+  useEffect(() => {
+    let subscription: any;
+
+    const name = onBoarding.find((item: any) => item.name)?.name;
+    const email = onBoarding.find((item: any) => item.email)?.email;
+    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
+    const date = onBoarding.find((item: any) => item.date)?.date;
+    const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
+    const photos = onBoarding.find((item: any) => item.photos)?.photos;
+
+    const handleAppClose = async () => {
+      await firestore()
+        .collection('unfinishedRegistrationUsers')
+        .doc(auth()?.currentUser?.uid)
+        .set({
+          name,
+          email,
+          accountType,
+          date,
+          gender,
+          photos,
+          phoneNumber: auth()?.currentUser?.phoneNumber,
+          createdAt: moment().format('YYYY-MM-DD'),
+          screen: 'house-rules',
+        });
+      analytics().logEvent('house_rules_app_closed', {
+        onBoarding: onBoarding,
+      });
+    };
+
+    subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'background') {
+        handleAppClose();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>

@@ -10,7 +10,7 @@ import {IOPath, paymentPath, tutorialFlowPath} from 'constants/pathLocations.ts'
 //import images
 import IconVerifyFilledAccepted from 'assets/images/icons/check-star.svg';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import {backgroundGradientColors, black1Color, blackColor, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, blackColor, whiteColor} from 'constants/colors';
 import {AuthContext} from 'contexts/AuthContext';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';

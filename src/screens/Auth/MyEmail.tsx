@@ -1,6 +1,6 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useContext, useState} from 'react';
-import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {FC, useContext, useEffect, useState} from 'react';
+import {AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {backgroundGradientColors, transparentWhite30Color, whiteColor} from 'constants/colors';
@@ -15,6 +15,10 @@ import {AuthContext} from 'contexts/AuthContext.tsx';
 import AuthProgress from 'components/AuthProgress';
 import {useUser} from 'src/store/userStore';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import analytics from '@react-native-firebase/analytics';
 
 const MyEmail: FC = (): JSX.Element => {
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
@@ -22,6 +26,45 @@ const MyEmail: FC = (): JSX.Element => {
   const {email, setEmail} = useUser();
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
+
+  useEffect(() => {
+    let subscription: any;
+
+    const name = onBoarding.find((item: any) => item.name)?.name;
+    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
+    const date = onBoarding.find((item: any) => item.date)?.date;
+    const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
+    const photos = onBoarding.find((item: any) => item.photos)?.photos;
+    const handleAppClose = async () => {
+      await firestore()
+        .collection('unfinishedRegistrationUsers')
+        .doc(auth()?.currentUser?.uid)
+        .set({
+          name,
+          email,
+          accountType,
+          date,
+          gender,
+          photos,
+          phoneNumber: auth()?.currentUser?.phoneNumber,
+          createdAt: moment().format('YYYY-MM-DD'),
+          screen: 'my-email',
+        });
+      analytics().logEvent('my_email_app_closed', {
+        onBoarding: onBoarding,
+      });
+    };
+
+    subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'background') {
+        handleAppClose();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const handleEmailChange = (value: string) => {
     const truncatedText = value.slice(0, 40);

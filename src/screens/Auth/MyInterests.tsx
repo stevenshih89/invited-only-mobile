@@ -1,6 +1,7 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useContext, useState} from 'react';
+import {FC, useContext, useEffect, useState} from 'react';
 import {
+  AppState,
   FlatList,
   Image,
   ImageBackground,
@@ -34,6 +35,10 @@ import {myEmailPath} from 'constants/pathLocations';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import AuthProgress from 'components/AuthProgress';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import analytics from '@react-native-firebase/analytics';
 
 const MyInterests: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -50,6 +55,45 @@ const MyInterests: FC = (): JSX.Element => {
     {id: 6, title: 'Birthday Party', isSelected: false, image: BirthdayParty},
     {id: 7, title: 'Restaurant', isSelected: false, image: Restaurant},
   ]);
+
+  useEffect(() => {
+    let subscription: any;
+
+    const name = onBoarding.find((item: any) => item.name)?.name;
+    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
+    const date = onBoarding.find((item: any) => item.date)?.date;
+    const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
+    const photos = onBoarding.find((item: any) => item.photos)?.photos;
+
+    const handleAppClose = async () => {
+      await firestore()
+        .collection('unfinishedRegistrationUsers')
+        .doc(auth()?.currentUser?.uid)
+        .set({
+          name,
+          accountType,
+          date,
+          gender,
+          photos,
+          phoneNumber: auth()?.currentUser?.phoneNumber,
+          createdAt: moment().format('YYYY-MM-DD'),
+          screen: 'my-interests',
+        });
+      analytics().logEvent('my_interests_app_closed', {
+        onBoarding: onBoarding,
+      });
+    };
+
+    subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'background') {
+        handleAppClose();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const handleSelectInterest = (id: number) => {
     const updatedInterests = listOfInterests.map(interest => {

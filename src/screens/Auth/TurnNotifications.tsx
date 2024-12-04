@@ -1,6 +1,6 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useContext, useState} from 'react';
-import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {FC, useContext, useEffect, useState} from 'react';
+import {AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {black1Color, grayColor, lightGray2Color, toggleColor, transparentWhite30Color, whiteColor} from 'constants/colors';
@@ -13,6 +13,10 @@ import {Switch} from '@ant-design/react-native';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import {getFcmToken} from 'helpers/fcmHelper';
 import AuthProgress from 'components/AuthProgress';
+import moment from 'moment';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import analytics from '@react-native-firebase/analytics';
 
 const TurnNotifications: FC = (): JSX.Element => {
   const [notifications, setNotifications] = useState<boolean>(true);
@@ -20,6 +24,39 @@ const TurnNotifications: FC = (): JSX.Element => {
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const navigation = useAppNavigation();
+
+  useEffect(() => {
+    let subscription: any;
+
+    const name = onBoarding.find((item: any) => item.name)?.name;
+    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
+
+    const handleAppClose = async () => {
+      await firestore()
+        .collection('unfinishedRegistrationUsers')
+        .doc(auth()?.currentUser?.uid)
+        .set({
+          name,
+          accountType,
+          phoneNumber: auth()?.currentUser?.phoneNumber,
+          createdAt: moment().format('YYYY-MM-DD'),
+          screen: 'turn-notifications',
+        });
+      analytics().logEvent('turn_notifications_app_closed', {
+        onBoarding: onBoarding,
+      });
+    };
+
+    subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'background') {
+        handleAppClose();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const handleNext = async () => {
     setOnBoarding([

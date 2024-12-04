@@ -1,6 +1,6 @@
 import {isIos, screenHeight} from 'constants/common';
-import React, {FC, useContext, useState} from 'react';
-import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import React, {FC, useContext, useEffect, useState} from 'react';
+import {AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {backgroundGradientColors, transparentWhite30Color, whiteColor} from 'constants/colors';
@@ -14,6 +14,10 @@ import {AuthContext} from 'contexts/AuthContext.tsx';
 import {isName} from 'helpers/regExpValidators';
 import AuthProgress from 'components/AuthProgress';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import analytics from '@react-native-firebase/analytics';
 
 const EnterName: FC = (): JSX.Element => {
   const [name, setName] = useState<string>('');
@@ -32,6 +36,37 @@ const EnterName: FC = (): JSX.Element => {
   };
 
   const navigation = useAppNavigation();
+
+  useEffect(() => {
+    let subscription: any;
+    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
+
+    const handleAppClose = async () => {
+      await firestore()
+        .collection('unfinishedRegistrationUsers')
+        .doc(auth()?.currentUser?.uid)
+        .set({
+          name,
+          accountType,
+          phoneNumber: auth()?.currentUser?.phoneNumber,
+          createdAt: moment().format('YYYY-MM-DD'),
+          screen: 'enter-name',
+        });
+      analytics().logEvent('enter_name_app_closed', {
+        onBoarding: onBoarding,
+      });
+    };
+
+    subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'background') {
+        handleAppClose();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const handleNext = async () => {
     if (!name) {

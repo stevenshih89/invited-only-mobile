@@ -39,8 +39,9 @@ const Eula: FC = (): JSX.Element => {
     },
     {
       id: 2,
-      title: '2. SUBSCRIPTION OPTIONS',
-      description: '',
+      title: '2. TERMINATION',
+      description:
+        'This Agreement remains in effect until terminated by you or Invited Only Inc. You may terminate this Agreement by uninstalling the App or canceling your subscription as outlined in Section 2. Licensor reserves the right to terminate or suspend your account at any time for violations of this Agreement or any activity deemed harmful to the App’s community.',
     },
     {
       id: 3,
@@ -58,13 +59,8 @@ const Eula: FC = (): JSX.Element => {
     },
     {
       id: 4,
-      title: '4. CODE OF CONDUCT',
-      description:
-        'While using the App, you agree to:\n\n' +
-        '    • Respect the rights of other users\n\n' +
-        '    • Avoid abusive language or behavior\n\n' +
-        '    • Refrain from posting misleading, harmful, or false information\n\n' +
-        'Failure to adhere to the Code of Conduct may result in account suspension or termination.',
+      title: '4. SUBSCRIPTION OPTIONS',
+      description: '',
     },
     {
       id: 5,
@@ -80,9 +76,13 @@ const Eula: FC = (): JSX.Element => {
     },
     {
       id: 7,
-      title: '7. TERMINATION',
+      title: '7. CODE OF CONDUCT',
       description:
-        'This Agreement remains in effect until terminated by you or Invited Only Inc. You may terminate this Agreement by uninstalling the App or canceling your subscription as outlined in Section 2. Licensor reserves the right to terminate or suspend your account at any time for violations of this Agreement or any activity deemed harmful to the App’s community.',
+        'While using the App, you agree to:\n\n' +
+        '    • Respect the rights of other users\n\n' +
+        '    • Avoid abusive language or behavior\n\n' +
+        '    • Refrain from posting misleading, harmful, or false information\n\n' +
+        'Failure to adhere to the Code of Conduct may result in account suspension or termination.',
     },
     {
       id: 8,
@@ -215,17 +215,17 @@ const Eula: FC = (): JSX.Element => {
 
       setDataEula(prev => {
         const newData = [...prev];
-        newData[2].description =
-          'The App offers the following subscription types:\n\n' +
+        newData[4].description =
+          'The App offers the following subscription types only for host role:\n\n' +
           `    • Weekly Subscription: ${products.find(product => product.identifier === 'io_59_1w')?.fullPrice} per week\n\n` +
           `    • 1 Month Subscription: ${products.find(product => product.identifier === 'io_99_1m')?.fullPrice} per 1 month\n\n` +
           `    • 3 Months Subscription: ${products.find(product => product.identifier === 'io_29_3m')?.fullPrice} per 3 months\n\n` +
           'By subscribing, you agree to the applicable subscription fees.\n\n' +
-          '2.1 Automatic Renewal\n\n' +
+          '4.1 Automatic Renewal\n\n' +
           'Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period. Renewal charges will be made to your Apple ID account at the rate associated with your selected subscription plan.\n\n' +
-          '2.2 Payment and Billing\n\n' +
+          '4.2 Payment and Billing\n\n' +
           'Payments will be charged to your Apple ID account upon confirmation of the subscription. Renewal payments are charged within 24 hours prior to the end of the current subscription period.\n\n' +
-          '2.3 Cancellation\n\n' +
+          '4.3 Cancellation\n\n' +
           'You can cancel your subscription at any time via your Apple App Store account settings. Canceling disables auto-renewal, but you will retain access until the current billing period ends. No refunds will be given for the remaining time of a subscription.';
         return newData;
       });

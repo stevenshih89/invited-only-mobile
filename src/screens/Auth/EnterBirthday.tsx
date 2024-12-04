@@ -1,6 +1,6 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, useContext, useState} from 'react';
-import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {FC, useContext, useEffect, useState} from 'react';
+import {AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {backgroundGradientColors, grayColor, lightGray2Color, toggleColor, transparentWhite30Color, whiteColor} from 'constants/colors';
@@ -14,6 +14,10 @@ import MaskInput from 'react-native-mask-input';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import AuthProgress from 'components/AuthProgress';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import analytics from '@react-native-firebase/analytics';
 
 const EnterBirthday: FC = (): JSX.Element => {
   const [month, setMonth] = useState<string>('');
@@ -22,6 +26,42 @@ const EnterBirthday: FC = (): JSX.Element => {
   const [showAge, setShowAge] = useState<boolean>(false);
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
+
+  useEffect(() => {
+    let subscription: any;
+
+    const name = onBoarding.find((item: any) => item.name)?.name;
+    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
+    const photos = onBoarding.find((item: any) => item.photos)?.photos;
+
+    const handleAppClose = async () => {
+      await firestore()
+        .collection('unfinishedRegistrationUsers')
+        .doc(auth()?.currentUser?.uid)
+        .set({
+          name,
+          accountType,
+          photos,
+          date: `${month}.${day}.${year}`,
+          phoneNumber: auth()?.currentUser?.phoneNumber,
+          createdAt: moment().format('YYYY-MM-DD'),
+          screen: 'enter-birthday',
+        });
+      analytics().logEvent('enter_birthday_app_closed', {
+        onBoarding: onBoarding,
+      });
+    };
+
+    subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'background') {
+        handleAppClose();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const handleShowAge = (value: boolean): void => {
     setShowAge(value);
@@ -143,7 +183,7 @@ const EnterBirthday: FC = (): JSX.Element => {
                       fontFamily: Satoshi400,
                       fontSize: RFValue(18, 932),
                     }}>
-                    {`Add your birthday. You can change it later (optional)`}
+                    {'Add your birthday. You can change it later (optional)'}
                   </Text>
                 </View>
                 <View style={{width: '100%', flexDirection: 'row'}}>

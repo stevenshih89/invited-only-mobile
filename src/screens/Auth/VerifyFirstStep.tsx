@@ -1,10 +1,12 @@
 import {isIos, screenHeight, screenWidth} from 'constants/common';
-import React, {FC, useContext, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {
   Alert,
+  AppState,
   ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -16,7 +18,6 @@ import CheckStar from 'assets/images/icons/check-star-white.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import MaleExampleSelfie from 'assets/images/auth/example-selfie.png';
 import FemaleExampleSelfie from 'assets/images/auth/female-selfie-example.png';
-
 import {backgroundGradientColors, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -27,17 +28,84 @@ import {photoVerifiedPath} from 'constants/pathLocations';
 import {launchCamera} from 'react-native-image-picker';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
+import firestore from '@react-native-firebase/firestore';
+import analytics from '@react-native-firebase/analytics';
+import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
 
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const [imageUri, setImageUri] = useState<string | undefined>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
   const name = onBoarding.find((item: {name: string}) => item?.name)?.name;
   const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
-
+  const email = onBoarding.find((item: any) => item.email)?.email;
+  const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
+  const date = onBoarding.find((item: any) => item.date)?.date;
+  const photos = onBoarding.find((item: any) => item.photos)?.photos;
   const selfieSource = gender === 'man' ? MaleExampleSelfie : FemaleExampleSelfie;
+
+  useEffect(() => {
+    let subscription: any;
+
+    const handleAppClose = async () => {
+      const currentUser = auth()?.currentUser;
+      if (!currentUser?.uid) {
+        return;
+      }
+      await firestore()
+        .collection('unfinishedRegistrationUsers')
+        .doc(currentUser?.uid)
+        .set({
+          name,
+          email,
+          accountType,
+          date,
+          photos,
+          gender,
+          phoneNumber: auth()?.currentUser?.phoneNumber,
+          createdAt: moment().format('YYYY-MM-DD'),
+          screen: 'verify-first-step-selfie',
+        });
+      analytics().logEvent('verify_first_step_selfie_app_closed', {
+        onBoarding: onBoarding,
+      });
+    };
+
+    subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'background') {
+        handleAppClose();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  const uploadImage = async (imagePath: string, userId: string | null) => {
+    if (imagePath) {
+      if (imagePath.includes('https://')) {
+        return imagePath;
+      } else {
+        const uploadUri = Platform.OS === 'ios' ? imagePath : `file://${imagePath}`;
+        const filename = `${userId}_${new Date().getTime()}`;
+        const storageRef = storage().ref(`selfie_photos/${filename}`);
+        try {
+          await storageRef.putFile(uploadUri);
+          const url = await storageRef.getDownloadURL();
+          return url;
+        } catch (e) {
+          console.error('Error uploading image:', e);
+          return null;
+        }
+      }
+    }
+  };
 
   const openCamera = async () => {
     if (isIos) {
@@ -53,6 +121,19 @@ const VerifySecondStep: FC = (): JSX.Element => {
             presentationStyle: 'fullScreen',
           },
           response => {
+            if (response.didCancel) {
+              analytics().logEvent('verify_first_step_selfie_camera_cancelled', {
+                name,
+                email,
+                accountType,
+                date,
+                gender,
+                phoneNumber: auth()?.currentUser?.phoneNumber,
+                createdAt: moment().format('YYYY-MM-DD HH:ss'),
+              });
+              return console.error('User cancelled the camera');
+            }
+
             if (response.errorCode === 'camera_unavailable') {
               return Alert.alert('Camera is not available');
             }
@@ -71,15 +152,31 @@ const VerifySecondStep: FC = (): JSX.Element => {
     }
   };
 
-  const handleNext = () => {
-    setOnBoarding([
-      ...onBoarding,
-      {
-        imageUser: imageUri,
-      },
-    ]);
-    navigation.navigate(photoVerifiedPath as never);
+  const handleNext = async () => {
+    const currentUser = auth()?.currentUser;
+    try {
+      if (!imageUri || !currentUser?.uid) {
+        return;
+      }
+      setIsLoading(true);
+      const imageUser = await uploadImage(imageUri, currentUser?.uid);
+
+      const onBoardingWithFacePhoto = onBoarding
+        .filter((onboardItem: any) => !onboardItem.facePhoto)
+        .concat({
+          facePhoto: imageUser,
+        });
+
+      setOnBoarding(onBoardingWithFacePhoto);
+      navigation.navigate(photoVerifiedPath as never);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  console.warn(onBoarding);
 
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
@@ -247,9 +344,12 @@ const VerifySecondStep: FC = (): JSX.Element => {
               </View>
               {imageUri ? (
                 <View style={{marginBottom: 4}}>
-                  <Button title="Submit" onPress={() => handleNext()} />
+                  <Button title="Submit" onPress={handleNext} loading={isLoading} />
                   <Button
                     onPress={async () => {
+                      if (isLoading) {
+                        return;
+                      }
                       setImageUri('');
                       await openCamera();
                     }}
