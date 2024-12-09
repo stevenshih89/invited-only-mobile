@@ -4,6 +4,7 @@ import {
   Alert,
   AppState,
   ImageBackground,
+  InteractionManager,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -122,14 +123,16 @@ const VerifySecondStep: FC = (): JSX.Element => {
           },
           response => {
             if (response.didCancel) {
-              analytics().logEvent('verify_first_step_selfie_camera_cancelled', {
-                name,
-                email,
-                accountType,
-                date,
-                gender,
-                phoneNumber: auth()?.currentUser?.phoneNumber,
-                createdAt: moment().format('YYYY-MM-DD HH:ss'),
+              InteractionManager.runAfterInteractions(() => {
+                analytics().logEvent('verify_first_step_selfie_camera_cancelled', {
+                  name,
+                  email,
+                  accountType,
+                  date,
+                  gender,
+                  phoneNumber: auth()?.currentUser?.phoneNumber,
+                  createdAt: moment().format('YYYY-MM-DD HH:ss'),
+                });
               });
               return console.error('User cancelled the camera');
             }
@@ -168,6 +171,15 @@ const VerifySecondStep: FC = (): JSX.Element => {
         });
 
       setOnBoarding(onBoardingWithFacePhoto);
+
+      InteractionManager.runAfterInteractions(() => {
+        analytics().logEvent('verify-first-step-selfie-submited', {
+          userId: currentUser?.uid,
+          name: onBoarding.find((item: any) => item.name)?.name,
+          screen: 'verify-first-step-selfie',
+          action: 'selfie-submited',
+        });
+      });
       navigation.navigate(photoVerifiedPath as never);
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -175,8 +187,6 @@ const VerifySecondStep: FC = (): JSX.Element => {
       setIsLoading(false);
     }
   };
-
-  console.warn(onBoarding);
 
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>

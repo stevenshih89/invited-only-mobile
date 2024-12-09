@@ -4,6 +4,7 @@ import {
   Alert,
   AppState,
   ImageBackground,
+  InteractionManager,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -226,9 +227,16 @@ const AddPhotos: FC = (): JSX.Element => {
     } else {
       showToast('inviteMatch', '', 'Failed to upload photos');
     }
-  };
 
-  console.warn(onBoarding);
+    InteractionManager.runAfterInteractions(() => {
+      analytics().logEvent('add-photos-continue-button-pressed', {
+        userId: currentUser?.uid,
+        name: onBoarding.find((item: any) => item.name)?.name,
+        screen: 'add-photos',
+        action: 'continue',
+      });
+    });
+  };
 
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>

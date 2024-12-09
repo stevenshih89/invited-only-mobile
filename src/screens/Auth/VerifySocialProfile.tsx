@@ -1,6 +1,7 @@
 import {backgroundGradientColors, errorColor, lightGray15Color, lightGray2Color, whiteColor} from 'constants/colors';
 import {
   AppState,
+  InteractionManager,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -30,6 +31,7 @@ import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
+import {AppEventsLogger} from 'react-native-fbsdk-next';
 interface Social {
   id: number;
   title: string;
@@ -170,12 +172,13 @@ const VerifySocialProfile = () => {
       const isTurnNotifications = onBoarding.find(item => 'notifications' in item);
 
       const isTurnedNotifications = isTurnNotifications?.notifications ?? false;
+      const createdAt = moment().format('YYYY-MM-DD');
       const newUserData = {
         ...mergedObject,
         uid: userId,
         codeForInvitingOtherUsers: generateInviteCode(),
         registrationDate: formattedDate,
-        createdAt: moment().format('YYYY-MM-DD'),
+        createdAt,
         phoneNumber: phoneNumber,
         accountConfirmed: false,
         accountReviewed: false,
@@ -206,6 +209,17 @@ const VerifySocialProfile = () => {
           setLoading(false);
         });
       await firestore().collection('unfinishedRegistrationUsers').doc(`${userId}`).delete();
+
+      InteractionManager.runAfterInteractions(() => {
+        AppEventsLogger.logEvent('registration_completed', {
+          userId: userId as string,
+          createdAt,
+          name: mergedObject?.name,
+          accountType: mergedObject?.accountType,
+          date: mergedObject?.date,
+          gender: mergedObject?.gender,
+        });
+      });
     } catch (e) {
       console.error(e);
       showToast('inviteMatch', '', `${e}`);

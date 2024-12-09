@@ -2,6 +2,7 @@ import {isIos} from 'constants/common';
 import {FC, useContext, useEffect, useState} from 'react';
 import {
   AppState,
+  InteractionManager,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -32,6 +33,7 @@ import {RootStackParamList} from 'typescript/types';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
+import {AppEventsLogger} from 'react-native-fbsdk-next';
 const InvitationCode: FC = (): JSX.Element => {
   const [code, setCode] = useState<string>('');
   const [invalidCode, setInvalidCode] = useState(false);
@@ -157,12 +159,14 @@ const InvitationCode: FC = (): JSX.Element => {
       const isTurnNotifications = onBoarding.find((item: any) => 'notifications' in item);
 
       const isTurnedNotifications = isTurnNotifications?.notifications ?? false;
+
+      const createdAt = moment().format('YYYY-MM-DD');
       const newUserData = {
         ...mergedObject,
         uid: userId,
         codeForInvitingOtherUsers: generateInviteCode(),
         registrationDate: formattedDate,
-        createdAt: moment().format('YYYY-MM-DD'),
+        createdAt,
         phoneNumber: phoneNumber,
         accountConfirmed: true,
         accountReviewed: true,
@@ -192,6 +196,16 @@ const InvitationCode: FC = (): JSX.Element => {
           setLoading(false);
         });
       await firestore().collection('unfinishedRegistrationUsers').doc(`${userId}`).delete();
+      InteractionManager.runAfterInteractions(() => {
+        AppEventsLogger.logEvent('registration_completed', {
+          userId: userId as string,
+          createdAt,
+          name: mergedObject?.name,
+          accountType: mergedObject?.accountType,
+          date: mergedObject?.date,
+          gender: mergedObject?.gender,
+        });
+      });
     } catch (e) {
       console.error(e);
       showToast('inviteMatch', '', `${e}`);

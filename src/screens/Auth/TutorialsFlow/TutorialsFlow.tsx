@@ -1,5 +1,5 @@
 import React, {FC, ReactNode, useContext, useState} from 'react';
-import {View, SafeAreaView, TouchableOpacity, Text} from 'react-native';
+import {View, SafeAreaView, TouchableOpacity, Text, InteractionManager} from 'react-native';
 
 //import components
 import {gray1Color, whiteColor} from 'constants/colors.ts';
@@ -15,6 +15,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
 import {AuthContext} from 'contexts/AuthContext';
 import {screenWidth} from 'constants/common';
+import analytics from '@react-native-firebase/analytics';
 
 const TutorialsFlow: FC = (): JSX.Element => {
   const [active, setActive] = useState<number>(0);
@@ -33,10 +34,18 @@ const TutorialsFlow: FC = (): JSX.Element => {
 
   const setOnBoarding = useUser((i: any) => i?.setOnBoarding);
   const navigation = useAppNavigation();
-
+  const currentUser = auth().currentUser;
   const handleGoBack = () => {
     if (active === 0) {
       navigation.goBack();
+      InteractionManager.runAfterInteractions(() => {
+        analytics().logEvent('tutorials-flow-back-button-pressed', {
+          userId: currentUser?.uid,
+          name: onBoarding.find((item: any) => item.name)?.name,
+          screen: 'tutorials-flow',
+          action: 'back',
+        });
+      });
     }
 
     setActive(p => p - 1);
@@ -44,7 +53,16 @@ const TutorialsFlow: FC = (): JSX.Element => {
 
   const handleNext = () => {
     if (active === content.length - 1) {
-      return handleCloseTutorialFlow();
+      handleCloseTutorialFlow();
+      InteractionManager.runAfterInteractions(() => {
+        analytics().logEvent('tutorials-flow-continue-button-pressed-and-completed', {
+          userId: currentUser?.uid,
+          name: onBoarding.find((item: any) => item.name)?.name,
+          screen: 'tutorials-flow',
+          action: 'continue',
+        });
+      });
+      return;
     }
     setActive(p => p + 1);
   };
