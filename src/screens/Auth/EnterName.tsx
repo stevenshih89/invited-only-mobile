@@ -42,19 +42,27 @@ const EnterName: FC = (): JSX.Element => {
     const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
 
     const handleAppClose = async () => {
-      await firestore()
-        .collection('unfinishedRegistrationUsers')
-        .doc(auth()?.currentUser?.uid)
-        .set({
+      try {
+        await firestore()
+          .collection('unfinishedRegistrationUsers')
+          .doc(auth()?.currentUser?.uid)
+          .set({
+            name,
+            accountType,
+            phoneNumber: auth()?.currentUser?.phoneNumber,
+            createdAt: moment().format('YYYY-MM-DD'),
+            screen: 'enter-name',
+          });
+        analytics().logEvent('enter_name_app_closed', {
           name,
           accountType,
           phoneNumber: auth()?.currentUser?.phoneNumber,
           createdAt: moment().format('YYYY-MM-DD'),
           screen: 'enter-name',
         });
-      analytics().logEvent('enter_name_app_closed', {
-        onBoarding: onBoarding,
-      });
+      } catch (e) {
+        console.error(e);
+      }
     };
 
     subscription = AppState.addEventListener('change', nextAppState => {

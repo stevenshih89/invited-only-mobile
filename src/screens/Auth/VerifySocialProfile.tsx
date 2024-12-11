@@ -1,7 +1,6 @@
 import {backgroundGradientColors, errorColor, lightGray15Color, lightGray2Color, whiteColor} from 'constants/colors';
 import {
   AppState,
-  InteractionManager,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -88,24 +87,41 @@ const VerifySocialProfile = () => {
     const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
     const date = onBoarding.find((item: any) => item.date)?.date;
     const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
+    const photos = onBoarding.find((item: any) => item.photos)?.photos;
+    const facePhoto = onBoarding.find((item: any) => item.facePhoto)?.facePhoto;
 
     const handleAppClose = async () => {
-      await firestore()
-        .collection('unfinishedRegistrationUsers')
-        .doc(auth()?.currentUser?.uid)
-        .set({
+      try {
+        await firestore()
+          .collection('unfinishedRegistrationUsers')
+          .doc(auth()?.currentUser?.uid)
+          .set({
+            name,
+            email,
+            accountType,
+            date,
+            gender,
+            photos,
+            facePhoto,
+            phoneNumber: auth()?.currentUser?.phoneNumber,
+            createdAt: moment().format('YYYY-MM-DD'),
+            screen: 'verify-social-profile',
+          });
+        analytics().logEvent('verify_social_prof_app_closed', {
           name,
           email,
           accountType,
           date,
           gender,
+          photos,
+          facePhoto,
           phoneNumber: auth()?.currentUser?.phoneNumber,
           createdAt: moment().format('YYYY-MM-DD'),
           screen: 'verify-social-profile',
         });
-      analytics().logEvent('verify_social_profile_app_closed', {
-        onBoarding: onBoarding,
-      });
+      } catch (e) {
+        console.error(e);
+      }
     };
 
     subscription = AppState.addEventListener('change', nextAppState => {
@@ -210,15 +226,13 @@ const VerifySocialProfile = () => {
         });
       await firestore().collection('unfinishedRegistrationUsers').doc(`${userId}`).delete();
 
-      InteractionManager.runAfterInteractions(() => {
-        AppEventsLogger.logEvent('registration_completed', {
-          userId: userId as string,
-          createdAt,
-          name: mergedObject?.name,
-          accountType: mergedObject?.accountType,
-          date: mergedObject?.date,
-          gender: mergedObject?.gender,
-        });
+      AppEventsLogger.logEvent('registration_completed', {
+        userId: userId as string,
+        createdAt,
+        name: mergedObject?.name,
+        accountType: mergedObject?.accountType,
+        date: mergedObject?.date,
+        gender: mergedObject?.gender,
       });
     } catch (e) {
       console.error(e);

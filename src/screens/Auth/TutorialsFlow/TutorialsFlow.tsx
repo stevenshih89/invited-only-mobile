@@ -38,14 +38,18 @@ const TutorialsFlow: FC = (): JSX.Element => {
   const handleGoBack = () => {
     if (active === 0) {
       navigation.goBack();
-      InteractionManager.runAfterInteractions(() => {
-        analytics().logEvent('tutorials-flow-back-button-pressed', {
+
+      try {
+        analytics().logEvent('tutorials_flow_back_button_pressed', {
           userId: currentUser?.uid,
           name: onBoarding.find((item: any) => item.name)?.name,
           screen: 'tutorials-flow',
           action: 'back',
         });
-      });
+      } catch (e) {
+        console.error(e);
+      }
+      return;
     }
 
     setActive(p => p - 1);
@@ -54,13 +58,12 @@ const TutorialsFlow: FC = (): JSX.Element => {
   const handleNext = () => {
     if (active === content.length - 1) {
       handleCloseTutorialFlow();
-      InteractionManager.runAfterInteractions(() => {
-        analytics().logEvent('tutorials-flow-continue-button-pressed-and-completed', {
-          userId: currentUser?.uid,
-          name: onBoarding.find((item: any) => item.name)?.name,
-          screen: 'tutorials-flow',
-          action: 'continue',
-        });
+
+      analytics().logEvent('tutorials_flow_continue_completed', {
+        userId: currentUser?.uid,
+        name: onBoarding.find((item: any) => item.name)?.name,
+        screen: 'tutorials-flow',
+        action: 'continue',
       });
       return;
     }

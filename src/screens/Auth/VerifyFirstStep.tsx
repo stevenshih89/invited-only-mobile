@@ -58,10 +58,23 @@ const VerifySecondStep: FC = (): JSX.Element => {
       if (!currentUser?.uid) {
         return;
       }
-      await firestore()
-        .collection('unfinishedRegistrationUsers')
-        .doc(currentUser?.uid)
-        .set({
+
+      try {
+        await firestore()
+          .collection('unfinishedRegistrationUsers')
+          .doc(currentUser?.uid)
+          .set({
+            name,
+            email,
+            accountType,
+            date,
+            photos,
+            gender,
+            phoneNumber: auth()?.currentUser?.phoneNumber,
+            createdAt: moment().format('YYYY-MM-DD'),
+            screen: 'verify-first-step-selfie',
+          });
+        analytics().logEvent('verify_selfie_app_closed', {
           name,
           email,
           accountType,
@@ -72,9 +85,9 @@ const VerifySecondStep: FC = (): JSX.Element => {
           createdAt: moment().format('YYYY-MM-DD'),
           screen: 'verify-first-step-selfie',
         });
-      analytics().logEvent('verify_first_step_selfie_app_closed', {
-        onBoarding: onBoarding,
-      });
+      } catch (e) {
+        console.error(e);
+      }
     };
 
     subscription = AppState.addEventListener('change', nextAppState => {
@@ -123,8 +136,8 @@ const VerifySecondStep: FC = (): JSX.Element => {
           },
           response => {
             if (response.didCancel) {
-              InteractionManager.runAfterInteractions(() => {
-                analytics().logEvent('verify_first_step_selfie_camera_cancelled', {
+              try {
+                analytics().logEvent('verify_selfie_camera_cancelled', {
                   name,
                   email,
                   accountType,
@@ -133,7 +146,10 @@ const VerifySecondStep: FC = (): JSX.Element => {
                   phoneNumber: auth()?.currentUser?.phoneNumber,
                   createdAt: moment().format('YYYY-MM-DD HH:ss'),
                 });
-              });
+              } catch (e) {
+                console.error(e);
+              }
+
               return console.error('User cancelled the camera');
             }
 
@@ -173,7 +189,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
       setOnBoarding(onBoardingWithFacePhoto);
 
       InteractionManager.runAfterInteractions(() => {
-        analytics().logEvent('verify-first-step-selfie-submited', {
+        analytics().logEvent('verify_selfie_submited', {
           userId: currentUser?.uid,
           name: onBoarding.find((item: any) => item.name)?.name,
           screen: 'verify-first-step-selfie',

@@ -38,18 +38,25 @@ const ChooseAccountType: FC = (): JSX.Element => {
     let subscription: any;
 
     const handleAppClose = async () => {
-      await firestore()
-        .collection('unfinishedRegistrationUsers')
-        .doc(auth()?.currentUser?.uid)
-        .set({
+      try {
+        await firestore()
+          .collection('unfinishedRegistrationUsers')
+          .doc(auth()?.currentUser?.uid)
+          .set({
+            accountType,
+            phoneNumber: auth()?.currentUser?.phoneNumber,
+            createdAt: moment().format('YYYY-MM-DD'),
+            screen: 'choose-account-type',
+          });
+        analytics().logEvent('choose_account_type_app_closed', {
           accountType,
           phoneNumber: auth()?.currentUser?.phoneNumber,
           createdAt: moment().format('YYYY-MM-DD'),
           screen: 'choose-account-type',
         });
-      analytics().logEvent('choose_account_type_app_closed', {
-        onBoarding: onBoarding,
-      });
+      } catch (e) {
+        console.error(e);
+      }
     };
 
     subscription = AppState.addEventListener('change', nextAppState => {

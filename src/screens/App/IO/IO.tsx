@@ -115,7 +115,7 @@ const IO: FC = (): JSX.Element => {
 
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
-  const {loadingCardsList, setLoadingCardsList, myEvents, loadingMyEvents, activeEvent} = useMyEvents();
+  const {loadingCardsList, setLoadingCardsList, myEvents, loadingMyEvents, activeEvent, setActiveEvent} = useMyEvents();
 
   const {activeEventDate} = useContext(EventsDate);
 
@@ -236,13 +236,11 @@ const IO: FC = (): JSX.Element => {
           }
           const data = querySnapshot.data();
           const prevEventReviewed = activeEvent?.eventReviewed;
-          const currentEventReviewed = data?.eventReviewed;
+          const currentEventReviewed = data?.eventReviewed || false;
           const prevStatusEvent = activeEvent?.statusEvent;
-          const currentStatusEvent = data?.statusEvent;
+          const currentStatusEvent = data?.statusEvent || false;
           if (prevStatusEvent !== currentStatusEvent || prevEventReviewed !== currentEventReviewed) {
-            console.warn('IO_useEffect_activeEvent', activeEvent?.id);
-
-            // dispatch(setActiveEvent({...activeEvent, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent}));
+            setActiveEvent({...activeEvent, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent});
           }
         });
     }
@@ -1857,8 +1855,6 @@ const IO: FC = (): JSX.Element => {
     }
   }, [events]);
 
-  console.warn('events', events.length, endReachedRef.current, lastVisibleRef.current);
-
   useEffect(() => {
     requestUserPermission();
   }, []);
@@ -1895,87 +1891,6 @@ const IO: FC = (): JSX.Element => {
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
         <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />
       </SafeAreaView>
-    );
-  }
-
-  if (
-    userInfo?.uid &&
-    !isHost &&
-    !userInfo?.accountReviewed &&
-    !userInfo?.accountConfirmed &&
-    !isVisibleMatch &&
-    !visibleModalSuperJoin &&
-    !isVisibleSuperInvite &&
-    !acceptModalVisible
-  ) {
-    return (
-      <>
-        <Loading
-          text={`We're currently searching for exciting ${isHost ? 'guests to join you' : 'events for you'}. It may take some time!`}
-          userInfo={userInfo}
-          wrapperText={false}
-        />
-        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
-          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
-        )}
-      </>
-    );
-  }
-
-  if (userInfo?.uid && !isHost) {
-    return (
-      <View style={{flex: 1, backgroundColor: blackColor, paddingHorizontal: 24}}>
-        <Loading topPosition={true} userInfo={userInfo} wrapperText={false} styleInnerContainer={{flex: 0}} styleContainer={{flex: 0}} />
-        <View
-          style={{
-            position: 'absolute',
-            top: screenHeight / 2.2,
-            left: 0,
-            right: 0,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              color: whiteColor,
-              fontWeight: '700',
-              fontSize: RFValue(22, 932),
-              letterSpacing: 22,
-              fontFamily: Satoshi500,
-              textAlign: 'center',
-              marginRight: -22,
-            }}>
-            WELCOME
-          </Text>
-          <Text
-            style={{
-              fontFamily: Satoshi700,
-              fontSize: RFValue(18, 932),
-              color: whiteColor,
-              marginTop: screenHeight / 50,
-            }}>
-            Soon, Everything Changes.
-          </Text>
-          <Text
-            style={{
-              fontFamily: Satoshi400,
-              fontSize: RFValue(18, 932),
-              color: whiteColor,
-              textAlign: 'center',
-              marginTop: screenHeight / 50,
-            }}>
-            Be the first to access exclusive offers and VIP events. stay tuned - something extraordinary is coming.
-          </Text>
-          {userInfo?.accountConfirmed && (
-            <TouchableOpacity style={{marginTop: screenHeight / 50}} onPress={handleGoToEarlyAccess}>
-              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812), textDecorationLine: 'underline'}}>
-                IO Invitations
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
     );
   }
 
@@ -2027,11 +1942,58 @@ const IO: FC = (): JSX.Element => {
   ) {
     return (
       <>
-        <Loading
-          text={`We're currently searching for exciting ${isHost ? 'guests to join you' : 'events for you'}. It may take some time!`}
-          userInfo={userInfo}
-          wrapperText={false}
-        />
+        <View style={{flex: 1, backgroundColor: blackColor, paddingHorizontal: 24}}>
+          <Loading topPosition={true} userInfo={userInfo} wrapperText={false} styleInnerContainer={{flex: 0}} styleContainer={{flex: 0}} />
+          <View
+            style={{
+              position: 'absolute',
+              top: screenHeight / 2.2,
+              left: 0,
+              right: 0,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                color: whiteColor,
+                fontWeight: '700',
+                fontSize: RFValue(22, 932),
+                letterSpacing: 22,
+                fontFamily: Satoshi500,
+                textAlign: 'center',
+                marginRight: -22,
+              }}>
+              WELCOME
+            </Text>
+            <Text
+              style={{
+                fontFamily: Satoshi700,
+                fontSize: RFValue(18, 932),
+                color: whiteColor,
+                marginTop: screenHeight / 50,
+              }}>
+              Soon, Everything Changes.
+            </Text>
+            <Text
+              style={{
+                fontFamily: Satoshi400,
+                fontSize: RFValue(18, 932),
+                color: whiteColor,
+                textAlign: 'center',
+                marginTop: screenHeight / 50,
+              }}>
+              Be the first to access exclusive offers and VIP events. stay tuned - something extraordinary is coming.
+            </Text>
+            {userInfo?.accountConfirmed && (
+              <TouchableOpacity style={{marginTop: screenHeight / 50}} onPress={handleGoToEarlyAccess}>
+                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812), textDecorationLine: 'underline'}}>
+                  IO Invitations
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
         {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
           <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
         )}
@@ -2118,7 +2080,6 @@ const IO: FC = (): JSX.Element => {
               imageEvent={currentEventInfo ? currentEventInfo.photos[0]?.image : ''}
             />
           )}
-
           {isVisibleSuperInvite && (
             <SuperInvite
               isVisibleSuperInvite={isVisibleSuperInvite}

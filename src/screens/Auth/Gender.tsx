@@ -38,10 +38,21 @@ const Gender: FC = (): JSX.Element => {
     const photos = onBoarding.find((item: any) => item.photos)?.photos;
 
     const handleAppClose = async () => {
-      await firestore()
-        .collection('unfinishedRegistrationUsers')
-        .doc(auth()?.currentUser?.uid)
-        .set({
+      try {
+        await firestore()
+          .collection('unfinishedRegistrationUsers')
+          .doc(auth()?.currentUser?.uid)
+          .set({
+            name,
+            accountType,
+            date,
+            photos,
+            gender,
+            phoneNumber: auth()?.currentUser?.phoneNumber,
+            createdAt: moment().format('YYYY-MM-DD'),
+            screen: 'my-gender',
+          });
+        analytics().logEvent('my_gender_app_closed', {
           name,
           accountType,
           date,
@@ -51,9 +62,9 @@ const Gender: FC = (): JSX.Element => {
           createdAt: moment().format('YYYY-MM-DD'),
           screen: 'my-gender',
         });
-      analytics().logEvent('my_gender_app_closed', {
-        onBoarding: onBoarding,
-      });
+      } catch (e) {
+        console.error(e);
+      }
     };
 
     subscription = AppState.addEventListener('change', nextAppState => {

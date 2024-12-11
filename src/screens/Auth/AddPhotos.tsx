@@ -4,7 +4,6 @@ import {
   Alert,
   AppState,
   ImageBackground,
-  InteractionManager,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -98,19 +97,20 @@ const AddPhotos: FC = (): JSX.Element => {
     const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
 
     const handleAppClose = async () => {
-      await firestore()
-        .collection('unfinishedRegistrationUsers')
-        .doc(auth()?.currentUser?.uid)
-        .set({
-          name,
-          accountType,
-          phoneNumber: auth()?.currentUser?.phoneNumber,
-          createdAt: moment().format('YYYY-MM-DD'),
-          screen: 'add-photos',
-        });
-      analytics().logEvent('add_photos_app_closed', {
-        onBoarding: onBoarding,
-      });
+      try {
+        await firestore()
+          .collection('unfinishedRegistrationUsers')
+          .doc(auth()?.currentUser?.uid)
+          .set({
+            name,
+            accountType,
+            phoneNumber: auth()?.currentUser?.phoneNumber,
+            createdAt: moment().format('YYYY-MM-DD'),
+            screen: 'add-photos',
+          });
+      } catch (e) {
+        console.error(e);
+      }
     };
 
     subscription = AppState.addEventListener('change', nextAppState => {
@@ -227,15 +227,16 @@ const AddPhotos: FC = (): JSX.Element => {
     } else {
       showToast('inviteMatch', '', 'Failed to upload photos');
     }
-
-    InteractionManager.runAfterInteractions(() => {
-      analytics().logEvent('add-photos-continue-button-pressed', {
+    try {
+      analytics().logEvent('add_photos_continue_button_press', {
         userId: currentUser?.uid,
         name: onBoarding.find((item: any) => item.name)?.name,
         screen: 'add-photos',
         action: 'continue',
       });
-    });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (

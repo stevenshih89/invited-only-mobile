@@ -14,12 +14,10 @@ import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import icons
-import CalendarIcon from 'assets/images/icons/calendar.svg';
 import FlashField from 'assets/images/icons/flash.svg';
 import ThreeDoths from 'assets/images/icons/more-white.svg';
 import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
 import Button from 'components/Button/Button.tsx';
-import {EventContext} from 'contexts/EventContext.tsx';
 import {blackColor, grayScale700, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import {useFocusEffect} from '@react-navigation/native';
@@ -27,16 +25,7 @@ import {useUser} from 'src/store/userStore';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {AccountInfoFlyWeight, useUserProfileChangeSubscription} from 'helpers/userProfile';
-import {
-  ACCEPTED_STATUS,
-  ALL,
-  APPROVED_STATUS,
-  CANCEL_STATUS,
-  INVITE_MATCH_STATUS,
-  screenHeight,
-  THIS_MONTH,
-  THIS_WEEK,
-} from 'constants/common';
+import {ACCEPTED_STATUS, ALL, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, THIS_MONTH, THIS_WEEK} from 'constants/common';
 import FastImage from 'react-native-fast-image';
 import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
@@ -562,7 +551,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
       <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
       {!loading ? (
-        !typeEvents ? (
+        isHost ? (
           <View style={{flex: 1}}>
             <FlatList
               showsVerticalScrollIndicator={false}

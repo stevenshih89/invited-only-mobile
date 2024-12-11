@@ -75,24 +75,41 @@ const InvitationCode: FC = (): JSX.Element => {
       const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
       const date = onBoarding.find((item: any) => item.date)?.date;
       const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
+      const photos = onBoarding.find((item: any) => item.photos)?.photos;
+      const facePhoto = onBoarding.find((item: any) => item.facePhoto)?.facePhoto;
 
       const handleAppClose = async () => {
-        await firestore()
-          .collection('unfinishedRegistrationUsers')
-          .doc(auth()?.currentUser?.uid)
-          .set({
+        try {
+          await firestore()
+            .collection('unfinishedRegistrationUsers')
+            .doc(auth()?.currentUser?.uid)
+            .set({
+              name,
+              email,
+              accountType,
+              date,
+              gender,
+              photos,
+              facePhoto,
+              phoneNumber: auth()?.currentUser?.phoneNumber,
+              createdAt: moment().format('YYYY-MM-DD'),
+              screen: 'invitation-code',
+            });
+          analytics().logEvent('invitation_code_app_closed', {
             name,
             email,
             accountType,
             date,
             gender,
+            photos,
+            facePhoto,
             phoneNumber: auth()?.currentUser?.phoneNumber,
             createdAt: moment().format('YYYY-MM-DD'),
             screen: 'invitation-code',
           });
-        analytics().logEvent('invitation_code_app_closed', {
-          onBoarding: onBoarding,
-        });
+        } catch (e) {
+          console.error(e);
+        }
       };
 
       subscription = AppState.addEventListener('change', nextAppState => {
@@ -196,15 +213,14 @@ const InvitationCode: FC = (): JSX.Element => {
           setLoading(false);
         });
       await firestore().collection('unfinishedRegistrationUsers').doc(`${userId}`).delete();
-      InteractionManager.runAfterInteractions(() => {
-        AppEventsLogger.logEvent('registration_completed', {
-          userId: userId as string,
-          createdAt,
-          name: mergedObject?.name,
-          accountType: mergedObject?.accountType,
-          date: mergedObject?.date,
-          gender: mergedObject?.gender,
-        });
+
+      AppEventsLogger.logEvent('registration_completed', {
+        userId: userId as string,
+        createdAt,
+        name: mergedObject?.name,
+        accountType: mergedObject?.accountType,
+        date: mergedObject?.date,
+        gender: mergedObject?.gender,
       });
     } catch (e) {
       console.error(e);
