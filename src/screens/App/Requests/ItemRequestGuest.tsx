@@ -25,6 +25,8 @@ import {Event} from 'src/types/event';
 import analytics from '@react-native-firebase/analytics';
 import { joinEvent } from 'constants/analitycs';
 import { requestsScreen } from 'constants/analitycs';
+import { useNavigation } from '@react-navigation/native';
+import { commonStackPath, eventActiveInfoPath, myProfileViewPath, userProfilePath } from 'constants/pathLocations';
 
 const eventTypes = [
   {id: 0, label: 'Vip Tables'},
@@ -265,6 +267,8 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
     return null;
   }
 
+  const navigation = useNavigation()
+
   return (
     <>
       {loading ? (
@@ -273,6 +277,9 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
         </View>
       ) : (
         <Animated.View style={[styles.itemContainer, {height: heightAnim, marginTop: index ? 30 : 0}]}>
+          <TouchableOpacity
+          onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list, isGuest: true}} as never)}
+          >
           <TinderCard
             ref={cardRef}
             // @ts-ignore
@@ -324,7 +331,9 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
                 )}
                 <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} style={styles.linearGradient}>
                   <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <View style={{flexDirection: 'row'}}>
+                    <TouchableOpacity 
+                      onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid}})}
+                      style={{flexDirection: 'row'}}>
                       <View style={{alignSelf: 'flex-start'}}>
                         <FastImage style={{width: 50, height: 50, borderRadius: 50}} source={{uri: hostInfo?.photos?.[0]?.image || ''}} />
                         <View
@@ -433,7 +442,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
                           <View style={{marginLeft: 8}}>{hostInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} />}</View>
                         </View>
                       </View>
-                    </View>
+                    </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => handleReject({userItem: item[0], withSwipeAnimation: true})}
                       style={{
@@ -531,6 +540,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
               </View>
             </FastImage>
           </TinderCard>
+          </TouchableOpacity>
         </Animated.View>
       )}
     </>

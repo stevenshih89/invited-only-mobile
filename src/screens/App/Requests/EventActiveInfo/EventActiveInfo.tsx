@@ -27,6 +27,8 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
   const {list, isGuest} = route?.params;
+  console.log('list', list);
+  
   const {
     usersList,
     photos,
