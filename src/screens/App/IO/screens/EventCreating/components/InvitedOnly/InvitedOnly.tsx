@@ -54,9 +54,13 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
       setFemaleFriend(prevFemaleFriend ?? 0);
       setMaleFriend(prevMaleFriend ?? 0);
     }
-    analytics().logScreenView({
-      screen_name: 'event_creating_invited_only_screen',
-    });
+    try {
+      analytics().logScreenView({
+        screen_name: 'event_creating_invited_screen',
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
   const styles = useStyles();

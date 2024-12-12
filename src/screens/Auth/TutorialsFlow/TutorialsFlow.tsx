@@ -40,7 +40,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
       navigation.goBack();
 
       try {
-        analytics().logEvent('tutorials_flow_back_button_pressed', {
+        analytics().logEvent('tutorials_back_button_pressed', {
           userId: currentUser?.uid,
           name: onBoarding.find((item: any) => item.name)?.name,
           screen: 'tutorials-flow',
@@ -59,12 +59,16 @@ const TutorialsFlow: FC = (): JSX.Element => {
     if (active === content.length - 1) {
       handleCloseTutorialFlow();
 
-      analytics().logEvent('tutorials_flow_continue_completed', {
-        userId: currentUser?.uid,
-        name: onBoarding.find((item: any) => item.name)?.name,
-        screen: 'tutorials-flow',
-        action: 'continue',
-      });
+      try {
+        analytics().logEvent('tutorials_continue_completed', {
+          userId: currentUser?.uid,
+          name: onBoarding.find((item: any) => item.name)?.name,
+          screen: 'tutorials-flow',
+          action: 'continue',
+        });
+      } catch (e) {
+        console.error(e);
+      }
       return;
     }
     setActive(p => p + 1);

@@ -110,9 +110,13 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         }
       };
       fetchUserInfo();
-      analytics().logScreenView({
-        screen_name: chatCorrespondenceScreen,
-      });
+      try {
+        analytics().logScreenView({
+          screen_name: chatCorrespondenceScreen,
+        });
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, [uid]);
 

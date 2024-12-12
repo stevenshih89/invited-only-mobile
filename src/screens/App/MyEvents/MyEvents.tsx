@@ -249,9 +249,13 @@ const MyEvents: FC<any> = ({navigation}) => {
   useFocusEffect(
     useCallback(() => {
       fetchUserInfo();
-      analytics().logScreenView({
-        screen_name: 'my_events_screen',
-      });
+      try {
+        analytics().logScreenView({
+          screen_name: 'my_events_screen',
+        });
+      } catch (e) {
+        console.error(e);
+      }
     }, []),
   );
 

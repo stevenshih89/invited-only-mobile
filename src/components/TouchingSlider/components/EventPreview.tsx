@@ -44,7 +44,7 @@ const EventPreview: FC<{
   superJoin: () => void;
   handleAutoSwipeRight: () => void;
   loaderVisible: boolean;
-  isReview?: boolean
+  isReview?: boolean;
 }> = ({
   photos,
   date,
@@ -65,7 +65,7 @@ const EventPreview: FC<{
   address,
   hour,
   id,
-  isReview
+  isReview,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
@@ -76,7 +76,7 @@ const EventPreview: FC<{
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
   const [usersList, setUsersList] = useState([]);
   const numberPhotos = imagesUser?.length;
-  
+
   function calculateAge(birthDateString: string) {
     const parts = birthDateString.split('.');
     const birthDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
@@ -126,9 +126,13 @@ const EventPreview: FC<{
       if (isEditing) {
         getUsersList();
       }
-      analytics().logScreenView({
-        screen_name: 'event_creating_event_preview_screen',
-      });
+      try {
+        analytics().logScreenView({
+          screen_name: 'event_creating_event_preview_screen',
+        });
+      } catch (e) {
+        console.error(e);
+      }
     }, []),
   );
 

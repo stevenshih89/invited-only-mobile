@@ -181,9 +181,13 @@ const EventDetails: FC<EventDetailsProps> = ({
       setAddress(prevAddress ?? '');
       setMeetingSpot(prevMeetingSpot ?? '');
     }
-    analytics().logScreenView({
-      screen_name: 'event_creating_event_details_screen',
-    });
+    try {
+      analytics().logScreenView({
+        screen_name: 'event_creating_event_details_screen',
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
   const styles = useStyles();

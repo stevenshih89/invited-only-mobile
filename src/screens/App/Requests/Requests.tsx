@@ -191,9 +191,13 @@ const Requests: FC = (): ReactElement => {
   useFocusEffect(
     useCallback(() => {
       fetchUserInfo();
-      analytics().logScreenView({
-        screen_name: `${requestsScreen}`,
-      });
+      try {
+        analytics().logScreenView({
+          screen_name: `${requestsScreen}`,
+        });
+      } catch (e) {
+        console.error(e);
+      }
     }, []),
   );
 

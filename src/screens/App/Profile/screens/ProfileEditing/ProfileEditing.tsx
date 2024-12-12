@@ -58,10 +58,10 @@ const ProfileEditing: FC = (): ReactElement => {
   const [activeSmokeItem, setActiveSmokeItem] = useState<{id: number; title: string} | null>(null);
   const [showHeight, setShowHeight] = useState(false);
   const [height, setHeight] = useState<string | null>(null);
-  const [saveBtnInterestsVisible, setSaveBtnInterestsVisible] = useState(false)
-  const [oldListInterests, setOldListInterests] = useState<{}[]>([])
+  const [saveBtnInterestsVisible, setSaveBtnInterestsVisible] = useState(false);
+  const [oldListInterests, setOldListInterests] = useState<{}[]>([]);
   const [saveBtnBioVisible, setSaveBtnBiosVisible] = useState<boolean>(false);
-  const [oldBio, setOldBio] = useState('')
+  const [oldBio, setOldBio] = useState('');
 
   const bithdate = useMemo(() => `${month.length ? `${month}.` : ''}${day.length ? `${day}.` : ''}${year}`, [isVisibleBirthdayModal, year]);
   const heightsList = useMemo(() => Array.from({length: 61}, (_, i) => ({id: i, value: i + 150, label: `${i + 150} cm`})), []);
@@ -164,22 +164,24 @@ const ProfileEditing: FC = (): ReactElement => {
     {id: 6, title: 'Birthday Party', isSelected: false},
     {id: 7, title: 'Restaurant', isSelected: false},
   ]);
-  
+
   const areArraysEqual = () => {
-    if (listOfInterests.length !== oldListInterests.length) return false;
-    
-    return listOfInterests.every((item, index) => {
-        return item.isSelected === oldListInterests[index].isSelected
-    });
-  }
-  useEffect(() => {
-    const arrayEqual = areArraysEqual()    
-    if(!arrayEqual && listOfInterests.length && oldListInterests.length) {
-      setSaveBtnInterestsVisible(true)
-    } else {
-      setSaveBtnInterestsVisible(false)
+    if (listOfInterests.length !== oldListInterests.length) {
+      return false;
     }
-  },[listOfInterests, oldListInterests])
+
+    return listOfInterests.every((item, index) => {
+      return item.isSelected === oldListInterests[index].isSelected;
+    });
+  };
+  useEffect(() => {
+    const arrayEqual = areArraysEqual();
+    if (!arrayEqual && listOfInterests.length && oldListInterests.length) {
+      setSaveBtnInterestsVisible(true);
+    } else {
+      setSaveBtnInterestsVisible(false);
+    }
+  }, [listOfInterests, oldListInterests]);
 
   const uploadImage = async (imagePath: string | null, userId: string | null) => {
     if (imagePath === null) {
@@ -224,16 +226,16 @@ const ProfileEditing: FC = (): ReactElement => {
 
   const setDefaultBio = (userBio: string) => {
     setBio(userBio);
-    setOldBio(userBio)
+    setOldBio(userBio);
   };
 
   useEffect(() => {
-    if(oldBio !== bio) {
-      setSaveBtnBiosVisible(true)
+    if (oldBio !== bio) {
+      setSaveBtnBiosVisible(true);
     } else {
-      setSaveBtnBiosVisible(false)
+      setSaveBtnBiosVisible(false);
     }
-  },[bio, oldBio])
+  }, [bio, oldBio]);
 
   const fetchUserInfo = async () => {
     setInterestsLoading(true);
@@ -319,9 +321,13 @@ const ProfileEditing: FC = (): ReactElement => {
   useEffect(() => {
     fetchUserInfo();
     // // console.log('fetchUserInfo');
-    analytics().logScreenView({
-      screen_name: `${profileScreen}_${profileEditing}`,
-    });
+    try {
+      analytics().logScreenView({
+        screen_name: `${profileScreen}_${profileEditing}`,
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }, [setShowGender, setActiveGenderItem]);
 
   const fetchImages = async (user: any) => {
@@ -358,20 +364,20 @@ const ProfileEditing: FC = (): ReactElement => {
   };
 
   const checkSaveField = (saveField: string, status: boolean) => {
-    if(saveField === SAVE_FIELD_INTERESTS) {
+    if (saveField === SAVE_FIELD_INTERESTS) {
       setLoadingSaveInterests(status);
     }
-    if(saveField === SAVE_FIELD_BIO) {
+    if (saveField === SAVE_FIELD_BIO) {
       setLoadingSaveBio(status);
     }
-  }
+  };
 
-  const SAVE_FIELD_INTERESTS = 'interests'
-  const SAVE_FIELD_BIO = 'bio'
+  const SAVE_FIELD_INTERESTS = 'interests';
+  const SAVE_FIELD_BIO = 'bio';
 
   const saveUserInfo = async (title?: 'string', saveField?: string) => {
-    if(saveField) {
-      checkSaveField(saveField, true)
+    if (saveField) {
+      checkSaveField(saveField, true);
     }
     const user = auth().currentUser;
     if (user) {
@@ -394,8 +400,8 @@ const ProfileEditing: FC = (): ReactElement => {
           .collection('userInfo')
           .doc(user.uid)
           .update({
-            interests: saveField === SAVE_FIELD_INTERESTS? reqInterestsNew: reqInterestsOld,
-            bio: saveField === SAVE_FIELD_BIO? bio: oldBio,
+            interests: saveField === SAVE_FIELD_INTERESTS ? reqInterestsNew : reqInterestsOld,
+            bio: saveField === SAVE_FIELD_BIO ? bio : oldBio,
             work: {title: textNameWork, description: textDescription},
             showWork,
             date: `${day}.${month}.${year}`,
@@ -419,13 +425,13 @@ const ProfileEditing: FC = (): ReactElement => {
                 status: 'UPDATED',
               });
             } else {
-              if(saveField === SAVE_FIELD_INTERESTS) {
-                setSaveBtnInterestsVisible(false)
-                setOldListInterests(listOfInterests)
+              if (saveField === SAVE_FIELD_INTERESTS) {
+                setSaveBtnInterestsVisible(false);
+                setOldListInterests(listOfInterests);
               }
-              if(saveField === SAVE_FIELD_BIO) {
-                setSaveBtnBiosVisible(false)
-                setOldBio(bio)
+              if (saveField === SAVE_FIELD_BIO) {
+                setSaveBtnBiosVisible(false);
+                setOldBio(bio);
               }
               showToast('inviteMatch', 'Your profile is updated', 'success!', {
                 ownerPhoto: images[0].image,
@@ -439,11 +445,11 @@ const ProfileEditing: FC = (): ReactElement => {
       } catch (error: any) {
         // console.log(error?.message);
         // Alert.alert('Error', error.message || 'Something went wrong');
-        if(saveField) {
+        if (saveField) {
           checkSaveField(saveField, false);
         }
       }
-      if(saveField) {
+      if (saveField) {
         checkSaveField(saveField, false);
       }
     }
@@ -463,9 +469,23 @@ const ProfileEditing: FC = (): ReactElement => {
             style={{flex: 1, borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
             <MyPhotos images={images} setImages={setImages} />
             <MyInterests listOfInterests={listOfInterests} setListOfInterests={setListOfInterests} loading={interestsLoading} />
-            {saveBtnInterestsVisible && <Button title="Save" buttonStyle={{marginTop: 20}} onPress={() => saveUserInfo('', SAVE_FIELD_INTERESTS)} loading={loadingSaveInterests} />}
+            {saveBtnInterestsVisible && (
+              <Button
+                title="Save"
+                buttonStyle={{marginTop: 20}}
+                onPress={() => saveUserInfo('', SAVE_FIELD_INTERESTS)}
+                loading={loadingSaveInterests}
+              />
+            )}
             <MyBio bio={bio} setBio={setBio} />
-            {saveBtnBioVisible && <Button title="Save" buttonStyle={{marginTop: 20}} onPress={() => saveUserInfo('', SAVE_FIELD_BIO)} loading={loadingSaveBoi} />}
+            {saveBtnBioVisible && (
+              <Button
+                title="Save"
+                buttonStyle={{marginTop: 20}}
+                onPress={() => saveUserInfo('', SAVE_FIELD_BIO)}
+                loading={loadingSaveBoi}
+              />
+            )}
             <MyBasics
               // activeWorkItem={activeWorkItem}
               work={textNameWork}

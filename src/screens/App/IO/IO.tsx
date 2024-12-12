@@ -361,9 +361,13 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     getSuperInvites();
-    analytics().logScreenView({
-      screen_name: IOscreen,
-    });
+    try {
+      analytics().logScreenView({
+        screen_name: IOscreen,
+      });
+    } catch (e) {
+      console.error(e);
+    }
     RNUxcam.tagScreenName(IOscreen);
   }, []);
 
@@ -545,15 +549,23 @@ const IO: FC = (): JSX.Element => {
 
     const rejectUid = isHost ? uid : userInfo?.uid;
     if (isHost) {
-      analytics().logEvent(`${IOscreen}_reject_${inviteUser}`, {
-        hostUid: userHost?.uid,
-        guestUid: uid,
-      });
+      try {
+        analytics().logEvent(`${IOscreen}_reject_${inviteUser}`, {
+          hostUid: userHost?.uid,
+          guestUid: uid,
+        });
+      } catch (e) {
+        console.error(e);
+      }
     } else {
-      analytics().logEvent(`${IOscreen}_reject_${joinEvent}`, {
-        hostUid: eventId,
-        guestUid: userInfo?.uid,
-      });
+      try {
+        analytics().logEvent(`${IOscreen}_reject_${joinEvent}`, {
+          hostUid: eventId,
+          guestUid: userInfo?.uid,
+        });
+      } catch (e) {
+        console.error(e);
+      }
     }
     try {
       await firestore()
@@ -831,12 +843,12 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const getUserAcceptedEvent = (event: any) => {
-    if (event) {
-      const userAccepted = event.usersList.filter(item => item.usersList.status === ACCEPTED_STATUS);
-      return userAccepted.length;
-    }
-  };
+  // const getUserAcceptedEvent = (event: any) => {
+  //   if (event) {
+  //     const userAccepted = event.usersList.filter(item => item.usersList.status === ACCEPTED_STATUS);
+  //     return userAccepted.length;
+  //   }
+  // };
 
   const handleSuperJoin = () => {
     if (counterSuperInvites > 0) {

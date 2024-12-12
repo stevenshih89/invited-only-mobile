@@ -138,9 +138,13 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   useFocusEffect(
     useCallback(() => {
       fetchUserInfo();
-      analytics().logScreenView({
-        screen_name: chatsScreen,
-      });
+      try {
+        analytics().logScreenView({
+          screen_name: chatsScreen,
+        });
+      } catch (e) {
+        console.error(e);
+      }
     }, []),
   );
 

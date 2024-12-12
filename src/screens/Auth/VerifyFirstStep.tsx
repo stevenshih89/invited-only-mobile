@@ -188,13 +188,11 @@ const VerifySecondStep: FC = (): JSX.Element => {
 
       setOnBoarding(onBoardingWithFacePhoto);
 
-      InteractionManager.runAfterInteractions(() => {
-        analytics().logEvent('verify_selfie_submited', {
-          userId: currentUser?.uid,
-          name: onBoarding.find((item: any) => item.name)?.name,
-          screen: 'verify-first-step-selfie',
-          action: 'selfie-submited',
-        });
+      analytics().logEvent('verify_selfie_submited', {
+        userId: currentUser?.uid,
+        name: onBoarding.find((item: any) => item.name)?.name,
+        screen: 'verify-first-step-selfie',
+        action: 'selfie-submited',
       });
       navigation.navigate(photoVerifiedPath as never);
     } catch (error) {

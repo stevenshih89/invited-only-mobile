@@ -30,9 +30,13 @@ const Settings = () => {
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
 
   useEffect(() => {
-    analytics().logScreenView({
-      screen_name: settingsScreen,
-    });
+    try {
+      analytics().logScreenView({
+        screen_name: settingsScreen,
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
   const openLogoutModal = () => {
