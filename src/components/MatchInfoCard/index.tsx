@@ -32,6 +32,7 @@ interface MatchInfoCardI {
   imageEvent?: string;
   guestsInvited: number;
   isGuest: boolean;
+  isHost: boolean;
 }
 
 const MatchInfoCard: FC<MatchInfoCardI> = ({
@@ -51,6 +52,7 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
   imageEvent,
   guestsInvited,
   isGuest,
+  isHost
 }) => {
   const getUsersListAccepted = () => {
     const filter = usersList?.filter(item => item.status === 'invite_match');
@@ -300,7 +302,7 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
               </View>
             </View>
           </View>
-          {isGuest && (
+          {isHost && (
             <View
               style={{
                 borderWidth: 1,

@@ -378,6 +378,26 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             <MatchInfoCard
               isProfile={false}
               usersList={matchData.usersListHost}
+              accountType={matchData.accountTypeHost}
+              image={matchData.userHostImageUri}
+              imageEvent={matchData.eventImage}
+              online={matchData.onlineGuest}
+              premium={matchData.premium}
+              name={matchData.nameHost}
+              age={calculateAge(matchData.dateHost)}
+              confirmedAccount={matchData.accountConfirmedGuest}
+              joinEvents={matchData.joinEvents}
+              location={matchData.location}
+              showHeaderInfo={false}
+              guestsInvited={matchData.guestsInvited}
+              isHost={true}
+            />
+          </Animated.View>
+
+          <Animated.View style={[{position: 'absolute', alignSelf: 'center'}, animatedStyleCard2]}>
+            <MatchInfoCard
+              isProfile={false}
+              usersList={matchData.usersListHost}
               accountType={matchData.accountTypeGuest}
               image={matchData.imageUri}
               imageEvent={matchData.eventImage}
@@ -389,27 +409,8 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
               joinEvents={matchData.joinEvents}
               location={matchData.location}
               guestsInvited={matchData.guestsInvited}
-              showHeaderInfo={false}
-              isGuest={true}
-            />
-          </Animated.View>
-
-          <Animated.View style={[{position: 'absolute', alignSelf: 'center'}, animatedStyleCard2]}>
-            <MatchInfoCard
-              isProfile={false}
-              usersList={matchData.usersListHost}
-              accountType={matchData.accountTypeHost}
-              image={matchData.userHostImageUri}
-              imageEvent={matchData.eventImage}
-              online={matchData.onlineGuest}
-              premium={matchData.premium}
-              name={matchData.nameHost}
-              age={calculateAge(matchData.dateHost)}
-              confirmedAccount={matchData.accountConfirmedGuest}
-              joinEvents={matchData.joinEvents}
-              location={matchData.location}
               showHeaderInfo={true}
-              guestsInvited={matchData.guestsInvited}
+              isGuest={true}
             />
           </Animated.View>
           <View>
