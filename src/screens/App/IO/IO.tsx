@@ -1470,6 +1470,7 @@ const IO: FC = (): JSX.Element => {
               isPremium={accountPremium}
               activeEvent={activeEvent}
               location={item.location}
+              placeName={item.placeName}
               joinEvents={item.joinEvents}
               online={item.online}
               date={item.date}

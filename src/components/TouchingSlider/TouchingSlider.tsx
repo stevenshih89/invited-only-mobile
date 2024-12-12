@@ -448,7 +448,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       )}
       <View style={[styles.wrapperBio, {position: 'absolute', zIndex: 1000, bottom: isProfile ? 120 : 200}]}>
         <View style={styles.rowBioInfo}>
-          <Text style={styles.textName}>{name}</Text>
+          <Text style={styles.textName}>{name.length > 0? name.length: placeName}</Text>
           <View style={{marginLeft: 10}}>{(confirmedEvent || confirmedAccount) && <CheckStarWhite width={25} height={25} />}</View>
         </View>
       </View>
