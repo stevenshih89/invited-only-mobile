@@ -113,6 +113,8 @@ const IO: FC = (): JSX.Element => {
   const [currentEventInfo, setCurrentEventInfo] = useState(null);
   const [appState, setAppState] = useState(AppState.currentState);
 
+  const getCurdsEventRef = useRef(true);
+
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
   const {loadingCardsList, setLoadingCardsList, myEvents, loadingMyEvents, activeEvent, setActiveEvent} = useMyEvents();
@@ -1108,7 +1110,10 @@ const IO: FC = (): JSX.Element => {
                 ))}
               </View>
               <TouchableOpacity // @ts-ignore
-                onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: event?.uid}})}
+                onPress={() => {
+                  getCurdsEventRef.current = false
+                  navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: event?.uid}})
+                }}
                 style={styles.wrapperHostProfile}>
                 <View style={{flexDirection: 'row'}}>
                   {event?.hostImage && (
@@ -1809,7 +1814,7 @@ const IO: FC = (): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       if (!isHost && activeEventDate) {
-        console.warn('useFocusEffect_getCardsListForGuest', events?.length, lastVisibleRef.current, endReachedRef.current);
+        console.warn('useFocusEffect_getCardsListForGuest', events?.length, lastVisibleRef.current);
 
         lastVisibleRef.current = null;
         endReachedRef.current = false;
@@ -1820,9 +1825,10 @@ const IO: FC = (): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       if (userInfo?.uid) {
-        if (isHost && activeEvent?.id && !loadingMyEvents && !lastVisibleRef.current && !endReachedRef.current) {
+        if (isHost && activeEvent?.id && !loadingMyEvents && !lastVisibleRef.current && !endReachedRef.current && getCurdsEventRef.current) {
           getCardsListForHost();
         }
+        getCurdsEventRef.current = true
       }
     }, [userInfo?.uid, activeEvent?.id, loadingMyEvents]),
   );
@@ -1830,10 +1836,11 @@ const IO: FC = (): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       if (userInfo?.uid) {
-        if (!isHost && activeEventDate && !lastVisibleRef.current && !endReachedRef.current) {
+        if (!isHost && activeEventDate && !lastVisibleRef.current && !endReachedRef.current && getCurdsEventRef.current) {
           console.warn('useEffect_getCardsListForGuest', events?.length, lastVisibleRef.current, endReachedRef.current);
           getCardsListForGuest();
         }
+        getCurdsEventRef.current = true
       }
     }, [userInfo?.uid, activeEventDate]),
   );
@@ -1861,10 +1868,10 @@ const IO: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
-      if (userInfo?.uid && isHost) {
+      if (userInfo?.uid && isHost) {        
         fetchMyEvents();
       }
-      fetchUserInfo();
+        fetchUserInfo();
     }, [userInfo?.uid]),
   );
 
