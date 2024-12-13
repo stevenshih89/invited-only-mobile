@@ -132,7 +132,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   const navigation = useAppNavigation();
 
   const {counterSuperInvites} = useCounterSuperEvents();
-
+  
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
 
   const [userEventInfo, setUserEventInfo] = useState();
