@@ -11,7 +11,7 @@ import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {blackColor, lightRed1Color, whiteColor} from 'constants/colors';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
+import {commonStackPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations.ts';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
 import {useContext, useEffect, useRef, useState} from 'react';
@@ -31,6 +31,8 @@ import analytics from '@react-native-firebase/analytics';
 import {inviteUser, joinEvent, requestsScreen} from 'constants/analitycs';
 
 const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fetchHostRequests}: any) => {
+  console.log('item', item);
+  
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState<Partial<User.Info>>({accountType: 'host'});
@@ -244,7 +246,8 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
   };
 
   return (
-    <View
+    <TouchableOpacity
+      onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: item.uid}})}
       style={{
         paddingHorizontal: 7,
         borderRadius: 12,
@@ -395,7 +398,7 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
           </View>
         </FastImage>
       </TinderCard>
-    </View>
+    </TouchableOpacity>
   );
 };
 
