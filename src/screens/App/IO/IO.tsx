@@ -373,14 +373,14 @@ const IO: FC = (): JSX.Element => {
 
   const decrementSuperInvite = async (item: UserInfo, coinAnimationTimer = 0) => {
     try {
-      if (counterSuperInvites > 0) {
-        setTimeout(() => {
-          rotation.value = withTiming(0, {
-            duration: 1,
-            easing: Easing.inOut(Easing.ease),
-          });
-          setFlipped(prev => !prev);
-        }, 500);
+      // if (counterSuperInvites > 0) {
+        // setTimeout(() => {
+        //   rotation.value = withTiming(0, {
+        //     duration: 100,
+        //     easing: Easing.inOut(Easing.ease),
+        //   });
+        //   setFlipped(prev => !prev);
+        // }, 500);
         if (userInfo?.accountType === 'host') {
           setTimeout(() => {
             setIsVisibleSuperInvite(true);
@@ -390,7 +390,7 @@ const IO: FC = (): JSX.Element => {
           handleSuperJoin();
           await onInvite(item?.uid, item?.id, true);
         }
-        if (counterWeeklySuperInvitesRef.current > 0) {
+        if (counterWeeklySuperInvitesRef.current > 0) {          
           firestore()
             .collection('userInfo')
             .doc(userHost.uid)
@@ -407,13 +407,13 @@ const IO: FC = (): JSX.Element => {
             });
           counterSuperInvitesRef.current -= 1;
         }
-      }
+      // }
     } catch (error) {
       console.log('error supert invite', error);
     }
   };
 
-  const handleOpenSuperInvite = (item: UserInfo, coinAnimationTimer: number): void => {
+  const handleOpenSuperInvite = (item: UserInfo, coinAnimationTimer: number): void => {    
     setActiveSuperInviteUser(item);
     decrementSuperInvite(item, coinAnimationTimer);
     decrementCounterSuperInvites(1);
