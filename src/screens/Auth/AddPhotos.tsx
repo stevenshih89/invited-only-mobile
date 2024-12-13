@@ -300,7 +300,7 @@ const AddPhotos: FC = (): JSX.Element => {
                   </Text>
                 </View>
                 <View style={{width: '100%', flexDirection: 'row'}}>
-                  <View style={{width: '60%', height: screenWidth / 1.3, marginRight: 6}}>
+                  <View style={{width: '60%', height: RFValue(350, 932), marginRight: 6}}>
                     {photos[0].image ? (
                       <View style={{position: 'relative', flex: 1, borderRadius: 10, overflow: 'hidden'}}>
                         <ImageBackground
