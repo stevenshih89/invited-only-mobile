@@ -150,7 +150,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
                   onPress={() => setAccountType(HOST)}
                   style={{
                     width: '100%',
-                    height: screenHeight / 14,
+                    minHeight: RFValue(64, 932),
                     backgroundColor: accountType === HOST ? transparentWhite16Color : lightGray3Color,
                     borderRadius: 10,
                     borderColor: whiteColor,
@@ -173,7 +173,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
                   onPress={() => setAccountType(GUEST)}
                   style={{
                     width: '100%',
-                    height: screenHeight / 14,
+                    minHeight: RFValue(64, 932),
                     backgroundColor: accountType === GUEST ? transparentWhite16Color : lightGray3Color,
                     borderRadius: 10,
                     borderColor: whiteColor,

@@ -162,7 +162,7 @@ const EnterName: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 16}}>
-                <Button disabled={name.length < 3 || errorInputName} onPress={() => handleNext()} title="Continue" />
+                <Button buttonStyle={{height: RFValue(64, 932)}} disabled={name.length < 3 || errorInputName} onPress={() => handleNext()} title="Continue" />
               </View>
             </View>
           </SafeAreaView>
