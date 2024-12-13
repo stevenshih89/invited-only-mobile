@@ -1046,6 +1046,7 @@ const IO: FC = (): JSX.Element => {
               eventPhotos={event?.photos}
               photos={currUserPhotos}
               name={event?.name}
+              placeName={event?.placeName}
               onReject={() => handleReject({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
               onInvite={() => handleInvite({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
               superJoin={() => handleInvite({uid: event?.uid, id: event?.id, withSwipeAnimation: true, superInvite: true})}
