@@ -49,7 +49,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   matchData,
 }) => {
   const userHost = useUser((i: any) => i?.user);
-  
+
   const navigation = useAppNavigation();
 
   const handleCloseMatch = async () => {
@@ -97,7 +97,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
           'Connection',
           'Connection'.toUpperCase(),
           userHost,
-          JSON.stringify({path: 'chat', data: isEventHost ? chatDataGuest: chatDataHost})
+          JSON.stringify({path: 'chat', data: isEventHost ? chatDataGuest : chatDataHost}),
         );
       }
     }
@@ -121,20 +121,28 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
 
       const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === matchData.uidGuest)[0];
 
+      const userHostQuery = await firestore().collection('userInfo').doc(matchData.uidHost).get();
+      const userHostData = userHostQuery?.data();
+
       const activeEvent = messageCollection?.data()?.activeEvent;
 
       if (chatCheck) {
-        await navigation.navigate(commonStackPath, {
+        const name = userHost?.accountType === 'host' ? matchData?.nameGuest : userHostData?.name;
+        const image = userHost?.accountType === 'host' ? matchData?.imageUri : userHostData?.photos[0]?.image;
+        const uid = userHost?.accountType === 'host' ? matchData?.uidGuest : userHostData?.uid;
+        navigation.navigate(commonStackPath, {
           screen: chatCorrespondencePath,
           params: {
-            image: chatCheck?.avatar,
-            title: chatCheck?.name,
+            image: image,
+            title: name,
             online: false,
             messages: chatCheck?.messages,
             activeEvent: activeEvent,
             id: chatCheck?.id,
             superInvite: chatCheck?.superInvite,
             invitedStatus: chatCheck?.invitedStatus,
+            hostUid: userHostData?.uid,
+            uid: uid,
           },
         });
         handleCloseMatch();
@@ -158,17 +166,22 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
               chats: [...prevChats, newChats],
             });
 
-          await navigation.navigate(commonStackPath, {
+          const name = userHost?.accountType === 'host' ? matchData?.nameGuest : userHostData?.name;
+          const image = userHost?.accountType === 'host' ? matchData?.imageUri : userHostData?.photos[0]?.image;
+          const uid = userHost?.accountType === 'host' ? matchData?.uidGuest : userHostData?.uid;
+          navigation.navigate(commonStackPath, {
             screen: chatCorrespondencePath,
             params: {
-              image: newChats?.avatar,
-              title: newChats?.name,
+              image: image,
+              title: name,
               online: false,
               messages: [],
               activeEvent: activeEvent,
               id: newChats?.id,
               superInvite: newChats?.superInvite,
               invitedStatus: newChats?.invitedStatus,
+              hostUid: userHostData?.uid,
+              uid: uid,
             },
           });
 
@@ -205,17 +218,23 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
               chats: [newChats],
             });
 
-          await navigation.navigate(commonStackPath, {
+          const name = userHost?.accountType === 'host' ? matchData?.nameGuest : userHostData?.name;
+          const image = userHost?.accountType === 'host' ? matchData?.imageUri : userHostData?.photos[0]?.image;
+          const uid = userHost?.accountType === 'host' ? matchData?.uidGuest : userHostData?.uid;
+
+          navigation.navigate(commonStackPath, {
             screen: chatCorrespondencePath,
             params: {
-              image: newChats?.avatar,
-              title: newChats?.name,
+              image: image,
+              title: name,
               online: false,
               messages: [],
               activeEvent: id,
               id: newChats?.id,
               superInvite: newChats?.superInvite,
               invitedStatus: newChats?.invitedStatus,
+              hostUid: userHostData?.uid,
+              uid: uid,
             },
           });
 

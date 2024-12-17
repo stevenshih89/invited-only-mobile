@@ -32,7 +32,7 @@ const ModalEventLocked: FC<{
           <View style={styles.lockDescWr}>
             <Text style={styles.lockedTitle}>Event Under Review</Text>
             <Text style={styles.lockedSubtitle}>
-              Your event is under review. Thank you for your patience. You will be notified if your account is accepted
+              Your event is under review. Thank you for your patience. You will be notified if your event is accepted
             </Text>
           </View>
         </View>

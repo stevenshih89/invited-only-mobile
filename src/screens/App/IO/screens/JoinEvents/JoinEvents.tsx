@@ -286,7 +286,7 @@ const JoinEvents = ({navigation}: any) => {
 
   const handleCloseMatch = (): void => {
     setIsVisibleMatch(false);
-    showToast('inviteMatch', 'Say, Hi! 👋', 'New invite match!', {ownerPhoto: ownerEventUserPhoto, status: 'INVITE MATCH'});
+    showToast('inviteMatch', 'Say, Hi! 👋', 'New Connection!', {ownerPhoto: ownerEventUserPhoto, status: 'INVITE MATCH'});
   };
 
   return (

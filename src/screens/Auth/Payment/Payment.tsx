@@ -13,7 +13,6 @@ import {profilePath, tutorialFlowPath} from 'constants/pathLocations.ts';
 import {
   backgroundGradientColors,
   blackColor,
-  gray1Color,
   lightGray2Color,
   lightGray4Color,
   lightGray5Color,
@@ -34,7 +33,6 @@ import CloseIcon from 'assets/images/icons/close.svg';
 import UnlimitedIcon from 'assets/images/icons/unlimited-new.svg';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {screenWidth} from 'constants/common';
 import {SvgProps} from 'react-native-svg';
 import Purchases, {PurchasesPackage} from 'react-native-purchases';
 import Loader from 'components/Modal/ModalLoader/Loader';
@@ -164,7 +162,7 @@ const Payment: FC = (): JSX.Element => {
   const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions);
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
 
-  const updateUser = async () => {
+  const updateUser = async (subscriptionId: string, expirationDate: string) => {
     const user = auth().currentUser;
     if (user) {
       try {
@@ -172,6 +170,10 @@ const Payment: FC = (): JSX.Element => {
           accountPremium: true,
           accountConfirmed: true,
           accountReviewed: true,
+          activeSubscription: {
+            subscriptionId,
+            expirationDate,
+          },
         });
       } catch (error: any) {
         console.log('error user premium update', error);
@@ -182,10 +184,6 @@ const Payment: FC = (): JSX.Element => {
   const handleNext = () => {
     navigation.navigate(tutorialFlowPath as never);
     navigation.navigate(profilePath as never);
-  };
-
-  const convertProgress = () => {
-    return ((spotsLeft - minProgress) / (maxProgress - minProgress)) * (1 - 0) + 0;
   };
 
   useEffect(() => {
@@ -217,6 +215,8 @@ const Payment: FC = (): JSX.Element => {
       const {customerInfo} = await Purchases.purchasePackage(pack);
 
       const activeSubscription = await getActiveSubscription();
+      console.warn('activeSubscription', activeSubscription);
+
       setCurrentSubscriptions(activeSubscription);
 
       setSuccessfulPay(true);
@@ -224,7 +224,11 @@ const Payment: FC = (): JSX.Element => {
         setLoaderVisible(false);
         showHostPremium();
       }, 1000);
-      updateUser();
+
+      const subscriptionId = customerInfo.activeSubscriptions[0];
+      const expirationDate = customerInfo.allExpirationDates[subscriptionId];
+
+      updateUser(subscriptionId, expirationDate);
     } catch (e) {
       console.error('error pay', e);
 
@@ -279,6 +283,7 @@ const Payment: FC = (): JSX.Element => {
     const formattedPrice = item.fullPrice;
     const isCurrentSubscription = currentSubscriptions.activeSubscriptions.includes(item.identifier);
     console.warn('isCurrentSubscription', isCurrentSubscription);
+    console.warn('ac', currentSubscriptions.activeSubscriptions);
 
     // if (item.identifier === 'io_59_1w') {
     //   if (

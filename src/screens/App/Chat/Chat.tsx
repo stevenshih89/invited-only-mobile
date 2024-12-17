@@ -35,6 +35,7 @@ import {getUserData} from 'helpers/getUserData';
 import analytics from '@react-native-firebase/analytics';
 import {chatsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
+import {EventData} from 'src/types/event';
 
 type ItemProps = {
   title: string;
@@ -78,7 +79,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const [messages, setMessages] = useState([]);
   const [DATAEventsJoining, setDATAEventsJoining] = useState([]);
   const [userInfo, setUserInfo] = useState<any>({});
-  const [eventData, setEventData] = useState<any>();
+  const [eventData, setEventData] = useState<EventData>();
 
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
@@ -269,7 +270,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             <View style={{marginLeft: 15}}>
               <View style={styles.fdrAiC}>
                 <Text style={styles.title}>{title}</Text>
-
                 <View style={{backgroundColor: statusColor, borderRadius: 4}}>
                   <View style={[handleCheckTypeInvitedStyles(status)]}>
                     <Text style={styles.textStatusInvite}>{handleCheckTypeInvitedText(status)}</Text>
@@ -353,7 +353,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       case APPROVED_STATUS:
         return 'Approved'.toUpperCase();
       case INVITE_MATCH_STATUS:
-        return 'Invite Match'.toUpperCase();
+        return 'New Connection'.toUpperCase();
       case ACCEPTED_STATUS:
         return 'Accepted'.toUpperCase();
       case CANCEL_STATUS:
@@ -519,11 +519,11 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
             <Text
               style={{
                 color: whiteColor,
-                fontFamily: Satoshi700,
+                fontFamily: Satoshi500,
                 fontSize: RFValue(18, 812),
                 textAlign: 'center',
               }}>
-              Join Requests: {eventData?.requestsList?.length}
+              {eventData?.name || eventData?.placeName}
             </Text>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>

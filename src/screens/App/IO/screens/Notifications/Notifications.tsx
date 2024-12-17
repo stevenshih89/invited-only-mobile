@@ -2,7 +2,14 @@ import {FlatList, Image, ImageBackground, Text, TouchableOpacity, View} from 're
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import ClockOrange from 'assets/images/icons/clock-orange.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {chatCorrespondencePath, commonStackPath, eventActiveInfoPath, invitationCodePath, myEventsPath, requestsPath} from 'constants/pathLocations';
+import {
+  chatCorrespondencePath,
+  commonStackPath,
+  eventActiveInfoPath,
+  invitationCodePath,
+  myEventsPath,
+  requestsPath,
+} from 'constants/pathLocations';
 import useStyles from './styles';
 import {FC, ReactElement, useCallback, useEffect, useState} from 'react';
 import {useUser} from '../../../../../store/userStore';
@@ -13,7 +20,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast';
 import FastImage from 'react-native-fast-image';
-import { handleCreateChat } from 'helpers/chat';
+import {handleCreateChat} from 'helpers/chat';
 
 interface Notifications {
   body: string;
@@ -92,7 +99,7 @@ const Notifications: FC = (): ReactElement => {
 
   const handleNavigate = async (path: string, data: any) => {
     console.log('data', data);
-    
+
     switch (path) {
       case 'invitationCode':
         navigation.navigate(commonStackPath, {screen: invitationCodePath});
@@ -126,7 +133,7 @@ const Notifications: FC = (): ReactElement => {
       default:
         break;
     }
-  }
+  };
 
   return (
     <View style={styles.root}>
@@ -193,7 +200,9 @@ const Notifications: FC = (): ReactElement => {
                     </Text>
                   </View>
                 </View>
-                <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi400}}>{item.body}</Text>
+                {item.body.toLowerCase() !== 'invited only' && (
+                  <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi400}}>{item.body}</Text>
+                )}
               </View>
             </View>
             <View

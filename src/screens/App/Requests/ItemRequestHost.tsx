@@ -32,7 +32,7 @@ import {inviteUser, joinEvent, requestsScreen} from 'constants/analitycs';
 
 const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fetchHostRequests}: any) => {
   console.log('item', item);
-  
+
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState<Partial<User.Info>>({accountType: 'host'});
@@ -204,7 +204,7 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
         .doc(activeEvent?.id)
         .update({
           requestsList: firestore.FieldValue.arrayRemove(userItem),
-          rejectsList: firestore.FieldValue.arrayUnion({uid: userItem?.uid}),
+          rejectsList: firestore.FieldValue.arrayUnion(userItem?.uid),
         });
       analytics().logEvent(`${requestsScreen}_reject_${inviteUser}`, {
         eventId: activeEvent?.id,

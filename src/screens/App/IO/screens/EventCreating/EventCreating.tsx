@@ -343,6 +343,7 @@ const EventCreating: FC = () => {
         placeName: placeName,
         id: uid,
         uid: user?.uid,
+        rejectsList: [],
         requestsList: [],
         usersList: [],
         statusEvent: false,

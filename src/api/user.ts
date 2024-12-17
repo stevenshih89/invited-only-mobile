@@ -20,10 +20,6 @@ export const getUsersForEvent = async ({
     .where('accountType', '==', 'guest')
     .where('accountConfirmed', '==', true);
 
-  if (excludeUids?.length > 0) {
-    query = query.where('uid', 'not-in', excludeUids);
-  }
-
   if (limit !== null) {
     query = query.limit(limit);
   }
@@ -32,13 +28,30 @@ export const getUsersForEvent = async ({
     query = query.startAfter(lastVisible);
   }
 
-  if (male > 0 && female > 0) {
-    return query.get();
+  let results: any[] = [];
+  if (excludeUids?.length > 0) {
+    const batchSize = 10;
+    for (let i = 0; i < excludeUids.length; i += batchSize) {
+      const batch = excludeUids.slice(i, i + batchSize);
+      let batchQuery = query.where('uid', 'not-in', batch);
+
+      if (male > 0 && female > 0) {
+        results.push(...(await batchQuery.get()).docs);
+      } else if (male > 0) {
+        results.push(...(await batchQuery.where('gender', '==', 'man').get()).docs);
+      } else if (female > 0) {
+        results.push(...(await batchQuery.where('gender', '==', 'woman').get()).docs);
+      }
+    }
+  } else {
+    if (male > 0 && female > 0) {
+      results = (await query.get()).docs;
+    } else if (male > 0) {
+      results = (await query.where('gender', '==', 'man').get()).docs;
+    } else if (female > 0) {
+      results = (await query.where('gender', '==', 'woman').get()).docs;
+    }
   }
-  if (male > 0) {
-    return query.where('gender', '==', 'man').get();
-  }
-  if (female > 0) {
-    return query.where('gender', '==', 'woman').get();
-  }
+
+  return results;
 };

@@ -243,7 +243,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
               </View>
             </View>
           )}
-          {findAcceptedGuest?.length >= allPeople && (
+          {findAcceptedGuest?.length >= allPeople && user?.accountType === 'host' && (
             <FullEvent
               activeEvent={item}
               text={`Event is full: ${findAcceptedGuest?.length}/${allPeople} guests invited`}

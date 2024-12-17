@@ -199,7 +199,20 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             findChat[0].newMessagesGuest = 1;
           }
         }
+        const name = userData?.accountType === 'host' ? title : userData?.name;
+        const image = userData?.accountType === 'host' ? image : userData?.photos[0]?.image;
+        const newUid = userData?.accountType === 'host' ? uid : userData?.uid;
         setMessageUser('');
+
+        console.warn({
+          id: id,
+          uid: newUid,
+          hostUid: hostUid,
+          name: name,
+          image: image,
+          activeEvent: activeEvent,
+        });
+
         await doc.update({
           chats: [...allChats],
         });
@@ -215,6 +228,17 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             'message',
             'Message'.toUpperCase(),
             user,
+            JSON.stringify({
+              path: 'chat',
+              data: {
+                id: id,
+                uid: newUid,
+                hostUid: hostUid,
+                name: name,
+                image: image,
+                activeEvent: activeEvent,
+              },
+            }),
           );
         }
       }

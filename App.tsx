@@ -4,7 +4,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Main from 'src';
 import 'react-native-gesture-handler';
 import {blackColor} from 'constants/colors';
-import Purchases from 'react-native-purchases';
+import Purchases, {CustomerInfo} from 'react-native-purchases';
 import {NavigationContainer} from '@react-navigation/native';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
 import {getActiveSubscription} from 'src/api/purchase';
@@ -13,6 +13,7 @@ import firestore from '@react-native-firebase/firestore';
 import RNUxcam from 'react-native-ux-cam';
 import {requestTrackingPermission} from 'react-native-tracking-transparency';
 import {Settings} from 'react-native-fbsdk-next';
+import moment from 'moment';
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
@@ -29,24 +30,71 @@ const App: FC = (): JSX.Element => {
 
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
 
-  const handleUpdateUserSubscriptions = async (activeSubscription: any[]) => {
+  const handleUpdateUserSubscriptions = async (activeSubscription: CustomerInfo | null) => {
     try {
       const currentUser = auth().currentUser;
-      console.warn('currentUser', currentUser);
 
       if (!currentUser?.uid) {
         return;
       }
 
-      const isPremium =
-        activeSubscription?.includes('io_59_1w') || activeSubscription?.includes('io_29_3m') || activeSubscription?.includes('io_99_1m');
-      await firestore().collection('userInfo').doc(currentUser?.uid).update({
-        accountPremium: isPremium,
-      });
+      const userQuery = await firestore().collection('userInfo').doc(currentUser?.uid).get();
+      const userData = userQuery.data();
+
+      if (!userData) {
+        return;
+      }
+
+      const userDataSubscriptionExpirationDate = userData?.activeSubscription?.expirationDate;
+      const userDataSubscriptionId = userData?.activeSubscription?.subscriptionId;
+      const serverSubscriptionId = activeSubscription?.activeSubscriptions?.[0];
+      const serverSubscriptionExpirationDate = activeSubscription?.allExpirationDates?.[serverSubscriptionId || ''];
+
+      let newExpirationDate = '';
+      let newSubscriptionId = '';
+
+      const currentDate = moment().toDate();
+      let isExpiredSubscription = true;
+
+      if (userDataSubscriptionExpirationDate) {
+        if (moment(userDataSubscriptionExpirationDate).isAfter(currentDate)) {
+          newExpirationDate = userDataSubscriptionExpirationDate;
+          newSubscriptionId = userDataSubscriptionId;
+          isExpiredSubscription = false;
+        } else if (
+          serverSubscriptionExpirationDate &&
+          serverSubscriptionId &&
+          moment(serverSubscriptionExpirationDate).isAfter(currentDate)
+        ) {
+          newExpirationDate = serverSubscriptionExpirationDate;
+          newSubscriptionId = serverSubscriptionId;
+          isExpiredSubscription = false;
+        }
+      } else if (
+        serverSubscriptionExpirationDate &&
+        serverSubscriptionId &&
+        moment(serverSubscriptionExpirationDate).isAfter(currentDate)
+      ) {
+        newExpirationDate = serverSubscriptionExpirationDate;
+        newSubscriptionId = serverSubscriptionId;
+        isExpiredSubscription = false;
+      }
+
+      await firestore()
+        .collection('userInfo')
+        .doc(currentUser?.uid)
+        .update({
+          accountPremium: !isExpiredSubscription,
+          activeSubscription: {
+            subscriptionId: newSubscriptionId || '',
+            expirationDate: newExpirationDate || '',
+          },
+        });
     } catch (e) {
       console.error('handleUpdateUserSubscriptions:error ', e);
     }
   };
+
   const initializeTracking = async () => {
     const trackingStatus = await requestTrackingPermission();
     if (trackingStatus === 'authorized') {
@@ -66,7 +114,7 @@ const App: FC = (): JSX.Element => {
 
     const getSubscription = async () => {
       const activeSubscription = await getActiveSubscription();
-      await handleUpdateUserSubscriptions(activeSubscription.activeSubscriptions);
+      await handleUpdateUserSubscriptions(activeSubscription);
       setCurrentSubscriptions(activeSubscription);
     };
     getSubscription();

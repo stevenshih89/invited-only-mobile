@@ -113,11 +113,9 @@ const IO: FC = (): JSX.Element => {
   const [currentEventInfo, setCurrentEventInfo] = useState(null);
   const [appState, setAppState] = useState(AppState.currentState);
 
-  const getCurdsEventRef = useRef(true);
-
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
-  const {loadingCardsList, setLoadingCardsList, myEvents, loadingMyEvents, activeEvent, setActiveEvent} = useMyEvents();
+  const {loadingCardsList, setLoadingCardsList, myEvents, loadingMyEvents, activeEvent, setActiveEvent, setMyEvents} = useMyEvents();
 
   const {activeEventDate} = useContext(EventsDate);
 
@@ -376,46 +374,46 @@ const IO: FC = (): JSX.Element => {
   const decrementSuperInvite = async (item: UserInfo, coinAnimationTimer = 0) => {
     try {
       // if (counterSuperInvites > 0) {
-        // setTimeout(() => {
-        //   rotation.value = withTiming(0, {
-        //     duration: 100,
-        //     easing: Easing.inOut(Easing.ease),
-        //   });
-        //   setFlipped(prev => !prev);
-        // }, 500);
-        if (userInfo?.accountType === 'host') {
-          setTimeout(() => {
-            setIsVisibleSuperInvite(true);
-          }, coinAnimationTimer);
-          await onInvite(item?.uid, item?.id, true);
-        } else {
-          handleSuperJoin();
-          await onInvite(item?.uid, item?.id, true);
-        }
-        if (counterWeeklySuperInvitesRef.current > 0) {          
-          firestore()
-            .collection('userInfo')
-            .doc(userHost.uid)
-            .update({
-              weeklySuperInvites: counterWeeklySuperInvitesRef.current - 1,
-            });
-          counterWeeklySuperInvitesRef.current -= 1;
-        } else if (counterSuperInvitesRef.current > 0) {
-          firestore()
-            .collection('userInfo')
-            .doc(userHost.uid)
-            .update({
-              superInvites: counterSuperInvitesRef.current - 1,
-            });
-          counterSuperInvitesRef.current -= 1;
-        }
+      // setTimeout(() => {
+      //   rotation.value = withTiming(0, {
+      //     duration: 100,
+      //     easing: Easing.inOut(Easing.ease),
+      //   });
+      //   setFlipped(prev => !prev);
+      // }, 500);
+      if (userInfo?.accountType === 'host') {
+        setTimeout(() => {
+          setIsVisibleSuperInvite(true);
+        }, coinAnimationTimer);
+        await onInvite(item?.uid, item?.id, true);
+      } else {
+        handleSuperJoin();
+        await onInvite(item?.uid, item?.id, true);
+      }
+      if (counterWeeklySuperInvitesRef.current > 0) {
+        firestore()
+          .collection('userInfo')
+          .doc(userHost.uid)
+          .update({
+            weeklySuperInvites: counterWeeklySuperInvitesRef.current - 1,
+          });
+        counterWeeklySuperInvitesRef.current -= 1;
+      } else if (counterSuperInvitesRef.current > 0) {
+        firestore()
+          .collection('userInfo')
+          .doc(userHost.uid)
+          .update({
+            superInvites: counterSuperInvitesRef.current - 1,
+          });
+        counterSuperInvitesRef.current -= 1;
+      }
       // }
     } catch (error) {
       console.log('error supert invite', error);
     }
   };
 
-  const handleOpenSuperInvite = (item: UserInfo, coinAnimationTimer: number): void => {    
+  const handleOpenSuperInvite = (item: UserInfo, coinAnimationTimer: number): void => {
     setActiveSuperInviteUser(item);
     decrementSuperInvite(item, coinAnimationTimer);
     decrementCounterSuperInvites(1);
@@ -524,19 +522,21 @@ const IO: FC = (): JSX.Element => {
         }
 
         const data = querySnapshot.docs.map(doc => doc.data() as EventData);
-        const filteredData = data.filter((event: EventData) => {
+        const filteredEvents = data.filter(event => {
           if (event?.date && event?.hour) {
-            const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+            const adjustedDate = moment(`${event?.date}, ${event?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
             if (adjustedDate.isBefore(moment())) {
               return false;
             }
+            return true;
           }
-          return true;
+          return false;
         });
-        if (!filteredData.length) {
+        if (!filteredEvents.length) {
           setLoadingCardsList(false);
           return;
         }
+        setMyEvents(filteredEvents);
       } catch (error: any) {
         setLoadingCardsList(false);
         console.error(error);
@@ -574,7 +574,7 @@ const IO: FC = (): JSX.Element => {
         .collection('Events')
         .doc(activeEventId)
         .update({
-          rejectsList: firestore.FieldValue.arrayUnion({uid: rejectUid}),
+          rejectsList: firestore.FieldValue.arrayUnion(rejectUid),
         });
 
       setTimeout(() => {
@@ -962,7 +962,7 @@ const IO: FC = (): JSX.Element => {
         excludeUids: uniqueBlockedUsers,
       });
 
-      if (!eventsQuery || !('docs' in eventsQuery) || eventsQuery.empty) {
+      if (!eventsQuery || !('docs' in eventsQuery)) {
         setEvents([]);
         setLoadingCardsList(false);
         endReachedRef.current = true;
@@ -980,23 +980,23 @@ const IO: FC = (): JSX.Element => {
       filteredEvents = eventsQuery?.docs
         ?.map(doc => doc.data() as EventData)
         ?.filter(event => {
-          if (event?.requestsList?.find((j: Event.User) => j?.uid === user?.uid)) {
+          if (event?.requestsList?.find((requestedUser: Event.User) => requestedUser?.uid === user?.uid)) {
             return false;
           }
           if (
             event?.usersList?.find(
-              (j: Event.User) =>
-                j?.uid === user?.uid &&
-                (j?.status === INVITE_MATCH_STATUS ||
-                  j?.status === APPROVED_STATUS ||
-                  j?.status === ACCEPTED_STATUS ||
-                  j?.status === NOT_ACCEPTED_STATUS ||
-                  j?.status === CANCEL_STATUS),
+              (invitedUser: Event.User) =>
+                invitedUser?.uid === user?.uid &&
+                (invitedUser?.status === INVITE_MATCH_STATUS ||
+                  invitedUser?.status === APPROVED_STATUS ||
+                  invitedUser?.status === ACCEPTED_STATUS ||
+                  invitedUser?.status === NOT_ACCEPTED_STATUS ||
+                  invitedUser?.status === CANCEL_STATUS),
             )
           ) {
             return false;
           }
-          if (event?.rejectsList?.find((j: Event.RejectUser) => j?.uid === userInfo?.uid)) {
+          if (event?.rejectsList?.find((rejectedUid: string) => rejectedUid === user?.uid)) {
             return false;
           }
           if (event?.date && event?.hour) {
@@ -1124,8 +1124,7 @@ const IO: FC = (): JSX.Element => {
               </View>
               <TouchableOpacity // @ts-ignore
                 onPress={() => {
-                  getCurdsEventRef.current = false
-                  navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: event?.uid}})
+                  navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: event?.uid}});
                 }}
                 style={styles.wrapperHostProfile}>
                 <View style={{flexDirection: 'row'}}>
@@ -1415,10 +1414,9 @@ const IO: FC = (): JSX.Element => {
       const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
       const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
 
-      const uniqueEventIds = getActualDataEvent?.rejectsList?.map((j: Event.RejectUser) => j?.uid) || [];
       const uniqueUsersListIds = getActualDataEvent?.usersList?.map((j: Event.User) => j?.uid) || [];
       const allUniqueIds = [
-        ...new Set([...blockedUsersList, ...blockedMeUsersList, ...uniqueEventIds, ...uniqueUsersListIds, userInfo?.uid]),
+        ...new Set([...blockedUsersList, ...blockedMeUsersList, ...getActualDataEvent?.rejectsList, ...uniqueUsersListIds, userInfo?.uid]),
       ];
 
       users = await getUsersForEvent({
@@ -1432,23 +1430,23 @@ const IO: FC = (): JSX.Element => {
       console.error(error);
     }
 
-    if (!users || !('docs' in users) || users?.empty) {
+    if (!users) {
       setLoadingCardsList(false);
       setEvents([]);
       endReachedRef.current = true;
       return;
     }
 
-    if (users?.docs?.length > 0) {
-      lastVisibleRef.current = users.docs[users.docs.length - 1];
+    if (users?.length > 0) {
+      lastVisibleRef.current = users[users.length - 1];
     }
 
-    if (users.docs.length < EVENTS_LOADING_LIMIT) {
+    if (users.length < EVENTS_LOADING_LIMIT) {
       endReachedRef.current = true;
     }
 
     const data: any[] = [];
-    const usersList = users?.docs.map(doc => doc.data());
+    const usersList = users?.map(doc => doc.data());
 
     usersList?.map((item: UserInfo, index: number): void => {
       const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} = item;
@@ -1839,10 +1837,9 @@ const IO: FC = (): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       if (userInfo?.uid) {
-        if (isHost && activeEvent?.id && !loadingMyEvents && !lastVisibleRef.current && !endReachedRef.current && getCurdsEventRef.current) {
+        if (isHost && activeEvent?.id && !loadingMyEvents && !lastVisibleRef.current && !endReachedRef.current) {
           getCardsListForHost();
         }
-        getCurdsEventRef.current = true
       }
     }, [userInfo?.uid, activeEvent?.id, loadingMyEvents]),
   );
@@ -1850,11 +1847,10 @@ const IO: FC = (): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       if (userInfo?.uid) {
-        if (!isHost && activeEventDate && !lastVisibleRef.current && !endReachedRef.current && getCurdsEventRef.current) {
+        if (!isHost && activeEventDate && !lastVisibleRef.current && !endReachedRef.current) {
           console.warn('useEffect_getCardsListForGuest', events?.length, lastVisibleRef.current, endReachedRef.current);
           getCardsListForGuest();
         }
-        getCurdsEventRef.current = true
       }
     }, [userInfo?.uid, activeEventDate]),
   );
@@ -1882,10 +1878,10 @@ const IO: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
-      if (userInfo?.uid && isHost) {        
+      if (userInfo?.uid && isHost) {
         fetchMyEvents();
       }
-        fetchUserInfo();
+      fetchUserInfo();
     }, [userInfo?.uid]),
   );
 

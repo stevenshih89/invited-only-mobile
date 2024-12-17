@@ -207,7 +207,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
         .doc(list?.id)
         .update({
           usersList: firestore.FieldValue.arrayRemove(userItem),
-          rejectsList: firestore.FieldValue.arrayUnion({uid: userItem.uid}),
+          rejectsList: firestore.FieldValue.arrayUnion(userItem.uid),
         });
       analytics().logEvent(`${requestsScreen}_reject_${joinEvent}`, {
         eventId: list?.id,
@@ -331,7 +331,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
                 )}
                 <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} style={styles.linearGradient}>
                   <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                       onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid}})}
                       style={{flexDirection: 'row'}}>
                       <View style={{alignSelf: 'flex-start'}}>
