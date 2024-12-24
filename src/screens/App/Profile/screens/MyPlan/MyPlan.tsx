@@ -9,14 +9,14 @@ import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from './styles';
-import {Satoshi400, Satoshi500, Satoshi700, Satoshi700Italic} from 'constants/fonts';
-import {black2Color90, blackColor, lightGray5Color, transparentGray90Color, whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500, Satoshi700Italic} from 'constants/fonts';
+import {blackColor, lightGray5Color, transparentGray90Color, whiteColor} from 'constants/colors';
 import {manageSubscriptionPath, paymentPath, superInvitePayPath} from 'constants/pathLocations';
 
 //import images
 import CheckIcon from 'assets/images/icons/check.svg';
 import ArrowRightIcon from 'assets/images/icons/arrow-right-balck.svg';
-import ArrowRightWhiteIcon from 'assets/images/icons/arrow-right.svg';
+
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import FlashIcon from 'assets/images/icons/flash-white.svg';
 import FlashFillIcon from 'assets/images/icons/flash-filled.svg';
@@ -30,7 +30,7 @@ import Loader from '../../../../../components/Modal/ModalLoader/Loader';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
 import {SvgProps} from 'react-native-svg';
 import {screenHeight} from 'constants/common';
-
+import Config from 'react-native-config';
 interface WhatGetItem {
   title: string;
   description: string;
@@ -56,6 +56,7 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
 };
 
 const MyPlan = () => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [loaderVisible, setLoaderVisible] = useState(false);
   const [userInfo, setUserInfo] = useState<any>({});
 
@@ -112,7 +113,7 @@ const MyPlan = () => {
 
     if (user) {
       try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }

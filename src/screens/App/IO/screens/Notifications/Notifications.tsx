@@ -20,7 +20,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast';
 import FastImage from 'react-native-fast-image';
-import {handleCreateChat} from 'helpers/chat';
+import Config from 'react-native-config';
 
 interface Notifications {
   body: string;
@@ -35,20 +35,21 @@ interface Notifications {
 type NotificationImage = {[key: string]: string};
 
 const fetchImage = async (uid: string): Promise<string> => {
-  const dataDoc = await firestore().collection('userInfo').doc(uid).get();
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const dataDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
   const photoUri = dataDoc?.data()?.photos?.[0]?.image || '';
   return photoUri;
 };
 
 const fetchNotifications = async (uid: string): Promise<Notifications[]> => {
-  const notificationsQuery = await firestore().collection('userInfo').doc(uid).collection('notifications').get();
+  const notificationsQuery = await firestore().collection(apiUserInfoCollection).doc(uid).collection('notifications').get();
   const notifications = notificationsQuery.docs.map(doc => doc.data()) as Notifications[];
   return notifications.reverse();
 };
 
 const clearNotifications = async (uid: string): Promise<void> => {
   await firestore()
-    .collection('userInfo')
+    .collection(apiUserInfoCollection)
     .doc(uid)
     .collection('notifications')
     .get()
@@ -76,14 +77,14 @@ const Notifications: FC = (): ReactElement => {
   useEffect(() => {
     const fetchImages = async () => {
       const imagesMap: NotificationImage = {};
-      for (const notification of notifications) {        
-        if(notification.image) {
-          imagesMap[notification.uid] = notification.image
+      for (const notification of notifications) {
+        if (notification.image) {
+          imagesMap[notification.uid] = notification.image;
         } else {
           const photoUri = await fetchImage(notification.uid);
           imagesMap[notification.uid] = photoUri;
         }
-      }      
+      }
       setImages(imagesMap);
     };
 

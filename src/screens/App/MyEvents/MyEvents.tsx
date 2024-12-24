@@ -45,7 +45,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import {calculateAge} from 'helpers/calculateAge';
 import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
+import Config from 'react-native-config';
+
 const MyEvents: FC<any> = ({navigation}) => {
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
   const MY_EVENTS = 'my_events';
 
@@ -129,7 +133,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     let users: Object[] = [];
 
     const promises = usersList.map(async item => {
-      const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
+      const userInfo = await firestore().collection(apiUserInfoCollection).doc(item?.uid).get();
       return {uid: userInfo?.data()?.uid, token: userInfo?.data()?.fcmToken};
     });
 
@@ -191,7 +195,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
     if (user) {
       try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
@@ -217,7 +221,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
   const fetchHostInfo = async (hostUid: string) => {
     try {
-      const hostDoc = await firestore().collection('userInfo').doc(hostUid).get();
+      const hostDoc = await firestore().collection(apiUserInfoCollection).doc(hostUid).get();
       if (hostDoc.exists) {
         setHostInfo(hostDoc.data());
       }
@@ -272,7 +276,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
   const handleAcceptInvitation = async () => {
     let list = activeModalEvent?.list;
-    const eventQuerySnapshot = await firestore().collection('Events').doc(list?.id).get();
+    const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(list?.id).get();
     const eventDataList = eventQuerySnapshot.data();
     if (!eventDataList?.usersList.length) {
       return;
@@ -289,14 +293,14 @@ const MyEvents: FC<any> = ({navigation}) => {
         }
         return userItem;
       });
-      await firestore().collection('Events').doc(list?.id).update({
+      await firestore().collection(apiEventsCollection).doc(list?.id).update({
         usersList: updatedUsersList,
       });
       showToast('inviteMatch', `See you at ${eventDataList?.date}`, 'You joined to this event!', {
         ownerPhoto: eventDataList?.hostImage,
         status: 'Joined'.toUpperCase(),
       });
-      const getDoc = await firestore().collection('userInfo').doc(eventDataList?.uid).get();
+      const getDoc = await firestore().collection(apiUserInfoCollection).doc(eventDataList?.uid).get();
       const docData = getDoc.data();
       if (docData?.notificationSettings.myEvents) {
         await sendNotification(
@@ -319,14 +323,14 @@ const MyEvents: FC<any> = ({navigation}) => {
       let list = activeModalEvent?.list;
       const uid = user?.uid;
       changeStatus(list?.usersList, uid, NOT_ACCEPTED_STATUS);
-      await firestore().collection('Events').doc(list?.id).update({
+      await firestore().collection(apiEventsCollection).doc(list?.id).update({
         usersList: list?.usersList,
       });
       analytics().logEvent('event_rejected_invitation', {
         eventId: list?.id,
       });
       setIsVisibleAcceptInvitationModal(false);
-      const getDoc = await firestore().collection('userInfo').doc(list?.uid).get();
+      const getDoc = await firestore().collection(apiUserInfoCollection).doc(list?.uid).get();
       const docData = getDoc.data();
       if (docData?.notificationSettings?.myEvents) {
         await sendNotification(list?.uid, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
@@ -357,14 +361,14 @@ const MyEvents: FC<any> = ({navigation}) => {
 
       changeStatus(list?.usersList, uid, NOT_ACCEPTED_STATUS);
 
-      await firestore().collection('Events').doc(list?.id).update({
+      await firestore().collection(apiEventsCollection).doc(list?.id).update({
         usersList: list?.usersList,
       });
       analytics().logEvent('event_cancelled_attending', {
         eventId: list?.id,
       });
       setIsVisibleCancelAttendingModal(false);
-      const getDoc = await firestore().collection('userInfo').doc(list?.uid).get();
+      const getDoc = await firestore().collection(apiUserInfoCollection).doc(list?.uid).get();
       const docData = getDoc.data();
       if (docData?.notificationSettings.myEvents) {
         await sendNotification(list?.uid, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
@@ -411,7 +415,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       let eventsJoiningSubscribe: any;
       if (user?.uid) {
         myEventsSubscribe = firestore()
-          .collection('Events')
+          .collection(apiEventsCollection)
           .where('uid', '==', `${user?.uid}`)
           .onSnapshot(querySnapshot => {
             if (querySnapshot.empty) {
@@ -447,7 +451,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       }
 
       eventsJoiningSubscribe = firestore()
-        .collection('Events')
+        .collection(apiEventsCollection)
         .onSnapshot(querySnapshot => {
           handleGetEventsIJoining(querySnapshot);
         });
@@ -495,7 +499,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   ) => {
     console.log('changeStatusGuestUsersList');
 
-    const eventQuerySnapshot = await firestore().collection('Events').doc(id).get();
+    const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(id).get();
     const eventDataList = eventQuerySnapshot.data();
     if (!eventDataList?.usersList.length) {
       return;
@@ -511,7 +515,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         }
         return userItem;
       });
-      await firestore().collection('Events').doc(id).update({
+      await firestore().collection(apiEventsCollection).doc(id).update({
         usersList: updatedUsersList,
       });
       switch (status) {

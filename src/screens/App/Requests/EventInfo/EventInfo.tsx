@@ -3,12 +3,11 @@ import {View, Text, ScrollView, Image, TouchableOpacity} from 'react-native';
 
 //import components
 import useStyles from './styles';
-import {commonStackPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations.ts';
+import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 
 //import icons
 import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
-import PersonIcon from 'assets/images/icons/person.svg';
 import PeopleIcon from 'assets/images/icons/profile-2user.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
@@ -23,8 +22,9 @@ import firestore from '@react-native-firebase/firestore';
 import {ActivityIndicator} from '@ant-design/react-native';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-
+import Config from 'react-native-config';
 const EventInfo = ({navigation, route}: any) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
   const [hostInfo, setHostInfo] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,16 +32,9 @@ const EventInfo = ({navigation, route}: any) => {
   const {list, isAcceptedInvitation} = route?.params;
   const {photos, placeName, meetingSpot, description, hour, date, address, userPhotos, female, femaleFriend, male, uid, name} = list;
 
-  // console.log('uid', uid);
-
-  // console.warn('list event info active', list);
-  const iconsArrayMale = Array.from({length: male}, (_, index) => index);
-  const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
-  const currUserPhotos = userPhotos?.map((photo: any) => photo?.image);
-
   const getHostInfo = async uid => {
     try {
-      const host = await firestore().collection('userInfo').doc(uid).get();
+      const host = await firestore().collection(apiUserInfoCollection).doc(uid).get();
       setHostInfo(host.data());
       setLoading(false);
     } catch (e) {

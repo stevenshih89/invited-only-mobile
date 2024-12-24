@@ -17,6 +17,7 @@ import MatchInfoCard from 'components/MatchInfoCard';
 import {calculateAge} from 'helpers/calculateAge';
 import {Event} from 'src/types/event';
 import LinearGradient from 'react-native-linear-gradient';
+import Config from 'react-native-config';
 
 export interface MatchData {
   type?: string;
@@ -48,13 +49,17 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   onCloseMatch,
   matchData,
 }) => {
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+
   const userHost = useUser((i: any) => i?.user);
 
   const navigation = useAppNavigation();
 
   const handleCloseMatch = async () => {
     onCloseMatch();
-    const messageCollection = await firestore().collection('messages').doc(matchData?.eventId).get();
+    const messageCollection = await firestore().collection(apiMessagesCollection).doc(matchData?.eventId).get();
     const chatCheck = messageCollection?.data()?.chats?.find(i => i?.uid === matchData.uidGuest);
     const chatDataHost = {
       image: chatCheck?.avatar,
@@ -87,7 +92,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
     const uidForNotification = isEventHost ? matchData?.uidGuest : matchData?.uidHost;
     const ownerPhoto = isEventHost ? matchData?.imageUri : matchData?.userHostImageUri;
     if (uidForNotification) {
-      const getDoc = await firestore().collection('userInfo').doc(uidForNotification).get();
+      const getDoc = await firestore().collection(apiUserInfoCollection).doc(uidForNotification).get();
       const docData = getDoc.data();
       if (docData?.notificationSettings?.match) {
         await sendNotification(
@@ -110,18 +115,18 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   };
 
   const handleCreateChat = async () => {
-    const querySnapshot = await firestore().collection('Events').doc(matchData.eventId).get();
+    const querySnapshot = await firestore().collection(apiEventsCollection).doc(matchData.eventId).get();
     if (!querySnapshot.exists) {
       return;
     }
     const list = querySnapshot.data();
 
     try {
-      const messageCollection = await firestore().collection('messages').doc(list?.id).get();
+      const messageCollection = await firestore().collection(apiMessagesCollection).doc(list?.id).get();
 
       const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === matchData.uidGuest)[0];
 
-      const userHostQuery = await firestore().collection('userInfo').doc(matchData.uidHost).get();
+      const userHostQuery = await firestore().collection(apiUserInfoCollection).doc(matchData.uidHost).get();
       const userHostData = userHostQuery?.data();
 
       const activeEvent = messageCollection?.data()?.activeEvent;
@@ -160,7 +165,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             hostUid: userHost?.uid,
           };
           await firestore()
-            .collection('messages')
+            .collection(apiMessagesCollection)
             .doc(list?.id)
             .update({
               chats: [...prevChats, newChats],
@@ -189,7 +194,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
         } else {
           const id = list?.id;
 
-          await firestore().collection('messages').doc(id).set({
+          await firestore().collection(apiMessagesCollection).doc(id).set({
             activeEvent: id,
             avatarGuest: matchData.imageUri,
             avatarHost: userHost?.photos[0]?.image,
@@ -212,7 +217,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
           };
 
           await firestore()
-            .collection('messages')
+            .collection(apiMessagesCollection)
             .doc(id)
             .update({
               chats: [newChats],
@@ -249,7 +254,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
 
   const handleApproveGuestFromHost = async () => {
     // console.warn(matchData);
-    const eventQuerySnapshot = await firestore().collection('Events').doc(matchData.eventId).get();
+    const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(matchData.eventId).get();
     if (eventQuerySnapshot.exists) {
       const eventData = eventQuerySnapshot?.data();
       const usersList = [...eventData?.usersList];
@@ -264,9 +269,9 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
         }
         return user;
       });
-      await firestore().collection('Events').doc(matchData.eventId).update({usersList: updatedUsersList});
+      await firestore().collection(apiEventsCollection).doc(matchData.eventId).update({usersList: updatedUsersList});
       if (matchData?.uidGuest) {
-        const getDoc = await firestore().collection('userInfo').doc(matchData?.uidGuest).get();
+        const getDoc = await firestore().collection(apiUserInfoCollection).doc(matchData?.uidGuest).get();
         const docData = getDoc.data();
         if (docData?.notificationSettings?.requests || docData?.notificationSettings?.joinedEvent) {
           await sendNotification(

@@ -12,12 +12,16 @@ import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
+import Config from 'react-native-config';
 
 const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verificationId: string}> = ({
   isVisible,
   onClose,
   verificationId,
 }) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
   const [code, setCode] = useState<string>('');
 
   const userHost = useUser((i: any) => i?.user);
@@ -46,21 +50,21 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
   const deleteUser = async () => {
     try {
       if (userHost.accountType === 'host') {
-        const docSnapshot = await firestore().collection('userInfo').doc(userHost.uid).get();
+        const docSnapshot = await firestore().collection(apiUserInfoCollection).doc(userHost.uid).get();
         const docData = docSnapshot.data();
 
         if (docData?.eventsList && docData?.eventsList.length > 0) {
           for (const item of docData?.eventsList) {
-            await firestore().collection('Events').doc(item).delete();
-            await firestore().collection('messages').doc(item).delete();
+            await firestore().collection(apiEventsCollection).doc(item).delete();
+            await firestore().collection(apiMessagesCollection).doc(item).delete();
           }
         }
       } else {
-        const eventsListGuest = userHost?.eventsListVisit
+        const eventsListGuest = userHost?.eventsListVisit;
         try {
           if (eventsListGuest && eventsListGuest.length > 0) {
             const deletePromises = eventsListGuest.map(async (id: string) => {
-              const docMessages = firestore().collection('messages').doc(id);
+              const docMessages = firestore().collection(apiMessagesCollection).doc(id);
               const docData = await docMessages.get();
               if (docData.exists) {
                 const messages = docData?.data().chats;
@@ -68,7 +72,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
                   const filteredChats = messages.filter(item => item.uid !== userHost?.uid);
                   if (filteredChats.length !== messages.length) {
                     await docMessages.update({
-                      chats: filteredChats
+                      chats: filteredChats,
                     });
                   }
                 }
@@ -82,7 +86,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
       }
       await messaging().deleteToken();
       await auth().currentUser?.delete();
-      await firestore().collection('userInfo').doc(userHost.uid).delete();
+      await firestore().collection(apiUserInfoCollection).doc(userHost.uid).delete();
       await auth().signOut();
       showToast('inviteMatch', '', 'Your account has been deleted', {
         ownerPhoto: userHost?.photos[0].image,

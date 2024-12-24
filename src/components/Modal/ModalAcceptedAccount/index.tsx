@@ -10,6 +10,7 @@ import Button from 'components/Button/Button';
 import {commonStackPath, earlyAccessPath} from 'constants/pathLocations';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import Config from 'react-native-config';
 
 interface RejectAccount {
   isVisible?: boolean;
@@ -19,6 +20,7 @@ interface RejectAccount {
 }
 
 const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userInfo}) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const navigation = useNavigation();
 
   const handleContinue = async () => {
@@ -26,7 +28,7 @@ const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userI
 
     setIsVisible(false);
     try {
-      await firestore().collection('userInfo').doc(userInfo?.uid).update({
+      await firestore().collection(apiUserInfoCollection).doc(userInfo?.uid).update({
         showModalAccept: false,
       });
     } catch (error) {

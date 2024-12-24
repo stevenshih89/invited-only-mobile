@@ -6,7 +6,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 //import components
 import useStyles from 'components/Modal/ModalUserMenu/styles.ts';
 import Button from 'components/Button/Button.tsx';
-import {black1Color, black2Color, blackColor, errorColor, gray1Color, grayScale700, whiteColor} from 'constants/colors.ts';
+import {black1Color, blackColor, errorColor, gray1Color, grayScale700, whiteColor} from 'constants/colors.ts';
 import {showToast} from 'helpers/showToast.ts';
 
 //import icons
@@ -16,7 +16,7 @@ import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import User from 'assets/images/icons/user.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
@@ -25,7 +25,7 @@ import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import ModalReport from '../ModalReport/ModalReport';
 import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common';
-
+import Config from 'react-native-config';
 interface ModalUserMenuProps {
   isModalVisible: boolean;
   setModalVisible: boolean | any;
@@ -51,6 +51,9 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   setIsVisibleModalFullEvent,
   handleCloseReport,
 }) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
   const [removingState, setRemovingState] = useState<boolean>(false);
   const [blockAndReportState, setBlockAndReportState] = useState<boolean>(false);
   const [cancelInvitationState, setCancelInvitationState] = useState<boolean>(false);
@@ -81,7 +84,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
 
   const getUsersList = async () => {
     try {
-      const eventQuerySnapshot = await firestore().collection('Events').doc(activeEvent).get();
+      const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(activeEvent).get();
       if (eventQuerySnapshot.exists) {
         const data = eventQuerySnapshot.data();
         setEventData(data);
@@ -112,7 +115,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       return;
     }
 
-    const getDoc = await firestore().collection('userInfo').doc(uid).get();
+    const getDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
     const uidData = getDoc.data();
 
     try {
@@ -126,11 +129,11 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         }
         return user;
       });
-      await firestore().collection('Events').doc(activeEvent).update({
+      await firestore().collection(apiEventsCollection).doc(activeEvent).update({
         usersList: updatedUsersList,
       });
       console.log('userGuest', userGuest);
-      
+
       showToast('inviteMatch', `Waiting for ${userGuest?.name} to accept your invitation`, 'Almost there!', {
         ownerPhoto: userGuest?.userPhoto,
         status: 'GUEST APPROVED',
@@ -158,7 +161,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     date?: string;
     hostPhoto: string;
   }) => {
-    const eventQuerySnapshot = await firestore().collection('Events').doc(id).get();
+    const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(id).get();
     const eventDataList = eventQuerySnapshot.data();
     if (!eventDataList?.usersList.length) {
       return;
@@ -176,7 +179,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         }
         return userItem;
       });
-      await firestore().collection('Events').doc(id).update({
+      await firestore().collection(apiEventsCollection).doc(id).update({
         usersList: updatedUsersList,
       });
       switch (status) {
@@ -217,11 +220,11 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
 
   const handleDeleteChat = async () => {
     try {
-      const messageCollection = await firestore().collection('messages').doc(activeEvent).get();
+      const messageCollection = await firestore().collection(apiMessagesCollection).doc(activeEvent).get();
       const data = messageCollection.data();
       const currentUid = user?.uid === hostUid ? uid : user?.uid;
       const updatedChats = data?.chats?.filter((i: any) => i?.uid !== currentUid);
-      await firestore().collection('messages').doc(activeEvent).update({
+      await firestore().collection(apiMessagesCollection).doc(activeEvent).update({
         chats: updatedChats,
       });
       showToast('inviteMatch', `${title} was removed!`);
@@ -232,7 +235,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   };
 
   const handleAcceptGuestFromGuest = async () => {
-    const eventQuerySnapshot = await firestore().collection('Events').doc(activeEvent).get();
+    const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(activeEvent).get();
     const eventDataList = eventQuerySnapshot.data();
     if (!eventDataList?.usersList.length) {
       return;
@@ -245,7 +248,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       return;
     }
 
-    const getDoc = await firestore().collection('userInfo').doc(eventDataList?.uid).get();
+    const getDoc = await firestore().collection(apiUserInfoCollection).doc(eventDataList?.uid).get();
     const docData = getDoc.data();
 
     try {
@@ -259,7 +262,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         }
         return userItem;
       });
-      await firestore().collection('Events').doc(activeEvent).update({
+      await firestore().collection(apiEventsCollection).doc(activeEvent).update({
         usersList: updatedUsersList,
       });
       showToast('inviteMatch', 'You succesfully accepted invitation', 'Invitation accepted!', {

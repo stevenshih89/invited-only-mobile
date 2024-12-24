@@ -6,8 +6,10 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from './showToast';
 import functions from '@react-native-firebase/functions';
+import Config from 'react-native-config';
 
 export const fcmHelper = async () => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const userUid = auth().currentUser?.uid;
 
   try {
@@ -20,7 +22,7 @@ export const fcmHelper = async () => {
     // } else {
     // console.warn('newToken', newToken, userUid);
     try {
-      await firestore().collection('userInfo').doc(userUid).update({
+      await firestore().collection(apiUserInfoCollection).doc(userUid).update({
         fcmToken: newToken,
       });
     } catch (error) {
@@ -217,7 +219,7 @@ export const sendNotification = async (
   };
 
   const getFcmTokenFromUser = async (uid: string) => {
-    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+    const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
     return userInfoDoc.data()?.fcmToken;
   };
 
@@ -275,7 +277,7 @@ export const sendNotification = async (
   // console.log('notification', notification);
 
   try {
-    await firestore().collection('userInfo').doc(forUserUid).collection('notifications').add(notification);
+    await firestore().collection(apiUserInfoCollection).doc(forUserUid).collection('notifications').add(notification);
   } catch (error) {
     console.error('error add notification', error);
   }

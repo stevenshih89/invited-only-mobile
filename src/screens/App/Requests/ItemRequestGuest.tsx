@@ -27,6 +27,7 @@ import {joinEvent} from 'constants/analitycs';
 import {requestsScreen} from 'constants/analitycs';
 import {useNavigation} from '@react-navigation/native';
 import {commonStackPath, eventActiveInfoPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations';
+import Config from 'react-native-config';
 
 const eventTypes = [
   {id: 0, label: 'Vip Tables'},
@@ -42,6 +43,8 @@ const eventTypes = [
 ];
 
 const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, index}: any) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const [hostInfo, setHostInfo] = useState([]);
   const [loading, setLoading] = useState(true);
   const [heightAnim] = useState(new Animated.Value(screenHeight * 0.4));
@@ -53,7 +56,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
 
   const getHostInfo = async uid => {
     try {
-      const host = await firestore().collection('userInfo').doc(uid).get();
+      const host = await firestore().collection(apiUserInfoCollection).doc(uid).get();
       setHostInfo(host.data());
       setLoading(false);
       // console.log('host data', host.data());
@@ -105,7 +108,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
       duration: 300,
       useNativeDriver: false,
     }).start(async () => {
-      const eventData = await firestore().collection('Events').doc(list?.id).get();
+      const eventData = await firestore().collection(apiEventsCollection).doc(list?.id).get();
       const event = eventData.data();
       if (!event) {
         return;
@@ -149,7 +152,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
         };
 
         await firestore()
-          .collection('Events')
+          .collection(apiEventsCollection)
           .doc(list?.id)
           .update({
             usersList: updatedUsersList,
@@ -161,7 +164,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
             await handleCreateChat(matchedData);
             await updateGuestEventsList(event?.id, user?.uid);
             handleOpenMatch(matchedData);
-            const getDoc = await firestore().collection('userInfo').doc(event.uid).get();
+            const getDoc = await firestore().collection(apiUserInfoCollection).doc(event.uid).get();
             const docData = getDoc.data();
             if (docData?.notificationSettings.joinedEvent) {
               await sendNotification(
@@ -184,7 +187,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
 
   const updateJoinEvents = async () => {
     try {
-      const doc = firestore().collection('userInfo').doc(user.uid);
+      const doc = firestore().collection(apiUserInfoCollection).doc(user.uid);
       const data = (await doc.get()).data();
       if (data?.joinEvents) {
         doc.update({
@@ -203,7 +206,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
   const onReject = async (userItem: Event.User): Promise<void> => {
     try {
       await firestore()
-        .collection('Events')
+        .collection(apiEventsCollection)
         .doc(list?.id)
         .update({
           usersList: firestore.FieldValue.arrayRemove(userItem),
@@ -213,7 +216,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
         eventId: list?.id,
       });
       showToast('inviteMatch', '', 'You reject invitation');
-      const getDoc = await firestore().collection('userInfo').doc(uid).get();
+      const getDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
       const docData = getDoc.data();
       if (docData?.notificationSettings.myEvents) {
         await sendNotification(uid, 'Not now.', `${userItem?.name} reject your invitation.`, 'rejected', 'Rejected'.toUpperCase(), user);

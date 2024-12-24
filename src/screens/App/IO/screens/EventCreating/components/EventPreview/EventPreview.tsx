@@ -31,6 +31,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500} from 'constants/fonts.ts';
 import {Switch} from '@ant-design/react-native';
 import {eventTypes} from 'src/mocks/eventTypes.ts';
+import Config from 'react-native-config';
 
 interface EventPreviewProps {
   isEditing?: boolean;
@@ -60,6 +61,8 @@ const EventPreview: FC<EventPreviewProps> = ({
   maleFriend,
   id,
 }): ReactElement => {
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [photos, setImages] = useState<{image: null | string; id: number}[]>([
     {
       id: 0,
@@ -174,7 +177,7 @@ const EventPreview: FC<EventPreviewProps> = ({
       return;
     }
     try {
-      await firestore().collection('Events').doc(userId).update({
+      await firestore().collection(apiEventsCollection).doc(userId).update({
         photos: imageUrl,
       });
       // console.log('Events image updated successfully.');
@@ -201,7 +204,7 @@ const EventPreview: FC<EventPreviewProps> = ({
 
   const handleSaveChanges = async () => {
     try {
-      await firestore().collection('Events').doc(id).update({
+      await firestore().collection(apiEventsCollection).doc(id).update({
         eventTypes,
         placeName,
         name,
@@ -232,7 +235,7 @@ const EventPreview: FC<EventPreviewProps> = ({
       // console.log('images', photos);
       // @ts-ignore
       await firestore()
-        .collection('Events')
+        .collection(apiEventsCollection)
         .doc(`${uid}`)
         .set({
           activeType: activeType,
@@ -274,7 +277,7 @@ const EventPreview: FC<EventPreviewProps> = ({
             });
           });
           await firestore()
-            .collection('userInfo')
+            .collection(apiUserInfoCollection)
             .doc(user?.uid)
             .update({
               eventsList: firestore.FieldValue.arrayUnion(uid),

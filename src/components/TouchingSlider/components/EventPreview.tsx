@@ -21,6 +21,8 @@ import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import analytics from '@react-native-firebase/analytics';
+import Config from 'react-native-config';
+
 const EventPreview: FC<{
   photos: any;
   isEditing: boolean | undefined;
@@ -67,6 +69,8 @@ const EventPreview: FC<{
   id,
   isReview,
 }): ReactElement => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
   const [imagesUser, setImagesUser] = useState();
@@ -91,7 +95,7 @@ const EventPreview: FC<{
   const getUserPhotos = async () => {
     try {
       const user = auth().currentUser;
-      const userInfoDoc = await firestore().collection('userInfo').doc(user?.uid).get();
+      const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user?.uid).get();
 
       if (!userInfoDoc.exists) {
         return;
@@ -112,7 +116,7 @@ const EventPreview: FC<{
   };
 
   const getUsersList = async () => {
-    const eventInfoDoc = await firestore().collection('Events').doc(id).get();
+    const eventInfoDoc = await firestore().collection(apiEventsCollection).doc(id).get();
     if (!eventInfoDoc.exists) {
       return;
     }

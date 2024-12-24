@@ -2,7 +2,6 @@ import React, {FC, useCallback, useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, Alert, Platform} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import TrashCanIcon from 'assets/images/icons/trash.svg';
-import EventPreviewImage from 'assets/images/app/event-preview.png';
 import useStyles from 'screens/App/IO/screens/EventCreating/styles.ts';
 import {blackColor, grayScale700, lightGray2Color, whiteColor} from 'constants/colors.ts';
 import InvitedOnly from 'screens/App/IO/screens/EventCreating/components/InvitedOnly/InvitedOnly.tsx';
@@ -14,7 +13,7 @@ import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent
 import {showToast} from 'helpers/showToast.ts';
 import auth from '@react-native-firebase/auth';
 import {ACCEPTED_STATUS, screenWidth} from 'constants/common';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {Satoshi500} from 'constants/fonts';
 import EventPreview from 'components/TouchingSlider/components/EventPreview';
 import Check from 'src/assets/images/icons/Check-black.svg';
 import uuid from 'react-native-uuid';
@@ -22,15 +21,18 @@ import {useUser} from 'src/store/userStore';
 // import {uploadImage} from 'helpers/uploadImage.ts';
 import {commonStackPath, eventActiveInfoPath, IOPath} from 'constants/pathLocations';
 import storage from '@react-native-firebase/storage';
-import {createEvent, IOEvent} from 'src/api/event';
+import {createEvent} from 'src/api/event';
 import {eventTypes} from 'src/mocks/eventTypes';
 import {EventData, Event} from 'src/types/event';
 import moment from 'moment';
 import {sendNotification} from 'helpers/fcmHelper';
 import analytics from '@react-native-firebase/analytics';
+import Config from 'react-native-config';
+
 const EventCreating: FC = () => {
   const INVITED_ONLY = 'invitedOnly';
-  const EVENT_DETAILS = 'eventDetails';
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
   const [tabState, setTabState] = useState<string>(INVITED_ONLY);
   const [isVisibleSaveModal, setIsVisibleSaveModal] = useState<boolean>(false);
@@ -48,7 +50,6 @@ const EventCreating: FC = () => {
   const [mainImage, setMainImage] = useState<any>();
   const [currentCreateStep, setCurrentCreateStap] = useState<number>(1);
 
-  ////////////////////
   const [activeType, setActiveType] = useState(eventTypes[0].id);
   const [placeName, setPlaceName] = useState('');
   const [name, setName] = useState('');
@@ -137,8 +138,8 @@ const EventCreating: FC = () => {
     let users: Object[] = [];
 
     const promises = usersList.map(async item => {
-      const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
-      // console.log('userInfo', userInfo);
+      const userInfo = await firestore().collection(apiUserInfoCollection).doc(item?.uid).get();
+      // console.log(apiUserInfoCollection, userInfo);
       return {uid: userInfo?.data()?.uid, token: userInfo?.data()?.fcmToken};
     });
 
@@ -179,7 +180,7 @@ const EventCreating: FC = () => {
   const handleSaveChanges = async () => {
     try {
       const id = isEditingItem?.id;
-      await firestore().collection('Events').doc(id).update({
+      await firestore().collection(apiEventsCollection).doc(id).update({
         female,
         male,
         femaleFriend,
@@ -197,7 +198,7 @@ const EventCreating: FC = () => {
       analytics().logEvent('event_saved_changes', {
         eventId: id,
       });
-      const getDoc = await firestore().collection('Events').doc(id).get();
+      const getDoc = await firestore().collection(apiEventsCollection).doc(id).get();
       const data = getDoc.data();
       navigation.navigate(commonStackPath, {
         screen: eventActiveInfoPath,
@@ -217,7 +218,7 @@ const EventCreating: FC = () => {
         const user = auth().currentUser;
         if (user) {
           try {
-            const querySnapshot = await firestore().collection('Events').where('uid', '==', user.uid).get();
+            const querySnapshot = await firestore().collection(apiEventsCollection).where('uid', '==', user.uid).get();
 
             if (querySnapshot.empty) {
               setMyEvents([]);
@@ -242,7 +243,7 @@ const EventCreating: FC = () => {
     const sortedPhotos = filteredImages.sort((a, b) => a.id - b.id);
 
     try {
-      await firestore().collection('Events').doc(userId).update({
+      await firestore().collection(apiEventsCollection).doc(userId).update({
         photos: sortedPhotos,
       });
     } catch (e) {
@@ -325,7 +326,7 @@ const EventCreating: FC = () => {
       await createEvent(uid, event);
 
       await firestore()
-        .collection('userInfo')
+        .collection(apiUserInfoCollection)
         .doc(user?.uid)
         .update({
           eventsList: firestore.FieldValue.arrayUnion(uid),

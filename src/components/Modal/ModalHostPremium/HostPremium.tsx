@@ -1,22 +1,17 @@
-import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
-import LoaderIcon from 'assets/images/icons/loader.svg';
-import CheckBlackIcon from 'assets/images/icons/Check-black.svg';
+import {Image, SafeAreaView, Text, View} from 'react-native';
 import LogoIcon from 'assets/images/icons/logo.svg';
-import {blackColor, lightGray10Color, whiteColor} from 'constants/colors';
+import {blackColor, whiteColor} from 'constants/colors';
 import Modal from 'react-native-modal';
-import {Outfit500, Satoshi400, Satoshi500, Satoshi700, Satoshi700Italic} from 'constants/fonts';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {FC, useCallback, useEffect, useRef, useState} from 'react';
-import {screenHeight} from 'constants/common';
-import Animated, {useSharedValue, withTiming, Easing, useAnimatedStyle, withRepeat} from 'react-native-reanimated';
+import {FC, useEffect, useState} from 'react';
 import Button from 'components/Button/Button';
 import LinearGradient from 'react-native-linear-gradient';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {profilePath, tutorialFlowPath} from 'constants/pathLocations.ts';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import {showToast} from 'helpers/showToast';
-
+import Config from 'react-native-config';
 interface LoaderProps {
   isVisible: boolean;
   setVsibleHostPremium: any;
@@ -24,6 +19,7 @@ interface LoaderProps {
 }
 
 const HostPremium: FC<LoaderProps> = ({isVisible, setVsibleHostPremium, screen}) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [userInfo, setUserInfo] = useState<any>({});
 
   const navigation = useAppNavigation();
@@ -40,7 +36,7 @@ const HostPremium: FC<LoaderProps> = ({isVisible, setVsibleHostPremium, screen})
   const getUserInfo = async () => {
     const userId = auth().currentUser?.uid;
     if (userId) {
-      const userInfoDoc = await firestore().collection('userInfo').doc(userId).get();
+      const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(userId).get();
       if (userInfoDoc.exists) {
         setUserInfo(userInfoDoc.data());
       }

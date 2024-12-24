@@ -1,22 +1,21 @@
-import {Alert, ImageBackground, Text, View} from 'react-native';
+import {ImageBackground, Text, View} from 'react-native';
 import Modal from 'react-native-modal';
 import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import TrashRed from 'assets/images/icons/trash-red.svg';
-import {FC, useContext, useEffect} from 'react';
+import {FC, useContext} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import auth from '@react-native-firebase/auth';
 import {useUser} from 'src/store/userStore';
 import {EventContext} from 'contexts/EventContext';
-import moment from 'moment';
-import {EventData} from 'src/types/event';
 import {ACCEPTED_STATUS} from 'constants/common';
 import {sendNotification} from 'helpers/fcmHelper';
 import analytics from '@react-native-firebase/analytics';
+import Config from 'react-native-config';
+
 const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined; nameEvent: string}> = ({
   id,
   isVisible,
@@ -24,36 +23,14 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
   image,
   nameEvent,
 }) => {
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const navigation = useAppNavigation();
-  const {setActiveEvent, setMyEvents, myEvents, activeEvent} = useContext(EventContext);
+  const {setActiveEvent} = useContext(EventContext);
 
   const userData = useUser((i: any) => i?.user);
 
-  const generateRandomId = (length: number) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  };
-
-  const getFcmTokens = async (usersList: []) => {
-    let users: Object[] = [];
-
-    const promises = usersList.map(async item => {
-      const userInfo = await firestore().collection('userInfo').doc(item?.uid).get();
-      return {uid: userInfo?.data()?.uid, token: userInfo?.data()?.fcmToken};
-    });
-
-    users = await Promise.all(promises);
-
-    return users;
-  };
-
   const getUsersList = async () => {
-    const eventInfoDoc = await firestore().collection('Events').doc(id).get();
+    const eventInfoDoc = await firestore().collection(apiEventsCollection).doc(id).get();
     const usersList = eventInfoDoc.data()?.usersList;
     return usersList;
   };
@@ -84,7 +61,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
     try {
       // await sendNotification(`${nameEvent} has been cancelled`, 'Swipe new events', 'cancelled');
 
-      await firestore().collection('Events').doc(id).update({
+      await firestore().collection(apiEventsCollection).doc(id).update({
         isCancelled: true,
       });
       analytics().logEvent('modal_cancelled_event', {
@@ -93,11 +70,11 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
 
       await sendNotificationAcceptedUser();
 
-      // const userInfo = await firestore().collection('userInfo').doc(uidUser).get();
+      // const userInfo = await firestore().collection(apiUserInfoCollection).doc(uidUser).get();
       // const eventList = userInfo?.data()?.eventsList;
 
       // const filterEvents = eventList.filter((item: string) => item != id);
-      // await firestore().collection('userInfo').doc(uidUser).update({
+      // await firestore().collection(apiUserInfoCollection).doc(uidUser).update({
       //   eventsList: filterEvents,
       // });
       setActiveEvent({});

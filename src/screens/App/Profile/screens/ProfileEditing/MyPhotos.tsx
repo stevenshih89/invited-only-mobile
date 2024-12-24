@@ -15,6 +15,7 @@ import {Gesture, GestureDetector, GestureHandlerRootView} from 'react-native-ges
 import firestore from '@react-native-firebase/firestore';
 import ModalReplacePhoto from './ModalReplacePhoto';
 import {showToast} from 'helpers/showToast';
+import Config from 'react-native-config';
 
 interface MyPhotosProps {
   images: {id: number; image: string | null}[];
@@ -22,6 +23,7 @@ interface MyPhotosProps {
 }
 
 const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const userHost = useUser((i: any) => i?.user);
   const isConfirmed = userHost?.accountConfirmed;
   const [visibleModalReplace, setVisibleModalReplace] = useState(false);
@@ -93,7 +95,7 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
 
   useEffect(() => {
     const unsubscribe = firestore()
-      .collection('userInfo')
+      .collection(apiUserInfoCollection)
       .doc(userHost.uid)
       .onSnapshot(docSnapshot => {
         const data = docSnapshot.data();
@@ -106,7 +108,7 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
   const replaceImage = async () => {
     if (selectImage && activeImage) {
       try {
-        const getDoc = await firestore().collection('userInfo').doc(userHost.uid).get();
+        const getDoc = await firestore().collection(apiUserInfoCollection).doc(userHost.uid).get();
         const data = getDoc.data();
         const photos = data?.photos;
         if ((activeImage === 1 && !photos[selectImage - 1].image) || (selectImage === 1 && !photos[activeImage - 1].image)) {
@@ -119,7 +121,7 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
         const temp = photos[activeImage - 1].image;
         photos[activeImage - 1].image = photos[selectImage - 1].image;
         photos[selectImage - 1].image = temp;
-        await firestore().collection('userInfo').doc(userHost.uid).update({
+        await firestore().collection(apiUserInfoCollection).doc(userHost.uid).update({
           photos,
         });
         setVisibleModalReplace(false);

@@ -1,4 +1,4 @@
-import React, {FC, Ref, RefObject, useEffect, useState} from 'react';
+import React, {FC, RefObject, useEffect, useState} from 'react';
 import {View, Text, Image, ImageBackground, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
 import firestore from '@react-native-firebase/firestore';
@@ -25,8 +25,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import {calculateAge} from 'helpers/calculateAge';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
-import {screenHeight} from 'constants/common';
 import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
+import Config from 'react-native-config';
 
 interface HostI {
   name: string;
@@ -98,11 +98,13 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
   const [isPremium, setIsPremium] = useState();
 
   const styles = useStyles();
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
   const getUserInfo = async () => {
     try {
       const uid = auth().currentUser?.uid;
-      const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+      const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
       setNameUser(userInfoDoc?.data()?.name);
       const age = calculateAge(userInfoDoc?.data()?.date);
       const photo = userInfoDoc?.data()?.photos[0].image;
@@ -220,7 +222,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
 
   const updateViewedNewData = async () => {
     const userUid = auth().currentUser?.uid;
-    const userEvent = await firestore().collection('Events').doc(id).get();
+    const userEvent = await firestore().collection(apiEventsCollection).doc(id).get();
     const dateNewViewed = userEvent.data()?.dateNewViewed;
     const hourNewViewed = userEvent.data()?.hourNewViewed;
     const nameNewViewed = userEvent.data()?.nameNewViewed;
@@ -228,7 +230,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
     if (updateEvent === 'date') {
       try {
         await firestore()
-          .collection('Events')
+          .collection(apiEventsCollection)
           .doc(id)
           .update({
             dateNewViewed: [...dateNewViewed, userUid],
@@ -240,7 +242,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
     if (updateEvent === 'hour') {
       try {
         await firestore()
-          .collection('Events')
+          .collection(apiEventsCollection)
           .doc(id)
           .update({
             hourNewViewed: [...hourNewViewed, userUid],
@@ -252,7 +254,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
     if (updateEvent === 'name') {
       try {
         await firestore()
-          .collection('Events')
+          .collection(apiEventsCollection)
           .doc(id)
           .update({
             nameNewViewed: [...nameNewViewed, userUid],

@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import Config from 'react-native-config';
 
 export type AccountInfoFlyWeight = {
   accountConfirmed: boolean;
@@ -17,10 +18,11 @@ const defaultAccountInfo: AccountInfoFlyWeight = {
 };
 
 export const onUserProfileChangeSubscription = (callback: (info: AccountInfoFlyWeight) => void) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const user = auth().currentUser;
 
   return firestore()
-    .collection('userInfo')
+    .collection(apiUserInfoCollection)
     .doc(user?.uid ?? undefined)
     .onSnapshot(snap => {
       if (!snap.exists) {

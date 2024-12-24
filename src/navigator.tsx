@@ -9,8 +9,10 @@ import {getFcmToken, registerListenerWithFCM} from 'helpers/fcmHelper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
+import Config from 'react-native-config';
 
 const Navigator = () => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [initializing, setInitializing] = useState<boolean>(true);
   const [authState, setAuthState] = useState(false);
   const {user, setUser} = useContext(AuthContext);
@@ -27,7 +29,7 @@ const Navigator = () => {
     const uid = userState?._user?.uid;
     await AsyncStorage.setItem('uid', `${uid}`);
     await getOnbordingState();
-    const userDataInfo = await firestore().collection('userInfo').doc(uid).get();
+    const userDataInfo = await firestore().collection(apiUserInfoCollection).doc(uid).get();
 
     if (userDataInfo.exists) {
       // // console.warn('user', userDataInfo.data());

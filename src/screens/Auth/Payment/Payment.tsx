@@ -46,6 +46,7 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import {openLink} from 'helpers/links';
 import analytics from '@react-native-firebase/analytics';
 import {paymentScreen} from 'constants/analitycs';
+import Config from 'react-native-config';
 
 interface PlanListItem {
   id: number;
@@ -82,6 +83,7 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
 };
 
 const Payment: FC = (): JSX.Element => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [spotsLeft, setSpotsLeft] = useState<number>(0);
@@ -166,7 +168,7 @@ const Payment: FC = (): JSX.Element => {
     const user = auth().currentUser;
     if (user) {
       try {
-        await firestore().collection('userInfo').doc(user.uid).update({
+        await firestore().collection(apiUserInfoCollection).doc(user.uid).update({
           accountPremium: true,
           accountConfirmed: true,
           accountReviewed: true,

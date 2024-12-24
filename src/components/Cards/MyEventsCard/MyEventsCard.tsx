@@ -22,7 +22,7 @@ import firestore from '@react-native-firebase/firestore';
 import {calculateAge} from 'helpers/calculateAge';
 import {eventTypes} from 'src/mocks/eventTypes';
 import {useUser} from 'src/store/userStore';
-
+import Config from 'react-native-config';
 interface MyEventsCardProps {
   statusEvent: boolean;
   eventReviewed: boolean;
@@ -59,14 +59,14 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
     isMyEvents = false,
     isReview,
   } = props;
-
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
   const [userHostInfo, setUserHostInfo] = useState();
 
   const [mainImageEvent, setMainImageEvent] = useState('');
 
   const getUserHostInfo = async () => {
-    const getDoc = await firestore().collection('userInfo').doc(item?.uid).get();
+    const getDoc = await firestore().collection(apiUserInfoCollection).doc(item?.uid).get();
     setUserHostInfo(getDoc.data());
   };
 

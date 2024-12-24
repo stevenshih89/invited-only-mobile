@@ -50,7 +50,7 @@ import moment from 'moment';
 import FastImage from 'react-native-fast-image';
 import {EventData} from 'src/types/event';
 import {useMyEvents} from 'src/store/myEvents';
-
+import Config from 'react-native-config';
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
   showHeaderTop?: boolean;
@@ -77,6 +77,8 @@ type ItemProps = {
 };
 
 const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const [eventStarting, setEventStarting] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>(null);
   // const [myEvents, setMyEvents] = useState<Array<any>>();
@@ -99,7 +101,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
       try {
         setLoadingMyEvents(true);
         const querySnapshot = await firestore()
-          .collection('Events')
+          .collection(apiEventsCollection)
           .where('uid', '==', user.uid)
           .where('isCancelled', '==', false)
           .orderBy('createdAt', 'desc')
@@ -607,7 +609,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
 
   const getCountNotifications = () => {
     return firestore()
-      .collection('userInfo')
+      .collection(apiUserInfoCollection)
       .doc(userData?.uid)
       .collection('notifications')
       .onSnapshot(querySnapshot => {

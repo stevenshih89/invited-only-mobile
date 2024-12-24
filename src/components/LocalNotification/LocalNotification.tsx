@@ -21,16 +21,25 @@ import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {INVITE_MATCH_STATUS, screenWidth} from 'constants/common';
-import {useNavigation} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {chatCorrespondencePath, commonStackPath, eventActiveInfoPath, invitationCodePath, myEventsPath, requestsPath} from 'constants/pathLocations';
-import { handleCreateChat } from 'helpers/chat';
+import {
+  chatCorrespondencePath,
+  commonStackPath,
+  eventActiveInfoPath,
+  invitationCodePath,
+  myEventsPath,
+  requestsPath,
+} from 'constants/pathLocations';
+import {handleCreateChat} from 'helpers/chat';
 import firestore from '@react-native-firebase/firestore';
+import Config from 'react-native-config';
 
 const LocalNotification = () => {
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const handlePress = async (path: string, params?: any) => {    
+  const handlePress = async (path: string, params?: any) => {
     switch (path) {
       case 'invitationCode':
         navigation.navigate(commonStackPath, {screen: invitationCodePath});
@@ -66,32 +75,30 @@ const LocalNotification = () => {
       case 'chatCreate':
         // @ts-ignore
         try {
-        await handleCreateChat(params)
-        const querySnapshot = await firestore().collection('Events').doc(params.eventId).get();
-        if (!querySnapshot.exists) {
-          return;
-        }
-        const list = querySnapshot.data();
-        const messageCollection = await firestore().collection('messages').doc(list?.id).get();
-        const activeEvent = messageCollection?.data()?.activeEvent;
-        navigation.navigate(commonStackPath, {
-          screen: chatCorrespondencePath,
-          params: {
-            image: params.userHostImageUri,
-            title: params?.nameHost,
-            online: true,
-            messages: [],
-            activeEvent: activeEvent,
-            id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
-            superInvite: params?.superInvite,
-            invitedStatus: INVITE_MATCH_STATUS,
-            uid: params.uidGuest,
-            hostUid: params.uidHost
-          },
-        })
-        } catch (error) {
-
-        }
+          await handleCreateChat(params);
+          const querySnapshot = await firestore().collection(apiEventsCollection).doc(params.eventId).get();
+          if (!querySnapshot.exists) {
+            return;
+          }
+          const list = querySnapshot.data();
+          const messageCollection = await firestore().collection(apiMessagesCollection).doc(list?.id).get();
+          const activeEvent = messageCollection?.data()?.activeEvent;
+          navigation.navigate(commonStackPath, {
+            screen: chatCorrespondencePath,
+            params: {
+              image: params.userHostImageUri,
+              title: params?.nameHost,
+              online: true,
+              messages: [],
+              activeEvent: activeEvent,
+              id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
+              superInvite: params?.superInvite,
+              invitedStatus: INVITE_MATCH_STATUS,
+              uid: params.uidGuest,
+              hostUid: params.uidHost,
+            },
+          });
+        } catch (error) {}
         break;
       default:
         break;
@@ -229,4 +236,3 @@ const LocalNotification = () => {
 };
 
 export default LocalNotification;
-

@@ -31,8 +31,11 @@ import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {getEventsIJoining} from 'helpers/getEventsIJoining';
+import Config from 'react-native-config';
 
 const Profile: FC = () => {
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [activeTabId, setActiveTabId] = useState(0);
   const [percentage, setPercentage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -80,7 +83,7 @@ const Profile: FC = () => {
         const user = auth().currentUser;
         if (user) {
           try {
-            const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+            const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
 
             if (userInfoDoc.exists) {
               setUserInfo(userInfoDoc.data());
@@ -135,7 +138,7 @@ const Profile: FC = () => {
     let totalParticipants = 0;
     try {
       for (const eventId of userInfo?.eventsList) {
-        const eventDoc = await firestore().collection('Events').doc(eventId).get();
+        const eventDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
         if (eventDoc.exists) {
           const data = eventDoc.data();
           totalParticipants += data?.male + data?.female;
@@ -147,7 +150,7 @@ const Profile: FC = () => {
 
   useEffect(() => {
     const unsubscribe = firestore()
-      .collection('Events')
+      .collection(apiEventsCollection)
       .onSnapshot(async querySnapshot => {
         const count = await getEventsIJoining(querySnapshot, userInfo?.uid);
         setEventsCount(count);

@@ -31,6 +31,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import {AppEventsLogger} from 'react-native-fbsdk-next';
+import Config from 'react-native-config';
 interface Social {
   id: number;
   title: string;
@@ -38,6 +39,7 @@ interface Social {
 }
 
 const VerifySocialProfile = () => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [openedSocial, setOpenedSocial] = useState<Social | null>(null);
   const [socialNickname, setSocialNickname] = useState<any>({});
   const [errorInput, setErrorInput] = useState<number[]>([]);
@@ -218,7 +220,7 @@ const VerifySocialProfile = () => {
       };
 
       await firestore()
-        .collection('userInfo')
+        .collection(apiUserInfoCollection)
         .doc(`${userId}`)
         .set(newUserData)
         .finally(() => {

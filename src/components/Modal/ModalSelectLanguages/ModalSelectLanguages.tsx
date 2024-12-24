@@ -7,7 +7,7 @@ import useStyles from './styles.ts';
 
 //import icons
 import IconCheckBoxSelected from './../../../assets/images/icons/checkbox-selected.svg';
-import {blackColor, grayColor, lightGray14Color, lightGray2Color, toggleColor, whiteColor} from 'constants/colors.ts';
+import {grayColor, lightGray14Color, lightGray2Color, toggleColor, whiteColor} from 'constants/colors.ts';
 import {Satoshi400} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Switch} from '@ant-design/react-native';
@@ -29,7 +29,7 @@ import IT from 'src/assets/images/flags/it.svg';
 import KR from 'src/assets/images/flags/kr.svg';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
-
+import Config from 'react-native-config';
 interface ModalSelectLanguagesProps {
   modalLanguages: boolean;
   showLanguages: boolean;
@@ -107,6 +107,7 @@ const DATA = [
 ];
 
 const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, showLanguages, modalLanguages, setModalLanguages}) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
   const userHost = useUser((i: any) => i?.user);
 
@@ -128,7 +129,7 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
   // const handleSetShowInMyProfile = async (state: boolean): Promise<void> => {
   //   try {
   //     setShowLanguages(state);
-  //     await firestore().collection('userInfo').doc(uid).update({
+  //     await firestore().collection(apiUserInfoCollection).doc(uid).update({
   //       showLanguages: state,
   //     });
   //   } catch (e) {
@@ -138,12 +139,12 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
 
   const handleSetLanguages = async (): Promise<void> => {
     try {
-      await firestore().collection('userInfo').doc(uid).update({
+      await firestore().collection(apiUserInfoCollection).doc(uid).update({
         languages: selectLanguage,
         showLanguages: showLanguages,
       });
       await firestore()
-        .collection('userInfo')
+        .collection(apiUserInfoCollection)
         .doc(uid)
         .get()
         .then(res => {

@@ -31,6 +31,7 @@ import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
 import analytics from '@react-native-firebase/analytics';
 import {chatCorrespondenceScreen} from 'constants/analitycs';
+import Config from 'react-native-config';
 
 interface MessageProps {
   message: {
@@ -49,6 +50,8 @@ interface NavigationParams {
 }
 
 const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
   const [messageUser, setMessageUser] = useState<string>('');
   const [messages, setMessages] = useState([]);
   const [allChats, setAllChats] = useState([]);
@@ -92,12 +95,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         const currentUser = auth().currentUser;
         if (currentUser) {
           try {
-            const chatQuery = await firestore().collection('messages').doc(activeEvent).get();
+            const chatQuery = await firestore().collection(apiMessagesCollection).doc(activeEvent).get();
             const chatData = chatQuery.data()?.chats;
             const currentChat = chatData?.find((i: any) => i?.id === id);
             const anotherUserUid = currentChat?.uid === user?.uid ? currentChat?.hostUid : currentChat?.uid;
 
-            const userInfoDoc = await firestore().collection('userInfo').doc(anotherUserUid).get();
+            const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(anotherUserUid).get();
             setCurrentUserName(user?.name);
             setAnotherUserData(userInfoDoc.data());
             if (userInfoDoc.exists) {
@@ -148,7 +151,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const handleBack = async () => {
     // console.log('handleBack');
 
-    const doc = firestore().collection('messages').doc(`${activeEvent}`);
+    const doc = firestore().collection(apiMessagesCollection).doc(`${activeEvent}`);
 
     const findChat = allChats?.filter(i => i?.id === id);
 
@@ -183,7 +186,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         uid: `${userData?.uid}`,
       };
 
-      const doc = firestore().collection('messages').doc(`${activeEvent}`);
+      const doc = firestore().collection(apiMessagesCollection).doc(`${activeEvent}`);
       const chatDataQuery = await doc.get();
       const chatData = chatDataQuery.data();
 
@@ -195,7 +198,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
       const anotherUserUid = currentChatHostUid === user?.uid ? currentChatGuestUid : currentChatHostUid;
 
-      const getDate = await firestore().collection('userInfo').doc(anotherUserUid).get();
+      const getDate = await firestore().collection(apiUserInfoCollection).doc(anotherUserUid).get();
       const docData = getDate.data();
 
       if (findChat && findChat.length > 0) {
@@ -335,7 +338,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
   useEffect(() => {
     const subscriber = firestore()
-      .collection('messages')
+      .collection(apiMessagesCollection)
       .doc(activeEvent)
       .onSnapshot(documentSnapshot => {
         const data = documentSnapshot.data()?.chats;

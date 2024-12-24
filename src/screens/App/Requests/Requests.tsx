@@ -37,8 +37,11 @@ import {getUserData} from 'helpers/getUserData';
 import analytics from '@react-native-firebase/analytics';
 import {requestsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
+import Config from 'react-native-config';
 
 const Requests: FC = (): ReactElement => {
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
 
   const navigation = useAppNavigation();
@@ -149,7 +152,7 @@ const Requests: FC = (): ReactElement => {
     if (currentUser) {
       setLoading(true);
       try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(currentUser.uid).get();
+        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(currentUser.uid).get();
         if (!userInfoDoc.exists) {
           return;
         }
@@ -214,7 +217,7 @@ const Requests: FC = (): ReactElement => {
           return;
         }
         subcribeHostRequests = firestore()
-          .collection('Events')
+          .collection(apiEventsCollection)
           .doc(activeEvent?.id)
           .onSnapshot(querySnapshot => {
             fetchHostRequests(querySnapshot);
@@ -223,7 +226,7 @@ const Requests: FC = (): ReactElement => {
       }
       if (!isHost) {
         subcribeGuestRequests = firestore()
-          .collection('Events')
+          .collection(apiEventsCollection)
           .where('statusEvent', '==', true)
           .where('isCancelled', '==', false)
           .onSnapshot(querySnapshot => {

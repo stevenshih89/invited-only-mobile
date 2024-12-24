@@ -10,8 +10,7 @@ import useStyles from './styles';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {blackColor, lightGray11Color, lightRed1Color, transparent60Color, whiteColor} from 'constants/colors';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
+
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
 import {useEffect, useState} from 'react';
@@ -19,13 +18,12 @@ import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 import {formatDate} from 'helpers/formatDate';
 import {ACCEPTED_STATUS, LIKED} from 'constants/common';
+import Config from 'react-native-config';
 
 const EventsRequest = ({item, list}: any) => {
-  // console.log('item', item);
-  // console.log('list', list);
-
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
-  const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState({accountType: ''});
   const [currentUserName, setCurrentUserName] = useState();
 
@@ -86,7 +84,7 @@ const EventsRequest = ({item, list}: any) => {
       const updateUsersList: any = [...list?.usersList, userAccepted];
       const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
 
-      await firestore().collection('Events').doc(list?.id).update({
+      await firestore().collection(apiEventsCollection).doc(list?.id).update({
         usersList: updateUsersList,
         requestsList: updateRequestsList,
       });
@@ -107,7 +105,7 @@ const EventsRequest = ({item, list}: any) => {
       }
 
       const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
-      await firestore().collection('Events').doc(list?.id).update({
+      await firestore().collection(apiEventsCollection).doc(list?.id).update({
         requestsList: updateRequestsList,
       });
     } catch (e) {
@@ -119,11 +117,11 @@ const EventsRequest = ({item, list}: any) => {
     const currentUserUid = auth()?.currentUser?.uid;
     if (item.uid) {
       try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(item.uid).get();
+        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(item.uid).get();
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
-        const currentUserInfo = await firestore().collection('userInfo').doc(currentUserUid).get();
+        const currentUserInfo = await firestore().collection(apiUserInfoCollection).doc(currentUserUid).get();
         setCurrentUserName(currentUserInfo.data()?.name);
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');
@@ -273,49 +271,6 @@ const EventsRequest = ({item, list}: any) => {
                   {formatDate(item.date)}
                 </Text>
               </View>
-              {/* {userInfo.accountType && (
-                <View
-                  style={{
-                    marginTop: 'auto',
-                    marginLeft: 8,
-                    marginBottom: 2,
-                    alignSelf: 'flex-start',
-                    paddingHorizontal: 6,
-                    paddingVertical: 1,
-                    backgroundColor: userInfo.accountType === 'host' ? blackColor : whiteColor,
-                    borderRadius: 4,
-                    borderWidth: 1,
-                    borderStyle: 'solid',
-                    borderColor: userInfo.accountType === 'host' ? whiteColor : blackColor,
-                  }}>
-                  <Text
-                    style={{
-                      textTransform: 'capitalize',
-                      fontFamily: Satoshi700,
-                      fontSize: 10,
-                      color: userInfo.accountType === 'host' ? whiteColor : blackColor,
-                    }}>
-                    {userInfo.accountType}
-                  </Text>
-                </View>
-              )}
-              <TouchableOpacity onPress={() => goToProfileView()} activeOpacity={0.7} style={styles.buttonContainer}>
-                <View style={styles.nameContainer}>
-                  <Text style={styles.nameText}>
-                    {item?.name} {`${userInfo?.date ? `, ${calculateAge(userInfo?.date)}` : ''}`}
-                  </Text>
-                  {userInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} style={{marginLeft: 4}} />}
-                </View>
-                {userInfo?.address && (
-                  <View style={styles.locationContainer}>
-                    <View style={styles.locationRow}>
-                      <Home height={12} />
-                      <Text style={styles.locationText}>From {item?.address}</Text>
-                    </View>
-                    <ArrowRight height={12} />
-                  </View>
-                )}
-              </TouchableOpacity> */}
             </LinearGradient>
           </View>
         </FastImage>

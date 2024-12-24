@@ -17,7 +17,7 @@ import EmojiSadIcon from 'assets/images/icons/emoji-sad.svg';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
 import analytics from '@react-native-firebase/analytics';
-
+import Config from 'react-native-config';
 interface ModalReportProps {
   modalReport?: boolean;
   setModalReport?: any;
@@ -28,10 +28,12 @@ interface ModalReportProps {
 
 const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSender, uid, handleAutoSwipeLeft, handleCloseReport}) => {
   const styles = useStyles();
-
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
   const handleSendReport = async (typeReport: string): Promise<void> => {
-    const infoUserUidDoc = await firestore().collection('userInfo').doc(uid).get();
-    const infoUserUidSenderDoc = await firestore().collection('userInfo').doc(uidSender).get();
+    const infoUserUidDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+    const infoUserUidSenderDoc = await firestore().collection(apiUserInfoCollection).doc(uidSender).get();
 
     if (!infoUserUidDoc.exists || !infoUserUidSenderDoc.exists || !uid) {
       return;
@@ -62,7 +64,7 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
       const currSenderUid = isHost ? uidSender : uid;
       const currUid = isHost ? uid : uidSender;
 
-      const eventsList = await firestore().collection('Events').where('uid', '==', currSenderUid).get();
+      const eventsList = await firestore().collection(apiEventsCollection).where('uid', '==', currSenderUid).get();
       if (!eventsList.empty) {
         const eventsListData = eventsList.docs.map(doc => doc.data());
 
@@ -86,10 +88,10 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
             requestsList: userInRequestsList ? firestore.FieldValue.arrayRemove(userInRequestsList) : event.requestsList,
           };
 
-          await firestore().collection('Events').doc(event.id).update(data);
+          await firestore().collection(apiEventsCollection).doc(event.id).update(data);
         }
       }
-      const chatsList = await firestore().collection('messages').where('uidHost', '==', currSenderUid).get();
+      const chatsList = await firestore().collection(apiMessagesCollection).where('uidHost', '==', currSenderUid).get();
       if (!chatsList.empty) {
         const chatsListData = chatsList.docs.map(doc => ({id: doc.id, ...doc.data()}));
         const filteredChats =
@@ -103,7 +105,7 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
         for (const chat of filteredChats) {
           const removedChat = chat.chats.filter(chatItem => chatItem.uid !== currUid);
 
-          await firestore().collection('messages').doc(chat.id).update({
+          await firestore().collection(apiMessagesCollection).doc(chat.id).update({
             chats: removedChat,
           });
         }

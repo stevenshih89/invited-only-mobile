@@ -5,7 +5,6 @@ import {TinderCard} from 'rn-tinder-card-bn-digital';
 import Home from 'assets/images/icons/home.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
-import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
 import FlashFilledWhiteIcon from 'assets/images/icons/flash-filled.svg';
 import useStyles from './styles';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
@@ -15,7 +14,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {commonStackPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations.ts';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
-import {useContext, useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 import {useUser} from 'src/store/userStore';
@@ -23,20 +22,21 @@ import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
 import {getFontSize} from 'helpers/getFontSize';
 import {ACCEPTED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
-import {EventContext} from 'contexts/EventContext';
 import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
 import {Event} from 'src/types/event';
 import {User} from 'src/types/userInfo';
 import {MatchData} from '../IO/screens/Match/Match';
 import analytics from '@react-native-firebase/analytics';
-import {inviteUser, joinEvent, requestsScreen} from 'constants/analitycs';
+import {inviteUser, requestsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
+import Config from 'react-native-config';
 
 const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fetchHostRequests}: any) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState<Partial<User.Info>>({accountType: 'host'});
-
   const user = useUser((state: any) => state.user);
   const [currentUserName, setCurrentUserName] = useState();
   const {activeEvent} = useMyEvents();
@@ -107,7 +107,7 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
   };
 
   const onInvite = async (userItem: Event.User): Promise<void> => {
-    const eventQuery = await firestore().collection('Events').doc(activeEvent?.id).get();
+    const eventQuery = await firestore().collection(apiEventsCollection).doc(activeEvent?.id).get();
     if (!eventQuery.exists) {
       return;
     }
@@ -123,7 +123,7 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
       return;
     }
 
-    const getDoc = await firestore().collection('userInfo').doc(userItem.uid).get();
+    const getDoc = await firestore().collection(apiUserInfoCollection).doc(userItem.uid).get();
     const guest = getDoc.data();
     if (!guest) {
       return;
@@ -165,7 +165,7 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
       };
 
       await firestore()
-        .collection('Events')
+        .collection(apiEventsCollection)
         .doc(activeEvent?.id)
         .update({
           requestsList: firestore.FieldValue.arrayRemove(userItem),
@@ -178,7 +178,7 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
           await handleCreateChat(matchedData as MatchData);
           await updateGuestEventsList(activeEvent?.id, guest?.uid);
           handleOpenMatch(matchedData);
-          const getDoc = await firestore().collection('userInfo').doc(userItem?.uid).get();
+          const getDoc = await firestore().collection(apiUserInfoCollection).doc(userItem?.uid).get();
           const docData = getDoc.data();
           if (docData?.notificationSettings.requests) {
             await sendNotification(
@@ -202,7 +202,7 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
       console.warn(userItem, activeEvent?.id);
 
       await firestore()
-        .collection('Events')
+        .collection(apiEventsCollection)
         .doc(activeEvent?.id)
         .update({
           requestsList: firestore.FieldValue.arrayRemove(userItem),
@@ -221,11 +221,11 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
     const currentUserUid = auth()?.currentUser?.uid;
     if (item.uid) {
       try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(item.uid).get();
+        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(item.uid).get();
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data() as User.Info);
         }
-        const currentUserInfo = await firestore().collection('userInfo').doc(currentUserUid).get();
+        const currentUserInfo = await firestore().collection(apiUserInfoCollection).doc(currentUserUid).get();
         setCurrentUserName(currentUserInfo.data()?.name);
       } catch (error: any) {
         Alert.alert('Error', error.message || 'Something went wrong');

@@ -14,6 +14,7 @@ import RNUxcam from 'react-native-ux-cam';
 import {requestTrackingPermission} from 'react-native-tracking-transparency';
 import {Settings} from 'react-native-fbsdk-next';
 import moment from 'moment';
+import Config from 'react-native-config';
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
@@ -26,6 +27,7 @@ const configuration = {
 RNUxcam.startWithConfiguration(configuration);
 
 const App: FC = (): JSX.Element => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const IO_PUBLICK_RC_IOS = 'appl_zMgrNWXsDMnWsICHMLKNhAKHebg';
 
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
@@ -38,7 +40,7 @@ const App: FC = (): JSX.Element => {
         return;
       }
 
-      const userQuery = await firestore().collection('userInfo').doc(currentUser?.uid).get();
+      const userQuery = await firestore().collection(apiUserInfoCollection).doc(currentUser?.uid).get();
       const userData = userQuery.data();
 
       if (!userData) {
@@ -81,7 +83,7 @@ const App: FC = (): JSX.Element => {
       }
 
       await firestore()
-        .collection('userInfo')
+        .collection(apiUserInfoCollection)
         .doc(currentUser?.uid)
         .update({
           accountPremium: !isExpiredSubscription,

@@ -1,20 +1,14 @@
-import {Dispatch, FC, SetStateAction, useCallback, useContext, useEffect, useState} from 'react';
-import InstagramSLider from 'components/InstagramSlider/InstagramSlider';
-import {blackColor, lightGray5Color, lightGray6Color, lightGrayColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {Dispatch, FC, SetStateAction, useCallback, useContext, useState} from 'react';
+import {blackColor, lightGrayColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {screenHeight, screenWidth} from 'constants/common';
 import Man from 'assets/images/app/man-rectangle.png';
 import {Alert, FlatList, Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider';
-import PersonIcon from 'assets/images/icons/person.svg';
 import LocationIcon from 'assets/images/icons/home.svg';
-import TablerGenderIcon from 'assets/images/icons/tabler_gender-bigender.svg';
-import HomeIcon from 'assets/images/icons/home.svg';
-import ArrowIcon from 'assets/images/icons/arrow-3.svg';
 import WineIcon from 'assets/images/icons/milk.svg';
 import SmokeIcon from 'assets/images/icons/smoke.svg';
 import Job from 'assets/images/icons/job.svg';
 import Gender from 'assets/images/icons/gender.svg';
-import Cake from 'assets/images/icons/cake.svg';
 
 //Flags
 import FlagAE from 'assets/images/flags/ae.svg';
@@ -43,8 +37,9 @@ import {useUser} from '../../../../../store/userStore';
 import {useFocusEffect, useRoute} from '@react-navigation/native';
 import {User} from 'src/types/userInfo';
 import {pipe} from 'helpers/pipe';
-import { EventContext } from 'contexts/EventContext';
+import {EventContext} from 'contexts/EventContext';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
+import Config from 'react-native-config';
 
 interface MyProfileViewProps {
   isShowEditButton?: boolean;
@@ -60,10 +55,11 @@ const mapPhotos = (photos: User.Photo[]): (string | null)[] => photos.map(p => p
 const processUserPhotos = pipe<string[]>(filterPhotos, mapPhotos);
 
 const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible, isShowInstagramPhotos = true}) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [loading, setLoading] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>({});
   const [scrollPosition, setScrollPosition] = useState(0);
-  
+
   const [photosList, setPhotosList] = useState<string[]>([]);
 
   const route = useRoute();
@@ -91,7 +87,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
         if (user) {
           try {
             const userUid = uid !== undefined ? uid : user;
-            const userInfoDoc = await firestore().collection('userInfo').doc(userUid).get();
+            const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(userUid).get();
 
             if (userInfoDoc?.exists) {
               setUserInfo(userInfoDoc?.data());
@@ -167,12 +163,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: blackColor}}>
-      <ModalReport
-            modalReport={modalReport}
-            setModalReport={setModalReport}
-            uidSender={userHost?.uid}
-            uid={route?.params?.uid}
-          />
+      <ModalReport modalReport={modalReport} setModalReport={setModalReport} uidSender={userHost?.uid} uid={route?.params?.uid} />
       <View style={{flex: 1, paddingTop: screenHeight / 48, paddingHorizontal: 20}}>
         <ScrollView
           onScroll={handleScroll}
@@ -202,7 +193,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
               joinEvents={userInfo?.joinEvents}
             />
             <View style={styles.basicsWrapper}>
-              {!isShowEditButton&& <Text style={styles.testBasics}>My basics</Text>}
+              {!isShowEditButton && <Text style={styles.testBasics}>My basics</Text>}
               {isShowEditButton && <Button onPress={goToProfileEditing} title={'Edit profile'} />}
               <View style={styles.wrapperTextTags}>
                 {userInfo?.work?.title && (
@@ -247,23 +238,41 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 )}
               </View>
             </View>
-            {userInfo?.bio && <View style={styles.wrapperAboutMe}>
+            {userInfo?.bio && (
+              <View style={styles.wrapperAboutMe}>
                 <Text style={styles.testBasics}>About me</Text>
                 <Text style={styles.textAboutMe}>{userInfo?.bio}</Text>
-            </View>}
+              </View>
+            )}
             {userInfo?.showLanguages && userInfo?.languages?.length > 0 && (
-                <View style={{marginTop: screenHeight / 55}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>Languages</Text>
-                  <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-                    {userInfo?.languages?.map(item => (
-                      <View style={{borderColor: lightGrayColor, borderWidth: 1, padding: 8, borderRadius: 30, flexDirection: 'row', alignItems: 'center', marginTop: 14, marginRight: 4}}>
-                        {getFlag(item.flag)}
-                        <Text style={{fontSize: RFValue(16, 812), color: whiteColor, fontFamily: Satoshi400, marginLeft: 10}}>{` ${item.title}`}</Text>
-                      </View>
-                    ))}
-                  </View>
+              <View style={{marginTop: screenHeight / 55}}>
+                <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>Languages</Text>
+                <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                  {userInfo?.languages?.map(item => (
+                    <View
+                      style={{
+                        borderColor: lightGrayColor,
+                        borderWidth: 1,
+                        padding: 8,
+                        borderRadius: 30,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginTop: 14,
+                        marginRight: 4,
+                      }}>
+                      {getFlag(item.flag)}
+                      <Text
+                        style={{
+                          fontSize: RFValue(16, 812),
+                          color: whiteColor,
+                          fontFamily: Satoshi400,
+                          marginLeft: 10,
+                        }}>{` ${item.title}`}</Text>
+                    </View>
+                  ))}
                 </View>
-              )}
+              </View>
+            )}
             <View style={{marginTop: screenHeight / 55}}>
               <Text style={[styles.testBasics, {marginBottom: 14}]}>My interests</Text>
               <FlatList
@@ -291,16 +300,19 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 )}
               />
             </View>
-            {!isShowEditButton && photosList.length > 1 && <TouchableOpacity onPress={handleReport} style={{marginTop: 34}}>
-              <Text style={{
-                fontSize: RFValue(16,812),
-                color: whiteColor,
-                fontFamily: Satoshi700,
-                textAlign: 'center'
-              }}>
-                Block and Report
-              </Text>
-            </TouchableOpacity>}
+            {!isShowEditButton && photosList.length > 1 && (
+              <TouchableOpacity onPress={handleReport} style={{marginTop: 34}}>
+                <Text
+                  style={{
+                    fontSize: RFValue(16, 812),
+                    color: whiteColor,
+                    fontFamily: Satoshi700,
+                    textAlign: 'center',
+                  }}>
+                  Block and Report
+                </Text>
+              </TouchableOpacity>
+            )}
             <View>
               {photosList?.map((item, index) => {
                 return index !== 0 && item ? (
@@ -312,16 +324,19 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 ) : null;
               })}
             </View>
-            {!isShowEditButton && <TouchableOpacity onPress={handleReport} style={{marginTop: 34}}>
-              <Text style={{
-                fontSize: RFValue(16,812),
-                color: whiteColor,
-                fontFamily: Satoshi700,
-                textAlign: 'center'
-              }}>
-                Block and Report
-              </Text>
-            </TouchableOpacity>}
+            {!isShowEditButton && (
+              <TouchableOpacity onPress={handleReport} style={{marginTop: 34}}>
+                <Text
+                  style={{
+                    fontSize: RFValue(16, 812),
+                    color: whiteColor,
+                    fontFamily: Satoshi700,
+                    textAlign: 'center',
+                  }}>
+                  Block and Report
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
           <ModalUserProfile title={'Alex'} image={Man} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
         </ScrollView>

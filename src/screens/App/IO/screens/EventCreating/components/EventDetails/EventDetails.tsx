@@ -1,5 +1,5 @@
-import {Dispatch, FC, ReactElement, SetStateAction, useEffect, useRef, useState} from 'react';
-import {Alert, FlatList, Image, Keyboard, Text, TextInput, View} from 'react-native';
+import {Dispatch, FC, ReactElement, SetStateAction, useEffect, useState} from 'react';
+import {Alert, FlatList, Image, Keyboard, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ImagePickerResponse, launchImageLibrary} from 'react-native-image-picker';
@@ -12,17 +12,7 @@ import useStyles from './styles.ts';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
 import {isIos} from 'constants/common';
-import {
-  black1Color,
-  black3Color,
-  errorColor,
-  gray1Color,
-  lightGray2Color,
-  orangeClose,
-  toggleColor,
-  transparentWhite30Color,
-  whiteColor,
-} from 'constants/colors';
+import {black1Color, black3Color, errorColor, lightGray2Color, orangeClose, transparentWhite30Color, whiteColor} from 'constants/colors';
 
 //import icons
 import Plus from 'assets/images/icons/plus.svg';
@@ -34,11 +24,11 @@ import Close from 'assets/images/icons/close.svg';
 import moment from 'moment';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
-import {Switch} from '@ant-design/react-native';
+
 import ModalAddPhoto from './ModalAddPhoto.tsx';
 import {eventTypes} from 'src/mocks/eventTypes.ts';
 import analytics from '@react-native-firebase/analytics';
-
+import Config from 'react-native-config';
 interface ImageType {
   image: null | string;
   id: number;
@@ -145,6 +135,7 @@ const EventDetails: FC<EventDetailsProps> = ({
   setOpenHour,
   userHost,
 }): ReactElement => {
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const [modalAddPhotoVisible, setModalAddPhotoVisible] = useState(false);
   const [photosId, setPhotosId] = useState();
   const [addressEmpty, setAddressEmpty] = useState(false);
@@ -322,7 +313,7 @@ const EventDetails: FC<EventDetailsProps> = ({
 
   const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
     try {
-      await firestore().collection('Events').doc(userId).update({
+      await firestore().collection(apiEventsCollection).doc(userId).update({
         photos: imageUrl,
       });
       // console.log('Events image updated successfully.');
@@ -351,7 +342,7 @@ const EventDetails: FC<EventDetailsProps> = ({
       // console.log('photos', photos);
       // console.log('compareArrays', compareArrays(photos, photos));
 
-      await firestore().collection('Events').doc(id).update({
+      await firestore().collection(apiEventsCollection).doc(id).update({
         eventTypes,
         placeName,
         name,

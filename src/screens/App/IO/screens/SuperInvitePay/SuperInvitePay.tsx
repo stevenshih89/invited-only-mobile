@@ -45,6 +45,7 @@ interface PlanListItem {
 }
 
 const SuperInvitePay: FC = (): JSX.Element => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
   const navigation = useAppNavigation();
 
@@ -87,7 +88,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
         const {superInvites: superInvitesCurrent, weeklySuperInvites: weeklySuperInvitesCurrent} = userData;
 
         await firestore()
-          .collection('userInfo')
+          .collection(apiUserInfoCollection)
           .doc(user.uid)
           .update({
             superInvites: firestore.FieldValue.increment(superInvites),

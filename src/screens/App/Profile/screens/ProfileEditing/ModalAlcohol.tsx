@@ -17,6 +17,7 @@ import {Satoshi400} from 'constants/fonts';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from '../../../../../store/userStore';
 import Button from 'components/Button/Button';
+import Config from 'react-native-config';
 
 interface ModalAlcoholProps {
   isVisible: boolean;
@@ -39,6 +40,7 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
   listOfAlcohols,
   saveUserInfo,
 }) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const userHost = useUser((i: any) => i?.user);
   const setUserInfo = useUser((i: any) => i?.setUser);
 
@@ -46,10 +48,10 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
     try {
       const uid = userHost?.uid;
       setShowAlcohol(state);
-      await firestore().collection('userInfo').doc(uid).update({
+      await firestore().collection(apiUserInfoCollection).doc(uid).update({
         showAlcohol: state,
       });
-      const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+      const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
 
       if (userInfoDoc?.exists) {
         setUserInfo(userInfoDoc.data());
@@ -62,10 +64,10 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
     try {
       const uid = userHost?.uid;
       setActiveAlcoholItem(gender);
-      await firestore().collection('userInfo').doc(uid).update({
+      await firestore().collection(apiUserInfoCollection).doc(uid).update({
         alcohol: gender,
       });
-      const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+      const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
 
       if (userInfoDoc?.exists) {
         setUserInfo(userInfoDoc.data());

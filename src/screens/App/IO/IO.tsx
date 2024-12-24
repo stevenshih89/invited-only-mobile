@@ -88,9 +88,12 @@ import {inviteUser, IOscreen, joinEvent} from 'constants/analitycs';
 import RNUxcam from 'react-native-ux-cam';
 import {getEvents} from 'src/api/event';
 import {useMyEvents} from 'src/store/myEvents';
+import Config from 'react-native-config';
 
 const IO: FC = (): JSX.Element => {
   const EVENTS_LOADING_LIMIT = 7;
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
@@ -204,7 +207,7 @@ const IO: FC = (): JSX.Element => {
       try {
         if (nextAppState === 'active' || nextAppState === 'inactive') {
           await firestore()
-            .collection('userInfo')
+            .collection(apiUserInfoCollection)
             .doc(userInfo.uid)
             .update({
               online: nextAppState === 'active' ? true : false,
@@ -227,7 +230,7 @@ const IO: FC = (): JSX.Element => {
     let unsubscribeEvent: any;
     if (activeEvent?.id) {
       unsubscribeEvent = firestore()
-        .collection('Events')
+        .collection(apiEventsCollection)
         .doc(activeEvent?.id)
         .onSnapshot(querySnapshot => {
           if (!querySnapshot.exists) {
@@ -352,7 +355,7 @@ const IO: FC = (): JSX.Element => {
   }, []);
 
   const getSuperInvites = async () => {
-    const getDoc = await firestore().collection('userInfo').doc(userHost.uid).get();
+    const getDoc = await firestore().collection(apiUserInfoCollection).doc(userHost.uid).get();
     const currentSuperInvites = getDoc?.data()?.superInvites;
     const currentWeeklySuperInvites = getDoc?.data()?.weeklySuperInvites;
     counterSuperInvitesRef.current = currentSuperInvites;
@@ -393,7 +396,7 @@ const IO: FC = (): JSX.Element => {
       }
       if (counterWeeklySuperInvitesRef.current > 0) {
         firestore()
-          .collection('userInfo')
+          .collection(apiUserInfoCollection)
           .doc(userHost.uid)
           .update({
             weeklySuperInvites: counterWeeklySuperInvitesRef.current - 1,
@@ -401,7 +404,7 @@ const IO: FC = (): JSX.Element => {
         counterWeeklySuperInvitesRef.current -= 1;
       } else if (counterSuperInvitesRef.current > 0) {
         firestore()
-          .collection('userInfo')
+          .collection(apiUserInfoCollection)
           .doc(userHost.uid)
           .update({
             superInvites: counterSuperInvitesRef.current - 1,
@@ -480,7 +483,7 @@ const IO: FC = (): JSX.Element => {
 
     if (user) {
       try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
 
         const userInfoData = userInfoDoc.data() as UserInfo;
 
@@ -493,7 +496,7 @@ const IO: FC = (): JSX.Element => {
         }
         const isWeek = hasWeekPassed(userInfoDoc?.data()?.lastUpdateSuperInvite);
         if (isWeek) {
-          await firestore().collection('userInfo').doc(user.uid).update({
+          await firestore().collection(apiUserInfoCollection).doc(user.uid).update({
             lastUpdateSuperInvite: Date.now(),
             weeklySuperInvites: 5,
           });
@@ -511,7 +514,7 @@ const IO: FC = (): JSX.Element => {
     if (user) {
       try {
         const querySnapshot = await firestore()
-          .collection('Events')
+          .collection(apiEventsCollection)
           .where('uid', '==', user.uid)
           .where('isCancelled', '==', false)
           .orderBy('createdAt', 'desc')
@@ -572,7 +575,7 @@ const IO: FC = (): JSX.Element => {
     }
     try {
       await firestore()
-        .collection('Events')
+        .collection(apiEventsCollection)
         .doc(activeEventId)
         .update({
           rejectsList: firestore.FieldValue.arrayUnion({uid: rejectUid}),
@@ -592,12 +595,12 @@ const IO: FC = (): JSX.Element => {
 
   const updateSuperJoinsUser = async () => {
     try {
-      const getDoc = await firestore().collection('userInfo').doc(userInfo.uid).get();
+      const getDoc = await firestore().collection(apiUserInfoCollection).doc(userInfo.uid).get();
       const data = getDoc.data();
 
       if (data?.weeklySuperInvites && data?.weeklySuperInvites > 0) {
         await firestore()
-          .collection('userInfo')
+          .collection(apiUserInfoCollection)
           .doc(userInfo.uid)
           .update({
             weeklySuperInvites: data?.weeklySuperInvites - 1,
@@ -605,7 +608,7 @@ const IO: FC = (): JSX.Element => {
       } else {
         if (data?.superInvites && data.superInvites > 0) {
           await firestore()
-            .collection('userInfo')
+            .collection(apiUserInfoCollection)
             .doc(userInfo.uid)
             .update({
               superInvites: data?.superInvites - 1,
@@ -619,13 +622,13 @@ const IO: FC = (): JSX.Element => {
 
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
     try {
-      const guest = await firestore().collection('userInfo').doc(forUserUid).get();
+      const guest = await firestore().collection(apiUserInfoCollection).doc(forUserUid).get();
 
       const guestData = guest.data() as UserInfo;
 
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
-      const eventData = await firestore().collection('Events').doc(activeEventId).get();
+      const eventData = await firestore().collection(apiEventsCollection).doc(activeEventId).get();
 
       if (!eventData.exists) {
         return;
@@ -699,7 +702,7 @@ const IO: FC = (): JSX.Element => {
           };
         }
         await firestore()
-          .collection('Events')
+          .collection(apiEventsCollection)
           .doc(activeEventId)
           .update(data)
           .then(async () => {
@@ -773,7 +776,7 @@ const IO: FC = (): JSX.Element => {
             };
           }
           await firestore()
-            .collection('Events')
+            .collection(apiEventsCollection)
             .doc(activeEventId)
             .update(data)
             .then(async () => {
@@ -911,7 +914,7 @@ const IO: FC = (): JSX.Element => {
 
   async function enrichElementsWithPhotos(elements) {
     const promises = elements?.map(async element => {
-      const docRef = firestore().collection('userInfo').doc(element?.uid);
+      const docRef = firestore().collection(apiUserInfoCollection).doc(element?.uid);
       const doc = await docRef?.get();
 
       if (!doc?.exists) {
@@ -1406,7 +1409,7 @@ const IO: FC = (): JSX.Element => {
     let users;
     let getActualDataEvent: EventData | null = null;
     try {
-      const eventQuery = await firestore().collection('Events').doc(activeEvent.id).get();
+      const eventQuery = await firestore().collection(apiEventsCollection).doc(activeEvent.id).get();
       if (!eventQuery.exists) {
         setLoadingCardsList(false);
         setEvents([]);
@@ -1927,7 +1930,7 @@ const IO: FC = (): JSX.Element => {
   if (userInfo?.uid && isRefreshing && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <>
-        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : apiEventsCollection} near you ...`} userInfo={userInfo} />
         {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
           <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
         )}
@@ -1938,7 +1941,7 @@ const IO: FC = (): JSX.Element => {
   if (userInfo?.uid && loadingCardsList && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <>
-        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : apiEventsCollection} near you ...`} userInfo={userInfo} />
         {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
           <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
         )}

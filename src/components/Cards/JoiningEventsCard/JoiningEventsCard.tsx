@@ -17,11 +17,11 @@ import {commonStackPath, eventInfoPath} from 'constants/pathLocations';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
-import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import firestore from '@react-native-firebase/firestore';
 import {calculateAge} from 'helpers/calculateAge';
 import {useFocusEffect} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
+import Config from 'react-native-config';
 
 interface JoiningEventsCardProps {
   estimeTime: string;
@@ -103,6 +103,8 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
   handleAcceptInvitation,
   handleGetEventsIJoining,
 }) => {
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [eventStarting, setEventStarting] = useState<boolean>(true);
   const [updateEvent, setUpdateEvent] = useState<string | null>(null);
   const [visibleUserDelete, setVisibleUserDelete] = useState(true);
@@ -123,7 +125,7 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
   const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
 
   const getUserInfo = async () => {
-    const userInfoDoc = await firestore().collection('userInfo').doc(host?.hostUid).get();
+    const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(host?.hostUid).get();
     if (userInfoDoc.exists) {
       setUserInfo(userInfoDoc.data());
     }
@@ -236,11 +238,11 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
 
   const deleteUserFromCanceled = async () => {
     const userId = auth().currentUser?.uid;
-    const dataEvents = (await firestore().collection('Events').doc(id).get()).data();
+    const dataEvents = (await firestore().collection(apiEventsCollection).doc(id).get()).data();
     const deleteUsers = dataEvents.deleteUsers.filter(item => item !== userId);
     try {
       await firestore()
-        .collection('Events')
+        .collection(apiEventsCollection)
         .doc(id)
         .update({
           deleteUsers: [...deleteUsers],

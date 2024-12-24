@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
+import Config from 'react-native-config';
 
 // Start of Selection
 interface UserData {
@@ -17,6 +18,7 @@ interface UserData {
 }
 
 export const getUserData = async (userUid: string): Promise<UserData> => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const deaultValues = {
     accountConfirmed: false,
     accountPremium: false,
@@ -32,7 +34,7 @@ export const getUserData = async (userUid: string): Promise<UserData> => {
     weeklySuperInvites: 0,
   };
   try {
-    const userQuery = await firestore().collection('userInfo').doc(userUid).get();
+    const userQuery = await firestore().collection(apiUserInfoCollection).doc(userUid).get();
 
     if (userQuery.exists) {
       const data = userQuery.data();

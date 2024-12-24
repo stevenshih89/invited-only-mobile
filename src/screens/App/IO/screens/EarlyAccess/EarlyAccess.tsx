@@ -15,8 +15,10 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {screenHeight} from 'constants/common';
+import Config from 'react-native-config';
 
 const EarlyAccess = () => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const userHost = useUser((i: any) => i?.user);
   const [loadingUser, setLoadingUser] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo>();
@@ -31,7 +33,7 @@ const EarlyAccess = () => {
 
     if (user) {
       try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
 
         if (userInfoDoc.exists) {
           const userInfoData = userInfoDoc.data() as UserInfo;

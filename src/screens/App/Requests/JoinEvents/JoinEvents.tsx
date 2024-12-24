@@ -1,4 +1,4 @@
-import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import {FC, ReactElement, useCallback, useState} from 'react';
 
 //import components
@@ -12,13 +12,14 @@ import {whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import Button from 'components/Button/Button';
 import {screenHeight} from 'constants/common';
+import Config from 'react-native-config';
 
 const JoinEvents: FC = (): ReactElement => {
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
-
-  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchHostRequests = async () => {
     const user = auth().currentUser;
@@ -27,7 +28,7 @@ const JoinEvents: FC = (): ReactElement => {
     }
 
     try {
-      const getData = await firestore().collection('Events').get();
+      const getData = await firestore().collection(apiEventsCollection).get();
 
       const matchingDocs = [];
 
@@ -52,7 +53,7 @@ const JoinEvents: FC = (): ReactElement => {
 
   //   if (user) {
   //     try {
-  //       const userInfoDoc = await firestore().collection('userInfo').doc(user.uid).get();
+  //       const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
   //       if (userInfoDoc.exists) {
   //         setUserInfo(userInfoDoc.data());
   //       }

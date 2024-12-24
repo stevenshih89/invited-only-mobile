@@ -39,6 +39,7 @@ import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat.ts';
 import {getUsersListAccepted} from 'helpers/getUsersListAccepted.ts';
 import {useScrollPosition} from 'src/store/scrollPosition/index.ts';
 import {eventTypes} from 'src/mocks/eventTypes.ts';
+import Config from 'react-native-config';
 
 interface Photo {
   url: string;
@@ -129,6 +130,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   male,
   female,
 }): ReactElement => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
 
@@ -152,7 +154,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   const getUserEventInfo = async () => {
     try {
-      const getDoc = await firestore().collection('userInfo').doc(uidUserEvent).get();
+      const getDoc = await firestore().collection(apiUserInfoCollection).doc(uidUserEvent).get();
       setUserEventInfo(getDoc?.data());
     } catch (error) {
       console.log('error getUserEventInfo', error);

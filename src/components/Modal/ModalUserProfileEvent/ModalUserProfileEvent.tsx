@@ -23,9 +23,9 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {calculateAge} from 'helpers/calculateAge.ts';
 import {useFocusEffect} from '@react-navigation/native';
 import {sendNotification} from 'helpers/fcmHelper.ts';
-import ModalFullEvent from '../ModalFullEvent/index.tsx';
 import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common.ts';
 import {Event} from 'src/types/event.ts';
+import Config from 'react-native-config';
 
 interface ModalUserProfileEventProps {
   isModalVisible?: boolean;
@@ -58,6 +58,9 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
 }) => {
   const styles = useStyles();
 
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const navigation = useAppNavigation();
   const userHost = useUser((i: any) => i?.user);
   const [userInfo, setUserInfo] = useState<any>({});
@@ -80,7 +83,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     }
   };
   const getUserInfo = async () => {
-    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
+    const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
     if (userInfoDoc.exists) {
       setUserInfo(userInfoDoc.data());
     }
@@ -107,7 +110,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     date?: string;
     hostPhoto: string;
   }) => {
-    const eventQuerySnapshot = await firestore().collection('Events').doc(id).get();
+    const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(id).get();
     const eventDataList = eventQuerySnapshot.data();
     if (!eventDataList?.usersList.length) {
       return;
@@ -125,7 +128,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         }
         return userItem;
       });
-      await firestore().collection('Events').doc(id).update({
+      await firestore().collection(apiEventsCollection).doc(id).update({
         usersList: updatedUsersList,
       });
       switch (status) {
@@ -193,7 +196,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   const handleCreateChat = async () => {
     try {
       const user = usersList?.filter((i: any) => i?.uid === uid)[0];
-      const messageCollection = await firestore().collection('messages').doc(list?.id).get();
+      const messageCollection = await firestore().collection(apiMessagesCollection).doc(list?.id).get();
       const chatCheck = messageCollection?.data()?.chats?.find(i => i?.uid === uid);
       const activeEvent = messageCollection?.data()?.activeEvent;
 
@@ -227,7 +230,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
             hostUid: userHost?.uid,
           };
           await firestore()
-            .collection('messages')
+            .collection(apiMessagesCollection)
             .doc(list?.id)
             .update({
               chats: [...prevChats, newChats],
@@ -252,7 +255,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
         } else {
           const id = list?.id;
 
-          await firestore().collection('messages').doc(id).set({
+          await firestore().collection(apiMessagesCollection).doc(id).set({
             activeEvent: id,
             avatarGuest: user?.userPhoto,
             avatarHost: userHost?.photos[0]?.image,
@@ -275,7 +278,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
           };
 
           await firestore()
-            .collection('messages')
+            .collection(apiMessagesCollection)
             .doc(id)
             .update({
               chats: [newChats],
@@ -306,7 +309,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   };
 
   const updateChatDocument = async () => {
-    const chatQuery = await firestore().collection('messages').doc(list?.id).get();
+    const chatQuery = await firestore().collection(apiMessagesCollection).doc(list?.id).get();
     if (!chatQuery.exists) {
       return;
     }
@@ -321,13 +324,13 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       }
       return chat;
     });
-    await firestore().collection('messages').doc(list?.id).update({
+    await firestore().collection(apiMessagesCollection).doc(list?.id).update({
       chats: updatedChatList,
     });
   };
 
   const updateEventDocument = async () => {
-    const eventQuery = await firestore().collection('Events').doc(list?.id).get();
+    const eventQuery = await firestore().collection(apiEventsCollection).doc(list?.id).get();
     if (!eventQuery.exists) {
       return;
     }
@@ -342,7 +345,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       return user;
     });
 
-    await firestore().collection('Events').doc(list?.id).update({
+    await firestore().collection(apiEventsCollection).doc(list?.id).update({
       usersList: updatedUsersList,
     });
   };
@@ -350,21 +353,27 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
   const handleApproveGuestFromHost = async () => {
     try {
       if (uid) {
-        const getDate = await firestore().collection('userInfo').doc(uid).get();
+        const getDate = await firestore().collection(apiUserInfoCollection).doc(uid).get();
         const docData = getDate.data();
         await updateChatDocument();
         await updateEventDocument();
         if (docData?.notificationSettings.requests) {
-          await sendNotification(uid, 'Please confirm your attendence', 'Request approved', 'Approve', 'Approved'.toUpperCase(), userInfo, JSON.stringify({path: 'myEvents'}));
+          await sendNotification(
+            uid,
+            'Please confirm your attendence',
+            'Request approved',
+            'Approve',
+            'Approved'.toUpperCase(),
+            userInfo,
+            JSON.stringify({path: 'myEvents'}),
+          );
         }
         showToast('inviteMatch', `Waiting for ${userGuest?.name} to accept your invitation`, 'Almost there!', {
           ownerPhoto: userGuest?.userPhoto,
           status: 'GUEST APPROVED',
         });
       }
-    } catch (e) {
-
-    }
+    } catch (e) {}
   };
 
   const getUserStatusButtonText = () => {

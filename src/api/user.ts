@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
+import Config from 'react-native-config';
 
 export const getUsersForEvent = async ({
   male,
@@ -13,8 +14,9 @@ export const getUsersForEvent = async ({
   lastVisible?: any;
   excludeUids: string[];
 }) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   let query = firestore()
-    .collection('userInfo')
+    .collection(apiUserInfoCollection)
     .orderBy('uid')
     .orderBy('createdAt', 'desc')
     .where('accountType', '==', 'guest')

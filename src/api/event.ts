@@ -1,6 +1,9 @@
 import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import {EventData} from 'src/types/event';
 import auth from '@react-native-firebase/auth';
+import Config from 'react-native-config';
+
+const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
 
 export type IOEventPhoto = {
   image: null | string;
@@ -31,7 +34,7 @@ export type IOEvent = {
 };
 
 export async function createEvent(uid: string, event: EventData): Promise<boolean> {
-  await firestore().collection('Events').doc(uid).set(event);
+  await firestore().collection(apiEventsCollection).doc(uid).set(event);
   return true;
 }
 
@@ -46,7 +49,7 @@ export const getEvents = async ({limit = 10, lastVisible, excludeUids}: GetEvent
   if (!currentUser) {
     throw new Error('User not found');
   }
-  let query = firestore().collection('Events').where('statusEvent', '==', true).where('isCancelled', '==', false);
+  let query = firestore().collection(apiEventsCollection).where('statusEvent', '==', true).where('isCancelled', '==', false);
 
   if (excludeUids?.length) {
     query = query.where('uid', 'not-in', excludeUids);

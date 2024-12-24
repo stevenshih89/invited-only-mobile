@@ -1,22 +1,9 @@
-import {
-  blackColor,
-  deleteColor,
-  grayColor,
-  lightGray5Color,
-  lightGray6Color,
-  lightRedColor,
-  toggleColor,
-  transparentWhite16Color,
-  whiteColor,
-} from 'constants/colors';
+import {blackColor, deleteColor, lightGray5Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
-import AEFlag from 'assets/images/flags/ae.svg';
 import TrashRed from 'assets/images/icons/trash-red.svg';
-import InstagramIcon from 'assets/images/auth/instagram.svg';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {Switch} from '@ant-design/react-native';
 import {FC, useEffect, useState} from 'react';
 import ModalDeleteMyAccount from './ModalDeleteMyAccount';
 import {phoneChangePath, emailChangePath} from 'constants/pathLocations';
@@ -24,11 +11,13 @@ import {useUser} from '../../../../../store/userStore';
 import auth from '@react-native-firebase/auth';
 import Geolocation from '@react-native-community/geolocation';
 import firestore from '@react-native-firebase/firestore';
-import chat from 'screens/App/Chat/Chat.tsx';
+
 import ModalConfirmPhone from './ModalConfirmPhone';
-import { showToast } from 'helpers/showToast';
+import {showToast} from 'helpers/showToast';
+import Config from 'react-native-config';
 
 const AccountSetting: FC = ({navigation, route}: any) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const locationState = route?.params?.params?.locationState;
   const [isChechked, setIsChechked] = useState(false);
   const [isConnectedInstagram, setIsConnectedInstagram] = useState(false);
@@ -49,14 +38,14 @@ const AccountSetting: FC = ({navigation, route}: any) => {
   const handleChangeLocation = async (state: boolean): Promise<void> => {
     try {
       await firestore()
-        .collection('userInfo')
+        .collection(apiUserInfoCollection)
         .doc(uid)
         .update({
           location: state,
         })
         .then(async () => {
           await firestore()
-            .collection('userInfo')
+            .collection(apiUserInfoCollection)
             .doc(uid)
             .get()
             .then(res => {
@@ -100,21 +89,22 @@ const AccountSetting: FC = ({navigation, route}: any) => {
 
   const sendVerificationCode = async () => {
     const phoneNumber = auth().currentUser?.phoneNumber;
-    if (!phoneNumber) return;
+    if (!phoneNumber) {
+      return;
+    }
     try {
-      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);      
+      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
       setVerificationId(confirmation?.verificationId);
     } catch (error) {
       console.error('Failed to send verification code:', error);
-      if(error.code === 'auth/too-many-requests') {
-        setIsVisibleConfirmPhoneModal(false)
-        showToast('inviteMatch', 'We have blocked all requests from this device due to unusual activity. Try again later.', 'Failed')
+      if (error.code === 'auth/too-many-requests') {
+        setIsVisibleConfirmPhoneModal(false);
+        showToast('inviteMatch', 'We have blocked all requests from this device due to unusual activity. Try again later.', 'Failed');
       }
     }
   };
 
   console.log('userPhone', userPhone);
-  
 
   return (
     <>
@@ -130,7 +120,10 @@ const AccountSetting: FC = ({navigation, route}: any) => {
                 {/*<AEFlag />*/}
                 <Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi700, marginLeft: 4}}>
                   {userPhone?.slice(0, 4)}
-                  <Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi400}}> {userPhone?.slice(4, userPhone.length)}</Text>
+                  <Text style={{color: whiteColor, fontSize: RFValue(15, 812), fontFamily: Satoshi400}}>
+                    {' '}
+                    {userPhone?.slice(4, userPhone.length)}
+                  </Text>
                 </Text>
               </View>
               <TouchableOpacity

@@ -22,13 +22,14 @@ import FastImage from 'react-native-fast-image';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import {useUser} from 'src/store/userStore';
 import {getUserData} from 'helpers/getUserData';
+import Config from 'react-native-config';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const GUEST_LIST = 'GUEST_LIST';
   const EVENT_INFO = 'EVENT_INFO';
   const {list, isGuest} = route?.params;
-  console.log('list', list);
-  
+
   const {
     usersList,
     photos,
@@ -71,7 +72,7 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
   useFocusEffect(
     useCallback(() => {
       const unsubscribe = firestore()
-        .collection('Events')
+        .collection(apiEventsCollection)
         .doc(id)
         .onSnapshot(async querySnapshot => {
           if (querySnapshot.exists) {

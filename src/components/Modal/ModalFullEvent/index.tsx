@@ -17,6 +17,7 @@ import {ACCEPTED_STATUS} from 'constants/common';
 import FastImage from 'react-native-fast-image';
 import {useUser} from 'src/store/userStore';
 import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
+import Config from 'react-native-config';
 
 interface ModalFullEvent {
   isVisible: boolean;
@@ -46,10 +47,11 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
 
   const navigation = useNavigation();
 
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const user = useUser((i: any) => i?.user);
 
   const getActiveEventData = async () => {
-    const getEventData = await firestore().collection('Events').doc(idEvent).get();
+    const getEventData = await firestore().collection(apiEventsCollection).doc(idEvent).get();
     if (!getEventData.exists) {
       return;
     }

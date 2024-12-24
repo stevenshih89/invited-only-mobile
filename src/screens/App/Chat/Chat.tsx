@@ -36,6 +36,7 @@ import analytics from '@react-native-firebase/analytics';
 import {chatsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
 import {EventData} from 'src/types/event';
+import Config from 'react-native-config';
 
 type ItemProps = {
   title: string;
@@ -74,6 +75,9 @@ interface ChatProps {
 }
 
 const Chat: FC<ChatProps> = ({typeEvents}) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
   const [hostMenu, setHostMenu] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [messages, setMessages] = useState([]);
@@ -111,7 +115,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
     if (userData) {
       try {
-        const userInfoDoc = await firestore().collection('userInfo').doc(userData.uid).get();
+        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(userData.uid).get();
         if (userInfoDoc.exists) {
           setUserInfo(userInfoDoc.data());
         }
@@ -122,7 +126,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   const fetchEventData = async () => {
     setLoading(true);
-    const eventDataDoc = await firestore().collection('Events').doc(activeEvent?.id).get();
+    const eventDataDoc = await firestore().collection(apiEventsCollection).doc(activeEvent?.id).get();
     if (eventDataDoc.exists) {
       const data = eventDataDoc.data();
       setEventData(data);
@@ -403,7 +407,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     let guestSubscriber: any;
     if (isHost) {
       hostSubscriber = firestore()
-        .collection('messages')
+        .collection(apiMessagesCollection)
         .doc(activeEvent?.id)
         .onSnapshot(async documentSnapshot => {
           if (!documentSnapshot.exists) {
@@ -427,7 +431,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
         });
     } else {
       guestSubscriber = firestore()
-        .collection('messages')
+        .collection(apiMessagesCollection)
         .onSnapshot(async documentSnapshot => {
           if (documentSnapshot.empty) {
             return;
@@ -442,7 +446,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
           const mappedChats: any = [];
 
           for (const chat of filteredChats) {
-            const eventQuery = await firestore().collection('Events').doc(chat?.activeEvent).get();
+            const eventQuery = await firestore().collection(apiEventsCollection).doc(chat?.activeEvent).get();
             if (!eventQuery.exists) {
               continue;
             }

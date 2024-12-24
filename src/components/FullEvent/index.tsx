@@ -7,6 +7,7 @@ import {Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import firestore from '@react-native-firebase/firestore';
 import {INVITE_MATCH_STATUS} from 'constants/common';
+import Config from 'react-native-config';
 
 interface FullEventProps {
   activeEvent: any;
@@ -21,8 +22,10 @@ interface FullEventProps {
 const FullEvent: FC<FullEventProps> = ({activeEvent, totalRequestsGuests, rightComponent, text, styleContainer}) => {
   const [actualActiveEventData, setActualActiveEventData] = useState([]);
 
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+
   const getActiveEventData = async () => {
-    const getEventData = (await firestore().collection('Events').doc(activeEvent.id).get()).data();
+    const getEventData = (await firestore().collection(apiEventsCollection).doc(activeEvent.id).get()).data();
     if (getEventData) {
       setActualActiveEventData(getEventData);
     }

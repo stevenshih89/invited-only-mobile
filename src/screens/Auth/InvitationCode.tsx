@@ -2,7 +2,6 @@ import {isIos} from 'constants/common';
 import {FC, useContext, useEffect, useState} from 'react';
 import {
   AppState,
-  InteractionManager,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -34,7 +33,10 @@ import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import {AppEventsLogger} from 'react-native-fbsdk-next';
+import Config from 'react-native-config';
+
 const InvitationCode: FC = (): JSX.Element => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [code, setCode] = useState<string>('');
   const [invalidCode, setInvalidCode] = useState(false);
   const [isFocusInput, setIsfocusInput] = useState<boolean>(false);
@@ -206,7 +208,7 @@ const InvitationCode: FC = (): JSX.Element => {
       };
 
       await firestore()
-        .collection('userInfo')
+        .collection(apiUserInfoCollection)
         .doc(`${userId}`)
         .set(newUserData)
         .finally(() => {
@@ -230,7 +232,7 @@ const InvitationCode: FC = (): JSX.Element => {
   };
 
   const handleNext = async () => {
-    const usersRef = firestore().collection('userInfo');
+    const usersRef = firestore().collection(apiUserInfoCollection);
     const snapshot = await usersRef.get();
     let userUid = null;
 
@@ -283,7 +285,7 @@ const InvitationCode: FC = (): JSX.Element => {
         await handleRegisterUser(onboardingData);
       } else {
         try {
-          await firestore().collection('userInfo').doc(auth()?.currentUser?.uid).update({
+          await firestore().collection(apiUserInfoCollection).doc(auth()?.currentUser?.uid).update({
             accountReviewed: true,
             accountConfirmed: true,
           });

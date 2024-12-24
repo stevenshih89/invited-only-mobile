@@ -1,5 +1,5 @@
 import {Switch} from '@rneui/themed';
-import {blackColor, grayColor, lightGray5Color, lightGray6Color, toggleColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {blackColor, grayColor, lightGray5Color, toggleColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {FC, useEffect, useState} from 'react';
 import {SafeAreaView, Text, View} from 'react-native';
@@ -7,8 +7,10 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import ModalTurnOffNotifications from './ModalTurnOffNotifications';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from '../../../../../store/userStore';
+import Config from 'react-native-config';
 
 const NotificationSetting: FC = ({navigation, route}: any) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const notificationSettings = route?.params?.params?.notificationSettings;
 
   const [allNotification, setAllNotification] = useState(false);
@@ -37,7 +39,7 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
       setMatch(val);
 
       await firestore()
-        .collection('userInfo')
+        .collection(apiUserInfoCollection)
         .doc(uid)
         .update({
           notificationSettings: {
@@ -52,7 +54,7 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
         })
         .then(async () => {
           await firestore()
-            .collection('userInfo')
+            .collection(apiUserInfoCollection)
             .doc(uid)
             .get()
             .then(res => {
@@ -76,7 +78,7 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
     setIsVisibleTurnOffNotificationsModal(false);
 
     await firestore()
-      .collection('userInfo')
+      .collection(apiUserInfoCollection)
       .doc(uid)
       .update({
         notificationSettings: {
@@ -91,7 +93,7 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
       })
       .then(async () => {
         await firestore()
-          .collection('userInfo')
+          .collection(apiUserInfoCollection)
           .doc(uid)
           .get()
           .then(res => {
@@ -103,7 +105,7 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
   const handleChangeStatus = async () => {
     try {
       await firestore()
-        .collection('userInfo')
+        .collection(apiUserInfoCollection)
         .doc(uid)
         .update({
           notificationSettings: {
@@ -118,7 +120,7 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
         })
         .then(async () => {
           await firestore()
-            .collection('userInfo')
+            .collection(apiUserInfoCollection)
             .doc(uid)
             .get()
             .then(res => {

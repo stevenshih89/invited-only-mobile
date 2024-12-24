@@ -23,8 +23,9 @@ import {showToast} from 'helpers/showToast';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {profileEditing, profileScreen} from 'constants/analitycs';
 import analytics from '@react-native-firebase/analytics';
-
+import Config from 'react-native-config';
 const ProfileEditing: FC = (): ReactElement => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [isVisibleSmokeModal, setIsVisibleSmokeModal] = useState<boolean>(false);
   const [isVisibleGenderModal, setIsVisibleGenderModal] = useState<boolean>(false);
   const [isVisibleHeightModal, setIsVisibleHeightModal] = useState<boolean>(false);
@@ -208,7 +209,7 @@ const ProfileEditing: FC = (): ReactElement => {
 
   const updatePhotosImage = async (userId: string, imageUrl: any[]) => {
     try {
-      await firestore().collection('userInfo').doc(userId).update({
+      await firestore().collection(apiUserInfoCollection).doc(userId).update({
         photos: imageUrl,
       });
     } catch (e: any) {
@@ -244,7 +245,7 @@ const ProfileEditing: FC = (): ReactElement => {
     const user = auth().currentUser;
     if (user) {
       try {
-        const documentSnapshot = await firestore().collection('userInfo').doc(user.uid).get();
+        const documentSnapshot = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
         const userData = documentSnapshot.data();
         const updatedImages = images.map(item => {
           const photo = userData?.photos?.[item.id];
@@ -416,7 +417,7 @@ const ProfileEditing: FC = (): ReactElement => {
 
       try {
         await firestore()
-          .collection('userInfo')
+          .collection(apiUserInfoCollection)
           .doc(user.uid)
           .update({
             interests: saveField === SAVE_FIELD_INTERESTS ? reqInterestsNew : reqInterestsOld,

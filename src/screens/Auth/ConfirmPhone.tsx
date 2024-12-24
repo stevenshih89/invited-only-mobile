@@ -24,8 +24,10 @@ import {showToast} from 'helpers/showToast.ts';
 import firebase from '@react-native-firebase/firestore';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import LinearGradient from 'react-native-linear-gradient';
+import Config from 'react-native-config';
 
 const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const mobilePhone = route?.params?.mobilePhone;
   const [code, setCode] = useState<string>('');
   const [isUserExist, setIsUserExist] = useState<boolean>(false);
@@ -43,7 +45,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
 
   const onAuthStateChanged = async (user: any) => {
     if (user) {
-      const userData = await firebase().collection('userInfo').doc(user.uid).get();
+      const userData = await firebase().collection(apiUserInfoCollection).doc(user.uid).get();
 
       if (userData.exists) {
         setIsUserExist(true);

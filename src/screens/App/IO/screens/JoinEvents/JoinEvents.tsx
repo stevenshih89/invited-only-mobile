@@ -5,8 +5,6 @@ import {TinderCard} from 'rn-tinder-card-bn-digital';
 //import components
 import useStyles from 'screens/App/IO/screens/JoinEvents/styles.ts';
 import {LIKED, screenHeight} from 'constants/common.ts';
-import Button from 'components/Button/Button.tsx';
-import {eventCreatingStackPath, userProfilePath} from 'constants/pathLocations.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 
 //import icons
@@ -30,8 +28,11 @@ import {useUser} from '../../../../../store/userStore';
 import {showToast} from 'helpers/showToast.ts';
 import Match from '../Match/Match';
 import {onMatchNotificationSubscription} from 'helpers/fcmHelper';
+import Config from 'react-native-config';
 
 const JoinEvents = ({navigation}: any) => {
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [events, setEvents] = useState<any[]>([]);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState();
@@ -72,7 +73,7 @@ const JoinEvents = ({navigation}: any) => {
       return;
     }
     try {
-      const querySnapshot = await firestore().collection('Events').limit(20).get();
+      const querySnapshot = await firestore().collection(apiEventsCollection).limit(20).get();
 
       const filteredEvents = querySnapshot.docs
         .map((doc: any) => ({
@@ -85,7 +86,7 @@ const JoinEvents = ({navigation}: any) => {
 
       async function enrichElementsWithPhotos(elements) {
         const promises = elements.map(async element => {
-          const docRef = firestore().collection('userInfo').doc(element.uid);
+          const docRef = firestore().collection(apiUserInfoCollection).doc(element.uid);
           const doc = await docRef.get();
           const userInfo = doc.data();
           return {...element, userPhotos: userInfo?.photos};
@@ -260,7 +261,7 @@ const JoinEvents = ({navigation}: any) => {
       };
 
       await firestore()
-        .collection('Events')
+        .collection(apiEventsCollection)
         .doc(activeEvent)
         .update({
           requestsList: firestore.FieldValue.arrayUnion(userLiked),

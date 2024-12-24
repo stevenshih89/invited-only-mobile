@@ -12,7 +12,7 @@ import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {requestsPath} from 'constants/pathLocations.ts';
-
+import Config from 'react-native-config';
 interface ModalCancelInvitationProps {
   cancelInvitation?: boolean;
   setCancelInvitation?: any;
@@ -41,14 +41,17 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
   const styles = useStyles();
   const navigation = useAppNavigation();
 
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
+
   const handleUnmatchEvent = async () => {
     try {
       const user = auth().currentUser;
-      await firestore().collection('messages').doc(eventId).delete();
-      const getDoc = await firestore().collection('Events').doc(eventId).get();
+      await firestore().collection(apiMessagesCollection).doc(eventId).delete();
+      const getDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
       const data = getDoc.data();
       await firestore()
-        .collection('Events')
+        .collection(apiEventsCollection)
         .doc(eventId)
         .update({
           usersList: data?.usersList.filter(item => item.uid !== user?.uid),

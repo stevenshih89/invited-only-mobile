@@ -8,43 +8,27 @@ import useStyles from 'components/Modal/ModalHostMenu/styles.ts';
 import ModalCancelOrConfirmInvitation from 'components/Modal/ModalCancelOrConfirmInvitation/ModalCancelOrConfirmInvitation.tsx';
 
 //import icons
-import Users from 'assets/images/icons/Users.svg';
 import UserIconWhite from 'assets/images/icons/user-white.svg';
-import UserIcon from 'assets/images/icons/user.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
-import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
-import ChatActiveIcon from 'assets/images/tab-bar/chat-active.svg';
 import UserWarnIcon from 'assets/images/icons/user-warn.svg';
 import CloseIcon from 'assets/images/icons/close-circle-red.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
 import LineImage from 'assets/images/app/Line.png';
 import {commonStackPath, eventActiveInfoPath, myProfileViewPath} from 'constants/pathLocations.ts';
-import {
-  blackColor,
-  deleteColor,
-  gray1Color,
-  lightGray18Color,
-  lightGray20Color,
-  lightGreenColor,
-  transparent60Color,
-  whiteColor,
-} from 'constants/colors.ts';
+import {blackColor, deleteColor, gray1Color, lightGray18Color, lightGray20Color, lightGreenColor, whiteColor} from 'constants/colors.ts';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 import firestore from '@react-native-firebase/firestore';
-import {color} from '@rneui/base';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {calculateAge} from 'helpers/calculateAge';
-import {userProfilePath} from 'constants/pathLocations.ts';
-import {formatDate} from 'helpers/formatDate';
-import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
 import {ACCEPTED_STATUS, APPROVED_STATUS, screenWidth} from 'constants/common';
 import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast';
 import {sendNotification} from 'helpers/fcmHelper';
+import Config from 'react-native-config';
 
 interface HostMenu {
   hostMenu?: boolean;
@@ -73,6 +57,8 @@ const ModalHostMenu: FC<HostMenu> = ({
   eventId,
   hostImage,
 }) => {
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const [cancelInvitation, setCancelInvitation] = useState<boolean>(false);
   const [modalReport, setModalReport] = useState<boolean>(false);
   const navigation = useAppNavigation();
@@ -85,18 +71,18 @@ const ModalHostMenu: FC<HostMenu> = ({
 
   useEffect(() => {
     const getEventData = async () => {
-      const getDoc = await firestore().collection('Events').doc(eventId).get()
-      const data = getDoc.data()
-      setEventData(data)
-    }
-    getEventData()
-  },[eventData])
+      const getDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
+      const data = getDoc.data();
+      setEventData(data);
+    };
+    getEventData();
+  }, [eventData]);
 
   const getHostData = async () => {
     if (!hostUid) {
       return;
     }
-    const hostQuery = await firestore().collection('userInfo').doc(hostUid).get();
+    const hostQuery = await firestore().collection(apiUserInfoCollection).doc(hostUid).get();
     // console.warn('hostQuery', hostQuery.data());
 
     if (!hostQuery.exists) {
@@ -109,11 +95,10 @@ const ModalHostMenu: FC<HostMenu> = ({
     setHostData(hostData);
   };
 
-  const goToEventInfo = () => {    
-    setHostMenu(false)
-    navigation.navigate(commonStackPath, 
-      {screen: eventActiveInfoPath, params: {list: eventData, isGuest: true}} as never)
-  }
+  const goToEventInfo = () => {
+    setHostMenu(false);
+    navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list: eventData, isGuest: true}} as never);
+  };
 
   const goToProfileView = (currentUid: string) => {
     setHostMenu(false);
@@ -133,7 +118,7 @@ const ModalHostMenu: FC<HostMenu> = ({
 
   const getStatus = async () => {
     try {
-      const eventQuerySnapshot = await firestore().collection('Events').doc(eventId).get();
+      const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(eventId).get();
       const eventDataList = eventQuerySnapshot.data();
 
       if (!eventDataList || !eventDataList?.usersList.length) {
@@ -153,7 +138,7 @@ const ModalHostMenu: FC<HostMenu> = ({
 
   const changeStatusGuestUsersList = async () => {
     try {
-      const eventQuerySnapshot = await firestore().collection('Events').doc(eventId).get();
+      const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(eventId).get();
       const eventDataList = eventQuerySnapshot.data();
 
       if (!eventDataList?.usersList.length) {
@@ -170,7 +155,7 @@ const ModalHostMenu: FC<HostMenu> = ({
         return userItem;
       });
       setStatus(ACCEPTED_STATUS);
-      await firestore().collection('Events').doc(eventId).update({
+      await firestore().collection(apiEventsCollection).doc(eventId).update({
         usersList: updatedUsersList,
       });
       getStatus();
