@@ -15,11 +15,11 @@ interface ModalAddProps {
   onClose: () => void;
   openLibrary: () => void;
   addPlaceholderPhoto: () => void;
-//   showHeight: boolean;
-//   setShowHeight: Dispatch<SetStateAction<boolean>>;
-//   height: string | null;
-//   setHeight: Dispatch<SetStateAction<string | null>>;
-//   heightsList: {id: number; value: number; label: string}[];
+  //   showHeight: boolean;
+  //   setShowHeight: Dispatch<SetStateAction<boolean>>;
+  //   height: string | null;
+  //   setHeight: Dispatch<SetStateAction<string | null>>;
+  //   heightsList: {id: number; value: number; label: string}[];
 }
 
 const ModalAddPhoto: FC<ModalAddProps> = ({isVisible, onClose, openLibrary, addPlaceholderPhoto}) => {
@@ -48,19 +48,30 @@ const ModalAddPhoto: FC<ModalAddProps> = ({isVisible, onClose, openLibrary, addP
         }}>
         <View style={{backgroundColor: whiteColor, height: 2, borderRadius: 10, width: 40, alignSelf: 'center', marginBottom: 22}} />
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), textAlign: 'center', marginBottom: 10}}>
-        Event photos
+          Event photos
         </Text>
-        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 16, paddingHorizontal: 20,}}>
-            <CameraIcon />
-            <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginLeft: 10}}>Use a camera</Text>
+        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 16, paddingHorizontal: 20}}>
+          <CameraIcon />
+          <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginLeft: 10}}>Use a camera</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={openLibrary} style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 16, paddingHorizontal: 20,}}>
-            <ImageIcon />
-            <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginLeft: 10}}>Upload from galery</Text>
+        <TouchableOpacity
+          onPress={openLibrary}
+          style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 16, paddingHorizontal: 20}}>
+          <ImageIcon />
+          <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginLeft: 10}}>Upload from galery</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={addPlaceholderPhoto} style={{paddingVertical: 16, paddingHorizontal: 20, backgroundColor: lightGray2Color, borderRadius: 10, alignItems: 'center', flexDirection: 'row'}}>
-            <PlusIcon />
-            <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginLeft: 10}}>Use a placeholder</Text>
+        <TouchableOpacity
+          onPress={addPlaceholderPhoto}
+          style={{
+            paddingVertical: 16,
+            paddingHorizontal: 20,
+            backgroundColor: lightGray2Color,
+            borderRadius: 10,
+            alignItems: 'center',
+            flexDirection: 'row',
+          }}>
+          <PlusIcon />
+          <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginLeft: 10}}>Use a placeholder</Text>
         </TouchableOpacity>
       </View>
     </Modal>

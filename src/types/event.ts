@@ -14,6 +14,9 @@ export namespace Event {
     superInvite: boolean;
     userPhoto: string;
   }
+  export interface RejectUser {
+    uid: string;
+  }
   export interface Info {
     uid: string;
     id: string;
@@ -40,7 +43,7 @@ export namespace Event {
 
 export interface EventData extends Event.Info {
   photos: Event.Photo[];
-  rejectsList: string[];
+  rejectsList: Event.RejectUser[];
   requestsList: Event.User[];
   usersList: Event.User[];
 }

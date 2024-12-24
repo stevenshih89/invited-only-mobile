@@ -23,10 +23,10 @@ import Button from 'components/Button/Button';
 import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
 import {Event} from 'src/types/event';
 import analytics from '@react-native-firebase/analytics';
-import { joinEvent } from 'constants/analitycs';
-import { requestsScreen } from 'constants/analitycs';
-import { useNavigation } from '@react-navigation/native';
-import { commonStackPath, eventActiveInfoPath, myProfileViewPath, userProfilePath } from 'constants/pathLocations';
+import {joinEvent} from 'constants/analitycs';
+import {requestsScreen} from 'constants/analitycs';
+import {useNavigation} from '@react-navigation/native';
+import {commonStackPath, eventActiveInfoPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations';
 
 const eventTypes = [
   {id: 0, label: 'Vip Tables'},
@@ -46,7 +46,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
   const [loading, setLoading] = useState(true);
   const [heightAnim] = useState(new Animated.Value(screenHeight * 0.4));
   const cardRef = useRef(null);
-  const {photos, uid, hour, date, female, male, name, usersList, activeType} = list;
+  const {photos, uid, hour, date, female, male, name, usersList, activeType, placeName} = list;
 
   const styles = useStyles();
   const user = useUser((i: any) => i?.user);
@@ -207,7 +207,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
         .doc(list?.id)
         .update({
           usersList: firestore.FieldValue.arrayRemove(userItem),
-          rejectsList: firestore.FieldValue.arrayUnion(userItem.uid),
+          rejectsList: firestore.FieldValue.arrayUnion({uid: userItem.uid}),
         });
       analytics().logEvent(`${requestsScreen}_reject_${joinEvent}`, {
         eventId: list?.id,
@@ -267,7 +267,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
     return null;
   }
 
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   return (
     <>
@@ -278,268 +278,294 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
       ) : (
         <Animated.View style={[styles.itemContainer, {height: heightAnim, marginTop: index ? 30 : 0}]}>
           <TouchableOpacity
-          onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list, isGuest: true}} as never)}
-          >
-          <TinderCard
-            ref={cardRef}
-            // @ts-ignore
-            cardWidth="100%"
-            // @ts-ignore
-            cardHeight="100%"
-            onSwipedRight={() => handleInvite({userItem: item[0], withSwipeAnimation: false})}
-            onSwipedLeft={() => handleReject({userItem: item[0], withSwipeAnimation: false})}
-            OverlayLabelRight={OverlayRight}
-            OverlayLabelLeft={OverlayLeft}
-            disableBottomSwipe={true}
-            disableVerticalSwipe={true}
-            inputOverlayLabelRightOpacityRange={[0, 40]}
-            inputOverlayLabelLeftOpacityRange={[0, -40]}
-            translateXRange={[-70, 0, 70]}
-            disableTopSwipe={true}
-            cardStyle={{height: '100%', borderRadius: 22, zIndex: 999}}>
-            <FastImage
-              style={styles.imageBackground}
-              source={{
-                uri: photos[0]?.image,
-                headers: {Authorization: 'someAuthToken'},
-                priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.cover}>
-              <View style={[styles.itemContentContainer, {justifyContent: item[0]?.isSuperInvite ? 'space-between' : 'flex-end'}]}>
-                {item[0]?.isSuperInvite && (
-                  <View
-                    style={{
-                      zIndex: 1000,
-                      position: 'absolute',
-                      top: screenHeight * 0.2 - 40,
-                      left: 17,
-                    }}>
+            onPress={() => navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list, isGuest: true}} as never)}>
+            <TinderCard
+              ref={cardRef}
+              // @ts-ignore
+              cardWidth="100%"
+              // @ts-ignore
+              cardHeight="100%"
+              onSwipedRight={() => handleInvite({userItem: item[0], withSwipeAnimation: false})}
+              onSwipedLeft={() => handleReject({userItem: item[0], withSwipeAnimation: false})}
+              OverlayLabelRight={OverlayRight}
+              OverlayLabelLeft={OverlayLeft}
+              disableBottomSwipe={true}
+              disableVerticalSwipe={true}
+              inputOverlayLabelRightOpacityRange={[0, 40]}
+              inputOverlayLabelLeftOpacityRange={[0, -40]}
+              translateXRange={[-70, 0, 70]}
+              disableTopSwipe={true}
+              cardStyle={{height: '100%', borderRadius: 22, zIndex: 999}}>
+              <FastImage
+                style={styles.imageBackground}
+                source={{
+                  uri: photos[0]?.image,
+                  headers: {Authorization: 'someAuthToken'},
+                  priority: FastImage.priority.normal,
+                }}
+                resizeMode={FastImage.resizeMode.cover}>
+                <View style={[styles.itemContentContainer, {justifyContent: item[0]?.isSuperInvite ? 'space-between' : 'flex-end'}]}>
+                  {item[0]?.isSuperInvite && (
                     <View
                       style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        backgroundColor: whiteColor,
-                        borderRadius: 5,
-                        paddingHorizontal: 8,
-                        paddingVertical: 4,
-                        marginBottom: 'auto',
+                        zIndex: 1000,
+                        position: 'absolute',
+                        top: screenHeight * 0.2 - 40,
+                        left: 17,
                       }}>
-                      <FlashFillBlack />
-                      <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>Super invite you</Text>
-                    </View>
-                  </View>
-                )}
-                <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} style={styles.linearGradient}>
-                  <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid}})}
-                      style={{flexDirection: 'row'}}>
-                      <View style={{alignSelf: 'flex-start'}}>
-                        <FastImage style={{width: 50, height: 50, borderRadius: 50}} source={{uri: hostInfo?.photos?.[0]?.image || ''}} />
-                        <View
-                          style={{
-                            position: 'absolute',
-                            bottom: 2,
-                            right: 0,
-                            width: 12,
-                            height: 12,
-                            borderRadius: 12,
-                            borderWidth: 1.25,
-                            borderColor: blackColor,
-                            backgroundColor: lightGreenColor,
-                          }}
-                        />
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          backgroundColor: whiteColor,
+                          borderRadius: 5,
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          marginBottom: 'auto',
+                        }}>
+                        <FlashFillBlack />
+                        <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>Super invite you</Text>
                       </View>
-                      <View style={{marginLeft: 10, justifyContent: 'center'}}>
-                        <View style={{flexDirection: 'row'}}>
+                    </View>
+                  )}
+                  <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} style={styles.linearGradient}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid}})}
+                        style={{flexDirection: 'row'}}>
+                        <View style={{alignSelf: 'flex-start'}}>
+                          <FastImage style={{width: 50, height: 50, borderRadius: 50}} source={{uri: hostInfo?.photos?.[0]?.image || ''}} />
                           <View
                             style={{
-                              backgroundColor: blackColor,
-                              borderRadius: 5,
-                              paddingHorizontal: 12,
-                              paddingVertical: 2,
-                              alignSelf: 'flex-start',
-                              borderWidth: 1,
-                              borderColor: whiteColor,
-                            }}>
-                            {hostInfo?.accountType === 'guest' && (
-                              <Text
-                                style={{
-                                  color: whiteColor,
-                                  fontSize: RFValue(10, 812),
-                                  fontFamily: Satoshi700,
-                                  textTransform: 'capitalize',
-                                }}>
-                                Guest
-                              </Text>
-                            )}
-                            {hostInfo?.accountType === 'host' && (
-                              <Text
-                                style={{
-                                  color: whiteColor,
-                                  fontSize: RFValue(10, 812),
-                                  fontFamily: Satoshi700,
-                                  textTransform: 'capitalize',
-                                }}>
-                                Host
-                              </Text>
-                            )}
-                          </View>
-                          {hostInfo?.accountPremium && (
-                            <LinearGradient
-                              colors={['#977B4A', '#E5D291', '#A28453']}
+                              position: 'absolute',
+                              bottom: 2,
+                              right: 0,
+                              width: 12,
+                              height: 12,
+                              borderRadius: 12,
+                              borderWidth: 1.25,
+                              borderColor: blackColor,
+                              backgroundColor: lightGreenColor,
+                            }}
+                          />
+                        </View>
+                        <View style={{marginLeft: 10, justifyContent: 'center'}}>
+                          <View style={{flexDirection: 'row'}}>
+                            <View
                               style={{
-                                marginLeft: 6,
-                                alignSelf: 'flex-start',
-                                borderRadius: 4,
+                                backgroundColor: blackColor,
+                                borderRadius: 5,
                                 paddingHorizontal: 12,
                                 paddingVertical: 2,
-                                backgroundColor: blackColor,
-                              }}
-                              start={{x: 0, y: 0}}
-                              end={{x: 1, y: 0}}>
-                              {
+                                alignSelf: 'flex-start',
+                                borderWidth: 1,
+                                borderColor: whiteColor,
+                              }}>
+                              {hostInfo?.accountType === 'guest' && (
                                 <Text
                                   style={{
-                                    color: blackColor,
+                                    color: whiteColor,
                                     fontSize: RFValue(10, 812),
                                     fontFamily: Satoshi700,
+                                    textTransform: 'capitalize',
                                   }}>
-                                  Premium
+                                  Guest
                                 </Text>
-                              }
-                            </LinearGradient>
-                          )}
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'flex-start',
-                          }}>
-                          <Text
+                              )}
+                              {hostInfo?.accountType === 'host' && (
+                                <Text
+                                  style={{
+                                    color: whiteColor,
+                                    fontSize: RFValue(10, 812),
+                                    fontFamily: Satoshi700,
+                                    textTransform: 'capitalize',
+                                  }}>
+                                  Host
+                                </Text>
+                              )}
+                            </View>
+                            {hostInfo?.accountPremium && (
+                              <LinearGradient
+                                colors={['#977B4A', '#E5D291', '#A28453']}
+                                style={{
+                                  marginLeft: 6,
+                                  alignSelf: 'flex-start',
+                                  borderRadius: 4,
+                                  paddingHorizontal: 12,
+                                  paddingVertical: 2,
+                                  backgroundColor: blackColor,
+                                }}
+                                start={{x: 0, y: 0}}
+                                end={{x: 1, y: 0}}>
+                                {
+                                  <Text
+                                    style={{
+                                      color: blackColor,
+                                      fontSize: RFValue(10, 812),
+                                      fontFamily: Satoshi700,
+                                    }}>
+                                    Premium
+                                  </Text>
+                                }
+                              </LinearGradient>
+                            )}
+                          </View>
+                          <View
                             style={{
-                              color: whiteColor,
-                              fontFamily: Satoshi700,
-                              fontSize: RFValue(16, 812),
-                              marginTop: 4,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'flex-start',
                             }}>
-                            {hostInfo?.name}
-                            {hostInfo?.showAge ? <Text>,</Text> : null}
-                          </Text>
-                          {hostInfo?.showAge && (
                             <Text
                               style={{
                                 color: whiteColor,
                                 fontFamily: Satoshi700,
-                                fontSize: RFValue(13, 812),
-                                marginTop: 5,
+                                fontSize: RFValue(16, 812),
+                                marginTop: 4,
                               }}>
-                              {' '}
-                              {calculateAge(hostInfo?.date)}
+                              {hostInfo?.name}
+                              {hostInfo?.showAge ? <Text>,</Text> : null}
                             </Text>
-                          )}
-                          <View style={{marginLeft: 8}}>{hostInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} />}</View>
+                            {hostInfo?.showAge && (
+                              <Text
+                                style={{
+                                  color: whiteColor,
+                                  fontFamily: Satoshi700,
+                                  fontSize: RFValue(13, 812),
+                                  marginTop: 5,
+                                }}>
+                                {' '}
+                                {calculateAge(hostInfo?.date)}
+                              </Text>
+                            )}
+                            <View style={{marginLeft: 8}}>{hostInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} />}</View>
+                          </View>
                         </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => handleReject({userItem: item[0], withSwipeAnimation: true})}
+                        style={{
+                          width: 50,
+                          height: 50,
+                          backgroundColor: transparent60Color,
+                          borderRadius: 50,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          zIndex: 5000,
+                        }}>
+                        <CloseIcon width={27} height={27} />
+                      </TouchableOpacity>
+                    </View>
+                    {item[0]?.superInvite && (
+                      <View
+                        style={{
+                          marginTop: 'auto',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: whiteColor,
+                          alignSelf: 'flex-start',
+                          borderRadius: 5,
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                        }}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                            borderRadius: 20,
+                            padding: 4,
+                            marginRight: 6,
+                          }}>
+                          <FlashFillBlack />
+                        </View>
+                        <Text style={{fontFamily: Satoshi700, fontSize: RFValue(10, 812), color: blackColor}}>Super invite you</Text>
                       </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => handleReject({userItem: item[0], withSwipeAnimation: true})}
-                      style={{
-                        width: 50,
-                        height: 50,
-                        backgroundColor: transparent60Color,
-                        borderRadius: 50,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        zIndex: 5000,
-                      }}>
-                      <CloseIcon width={27} height={27} />
-                    </TouchableOpacity>
-                  </View>
-                </LinearGradient>
-                <View
-                  style={{
-                    backgroundColor: whiteColor,
-                    height: screenHeight * 0.18,
-                    paddingHorizontal: 16,
-                    paddingVertical: 12,
-                    justifyContent: 'space-between',
-                  }}>
+                    )}
+                  </LinearGradient>
                   <View
                     style={{
-                      flexDirection: 'row',
+                      backgroundColor: whiteColor,
+                      height: screenHeight * 0.18,
+                      paddingHorizontal: 16,
+                      paddingVertical: 12,
+                      justifyContent: 'space-between',
                     }}>
                     <View
                       style={{
-                        width: 54,
-                        height: 54,
-                        borderWidth: 1,
-                        borderColor: blackColor,
-                        borderRadius: 10,
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        flexDirection: 'row',
                       }}>
-                      <Text
+                      <View
                         style={{
-                          color: blackColor,
-                          fontSize: RFValue(22, 812),
-                          fontFamily: Satoshi700,
+                          width: 54,
+                          height: 54,
+                          borderWidth: 1,
+                          borderColor: blackColor,
+                          borderRadius: 10,
+                          alignItems: 'center',
+                          justifyContent: 'center',
                         }}>
-                        {date.split('.')[0]}
-                      </Text>
-                      <Text
-                        style={{
-                          color: blackColor,
-                          fontSize: RFValue(10, 812),
-                          fontFamily: Satoshi500,
-                        }}>
-                        {getMonth()}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        marginLeft: 27,
-                      }}>
-                      <Text
-                        style={{
-                          color: black4Color,
-                          fontSize: RFValue(16, 812),
-                          fontFamily: Satoshi700,
-                        }}>
-                        {name} - {eventTypes[activeType].label}
-                      </Text>
-                      {hour && (
                         <Text
                           style={{
-                            color: grayColor,
-                            fontSize: RFValue(16, 812),
-                            fontFamily: Satoshi500,
-                            marginVertical: 4,
+                            color: blackColor,
+                            fontSize: RFValue(22, 812),
+                            fontFamily: Satoshi700,
                           }}>
-                          {date.split('.')[0]} {getMonth()} - {convertToPmAmFormat(hour)}{' '}
+                          {date.split('.')[0]}
                         </Text>
-                      )}
-                      <Text
+                        <Text
+                          style={{
+                            color: blackColor,
+                            fontSize: RFValue(10, 812),
+                            fontFamily: Satoshi500,
+                          }}>
+                          {getMonth()}
+                        </Text>
+                      </View>
+                      <View
                         style={{
-                          color: black4Color,
-                          fontSize: RFValue(14, 812),
-                          fontFamily: Satoshi500,
+                          marginLeft: 27,
                         }}>
-                        Guest Invitation : {usersList.length}
-                      </Text>
+                        <Text
+                          style={{
+                            color: black4Color,
+                            fontSize: RFValue(16, 812),
+                            fontFamily: Satoshi700,
+                          }}>
+                          {name || placeName} - {eventTypes[activeType].label}
+                        </Text>
+                        {hour && (
+                          <Text
+                            style={{
+                              color: grayColor,
+                              fontSize: RFValue(16, 812),
+                              fontFamily: Satoshi500,
+                              marginVertical: 4,
+                            }}>
+                            {date.split('.')[0]} {getMonth()} - {convertToPmAmFormat(hour)}{' '}
+                          </Text>
+                        )}
+                        <Text
+                          style={{
+                            color: black4Color,
+                            fontSize: RFValue(14, 812),
+                            fontFamily: Satoshi500,
+                          }}>
+                          Guest Invitation : {usersList.length}
+                        </Text>
+                      </View>
                     </View>
+                    <Button
+                      onPress={() => handleInvite({userItem: item[0], withSwipeAnimation: true})}
+                      title="Join"
+                      buttonStyle={{backgroundColor: blackColor}}
+                      buttonTitleStyle={{color: whiteColor}}
+                    />
                   </View>
-                  <Button
-                    onPress={() => handleInvite({userItem: item[0], withSwipeAnimation: true})}
-                    title="Join"
-                    buttonStyle={{backgroundColor: blackColor}}
-                    buttonTitleStyle={{color: whiteColor}}
-                  />
                 </View>
-              </View>
-            </FastImage>
-          </TinderCard>
+              </FastImage>
+            </TinderCard>
           </TouchableOpacity>
         </Animated.View>
       )}

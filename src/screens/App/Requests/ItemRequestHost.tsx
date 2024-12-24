@@ -6,6 +6,7 @@ import Home from 'assets/images/icons/home.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
+import FlashFilledWhiteIcon from 'assets/images/icons/flash-filled.svg';
 import useStyles from './styles';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -29,17 +30,16 @@ import {User} from 'src/types/userInfo';
 import {MatchData} from '../IO/screens/Match/Match';
 import analytics from '@react-native-firebase/analytics';
 import {inviteUser, joinEvent, requestsScreen} from 'constants/analitycs';
+import {useMyEvents} from 'src/store/myEvents';
 
 const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fetchHostRequests}: any) => {
-  console.log('item', item);
-
   const styles = useStyles();
   const navigation = useAppNavigation();
   const [userInfo, setUserInfo] = useState<Partial<User.Info>>({accountType: 'host'});
 
   const user = useUser((state: any) => state.user);
   const [currentUserName, setCurrentUserName] = useState();
-  const {activeEvent} = useContext(EventContext);
+  const {activeEvent} = useMyEvents();
   const cardRef = useRef(null);
 
   const OverlayRight = () => {
@@ -199,12 +199,14 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
 
   const onReject = async (userItem: Event.User): Promise<void> => {
     try {
+      console.warn(userItem, activeEvent?.id);
+
       await firestore()
         .collection('Events')
         .doc(activeEvent?.id)
         .update({
           requestsList: firestore.FieldValue.arrayRemove(userItem),
-          rejectsList: firestore.FieldValue.arrayUnion(userItem?.uid),
+          rejectsList: firestore.FieldValue.arrayUnion({uid: userItem?.uid}),
         });
       analytics().logEvent(`${requestsScreen}_reject_${inviteUser}`, {
         eventId: activeEvent?.id,
@@ -287,21 +289,21 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
               end={{x: 0, y: 1}}
               locations={[0.3, 0.8, 1]}>
               {item?.superInvite && (
-                <View style={{alignItems: 'flex-start'}}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      backgroundColor: whiteColor,
-                      borderRadius: 5,
-                      paddingHorizontal: 8,
-                      paddingVertical: 4,
-                      marginBottom: 'auto',
-                      marginTop: 10,
-                    }}>
-                    <FlashFillBlack />
-                    <Text style={{color: blackColor, fontSize: 10, fontFamily: Satoshi700, marginLeft: 6}}>Super wants to join you</Text>
-                  </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    backgroundColor: blackColor,
+                    alignItems: 'center',
+                    alignSelf: 'flex-start',
+                    borderRadius: 5,
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                  }}>
+                  <FlashFilledWhiteIcon width={8} />
+                  <Text style={{marginLeft: 4, fontFamily: Satoshi700, fontSize: RFValue(8, 812), color: whiteColor}}>
+                    Super wants to join you
+                  </Text>
                 </View>
               )}
               <TouchableOpacity

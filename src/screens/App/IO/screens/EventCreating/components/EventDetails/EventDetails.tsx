@@ -256,7 +256,7 @@ const EventDetails: FC<EventDetailsProps> = ({
         return {
           ...img,
           image:
-            'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/placeholders%2FFrame%201321315887.jpg?alt=media&token=dd4f9b58-f90b-415e-85f8-52de10eb0e68',
+            'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805',
         };
       }
       return img;

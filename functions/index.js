@@ -12,6 +12,53 @@ const firebaseConfig = {
 
 admin.initializeApp(firebaseConfig);
 
+exports.getUsersForEvent = functionsV1.https.onCall(async data => {
+  const {excludeUids, limit = 7, lastDoc, male, female} = data;
+
+  if (!excludeUids || !Array.isArray(excludeUids)) {
+    throw new functionsV1.https.HttpsError('invalid-argument', 'Invalid excludeUids array');
+  }
+
+  try {
+    let query = admin
+      .firestore()
+      .collection('userInfo')
+      .orderBy('uid')
+      .orderBy('createdAt', 'desc')
+      .where('accountType', '==', 'guest')
+      .where('accountConfirmed', '==', true);
+
+    if (limit !== null) {
+      query = query.limit(limit);
+    }
+
+    if (lastDoc) {
+      query = query.startAfter(lastDoc);
+    }
+
+    if (male > 0 && female === 0) {
+      query = query.where('gender', '==', 'man');
+    }
+    if (female > 0 && male === 0) {
+      query = query.where('gender', '==', 'woman');
+    }
+
+    const snapshot = await query.get();
+
+    const users = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()})).filter(user => !excludeUids.includes(user.uid));
+
+    const newLastDoc = snapshot.docs[snapshot.docs.length - 1] || null;
+
+    return {
+      users,
+      lastDoc: newLastDoc ? newLastDoc : null,
+    };
+  } catch (error) {
+    console.error('Error filtering users:', error);
+    throw new functionsV1.https.HttpsError('internal', 'Unable to filter users');
+  }
+});
+
 exports.sendNotification = functionsV1.https.onCall(async data => {
   const {token, notification, data: msgData} = data;
   if (token) {

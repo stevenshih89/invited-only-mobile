@@ -85,6 +85,8 @@ interface TouchingSliderProps {
   scrollPositionPreview: number;
   isPreview: boolean;
   eventsCreated: number;
+  male: number;
+  female: number;
   setCurrentEventCardPosition: (value: number) => void;
   setScrollPosition: (value: number) => void;
 }
@@ -124,6 +126,8 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   scrollPositionPreview,
   isPreview = true,
   eventsCreated,
+  male,
+  female,
 }): ReactElement => {
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
@@ -132,7 +136,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   const navigation = useAppNavigation();
 
   const {counterSuperInvites} = useCounterSuperEvents();
-  
+
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
 
   const [userEventInfo, setUserEventInfo] = useState();
@@ -524,7 +528,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   fontSize: RFValue(14, 812),
                   fontFamily: Satoshi500,
                 }}>
-                Guest Invitation : {usersListLength}
+                Guest Invitation : {male ?? 0 + female ?? 0}
               </Text>
             </View>
             {usersListLength > 0 && (

@@ -58,6 +58,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [age, setAge] = useState();
   const [currentUserName, setCurrentUserName] = useState('');
   const [userAccountType, setUserAccountType] = useState('');
+  const [anotherUserData, setAnotherUserData] = useState<any>(null);
   const {image, title, online, activeEvent, id, superInvite, invitedStatus, uid, hostUid} = route?.params;
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [isPremium, setIsPremium] = useState<boolean>(false);
@@ -91,9 +92,14 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         const currentUser = auth().currentUser;
         if (currentUser) {
           try {
-            const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-            setCurrentUserName(user?.name);
+            const chatQuery = await firestore().collection('messages').doc(activeEvent).get();
+            const chatData = chatQuery.data()?.chats;
+            const currentChat = chatData?.find((i: any) => i?.id === id);
+            const anotherUserUid = currentChat?.uid === user?.uid ? currentChat?.hostUid : currentChat?.uid;
 
+            const userInfoDoc = await firestore().collection('userInfo').doc(anotherUserUid).get();
+            setCurrentUserName(user?.name);
+            setAnotherUserData(userInfoDoc.data());
             if (userInfoDoc.exists) {
               const age = calculateAge(userInfoDoc.data()?.date);
               setAge(age);
@@ -178,10 +184,18 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       };
 
       const doc = firestore().collection('messages').doc(`${activeEvent}`);
+      const chatDataQuery = await doc.get();
+      const chatData = chatDataQuery.data();
+
+      const currentChat = chatData?.chats?.find((i: any) => i?.id === id);
 
       const findChat = allChats?.filter(i => i?.id === id);
+      const currentChatGuestUid = currentChat?.uid;
+      const currentChatHostUid = currentChat?.hostUid;
 
-      const getDate = await firestore().collection('userInfo').doc(uid).get();
+      const anotherUserUid = currentChatHostUid === user?.uid ? currentChatGuestUid : currentChatHostUid;
+
+      const getDate = await firestore().collection('userInfo').doc(anotherUserUid).get();
       const docData = getDate.data();
 
       if (findChat && findChat.length > 0) {
@@ -199,14 +213,14 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
             findChat[0].newMessagesGuest = 1;
           }
         }
+
         const name = userData?.accountType === 'host' ? title : userData?.name;
         const image = userData?.accountType === 'host' ? image : userData?.photos[0]?.image;
-        const newUid = userData?.accountType === 'host' ? uid : userData?.uid;
         setMessageUser('');
 
         console.warn({
           id: id,
-          uid: newUid,
+          uid: anotherUserUid,
           hostUid: hostUid,
           name: name,
           image: image,
@@ -222,7 +236,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         });
         if (docData?.notificationSettings.chat) {
           await sendNotification(
-            uid,
+            anotherUserUid,
             `${currentUserName} sent you a new message`,
             'Invited Only',
             'message',
@@ -232,11 +246,11 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               path: 'chat',
               data: {
                 id: id,
-                uid: newUid,
-                hostUid: hostUid,
+                uid: anotherUserUid,
+                hostUid: chatData?.uidHost || hostUid,
                 name: name,
                 image: image,
-                activeEvent: activeEvent,
+                activeEvent: chatData?.activeEvent || activeEvent,
               },
             }),
           );
@@ -283,7 +297,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   };
 
   const ChatMessage = useCallback(
-    ({messageUser, userAvatar, showDate}: {messageUser: MessageProps; userAvatar: string; showDate: boolean}) => {
+    ({messageUser, showDate}: {messageUser: MessageProps; showDate: boolean}) => {
       const {message, userType, timestamp, uid} = messageUser;
 
       const isCurrentUserMessage = user.uid === uid;
@@ -302,7 +316,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
           <View style={[styles.messageContainer, containerStyle]}>
             {!isCurrentUserMessage && (
               <TouchableOpacity onPress={() => goToProfileView(uid)}>
-                <Image source={{uri: userAvatar}} style={styles.avatar} />
+                <Image source={{uri: anotherUserData?.photos[0]?.image}} style={styles.avatar} />
               </TouchableOpacity>
             )}
             <View>
@@ -316,7 +330,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         </View>
       );
     },
-    [],
+    [anotherUserData?.uid],
   );
 
   useEffect(() => {
@@ -352,8 +366,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                 </TouchableOpacity>
                 <View style={[styles.fdrAlc, {marginLeft: 16}]}>
                   <View>
-                    <Image source={{uri: image}} style={styles.userPhoto} />
-                    {online && <View style={styles.greenCircle} />}
+                    <Image source={{uri: anotherUserData?.photos[0]?.image}} style={styles.userPhoto} />
+                    {anotherUserData?.online && <View style={styles.greenCircle} />}
                   </View>
                   <View style={styles.wrapperTitleOnline}>
                     <View>
@@ -377,12 +391,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
                       </View>
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <Text style={styles.textNameUser}>
-                          {name}, {age}
+                          {anotherUserData?.name}, {age}
                         </Text>
                         <CheckStar />
                       </View>
                     </View>
-                    {online && <Text style={styles.textOnline}>Online</Text>}
+                    {anotherUserData?.online && <Text style={styles.textOnline}>Online</Text>}
                   </View>
                 </View>
               </View>

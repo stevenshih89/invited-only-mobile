@@ -1,5 +1,5 @@
 import {blackColor, transparentWhite16Color} from 'constants/colors';
-import {FC, ReactElement, useEffect, useMemo, useState} from 'react';
+import {FC, ReactElement, useEffect, useMemo, useRef, useState} from 'react';
 import {Alert, SafeAreaView, View} from 'react-native';
 import MyPhotos from './MyPhotos';
 import MyInterests from './MyInterests';
@@ -138,6 +138,8 @@ const ProfileEditing: FC = (): ReactElement => {
       image: null,
     },
   ]);
+
+  const previousImages = useRef(images);
 
   const [listOfGenders] = useState([
     {
@@ -359,6 +361,7 @@ const ProfileEditing: FC = (): ReactElement => {
       allImagesUrl.push({id: images[sixthImId].id, image});
     });
     await updatePhotosImage(user.uid, allImagesUrl);
+    console.warn('allImagesUrl', allImagesUrl);
 
     // // console.log('allImagesUrl', allImagesUrl);
   };
@@ -371,6 +374,23 @@ const ProfileEditing: FC = (): ReactElement => {
       setLoadingSaveBio(status);
     }
   };
+
+  useEffect(() => {
+    const user = auth().currentUser;
+    if (images.length && images.find(image => image?.id === 0 && image?.image && !images.every(image => image?.image?.includes('http')))) {
+      const areImagesEqual = (prevImages: any[], currentImages: any[]) => {
+        if (prevImages.length !== currentImages.length) {
+          return false;
+        }
+        return prevImages.every((img, index) => img.image === currentImages[index].image);
+      };
+
+      if (!areImagesEqual(previousImages.current, images)) {
+        fetchImages(user);
+        previousImages.current = images;
+      }
+    }
+  }, [images]);
 
   const SAVE_FIELD_INTERESTS = 'interests';
   const SAVE_FIELD_BIO = 'bio';
