@@ -76,10 +76,14 @@ const Notifications: FC = (): ReactElement => {
   useEffect(() => {
     const fetchImages = async () => {
       const imagesMap: NotificationImage = {};
-      for (const notification of notifications) {
-        const photoUri = await fetchImage(notification.uid);
-        imagesMap[notification.uid] = photoUri;
-      }
+      for (const notification of notifications) {        
+        if(notification.image) {
+          imagesMap[notification.uid] = notification.image
+        } else {
+          const photoUri = await fetchImage(notification.uid);
+          imagesMap[notification.uid] = photoUri;
+        }
+      }      
       setImages(imagesMap);
     };
 
