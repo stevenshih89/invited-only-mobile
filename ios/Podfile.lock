@@ -2118,6 +2118,11 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
+  - react-native-config (1.5.3):
+    - react-native-config/App (= 1.5.3)
+  - react-native-config/App (1.5.3):
+    - React-Core
+  - react-native-config/Extension (1.5.3)
   - react-native-date-picker (4.4.2):
     - React-Core
   - react-native-fbsdk-next (13.3.0):
@@ -2459,6 +2464,8 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - "react-native-cameraroll (from `../node_modules/@react-native-camera-roll/camera-roll`)"
+  - react-native-config (from `../node_modules/react-native-config`)
+  - react-native-config/Extension (from `../node_modules/react-native-config`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-fbsdk-next (from `../node_modules/react-native-fbsdk-next`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
@@ -2617,6 +2624,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   react-native-cameraroll:
     :path: "../node_modules/@react-native-camera-roll/camera-roll"
+  react-native-config:
+    :path: "../node_modules/react-native-config"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
   react-native-fbsdk-next:
@@ -2787,6 +2796,7 @@ SPEC CHECKSUMS:
   React-logger: cb0dd15ac67b00e7b771ef15203edcb29d4a3f8e
   React-Mapbuffer: ac7eff7bcdb1716d18eb7b305ee8c43a9a1ed7c8
   react-native-cameraroll: be7f4a2910860f15b821efecc4c6469d605ac7bc
+  react-native-config: 8f7283449bbb048902f4e764affbbf24504454af
   react-native-date-picker: 312c387d2ff873c66c5e4cf78ff6827fa91644e2
   react-native-fbsdk-next: b430fc002cf9b8675b8688d43fe6eddd5ff4e029
   react-native-geolocation: 633b52797a5b8a20306aa17e863e41704fb07f25
@@ -2845,6 +2855,6 @@ SPEC CHECKSUMS:
   UXCam: 94f02257f93ea393e76581c25dd0c6844260a89a
   Yoga: 08cd7601462818c4985bda7b205b9e6a92a7e66a
 
-PODFILE CHECKSUM: 09f69fe1dd17210178db8f245c06d2dcde805e4a
+PODFILE CHECKSUM: 748860ccb79d1c82ba52a3e4acbecec9264c8d65
 
 COCOAPODS: 1.15.2

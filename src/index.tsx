@@ -7,8 +7,11 @@ import LocalNotification from 'components/LocalNotification/LocalNotification.ts
 import {EventProvider} from 'contexts/EventContext';
 import {EventsDateProvider} from 'contexts/EventsDate';
 import Navigator from './navigator';
+import Config from 'react-native-config';
 
 const Main = () => {
+  console.warn('Config', Config);
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <View style={{flex: 1, backgroundColor: 'transparent'}}>

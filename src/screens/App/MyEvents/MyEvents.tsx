@@ -5,7 +5,6 @@ import {FlatList} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 
 //import components
 import useStyles from 'screens/App/MyEvents/styles.ts';
@@ -137,49 +136,6 @@ const MyEvents: FC<any> = ({navigation}) => {
     users = await Promise.all(promises);
 
     return users;
-  };
-
-  const sendNotificationInner = async (usersList: [], title: string, body: string, mark: string) => {
-    const users = await getFcmTokens(usersList);
-
-    for (const user of users) {
-      // console.log('user of users', user);
-
-      const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-        },
-        body: JSON.stringify({
-          to: user.token,
-          notification: {
-            title: title,
-            body: body,
-          },
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        // console.error('error sending notification:', error);
-      } else {
-        const data = await response.json();
-        const id = generateRandomId(8);
-        const notification = {
-          id,
-          title: title,
-          body: body,
-          mark: mark,
-          uid: userData?.uid,
-        };
-        try {
-          await firestore().collection('userInfo').doc(user.uid).collection('notifications').add(notification);
-        } catch (error) {
-          console.error('error add notification', error);
-        }
-      }
-    }
   };
 
   interface usersListI {

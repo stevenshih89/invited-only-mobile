@@ -22,7 +22,6 @@ import {useUser} from 'src/store/userStore';
 // import {uploadImage} from 'helpers/uploadImage.ts';
 import {commonStackPath, eventActiveInfoPath, IOPath} from 'constants/pathLocations';
 import storage from '@react-native-firebase/storage';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import {createEvent, IOEvent} from 'src/api/event';
 import {eventTypes} from 'src/mocks/eventTypes';
 import {EventData, Event} from 'src/types/event';
@@ -148,48 +147,6 @@ const EventCreating: FC = () => {
     // console.log('users', users);
 
     return users;
-  };
-
-  const sendNotificationInner = async (title: string, body: string, mark: string) => {
-    const users = await getFcmTokens(isEditingItem?.usersList);
-
-    for (const user of users) {
-      const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-        },
-        body: JSON.stringify({
-          to: user.token,
-          notification: {
-            title: title,
-            body: body,
-          },
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        // console.error('error sending notification:', error);
-      } else {
-        const data = await response.json();
-        const id = generateRandomId(8);
-        const notification = {
-          id,
-          title: title,
-          body: body,
-          mark: mark,
-          uid: userHost?.uid,
-        };
-
-        try {
-          await firestore().collection('userInfo').doc(user.uid).collection('notifications').add(notification);
-        } catch (error) {
-          console.error('error add notification', error);
-        }
-      }
-    }
   };
 
   interface usersListI {

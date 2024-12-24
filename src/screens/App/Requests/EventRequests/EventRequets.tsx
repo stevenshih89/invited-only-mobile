@@ -15,7 +15,6 @@ import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
 import {useEffect, useState} from 'react';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 import {formatDate} from 'helpers/formatDate';
@@ -92,11 +91,6 @@ const EventsRequest = ({item, list}: any) => {
         requestsList: updateRequestsList,
       });
       showToast('inviteMatch', '', 'The request has been confirmed');
-      const getDoc = await firestore().collection('userInfo').doc(item?.uid).get();
-      const docData = getDoc.data();
-      if (docData?.notificationSettings.joinedEvent) {
-        sendNotification(item.uid, 'Invited Only', `${currentUserName} approved you as a guest!`, 'invite');
-      }
     } catch (e) {
       // console.log(e);
       showToast('inviteMatch', '', "There's been an error");
@@ -140,71 +134,6 @@ const EventsRequest = ({item, list}: any) => {
   useEffect(() => {
     fetchItemUserInfo();
   }, [item]);
-
-  const goToProfileView = () => {
-    navigation.navigate(commonStackPath, {
-      screen: myProfileViewPath,
-      params: {
-        uid: item?.uid,
-      },
-    });
-  };
-
-  const generateRandomId = (length: number) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  };
-
-  const getFcmTokenFromUser = async (uid: string) => {
-    const userInfoDoc = await firestore().collection('userInfo').doc(uid).get();
-    return userInfoDoc.data()?.fcmToken;
-  };
-
-  const sendNotification = async (forUserUid: string, title: string, body: string, mark: string) => {
-    const token = await getFcmTokenFromUser(forUserUid);
-
-    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-      },
-      body: JSON.stringify({
-        to: token,
-        notification: {
-          title: title,
-          body: body,
-        },
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      // console.error('error sending notification:', error);
-    } else {
-      const data = await response.json();
-      const id = generateRandomId;
-      const notification = {
-        id,
-        title: title,
-        body: body,
-        mark: mark,
-        uid: userInfo?.uid,
-      };
-
-      try {
-        await firestore().collection('userInfo').doc(forUserUid).collection('notifications').add(notification);
-      } catch (error) {
-        console.error('error add notification', error);
-      }
-    }
-  };
-
   return (
     <View style={styles.itemContainer}>
       <TinderCard

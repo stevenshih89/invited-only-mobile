@@ -361,7 +361,6 @@ const ProfileEditing: FC = (): ReactElement => {
       allImagesUrl.push({id: images[sixthImId].id, image});
     });
     await updatePhotosImage(user.uid, allImagesUrl);
-    console.warn('allImagesUrl', allImagesUrl);
 
     // // console.log('allImagesUrl', allImagesUrl);
   };

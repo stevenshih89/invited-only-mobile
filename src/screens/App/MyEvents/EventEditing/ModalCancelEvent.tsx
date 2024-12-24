@@ -9,7 +9,6 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {CLOUD_MESSAGING_SERVER_KEY} from '@env';
 import auth from '@react-native-firebase/auth';
 import {useUser} from 'src/store/userStore';
 import {EventContext} from 'contexts/EventContext';
@@ -58,121 +57,6 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
     const usersList = eventInfoDoc.data()?.usersList;
     return usersList;
   };
-
-  // const sendNotification = async (title: string, body: string, mark: string) => {
-  //   const usersList = await getUsersList();
-  //   const users = await getFcmTokens(usersList);
-
-  //   for (const user of users) {
-  //     // console.log('const user of users', user);
-
-  //     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `key=${CLOUD_MESSAGING_SERVER_KEY}`,
-  //       },
-  //       body: JSON.stringify({
-  //         to: user.token,
-  //         notification: {
-  //           title: title,
-  //           body: body,
-  //         },
-  //         data: {
-  //           status: mark,
-  //           image: image,
-  //         },
-  //       }),
-  //     });
-
-  //     if (!response.ok) {
-  //       const error = await response.json();
-  //       // console.error('error sending notification:', error);
-  //     } else {
-  //       const data = await response.json();
-  //       const id = generateRandomId(8);
-  //       const notification = {
-  //         id,
-  //         title: title,
-  //         body: body,
-  //         mark: mark,
-  //         uid: userData?.uid,
-  //       };
-
-  //       try {
-  //         await firestore().collection('userInfo').doc(user.uid).collection('notifications').add(notification);
-  //       } catch (error) {
-  //         console.error('error add notification', error);
-  //       }
-  //     }
-  //   }
-  //   // const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-  //   //   method: 'POST',
-  //   //   headers: {
-  //   //     'Content-Type': 'application/json',
-  //   //     'Authorization': `key=${CLOUD_MESSAGING_SERVER_KEY}`
-  //   //   },
-  //   //   body: JSON.stringify({
-  //   //     registration_ids: tokens,
-  //   //     notification: {
-  //   //       title: title,
-  //   //       body: body
-  //   //     }
-  //   //   })
-  //   // });
-
-  //   // if (!response.ok) {
-  //   //   const error = await response.json();
-  //   //   // console.error('error sending notification:', error);
-  //   // } else {
-  //   //   const data = await response.json();
-  //   //   // console.log('notification sent successfully:', data);
-  //   // }
-  // };
-
-  // const fetchMyEvents = async () => {
-  //   const user = auth().currentUser;
-  //   if (user) {
-  //     try {
-  //       const querySnapshot = await firestore()
-  //         .collection('Events')
-  //         .where('uid', '==', user.uid)
-  //         .where('isCancelled', '==', false)
-  //         .orderBy('createdAt', 'desc')
-  //         .get();
-
-  //       if (querySnapshot.empty) {
-  //         setMyEvents([]);
-  //         setActiveEvent({});
-  //         return;
-  //       }
-
-  //       const data = querySnapshot.docs.map(doc => doc.data() as EventData);
-  //       const filteredData = data.filter((event: EventData) => {
-  //         if (event?.date && event?.hour) {
-  //           const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-  //           if (adjustedDate.isBefore(moment())) {
-  //             return false;
-  //           }
-  //         }
-  //         return true;
-  //       });
-  //       if (!filteredData.length) {
-  //         setMyEvents([]);
-  //         setActiveEvent({});
-  //         return;
-  //       }
-  //       setMyEvents(filteredData);
-  //       setActiveEvent(filteredData[0]);
-  //     } catch (error: any) {
-  //       setMyEvents([]);
-  //       setActiveEvent({});
-  //       console.error(error);
-
-  //       Alert.alert('Error', error.message || 'Something went wrong');
-  //     }
-  //   }
-  // };
 
   interface usersListI {
     status: string;

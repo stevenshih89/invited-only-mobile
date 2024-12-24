@@ -43,6 +43,8 @@ end
 target 'InvitedOnly' do
   config = use_native_modules!
   $RNFirebaseAsStaticFramework = true
+  
+  pod 'react-native-config/Extension', :path => '../node_modules/react-native-config'
 
   use_react_native!(
     :path => config[:reactNativePath],
