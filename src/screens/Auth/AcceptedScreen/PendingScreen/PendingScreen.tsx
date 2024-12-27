@@ -26,10 +26,10 @@ const PendingScreen: FC = (): JSX.Element => {
   const handleNext = () => {
     const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
     const isHost = accountType.toLowerCase() === 'host';
-    if (isHost) {
-      // @ts-ignore
-      return navigation.navigate(paymentPath as never, {screen: 'pending'});
-    }
+    // if (isHost) {
+    //   // @ts-ignore
+    //   return navigation.navigate(paymentPath as never, {screen: 'pending'});
+    // }
     navigation.navigate(tutorialFlowPath as never);
   };
   const flattenedPhotos = onBoarding.filter((item: {photos: []}) => item.photos)[0]?.photos;
