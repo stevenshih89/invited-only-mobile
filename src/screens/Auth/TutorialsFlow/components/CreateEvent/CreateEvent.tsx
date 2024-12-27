@@ -14,9 +14,9 @@ const CreateEvent = () => {
         <Image style={styles.image} resizeMode="stretch" source={CreateEventImage} />
       </View>
       <View style={styles.textWrapper}>
-        <Text style={styles.textCreateEvent}>Share your event</Text>
+        <Text style={styles.textCreateEvent}>Share your table or event</Text>
         <Text style={styles.textAddYourEvent}>
-          Provide your event or table details, choose your invitees, and specify how many invites you’d like to send.
+          Provide your table or event details, choose your invitees, and specify how many invites you’d like to send.
         </Text>
       </View>
     </View>

@@ -31,10 +31,10 @@ const useStyles = () => {
       fontSize: RFValue(14, 812),
       textAlign: 'center',
       marginTop: 8,
+      paddingHorizontal: dimensionsHeight / 18,
     },
     textWrapper: {
       alignItems: 'center',
-      paddingHorizontal: dimensionsHeight / 18,
     },
   });
 };

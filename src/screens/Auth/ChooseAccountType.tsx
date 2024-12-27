@@ -1,10 +1,11 @@
 import {isIos, screenHeight} from 'constants/common';
 import {FC, useContext, useEffect, useState} from 'react';
-import {AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {AppState, Image, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {
   black1Color,
+  blackColor,
   lightGray3Color,
   transparentWhite16Color,
   transparentWhite30Color,
@@ -13,6 +14,8 @@ import {
 } from 'constants/colors';
 import CheckCircle from 'assets/images/icons/check-circle.svg';
 import CircleGray from 'assets/images/icons/circle-gray.svg';
+import UsersHost from 'assets/images/auth/users-host.png'
+import UsersGuest from 'assets/images/auth/user-guest.png'
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
@@ -159,14 +162,18 @@ const ChooseAccountType: FC = (): JSX.Element => {
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    paddingHorizontal: 20,
+                    paddingHorizontal: 24,
+                    paddingVertical: 20,
                     marginBottom: 8,
                   }}>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Host</Text>
+                  <Image style={{width: 105, height: 40, marginLeft: 20}} source={UsersHost}/>
+                  </View>
                   {accountType === HOST ? <CheckCircle /> : <CircleGray />}
                 </TouchableOpacity>
                 <Text style={{color: transparentWhite56Color, fontFamily: Satoshi400, fontSize: RFValue(14, 932)}}>
-                  You can create events and invite people
+                  Share a table or event and invite people to join you
                 </Text>
                 <TouchableOpacity
                   activeOpacity={0.7}
@@ -182,15 +189,20 @@ const ChooseAccountType: FC = (): JSX.Element => {
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    paddingHorizontal: 20,
+                    paddingHorizontal: 24,
                     marginBottom: 8,
+                    paddingVertical: 20,
                     marginTop: 16,
                   }}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Guest</Text>
+                  
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Guest</Text>
+                    <Image style={{width: 105, height: 40, marginLeft: 20}} source={UsersGuest}/>
+                  </View>
                   {accountType === GUEST ? <CheckCircle /> : <CircleGray />}
                 </TouchableOpacity>
                 <Text style={{color: transparentWhite56Color, fontFamily: Satoshi400, fontSize: RFValue(14, 932)}}>
-                  You can join events
+                  You can join tables and events 
                 </Text>
               </View>
             </View>

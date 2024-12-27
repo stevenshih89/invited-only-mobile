@@ -30,7 +30,7 @@ const CodeVerified: FC = (): JSX.Element => {
     if (cameFromSummary) {
       const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
       const isHost = accountType.toLowerCase() === 'host';
-      const nextPath = isHost ? paymentPath : tutorialFlowPath;
+      const nextPath = tutorialFlowPath;
       navigation.navigate(nextPath as never);
     } else {
       navigation.navigate(IOPath as never);
