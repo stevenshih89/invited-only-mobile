@@ -1,6 +1,16 @@
 import {isIos, screenHeight} from 'constants/common';
 import {FC, useContext, useEffect, useState} from 'react';
-import {AppState, Image, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {
+  AppState,
+  Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {
@@ -14,8 +24,8 @@ import {
 } from 'constants/colors';
 import CheckCircle from 'assets/images/icons/check-circle.svg';
 import CircleGray from 'assets/images/icons/circle-gray.svg';
-import UsersHost from 'assets/images/auth/users-host.png'
-import UsersGuest from 'assets/images/auth/user-guest.png'
+import UsersHost from 'assets/images/auth/users-host.png';
+import UsersGuest from 'assets/images/auth/user-guest.png';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
@@ -156,9 +166,9 @@ const ChooseAccountType: FC = (): JSX.Element => {
                     minHeight: RFValue(64, 932),
                     backgroundColor: accountType === HOST ? transparentWhite16Color : lightGray3Color,
                     borderRadius: 10,
-                    borderColor: whiteColor,
+                    borderColor: accountType === HOST ? whiteColor : 'transparent',
                     borderStyle: 'solid',
-                    borderWidth: accountType === HOST ? 0.5 : 0,
+                    borderWidth: 0.5,
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -167,8 +177,8 @@ const ChooseAccountType: FC = (): JSX.Element => {
                     marginBottom: 8,
                   }}>
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Host</Text>
-                  <Image style={{width: 105, height: 40, marginLeft: 20}} source={UsersHost}/>
+                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Host</Text>
+                    <Image style={{width: 105, height: 40, marginLeft: 20}} source={UsersHost} />
                   </View>
                   {accountType === HOST ? <CheckCircle /> : <CircleGray />}
                 </TouchableOpacity>
@@ -183,9 +193,9 @@ const ChooseAccountType: FC = (): JSX.Element => {
                     minHeight: RFValue(64, 932),
                     backgroundColor: accountType === GUEST ? transparentWhite16Color : lightGray3Color,
                     borderRadius: 10,
-                    borderColor: whiteColor,
+                    borderColor: accountType === GUEST ? whiteColor : 'transparent',
                     borderStyle: 'solid',
-                    borderWidth: accountType === GUEST ? 0.5 : 0,
+                    borderWidth: 0.5,
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -194,15 +204,14 @@ const ChooseAccountType: FC = (): JSX.Element => {
                     paddingVertical: 20,
                     marginTop: 16,
                   }}>
-                  
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Guest</Text>
-                    <Image style={{width: 105, height: 40, marginLeft: 20}} source={UsersGuest}/>
+                    <Image style={{width: 105, height: 40, marginLeft: 20}} source={UsersGuest} />
                   </View>
                   {accountType === GUEST ? <CheckCircle /> : <CircleGray />}
                 </TouchableOpacity>
                 <Text style={{color: transparentWhite56Color, fontFamily: Satoshi400, fontSize: RFValue(14, 932)}}>
-                  You can join tables and events 
+                  You can join tables and events
                 </Text>
               </View>
             </View>
