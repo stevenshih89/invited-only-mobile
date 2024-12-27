@@ -21,7 +21,7 @@ const SwipeToInvite = () => {
         <Text style={styles.textSwipeRightToInvite}>
           {accountTypeGuest
             ? 'Discover premier events and unlock exclusive invitations.'
-            : 'Invite someone you’d love to have at your event! Dismiss anyone you’re not interested in inviting.'}
+            : 'Invite someone you’d love to have at your table or event! Dismiss anyone you’re not interested in inviting.'}
         </Text>
       </View>
     </View>
