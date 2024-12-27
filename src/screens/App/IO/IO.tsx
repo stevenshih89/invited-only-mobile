@@ -1,4 +1,4 @@
-import {SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity, Alert, TouchableWithoutFeedback, AppState} from 'react-native';
+import {SafeAreaView, View, Text, ScrollView, TouchableOpacity, Alert, TouchableWithoutFeedback, AppState} from 'react-native';
 import React, {FC, useState, useEffect, useContext, useCallback, useRef} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
@@ -91,7 +91,7 @@ import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
 
 const IO: FC = (): JSX.Element => {
-  const EVENTS_LOADING_LIMIT = 7;
+  const EVENTS_LOADING_LIMIT = 6;
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const styles = useStyles();
@@ -963,10 +963,23 @@ const IO: FC = (): JSX.Element => {
       const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
 
       const uniqueBlockedUsers = [...new Set([...blockedUsersList, ...blockedMeUsersList])];
+
+      const getGenderFilter = () => {
+        if (userInfo?.gender === 'man') {
+          return 'male';
+        }
+        if (userInfo?.gender === 'woman') {
+          return 'female';
+        }
+        return null;
+      };
+
+      const genderFilter = getGenderFilter();
       const eventsQuery = await getEvents({
         limit: EVENTS_LOADING_LIMIT,
         lastVisible: lastVisibleRef.current,
         excludeUids: uniqueBlockedUsers,
+        genderFilter,
       });
 
       if (!eventsQuery || !('docs' in eventsQuery)) {
@@ -1018,8 +1031,6 @@ const IO: FC = (): JSX.Element => {
       console.error(e);
       Alert.alert('Error', e.message || 'Something went wrong');
     }
-
-    console.warn('getCardsListForGuest_1', filteredEvents?.length, refresh);
 
     const enrichedEvents = await enrichElementsWithPhotos(filteredEvents);
 
@@ -1128,7 +1139,10 @@ const IO: FC = (): JSX.Element => {
               </View>
               <View>
                 {eventPhotos?.map((image: string) => (
-                  <Image source={{uri: image}} style={{width: '100%', height: screenHeight / 4, marginVertical: 10, borderRadius: 20}} />
+                  <FastImage
+                    source={{uri: image}}
+                    style={{width: '100%', height: screenHeight / 4, marginVertical: 10, borderRadius: 20}}
+                  />
                 ))}
               </View>
               <TouchableOpacity // @ts-ignore
@@ -1599,7 +1613,7 @@ const IO: FC = (): JSX.Element => {
                 </View>
                 <View style={styles.wrapperImageSectionFaceGirl}>
                   {girlPhotos?.map((photo: string, photoIndex: number) => (
-                    <Image key={photoIndex} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
+                    <FastImage key={photoIndex} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
                   ))}
                 </View>
                 <View style={styles.wrapperButtonsFooter}>
@@ -1762,13 +1776,13 @@ const IO: FC = (): JSX.Element => {
         }
       });
 
-      setLoadingCardsList(false);
-
       if (refresh && data?.length) {
         setIsRefreshing(false);
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoadingCardsList(false);
     }
   };
 
@@ -1930,7 +1944,7 @@ const IO: FC = (): JSX.Element => {
   if (userInfo?.uid && isRefreshing && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <>
-        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : apiEventsCollection} near you ...`} userInfo={userInfo} />
+        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
         {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
           <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
         )}
@@ -1941,7 +1955,7 @@ const IO: FC = (): JSX.Element => {
   if (userInfo?.uid && loadingCardsList && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <>
-        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : apiEventsCollection} near you ...`} userInfo={userInfo} />
+        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
         {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
           <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
         )}

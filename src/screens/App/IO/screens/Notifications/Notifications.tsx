@@ -34,8 +34,8 @@ interface Notifications {
 
 type NotificationImage = {[key: string]: string};
 
+const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 const fetchImage = async (uid: string): Promise<string> => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const dataDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
   const photoUri = dataDoc?.data()?.photos?.[0]?.image || '';
   return photoUri;

@@ -42,14 +42,21 @@ interface GetEventsParams {
   lastVisible: FirebaseFirestoreTypes.QueryDocumentSnapshot | null;
   limit?: number | null;
   excludeUids: string[];
+  genderFilter?: 'male' | 'female' | null;
 }
 
-export const getEvents = async ({limit = 10, lastVisible, excludeUids}: GetEventsParams) => {
+export const getEvents = async ({limit = 10, lastVisible, excludeUids, genderFilter}: GetEventsParams) => {
   const currentUser = auth().currentUser;
+
   if (!currentUser) {
     throw new Error('User not found');
   }
+
   let query = firestore().collection(apiEventsCollection).where('statusEvent', '==', true).where('isCancelled', '==', false);
+
+  if (genderFilter) {
+    query = query.where(genderFilter, '>', 0).orderBy(genderFilter);
+  }
 
   if (excludeUids?.length) {
     query = query.where('uid', 'not-in', excludeUids);

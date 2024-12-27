@@ -29,6 +29,7 @@ import CloseIcon from 'assets/images/icons/close.svg';
 import Purchases, {PurchasesPackage} from 'react-native-purchases';
 import {showToast} from 'helpers/showToast';
 import {getSuperInvites} from 'src/api/purchase';
+import Config from 'react-native-config';
 
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {useUser} from 'src/store/userStore';

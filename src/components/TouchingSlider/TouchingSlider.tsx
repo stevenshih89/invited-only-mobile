@@ -413,7 +413,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     marginTop: 4,
                   }}>
                   {userEventInfo?.name}
-                  {userEventInfo?.date ? <Text>,</Text> : null}
                 </Text>
                 {!isProfile && userEventInfo?.showAge && (
                   <Text
@@ -423,7 +422,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                       fontSize: RFValue(13, 812),
                       marginTop: 5,
                     }}>
-                    {' '}
+                    {' ,'}
                     {calculateAge(userEventInfo?.date)}
                   </Text>
                 )}
