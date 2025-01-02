@@ -519,7 +519,7 @@ const Payment: FC = (): JSX.Element => {
         <Loader isVisible={loaderVisible} successfulPay={successfulPay} />
         <ModalUpgradeSuccessful isVisible={visibleUpgradeSuccessful} />
         <HostPremium isVisible={visibleHostPremium} setVsibleHostPremium={setVsibleHostPremium} screen={checkNavig?.params?.screen} />
-        <ScrollView>
+        <ScrollView contentContainerStyle={{paddingBottom: 240}}>
           <View style={styles.container}>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
             <View />
@@ -592,49 +592,51 @@ const Payment: FC = (): JSX.Element => {
               <Logo />
               <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(46, 932), marginLeft: 14}}>Premium </Text>
             </View> */}
-            <Button
-              buttonTitleStyle={{fontSize: RFValue(16, 812)}}
-              buttonStyle={{marginTop: 20}}
-              title={getButtonTitle()}
-              onPress={getOfferings}
-              disabled={getButtonDisabled()}
-            />
-            <TouchableOpacity
-              onPress={restorePurchases}
-              style={{
-                marginTop: 12,
-                alignItems: 'center',
-                height: 38,
-                justifyContent: 'center',
-              }}>
-              <View style={{borderBottomWidth: 1, borderBottomColor: whiteColor}}>
-                <Text style={{fontSize: RFValue(16), color: whiteColor, fontFamily: Satoshi500}}>Restore purchases</Text>
-              </View>
-            </TouchableOpacity>
-            <View style={{marginTop: 12, alignItems: 'center'}}>
-              <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
-                By tapping, your App Store account will be charged. Your subscription will auto-renew for the same price and duration until
-                you cancel via your App Store settings. You also agree to the Terms.
-              </Text>
-              <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
-                More details can be found here:
-              </Text>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
-                  <View style={{borderBottomWidth: 1, borderBottomColor: whiteColor}}>
-                    <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Privacy Policy</Text>
-                  </View>
-                </TouchableOpacity>
-                <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, marginHorizontal: 5}}>and</Text>
-                <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/terms-of-service-eula')}>
-                  <View style={{borderBottomWidth: 1, borderBottomColor: whiteColor}}>
-                    <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Terms and Conditions (EULA)</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
           </View>
         </ScrollView>
+        <View style={{position: 'absolute', bottom: 0, backgroundColor: blackColor, paddingHorizontal: 24, paddingBottom: 24}}>
+              <Button
+                buttonTitleStyle={{fontSize: RFValue(16, 812)}}
+                buttonStyle={{marginTop: 20}}
+                title={getButtonTitle()}
+                onPress={getOfferings}
+                disabled={getButtonDisabled()}
+              />
+              <TouchableOpacity
+                onPress={restorePurchases}
+                style={{
+                  marginTop: 12,
+                  alignItems: 'center',
+                  height: 38,
+                  justifyContent: 'center',
+                }}>
+                <View style={{borderBottomWidth: 1, borderBottomColor: whiteColor}}>
+                  <Text style={{fontSize: RFValue(16), color: whiteColor, fontFamily: Satoshi500}}>Restore purchases</Text>
+                </View>
+              </TouchableOpacity>
+              <View style={{marginTop: 12, alignItems: 'center'}}>
+                <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
+                  By tapping, your App Store account will be charged. Your subscription will auto-renew for the same price and duration until
+                  you cancel via your App Store settings. You also agree to the Terms.
+                </Text>
+                <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
+                  More details can be found here:
+                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
+                    <View style={{borderBottomWidth: 1, borderBottomColor: whiteColor}}>
+                      <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Privacy Policy</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, marginHorizontal: 5}}>and</Text>
+                  <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/terms-of-service-eula')}>
+                    <View style={{borderBottomWidth: 1, borderBottomColor: whiteColor}}>
+                      <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Terms and Conditions (EULA)</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
       </SafeAreaView>
     </LinearGradient>
   );

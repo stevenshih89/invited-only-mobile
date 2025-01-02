@@ -269,7 +269,6 @@ const Requests: FC = (): ReactElement => {
                     fetchHostRequests={fetchHostRequests}
                   />
                 ) : (
-                  // @ts-ignore
                   <ItemRequestGuest
                     list={item}
                     item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}

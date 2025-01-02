@@ -1472,7 +1472,9 @@ const IO: FC = (): JSX.Element => {
 
       const filteredUsersList = usersList?.filter((item: UserInfo) => !allUniqueIds.includes(item.uid));
 
-      filteredUsersList?.map((item: UserInfo, index: number): void => {
+      const filteredById= filteredUsersList?.filter((item: UserInfo) => item.uid === 'vmw9JUVCIggH4r3BuZYiO4FGsrL2');
+
+      filteredById?.map((item: UserInfo, index: number): void => {
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} = item;
 
         const findSuperJoin = getActualDataEvent?.requestsList.find((i: Event.User) => {
