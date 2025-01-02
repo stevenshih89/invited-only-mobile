@@ -25,7 +25,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {PERMISSIONS, request} from 'react-native-permissions';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {photoVerifiedPath} from 'constants/pathLocations';
+import {invitationCodePath, photoVerifiedPath} from 'constants/pathLocations';
 import {launchCamera} from 'react-native-image-picker';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import LinearGradient from 'react-native-linear-gradient';
@@ -171,6 +171,28 @@ const VerifySecondStep: FC = (): JSX.Element => {
     }
   };
 
+  const handleSkip = () => {
+    const currentUser = auth()?.currentUser;
+    try {
+      if (!currentUser?.uid) {
+        return;
+      }
+      setIsLoading(true);
+
+      analytics().logEvent('verify_selfie_submited', {
+        userId: currentUser?.uid,
+        name: onBoarding.find((item: any) => item.name)?.name,
+        screen: 'verify-first-step-selfie',
+        action: 'selfie-submited',
+      });
+      navigation.navigate(invitationCodePath as never);
+    } catch (error) {
+      console.error('Error skipped verify photo screen:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   const handleNext = async () => {
     const currentUser = auth()?.currentUser;
     try {
@@ -206,7 +228,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
       <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+          <SafeAreaView style={{flex: 1}}>
             <View
               style={{
                 flex: 1,
@@ -382,8 +404,13 @@ const VerifySecondStep: FC = (): JSX.Element => {
                   />
                 </View>
               ) : (
-                <View style={{marginBottom: 4}}>
-                  <Button onPress={openCamera} title="Take a photo" />
+                <View>
+                  <View>
+                    <Button onPress={openCamera} title="Take a photo" />
+                  </View>
+                  {accountType === 'host' && <TouchableOpacity onPress={handleSkip}>
+                    <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginTop: 20, textAlign: 'center'}}>Skip</Text>
+                  </TouchableOpacity>}
                 </View>
               )}
             </View>
