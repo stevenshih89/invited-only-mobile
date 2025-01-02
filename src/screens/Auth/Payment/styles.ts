@@ -73,8 +73,8 @@ const useStyles = () => {
     listColumnWrapper: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginTop: screenHeight / 25,
-      marginBottom: screenHeight / 82,
+      // marginTop: screenHeight / 25,
+      // marginBottom: screenHeight / 82,
     },
     textWhatYouGet: {
       color: whiteColor,
@@ -90,8 +90,8 @@ const useStyles = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      borderBottomColor: lightGray7Color,
-      borderBottomWidth: 1,
+      // borderBottomColor: lightGray7Color,
+      // borderBottomWidth: 1,
       paddingVertical: screenHeight / 63,
     },
     textFromTheList: {
