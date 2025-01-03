@@ -1941,7 +1941,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isRefreshing && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+  if (userInfo?.uid && isRefreshing && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite && loadingCardsList) {
     return (
       <>
         <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
