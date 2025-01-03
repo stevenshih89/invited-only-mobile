@@ -171,9 +171,9 @@ const InvitationCode: FC = (): JSX.Element => {
       });
 
       const userId = await AsyncStorage.getItem('uid');
-      const facePhoto = mergedObject?.facePhoto;
+      const facePhoto = mergedObject?.facePhoto || '';
 
-      const photos = mergedObject?.photos;
+      const photos = mergedObject?.photos || [];
 
       const isTurnNotifications = onBoarding.find((item: any) => 'notifications' in item);
 
