@@ -42,7 +42,9 @@ const eventTypes = [
   {id: 9, label: 'Restaurants'},
 ];
 
-const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, index}: any) => {
+const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, index}: any) => { 
+  console.log('ItemRequestGuest', item);
+   
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const [hostInfo, setHostInfo] = useState([]);
@@ -241,7 +243,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
     }
   };
 
-  const handleInvite = ({userItem, withSwipeAnimation}: {userItem: Event.User; withSwipeAnimation: boolean}) => {
+  const handleInvite = ({userItem, withSwipeAnimation}: {userItem: Event.User; withSwipeAnimation: boolean}) => {    
     onInvite(userItem);
     if (withSwipeAnimation) {
       handleSwipeCardRight();
@@ -269,6 +271,9 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
   if (item[0]?.uid !== user?.uid) {
     return null;
   }
+
+  // console.log('item', item);
+  
 
   const navigation = useNavigation();
 

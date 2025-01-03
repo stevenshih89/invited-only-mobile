@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, ScrollView, TouchableOpacity, FlatList} from 'react-native';
+import {View, Text, SafeAreaView, ScrollView, TouchableOpacity, FlatList, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Tooltip, TooltipProps} from '@rneui/themed';
 import auth from '@react-native-firebase/auth';
@@ -12,6 +12,7 @@ import Button from 'components/Button/Button.tsx';
 import {profilePath, tutorialFlowPath} from 'constants/pathLocations.ts';
 import {
   backgroundGradientColors,
+  black2Color,
   blackColor,
   lightGray2Color,
   lightGray4Color,
@@ -22,15 +23,18 @@ import {
 
 //import icons
 import CheckIcon from 'assets/images/icons/check.svg';
-import CalendarIcon from 'assets/images/icons/calendar-white.svg';
+import CalendarIcon from 'assets/images/icons/calendar-event.svg';
 import IOIcon from 'assets/images/icons/io.svg';
-import FlashIcon from 'assets/images/icons/flash-white.svg';
+import ExportIcon from 'assets/images/icons/export.svg';
+import FlashIcon from 'assets/images/icons/lightning-fill.svg';
 import Logo from 'assets/images/icons/logo.svg';
-import EyeIcon from 'assets/images/icons/eye.svg';
+import EyeIcon from 'assets/images/icons/eye-solid.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import CloseCircleIcon from 'assets/images/icons/close-circle.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
-import UnlimitedIcon from 'assets/images/icons/unlimited-new.svg';
+import SubscriptionWeek from 'assets/images/app/subscription-1-week.png';
+import SubscriptionMonth from 'assets/images/app/subscription-1-month.png'; 
+import SubscriptionThreeMonth from 'assets/images/app/subscription-3-month.png'; 
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {SvgProps} from 'react-native-svg';
@@ -47,6 +51,7 @@ import {openLink} from 'helpers/links';
 import analytics from '@react-native-firebase/analytics';
 import {paymentScreen} from 'constants/analitycs';
 import Config from 'react-native-config';
+import { screenHeight, screenWidth } from 'constants/common';
 
 interface PlanListItem {
   id: number;
@@ -92,22 +97,22 @@ const Payment: FC = (): JSX.Element => {
 
   const whatGet: WhatGetItem[] = [
     {
-      title: 'Unlimited Events Creation',
+      title: 'Unlimited Events Sharing',
       description: 'Share Unlimited VIP Tables and Events to Invite.',
       icon: CalendarIcon,
     },
     {
       title: 'Unlimited Invitations',
       description: 'Send Unlimited Invitations and Create Your Guest List',
-      icon: UnlimitedIcon,
+      icon: ExportIcon,
     },
     {
-      title: 'Unlimited Guest Connections',
+      title: 'Unlimited Swiped',
       description: 'Enjoy endless connections to build your guests lists.',
       icon: IOIcon,
     },
     {
-      title: '5 Super invites a week',
+      title: '5 Super Invites a week',
       description: 'Send 5 super invites each week.',
       icon: FlashIcon,
     },
@@ -125,7 +130,7 @@ const Payment: FC = (): JSX.Element => {
   const [plansList, setPlansList] = useState<PlanListItem[]>([
     {
       id: 0,
-      title: 'BILLED WEEKLY',
+      title: '1 Week',
       duration: 1,
       durationName: 'week',
       description: 'Week',
@@ -135,7 +140,7 @@ const Payment: FC = (): JSX.Element => {
     },
     {
       id: 1,
-      title: 'BILLED MONTHLY',
+      title: '1 Month',
       duration: 1,
       durationName: 'month',
       description: 'Month',
@@ -145,7 +150,7 @@ const Payment: FC = (): JSX.Element => {
     },
     {
       id: 2,
-      title: 'BILLED 3 MONTHS',
+      title: '3 Month',
       duration: 3,
       durationName: 'months',
       description: 'Months',
@@ -155,7 +160,7 @@ const Payment: FC = (): JSX.Element => {
     },
   ]);
 
-  const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
+  const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[0]);
   const [loaderVisible, setLoaderVisible] = useState(false);
   const [successfulPay, setSuccessfulPay] = useState(false);
   const [visibleHostPremium, setVsibleHostPremium] = useState(false);
@@ -281,6 +286,8 @@ const Payment: FC = (): JSX.Element => {
   console.warn(currentSubscriptions);
 
   const renderItem = ({item}: {item: PlanListItem}) => {
+    console.log('item', item);
+    
     let isRender = true;
     const formattedPrice = item.fullPrice;
     const isCurrentSubscription = currentSubscriptions.activeSubscriptions.includes(item.identifier);
@@ -313,8 +320,8 @@ const Payment: FC = (): JSX.Element => {
       const colors = isActive ? ['#977B4A', '#E5D291', '#A28453'] : [lightGray2Color, lightGray2Color, lightGray2Color];
 
       return (
-        <View style={{height: 200, flex: 1}}>
-          {isCurrentSubscription && (
+        <View style={{flex: 1}}>
+          {/* {isCurrentSubscription && (
             <View style={{position: 'absolute', top: -26, width: '100%'}}>
               <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(16, 932), fontFamily: Satoshi700}}>Current Plan</Text>
             </View>
@@ -333,7 +340,7 @@ const Payment: FC = (): JSX.Element => {
               }}>
               <Text style={{fontFamily: Satoshi700, fontSize: RFValue(8, 812), color: whiteColor}}>{item.title}</Text>
             </View>
-          </View>
+          </View> */}
           <TouchableOpacity
             key={item.id}
             disabled={isActive}
@@ -345,7 +352,19 @@ const Payment: FC = (): JSX.Element => {
             }}
             activeOpacity={0.7}
             onPress={() => setActivePayment(item)}>
-            <LinearGradient
+              <View style={{
+                backgroundColor: isActive? lightGray2Color: black2Color, 
+                height: 48, 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                borderTopLeftRadius: item.id === 0? 10: 0,
+                borderBottomLeftRadius: item.id === 0? 10: 0,
+                borderTopRightRadius: item.id === 2? 10: 0,
+                borderBottomRightRadius: item.id === 2? 10: 0
+                }}>
+                <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi500}}>{item.title}</Text>
+              </View>
+            {/* <LinearGradient
               colors={isCurrentSubscription && isActive ? [whiteColor, whiteColor] : colors}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 0}}
@@ -398,7 +417,7 @@ const Payment: FC = (): JSX.Element => {
                 }}>
                 {formattedPrice}
               </Text>
-            </LinearGradient>
+            </LinearGradient> */}
           </TouchableOpacity>
         </View>
       );
@@ -451,8 +470,10 @@ const Payment: FC = (): JSX.Element => {
       fullPrice: offer.product.priceString,
       package: offer,
     }));
+    console.log('products', products);
+    
     setPlansList(products);
-    setActivePayment(products[1]);
+    setActivePayment(products[0]);
   }, [subscriptions]);
 
   const restorePurchases = async () => {
@@ -498,70 +519,38 @@ const Payment: FC = (): JSX.Element => {
         <Loader isVisible={loaderVisible} successfulPay={successfulPay} />
         <ModalUpgradeSuccessful isVisible={visibleUpgradeSuccessful} />
         <HostPremium isVisible={visibleHostPremium} setVsibleHostPremium={setVsibleHostPremium} screen={checkNavig?.params?.screen} />
-        <ScrollView>
+        <ScrollView contentContainerStyle={{paddingBottom: 240}}>
           <View style={styles.container}>
-            <View style={{alignItems: 'center', marginTop: 24}}>
-              <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 932)}}>Select a plan</Text>
-            </View>
-            <View style={{alignItems: 'flex-end'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+            <View />
+            <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(32, 932), marginLeft: 25}}>Subscription</Text>
               <TouchableOpacity activeOpacity={0.7} onPress={handleNext}>
                 <CloseIcon width={25} height={25} />
               </TouchableOpacity>
             </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-              <Logo />
-              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(46, 932), marginLeft: 14}}>Premium </Text>
-            </View>
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 30, flex: 1}}>
+            <Image 
+              style={{height: screenHeight/3.58, width: screenWidth/2.62, marginTop: 40, alignSelf: 'center'}} 
+              source={activePayment.id === 0 && SubscriptionWeek || 
+                      activePayment.id === 1 && SubscriptionMonth || 
+                      activePayment.id === 2 && SubscriptionThreeMonth}
+              />
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 30}}>
               {plansList.map(item => renderItem({item}))}
             </View>
-            <Button
-              buttonTitleStyle={{fontSize: RFValue(16, 812)}}
-              buttonStyle={{marginTop: 20}}
-              title={getButtonTitle()}
-              onPress={getOfferings}
-              disabled={getButtonDisabled()}
-            />
-            <TouchableOpacity
-              onPress={restorePurchases}
-              style={{
-                marginTop: 12,
-                alignItems: 'center',
-                borderWidth: 1,
-                borderRadius: 18,
-                borderColor: whiteColor,
-                height: 38,
-                justifyContent: 'center',
-              }}>
-              <Text style={{fontSize: RFValue(16), color: whiteColor, fontFamily: Satoshi500}}>Restore purchases</Text>
-            </TouchableOpacity>
-            <View style={{marginTop: 12, alignItems: 'center'}}>
-              <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
-                By tapping, your App Store account will be charged. Your subscription will auto-renew for the same price and duration until
-                you cancel via your App Store settings. You also agree to the Terms.
-              </Text>
-              <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
-                More details can be found here:
-              </Text>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
-                  <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Privacy Policy</Text>
-                </TouchableOpacity>
-                <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, marginHorizontal: 5}}>and</Text>
-                <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/terms-of-service-eula')}>
-                  <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Terms and Conditions (EULA)</Text>
-                </TouchableOpacity>
-              </View>
+            <View style={{backgroundColor: black2Color, borderRadius: 10, paddingVertical: 20, paddingHorizontal: 24, marginTop: screenHeight / 25,}}>
+            <View style={[styles.listColumnWrapper, {paddingBottom: 20, borderBottomWidth: 1, borderBottomColor: lightGray2Color}]}>
+              <Text style={styles.textWhatYouGet}>{activePayment.duration + ' ' + activePayment.durationName.charAt(0).toUpperCase() + activePayment.durationName.slice(1, activePayment.durationName.length)}</Text>
+              <Text style={styles.textPremium}>{activePayment.fullPrice}</Text>
             </View>
-            <View style={styles.listColumnWrapper}>
+            <View style={[styles.listColumnWrapper, {paddingTop: 20}]}>
               <Text style={styles.textWhatYouGet}>What you get:</Text>
               <Text style={styles.textPremium}>Premium</Text>
             </View>
             <FlatList
               data={whatGet}
-              renderItem={({item}) => {
+              renderItem={({item, index}) => {
                 return (
-                  <View style={styles.itemInTheList}>
+                  <View style={[styles.itemInTheList, {paddingBottom: index + 1 === whatGet.length? 0: screenHeight / 63}]}>
                     <View style={styles.rowTextAndCheckCircleIcon}>
                       <View
                         style={{
@@ -598,8 +587,56 @@ const Payment: FC = (): JSX.Element => {
                 );
               }}
             />
+            </View>
+            {/* <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+              <Logo />
+              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(46, 932), marginLeft: 14}}>Premium </Text>
+            </View> */}
           </View>
         </ScrollView>
+        <View style={{position: 'absolute', bottom: 0, backgroundColor: blackColor, paddingHorizontal: 24, paddingBottom: 24}}>
+              <Button
+                buttonTitleStyle={{fontSize: RFValue(16, 812)}}
+                buttonStyle={{marginTop: 20}}
+                title={getButtonTitle()}
+                onPress={getOfferings}
+                disabled={getButtonDisabled()}
+              />
+              <TouchableOpacity
+                onPress={restorePurchases}
+                style={{
+                  marginTop: 12,
+                  alignItems: 'center',
+                  height: 38,
+                  justifyContent: 'center',
+                }}>
+                <View style={{borderBottomWidth: 1, borderBottomColor: whiteColor}}>
+                  <Text style={{fontSize: RFValue(16), color: whiteColor, fontFamily: Satoshi500}}>Restore purchases</Text>
+                </View>
+              </TouchableOpacity>
+              <View style={{marginTop: 12, alignItems: 'center'}}>
+                <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
+                  By tapping, your App Store account will be charged. Your subscription will auto-renew for the same price and duration until
+                  you cancel via your App Store settings. You also agree to the Terms.
+                </Text>
+                <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, textAlign: 'center'}}>
+                  More details can be found here:
+                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
+                    <View style={{borderBottomWidth: 1, borderBottomColor: whiteColor}}>
+                      <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Privacy Policy</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <Text style={{fontFamily: Satoshi400, fontSize: RFValue(12, 812), color: whiteColor, marginHorizontal: 5}}>and</Text>
+                  <TouchableOpacity onPress={() => openLink('https://www.invitedonly.app/terms-of-service-eula')}>
+                    <View style={{borderBottomWidth: 1, borderBottomColor: whiteColor}}>
+                      <Text style={{fontFamily: Satoshi500, fontSize: RFValue(14, 812), color: whiteColor}}>Terms and Conditions (EULA)</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
       </SafeAreaView>
     </LinearGradient>
   );
