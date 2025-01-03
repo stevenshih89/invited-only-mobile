@@ -1,7 +1,16 @@
 import {StyleSheet} from 'react-native';
 import {Satoshi500, Satoshi400} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {black3Color, goldColor, lightGray10Color, lightGray5Color, lightGray6Color, lightGray9Color, whiteColor} from 'constants/colors.ts';
+import {
+  black3Color,
+  black60Color,
+  goldColor,
+  lightGray10Color,
+  lightGray5Color,
+  lightGray6Color,
+  lightGray9Color,
+  whiteColor
+} from "constants/colors.ts";
 import {screenHeight, screenWidth} from 'constants/common.ts';
 
 const useStyles = () => {
@@ -9,6 +18,19 @@ const useStyles = () => {
     container: {
       flex: 1,
       paddingBottom: 40,
+    },
+    overlayContainer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      width: screenWidth,
+      height: screenHeight,
+      zIndex: 1,
+      backgroundColor: black60Color,
+    },
+    stepHintContainer: {
+      zIndex: 111,
     },
     wrapperSelectYourDesiredCompany: {
       // borderWidth: 1,
@@ -129,6 +151,11 @@ const useStyles = () => {
       fontSize: RFValue(14, 812),
       color: whiteColor,
     },
+    handIconContainer: {
+      position: 'absolute',
+      bottom: -24,
+      right: -16,
+    }
   });
 };
 

@@ -1,5 +1,5 @@
-import React, {FC, useCallback, useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, Alert, Platform} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Alert, Platform, Text, TouchableOpacity, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import TrashCanIcon from 'assets/images/icons/trash.svg';
 import useStyles from 'screens/App/IO/screens/EventCreating/styles.ts';
@@ -19,21 +19,25 @@ import Check from 'src/assets/images/icons/Check-black.svg';
 import uuid from 'react-native-uuid';
 import {useUser} from 'src/store/userStore';
 // import {uploadImage} from 'helpers/uploadImage.ts';
-import {commonStackPath, eventActiveInfoPath, IOPath} from 'constants/pathLocations';
+import { commonStackPath, demoFlowStackPath, demoIOPath, eventActiveInfoPath, IOPath } from "constants/pathLocations";
 import storage from '@react-native-firebase/storage';
 import {createEvent} from 'src/api/event';
 import {eventTypes} from 'src/mocks/eventTypes';
-import {EventData, Event} from 'src/types/event';
+import {Event, EventData} from 'src/types/event';
 import moment from 'moment';
 import {sendNotification} from 'helpers/fcmHelper';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
+import HintCard from 'components/HintCard';
+import {hostHintSteps} from 'constants/hints.ts';
+import {useDemoFlowStore} from '../../../../../store/demoFlowStore';
 
-const EventCreating: FC = () => {
+const EventCreating = () => {
   const INVITED_ONLY = 'invitedOnly';
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
+  const {hintStep, setHintStep, setIsVisibleSwipeGuide} = useDemoFlowStore();
   const [tabState, setTabState] = useState<string>(INVITED_ONLY);
   const [isVisibleSaveModal, setIsVisibleSaveModal] = useState<boolean>(false);
   const [isVisibleCancelModal, setIsVisibleCancelModal] = useState<boolean>(false);
@@ -51,14 +55,14 @@ const EventCreating: FC = () => {
   const [currentCreateStep, setCurrentCreateStap] = useState<number>(1);
 
   const [activeType, setActiveType] = useState(eventTypes[0].id);
-  const [placeName, setPlaceName] = useState('');
+  const [placeName, setPlaceName] = useState(hintStep > 4 ? 'Irisol Dubai' : '');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [datePicker, setDatePicker] = useState(new Date());
   const [hourPicker, setHourPicker] = useState(new Date());
   const [date, setDate] = useState('');
   const [hour, setHour] = useState('');
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState(hintStep > 4 ? 'Nad AJ Sheba 1 - Dubai' : '');
   const [meetingSpot, setMeetingSpot] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
@@ -93,6 +97,7 @@ const EventCreating: FC = () => {
 
   const route = useRoute();
 
+  const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
   const isEditing = (route?.params as {isEditing?: boolean})?.isEditing;
   const isEditingItem = (route?.params as {isEditingItems?: any})?.isEditingItems;
 
@@ -107,6 +112,18 @@ const EventCreating: FC = () => {
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (hintStep === 5) {
+      setPlaceName('Irisol Dubai');
+      setAddress('Nad AJ Sheba 1 - Dubai');
+      setName('Red Mirage');
+      setDescription('A night of elegance and excitement');
+      setDate('07.02.2025');
+      setHour('21:30');
+      setMeetingSpot('Main Entrance');
+    }
+  }, [hintStep]);
 
   const editingItems = {
     prevImages: isEditingItem?.photos ? [...isEditingItem?.photos] : [],
@@ -343,13 +360,43 @@ const EventCreating: FC = () => {
     }
   };
 
+  const handleSkipHints = () => {
+    if (hintStep === 1) {
+      navigation.goBack()
+    } else {
+      navigation.navigate(demoFlowStackPath, {screen: demoIOPath} as never);
+      setHintStep(8)
+      setIsVisibleSwipeGuide(true)
+    }
+  };
+
+  const handlePreviousStep = () => {
+    if (hintStep === 3) {
+      setTabState('invitedOnly');
+      setCurrentCreateStap(1);
+    }
+  };
+
   return (
     <>
       <View style={styles.container}>
-        <View style={styles.wrapperTabSelections}>
+        {isDemo && <View style={styles.overlayContainer} />}
+        <View
+          style={{
+            ...styles.wrapperTabSelections,
+            zIndex: isDemo && (hintStep === 1 || hintStep === 3) ? 1111 : 1,
+          }}>
           <View style={{width: '100%', marginVertical: 24}}>
             <View style={{position: 'relative', alignItems: 'center', width: '100%'}}>
-              <View style={{height: 2, width: screenWidth - 48 - 32, backgroundColor: grayScale700, position: 'absolute', top: 16}} />
+              <View
+                style={{
+                  height: 2,
+                  width: screenWidth - 48 - 32,
+                  backgroundColor: grayScale700,
+                  position: 'absolute',
+                  top: 16,
+                }}
+              />
               <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
                 <View style={{alignItems: 'center'}}>
                   <View
@@ -442,6 +489,20 @@ const EventCreating: FC = () => {
                   </Text>
                 </View>
               </View>
+              {isDemo && (hintStep === 1 || hintStep === 3) && (
+                <View style={styles.step1HintContainer}>
+                  <HintCard
+                    currentStep={hintStep}
+                    description={hostHintSteps[hintStep - 1]?.description}
+                    onSkipAction={handleSkipHints}
+                    onStepChange={setHintStep}
+                    onPreviousAction={handlePreviousStep}
+                    totalSteps={hostHintSteps.length}
+                    directionHorizontal={hintStep === 3 ? 'center' : 'start'}
+                    title={hostHintSteps[hintStep - 1]?.title}
+                  />
+                </View>
+              )}
             </View>
           </View>
         </View>

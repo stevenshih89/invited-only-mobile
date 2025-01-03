@@ -4,7 +4,7 @@ import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useRoute} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
 
@@ -20,6 +20,7 @@ import {
   LIKED,
   NOT_ACCEPTED_STATUS,
   screenHeight,
+  screenWidth,
   THIS_MONTH,
   THIS_WEEK,
 } from 'constants/common.ts';
@@ -30,12 +31,22 @@ import {
   eventCreatingStackPath,
   myProfileViewPath,
   paymentPath,
-  userProfilePath,
-} from 'constants/pathLocations.ts';
+  userProfilePath, demoFlowStackPath, demoIOPath
+} from "constants/pathLocations.ts";
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
-import {blackColor, lightGreenColor, transparentWhite16Color, transparentWhite56Color, whiteColor} from 'constants/colors';
+import {
+  black60Color,
+  blackColor,
+  lightGreenColor,
+  transparentWhite16Color,
+  transparentWhite56Color,
+  white0Color,
+  white10Color,
+  white40Color,
+  whiteColor,
+} from 'constants/colors';
 import {fcmHelper, onMatchNotificationSubscription, sendNotification} from 'helpers/fcmHelper.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {useUser} from '../../../store/userStore';
@@ -54,6 +65,9 @@ import CloseIcon from 'assets/images/icons/close.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
+import RejectDemoIcon from 'assets/images/icons/reject-demo.svg';
+import MoreDetailsDemoIcon from 'assets/images/icons/more-details-demo.svg';
+import InviteDemoIcon from 'assets/images/icons/invite-demo.svg';
 import PersoneIcon from 'assets/images/icons/Users.svg';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
@@ -89,6 +103,12 @@ import RNUxcam from 'react-native-ux-cam';
 import {getEvents} from 'src/api/event';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
+import {useDemoFlowStore} from '../../../store/demoFlowStore';
+import invitedOnly from 'screens/App/IO/screens/EventCreating/components/InvitedOnly/InvitedOnly.tsx';
+import HintCard from 'components/HintCard';
+import {hostHintSteps} from 'constants/hints.ts';
+import DemoGuestCard from 'components/DemoGuestCard';
+import SwipeHints from "components/SwipeHints";
 
 const IO: FC = (): JSX.Element => {
   const EVENTS_LOADING_LIMIT = 6;
@@ -121,9 +141,12 @@ const IO: FC = (): JSX.Element => {
 
   const {loadingCardsList, setLoadingCardsList, myEvents, loadingMyEvents, activeEvent, setActiveEvent, setMyEvents} = useMyEvents();
 
-  const {activeEventDate} = useContext(EventsDate);
-
   const userHost = useUser((i: any) => i?.user);
+  const {activeEventDate} = useContext(EventsDate);
+  const {setHintStep, hintStep, isVisibleSwipeGuide, setIsVisibleSwipeGuide} = useDemoFlowStore();
+  const route = useRoute();
+  const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
+
   const setUser = useUser((i: any) => i?.setUser);
 
   const setScrollPosition = useScrollPosition((i: any) => i?.setScrollPosition);
@@ -228,7 +251,7 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     let unsubscribeEvent: any;
-    if (activeEvent?.id) {
+    if (!isDemo && activeEvent?.id) {
       unsubscribeEvent = firestore()
         .collection(apiEventsCollection)
         .doc(activeEvent?.id)
@@ -1071,7 +1094,14 @@ const IO: FC = (): JSX.Element => {
               placeName={event?.placeName}
               onReject={() => handleReject({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
               onInvite={() => handleInvite({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
-              superJoin={() => handleInvite({uid: event?.uid, id: event?.id, withSwipeAnimation: true, superInvite: true})}
+              superJoin={() =>
+                handleInvite({
+                  uid: event?.uid,
+                  id: event?.id,
+                  withSwipeAnimation: true,
+                  superInvite: true,
+                })
+              }
               confirmedEvent={event?.statusEvent}
               uidUserEvent={event?.uid}
               hourEvent={event?.hour}
@@ -1104,14 +1134,48 @@ const IO: FC = (): JSX.Element => {
                 customButton={customButton(event?.id, event?.uid)}
               />
               <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Place name</Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.placeName}</Text>
+              <Text
+                style={{
+                  marginTop: 6,
+                  color: whiteColor,
+                  fontFamily: Satoshi400,
+                  fontSize: RFValue(16, 812),
+                }}>
+                {event?.placeName}
+              </Text>
               <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
-              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 20}]}>
+              <Text
+                style={[
+                  {
+                    marginTop: 14,
+                    color: whiteColor,
+                    fontFamily: Satoshi700,
+                    fontSize: RFValue(16, 812),
+                  },
+                  {marginTop: 20},
+                ]}>
                 Event name
               </Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.name}</Text>
+              <Text
+                style={{
+                  marginTop: 6,
+                  color: whiteColor,
+                  fontFamily: Satoshi400,
+                  fontSize: RFValue(16, 812),
+                }}>
+                {event?.name}
+              </Text>
               <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
-              <Text style={[{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}, {marginTop: 20}]}>
+              <Text
+                style={[
+                  {
+                    marginTop: 14,
+                    color: whiteColor,
+                    fontFamily: Satoshi700,
+                    fontSize: RFValue(16, 812),
+                  },
+                  {marginTop: 20},
+                ]}>
                 Event description
               </Text>
               <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>
@@ -1120,7 +1184,15 @@ const IO: FC = (): JSX.Element => {
               <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
               <View style={{marginVertical: 20}}>
                 <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Address</Text>
-                <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{event?.address}</Text>
+                <Text
+                  style={{
+                    marginTop: 6,
+                    color: whiteColor,
+                    fontFamily: Satoshi400,
+                    fontSize: RFValue(16, 812),
+                  }}>
+                  {event?.address}
+                </Text>
               </View>
               <View
                 style={{
@@ -1188,7 +1260,13 @@ const IO: FC = (): JSX.Element => {
                           paddingHorizontal: 6,
                           paddingVertical: 2,
                         }}>
-                        <Text style={{color: whiteColor, textTransform: 'capitalize', fontFamily: Satoshi700, fontSize: RFValue(10, 812)}}>
+                        <Text
+                          style={{
+                            color: whiteColor,
+                            textTransform: 'capitalize',
+                            fontFamily: Satoshi700,
+                            fontSize: RFValue(10, 812),
+                          }}>
                           {event?.hostInfo.accountType}
                         </Text>
                       </View>
@@ -1219,7 +1297,13 @@ const IO: FC = (): JSX.Element => {
                       )}
                     </View>
                     <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
-                      <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812), marginRight: 6}}>
+                      <Text
+                        style={{
+                          color: whiteColor,
+                          fontFamily: Satoshi700,
+                          fontSize: RFValue(14, 812),
+                          marginRight: 6,
+                        }}>
                         {event?.hostName}
                         {userEventDate && ', ' + calculateAge(userEventDate)}
                       </Text>
@@ -1330,7 +1414,13 @@ const IO: FC = (): JSX.Element => {
                         },
                         backAnimatedStyle,
                       ]}>
-                      <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>
+                      <Text
+                        style={{
+                          color: whiteColor,
+                          fontSize: 24,
+                          fontWeight: '500',
+                          transform: [{rotateY: '180deg'}],
+                        }}>
                         {counterSuperInvites - 1}
                       </Text>
                     </Animated.View>
@@ -1709,7 +1799,13 @@ const IO: FC = (): JSX.Element => {
                           },
                           backAnimatedStyle,
                         ]}>
-                        <Text style={{color: whiteColor, fontSize: 24, fontWeight: '500', transform: [{rotateY: '180deg'}]}}>
+                        <Text
+                          style={{
+                            color: whiteColor,
+                            fontSize: 24,
+                            fontWeight: '500',
+                            transform: [{rotateY: '180deg'}],
+                          }}>
                           {counterSuperInvites}
                         </Text>
                       </Animated.View>
@@ -1848,6 +1944,12 @@ const IO: FC = (): JSX.Element => {
     setScrollPosition(positionY);
   };
 
+  const handleSkipHints = () => {
+    navigation.navigate(demoFlowStackPath, {screen: demoIOPath} as never);
+    setHintStep(8);
+    setIsVisibleSwipeGuide(true);
+  };
+
   useEffect(() => {
     if (isHost && activeEvent?.id) {
       lastVisibleRef.current = null;
@@ -1933,7 +2035,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && rejectModalVisible) {
+  if (userInfo?.uid && rejectModalVisible && userInfo?.photos?.[0].image) {
     return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
         <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />
@@ -1944,6 +2046,31 @@ const IO: FC = (): JSX.Element => {
   if (userInfo?.uid && isRefreshing && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite && loadingCardsList) {
     return (
       <>
+        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+        )}
+      </>
+    );
+  }
+  if (isDemo && hintStep === 7) {
+    return (
+      <>
+        <View style={styles.overlayContainer} />
+        <View style={styles.stepHintContainer}>
+          <HintCard
+            currentStep={hintStep}
+            description={hostHintSteps[hintStep - 1]?.description}
+            onSkipAction={handleSkipHints}
+            onStepChange={setHintStep}
+            onNextAction={() => {
+              setIsVisibleSwipeGuide(true)
+            }}
+            totalSteps={hostHintSteps.length}
+            title={hostHintSteps[hintStep - 1]?.title}
+            directionHorizontal={'center'}
+          />
+        </View>
         <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
         {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
           <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
@@ -1963,7 +2090,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isHost && !loadingCardsList && !myEvents.length && !isVisibleMatch) {
+  if (userInfo?.uid && isHost && !loadingCardsList && !myEvents.length && !isVisibleMatch && userInfo?.isPassedDemo) {
     return (
       <>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
@@ -1996,7 +2123,8 @@ const IO: FC = (): JSX.Element => {
     !isVisibleMatch &&
     !visibleModalSuperJoin &&
     !isVisibleSuperInvite &&
-    !acceptModalVisible
+    !acceptModalVisible &&
+    userInfo.isPassedDemo
   ) {
     return (
       <>
@@ -2045,7 +2173,13 @@ const IO: FC = (): JSX.Element => {
             </Text>
             {userInfo?.accountConfirmed && (
               <TouchableOpacity style={{marginTop: screenHeight / 50}} onPress={handleGoToEarlyAccess}>
-                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812), textDecorationLine: 'underline'}}>
+                <Text
+                  style={{
+                    color: whiteColor,
+                    fontFamily: Satoshi500,
+                    fontSize: RFValue(14, 812),
+                    textDecorationLine: 'underline',
+                  }}>
                   IO Invitations
                 </Text>
               </TouchableOpacity>
@@ -2084,6 +2218,9 @@ const IO: FC = (): JSX.Element => {
           />
         )}
         <View style={styles.container}>
+          {
+            (isVisibleSwipeGuide && !userInfo?.isPassedDemo && hintStep !== 7) && <SwipeHints />
+          }
           {events?.map((item, index) => {
             return (
               <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
@@ -2112,6 +2249,42 @@ const IO: FC = (): JSX.Element => {
             );
           })}
 
+          {/*<View style={styles.cardContainer} pointerEvents="box-none">*/}
+          {/*  <TinderCard*/}
+          {/*    ref={cardRef}*/}
+          {/*    // @ts-ignore*/}
+          {/*    cardWidth="100%"*/}
+          {/*    // @ts-ignore*/}
+          {/*    cardHeight="100%"*/}
+          {/*    onSwipedLeft={() => handleReject({uid: item?.info?.uid, id: item?.info?.id, withSwipeAnimation: false})}*/}
+          {/*    onSwipedRight={() =>*/}
+          {/*      handleInvite({*/}
+          {/*        uid: item?.info?.uid,*/}
+          {/*        id: item?.info?.id,*/}
+          {/*        withSwipeAnimation: false,*/}
+          {/*      })*/}
+          {/*    }*/}
+          {/*    OverlayLabelRight={OverlayRight}*/}
+          {/*    OverlayLabelLeft={OverlayLeft}*/}
+          {/*    disableBottomSwipe={true}*/}
+          {/*    disableTopSwipe={true}*/}
+          {/*    cardStyle={styles.card}>*/}
+          {/*    <ScrollView*/}
+          {/*      onScroll={handleScroll}*/}
+          {/*      scrollEventThrottle={20}*/}
+          {/*      showsVerticalScrollIndicator={false}*/}
+          {/*      style={{borderRadius: 22, height: screenHeight - 250}}>*/}
+          {/*      <DemoGuestCard*/}
+          {/*        userInfo={*/}
+          {/*          {*/}
+          {/*            name: 'asd',*/}
+          {/*          } as UserInfo*/}
+          {/*        }*/}
+          {/*      />*/}
+          {/*    </ScrollView>*/}
+          {/*  </TinderCard>*/}
+          {/*</View>*/}
+
           <ModalFullEvent
             isVisible={isVisibleModalFullEvent}
             idEvent={activeEvent?.id}
@@ -2120,11 +2293,17 @@ const IO: FC = (): JSX.Element => {
           {!userInfo?.accountReviewed && (
             <ModalLockAccount haveCode accountType={userInfo?.accountType} isPremium={userInfo?.accountPremium} isVisibleButton={true} />
           )}
-          {userInfo?.accountConfirmed && isHost && (
-            <ModalEventLocked eventReviewed={activeEvent?.eventReviewed} eventStatus={activeEvent?.statusEvent} />
-          )}
+          {/*{userInfo?.accountConfirmed && isHost && (*/}
+          {/*  <ModalEventLocked eventReviewed={activeEvent?.eventReviewed} eventStatus={activeEvent?.statusEvent} />*/}
+          {/*)}*/}
           <ModalReport
-            handleAutoSwipeLeft={() => handleFilterEvent({uid: reportedItem?.uid, id: reportedItem?.event?.id, withSwipeAnimation: false})}
+            handleAutoSwipeLeft={() =>
+              handleFilterEvent({
+                uid: reportedItem?.uid,
+                id: reportedItem?.event?.id,
+                withSwipeAnimation: false,
+              })
+            }
             modalReport={modalReport}
             setModalReport={setModalReport}
             uidSender={userHost?.uid}

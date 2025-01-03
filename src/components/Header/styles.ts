@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {blackColor, lightGray2Color, lightGray5Color, lightRedColor, whiteColor} from 'constants/colors.ts';
+import {blackColor, lightGray2Color, lightGray5Color, lightRedColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi500, Satoshi700, Satoshi400} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common';
@@ -9,6 +9,15 @@ const useStyles = () =>
     container: {
       backgroundColor: blackColor,
       paddingHorizontal: screenWidth / 15.5,
+    },
+    overlayContainer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: transparent60Color,
+      zIndex: 1000,
     },
     wrapperHeader: {
       flexDirection: 'row',

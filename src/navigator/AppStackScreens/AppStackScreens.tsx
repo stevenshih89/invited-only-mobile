@@ -6,38 +6,42 @@ import IO from 'screens/App/IO/IO.tsx';
 import BottomMenu from 'navigator/BottomMenu/BottomMenu.tsx';
 import Header from 'components/Header/Header.tsx';
 import {
-  IOPath,
   accountRejectedPath,
+  accountSettingPath,
   bottomTabsStackPath,
+  chatCorrespondencePath,
+  chatPath,
   codeVerifiedPath,
   commonStackPath,
+  contactAndFAQPath,
+  demoEventCreatingPath,
+  demoFlowStackPath,
+  demoIntroPath,
+  demoIOPath,
+  earlyAccessPath,
+  emailChangePath,
+  eventActiveInfoPath,
+  eventCreatingStackPath,
+  eventEditingPath,
+  eventInfoPath,
   invitationCodePath,
+  IOPath,
+  joinEventsPath,
+  manageSubscriptionPath,
+  myEventsPath,
+  myProfileViewPath,
+  notificationSettingPath,
   notificationsPath,
   notificationsStackPath,
-  pendingScreenPath,
-  eventCreatingStackPath,
-  myEventsPath,
-  chatPath,
-  chatCorrespondencePath,
-  joinEventsPath,
-  myProfileViewPath,
-  userProfilePath,
-  eventInfoPath,
-  eventActiveInfoPath,
-  settingsPath,
-  eventEditingPath,
-  accountSettingPath,
-  phoneChangePath,
-  notificationSettingPath,
-  contactAndFAQPath,
-  securePrivacyPath,
   paymentPath,
-  superInvitePayPath,
-  verifySocialProfilePath,
-  manageSubscriptionPath,
+  pendingScreenPath,
+  phoneChangePath,
   privacyPath,
-  emailChangePath,
-  earlyAccessPath,
+  securePrivacyPath,
+  settingsPath,
+  superInvitePayPath,
+  userProfilePath,
+  verifySocialProfilePath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -69,12 +73,15 @@ import VerifySocialProfile from 'screens/Auth/VerifySocialProfile';
 import Privacy from 'screens/Auth/Privacy';
 import EmailChange from 'screens/App/Profile/screens/Settings/EmailChange';
 import EarlyAccess from 'screens/App/IO/screens/EarlyAccess/EarlyAccess';
+import DemoIntro from 'screens/App/DemoFlow/screens/DemoIntro/DemoIntro.tsx';
+import DemoEventCreatingHeader from 'screens/App/IO/screens/EventCreating/components/DemoEventCreatingHeader';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
 const CommonStack = createStackNavigator();
 const NotificationsStack = createStackNavigator();
 const EventCreatingStack = createStackNavigator();
+const DemoFlowStack = createStackNavigator();
 
 export const IOStackNavigation: FC = () => {
   const styles = useStyles();
@@ -457,6 +464,38 @@ const ManageSubscriptionScreen = () => {
   );
 };
 
+const DemoFlowScreen = () => {
+  return (
+    <DemoFlowStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+      initialRouteName={demoIntroPath}>
+      <DemoFlowStack.Screen name={demoIntroPath} key={demoIntroPath} component={DemoIntro} />
+      <DemoFlowStack.Screen
+        name={demoEventCreatingPath}
+        key={demoEventCreatingPath}
+        options={{
+          headerShown: true,
+          header: DemoEventCreatingHeader,
+        }}
+        component={EventCreating}
+        initialParams={{isDemo: true}}
+      />
+      <DemoFlowStack.Screen
+        options={{
+          headerShown: true,
+          header: () => <Header badge={true} logoType="logo" headerType="IO" />,
+        }}
+        name={demoIOPath}
+        key={demoIOPath}
+        component={IO}
+        initialParams={{isDemo: true}}
+      />
+    </DemoFlowStack.Navigator>
+  );
+};
+
 const AppStackScreen = () => {
   return (
     <AppStack.Navigator initialRouteName={bottomTabsStackPath} screenOptions={{headerShown: false}}>
@@ -466,6 +505,7 @@ const AppStackScreen = () => {
       <AppStack.Screen key={chatCorrespondencePath} name={chatCorrespondencePath} component={ChatCorrespondenceStackScreen} />
       <AppStack.Screen key={userProfilePath} name={userProfilePath} component={UserProfileStackScreen} />
       <AppStack.Screen key={commonStackPath} name={commonStackPath} component={CommonStackScreen} />
+      <AppStack.Screen key={demoFlowStackPath} name={demoFlowStackPath} component={DemoFlowScreen} />
       <AppStack.Screen key={paymentPath} name={paymentPath} component={PaymentStackScreen} />
       <AppStack.Screen key={verifySocialProfilePath} name={verifySocialProfilePath} component={VerifySocialProfile} />
       <AppStack.Screen key={manageSubscriptionPath} name={manageSubscriptionPath} component={ManageSubscriptionScreen} />

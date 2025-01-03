@@ -1,5 +1,6 @@
 import React, {FC, useState, Dispatch, SetStateAction, useEffect} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
+import HandIC from 'assets/images/icons/hand.svg';
 
 //import components
 import useStyles from 'screens/App/IO/screens/EventCreating/components/InvitedOnly/styles.ts';
@@ -8,6 +9,13 @@ import {screenHeight} from 'constants/common.ts';
 import PersonIcon from 'assets/images/icons/person.svg';
 import {ScrollView} from 'react-native-gesture-handler';
 import analytics from '@react-native-firebase/analytics';
+import {useRoute} from '@react-navigation/native';
+import {useDemoFlowStore} from '../../../../../../../store/demoFlowStore';
+import HintCard from 'components/HintCard';
+import {hostHintSteps} from 'constants/hints.ts';
+import { demoFlowStackPath, demoIOPath } from "constants/pathLocations.ts";
+import { useAppNavigation } from "hooks/useAppNavigation.ts";
+
 interface InvitedOnlyProps {
   setTabState: Dispatch<SetStateAction<string>>;
   setIsVisibleSaveModal: Dispatch<SetStateAction<boolean>>;
@@ -45,6 +53,11 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
   maleFriend,
   setMaleFriend,
 }) => {
+  const route = useRoute();
+  const navigation = useAppNavigation()
+  const {hintStep, setHintStep, setIsVisibleSwipeGuide} = useDemoFlowStore();
+  const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
+
   const iconsArrayMale = Array.from({length: male}, (_, index) => index);
   const iconsArrayFemale = Array.from({length: female}, (_, index) => index);
   useEffect(() => {
@@ -121,10 +134,36 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
     }
   };
 
+  const handleNextStep = () => {
+    setTabState('eventDetails');
+    setCurrentCreateStap(2);
+  };
+
+  const handleSkipHints = () => {
+    navigation.navigate(demoFlowStackPath, {screen: demoIOPath} as never);
+    setHintStep(8);
+    setIsVisibleSwipeGuide(true);
+  };
+
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.container}>
-        <View style={styles.wrapperSelectYourDesiredCompany}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      style={{
+        position: 'relative',
+        zIndex: isDemo && hintStep === 2 ? 111 : 1,
+      }}
+      scrollEnabled={!isDemo}>
+      <View
+        style={{
+          ...styles.container,
+          zIndex: isDemo && hintStep === 2 ? 111 : 1,
+        }}>
+        {isDemo && hintStep === 2 && <View style={styles.overlayContainer} />}
+        <View
+          style={{
+            ...styles.wrapperSelectYourDesiredCompany,
+            zIndex: isDemo && hintStep === 2 ? 111 : 1,
+          }}>
           <Text style={styles.textSelectYourDesiredCompany}>How many Guests would you like to invite?</Text>
           <View>
             <View style={styles.rowFemale}>
@@ -138,6 +177,12 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
                 </View>
                 <TouchableOpacity onPress={() => setFemale(female + 1)} style={styles.buttonPress}>
                   <Text style={styles.textButton}>+</Text>
+                  {isDemo && hintStep === 2 && (
+                    <View
+                      style={styles.handIconContainer}>
+                      <HandIC />
+                    </View>
+                  )}
                 </TouchableOpacity>
               </View>
             </View>
@@ -171,6 +216,20 @@ const InvitedOnly: FC<InvitedOnlyProps> = ({
             {/* {iconsArrayMale?.length > 0 && <View style={{flexDirection: 'row', marginTop: 20}}>{renderIconsArrayMale()}</View>} */}
           </View>
         </View>
+        {isDemo && hintStep === 2 && (
+          <View style={styles.stepHintContainer}>
+            <HintCard
+              currentStep={hintStep}
+              description={hostHintSteps[hintStep - 1]?.description}
+              onSkipAction={handleSkipHints}
+              onStepChange={setHintStep}
+              onNextAction={handleNextStep}
+              isNextBtnDisabled={female === 0 && male === 0}
+              totalSteps={hostHintSteps.length}
+              title={hostHintSteps[hintStep - 1]?.title}
+            />
+          </View>
+        )}
         <View style={styles.wrapperOtherFriends}>
           <Text style={styles.textOtherFriend}>Do you have any other friends with you?</Text>
           <View style={styles.rowFemale}>

@@ -69,7 +69,7 @@ const CodeVerified: FC = (): JSX.Element => {
                   justifyContent: 'center',
                 }}>
                 <Text style={{color: blackColor, fontFamily: Satoshi500, fontSize: RFValue(20, 932), textAlign: 'center', marginRight: 8}}>
-                  {name?.split(' ')[0]}
+                  {name?.split(' ')[0]}ш
                 </Text>
                 <IconVerifyFilledAccepted />
               </View>

@@ -1,5 +1,5 @@
-import {Dispatch, FC, ReactElement, SetStateAction, useEffect, useState} from 'react';
-import {Alert, FlatList, Image, Keyboard, Text, View} from 'react-native';
+import React, {Dispatch, FC, ReactElement, SetStateAction, useEffect, useRef, useState} from 'react';
+import {Alert, FlatList, Image, Keyboard, LayoutRectangle, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ImagePickerResponse, launchImageLibrary} from 'react-native-image-picker';
@@ -29,6 +29,14 @@ import ModalAddPhoto from './ModalAddPhoto.tsx';
 import {eventTypes} from 'src/mocks/eventTypes.ts';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
+import HintCard from 'components/HintCard';
+import {hostHintSteps} from 'constants/hints.ts';
+import {useDemoFlowStore} from '../../../../../../../store/demoFlowStore';
+import {useRoute} from '@react-navigation/native';
+import HandIC from 'assets/images/icons/hand.svg';
+import { demoFlowStackPath, demoIOPath } from "constants/pathLocations.ts";
+import { useAppNavigation } from "hooks/useAppNavigation.ts";
+
 interface ImageType {
   image: null | string;
   id: number;
@@ -143,6 +151,15 @@ const EventDetails: FC<EventDetailsProps> = ({
   const [eventNameEmpty] = useState(false);
   const [dateEmpty, setDateEmpty] = useState(false);
   const [hourEmpty, setHourEmpty] = useState(false);
+  const route = useRoute();
+  const navigation = useAppNavigation();
+  const {hintStep, setHintStep, setIsVisibleSwipeGuide} = useDemoFlowStore();
+  const scrollViewRef = useRef<KeyboardAwareScrollView | null>(null);
+  const [eventDetailsViewCoord, setEventDetailsViewCoord] = useState<LayoutRectangle | null>(null);
+  const [eventTypeViewCoord, setEventTypeViewCoord] = useState<LayoutRectangle | null>(null);
+  const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
+  const isActiveHint4Step = hintStep === 4;
+  const isActiveHint5Step = hintStep === 5;
 
   useEffect(() => {
     if (address) {
@@ -180,6 +197,16 @@ const EventDetails: FC<EventDetailsProps> = ({
       console.error(e);
     }
   }, []);
+
+  useEffect(() => {
+    if (isDemo && scrollViewRef?.current?.scrollToPosition) {
+      if (hintStep === 4 && eventTypeViewCoord) {
+        scrollViewRef?.current?.scrollToPosition(0, eventTypeViewCoord.y, true);
+      } else if (hintStep === 5 && eventDetailsViewCoord) {
+        scrollViewRef?.current?.scrollToPosition(0, eventDetailsViewCoord.y - 200, true);
+      }
+    }
+  }, [isDemo, hintStep, eventDetailsViewCoord, eventTypeViewCoord]);
 
   const styles = useStyles();
 
@@ -361,9 +388,24 @@ const EventDetails: FC<EventDetailsProps> = ({
     Keyboard.dismiss();
   };
 
+  const handleNextStep = () => {
+    checkFieldsNotEmpty()
+  }
+
+  const handleSkipHints = () => {
+    navigation.navigate(demoFlowStackPath, {screen: demoIOPath} as never);
+    setHintStep(8);
+    setIsVisibleSwipeGuide(true);
+  };
+
   return (
-    <View style={styles.root}>
+    <View
+      style={{
+        ...styles.root,
+        zIndex: isDemo && (isActiveHint4Step || isActiveHint5Step) ? 1111 : 1,
+      }}>
       <KeyboardAwareScrollView
+        ref={scrollViewRef}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainerContent}
@@ -372,31 +414,64 @@ const EventDetails: FC<EventDetailsProps> = ({
         // onMomentumScrollBegin={handleScroll}
         enableAutomaticScroll={true}
         keyboardDismissMode="on-drag">
-        <View style={styles.eventTypeWr}>
+        {isDemo && <View style={styles.overlayContainer} />}
+        <View
+          style={{
+            ...styles.eventTypeWr,
+            zIndex: isDemo && isActiveHint4Step ? 111 : -1,
+          }}
+          onLayout={event => setEventTypeViewCoord(event.nativeEvent.layout)}>
           <Text style={styles.eventTypeTitle}>Event type</Text>
           <FlatList
             data={eventTypes}
             horizontal
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
+            style={{
+              height: isDemo && isActiveHint4Step ? 60 : 'auto',
+            }}
             ItemSeparatorComponent={() => <View style={styles.eventTypeSeparator} />}
-            renderItem={({item}: any) => (
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => setActiveType(item.id)}
-                style={[
-                  styles.eventTypeItem,
-                  {
-                    backgroundColor: activeType === item.id ? whiteColor : lightGray2Color,
-                  },
-                ]}>
-                <Text style={[styles.eventTypeItemText, {color: activeType === item.id ? black1Color : whiteColor}]}>{item.label}</Text>
-              </TouchableOpacity>
+            renderItem={({item, index}: any) => (
+              <View
+                style={{
+                  position: 'relative',
+                }}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => setActiveType(item.id)}
+                  style={[
+                    styles.eventTypeItem,
+                    {
+                      backgroundColor: activeType === item.id ? whiteColor : lightGray2Color,
+                    },
+                  ]}>
+                  <Text style={[styles.eventTypeItemText, {color: activeType === item.id ? black1Color : whiteColor}]}>{item.label}</Text>
+                  {isDemo && isActiveHint4Step && index === 0 && (
+                    <View style={styles.handIconContainer}>
+                      <HandIC />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              </View>
             )}
           />
+          {isDemo && isActiveHint4Step && (
+            <View style={styles.stepHint4Container}>
+              <HintCard
+                currentStep={hintStep}
+                description={hostHintSteps[hintStep - 1]?.description}
+                onSkipAction={handleSkipHints}
+                onStepChange={setHintStep}
+                onNextAction={() => {}}
+                isNextBtnDisabled={female === 0 && male === 0}
+                totalSteps={hostHintSteps.length}
+                title={hostHintSteps[hintStep - 1]?.title}
+              />
+            </View>
+          )}
         </View>
         {/* <View style={styles.eventPlaceWr}> */}
-        <View style={{backgroundColor: black3Color, borderRadius: 20, padding: 20, marginBottom: 24}}>
+        <View style={{backgroundColor: black3Color, borderRadius: 20, padding: 20, marginBottom: 24, zIndex: -1}}>
           <Input
             required
             isError={placeNameEmpty}
@@ -552,7 +627,27 @@ const EventDetails: FC<EventDetailsProps> = ({
           </View>
         </View>
         {/* </View> */}
-        <View style={styles.eventDetailsWr}>
+        <View
+          style={{
+            ...styles.eventDetailsWr,
+            zIndex: isDemo && isActiveHint5Step ? 111 : -1,
+          }}
+          onLayout={event => setEventDetailsViewCoord(event.nativeEvent.layout)}>
+          {isDemo && isActiveHint5Step && (
+            <View style={styles.stepHint5Container}>
+              <HintCard
+                currentStep={hintStep}
+                description={hostHintSteps[hintStep - 1]?.description}
+                onSkipAction={handleSkipHints}
+                onStepChange={setHintStep}
+                onNextAction={handleNextStep}
+                isNextBtnDisabled={female === 0 && male === 0}
+                totalSteps={hostHintSteps.length}
+                directionVertical={'bottom'}
+                title={hostHintSteps[hintStep - 1]?.title}
+              />
+            </View>
+          )}
           <Text style={styles.eventDetailsTitle}>Event details</Text>
           <Input
             required={false}
@@ -583,7 +678,13 @@ const EventDetails: FC<EventDetailsProps> = ({
               <View style={{marginBottom: 26}}>
                 <TouchableOpacity
                   onPress={() => setOpen(true)}
-                  style={[styles.maskInputWr, {borderWidth: dateEmpty ? 1 : 0, borderColor: dateEmpty ? errorColor : ''}]}>
+                  style={[
+                    styles.maskInputWr,
+                    {
+                      borderWidth: dateEmpty ? 1 : 0,
+                      borderColor: dateEmpty ? errorColor : '',
+                    },
+                  ]}>
                   <DatePicker
                     modal
                     mode="date"
@@ -600,7 +701,14 @@ const EventDetails: FC<EventDetailsProps> = ({
                     }}
                   />
                   {dateEmpty ? <CalendarRed /> : <Calendar />}
-                  <Text style={[styles.maskInput, {color: dateEmpty ? errorColor : whiteColor, opacity: date ? 1 : 0.35}]}>
+                  <Text
+                    style={[
+                      styles.maskInput,
+                      {
+                        color: dateEmpty ? errorColor : whiteColor,
+                        opacity: date ? 1 : 0.35,
+                      },
+                    ]}>
                     {date ? date : 'MM/DD/YY'}
                   </Text>
                 </TouchableOpacity>
@@ -616,7 +724,13 @@ const EventDetails: FC<EventDetailsProps> = ({
               <View>
                 <TouchableOpacity
                   onPress={() => setOpenHour(true)}
-                  style={[styles.maskInputWr, {borderWidth: hourEmpty ? 1 : 0, borderColor: dateEmpty ? errorColor : ''}]}>
+                  style={[
+                    styles.maskInputWr,
+                    {
+                      borderWidth: hourEmpty ? 1 : 0,
+                      borderColor: dateEmpty ? errorColor : '',
+                    },
+                  ]}>
                   <DatePicker
                     modal
                     mode="time"
@@ -633,7 +747,14 @@ const EventDetails: FC<EventDetailsProps> = ({
                     }}
                   />
                   {hourEmpty ? <ClockRed /> : <Clock />}
-                  <Text style={[styles.maskInput, {color: hourEmpty ? errorColor : whiteColor, opacity: hour ? 1 : 0.35}]}>
+                  <Text
+                    style={[
+                      styles.maskInput,
+                      {
+                        color: hourEmpty ? errorColor : whiteColor,
+                        opacity: hour ? 1 : 0.35,
+                      },
+                    ]}>
                     {hour ? hour : '00:30'}
                   </Text>
                 </TouchableOpacity>

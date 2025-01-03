@@ -41,7 +41,7 @@ import {useScrollPosition} from 'src/store/scrollPosition/index.ts';
 import {eventTypes} from 'src/mocks/eventTypes.ts';
 import Config from 'react-native-config';
 
-interface Photo {
+export interface Photo {
   url: string;
 }
 
