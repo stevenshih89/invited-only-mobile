@@ -325,6 +325,13 @@ const VerifySocialProfile = () => {
     );
   };
 
+  const handleSkip = async () => {
+    await handleRegisterUser(onBoarding);
+    navigation.navigate(pendingScreenPath as never)
+  }
+
+  const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
+
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
       <SafeAreaView style={{flex: 1}}>
@@ -376,6 +383,11 @@ const VerifySocialProfile = () => {
                   disabled={!socialNickname[openedSocial?.name]?.length || errorInput.length}
                   onPress={handleNext}
                 />
+                {accountType === 'host' && <TouchableOpacity
+                  onPress={handleSkip}
+                >
+                  <Text style={{color: whiteColor, fontSize: RFValue(16, 812), marginTop: 24, textAlign: 'center'}}>Skip</Text>
+                </TouchableOpacity>}
               </View>
             </View>
           </TouchableWithoutFeedback>
