@@ -20,7 +20,6 @@ import {
   LIKED,
   NOT_ACCEPTED_STATUS,
   screenHeight,
-  screenWidth,
   THIS_MONTH,
   THIS_WEEK,
 } from 'constants/common.ts';
@@ -31,22 +30,14 @@ import {
   eventCreatingStackPath,
   myProfileViewPath,
   paymentPath,
-  userProfilePath, demoFlowStackPath, demoIOPath
-} from "constants/pathLocations.ts";
+  userProfilePath,
+  demoFlowStackPath,
+  demoIOPath,
+} from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import {calculateAge} from 'helpers/calculateAge';
-import {
-  black60Color,
-  blackColor,
-  lightGreenColor,
-  transparentWhite16Color,
-  transparentWhite56Color,
-  white0Color,
-  white10Color,
-  white40Color,
-  whiteColor,
-} from 'constants/colors';
+import {blackColor, lightGreenColor, transparentWhite16Color, transparentWhite56Color, whiteColor} from 'constants/colors';
 import {fcmHelper, onMatchNotificationSubscription, sendNotification} from 'helpers/fcmHelper.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {useUser} from '../../../store/userStore';
@@ -65,9 +56,6 @@ import CloseIcon from 'assets/images/icons/close.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
-import RejectDemoIcon from 'assets/images/icons/reject-demo.svg';
-import MoreDetailsDemoIcon from 'assets/images/icons/more-details-demo.svg';
-import InviteDemoIcon from 'assets/images/icons/invite-demo.svg';
 import PersoneIcon from 'assets/images/icons/Users.svg';
 import {EventsDate} from 'contexts/EventsDate.tsx';
 import Loading from 'components/Loading/Loading';
@@ -104,11 +92,9 @@ import {getEvents} from 'src/api/event';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
 import {useDemoFlowStore} from '../../../store/demoFlowStore';
-import invitedOnly from 'screens/App/IO/screens/EventCreating/components/InvitedOnly/InvitedOnly.tsx';
 import HintCard from 'components/HintCard';
 import {hostHintSteps} from 'constants/hints.ts';
-import DemoGuestCard from 'components/DemoGuestCard';
-import SwipeHints from "components/SwipeHints";
+import ModalLimitedAccess from 'components/Modal/ModalLimitedAccess/ModalLimitedAccess';
 
 const IO: FC = (): JSX.Element => {
   const EVENTS_LOADING_LIMIT = 6;
@@ -136,6 +122,7 @@ const IO: FC = (): JSX.Element => {
   const [currentEventInfo, setCurrentEventInfo] = useState(null);
   const [appState, setAppState] = useState(AppState.currentState);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [swipedCardsCount, setSwipedCardsCount] = useState(0);
 
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
@@ -185,6 +172,12 @@ const IO: FC = (): JSX.Element => {
       transform: [{rotate: `${rotationLoader.value}deg`}],
     };
   });
+
+  useEffect(() => {
+    if (userHost?.accountConfirmed && userHost?.accountType === 'host' && !userHost?.accountPremium && !userHost?.isPassedDemo) {
+      navigation.navigate(demoFlowStackPath);
+    }
+  }, [userHost]);
 
   const handleSuperInvite = () => {
     if (counterSuperInvitesRef.current > 0 || counterWeeklySuperInvitesRef.current > 0) {
@@ -574,6 +567,12 @@ const IO: FC = (): JSX.Element => {
   };
 
   const onReject = async (uid: string, eventId: string) => {
+    if (isDemo) {
+      setTimeout(() => {
+        setSwipedCardsCount(prev => prev + 1);
+      }, 500);
+      return;
+    }
     const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
     const rejectUid = isHost ? uid : userInfo?.uid;
@@ -644,6 +643,12 @@ const IO: FC = (): JSX.Element => {
   };
 
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
+    if (isDemo) {
+      setTimeout(() => {
+        setSwipedCardsCount(prev => prev + 1);
+      }, 500);
+      return;
+    }
     try {
       const guest = await firestore().collection(apiUserInfoCollection).doc(forUserUid).get();
 
@@ -739,7 +744,7 @@ const IO: FC = (): JSX.Element => {
               setMatchData(matchedGuestData);
               setIsVisibleMatch(true);
             }
-            if (guestData.notificationSettings?.match || guestData.notificationSettings?.superInvite) {
+            if ((guestData.notificationSettings?.match || guestData.notificationSettings?.superInvite) && !isDemo) {
               await sendNotification(
                 forUserUid,
                 'New invite request',
@@ -815,7 +820,7 @@ const IO: FC = (): JSX.Element => {
                 setMatchData(matchedGuestData);
                 setIsVisibleMatch(true);
               }
-              if (guestData.notificationSettings?.match || guestData.notificationSettings?.superJoin) {
+              if ((guestData.notificationSettings?.match || guestData.notificationSettings?.superJoin) && !isDemo) {
                 await sendNotification(
                   event.uid,
                   'New join request',
@@ -1513,14 +1518,49 @@ const IO: FC = (): JSX.Element => {
     let users;
     let getActualDataEvent: EventData | null = null;
     try {
+      let listOfUsers = [];
+
+      if (isDemo) {
+        const demoUsersUidsList = [
+          // 'ztlc8qmO09dM9sWXGja8EVHWLIr2',
+          // '5E7tfk5edaQ9blfBUr6C0w4aBZT2',
+          // 'Bku02o6thxSqNQWqyjowog4600y1',
+          // 'VKXvBdFky3amCw26vxwNkflKQeO2',
+          // 'KdKWeJQ0PSQDlPmmY8C5nJg3QRx1',
+          // 'xQOx2tzTzTVx0fjXqgzCFKyP3IY2',
+          // 'SjZXcwnVpjUvBDLiHOwP10ZbFvv1',
+          // 'x4cIov0QQqQIeJDVpeO7n5GGhnz2',
+          // 'PA4DDwLdH4a70zNNACS0pe8SbTC2',
+          // 'CCfqT1CeRUPkxCyQQxn8FYHXh3w2',
+          // 'jVj6cOgnZRfi3MkkXLRg0ePsNr93',
+          // 'jxqkE8xzKoaMCfC3rqI4HxII9Xj1',
+          // 'iYB5oM8705RyJoo5qFhfa10ZS1K3',
+          // 'JgpDnDZAM0OsKJVb5yz2eoAMJB03',
+          // '9i7JMq9kQBTKW5jsrTd6RPd9Ie83',
+          '5E45SWY8PPh6XG6TKosh7KoNGS23',
+          'IVIt8krtaqPNgSWR3c2SqYVxNYG2',
+          'IkgSk9EM2RdazTmblfLLj0Idtw83',
+          'KZ4K7Ptm5ORvDKcOHbTjY9k4n872',
+          'bjKkDs5nmgbN8Q4ArsFskwmJo5h2',
+          'gMp0lX0rPcfFe6vkV9EhfTu5OU93',
+          'pA2tVx2vSuPcp8Dl3wxliVtfYcx2',
+        ];
+
+        for (const uid of demoUsersUidsList) {
+          const user = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+          if (user.exists) {
+            listOfUsers.push(user);
+          }
+        }
+      }
       const eventQuery = await firestore().collection(apiEventsCollection).doc(activeEvent.id).get();
-      if (!eventQuery.exists) {
+      if (!eventQuery.exists && !isDemo) {
         setLoadingCardsList(false);
         setEvents([]);
         endReachedRef.current = true;
         return;
       }
-      getActualDataEvent = eventQuery.data() as EventData;
+      getActualDataEvent = eventQuery.data() || ({} as EventData);
 
       const blockedUsers = await firestore().collection('report').where('uidSender', '==', user.uid).get();
 
@@ -1530,9 +1570,12 @@ const IO: FC = (): JSX.Element => {
       const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
       const uniqueRejectsList = getActualDataEvent?.rejectsList?.map((j: Event.RejectUser) => j?.uid) || [];
       const uniqueUsersListIds = getActualDataEvent?.usersList?.map((j: Event.User) => j?.uid) || [];
-      const allUniqueIds = [
-        ...new Set([...blockedUsersList, ...blockedMeUsersList, ...uniqueRejectsList, ...uniqueUsersListIds, userInfo?.uid]),
-      ];
+
+      const allUniqueIds =
+        //  isDemo
+        // ? demoUsersUidsList
+        // :
+        [...new Set([...blockedUsersList, ...blockedMeUsersList, ...uniqueRejectsList, ...uniqueUsersListIds, userInfo?.uid])];
 
       users = await getUsersForEvent({
         excludeUids: [userInfo?.uid],
@@ -1541,6 +1584,14 @@ const IO: FC = (): JSX.Element => {
         limit: EVENTS_LOADING_LIMIT,
         lastVisible: lastVisibleRef.current,
       });
+
+      if (isDemo) {
+        users = {docs: listOfUsers};
+      }
+
+      console.warn(users);
+
+      console.warn(users?.docs?.length);
 
       if (!users || !('docs' in users) || users?.empty) {
         setLoadingCardsList(false);
@@ -1565,7 +1616,7 @@ const IO: FC = (): JSX.Element => {
       filteredUsersList?.map((item: UserInfo, index: number): void => {
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} = item;
 
-        const findSuperJoin = getActualDataEvent?.requestsList.find((i: Event.User) => {
+        const findSuperJoin = getActualDataEvent?.requestsList?.find((i: Event.User) => {
           if (item.uid === i.uid && i.superInvite) {
             return true;
           }
@@ -1882,8 +1933,6 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  console.warn(events?.length, endReachedRef.current);
-
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission();
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
@@ -1969,7 +2018,7 @@ const IO: FC = (): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       if (userInfo?.uid) {
-        if (isHost && activeEvent?.id && !loadingMyEvents && !lastVisibleRef.current && !endReachedRef.current) {
+        if (isHost && activeEvent?.id) {
           getCardsListForHost();
         }
       }
@@ -2016,6 +2065,14 @@ const IO: FC = (): JSX.Element => {
       fetchUserInfo();
     }, [userInfo?.uid]),
   );
+
+  if (userInfo?.uid && isDemo && !userInfo?.accountPremium && swipedCardsCount >= 7) {
+    return (
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
+        <ModalLimitedAccess />
+      </SafeAreaView>
+    );
+  }
 
   if ((loadingUser || loadingMyEvents) && !userInfo?.uid && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
@@ -2064,7 +2121,7 @@ const IO: FC = (): JSX.Element => {
             onSkipAction={handleSkipHints}
             onStepChange={setHintStep}
             onNextAction={() => {
-              setIsVisibleSwipeGuide(true)
+              setIsVisibleSwipeGuide(true);
             }}
             totalSteps={hostHintSteps.length}
             title={hostHintSteps[hintStep - 1]?.title}
@@ -2090,7 +2147,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isHost && !loadingCardsList && !myEvents.length && !isVisibleMatch && userInfo?.isPassedDemo) {
+  if (userInfo?.uid && isHost && !loadingCardsList && !myEvents.length && !isVisibleMatch && !isDemo) {
     return (
       <>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
@@ -2124,7 +2181,7 @@ const IO: FC = (): JSX.Element => {
     !visibleModalSuperJoin &&
     !isVisibleSuperInvite &&
     !acceptModalVisible &&
-    userInfo.isPassedDemo
+    !isDemo
   ) {
     return (
       <>
@@ -2218,9 +2275,7 @@ const IO: FC = (): JSX.Element => {
           />
         )}
         <View style={styles.container}>
-          {
-            (isVisibleSwipeGuide && !userInfo?.isPassedDemo && hintStep !== 7) && <SwipeHints />
-          }
+          {/* {isVisibleSwipeGuide && !userInfo?.isPassedDemo && hintStep !== 7 && <SwipeHints />} */}
           {events?.map((item, index) => {
             return (
               <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
@@ -2293,9 +2348,9 @@ const IO: FC = (): JSX.Element => {
           {!userInfo?.accountReviewed && (
             <ModalLockAccount haveCode accountType={userInfo?.accountType} isPremium={userInfo?.accountPremium} isVisibleButton={true} />
           )}
-          {/*{userInfo?.accountConfirmed && isHost && (*/}
-          {/*  <ModalEventLocked eventReviewed={activeEvent?.eventReviewed} eventStatus={activeEvent?.statusEvent} />*/}
-          {/*)}*/}
+          {userInfo?.accountConfirmed && isHost && activeEvent?.id && !isDemo && (
+            <ModalEventLocked eventReviewed={activeEvent?.eventReviewed} eventStatus={activeEvent?.statusEvent} />
+          )}
           <ModalReport
             handleAutoSwipeLeft={() =>
               handleFilterEvent({

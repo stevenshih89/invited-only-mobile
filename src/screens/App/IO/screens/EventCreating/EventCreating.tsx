@@ -19,7 +19,7 @@ import Check from 'src/assets/images/icons/Check-black.svg';
 import uuid from 'react-native-uuid';
 import {useUser} from 'src/store/userStore';
 // import {uploadImage} from 'helpers/uploadImage.ts';
-import { commonStackPath, demoFlowStackPath, demoIOPath, eventActiveInfoPath, IOPath } from "constants/pathLocations";
+import {commonStackPath, demoFlowStackPath, demoIOPath, eventActiveInfoPath, IOPath} from 'constants/pathLocations';
 import storage from '@react-native-firebase/storage';
 import {createEvent} from 'src/api/event';
 import {eventTypes} from 'src/mocks/eventTypes';
@@ -87,8 +87,6 @@ const EventCreating = () => {
     },
   ]);
 
-  // console.log('photos', photos);
-
   const navigation = useAppNavigation();
 
   const handleSetTabState = (type: string): void => {
@@ -114,7 +112,7 @@ const EventCreating = () => {
   }, []);
 
   useEffect(() => {
-    if (hintStep === 5) {
+    if (hintStep === 3) {
       setPlaceName('Irisol Dubai');
       setAddress('Nad AJ Sheba 1 - Dubai');
       setName('Red Mirage');
@@ -122,6 +120,13 @@ const EventCreating = () => {
       setDate('07.02.2025');
       setHour('21:30');
       setMeetingSpot('Main Entrance');
+      setImages([
+        {
+          id: 0,
+          image:
+            'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2FImage.png?alt=media&token=14b8e084-7280-4e49-abd4-0aeb3503c133',
+        },
+      ]);
     }
   }, [hintStep]);
 
@@ -362,11 +367,11 @@ const EventCreating = () => {
 
   const handleSkipHints = () => {
     if (hintStep === 1) {
-      navigation.goBack()
+      navigation.goBack();
     } else {
       navigation.navigate(demoFlowStackPath, {screen: demoIOPath} as never);
-      setHintStep(8)
-      setIsVisibleSwipeGuide(true)
+      setHintStep(8);
+      setIsVisibleSwipeGuide(true);
     }
   };
 

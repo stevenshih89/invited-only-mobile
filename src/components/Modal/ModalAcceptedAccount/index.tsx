@@ -7,11 +7,11 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import Loading from 'components/Loading/Loading';
 import Button from 'components/Button/Button';
-import { commonStackPath, demoFlowStackPath, demoIntroPath, earlyAccessPath } from "constants/pathLocations";
+import {commonStackPath, demoFlowStackPath, demoIntroPath, earlyAccessPath} from 'constants/pathLocations';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
-import { useUser } from "../../../store/userStore";
+import {useUser} from '../../../store/userStore';
 
 interface RejectAccount {
   isVisible?: boolean;
@@ -26,7 +26,7 @@ const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userI
   const {user} = useUser();
 
   const handleContinue = async () => {
-    if (user.accountType === 'host') {
+    if (user.accountType === 'host' && !user?.isPassedDemo) {
       navigation.navigate(demoFlowStackPath, {screen: demoIntroPath} as never);
     } else {
       navigation.navigate(commonStackPath, {screen: earlyAccessPath} as never);

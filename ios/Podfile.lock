@@ -2114,7 +2114,7 @@ PODS:
   - React-Mapbuffer (0.73.3):
     - glog
     - React-debug
-  - react-native-cameraroll (7.9.0):
+  - react-native-cameraroll (7.8.3):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -2144,11 +2144,11 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - react-native-image-picker (7.2.3):
+  - react-native-image-picker (7.1.2):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - react-native-safe-area-context (4.14.1):
+  - react-native-safe-area-context (4.14.0):
     - React-Core
   - react-native-segmented-control (2.2.2):
     - React-Core
@@ -2331,9 +2331,9 @@ PODS:
   - RevenueCat (4.43.2)
   - RNCAsyncStorage (1.24.0):
     - React-Core
-  - RNCClipboard (1.15.0):
+  - RNCClipboard (1.14.3):
     - React-Core
-  - RNCPicker (2.10.2):
+  - RNCPicker (2.9.0):
     - React-Core
   - RNCPushNotificationIOS (1.11.0):
     - React-Core
@@ -2370,7 +2370,7 @@ PODS:
     - Firebase/Storage (= 10.24.0)
     - React-Core
     - RNFBApp
-  - RNGestureHandler (2.21.2):
+  - RNGestureHandler (2.20.2):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -2384,25 +2384,25 @@ PODS:
   - RNPurchases (7.28.1):
     - PurchasesHybridCommon (= 11.1.1)
     - React-Core
-  - RNReanimated (3.16.6):
+  - RNReanimated (3.16.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 3.16.6)
-    - RNReanimated/worklets (= 3.16.6)
-  - RNReanimated/reanimated (3.16.6):
+    - RNReanimated/reanimated (= 3.16.1)
+    - RNReanimated/worklets (= 3.16.1)
+  - RNReanimated/reanimated (3.16.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 3.16.6)
-  - RNReanimated/reanimated/apple (3.16.6):
+    - RNReanimated/reanimated/apple (= 3.16.1)
+  - RNReanimated/reanimated/apple (3.16.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - ReactCommon/turbomodule/core
-  - RNReanimated/worklets (3.16.6):
+  - RNReanimated/worklets (3.16.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -2414,11 +2414,9 @@ PODS:
     - React-RCTImage
   - RNSVG (14.2.0):
     - React-Core
-  - RNUxcam (6.0.2):
-    - glog
-    - RCT-Folly (= 2022.05.16.00)
+  - RNUxcam (6.0.1):
     - React-Core
-    - UXCam (~> 3.6.20)
+    - UXCam (~> 3.6.17)
   - RNVectorIcons (10.2.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -2797,13 +2795,13 @@ SPEC CHECKSUMS:
   React-jsinspector: 6fad0fe14882fb6b1c32e5cc8a4bd3d33a8b6790
   React-logger: cb0dd15ac67b00e7b771ef15203edcb29d4a3f8e
   React-Mapbuffer: ac7eff7bcdb1716d18eb7b305ee8c43a9a1ed7c8
-  react-native-cameraroll: 74d532680568b075293702e304314ac85c70cfc5
+  react-native-cameraroll: be7f4a2910860f15b821efecc4c6469d605ac7bc
   react-native-config: 8f7283449bbb048902f4e764affbbf24504454af
   react-native-date-picker: 312c387d2ff873c66c5e4cf78ff6827fa91644e2
   react-native-fbsdk-next: b430fc002cf9b8675b8688d43fe6eddd5ff4e029
   react-native-geolocation: 633b52797a5b8a20306aa17e863e41704fb07f25
-  react-native-image-picker: 8f0b7e141ff71cc8149dc246c9bf7bda46aa9b72
-  react-native-safe-area-context: 141eca0fd4e4191288dfc8b96a7c7e1c2983447a
+  react-native-image-picker: fefff630cfa3ee6a809f6ac6569981f4a34e0050
+  react-native-safe-area-context: 4532f1a0c5d34a46b9324ccaaedcb5582a302b7d
   react-native-segmented-control: 65df6cd0619b780b3843d574a72d4c7cec396097
   react-native-slider: e72ea47d9a30610073507cfb01084e07341b20e6
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
@@ -2831,8 +2829,8 @@ SPEC CHECKSUMS:
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   RevenueCat: 3d934653b7e8b09af88fd47e9e84cfaf5d0a89ba
   RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
-  RNCClipboard: 69ab8e51324d5b351f6ba72bbdb72478087a2c64
-  RNCPicker: d162737e03e48797110dbb60e5ddc03012e87e0b
+  RNCClipboard: 2821ac938ef46f736a8de0c8814845dde2dcbdfb
+  RNCPicker: f963e01f78e546a93b98aa201501713dbda14e94
   RNCPushNotificationIOS: 64218f3c776c03d7408284a819b2abfda1834bc8
   RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
   RNFBAnalytics: bb0047a8843d13fc7ecc9fb834fc80e969c1851f
@@ -2842,14 +2840,14 @@ SPEC CHECKSUMS:
   RNFBFunctions: 6250dbfde32be154057622c80db9da4289a4c43f
   RNFBMessaging: bcceb47d52080700672f4a46aa9096d9754a988f
   RNFBStorage: 591d676ad5596b11ca1b0e324111dbdc6cb7aa95
-  RNGestureHandler: 53c46ccbd53c37b73b1a9b1a8e375753bc89344c
+  RNGestureHandler: 55e9771b10b89eac38603157e6f9e79c2fd2f4d9
   RNNotifee: 935f3ea8c134c88cbf8b13ea0c97c72c09ad2116
   RNPermissions: 4da8c626e4ac9d71c1a199d500d52dd54da62e38
   RNPurchases: 4305de02b902d3c1e56a50295dc0a6e758b73095
-  RNReanimated: c0c30fa907b46f4cb2f14d104b7d31c283d30fef
+  RNReanimated: 4d83686c94a26e87238b81fe920ed78271c3f27a
   RNScreens: bcd27206ee1fc02737b674e11004ce26813af7d5
   RNSVG: 963a95f1f5d512a13d11ffd50d351c87fb5c6890
-  RNUxcam: 6fc488b44d7e8f460ec884387e0caf145520a7c2
+  RNUxcam: 0b8a70ec10c149d4fbc78fb837e816b68919ae28
   RNVectorIcons: bc3cd26c90d52e5d0fc1dc1302308e5e2b3402a5
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
@@ -2859,4 +2857,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 748860ccb79d1c82ba52a3e4acbecec9264c8d65
 
-COCOAPODS: 1.13.0
+COCOAPODS: 1.15.2

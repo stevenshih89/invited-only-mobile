@@ -916,7 +916,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     color: blackColor,
                     fontFamily: Satoshi700,
                   }}>
-                  {getUsersListAccepted(activeEvent?.usersList)}/{activeEvent?.female + activeEvent?.male}
+                  {getUsersListAccepted(activeEvent?.usersList)}/{activeEvent?.female || 0 + activeEvent?.male || 0}
                 </Text>
                 <Text
                   style={{

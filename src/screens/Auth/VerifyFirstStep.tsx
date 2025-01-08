@@ -185,13 +185,14 @@ const VerifySecondStep: FC = (): JSX.Element => {
         screen: 'verify-first-step-selfie',
         action: 'selfie-submited',
       });
-      navigation.navigate(invitationCodePath as never);
+      // @ts-ignore
+      navigation.navigate(invitationCodePath, {cameFromSummary: true} as never);
     } catch (error) {
       console.error('Error skipped verify photo screen:', error);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const handleNext = async () => {
     const currentUser = auth()?.currentUser;
@@ -408,9 +409,14 @@ const VerifySecondStep: FC = (): JSX.Element => {
                   <View>
                     <Button onPress={openCamera} title="Take a photo" />
                   </View>
-                  {accountType === 'host' && <TouchableOpacity onPress={handleSkip}>
-                    <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginTop: 20, textAlign: 'center'}}>Skip</Text>
-                  </TouchableOpacity>}
+                  {accountType === 'host' && (
+                    <TouchableOpacity onPress={handleSkip}>
+                      <Text
+                        style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginTop: 20, textAlign: 'center'}}>
+                        Skip
+                      </Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               )}
             </View>
