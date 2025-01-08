@@ -1,5 +1,5 @@
 import React, {FC, useCallback, useState} from 'react';
-import {View, Text, ImageBackground, TouchableOpacity} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
 import firestore from '@react-native-firebase/firestore';
 
@@ -148,7 +148,9 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
                   paddingVertical: 7,
                   alignItems: 'center',
                 }}>
-                <FastImage style={{width: 40, height: 40, borderRadius: 40}} source={{uri: user?.photos[0]?.image}} />
+                {user && user.photos?.[0]?.image && (
+                  <FastImage style={{width: 40, height: 40, borderRadius: 40}} source={{uri: user?.photos[0]?.image}} />
+                )}
                 <View style={{marginLeft: 10, alignItems: 'center'}}>
                   <Text
                     style={{
@@ -197,7 +199,15 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
               buttonStyle={styles.button}
             />
             <TouchableOpacity style={{marginBottom: 30}} onPress={() => setIsVisibleModalFullEvent(false)}>
-              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812), textAlign: 'center'}}>Cancel</Text>
+              <Text
+                style={{
+                  color: whiteColor,
+                  fontFamily: Satoshi500,
+                  fontSize: RFValue(18, 812),
+                  textAlign: 'center',
+                }}>
+                Cancel
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

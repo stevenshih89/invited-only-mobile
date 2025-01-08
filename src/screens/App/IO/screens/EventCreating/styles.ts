@@ -1,7 +1,8 @@
 import {StyleSheet} from 'react-native';
-import {black1Color, blackColor, lightGray6Color, lightGray9Color, transparentGray90Color, transparentWhite16Color} from 'constants/colors.ts';
+import { black60Color, blackColor, gray3Color, lightGray9Color, transparentWhite16Color } from "constants/colors.ts";
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500} from 'constants/fonts.ts';
+import {screenHeight, screenWidth} from 'constants/common.ts';
 
 const useStyles = () => {
   return StyleSheet.create({
@@ -9,6 +10,16 @@ const useStyles = () => {
       backgroundColor: blackColor,
       paddingHorizontal: 20,
       flex: 1,
+    },
+    overlayContainer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      width: screenWidth,
+      height: screenHeight,
+      zIndex: 11,
+      backgroundColor: black60Color,
     },
     wrapperTabSelections: {
       borderTopColor: transparentWhite16Color,
@@ -18,6 +29,12 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       paddingVertical: 24,
+    },
+    step1HintContainer: {
+      position: 'absolute',
+      width: '100%',
+      top: 60,
+      left: 0,
     },
     buttonInvitedOnly: {
       marginRight: 14,

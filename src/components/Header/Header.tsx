@@ -43,7 +43,7 @@ import MIcon from 'assets/images/icons/M.svg';
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
 import {Satoshi500} from 'constants/fonts';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useRoute} from '@react-navigation/native';
 import {onUserProfileChangeSubscription} from 'helpers/userProfile';
 import {UserInfo} from 'src/types/userInfo';
 import moment from 'moment';
@@ -51,6 +51,10 @@ import FastImage from 'react-native-fast-image';
 import {EventData} from 'src/types/event';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
+import {useDemoFlowStore} from '../../store/demoFlowStore';
+import HintCard from 'components/HintCard';
+import {hostHintSteps} from 'constants/hints.ts';
+
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
   showHeaderTop?: boolean;
@@ -79,6 +83,9 @@ type ItemProps = {
 const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const route = useRoute();
+  const {hintStep, setHintStep, event, isVisibleSwipeGuide} = useDemoFlowStore();
+  const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
   const [eventStarting, setEventStarting] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>(null);
   // const [myEvents, setMyEvents] = useState<Array<any>>();
@@ -171,8 +178,10 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   };
 
   useEffect(() => {
-    fetchMyEvents();
-  }, [headerType, userData?.uid]);
+    if (!isDemo) {
+      fetchMyEvents();
+    }
+  }, [headerType, userData?.uid, isDemo]);
 
   const goToCreateEvent = async (): void => {
     if (!userInfo?.accountConfirmed) {
@@ -208,6 +217,12 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
 
     return subscription;
   }, []);
+
+  useEffect(() => {
+    if (isDemo) {
+      setActiveEvent(event);
+    }
+  }, [isDemo, hintStep]);
 
   const DATAEventsJoining = [
     {
@@ -315,8 +330,8 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                   </View>
                   <Text style={styles.textButton}>Create event</Text>
                 </TouchableOpacity>
-                {myEvents &&
-                  myEvents.map((event: any, index: number) => {
+                {(isDemo || myEvents) &&
+                  (isDemo ? [event] : myEvents).map((event: any, index: number) => {
                     const isActive = activeEvent?.id === event?.id;
                     const eventIsFinished = isEventFinished(event?.date, event?.hour);
                     const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
@@ -345,7 +360,9 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                           }}>
                           {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                           {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                          <FastImage style={{width: '100%', height: '100%', borderRadius: 50}} source={{uri: event?.photos[0]?.image}} />
+                          {event?.photos?.[0]?.image && (
+                            <FastImage style={{width: '100%', height: '100%', borderRadius: 50}} source={{uri: event?.photos[0]?.image}} />
+                          )}
                         </View>
                         <Text
                           style={{
@@ -628,16 +645,21 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
 
   return (
     <View style={[styles.container, headerInsets]}>
-      {!userInfo?.accountConfirmed && headerType !== 'profile' && (
-        <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: transparent60Color, zIndex: 1000}} />
-      )}
+      {(!userInfo?.accountConfirmed && headerType !== 'profile') ||
+        (!userData?.isPassedDemo && isDemo && hintStep !== 7 && isVisibleSwipeGuide && <View style={styles.overlayContainer} />)}
       {showHeaderTop && (
         <View style={styles.wrapperHeader}>
           {logoType === 'logo' ? <Logo width={157} height={32} /> : <LogoPrimary width={157} height={32} />}
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             {userInfo?.accountType && userInfo?.accountConfirmed && !isHost && headerType !== 'profile' && (
               <TouchableOpacity style={{marginRight: 10}} onPress={handleGoToEarlyAccess}>
-                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(14, 812), textDecorationLine: 'underline'}}>
+                <Text
+                  style={{
+                    color: whiteColor,
+                    fontFamily: Satoshi500,
+                    fontSize: RFValue(14, 812),
+                    textDecorationLine: 'underline',
+                  }}>
                   IO Invitations
                 </Text>
               </TouchableOpacity>

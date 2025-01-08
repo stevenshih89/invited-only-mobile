@@ -1,7 +1,7 @@
-import {Dispatch, FC, ReactElement, SetStateAction, useCallback, useState} from 'react';
+import React, {Dispatch, FC, ReactElement, SetStateAction, useCallback, useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, SafeAreaView, ScrollView} from 'react-native';
 // import components
-import {grayScale700, lightGray20Color, transparent60Color, transparentGray90Color, whiteColor} from 'constants/colors.ts';
+import {black60Color, grayScale700, lightGray20Color, transparent60Color, transparentGray90Color, whiteColor} from 'constants/colors.ts';
 import User from 'assets/images/icons/user.svg';
 import Calendar from 'assets/images/icons/calendar.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
@@ -13,7 +13,7 @@ import moment from 'moment/moment';
 import Button from 'components/Button/Button';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useRoute} from '@react-navigation/native';
 import {showToast} from 'helpers/showToast';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin';
 import FastImage from 'react-native-fast-image';
@@ -22,6 +22,13 @@ import Loader from 'components/Modal/ModalLoader/Loader';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
+import {useDemoFlowStore} from '../../../store/demoFlowStore';
+import HintCard from 'components/HintCard';
+import {hostHintSteps} from 'constants/hints.ts';
+import {demoFlowStackPath, demoIntroPath, demoIOPath} from 'constants/pathLocations.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useUser} from '../../../store/userStore';
+import uuid from 'react-native-uuid';
 
 const EventPreview: FC<{
   photos: any;
@@ -73,13 +80,18 @@ const EventPreview: FC<{
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const [active, setActive] = useState<number>(0);
   const styles = useStyles();
+  const navigation = useAppNavigation();
   const [imagesUser, setImagesUser] = useState();
   const [nameUser, setNameUser] = useState('');
   const [userAge, setUserAge] = useState('');
   const [userAccountType, setUserAccountType] = useState('');
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
   const [usersList, setUsersList] = useState([]);
+  const route = useRoute();
+  const {hintStep, setHintStep, setEvent, setIsVisibleSwipeGuide} = useDemoFlowStore();
+  const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
   const numberPhotos = imagesUser?.length;
+  const {user} = useUser();
 
   function calculateAge(birthDateString: string) {
     const parts = birthDateString.split('.');
@@ -171,6 +183,12 @@ const EventPreview: FC<{
     }
   };
 
+  const handleSkipHints = () => {
+    navigation.navigate(demoFlowStackPath, {screen: demoIOPath} as never);
+    setHintStep(8);
+    setIsVisibleSwipeGuide(true);
+  };
+
   const customButton = () => {
     return (
       <TouchableOpacity
@@ -196,12 +214,68 @@ const EventPreview: FC<{
     );
   };
 
+  const handlePreviousStep = () => {
+    setCurrentCreateStap(2);
+    setTabState('eventDetails');
+  };
+
+  const handleNextStep = () => {
+    const uid: string = uuid.v4() as string;
+    const demoEvent = {
+      name: name,
+      date: date,
+      hour: hour,
+      address: address,
+      male: male,
+      placeName: placeName,
+      id: uid,
+      uid: user?.uid,
+      rejectsList: [],
+      requestsList: [],
+      usersList: [],
+      statusEvent: false,
+      eventReviewed: false,
+      hostImage: user?.photos?.[0]?.image,
+      hostName: user?.name,
+      photos: [
+        {
+          id: 0,
+          image:
+            'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805',
+        },
+      ],
+      isCancelled: false,
+      createdAt: moment().format('YYYY-MM-DD'),
+    };
+    setEvent(demoEvent);
+    navigation.navigate(demoFlowStackPath, {screen: demoIOPath} as never);
+  };
+
   if (userAccountType === 'host' && !fromJoinEventsScreen) {
     return (
       // @ts-ignore
-      <SafeAreaView style={{flex: 1}}>
+      <SafeAreaView style={{flex: 1, zIndex: isDemo ? 111 : -1}}>
         <View style={styles.container}>
-          <ScrollView>
+          {isDemo && <View style={styles.overlayContainer} />}
+          <ScrollView
+            style={{
+              zIndex: isDemo ? 1111 : -1,
+            }}>
+            {isDemo && (
+              <View style={styles.stepHintContainer}>
+                <HintCard
+                  currentStep={hintStep}
+                  description={hostHintSteps[hintStep - 1]?.description}
+                  onStepChange={setHintStep}
+                  onPreviousAction={handlePreviousStep}
+                  onNextAction={handleNextStep}
+                  onSkipAction={handleSkipHints}
+                  directionVertical={'bottom'}
+                  totalSteps={hostHintSteps.length}
+                  title={hostHintSteps[hintStep - 1]?.title}
+                />
+              </View>
+            )}
             <MyEventsCard
               imageBg={photos}
               statusEvent={true}
@@ -304,6 +378,20 @@ const useStyles = () => {
   return StyleSheet.create({
     container: {
       flex: 1,
+    },
+    overlayContainer: {
+      position: 'absolute',
+      bottom: 0,
+      top: 0,
+      left: 0,
+      right: 0,
+      width: '100%',
+      zIndex: 1111,
+      backgroundColor: black60Color,
+    },
+    stepHintContainer: {
+      zIndex: 111,
+      marginBottom: 20,
     },
     containerInfo: {
       // position: 'absolute',

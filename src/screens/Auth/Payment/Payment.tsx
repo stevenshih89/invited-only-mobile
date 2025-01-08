@@ -87,7 +87,7 @@ const Payment: FC = (): JSX.Element => {
 
   const whatGet: WhatGetItem[] = [
     {
-      title: 'Unlimited Events Sharing',
+      title: 'Unlimited Tables/Events Sharing',
       description: 'Share Unlimited VIP Tables and Events to Invite.',
       icon: CalendarIcon,
     },
@@ -97,7 +97,7 @@ const Payment: FC = (): JSX.Element => {
       icon: ExportIcon,
     },
     {
-      title: 'Unlimited Swiped',
+      title: 'Unlimited Swipes',
       description: 'Enjoy endless connections to build your guests lists.',
       icon: IOIcon,
     },

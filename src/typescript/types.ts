@@ -13,6 +13,10 @@ export type RootStackParamList = {
     screen?: string;
     params?: any;
   };
+  '/demo-flow-stack'?: {
+    screen?: string;
+    params?: any;
+  };
   '/onboard': undefined;
   '/sign-up': undefined;
   '/start-create-account': undefined;
@@ -70,4 +74,7 @@ export type RootStackParamList = {
   '/verify-social-profile': undefined;
   '/checking-spots': undefined;
   '/early-access': undefined;
+  '/demo-intro': undefined;
+  '/demo-event-creating': undefined;
+  '/demo-io': undefined
 };

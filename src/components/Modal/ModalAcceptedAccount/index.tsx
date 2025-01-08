@@ -7,10 +7,11 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import Loading from 'components/Loading/Loading';
 import Button from 'components/Button/Button';
-import {commonStackPath, earlyAccessPath} from 'constants/pathLocations';
+import {commonStackPath, demoFlowStackPath, demoIntroPath, earlyAccessPath} from 'constants/pathLocations';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
+import {useUser} from '../../../store/userStore';
 
 interface RejectAccount {
   isVisible?: boolean;
@@ -22,13 +23,18 @@ interface RejectAccount {
 const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userInfo}) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const navigation = useNavigation();
+  const {user} = useUser();
 
   const handleContinue = async () => {
-    navigation.navigate(commonStackPath, {screen: earlyAccessPath} as never);
+    if (user.accountType === 'host' && !user?.isPassedDemo) {
+      navigation.navigate(demoFlowStackPath, {screen: demoIntroPath} as never);
+    } else {
+      navigation.navigate(commonStackPath, {screen: earlyAccessPath} as never);
+    }
 
     setIsVisible(false);
     try {
-      await firestore().collection(apiUserInfoCollection).doc(userInfo?.uid).update({
+      await firestore().collection(apiUserInfoCollection).doc(user.uid).update({
         showModalAccept: false,
       });
     } catch (error) {

@@ -185,7 +185,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
         action: 'selfie-submited',
       });
       // @ts-ignore
-      navigation.navigate(invitationCodePath, {cameFromSummary: true});
+      navigation.navigate(invitationCodePath, {cameFromSummary: true} as never);
     } catch (error) {
       console.error('Error skipped verify photo screen:', error);
     } finally {

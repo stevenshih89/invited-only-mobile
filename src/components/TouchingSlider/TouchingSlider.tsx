@@ -41,7 +41,7 @@ import {useScrollPosition} from 'src/store/scrollPosition/index.ts';
 import {eventTypes} from 'src/mocks/eventTypes.ts';
 import Config from 'react-native-config';
 
-interface Photo {
+export interface Photo {
   url: string;
 }
 
@@ -916,7 +916,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     color: blackColor,
                     fontFamily: Satoshi700,
                   }}>
-                  {getUsersListAccepted(activeEvent?.usersList)}/{activeEvent?.female + activeEvent?.male}
+                  {getUsersListAccepted(activeEvent?.usersList)}/{activeEvent?.female || 0 + activeEvent?.male || 0}
                 </Text>
                 <Text
                   style={{

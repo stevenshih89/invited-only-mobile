@@ -2428,7 +2428,7 @@ PODS:
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
   - SocketRocket (0.6.1)
-  - UXCam (3.6.19)
+  - UXCam (3.6.20)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -2852,7 +2852,7 @@ SPEC CHECKSUMS:
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  UXCam: 94f02257f93ea393e76581c25dd0c6844260a89a
+  UXCam: fd60ef825df566fcd5b8792888d767e1643095dc
   Yoga: 08cd7601462818c4985bda7b205b9e6a92a7e66a
 
 PODFILE CHECKSUM: 748860ccb79d1c82ba52a3e4acbecec9264c8d65

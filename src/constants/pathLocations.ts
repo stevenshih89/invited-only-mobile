@@ -5,6 +5,8 @@ const notificationsStackPath = '/notifications-stack';
 const eventCreatingStackPath = '/event-creating-stack';
 const commonStackPath = '/common-stack';
 
+const demoFlowStackPath = '/demo-flow-stack';
+
 // Screen paths
 const onboardPath: keyof RootStackParamList = '/onboard';
 const startCreateAccountPath: keyof RootStackParamList = '/start-create-account';
@@ -59,6 +61,11 @@ const superInvitePayPath: keyof RootStackParamList = '/super-invite-pay';
 const addBuisnessPath: keyof RootStackParamList = '/add-biusness';
 const joinEventsPathRequest: keyof RootStackParamList = '/join-event-request';
 const earlyAccessPath: keyof RootStackParamList = '/early-access';
+
+const demoIntroPath: keyof RootStackParamList = '/demo-intro';
+const demoEventCreatingPath: keyof RootStackParamList = '/demo-event-creating';
+
+const demoIOPath: keyof RootStackParamList = '/demo-io';
 
 export {
   bottomTabsStackPath,
@@ -118,4 +125,8 @@ export {
   eulaPath,
   emailChangePath,
   earlyAccessPath,
+  demoFlowStackPath,
+  demoIntroPath,
+  demoEventCreatingPath,
+  demoIOPath,
 };

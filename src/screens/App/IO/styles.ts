@@ -2,7 +2,15 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
 //import components
-import {black2Color, blackColor, lightGray6Color, lightGreenColor, lightRed1Color, whiteColor} from 'constants/colors.ts';
+import {
+  black2Color,
+  black60Color,
+  blackColor,
+  lightGray6Color,
+  lightGreenColor,
+  lightRed1Color,
+  whiteColor
+} from "constants/colors.ts";
 import {Satoshi400, Satoshi700, Satoshi500} from 'constants/fonts.ts';
 
 const screenHeight: number = Dimensions.get('window').height;
@@ -13,6 +21,21 @@ const useStyles = () => {
     safeAreaView: {
       flex: 1,
       backgroundColor: blackColor,
+    },
+    overlayContainer: {
+      position: 'absolute',
+      bottom: 0,
+      top: 0,
+      left: 0,
+      right: 0,
+      width: '100%',
+      zIndex: 1111,
+      backgroundColor: black60Color,
+    },
+    stepHintContainer: {
+      zIndex: 1111,
+      position: 'absolute',
+      width: screenWidth - 16,
     },
     container: {
       paddingHorizontal: screenWidth / 15.5,

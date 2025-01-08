@@ -9,6 +9,7 @@ import {blackColor, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import FastImage from 'react-native-fast-image';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface LoadingProps {
   text?: string;

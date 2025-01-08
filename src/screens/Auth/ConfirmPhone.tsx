@@ -18,7 +18,7 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {backgroundGradientColors, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
-import {chooseAccountTypePath} from 'constants/pathLocations';
+import { bottomTabsStackPath, chooseAccountTypePath, IOPath } from "constants/pathLocations";
 import auth from '@react-native-firebase/auth';
 import {showToast} from 'helpers/showToast.ts';
 import firebase from '@react-native-firebase/firestore';
@@ -44,8 +44,11 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
 
   const onAuthStateChanged = async (user: any) => {
+    console.log(user);
     if (user) {
       const userData = await firebase().collection(apiUserInfoCollection).doc(user.uid).get();
+
+      console.log("userData: ", userData)
 
       if (userData.exists) {
         setIsUserExist(true);
@@ -94,6 +97,9 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
       setTimeout(() => {
         navigation.navigate(nextRoute);
       }, 1000);
+      // navigation.navigate(bottomTabsStackPath, {
+      //   screen: IOPath,
+      // });
       setLoadingConfirmation(false);
     } catch (e: any) {
       // console.log(e);

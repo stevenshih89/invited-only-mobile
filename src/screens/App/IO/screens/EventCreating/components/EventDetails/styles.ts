@@ -1,5 +1,15 @@
 import {StyleSheet} from 'react-native';
-import {backgroundColor, black3Color, blackColor, lightGray10Color, lightGray2Color, lightGray5Color, lightGray8Color, whiteColor} from 'constants/colors.ts';
+import {
+  backgroundColor,
+  black3Color,
+  black60Color,
+  blackColor,
+  lightGray10Color,
+  lightGray2Color,
+  lightGray5Color,
+  lightGray8Color,
+  whiteColor
+} from "constants/colors.ts";
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common.ts';
@@ -12,6 +22,16 @@ const useStyles = () =>
     scrollContainerContent: {
       paddingBottom: 40,
       flexGrow: 1,
+    },
+    overlayContainer: {
+      position: 'absolute',
+      bottom: 0,
+      top: 0,
+      left: 0,
+      right: 0,
+      width: '100%',
+      zIndex: 1,
+      backgroundColor: black60Color,
     },
     scrollView: {
       flex: 1,
@@ -57,6 +77,7 @@ const useStyles = () =>
       fontSize: RFValue(18, 812),
     },
     eventTypeWr: {
+      width: '100%',
       borderRadius: 20,
       padding: 20,
       backgroundColor: black3Color,
@@ -71,13 +92,34 @@ const useStyles = () =>
     eventTypeItem: {
       // borderWidth: 1,
       // borderStyle: 'solid',
+      position: 'relative',
       borderRadius: 88,
       paddingVertical: 6,
       paddingHorizontal: 12,
     },
+    handIconContainer: {
+      position: 'absolute',
+      top: 6,
+      right: -16,
+      zIndex: 111,
+    },
     eventTypeItemText: {
       fontFamily: Satoshi400,
       fontSize: RFValue(16, 812),
+    },
+    stepHint4Container: {
+      position: 'absolute',
+      top: 130,
+      zIndex: 11111,
+      left: 0,
+      width: screenWidth - 40
+    },
+    stepHint5Container: {
+      position: 'absolute',
+      top: -200,
+      zIndex: 11111,
+      left: 0,
+      width: screenWidth - 40
     },
     eventTypeSeparator: {
       width: 14,
@@ -150,7 +192,7 @@ const useStyles = () =>
     },
     flex: {
       flex: 1,
-      
+
     },
     inputLabel: {
       fontSize: RFValue(14, 812),
