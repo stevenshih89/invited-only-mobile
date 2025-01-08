@@ -10,16 +10,7 @@ import useStyles from 'screens/Auth/Payment/styles.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import Button from 'components/Button/Button.tsx';
 import {profilePath, tutorialFlowPath} from 'constants/pathLocations.ts';
-import {
-  backgroundGradientColors,
-  black2Color,
-  blackColor,
-  lightGray2Color,
-  lightGray4Color,
-  lightGray5Color,
-  transparentWhite40Color,
-  whiteColor,
-} from 'constants/colors.ts';
+import {backgroundGradientColors, black2Color, blackColor, lightGray2Color, lightGray5Color, whiteColor} from 'constants/colors.ts';
 
 //import icons
 import CheckIcon from 'assets/images/icons/check.svg';
@@ -27,7 +18,6 @@ import CalendarIcon from 'assets/images/icons/calendar-event.svg';
 import IOIcon from 'assets/images/icons/io.svg';
 import ExportIcon from 'assets/images/icons/export.svg';
 import FlashIcon from 'assets/images/icons/lightning-fill.svg';
-import Logo from 'assets/images/icons/logo.svg';
 import EyeIcon from 'assets/images/icons/eye-solid.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import CloseCircleIcon from 'assets/images/icons/close-circle.svg';

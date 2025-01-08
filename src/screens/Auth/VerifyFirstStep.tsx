@@ -4,7 +4,6 @@ import {
   Alert,
   AppState,
   ImageBackground,
-  InteractionManager,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
