@@ -15,10 +15,11 @@ export const getUsersForEvent = async ({
   excludeUids: string[];
 }) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+
   let query = firestore()
     .collection(apiUserInfoCollection)
+    .orderBy('userBeauty', 'asc')
     .orderBy('uid')
-    .orderBy('createdAt', 'desc')
     .where('accountType', '==', 'guest')
     .where('accountConfirmed', '==', true);
 

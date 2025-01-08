@@ -37,7 +37,7 @@ const EventCreating = () => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
-  const {hintStep, setHintStep, setIsVisibleSwipeGuide} = useDemoFlowStore();
+  const {hintStep, setHintStep, setIsVisibleSwipeGuide, setEvent} = useDemoFlowStore();
   const [tabState, setTabState] = useState<string>(INVITED_ONLY);
   const [isVisibleSaveModal, setIsVisibleSaveModal] = useState<boolean>(false);
   const [isVisibleCancelModal, setIsVisibleCancelModal] = useState<boolean>(false);
@@ -48,6 +48,7 @@ const EventCreating = () => {
   const [femaleFriend, setFemaleFriend] = useState<number>(0);
   const [maleFriend, setMaleFriend] = useState<number>(0);
   const [loaderVisible, setLoaderVisible] = useState<boolean>(false);
+  const {user} = useUser();
 
   const [myEvents, setMyEvents] = useState();
 
@@ -369,6 +370,34 @@ const EventCreating = () => {
     if (hintStep === 1) {
       navigation.goBack();
     } else {
+      const uid: string = uuid.v4() as string;
+      const demoEvent = {
+        name: 'Red Mirage',
+        date: '07.02.2025',
+        hour: '21:30',
+        address: 'Nad AJ Sheba 1 - Dubai',
+        male: 50,
+        placeName: 'Irisol Dubai',
+        id: uid,
+        uid: user?.uid,
+        rejectsList: [],
+        requestsList: [],
+        usersList: [],
+        statusEvent: false,
+        eventReviewed: false,
+        hostImage: user?.photos?.[0]?.image,
+        hostName: user?.name,
+        photos: [
+          {
+            id: 0,
+            image:
+              'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2FImage.png?alt=media&token=14b8e084-7280-4e49-abd4-0aeb3503c133',
+          },
+        ],
+        isCancelled: false,
+        createdAt: moment().format('YYYY-MM-DD'),
+      };
+      setEvent(demoEvent);
       navigation.navigate(demoFlowStackPath, {screen: demoIOPath} as never);
       setHintStep(8);
       setIsVisibleSwipeGuide(true);

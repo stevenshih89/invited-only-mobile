@@ -651,7 +651,6 @@ const IO: FC = (): JSX.Element => {
     }
     try {
       const guest = await firestore().collection(apiUserInfoCollection).doc(forUserUid).get();
-
       const guestData = guest.data() as UserInfo;
 
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
@@ -877,13 +876,6 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  // const getUserAcceptedEvent = (event: any) => {
-  //   if (event) {
-  //     const userAccepted = event.usersList.filter(item => item.usersList.status === ACCEPTED_STATUS);
-  //     return userAccepted.length;
-  //   }
-  // };
-
   const handleSuperJoin = () => {
     if (counterSuperInvites > 0) {
       setVisibleModalSuperJoin(true);
@@ -894,26 +886,6 @@ const IO: FC = (): JSX.Element => {
       showToast('inviteMatch', "You don't have Super Joins", 'Super Join');
     }
   };
-
-  // const filterEventsByBlockedUsers = async (eventsList: any[]) => {
-  //   const user = auth().currentUser;
-  //   if (!user) {
-  //     return;
-  //   }
-  //   const blockedUsers = await firestore().collection('report').where('uidSender', '==', user?.uid).get();
-  //   const blockedMeUsers = await firestore().collection('report').where('uid', '==', user?.uid).get();
-
-  //   const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
-  //   const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
-  //   const filteredEvents = eventsList.filter(event => {
-  //     if (blockedUsersList.includes(event?.info?.uid) || blockedMeUsersList.includes(event?.info?.uid)) {
-  //       return false;
-  //     }
-  //     return true;
-  //   });
-
-  //   return filteredEvents;
-  // };
 
   const customButton = (id: string, uid: string) => {
     return (
@@ -984,7 +956,6 @@ const IO: FC = (): JSX.Element => {
 
     try {
       const blockedUsers = await firestore().collection('report').where('uidSender', '==', user.uid).get();
-
       const blockedMeUsers = await firestore().collection('report').where('uid', '==', user.uid).get();
 
       const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
@@ -1061,9 +1032,7 @@ const IO: FC = (): JSX.Element => {
     }
 
     const enrichedEvents = await enrichElementsWithPhotos(filteredEvents);
-
     const data: any[] = [];
-
     const filteredDataEvents = filterEventByDate(enrichedEvents);
 
     for (const event of filteredDataEvents) {
@@ -1589,13 +1558,9 @@ const IO: FC = (): JSX.Element => {
         users = {docs: listOfUsers};
       }
 
-      console.warn(users);
-
-      console.warn(users?.docs?.length);
-
       if (!users || !('docs' in users) || users?.empty) {
         setLoadingCardsList(false);
-        setEvents([]);
+        // setEvents([]);
         endReachedRef.current = true;
         return;
       }
@@ -2110,6 +2075,7 @@ const IO: FC = (): JSX.Element => {
       </>
     );
   }
+
   if (isDemo && hintStep === 7) {
     return (
       <>
@@ -2277,6 +2243,7 @@ const IO: FC = (): JSX.Element => {
         <View style={styles.container}>
           {/* {isVisibleSwipeGuide && !userInfo?.isPassedDemo && hintStep !== 7 && <SwipeHints />} */}
           {events?.map((item, index) => {
+            console.warn('item', item.info.uid);
             return (
               <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
                 <TinderCard

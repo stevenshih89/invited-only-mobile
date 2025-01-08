@@ -34,8 +34,10 @@ import {hostHintSteps} from 'constants/hints.ts';
 import {useDemoFlowStore} from '../../../../../../../store/demoFlowStore';
 import {useRoute} from '@react-navigation/native';
 import HandIC from 'assets/images/icons/hand.svg';
-import { demoFlowStackPath, demoIOPath } from "constants/pathLocations.ts";
-import { useAppNavigation } from "hooks/useAppNavigation.ts";
+import {demoFlowStackPath, demoIOPath} from 'constants/pathLocations.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import uuid from 'react-native-uuid';
+import {useUser} from 'src/store/userStore/index.ts';
 
 interface ImageType {
   image: null | string;
@@ -153,10 +155,11 @@ const EventDetails: FC<EventDetailsProps> = ({
   const [hourEmpty, setHourEmpty] = useState(false);
   const route = useRoute();
   const navigation = useAppNavigation();
-  const {hintStep, setHintStep, setIsVisibleSwipeGuide} = useDemoFlowStore();
+  const {hintStep, setHintStep, setIsVisibleSwipeGuide, setEvent} = useDemoFlowStore();
   const scrollViewRef = useRef<KeyboardAwareScrollView | null>(null);
   const [eventDetailsViewCoord, setEventDetailsViewCoord] = useState<LayoutRectangle | null>(null);
   const [eventTypeViewCoord, setEventTypeViewCoord] = useState<LayoutRectangle | null>(null);
+  const {user} = useUser();
   const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
   const isActiveHint4Step = hintStep === 4;
   const isActiveHint5Step = hintStep === 5;
@@ -389,10 +392,39 @@ const EventDetails: FC<EventDetailsProps> = ({
   };
 
   const handleNextStep = () => {
-    checkFieldsNotEmpty()
-  }
+    checkFieldsNotEmpty();
+  };
 
   const handleSkipHints = () => {
+    const uid: string = uuid.v4() as string;
+    const demoEvent = {
+      name: 'Red Mirage',
+      date: '07.02.2025',
+      hour: '21:30',
+      address: 'Nad AJ Sheba 1 - Dubai',
+      male: 50,
+      placeName: 'Irisol Dubai',
+      id: uid,
+      uid: user?.uid,
+      rejectsList: [],
+      requestsList: [],
+      usersList: [],
+      statusEvent: false,
+      eventReviewed: false,
+      hostImage: user?.photos?.[0]?.image,
+      hostName: user?.name,
+      photos: [
+        {
+          id: 0,
+          image:
+            'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2FImage.png?alt=media&token=14b8e084-7280-4e49-abd4-0aeb3503c133',
+        },
+      ],
+      isCancelled: false,
+      createdAt: moment().format('YYYY-MM-DD'),
+    };
+    setEvent(demoEvent);
+
     navigation.navigate(demoFlowStackPath, {screen: demoIOPath} as never);
     setHintStep(8);
     setIsVisibleSwipeGuide(true);

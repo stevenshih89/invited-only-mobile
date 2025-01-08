@@ -179,8 +179,12 @@ const Payment: FC = (): JSX.Element => {
   };
 
   const handleNext = () => {
-    navigation.navigate(tutorialFlowPath as never);
-    navigation.navigate(profilePath as never);
+    try {
+      navigation.navigate(tutorialFlowPath as never);
+      navigation.navigate(profilePath as never);
+    } catch (error) {
+      console.log('error handle next', error);
+    }
   };
 
   useEffect(() => {
