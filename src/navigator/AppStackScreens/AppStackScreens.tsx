@@ -28,6 +28,7 @@ import {
   IOPath,
   joinEventsPath,
   manageSubscriptionPath,
+  markAttendancePath,
   myEventsPath,
   myProfileViewPath,
   notificationSettingPath,
@@ -75,6 +76,7 @@ import EmailChange from 'screens/App/Profile/screens/Settings/EmailChange';
 import EarlyAccess from 'screens/App/IO/screens/EarlyAccess/EarlyAccess';
 import DemoIntro from 'screens/App/DemoFlow/screens/DemoIntro/DemoIntro.tsx';
 import DemoEventCreatingHeader from 'screens/App/IO/screens/EventCreating/components/DemoEventCreatingHeader';
+import MarkAttendance from 'screens/App/MyEvents/MarkAttendance';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -312,6 +314,7 @@ const CommonStackScreen = () => {
         component={ContactAndFAQ}
       />
       <CommonStack.Screen key={earlyAccessPath} name={earlyAccessPath} options={{headerShown: false}} component={EarlyAccess} />
+      <CommonStack.Screen key={markAttendancePath} name={markAttendancePath} options={{headerShown: false}} component={MarkAttendance} />
     </CommonStack.Navigator>
   );
 };

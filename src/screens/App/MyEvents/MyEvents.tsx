@@ -35,7 +35,14 @@ import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import AddIcon from 'assets/images/icons/add.svg';
 
 import Button from 'components/Button/Button';
-import {commonStackPath, eventActiveInfoPath, eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocations';
+import {
+  commonStackPath,
+  eventActiveInfoPath,
+  eventCreatingStackPath,
+  IOPath,
+  markAttendancePath,
+  paymentPath,
+} from 'constants/pathLocations';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
 import {sendNotification} from 'helpers/fcmHelper';
@@ -260,14 +267,15 @@ const MyEvents: FC<any> = ({navigation}) => {
   };
 
   const goToCreateEvent = (): void => {
-    if (!user?.accountConfirmed) {
-      return;
-    }
-    if (!user.accountPremium) {
-      navigation.navigate(paymentPath);
-    } else {
-      navigation.navigate(eventCreatingStackPath);
-    }
+    navigation.navigate(commonStackPath, {screen: markAttendancePath, params: {eventId: myEventsData[0]?.id}} as never);
+    // if (!user?.accountConfirmed) {
+    //   return;
+    // }
+    // if (!user.accountPremium) {
+    //   navigation.navigate(paymentPath);
+    // } else {
+    //   navigation.navigate(eventCreatingStackPath);
+    // }
   };
 
   const goToIOStack = () => {

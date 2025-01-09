@@ -76,5 +76,8 @@ export type RootStackParamList = {
   '/early-access': undefined;
   '/demo-intro': undefined;
   '/demo-event-creating': undefined;
-  '/demo-io': undefined
+  '/demo-io': undefined;
+  '/mark-attendance': {
+    eventId?: string;
+  };
 };

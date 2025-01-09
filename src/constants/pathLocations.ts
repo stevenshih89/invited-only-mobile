@@ -61,6 +61,7 @@ const superInvitePayPath: keyof RootStackParamList = '/super-invite-pay';
 const addBuisnessPath: keyof RootStackParamList = '/add-biusness';
 const joinEventsPathRequest: keyof RootStackParamList = '/join-event-request';
 const earlyAccessPath: keyof RootStackParamList = '/early-access';
+const markAttendancePath: keyof RootStackParamList = '/mark-attendance';
 
 const demoIntroPath: keyof RootStackParamList = '/demo-intro';
 const demoEventCreatingPath: keyof RootStackParamList = '/demo-event-creating';
@@ -125,6 +126,7 @@ export {
   eulaPath,
   emailChangePath,
   earlyAccessPath,
+  markAttendancePath,
   demoFlowStackPath,
   demoIntroPath,
   demoEventCreatingPath,
