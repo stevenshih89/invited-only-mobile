@@ -510,6 +510,12 @@ const Payment: FC = (): JSX.Element => {
     }
   };
 
+  const animations = {
+    0: require('../../../animations/Card_1.json'),
+    1: require('../../../animations/Card_0.json'),
+    2: require('../../../animations/Card_2.json'),
+  };
+
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
       <SafeAreaView style={{flex: 1}}>
@@ -525,15 +531,9 @@ const Payment: FC = (): JSX.Element => {
                 <CloseIcon width={25} height={25} />
               </TouchableOpacity>
             </View>
-            {activePayment.id === 2 && <View style={{marginTop: 40}}>
-              <LottieView source={require('../../../animations/Invite_only_x2.json')} autoPlay loop style={{height: screenHeight / 3.58, width: screenWidth / 2.62, alignSelf: 'center'}}/></View>}
-            {activePayment.id !== 2 && <Image
-              style={{height: screenHeight / 3.58, width: screenWidth / 2.62, marginTop: 40, alignSelf: 'center'}}
-              source={
-                (activePayment.id === 0 && SubscriptionWeek) ||
-                (activePayment.id === 1 && SubscriptionMonth)
-              }
-            />}
+            <View style={{marginTop: 40}}>
+              <LottieView source={animations[activePayment.id]} autoPlay loop style={{height: screenHeight / 3.58, width: screenWidth / 2.62, alignSelf: 'center'}}/>
+            </View>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 30}}>
               {plansList.map(item => renderItem({item}))}
             </View>
