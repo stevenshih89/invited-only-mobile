@@ -4,6 +4,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Tooltip, TooltipProps} from '@rneui/themed';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import LottieView from 'lottie-react-native';
+
 
 //import components
 import useStyles from 'screens/Auth/Payment/styles.ts';
@@ -523,14 +525,15 @@ const Payment: FC = (): JSX.Element => {
                 <CloseIcon width={25} height={25} />
               </TouchableOpacity>
             </View>
-            <Image
+            {activePayment.id === 2 && <View style={{marginTop: 40}}>
+              <LottieView source={require('../../../animations/Invite_only_x2.json')} autoPlay loop style={{height: screenHeight / 3.58, width: screenWidth / 2.62, alignSelf: 'center'}}/></View>}
+            {activePayment.id !== 2 && <Image
               style={{height: screenHeight / 3.58, width: screenWidth / 2.62, marginTop: 40, alignSelf: 'center'}}
               source={
                 (activePayment.id === 0 && SubscriptionWeek) ||
-                (activePayment.id === 1 && SubscriptionMonth) ||
-                (activePayment.id === 2 && SubscriptionThreeMonth)
+                (activePayment.id === 1 && SubscriptionMonth)
               }
-            />
+            />}
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 30}}>
               {plansList.map(item => renderItem({item}))}
             </View>
