@@ -13,6 +13,7 @@ export namespace Event {
     status: UserStatus;
     superInvite: boolean;
     userPhoto: string;
+    createdAt?: string;
   }
   export interface RejectUser {
     uid: string;

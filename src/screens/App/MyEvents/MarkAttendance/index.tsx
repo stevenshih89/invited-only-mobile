@@ -29,7 +29,7 @@ const MarkAttendance = () => {
   const {eventId} = route.params as {eventId: string};
   const [eventUsersList, setEventUsersList] = useState<MarkUser[] | null>(null);
   const [loadingEventUsersList, setLoadingEventUsersList] = useState(true);
-
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const navigation = useNavigation();
 
   const getEventData = async () => {
@@ -86,6 +86,33 @@ const MarkAttendance = () => {
       return user;
     });
     setEventUsersList(updatedUsersList!);
+  };
+
+  const handleSubmit = async () => {
+    if (!eventUsersList?.length || loadingSubmit || !eventId) {
+      return;
+    }
+    setLoadingSubmit(true);
+    const updatedUsersList = eventUsersList?.map(user => ({
+      createdAt: user.createdAt,
+      gender: user.gender,
+      uid: user.uid,
+      name: user.name,
+      status: user.status,
+      superInvite: user.superInvite,
+      userPhoto: user.userPhoto,
+      isPresent: user.isPresent,
+    }));
+
+    try {
+      await firestore().collection(apiEventsCollection).doc(eventId).update({
+        usersList: updatedUsersList,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingSubmit(false);
+    }
   };
 
   const renderUser = (user: MarkUser) => {
@@ -174,7 +201,7 @@ const MarkAttendance = () => {
           <FlatList data={eventUsersList} renderItem={({item}) => renderUser(item)} />
         </View>
         <View style={{flex: 1, justifyContent: 'flex-end', paddingHorizontal: 16, paddingBottom: 20}}>
-          <Button title="Submit" onPress={() => {}} />
+          <Button title="Submit" onPress={handleSubmit} loading={loadingSubmit} />
         </View>
       </SafeAreaView>
     </LinearGradient>

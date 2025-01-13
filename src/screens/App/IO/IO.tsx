@@ -19,9 +19,9 @@ import {
   INVITE_MATCH_STATUS,
   LIKED,
   NOT_ACCEPTED_STATUS,
-  screenHeight,
   THIS_MONTH,
   THIS_WEEK,
+  screenHeight,
 } from 'constants/common.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {
@@ -250,8 +250,6 @@ const IO: FC = (): JSX.Element => {
         .doc(activeEvent?.id)
         .onSnapshot(querySnapshot => {
           if (!querySnapshot.exists) {
-            console.warn('IO_useEffect_activeEvent_querySnapshot', querySnapshot);
-
             // dispatch(setActiveEvent({}));
           }
           const data = querySnapshot.data();
@@ -1475,6 +1473,8 @@ const IO: FC = (): JSX.Element => {
   const getCardsListForHost = async (refresh?: boolean) => {
     const user = auth().currentUser;
 
+    console.warn('refresh', refresh);
+
     if (!user?.uid || !activeEvent?.id || !userInfo?.uid) {
       return;
     }
@@ -1557,6 +1557,8 @@ const IO: FC = (): JSX.Element => {
       if (isDemo) {
         users = {docs: listOfUsers};
       }
+
+      console.warn('users', users?.empty);
 
       if (!users || !('docs' in users) || users?.empty) {
         setLoadingCardsList(false);
@@ -1982,21 +1984,18 @@ const IO: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
-      if (userInfo?.uid) {
-        if (isHost && activeEvent?.id) {
-          getCardsListForHost();
-        }
+      if (userInfo?.uid && isHost && activeEvent?.id && !events?.length) {
+        console.warn('useEffect_getCardsListForHost', events?.length, lastVisibleRef.current, endReachedRef.current);
+        getCardsListForHost();
       }
     }, [userInfo?.uid, activeEvent?.id, loadingMyEvents]),
   );
 
   useFocusEffect(
     useCallback(() => {
-      if (userInfo?.uid) {
-        if (!isHost && activeEventDate && !lastVisibleRef.current && !endReachedRef.current) {
-          console.warn('useEffect_getCardsListForGuest', events?.length, lastVisibleRef.current, endReachedRef.current);
-          getCardsListForGuest();
-        }
+      if (userInfo?.uid && !isHost && activeEventDate && !lastVisibleRef.current && !endReachedRef.current) {
+        console.warn('useEffect_getCardsListForGuest', events?.length, lastVisibleRef.current, endReachedRef.current);
+        getCardsListForGuest();
       }
     }, [userInfo?.uid, activeEventDate]),
   );
@@ -2005,6 +2004,7 @@ const IO: FC = (): JSX.Element => {
     if (userInfo?.uid) {
       if (isHost) {
         if (events?.length <= 2 && lastVisibleRef.current && !endReachedRef.current) {
+          console.warn('getCardsListForHost', events?.length, lastVisibleRef.current, endReachedRef.current);
           getCardsListForHost(true);
         }
       }
@@ -2243,7 +2243,6 @@ const IO: FC = (): JSX.Element => {
         <View style={styles.container}>
           {/* {isVisibleSwipeGuide && !userInfo?.isPassedDemo && hintStep !== 7 && <SwipeHints />} */}
           {events?.map((item, index) => {
-            console.warn('item', item.info.uid);
             return (
               <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
                 <TinderCard

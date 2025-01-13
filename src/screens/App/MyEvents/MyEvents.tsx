@@ -35,14 +35,7 @@ import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import AddIcon from 'assets/images/icons/add.svg';
 
 import Button from 'components/Button/Button';
-import {
-  commonStackPath,
-  eventActiveInfoPath,
-  eventCreatingStackPath,
-  IOPath,
-  markAttendancePath,
-  paymentPath,
-} from 'constants/pathLocations';
+import {commonStackPath, eventActiveInfoPath, IOPath, markAttendancePath} from 'constants/pathLocations';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
 import {sendNotification} from 'helpers/fcmHelper';
@@ -53,6 +46,7 @@ import {calculateAge} from 'helpers/calculateAge';
 import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
+import ModalEventMarkAttendance from 'components/Modal/ModalEventMarkAttendance';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -64,6 +58,8 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [isVisibleAcceptInvitationModal, setIsVisibleAcceptInvitationModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(MY_EVENTS);
   const [visibleModalEventRemindes, setVisibleModalEventRemindes] = useState(false);
+  const [isVisibleMarkAttendance, setIsVisibleMarkAttendance] = useState(false);
+  const [eventDataMarkAttendance, setEventDataMarkAttendance] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const countMyEvent = useRef(0);
 
@@ -122,31 +118,6 @@ const MyEvents: FC<any> = ({navigation}) => {
     const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
 
     return Math.floor(diffInHours);
-  };
-
-  const generateRandomId = (length: number) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  };
-
-  const userData = useUser((i: any) => i?.user);
-
-  const getFcmTokens = async (usersList: []) => {
-    let users: Object[] = [];
-
-    const promises = usersList.map(async item => {
-      const userInfo = await firestore().collection(apiUserInfoCollection).doc(item?.uid).get();
-      return {uid: userInfo?.data()?.uid, token: userInfo?.data()?.fcmToken};
-    });
-
-    users = await Promise.all(promises);
-
-    return users;
   };
 
   interface usersListI {
@@ -240,6 +211,15 @@ const MyEvents: FC<any> = ({navigation}) => {
       fetchHostInfo(activeModalEvent.host.hostUid);
     }
   }, [activeModalEvent]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (myEventsData.length) {
+        setIsVisibleMarkAttendance(true);
+        setEventDataMarkAttendance(myEventsData[0]);
+      }
+    }, [myEventsData.length]),
+  );
 
   const handleOpenCancelAttendingModal = (
     eventInfo: {list: any; host: any; image: string; textCityName: string; date: string; numberOfGirlsInvited: string},
@@ -1030,6 +1010,11 @@ const MyEvents: FC<any> = ({navigation}) => {
           countMyEvent={countMyEvent}
         />
       )}
+      <ModalEventMarkAttendance
+        isVisible={isVisibleMarkAttendance}
+        setIsVisible={setIsVisibleMarkAttendance}
+        eventInfo={eventDataMarkAttendance}
+      />
     </>
   );
 };
