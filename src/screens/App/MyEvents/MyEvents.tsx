@@ -35,7 +35,14 @@ import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import AddIcon from 'assets/images/icons/add.svg';
 
 import Button from 'components/Button/Button';
-import {commonStackPath, eventActiveInfoPath, IOPath, markAttendancePath} from 'constants/pathLocations';
+import {
+  commonStackPath,
+  eventActiveInfoPath,
+  eventCreatingStackPath,
+  IOPath,
+  markAttendancePath,
+  paymentPath,
+} from 'constants/pathLocations';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes';
 import {sendNotification} from 'helpers/fcmHelper';
@@ -212,14 +219,71 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   }, [activeModalEvent]);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (myEventsData.length) {
-        setIsVisibleMarkAttendance(true);
-        setEventDataMarkAttendance(myEventsData[0]);
+  const goToMarkAttendance = (eventId: string) => {
+    navigation.navigate(commonStackPath, {screen: markAttendancePath, params: {eventId}} as never);
+    setIsVisibleMarkAttendance(false);
+  };
+
+  const handleMarkAttendance = async (isPresent: boolean) => {
+    const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(eventDataMarkAttendance?.id).get();
+    const eventDataList = eventQuerySnapshot.data();
+    const updatedUsersList = eventDataList?.usersList?.map(userItem => {
+      if (userItem.uid === user?.uid) {
+        return {...userItem, isPresent};
       }
-    }, [myEventsData.length]),
-  );
+      return userItem;
+    });
+    await firestore().collection(apiEventsCollection).doc(eventDataMarkAttendance?.id).update({
+      usersList: updatedUsersList,
+    });
+    setIsVisibleMarkAttendance(false);
+  };
+
+  const handleCheckEventMarkAttendanceGuest = () => {
+    if (eventsJoiningData.length && !isHost) {
+      for (const event of eventsJoiningData) {
+        const eventDate = moment(`${event.date} ${event.hour}`, 'DD.MM.YYYY HH:mm').add(12, 'hours');
+        const currentDate = moment();
+        const currentUserFromList = event?.usersList?.find(userItem => userItem.uid === user?.uid);
+        if (
+          currentUserFromList &&
+          (currentUserFromList?.status === ACCEPTED_STATUS ||
+            currentUserFromList?.status === INVITE_MATCH_STATUS ||
+            currentUserFromList?.status === APPROVED_STATUS) &&
+          !('isPresent' in currentUserFromList) &&
+          currentDate.isAfter(eventDate)
+        ) {
+          setIsVisibleMarkAttendance(true);
+          setEventDataMarkAttendance(event);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    handleCheckEventMarkAttendanceGuest();
+  }, [eventsJoiningData.length]);
+
+  const handleCheckEventMarkAttendanceHost = () => {
+    if (myEventsData.length && isHost) {
+      for (const event of myEventsData) {
+        const eventDate = moment(`${event.date} ${event.hour}`, 'DD.MM.YYYY HH:mm').add(12, 'hours');
+        const currentDate = moment();
+        const usersInvited = event?.usersList?.filter(
+          user => user.status === INVITE_MATCH_STATUS || user.status === ACCEPTED_STATUS || user.status === APPROVED_STATUS,
+        );
+        if (currentDate.isAfter(eventDate) && !event?.isMarkedAttendance && usersInvited.length) {
+          setIsVisibleMarkAttendance(true);
+          setEventDataMarkAttendance(event);
+          break;
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    handleCheckEventMarkAttendanceHost();
+  }, [myEventsData.length]);
 
   const handleOpenCancelAttendingModal = (
     eventInfo: {list: any; host: any; image: string; textCityName: string; date: string; numberOfGirlsInvited: string},
@@ -247,15 +311,14 @@ const MyEvents: FC<any> = ({navigation}) => {
   };
 
   const goToCreateEvent = (): void => {
-    navigation.navigate(commonStackPath, {screen: markAttendancePath, params: {eventId: myEventsData[0]?.id}} as never);
-    // if (!user?.accountConfirmed) {
-    //   return;
-    // }
-    // if (!user.accountPremium) {
-    //   navigation.navigate(paymentPath);
-    // } else {
-    //   navigation.navigate(eventCreatingStackPath);
-    // }
+    if (!user?.accountConfirmed) {
+      return;
+    }
+    if (!user.accountPremium) {
+      navigation.navigate(paymentPath);
+    } else {
+      navigation.navigate(eventCreatingStackPath);
+    }
   };
 
   const goToIOStack = () => {
@@ -1014,6 +1077,8 @@ const MyEvents: FC<any> = ({navigation}) => {
         isVisible={isVisibleMarkAttendance}
         setIsVisible={setIsVisibleMarkAttendance}
         eventInfo={eventDataMarkAttendance}
+        goToMarkAttendance={() => goToMarkAttendance(eventDataMarkAttendance?.id)}
+        handleMarkAttendance={handleMarkAttendance}
       />
     </>
   );

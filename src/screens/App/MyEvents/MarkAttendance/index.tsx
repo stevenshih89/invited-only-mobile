@@ -9,7 +9,7 @@ import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
-import {screenHeight} from 'constants/common';
+import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import Button from 'components/Button/Button';
 import {Checkbox} from '@ant-design/react-native';
 import FastImage from 'react-native-fast-image';
@@ -43,16 +43,18 @@ const MarkAttendance = () => {
         const data = event.data() as EventData;
         const usersList = [];
         for (const user of data.usersList) {
-          const userQuery = await firestore().collection(apiUsersCollection).doc(user.uid).get();
-          if (userQuery.exists) {
-            const userData: UserInfo = userQuery.data() as UserInfo;
-            usersList.push({
-              ...user,
-              userPhoto: userData.photos[0].image,
-              showAge: userData.showAge,
-              date: userData.date,
-              isPresent: false,
-            });
+          if (user.status === ACCEPTED_STATUS || user.status === INVITE_MATCH_STATUS || user.status === APPROVED_STATUS) {
+            const userQuery = await firestore().collection(apiUsersCollection).doc(user.uid).get();
+            if (userQuery.exists) {
+              const userData: UserInfo = userQuery.data() as UserInfo;
+              usersList.push({
+                ...user,
+                userPhoto: userData.photos[0].image,
+                showAge: userData.showAge,
+                date: userData.date,
+                isPresent: false,
+              });
+            }
           }
         }
 
@@ -107,7 +109,9 @@ const MarkAttendance = () => {
     try {
       await firestore().collection(apiEventsCollection).doc(eventId).update({
         usersList: updatedUsersList,
+        isMarkedAttendance: true,
       });
+      navigation.goBack();
     } catch (error) {
       console.error(error);
     } finally {
