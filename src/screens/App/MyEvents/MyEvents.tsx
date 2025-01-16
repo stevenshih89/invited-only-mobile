@@ -54,6 +54,7 @@ import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
 import ModalEventMarkAttendance from 'components/Modal/ModalEventMarkAttendance';
+import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -73,6 +74,8 @@ const MyEvents: FC<any> = ({navigation}) => {
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
+  const changeAccountTypeModalVisible = useAdminActions((i: any) => i?.changeAccountTypeModalVisible);
+  const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
 
   const [activeModalEvent, setActiveModalEvent] = useState<any>({
     id: 0,
@@ -844,7 +847,8 @@ const MyEvents: FC<any> = ({navigation}) => {
     <>
       <View style={styles.container}>
         {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
-        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+        {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />}
+        {changeAccountTypeModalVisible && !acceptModalVisible && <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />}
         {isHost ? (
           <View style={styles.wrapperHeaderButtonMyEvents}>
             <TouchableOpacity

@@ -32,6 +32,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {getEventsIJoining} from 'helpers/getEventsIJoining';
 import Config from 'react-native-config';
+import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 
 const Profile: FC = () => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -47,6 +48,8 @@ const Profile: FC = () => {
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
+  const changeAccountTypeModalVisible = useAdminActions((i: any) => i?.changeAccountTypeModalVisible);
+  const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
 
   const tabList = [
     {id: 0, title: 'My plan'},
@@ -199,7 +202,8 @@ const Profile: FC = () => {
   return (
     <View style={styles.container}>
       {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
-      <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+      {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />}
+      {changeAccountTypeModalVisible && !acceptModalVisible && <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />}
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
         <View>
           <View style={styles.profileImageContainer}>

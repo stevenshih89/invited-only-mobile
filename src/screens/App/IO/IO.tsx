@@ -95,6 +95,7 @@ import {useDemoFlowStore} from '../../../store/demoFlowStore';
 import HintCard from 'components/HintCard';
 import {hostHintSteps} from 'constants/hints.ts';
 import ModalLimitedAccess from 'components/Modal/ModalLimitedAccess/ModalLimitedAccess';
+import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 
 const IO: FC = (): JSX.Element => {
   const EVENTS_LOADING_LIMIT = 6;
@@ -139,8 +140,10 @@ const IO: FC = (): JSX.Element => {
   const setScrollPosition = useScrollPosition((i: any) => i?.setScrollPosition);
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
+  const changeAccountTypeModalVisible = useAdminActions((i: any) => i?.changeAccountTypeModalVisible);
   const setRejectModalVisible = useAdminActions((i: any) => i?.setRejectModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
+  const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
 
   const eventsRef = useRef<any[]>();
   const counterSuperInvitesRef = useRef(0);
@@ -352,6 +355,9 @@ const IO: FC = (): JSX.Element => {
   useEffect(() => {
     if (userInfo && userInfo?.showModalAccept) {
       setAcceptModalVisible(true);
+    }    
+    if (userInfo && userInfo?.showModalChangeAccountType) {
+      setChangeAccountModalVisible(true);
     }
   }, [userInfo]);
 
@@ -2057,6 +2063,14 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
+  if (userInfo?.uid && changeAccountTypeModalVisible) {
+    return (
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
+        <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />
+      </SafeAreaView>
+    );
+  }
+
   if (userInfo?.uid && rejectModalVisible && userInfo?.photos?.[0].image) {
     return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
@@ -2147,7 +2161,8 @@ const IO: FC = (): JSX.Element => {
     !visibleModalSuperJoin &&
     !isVisibleSuperInvite &&
     !acceptModalVisible &&
-    !isDemo
+    !isDemo &&
+    !changeAccountTypeModalVisible
   ) {
     return (
       <>

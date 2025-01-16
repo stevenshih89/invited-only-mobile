@@ -37,6 +37,7 @@ import {chatsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
 import {EventData} from 'src/types/event';
 import Config from 'react-native-config';
+import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 
 type ItemProps = {
   title: string;
@@ -88,6 +89,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
+  const changeAccountTypeModalVisible = useAdminActions((i: any) => i?.changeAccountTypeModalVisible);
+  const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
 
   const {activeEventDate} = useContext(EventsDate);
 
@@ -557,7 +560,8 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
         </View>
       )}
       {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
-      <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+      {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />}
+      {changeAccountTypeModalVisible && !acceptModalVisible && <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />}
       {!loading ? (
         isHost ? (
           <View style={{flex: 1}}>
