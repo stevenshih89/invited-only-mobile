@@ -77,6 +77,7 @@ import EarlyAccess from 'screens/App/IO/screens/EarlyAccess/EarlyAccess';
 import DemoIntro from 'screens/App/DemoFlow/screens/DemoIntro/DemoIntro.tsx';
 import DemoEventCreatingHeader from 'screens/App/IO/screens/EventCreating/components/DemoEventCreatingHeader';
 import MarkAttendance from 'screens/App/MyEvents/MarkAttendance';
+import {useUser} from 'src/store/userStore';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -500,8 +501,15 @@ const DemoFlowScreen = () => {
 };
 
 const AppStackScreen = () => {
+  const {user} = useUser();
+
+  const initialRouteName =
+    user?.uid && user?.accountType === 'host' && user?.accountConfirmed && user?.accountReviewed && !user?.isPassedDemo
+      ? demoFlowStackPath
+      : bottomTabsStackPath;
+
   return (
-    <AppStack.Navigator initialRouteName={bottomTabsStackPath} screenOptions={{headerShown: false}}>
+    <AppStack.Navigator initialRouteName={initialRouteName} screenOptions={{headerShown: false}}>
       <AppStack.Screen key={bottomTabsStackPath} name={bottomTabsStackPath} component={BottomTabsStackScreen} />
       <AppStack.Screen key={notificationsStackPath} name={notificationsStackPath} component={NotificationsStackScreen} />
       <AppStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={EventCreatingStackScreen} />

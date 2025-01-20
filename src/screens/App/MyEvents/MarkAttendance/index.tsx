@@ -1,6 +1,6 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import Config from 'react-native-config';
 import {Event, EventData} from 'src/types/event';
 import firestore from '@react-native-firebase/firestore';
@@ -11,13 +11,14 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import Button from 'components/Button/Button';
-import {Checkbox} from '@ant-design/react-native';
 import FastImage from 'react-native-fast-image';
 import {UserInfo} from 'src/types/userInfo';
 import {calculateAge} from 'helpers/calculateAge';
+import CheckBox from '@react-native-community/checkbox';
+import moment from 'moment';
 
 interface MarkUser extends Event.User {
-  isPresent?: boolean;
+  isPresentMarkedByHost?: boolean;
   showAge?: boolean;
   date?: string;
 }
@@ -52,7 +53,7 @@ const MarkAttendance = () => {
                 userPhoto: userData.photos[0].image,
                 showAge: userData.showAge,
                 date: userData.date,
-                isPresent: false,
+                isPresentMarkedByHost: false,
               });
             }
           }
@@ -76,14 +77,14 @@ const MarkAttendance = () => {
   }, [eventId]);
 
   const handleMarkAllAsPresent = () => {
-    const updatedUsersList = eventUsersList?.map(user => ({...user, isPresent: true}));
+    const updatedUsersList = eventUsersList?.map(user => ({...user, isPresentMarkedByHost: true}));
     setEventUsersList(updatedUsersList!);
   };
 
   const handleChangePresentUser = (userUid: string) => {
     const updatedUsersList = eventUsersList?.map(user => {
       if (user.uid === userUid) {
-        return {...user, isPresent: !user.isPresent};
+        return {...user, isPresentMarkedByHost: !user.isPresentMarkedByHost};
       }
       return user;
     });
@@ -95,18 +96,19 @@ const MarkAttendance = () => {
       return;
     }
     setLoadingSubmit(true);
-    const updatedUsersList = eventUsersList?.map(user => ({
-      createdAt: user.createdAt,
-      gender: user.gender,
-      uid: user.uid,
-      name: user.name,
-      status: user.status,
-      superInvite: user.superInvite,
-      userPhoto: user.userPhoto,
-      isPresent: user.isPresent,
-    }));
 
     try {
+      const updatedUsersList = eventUsersList?.map(user => ({
+        createdAt: user?.createdAt || moment().format('YYYY-MM-DD HH:mm'),
+        gender: user.gender,
+        uid: user.uid,
+        name: user.name,
+        status: user.status,
+        superInvite: user.superInvite,
+        userPhoto: user.userPhoto,
+        isPresentMarkedByHost: user.isPresentMarkedByHost,
+      }));
+
       await firestore().collection(apiEventsCollection).doc(eventId).update({
         usersList: updatedUsersList,
         isMarkedAttendance: true,
@@ -120,7 +122,7 @@ const MarkAttendance = () => {
   };
 
   const renderUser = (user: MarkUser) => {
-    const isPresent = user?.isPresent;
+    const isPresentMarkedByHost = user?.isPresentMarkedByHost;
     const gender = user?.gender.charAt(0).toUpperCase() + user?.gender.slice(1);
     const age = user?.showAge && user?.date ? ` · ${calculateAge(user.date)} years old` : '';
 
@@ -129,7 +131,7 @@ const MarkAttendance = () => {
         style={{
           width: '100%',
           padding: 16,
-          backgroundColor: isPresent ? '#131313' : 'transparent',
+          backgroundColor: isPresentMarkedByHost ? '#131313' : 'transparent',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -157,7 +159,18 @@ const MarkAttendance = () => {
           </View>
         </View>
         <View>
-          <Checkbox checked={isPresent} onChange={() => handleChangePresentUser(user.uid)} />
+          <CheckBox
+            value={isPresentMarkedByHost}
+            onValueChange={() => handleChangePresentUser(user.uid)}
+            style={{
+              transform: [{scaleX: 0.75}, {scaleY: 0.75}],
+            }}
+            boxType="square"
+            tintColor={whiteColor}
+            onFillColor={whiteColor}
+            onTintColor={whiteColor}
+            onCheckColor={blackColor}
+          />
         </View>
       </View>
     );

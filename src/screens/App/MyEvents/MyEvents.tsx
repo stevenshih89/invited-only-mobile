@@ -31,9 +31,9 @@ import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import images
+import LoaderIcon from 'assets/images/icons/loader.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import AddIcon from 'assets/images/icons/add.svg';
-
 import Button from 'components/Button/Button';
 import {
   commonStackPath,
@@ -54,6 +54,8 @@ import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
 import ModalEventMarkAttendance from 'components/Modal/ModalEventMarkAttendance';
+import {Event, EventData} from 'src/types/event';
+import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 
 const MyEvents: FC<any> = ({navigation}) => {
@@ -69,6 +71,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [isVisibleMarkAttendance, setIsVisibleMarkAttendance] = useState(false);
   const [eventDataMarkAttendance, setEventDataMarkAttendance] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
   const countMyEvent = useRef(0);
 
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
@@ -90,8 +93,8 @@ const MyEvents: FC<any> = ({navigation}) => {
   });
   const [activeUserInfo, setActiveUserInfo] = useState<any>({});
 
-  const [myEventsData, setMyEventsData] = useState([]);
-  const [eventsJoiningData, setEventsJoiningData] = useState([]);
+  const [myEventsData, setMyEventsData] = useState<EventData[]>([]);
+  const [eventsJoiningData, setEventsJoiningData] = useState<EventData[]>([]);
   const [hoursUntilEvent, setHoursUntilEvent] = useState<number>();
   const [currentEvent, setCurrentEvent] = useState();
 
@@ -103,6 +106,31 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [hostInfo, setHostInfo] = useState<any>({});
 
   const {accountConfirmed} = useUserProfileChangeSubscription();
+
+  const rotationLoader = useSharedValue(0);
+
+  useEffect(() => {
+    if (loading) {
+      rotationLoader.value = withRepeat(
+        withTiming(360, {
+          duration: 2000,
+          easing: Easing.linear,
+        }),
+        -1,
+      );
+    }
+
+    return () => {
+      cancelAnimation(rotationLoader);
+    };
+  }, [rotationLoader, loading]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotate: `${rotationLoader.value}deg`}],
+    };
+  });
+
   useEffect(() => {
     if (userInfo && userInfo?.length) {
       return;
@@ -227,12 +255,12 @@ const MyEvents: FC<any> = ({navigation}) => {
     setIsVisibleMarkAttendance(false);
   };
 
-  const handleMarkAttendance = async (isPresent: boolean) => {
+  const handleMarkAttendance = async (isPresentMarkedByGuest: boolean) => {
     const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(eventDataMarkAttendance?.id).get();
     const eventDataList = eventQuerySnapshot.data();
-    const updatedUsersList = eventDataList?.usersList?.map(userItem => {
+    const updatedUsersList = eventDataList?.usersList?.map((userItem: Event.User) => {
       if (userItem.uid === user?.uid) {
-        return {...userItem, isPresent};
+        return {...userItem, isPresentMarkedByGuest};
       }
       return userItem;
     });
@@ -249,11 +277,12 @@ const MyEvents: FC<any> = ({navigation}) => {
         const currentDate = moment();
         const currentUserFromList = event?.usersList?.find(userItem => userItem.uid === user?.uid);
         if (
+          !event.isCancelled &&
           currentUserFromList &&
           (currentUserFromList?.status === ACCEPTED_STATUS ||
             currentUserFromList?.status === INVITE_MATCH_STATUS ||
             currentUserFromList?.status === APPROVED_STATUS) &&
-          !('isPresent' in currentUserFromList) &&
+          !('isPresentMarkedByGuest' in currentUserFromList) &&
           currentDate.isAfter(eventDate)
         ) {
           setIsVisibleMarkAttendance(true);
@@ -275,7 +304,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         const usersInvited = event?.usersList?.filter(
           user => user.status === INVITE_MATCH_STATUS || user.status === ACCEPTED_STATUS || user.status === APPROVED_STATUS,
         );
-        if (currentDate.isAfter(eventDate) && !event?.isMarkedAttendance && usersInvited.length) {
+        if (!event.isCancelled && currentDate.isAfter(eventDate) && !event?.isMarkedAttendance && usersInvited.length) {
           setIsVisibleMarkAttendance(true);
           setEventDataMarkAttendance(event);
           break;
@@ -457,6 +486,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       });
       setEventsJoiningData(filterData);
       setEventsImJoining(filterData);
+      setLoadingEvents(false);
     } catch (e) {
       // console.log('error events im joining', e);
       // showToast('cancel', 'Error!');
@@ -501,6 +531,7 @@ const MyEvents: FC<any> = ({navigation}) => {
               return 0;
             });
             setMyEventsData(sortedData);
+            setLoadingEvents(false);
           });
       }
 
@@ -842,6 +873,22 @@ const MyEvents: FC<any> = ({navigation}) => {
       </View>
     );
   };
+
+  if (loading || loadingEvents) {
+    return (
+      <View
+        style={{
+          backgroundColor: blackColor,
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Animated.View style={[animatedStyle]}>
+          <LoaderIcon />
+        </Animated.View>
+      </View>
+    );
+  }
 
   return (
     <>

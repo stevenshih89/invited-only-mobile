@@ -14,6 +14,7 @@ import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import icons
+import LoaderIcon from 'assets/images/icons/loader.svg';
 import FlashField from 'assets/images/icons/flash.svg';
 import ThreeDoths from 'assets/images/icons/more-white.svg';
 import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
@@ -37,6 +38,7 @@ import {chatsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
 import {EventData} from 'src/types/event';
 import Config from 'react-native-config';
+import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 
 type ItemProps = {
@@ -75,7 +77,7 @@ interface ChatProps {
   typeEvents?: boolean;
 }
 
-const Chat: FC<ChatProps> = ({typeEvents}) => {
+const Chat: FC<ChatProps> = () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
@@ -96,8 +98,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   const styles = useStyles();
   const navigation = useAppNavigation();
-
-  // const {activeEvent} = useContext(EventContext);
   const {activeEvent} = useMyEvents();
   const user = useUser((i: any) => i?.user);
 
@@ -111,6 +111,30 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
     setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
   }, [accountConfirmed]);
+
+  const rotationLoader = useSharedValue(0);
+
+  useEffect(() => {
+    if (loading) {
+      rotationLoader.value = withRepeat(
+        withTiming(360, {
+          duration: 2000,
+          easing: Easing.linear,
+        }),
+        -1,
+      );
+    }
+
+    return () => {
+      cancelAnimation(rotationLoader);
+    };
+  }, [rotationLoader, loading]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotate: `${rotationLoader.value}deg`}],
+    };
+  });
 
   const fetchUserInfo = async () => {
     setLoading(true);
@@ -506,6 +530,22 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     };
   }, [activeEvent?.id, loading, activeEventDate]);
 
+  if (loading) {
+    return (
+      <View
+        style={{
+          backgroundColor: blackColor,
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Animated.View style={[animatedStyle]}>
+          <LoaderIcon />
+        </Animated.View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {isHost && eventData?.uid && (
@@ -562,8 +602,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
       {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />}
       {changeAccountTypeModalVisible && !acceptModalVisible && <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />}
-      {!loading ? (
-        isHost ? (
+      {isHost ? (
           <View style={{flex: 1}}>
             <FlatList
               showsVerticalScrollIndicator={false}
@@ -637,8 +676,7 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
               keyExtractor={(item, index) => index.toString()}
             />
           </View>
-        )
-      ) : null}
+        )}
       {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton={false} />}
     </View>
   );

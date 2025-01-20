@@ -80,7 +80,6 @@ import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import moment from 'moment';
 import {Event, EventData} from 'src/types/event';
 import {useScrollPosition} from 'src/store/scrollPosition';
-import {getUsersForEvent} from 'src/api/user';
 import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
 import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
@@ -95,10 +94,11 @@ import {useDemoFlowStore} from '../../../store/demoFlowStore';
 import HintCard from 'components/HintCard';
 import {hostHintSteps} from 'constants/hints.ts';
 import ModalLimitedAccess from 'components/Modal/ModalLimitedAccess/ModalLimitedAccess';
+import CardsFakeState from 'components/CardsFakeState';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 
 const IO: FC = (): JSX.Element => {
-  const EVENTS_LOADING_LIMIT = 6;
+  const CARDS_LOADING_LIMIT = 6;
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const styles = useStyles();
@@ -124,6 +124,7 @@ const IO: FC = (): JSX.Element => {
   const [appState, setAppState] = useState(AppState.currentState);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [swipedCardsCount, setSwipedCardsCount] = useState(0);
+  const [isOpenModalLimitedAccess, setIsOpenModalLimitedAccess] = useState(false);
 
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
@@ -175,12 +176,6 @@ const IO: FC = (): JSX.Element => {
       transform: [{rotate: `${rotationLoader.value}deg`}],
     };
   });
-
-  useEffect(() => {
-    if (userHost?.accountConfirmed && userHost?.accountType === 'host' && !userHost?.accountPremium && !userHost?.isPassedDemo) {
-      navigation.navigate(demoFlowStackPath);
-    }
-  }, [userHost]);
 
   const handleSuperInvite = () => {
     if (counterSuperInvitesRef.current > 0 || counterWeeklySuperInvitesRef.current > 0) {
@@ -397,14 +392,6 @@ const IO: FC = (): JSX.Element => {
 
   const decrementSuperInvite = async (item: UserInfo, coinAnimationTimer = 0) => {
     try {
-      // if (counterSuperInvites > 0) {
-      // setTimeout(() => {
-      //   rotation.value = withTiming(0, {
-      //     duration: 100,
-      //     easing: Easing.inOut(Easing.ease),
-      //   });
-      //   setFlipped(prev => !prev);
-      // }, 500);
       if (userInfo?.accountType === 'host') {
         setTimeout(() => {
           setIsVisibleSuperInvite(true);
@@ -449,6 +436,34 @@ const IO: FC = (): JSX.Element => {
 
   const handleCloseMatch = (): void => {
     setIsVisibleMatch(false);
+  };
+
+  const handleDemoSwipeCardRight = ({uid, withSwipeAnimation}: {uid: string; withSwipeAnimation: boolean}) => {
+    setTimeout(() => {
+      setSwipedCardsCount(prev => prev + 1);
+      setEvents(prev =>
+        prev.filter(i => {
+          return i?.info?.uid !== uid;
+        }),
+      );
+    }, 500);
+    if (withSwipeAnimation) {
+      handleSwipeCardRight();
+    }
+  };
+
+  const handleDemoSwipeCardLeft = ({uid, withSwipeAnimation}: {uid: string; withSwipeAnimation: boolean}) => {
+    setTimeout(() => {
+      setSwipedCardsCount(prev => prev + 1);
+      setEvents(prev =>
+        prev.filter(i => {
+          return i?.info?.uid !== uid;
+        }),
+      );
+    }, 500);
+    if (withSwipeAnimation) {
+      handleSwipeCardLeft();
+    }
   };
 
   useEffect(() => {
@@ -571,12 +586,6 @@ const IO: FC = (): JSX.Element => {
   };
 
   const onReject = async (uid: string, eventId: string) => {
-    if (isDemo) {
-      setTimeout(() => {
-        setSwipedCardsCount(prev => prev + 1);
-      }, 500);
-      return;
-    }
     const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
     const rejectUid = isHost ? uid : userInfo?.uid;
@@ -647,12 +656,6 @@ const IO: FC = (): JSX.Element => {
   };
 
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
-    if (isDemo) {
-      setTimeout(() => {
-        setSwipedCardsCount(prev => prev + 1);
-      }, 500);
-      return;
-    }
     try {
       const guest = await firestore().collection(apiUserInfoCollection).doc(forUserUid).get();
       const guestData = guest.data() as UserInfo;
@@ -928,7 +931,6 @@ const IO: FC = (): JSX.Element => {
         return {...element, userPhotos: userData?.photos, hostInfo: userData};
       }
     });
-
     return Promise.all(promises);
   }
 
@@ -979,7 +981,7 @@ const IO: FC = (): JSX.Element => {
 
       const genderFilter = getGenderFilter();
       const eventsQuery = await getEvents({
-        limit: EVENTS_LOADING_LIMIT,
+        limit: CARDS_LOADING_LIMIT,
         lastVisible: lastVisibleRef.current,
         excludeUids: uniqueBlockedUsers,
         genderFilter,
@@ -996,7 +998,7 @@ const IO: FC = (): JSX.Element => {
         lastVisibleRef.current = eventsQuery.docs[eventsQuery.docs.length - 1];
       }
 
-      if (eventsQuery.docs.length < EVENTS_LOADING_LIMIT) {
+      if (eventsQuery.docs.length < CARDS_LOADING_LIMIT) {
         endReachedRef.current = true;
       }
 
@@ -1049,7 +1051,6 @@ const IO: FC = (): JSX.Element => {
         date: userEventDate,
         accountConfirmed: userEventAccountConfirmed,
       } = await getUserData(event?.uid);
-
       data.push({
         component: (
           <View style={styles.wrapperFakeCard}>
@@ -1479,8 +1480,6 @@ const IO: FC = (): JSX.Element => {
   const getCardsListForHost = async (refresh?: boolean) => {
     const user = auth().currentUser;
 
-    console.warn('refresh', refresh);
-
     if (!user?.uid || !activeEvent?.id || !userInfo?.uid) {
       return;
     }
@@ -1495,40 +1494,47 @@ const IO: FC = (): JSX.Element => {
     try {
       let listOfUsers = [];
 
+      const isDevEvents = apiEventsCollection === 'devEvents';
+
       if (isDemo) {
-        const demoUsersUidsList = [
-          // 'ztlc8qmO09dM9sWXGja8EVHWLIr2',
-          // '5E7tfk5edaQ9blfBUr6C0w4aBZT2',
-          // 'Bku02o6thxSqNQWqyjowog4600y1',
-          // 'VKXvBdFky3amCw26vxwNkflKQeO2',
-          // 'KdKWeJQ0PSQDlPmmY8C5nJg3QRx1',
-          // 'xQOx2tzTzTVx0fjXqgzCFKyP3IY2',
-          // 'SjZXcwnVpjUvBDLiHOwP10ZbFvv1',
-          // 'x4cIov0QQqQIeJDVpeO7n5GGhnz2',
-          // 'PA4DDwLdH4a70zNNACS0pe8SbTC2',
-          // 'CCfqT1CeRUPkxCyQQxn8FYHXh3w2',
-          // 'jVj6cOgnZRfi3MkkXLRg0ePsNr93',
-          // 'jxqkE8xzKoaMCfC3rqI4HxII9Xj1',
-          // 'iYB5oM8705RyJoo5qFhfa10ZS1K3',
-          // 'JgpDnDZAM0OsKJVb5yz2eoAMJB03',
-          // '9i7JMq9kQBTKW5jsrTd6RPd9Ie83',
-          '5E45SWY8PPh6XG6TKosh7KoNGS23',
-          'IVIt8krtaqPNgSWR3c2SqYVxNYG2',
-          'IkgSk9EM2RdazTmblfLLj0Idtw83',
-          'KZ4K7Ptm5ORvDKcOHbTjY9k4n872',
-          'bjKkDs5nmgbN8Q4ArsFskwmJo5h2',
-          'gMp0lX0rPcfFe6vkV9EhfTu5OU93',
-          'pA2tVx2vSuPcp8Dl3wxliVtfYcx2',
-        ];
+        const demoUsersUidsList = isDevEvents
+          ? [
+              '5E45SWY8PPh6XG6TKosh7KoNGS23',
+              'IVIt8krtaqPNgSWR3c2SqYVxNYG2',
+              'gkzR767ZUpa2stWJUzw6I8rcGea2',
+              'KZ4K7Ptm5ORvDKcOHbTjY9k4n872',
+              'bjKkDs5nmgbN8Q4ArsFskwmJo5h2',
+              'gMp0lX0rPcfFe6vkV9EhfTu5OU93',
+              'qONEe70GvYepjeSgzeAtLqfzNIo1',
+            ]
+          : [
+              'ztlc8qmO09dM9sWXGja8EVHWLIr2',
+              '5E7tfk5edaQ9blfBUr6C0w4aBZT2',
+              'Bku02o6thxSqNQWqyjowog4600y1',
+              'VKXvBdFky3amCw26vxwNkflKQeO2',
+              'KdKWeJQ0PSQDlPmmY8C5nJg3QRx1',
+              'xQOx2tzTzTVx0fjXqgzCFKyP3IY2',
+              'SjZXcwnVpjUvBDLiHOwP10ZbFvv1',
+              'x4cIov0QQqQIeJDVpeO7n5GGhnz2',
+              'PA4DDwLdH4a70zNNACS0pe8SbTC2',
+              'CCfqT1CeRUPkxCyQQxn8FYHXh3w2',
+              'jVj6cOgnZRfi3MkkXLRg0ePsNr93',
+              'jxqkE8xzKoaMCfC3rqI4HxII9Xj1',
+              'iYB5oM8705RyJoo5qFhfa10ZS1K3',
+              'JgpDnDZAM0OsKJVb5yz2eoAMJB03',
+              '9i7JMq9kQBTKW5jsrTd6RPd9Ie83',
+            ];
 
         for (const uid of demoUsersUidsList) {
-          const user = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-          if (user.exists) {
-            listOfUsers.push(user);
+          const userQuery = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+          if (userQuery.exists) {
+            const data = userQuery.data() as UserInfo;
+            listOfUsers.push(data);
           }
         }
       }
       const eventQuery = await firestore().collection(apiEventsCollection).doc(activeEvent.id).get();
+
       if (!eventQuery.exists && !isDemo) {
         setLoadingCardsList(false);
         setEvents([]);
@@ -1546,47 +1552,47 @@ const IO: FC = (): JSX.Element => {
       const uniqueRejectsList = getActualDataEvent?.rejectsList?.map((j: Event.RejectUser) => j?.uid) || [];
       const uniqueUsersListIds = getActualDataEvent?.usersList?.map((j: Event.User) => j?.uid) || [];
 
-      const allUniqueIds =
-        //  isDemo
-        // ? demoUsersUidsList
-        // :
-        [...new Set([...blockedUsersList, ...blockedMeUsersList, ...uniqueRejectsList, ...uniqueUsersListIds, userInfo?.uid])];
+      const allUniqueIds = [
+        ...new Set([...blockedUsersList, ...blockedMeUsersList, ...uniqueRejectsList, ...uniqueUsersListIds, userInfo?.uid]),
+      ];
 
-      users = await getUsersForEvent({
-        excludeUids: [userInfo?.uid],
-        male: activeEvent?.male,
-        female: activeEvent?.female,
-        limit: EVENTS_LOADING_LIMIT,
-        lastVisible: lastVisibleRef.current,
-      });
-
-      if (isDemo) {
-        users = {docs: listOfUsers};
+      let listOfUsersResponse: any;
+      if (!isDemo && userInfo?.accountPremium) {
+        listOfUsersResponse = await functions().httpsCallable('getUsersForEvent')({
+          excludeUids: allUniqueIds,
+          male: activeEvent?.male,
+          female: activeEvent?.female,
+          limit: CARDS_LOADING_LIMIT,
+          lastDoc: lastVisibleRef.current ? JSON.stringify(lastVisibleRef.current) : null,
+          collectionName: apiUserInfoCollection,
+        });
       }
 
-      console.warn('users', users?.empty);
+      const lastDoc = listOfUsersResponse?.data?.lastDoc ? JSON.parse(listOfUsersResponse.data.lastDoc) : null;
 
-      if (!users || !('docs' in users) || users?.empty) {
+      if (isDemo) {
+        users = listOfUsers;
+      } else {
+        users = listOfUsersResponse?.data?.users as UserInfo[];
+      }
+
+      if (!users || !Array.isArray(users)) {
         setLoadingCardsList(false);
-        // setEvents([]);
         endReachedRef.current = true;
         return;
       }
 
-      if (users?.docs?.length > 0) {
-        lastVisibleRef.current = users.docs[users.docs.length - 1];
+      if (users?.length > 0) {
+        lastVisibleRef.current = lastDoc;
       }
 
-      if (users.docs.length < EVENTS_LOADING_LIMIT) {
+      if (users?.length < CARDS_LOADING_LIMIT) {
         endReachedRef.current = true;
       }
 
       const data: any[] = [];
-      const usersList = users?.docs.map(doc => doc.data());
 
-      const filteredUsersList = usersList?.filter((item: UserInfo) => !allUniqueIds.includes(item.uid));
-
-      filteredUsersList?.map((item: UserInfo, index: number): void => {
+      users?.map((item: UserInfo, index: number): void => {
         const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} = item;
 
         const findSuperJoin = getActualDataEvent?.requestsList?.find((i: Event.User) => {
@@ -1615,16 +1621,25 @@ const IO: FC = (): JSX.Element => {
                 isShowInvitesTooltip={false}
                 isLocked={!userInfo?.accountConfirmed}
                 confirmedAccount={accountConfirmed}
-                onReject={() => handleReject({uid, id: item?.id, withSwipeAnimation: true})}
-                onInvite={() => handleInvite({uid, id: item?.id, withSwipeAnimation: true})}
-                handleOpenSuperInvite={() => handleOpenSuperInvite(item, uid)}
+                onReject={() =>
+                  isDemo
+                    ? handleDemoSwipeCardLeft({uid, withSwipeAnimation: true})
+                    : handleReject({uid, id: item?.id, withSwipeAnimation: true})
+                }
+                onInvite={() =>
+                  isDemo
+                    ? handleDemoSwipeCardRight({uid, withSwipeAnimation: true})
+                    : handleInvite({uid, id: item?.id, withSwipeAnimation: true})
+                }
+                handleOpenSuperInvite={() =>
+                  isDemo ? handleDemoSwipeCardRight({uid, withSwipeAnimation: true}) : handleOpenSuperInvite(item, uid)
+                }
                 photos={girlPhotos}
                 accountType={accountType}
-                isShowWantsJoin={findSuperJoin}
+                isShowWantsJoin={!!findSuperJoin}
                 isPremium={accountPremium}
                 activeEvent={activeEvent}
                 location={item.location}
-                placeName={item.placeName}
                 joinEvents={item.joinEvents}
                 online={item.online}
                 date={item.date}
@@ -1709,22 +1724,24 @@ const IO: FC = (): JSX.Element => {
                     </View>
                   </View>
                 )}
-                <View
-                  style={{
-                    borderTopWidth: 1,
-                    borderStyle: 'solid',
-                    borderTopColor: transparentWhite16Color,
-                    paddingTop: screenHeight / 34,
-                    marginTop: 10,
-                    marginBottom: screenHeight / 40,
-                  }}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      handleReport(uid, activeEvent);
+                {!isDemo && (
+                  <View
+                    style={{
+                      borderTopWidth: 1,
+                      borderStyle: 'solid',
+                      borderTopColor: transparentWhite16Color,
+                      paddingTop: screenHeight / 34,
+                      marginTop: 10,
+                      marginBottom: screenHeight / 40,
                     }}>
-                    <Text style={styles.textHideNadSendReport}>Block and Report</Text>
-                  </TouchableOpacity>
-                </View>
+                    <TouchableOpacity
+                      onPress={() => {
+                        handleReport(uid, activeEvent);
+                      }}>
+                      <Text style={styles.textHideNadSendReport}>Block and Report</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
                 <View style={styles.wrapperImageSectionFaceGirl}>
                   {girlPhotos?.map((photo: string, photoIndex: number) => (
                     <FastImage key={photoIndex} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
@@ -1732,7 +1749,11 @@ const IO: FC = (): JSX.Element => {
                 </View>
                 <View style={styles.wrapperButtonsFooter}>
                   <TouchableOpacity
-                    onPress={() => handleReject({uid, id: item?.id, withSwipeAnimation: true})}
+                    onPress={() =>
+                      isDemo
+                        ? handleDemoSwipeCardLeft({uid, withSwipeAnimation: true})
+                        : handleReject({uid, id: item?.id, withSwipeAnimation: true})
+                    }
                     style={styles.buttonCloseOrCheck}>
                     <View
                       style={{
@@ -1769,7 +1790,10 @@ const IO: FC = (): JSX.Element => {
                       <CloseIcon />
                     </View>
                   </TouchableOpacity>
-                  <TouchableWithoutFeedback onPress={() => handleSuperInviteBottom(item, 400)}>
+                  <TouchableWithoutFeedback
+                    onPress={() =>
+                      isDemo ? handleDemoSwipeCardLeft({uid, withSwipeAnimation: true}) : handleSuperInviteBottom(item, 400)
+                    }>
                     <View style={styles.buttonFlash}>
                       <View
                         style={{
@@ -1836,7 +1860,11 @@ const IO: FC = (): JSX.Element => {
                     </View>
                   </TouchableWithoutFeedback>
                   <TouchableOpacity
-                    onPress={() => handleInvite({uid: item?.uid, id: item?.id, withSwipeAnimation: true})}
+                    onPress={() =>
+                      isDemo
+                        ? handleDemoSwipeCardRight({uid, withSwipeAnimation: true})
+                        : handleInvite({uid: item?.uid, id: item?.id, withSwipeAnimation: true})
+                    }
                     style={styles.buttonCloseOrCheck}>
                     <View
                       style={{
@@ -1874,9 +1902,11 @@ const IO: FC = (): JSX.Element => {
                     </View>
                   </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={() => handleReport(uid, activeEvent)}>
-                  <Text style={styles.textHideNadSendReport}>Block and Report</Text>
-                </TouchableOpacity>
+                {!isDemo && (
+                  <TouchableOpacity onPress={() => handleReport(uid, activeEvent)}>
+                    <Text style={styles.textHideNadSendReport}>Block and Report</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           ),
@@ -1887,7 +1917,8 @@ const IO: FC = (): JSX.Element => {
       eventsRef.current = data;
       setEvents(prevEvents => {
         if (refresh) {
-          const updatedEvents = [...prevEvents.reverse(), ...data].reverse();
+          const filteredData = data.filter(event => !prevEvents.some(prevEvent => prevEvent.info.uid === event.info.uid));
+          const updatedEvents = [...filteredData, ...[...prevEvents].reverse()].reverse();
           eventsRef.current = updatedEvents;
           return updatedEvents;
         } else {
@@ -1972,6 +2003,10 @@ const IO: FC = (): JSX.Element => {
     setIsVisibleSwipeGuide(true);
   };
 
+  const handleSwipeFakeCard = () => {
+    setIsOpenModalLimitedAccess(true);
+  };
+
   useEffect(() => {
     if (isHost && activeEvent?.id) {
       lastVisibleRef.current = null;
@@ -2037,11 +2072,82 @@ const IO: FC = (): JSX.Element => {
     }, [userInfo?.uid]),
   );
 
-  if (userInfo?.uid && isDemo && !userInfo?.accountPremium && swipedCardsCount >= 7) {
+  const cardsList = isHost ? [...events].reverse() : events;
+
+  if (userInfo?.uid && isDemo && isHost && hintStep === 7) {
     return (
-      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
-        <ModalLimitedAccess />
-      </SafeAreaView>
+      <>
+        <View style={styles.overlayContainer} />
+        <View style={styles.stepHintContainer}>
+          <HintCard
+            currentStep={hintStep}
+            description={hostHintSteps[hintStep - 1]?.description}
+            onSkipAction={handleSkipHints}
+            onStepChange={setHintStep}
+            onNextAction={() => {
+              setIsVisibleSwipeGuide(true);
+            }}
+            totalSteps={hostHintSteps.length}
+            title={hostHintSteps[hintStep - 1]?.title}
+            directionHorizontal={'center'}
+          />
+        </View>
+        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+        )}
+      </>
+    );
+  }
+
+  if (userInfo?.uid && isDemo && isHost && !userInfo?.accountPremium) {
+    return (
+      <>
+        {loadingCardsList ? (
+          <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        ) : (
+          <SafeAreaView style={styles.safeAreaView}>
+            <View style={styles.container}>
+              {cardsList?.map((item, index) => {
+                return (
+                  <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
+                    <TinderCard
+                      ref={cardRef}
+                      // @ts-ignore
+                      cardWidth="100%"
+                      // @ts-ignore
+                      cardHeight="100%"
+                      onSwipedLeft={() =>
+                        isDemo
+                          ? handleDemoSwipeCardLeft({uid: item?.info?.uid, withSwipeAnimation: false})
+                          : handleReject({uid: item?.info?.uid, id: item?.info?.id, withSwipeAnimation: false})
+                      }
+                      onSwipedRight={() =>
+                        isDemo
+                          ? handleDemoSwipeCardRight({uid: item?.info?.uid, withSwipeAnimation: false})
+                          : handleInvite({uid: item?.info?.uid, id: item?.info?.id, withSwipeAnimation: false})
+                      }
+                      OverlayLabelRight={OverlayRight}
+                      OverlayLabelLeft={OverlayLeft}
+                      disableBottomSwipe={true}
+                      disableTopSwipe={true}
+                      cardStyle={styles.card}>
+                      <ScrollView
+                        onScroll={handleScroll}
+                        scrollEventThrottle={20}
+                        showsVerticalScrollIndicator={false}
+                        style={{borderRadius: 22, height: screenHeight - 250}}>
+                        {item.component}
+                      </ScrollView>
+                    </TinderCard>
+                  </View>
+                );
+              })}
+            </View>
+          </SafeAreaView>
+        )}
+        {swipedCardsCount >= (apiEventsCollection === 'devEvents' ? 5 : 12) && <ModalLimitedAccess />}
+      </>
     );
   }
 
@@ -2090,28 +2196,28 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (isDemo && hintStep === 7) {
+  if (userInfo?.uid && isHost && !userInfo?.accountReviewed && !userInfo?.accountConfirmed) {
     return (
       <>
-        <View style={styles.overlayContainer} />
-        <View style={styles.stepHintContainer}>
-          <HintCard
-            currentStep={hintStep}
-            description={hostHintSteps[hintStep - 1]?.description}
-            onSkipAction={handleSkipHints}
-            onStepChange={setHintStep}
-            onNextAction={() => {
-              setIsVisibleSwipeGuide(true);
-            }}
-            totalSteps={hostHintSteps.length}
-            title={hostHintSteps[hintStep - 1]?.title}
-            directionHorizontal={'center'}
-          />
-        </View>
-        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
-        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
-          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
-        )}
+        <SafeAreaView style={styles.safeAreaView}>
+          <View style={styles.container}>
+            <CardsFakeState handleSwipeFakeCard={handleSwipeFakeCard} OverlayRight={OverlayRight} OverlayLeft={OverlayLeft} />
+          </View>
+        </SafeAreaView>
+        <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+      </>
+    );
+  }
+
+  if (userInfo?.uid && isHost && userInfo?.accountReviewed && userInfo?.accountConfirmed && !userInfo?.accountPremium) {
+    return (
+      <>
+        <SafeAreaView style={styles.safeAreaView}>
+          <View style={styles.container}>
+            <CardsFakeState handleSwipeFakeCard={handleSwipeFakeCard} OverlayRight={OverlayRight} OverlayLeft={OverlayLeft} />
+          </View>
+        </SafeAreaView>
+        {isOpenModalLimitedAccess && <ModalLimitedAccess showNotNow={false} showCloseIcon={false} />}
       </>
     );
   }
@@ -2256,8 +2362,7 @@ const IO: FC = (): JSX.Element => {
           />
         )}
         <View style={styles.container}>
-          {/* {isVisibleSwipeGuide && !userInfo?.isPassedDemo && hintStep !== 7 && <SwipeHints />} */}
-          {events?.map((item, index) => {
+          {cardsList?.map((item, index) => {
             return (
               <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
                 <TinderCard
@@ -2284,43 +2389,6 @@ const IO: FC = (): JSX.Element => {
               </View>
             );
           })}
-
-          {/*<View style={styles.cardContainer} pointerEvents="box-none">*/}
-          {/*  <TinderCard*/}
-          {/*    ref={cardRef}*/}
-          {/*    // @ts-ignore*/}
-          {/*    cardWidth="100%"*/}
-          {/*    // @ts-ignore*/}
-          {/*    cardHeight="100%"*/}
-          {/*    onSwipedLeft={() => handleReject({uid: item?.info?.uid, id: item?.info?.id, withSwipeAnimation: false})}*/}
-          {/*    onSwipedRight={() =>*/}
-          {/*      handleInvite({*/}
-          {/*        uid: item?.info?.uid,*/}
-          {/*        id: item?.info?.id,*/}
-          {/*        withSwipeAnimation: false,*/}
-          {/*      })*/}
-          {/*    }*/}
-          {/*    OverlayLabelRight={OverlayRight}*/}
-          {/*    OverlayLabelLeft={OverlayLeft}*/}
-          {/*    disableBottomSwipe={true}*/}
-          {/*    disableTopSwipe={true}*/}
-          {/*    cardStyle={styles.card}>*/}
-          {/*    <ScrollView*/}
-          {/*      onScroll={handleScroll}*/}
-          {/*      scrollEventThrottle={20}*/}
-          {/*      showsVerticalScrollIndicator={false}*/}
-          {/*      style={{borderRadius: 22, height: screenHeight - 250}}>*/}
-          {/*      <DemoGuestCard*/}
-          {/*        userInfo={*/}
-          {/*          {*/}
-          {/*            name: 'asd',*/}
-          {/*          } as UserInfo*/}
-          {/*        }*/}
-          {/*      />*/}
-          {/*    </ScrollView>*/}
-          {/*  </TinderCard>*/}
-          {/*</View>*/}
-
           <ModalFullEvent
             isVisible={isVisibleModalFullEvent}
             idEvent={activeEvent?.id}

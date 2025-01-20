@@ -46,7 +46,7 @@ export interface Photo {
 }
 
 interface TouchingSliderProps {
-  photos: Photo[];
+  photos: string[];
   handleOpenSuperInvite?: () => void;
   onInvite?: () => void;
   onReject?: () => void;
@@ -69,12 +69,12 @@ interface TouchingSliderProps {
   confirmedAccount?: boolean;
   confirmedEvent?: boolean;
   accountType?: string;
-  isPremium?: string;
+  isPremium?: boolean;
   fromJoinEventsScreen?: boolean;
   isProfile?: boolean;
   userInfo?: any;
   activeEvent?: any;
-  location?: string;
+  location?: string | null;
   joinEvents?: number;
   online?: boolean;
   uidUserEvent?: string;
@@ -529,7 +529,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   fontSize: RFValue(14, 812),
                   fontFamily: Satoshi500,
                 }}>
-                Guest Invitation : {male ?? 0 + female ?? 0}
+                Guest Invitation: {male || 0 + female || 0}
               </Text>
             </View>
             {usersListLength > 0 && (

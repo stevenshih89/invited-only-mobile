@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {lightGray2Color, transparent60Color, whiteColor, backgroundColor} from 'constants/colors.ts';
+import {lightGray2Color, transparent60Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common.ts';
@@ -10,7 +10,7 @@ const useStyles = () =>
       borderRadius: 30,
       marginBottom: screenHeight / 50,
       marginTop: 26,
-      backgroundColor: whiteColor
+      backgroundColor: whiteColor,
     },
     imageBackground: {
       height: screenHeight * 0.22,

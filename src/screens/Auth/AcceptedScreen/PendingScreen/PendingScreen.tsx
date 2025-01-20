@@ -5,17 +5,17 @@ import {SafeAreaView, View, Text, Image} from 'react-native';
 import useStyles from 'screens/Auth/AcceptedScreen/ReusableStyles/styles.ts';
 import Button from 'components/Button/Button.tsx';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {paymentPath, tutorialFlowPath} from 'constants/pathLocations.ts';
+import {tutorialFlowPath} from 'constants/pathLocations.ts';
 
 //import images
 import TimerIcon from 'assets/images/icons/timer.svg';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import {backgroundGradientColors, black1Color, blackColor, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, blackColor, whiteColor} from 'constants/colors';
 import {AuthContext} from 'contexts/AuthContext';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
-import {screenHeight, screenWidth} from 'constants/common';
+import {screenHeight} from 'constants/common';
 
 const PendingScreen: FC = (): JSX.Element => {
   const styles = useStyles();
@@ -24,12 +24,6 @@ const PendingScreen: FC = (): JSX.Element => {
   const {onBoarding} = useContext(AuthContext);
 
   const handleNext = () => {
-    const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
-    const isHost = accountType.toLowerCase() === 'host';
-    // if (isHost) {
-    //   // @ts-ignore
-    //   return navigation.navigate(paymentPath as never, {screen: 'pending'});
-    // }
     navigation.navigate(tutorialFlowPath as never);
   };
   const flattenedPhotos = onBoarding.filter((item: {photos: []}) => item.photos)[0]?.photos;

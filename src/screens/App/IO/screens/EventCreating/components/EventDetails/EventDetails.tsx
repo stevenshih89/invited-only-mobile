@@ -4,7 +4,6 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ImagePickerResponse, launchImageLibrary} from 'react-native-image-picker';
 import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
-import firestore from '@react-native-firebase/firestore';
 import DatePicker from 'react-native-date-picker';
 
 //import components
@@ -97,7 +96,6 @@ interface EventDetailsProps {
 
 const EventDetails: FC<EventDetailsProps> = ({
   isEditing,
-  setIsVisibleSaveModal,
   setCurrentCreateStap,
   setTabState,
   setMainImage,
@@ -112,9 +110,6 @@ const EventDetails: FC<EventDetailsProps> = ({
   prevMeetingSpot,
   female,
   male,
-  femaleFriend,
-  maleFriend,
-  id,
   photos,
   setImages,
   activeType,
@@ -138,12 +133,10 @@ const EventDetails: FC<EventDetailsProps> = ({
   meetingSpot,
   setMeetingSpot,
   loading,
-  setLoading,
   open,
   setOpen,
   openHour,
   setOpenHour,
-  userHost,
 }): ReactElement => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const [modalAddPhotoVisible, setModalAddPhotoVisible] = useState(false);
@@ -341,52 +334,6 @@ const EventDetails: FC<EventDetailsProps> = ({
     setImages(newPhotos);
   };
 
-  const updatePhotosImage = async (userId: string | null, imageUrl: string) => {
-    try {
-      await firestore().collection(apiEventsCollection).doc(userId).update({
-        photos: imageUrl,
-      });
-      // console.log('Events image updated successfully.');
-    } catch (e) {
-      // console.error('Error updating events image: ', e);
-    }
-  };
-
-  const compareArrays = (arr1, arr2) => {
-    if (arr1.length !== arr2.length) {
-      return false;
-    }
-
-    for (let i = 0; i < arr1.length; i++) {
-      for (let key in arr1[i]) {
-        if (arr1[i][key] !== arr2[i][key]) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  };
-  const handleSaveChanges = async () => {
-    try {
-      // console.log('photos', photos);
-      // console.log('compareArrays', compareArrays(photos, photos));
-
-      await firestore().collection(apiEventsCollection).doc(id).update({
-        eventTypes,
-        placeName,
-        name,
-        description,
-        date,
-        hour,
-        address,
-        meetingSpot,
-      });
-    } catch (e) {
-      // console.log(e);
-    }
-  };
-
   const handleScroll = () => {
     Keyboard.dismiss();
   };
@@ -443,7 +390,6 @@ const EventDetails: FC<EventDetailsProps> = ({
         contentContainerStyle={styles.scrollContainerContent}
         style={styles.scrollView}
         enableResetScrollToCoords={false}
-        // onMomentumScrollBegin={handleScroll}
         enableAutomaticScroll={true}
         keyboardDismissMode="on-drag">
         {isDemo && <View style={styles.overlayContainer} />}
@@ -502,7 +448,6 @@ const EventDetails: FC<EventDetailsProps> = ({
             </View>
           )}
         </View>
-        {/* <View style={styles.eventPlaceWr}> */}
         <View style={{backgroundColor: black3Color, borderRadius: 20, padding: 20, marginBottom: 24, zIndex: -1}}>
           <Input
             required
@@ -527,11 +472,9 @@ const EventDetails: FC<EventDetailsProps> = ({
             placeholder="Enter adress"
             placeholderTextColor={addressEmpty ? errorColor : transparentWhite30Color}
             label="Address"
-            // InputIcon={Location}
             labelStyle={styles.inputLabel}
             onBlur={handleScroll}
           />
-          {/* <Text>Incorrect address</Text> */}
         </View>
 
         <View
@@ -658,7 +601,6 @@ const EventDetails: FC<EventDetailsProps> = ({
             </View>
           </View>
         </View>
-        {/* </View> */}
         <View
           style={{
             ...styles.eventDetailsWr,
@@ -680,36 +622,42 @@ const EventDetails: FC<EventDetailsProps> = ({
               />
             </View>
           )}
-          <Text style={styles.eventDetailsTitle}>Event details</Text>
+          <Text style={[styles.eventDetailsTitle, {opacity: isDemo ? 0.5 : 1}]}>Event details</Text>
           <Input
             required={false}
             isError={false}
             errorText={''}
-            containerInnerStyle={{borderColor: '', borderWidth: 0}}
+            editable={!isDemo}
+            containerInnerStyle={{borderColor: '', borderWidth: 0, opacity: isDemo ? 0.5 : 1}}
             placeholderTextColor={transparentWhite30Color}
             value={name}
             onChange={val => setName(val)}
             placeholder="Enter event name (Or just the place name)"
             label="Event name"
-            labelStyle={styles.inputLabel}
+            labelStyle={[styles.inputLabel, {opacity: isDemo ? 0.5 : 1}]}
             onBlur={handleScroll}
           />
           <Input
             value={description}
             onChange={val => setDescription(val)}
             placeholder="Enter description"
+            containerInnerStyle={{opacity: isDemo ? 0.5 : 1}}
+            editable={!isDemo}
             label="Description"
-            labelStyle={styles.inputLabel}
+            labelStyle={[styles.inputLabel, {opacity: isDemo ? 0.5 : 1}]}
             onBlur={handleScroll}
           />
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <View style={{flexDirection: 'column', flex: 1, marginRight: 10}}>
-              <Text style={styles.maskInputLabel}>
+              <Text style={[styles.maskInputLabel, {opacity: isDemo ? 0.5 : 1}]}>
                 Date <Text style={{color: errorColor}}>*</Text>
               </Text>
-              <View style={{marginBottom: 26}}>
+              <View style={{marginBottom: 26, opacity: isDemo ? 0.5 : 1}}>
                 <TouchableOpacity
-                  onPress={() => setOpen(true)}
+                  onPress={() => {
+                    !isDemo && setOpen(true);
+                  }}
+                  disabled={isDemo}
                   style={[
                     styles.maskInputWr,
                     {
@@ -750,12 +698,15 @@ const EventDetails: FC<EventDetailsProps> = ({
               </View>
             </View>
             <View style={{flexDirection: 'column', flex: 1}}>
-              <Text style={styles.maskInputLabel}>
+              <Text style={[styles.maskInputLabel, {opacity: isDemo ? 0.5 : 1}]}>
                 Hour <Text style={{color: errorColor}}>*</Text>
               </Text>
-              <View>
+              <View style={{opacity: isDemo ? 0.5 : 1}}>
                 <TouchableOpacity
-                  onPress={() => setOpenHour(true)}
+                  onPress={() => {
+                    !isDemo && setOpenHour(true);
+                  }}
+                  disabled={isDemo}
                   style={[
                     styles.maskInputWr,
                     {
@@ -800,8 +751,10 @@ const EventDetails: FC<EventDetailsProps> = ({
             value={meetingSpot}
             onChange={val => setMeetingSpot(val)}
             placeholder="Enter meeting spot"
-            labelStyle={styles.inputLabel}
+            labelStyle={[styles.inputLabel, {opacity: isDemo ? 0.5 : 1}]}
             label="Meeting spot"
+            editable={!isDemo}
+            containerInnerStyle={{opacity: isDemo ? 0.5 : 1}}
             onBlur={handleScroll}
           />
         </View>

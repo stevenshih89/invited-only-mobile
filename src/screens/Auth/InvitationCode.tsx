@@ -1,16 +1,6 @@
 import {isIos} from 'constants/common';
 import {FC, useContext, useEffect, useState} from 'react';
-import {
-  AppState,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import {AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
@@ -23,7 +13,6 @@ import {backgroundGradientColors, errorColor, transparentWhite30Color, whiteColo
 import {Outfit500, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import {ScrollView} from 'react-native-gesture-handler';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -48,26 +37,6 @@ const InvitationCode: FC = (): JSX.Element => {
   const {cameFromSummary = false} = route.params || {};
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
-
-  const uploadImage = async (imagePath: string, userId: string | null) => {
-    if (imagePath) {
-      if (imagePath.includes('https://')) {
-        return imagePath;
-      } else {
-        const uploadUri = Platform.OS === 'ios' ? imagePath : `file://${imagePath}`;
-        const filename = `${userId}_${new Date().getTime()}`;
-        const storageRef = storage().ref(`images/${filename}`);
-        try {
-          await storageRef.putFile(uploadUri);
-          const url = await storageRef.getDownloadURL();
-          return url;
-        } catch (e) {
-          console.error('Error uploading image:', e);
-          return null;
-        }
-      }
-    }
-  };
 
   useEffect(() => {
     let subscription: any;

@@ -18,7 +18,7 @@ import {
   paymentPath,
   settingsPath,
 } from 'constants/pathLocations';
-import {lightGray5Color, orangeColor, transparent60Color, whiteColor} from 'constants/colors.ts';
+import {lightGray5Color, orangeColor, whiteColor} from 'constants/colors.ts';
 import {screenHeight, THIS_WEEK, ALL, THIS_MONTH, ACCEPTED_STATUS} from 'constants/common.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
@@ -224,6 +224,8 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
     }
   }, [isDemo, hintStep]);
 
+  console.warn('Header_event', userInfo?.accountType);
+
   const DATAEventsJoining = [
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -324,7 +326,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
           <>
             {isHost ? (
               <ScrollView horizontal scrollEnabled={!!myEvents?.length} contentContainerStyle={{marginVertical: screenHeight / 50}}>
-                <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
+                <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent} disabled={isDemo}>
                   <View style={styles.eventView}>
                     <AddIcon width={26} height={26} />
                   </View>
@@ -682,7 +684,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
           </View>
         </View>
       )}
-      {handleCheckType(headerType)}
+      {userInfo?.uid && handleCheckType(headerType)}
     </View>
   );
 };

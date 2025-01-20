@@ -29,6 +29,8 @@ export interface InputProps {
   InputIcon?: any;
   required?: boolean;
   placeholderTextColor?: string;
+  disabled?: boolean;
+  editable?: boolean;
 }
 
 

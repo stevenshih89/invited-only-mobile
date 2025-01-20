@@ -14,6 +14,7 @@ import moment from 'moment';
 import uuid from 'react-native-uuid';
 import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
+import Loading from 'components/Loading/Loading';
 
 const DemoIntro: FC = () => {
   const styles = useStyles();

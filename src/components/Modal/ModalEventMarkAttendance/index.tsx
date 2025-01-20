@@ -24,7 +24,7 @@ interface RejectAccount {
 const ModalEventMarkAttendance: FC<RejectAccount> = ({isVisible, setIsVisible, eventInfo, goToMarkAttendance, handleMarkAttendance}) => {
   const {user} = useUser();
 
-  const isHost = user.accountType === 'host';
+  const isHost = user?.accountType === 'host';
   const handleClose = () => {
     setIsVisible(false);
   };
@@ -85,7 +85,7 @@ const ModalEventMarkAttendance: FC<RejectAccount> = ({isVisible, setIsVisible, e
           </View>
         </View>
         <View style={{marginTop: 24}}>
-          <Text style={{color: whiteColor, fontSize: RFValue(32, 932), fontFamily: Satoshi500}}>Event Warn-Up!</Text>
+          <Text style={{color: whiteColor, fontSize: RFValue(32, 932), fontFamily: Satoshi500}}>Event Wrap-Up!</Text>
           <Text style={{color: whiteColor, fontSize: RFValue(16, 932), fontFamily: Satoshi400, marginTop: 16}}>
             {isHost
               ? 'Your event has ended. Please fill in the list by marking who attended the event and who was unable to join.'

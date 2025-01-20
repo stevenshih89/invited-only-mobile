@@ -21,6 +21,8 @@ const Input: FC<InputProps> = ({
   keyboardType = 'default',
   InputIcon,
   required,
+  disabled,
+  editable = true,
 }) => {
   const inputRef = useRef<TextInput>(null);
 
@@ -35,9 +37,9 @@ const Input: FC<InputProps> = ({
   };
 
   return (
-    <View style={[containerStyle]}>
+    <View style={containerStyle}>
       {label && (
-        <Text style={[styles.titleText, {...labelStyle}]}>
+        <Text style={[styles.titleText, labelStyle]}>
           {label} {required && <Text style={{color: errorColor}}>*</Text>}
         </Text>
       )}
@@ -55,7 +57,7 @@ const Input: FC<InputProps> = ({
           onChangeText={handleOnChange}
           onSubmitEditing={() => console.log('onSubmitEditing')}
           blurOnSubmit={false}
-          editable={true}
+          editable={editable}
           autoComplete={'off'}
           autoCorrect={false}
           autoCapitalize={'none'}

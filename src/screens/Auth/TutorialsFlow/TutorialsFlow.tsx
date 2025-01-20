@@ -16,9 +16,13 @@ import auth from '@react-native-firebase/auth';
 import {AuthContext} from 'contexts/AuthContext';
 import {screenWidth} from 'constants/common';
 import analytics from '@react-native-firebase/analytics';
-
+import Config from 'react-native-config';
+import firestore from '@react-native-firebase/firestore';
+import {UserInfo} from 'src/types/userInfo';
 const TutorialsFlow: FC = (): JSX.Element => {
   const [active, setActive] = useState<number>(0);
+
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
   const {setUser, onBoarding} = useContext(AuthContext);
   const accountType = onBoarding.find((item: {accountType: string}) => item?.accountType);
@@ -32,7 +36,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
 
   const content = accountTypeGuest ? guestContent : hostContent;
 
-  const setOnBoarding = useUser((i: any) => i?.setOnBoarding);
+  const {setOnBoarding, setUser: setUserData} = useUser();
   const navigation = useAppNavigation();
   const currentUser = auth().currentUser;
   const handleGoBack = () => {
@@ -75,9 +79,18 @@ const TutorialsFlow: FC = (): JSX.Element => {
   };
 
   const handleCloseTutorialFlow = async () => {
-    const user = auth().currentUser;
     setOnBoarding(true);
-    setUser([`${user?.uid}`]);
+    setUser([`${currentUser?.uid}`]);
+
+    try {
+      const userQuery = await firestore().collection(apiUserInfoCollection).doc(currentUser?.uid).get();
+      if (userQuery.exists) {
+        const userData = userQuery.data() as UserInfo;
+        setUserData(userData);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
