@@ -1,4 +1,4 @@
-import {blackColor, lightGray5Color, lightGray6Color, transparentWhite16Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGray5Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {screenHeight} from 'constants/common';
 import IOLogo from 'assets/images/icons/io-logo.svg';
 import ArrowUp from 'assets/images/icons/arrow-up-thin.svg';

@@ -14,6 +14,7 @@ import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import icons
+import LoaderIcon from 'assets/images/icons/loader.svg';
 import FlashField from 'assets/images/icons/flash.svg';
 import ThreeDoths from 'assets/images/icons/more-white.svg';
 import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
@@ -37,6 +38,7 @@ import {chatsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
 import {EventData} from 'src/types/event';
 import Config from 'react-native-config';
+import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 
 type ItemProps = {
   title: string;
@@ -74,7 +76,7 @@ interface ChatProps {
   typeEvents?: boolean;
 }
 
-const Chat: FC<ChatProps> = ({typeEvents}) => {
+const Chat: FC<ChatProps> = () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
@@ -93,8 +95,6 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
   const styles = useStyles();
   const navigation = useAppNavigation();
-
-  // const {activeEvent} = useContext(EventContext);
   const {activeEvent} = useMyEvents();
   const user = useUser((i: any) => i?.user);
 
@@ -108,6 +108,30 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
 
     setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
   }, [accountConfirmed]);
+
+  const rotationLoader = useSharedValue(0);
+
+  useEffect(() => {
+    if (loading) {
+      rotationLoader.value = withRepeat(
+        withTiming(360, {
+          duration: 2000,
+          easing: Easing.linear,
+        }),
+        -1,
+      );
+    }
+
+    return () => {
+      cancelAnimation(rotationLoader);
+    };
+  }, [rotationLoader, loading]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotate: `${rotationLoader.value}deg`}],
+    };
+  });
 
   const fetchUserInfo = async () => {
     setLoading(true);
@@ -503,6 +527,22 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
     };
   }, [activeEvent?.id, loading, activeEventDate]);
 
+  if (loading) {
+    return (
+      <View
+        style={{
+          backgroundColor: blackColor,
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Animated.View style={[animatedStyle]}>
+          <LoaderIcon />
+        </Animated.View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {isHost && eventData?.uid && (
@@ -558,83 +598,81 @@ const Chat: FC<ChatProps> = ({typeEvents}) => {
       )}
       {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
       <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
-      {!loading ? (
-        isHost ? (
-          <View style={{flex: 1}}>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              data={messages?.chats}
-              contentContainerStyle={{flexGrow: 1}}
-              ListEmptyComponent={() => (
-                <View style={{justifyContent: 'center', flex: 1}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
-                    You don't have any chat
-                  </Text>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>
-                    Get started to {isHost ? 'invite guests' : 'join events and begin receiving messages.'}
-                  </Text>
-                  <Button title={isHost ? 'Invite guests' : 'Join events'} onPress={() => navigation.navigate(IOPath as never)} />
-                </View>
-              )}
-              renderItem={({item}) => {
-                return (
-                  <Item
-                    inviteStatus={item?.invitedStatus}
-                    story={item?.story}
-                    online={item?.online}
-                    title={item?.name}
-                    message={item?.messages ? item?.messages[item?.messages?.length - 1]?.message : []}
-                    messages={item?.messages}
-                    image={item?.avatar}
-                    superInvite={item?.superInvite}
-                    invitedStatus={item?.invitedStatus}
-                    id={item?.id}
-                    uid={item?.uid}
-                    hostUid={item?.hostUid}
-                    newMessages={item?.newMessagesGuest}
-                  />
-                );
-              }}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </View>
-        ) : (
-          <View style={{flex: 1}}>
-            <FlatList
-              data={DATAEventsJoining}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{flexGrow: 1, marginBottom: 20, marginHorizontal: 5}}
-              ListEmptyComponent={() => (
-                <View style={{justifyContent: 'center', flex: 1}}>
-                  <Text style={styles.textYouNeedToJoin}>You need to join an event</Text>
-                  <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
-                  <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />
-                </View>
-              )}
-              renderItem={({item}) => {
-                return (
-                  <ItemEventsJoining
-                    image={item.image}
-                    title={item.title}
-                    chats={item.chats}
-                    date={item.date}
-                    activeEvent={item.activeEvent}
-                    girlInvitation={item.girlInvitation}
-                    maleInvitation={item.maleInvitation}
-                    hostUid={item.hostUid}
-                    status={item.status}
-                    usersList={item.usersList}
-                    newMessages={item?.chats[0].newMessagesHost}
-                    hostImage={item?.hostImage}
-                    statusEvent={item?.statusEvent}
-                  />
-                );
-              }}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </View>
-        )
-      ) : null}
+      {isHost ? (
+        <View style={{flex: 1}}>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={messages?.chats}
+            contentContainerStyle={{flexGrow: 1}}
+            ListEmptyComponent={() => (
+              <View style={{justifyContent: 'center', flex: 1}}>
+                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
+                  You don't have any chat
+                </Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>
+                  Get started to {isHost ? 'invite guests' : 'join events and begin receiving messages.'}
+                </Text>
+                <Button title={isHost ? 'Invite guests' : 'Join events'} onPress={() => navigation.navigate(IOPath as never)} />
+              </View>
+            )}
+            renderItem={({item}) => {
+              return (
+                <Item
+                  inviteStatus={item?.invitedStatus}
+                  story={item?.story}
+                  online={item?.online}
+                  title={item?.name}
+                  message={item?.messages ? item?.messages[item?.messages?.length - 1]?.message : []}
+                  messages={item?.messages}
+                  image={item?.avatar}
+                  superInvite={item?.superInvite}
+                  invitedStatus={item?.invitedStatus}
+                  id={item?.id}
+                  uid={item?.uid}
+                  hostUid={item?.hostUid}
+                  newMessages={item?.newMessagesGuest}
+                />
+              );
+            }}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+      ) : (
+        <View style={{flex: 1}}>
+          <FlatList
+            data={DATAEventsJoining}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{flexGrow: 1, marginBottom: 20, marginHorizontal: 5}}
+            ListEmptyComponent={() => (
+              <View style={{justifyContent: 'center', flex: 1}}>
+                <Text style={styles.textYouNeedToJoin}>You need to join an event</Text>
+                <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
+                <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />
+              </View>
+            )}
+            renderItem={({item}) => {
+              return (
+                <ItemEventsJoining
+                  image={item.image}
+                  title={item.title}
+                  chats={item.chats}
+                  date={item.date}
+                  activeEvent={item.activeEvent}
+                  girlInvitation={item.girlInvitation}
+                  maleInvitation={item.maleInvitation}
+                  hostUid={item.hostUid}
+                  status={item.status}
+                  usersList={item.usersList}
+                  newMessages={item?.chats[0].newMessagesHost}
+                  hostImage={item?.hostImage}
+                  statusEvent={item?.statusEvent}
+                />
+              );
+            }}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+      )}
       {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton={false} />}
     </View>
   );

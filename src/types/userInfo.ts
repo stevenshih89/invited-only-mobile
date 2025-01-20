@@ -71,6 +71,8 @@ export namespace User {
     showSmoke?: boolean;
     showWork?: boolean;
     online: boolean;
+    userBeauty?: number;
+    isPassedDemo?: boolean;
   }
 
   export interface Photo {

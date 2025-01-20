@@ -5,7 +5,7 @@ import {SafeAreaView, View, Text, Image} from 'react-native';
 import useStyles from 'screens/Auth/AcceptedScreen/ReusableStyles/styles.ts';
 import Button from 'components/Button/Button.tsx';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
-import {IOPath, paymentPath, tutorialFlowPath} from 'constants/pathLocations.ts';
+import {IOPath, tutorialFlowPath} from 'constants/pathLocations.ts';
 
 //import images
 import IconVerifyFilledAccepted from 'assets/images/icons/check-star.svg';
@@ -28,10 +28,7 @@ const CodeVerified: FC = (): JSX.Element => {
 
   const handleNext = () => {
     if (cameFromSummary) {
-      const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
-      const isHost = accountType.toLowerCase() === 'host';
-      const nextPath = isHost ? paymentPath : tutorialFlowPath;
-      navigation.navigate(nextPath as never);
+      navigation.navigate(tutorialFlowPath as never);
     } else {
       navigation.navigate(IOPath as never);
     }
@@ -69,7 +66,7 @@ const CodeVerified: FC = (): JSX.Element => {
                   justifyContent: 'center',
                 }}>
                 <Text style={{color: blackColor, fontFamily: Satoshi500, fontSize: RFValue(20, 932), textAlign: 'center', marginRight: 8}}>
-                  {name?.split(' ')[0]}ш
+                  {name?.split(' ')[0]}
                 </Text>
                 <IconVerifyFilledAccepted />
               </View>

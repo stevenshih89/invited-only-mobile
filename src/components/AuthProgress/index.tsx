@@ -46,7 +46,7 @@ const AuthProgress = ({
           r={radius}
           strokeWidth={borderWidth}
           strokeDasharray={circleCircumference}
-          strokeDashoffset={circleCircumference - (startPercentage / 100) * circleCircumference} // Закрашиваем до startPercentage
+          strokeDashoffset={circleCircumference - (startPercentage / 100) * circleCircumference}
           strokeLinecap="round"
           transform={`rotate(-90 ${radius + borderWidth} ${radius + borderWidth})`}
         />

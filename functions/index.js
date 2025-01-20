@@ -13,7 +13,7 @@ const firebaseConfig = {
 admin.initializeApp(firebaseConfig);
 
 exports.getUsersForEvent = functionsV1.https.onCall(async data => {
-  const {excludeUids, limit = 7, lastDoc, male, female} = data;
+  const {excludeUids, limit = 7, lastDoc, male, female, collectionName} = data;
 
   if (!excludeUids || !Array.isArray(excludeUids)) {
     throw new functionsV1.https.HttpsError('invalid-argument', 'Invalid excludeUids array');
@@ -22,40 +22,38 @@ exports.getUsersForEvent = functionsV1.https.onCall(async data => {
   try {
     let query = admin
       .firestore()
-      .collection('userInfo')
-      .orderBy('uid')
-      .orderBy('createdAt', 'desc')
+      .collection(collectionName)
+      .orderBy('userBeauty', 'desc')
       .where('accountType', '==', 'guest')
       .where('accountConfirmed', '==', true);
 
-    if (limit !== null) {
-      query = query.limit(limit);
+    if (male > 0 && female === 0) {
+      query = query.where('gender', '!=', 'woman');
+    }
+    if (female > 0 && male === 0) {
+      query = query.where('gender', '!=', 'man');
     }
 
     if (lastDoc) {
-      query = query.startAfter(lastDoc);
-    }
-
-    if (male > 0 && female === 0) {
-      query = query.where('gender', '==', 'man');
-    }
-    if (female > 0 && male === 0) {
-      query = query.where('gender', '==', 'woman');
+      const parsedLastDoc = JSON.parse(lastDoc);
+      query = query.startAfter(parsedLastDoc);
     }
 
     const snapshot = await query.get();
 
-    const users = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()})).filter(user => !excludeUids.includes(user.uid));
-
+    const users = snapshot.docs
+      .map(doc => ({id: doc.id, ...doc.data()}))
+      .filter(user => !excludeUids.includes(user.uid))
+      .slice(0, limit);
     const newLastDoc = snapshot.docs[snapshot.docs.length - 1] || null;
 
     return {
       users,
-      lastDoc: newLastDoc ? newLastDoc : null,
+      lastDoc: newLastDoc ? JSON.stringify(newLastDoc) : null,
     };
   } catch (error) {
     console.error('Error filtering users:', error);
-    throw new functionsV1.https.HttpsError('internal', 'Unable to filter users');
+    throw new functionsV1.https.HttpsError('internal', 'Unable to get users');
   }
 });
 

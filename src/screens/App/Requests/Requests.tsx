@@ -1,4 +1,4 @@
-import {ActivityIndicator, FlatList, Text, View} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
 //import components
 import useStyles from './styles';
@@ -8,6 +8,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import PersoneIcon from 'assets/images/icons/Users.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
+import LoaderIcon from 'assets/images/icons/loader.svg';
 import ItemRequestGuest from './ItemRequestGuest';
 import ItemRequestHost from './ItemRequestHost';
 import firestore from '@react-native-firebase/firestore';
@@ -38,6 +39,7 @@ import analytics from '@react-native-firebase/analytics';
 import {requestsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
+import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 
 const Requests: FC = (): ReactElement => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -70,6 +72,30 @@ const Requests: FC = (): ReactElement => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const {accountConfirmed} = useUserProfileChangeSubscription();
+
+  const rotationLoader = useSharedValue(0);
+
+  useEffect(() => {
+    if (loading || loadingMyEvents) {
+      rotationLoader.value = withRepeat(
+        withTiming(360, {
+          duration: 2000,
+          easing: Easing.linear,
+        }),
+        -1,
+      );
+    }
+
+    return () => {
+      cancelAnimation(rotationLoader);
+    };
+  }, [rotationLoader, loading, loadingMyEvents]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotate: `${rotationLoader.value}deg`}],
+    };
+  });
   useEffect(() => {
     if (!Object.keys(userInfo)?.length) {
       return;
@@ -353,12 +379,14 @@ const Requests: FC = (): ReactElement => {
     return (
       <View
         style={{
-          flex: 1,
           backgroundColor: blackColor,
+          flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <ActivityIndicator />
+        <Animated.View style={[animatedStyle]}>
+          <LoaderIcon />
+        </Animated.View>
       </View>
     );
   }

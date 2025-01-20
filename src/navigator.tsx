@@ -31,7 +31,7 @@ const Navigator = () => {
     await getOnbordingState();
     const userDataInfo = await firestore().collection(apiUserInfoCollection).doc(uid).get();
 
-    console.log(userDataInfo)
+    console.log(userDataInfo);
     if (userDataInfo.exists) {
       // // console.warn('user', userDataInfo.data());
       setAuthState(!!userState);

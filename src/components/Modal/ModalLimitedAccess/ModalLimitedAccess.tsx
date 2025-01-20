@@ -14,7 +14,9 @@ import Config from 'react-native-config';
 
 const ModalLimitedAccess: FC<{
   wrapperStyle?: StyleProp<ViewStyle>;
-}> = ({wrapperStyle}) => {
+  showNotNow?: boolean;
+  showCloseIcon?: boolean;
+}> = ({wrapperStyle, showNotNow = true, showCloseIcon = true}) => {
   const styles = useStyles();
   const {user, setUser} = useUser();
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -59,12 +61,14 @@ const ModalLimitedAccess: FC<{
         zIndex: 1000,
       }}>
       <View style={[styles.lockedWrapper, wrapperStyle]}>
-        <View style={styles.lockDescWr}>
-          <View style={{flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 20}}>
-            <TouchableOpacity onPress={setUserPassedDemo}>
-              <CloseIcon width={28} height={28} />
-            </TouchableOpacity>
-          </View>
+        <View style={[styles.lockDescWr, {paddingVertical: !showNotNow ? 32 : 16}]}>
+          {showCloseIcon && (
+            <View style={{flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 20}}>
+              <TouchableOpacity onPress={setUserPassedDemo}>
+                <CloseIcon width={28} height={28} />
+              </TouchableOpacity>
+            </View>
+          )}
           <Text style={styles.lockedTitle}>Limited Access</Text>
           <Text style={styles.lockedSubtitle}>
             You’ve reached the end of your demo swipes! Upgrade to Premium to keep swiping, connecting, and sharing tables and events
@@ -114,13 +118,15 @@ const ModalLimitedAccess: FC<{
               <Text style={{fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Upgrade to Premium</Text>
             </LinearGradient>
           </TouchableOpacity>
-          <View style={{marginVertical: 16, width: '100%', alignItems: 'center'}}>
-            <TouchableOpacity onPress={setUserPassedDemo}>
-              <Text style={{fontSize: RFValue(16, 932), fontFamily: Satoshi500, textDecorationLine: 'underline', color: whiteColor}}>
-                Not Now
-              </Text>
-            </TouchableOpacity>
-          </View>
+          {showNotNow && (
+            <View style={{marginVertical: 16, width: '100%', alignItems: 'center'}}>
+              <TouchableOpacity onPress={setUserPassedDemo}>
+                <Text style={{fontSize: RFValue(16, 932), fontFamily: Satoshi500, textDecorationLine: 'underline', color: whiteColor}}>
+                  Not Now
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
     </View>

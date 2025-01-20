@@ -1,7 +1,8 @@
-import {ActivityIndicator, FlatList, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Invitations from './screens/Invitations/Invitations';
 import SafetyAndWellbeing from './screens/SafetyAndWellbeing/SafetyAndWellbeing';
 import MyPlan from './screens/MyPlan/MyPlan';
+import LoaderIcon from 'assets/images/icons/loader.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import EditBlack from 'assets/images/icons/edit-black.svg';
 import {FC, useCallback, useEffect, useState} from 'react';
@@ -32,6 +33,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {getEventsIJoining} from 'helpers/getEventsIJoining';
 import Config from 'react-native-config';
+import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 
 const Profile: FC = () => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -47,6 +49,30 @@ const Profile: FC = () => {
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
+
+  const rotationLoader = useSharedValue(0);
+
+  useEffect(() => {
+    if (loading) {
+      rotationLoader.value = withRepeat(
+        withTiming(360, {
+          duration: 2000,
+          easing: Easing.linear,
+        }),
+        -1,
+      );
+    }
+
+    return () => {
+      cancelAnimation(rotationLoader);
+    };
+  }, [rotationLoader, loading]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotate: `${rotationLoader.value}deg`}],
+    };
+  });
 
   const tabList = [
     {id: 0, title: 'My plan'},
@@ -165,8 +191,20 @@ const Profile: FC = () => {
 
   const userAge = calculateAge(userInfo?.date);
 
-  if (loading || !userInfo) {
-    return <ActivityIndicator style={styles.scrollView} />;
+  if (loading) {
+    return (
+      <View
+        style={{
+          backgroundColor: blackColor,
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Animated.View style={[animatedStyle]}>
+          <LoaderIcon />
+        </Animated.View>
+      </View>
+    );
   }
 
   const ProgressCircle = ({size, strokeWidth, progress, color, backgroundColor}) => {
