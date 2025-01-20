@@ -40,6 +40,7 @@ import {requestsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
+import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 
 const Requests: FC = (): ReactElement => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -67,6 +68,8 @@ const Requests: FC = (): ReactElement => {
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
+  const changeAccountTypeModalVisible = useAdminActions((i: any) => i?.changeAccountTypeModalVisible);
+  const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
   const currentUser = auth().currentUser;
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -514,7 +517,8 @@ const Requests: FC = (): ReactElement => {
     <>
       <View style={styles.container}>
         {userInfo?.photos?.length && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos?.[0].image} />}
-        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+        {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />}
+        {changeAccountTypeModalVisible && !acceptModalVisible && <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />}
         <ModalFullEvent
           isVisible={isVisibleModalFullEvent}
           idEvent={activeEvent.id}
