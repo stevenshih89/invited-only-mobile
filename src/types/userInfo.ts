@@ -73,6 +73,7 @@ export namespace User {
     online: boolean;
     userBeauty?: number;
     isPassedDemo?: boolean;
+    isInvitedOnlyAdmin?: boolean;
   }
 
   export interface Photo {

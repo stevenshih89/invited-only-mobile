@@ -25,7 +25,6 @@ const ModalLimitedAccess: FC<{
 
   const goToPayment = async () => {
     // @ts-ignore
-
     if (user?.uid) {
       try {
         await firestore().collection(apiUserInfoCollection).doc(user?.uid).update({isPassedDemo: true});
@@ -42,7 +41,10 @@ const ModalLimitedAccess: FC<{
       try {
         await firestore().collection(apiUserInfoCollection).doc(user?.uid).update({isPassedDemo: true});
         setUser({...user, isPassedDemo: true});
-        navigation.navigate(bottomTabsStackPath);
+        navigation.reset({
+          index: 0,
+          routes: [{name: bottomTabsStackPath}],
+        });
       } catch (error) {
         console.error(error);
       }

@@ -80,4 +80,7 @@ export type RootStackParamList = {
   '/mark-attendance': {
     eventId?: string;
   };
+  '/admin-chat': {
+    chatId?: string;
+  };
 };

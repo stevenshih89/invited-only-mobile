@@ -217,6 +217,7 @@ const VerifySocialProfile = () => {
           superInvite: isTurnedNotifications,
           superJoin: isTurnedNotifications,
         },
+        userBeauty: 1,
       };
 
       await firestore()
@@ -327,8 +328,8 @@ const VerifySocialProfile = () => {
 
   const handleSkip = async () => {
     await handleRegisterUser(onBoarding);
-    navigation.navigate(pendingScreenPath as never)
-  }
+    navigation.navigate(pendingScreenPath as never);
+  };
 
   const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
 
@@ -383,11 +384,11 @@ const VerifySocialProfile = () => {
                   disabled={!socialNickname[openedSocial?.name]?.length || errorInput.length}
                   onPress={handleNext}
                 />
-                {accountType === 'host' && <TouchableOpacity
-                  onPress={handleSkip}
-                >
-                  <Text style={{color: whiteColor, fontSize: RFValue(16, 812), marginTop: 24, textAlign: 'center'}}>Skip</Text>
-                </TouchableOpacity>}
+                {accountType === 'host' && (
+                  <TouchableOpacity onPress={handleSkip}>
+                    <Text style={{color: whiteColor, fontSize: RFValue(16, 812), marginTop: 24, textAlign: 'center'}}>Skip</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           </TouchableWithoutFeedback>

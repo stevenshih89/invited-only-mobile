@@ -8,6 +8,7 @@ import Header from 'components/Header/Header.tsx';
 import {
   accountRejectedPath,
   accountSettingPath,
+  adminChatPath,
   bottomTabsStackPath,
   chatCorrespondencePath,
   chatPath,
@@ -78,6 +79,7 @@ import DemoIntro from 'screens/App/DemoFlow/screens/DemoIntro/DemoIntro.tsx';
 import DemoEventCreatingHeader from 'screens/App/IO/screens/EventCreating/components/DemoEventCreatingHeader';
 import MarkAttendance from 'screens/App/MyEvents/MarkAttendance';
 import {useUser} from 'src/store/userStore';
+import AdminChat from 'screens/App/Chat/screens/AdminChat';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -166,6 +168,7 @@ const CommonStackScreen = () => {
         options={{headerShown: false}}
         component={ChatCorrespondence}
       />
+      <CommonStack.Screen key={adminChatPath} name={adminChatPath} options={{headerShown: false}} component={AdminChat} />
       <CommonStack.Screen
         key={eventInfoPath}
         name={eventInfoPath}

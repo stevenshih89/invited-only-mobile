@@ -13,6 +13,7 @@ import Config from 'react-native-config';
 
 const Navigator = () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const apiAdminChatsCollection = Config.API_ADMIN_CHATS_COLLECTION || 'adminChats';
   const [initializing, setInitializing] = useState<boolean>(true);
   const [authState, setAuthState] = useState(false);
   const {user, setUser} = useContext(AuthContext);
@@ -31,9 +32,7 @@ const Navigator = () => {
     await getOnbordingState();
     const userDataInfo = await firestore().collection(apiUserInfoCollection).doc(uid).get();
 
-    console.log(userDataInfo);
     if (userDataInfo.exists) {
-      // // console.warn('user', userDataInfo.data());
       setAuthState(!!userState);
       setUserData(userDataInfo.data());
     }
@@ -55,16 +54,42 @@ const Navigator = () => {
   }, [initializing]);
 
   useEffect(() => {
-    // // console.warn('works');
-    messaging().onMessage(async remoteMessage => {
-      // // console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
-      // await notifee.requestPermission();
-      // if (remoteMessage.data?.type === 'match') {
-      //   handler(remoteMessage);
-      // }
-      // onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data);
-    });
+    messaging().onMessage(async () => {});
   }, []);
+
+  const handleAddChatWithAdmin = async () => {
+    const isAdmin = userData?.isInvitedOnlyAdmin;
+
+    if (!isAdmin && userData?.uid) {
+      try {
+        const chatQuery = await firestore().collection(apiAdminChatsCollection).doc(userData?.uid).get();
+        if (!chatQuery.exists) {
+          await firestore().collection(apiAdminChatsCollection).doc(userData?.uid).set({
+            uid: userData?.uid,
+            lastMessageTimestamp: firestore.FieldValue.serverTimestamp(),
+            lastSeenUserTimestamp: firestore.FieldValue.serverTimestamp(),
+            lastSeenAdminTimestamp: firestore.FieldValue.serverTimestamp(),
+          });
+        } else if (chatQuery.exists) {
+          const data = chatQuery.data();
+          if (!data?.lastMessageTimestamp && !data?.uid) {
+            await firestore().collection(apiAdminChatsCollection).doc(userData?.uid).set({
+              uid: userData?.uid,
+              lastMessageTimestamp: firestore.FieldValue.serverTimestamp(),
+              lastSeenUserTimestamp: firestore.FieldValue.serverTimestamp(),
+              lastSeenAdminTimestamp: firestore.FieldValue.serverTimestamp(),
+            });
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    handleAddChatWithAdmin();
+  }, [userData?.uid]);
 
   useEffect(() => {
     const subcriber = auth().onAuthStateChanged(onAuthStateChanged);

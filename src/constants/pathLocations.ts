@@ -42,6 +42,7 @@ const profileEditingPath: keyof RootStackParamList = '/profile-editing';
 const myEventsPath: keyof RootStackParamList = '/my-events';
 const chatPath: keyof RootStackParamList = '/chat';
 const chatCorrespondencePath: keyof RootStackParamList = '/chat-correspondence';
+const adminChatPath: keyof RootStackParamList = '/admin-chat';
 const userProfilePath: keyof RootStackParamList = '/user-profile';
 const eventInfoPath: keyof RootStackParamList = '/event-info';
 const eventActiveInfoPath: keyof RootStackParamList = '/event-active-info';
@@ -131,4 +132,5 @@ export {
   demoIntroPath,
   demoEventCreatingPath,
   demoIOPath,
+  adminChatPath,
 };

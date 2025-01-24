@@ -96,6 +96,7 @@ import {hostHintSteps} from 'constants/hints.ts';
 import ModalLimitedAccess from 'components/Modal/ModalLimitedAccess/ModalLimitedAccess';
 import CardsFakeState from 'components/CardsFakeState';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
+import functions from '@react-native-firebase/functions';
 
 const IO: FC = (): JSX.Element => {
   const CARDS_LOADING_LIMIT = 6;
@@ -249,6 +250,7 @@ const IO: FC = (): JSX.Element => {
         .onSnapshot(querySnapshot => {
           if (!querySnapshot.exists) {
             // dispatch(setActiveEvent({}));
+            return;
           }
           const data = querySnapshot.data();
           const prevEventReviewed = activeEvent?.eventReviewed;
@@ -350,7 +352,7 @@ const IO: FC = (): JSX.Element => {
   useEffect(() => {
     if (userInfo && userInfo?.showModalAccept) {
       setAcceptModalVisible(true);
-    }    
+    }
     if (userInfo && userInfo?.showModalChangeAccountType) {
       setChangeAccountModalVisible(true);
     }
@@ -370,9 +372,13 @@ const IO: FC = (): JSX.Element => {
   }, []);
 
   const getSuperInvites = async () => {
-    const getDoc = await firestore().collection(apiUserInfoCollection).doc(userHost.uid).get();
-    const currentSuperInvites = getDoc?.data()?.superInvites;
-    const currentWeeklySuperInvites = getDoc?.data()?.weeklySuperInvites;
+    const userQuery = await firestore().collection(apiUserInfoCollection).doc(userHost.uid).get();
+    if (!userQuery.exists) {
+      return;
+    }
+    const data = userQuery.data() as UserInfo;
+    const currentSuperInvites = data?.superInvites;
+    const currentWeeklySuperInvites = data?.weeklySuperInvites;
     counterSuperInvitesRef.current = currentSuperInvites;
     counterWeeklySuperInvitesRef.current = currentWeeklySuperInvites;
     setCounterSuperInvites(currentSuperInvites + currentWeeklySuperInvites);
@@ -439,6 +445,7 @@ const IO: FC = (): JSX.Element => {
   };
 
   const handleDemoSwipeCardRight = ({uid, withSwipeAnimation}: {uid: string; withSwipeAnimation: boolean}) => {
+    console.warn('handleDemoSwipeCardRight', uid, withSwipeAnimation);
     setTimeout(() => {
       setSwipedCardsCount(prev => prev + 1);
       setEvents(prev =>
@@ -453,6 +460,8 @@ const IO: FC = (): JSX.Element => {
   };
 
   const handleDemoSwipeCardLeft = ({uid, withSwipeAnimation}: {uid: string; withSwipeAnimation: boolean}) => {
+    console.warn('handleDemoSwipeCardLeft', uid, withSwipeAnimation);
+
     setTimeout(() => {
       setSwipedCardsCount(prev => prev + 1);
       setEvents(prev =>
@@ -520,21 +529,20 @@ const IO: FC = (): JSX.Element => {
       try {
         const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
 
-        const userInfoData = userInfoDoc.data() as UserInfo;
-
         if (userInfoDoc.exists) {
-          setUserInfo(userInfoDoc.data());
+          const userInfoData = userInfoDoc.data() as UserInfo;
+          setUserInfo(userInfoData);
 
           if (userInfoData.accountReviewed && !userInfoData.accountConfirmed) {
             setRejectModalVisible(true);
           }
-        }
-        const isWeek = hasWeekPassed(userInfoDoc?.data()?.lastUpdateSuperInvite);
-        if (isWeek) {
-          await firestore().collection(apiUserInfoCollection).doc(user.uid).update({
-            lastUpdateSuperInvite: Date.now(),
-            weeklySuperInvites: 5,
-          });
+          const isWeek = hasWeekPassed(userInfoDoc?.data()?.lastUpdateSuperInvite);
+          if (isWeek) {
+            await firestore().collection(apiUserInfoCollection).doc(user.uid).update({
+              lastUpdateSuperInvite: Date.now(),
+              weeklySuperInvites: 5,
+            });
+          }
         }
       } catch (error: any) {
         setLoadingUser(false);
@@ -657,18 +665,21 @@ const IO: FC = (): JSX.Element => {
 
   const onInvite = async (forUserUid: string, eventId: string, superInvite?: boolean) => {
     try {
-      const guest = await firestore().collection(apiUserInfoCollection).doc(forUserUid).get();
-      const guestData = guest.data() as UserInfo;
+      const guestQuery = await firestore().collection(apiUserInfoCollection).doc(forUserUid).get();
+      if (!guestQuery.exists) {
+        return;
+      }
+      const guestData = guestQuery.data() as UserInfo;
 
       const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
 
-      const eventData = await firestore().collection(apiEventsCollection).doc(activeEventId).get();
+      const eventQuery = await firestore().collection(apiEventsCollection).doc(activeEventId).get();
 
-      if (!eventData.exists) {
+      if (!eventQuery.exists) {
         return;
       }
 
-      const event = eventData.data() as EventData;
+      const event = eventQuery.data() as EventData;
       if (!event || event?.statusEvent === false || event?.isCancelled === true) {
         return;
       }
@@ -961,11 +972,18 @@ const IO: FC = (): JSX.Element => {
     let filteredEvents: any[] = [];
 
     try {
-      const blockedUsers = await firestore().collection('report').where('uidSender', '==', user.uid).get();
-      const blockedMeUsers = await firestore().collection('report').where('uid', '==', user.uid).get();
+      let blockedUsersList: string[] = [];
+      let blockedMeUsersList: string[] = [];
 
-      const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
-      const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
+      const blockedUsersQuery = await firestore().collection('report').where('uidSender', '==', user.uid).get();
+      if (!blockedUsersQuery.empty) {
+        blockedUsersList = blockedUsersQuery.docs.map(doc => doc.data().uid);
+      }
+
+      const blockedMeUsersQuery = await firestore().collection('report').where('uid', '==', user.uid).get();
+      if (!blockedMeUsersQuery.empty) {
+        blockedMeUsersList = blockedMeUsersQuery.docs.map(doc => doc.data().uidSender);
+      }
 
       const uniqueBlockedUsers = [...new Set([...blockedUsersList, ...blockedMeUsersList])];
 
@@ -1526,13 +1544,18 @@ const IO: FC = (): JSX.Element => {
             ];
 
         for (const uid of demoUsersUidsList) {
-          const userQuery = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-          if (userQuery.exists) {
-            const data = userQuery.data() as UserInfo;
-            listOfUsers.push(data);
+          try {
+            const userQuery = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+            if (userQuery.exists) {
+              const data = userQuery.data() as UserInfo;
+              listOfUsers.push(data);
+            }
+          } catch (err) {
+            console.error('error_getCardsListForHost 3', err);
           }
         }
       }
+
       const eventQuery = await firestore().collection(apiEventsCollection).doc(activeEvent.id).get();
 
       if (!eventQuery.exists && !isDemo) {
@@ -1541,14 +1564,22 @@ const IO: FC = (): JSX.Element => {
         endReachedRef.current = true;
         return;
       }
-      getActualDataEvent = eventQuery.data() || ({} as EventData);
+      if (eventQuery.exists) {
+        getActualDataEvent = eventQuery.data() || ({} as EventData);
+      }
 
-      const blockedUsers = await firestore().collection('report').where('uidSender', '==', user.uid).get();
+      let blockedUsersList = [];
+      let blockedMeUsersList = [];
 
-      const blockedMeUsers = await firestore().collection('report').where('uid', '==', user.uid).get();
+      const blockedUsersQuery = await firestore().collection('report').where('uidSender', '==', user.uid).get();
+      if (!blockedUsersQuery.empty) {
+        blockedUsersList = blockedUsersQuery.docs.map(doc => doc.data().uid);
+      }
+      const blockedMeUsersQuery = await firestore().collection('report').where('uid', '==', user.uid).get();
+      if (!blockedMeUsersQuery.empty) {
+        blockedMeUsersList = blockedMeUsersQuery.docs.map(doc => doc.data().uidSender);
+      }
 
-      const blockedUsersList = blockedUsers.docs.map(doc => doc.data().uid);
-      const blockedMeUsersList = blockedMeUsers.docs.map(doc => doc.data().uidSender);
       const uniqueRejectsList = getActualDataEvent?.rejectsList?.map((j: Event.RejectUser) => j?.uid) || [];
       const uniqueUsersListIds = getActualDataEvent?.usersList?.map((j: Event.User) => j?.uid) || [];
 
@@ -1560,8 +1591,8 @@ const IO: FC = (): JSX.Element => {
       if (!isDemo && userInfo?.accountPremium) {
         listOfUsersResponse = await functions().httpsCallable('getUsersForEvent')({
           excludeUids: allUniqueIds,
-          male: activeEvent?.male,
-          female: activeEvent?.female,
+          male: activeEvent?.male || 0,
+          female: activeEvent?.female || 0,
           limit: CARDS_LOADING_LIMIT,
           lastDoc: lastVisibleRef.current ? JSON.stringify(lastVisibleRef.current) : null,
           collectionName: apiUserInfoCollection,
@@ -1931,7 +1962,7 @@ const IO: FC = (): JSX.Element => {
         setIsRefreshing(false);
       }
     } catch (error) {
-      console.error(error);
+      console.error('error_getCardsListForHost', error);
     } finally {
       setLoadingCardsList(false);
     }
@@ -2100,7 +2131,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isDemo && isHost && !userInfo?.accountPremium) {
+  if (userInfo?.uid && isDemo && isHost) {
     return (
       <>
         {loadingCardsList ? (

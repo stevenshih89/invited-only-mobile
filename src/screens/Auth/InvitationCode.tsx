@@ -174,6 +174,7 @@ const InvitationCode: FC = (): JSX.Element => {
           superInvite: isTurnedNotifications,
           superJoin: isTurnedNotifications,
         },
+        userBeauty: 1,
       };
 
       await firestore()

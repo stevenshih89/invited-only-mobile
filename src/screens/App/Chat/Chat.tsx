@@ -7,7 +7,7 @@ import auth from '@react-native-firebase/auth';
 //import components
 import useStyles from 'screens/App/Chat/styles.ts';
 
-import {chatCorrespondencePath, IOPath} from 'constants/pathLocations.ts';
+import {adminChatPath, chatCorrespondencePath, commonStackPath, IOPath} from 'constants/pathLocations.ts';
 import ModalHostMenu from 'components/Modal/ModalHostMenu/ModalHostMenu.tsx';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
@@ -18,6 +18,7 @@ import LoaderIcon from 'assets/images/icons/loader.svg';
 import FlashField from 'assets/images/icons/flash.svg';
 import ThreeDoths from 'assets/images/icons/more-white.svg';
 import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
+import IOIcon from 'assets/images/icons/io-logo.svg';
 import Button from 'components/Button/Button.tsx';
 import {blackColor, grayScale700, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
@@ -78,15 +79,22 @@ interface ChatProps {
 }
 
 const Chat: FC<ChatProps> = () => {
+  const COUNT_TO_ADD_ADMIN_CHATS = 5;
+  const DEFAULT_LIMIT_ADMIN_CHATS = 9;
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
+  const apiAdminChatsCollection = Config.API_ADMIN_CHATS_COLLECTION || 'adminChats';
   const [hostMenu, setHostMenu] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [messages, setMessages] = useState([]);
   const [DATAEventsJoining, setDATAEventsJoining] = useState([]);
   const [userInfo, setUserInfo] = useState<any>({});
   const [eventData, setEventData] = useState<EventData>();
+  const [adminChatsWithUsers, setAdminChatsWithUsers] = useState<any>([]);
+  const [userChatWithAdmin, setUserChatWithAdmin] = useState<any>({});
+  const [loadingAdminChatsWithUsers, setLoadingAdminChatsWithUsers] = useState<boolean>(true);
+  const [limitAdminChatsWithUsers, setLimitAdminChatsWithUsers] = useState<number>(DEFAULT_LIMIT_ADMIN_CHATS);
 
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
@@ -95,6 +103,8 @@ const Chat: FC<ChatProps> = () => {
   const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
 
   const {activeEventDate} = useContext(EventsDate);
+
+  console.warn(limitAdminChatsWithUsers);
 
   const styles = useStyles();
   const navigation = useAppNavigation();
@@ -115,7 +125,7 @@ const Chat: FC<ChatProps> = () => {
   const rotationLoader = useSharedValue(0);
 
   useEffect(() => {
-    if (loading) {
+    if (loading || loadingAdminChatsWithUsers) {
       rotationLoader.value = withRepeat(
         withTiming(360, {
           duration: 2000,
@@ -128,7 +138,146 @@ const Chat: FC<ChatProps> = () => {
     return () => {
       cancelAnimation(rotationLoader);
     };
-  }, [rotationLoader, loading]);
+  }, [rotationLoader, loading, loadingAdminChatsWithUsers]);
+
+  function chunkArray(array: any, chunkSize: number) {
+    const results = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+      results.push(array.slice(i, i + chunkSize));
+    }
+    return results;
+  }
+
+  const handleAdminChatsWithUsers = useCallback(() => {
+    let unsubscribeAdminChatsWithUsers: () => void;
+    if (user?.uid && user?.isInvitedOnlyAdmin) {
+      try {
+        unsubscribeAdminChatsWithUsers = firestore()
+          .collection(apiAdminChatsCollection)
+          .orderBy('lastMessageTimestamp', 'desc')
+          .limit(limitAdminChatsWithUsers)
+          .onSnapshot(async querySnapshot => {
+            const adminChats = querySnapshot.docs.map(doc => doc.data());
+
+            const userInfoMap = new Map();
+
+            const userInfoPromises = adminChats.map(chat => {
+              return firestore()
+                .collection(apiUserInfoCollection)
+                .doc(chat.uid)
+                .get()
+                .then(doc => {
+                  if (doc.exists) {
+                    userInfoMap.set(chat.uid, doc.data());
+                  }
+                });
+            });
+
+            const userInfoChunks = chunkArray(userInfoPromises, 10);
+
+            for (const chunk of userInfoChunks) {
+              await Promise.all(chunk);
+            }
+
+            const adminChatsWithContent = await Promise.all(
+              adminChats.map(async chat => {
+                const userData = userInfoMap.get(chat.uid);
+                try {
+                  const messagesSnapshot = await firestore()
+                    .collection(apiAdminChatsCollection)
+                    .doc(chat.uid)
+                    .collection('messages')
+                    .orderBy('timestamp', 'desc')
+                    .where('senderUid', '==', chat?.uid)
+                    .limit(4)
+                    .get();
+                  let unreadMessagesCount = 0;
+                  if (!messagesSnapshot?.empty) {
+                    unreadMessagesCount = messagesSnapshot?.docs?.reduce((count, messageDoc) => {
+                      const messageData = messageDoc?.data();
+                      if (messageData?.timestamp?.seconds > chat?.lastSeenAdminTimestamp?.seconds) {
+                        return count + 1;
+                      }
+                      return count;
+                    }, 0);
+                  }
+
+                  return {
+                    ...chat,
+                    userName: userData?.name,
+                    userPhoto: userData?.photos?.[0]?.image,
+                    userAccountType: userData?.accountType,
+                    unreadMessagesCount,
+                  };
+                } catch (error) {
+                  console.error(error);
+                }
+              }),
+            );
+            setAdminChatsWithUsers(adminChatsWithContent);
+            setLoadingAdminChatsWithUsers(false);
+          });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    return () => {
+      unsubscribeAdminChatsWithUsers && unsubscribeAdminChatsWithUsers();
+    };
+  }, [user?.uid, limitAdminChatsWithUsers]);
+
+  const handleUserChatWithAdmin = useCallback(() => {
+    let unsubscribeUserChatWithAdmin: () => void;
+    if (user?.uid && !user?.isInvitedOnlyAdmin) {
+      try {
+        unsubscribeUserChatWithAdmin = firestore()
+          .collection(apiAdminChatsCollection)
+          .doc(user?.uid)
+          .onSnapshot(async querySnapshot => {
+            if (querySnapshot.exists) {
+              const chatData = querySnapshot.data();
+
+              try {
+                const messagesSnapshot = await firestore()
+                  .collection(apiAdminChatsCollection)
+                  .doc(chatData?.uid)
+                  .collection('messages')
+                  .orderBy('timestamp', 'desc')
+                  .where('senderUid', '!=', chatData?.uid)
+                  .limit(10)
+                  .get();
+                let unreadMessagesCount = 0;
+                if (!messagesSnapshot?.empty) {
+                  unreadMessagesCount = messagesSnapshot?.docs?.reduce((count, messageDoc) => {
+                    const messageData = messageDoc?.data();
+                    if (messageData?.timestamp?.seconds > chatData?.lastSeenUserTimestamp?.seconds) {
+                      return count + 1;
+                    }
+                    return count;
+                  }, 0);
+                }
+                setUserChatWithAdmin({...chatData, unreadMessagesCount});
+              } catch (error) {
+                console.error(error);
+              }
+            }
+          });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    return () => {
+      if (unsubscribeUserChatWithAdmin) {
+        unsubscribeUserChatWithAdmin();
+      }
+    };
+  }, [user?.uid]);
+
+  useFocusEffect(handleAdminChatsWithUsers);
+
+  useFocusEffect(handleUserChatWithAdmin);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -461,6 +610,7 @@ const Chat: FC<ChatProps> = () => {
         .collection(apiMessagesCollection)
         .onSnapshot(async documentSnapshot => {
           if (documentSnapshot.empty) {
+            setDATAEventsJoining([]);
             return;
           }
           const chatData = documentSnapshot.docs.map(i => i.data());
@@ -521,7 +671,6 @@ const Chat: FC<ChatProps> = () => {
           setDATAEventsJoining(filteredDataEvents);
           setLoading(false);
         });
-      // handleBuildGuestEventsData();
     }
 
     return () => {
@@ -546,8 +695,160 @@ const Chat: FC<ChatProps> = () => {
     );
   }
 
+  if (user?.uid && user?.isInvitedOnlyAdmin && loadingAdminChatsWithUsers && !adminChatsWithUsers?.length) {
+    return (
+      <View
+        style={{
+          backgroundColor: blackColor,
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Animated.View style={[animatedStyle]}>
+          <LoaderIcon />
+        </Animated.View>
+      </View>
+    );
+  }
+
+  if (user?.uid && user?.isInvitedOnlyAdmin && adminChatsWithUsers?.length) {
+    return (
+      <View style={styles.container}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={adminChatsWithUsers}
+          contentContainerStyle={{flexGrow: 1, paddingBottom: 40}}
+          onEndReached={() => setLimitAdminChatsWithUsers(prev => prev + COUNT_TO_ADD_ADMIN_CHATS)}
+          ItemSeparatorComponent={() => <View style={{height: 10}} />}
+          renderItem={({item}) => {
+            if (!item?.uid || !item?.userName) {
+              return null;
+            }
+            return (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  backgroundColor: '#0F0F0F',
+                  paddingHorizontal: 16,
+                  borderRadius: 10,
+                }}>
+                <View style={{flexDirection: 'row', height: 75, width: '100%', justifyContent: 'space-between'}}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      // @ts-ignore
+                      navigation.navigate(commonStackPath, {
+                        screen: adminChatPath,
+                        params: {
+                          chatId: item?.uid,
+                        },
+                      });
+                    }}
+                    style={styles.wrapperItem}>
+                    <View>
+                      <FastImage resizeMode="cover" style={[styles.imageUser]} source={{uri: item.userPhoto}} />
+                      {item.online && <View style={styles.greenCircle} />}
+                    </View>
+                    <View style={styles.wrapperItemElements}>
+                      <View style={styles.rowTextNameAndStatus}>
+                        <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>{item.userName} · </Text>
+                        <Text
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.72)',
+                            fontSize: RFValue(14, 932),
+                            lineHeight: RFValue(17, 932),
+                            fontFamily: Satoshi400,
+                            textTransform: 'capitalize',
+                          }}>
+                          {item?.userAccountType}
+                        </Text>
+                      </View>
+                      {item?.lastMessage && (
+                        <Text numberOfLines={1} style={styles.textMessage}>
+                          {item?.lastMessage}
+                        </Text>
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                  <View style={[styles.wrapperTextMessage, {flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center'}]}>
+                    {!!item?.unreadMessagesCount && (
+                      <View style={styles.newMessage}>
+                        <Text style={styles.textCountNewMessages}>{`${
+                          item?.unreadMessagesCount > 3 ? '3+' : item?.unreadMessagesCount
+                        }`}</Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              </View>
+            );
+          }}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
+      {userChatWithAdmin?.uid && (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            backgroundColor: '#0F0F0F',
+            borderRadius: 10,
+            marginBottom: 16,
+            paddingHorizontal: 16,
+          }}>
+          <View style={{flexDirection: 'row', height: 75, width: '100%', justifyContent: 'space-between'}}>
+            <TouchableOpacity
+              onPress={() => {
+                // @ts-ignore
+                navigation.navigate(commonStackPath, {
+                  screen: adminChatPath,
+                  params: {
+                    chatId: userChatWithAdmin?.uid,
+                  },
+                });
+              }}
+              style={styles.wrapperItem}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View
+                  style={{
+                    position: 'relative',
+                    backgroundColor: '#212121',
+                    borderRadius: 30,
+                    width: 56,
+                    height: 56,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <IOIcon width={24} height={24} />
+                </View>
+              </View>
+              <View style={styles.wrapperItemElements}>
+                <View style={styles.rowTextNameAndStatus}>
+                  <Text style={[styles.textName, {marginRight: 6}]}>Support Team</Text>
+                </View>
+                <Text numberOfLines={1} style={styles.textMessage}>
+                  {userChatWithAdmin?.lastMessage || 'Need help? Chat with us now'}
+                </Text>
+              </View>
+              <View style={[styles.wrapperTextMessage, {flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center'}]}>
+                {!!userChatWithAdmin?.unreadMessagesCount && (
+                  <View style={styles.newMessage}>
+                    <Text style={styles.textCountNewMessages}>{userChatWithAdmin?.unreadMessagesCount}</Text>
+                  </View>
+                )}
+              </View>
+              <View style={{justifyContent: 'flex-start', height: '100%', paddingTop: 16}}>
+                <ChatIcon width={18} height={18} />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
       {isHost && eventData?.uid && (
         <View
           style={{
@@ -600,83 +901,87 @@ const Chat: FC<ChatProps> = () => {
         </View>
       )}
       {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
-      {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />}
-      {changeAccountTypeModalVisible && !acceptModalVisible && <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />}
+      {acceptModalVisible && (
+        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+      )}
+      {changeAccountTypeModalVisible && !acceptModalVisible && (
+        <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />
+      )}
       {isHost ? (
-          <View style={{flex: 1}}>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              data={messages?.chats}
-              contentContainerStyle={{flexGrow: 1}}
-              ListEmptyComponent={() => (
-                <View style={{justifyContent: 'center', flex: 1}}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
-                    You don't have any chat
-                  </Text>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>
-                    Get started to {isHost ? 'invite guests' : 'join events and begin receiving messages.'}
-                  </Text>
-                  <Button title={isHost ? 'Invite guests' : 'Join events'} onPress={() => navigation.navigate(IOPath as never)} />
-                </View>
-              )}
-              renderItem={({item}) => {
-                return (
-                  <Item
-                    inviteStatus={item?.invitedStatus}
-                    story={item?.story}
-                    online={item?.online}
-                    title={item?.name}
-                    message={item?.messages ? item?.messages[item?.messages?.length - 1]?.message : []}
-                    messages={item?.messages}
-                    image={item?.avatar}
-                    superInvite={item?.superInvite}
-                    invitedStatus={item?.invitedStatus}
-                    id={item?.id}
-                    uid={item?.uid}
-                    hostUid={item?.hostUid}
-                    newMessages={item?.newMessagesGuest}
-                  />
-                );
-              }}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </View>
-        ) : (
-          <View style={{flex: 1}}>
-            <FlatList
-              data={DATAEventsJoining}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{flexGrow: 1, marginBottom: 20, marginHorizontal: 5}}
-              ListEmptyComponent={() => (
-                <View style={{justifyContent: 'center', flex: 1}}>
-                  <Text style={styles.textYouNeedToJoin}>You need to join an event</Text>
-                  <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
-                  <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />
-                </View>
-              )}
-              renderItem={({item}) => {
-                return (
-                  <ItemEventsJoining
-                    image={item.image}
-                    title={item.title}
-                    chats={item.chats}
-                    date={item.date}
-                    activeEvent={item.activeEvent}
-                    girlInvitation={item.girlInvitation}
-                    maleInvitation={item.maleInvitation}
-                    hostUid={item.hostUid}
-                    status={item.status}
-                    usersList={item.usersList}
-                    newMessages={item?.chats[0].newMessagesHost}
-                    hostImage={item?.hostImage}
-                    statusEvent={item?.statusEvent}
-                  />
-                );
-              }}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </View>
-        )}
+        <View style={{flex: 1}}>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={messages?.chats}
+            contentContainerStyle={{flexGrow: 1}}
+            ListEmptyComponent={() => (
+              <View style={{justifyContent: 'center', flex: 1}}>
+                <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
+                  You don't have any chat
+                </Text>
+                <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>
+                  Get started to {isHost ? 'invite guests' : 'join events and begin receiving messages.'}
+                </Text>
+                <Button title={isHost ? 'Invite guests' : 'Join events'} onPress={() => navigation.navigate(IOPath as never)} />
+              </View>
+            )}
+            renderItem={({item}) => {
+              return (
+                <Item
+                  inviteStatus={item?.invitedStatus}
+                  story={item?.story}
+                  online={item?.online}
+                  title={item?.name}
+                  message={item?.messages ? item?.messages[item?.messages?.length - 1]?.message : []}
+                  messages={item?.messages}
+                  image={item?.avatar}
+                  superInvite={item?.superInvite}
+                  invitedStatus={item?.invitedStatus}
+                  id={item?.id}
+                  uid={item?.uid}
+                  hostUid={item?.hostUid}
+                  newMessages={item?.newMessagesGuest}
+                />
+              );
+            }}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+      ) : (
+        <View style={{flex: 1}}>
+          <FlatList
+            data={DATAEventsJoining}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{flexGrow: 1, marginBottom: 20, marginHorizontal: 5}}
+            ListEmptyComponent={() => (
+              <View style={{justifyContent: 'center', flex: 1}}>
+                <Text style={styles.textYouNeedToJoin}>You need to join an event</Text>
+                <Text style={styles.textYouDontHaveAny}>You don't have any active event.</Text>
+                <Button onPress={() => navigation.navigate(IOPath as never)} buttonStyle={{marginTop: 34}} title="Join event" />
+              </View>
+            )}
+            renderItem={({item}) => {
+              return (
+                <ItemEventsJoining
+                  image={item.image}
+                  title={item.title}
+                  chats={item.chats}
+                  date={item.date}
+                  activeEvent={item.activeEvent}
+                  girlInvitation={item.girlInvitation}
+                  maleInvitation={item.maleInvitation}
+                  hostUid={item.hostUid}
+                  status={item.status}
+                  usersList={item.usersList}
+                  newMessages={item?.chats[0].newMessagesHost}
+                  hostImage={item?.hostImage}
+                  statusEvent={item?.statusEvent}
+                />
+              );
+            }}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+      )}
       {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton={false} />}
     </View>
   );

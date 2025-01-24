@@ -19,7 +19,7 @@ import {
   settingsPath,
 } from 'constants/pathLocations';
 import {lightGray5Color, orangeColor, whiteColor} from 'constants/colors.ts';
-import {screenHeight, THIS_WEEK, ALL, THIS_MONTH, ACCEPTED_STATUS} from 'constants/common.ts';
+import {screenHeight, THIS_WEEK, ALL, THIS_MONTH, ACCEPTED_STATUS, screenWidth} from 'constants/common.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
 import {useChat} from '../../store/chatStore';
@@ -52,8 +52,7 @@ import {EventData} from 'src/types/event';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
 import {useDemoFlowStore} from '../../store/demoFlowStore';
-import HintCard from 'components/HintCard';
-import {hostHintSteps} from 'constants/hints.ts';
+import {Marquee} from '@animatereactnative/marquee';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -81,6 +80,8 @@ type ItemProps = {
 };
 
 const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
+  const MARQUEE_SPEED = 0.4;
+  const MARQUEE_SPACING = 30;
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const route = useRoute();
@@ -261,7 +262,34 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         <FastImage style={styles.imageEvent} source={{uri: image}} />
         {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
       </View>
-      <Text style={styles.textButton}>{title}</Text>
+      <View style={{maxWidth: screenWidth / 5, overflow: 'hidden'}}>
+        {title.length >= 10 ? (
+          <Marquee spacing={MARQUEE_SPACING} speed={MARQUEE_SPEED}>
+            <Text
+              style={{
+                marginTop: screenHeight / 190,
+                color: whiteColor,
+                fontFamily: Satoshi500,
+                fontSize: RFValue(13, 812),
+                textAlign: 'center',
+              }}>
+              {title}
+            </Text>
+          </Marquee>
+        ) : (
+          <Text
+            numberOfLines={1}
+            style={{
+              marginTop: screenHeight / 190,
+              color: whiteColor,
+              fontFamily: Satoshi500,
+              fontSize: RFValue(13, 812),
+              textAlign: 'center',
+            }}>
+            {title}
+          </Text>
+        )}
+      </View>
       <ModalEventRemindes
         girlInvitation={girlInvitation}
         eventStarting={eventStarting}
@@ -366,7 +394,35 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                             <FastImage style={{width: '100%', height: '100%', borderRadius: 50}} source={{uri: event?.photos[0]?.image}} />
                           )}
                         </View>
-                        <Text
+                        <View style={{maxWidth: screenWidth / 5, overflow: 'hidden'}}>
+                          {`${event?.name || event?.placeName}`.length >= 10 ? (
+                            <Marquee spacing={MARQUEE_SPACING} speed={MARQUEE_SPEED}>
+                              <Text
+                                style={{
+                                  marginTop: screenHeight / 190,
+                                  color: whiteColor,
+                                  fontFamily: Satoshi500,
+                                  fontSize: RFValue(13, 812),
+                                  textAlign: 'center',
+                                }}>
+                                {`${event?.name || event?.placeName}`}
+                              </Text>
+                            </Marquee>
+                          ) : (
+                            <Text
+                              numberOfLines={1}
+                              style={{
+                                marginTop: screenHeight / 190,
+                                color: whiteColor,
+                                fontFamily: Satoshi500,
+                                fontSize: RFValue(13, 812),
+                                textAlign: 'center',
+                              }}>
+                              {`${event?.name || event?.placeName}`}
+                            </Text>
+                          )}
+                        </View>
+                        {/* <Text
                           style={{
                             marginTop: screenHeight / 190,
                             color: whiteColor,
@@ -375,7 +431,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                             textAlign: 'center',
                           }}>
                           {event?.name || event?.placeName}
-                        </Text>
+                        </Text> */}
                       </TouchableOpacity>
                     );
                   })}
@@ -554,16 +610,34 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                       style={{width: '100%', height: '100%', borderRadius: 50}}
                     />
                   </View>
-                  <Text
-                    style={{
-                      marginTop: screenHeight / 190,
-                      color: whiteColor,
-                      fontFamily: Satoshi500,
-                      fontSize: RFValue(13, 812),
-                      textAlign: 'center',
-                    }}>
-                    {event?.name || event?.placeName}
-                  </Text>
+                  <View style={{maxWidth: screenWidth / 5, overflow: 'hidden'}}>
+                    {`${event?.name || event?.placeName}`.length >= 10 ? (
+                      <Marquee spacing={MARQUEE_SPACING} speed={MARQUEE_SPEED}>
+                        <Text
+                          style={{
+                            marginTop: screenHeight / 190,
+                            color: whiteColor,
+                            fontFamily: Satoshi500,
+                            fontSize: RFValue(13, 812),
+                            textAlign: 'center',
+                          }}>
+                          {`${event?.name || event?.placeName}`}
+                        </Text>
+                      </Marquee>
+                    ) : (
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          marginTop: screenHeight / 190,
+                          color: whiteColor,
+                          fontFamily: Satoshi500,
+                          fontSize: RFValue(13, 812),
+                          textAlign: 'center',
+                        }}>
+                        {`${event?.name || event?.placeName}`}
+                      </Text>
+                    )}
+                  </View>
                 </TouchableOpacity>
               );
             })}
