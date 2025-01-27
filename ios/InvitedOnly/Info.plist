@@ -24,6 +24,11 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>bugsnag</key>
+	<dict>
+    	<key>apiKey</key>
+    	<string>c9cf62ba5dfa5873c3c3ea42b2e66619</string>
+	</dict>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
