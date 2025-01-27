@@ -265,7 +265,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
     }
   };
 
-  if (eventStarting && !userDelete) {
+  if (eventStarting && !userDelete) {    
     return (
       <Modal
         isVisible={eventStarting}
@@ -275,16 +275,12 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
         backdropColor={blackColor}
         testID={'bottom-half-modal-open-button'}
         onBackdropPress={() => {
+          countMyEvent.current = countMyEvent.current + 1;
           setEventStarting(false);
-          if (countMyEvent?.current) {
-            countMyEvent.current = countMyEvent.current + 1;
-          }
         }}
         onSwipeComplete={() => {
+          countMyEvent.current = countMyEvent.current + 1;
           setEventStarting(false);
-          if (countMyEvent?.current) {
-            countMyEvent.current = countMyEvent.current + 1;
-          }
         }}
         style={styles.modalStyles}
         swipeDirection={['down']}>
@@ -379,10 +375,8 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               if (time === '0') {
                 setEventStarting(false);
               } else {
+                countMyEvent.current = countMyEvent.current + 1;
                 setEventStarting(false);
-                if (countMyEvent?.current) {
-                  countMyEvent.current = countMyEvent.current + 1;
-                }
               }
             }}
             title={time === '0' ? 'Im on my way' : 'Confirm'}
@@ -686,7 +680,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               setVisibleUserDelete(false);
               deleteUserFromCanceled();
             }}
-            title={'Ok, got itrm'}
+            title={'Ok, got item'}
             buttonStyle={styles.button}
           />
         </View>
