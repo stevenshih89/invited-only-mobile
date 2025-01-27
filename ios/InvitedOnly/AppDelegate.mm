@@ -6,6 +6,7 @@
 #import <AuthenticationServices/AuthenticationServices.h>
 #import <SafariServices/SafariServices.h>
 #import <FBSDKCoreKit/FBSDKCoreKit-Swift.h>
+#import <Bugsnag/Bugsnag.h>
 
 @implementation AppDelegate
 
@@ -17,7 +18,7 @@
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
   [FIRApp configure];
-
+  [Bugsnag start];
   bool didLaunched = [super application:application didFinishLaunchingWithOptions:launchOptions];
 
 

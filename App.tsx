@@ -15,6 +15,7 @@ import {requestTrackingPermission} from 'react-native-tracking-transparency';
 import {Settings} from 'react-native-fbsdk-next';
 import moment from 'moment';
 import Config from 'react-native-config';
+import Bugsnag from '@bugsnag/react-native';
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
@@ -25,6 +26,8 @@ const configuration = {
   occlusions: [],
 };
 RNUxcam.startWithConfiguration(configuration);
+
+Bugsnag.start();
 
 const App: FC = (): JSX.Element => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
