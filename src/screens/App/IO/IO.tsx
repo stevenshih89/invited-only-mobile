@@ -616,13 +616,19 @@ const IO: FC = (): JSX.Element => {
         console.error(e);
       }
     }
+
     try {
-      await firestore()
-        .collection(apiEventsCollection)
-        .doc(activeEventId)
-        .update({
-          rejectsList: firestore.FieldValue.arrayUnion({uid: rejectUid}),
-        });
+      const isEventOwner = userInfo?.uid === activeEvent?.uid;
+
+      const data = isEventOwner
+        ? {
+            rejectsList: firestore.FieldValue.arrayUnion({uid: rejectUid}),
+          }
+        : {
+            rejectsByGuestsList: firestore.FieldValue.arrayUnion({uid: rejectUid}),
+          };
+
+      await firestore().collection(apiEventsCollection).doc(activeEventId).update(data);
 
       setTimeout(() => {
         setEvents(prev =>
@@ -1039,7 +1045,7 @@ const IO: FC = (): JSX.Element => {
           ) {
             return false;
           }
-          if (event?.rejectsList?.find((rejectedUid: Event.RejectUser) => rejectedUid.uid === user?.uid)) {
+          if (event?.rejectsByGuestsList?.find((rejectedUid: Event.RejectUser) => rejectedUid.uid === user?.uid)) {
             return false;
           }
           if (event?.date && event?.hour) {

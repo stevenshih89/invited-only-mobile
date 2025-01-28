@@ -27,6 +27,7 @@ import ProfileEditing from 'screens/App/Profile/screens/ProfileEditing/ProfileEd
 import {TouchableOpacity} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import JoinEvents from 'screens/App/Requests/JoinEvents/JoinEvents';
+import {useUser} from 'src/store/userStore';
 
 const RequestsStackScreen = () => {
   const RequestsStack = createStackNavigator();
@@ -115,6 +116,12 @@ const BottomMenu: FC = (): JSX.Element => {
   const styles = useStyles();
   const Tab = createBottomTabNavigator();
 
+  const {user} = useUser();
+
+  const isInvitedOnlyAdmin = user?.isInvitedOnlyAdmin;
+
+  const initialRouteName = isInvitedOnlyAdmin ? chatPath : IOPath;
+
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -125,10 +132,10 @@ const BottomMenu: FC = (): JSX.Element => {
         tabBarIcon: ({focused}: {focused: boolean}) => tabIcon(focused, route.name),
         tabBarLabel: ({focused}: {focused: boolean}) => tabBarName(focused, route.name),
       })}
-      initialRouteName={IOPath}>
-      <Tab.Screen name={profilePath} component={ProfileStackScreen} />
-      <Tab.Screen name={requestsPath} component={RequestsStackScreen} />
-      <Tab.Screen name={IOPath} component={IOStackNavigation} />
+      initialRouteName={initialRouteName}>
+      {!isInvitedOnlyAdmin && <Tab.Screen name={profilePath} component={ProfileStackScreen} />}
+      {!isInvitedOnlyAdmin && <Tab.Screen name={requestsPath} component={RequestsStackScreen} />}
+      {!isInvitedOnlyAdmin && <Tab.Screen name={IOPath} component={IOStackNavigation} />}
       <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation} />
       <Tab.Screen name={chatPath} component={ChatStackScreen} />
     </Tab.Navigator>

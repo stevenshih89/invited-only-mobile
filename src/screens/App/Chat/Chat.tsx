@@ -81,6 +81,7 @@ interface ChatProps {
 const Chat: FC<ChatProps> = () => {
   const COUNT_TO_ADD_ADMIN_CHATS = 5;
   const DEFAULT_LIMIT_ADMIN_CHATS = 9;
+  const MAX_LIMIT_ADMIN_CHATS = 40;
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
@@ -278,6 +279,12 @@ const Chat: FC<ChatProps> = () => {
   useFocusEffect(handleAdminChatsWithUsers);
 
   useFocusEffect(handleUserChatWithAdmin);
+
+  const handleAddCountAdminChats = () => {
+    if (limitAdminChatsWithUsers < MAX_LIMIT_ADMIN_CHATS) {
+      setLimitAdminChatsWithUsers(prev => prev + COUNT_TO_ADD_ADMIN_CHATS);
+    }
+  };
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -718,7 +725,7 @@ const Chat: FC<ChatProps> = () => {
           showsVerticalScrollIndicator={false}
           data={adminChatsWithUsers}
           contentContainerStyle={{flexGrow: 1, paddingBottom: 40}}
-          onEndReached={() => setLimitAdminChatsWithUsers(prev => prev + COUNT_TO_ADD_ADMIN_CHATS)}
+          onEndReached={handleAddCountAdminChats}
           ItemSeparatorComponent={() => <View style={{height: 10}} />}
           renderItem={({item}) => {
             if (!item?.uid || !item?.userName) {
