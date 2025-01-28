@@ -57,6 +57,7 @@ import ModalEventMarkAttendance from 'components/Modal/ModalEventMarkAttendance'
 import {Event, EventData} from 'src/types/event';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
+import ModalEventRemindersStarting from 'components/Modal/ModalEventRemindersStarting';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -72,7 +73,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [eventDataMarkAttendance, setEventDataMarkAttendance] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
-  const countMyEvent = useRef(0);
+  const countMyEvent = useRef(0);  
 
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
@@ -94,10 +95,9 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [activeUserInfo, setActiveUserInfo] = useState<any>({});
 
   const [myEventsData, setMyEventsData] = useState<EventData[]>([]);
-  const [eventsJoiningData, setEventsJoiningData] = useState<EventData[]>([]);
+  const [eventsJoiningData, setEventsJoiningData] = useState<EventData[]>([]);   
   const [hoursUntilEvent, setHoursUntilEvent] = useState<number>();
-  const [currentEvent, setCurrentEvent] = useState();
-
+  const [currentEvent, setCurrentEvent] = useState();    
   const user = useUser((i: any) => i?.user);
   const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
   const isHost = user?.accountType === 'host';
@@ -188,22 +188,74 @@ const MyEvents: FC<any> = ({navigation}) => {
   const checkTimeEvent = item => {
     if (item) {
       const res = calculateHoursUntilEvent(item.date, item.hour);
-      setHoursUntilEvent(res);
-      setCurrentEvent(item);
-      setVisibleModalEventRemindes(true);
-      if (res < 25) {
-        sendNotificationAcceptedUser(item, res);
-        // sendNotificationInner(item?.usersList, `${item?.name} starting in ${res}h!`, 'Click here to confirm', 'start');
+      if(res > 0 && res < 25) {
+        setHoursUntilEvent(res);      
+        setCurrentEvent(item);
+        setVisibleModalEventRemindes(true);
       }
-      countMyEvent.current = countMyEvent.current + 1;
+      if (res > 0 && res < 25 && isHost) {
+        sendNotificationAcceptedUser(item, res);
+      }
     }
   };
 
   useEffect(() => {
-    if (myEventsData && myEventsData.length > countMyEvent.current) {
+    if (myEventsData && myEventsData.length > countMyEvent.current && isHost) {
       checkTimeEvent(myEventsData[countMyEvent.current]);
     }
   }, [myEventsData, countMyEvent.current]);
+
+
+  useEffect(() => {    
+    if (eventsJoiningData && eventsJoiningData.length > countMyEvent.current && !isHost) {
+      checkTimeEvent(eventsJoiningData[countMyEvent.current]);
+    }
+  }, [eventsJoiningData, countMyEvent.current]);
+
+  const updateGuestAttending = async (updatedUser: any) => {
+    try {
+      const eventDoc = await firestore().collection('Events').doc(currentEvent.id).get();
+      const data = eventDoc.data();
+      if (!data) return
+      const filteredGuests = data.usersList.filter((item: any) => item.uid !== user.uid);
+      await firestore().collection('Events').doc(currentEvent.id).update({
+        usersList: [...filteredGuests, updatedUser],
+      });
+    } catch (error) {
+      console.error('error updating guest:', error);
+    }
+  };
+  
+  const getGuestAttending = () => {
+    if (!currentEvent?.usersList) return;
+    let hourToEvent: number;
+    if (hoursUntilEvent > 12 && hoursUntilEvent <= 24) {
+      hourToEvent = 24;
+    } else if (hoursUntilEvent > 2 && hoursUntilEvent <= 12) {
+      hourToEvent = 12;
+    } else if (hoursUntilEvent > 0 && hoursUntilEvent <= 2) {
+      hourToEvent = 2;
+    } else {
+      return;
+    }
+    const currentUserGuest = currentEvent.usersList.find((item: any) => item.uid === user.uid);
+    if (!currentUserGuest) {
+      return;
+    }
+    const updatedUserGuest = {
+      ...currentUserGuest,
+      attending: currentUserGuest.attending? 
+      Array.from(new Set([...currentUserGuest.attending, hourToEvent])): 
+      [hourToEvent],
+    };
+    updateGuestAttending(updatedUserGuest);
+  };
+  
+
+  const incrementCount = async () => {
+    getGuestAttending()
+    countMyEvent.current += 1;
+  };
 
   const fetchUserInfo = async () => {
     setLoading(true);
@@ -1114,7 +1166,7 @@ const MyEvents: FC<any> = ({navigation}) => {
           accountType={userInfo?.accountType}
         />
       )}
-      {hoursUntilEvent < 25 && hoursUntilEvent > 0 && (
+      {hoursUntilEvent < 25 && hoursUntilEvent > 0 && isHost && (
         <ModalEventRemindes
           currentEvent={currentEvent}
           uid={userInfo?.uid}
@@ -1131,6 +1183,16 @@ const MyEvents: FC<any> = ({navigation}) => {
         goToMarkAttendance={() => goToMarkAttendance(eventDataMarkAttendance?.id)}
         handleMarkAttendance={handleMarkAttendance}
       />
+      {hoursUntilEvent < 25 && hoursUntilEvent > 0 && !isHost &&(
+        <ModalEventRemindersStarting
+          currentEvent={currentEvent}
+          incrementCount={incrementCount}
+          isModalVisible={visibleModalEventRemindes}
+          setEventStarting={setVisibleModalEventRemindes}
+          hoursUntilEvent={hoursUntilEvent}
+          countMyEvent={countMyEvent}
+        />
+      )}
     </>
   );
 };
