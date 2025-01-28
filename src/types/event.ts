@@ -45,6 +45,7 @@ export namespace Event {
 export interface EventData extends Event.Info {
   photos: Event.Photo[];
   rejectsList: Event.RejectUser[];
+  rejectsByGuestsList: Event.RejectUser[];
   requestsList: Event.User[];
   usersList: Event.User[];
 }

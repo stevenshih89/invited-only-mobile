@@ -4,7 +4,7 @@ import {create} from 'zustand';
 interface MyEventsState {
   eventsImJoining: EventData[];
   setEventsImJoining: (data: EventData[]) => void;
-  activeEvent: EventData | {};
+  activeEvent: EventData;
   eventFilter: string;
   setActiveEvent: (activeEvent: EventData) => void;
   setEventFilter: (status: string) => void;
@@ -19,7 +19,7 @@ interface MyEventsState {
 export const useMyEvents = create<MyEventsState>(set => ({
   eventsImJoining: [],
   setEventsImJoining: (data: EventData[]) => set(() => ({eventsImJoining: data})),
-  activeEvent: {},
+  activeEvent: {} as EventData,
   eventFilter: 'All',
   setActiveEvent: (activeEvent: EventData) => set(() => ({activeEvent})),
   setEventFilter: (status: string) => set(() => ({eventFilter: status})),

@@ -17,9 +17,9 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi700} from 'constants/fonts';
 import {useUser} from 'src/store/userStore';
 import firestore from '@react-native-firebase/firestore';
-
 import {getEventsIJoining} from 'helpers/getEventsIJoining';
 import Config from 'react-native-config';
+
 export const tabBarName = (focused: boolean, route: string): ReactElement => {
   const getLabel = (): string =>
     ({
