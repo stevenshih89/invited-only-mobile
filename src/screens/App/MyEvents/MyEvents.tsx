@@ -73,7 +73,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [eventDataMarkAttendance, setEventDataMarkAttendance] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
-  const countMyEvent = useRef(0);  
+  const countMyEvent = useRef(0);
 
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
@@ -95,9 +95,9 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [activeUserInfo, setActiveUserInfo] = useState<any>({});
 
   const [myEventsData, setMyEventsData] = useState<EventData[]>([]);
-  const [eventsJoiningData, setEventsJoiningData] = useState<EventData[]>([]);   
+  const [eventsJoiningData, setEventsJoiningData] = useState<EventData[]>([]);
   const [hoursUntilEvent, setHoursUntilEvent] = useState<number>();
-  const [currentEvent, setCurrentEvent] = useState();    
+  const [currentEvent, setCurrentEvent] = useState();
   const user = useUser((i: any) => i?.user);
   const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
   const isHost = user?.accountType === 'host';
@@ -188,8 +188,8 @@ const MyEvents: FC<any> = ({navigation}) => {
   const checkTimeEvent = item => {
     if (item) {
       const res = calculateHoursUntilEvent(item.date, item.hour);
-      if(res > 0 && res < 25) {
-        setHoursUntilEvent(res);      
+      if (res > 0 && res < 25) {
+        setHoursUntilEvent(res);
         setCurrentEvent(item);
         setVisibleModalEventRemindes(true);
       }
@@ -205,8 +205,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
   }, [myEventsData, countMyEvent.current]);
 
-
-  useEffect(() => {    
+  useEffect(() => {
     if (eventsJoiningData && eventsJoiningData.length > countMyEvent.current && !isHost) {
       checkTimeEvent(eventsJoiningData[countMyEvent.current]);
     }
@@ -216,18 +215,25 @@ const MyEvents: FC<any> = ({navigation}) => {
     try {
       const eventDoc = await firestore().collection('Events').doc(currentEvent.id).get();
       const data = eventDoc.data();
-      if (!data) return
+      if (!data) {
+        return;
+      }
       const filteredGuests = data.usersList.filter((item: any) => item.uid !== user.uid);
-      await firestore().collection('Events').doc(currentEvent.id).update({
-        usersList: [...filteredGuests, updatedUser],
-      });
+      await firestore()
+        .collection('Events')
+        .doc(currentEvent.id)
+        .update({
+          usersList: [...filteredGuests, updatedUser],
+        });
     } catch (error) {
       console.error('error updating guest:', error);
     }
   };
-  
+
   const getGuestAttending = () => {
-    if (!currentEvent?.usersList) return;
+    if (!currentEvent?.usersList) {
+      return;
+    }
     let hourToEvent: number;
     if (hoursUntilEvent > 12 && hoursUntilEvent <= 24) {
       hourToEvent = 24;
@@ -244,16 +250,13 @@ const MyEvents: FC<any> = ({navigation}) => {
     }
     const updatedUserGuest = {
       ...currentUserGuest,
-      attending: currentUserGuest.attending? 
-      Array.from(new Set([...currentUserGuest.attending, hourToEvent])): 
-      [hourToEvent],
+      attending: currentUserGuest.attending ? Array.from(new Set([...currentUserGuest.attending, hourToEvent])) : [hourToEvent],
     };
     updateGuestAttending(updatedUserGuest);
   };
-  
 
   const incrementCount = async () => {
-    getGuestAttending()
+    getGuestAttending();
     countMyEvent.current += 1;
   };
 
@@ -946,8 +949,16 @@ const MyEvents: FC<any> = ({navigation}) => {
     <>
       <View style={styles.container}>
         {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
-        {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />}
-        {changeAccountTypeModalVisible && !acceptModalVisible && <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />}
+        {acceptModalVisible && (
+          <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+        )}
+        {changeAccountTypeModalVisible && !acceptModalVisible && (
+          <ModalChangeAccountType
+            isVisible={changeAccountTypeModalVisible}
+            userInfo={userInfo}
+            setIsVisible={setChangeAccountModalVisible}
+          />
+        )}
         {isHost ? (
           <View style={styles.wrapperHeaderButtonMyEvents}>
             <TouchableOpacity
@@ -1183,7 +1194,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         goToMarkAttendance={() => goToMarkAttendance(eventDataMarkAttendance?.id)}
         handleMarkAttendance={handleMarkAttendance}
       />
-      {hoursUntilEvent < 25 && hoursUntilEvent > 0 && !isHost &&(
+      {hoursUntilEvent < 25 && hoursUntilEvent > 0 && !isHost && (
         <ModalEventRemindersStarting
           currentEvent={currentEvent}
           incrementCount={incrementCount}

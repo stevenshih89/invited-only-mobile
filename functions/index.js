@@ -24,6 +24,7 @@ exports.getUsersForEvent = functionsV1.https.onCall(async data => {
       .firestore()
       .collection(collectionName)
       .orderBy('userBeauty', 'desc')
+      .orderBy('uid')
       .where('accountType', '==', 'guest')
       .where('accountConfirmed', '==', true);
 
@@ -36,16 +37,16 @@ exports.getUsersForEvent = functionsV1.https.onCall(async data => {
 
     if (lastDoc) {
       const parsedLastDoc = JSON.parse(lastDoc);
-      query = query.startAfter(parsedLastDoc);
+      query = query.startAfter(parsedLastDoc.uid);
     }
 
     const snapshot = await query.get();
 
     const users = snapshot.docs
+      .filter(doc => !excludeUids.includes(doc.id))
       .map(doc => ({id: doc.id, ...doc.data()}))
-      .filter(user => !excludeUids.includes(user.uid))
       .slice(0, limit);
-    const newLastDoc = snapshot.docs[snapshot.docs.length - 1] || null;
+    const newLastDoc = users[users.length - 1] || null;
 
     return {
       users,
@@ -96,5 +97,58 @@ exports.sendNotificationReq = functionsV1.https.onRequest(async (req, res) => {
     }
   } else {
     return {success: false, error: 'FCM token not found'};
+  }
+});
+
+/////////////////////////////////////////////////////////////// DEV
+
+exports.devGetUsersForEvent = functionsV1.https.onCall(async data => {
+  const {excludeUids, limit = 7, lastDoc, male, female, collectionName} = data;
+
+  if (!excludeUids || !Array.isArray(excludeUids)) {
+    throw new functionsV1.https.HttpsError('invalid-argument', 'Invalid excludeUids array');
+  }
+
+  try {
+    let query = admin
+      .firestore()
+      .collection(collectionName)
+      .orderBy('userBeauty', 'desc')
+      .orderBy('uid')
+      .where('accountType', '==', 'guest')
+      .where('accountConfirmed', '==', true);
+
+    if (male > 0 && female === 0) {
+      query = query.where('gender', '!=', 'woman');
+    }
+    if (female > 0 && male === 0) {
+      query = query.where('gender', '!=', 'man');
+    }
+
+    if (lastDoc) {
+      const parsedLastDoc = JSON.parse(lastDoc);
+      query = query.startAfter(parsedLastDoc.uid);
+    }
+
+    const startTime = Date.now(); // Начало времени выполнения
+
+    const snapshot = await query.get();
+
+    const endTime = Date.now(); // Конец времени выполнения
+    console.log(`Query execution time: ${endTime - startTime} ms`);
+
+    const users = snapshot.docs
+      .filter(doc => !excludeUids.includes(doc.id))
+      .map(doc => ({id: doc.id, ...doc.data()}))
+      .slice(0, limit);
+    const newLastDoc = users[users.length - 1] || null;
+
+    return {
+      users,
+      lastDoc: newLastDoc ? JSON.stringify(newLastDoc) : null,
+    };
+  } catch (error) {
+    console.error('Error filtering users:', error);
+    throw new functionsV1.https.HttpsError('internal', 'Unable to get users');
   }
 });

@@ -27,6 +27,6 @@ export const useMyEvents = create<MyEventsState>(set => ({
   setMyEvents: (myEvents: EventData[]) => set(() => ({myEvents})),
   loadingMyEvents: true,
   setLoadingMyEvents: (loading: boolean) => set(() => ({loadingMyEvents: loading})),
-  loadingCardsList: true,
+  loadingCardsList: false,
   setLoadingCardsList: (loading: boolean) => set(() => ({loadingCardsList: loading})),
 }));

@@ -157,7 +157,7 @@ const IO: FC = (): JSX.Element => {
   const rotationLoader = useSharedValue(0);
 
   useEffect(() => {
-    if (loadingUser) {
+    if (loadingUser || loadingCardsList || loadingMyEvents) {
       rotationLoader.value = withRepeat(
         withTiming(360, {
           duration: 2000,
@@ -170,7 +170,7 @@ const IO: FC = (): JSX.Element => {
     return () => {
       cancelAnimation(rotationLoader);
     };
-  }, [rotationLoader, loadingUser]);
+  }, [rotationLoader, loadingUser, loadingCardsList, loadingMyEvents]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -1502,11 +1502,15 @@ const IO: FC = (): JSX.Element => {
   };
 
   const getCardsListForHost = async (refresh?: boolean) => {
-    const user = auth().currentUser;
-
-    if (!user?.uid || !activeEvent?.id || !userInfo?.uid) {
+    if (!userInfo?.uid || !activeEvent?.id || !userInfo?.uid) {
       return;
     }
+
+    console.warn(
+      refresh,
+      events?.map((i: any) => i?.info?.uid),
+    );
+
     if (!refresh) {
       setLoadingCardsList(true);
     }
@@ -1577,11 +1581,11 @@ const IO: FC = (): JSX.Element => {
       let blockedUsersList = [];
       let blockedMeUsersList = [];
 
-      const blockedUsersQuery = await firestore().collection('report').where('uidSender', '==', user.uid).get();
+      const blockedUsersQuery = await firestore().collection('report').where('uidSender', '==', userInfo?.uid).get();
       if (!blockedUsersQuery.empty) {
         blockedUsersList = blockedUsersQuery.docs.map(doc => doc.data().uid);
       }
-      const blockedMeUsersQuery = await firestore().collection('report').where('uid', '==', user.uid).get();
+      const blockedMeUsersQuery = await firestore().collection('report').where('uid', '==', userInfo?.uid).get();
       if (!blockedMeUsersQuery.empty) {
         blockedMeUsersList = blockedMeUsersQuery.docs.map(doc => doc.data().uidSender);
       }
@@ -1595,7 +1599,7 @@ const IO: FC = (): JSX.Element => {
 
       let listOfUsersResponse: any;
       if (!isDemo && userInfo?.accountPremium) {
-        listOfUsersResponse = await functions().httpsCallable('getUsersForEvent')({
+        listOfUsersResponse = await functions().httpsCallable('devGetUsersForEvent')({
           excludeUids: allUniqueIds,
           male: activeEvent?.male || 0,
           female: activeEvent?.female || 0,
@@ -1612,6 +1616,8 @@ const IO: FC = (): JSX.Element => {
       } else {
         users = listOfUsersResponse?.data?.users as UserInfo[];
       }
+
+      console.warn(users?.map((i: any) => i?.uid));
 
       if (!users || !Array.isArray(users)) {
         setLoadingCardsList(false);
@@ -1950,6 +1956,7 @@ const IO: FC = (): JSX.Element => {
           info: item,
         });
       });
+      console.warn(data.length);
 
       eventsRef.current = data;
       setEvents(prevEvents => {
@@ -2062,11 +2069,11 @@ const IO: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
-      if (userInfo?.uid && isHost && activeEvent?.id && !events?.length) {
+      if (userInfo?.uid && isHost && activeEvent?.id && !events?.length && !loadingCardsList) {
         console.warn('useEffect_getCardsListForHost', events?.length, lastVisibleRef.current, endReachedRef.current);
         getCardsListForHost();
       }
-    }, [userInfo?.uid, activeEvent?.id, loadingMyEvents]),
+    }, [userInfo?.uid, activeEvent?.id, loadingMyEvents, loadingCardsList]),
   );
 
   useFocusEffect(
@@ -2110,6 +2117,8 @@ const IO: FC = (): JSX.Element => {
   );
 
   const cardsList = isHost ? [...events].reverse() : events;
+
+  console.warn(cardsList.length);
 
   if (userInfo?.uid && isDemo && isHost && hintStep === 7) {
     return (
@@ -2198,6 +2207,16 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
+  if ((loadingUser || loadingMyEvents) && userInfo?.uid && isHost && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+    return (
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
+        <Animated.View style={[animatedStyle]}>
+          <LoaderIcon />
+        </Animated.View>
+      </SafeAreaView>
+    );
+  }
+
   if (userInfo?.uid && acceptModalVisible) {
     return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
@@ -2222,7 +2241,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isRefreshing && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite && loadingCardsList) {
+  if (userInfo?.uid && isRefreshing && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <>
         <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
@@ -2398,6 +2417,7 @@ const IO: FC = (): JSX.Element => {
             }
           />
         )}
+
         <View style={styles.container}>
           {cardsList?.map((item, index) => {
             return (

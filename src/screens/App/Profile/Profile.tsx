@@ -112,7 +112,10 @@ const Profile: FC = () => {
         const user = auth().currentUser;
         if (user) {
           try {
+            const startTime = Date.now();
             const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
+            const endTime = Date.now();
+            console.warn(`Query execution time: ${endTime - startTime} ms`); //
 
             if (userInfoDoc.exists) {
               setUserInfo(userInfoDoc.data());
@@ -123,7 +126,7 @@ const Profile: FC = () => {
                 setMainImage(userImage);
               }
               Image.prefetch(userImage.image).catch(error => {
-                // console.error('image prefetching error: ', error);
+                console.error('image prefetching error: ', error);
               });
             } else {
               Alert.alert('Error', 'No user data found in Firestore');
@@ -174,19 +177,27 @@ const Profile: FC = () => {
         }
       }
       setTotalGuests(totalParticipants);
-    } catch (error) {}
+    } catch (error) {
+      console.error('error fetching guest list: ', error);
+    }
   };
 
-  useEffect(() => {
-    const unsubscribe = firestore()
-      .collection(apiEventsCollection)
-      .onSnapshot(async querySnapshot => {
-        const count = await getEventsIJoining(querySnapshot, userInfo?.uid);
-        setEventsCount(count);
-      });
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = firestore()
+        .collection(apiEventsCollection)
+        .onSnapshot(async querySnapshot => {
+          const count = await getEventsIJoining(querySnapshot, userInfo?.uid);
+          setEventsCount(count);
+        });
 
-    return () => unsubscribe();
-  }, [userInfo]);
+      return () => {
+        console.warn('unsubscribe 213123');
+
+        unsubscribe();
+      };
+    }, [userInfo]),
+  );
 
   useEffect(() => {
     getGuestList();
@@ -240,8 +251,12 @@ const Profile: FC = () => {
   return (
     <View style={styles.container}>
       {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
-      {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />}
-      {changeAccountTypeModalVisible && !acceptModalVisible && <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />}
+      {acceptModalVisible && (
+        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+      )}
+      {changeAccountTypeModalVisible && !acceptModalVisible && (
+        <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />
+      )}
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
         <View>
           <View style={styles.profileImageContainer}>

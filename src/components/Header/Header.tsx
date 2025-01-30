@@ -117,7 +117,6 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
 
         if (querySnapshot.empty) {
           setMyEvents([]);
-          console.warn('Header_fetchMyEvents_querySnapshot_empty');
           setActiveEvent({});
           setChat('');
           setLoadingMyEvents(false);
@@ -136,11 +135,9 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
           }
           return false;
         });
-        console.warn('Header_fetchMyEvents', filteredEvents);
 
         if (!filteredEvents.length) {
           setMyEvents([]);
-          console.warn('Header_fetchMyEvents_filteredEvents_empty');
           setActiveEvent({});
           setChat('');
           setLoadingMyEvents(false);
@@ -155,14 +152,9 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         //   setChat(filteredEvents[0]?.id);
         //   return;
         // }
-        console.warn('Header_fetchMyEvents_activeEvent', activeEvent);
 
         const currentEvent = filteredEvents.find((event: EventData) => event?.id === activeEvent?.id);
         const eventIndex = currentEvent ? filteredEvents.findIndex((event: any) => event?.id === currentEvent?.id) : 0;
-
-        console.warn('Header_fetchMyEvents_currentEvent', currentEvent);
-
-        console.warn('Header_fetchMyEvents', filteredEvents[eventIndex]);
 
         setActiveEvent(filteredEvents[eventIndex]);
         setChat(filteredEvents[eventIndex]?.id);
@@ -224,8 +216,6 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
       setActiveEvent(event);
     }
   }, [isDemo, hintStep]);
-
-  console.warn('Header_event', userInfo?.accountType);
 
   const DATAEventsJoining = [
     {

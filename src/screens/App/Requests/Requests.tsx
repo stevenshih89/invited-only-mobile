@@ -517,15 +517,23 @@ const Requests: FC = (): ReactElement => {
     <>
       <View style={styles.container}>
         {userInfo?.photos?.length && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos?.[0].image} />}
-        {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />}
-        {changeAccountTypeModalVisible && !acceptModalVisible && <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />}
+        {acceptModalVisible && (
+          <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+        )}
+        {changeAccountTypeModalVisible && !acceptModalVisible && (
+          <ModalChangeAccountType
+            isVisible={changeAccountTypeModalVisible}
+            userInfo={userInfo}
+            setIsVisible={setChangeAccountModalVisible}
+          />
+        )}
         <ModalFullEvent
           isVisible={isVisibleModalFullEvent}
           idEvent={activeEvent.id}
           setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
         />
         {headerInfoEvent()}
-        {isHost && activeEvent?.id && acceptQuantityGuest >= totalQuantityGuests && (
+        {isHost && activeEvent?.id && acceptQuantityGuest >= totalQuantityGuests && totalQuantityGuests > 0 && acceptQuantityGuest > 0 && (
           <FullEvent
             text={`Event is full: ${acceptQuantityGuest}/${totalQuantityGuests} Guests Accepted`}
             activeEvent={activeEvent}
