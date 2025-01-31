@@ -88,6 +88,7 @@ const Chat: FC<ChatProps> = () => {
   const apiAdminChatsCollection = Config.API_ADMIN_CHATS_COLLECTION || 'adminChats';
   const [hostMenu, setHostMenu] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingChats, setLoadingChats] = useState<boolean>(true);
   const [messages, setMessages] = useState([]);
   const [DATAEventsJoining, setDATAEventsJoining] = useState([]);
   const [userInfo, setUserInfo] = useState<any>({});
@@ -104,8 +105,6 @@ const Chat: FC<ChatProps> = () => {
   const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
 
   const {activeEventDate} = useContext(EventsDate);
-
-  console.warn(limitAdminChatsWithUsers);
 
   const styles = useStyles();
   const navigation = useAppNavigation();
@@ -126,7 +125,7 @@ const Chat: FC<ChatProps> = () => {
   const rotationLoader = useSharedValue(0);
 
   useEffect(() => {
-    if (loading || loadingAdminChatsWithUsers) {
+    if (loading || loadingAdminChatsWithUsers || loadingChats) {
       rotationLoader.value = withRepeat(
         withTiming(360, {
           duration: 2000,
@@ -139,7 +138,7 @@ const Chat: FC<ChatProps> = () => {
     return () => {
       cancelAnimation(rotationLoader);
     };
-  }, [rotationLoader, loading, loadingAdminChatsWithUsers]);
+  }, [rotationLoader, loading, loadingAdminChatsWithUsers, loadingChats]);
 
   function chunkArray(array: any, chunkSize: number) {
     const results = [];
@@ -594,7 +593,9 @@ const Chat: FC<ChatProps> = () => {
         .doc(activeEvent?.id)
         .onSnapshot(async documentSnapshot => {
           if (!documentSnapshot.exists) {
-            return setMessages([]);
+            setMessages([]);
+            setLoadingChats(false);
+            return;
           }
           const data = documentSnapshot.data();
           const mappedMessagesData = [];
@@ -610,7 +611,7 @@ const Chat: FC<ChatProps> = () => {
           }
 
           setMessages({...data, chats: mappedMessagesData});
-          setLoading(false);
+          setLoadingChats(false);
         });
     } else {
       guestSubscriber = firestore()
@@ -618,6 +619,7 @@ const Chat: FC<ChatProps> = () => {
         .onSnapshot(async documentSnapshot => {
           if (documentSnapshot.empty) {
             setDATAEventsJoining([]);
+            setLoadingChats(false);
             return;
           }
           const chatData = documentSnapshot.docs.map(i => i.data());
@@ -676,7 +678,7 @@ const Chat: FC<ChatProps> = () => {
 
           const filteredDataEvents = filterEventByDate();
           setDATAEventsJoining(filteredDataEvents);
-          setLoading(false);
+          setLoadingChats(false);
         });
     }
 
@@ -686,7 +688,7 @@ const Chat: FC<ChatProps> = () => {
     };
   }, [activeEvent?.id, loading, activeEventDate]);
 
-  if (loading) {
+  if (loading || loadingChats) {
     return (
       <View
         style={{

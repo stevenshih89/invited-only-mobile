@@ -1,4 +1,5 @@
 const functionsV1 = require('firebase-functions');
+const functionsV2 = require('firebase-functions/v2');
 const admin = require('firebase-admin');
 
 const firebaseConfig = {
@@ -12,21 +13,15 @@ const firebaseConfig = {
 
 admin.initializeApp(firebaseConfig);
 
-exports.getUsersForEvent = functionsV1.https.onCall(async data => {
-  const {excludeUids, limit = 7, lastDoc, male, female, collectionName} = data;
+exports.getUsersForEvent = functionsV2.https.onCall(async request => {
+  const {excludeUids, limit = 7, lastDoc, male, female, collectionName} = request.data;
 
   if (!excludeUids || !Array.isArray(excludeUids)) {
-    throw new functionsV1.https.HttpsError('invalid-argument', 'Invalid excludeUids array');
+    throw new functionsV2.https.HttpsError('invalid-argument', 'Invalid excludeUids array');
   }
 
   try {
-    let query = admin
-      .firestore()
-      .collection(collectionName)
-      .orderBy('userBeauty', 'desc')
-      .orderBy('uid')
-      .where('accountType', '==', 'guest')
-      .where('accountConfirmed', '==', true);
+    let query = admin.firestore().collection(collectionName).where('accountType', '==', 'guest').where('accountConfirmed', '==', true);
 
     if (male > 0 && female === 0) {
       query = query.where('gender', '!=', 'woman');
@@ -34,6 +29,8 @@ exports.getUsersForEvent = functionsV1.https.onCall(async data => {
     if (female > 0 && male === 0) {
       query = query.where('gender', '!=', 'man');
     }
+
+    query = query.orderBy('userBeauty', 'desc').orderBy('uid');
 
     if (lastDoc) {
       const parsedLastDoc = JSON.parse(lastDoc);
@@ -54,7 +51,7 @@ exports.getUsersForEvent = functionsV1.https.onCall(async data => {
     };
   } catch (error) {
     console.error('Error filtering users:', error);
-    throw new functionsV1.https.HttpsError('internal', 'Unable to get users');
+    throw new functionsV2.https.HttpsError('internal', 'Unable to get users');
   }
 });
 
@@ -102,21 +99,15 @@ exports.sendNotificationReq = functionsV1.https.onRequest(async (req, res) => {
 
 /////////////////////////////////////////////////////////////// DEV
 
-exports.devGetUsersForEvent = functionsV1.https.onCall(async data => {
-  const {excludeUids, limit = 7, lastDoc, male, female, collectionName} = data;
+exports.devGetUsersForEvent = functionsV2.https.onCall(async request => {
+  const {excludeUids, limit = 7, lastDoc, male, female, collectionName} = request.data;
 
   if (!excludeUids || !Array.isArray(excludeUids)) {
-    throw new functionsV1.https.HttpsError('invalid-argument', 'Invalid excludeUids array');
+    throw new functionsV2.https.HttpsError('invalid-argument', 'Invalid excludeUids array');
   }
 
   try {
-    let query = admin
-      .firestore()
-      .collection(collectionName)
-      .orderBy('userBeauty', 'desc')
-      .orderBy('uid')
-      .where('accountType', '==', 'guest')
-      .where('accountConfirmed', '==', true);
+    let query = admin.firestore().collection(collectionName).where('accountType', '==', 'guest').where('accountConfirmed', '==', true);
 
     if (male > 0 && female === 0) {
       query = query.where('gender', '!=', 'woman');
@@ -125,16 +116,18 @@ exports.devGetUsersForEvent = functionsV1.https.onCall(async data => {
       query = query.where('gender', '!=', 'man');
     }
 
+    query = query.orderBy('userBeauty', 'desc').orderBy('uid');
+
     if (lastDoc) {
       const parsedLastDoc = JSON.parse(lastDoc);
       query = query.startAfter(parsedLastDoc.uid);
     }
 
-    const startTime = Date.now(); // Начало времени выполнения
+    const startTime = Date.now();
 
     const snapshot = await query.get();
 
-    const endTime = Date.now(); // Конец времени выполнения
+    const endTime = Date.now();
     console.log(`Query execution time: ${endTime - startTime} ms`);
 
     const users = snapshot.docs
@@ -149,6 +142,6 @@ exports.devGetUsersForEvent = functionsV1.https.onCall(async data => {
     };
   } catch (error) {
     console.error('Error filtering users:', error);
-    throw new functionsV1.https.HttpsError('internal', 'Unable to get users');
+    throw new functionsV2.https.HttpsError('internal', 'Unable to get users');
   }
 });

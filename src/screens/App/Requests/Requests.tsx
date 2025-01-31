@@ -43,6 +43,9 @@ import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, wit
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 
 const Requests: FC = (): ReactElement => {
+  const COUNT_TO_ADD_REQUEST_ITEMS = 2;
+  const DEFAULT_LIMIT_REQUEST_ITEMS = 6;
+  const MAX_LIMIT_REQUEST_ITEMS = 40;
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
@@ -71,6 +74,9 @@ const Requests: FC = (): ReactElement => {
   const changeAccountTypeModalVisible = useAdminActions((i: any) => i?.changeAccountTypeModalVisible);
   const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
   const currentUser = auth().currentUser;
+  const [loadingRequestItems, setLoadingRequestItems] = useState<boolean>(true);
+
+  const [limitRequestItems, setLimitRequestItems] = useState<number>(DEFAULT_LIMIT_REQUEST_ITEMS);
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -78,8 +84,10 @@ const Requests: FC = (): ReactElement => {
 
   const rotationLoader = useSharedValue(0);
 
+  console.warn(limitRequestItems);
+
   useEffect(() => {
-    if (loading || loadingMyEvents) {
+    if (loading || loadingMyEvents || loadingRequestItems) {
       rotationLoader.value = withRepeat(
         withTiming(360, {
           duration: 2000,
@@ -92,7 +100,7 @@ const Requests: FC = (): ReactElement => {
     return () => {
       cancelAnimation(rotationLoader);
     };
-  }, [rotationLoader, loading, loadingMyEvents]);
+  }, [rotationLoader, loading, loadingMyEvents, loadingRequestItems]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -111,7 +119,14 @@ const Requests: FC = (): ReactElement => {
     setIsVisibleMatch(false);
   };
 
-  const fetchHostRequests = async querySnapshot => {
+  const handleAddCountRequestItems = (): void => {
+    if (limitRequestItems >= MAX_LIMIT_REQUEST_ITEMS) {
+      return;
+    }
+    setLimitRequestItems(prev => prev + COUNT_TO_ADD_REQUEST_ITEMS);
+  };
+
+  const fetchHostRequests = async (querySnapshot: any) => {
     if (!querySnapshot.exists) {
       setRequestsForHost([]);
       return;
@@ -119,12 +134,16 @@ const Requests: FC = (): ReactElement => {
     const data = querySnapshot.data();
     if (!data?.requestsList?.length) {
       setRequestsForHost([]);
+      setLoadingRequestItems(false);
       return;
     }
 
-    const sortedRequests = data?.requestsList?.sort((a: Event.User, b: Event.User) => {
-      return moment(a?.createdAt, 'YYYY-MM-DD HH:mm:ss').isAfter(moment(b?.createdAt, 'YYYY-MM-DD HH:mm:ss')) ? 1 : -1;
-    });
+    const sortedRequests = data?.requestsList
+      ?.sort((a: Event.User, b: Event.User) => {
+        return a?.uid.localeCompare(b?.uid);
+      })
+      .filter((value, index, self) => index === self.findIndex(t => t.uid === value.uid))
+      .slice(0, limitRequestItems);
 
     const mappedRequests = [];
     for (const request of sortedRequests) {
@@ -139,6 +158,7 @@ const Requests: FC = (): ReactElement => {
     }
 
     setRequestsForHost(mappedRequests);
+    setLoadingRequestItems(false);
   };
 
   const filterByUid = (array: EventData[], uid: string) => {
@@ -151,9 +171,10 @@ const Requests: FC = (): ReactElement => {
     });
   };
 
-  const fetchGuestRequests = async querySnapshot => {
+  const fetchGuestRequests = async (querySnapshot: any) => {
     if (querySnapshot.empty) {
       setDataForGuest([]);
+      setLoadingRequestItems(false);
       return;
     }
     const data = querySnapshot?.docs?.map(i => i?.data()) as EventData[];
@@ -175,6 +196,7 @@ const Requests: FC = (): ReactElement => {
     const filteredRequestsByDate = filterEventByDate();
 
     setDataForGuest(filteredRequestsByDate);
+    setLoadingRequestItems(false);
   };
 
   const fetchUserInfo = async () => {
@@ -267,7 +289,7 @@ const Requests: FC = (): ReactElement => {
         subcribeHostRequests && subcribeHostRequests();
         subcribeGuestRequests && subcribeGuestRequests();
       };
-    }, [activeEvent?.id, isHost, activeEventDate]),
+    }, [activeEvent?.id, isHost, activeEventDate, limitRequestItems]),
   );
 
   const getEventListItem = () => {
@@ -281,6 +303,7 @@ const Requests: FC = (): ReactElement => {
               numColumns={2}
               key={'2'}
               showsVerticalScrollIndicator={false}
+              onEndReached={handleAddCountRequestItems}
               keyExtractor={({uid, name}) => `${uid}${name}`}
               contentContainerStyle={styles.listContentContainer}
               extraData={list}
@@ -378,7 +401,7 @@ const Requests: FC = (): ReactElement => {
     }
   };
 
-  if ((loading || loadingMyEvents) && !list.length && !isVisibleMatch) {
+  if ((loading || loadingMyEvents || loadingRequestItems) && !list.length && !isVisibleMatch) {
     return (
       <View
         style={{

@@ -628,7 +628,7 @@ const IO: FC = (): JSX.Element => {
             rejectsByGuestsList: firestore.FieldValue.arrayUnion({uid: rejectUid}),
           };
 
-      await firestore().collection(apiEventsCollection).doc(activeEventId).update(data);
+      firestore().collection(apiEventsCollection).doc(activeEventId).update(data);
 
       setTimeout(() => {
         setEvents(prev =>
@@ -697,7 +697,7 @@ const IO: FC = (): JSX.Element => {
         superInvite: superInvite ? superInvite : false,
         uid: isHost ? guestData?.uid : userHost?.uid,
         userPhoto: isHost ? guestData?.photos[0]?.image : userHost?.photos[0]?.image,
-        createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+        createdAt: moment().format('YYYY-MM-DD'),
       };
       const acceptedUsersList = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS);
       if (isHost) {
@@ -1493,6 +1493,9 @@ const IO: FC = (): JSX.Element => {
         return sortedByInterestsData;
       }
     });
+    if (refresh) {
+      setIsRefreshing(false);
+    }
     setLoadingCardsList(false);
   };
 
@@ -1956,7 +1959,6 @@ const IO: FC = (): JSX.Element => {
           info: item,
         });
       });
-      console.warn(data.length);
 
       eventsRef.current = data;
       setEvents(prevEvents => {
@@ -2118,7 +2120,7 @@ const IO: FC = (): JSX.Element => {
 
   const cardsList = isHost ? [...events].reverse() : events;
 
-  console.warn(cardsList.length);
+  console.warn(cardsList.length, loadingCardsList, isRefreshing);
 
   if (userInfo?.uid && isDemo && isHost && hintStep === 7) {
     return (
