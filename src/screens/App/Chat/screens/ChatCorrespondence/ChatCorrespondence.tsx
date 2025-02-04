@@ -65,6 +65,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const {image, title, online, activeEvent, id, superInvite, invitedStatus, uid, hostUid} = route?.params;
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [isPremium, setIsPremium] = useState<boolean>(false);
+  const [isSending, setIsSending] = useState(false);
 
   const clearChat = useRef(false);
   const user = useUser((i: any) => i?.user);
@@ -174,9 +175,11 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
   const handleSendMessage = async () => {
     try {
-      if (!messageUser) {
+      if (!messageUser || isSending) {
         return;
       }
+
+      setIsSending(true)
 
       let updateData = {
         id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
@@ -187,9 +190,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       };
 
       const doc = firestore().collection(apiMessagesCollection).doc(`${activeEvent}`);
-      const chatDataQuery = await doc.get();
+      const chatDataQuery = await doc.get();      
       const chatData = chatDataQuery.data();
-
       const currentChat = chatData?.chats?.find((i: any) => i?.id === id);
 
       const findChat = allChats?.filter(i => i?.id === id);
@@ -233,6 +235,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         await doc.update({
           chats: [...allChats],
         });
+        setIsSending(false)
         analytics().logEvent(`${chatCorrespondenceScreen}_send_message`, {
           hostUid: user?.uid,
           guestUid: uid,
@@ -260,6 +263,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         }
       }
     } catch (e) {
+      setIsSending(false)
       // console.log(e);
     }
   };
