@@ -167,9 +167,9 @@ const MyEvents: FC<any> = ({navigation}) => {
     return filter;
   };
 
-  const sendNotificationAcceptedUser = async (item, hourToEvent: number) => {
+  const sendNotificationAcceptedUser = async (item, hourToEvent: number) => {    
     const usersAccepted = getUsersListAccepted(item.usersList);
-    for (const user of usersAccepted) {
+    for (const user of usersAccepted) {      
       try {
         await sendNotification(
           user.uid,
@@ -179,13 +179,20 @@ const MyEvents: FC<any> = ({navigation}) => {
           'Event',
           userInfo,
         );
+        changeStatusReminders(item)
       } catch (error) {
         console.error('error sendNotificationAcceptedUser', error);
       }
     }
   };
 
-  const checkTimeEvent = item => {
+  const changeStatusReminders = async (item) => {
+    await firestore().collection('Events').doc(item.id).update({
+      isReminders: true
+    })
+  }
+
+  const checkTimeEvent = item => {    
     if (item) {
       const res = calculateHoursUntilEvent(item.date, item.hour);
       if (res > 0 && res < 25) {
@@ -193,7 +200,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         setCurrentEvent(item);
         setVisibleModalEventRemindes(true);
       }
-      if (res > 0 && res < 25 && isHost) {
+      if (res > 0 && res < 25 && isHost && !item.isReminders) {
         sendNotificationAcceptedUser(item, res);
       }
     }
