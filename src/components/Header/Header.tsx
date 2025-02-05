@@ -53,6 +53,7 @@ import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
 import {useDemoFlowStore} from '../../store/demoFlowStore';
 import {Marquee} from '@animatereactnative/marquee';
+import functions from '@react-native-firebase/functions';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -83,9 +84,8 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   const MARQUEE_SPEED = 0.4;
   const MARQUEE_SPACING = 30;
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const route = useRoute();
-  const {hintStep, setHintStep, event, isVisibleSwipeGuide} = useDemoFlowStore();
+  const {hintStep, event, isVisibleSwipeGuide} = useDemoFlowStore();
   const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
   const [eventStarting, setEventStarting] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>(null);
@@ -108,14 +108,17 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
     if (user) {
       try {
         setLoadingMyEvents(true);
-        const querySnapshot = await firestore()
-          .collection(apiEventsCollection)
-          .where('uid', '==', user.uid)
-          .where('isCancelled', '==', false)
-          .orderBy('createdAt', 'desc')
-          .get();
 
-        if (querySnapshot.empty) {
+        const start = new Date().getTime();
+        const cloudFunction = Config.CLOUD_FUNCTION_GET_USER_EVENTS || 'getUserEvents';
+        const querySnapshot = await functions().httpsCallable(cloudFunction)({
+          uid: user.uid,
+        });
+
+        const end = new Date().getTime();
+        console.warn('fetchMyEvents Header', end - start);
+
+        if (!querySnapshot?.data?.events?.length) {
           setMyEvents([]);
           setActiveEvent({});
           setChat('');
@@ -123,7 +126,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
           return;
         }
 
-        const data = querySnapshot.docs.map(doc => doc.data() as EventData);
+        const data = querySnapshot?.data?.events || [];
 
         const filteredEvents = data.filter(event => {
           if (event?.date && event?.hour) {

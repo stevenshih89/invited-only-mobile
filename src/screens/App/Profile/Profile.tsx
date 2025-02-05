@@ -52,7 +52,7 @@ const Profile: FC = () => {
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
   const changeAccountTypeModalVisible = useAdminActions((i: any) => i?.changeAccountTypeModalVisible);
   const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
-
+  const isHost = userInfo?.accountType === 'host';
   const rotationLoader = useSharedValue(0);
 
   useEffect(() => {
@@ -95,7 +95,6 @@ const Profile: FC = () => {
 
     const completenessPercentage = (presentFields / requiredFields.length) * 100;
 
-    // Если все поля заполнены, вернуть 100%, иначе отнять проценты за отсутствующие поля
     if (completenessPercentage === 100) {
       return 100;
     } else {
@@ -173,7 +172,7 @@ const Profile: FC = () => {
         const eventDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
         if (eventDoc.exists) {
           const data = eventDoc.data();
-          totalParticipants += data?.male + data?.female;
+          totalParticipants += data?.male || 0 + data?.female || 0;
         }
       }
       setTotalGuests(totalParticipants);
@@ -200,8 +199,10 @@ const Profile: FC = () => {
   );
 
   useEffect(() => {
-    getGuestList();
-  }, [userInfo]);
+    if (userInfo?.uid && isHost) {
+      getGuestList();
+    }
+  }, [userInfo?.uid]);
 
   const userAge = calculateAge(userInfo?.date);
 

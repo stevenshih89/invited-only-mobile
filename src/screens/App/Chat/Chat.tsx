@@ -584,109 +584,111 @@ const Chat: FC<ChatProps> = () => {
     }
   };
 
-  useEffect(() => {
-    let hostSubscriber: any;
-    let guestSubscriber: any;
-    if (isHost) {
-      hostSubscriber = firestore()
-        .collection(apiMessagesCollection)
-        .doc(activeEvent?.id)
-        .onSnapshot(async documentSnapshot => {
-          if (!documentSnapshot.exists) {
-            setMessages([]);
-            setLoadingChats(false);
-            return;
-          }
-          const data = documentSnapshot.data();
-          const mappedMessagesData = [];
-          for (const chat of data.chats) {
-            if (!chat?.uid) {
-              continue;
+  useFocusEffect(
+    useCallback(() => {
+      let hostSubscriber: any;
+      let guestSubscriber: any;
+      if (isHost) {
+        hostSubscriber = firestore()
+          .collection(apiMessagesCollection)
+          .doc(activeEvent?.id)
+          .onSnapshot(async documentSnapshot => {
+            if (!documentSnapshot.exists) {
+              setMessages([]);
+              setLoadingChats(false);
+              return;
             }
-            const {photos} = await getUserData(chat?.uid);
-            mappedMessagesData.push({
-              ...chat,
-              avatar: photos?.[0]?.image || chat?.avatar,
-            });
-          }
+            const data = documentSnapshot.data();
+            const mappedMessagesData = [];
+            for (const chat of data.chats) {
+              if (!chat?.uid) {
+                continue;
+              }
+              const {photos} = await getUserData(chat?.uid);
+              mappedMessagesData.push({
+                ...chat,
+                avatar: photos?.[0]?.image || chat?.avatar,
+              });
+            }
 
-          setMessages({...data, chats: mappedMessagesData});
-          setLoadingChats(false);
-        });
-    } else {
-      guestSubscriber = firestore()
-        .collection(apiMessagesCollection)
-        .onSnapshot(async documentSnapshot => {
-          if (documentSnapshot.empty) {
-            setDATAEventsJoining([]);
+            setMessages({...data, chats: mappedMessagesData});
             setLoadingChats(false);
-            return;
-          }
-          const chatData = documentSnapshot.docs.map(i => i.data());
-          const filteredChats = chatData.filter(chatDataItem => {
-            return chatDataItem?.chats?.some(chat => {
-              return chat?.uid === user?.uid;
-            });
           });
-
-          const mappedChats: any = [];
-
-          for (const chat of filteredChats) {
-            const eventQuery = await firestore().collection(apiEventsCollection).doc(chat?.activeEvent).get();
-            if (!eventQuery.exists) {
-              continue;
+      } else {
+        guestSubscriber = firestore()
+          .collection(apiMessagesCollection)
+          .onSnapshot(async documentSnapshot => {
+            if (documentSnapshot.empty) {
+              setDATAEventsJoining([]);
+              setLoadingChats(false);
+              return;
             }
-            const eventData = eventQuery.data();
-            const {photos: hostPhotos} = await getUserData(eventData?.uid);
-            const data = {
-              id: chat?.activeEvent,
-              girlInvitation: eventData?.female,
-              maleInvitation: eventData?.male,
-              date: eventData?.date,
-              hour: eventData?.hour,
-              status: eventData?.activeType,
-              image: eventData?.photos[0]?.image,
-              hostImage: eventData?.hostImage,
-              title: eventData?.name,
-              hostUid: eventData?.uid,
-              activeEvent: chat?.activeEvent,
-              usersList: eventData?.usersList,
-              statusEvent: eventData?.statusEvent,
-              chats: chat?.chats
-                .filter(chat => chat.uid === user?.uid)
-                .map(chat => ({
-                  ...chat,
-                  avatar: hostPhotos.length ? hostPhotos[0]?.image : eventData?.hostImage,
-                  name: eventData?.hostName,
-                })),
-            };
-            mappedChats.push(data);
-          }
+            const chatData = documentSnapshot.docs.map(i => i.data());
+            const filteredChats = chatData.filter(chatDataItem => {
+              return chatDataItem?.chats?.some(chat => {
+                return chat?.uid === user?.uid;
+              });
+            });
 
-          const filterEventByDate = () => {
-            if (activeEventDate === ALL) {
+            const mappedChats: any = [];
+
+            for (const chat of filteredChats) {
+              const eventQuery = await firestore().collection(apiEventsCollection).doc(chat?.activeEvent).get();
+              if (!eventQuery.exists) {
+                continue;
+              }
+              const eventData = eventQuery.data();
+              const {photos: hostPhotos} = await getUserData(eventData?.uid);
+              const data = {
+                id: chat?.activeEvent,
+                girlInvitation: eventData?.female,
+                maleInvitation: eventData?.male,
+                date: eventData?.date,
+                hour: eventData?.hour,
+                status: eventData?.activeType,
+                image: eventData?.photos[0]?.image,
+                hostImage: eventData?.hostImage,
+                title: eventData?.name,
+                hostUid: eventData?.uid,
+                activeEvent: chat?.activeEvent,
+                usersList: eventData?.usersList,
+                statusEvent: eventData?.statusEvent,
+                chats: chat?.chats
+                  .filter(chat => chat.uid === user?.uid)
+                  .map(chat => ({
+                    ...chat,
+                    avatar: hostPhotos.length ? hostPhotos[0]?.image : eventData?.hostImage,
+                    name: eventData?.hostName,
+                  })),
+              };
+              mappedChats.push(data);
+            }
+
+            const filterEventByDate = () => {
+              if (activeEventDate === ALL) {
+                return mappedChats;
+              }
+              if (activeEventDate === THIS_WEEK) {
+                return filterEventsByThisWeek(mappedChats);
+              }
+              if (activeEventDate === THIS_MONTH) {
+                return filterEventsByThisMonth(mappedChats);
+              }
               return mappedChats;
-            }
-            if (activeEventDate === THIS_WEEK) {
-              return filterEventsByThisWeek(mappedChats);
-            }
-            if (activeEventDate === THIS_MONTH) {
-              return filterEventsByThisMonth(mappedChats);
-            }
-            return mappedChats;
-          };
+            };
 
-          const filteredDataEvents = filterEventByDate();
-          setDATAEventsJoining(filteredDataEvents);
-          setLoadingChats(false);
-        });
-    }
+            const filteredDataEvents = filterEventByDate();
+            setDATAEventsJoining(filteredDataEvents);
+            setLoadingChats(false);
+          });
+      }
 
-    return () => {
-      hostSubscriber && hostSubscriber();
-      guestSubscriber && guestSubscriber();
-    };
-  }, [activeEvent?.id, loading, activeEventDate]);
+      return () => {
+        hostSubscriber && hostSubscriber?.();
+        guestSubscriber && guestSubscriber?.();
+      };
+    }, [activeEvent?.id, loading, activeEventDate]),
+  );
 
   if (loading || loadingChats) {
     return (

@@ -126,6 +126,7 @@ const IO: FC = (): JSX.Element => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [swipedCardsCount, setSwipedCardsCount] = useState(0);
   const [isOpenModalLimitedAccess, setIsOpenModalLimitedAccess] = useState(false);
+  const [swipedCardUids, setSwipedCardUids] = useState<string[]>([]);
 
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
@@ -133,7 +134,7 @@ const IO: FC = (): JSX.Element => {
 
   const userHost = useUser((i: any) => i?.user);
   const {activeEventDate} = useContext(EventsDate);
-  const {setHintStep, hintStep, isVisibleSwipeGuide, setIsVisibleSwipeGuide} = useDemoFlowStore();
+  const {setHintStep, hintStep, setIsVisibleSwipeGuide} = useDemoFlowStore();
   const route = useRoute();
   const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
 
@@ -156,21 +157,23 @@ const IO: FC = (): JSX.Element => {
 
   const rotationLoader = useSharedValue(0);
 
-  useEffect(() => {
-    if (loadingUser || loadingCardsList || loadingMyEvents) {
-      rotationLoader.value = withRepeat(
-        withTiming(360, {
-          duration: 2000,
-          easing: Easing.linear,
-        }),
-        -1,
-      );
-    }
+  useFocusEffect(
+    useCallback(() => {
+      if (loadingUser || loadingCardsList || loadingMyEvents) {
+        rotationLoader.value = withRepeat(
+          withTiming(360, {
+            duration: 2000,
+            easing: Easing.linear,
+          }),
+          -1,
+        );
+      }
 
-    return () => {
-      cancelAnimation(rotationLoader);
-    };
-  }, [rotationLoader, loadingUser, loadingCardsList, loadingMyEvents]);
+      return () => {
+        cancelAnimation(rotationLoader);
+      };
+    }, [rotationLoader, loadingUser, loadingCardsList, loadingMyEvents]),
+  );
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -241,40 +244,44 @@ const IO: FC = (): JSX.Element => {
     };
   }, [appState, userInfo]);
 
-  useEffect(() => {
-    let unsubscribeEvent: any;
-    if (!isDemo && activeEvent?.id) {
-      unsubscribeEvent = firestore()
-        .collection(apiEventsCollection)
-        .doc(activeEvent?.id)
-        .onSnapshot(querySnapshot => {
-          if (!querySnapshot.exists) {
-            // dispatch(setActiveEvent({}));
-            return;
-          }
-          const data = querySnapshot.data();
-          const prevEventReviewed = activeEvent?.eventReviewed;
-          const currentEventReviewed = data?.eventReviewed || false;
-          const prevStatusEvent = activeEvent?.statusEvent;
-          const currentStatusEvent = data?.statusEvent || false;
-          if (prevStatusEvent !== currentStatusEvent || prevEventReviewed !== currentEventReviewed) {
-            setActiveEvent({...activeEvent, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent});
-          }
-        });
-    }
-    return () => {
-      unsubscribeEvent && unsubscribeEvent();
-    };
-  }, [activeEvent?.id]);
+  useFocusEffect(
+    useCallback(() => {
+      let unsubscribeEvent: any;
+      if (!isDemo && activeEvent?.id) {
+        unsubscribeEvent = firestore()
+          .collection(apiEventsCollection)
+          .doc(activeEvent?.id)
+          .onSnapshot(querySnapshot => {
+            if (!querySnapshot.exists) {
+              // dispatch(setActiveEvent({}));
+              return;
+            }
+            const data = querySnapshot.data();
+            const prevEventReviewed = activeEvent?.eventReviewed;
+            const currentEventReviewed = data?.eventReviewed || false;
+            const prevStatusEvent = activeEvent?.statusEvent;
+            const currentStatusEvent = data?.statusEvent || false;
+            if (prevStatusEvent !== currentStatusEvent || prevEventReviewed !== currentEventReviewed) {
+              setActiveEvent({...activeEvent, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent});
+            }
+          });
+      }
+      return () => {
+        unsubscribeEvent && unsubscribeEvent();
+      };
+    }, [activeEvent?.id]),
+  );
 
-  useEffect(() => {
-    const subscription = onUserProfileChangeSubscription(info => {
-      setUserInfo((prev: UserInfo) => ({...prev, ...info}));
-      setUser(info);
-    });
+  useFocusEffect(
+    useCallback(() => {
+      const subscription = onUserProfileChangeSubscription(info => {
+        setUserInfo((prev: UserInfo) => ({...prev, ...info}));
+        setUser(info);
+      });
 
-    return subscription;
-  }, []);
+      return () => subscription();
+    }, []),
+  );
 
   const handleSwipeCardRight = () => {
     if (cardRef.current) {
@@ -288,6 +295,16 @@ const IO: FC = (): JSX.Element => {
       // @ts-ignore
       cardRef.current?.swipeCardLeft();
     }
+  };
+
+  const handleAddSwipeCardUid = (uid: string) => {
+    setSwipedCardUids(prev => {
+      if (prev.length >= 70) {
+        return [...prev.slice(30, prev.length), uid];
+      } else {
+        return [...prev, uid];
+      }
+    });
   };
 
   const handleFilterEvent = ({uid, id, withSwipeAnimation}: {uid: string; id: string; withSwipeAnimation: boolean}) => {
@@ -307,6 +324,7 @@ const IO: FC = (): JSX.Element => {
 
   const handleReject = ({uid, id, withSwipeAnimation}: {uid: string; id: string; withSwipeAnimation: boolean}) => {
     setScrollPosition(0);
+    handleAddSwipeCardUid(uid);
     onReject(uid, id);
     setTimeout(() => {
       setCurrentEventCardPosition(prev => prev + 1);
@@ -328,6 +346,7 @@ const IO: FC = (): JSX.Element => {
     superInvite?: boolean;
   }) => {
     setScrollPosition(0);
+    handleAddSwipeCardUid(uid);
     onInvite(uid, id, superInvite);
     setTimeout(() => {
       setCurrentEventCardPosition(prev => prev + 1);
@@ -358,18 +377,20 @@ const IO: FC = (): JSX.Element => {
     }
   }, [userInfo]);
 
-  useEffect(() => {
-    const unsubscribe = onMatchNotificationSubscription(
-      message => {
-        const data = message?.data;
-        setMatchData(data);
-        setIsVisibleMatch(true);
-      },
-      setRejectVisible,
-      setAcceptVisible,
-    );
-    return () => unsubscribe();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = onMatchNotificationSubscription(
+        message => {
+          const data = message?.data;
+          setMatchData(data);
+          setIsVisibleMatch(true);
+        },
+        setRejectVisible,
+        setAcceptVisible,
+      );
+      return () => unsubscribe();
+    }, []),
+  );
 
   const getSuperInvites = async () => {
     const userQuery = await firestore().collection(apiUserInfoCollection).doc(userHost.uid).get();
@@ -522,12 +543,15 @@ const IO: FC = (): JSX.Element => {
   }
 
   const fetchUserInfo = async () => {
-    setLoadingUser(true);
     const user = auth().currentUser;
 
-    if (user) {
+    if (user && !loadingUser) {
+      setLoadingUser(true);
       try {
+        const start = new Date().getTime();
         const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
+        const end = new Date().getTime();
+        console.warn('fetchUserInfo IO', end - start);
 
         if (userInfoDoc.exists) {
           const userInfoData = userInfoDoc.data() as UserInfo;
@@ -556,19 +580,17 @@ const IO: FC = (): JSX.Element => {
     const user = auth().currentUser;
     if (user) {
       try {
-        const querySnapshot = await firestore()
-          .collection(apiEventsCollection)
-          .where('uid', '==', user.uid)
-          .where('isCancelled', '==', false)
-          .orderBy('createdAt', 'desc')
-          .get();
+        const cloudFunction = Config.CLOUD_FUNCTION_GET_USER_EVENTS || 'getUserEvents';
+        const querySnapshot = await functions().httpsCallable(cloudFunction)({
+          uid: user.uid,
+        });
 
-        if (querySnapshot.empty) {
+        if (!querySnapshot?.data?.events?.length) {
           setLoadingCardsList(false);
           return;
         }
 
-        const data = querySnapshot.docs.map(doc => doc.data() as EventData);
+        const data = querySnapshot?.data?.events || [];
         const filteredEvents = data.filter(event => {
           if (event?.date && event?.hour) {
             const adjustedDate = moment(`${event?.date}, ${event?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
@@ -636,7 +658,7 @@ const IO: FC = (): JSX.Element => {
             return isHost ? i?.info?.uid !== uid : i?.info?.id !== eventId;
           }),
         );
-      }, 300);
+      }, 100);
     } catch (error) {
       console.error(error);
     }
@@ -1521,7 +1543,6 @@ const IO: FC = (): JSX.Element => {
       setIsRefreshing(true);
     }
     let users;
-    let getActualDataEvent: EventData | null = null;
     try {
       let listOfUsers = [];
 
@@ -1569,47 +1590,21 @@ const IO: FC = (): JSX.Element => {
         }
       }
 
-      const eventQuery = await firestore().collection(apiEventsCollection).doc(activeEvent.id).get();
-
-      if (!eventQuery.exists && !isDemo) {
-        setLoadingCardsList(false);
-        setEvents([]);
-        endReachedRef.current = true;
-        return;
-      }
-      if (eventQuery.exists) {
-        getActualDataEvent = eventQuery.data() || ({} as EventData);
-      }
-
-      let blockedUsersList = [];
-      let blockedMeUsersList = [];
-
-      const blockedUsersQuery = await firestore().collection('report').where('uidSender', '==', userInfo?.uid).get();
-      if (!blockedUsersQuery.empty) {
-        blockedUsersList = blockedUsersQuery.docs.map(doc => doc.data().uid);
-      }
-      const blockedMeUsersQuery = await firestore().collection('report').where('uid', '==', userInfo?.uid).get();
-      if (!blockedMeUsersQuery.empty) {
-        blockedMeUsersList = blockedMeUsersQuery.docs.map(doc => doc.data().uidSender);
-      }
-
-      const uniqueRejectsList = getActualDataEvent?.rejectsList?.map((j: Event.RejectUser) => j?.uid) || [];
-      const uniqueUsersListIds = getActualDataEvent?.usersList?.map((j: Event.User) => j?.uid) || [];
-
-      const allUniqueIds = [
-        ...new Set([...blockedUsersList, ...blockedMeUsersList, ...uniqueRejectsList, ...uniqueUsersListIds, userInfo?.uid]),
-      ];
-
       let listOfUsersResponse: any;
       if (!isDemo && userInfo?.accountPremium) {
-        listOfUsersResponse = await functions().httpsCallable('devGetUsersForEvent')({
-          excludeUids: allUniqueIds,
-          male: activeEvent?.male || 0,
-          female: activeEvent?.female || 0,
+        const start = new Date().getTime();
+        console.warn('start', start);
+
+        const cloudFunction = Config.CLOUD_FUNCTION_GET_USERS_FOR_EVENT || 'getUsersForEvent_v2';
+        listOfUsersResponse = await functions().httpsCallable(cloudFunction)({
           limit: CARDS_LOADING_LIMIT,
           lastDoc: lastVisibleRef.current ? JSON.stringify(lastVisibleRef.current) : null,
-          collectionName: apiUserInfoCollection,
+          eventId: activeEvent?.id,
         });
+
+        console.warn('end', new Date().getTime());
+
+        console.warn('execution time', new Date().getTime() - start);
       }
 
       const lastDoc = listOfUsersResponse?.data?.lastDoc ? JSON.parse(listOfUsersResponse.data.lastDoc) : null;
@@ -1639,13 +1634,21 @@ const IO: FC = (): JSX.Element => {
       const data: any[] = [];
 
       users?.map((item: UserInfo, index: number): void => {
-        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} = item;
-
-        const findSuperJoin = getActualDataEvent?.requestsList?.find((i: Event.User) => {
-          if (item.uid === i.uid && i.superInvite) {
-            return true;
-          }
-        });
+        const {
+          name,
+          bio,
+          accountType,
+          gender,
+          address,
+          homeAddress,
+          height,
+          alcohol,
+          date,
+          accountConfirmed,
+          uid,
+          accountPremium,
+          isSuperInvite,
+        } = item;
 
         setNameUser(name);
         const girlPhotos: string[] = item?.photos
@@ -1682,7 +1685,7 @@ const IO: FC = (): JSX.Element => {
                 }
                 photos={girlPhotos}
                 accountType={accountType}
-                isShowWantsJoin={!!findSuperJoin}
+                isShowWantsJoin={isSuperInvite}
                 isPremium={accountPremium}
                 activeEvent={activeEvent}
                 location={item.location}
@@ -1963,7 +1966,12 @@ const IO: FC = (): JSX.Element => {
       eventsRef.current = data;
       setEvents(prevEvents => {
         if (refresh) {
-          const filteredData = data.filter(event => !prevEvents.some(prevEvent => prevEvent.info.uid === event.info.uid));
+          const filteredData = data.filter(event => {
+            if (prevEvents.some(prevEvent => prevEvent.info.uid === event.info.uid) || swipedCardUids.includes(event.info.uid)) {
+              return false;
+            }
+            return true;
+          });
           const updatedEvents = [...filteredData, ...[...prevEvents].reverse()].reverse();
           eventsRef.current = updatedEvents;
           return updatedEvents;
@@ -1978,6 +1986,9 @@ const IO: FC = (): JSX.Element => {
       }
     } catch (error) {
       console.error('error_getCardsListForHost', error);
+      endReachedRef.current = true;
+      setEvents([]);
+      setIsRefreshing(false);
     } finally {
       setLoadingCardsList(false);
     }
@@ -2057,8 +2068,21 @@ const IO: FC = (): JSX.Element => {
     if (isHost && activeEvent?.id) {
       lastVisibleRef.current = null;
       endReachedRef.current = false;
+      if (events?.length) {
+        setIsRefreshing(true);
+        getCardsListForHost();
+      }
     }
   }, [activeEvent?.id, isHost]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserInfo();
+      if (userInfo?.uid && isHost) {
+        fetchMyEvents();
+      }
+    }, [userInfo?.uid]),
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -2092,13 +2116,13 @@ const IO: FC = (): JSX.Element => {
       if (isHost) {
         if (events?.length <= 2 && lastVisibleRef.current && !endReachedRef.current) {
           console.warn('getCardsListForHost', events?.length, lastVisibleRef.current, endReachedRef.current);
+          setIsRefreshing(true);
           getCardsListForHost(true);
         }
       }
       if (!isHost) {
         if (events?.length <= 2 && lastVisibleRef.current && !endReachedRef.current) {
           console.warn('getCardsListForGuest', events?.length, lastVisibleRef.current, endReachedRef.current);
-
           getCardsListForGuest(true);
         }
       }
@@ -2108,15 +2132,6 @@ const IO: FC = (): JSX.Element => {
   useEffect(() => {
     requestUserPermission();
   }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (userInfo?.uid && isHost) {
-        fetchMyEvents();
-      }
-      fetchUserInfo();
-    }, [userInfo?.uid]),
-  );
 
   const cardsList = isHost ? [...events].reverse() : events;
 
@@ -2209,15 +2224,16 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if ((loadingUser || loadingMyEvents) && userInfo?.uid && isHost && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
-    return (
-      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
-        <Animated.View style={[animatedStyle]}>
-          <LoaderIcon />
-        </Animated.View>
-      </SafeAreaView>
-    );
-  }
+  // if ((loadingUser || loadingMyEvents) && userInfo?.uid && isHost && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+  //   console.warn('log 2', loadingUser, loadingMyEvents, userInfo?.uid);
+  //   return (
+  //     <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
+  //       <Animated.View style={[animatedStyle]}>
+  //         <LoaderIcon />
+  //       </Animated.View>
+  //     </SafeAreaView>
+  //   );
+  // }
 
   if (userInfo?.uid && acceptModalVisible) {
     return (
@@ -2243,7 +2259,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isRefreshing && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+  if (userInfo?.uid && isRefreshing && !cardsList.length && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <>
         <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
@@ -2280,7 +2296,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && loadingCardsList && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+  if (userInfo?.uid && (loadingCardsList || loadingUser) && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <>
         <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
@@ -2291,7 +2307,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isHost && !loadingCardsList && !myEvents.length && !isVisibleMatch && !isDemo) {
+  if (userInfo?.uid && isHost && !loadingCardsList && !loadingMyEvents && !loadingUser && !myEvents.length && !isVisibleMatch && !isDemo) {
     return (
       <>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
@@ -2419,7 +2435,6 @@ const IO: FC = (): JSX.Element => {
             }
           />
         )}
-
         <View style={styles.container}>
           {cardsList?.map((item, index) => {
             return (
