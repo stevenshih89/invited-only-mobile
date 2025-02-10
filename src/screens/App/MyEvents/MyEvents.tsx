@@ -569,7 +569,12 @@ const MyEvents: FC<any> = ({navigation}) => {
               return;
             }
             const data = querySnapshot?.docs?.map(i => i?.data());
-            const sortedData = data.sort((a, b) => {
+            const oneMonthAgo = moment().subtract(1, "months");            
+            const filterMonth = data.filter(event => {
+              const eventDate = moment(event.date, "DD.MM.YYYY");              
+              return eventDate.isAfter(oneMonthAgo);
+            });
+            const sortedData = filterMonth.sort((a, b) => {
               if (a.isCancelled && !b.isCancelled) {
                 return 1;
               }
