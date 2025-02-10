@@ -27,10 +27,13 @@ const Navigator = () => {
     if (!userState) {
       setAuthState(false);
     }
+    const start = new Date().getTime();
     const uid = userState?._user?.uid;
     await AsyncStorage.setItem('uid', `${uid}`);
     await getOnbordingState();
     const userDataInfo = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+    const end = new Date().getTime();
+    console.warn('onAuthStateChanged', end - start);
 
     if (userDataInfo.exists) {
       setAuthState(!!userState);
@@ -48,10 +51,10 @@ const Navigator = () => {
   };
 
   useEffect(() => {
-    if (!initializing) {
+    if (!initializing && userData?.uid) {
       SplashScreen.hide();
     }
-  }, [initializing]);
+  }, [initializing, userData?.uid]);
 
   useEffect(() => {
     messaging().onMessage(async () => {});
@@ -102,7 +105,9 @@ const Navigator = () => {
     if (userData?.id) {
       setAuthState(true);
     }
-    return () => subcriber();
+    return () => {
+      subcriber();
+    };
   }, [initializing, user, onBoarding, setUser]);
 
   if (initializing) {

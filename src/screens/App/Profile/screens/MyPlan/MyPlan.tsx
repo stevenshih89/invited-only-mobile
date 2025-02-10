@@ -31,6 +31,7 @@ import {useSubscriptions} from 'src/store/subscriptionsStore';
 import {SvgProps} from 'react-native-svg';
 import {screenHeight} from 'constants/common';
 import Config from 'react-native-config';
+import {useUser} from 'src/store/userStore';
 interface WhatGetItem {
   title: string;
   description: string;
@@ -58,7 +59,9 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
 const MyPlan = () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [loaderVisible, setLoaderVisible] = useState(false);
-  const [userInfo, setUserInfo] = useState<any>({});
+
+  const {user: userInfo} = useUser();
+  // const [userInfo, setUserInfo] = useState<any>({});
 
   const whatGet: WhatGetItem[] = [
     {
@@ -107,35 +110,35 @@ const MyPlan = () => {
 
   const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions);
 
-  const fetchUserInfo = async () => {
-    // setLoaderVisible(true)
-    const user = auth().currentUser;
+  // const fetchUserInfo = async () => {
+  //   // setLoaderVisible(true)
+  //   const user = auth().currentUser;
 
-    if (user) {
-      try {
-        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
-        if (userInfoDoc.exists) {
-          setUserInfo(userInfoDoc.data());
-        }
-      } catch (error: any) {}
-    }
-    // setLoaderVisible(false)
-  };
+  //   if (user) {
+  //     try {
+  //       const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
+  //       if (userInfoDoc.exists) {
+  //         setUserInfo(userInfoDoc.data());
+  //       }
+  //     } catch (error: any) {}
+  //   }
+  //   // setLoaderVisible(false)
+  // };
 
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
+  // useEffect(() => {
+  //   fetchUserInfo();
+  // }, []);
 
   const navigation = useAppNavigation();
 
-  const loaderVisibleFun = () => {
-    setLoaderVisible(true);
-    setTimeout(() => setLoaderVisible(false), 1000);
-  };
+  // const loaderVisibleFun = () => {
+  //   setLoaderVisible(true);
+  //   setTimeout(() => setLoaderVisible(false), 1000);
+  // };
 
-  const goToManagePath = () => {
-    navigation.navigate(manageSubscriptionPath as never);
-  };
+  // const goToManagePath = () => {
+  //   navigation.navigate(manageSubscriptionPath as never);
+  // };
 
   const goToPaymentPath = () => {
     navigation.navigate(paymentPath as never);

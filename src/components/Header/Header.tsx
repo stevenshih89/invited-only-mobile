@@ -53,7 +53,8 @@ import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
 import {useDemoFlowStore} from '../../store/demoFlowStore';
 import {Marquee} from '@animatereactnative/marquee';
-
+import functions from '@react-native-firebase/functions';
+import firebase from '@react-native-firebase/app';
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
   showHeaderTop?: boolean;
@@ -83,12 +84,10 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   const MARQUEE_SPEED = 0.4;
   const MARQUEE_SPACING = 30;
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const route = useRoute();
-  const {hintStep, setHintStep, event, isVisibleSwipeGuide} = useDemoFlowStore();
+  const {hintStep, event, isVisibleSwipeGuide} = useDemoFlowStore();
   const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
   const [eventStarting, setEventStarting] = useState<boolean>(false);
-  const [userInfo, setUserInfo] = useState<any>(null);
   // const [myEvents, setMyEvents] = useState<Array<any>>();
   const styles = useStyles();
 
@@ -97,7 +96,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
 
   const setChat = useChat((i: any) => i.setActiveEvent);
 
-  const userData = useUser((i: any) => i?.user);
+  const {user: userInfo} = useUser();
 
   const {setActiveEvent, activeEvent, myEvents, setMyEvents, setLoadingMyEvents} = useMyEvents(state => state);
 
@@ -108,14 +107,18 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
     if (user) {
       try {
         setLoadingMyEvents(true);
-        const querySnapshot = await firestore()
-          .collection(apiEventsCollection)
-          .where('uid', '==', user.uid)
-          .where('isCancelled', '==', false)
-          .orderBy('createdAt', 'desc')
-          .get();
 
-        if (querySnapshot.empty) {
+        const start = new Date().getTime();
+        const cloudFunctionName = Config.CLOUD_FUNCTION_GET_USER_EVENTS || 'getUserEvents';
+        const getUserEventsCloudFunction = firebase.app().functions('europe-west3').httpsCallable(cloudFunctionName);
+        const querySnapshot = await getUserEventsCloudFunction({
+          uid: user.uid,
+        });
+
+        const end = new Date().getTime();
+        console.warn('fetchMyEvents Header', end - start);
+
+        if (!querySnapshot?.data?.events?.length) {
           setMyEvents([]);
           setActiveEvent({});
           setChat('');
@@ -123,11 +126,11 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
           return;
         }
 
-        const data = querySnapshot.docs.map(doc => doc.data() as EventData);
+        const data = querySnapshot?.data?.events || [];
 
-        const filteredEvents = data.filter(event => {
-          if (event?.date && event?.hour) {
-            const adjustedDate = moment(`${event?.date}, ${event?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+        const filteredEvents = data.filter((eventItem: EventData) => {
+          if (eventItem?.date && eventItem?.hour) {
+            const adjustedDate = moment(`${eventItem?.date}, ${eventItem?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
             if (adjustedDate.isBefore(moment())) {
               return false;
             }
@@ -145,13 +148,6 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         }
 
         setMyEvents(filteredEvents);
-
-        // if (!activeEvent?.id) {
-        //   console.warn('Header_fetchMyEvents_activeEvent_empty');
-        //   setActiveEvent(filteredEvents[0]);
-        //   setChat(filteredEvents[0]?.id);
-        //   return;
-        // }
 
         const currentEvent = filteredEvents.find((event: EventData) => event?.id === activeEvent?.id);
         const eventIndex = currentEvent ? filteredEvents.findIndex((event: any) => event?.id === currentEvent?.id) : 0;
@@ -171,10 +167,10 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   };
 
   useEffect(() => {
-    if (!isDemo) {
+    if (!isDemo && userInfo?.uid && isHost) {
       fetchMyEvents();
     }
-  }, [headerType, userData?.uid, isDemo]);
+  }, [headerType, userInfo?.uid, isDemo]);
 
   const goToCreateEvent = async (): void => {
     if (!userInfo?.accountConfirmed) {
@@ -187,29 +183,11 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const subscription = onUserProfileChangeSubscription(info => {
-        setUserInfo((prev: any) => ({...prev, ...info}));
-      });
-
-      return subscription;
-    }, []),
-  );
-
   useEffect(() => {
     if (userInfo?.accountType) {
       setTypeEvents && setTypeEvents(userInfo?.accountType?.toLowerCase() === 'host' ? false : true);
     }
   }, [userInfo?.accountType]);
-
-  useEffect(() => {
-    const subscription = onUserProfileChangeSubscription(info => {
-      setUserInfo((prev: UserInfo) => ({...prev, ...info}));
-    });
-
-    return subscription;
-  }, []);
 
   useEffect(() => {
     if (isDemo) {
@@ -315,7 +293,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
     </TouchableOpacity>
   );
 
-  const isHost = userInfo?.isHost;
+  const isHost = userInfo?.accountType === 'host';
 
   const isEventFinished = (eventDate: string, eventHour: string) => {
     if (eventDate && eventHour) {
@@ -363,7 +341,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                         style={styles.eventButton}
                         activeOpacity={0.7}
                         onPress={() => {
-                          if (!userData?.accountConfirmed) {
+                          if (!userInfo?.accountConfirmed) {
                             return;
                           }
                           setActiveEvent(event);
@@ -432,7 +410,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                   style={styles.eventButton}
                   activeOpacity={0.7}
                   onPress={() => {
-                    if (!userData?.accountConfirmed) {
+                    if (!userInfo?.accountConfirmed) {
                       return;
                     }
                     setActiveEventDate(ALL);
@@ -466,7 +444,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                   style={styles.eventButton}
                   activeOpacity={0.7}
                   onPress={() => {
-                    if (!userData?.accountConfirmed) {
+                    if (!userInfo?.accountConfirmed) {
                       return;
                     }
                     setActiveEventDate(THIS_WEEK);
@@ -500,7 +478,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                   style={styles.eventButton}
                   activeOpacity={0.7}
                   onPress={() => {
-                    if (!userData?.accountConfirmed) {
+                    if (!userInfo?.accountConfirmed) {
                       return;
                     }
                     setActiveEventDate(THIS_MONTH);
@@ -573,7 +551,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                   style={styles.eventButton}
                   activeOpacity={0.7}
                   onPress={() => {
-                    if (!userData?.accountConfirmed) {
+                    if (!userInfo?.accountConfirmed) {
                       return;
                     }
 
@@ -645,7 +623,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         );
       case 'chat':
         return (
-          <View style={[styles.wrapperHeaderButtonsChat, {marginTop: userData?.accountType === 'host' ? 0 : screenHeight / 50}]}>
+          <View style={[styles.wrapperHeaderButtonsChat, {marginTop: userInfo?.accountType === 'host' ? 0 : screenHeight / 50}]}>
             {isHost ? (
               <View style={[styles.rowButtonsChat, {marginTop: 10}]}>
                 <FlatList
@@ -693,7 +671,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   const getCountNotifications = () => {
     return firestore()
       .collection(apiUserInfoCollection)
-      .doc(userData?.uid)
+      .doc(userInfo?.uid)
       .collection('notifications')
       .onSnapshot(querySnapshot => {
         setCountNotifications(querySnapshot.docs.length);
@@ -712,7 +690,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   return (
     <View style={[styles.container, headerInsets]}>
       {(!userInfo?.accountConfirmed && headerType !== 'profile') ||
-        (!userData?.isPassedDemo && isDemo && hintStep !== 7 && isVisibleSwipeGuide && <View style={styles.overlayContainer} />)}
+        (!userInfo?.isPassedDemo && isDemo && hintStep !== 7 && isVisibleSwipeGuide && <View style={styles.overlayContainer} />)}
       {showHeaderTop && (
         <View style={styles.wrapperHeader}>
           {logoType === 'logo' ? <Logo width={157} height={32} /> : <LogoPrimary width={157} height={32} />}

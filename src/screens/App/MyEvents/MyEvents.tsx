@@ -98,19 +98,19 @@ const MyEvents: FC<any> = ({navigation}) => {
   const [eventsJoiningData, setEventsJoiningData] = useState<EventData[]>([]);
   const [hoursUntilEvent, setHoursUntilEvent] = useState<number>();
   const [currentEvent, setCurrentEvent] = useState();
-  const user = useUser((i: any) => i?.user);
+  const {user: userInfo, setUser: setUserInfo} = useUser();
   const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
-  const isHost = user?.accountType === 'host';
+  const isHost = userInfo?.accountType === 'host';
 
-  const [userInfo, setUserInfo] = useState<any>();
+  // const [userInfo, setUserInfo] = useState<any>();
   const [hostInfo, setHostInfo] = useState<any>({});
 
-  const {accountConfirmed} = useUserProfileChangeSubscription();
+  // const {accountConfirmed} = useUserProfileChangeSubscription();
 
   const rotationLoader = useSharedValue(0);
 
   useEffect(() => {
-    if (loading) {
+    if (loadingEvents) {
       rotationLoader.value = withRepeat(
         withTiming(360, {
           duration: 2000,
@@ -123,7 +123,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     return () => {
       cancelAnimation(rotationLoader);
     };
-  }, [rotationLoader, loading]);
+  }, [rotationLoader, loadingEvents]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -131,13 +131,13 @@ const MyEvents: FC<any> = ({navigation}) => {
     };
   });
 
-  useEffect(() => {
-    if (userInfo && userInfo?.length) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (userInfo && userInfo?.length) {
+  //     return;
+  //   }
 
-    setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
-  }, [accountConfirmed]);
+  //   setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
+  // }, [accountConfirmed]);
 
   const calculateHoursUntilEvent = (eventDate, eventTime) => {
     const now = new Date();
@@ -169,6 +169,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
   const sendNotificationAcceptedUser = async (item, hourToEvent: number) => {
     const usersAccepted = getUsersListAccepted(item.usersList);
+    // DEVNOTE: userInfo
     for (const user of usersAccepted) {
       try {
         await sendNotification(
@@ -177,12 +178,19 @@ const MyEvents: FC<any> = ({navigation}) => {
           `${item.name} event starting in ${hourToEvent}h!`,
           'Event Reminders',
           'Event',
-          userInfo,
+          user,
         );
+        changeStatusReminders(item);
       } catch (error) {
         console.error('error sendNotificationAcceptedUser', error);
       }
     }
+  };
+
+  const changeStatusReminders = async item => {
+    await firestore().collection('Events').doc(item.id).update({
+      isReminders: true,
+    });
   };
 
   const checkTimeEvent = item => {
@@ -193,7 +201,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         setCurrentEvent(item);
         setVisibleModalEventRemindes(true);
       }
-      if (res > 0 && res < 25 && isHost) {
+      if (res > 0 && res < 25 && isHost && !item.isReminders) {
         sendNotificationAcceptedUser(item, res);
       }
     }
@@ -218,7 +226,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       if (!data) {
         return;
       }
-      const filteredGuests = data.usersList.filter((item: any) => item.uid !== user.uid);
+      const filteredGuests = data.usersList.filter((item: any) => item.uid !== userInfo.uid);
       await firestore()
         .collection('Events')
         .doc(currentEvent.id)
@@ -244,7 +252,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     } else {
       return;
     }
-    const currentUserGuest = currentEvent.usersList.find((item: any) => item.uid === user.uid);
+    const currentUserGuest = currentEvent.usersList.find((item: any) => item.uid === userInfo.uid);
     if (!currentUserGuest) {
       return;
     }
@@ -260,26 +268,29 @@ const MyEvents: FC<any> = ({navigation}) => {
     countMyEvent.current += 1;
   };
 
-  const fetchUserInfo = async () => {
-    setLoading(true);
-    const user = auth().currentUser;
+  // const fetchUserInfo = async () => {
+  //   setLoading(true);
+  //   const userInfo = auth().currentUser;
 
-    if (user) {
-      try {
-        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
-        if (userInfoDoc.exists) {
-          setUserInfo(userInfoDoc.data());
-        }
-      } catch (error: any) {
-        setLoading(false);
-      }
-    }
-    setLoading(false);
-  };
+  //   if (userInfo) {
+  //     try {
+  //       const start = new Date().getTime();
+  //       const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(userInfo.uid).get();
+  //       if (userInfoDoc.exists) {
+  //         setUserInfo(userInfoDoc.data());
+  //       }
+  //       const end = new Date().getTime();
+  //       console.warn('fetchUserInfo myEvents', end - start);
+  //     } catch (error: any) {
+  //       setLoading(false);
+  //     }
+  //   }
+  //   setLoading(false);
+  // };
 
   useFocusEffect(
     useCallback(() => {
-      fetchUserInfo();
+      // fetchUserInfo();
       try {
         analytics().logScreenView({
           screen_name: 'my_events_screen',
@@ -314,7 +325,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(eventDataMarkAttendance?.id).get();
     const eventDataList = eventQuerySnapshot.data();
     const updatedUsersList = eventDataList?.usersList?.map((userItem: Event.User) => {
-      if (userItem.uid === user?.uid) {
+      if (userItem.uid === userInfo?.uid) {
         return {...userItem, isPresentMarkedByGuest};
       }
       return userItem;
@@ -330,7 +341,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       for (const event of eventsJoiningData) {
         const eventDate = moment(`${event.date} ${event.hour}`, 'DD.MM.YYYY HH:mm').add(12, 'hours');
         const currentDate = moment();
-        const currentUserFromList = event?.usersList?.find(userItem => userItem.uid === user?.uid);
+        const currentUserFromList = event?.usersList?.find(userItem => userItem.uid === userInfo?.uid);
         if (
           !event.isCancelled &&
           currentUserFromList &&
@@ -357,6 +368,7 @@ const MyEvents: FC<any> = ({navigation}) => {
         const eventDate = moment(`${event.date} ${event.hour}`, 'DD.MM.YYYY HH:mm').add(12, 'hours');
         const currentDate = moment();
         const usersInvited = event?.usersList?.filter(
+          // DEVNOTE: userInfo
           user => user.status === INVITE_MATCH_STATUS || user.status === ACCEPTED_STATUS || user.status === APPROVED_STATUS,
         );
         if (!event.isCancelled && currentDate.isAfter(eventDate) && !event?.isMarkedAttendance && usersInvited.length) {
@@ -398,10 +410,10 @@ const MyEvents: FC<any> = ({navigation}) => {
   };
 
   const goToCreateEvent = (): void => {
-    if (!user?.accountConfirmed) {
+    if (!userInfo?.accountConfirmed) {
       return;
     }
-    if (!user.accountPremium) {
+    if (!userInfo.accountPremium) {
       navigation.navigate(paymentPath);
     } else {
       navigation.navigate(eventCreatingStackPath);
@@ -422,7 +434,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
     try {
       const updatedUsersList = eventDataList?.usersList?.map(userItem => {
-        if (userItem.uid === user?.uid) {
+        if (userItem.uid === userInfo?.uid) {
           return {
             // @ts-ignore
             ...userItem,
@@ -443,11 +455,11 @@ const MyEvents: FC<any> = ({navigation}) => {
       if (docData?.notificationSettings.myEvents) {
         await sendNotification(
           eventDataList?.uid,
-          `${user?.name} accepted your invitation`,
+          `${userInfo?.name} accepted your invitation`,
           'Invitation Accepted!',
           'Accepted',
           'Accepted'.toUpperCase(),
-          user,
+          userInfo,
         );
       }
       setIsVisibleAcceptInvitationModal(false);
@@ -459,7 +471,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const handleRejectInvitation = async () => {
     try {
       let list = activeModalEvent?.list;
-      const uid = user?.uid;
+      const uid = userInfo?.uid;
       changeStatus(list?.usersList, uid, NOT_ACCEPTED_STATUS);
       await firestore().collection(apiEventsCollection).doc(list?.id).update({
         usersList: list?.usersList,
@@ -471,7 +483,14 @@ const MyEvents: FC<any> = ({navigation}) => {
       const getDoc = await firestore().collection(apiUserInfoCollection).doc(list?.uid).get();
       const docData = getDoc.data();
       if (docData?.notificationSettings?.myEvents) {
-        await sendNotification(list?.uid, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+        await sendNotification(
+          list?.uid,
+          `${userInfo?.name} rejected your invitation`,
+          'Not now.',
+          'Rejected',
+          'Rejected'.toUpperCase(),
+          userInfo,
+        );
       }
       showToast('inviteMatch', `You rejected ${list?.placeName} event`, 'Not now', {
         ownerPhoto: list?.hostImage,
@@ -495,7 +514,7 @@ const MyEvents: FC<any> = ({navigation}) => {
   const handleCancelAttending = async () => {
     try {
       let list = activeModalEvent?.list;
-      const uid = user?.uid;
+      const uid = userInfo?.uid;
 
       changeStatus(list?.usersList, uid, NOT_ACCEPTED_STATUS);
 
@@ -509,7 +528,14 @@ const MyEvents: FC<any> = ({navigation}) => {
       const getDoc = await firestore().collection(apiUserInfoCollection).doc(list?.uid).get();
       const docData = getDoc.data();
       if (docData?.notificationSettings.myEvents) {
-        await sendNotification(list?.uid, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+        await sendNotification(
+          list?.uid,
+          `${userInfo?.name} rejected your invitation`,
+          'Not now.',
+          'Rejected',
+          'Rejected'.toUpperCase(),
+          userInfo,
+        );
       }
       showToast('inviteMatch', `You rejected ${list?.placeName} event`, 'Not now', {
         ownerPhoto: list?.hostImage,
@@ -528,10 +554,11 @@ const MyEvents: FC<any> = ({navigation}) => {
         setEventsImJoining([]);
         return;
       }
-      const uid = user?.uid;
+      const uid = userInfo?.uid;
       const data = events?.docs?.map(i => i?.data());
 
       const filterData = data?.filter(obj => {
+        // DEVNOTE: userInfo
         return obj?.usersList?.some(user => {
           return (
             user?.uid === uid &&
@@ -552,17 +579,22 @@ const MyEvents: FC<any> = ({navigation}) => {
     useCallback(() => {
       let myEventsSubscribe: any;
       let eventsJoiningSubscribe: any;
-      if (user?.uid) {
+      if (userInfo?.uid) {
         myEventsSubscribe = firestore()
           .collection(apiEventsCollection)
-          .where('uid', '==', `${user?.uid}`)
+          .where('uid', '==', `${userInfo?.uid}`)
           .onSnapshot(querySnapshot => {
             if (querySnapshot.empty) {
               setMyEventsData([]);
               return;
             }
             const data = querySnapshot?.docs?.map(i => i?.data());
-            const sortedData = data.sort((a, b) => {
+            const oneMonthAgo = moment().subtract(1, "months");            
+            const filterMonth = data.filter(event => {
+              const eventDate = moment(event.date, "DD.MM.YYYY");              
+              return eventDate.isAfter(oneMonthAgo);
+            });
+            const sortedData = filterMonth.sort((a, b) => {
               if (a.isCancelled && !b.isCancelled) {
                 return 1;
               }
@@ -647,7 +679,7 @@ const MyEvents: FC<any> = ({navigation}) => {
 
     try {
       const updatedUsersList = eventDataList?.usersList?.map(userItem => {
-        if (userItem.uid === user?.uid) {
+        if (userItem.uid === userInfo?.uid) {
           return {
             ...userItem,
             status,
@@ -666,11 +698,11 @@ const MyEvents: FC<any> = ({navigation}) => {
           });
           await sendNotification(
             uidHost,
-            `${user?.name} accepted your invitation`,
+            `${userInfo?.name} accepted your invitation`,
             'Invitation Accepted!',
             'Accepted',
             'Accepted'.toUpperCase(),
-            user,
+            userInfo,
             JSON.stringify({path: 'guestsList', data: item}),
           );
           break;
@@ -679,14 +711,28 @@ const MyEvents: FC<any> = ({navigation}) => {
             ownerPhoto: hostPhoto,
             status: 'REJECTED'.toUpperCase(),
           });
-          await sendNotification(uidHost, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+          await sendNotification(
+            uidHost,
+            `${userInfo?.name} rejected your invitation`,
+            'Not now.',
+            'Rejected',
+            'Rejected'.toUpperCase(),
+            userInfo,
+          );
           break;
         case CANCEL_STATUS:
           showToast('inviteMatch', `You rejected ${placeName} event`, 'Not now', {
             ownerPhoto: hostPhoto,
             status: 'REJECTED'.toUpperCase(),
           });
-          await sendNotification(uidHost, `${user?.name} rejected your invitation`, 'Not now.', 'Rejected', 'Rejected'.toUpperCase(), user);
+          await sendNotification(
+            uidHost,
+            `${userInfo?.name} rejected your invitation`,
+            'Not now.',
+            'Rejected',
+            'Rejected'.toUpperCase(),
+            userInfo,
+          );
         default:
           break;
       }
@@ -704,7 +750,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     hostPhoto: string,
     item: any,
   ) => {
-    const findUser = usersList.find(item => item.uid === user?.uid);
+    const findUser = usersList.find(item => item.uid === userInfo?.uid);
     const status = findUser?.status;
 
     return (
@@ -929,7 +975,7 @@ const MyEvents: FC<any> = ({navigation}) => {
     );
   };
 
-  if (loading || loadingEvents) {
+  if (loadingEvents) {
     return (
       <View
         style={{
@@ -1038,7 +1084,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                       eventReviewed={item?.eventReviewed}
                       allPeople={item?.female + item?.male}
                       date={item?.date}
-                      accountConfirmed={user?.accountConfirmed}
+                      accountConfirmed={userInfo?.accountConfirmed}
                       findAcceptedGuest={item?.usersList?.filter(item => item.status === INVITE_MATCH_STATUS)}
                       item={item}
                       showGuestList={true}
@@ -1087,8 +1133,8 @@ const MyEvents: FC<any> = ({navigation}) => {
                     numberOfGirlsInvited={item?.female + item?.femaleFriend}
                     host={{name: item?.name, image: item?.hostImage, hostUid: item?.uid}}
                     joinedPeopleCount={item?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length}
-                    status={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status}
-                    isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === user?.uid)[0]?.status === ACCEPTED_STATUS}
+                    status={item?.usersList?.filter(j => j?.uid === userInfo?.uid)[0]?.status}
+                    isAcceptedInvitation={item?.usersList?.filter(j => j?.uid === userInfo?.uid)[0]?.status === ACCEPTED_STATUS}
                     handleOpenCancelAttendingModal={handleOpenCancelAttendingModal}
                     handleOpenAcceptInvitationModal={handleOpenAcceptInvitationModal}
                     handleAcceptInvitation={handleAcceptInvitation}
@@ -1130,7 +1176,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                     numberOfGirlsInvited={item?.female}
                     placeName={item?.placeName}
                     invitingPeople={item?.usersList?.filter(i => i?.status !== NOT_ACCEPTED_STATUS)}
-                    accountConfirmed={user?.accountConfirmed}
+                    accountConfirmed={userInfo?.accountConfirmed}
                     findAcceptedGuest={item?.usersList?.filter(item => item.status === INVITE_MATCH_STATUS)}
                     totalRequestsGuests={item?.requestsList?.length}
                     item={item}

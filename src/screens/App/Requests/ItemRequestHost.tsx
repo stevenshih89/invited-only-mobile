@@ -233,9 +233,9 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
     }
   };
 
-  useEffect(() => {
-    fetchItemUserInfo();
-  }, [item]);
+  // useEffect(() => {
+  //   fetchItemUserInfo();
+  // }, [item]);
 
   const goToProfileView = () => {
     navigation.navigate(commonStackPath, {
@@ -324,7 +324,26 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
                 <CloseIcon />
               </TouchableOpacity>
               <View style={{marginTop: 'auto'}}>
-                {userInfo.accountType && (
+                <View
+                  style={{
+                    marginTop: 'auto',
+                    alignSelf: 'flex-start',
+                    paddingHorizontal: 8,
+                    paddingVertical: 2,
+                    backgroundColor: whiteColor,
+                    borderRadius: 4,
+                  }}>
+                  <Text
+                    style={{
+                      textTransform: 'capitalize',
+                      fontFamily: Satoshi700,
+                      fontSize: RFValue(10, 812),
+                      color: blackColor,
+                    }}>
+                    Guest
+                  </Text>
+                </View>
+                {/* {userInfo.accountType && (
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <View
                       style={{
@@ -355,21 +374,13 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
                       </LinearGradient>
                     )}
                   </View>
-                )}
+                )} */}
                 <TouchableOpacity onPress={() => goToProfileView()} activeOpacity={0.7} style={styles.buttonContainer}>
                   <View style={styles.nameContainer}>
                     <Text style={[styles.nameText, {fontSize: getFontSize(item?.name)}]}>{item?.name}</Text>
-                    {userInfo?.accountConfirmed && <CheckStarWhite width={15} height={17} style={{marginLeft: 8, marginTop: 4}} />}
+                    <CheckStarWhite width={15} height={17} style={{marginLeft: 8, marginTop: 4}} />
                   </View>
                 </TouchableOpacity>
-                {userInfo?.homeAddress && (
-                  <View style={styles.locationContainer}>
-                    <View style={styles.locationRow}>
-                      <Home height={12} />
-                      <Text style={styles.locationText}>From {item?.homeAddress}</Text>
-                    </View>
-                  </View>
-                )}
               </View>
             </LinearGradient>
           </View>

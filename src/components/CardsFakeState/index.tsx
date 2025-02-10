@@ -79,7 +79,7 @@ const CardsFakeState = ({handleSwipeFakeCard, OverlayRight, OverlayLeft, item}: 
           bottom: 0,
         }}
         pointerEvents="box-none"
-        key={'0'}>
+        >
         <TinderCard
           ref={cardRef1}
           // @ts-ignore

@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
 //import components
@@ -82,8 +82,10 @@ import DemoEventCreatingHeader from 'screens/App/IO/screens/EventCreating/compon
 import MarkAttendance from 'screens/App/MyEvents/MarkAttendance';
 import {useUser} from 'src/store/userStore';
 import AdminChat from 'screens/App/Chat/screens/AdminChat';
-import UnderMaintenance from 'screens/App/UnderMaintenance/UnderMaintenance';
-import UpdateAvailable from 'screens/App/UpdateAvailableScreen/UpdateAvailableScreen';
+import firestore from '@react-native-firebase/firestore';
+import {UserInfo} from 'src/types/userInfo';
+import Config from 'react-native-config';
+import auth from '@react-native-firebase/auth';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -508,12 +510,32 @@ const DemoFlowScreen = () => {
 };
 
 const AppStackScreen = () => {
-  const {user} = useUser();
+  const {user, setUser} = useUser();
 
   const initialRouteName =
     user?.uid && user?.accountType === 'host' && user?.accountConfirmed && user?.accountReviewed && !user?.isPassedDemo
       ? demoFlowStackPath
       : bottomTabsStackPath;
+
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+
+  useEffect(() => {
+    const currentUser = auth().currentUser;
+    let userDataSubscriber: any;
+    userDataSubscriber = firestore()
+      .collection(apiUserInfoCollection)
+      .doc(currentUser?.uid)
+      .onSnapshot(doc => {
+        console.warn('userDataSubscriber', doc.data());
+        setUser(doc.data() as UserInfo);
+      });
+
+    return () => {
+      console.warn('unmount');
+
+      userDataSubscriber();
+    };
+  }, []);
 
   return (
     <AppStack.Navigator initialRouteName={initialRouteName} screenOptions={{headerShown: false}}>
@@ -528,14 +550,6 @@ const AppStackScreen = () => {
       <AppStack.Screen key={verifySocialProfilePath} name={verifySocialProfilePath} component={VerifySocialProfile} />
       <AppStack.Screen key={manageSubscriptionPath} name={manageSubscriptionPath} component={ManageSubscriptionScreen} />
       <AppStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
-      <AppStack.Screen key={underMaintenance} name={underMaintenance} component={UnderMaintenance} />
-      <AppStack.Screen 
-        key={updateAvailable} 
-        name={updateAvailable} 
-        component={UpdateAvailable} 
-        initialParams={{version: '1.0'}} //app version
-      />
-
     </AppStack.Navigator>
   );
 };

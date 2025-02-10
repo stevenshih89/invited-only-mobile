@@ -1,6 +1,7 @@
-import {FlatList, Image, ImageBackground, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, ImageBackground, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import ClockOrange from 'assets/images/icons/clock-orange.svg';
+import LoaderIcon from 'assets/images/icons/loader.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {
   chatCorrespondencePath,
@@ -21,6 +22,7 @@ import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast';
 import FastImage from 'react-native-fast-image';
 import Config from 'react-native-config';
+import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 
 interface Notifications {
   body: string;
@@ -34,67 +36,117 @@ interface Notifications {
 
 type NotificationImage = {[key: string]: string};
 
-const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-const fetchImage = async (uid: string): Promise<string> => {
-  const dataDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-  const photoUri = dataDoc?.data()?.photos?.[0]?.image || '';
-  return photoUri;
-};
-
-const fetchNotifications = async (uid: string): Promise<Notifications[]> => {
-  const notificationsQuery = await firestore().collection(apiUserInfoCollection).doc(uid).collection('notifications').get();
-  const notifications = notificationsQuery.docs.map(doc => doc.data()) as Notifications[];
-  return notifications.reverse();
-};
-
-const clearNotifications = async (uid: string): Promise<void> => {
-  await firestore()
-    .collection(apiUserInfoCollection)
-    .doc(uid)
-    .collection('notifications')
-    .get()
-    .then(querySnapshot => {
-      querySnapshot.docs.forEach(doc => {
-        doc.ref.delete();
-      });
-    });
-};
-
 const Notifications: FC = (): ReactElement => {
+  const DEFAULT_NOTIFICATIONS_LIMIT = 20;
+  const COUNT_NOTIFICATIONS_TO_ADD = 5;
   const [notifications, setNotifications] = useState<Notifications[]>([]);
-  const [images, setImages] = useState<NotificationImage>({});
+  // const [images, setImages] = useState<NotificationImage>({});
   const navigation = useAppNavigation();
+  const [limitNotifications, setLimitNotifications] = useState<number>(DEFAULT_NOTIFICATIONS_LIMIT);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const rotationLoader = useSharedValue(0);
+
+  useEffect(() => {
+    if (loading) {
+      rotationLoader.value = withRepeat(
+        withTiming(360, {
+          duration: 2000,
+          easing: Easing.linear,
+        }),
+        -1,
+      );
+    }
+
+    return () => {
+      cancelAnimation(rotationLoader);
+    };
+  }, [rotationLoader, loading]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotate: `${rotationLoader.value}deg`}],
+    };
+  });
 
   const styles = useStyles();
   const user = useUser((i: any) => i?.user);
 
-  useFocusEffect(
-    useCallback(() => {
-      getNotifications();
-    }, []),
-  );
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const fetchImage = async (uid: string): Promise<string> => {
+    const dataDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+    const photoUri = dataDoc?.data()?.photos?.[0]?.image || '';
+    return photoUri;
+  };
 
-  useEffect(() => {
-    const fetchImages = async () => {
-      const imagesMap: NotificationImage = {};
-      for (const notification of notifications) {
-        if (notification.image) {
-          imagesMap[notification.uid] = notification.image;
-        } else {
+  const fetchNotifications = async (uid: string): Promise<Notifications[]> => {
+    try {
+      const notificationsQuery = await firestore()
+        .collection(apiUserInfoCollection)
+        .doc(uid)
+        .collection('notifications')
+        .limit(limitNotifications)
+        .get();
+
+      const notificationsWithImages = await Promise.all(
+        notificationsQuery.docs.map(async doc => {
+          const notification = doc.data() as Notifications;
           const photoUri = await fetchImage(notification.uid);
-          imagesMap[notification.uid] = photoUri;
-        }
-      }
-      setImages(imagesMap);
-    };
+          return {
+            ...notification,
+            image: photoUri,
+          };
+        }),
+      );
+      return notificationsWithImages;
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    } finally {
+      setLoading(false);
+    }
+    return [];
+  };
 
-    fetchImages();
-  }, [notifications]);
+  const clearNotifications = async (uid: string): Promise<void> => {
+    await firestore()
+      .collection(apiUserInfoCollection)
+      .doc(uid)
+      .collection('notifications')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.docs.forEach(doc => {
+          doc.ref.delete();
+        });
+      });
+  };
 
   const getNotifications = async () => {
     const notification = await fetchNotifications(user?.uid ?? '');
     setNotifications(notification);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      getNotifications();
+    }, [limitNotifications]),
+  );
+
+  // useEffect(() => {
+  //   const fetchImages = async () => {
+  //     const imagesMap: NotificationImage = {};
+  //     for (const notification of notifications) {
+  //       if (notification.image) {
+  //         imagesMap[notification.uid] = notification.image;
+  //       } else {
+  //         const photoUri = await fetchImage(notification.uid);
+  //         imagesMap[notification.uid] = photoUri;
+  //       }
+  //     }
+  //     setImages(imagesMap);
+  //   };
+
+  //   fetchImages();
+  // }, [notifications]);
 
   const handleClearNotifications = async () => {
     setNotifications([]);
@@ -140,6 +192,16 @@ const Notifications: FC = (): ReactElement => {
     }
   };
 
+  if (loading) {
+    return (
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
+        <Animated.View style={[animatedStyle]}>
+          <LoaderIcon />
+        </Animated.View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <View style={styles.root}>
       <View
@@ -167,6 +229,7 @@ const Notifications: FC = (): ReactElement => {
       <FlatList
         data={notifications}
         keyExtractor={item => item.id}
+        onEndReached={() => setLimitNotifications(prev => prev + COUNT_NOTIFICATIONS_TO_ADD)}
         renderItem={({item}) => (
           <TouchableOpacity disabled={!item?.path} onPress={() => handleNavigate(item.path, item.data)}>
             <View
@@ -175,7 +238,7 @@ const Notifications: FC = (): ReactElement => {
                 flexDirection: 'row',
                 paddingVertical: 16,
               }}>
-              <FastImage source={{uri: images[item.uid]}} style={{width: 60, height: 60, borderRadius: 60}} />
+              <FastImage source={{uri: item?.image}} style={{width: 60, height: 60, borderRadius: 60}} />
               <View style={{marginLeft: 16, justifyContent: 'center', flex: 1}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1}}>
                   <Text
