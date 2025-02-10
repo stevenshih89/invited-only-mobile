@@ -44,6 +44,8 @@ import {
   superInvitePayPath,
   userProfilePath,
   verifySocialProfilePath,
+  underMaintenance,
+  updateAvailable
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -80,6 +82,8 @@ import DemoEventCreatingHeader from 'screens/App/IO/screens/EventCreating/compon
 import MarkAttendance from 'screens/App/MyEvents/MarkAttendance';
 import {useUser} from 'src/store/userStore';
 import AdminChat from 'screens/App/Chat/screens/AdminChat';
+import UnderMaintenance from 'screens/App/UnderMaintenance/UnderMaintenance';
+import UpdateAvailable from 'screens/App/UpdateAvailableScreen/UpdateAvailableScreen';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -524,6 +528,14 @@ const AppStackScreen = () => {
       <AppStack.Screen key={verifySocialProfilePath} name={verifySocialProfilePath} component={VerifySocialProfile} />
       <AppStack.Screen key={manageSubscriptionPath} name={manageSubscriptionPath} component={ManageSubscriptionScreen} />
       <AppStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
+      <AppStack.Screen key={underMaintenance} name={underMaintenance} component={UnderMaintenance} />
+      <AppStack.Screen 
+        key={updateAvailable} 
+        name={updateAvailable} 
+        component={UpdateAvailable} 
+        initialParams={{version: '1.0'}} //app version
+      />
+
     </AppStack.Navigator>
   );
 };
