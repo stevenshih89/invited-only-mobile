@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
 //import components
@@ -80,6 +80,10 @@ import DemoEventCreatingHeader from 'screens/App/IO/screens/EventCreating/compon
 import MarkAttendance from 'screens/App/MyEvents/MarkAttendance';
 import {useUser} from 'src/store/userStore';
 import AdminChat from 'screens/App/Chat/screens/AdminChat';
+import firestore from '@react-native-firebase/firestore';
+import {UserInfo} from 'src/types/userInfo';
+import Config from 'react-native-config';
+import auth from '@react-native-firebase/auth';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -504,12 +508,31 @@ const DemoFlowScreen = () => {
 };
 
 const AppStackScreen = () => {
-  const {user} = useUser();
+  const {user, setUser} = useUser();
 
   const initialRouteName =
     user?.uid && user?.accountType === 'host' && user?.accountConfirmed && user?.accountReviewed && !user?.isPassedDemo
       ? demoFlowStackPath
       : bottomTabsStackPath;
+
+  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  useEffect(() => {
+    const currentUser = auth().currentUser;
+    let userDataSubscriber: any;
+    userDataSubscriber = firestore()
+      .collection(apiUserInfoCollection)
+      .doc(currentUser?.uid)
+      .onSnapshot(doc => {
+        console.warn('userDataSubscriber', doc.data());
+        setUser(doc.data() as UserInfo);
+      });
+
+    return () => {
+      console.warn('unmount');
+
+      userDataSubscriber();
+    };
+  }, []);
 
   return (
     <AppStack.Navigator initialRouteName={initialRouteName} screenOptions={{headerShown: false}}>

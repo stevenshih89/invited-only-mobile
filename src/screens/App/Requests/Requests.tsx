@@ -20,7 +20,6 @@ import {useUser} from '../../../store/userStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import Match, {MatchData} from '../IO/screens/Match/Match';
 import FullEvent from 'components/FullEvent';
-import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
@@ -185,13 +184,6 @@ const Requests: FC = (): ReactElement => {
     setIsVisibleMatch(true);
   };
 
-  const checkIsFullGuestsFun = async () => {
-    const {allGuests, findAcceptedGuest, totalRequestsGuests: requeststCount} = await checkIsFullGuests(activeEvent?.id);
-    setTotalQuantityGuests(allGuests);
-    setTotalRequestsGuests(requeststCount);
-    setAcceptQuantityGuest(findAcceptedGuest);
-  };
-
   const goToCreateEvent = (): void => {
     if (!userInfo?.accountConfirmed) {
       return;
@@ -231,7 +223,6 @@ const Requests: FC = (): ReactElement => {
           .collection(apiEventsCollection)
           .doc(activeEvent?.id)
           .onSnapshot(querySnapshot => {
-            // checkIsFullGuestsFun();
             fetchHostRequests(querySnapshot);
           });
       }

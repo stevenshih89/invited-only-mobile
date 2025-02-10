@@ -14,6 +14,10 @@ const firebaseConfig = {
 
 admin.initializeApp(firebaseConfig);
 
+functionsV2.setGlobalOptions({
+  region: 'europe-west3',
+});
+
 exports.getUsersForEvent = functionsV2.https.onCall(async request => {
   const {excludeUids, limit = 7, lastDoc, male, female, collectionName} = request.data;
 
@@ -68,28 +72,6 @@ exports.sendNotification = functionsV1.https.onCall(async data => {
     try {
       await admin.messaging().send(message);
       return {success: true, data: message};
-    } catch (error) {
-      return {success: false, error: error.message};
-    }
-  } else {
-    return {success: false, error: 'FCM token not found'};
-  }
-});
-
-exports.sendNotificationReq = functionsV1.https.onRequest(async (req, res) => {
-  const {token, notification, data: msgData} = req.body;
-
-  if (token) {
-    const message = {
-      token: token,
-      notification: notification,
-      data: msgData,
-    };
-
-    try {
-      await admin.messaging().send(message);
-      return res.status(200).send({success: true, data: message});
-      // return {success: true, data: message};
     } catch (error) {
       return {success: false, error: error.message};
     }
@@ -288,19 +270,23 @@ exports.devGetUsersForEvent_v2 = functionsV2.https.onCall(async request => {
       query = query.startAfter(parsedLastDoc.uid);
     }
 
-    const snapshot = await query.get();
+    const snapshot = await query.limit(400).get();
 
-    const users = snapshot.docs
-      .filter(doc => !allUniqueIds.some(item => item.uid === doc.id))
-      .slice(0, limit)
-      .map(doc => {
-        const findSuperJoin = event?.requestsList?.find(requestItem => doc.id === requestItem?.uid && requestItem?.superInvite);
-        return {id: doc.id, ...doc.data(), isSuperInvite: findSuperJoin};
-      });
-    const newLastDoc = users[users.length - 1] || null;
+    if (snapshot.empty) {
+      return {users: [], lastDoc: null};
+    }
+
+    const preparedUsers = snapshot.docs.filter(doc => !allUniqueIds.some(item => item?.uid === doc.id)).slice(0, limit);
+    const mappedUsers = preparedUsers?.length
+      ? preparedUsers.map(doc => {
+          const findSuperJoin = event?.requestsList?.find(requestItem => doc.id === requestItem?.uid && requestItem?.superInvite);
+          return {id: doc.id, ...doc.data(), isSuperInvite: findSuperJoin};
+        })
+      : [];
+    const newLastDoc = mappedUsers?.length ? mappedUsers[mappedUsers.length - 1] || null : snapshot.docs[snapshot.docs.length - 1];
 
     return {
-      users,
+      users: mappedUsers,
       lastDoc: newLastDoc ? JSON.stringify(newLastDoc) : null,
     };
   } catch (error) {

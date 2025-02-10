@@ -104,12 +104,15 @@ const App: FC = (): JSX.Element => {
   };
 
   const initializeTracking = async () => {
+    const start = new Date().getTime();
     const trackingStatus = await requestTrackingPermission();
     if (trackingStatus === 'authorized') {
       Settings.setAdvertiserTrackingEnabled(true);
     } else {
       Settings.setAdvertiserTrackingEnabled(false);
     }
+    const end = new Date().getTime();
+    console.warn('initializeTracking', end - start);
   };
 
   useEffect(() => {
@@ -119,9 +122,12 @@ const App: FC = (): JSX.Element => {
     }
 
     const getSubscription = async () => {
+      const start = new Date().getTime();
       const activeSubscription = await getActiveSubscription();
       await handleUpdateUserSubscriptions(activeSubscription);
       setCurrentSubscriptions(activeSubscription);
+      const end = new Date().getTime();
+      console.warn('getSubscription', end - start);
     };
     getSubscription();
   }, []);
