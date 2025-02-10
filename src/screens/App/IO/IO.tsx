@@ -996,7 +996,7 @@ const IO: FC = (): JSX.Element => {
 
       const genderFilter = getGenderFilter();
       const start = new Date().getTime();
-      const cloudFunctionName = Config.CLOUD_FUNCTION_GET_EVENTS_FOR_USER || 'devGetEventsForUser';
+      const cloudFunctionName = Config.CLOUD_FUNCTION_GET_EVENTS_FOR_USER || 'getEventsForUser';
       const getEventsForUserCloudFunction = firebase.app().functions('europe-west3').httpsCallable(cloudFunctionName);
       const eventsQuery = await getEventsForUserCloudFunction({
         uid: user.uid,
@@ -1299,7 +1299,7 @@ const IO: FC = (): JSX.Element => {
                           marginRight: 6,
                         }}>
                         {event?.hostName}
-                        {/* {userEventDate && ', ' + calculateAge(userEventDate)} */}
+                        {event?.hostInfo?.date && ', ' + calculateAge(event?.hostInfo?.date)}
                       </Text>
                       {true && <CheckStarWhite />}
                     </View>

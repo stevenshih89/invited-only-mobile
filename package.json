@@ -61,6 +61,7 @@
     "react-native-config": "^1.5.3",
     "react-native-confirmation-code-field": "^7.3.2",
     "react-native-date-picker": "^4.3.5",
+    "react-native-device-info": "^14.0.4",
     "react-native-dotenv": "^3.4.11",
     "react-native-element-dropdown": "^2.10.1",
     "react-native-fast-image": "^8.6.3",

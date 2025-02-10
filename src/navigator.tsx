@@ -10,12 +10,31 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 import Config from 'react-native-config';
+import UnderMaintenance from 'screens/App/UnderMaintenance/UnderMaintenance';
+import DeviceInfo from 'react-native-device-info';
+import UpdateAvailable from 'screens/App/UpdateAvailableScreen/UpdateAvailableScreen';
 
 const Navigator = () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiAdminChatsCollection = Config.API_ADMIN_CHATS_COLLECTION || 'adminChats';
   const [initializing, setInitializing] = useState<boolean>(true);
   const [authState, setAuthState] = useState(false);
+  const [maintenanceData, setMaintenanceData] = useState<{
+    isMaintenance: boolean;
+    approximatelyTime: string | null;
+  }>({
+    isMaintenance: false,
+    approximatelyTime: null,
+  });
+  const [versionData, setVersionData] = useState<{
+    lastAvailableBuild: string;
+    lastAvailableVersion: string;
+    showUpdateAvailable?: boolean;
+  }>({
+    lastAvailableBuild: '',
+    lastAvailableVersion: '',
+    showUpdateAvailable: false,
+  });
   const {user, setUser} = useContext(AuthContext);
 
   const setUserData = useUser((i: any) => i?.setUser);
@@ -90,8 +109,40 @@ const Navigator = () => {
     }
   };
 
+  const handleCheckMaintenance = async () => {
+    const maintenanceQuery = await firestore().collection('appSettings').doc('maintenance').get();
+    if (maintenanceQuery.exists) {
+      const data = maintenanceQuery.data() as {
+        isMaintenance: boolean;
+        approximatelyTime: string | null;
+      };
+      if (data?.isMaintenance) {
+        setMaintenanceData(data);
+      }
+    }
+  };
+
+  const handleCheckAppVersion = async () => {
+    const appVersion = DeviceInfo.getVersion();
+    const buildNumber = DeviceInfo.getBuildNumber();
+    const versionQuery = await firestore().collection('appSettings').doc('version').get();
+    if (versionQuery.exists) {
+      const data = versionQuery.data() as {
+        lastAvailableBuild: string;
+        lastAvailableVersion: string;
+      };
+      if (data?.lastAvailableBuild && data?.lastAvailableVersion) {
+        if (appVersion !== data?.lastAvailableVersion || buildNumber !== data?.lastAvailableBuild) {
+          setVersionData({...data, showUpdateAvailable: true});
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     handleAddChatWithAdmin();
+    handleCheckAppVersion();
+    handleCheckMaintenance();
   }, [userData?.uid]);
 
   useEffect(() => {
@@ -112,6 +163,14 @@ const Navigator = () => {
 
   if (initializing) {
     return null;
+  }
+
+  if (versionData?.showUpdateAvailable) {
+    return <UpdateAvailable />;
+  }
+
+  if (maintenanceData?.isMaintenance) {
+    return <UnderMaintenance data={maintenanceData} />;
   }
 
   return authState ? <AppStackScreens /> : <AuthStackScreens />;
