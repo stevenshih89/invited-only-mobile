@@ -14,6 +14,10 @@ const firebaseConfig = {
 
 admin.initializeApp(firebaseConfig);
 
+functionsV2.setGlobalOptions({
+  region: 'europe-west3',
+});
+
 exports.getUsersForEvent = functionsV2.https.onCall(async request => {
   const {excludeUids, limit = 7, lastDoc, male, female, collectionName} = request.data;
 
@@ -68,28 +72,6 @@ exports.sendNotification = functionsV1.https.onCall(async data => {
     try {
       await admin.messaging().send(message);
       return {success: true, data: message};
-    } catch (error) {
-      return {success: false, error: error.message};
-    }
-  } else {
-    return {success: false, error: 'FCM token not found'};
-  }
-});
-
-exports.sendNotificationReq = functionsV1.https.onRequest(async (req, res) => {
-  const {token, notification, data: msgData} = req.body;
-
-  if (token) {
-    const message = {
-      token: token,
-      notification: notification,
-      data: msgData,
-    };
-
-    try {
-      await admin.messaging().send(message);
-      return res.status(200).send({success: true, data: message});
-      // return {success: true, data: message};
     } catch (error) {
       return {success: false, error: error.message};
     }
@@ -288,20 +270,26 @@ exports.devGetUsersForEvent_v2 = functionsV2.https.onCall(async request => {
       query = query.startAfter(parsedLastDoc.uid);
     }
 
-    const snapshot = await query.get();
+    const snapshot = await query.limit(400).get();
 
-    const users = snapshot.docs
-      .filter(doc => !allUniqueIds.some(item => item.uid === doc.id))
-      .slice(0, limit)
-      .map(doc => {
-        const findSuperJoin = event?.requestsList?.find(requestItem => doc.id === requestItem?.uid && requestItem?.superInvite);
-        return {id: doc.id, ...doc.data(), isSuperInvite: findSuperJoin};
-      });
-    const newLastDoc = users[users.length - 1] || null;
+    if (snapshot.empty) {
+      return {users: [], lastDoc: null, endReached: true};
+    }
+
+    const endReached = snapshot.docs.length < 400;
+    const preparedUsers = snapshot.docs.filter(doc => !allUniqueIds.some(item => item?.uid === doc.id)).slice(0, limit);
+    const mappedUsers = preparedUsers?.length
+      ? preparedUsers.map(doc => {
+          const findSuperJoin = event?.requestsList?.find(requestItem => doc.id === requestItem?.uid && requestItem?.superInvite);
+          return {id: doc.id, ...doc.data(), isSuperInvite: findSuperJoin};
+        })
+      : [];
+    const newLastDoc = mappedUsers?.length ? mappedUsers[mappedUsers.length - 1] || null : snapshot.docs[snapshot.docs.length - 1];
 
     return {
-      users,
+      users: mappedUsers,
       lastDoc: newLastDoc ? JSON.stringify(newLastDoc) : null,
+      endReached,
     };
   } catch (error) {
     console.error('Error filtering users:', error);
@@ -389,6 +377,131 @@ exports.devGetUserEvents = functionsV2.https.onCall(async request => {
     }
 
     return {events: events.docs.map(doc => doc.data())};
+  } catch (error) {
+    console.error('Error fetching user events:', error);
+    throw new functionsV2.https.HttpsError('internal', 'Unable to fetch user events');
+  }
+});
+
+exports.devGetEventsForUser = functionsV2.https.onCall(async request => {
+  const {limit = 7, lastDoc, genderFilter, uid} = request.data;
+  if (!uid) {
+    throw new functionsV2.https.HttpsError('invalid-argument', 'Invalid user ID');
+  }
+
+  const EVENTS_COUNT_LIMIT = 50;
+
+  try {
+    let blockedUsersList = [];
+    let blockedMeUsersList = [];
+
+    const blockedUsersQuery = await admin.firestore().collection('report').where('uidSender', '==', uid).get();
+    if (!blockedUsersQuery.empty) {
+      blockedUsersList = blockedUsersQuery.docs.map(doc => doc.data().uid);
+    }
+
+    const blockedMeUsersQuery = await admin.firestore().collection('report').where('uid', '==', uid).get();
+    if (!blockedMeUsersQuery.empty) {
+      blockedMeUsersList = blockedMeUsersQuery.docs.map(doc => doc.data().uidSender);
+    }
+
+    const uniqueBlockedUsers = [...new Set([...blockedUsersList, ...blockedMeUsersList])];
+
+    let events = admin
+      .firestore()
+      .collection('devEvents')
+      .where('statusEvent', '==', true)
+      .where('eventReviewed', '==', true)
+      .where('isCancelled', '==', false);
+
+    if (uniqueBlockedUsers.length) {
+      events = events.where('uid', 'not-in', uniqueBlockedUsers);
+    }
+
+    if (genderFilter) {
+      events = events.where(genderFilter, '>', 0).orderBy(genderFilter);
+    }
+
+    events = events
+      .orderBy('id', 'desc')
+      .select(
+        'id',
+        'uid',
+        'name',
+        'meetingSpot',
+        'description',
+        'createdAt',
+        'address',
+        'hostImage',
+        'hostName',
+        'date',
+        'hour',
+        'location',
+        'male',
+        'female',
+        'photos',
+        'placeName',
+        'usersList',
+        'requestsList',
+        'rejectsByGuestsList',
+      )
+      .limit(EVENTS_COUNT_LIMIT);
+
+    if (lastDoc) {
+      const parsedLastDoc = JSON.parse(lastDoc);
+      if (parsedLastDoc && parsedLastDoc.id) {
+        events = events.startAfter(parsedLastDoc.id);
+      }
+    }
+
+    const snapshot = await events.get();
+
+    if (snapshot.empty) {
+      return {events: [], lastDoc: null, endReached: true};
+    }
+
+    const endReached = snapshot.docs.length < EVENTS_COUNT_LIMIT;
+
+    const eventsList = snapshot.docs
+      ?.map(doc => doc.data())
+      ?.filter(event => {
+        if (event?.requestsList?.find(requestedUser => requestedUser?.uid === uid)) {
+          return false;
+        }
+        if (
+          event?.usersList?.find(
+            invitedUser =>
+              invitedUser?.uid === uid &&
+              (invitedUser?.status === 'invite_match' ||
+                invitedUser?.status === 'approved' ||
+                invitedUser?.status === 'accepted' ||
+                invitedUser?.status === 'notAccepted' ||
+                invitedUser?.status === 'cancel'),
+          )
+        ) {
+          return false;
+        }
+        if (event?.rejectsByGuestsList?.find(rejectedUid => rejectedUid.uid === uid)) {
+          return false;
+        }
+        if (event?.date && event?.hour) {
+          const eventDate = new Date(`${event.date.split('.').reverse().join('-')}T${event.hour}:00`);
+          const adjustedDate = new Date(eventDate.getTime() + 12 * 60 * 60 * 1000);
+          if (adjustedDate < new Date()) {
+            return false;
+          }
+        }
+        return true;
+      })
+      .slice(0, limit);
+
+    const newLastDoc = eventsList?.length ? eventsList[eventsList.length - 1] || null : snapshot.docs[snapshot.docs.length - 1];
+
+    return {
+      events: eventsList,
+      lastDoc: newLastDoc ? JSON.stringify(newLastDoc) : null,
+      endReached,
+    };
   } catch (error) {
     console.error('Error fetching user events:', error);
     throw new functionsV2.https.HttpsError('internal', 'Unable to fetch user events');

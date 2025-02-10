@@ -20,7 +20,6 @@ import {useUser} from '../../../store/userStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import Match, {MatchData} from '../IO/screens/Match/Match';
 import FullEvent from 'components/FullEvent';
-import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
@@ -114,14 +113,18 @@ const Requests: FC = (): ReactElement => {
       return;
     }
     const data = querySnapshot.data();
+
+    const allGuests = data?.male + data?.female;
+    const findAcceptedGuest = data?.usersList.filter((item: Event.User) => item.status === ACCEPTED_STATUS);
+    setTotalQuantityGuests(allGuests);
+    setAcceptQuantityGuest(findAcceptedGuest.length);
+    setTotalRequestsGuests(data?.requestsList?.length);
+
     if (!data?.requestsList?.length) {
       setRequestsForHost([]);
       setLoadingRequestItems(false);
       return;
     }
-
-    const allGuests = data?.male + data?.female;
-    const findAcceptedGuest = data?.usersList.filter(item => item.status === ACCEPTED_STATUS);
 
     const sortedRequests = data?.requestsList
       ?.sort((a: Event.User, b: Event.User) => {
@@ -133,9 +136,6 @@ const Requests: FC = (): ReactElement => {
     console.warn('sortedRequests', sortedRequests.length);
 
     setRequestsForHost(sortedRequests);
-    setTotalQuantityGuests(allGuests);
-    setAcceptQuantityGuest(findAcceptedGuest.length);
-    setTotalRequestsGuests(data?.requestsList?.length);
     setLoadingRequestItems(false);
   };
 
@@ -185,13 +185,6 @@ const Requests: FC = (): ReactElement => {
     setIsVisibleMatch(true);
   };
 
-  const checkIsFullGuestsFun = async () => {
-    const {allGuests, findAcceptedGuest, totalRequestsGuests: requeststCount} = await checkIsFullGuests(activeEvent?.id);
-    setTotalQuantityGuests(allGuests);
-    setTotalRequestsGuests(requeststCount);
-    setAcceptQuantityGuest(findAcceptedGuest);
-  };
-
   const goToCreateEvent = (): void => {
     if (!userInfo?.accountConfirmed) {
       return;
@@ -231,7 +224,6 @@ const Requests: FC = (): ReactElement => {
           .collection(apiEventsCollection)
           .doc(activeEvent?.id)
           .onSnapshot(querySnapshot => {
-            // checkIsFullGuestsFun();
             fetchHostRequests(querySnapshot);
           });
       }
