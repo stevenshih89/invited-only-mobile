@@ -5,7 +5,14 @@ import {View, Text} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import UpdateAvailableIcon from '../../../assets/images/icons/update-available.svg';
 
-const UpdateAvailable: FC = () => {
+interface UpdateAvailableProps {
+  data?: {
+    lastAvailableVersion?: string;
+    lastAvailableBuild?: string;
+  };
+}
+
+const UpdateAvailable: FC<UpdateAvailableProps> = ({data}) => {
   return (
     <View
       style={{
@@ -24,7 +31,9 @@ const UpdateAvailable: FC = () => {
           textAlign: 'center',
           fontFamily: Satoshi400,
         }}>
-        Update Application for enhanced performance and new features!
+        {`Update Version to ${data?.lastAvailableVersion} ${
+          data?.lastAvailableBuild ? `(${data?.lastAvailableBuild})` : ''
+        } for enhanced performance and new features!`}
       </Text>
     </View>
   );

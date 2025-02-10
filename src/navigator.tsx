@@ -17,6 +17,8 @@ import UpdateAvailable from 'screens/App/UpdateAvailableScreen/UpdateAvailableSc
 const Navigator = () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiAdminChatsCollection = Config.API_ADMIN_CHATS_COLLECTION || 'adminChats';
+  const apiAppSettingsCollection = Config.APP_SETTINGS_COLLECTION || 'appSettings';
+  const appStoreAppId = Config.APP_STORE_APP_ID || '';
   const [initializing, setInitializing] = useState<boolean>(true);
   const [authState, setAuthState] = useState(false);
   const [maintenanceData, setMaintenanceData] = useState<{
@@ -27,8 +29,8 @@ const Navigator = () => {
     approximatelyTime: null,
   });
   const [versionData, setVersionData] = useState<{
-    lastAvailableBuild: string;
-    lastAvailableVersion: string;
+    lastAvailableBuild?: string;
+    lastAvailableVersion?: string;
     showUpdateAvailable?: boolean;
   }>({
     lastAvailableBuild: '',
@@ -110,7 +112,7 @@ const Navigator = () => {
   };
 
   const handleCheckMaintenance = async () => {
-    const maintenanceQuery = await firestore().collection('appSettings').doc('maintenance').get();
+    const maintenanceQuery = await firestore().collection(apiAppSettingsCollection).doc('maintenance').get();
     if (maintenanceQuery.exists) {
       const data = maintenanceQuery.data() as {
         isMaintenance: boolean;
@@ -122,10 +124,32 @@ const Navigator = () => {
     }
   };
 
+  const checkAppStoreVersion = async () => {
+    if (!appStoreAppId) {
+      return;
+    }
+    const appVersion = DeviceInfo.getVersion();
+
+    try {
+      const response = await fetch(`https://itunes.apple.com/lookup?id=${appStoreAppId}`);
+      const data = await response.json();
+
+      if (data.results.length > 0) {
+        const latestVersion = data.results[0].version;
+
+        if (latestVersion !== appVersion) {
+          setVersionData({lastAvailableVersion: latestVersion, showUpdateAvailable: true});
+        }
+      }
+    } catch (error) {
+      console.error('Error checking for new version:', error);
+    }
+  };
+
   const handleCheckAppVersion = async () => {
     const appVersion = DeviceInfo.getVersion();
     const buildNumber = DeviceInfo.getBuildNumber();
-    const versionQuery = await firestore().collection('appSettings').doc('version').get();
+    const versionQuery = await firestore().collection(apiAppSettingsCollection).doc('version').get();
     if (versionQuery.exists) {
       const data = versionQuery.data() as {
         lastAvailableBuild: string;
@@ -141,7 +165,11 @@ const Navigator = () => {
 
   useEffect(() => {
     handleAddChatWithAdmin();
-    handleCheckAppVersion();
+    if (apiUserInfoCollection === 'devUserInfo') {
+      handleCheckAppVersion();
+    } else {
+      checkAppStoreVersion();
+    }
     handleCheckMaintenance();
   }, [userData?.uid]);
 
@@ -166,7 +194,7 @@ const Navigator = () => {
   }
 
   if (versionData?.showUpdateAvailable) {
-    return <UpdateAvailable />;
+    return <UpdateAvailable data={versionData} />;
   }
 
   if (maintenanceData?.isMaintenance) {
