@@ -44,6 +44,8 @@ import {
   superInvitePayPath,
   userProfilePath,
   verifySocialProfilePath,
+  underMaintenance,
+  updateAvailable
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';

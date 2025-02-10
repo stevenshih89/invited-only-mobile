@@ -25,6 +25,8 @@ export type RootStackParamList = {
     phone: string;
   };
   '/email-change': undefined;
+  '/under-maintenance': undefined;
+  '/update-available': undefined;
   '/turn-notifications': undefined;
   '/choose-account-type': undefined;
   '/enter-name': undefined;
