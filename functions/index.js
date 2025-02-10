@@ -273,9 +273,10 @@ exports.devGetUsersForEvent_v2 = functionsV2.https.onCall(async request => {
     const snapshot = await query.limit(400).get();
 
     if (snapshot.empty) {
-      return {users: [], lastDoc: null};
+      return {users: [], lastDoc: null, endReached: true};
     }
 
+    const endReached = snapshot.docs.length < 400;
     const preparedUsers = snapshot.docs.filter(doc => !allUniqueIds.some(item => item?.uid === doc.id)).slice(0, limit);
     const mappedUsers = preparedUsers?.length
       ? preparedUsers.map(doc => {
@@ -288,6 +289,7 @@ exports.devGetUsersForEvent_v2 = functionsV2.https.onCall(async request => {
     return {
       users: mappedUsers,
       lastDoc: newLastDoc ? JSON.stringify(newLastDoc) : null,
+      endReached,
     };
   } catch (error) {
     console.error('Error filtering users:', error);
@@ -375,6 +377,131 @@ exports.devGetUserEvents = functionsV2.https.onCall(async request => {
     }
 
     return {events: events.docs.map(doc => doc.data())};
+  } catch (error) {
+    console.error('Error fetching user events:', error);
+    throw new functionsV2.https.HttpsError('internal', 'Unable to fetch user events');
+  }
+});
+
+exports.devGetEventsForUser = functionsV2.https.onCall(async request => {
+  const {limit = 7, lastDoc, genderFilter, uid} = request.data;
+  if (!uid) {
+    throw new functionsV2.https.HttpsError('invalid-argument', 'Invalid user ID');
+  }
+
+  const EVENTS_COUNT_LIMIT = 50;
+
+  try {
+    let blockedUsersList = [];
+    let blockedMeUsersList = [];
+
+    const blockedUsersQuery = await admin.firestore().collection('report').where('uidSender', '==', uid).get();
+    if (!blockedUsersQuery.empty) {
+      blockedUsersList = blockedUsersQuery.docs.map(doc => doc.data().uid);
+    }
+
+    const blockedMeUsersQuery = await admin.firestore().collection('report').where('uid', '==', uid).get();
+    if (!blockedMeUsersQuery.empty) {
+      blockedMeUsersList = blockedMeUsersQuery.docs.map(doc => doc.data().uidSender);
+    }
+
+    const uniqueBlockedUsers = [...new Set([...blockedUsersList, ...blockedMeUsersList])];
+
+    let events = admin
+      .firestore()
+      .collection('devEvents')
+      .where('statusEvent', '==', true)
+      .where('eventReviewed', '==', true)
+      .where('isCancelled', '==', false);
+
+    if (uniqueBlockedUsers.length) {
+      events = events.where('uid', 'not-in', uniqueBlockedUsers);
+    }
+
+    if (genderFilter) {
+      events = events.where(genderFilter, '>', 0).orderBy(genderFilter);
+    }
+
+    events = events
+      .orderBy('id', 'desc')
+      .select(
+        'id',
+        'uid',
+        'name',
+        'meetingSpot',
+        'description',
+        'createdAt',
+        'address',
+        'hostImage',
+        'hostName',
+        'date',
+        'hour',
+        'location',
+        'male',
+        'female',
+        'photos',
+        'placeName',
+        'usersList',
+        'requestsList',
+        'rejectsByGuestsList',
+      )
+      .limit(EVENTS_COUNT_LIMIT);
+
+    if (lastDoc) {
+      const parsedLastDoc = JSON.parse(lastDoc);
+      if (parsedLastDoc && parsedLastDoc.id) {
+        events = events.startAfter(parsedLastDoc.id);
+      }
+    }
+
+    const snapshot = await events.get();
+
+    if (snapshot.empty) {
+      return {events: [], lastDoc: null, endReached: true};
+    }
+
+    const endReached = snapshot.docs.length < EVENTS_COUNT_LIMIT;
+
+    const eventsList = snapshot.docs
+      ?.map(doc => doc.data())
+      ?.filter(event => {
+        if (event?.requestsList?.find(requestedUser => requestedUser?.uid === uid)) {
+          return false;
+        }
+        if (
+          event?.usersList?.find(
+            invitedUser =>
+              invitedUser?.uid === uid &&
+              (invitedUser?.status === 'invite_match' ||
+                invitedUser?.status === 'approved' ||
+                invitedUser?.status === 'accepted' ||
+                invitedUser?.status === 'notAccepted' ||
+                invitedUser?.status === 'cancel'),
+          )
+        ) {
+          return false;
+        }
+        if (event?.rejectsByGuestsList?.find(rejectedUid => rejectedUid.uid === uid)) {
+          return false;
+        }
+        if (event?.date && event?.hour) {
+          const eventDate = new Date(`${event.date.split('.').reverse().join('-')}T${event.hour}:00`);
+          const adjustedDate = new Date(eventDate.getTime() + 12 * 60 * 60 * 1000);
+          if (adjustedDate < new Date()) {
+            return false;
+          }
+        }
+        return true;
+      })
+      .slice(0, limit);
+
+    const newLastDoc = eventsList?.length ? eventsList[eventsList.length - 1] || null : snapshot.docs[snapshot.docs.length - 1];
+
+    return {
+      events: eventsList,
+      lastDoc: newLastDoc ? JSON.stringify(newLastDoc) : null,
+      endReached,
+    };
   } catch (error) {
     console.error('Error fetching user events:', error);
     throw new functionsV2.https.HttpsError('internal', 'Unable to fetch user events');

@@ -113,14 +113,18 @@ const Requests: FC = (): ReactElement => {
       return;
     }
     const data = querySnapshot.data();
+
+    const allGuests = data?.male + data?.female;
+    const findAcceptedGuest = data?.usersList.filter((item: Event.User) => item.status === ACCEPTED_STATUS);
+    setTotalQuantityGuests(allGuests);
+    setAcceptQuantityGuest(findAcceptedGuest.length);
+    setTotalRequestsGuests(data?.requestsList?.length);
+
     if (!data?.requestsList?.length) {
       setRequestsForHost([]);
       setLoadingRequestItems(false);
       return;
     }
-
-    const allGuests = data?.male + data?.female;
-    const findAcceptedGuest = data?.usersList.filter(item => item.status === ACCEPTED_STATUS);
 
     const sortedRequests = data?.requestsList
       ?.sort((a: Event.User, b: Event.User) => {
@@ -132,9 +136,6 @@ const Requests: FC = (): ReactElement => {
     console.warn('sortedRequests', sortedRequests.length);
 
     setRequestsForHost(sortedRequests);
-    setTotalQuantityGuests(allGuests);
-    setAcceptQuantityGuest(findAcceptedGuest.length);
-    setTotalRequestsGuests(data?.requestsList?.length);
     setLoadingRequestItems(false);
   };
 

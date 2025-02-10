@@ -516,6 +516,7 @@ const AppStackScreen = () => {
       : bottomTabsStackPath;
 
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+
   useEffect(() => {
     const currentUser = auth().currentUser;
     let userDataSubscriber: any;

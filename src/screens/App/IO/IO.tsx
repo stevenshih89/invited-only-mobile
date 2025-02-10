@@ -127,6 +127,7 @@ const IO: FC = (): JSX.Element => {
   const [swipedCardsCount, setSwipedCardsCount] = useState(0);
   const [isOpenModalLimitedAccess, setIsOpenModalLimitedAccess] = useState(false);
   const [swipedCardUids, setSwipedCardUids] = useState<string[]>([]);
+  const [isFocusedScreen, setIsFocusedScreen] = useState(false);
 
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
@@ -272,17 +273,14 @@ const IO: FC = (): JSX.Element => {
     }, [activeEvent?.id]),
   );
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const subscription = onUserProfileChangeSubscription(info => {
-  //       setUserInfo((prev: UserInfo) => ({...prev, ...info}));
-  //       setUser(info);
-  //       setLoadingUser(false);
-  //     });
-
-  //     return () => subscription();
-  //   }, []),
-  // );
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocusedScreen(true);
+      return () => {
+        setIsFocusedScreen(false);
+      };
+    }, []),
+  );
 
   const handleSwipeCardRight = () => {
     if (cardRef.current) {
@@ -944,7 +942,7 @@ const IO: FC = (): JSX.Element => {
     );
   };
 
-  async function enrichElementsWithPhotos(elements) {
+  async function enrichElementsWithPhotos(elements: any[]) {
     const promises = elements?.map(async element => {
       const docRef = firestore().collection(apiUserInfoCollection).doc(element?.uid);
       const doc = await docRef?.get();
@@ -959,7 +957,7 @@ const IO: FC = (): JSX.Element => {
     return Promise.all(promises);
   }
 
-  const filterEventByDate = list => {
+  const filterEventByDate = (list: any[]) => {
     if (activeEventDate === ALL) {
       return list;
     }
@@ -986,27 +984,6 @@ const IO: FC = (): JSX.Element => {
     let filteredEvents: any[] = [];
 
     try {
-      let blockedUsersList: string[] = [];
-      let blockedMeUsersList: string[] = [];
-
-      const startBlockedUsers = new Date().getTime();
-      const blockedUsersQuery = await firestore().collection('report').where('uidSender', '==', user.uid).get();
-      if (!blockedUsersQuery.empty) {
-        blockedUsersList = blockedUsersQuery.docs.map(doc => doc.data().uid);
-      }
-      const endBlockedUsers = new Date().getTime();
-      console.warn('blockedUsersQuery', endBlockedUsers - startBlockedUsers);
-
-      const startBlockedMeUsers = new Date().getTime();
-      const blockedMeUsersQuery = await firestore().collection('report').where('uid', '==', user.uid).get();
-      if (!blockedMeUsersQuery.empty) {
-        blockedMeUsersList = blockedMeUsersQuery.docs.map(doc => doc.data().uidSender);
-      }
-      const endBlockedMeUsers = new Date().getTime();
-      console.warn('blockedMeUsersQuery', endBlockedMeUsers - startBlockedMeUsers);
-
-      const uniqueBlockedUsers = [...new Set([...blockedUsersList, ...blockedMeUsersList])];
-
       const getGenderFilter = () => {
         if (userInfo?.gender === 'man') {
           return 'male';
@@ -1019,60 +996,63 @@ const IO: FC = (): JSX.Element => {
 
       const genderFilter = getGenderFilter();
       const start = new Date().getTime();
-      const eventsQuery = await getEvents({
+      const cloudFunctionName = Config.CLOUD_FUNCTION_GET_EVENTS_FOR_USER || 'devGetEventsForUser';
+      const getEventsForUserCloudFunction = firebase.app().functions('europe-west3').httpsCallable(cloudFunctionName);
+      const eventsQuery = await getEventsForUserCloudFunction({
+        uid: user.uid,
         limit: CARDS_LOADING_LIMIT,
-        lastVisible: lastVisibleRef.current,
-        excludeUids: uniqueBlockedUsers,
+        lastDoc: lastVisibleRef.current ? JSON.stringify(lastVisibleRef.current) : null,
         genderFilter,
       });
       const end = new Date().getTime();
       console.warn('time', end - start);
 
-      if (!eventsQuery || !('docs' in eventsQuery)) {
+      if (!('events' in eventsQuery?.data) || !('lastDoc' in eventsQuery?.data)) {
         setEvents([]);
         setLoadingCardsList(false);
         endReachedRef.current = true;
         return;
       }
 
-      if (eventsQuery.docs.length > 0) {
-        lastVisibleRef.current = eventsQuery.docs[eventsQuery.docs.length - 1];
+      const eventsData = eventsQuery?.data?.events;
+      const lastDoc = eventsQuery?.data?.lastDoc ? JSON.parse(eventsQuery.data.lastDoc) : null;
+
+      if ('lastDoc' in eventsQuery?.data) {
+        lastVisibleRef.current = lastDoc;
       }
 
-      if (eventsQuery.docs.length < CARDS_LOADING_LIMIT) {
-        endReachedRef.current = true;
+      if ('endReached' in eventsQuery?.data) {
+        endReachedRef.current = eventsQuery?.data?.endReached;
       }
 
-      filteredEvents = eventsQuery?.docs
-        ?.map(doc => doc.data() as EventData)
-        ?.filter(event => {
-          if (event?.requestsList?.find((requestedUser: Event.User) => requestedUser?.uid === user?.uid)) {
+      filteredEvents = eventsData?.filter(event => {
+        if (event?.requestsList?.find((requestedUser: Event.User) => requestedUser?.uid === user?.uid)) {
+          return false;
+        }
+        if (
+          event?.usersList?.find(
+            (invitedUser: Event.User) =>
+              invitedUser?.uid === user?.uid &&
+              (invitedUser?.status === INVITE_MATCH_STATUS ||
+                invitedUser?.status === APPROVED_STATUS ||
+                invitedUser?.status === ACCEPTED_STATUS ||
+                invitedUser?.status === NOT_ACCEPTED_STATUS ||
+                invitedUser?.status === CANCEL_STATUS),
+          )
+        ) {
+          return false;
+        }
+        if (event?.rejectsByGuestsList?.find((rejectedUid: Event.RejectUser) => rejectedUid.uid === user?.uid)) {
+          return false;
+        }
+        if (event?.date && event?.hour) {
+          const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+          if (adjustedDate.isBefore(moment())) {
             return false;
           }
-          if (
-            event?.usersList?.find(
-              (invitedUser: Event.User) =>
-                invitedUser?.uid === user?.uid &&
-                (invitedUser?.status === INVITE_MATCH_STATUS ||
-                  invitedUser?.status === APPROVED_STATUS ||
-                  invitedUser?.status === ACCEPTED_STATUS ||
-                  invitedUser?.status === NOT_ACCEPTED_STATUS ||
-                  invitedUser?.status === CANCEL_STATUS),
-            )
-          ) {
-            return false;
-          }
-          if (event?.rejectsByGuestsList?.find((rejectedUid: Event.RejectUser) => rejectedUid.uid === user?.uid)) {
-            return false;
-          }
-          if (event?.date && event?.hour) {
-            const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-            if (adjustedDate.isBefore(moment())) {
-              return false;
-            }
-          }
-          return true;
-        });
+        }
+        return true;
+      });
     } catch (e: any) {
       console.error(e);
       Alert.alert('Error', e.message || 'Something went wrong');
@@ -1085,13 +1065,7 @@ const IO: FC = (): JSX.Element => {
     for (const event of filteredDataEvents) {
       const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
       const eventPhotos = event?.photos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
-      const {
-        online: userEventOnline,
-        accountPremium: userEventAccountPremium,
-        photos: userEventPhotos,
-        date: userEventDate,
-        accountConfirmed: userEventAccountConfirmed,
-      } = await getUserData(event?.uid);
+
       data.push({
         component: (
           <View style={styles.wrapperFakeCard}>
@@ -1137,8 +1111,8 @@ const IO: FC = (): JSX.Element => {
               <MyEventsCard
                 imageBg={event?.photos}
                 list={event}
-                statusEvent={event?.statusEvent}
-                eventReviewed={event?.eventReviewed}
+                statusEvent={true}
+                eventReviewed={true}
                 allPeople={event?.female + event?.male}
                 date={event?.date}
                 textCityName={event?.name}
@@ -1246,10 +1220,10 @@ const IO: FC = (): JSX.Element => {
                   {event?.hostImage && (
                     <View style={{flexDirection: 'row'}}>
                       <FastImage
-                        source={{uri: userEventPhotos?.[0]?.image || event?.hostImage}}
+                        source={{uri: currUserPhotos?.[0]?.image || event?.hostImage}}
                         style={{width: 40, height: 40, borderRadius: 50}}
                       />
-                      {userEventOnline && (
+                      {true && (
                         <View
                           style={{
                             width: 11,
@@ -1290,7 +1264,7 @@ const IO: FC = (): JSX.Element => {
                           {event?.hostInfo.accountType}
                         </Text>
                       </View>
-                      {userEventAccountPremium && (
+                      {true && (
                         <LinearGradient
                           colors={['#977B4A', '#E5D291', '#A28453']}
                           style={{
@@ -1325,9 +1299,9 @@ const IO: FC = (): JSX.Element => {
                           marginRight: 6,
                         }}>
                         {event?.hostName}
-                        {userEventDate && ', ' + calculateAge(userEventDate)}
+                        {/* {userEventDate && ', ' + calculateAge(userEventDate)} */}
                       </Text>
-                      {userEventAccountConfirmed && <CheckStarWhite />}
+                      {true && <CheckStarWhite />}
                     </View>
                   </View>
                 </View>
@@ -1619,12 +1593,12 @@ const IO: FC = (): JSX.Element => {
         return;
       }
 
-      if (users?.length > 0) {
+      if ('lastDoc' in listOfUsersResponse?.data) {
         lastVisibleRef.current = lastDoc;
       }
 
-      if (users?.length < CARDS_LOADING_LIMIT) {
-        endReachedRef.current = true;
+      if ('endReached' in listOfUsersResponse?.data) {
+        endReachedRef.current = listOfUsersResponse?.data?.endReached;
       }
 
       const data: any[] = [];
@@ -2071,15 +2045,6 @@ const IO: FC = (): JSX.Element => {
     }
   }, [activeEvent?.id, isHost]);
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     // fetchUserInfo();
-  //     if (userInfo?.uid && isHost) {
-  //       fetchMyEvents();
-  //     }
-  //   }, [userInfo?.uid]),
-  // );
-
   useFocusEffect(
     useCallback(() => {
       if (!isHost && activeEventDate) {
@@ -2130,6 +2095,19 @@ const IO: FC = (): JSX.Element => {
   }, []);
 
   const cardsList = isHost ? [...events].reverse() : events;
+
+  console.warn(endReachedRef.current, lastVisibleRef?.current);
+
+  if (!isFocusedScreen) {
+    return (
+      <>
+        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+        )}
+      </>
+    );
+  }
 
   console.warn(cardsList.length, loadingCardsList, isRefreshing);
 
