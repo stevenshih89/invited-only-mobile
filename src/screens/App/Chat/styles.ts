@@ -216,6 +216,69 @@ const useStyles = () => {
       fontSize: RFValue(12, 812),
       fontFamily: Satoshi700,
     },
+    searchContainer: {
+      position: 'relative',
+    },
+    searchIcon: {
+      position: 'absolute',
+      zIndex: 1000,
+      top: 20,
+      left: 20,
+    },
+    input: {
+      height: 56,
+      color: '#FFFFFF',
+      paddingHorizontal: 42,
+      marginBottom: 12,
+      paddingVertical: 16,
+      borderRadius: 10,
+      backgroundColor: '#0F0F0F',
+      fontSize: RFValue(18, 812),
+      fontFamily: 'Satoshi400',
+    },
+    placeholderColor: {
+      color: '#FFFFFF',
+    },
+    buttonContainer: {
+      width: '100%',
+      height: 48,
+      flexDirection: 'row',
+      gap: 4,
+      marginBottom: 12,
+    },
+    button: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+    },
+    hostButton: {
+      borderTopLeftRadius: 10,
+      borderBottomLeftRadius: 10,
+    },
+    guestButton: {
+      borderTopRightRadius: 10,
+      borderBottomRightRadius: 10,
+    },
+    buttonText: {
+      color: '#FFFFFF',
+      fontSize: RFValue(16, 812),
+      fontFamily: 'Satoshi500',
+    },
+    counterContainer: {
+      height: 24,
+      width: 24,
+      borderRadius: 24,
+      backgroundColor: '#2B2B2B',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: 8,
+    },
+    counterText: {
+      color: '#FFFFFF',
+      fontFamily: 'Satoshi500',
+      fontSize: RFValue(12, 812),
+    },
   });
 };
 

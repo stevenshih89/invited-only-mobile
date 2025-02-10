@@ -1,5 +1,5 @@
-import React, {FC, useState, useEffect, useContext, useCallback} from 'react';
-import {View, Text, FlatList, TouchableOpacity} from 'react-native';
+import React, {FC, useState, useEffect, useContext, useCallback, useMemo} from 'react';
+import {View, Text, FlatList, TouchableOpacity, TextInput} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -15,12 +15,13 @@ import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import icons
 import LoaderIcon from 'assets/images/icons/loader.svg';
+import SearchIcon from 'assets/images/icons/search.svg';
 import FlashField from 'assets/images/icons/flash.svg';
 import ThreeDoths from 'assets/images/icons/more-white.svg';
 import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
 import Button from 'components/Button/Button.tsx';
-import {blackColor, grayScale700, whiteColor} from 'constants/colors';
+import {backgroundColor, blackColor, grayScale700, lightGray2Color, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import {useFocusEffect} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
@@ -41,6 +42,7 @@ import {EventData} from 'src/types/event';
 import Config from 'react-native-config';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
+import Input from 'components/Inputs/Input';
 
 type ItemProps = {
   title: string;
@@ -86,6 +88,7 @@ const Chat: FC<ChatProps> = () => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
   const apiAdminChatsCollection = Config.API_ADMIN_CHATS_COLLECTION || 'adminChats';
+  
   const [hostMenu, setHostMenu] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingChats, setLoadingChats] = useState<boolean>(true);
@@ -93,8 +96,14 @@ const Chat: FC<ChatProps> = () => {
   const [DATAEventsJoining, setDATAEventsJoining] = useState([]);
   const [userInfo, setUserInfo] = useState<any>({});
   const [eventData, setEventData] = useState<EventData>();
-  const [adminChatsWithUsers, setAdminChatsWithUsers] = useState<any>([]);
-  const [userChatWithAdmin, setUserChatWithAdmin] = useState<any>({});
+
+  const [searchInput, setSearchInput] = useState('');
+  const [adminChatsWithUsers, setAdminChatsWithUsers] = useState<any>([]);  
+  const [filterTypeAccount, setFilterTypeAccount] = useState<'host' | 'guest'>('host')
+  const searchByName = useMemo(() => adminChatsWithUsers.filter((item: any) =>
+    item.userName?.toLowerCase().startsWith(searchInput.toLowerCase())), 
+  [adminChatsWithUsers, searchInput])
+  const [userChatWithAdmin, setUserChatWithAdmin] = useState<any>({});  
   const [loadingAdminChatsWithUsers, setLoadingAdminChatsWithUsers] = useState<boolean>(true);
   const [limitAdminChatsWithUsers, setLimitAdminChatsWithUsers] = useState<number>(DEFAULT_LIMIT_ADMIN_CHATS);
 
@@ -172,7 +181,7 @@ const Chat: FC<ChatProps> = () => {
                   }
                 });
             });
-
+                                   
             const userInfoChunks = chunkArray(userInfoPromises, 10);
 
             for (const chunk of userInfoChunks) {
@@ -725,9 +734,37 @@ const Chat: FC<ChatProps> = () => {
   if (user?.uid && user?.isInvitedOnlyAdmin && adminChatsWithUsers?.length) {
     return (
       <View style={styles.container}>
+        <View style={styles.searchContainer}>
+          <SearchIcon style={styles.searchIcon} />
+          <TextInput
+            value={searchInput}
+            onChangeText={setSearchInput}
+            placeholder='Search'
+            placeholderTextColor={styles.placeholderColor.color}
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity 
+            onPress={() => setFilterTypeAccount('host')}
+            style={[styles.button, styles.hostButton, {backgroundColor: filterTypeAccount === 'host'? '#212121': '#131313'}]}>
+            <Text style={styles.buttonText}>Host</Text>
+            <View style={styles.counterContainer}>
+              <Text style={styles.counterText}>2</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => setFilterTypeAccount('guest')}
+            style={[styles.button, styles.guestButton, {backgroundColor: filterTypeAccount === 'guest'? '#212121': '#131313'}]}>
+            <Text style={styles.buttonText}>Guest</Text>
+            <View style={styles.counterContainer}>
+              <Text style={styles.counterText}>2</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={adminChatsWithUsers}
+          data={searchByName}
           contentContainerStyle={{flexGrow: 1, paddingBottom: 40}}
           onEndReached={handleAddCountAdminChats}
           ItemSeparatorComponent={() => <View style={{height: 10}} />}
