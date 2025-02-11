@@ -1,5 +1,5 @@
 import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
-import {View, Text, Image, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Alert} from 'react-native';
+import {View, Text, Image, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Alert, Animated} from 'react-native';
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NavigationProp} from '@react-navigation/native';
 
@@ -15,6 +15,7 @@ import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import ThreeDots from 'assets/images/icons/more-white.svg';
 import SendIcon from 'assets/images/icons/send.svg';
 import CheckStar from 'assets/images/icons/check-star-white.svg';
+import LoaderIcon from 'assets/images/icons/loader.svg';
 
 // Import images
 import moment from 'moment';
@@ -32,6 +33,8 @@ import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
 import analytics from '@react-native-firebase/analytics';
 import {chatCorrespondenceScreen} from 'constants/analitycs';
 import Config from 'react-native-config';
+import { showToast } from 'helpers/showToast';
+import { cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 
 interface MessageProps {
   message: {
@@ -66,6 +69,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
   const [isPremium, setIsPremium] = useState<boolean>(false);
   const [isSending, setIsSending] = useState(false);
+  const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
 
   const clearChat = useRef(false);
   const user = useUser((i: any) => i?.user);
@@ -93,6 +97,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   useEffect(() => {
     if (uid) {
       const fetchUserInfo = async () => {
+        setLoadingEvents(true)
         const currentUser = auth().currentUser;
         if (currentUser) {
           try {
@@ -110,14 +115,18 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               setUserAccountType(userInfoDoc.data()?.accountType);
               setIsPremium(userInfoDoc.data()?.accountPremium);
             } else {
-              console.error('No user data found in Firestore');
-              Alert.alert('Error', 'No user data found in Firestore');
+              navigation.goBack()
+              setLoadingEvents(false)
+              showToast('inviteMatch', 'This user is no longer available', 'No user data');
+              
             }
           } catch (error: any) {
             console.error(error);
+            setLoadingEvents(false)
             Alert.alert('Error', error.message || 'Something went wrong');
           }
         }
+        setLoadingEvents(false)
       };
       fetchUserInfo();
       try {
@@ -356,6 +365,46 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
 
     return () => subscriber();
   }, [activeEvent]);
+
+  const rotationLoader = useSharedValue(0);
+  
+    useEffect(() => {
+      if (loadingEvents) {
+        rotationLoader.value = withRepeat(
+          withTiming(360, {
+            duration: 2000,
+            easing: Easing.linear,
+          }),
+          -1,
+        );
+      }
+  
+      return () => {
+        cancelAnimation(rotationLoader);
+      };
+    }, [rotationLoader, loadingEvents]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+      return {
+        transform: [{rotate: `${rotationLoader.value}deg`}],
+      };
+    });
+
+  if (loadingEvents) {
+    return (
+      <View
+        style={{
+          backgroundColor: blackColor,
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Animated.View style={[animatedStyle]}>
+          <LoaderIcon />
+        </Animated.View>
+      </View>
+    );
+  }
 
   return (
     <>
