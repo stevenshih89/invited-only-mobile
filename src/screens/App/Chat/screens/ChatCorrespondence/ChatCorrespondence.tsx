@@ -357,6 +357,10 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     return () => subscriber();
   }, [activeEvent]);
 
+  const handleTextChange = useCallback((text: any) => {
+    setMessageUser(text);
+  }, []);
+
   return (
     <>
       <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={styles.keyboardAvoid}>
@@ -430,10 +434,12 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               <TextInput
                 placeholderTextColor={transparentWhite40Color}
                 value={messageUser}
-                onChangeText={setMessageUser}
+                onChangeText={handleTextChange}
                 style={styles.textInput}
                 placeholder="Write your message"
                 onFocus={scrollToEnd}
+                multiline={true}
+                spellCheck={false}
               />
               <TouchableOpacity style={styles.buttonSend} onPress={handleSendMessage}>
                 <SendIcon />

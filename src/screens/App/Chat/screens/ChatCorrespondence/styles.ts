@@ -160,6 +160,7 @@ const useStyles = () => {
       fontFamily: Satoshi400,
       fontSize: RFValue(14, 812),
       height: '100%',
+      paddingTop: 18,
       borderRadius: 12,
       paddingLeft: screenWidth / 23,
       paddingRight: screenWidth / 23 + 40 + 16,
