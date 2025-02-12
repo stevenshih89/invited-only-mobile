@@ -44,8 +44,6 @@ import {
   superInvitePayPath,
   userProfilePath,
   verifySocialProfilePath,
-  underMaintenance,
-  updateAvailable
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -445,8 +443,6 @@ const UserProfileStackScreen = () => {
 };
 
 const PaymentStackScreen = () => {
-  const styles = useStyles();
-  const [isModalVisible, setModalVisible] = useState<boolean>(false);
   return (
     <EventCreatingStack.Navigator
       initialRouteName={paymentPath}
@@ -526,8 +522,10 @@ const AppStackScreen = () => {
       .collection(apiUserInfoCollection)
       .doc(currentUser?.uid)
       .onSnapshot(doc => {
-        console.warn('userDataSubscriber', doc.data());
-        setUser(doc.data() as UserInfo);
+        const newUserData = doc.data() as UserInfo;
+        if (JSON.stringify(user) !== JSON.stringify(newUserData)) {
+          setUser(newUserData);
+        }
       });
 
     return () => {

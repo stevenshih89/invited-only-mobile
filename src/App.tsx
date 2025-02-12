@@ -88,6 +88,7 @@ const App: FC = (): JSX.Element => {
         isExpiredSubscription = false;
       }
 
+      const start = new Date().getTime();
       await firestore()
         .collection(apiUserInfoCollection)
         .doc(currentUser?.uid)
@@ -98,6 +99,8 @@ const App: FC = (): JSX.Element => {
             expirationDate: newExpirationDate || '',
           },
         });
+      const end = new Date().getTime();
+      console.warn('handleUpdateUserSubscriptions', end - start);
     } catch (e) {
       console.error('handleUpdateUserSubscriptions:error ', e);
     }

@@ -84,12 +84,15 @@ const Profile: FC = () => {
     {id: 2, title: 'App Invitations'},
   ];
 
-  const calculateCompleteness = profile => {
+  const calculateCompleteness = (profile: any) => {
+    if (!profile) {
+      return 0;
+    }
     const requiredFields = ['chooseGuest', 'date', 'email', 'gender', 'homeAddress', 'interests', 'work', 'imageUser', 'bio', 'photos'];
     let presentFields = 0;
 
     for (const field of requiredFields) {
-      if (profile.hasOwnProperty(field) && profile[field] !== null && profile[field] !== undefined) {
+      if (profile?.hasOwnProperty(field) && profile?.[field] !== null && profile?.[field] !== undefined) {
         presentFields++;
       }
     }

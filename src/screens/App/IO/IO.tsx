@@ -85,8 +85,6 @@ import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
 import {getUserData} from 'helpers/getUserData';
 import analytics from '@react-native-firebase/analytics';
 import {inviteUser, IOscreen, joinEvent} from 'constants/analitycs';
-import RNUxcam from 'react-native-ux-cam';
-import {getEvents} from 'src/api/event';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
 import {useDemoFlowStore} from '../../../store/demoFlowStore';
@@ -95,7 +93,6 @@ import {hostHintSteps} from 'constants/hints.ts';
 import ModalLimitedAccess from 'components/Modal/ModalLimitedAccess/ModalLimitedAccess';
 import CardsFakeState from 'components/CardsFakeState';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
-import functions from '@react-native-firebase/functions';
 import firebase from '@react-native-firebase/app';
 
 const IO: FC = (): JSX.Element => {
@@ -487,14 +484,12 @@ const IO: FC = (): JSX.Element => {
   };
 
   useEffect(() => {
-    if (Object.keys(userInfo).length != 0) {
-      if (!userInfo?.accountReviewed) {
-        showToast('inviteMatch', 'have a code? click here', 'Your account is under review', {
-          ownerPhoto: userInfo?.photos[0].image,
-          status: 'ON REVIEW',
-          path: 'invitationCode',
-        });
-      }
+    if (userInfo?.uid && !userInfo?.accountReviewed) {
+      showToast('inviteMatch', 'have a code? click here', 'Your account is under review', {
+        ownerPhoto: userInfo?.photos[0].image,
+        status: 'ON REVIEW',
+        path: 'invitationCode',
+      });
     }
   }, [userInfo?.uid]);
 
@@ -1058,19 +1053,26 @@ const IO: FC = (): JSX.Element => {
       Alert.alert('Error', e.message || 'Something went wrong');
     }
 
-    const enrichedEvents = await enrichElementsWithPhotos(filteredEvents);
+    const filteredDataEvents = filterEventByDate(filteredEvents);
+
     const data: any[] = [];
-    const filteredDataEvents = filterEventByDate(enrichedEvents);
 
     for (const event of filteredDataEvents) {
-      const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
+      const currUserPhotos = [event?.hostImage];
       const eventPhotos = event?.photos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
+
+      const hostInfoData = {
+        accountPremium: true,
+        accountType: 'host',
+        name: event?.hostName,
+        photo: event?.hostImage,
+      };
 
       data.push({
         component: (
           <View style={styles.wrapperFakeCard}>
             <TouchingSlider
-              hostInfo={event?.hostInfo}
+              hostInfo={hostInfoData}
               userInfo={userInfo}
               placeName={event?.placeName}
               girls={event?.female + event?.femaleFriend}
@@ -1101,7 +1103,7 @@ const IO: FC = (): JSX.Element => {
               hourEvent={event?.hour}
               usersListLength={event?.usersList.length}
               usersList={event?.usersList}
-              accountType={userInfo?.accountType}
+              accountType={userInfo?.accountType || ''}
               isPreview={false}
               setCurrentEventCardPosition={setCurrentEventCardPosition}
               setScrollPosition={setScrollPosition}
@@ -1261,7 +1263,7 @@ const IO: FC = (): JSX.Element => {
                             fontFamily: Satoshi700,
                             fontSize: RFValue(10, 812),
                           }}>
-                          {event?.hostInfo.accountType}
+                          {hostInfoData?.accountType}
                         </Text>
                       </View>
                       {true && (
@@ -1299,7 +1301,7 @@ const IO: FC = (): JSX.Element => {
                           marginRight: 6,
                         }}>
                         {event?.hostName}
-                        {event?.hostInfo?.date && ', ' + calculateAge(event?.hostInfo?.date)}
+                        {hostInfoData?.date && ', ' + calculateAge(hostInfoData?.date)}
                       </Text>
                       {true && <CheckStarWhite />}
                     </View>
@@ -1471,9 +1473,7 @@ const IO: FC = (): JSX.Element => {
         info: event,
       });
     }
-
-    const sortedByInterestsData = sortByInterests(sortByDate(data)?.reverse(), userInfo);
-
+    const sortedByInterestsData = sortByDate(data)?.reverse();
     setEvents(prevEvents => {
       if (refresh) {
         const updatedEvents = [...prevEvents.reverse(), ...sortedByInterestsData].reverse();
@@ -1572,12 +1572,20 @@ const IO: FC = (): JSX.Element => {
           eventId: activeEvent?.id,
         });
 
+        const lastDoc = listOfUsersResponse?.data?.lastDoc ? JSON.parse(listOfUsersResponse.data.lastDoc) : null;
+
+        if ('lastDoc' in listOfUsersResponse?.data) {
+          lastVisibleRef.current = lastDoc;
+        }
+
+        if ('endReached' in listOfUsersResponse?.data) {
+          endReachedRef.current = listOfUsersResponse?.data?.endReached;
+        }
+
         console.warn('end', new Date().getTime());
 
         console.warn('execution time', new Date().getTime() - start);
       }
-
-      const lastDoc = listOfUsersResponse?.data?.lastDoc ? JSON.parse(listOfUsersResponse.data.lastDoc) : null;
 
       if (isDemo) {
         users = listOfUsers;
@@ -1591,14 +1599,6 @@ const IO: FC = (): JSX.Element => {
         setLoadingCardsList(false);
         endReachedRef.current = true;
         return;
-      }
-
-      if ('lastDoc' in listOfUsersResponse?.data) {
-        lastVisibleRef.current = lastDoc;
-      }
-
-      if ('endReached' in listOfUsersResponse?.data) {
-        endReachedRef.current = listOfUsersResponse?.data?.endReached;
       }
 
       const data: any[] = [];
@@ -1964,14 +1964,6 @@ const IO: FC = (): JSX.Element => {
     }
   };
 
-  const requestUserPermission = async () => {
-    const authStatus = await messaging().requestPermission();
-    const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    if (enabled) {
-      await fcmHelper();
-    }
-  };
-
   const sortByDate = (eventsForSort: {info: EventData}[]) => {
     eventsForSort?.sort((a, b) => {
       let dateA: Date | any = new Date(a?.info?.date.split('.').reverse().join('-'));
@@ -1980,28 +1972,6 @@ const IO: FC = (): JSX.Element => {
       return dateA - dateB;
     });
     return eventsForSort;
-  };
-
-  const sortByInterests = (dataGuest: any, userInfo: any) => {
-    const filteredGuests = dataGuest.filter(guest => guest?.info?.hostInfo);
-
-    if (!userInfo?.interests || userInfo?.interests.length === 0) {
-      return [];
-    }
-
-    const userInterests = userInfo?.interests?.map((interest: User.Interests) => interest?.title);
-
-    const matchedGuests = filteredGuests?.sort(guest => {
-      if (
-        !guest?.info?.hostInfo?.interests ||
-        guest?.info?.hostInfo?.interests?.length === 0 ||
-        guest?.info?.hostInfo?.chooseGuest !== userInfo?.chooseGuest
-      ) {
-        return false;
-      }
-      return guest?.info?.hostInfo.interests?.some((interest: User.Interests) => userInterests?.includes(interest.title));
-    });
-    return matchedGuests;
   };
 
   const handleGoToEarlyAccess = () => {
@@ -2089,10 +2059,6 @@ const IO: FC = (): JSX.Element => {
       }
     }
   }, [events]);
-
-  useEffect(() => {
-    requestUserPermission();
-  }, []);
 
   const cardsList = isHost ? [...events].reverse() : events;
 
@@ -2235,7 +2201,14 @@ const IO: FC = (): JSX.Element => {
   if (userInfo?.uid && isRefreshing && !cardsList.length && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <>
-        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        <Loading
+          wrapperText={false}
+          textStyle={{
+            opacity: 0.8,
+          }}
+          text={`Finding ${isHost ? 'guests' : 'events'} near you ...`}
+          userInfo={userInfo}
+        />
         {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
           <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
         )}
