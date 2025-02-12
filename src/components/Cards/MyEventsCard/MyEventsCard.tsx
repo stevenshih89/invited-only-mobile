@@ -108,6 +108,17 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
     return filter.length;
   };
 
+  const eventIsExpired = () => {
+    if (item?.date && item?.hour) {
+      const adjustedDate = moment(`${item.date}, ${item.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+      if (adjustedDate.isBefore(moment())) {
+        return true
+      } else false
+    }
+  }
+
+  const isExpired = eventIsExpired()
+
   const getEventStatus = () => {
     if (item?.isCancelled) {
       return {
@@ -116,14 +127,11 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
       };
     }
 
-    if (item?.date && item?.hour) {
-      const adjustedDate = moment(`${item.date}, ${item.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-      if (adjustedDate.isBefore(moment())) {
-        return {
-          plateTitle: 'Expired',
-          plateBackgroundColor: grayScale600,
-        };
-      }
+    if(isExpired) {
+      return {
+        plateTitle: 'Expired',
+        plateBackgroundColor: grayScale600,
+      };
     }
 
     if (eventIsFull) {
@@ -467,7 +475,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
             <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
           </View>
         )}
-        <View style={{marginBottom: 20, paddingHorizontal: 24}}>{customButton ? customButton : null}</View>
+        {!isExpired? <View style={{marginBottom: 20, paddingHorizontal: 24}}>{customButton ? customButton : null}</View>: null}
       </View>
     </>
   );
