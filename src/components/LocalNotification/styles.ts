@@ -58,6 +58,7 @@ const useStyles = () => {
       height: 60,
       width: 200,
       alignSelf: 'flex-end',
+      zIndex: 2000
     },
     // changeProfile: {
     //   backgroundColor: whiteColor,
