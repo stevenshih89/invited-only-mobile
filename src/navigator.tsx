@@ -72,10 +72,10 @@ const Navigator = () => {
   };
 
   useEffect(() => {
-    if (!initializing && userData?.uid) {
+    if (!initializing) {
       SplashScreen.hide();
     }
-  }, [initializing, userData?.uid]);
+  }, [initializing]);
 
   useEffect(() => {
     messaging().onMessage(async () => {});
@@ -112,6 +112,10 @@ const Navigator = () => {
   };
 
   const handleCheckMaintenance = async () => {
+    const currentUser = auth().currentUser;
+    if (!currentUser?.uid) {
+      return;
+    }
     const maintenanceQuery = await firestore().collection(apiAppSettingsCollection).doc('maintenance').get();
     if (maintenanceQuery.exists) {
       const data = maintenanceQuery.data() as {
@@ -125,7 +129,8 @@ const Navigator = () => {
   };
 
   const checkAppStoreVersion = async () => {
-    if (!appStoreAppId) {
+    const currentUser = auth().currentUser;
+    if (!appStoreAppId || !currentUser?.uid) {
       return;
     }
     const appVersion = DeviceInfo.getVersion();
@@ -147,6 +152,11 @@ const Navigator = () => {
   };
 
   const handleCheckAppVersion = async () => {
+    const currentUser = auth().currentUser;
+    if (!currentUser?.uid) {
+      return;
+    }
+
     const appVersion = DeviceInfo.getVersion();
     const buildNumber = DeviceInfo.getBuildNumber();
     const versionQuery = await firestore().collection(apiAppSettingsCollection).doc('version').get();
@@ -174,20 +184,18 @@ const Navigator = () => {
   }, [userData?.uid]);
 
   useEffect(() => {
-    const subcriber = auth().onAuthStateChanged(onAuthStateChanged);
-    getOnbordingState();
     if (authState) {
       getFcmToken();
       registerListenerWithFCM();
     }
+  }, [authState]);
 
-    if (userData?.id) {
-      setAuthState(true);
-    }
+  useEffect(() => {
+    const subcriber = auth().onAuthStateChanged(onAuthStateChanged);
     return () => {
       subcriber();
     };
-  }, [initializing, user, onBoarding, setUser]);
+  }, [onBoarding, user]);
 
   if (initializing) {
     return null;

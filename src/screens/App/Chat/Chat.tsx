@@ -43,6 +43,7 @@ import Config from 'react-native-config';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import Input from 'components/Inputs/Input';
+import Loading from 'components/Loading/Loading';
 
 type ItemProps = {
   title: string;
@@ -88,22 +89,22 @@ const Chat: FC<ChatProps> = () => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
   const apiAdminChatsCollection = Config.API_ADMIN_CHATS_COLLECTION || 'adminChats';
-  
+
   const [hostMenu, setHostMenu] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingChats, setLoadingChats] = useState<boolean>(true);
   const [messages, setMessages] = useState([]);
   const [DATAEventsJoining, setDATAEventsJoining] = useState([]);
-  const [userInfo, setUserInfo] = useState<any>({});
   const [eventData, setEventData] = useState<EventData>();
 
   const [searchInput, setSearchInput] = useState('');
-  const [adminChatsWithUsers, setAdminChatsWithUsers] = useState<any>([]);  
-  const [filterTypeAccount, setFilterTypeAccount] = useState<'host' | 'guest'>('host')
-  const searchByName = useMemo(() => adminChatsWithUsers.filter((item: any) =>
-    item.userName?.toLowerCase().startsWith(searchInput.toLowerCase())), 
-  [adminChatsWithUsers, searchInput])
-  const [userChatWithAdmin, setUserChatWithAdmin] = useState<any>({});  
+  const [adminChatsWithUsers, setAdminChatsWithUsers] = useState<any>([]);
+  const [filterTypeAccount, setFilterTypeAccount] = useState<'host' | 'guest'>('host');
+  const searchByName = useMemo(
+    () => adminChatsWithUsers.filter((item: any) => item.userName?.toLowerCase().startsWith(searchInput.toLowerCase())),
+    [adminChatsWithUsers, searchInput],
+  );
+  const [userChatWithAdmin, setUserChatWithAdmin] = useState<any>({});
   const [loadingAdminChatsWithUsers, setLoadingAdminChatsWithUsers] = useState<boolean>(true);
   const [limitAdminChatsWithUsers, setLimitAdminChatsWithUsers] = useState<number>(DEFAULT_LIMIT_ADMIN_CHATS);
 
@@ -121,15 +122,6 @@ const Chat: FC<ChatProps> = () => {
   const user = useUser((i: any) => i?.user);
 
   const isHost = user?.accountType?.toLowerCase() === 'host';
-
-  const {accountConfirmed} = useUserProfileChangeSubscription();
-  useEffect(() => {
-    if (!Object.keys(userInfo).length) {
-      return;
-    }
-
-    setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
-  }, [accountConfirmed]);
 
   const rotationLoader = useSharedValue(0);
 
@@ -181,7 +173,7 @@ const Chat: FC<ChatProps> = () => {
                   }
                 });
             });
-                                   
+
             const userInfoChunks = chunkArray(userInfoPromises, 10);
 
             for (const chunk of userInfoChunks) {
@@ -300,21 +292,6 @@ const Chat: FC<ChatProps> = () => {
     };
   });
 
-  const fetchUserInfo = async () => {
-    setLoading(true);
-    const userData = auth().currentUser;
-
-    if (userData) {
-      try {
-        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(userData.uid).get();
-        if (userInfoDoc.exists) {
-          setUserInfo(userInfoDoc.data());
-        }
-      } catch (error: any) {}
-    }
-    setLoading(false);
-  };
-
   const fetchEventData = async () => {
     setLoading(true);
     const eventDataDoc = await firestore().collection(apiEventsCollection).doc(activeEvent?.id).get();
@@ -333,7 +310,6 @@ const Chat: FC<ChatProps> = () => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchUserInfo();
       try {
         analytics().logScreenView({
           screen_name: chatsScreen,
@@ -587,7 +563,6 @@ const Chat: FC<ChatProps> = () => {
         return '#676767';
       case 'Starts':
         return '#2E5BB2';
-
       default:
         return '';
     }
@@ -699,19 +674,14 @@ const Chat: FC<ChatProps> = () => {
     }, [activeEvent?.id, loading, activeEventDate]),
   );
 
-  if (loading || loadingChats) {
+  if (loadingChats) {
     return (
-      <View
-        style={{
-          backgroundColor: blackColor,
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Animated.View style={[animatedStyle]}>
-          <LoaderIcon />
-        </Animated.View>
-      </View>
+      <>
+        <Loading wrapperText={false} text={'Checking for new messages.\nStay tuned!'} userInfo={user} />
+        {!user?.accountReviewed && !user?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={user?.accountPremium} accountType={user?.accountType} isVisibleButton={true} />
+        )}
+      </>
     );
   }
 
@@ -739,23 +709,23 @@ const Chat: FC<ChatProps> = () => {
           <TextInput
             value={searchInput}
             onChangeText={setSearchInput}
-            placeholder='Search'
+            placeholder="Search"
             placeholderTextColor={styles.placeholderColor.color}
             style={styles.input}
           />
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => setFilterTypeAccount('host')}
-            style={[styles.button, styles.hostButton, {backgroundColor: filterTypeAccount === 'host'? '#212121': '#131313'}]}>
+            style={[styles.button, styles.hostButton, {backgroundColor: filterTypeAccount === 'host' ? '#212121' : '#131313'}]}>
             <Text style={styles.buttonText}>Host</Text>
             <View style={styles.counterContainer}>
               <Text style={styles.counterText}>2</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => setFilterTypeAccount('guest')}
-            style={[styles.button, styles.guestButton, {backgroundColor: filterTypeAccount === 'guest'? '#212121': '#131313'}]}>
+            style={[styles.button, styles.guestButton, {backgroundColor: filterTypeAccount === 'guest' ? '#212121' : '#131313'}]}>
             <Text style={styles.buttonText}>Guest</Text>
             <View style={styles.counterContainer}>
               <Text style={styles.counterText}>2</Text>
@@ -948,12 +918,10 @@ const Chat: FC<ChatProps> = () => {
           </View>
         </View>
       )}
-      {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
-      {acceptModalVisible && (
-        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
-      )}
+      {user?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={user.photos[0].image} />}
+      {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={user} setIsVisible={setAcceptModalVisible} />}
       {changeAccountTypeModalVisible && !acceptModalVisible && (
-        <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />
+        <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={user} setIsVisible={setChangeAccountModalVisible} />
       )}
       {isHost ? (
         <View style={{flex: 1}}>
@@ -1030,7 +998,7 @@ const Chat: FC<ChatProps> = () => {
           />
         </View>
       )}
-      {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton={false} />}
+      {!user?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton={false} />}
     </View>
   );
 };

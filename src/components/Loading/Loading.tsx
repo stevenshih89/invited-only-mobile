@@ -9,7 +9,7 @@ import {blackColor, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import FastImage from 'react-native-fast-image';
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface LoadingProps {
   text?: string;
@@ -19,6 +19,7 @@ interface LoadingProps {
   styleContainer?: any;
   showCheckIcon?: boolean;
   styleInnerContainer?: any;
+  textStyle?: any;
 }
 
 const Loading: FC<LoadingProps> = ({
@@ -29,6 +30,7 @@ const Loading: FC<LoadingProps> = ({
   styleContainer,
   showCheckIcon = false,
   styleInnerContainer,
+  textStyle,
 }) => {
   const styles = useStyles();
 
@@ -117,6 +119,8 @@ const Loading: FC<LoadingProps> = ({
                           fontSize: RFValue(18, 812),
                           fontFamily: Satoshi500,
                           textAlign: 'center',
+                          opacity: 0.8,
+                          ...textStyle,
                         }}>
                         {text}
                       </Text>
@@ -138,6 +142,8 @@ const Loading: FC<LoadingProps> = ({
                       fontSize: RFValue(18, 812),
                       fontFamily: Satoshi400,
                       textAlign: 'center',
+                      opacity: 0.8,
+                      ...textStyle,
                     }}>
                     {text}
                   </Text>

@@ -58,6 +58,8 @@ import {Event, EventData} from 'src/types/event';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import ModalEventRemindersStarting from 'components/Modal/ModalEventRemindersStarting';
+import Loading from 'components/Loading/Loading';
+import {opacity} from 'react-native-reanimated/lib/typescript/Colors';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -589,9 +591,9 @@ const MyEvents: FC<any> = ({navigation}) => {
               return;
             }
             const data = querySnapshot?.docs?.map(i => i?.data());
-            const oneMonthAgo = moment().subtract(1, "months");            
+            const oneMonthAgo = moment().subtract(1, 'months');
             const filterMonth = data.filter(event => {
-              const eventDate = moment(event.date, "DD.MM.YYYY");              
+              const eventDate = moment(event.date, 'DD.MM.YYYY');
               return eventDate.isAfter(oneMonthAgo);
             });
             const sortedData = filterMonth.sort((a, b) => {
@@ -830,7 +832,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                 justifyContent: 'center',
                 borderRadius: 18,
                 backgroundColor: lightGray20Color,
-                marginTop: 25,
+                marginTop: 12,
               }}>
               <Text
                 style={{
@@ -979,14 +981,16 @@ const MyEvents: FC<any> = ({navigation}) => {
     return (
       <View
         style={{
-          backgroundColor: blackColor,
           flex: 1,
+          backgroundColor: blackColor,
           justifyContent: 'center',
           alignItems: 'center',
+          paddingTop: screenHeight / 9,
         }}>
-        <Animated.View style={[animatedStyle]}>
-          <LoaderIcon />
-        </Animated.View>
+        <Loading wrapperText={false} text={'Looking for your events.\nAlmost ready to go!'} userInfo={userInfo} />
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+        )}
       </View>
     );
   }

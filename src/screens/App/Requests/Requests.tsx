@@ -1,14 +1,13 @@
 import {FlatList, Text, View} from 'react-native';
-import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
+import {FC, ReactElement, useCallback, useContext, useState} from 'react';
 //import components
 import useStyles from './styles';
-import {blackColor, transparentGray70Color, whiteColor} from 'constants/colors';
+import {transparentGray70Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import PersoneIcon from 'assets/images/icons/Users.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
-import LoaderIcon from 'assets/images/icons/loader.svg';
 import ItemRequestGuest from './ItemRequestGuest';
 import ItemRequestHost from './ItemRequestHost';
 import firestore from '@react-native-firebase/firestore';
@@ -34,8 +33,8 @@ import analytics from '@react-native-firebase/analytics';
 import {requestsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
-import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
+import Loading from 'components/Loading/Loading';
 
 const Requests: FC = (): ReactElement => {
   const COUNT_TO_ADD_REQUEST_ITEMS = 2;
@@ -72,30 +71,6 @@ const Requests: FC = (): ReactElement => {
 
   const [limitRequestItems, setLimitRequestItems] = useState<number>(DEFAULT_LIMIT_REQUEST_ITEMS);
 
-  const rotationLoader = useSharedValue(0);
-
-  useEffect(() => {
-    if (loadingMyEvents || loadingRequestItems) {
-      rotationLoader.value = withRepeat(
-        withTiming(360, {
-          duration: 2000,
-          easing: Easing.linear,
-        }),
-        -1,
-      );
-    }
-
-    return () => {
-      cancelAnimation(rotationLoader);
-    };
-  }, [rotationLoader, loadingMyEvents, loadingRequestItems]);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{rotate: `${rotationLoader.value}deg`}],
-    };
-  });
-
   const handleCloseMatch = (): void => {
     setIsVisibleMatch(false);
   };
@@ -110,6 +85,7 @@ const Requests: FC = (): ReactElement => {
   const fetchHostRequests = async (querySnapshot: any) => {
     if (!querySnapshot.exists) {
       setRequestsForHost([]);
+      setLoadingRequestItems(false);
       return;
     }
     const data = querySnapshot.data();
@@ -218,6 +194,7 @@ const Requests: FC = (): ReactElement => {
       if (isHost) {
         if (!activeEvent?.id) {
           setRequestsForHost([]);
+          setLoadingRequestItems(false);
           return;
         }
         subcribeHostRequests = firestore()
@@ -355,17 +332,16 @@ const Requests: FC = (): ReactElement => {
 
   if (loadingRequestItems && !list.length && !isVisibleMatch) {
     return (
-      <View
-        style={{
-          backgroundColor: blackColor,
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Animated.View style={[animatedStyle]}>
-          <LoaderIcon />
-        </Animated.View>
-      </View>
+      <>
+        <Loading
+          wrapperText={false}
+          text={`Fetching the latest ${isHost ? 'guest' : 'event'} requests for you. This may take a second!`}
+          userInfo={userInfo}
+        />
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+        )}
+      </>
     );
   }
 

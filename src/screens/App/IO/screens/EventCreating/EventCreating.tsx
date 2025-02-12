@@ -31,6 +31,7 @@ import Config from 'react-native-config';
 import HintCard from 'components/HintCard';
 import {hostHintSteps} from 'constants/hints.ts';
 import {useDemoFlowStore} from '../../../../../store/demoFlowStore';
+import functions from '@react-native-firebase/functions';
 
 const EventCreating = () => {
   const INVITED_ONLY = 'invitedOnly';
@@ -354,6 +355,38 @@ const EventCreating = () => {
         .update({
           eventsList: firestore.FieldValue.arrayUnion(uid),
         });
+
+        const getFcmTokensFromUsers = async () => {
+          const userInfoDocs = await firestore()
+            .collection(apiUserInfoCollection)
+            .where('isInvitedOnlyAdmin', '==', true)
+            .get();
+        
+          const tokens: string[] = [];
+          
+          userInfoDocs.forEach((doc) => {
+            const data = doc.data();
+            if (data.fcmToken) {
+              tokens.push(data.fcmToken);
+            }
+          });
+        
+          return tokens;
+        };
+      
+        const tokens = await getFcmTokensFromUsers();        
+
+        for (const token of tokens) {
+            const result = await functions().httpsCallable('sendNotification')({
+              token: token,
+              priority: 'high',
+              notification: {
+                title: 'Invited Only',
+                body: 'A new event was created!',
+              },
+            });
+        }
+        
 
       setLoading(false);
       setLoaderVisible(false);
