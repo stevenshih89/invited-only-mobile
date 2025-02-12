@@ -164,7 +164,7 @@ const VerifySocialProfile = () => {
     return `${day} ${month} ${year}`;
   };
 
-  const handleRegisterUser = async onBoarding => {
+  const handleRegisterUser = async (onBoarding: any) => {
     try {
       setLoading(true);
       const registrationDate = new Date();

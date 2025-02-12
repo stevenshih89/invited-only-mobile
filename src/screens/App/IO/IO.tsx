@@ -180,7 +180,10 @@ const IO: FC = (): JSX.Element => {
   });
 
   const handleSuperInvite = () => {
-    if (counterSuperInvitesRef.current > 0 || counterWeeklySuperInvitesRef.current > 0) {
+    if (!userInfo?.uid) {
+      return;
+    }
+    if (userInfo?.superInvites > 0 || userInfo?.weeklySuperInvites > 0) {
       flipCoin();
     } else {
       navigation.navigate('/super-invite-pay');
@@ -363,11 +366,14 @@ const IO: FC = (): JSX.Element => {
   };
 
   useEffect(() => {
-    if (userInfo && userInfo?.showModalAccept) {
+    if (userInfo?.uid && userInfo?.showModalAccept) {
       setAcceptModalVisible(true);
     }
-    if (userInfo && userInfo?.showModalChangeAccountType) {
+    if (userInfo?.uid && userInfo?.showModalChangeAccountType) {
       setChangeAccountModalVisible(true);
+    }
+    if (userInfo?.uid && userInfo?.accountReviewed && !userInfo?.accountConfirmed) {
+      setRejectModalVisible(true);
     }
   }, [userInfo]);
 
@@ -387,6 +393,9 @@ const IO: FC = (): JSX.Element => {
   );
 
   const getSuperInvites = async () => {
+    if (!userInfo?.uid) {
+      return;
+    }
     const currentSuperInvites = userInfo?.superInvites;
     const currentWeeklySuperInvites = userInfo?.weeklySuperInvites;
     setCounterSuperInvites(currentSuperInvites + currentWeeklySuperInvites);
@@ -394,15 +403,7 @@ const IO: FC = (): JSX.Element => {
 
   useEffect(() => {
     getSuperInvites();
-    // try {
-    //   analytics().logScreenView({
-    //     screen_name: IOscreen,
-    //   });
-    // } catch (e) {
-    //   console.error(e);
-    // }
-    // RNUxcam.tagScreenName(IOscreen);
-  }, []);
+  }, [userInfo?.uid, userInfo?.superInvites, userInfo?.weeklySuperInvites]);
 
   const decrementSuperInvite = async (item: UserInfo, coinAnimationTimer = 0) => {
     try {
@@ -415,24 +416,21 @@ const IO: FC = (): JSX.Element => {
         handleSuperJoin();
         await onInvite(item?.uid, item?.id, true);
       }
-      if (counterWeeklySuperInvitesRef.current > 0) {
+      if (userInfo?.weeklySuperInvites > 0) {
         firestore()
           .collection(apiUserInfoCollection)
           .doc(userInfo.uid)
           .update({
-            weeklySuperInvites: counterWeeklySuperInvitesRef.current - 1,
+            weeklySuperInvites: userInfo?.weeklySuperInvites - 1,
           });
-        counterWeeklySuperInvitesRef.current -= 1;
-      } else if (counterSuperInvitesRef.current > 0) {
+      } else if (userInfo?.superInvites > 0) {
         firestore()
           .collection(apiUserInfoCollection)
           .doc(userInfo.uid)
           .update({
-            superInvites: counterSuperInvitesRef.current - 1,
+            superInvites: userInfo?.superInvites - 1,
           });
-        counterSuperInvitesRef.current -= 1;
       }
-      // }
     } catch (error) {
       console.log('error supert invite', error);
     }
@@ -521,78 +519,28 @@ const IO: FC = (): JSX.Element => {
     );
   };
 
-  // const fetchUserInfo = async () => {
-  //   const user = auth().currentUser;
+  const handleSetWeeklySuperInvites = async () => {
+    if (!userInfo?.uid) {
+      return;
+    }
+    const isWeekPassed = (lastUpdate: number) => {
+      const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
+      const currentTime = Date.now();
+      return currentTime - lastUpdate >= oneWeekInMilliseconds;
+    };
 
-  //   if (user && !loadingUser) {
-  //     setLoadingUser(true);
-  //     try {
-  //       const start = new Date().getTime();
-  //       const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
-  //       const end = new Date().getTime();
-  //       console.warn('fetchUserInfo IO', end - start);
+    const isWeek = isWeekPassed(userInfo?.lastUpdateSuperInvite);
+    if (isWeek) {
+      await firestore().collection(apiUserInfoCollection).doc(userInfo?.uid).update({
+        lastUpdateSuperInvite: Date.now(),
+        weeklySuperInvites: 5,
+      });
+    }
+  };
 
-  //       if (userInfoDoc.exists) {
-  //         const userInfoData = userInfoDoc.data() as UserInfo;
-  //         setUserInfo(userInfoData);
-
-  //         if (userInfoData.accountReviewed && !userInfoData.accountConfirmed) {
-  //           setRejectModalVisible(true);
-  //         }
-  //         const isWeek = hasWeekPassed(userInfoDoc?.data()?.lastUpdateSuperInvite);
-  //         if (isWeek) {
-  //           await firestore().collection(apiUserInfoCollection).doc(user.uid).update({
-  //             lastUpdateSuperInvite: Date.now(),
-  //             weeklySuperInvites: 5,
-  //           });
-  //         }
-  //       }
-  //     } catch (error: any) {
-  //       setLoadingUser(false);
-  //       Alert.alert('Error', error.message || 'Something went wrong');
-  //     }
-  //   }
-  //   setLoadingUser(false);
-  // };
-
-  // const fetchMyEvents = async () => {
-  //   const user = auth().currentUser;
-  //   if (user) {
-  //     try {
-  //       const cloudFunction = Config.CLOUD_FUNCTION_GET_USER_EVENTS || 'getUserEvents';
-  //       const querySnapshot = await functions().httpsCallable(cloudFunction)({
-  //         uid: user.uid,
-  //       });
-
-  //       if (!querySnapshot?.data?.events?.length) {
-  //         setLoadingCardsList(false);
-  //         return;
-  //       }
-
-  //       const data = querySnapshot?.data?.events || [];
-  //       const filteredEvents = data.filter(event => {
-  //         if (event?.date && event?.hour) {
-  //           const adjustedDate = moment(`${event?.date}, ${event?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-  //           if (adjustedDate.isBefore(moment())) {
-  //             return false;
-  //           }
-  //           return true;
-  //         }
-  //         return false;
-  //       });
-  //       if (!filteredEvents.length) {
-  //         setLoadingCardsList(false);
-  //         return;
-  //       }
-  //       setMyEvents(filteredEvents);
-  //     } catch (error: any) {
-  //       setLoadingCardsList(false);
-  //       console.error(error);
-
-  //       Alert.alert('Error', error.message || 'Something went wrong');
-  //     }
-  //   }
-  // };
+  useEffect(() => {
+    handleSetWeeklySuperInvites();
+  }, [userInfo?.uid]);
 
   const onReject = async (uid: string, eventId: string) => {
     const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
@@ -902,7 +850,7 @@ const IO: FC = (): JSX.Element => {
   };
 
   const handleSuperJoin = () => {
-    if (counterSuperInvites > 0) {
+    if (userInfo?.superInvites > 0 || userInfo?.weeklySuperInvites > 0) {
       setVisibleModalSuperJoin(true);
       setTimeout(() => {
         setVisibleModalSuperJoin(false);
@@ -1473,15 +1421,15 @@ const IO: FC = (): JSX.Element => {
         info: event,
       });
     }
-    const sortedByInterestsData = sortByDate(data)?.reverse();
+    // const sortedByInterestsData = sortByDate(data)?.reverse();
     setEvents(prevEvents => {
       if (refresh) {
-        const updatedEvents = [...prevEvents.reverse(), ...sortedByInterestsData].reverse();
+        const updatedEvents = [...prevEvents.reverse(), ...data].reverse();
         eventsRef.current = updatedEvents;
         return updatedEvents;
       } else {
-        eventsRef.current = sortedByInterestsData;
-        return sortedByInterestsData;
+        eventsRef.current = data;
+        return data;
       }
     });
     if (refresh) {
@@ -2163,16 +2111,6 @@ const IO: FC = (): JSX.Element => {
       </SafeAreaView>
     );
   }
-
-  // if ((loadingUser || loadingMyEvents) && userInfo?.uid && isHost && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
-  //   return (
-  //     <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
-  //       <Animated.View style={[animatedStyle]}>
-  //         <LoaderIcon />
-  //       </Animated.View>
-  //     </SafeAreaView>
-  //   );
-  // }
 
   if (userInfo?.uid && acceptModalVisible) {
     return (

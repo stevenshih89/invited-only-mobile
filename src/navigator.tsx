@@ -112,6 +112,10 @@ const Navigator = () => {
   };
 
   const handleCheckMaintenance = async () => {
+    const currentUser = auth().currentUser;
+    if (!currentUser?.uid) {
+      return;
+    }
     const maintenanceQuery = await firestore().collection(apiAppSettingsCollection).doc('maintenance').get();
     if (maintenanceQuery.exists) {
       const data = maintenanceQuery.data() as {
@@ -125,7 +129,8 @@ const Navigator = () => {
   };
 
   const checkAppStoreVersion = async () => {
-    if (!appStoreAppId) {
+    const currentUser = auth().currentUser;
+    if (!appStoreAppId || !currentUser?.uid) {
       return;
     }
     const appVersion = DeviceInfo.getVersion();
@@ -147,6 +152,11 @@ const Navigator = () => {
   };
 
   const handleCheckAppVersion = async () => {
+    const currentUser = auth().currentUser;
+    if (!currentUser?.uid) {
+      return;
+    }
+
     const appVersion = DeviceInfo.getVersion();
     const buildNumber = DeviceInfo.getBuildNumber();
     const versionQuery = await firestore().collection(apiAppSettingsCollection).doc('version').get();
@@ -185,7 +195,7 @@ const Navigator = () => {
     return () => {
       subcriber();
     };
-  }, [onBoarding]);
+  }, [onBoarding, user]);
 
   if (initializing) {
     return null;

@@ -173,6 +173,8 @@ const MyPlan = () => {
     return <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>{text}</Text>;
   };
 
+  console.warn(userInfo?.superInvites, userInfo?.weeklySuperInvites);
+
   return (
     <View>
       <Loader isVisible={loaderVisible} successfulPay={false} textLoader={'Checking for available spots...'} />
@@ -190,7 +192,7 @@ const MyPlan = () => {
             <FlashFillIcon width={18} height={18} />
             <Text style={{fontSize: RFValue(18, 812), marginLeft: 8, color: whiteColor, fontFamily: Satoshi700Italic}}>
               Super {userInfo?.accountType === 'host' ? 'Invite' : 'Join'}{' '}
-              <Text style={{fontFamily: Satoshi400}}>({userInfo?.superInvites || 0 + userInfo?.weeklySuperInvites || 0})</Text>
+              <Text style={{fontFamily: Satoshi400}}>({(userInfo?.superInvites || 0) + (userInfo?.weeklySuperInvites || 0)})</Text>
             </Text>
           </View>
           <TouchableOpacity
