@@ -1,14 +1,13 @@
 import {FlatList, Text, View} from 'react-native';
-import {FC, ReactElement, useCallback, useContext, useEffect, useState} from 'react';
+import {FC, ReactElement, useCallback, useContext, useState} from 'react';
 //import components
 import useStyles from './styles';
-import {blackColor, transparentGray70Color, whiteColor} from 'constants/colors';
+import {transparentGray70Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import PersoneIcon from 'assets/images/icons/Users.svg';
 import Clock from 'assets/images/icons/clock-white.svg';
-import LoaderIcon from 'assets/images/icons/loader.svg';
 import ItemRequestGuest from './ItemRequestGuest';
 import ItemRequestHost from './ItemRequestHost';
 import firestore from '@react-native-firebase/firestore';
@@ -18,44 +17,41 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {eventCreatingStackPath, IOPath, paymentPath} from 'constants/pathLocations';
 import {useUser} from '../../../store/userStore';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
-import moment from 'moment';
 import Match, {MatchData} from '../IO/screens/Match/Match';
 import FullEvent from 'components/FullEvent';
-import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
-import {useUserProfileChangeSubscription} from 'helpers/userProfile';
 import {useAdminActions} from 'src/store/adminActions';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import FastImage from 'react-native-fast-image';
-import {ALL, LIKED, screenHeight, THIS_MONTH, THIS_WEEK} from 'constants/common';
+import {ACCEPTED_STATUS, ALL, LIKED, screenHeight, THIS_MONTH, THIS_WEEK} from 'constants/common';
 import {Event, EventData} from 'src/types/event';
-import {UserInfo} from 'src/types/userInfo';
 import {EventsDate} from 'contexts/EventsDate';
 import {filterEventsByThisMonth} from 'helpers/filterEventsByThisMonth';
 import {filterEventsByThisWeek} from 'helpers/filterEventsByThisWeek';
-import {getUserData} from 'helpers/getUserData';
 import analytics from '@react-native-firebase/analytics';
 import {requestsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
-import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
+import Loading from 'components/Loading/Loading';
 
 const Requests: FC = (): ReactElement => {
+  const COUNT_TO_ADD_REQUEST_ITEMS = 2;
+  const DEFAULT_LIMIT_REQUEST_ITEMS = 6;
+  const MAX_LIMIT_REQUEST_ITEMS = 40;
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
 
   const navigation = useAppNavigation();
-  const user = useUser((i: any) => i?.user);
+  const userInfo = useUser((i: any) => i?.user);
 
   const {activeEvent, myEvents, loadingMyEvents} = useMyEvents(state => state);
 
   const {activeEventDate} = useContext(EventsDate);
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
-  const [userInfo, setUserInfoData] = useState<UserInfo>({});
+  // const [userInfo, setUserInfoData] = useState<UserInfo>({});
   const [dataForGuest, setDataForGuest] = useState<EventData[]>([]);
 
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
@@ -71,74 +67,52 @@ const Requests: FC = (): ReactElement => {
   const changeAccountTypeModalVisible = useAdminActions((i: any) => i?.changeAccountTypeModalVisible);
   const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
   const currentUser = auth().currentUser;
+  const [loadingRequestItems, setLoadingRequestItems] = useState<boolean>(true);
 
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const {accountConfirmed} = useUserProfileChangeSubscription();
-
-  const rotationLoader = useSharedValue(0);
-
-  useEffect(() => {
-    if (loading || loadingMyEvents) {
-      rotationLoader.value = withRepeat(
-        withTiming(360, {
-          duration: 2000,
-          easing: Easing.linear,
-        }),
-        -1,
-      );
-    }
-
-    return () => {
-      cancelAnimation(rotationLoader);
-    };
-  }, [rotationLoader, loading, loadingMyEvents]);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{rotate: `${rotationLoader.value}deg`}],
-    };
-  });
-  useEffect(() => {
-    if (!Object.keys(userInfo)?.length) {
-      return;
-    }
-
-    setUserInfoData((prev: UserInfo) => ({...prev, accountConfirmed}));
-  }, [accountConfirmed]);
+  const [limitRequestItems, setLimitRequestItems] = useState<number>(DEFAULT_LIMIT_REQUEST_ITEMS);
 
   const handleCloseMatch = (): void => {
     setIsVisibleMatch(false);
   };
 
-  const fetchHostRequests = async querySnapshot => {
+  const handleAddCountRequestItems = (): void => {
+    if (limitRequestItems >= MAX_LIMIT_REQUEST_ITEMS) {
+      return;
+    }
+    setLimitRequestItems(prev => prev + COUNT_TO_ADD_REQUEST_ITEMS);
+  };
+
+  const fetchHostRequests = async (querySnapshot: any) => {
     if (!querySnapshot.exists) {
       setRequestsForHost([]);
+      setLoadingRequestItems(false);
       return;
     }
     const data = querySnapshot.data();
+
+    const allGuests = data?.male + data?.female;
+    const findAcceptedGuest = data?.usersList.filter((item: Event.User) => item.status === ACCEPTED_STATUS);
+    setTotalQuantityGuests(allGuests);
+    setAcceptQuantityGuest(findAcceptedGuest.length);
+    setTotalRequestsGuests(data?.requestsList?.length);
+
     if (!data?.requestsList?.length) {
       setRequestsForHost([]);
+      setLoadingRequestItems(false);
       return;
     }
 
-    const sortedRequests = data?.requestsList?.sort((a: Event.User, b: Event.User) => {
-      return moment(a?.createdAt, 'YYYY-MM-DD HH:mm:ss').isAfter(moment(b?.createdAt, 'YYYY-MM-DD HH:mm:ss')) ? 1 : -1;
-    });
+    const sortedRequests = data?.requestsList
+      ?.sort((a: Event.User, b: Event.User) => {
+        return a?.uid.localeCompare(b?.uid);
+      })
+      .filter((value, index, self) => index === self.findIndex(t => t.uid === value.uid))
+      .slice(0, limitRequestItems);
 
-    const mappedRequests = [];
-    for (const request of sortedRequests) {
-      if (!request?.uid) {
-        continue;
-      }
-      const {photos} = await getUserData(request.uid);
-      mappedRequests.push({
-        ...request,
-        userPhoto: photos?.[0]?.image || request?.userPhoto,
-      });
-    }
+    console.warn('sortedRequests', sortedRequests.length);
 
-    setRequestsForHost(mappedRequests);
+    setRequestsForHost(sortedRequests);
+    setLoadingRequestItems(false);
   };
 
   const filterByUid = (array: EventData[], uid: string) => {
@@ -151,9 +125,10 @@ const Requests: FC = (): ReactElement => {
     });
   };
 
-  const fetchGuestRequests = async querySnapshot => {
+  const fetchGuestRequests = async (querySnapshot: any) => {
     if (querySnapshot.empty) {
       setDataForGuest([]);
+      setLoadingRequestItems(false);
       return;
     }
     const data = querySnapshot?.docs?.map(i => i?.data()) as EventData[];
@@ -175,38 +150,15 @@ const Requests: FC = (): ReactElement => {
     const filteredRequestsByDate = filterEventByDate();
 
     setDataForGuest(filteredRequestsByDate);
+    setLoadingRequestItems(false);
   };
 
-  const fetchUserInfo = async () => {
-    if (currentUser) {
-      setLoading(true);
-      try {
-        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(currentUser.uid).get();
-        if (!userInfoDoc.exists) {
-          return;
-        }
-        const data = userInfoDoc.data() as UserInfo;
-        setUserInfoData(data);
-        setLoading(false);
-      } catch (error: any) {
-        setLoading(false);
-      }
-    }
-  };
-
-  const isHost = user?.accountType?.toLowerCase() === 'host';
+  const isHost = userInfo?.accountType?.toLowerCase() === 'host';
   const list = isHost ? requestsForHost : dataForGuest;
 
   const handleOpenMatch = (data: MatchData) => {
     setMatchData(data);
     setIsVisibleMatch(true);
-  };
-
-  const checkIsFullGuestsFun = async () => {
-    const {allGuests, findAcceptedGuest, totalRequestsGuests: requeststCount} = await checkIsFullGuests(activeEvent?.id);
-    setTotalQuantityGuests(allGuests);
-    setTotalRequestsGuests(requeststCount);
-    setAcceptQuantityGuest(findAcceptedGuest);
   };
 
   const goToCreateEvent = (): void => {
@@ -222,7 +174,6 @@ const Requests: FC = (): ReactElement => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchUserInfo();
       try {
         analytics().logScreenView({
           screen_name: `${requestsScreen}`,
@@ -243,6 +194,7 @@ const Requests: FC = (): ReactElement => {
       if (isHost) {
         if (!activeEvent?.id) {
           setRequestsForHost([]);
+          setLoadingRequestItems(false);
           return;
         }
         subcribeHostRequests = firestore()
@@ -250,7 +202,6 @@ const Requests: FC = (): ReactElement => {
           .doc(activeEvent?.id)
           .onSnapshot(querySnapshot => {
             fetchHostRequests(querySnapshot);
-            checkIsFullGuestsFun();
           });
       }
       if (!isHost) {
@@ -267,7 +218,7 @@ const Requests: FC = (): ReactElement => {
         subcribeHostRequests && subcribeHostRequests();
         subcribeGuestRequests && subcribeGuestRequests();
       };
-    }, [activeEvent?.id, isHost, activeEventDate]),
+    }, [activeEvent?.id, isHost, activeEventDate, limitRequestItems]),
   );
 
   const getEventListItem = () => {
@@ -281,6 +232,7 @@ const Requests: FC = (): ReactElement => {
               numColumns={2}
               key={'2'}
               showsVerticalScrollIndicator={false}
+              onEndReached={handleAddCountRequestItems}
               keyExtractor={({uid, name}) => `${uid}${name}`}
               contentContainerStyle={styles.listContentContainer}
               extraData={list}
@@ -300,7 +252,7 @@ const Requests: FC = (): ReactElement => {
                 ) : (
                   <ItemRequestGuest
                     list={item}
-                    item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
+                    item={item?.usersList?.filter((i: Event.User) => i?.uid === userInfo?.uid)}
                     setDataForGuest={setDataForGuest}
                     handleOpenMatch={handleOpenMatch}
                     index={index}
@@ -352,7 +304,7 @@ const Requests: FC = (): ReactElement => {
                   // @ts-ignore
                   <ItemRequestGuest
                     list={item}
-                    item={item?.usersList?.filter((i: Event.User) => i?.uid === user?.uid)}
+                    item={item?.usersList?.filter((i: Event.User) => i?.uid === userInfo?.uid)}
                     setDataForGuest={setDataForGuest}
                     handleOpenMatch={handleOpenMatch}
                     index={index}
@@ -378,23 +330,22 @@ const Requests: FC = (): ReactElement => {
     }
   };
 
-  if ((loading || loadingMyEvents) && !list.length && !isVisibleMatch) {
+  if (loadingRequestItems && !list.length && !isVisibleMatch) {
     return (
-      <View
-        style={{
-          backgroundColor: blackColor,
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Animated.View style={[animatedStyle]}>
-          <LoaderIcon />
-        </Animated.View>
-      </View>
+      <>
+        <Loading
+          wrapperText={false}
+          text={`Fetching the latest ${isHost ? 'guest' : 'event'} requests for you. This may take a second!`}
+          userInfo={userInfo}
+        />
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+        )}
+      </>
     );
   }
 
-  if (userInfo?.uid && !userInfo?.accountConfirmed && !loading && !rejectModalVisible && !acceptModalVisible) {
+  if (userInfo?.uid && !userInfo?.accountConfirmed && !rejectModalVisible && !acceptModalVisible) {
     return (
       <View style={styles.container}>
         <ModalLockAccount isVisibleButton isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} />
@@ -402,7 +353,7 @@ const Requests: FC = (): ReactElement => {
     );
   }
 
-  if (!!userInfo?.accountConfirmed && isHost && !myEvents?.length && !loading && !loadingMyEvents) {
+  if (!!userInfo?.accountConfirmed && isHost && !myEvents?.length && !loadingMyEvents) {
     return (
       <View style={styles.container}>
         <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
@@ -517,15 +468,23 @@ const Requests: FC = (): ReactElement => {
     <>
       <View style={styles.container}>
         {userInfo?.photos?.length && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo?.photos?.[0].image} />}
-        {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />}
-        {changeAccountTypeModalVisible && !acceptModalVisible && <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />}
+        {acceptModalVisible && (
+          <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+        )}
+        {changeAccountTypeModalVisible && !acceptModalVisible && (
+          <ModalChangeAccountType
+            isVisible={changeAccountTypeModalVisible}
+            userInfo={userInfo}
+            setIsVisible={setChangeAccountModalVisible}
+          />
+        )}
         <ModalFullEvent
           isVisible={isVisibleModalFullEvent}
           idEvent={activeEvent.id}
           setIsVisibleModalFullEvent={setIsVisibleModalFullEvent}
         />
         {headerInfoEvent()}
-        {isHost && activeEvent?.id && acceptQuantityGuest >= totalQuantityGuests && (
+        {isHost && activeEvent?.id && acceptQuantityGuest >= totalQuantityGuests && totalQuantityGuests > 0 && acceptQuantityGuest > 0 && (
           <FullEvent
             text={`Event is full: ${acceptQuantityGuest}/${totalQuantityGuests} Guests Accepted`}
             activeEvent={activeEvent}

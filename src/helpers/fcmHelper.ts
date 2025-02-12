@@ -26,7 +26,7 @@ export const fcmHelper = async () => {
         fcmToken: newToken,
       });
     } catch (error) {
-      // console.log('error update token', error);
+      console.error('error update token', error);
     }
     await AsyncStorage.setItem('fcmToken', JSON.stringify(newToken));
     // }
@@ -36,7 +36,7 @@ export const fcmHelper = async () => {
     // await AsyncStorage.setItem('fcmToken', JSON.stringify(fcmToken));
     // // console.log('fcmToken', fcmToken);
   } catch (e) {
-    // console.log('error fcm token', e);
+    console.error('error fcm token', e);
   }
 };
 
@@ -64,7 +64,7 @@ export async function registerAppWithFCM() {
         // console.log('registerDeviceForRemoteMessages status', status);
       })
       .catch(error => {
-        // console.log('registerDeviceForRemoteMessages error ', error);
+        console.error('registerDeviceForRemoteMessages error ', error);
       });
   }
 }
@@ -80,7 +80,7 @@ export async function unRegisterAppWithFCM() {
         // console.log('unregisterDeviceForRemoteMessages status', status);
       })
       .catch(error => {
-        // console.log('unregisterDeviceForRemoteMessages error ', error);
+        console.error('unregisterDeviceForRemoteMessages error ', error);
       });
   }
   await messaging().deleteToken();
@@ -95,14 +95,14 @@ export const checkApplicationNotificationPermission = async () => {
   const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    // console.warn('Authorization status:', authStatus);
+    await fcmHelper();
   }
   request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS)
     .then(result => {
       // // console.log('POST_NOTIFICATIONS status:', result);
     })
     .catch(error => {
-      // console.log('POST_NOTIFICATIONS error ', error);
+      console.error('POST_NOTIFICATIONS error ', error);
     });
 };
 
@@ -209,6 +209,9 @@ export const sendNotification = async (
   params?: any,
 ) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+
+  const isDevEnvironment = Config.API_USERINFO_COLLECTION === 'devUserInfo';
+
   const generateRandomId = (length: number) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -242,15 +245,17 @@ export const sendNotification = async (
     notificationData.data.params = params;
   }
 
-  try {
-    const result = await functions().httpsCallable('sendNotification')(notificationData);
-    if (result.data.success) {
-      console.warn('Notification sent successfully', result.data.data);
-    } else {
-      console.error('Error sending notification:', result.data.error);
+  if (!isDevEnvironment) {
+    try {
+      const result = await functions().httpsCallable('sendNotification')(notificationData);
+      if (result.data.success) {
+        console.warn('Notification sent successfully', result.data.data);
+      } else {
+        console.error('Error sending notification:', result.data.error);
+      }
+    } catch (error) {
+      console.error('Error calling Firebase Function:', error);
     }
-  } catch (error) {
-    console.error('Error calling Firebase Function:', error);
   }
 
   let paramsParse;
@@ -274,6 +279,7 @@ export const sendNotification = async (
     uid: userInfo?.uid,
     path: paramsParse.path ? paramsParse.path : null,
     data: paramsParse.data ? paramsParse.data : null,
+    createdAt: firestore.FieldValue.serverTimestamp(),
   };
   // console.log('notification', notification);
 

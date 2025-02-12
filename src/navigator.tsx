@@ -10,12 +10,33 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 import Config from 'react-native-config';
+import UnderMaintenance from 'screens/App/UnderMaintenance/UnderMaintenance';
+import DeviceInfo from 'react-native-device-info';
+import UpdateAvailable from 'screens/App/UpdateAvailableScreen/UpdateAvailableScreen';
 
 const Navigator = () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiAdminChatsCollection = Config.API_ADMIN_CHATS_COLLECTION || 'adminChats';
+  const apiAppSettingsCollection = Config.APP_SETTINGS_COLLECTION || 'appSettings';
+  const appStoreAppId = Config.APP_STORE_APP_ID || '';
   const [initializing, setInitializing] = useState<boolean>(true);
   const [authState, setAuthState] = useState(false);
+  const [maintenanceData, setMaintenanceData] = useState<{
+    isMaintenance: boolean;
+    approximatelyTime: string | null;
+  }>({
+    isMaintenance: false,
+    approximatelyTime: null,
+  });
+  const [versionData, setVersionData] = useState<{
+    lastAvailableBuild?: string;
+    lastAvailableVersion?: string;
+    showUpdateAvailable?: boolean;
+  }>({
+    lastAvailableBuild: '',
+    lastAvailableVersion: '',
+    showUpdateAvailable: false,
+  });
   const {user, setUser} = useContext(AuthContext);
 
   const setUserData = useUser((i: any) => i?.setUser);
@@ -27,10 +48,13 @@ const Navigator = () => {
     if (!userState) {
       setAuthState(false);
     }
+    const start = new Date().getTime();
     const uid = userState?._user?.uid;
     await AsyncStorage.setItem('uid', `${uid}`);
     await getOnbordingState();
     const userDataInfo = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+    const end = new Date().getTime();
+    console.warn('onAuthStateChanged', end - start);
 
     if (userDataInfo.exists) {
       setAuthState(!!userState);
@@ -87,26 +111,102 @@ const Navigator = () => {
     }
   };
 
+  const handleCheckMaintenance = async () => {
+    const currentUser = auth().currentUser;
+    if (!currentUser?.uid) {
+      return;
+    }
+    const maintenanceQuery = await firestore().collection(apiAppSettingsCollection).doc('maintenance').get();
+    if (maintenanceQuery.exists) {
+      const data = maintenanceQuery.data() as {
+        isMaintenance: boolean;
+        approximatelyTime: string | null;
+      };
+      if (data?.isMaintenance) {
+        setMaintenanceData(data);
+      }
+    }
+  };
+
+  const checkAppStoreVersion = async () => {
+    const currentUser = auth().currentUser;
+    if (!appStoreAppId || !currentUser?.uid) {
+      return;
+    }
+    const appVersion = DeviceInfo.getVersion();
+
+    try {
+      const response = await fetch(`https://itunes.apple.com/lookup?id=${appStoreAppId}`);
+      const data = await response.json();
+
+      if (data.results.length > 0) {
+        const latestVersion = data.results[0].version;
+
+        if (latestVersion !== appVersion) {
+          setVersionData({lastAvailableVersion: latestVersion, showUpdateAvailable: true});
+        }
+      }
+    } catch (error) {
+      console.error('Error checking for new version:', error);
+    }
+  };
+
+  const handleCheckAppVersion = async () => {
+    const currentUser = auth().currentUser;
+    if (!currentUser?.uid) {
+      return;
+    }
+
+    const appVersion = DeviceInfo.getVersion();
+    const buildNumber = DeviceInfo.getBuildNumber();
+    const versionQuery = await firestore().collection(apiAppSettingsCollection).doc('version').get();
+    if (versionQuery.exists) {
+      const data = versionQuery.data() as {
+        lastAvailableBuild: string;
+        lastAvailableVersion: string;
+      };
+      if (data?.lastAvailableBuild && data?.lastAvailableVersion) {
+        if (appVersion !== data?.lastAvailableVersion || buildNumber !== data?.lastAvailableBuild) {
+          setVersionData({...data, showUpdateAvailable: true});
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     handleAddChatWithAdmin();
+    if (apiUserInfoCollection === 'devUserInfo') {
+      handleCheckAppVersion();
+    } else {
+      checkAppStoreVersion();
+    }
+    handleCheckMaintenance();
   }, [userData?.uid]);
 
   useEffect(() => {
-    const subcriber = auth().onAuthStateChanged(onAuthStateChanged);
-    getOnbordingState();
     if (authState) {
       getFcmToken();
       registerListenerWithFCM();
     }
+  }, [authState]);
 
-    if (userData?.id) {
-      setAuthState(true);
-    }
-    return () => subcriber();
-  }, [initializing, user, onBoarding, setUser]);
+  useEffect(() => {
+    const subcriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return () => {
+      subcriber();
+    };
+  }, [onBoarding, user]);
 
   if (initializing) {
     return null;
+  }
+
+  if (versionData?.showUpdateAvailable) {
+    return <UpdateAvailable data={versionData} />;
+  }
+
+  if (maintenanceData?.isMaintenance) {
+    return <UnderMaintenance data={maintenanceData} />;
   }
 
   return authState ? <AppStackScreens /> : <AuthStackScreens />;

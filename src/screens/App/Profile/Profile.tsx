@@ -33,49 +33,50 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {getEventsIJoining} from 'helpers/getEventsIJoining';
 import Config from 'react-native-config';
-import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
+// import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
+import {useUser} from 'src/store/userStore';
 
 const Profile: FC = () => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [activeTabId, setActiveTabId] = useState(0);
-  const [percentage, setPercentage] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [userInfo, setUserInfo] = useState({} as any);
+  // const [percentage, setPercentage] = useState(0);
+  // const [loading, setLoading] = useState(false);
+
   const [totalGuests, setTotalGuests] = useState(0);
   const [eventsCount, setEventsCount] = useState(0);
-  const [mainImage, setMainImage] = useState({id: 0, image: ''} as any);
+
+  const {user: userInfo} = useUser();
 
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
   const changeAccountTypeModalVisible = useAdminActions((i: any) => i?.changeAccountTypeModalVisible);
   const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
+  const isHost = userInfo?.accountType === 'host';
+  // const rotationLoader = useSharedValue(0);
 
-  const rotationLoader = useSharedValue(0);
+  // useEffect(() => {
+  //   if (loading) {
+  //     rotationLoader.value = withRepeat(
+  //       withTiming(360, {
+  //         duration: 2000,
+  //         easing: Easing.linear,
+  //       }),
+  //       -1,
+  //     );
+  //   }
 
-  useEffect(() => {
-    if (loading) {
-      rotationLoader.value = withRepeat(
-        withTiming(360, {
-          duration: 2000,
-          easing: Easing.linear,
-        }),
-        -1,
-      );
-    }
+  //   return () => {
+  //     cancelAnimation(rotationLoader);
+  //   };
+  // }, [rotationLoader, loading]);
 
-    return () => {
-      cancelAnimation(rotationLoader);
-    };
-  }, [rotationLoader, loading]);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{rotate: `${rotationLoader.value}deg`}],
-    };
-  });
+  // const animatedStyle = useAnimatedStyle(() => {
+  //   return {
+  //     transform: [{rotate: `${rotationLoader.value}deg`}],
+  //   };
+  // });
 
   const tabList = [
     {id: 0, title: 'My plan'},
@@ -83,19 +84,21 @@ const Profile: FC = () => {
     {id: 2, title: 'App Invitations'},
   ];
 
-  const calculateCompleteness = profile => {
+  const calculateCompleteness = (profile: any) => {
+    if (!profile) {
+      return 0;
+    }
     const requiredFields = ['chooseGuest', 'date', 'email', 'gender', 'homeAddress', 'interests', 'work', 'imageUser', 'bio', 'photos'];
     let presentFields = 0;
 
     for (const field of requiredFields) {
-      if (profile.hasOwnProperty(field) && profile[field] !== null && profile[field] !== undefined) {
+      if (profile?.hasOwnProperty(field) && profile?.[field] !== null && profile?.[field] !== undefined) {
         presentFields++;
       }
     }
 
     const completenessPercentage = (presentFields / requiredFields.length) * 100;
 
-    // Если все поля заполнены, вернуть 100%, иначе отнять проценты за отсутствующие поля
     if (completenessPercentage === 100) {
       return 100;
     } else {
@@ -105,39 +108,44 @@ const Profile: FC = () => {
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchUserInfo = async () => {
-        setLoading(true);
-        const user = auth().currentUser;
-        if (user) {
-          try {
-            const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
+  const percentage = Math.floor(calculateCompleteness(userInfo));
 
-            if (userInfoDoc.exists) {
-              setUserInfo(userInfoDoc.data());
-              const calculate = Math.floor(calculateCompleteness(userInfoDoc.data()));
-              setPercentage(calculate);
-              const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
-              if (userImage) {
-                setMainImage(userImage);
-              }
-              Image.prefetch(userImage.image).catch(error => {
-                // console.error('image prefetching error: ', error);
-              });
-            } else {
-              Alert.alert('Error', 'No user data found in Firestore');
-            }
-          } catch (error: any) {
-            Alert.alert('Error', error.message || 'Something went wrong');
-          }
-          setLoading(false);
-        }
-      };
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const fetchUserInfo = async () => {
+  //       setLoading(true);
+  //       const user = auth().currentUser;
+  //       if (user) {
+  //         try {
+  //           const startTime = Date.now();
+  //           const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
+  //           const endTime = Date.now();
+  //           console.warn(`Query execution time: ${endTime - startTime} ms`); //
 
-      fetchUserInfo();
-    }, []),
-  );
+  //           if (userInfoDoc.exists) {
+  //             setUserInfo(userInfoDoc.data());
+  //             const calculate = Math.floor(calculateCompleteness(userInfoDoc.data()));
+  //             setPercentage(calculate);
+  //             const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
+  //             if (userImage) {
+  //               setMainImage(userImage);
+  //             }
+  //             Image.prefetch(userImage.image).catch(error => {
+  //               console.error('image prefetching error: ', error);
+  //             });
+  //           } else {
+  //             Alert.alert('Error', 'No user data found in Firestore');
+  //           }
+  //         } catch (error: any) {
+  //           Alert.alert('Error', error.message || 'Something went wrong');
+  //         }
+  //         setLoading(false);
+  //       }
+  //     };
+
+  //     fetchUserInfo();
+  //   }, []),
+  // );
 
   const styles = useStyles();
   const navigation = useAppNavigation();
@@ -170,45 +178,58 @@ const Profile: FC = () => {
         const eventDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
         if (eventDoc.exists) {
           const data = eventDoc.data();
-          totalParticipants += data?.male + data?.female;
+          totalParticipants += data?.male || 0 + data?.female || 0;
         }
       }
       setTotalGuests(totalParticipants);
-    } catch (error) {}
+    } catch (error) {
+      console.error('error fetching guest list: ', error);
+    }
   };
 
-  useEffect(() => {
-    const unsubscribe = firestore()
-      .collection(apiEventsCollection)
-      .onSnapshot(async querySnapshot => {
-        const count = await getEventsIJoining(querySnapshot, userInfo?.uid);
-        setEventsCount(count);
-      });
+  useFocusEffect(
+    useCallback(() => {
+      let eventsJoiningSubscriber: any;
+      if (!isHost) {
+        eventsJoiningSubscriber = firestore()
+          .collection(apiEventsCollection)
+          .onSnapshot(async querySnapshot => {
+            const count = await getEventsIJoining(querySnapshot, userInfo?.uid);
+            setEventsCount(count);
+          });
+      }
+      return () => {
+        console.warn('unsubscribe 213123');
+        if (eventsJoiningSubscriber) {
+          eventsJoiningSubscriber();
+        }
+      };
+    }, [userInfo]),
+  );
 
-    return () => unsubscribe();
-  }, [userInfo]);
-
   useEffect(() => {
-    getGuestList();
-  }, [userInfo]);
+    if (userInfo?.uid && isHost) {
+      getGuestList();
+    }
+  }, [userInfo?.uid]);
 
   const userAge = calculateAge(userInfo?.date);
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          backgroundColor: blackColor,
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Animated.View style={[animatedStyle]}>
-          <LoaderIcon />
-        </Animated.View>
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View
+  //       style={{
+  //         backgroundColor: blackColor,
+  //         flex: 1,
+  //         justifyContent: 'center',
+  //         alignItems: 'center',
+  //       }}>
+  //       <Animated.View style={[animatedStyle]}>
+  //         <LoaderIcon />
+  //       </Animated.View>
+  //     </View>
+  //   );
+  // }
 
   const ProgressCircle = ({size, strokeWidth, progress, color, backgroundColor}) => {
     const radius = (size - strokeWidth) / 2;
@@ -240,8 +261,12 @@ const Profile: FC = () => {
   return (
     <View style={styles.container}>
       {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
-      {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />}
-      {changeAccountTypeModalVisible && !acceptModalVisible && <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />}
+      {acceptModalVisible && (
+        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
+      )}
+      {changeAccountTypeModalVisible && !acceptModalVisible && (
+        <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />
+      )}
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
         <View>
           <View style={styles.profileImageContainer}>
@@ -250,11 +275,11 @@ const Profile: FC = () => {
                 <Text style={styles.percentageText}>{percentage}%</Text>
               </View>
             </View>
-            {mainImage?.image ? (
+            {userInfo?.photos?.[0]?.image ? (
               <FastImage
                 style={styles.profileImage}
                 source={{
-                  uri: mainImage?.image,
+                  uri: userInfo?.photos?.[0]?.image,
                   headers: {Authorization: 'someAuthToken'},
                   priority: FastImage.priority.normal,
                 }}
@@ -394,7 +419,6 @@ const Profile: FC = () => {
           }}
         />
         <View style={styles.tabContentContainer}>{getTabContent()}</View>
-        {/* <Payment /> */}
       </ScrollView>
     </View>
   );

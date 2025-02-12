@@ -1,5 +1,5 @@
-import React, {FC, useState, useEffect, useContext, useCallback} from 'react';
-import {View, Text, FlatList, TouchableOpacity} from 'react-native';
+import React, {FC, useState, useEffect, useContext, useCallback, useMemo} from 'react';
+import {View, Text, FlatList, TouchableOpacity, TextInput} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -15,12 +15,13 @@ import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 
 //import icons
 import LoaderIcon from 'assets/images/icons/loader.svg';
+import SearchIcon from 'assets/images/icons/search.svg';
 import FlashField from 'assets/images/icons/flash.svg';
 import ThreeDoths from 'assets/images/icons/more-white.svg';
 import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
 import Button from 'components/Button/Button.tsx';
-import {blackColor, grayScale700, whiteColor} from 'constants/colors';
+import {backgroundColor, blackColor, grayScale700, lightGray2Color, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import {useFocusEffect} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
@@ -41,6 +42,8 @@ import {EventData} from 'src/types/event';
 import Config from 'react-native-config';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
+import Input from 'components/Inputs/Input';
+import Loading from 'components/Loading/Loading';
 
 type ItemProps = {
   title: string;
@@ -86,13 +89,21 @@ const Chat: FC<ChatProps> = () => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
   const apiAdminChatsCollection = Config.API_ADMIN_CHATS_COLLECTION || 'adminChats';
+
   const [hostMenu, setHostMenu] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingChats, setLoadingChats] = useState<boolean>(true);
   const [messages, setMessages] = useState([]);
   const [DATAEventsJoining, setDATAEventsJoining] = useState([]);
-  const [userInfo, setUserInfo] = useState<any>({});
   const [eventData, setEventData] = useState<EventData>();
+
+  const [searchInput, setSearchInput] = useState('');
   const [adminChatsWithUsers, setAdminChatsWithUsers] = useState<any>([]);
+  const [filterTypeAccount, setFilterTypeAccount] = useState<'host' | 'guest'>('host');
+  const searchByName = useMemo(
+    () => adminChatsWithUsers.filter((item: any) => item.userName?.toLowerCase().startsWith(searchInput.toLowerCase())),
+    [adminChatsWithUsers, searchInput],
+  );
   const [userChatWithAdmin, setUserChatWithAdmin] = useState<any>({});
   const [loadingAdminChatsWithUsers, setLoadingAdminChatsWithUsers] = useState<boolean>(true);
   const [limitAdminChatsWithUsers, setLimitAdminChatsWithUsers] = useState<number>(DEFAULT_LIMIT_ADMIN_CHATS);
@@ -105,8 +116,6 @@ const Chat: FC<ChatProps> = () => {
 
   const {activeEventDate} = useContext(EventsDate);
 
-  console.warn(limitAdminChatsWithUsers);
-
   const styles = useStyles();
   const navigation = useAppNavigation();
   const {activeEvent} = useMyEvents();
@@ -114,19 +123,10 @@ const Chat: FC<ChatProps> = () => {
 
   const isHost = user?.accountType?.toLowerCase() === 'host';
 
-  const {accountConfirmed} = useUserProfileChangeSubscription();
-  useEffect(() => {
-    if (!Object.keys(userInfo).length) {
-      return;
-    }
-
-    setUserInfo((prev: Partial<AccountInfoFlyWeight>) => ({...prev, accountConfirmed}));
-  }, [accountConfirmed]);
-
   const rotationLoader = useSharedValue(0);
 
   useEffect(() => {
-    if (loading || loadingAdminChatsWithUsers) {
+    if (loading || loadingAdminChatsWithUsers || loadingChats) {
       rotationLoader.value = withRepeat(
         withTiming(360, {
           duration: 2000,
@@ -139,7 +139,7 @@ const Chat: FC<ChatProps> = () => {
     return () => {
       cancelAnimation(rotationLoader);
     };
-  }, [rotationLoader, loading, loadingAdminChatsWithUsers]);
+  }, [rotationLoader, loading, loadingAdminChatsWithUsers, loadingChats]);
 
   function chunkArray(array: any, chunkSize: number) {
     const results = [];
@@ -292,21 +292,6 @@ const Chat: FC<ChatProps> = () => {
     };
   });
 
-  const fetchUserInfo = async () => {
-    setLoading(true);
-    const userData = auth().currentUser;
-
-    if (userData) {
-      try {
-        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(userData.uid).get();
-        if (userInfoDoc.exists) {
-          setUserInfo(userInfoDoc.data());
-        }
-      } catch (error: any) {}
-    }
-    setLoading(false);
-  };
-
   const fetchEventData = async () => {
     setLoading(true);
     const eventDataDoc = await firestore().collection(apiEventsCollection).doc(activeEvent?.id).get();
@@ -325,7 +310,6 @@ const Chat: FC<ChatProps> = () => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchUserInfo();
       try {
         analytics().logScreenView({
           screen_name: chatsScreen,
@@ -579,126 +563,125 @@ const Chat: FC<ChatProps> = () => {
         return '#676767';
       case 'Starts':
         return '#2E5BB2';
-
       default:
         return '';
     }
   };
 
-  useEffect(() => {
-    let hostSubscriber: any;
-    let guestSubscriber: any;
-    if (isHost) {
-      hostSubscriber = firestore()
-        .collection(apiMessagesCollection)
-        .doc(activeEvent?.id)
-        .onSnapshot(async documentSnapshot => {
-          if (!documentSnapshot.exists) {
-            return setMessages([]);
-          }
-          const data = documentSnapshot.data();
-          const mappedMessagesData = [];
-          for (const chat of data.chats) {
-            if (!chat?.uid) {
-              continue;
+  useFocusEffect(
+    useCallback(() => {
+      let hostSubscriber: any;
+      let guestSubscriber: any;
+      if (isHost) {
+        hostSubscriber = firestore()
+          .collection(apiMessagesCollection)
+          .doc(activeEvent?.id)
+          .onSnapshot(async documentSnapshot => {
+            if (!documentSnapshot.exists) {
+              setMessages([]);
+              setLoadingChats(false);
+              return;
             }
-            const {photos} = await getUserData(chat?.uid);
-            mappedMessagesData.push({
-              ...chat,
-              avatar: photos?.[0]?.image || chat?.avatar,
-            });
-          }
+            const data = documentSnapshot.data();
+            const mappedMessagesData = [];
+            for (const chat of data.chats) {
+              if (!chat?.uid) {
+                continue;
+              }
+              const {photos} = await getUserData(chat?.uid);
+              mappedMessagesData.push({
+                ...chat,
+                avatar: photos?.[0]?.image || chat?.avatar,
+              });
+            }
 
-          setMessages({...data, chats: mappedMessagesData});
-          setLoading(false);
-        });
-    } else {
-      guestSubscriber = firestore()
-        .collection(apiMessagesCollection)
-        .onSnapshot(async documentSnapshot => {
-          if (documentSnapshot.empty) {
-            setDATAEventsJoining([]);
-            return;
-          }
-          const chatData = documentSnapshot.docs.map(i => i.data());
-          const filteredChats = chatData.filter(chatDataItem => {
-            return chatDataItem?.chats?.some(chat => {
-              return chat?.uid === user?.uid;
-            });
+            setMessages({...data, chats: mappedMessagesData});
+            setLoadingChats(false);
           });
-
-          const mappedChats: any = [];
-
-          for (const chat of filteredChats) {
-            const eventQuery = await firestore().collection(apiEventsCollection).doc(chat?.activeEvent).get();
-            if (!eventQuery.exists) {
-              continue;
+      } else {
+        guestSubscriber = firestore()
+          .collection(apiMessagesCollection)
+          .onSnapshot(async documentSnapshot => {
+            if (documentSnapshot.empty) {
+              setDATAEventsJoining([]);
+              setLoadingChats(false);
+              return;
             }
-            const eventData = eventQuery.data();
-            const {photos: hostPhotos} = await getUserData(eventData?.uid);
-            const data = {
-              id: chat?.activeEvent,
-              girlInvitation: eventData?.female,
-              maleInvitation: eventData?.male,
-              date: eventData?.date,
-              hour: eventData?.hour,
-              status: eventData?.activeType,
-              image: eventData?.photos[0]?.image,
-              hostImage: eventData?.hostImage,
-              title: eventData?.name,
-              hostUid: eventData?.uid,
-              activeEvent: chat?.activeEvent,
-              usersList: eventData?.usersList,
-              statusEvent: eventData?.statusEvent,
-              chats: chat?.chats
-                .filter(chat => chat.uid === user?.uid)
-                .map(chat => ({
-                  ...chat,
-                  avatar: hostPhotos.length ? hostPhotos[0]?.image : eventData?.hostImage,
-                  name: eventData?.hostName,
-                })),
-            };
-            mappedChats.push(data);
-          }
+            const chatData = documentSnapshot.docs.map(i => i.data());
+            const filteredChats = chatData.filter(chatDataItem => {
+              return chatDataItem?.chats?.some(chat => {
+                return chat?.uid === user?.uid;
+              });
+            });
 
-          const filterEventByDate = () => {
-            if (activeEventDate === ALL) {
+            const mappedChats: any = [];
+
+            for (const chat of filteredChats) {
+              const eventQuery = await firestore().collection(apiEventsCollection).doc(chat?.activeEvent).get();
+              if (!eventQuery.exists) {
+                continue;
+              }
+              const eventData = eventQuery.data();
+              const {photos: hostPhotos} = await getUserData(eventData?.uid);
+              const data = {
+                id: chat?.activeEvent,
+                girlInvitation: eventData?.female,
+                maleInvitation: eventData?.male,
+                date: eventData?.date,
+                hour: eventData?.hour,
+                status: eventData?.activeType,
+                image: eventData?.photos[0]?.image,
+                hostImage: eventData?.hostImage,
+                title: eventData?.name,
+                hostUid: eventData?.uid,
+                activeEvent: chat?.activeEvent,
+                usersList: eventData?.usersList,
+                statusEvent: eventData?.statusEvent,
+                chats: chat?.chats
+                  .filter(chat => chat.uid === user?.uid)
+                  .map(chat => ({
+                    ...chat,
+                    avatar: hostPhotos.length ? hostPhotos[0]?.image : eventData?.hostImage,
+                    name: eventData?.hostName,
+                  })),
+              };
+              mappedChats.push(data);
+            }
+
+            const filterEventByDate = () => {
+              if (activeEventDate === ALL) {
+                return mappedChats;
+              }
+              if (activeEventDate === THIS_WEEK) {
+                return filterEventsByThisWeek(mappedChats);
+              }
+              if (activeEventDate === THIS_MONTH) {
+                return filterEventsByThisMonth(mappedChats);
+              }
               return mappedChats;
-            }
-            if (activeEventDate === THIS_WEEK) {
-              return filterEventsByThisWeek(mappedChats);
-            }
-            if (activeEventDate === THIS_MONTH) {
-              return filterEventsByThisMonth(mappedChats);
-            }
-            return mappedChats;
-          };
+            };
 
-          const filteredDataEvents = filterEventByDate();
-          setDATAEventsJoining(filteredDataEvents);
-          setLoading(false);
-        });
-    }
+            const filteredDataEvents = filterEventByDate();
+            setDATAEventsJoining(filteredDataEvents);
+            setLoadingChats(false);
+          });
+      }
 
-    return () => {
-      hostSubscriber && hostSubscriber();
-      guestSubscriber && guestSubscriber();
-    };
-  }, [activeEvent?.id, loading, activeEventDate]);
+      return () => {
+        hostSubscriber && hostSubscriber?.();
+        guestSubscriber && guestSubscriber?.();
+      };
+    }, [activeEvent?.id, loading, activeEventDate]),
+  );
 
-  if (loading) {
+  if (loadingChats) {
     return (
-      <View
-        style={{
-          backgroundColor: blackColor,
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Animated.View style={[animatedStyle]}>
-          <LoaderIcon />
-        </Animated.View>
-      </View>
+      <>
+        <Loading wrapperText={false} text={'Checking for new messages.\nStay tuned!'} userInfo={user} />
+        {!user?.accountReviewed && !user?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={user?.accountPremium} accountType={user?.accountType} isVisibleButton={true} />
+        )}
+      </>
     );
   }
 
@@ -721,9 +704,37 @@ const Chat: FC<ChatProps> = () => {
   if (user?.uid && user?.isInvitedOnlyAdmin && adminChatsWithUsers?.length) {
     return (
       <View style={styles.container}>
+        <View style={styles.searchContainer}>
+          <SearchIcon style={styles.searchIcon} />
+          <TextInput
+            value={searchInput}
+            onChangeText={setSearchInput}
+            placeholder="Search"
+            placeholderTextColor={styles.placeholderColor.color}
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            onPress={() => setFilterTypeAccount('host')}
+            style={[styles.button, styles.hostButton, {backgroundColor: filterTypeAccount === 'host' ? '#212121' : '#131313'}]}>
+            <Text style={styles.buttonText}>Host</Text>
+            <View style={styles.counterContainer}>
+              <Text style={styles.counterText}>2</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setFilterTypeAccount('guest')}
+            style={[styles.button, styles.guestButton, {backgroundColor: filterTypeAccount === 'guest' ? '#212121' : '#131313'}]}>
+            <Text style={styles.buttonText}>Guest</Text>
+            <View style={styles.counterContainer}>
+              <Text style={styles.counterText}>2</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={adminChatsWithUsers}
+          data={searchByName}
           contentContainerStyle={{flexGrow: 1, paddingBottom: 40}}
           onEndReached={handleAddCountAdminChats}
           ItemSeparatorComponent={() => <View style={{height: 10}} />}
@@ -907,12 +918,10 @@ const Chat: FC<ChatProps> = () => {
           </View>
         </View>
       )}
-      {userInfo?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={userInfo.photos[0].image} />}
-      {acceptModalVisible && (
-        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={userInfo} setIsVisible={setAcceptModalVisible} />
-      )}
+      {user?.photos?.length > 0 && <ModalRejectAccount isVisible={rejectModalVisible} image={user.photos[0].image} />}
+      {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={user} setIsVisible={setAcceptModalVisible} />}
       {changeAccountTypeModalVisible && !acceptModalVisible && (
-        <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={userInfo} setIsVisible={setChangeAccountModalVisible} />
+        <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={user} setIsVisible={setChangeAccountModalVisible} />
       )}
       {isHost ? (
         <View style={{flex: 1}}>
@@ -989,7 +998,7 @@ const Chat: FC<ChatProps> = () => {
           />
         </View>
       )}
-      {!userInfo?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton={false} />}
+      {!user?.accountConfirmed && !loading && <ModalLockAccount isVisibleButton={false} />}
     </View>
   );
 };

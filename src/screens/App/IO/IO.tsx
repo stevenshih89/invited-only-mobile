@@ -67,7 +67,6 @@ import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
 import {handleCreateChat} from 'helpers/chat';
 import FullEvent from 'components/FullEvent';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
-import {onUserProfileChangeSubscription} from 'helpers/userProfile';
 import {User, UserInfo} from 'src/types/userInfo';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 import {useAdminActions} from 'src/store/adminActions';
@@ -86,8 +85,6 @@ import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
 import {getUserData} from 'helpers/getUserData';
 import analytics from '@react-native-firebase/analytics';
 import {inviteUser, IOscreen, joinEvent} from 'constants/analitycs';
-import RNUxcam from 'react-native-ux-cam';
-import {getEvents} from 'src/api/event';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
 import {useDemoFlowStore} from '../../../store/demoFlowStore';
@@ -96,7 +93,7 @@ import {hostHintSteps} from 'constants/hints.ts';
 import ModalLimitedAccess from 'components/Modal/ModalLimitedAccess/ModalLimitedAccess';
 import CardsFakeState from 'components/CardsFakeState';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
-import functions from '@react-native-firebase/functions';
+import firebase from '@react-native-firebase/app';
 
 const IO: FC = (): JSX.Element => {
   const CARDS_LOADING_LIMIT = 6;
@@ -109,7 +106,7 @@ const IO: FC = (): JSX.Element => {
   const [events, setEvents] = useState<any[]>([]);
   const [nameUser, setNameUser] = useState<string>('');
   const [reportedItem, setReportedItem] = useState<string>('');
-  const [userInfo, setUserInfo] = useState<any>({});
+  // const [userInfo, setUserInfo] = useState<any>({});
   const [matchData, setMatchData] = useState<MatchData>({});
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
   const [modalReport, setModalReport] = useState<boolean>(false);
@@ -126,18 +123,18 @@ const IO: FC = (): JSX.Element => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [swipedCardsCount, setSwipedCardsCount] = useState(0);
   const [isOpenModalLimitedAccess, setIsOpenModalLimitedAccess] = useState(false);
+  const [swipedCardUids, setSwipedCardUids] = useState<string[]>([]);
+  const [isFocusedScreen, setIsFocusedScreen] = useState(false);
 
   const {setCounterSuperInvites, decrementCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
 
-  const {loadingCardsList, setLoadingCardsList, myEvents, loadingMyEvents, activeEvent, setActiveEvent, setMyEvents} = useMyEvents();
+  const {loadingCardsList, setLoadingCardsList, myEvents, loadingMyEvents, activeEvent, setActiveEvent} = useMyEvents();
 
-  const userHost = useUser((i: any) => i?.user);
+  const {user: userInfo} = useUser();
   const {activeEventDate} = useContext(EventsDate);
-  const {setHintStep, hintStep, isVisibleSwipeGuide, setIsVisibleSwipeGuide} = useDemoFlowStore();
+  const {setHintStep, hintStep, setIsVisibleSwipeGuide} = useDemoFlowStore();
   const route = useRoute();
   const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
-
-  const setUser = useUser((i: any) => i?.setUser);
 
   const setScrollPosition = useScrollPosition((i: any) => i?.setScrollPosition);
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
@@ -156,21 +153,25 @@ const IO: FC = (): JSX.Element => {
 
   const rotationLoader = useSharedValue(0);
 
-  useEffect(() => {
-    if (loadingUser) {
-      rotationLoader.value = withRepeat(
-        withTiming(360, {
-          duration: 2000,
-          easing: Easing.linear,
-        }),
-        -1,
-      );
-    }
+  const isHost = userInfo?.accountType === 'host';
 
-    return () => {
-      cancelAnimation(rotationLoader);
-    };
-  }, [rotationLoader, loadingUser]);
+  useFocusEffect(
+    useCallback(() => {
+      if (loadingCardsList || loadingMyEvents) {
+        rotationLoader.value = withRepeat(
+          withTiming(360, {
+            duration: 2000,
+            easing: Easing.linear,
+          }),
+          -1,
+        );
+      }
+
+      return () => {
+        cancelAnimation(rotationLoader);
+      };
+    }, [rotationLoader, loadingCardsList, loadingMyEvents]),
+  );
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -179,7 +180,10 @@ const IO: FC = (): JSX.Element => {
   });
 
   const handleSuperInvite = () => {
-    if (counterSuperInvitesRef.current > 0 || counterWeeklySuperInvitesRef.current > 0) {
+    if (!userInfo?.uid) {
+      return;
+    }
+    if (userInfo?.superInvites > 0 || userInfo?.weeklySuperInvites > 0) {
       flipCoin();
     } else {
       navigation.navigate('/super-invite-pay');
@@ -241,40 +245,42 @@ const IO: FC = (): JSX.Element => {
     };
   }, [appState, userInfo]);
 
-  useEffect(() => {
-    let unsubscribeEvent: any;
-    if (!isDemo && activeEvent?.id) {
-      unsubscribeEvent = firestore()
-        .collection(apiEventsCollection)
-        .doc(activeEvent?.id)
-        .onSnapshot(querySnapshot => {
-          if (!querySnapshot.exists) {
-            // dispatch(setActiveEvent({}));
-            return;
-          }
-          const data = querySnapshot.data();
-          const prevEventReviewed = activeEvent?.eventReviewed;
-          const currentEventReviewed = data?.eventReviewed || false;
-          const prevStatusEvent = activeEvent?.statusEvent;
-          const currentStatusEvent = data?.statusEvent || false;
-          if (prevStatusEvent !== currentStatusEvent || prevEventReviewed !== currentEventReviewed) {
-            setActiveEvent({...activeEvent, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent});
-          }
-        });
-    }
-    return () => {
-      unsubscribeEvent && unsubscribeEvent();
-    };
-  }, [activeEvent?.id]);
+  useFocusEffect(
+    useCallback(() => {
+      let unsubscribeEvent: any;
+      if (!isDemo && activeEvent?.id) {
+        unsubscribeEvent = firestore()
+          .collection(apiEventsCollection)
+          .doc(activeEvent?.id)
+          .onSnapshot(querySnapshot => {
+            if (!querySnapshot.exists) {
+              // dispatch(setActiveEvent({}));
+              return;
+            }
+            const data = querySnapshot.data();
+            const prevEventReviewed = activeEvent?.eventReviewed;
+            const currentEventReviewed = data?.eventReviewed || false;
+            const prevStatusEvent = activeEvent?.statusEvent;
+            const currentStatusEvent = data?.statusEvent || false;
+            if (prevStatusEvent !== currentStatusEvent || prevEventReviewed !== currentEventReviewed) {
+              setActiveEvent({...activeEvent, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent});
+            }
+          });
+      }
+      return () => {
+        unsubscribeEvent && unsubscribeEvent();
+      };
+    }, [activeEvent?.id]),
+  );
 
-  useEffect(() => {
-    const subscription = onUserProfileChangeSubscription(info => {
-      setUserInfo((prev: UserInfo) => ({...prev, ...info}));
-      setUser(info);
-    });
-
-    return subscription;
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocusedScreen(true);
+      return () => {
+        setIsFocusedScreen(false);
+      };
+    }, []),
+  );
 
   const handleSwipeCardRight = () => {
     if (cardRef.current) {
@@ -288,6 +294,16 @@ const IO: FC = (): JSX.Element => {
       // @ts-ignore
       cardRef.current?.swipeCardLeft();
     }
+  };
+
+  const handleAddSwipeCardUid = (uid: string) => {
+    setSwipedCardUids(prev => {
+      if (prev.length >= 70) {
+        return [...prev.slice(30, prev.length), uid];
+      } else {
+        return [...prev, uid];
+      }
+    });
   };
 
   const handleFilterEvent = ({uid, id, withSwipeAnimation}: {uid: string; id: string; withSwipeAnimation: boolean}) => {
@@ -307,6 +323,7 @@ const IO: FC = (): JSX.Element => {
 
   const handleReject = ({uid, id, withSwipeAnimation}: {uid: string; id: string; withSwipeAnimation: boolean}) => {
     setScrollPosition(0);
+    handleAddSwipeCardUid(uid);
     onReject(uid, id);
     setTimeout(() => {
       setCurrentEventCardPosition(prev => prev + 1);
@@ -328,6 +345,7 @@ const IO: FC = (): JSX.Element => {
     superInvite?: boolean;
   }) => {
     setScrollPosition(0);
+    handleAddSwipeCardUid(uid);
     onInvite(uid, id, superInvite);
     setTimeout(() => {
       setCurrentEventCardPosition(prev => prev + 1);
@@ -336,8 +354,6 @@ const IO: FC = (): JSX.Element => {
       handleSwipeCardRight();
     }
   };
-
-  const isHost = userHost?.accountType === 'host';
 
   const setRejectVisible = () => {
     setAcceptModalVisible(false);
@@ -350,51 +366,44 @@ const IO: FC = (): JSX.Element => {
   };
 
   useEffect(() => {
-    if (userInfo && userInfo?.showModalAccept) {
+    if (userInfo?.uid && userInfo?.showModalAccept) {
       setAcceptModalVisible(true);
     }
-    if (userInfo && userInfo?.showModalChangeAccountType) {
+    if (userInfo?.uid && userInfo?.showModalChangeAccountType) {
       setChangeAccountModalVisible(true);
+    }
+    if (userInfo?.uid && userInfo?.accountReviewed && !userInfo?.accountConfirmed) {
+      setRejectModalVisible(true);
     }
   }, [userInfo]);
 
-  useEffect(() => {
-    const unsubscribe = onMatchNotificationSubscription(
-      message => {
-        const data = message?.data;
-        setMatchData(data);
-        setIsVisibleMatch(true);
-      },
-      setRejectVisible,
-      setAcceptVisible,
-    );
-    return () => unsubscribe();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = onMatchNotificationSubscription(
+        message => {
+          const data = message?.data;
+          setMatchData(data);
+          setIsVisibleMatch(true);
+        },
+        setRejectVisible,
+        setAcceptVisible,
+      );
+      return () => unsubscribe();
+    }, []),
+  );
 
   const getSuperInvites = async () => {
-    const userQuery = await firestore().collection(apiUserInfoCollection).doc(userHost.uid).get();
-    if (!userQuery.exists) {
+    if (!userInfo?.uid) {
       return;
     }
-    const data = userQuery.data() as UserInfo;
-    const currentSuperInvites = data?.superInvites;
-    const currentWeeklySuperInvites = data?.weeklySuperInvites;
-    counterSuperInvitesRef.current = currentSuperInvites;
-    counterWeeklySuperInvitesRef.current = currentWeeklySuperInvites;
+    const currentSuperInvites = userInfo?.superInvites;
+    const currentWeeklySuperInvites = userInfo?.weeklySuperInvites;
     setCounterSuperInvites(currentSuperInvites + currentWeeklySuperInvites);
   };
 
   useEffect(() => {
     getSuperInvites();
-    try {
-      analytics().logScreenView({
-        screen_name: IOscreen,
-      });
-    } catch (e) {
-      console.error(e);
-    }
-    RNUxcam.tagScreenName(IOscreen);
-  }, []);
+  }, [userInfo?.uid, userInfo?.superInvites, userInfo?.weeklySuperInvites]);
 
   const decrementSuperInvite = async (item: UserInfo, coinAnimationTimer = 0) => {
     try {
@@ -407,24 +416,21 @@ const IO: FC = (): JSX.Element => {
         handleSuperJoin();
         await onInvite(item?.uid, item?.id, true);
       }
-      if (counterWeeklySuperInvitesRef.current > 0) {
+      if (userInfo?.weeklySuperInvites > 0) {
         firestore()
           .collection(apiUserInfoCollection)
-          .doc(userHost.uid)
+          .doc(userInfo.uid)
           .update({
-            weeklySuperInvites: counterWeeklySuperInvitesRef.current - 1,
+            weeklySuperInvites: userInfo?.weeklySuperInvites - 1,
           });
-        counterWeeklySuperInvitesRef.current -= 1;
-      } else if (counterSuperInvitesRef.current > 0) {
+      } else if (userInfo?.superInvites > 0) {
         firestore()
           .collection(apiUserInfoCollection)
-          .doc(userHost.uid)
+          .doc(userInfo.uid)
           .update({
-            superInvites: counterSuperInvitesRef.current - 1,
+            superInvites: userInfo?.superInvites - 1,
           });
-        counterSuperInvitesRef.current -= 1;
       }
-      // }
     } catch (error) {
       console.log('error supert invite', error);
     }
@@ -476,16 +482,14 @@ const IO: FC = (): JSX.Element => {
   };
 
   useEffect(() => {
-    if (Object.keys(userInfo).length != 0) {
-      if (!userInfo?.accountReviewed) {
-        showToast('inviteMatch', 'have a code? click here', 'Your account is under review', {
-          ownerPhoto: userInfo?.photos[0].image,
-          status: 'ON REVIEW',
-          path: 'invitationCode',
-        });
-      }
+    if (userInfo?.uid && !userInfo?.accountReviewed) {
+      showToast('inviteMatch', 'have a code? click here', 'Your account is under review', {
+        ownerPhoto: userInfo?.photos[0].image,
+        status: 'ON REVIEW',
+        path: 'invitationCode',
+      });
     }
-  }, [userInfo]);
+  }, [userInfo?.uid]);
 
   useFocusEffect(
     useCallback(() => {
@@ -515,83 +519,28 @@ const IO: FC = (): JSX.Element => {
     );
   };
 
-  function hasWeekPassed(previousTimestamp: number) {
-    const currentTimestamp = Date.now();
-    const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
-    return currentTimestamp - previousTimestamp >= oneWeekInMilliseconds;
-  }
-
-  const fetchUserInfo = async () => {
-    setLoadingUser(true);
-    const user = auth().currentUser;
-
-    if (user) {
-      try {
-        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
-
-        if (userInfoDoc.exists) {
-          const userInfoData = userInfoDoc.data() as UserInfo;
-          setUserInfo(userInfoData);
-
-          if (userInfoData.accountReviewed && !userInfoData.accountConfirmed) {
-            setRejectModalVisible(true);
-          }
-          const isWeek = hasWeekPassed(userInfoDoc?.data()?.lastUpdateSuperInvite);
-          if (isWeek) {
-            await firestore().collection(apiUserInfoCollection).doc(user.uid).update({
-              lastUpdateSuperInvite: Date.now(),
-              weeklySuperInvites: 5,
-            });
-          }
-        }
-      } catch (error: any) {
-        setLoadingUser(false);
-        Alert.alert('Error', error.message || 'Something went wrong');
-      }
+  const handleSetWeeklySuperInvites = async () => {
+    if (!userInfo?.uid) {
+      return;
     }
-    setLoadingUser(false);
-  };
+    const isWeekPassed = (lastUpdate: number) => {
+      const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
+      const currentTime = Date.now();
+      return currentTime - lastUpdate >= oneWeekInMilliseconds;
+    };
 
-  const fetchMyEvents = async () => {
-    const user = auth().currentUser;
-    if (user) {
-      try {
-        const querySnapshot = await firestore()
-          .collection(apiEventsCollection)
-          .where('uid', '==', user.uid)
-          .where('isCancelled', '==', false)
-          .orderBy('createdAt', 'desc')
-          .get();
-
-        if (querySnapshot.empty) {
-          setLoadingCardsList(false);
-          return;
-        }
-
-        const data = querySnapshot.docs.map(doc => doc.data() as EventData);
-        const filteredEvents = data.filter(event => {
-          if (event?.date && event?.hour) {
-            const adjustedDate = moment(`${event?.date}, ${event?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-            if (adjustedDate.isBefore(moment())) {
-              return false;
-            }
-            return true;
-          }
-          return false;
-        });
-        if (!filteredEvents.length) {
-          setLoadingCardsList(false);
-          return;
-        }
-        setMyEvents(filteredEvents);
-      } catch (error: any) {
-        setLoadingCardsList(false);
-        console.error(error);
-
-        Alert.alert('Error', error.message || 'Something went wrong');
-      }
+    const isWeek = isWeekPassed(userInfo?.lastUpdateSuperInvite);
+    if (isWeek) {
+      await firestore().collection(apiUserInfoCollection).doc(userInfo?.uid).update({
+        lastUpdateSuperInvite: Date.now(),
+        weeklySuperInvites: 5,
+      });
     }
   };
+
+  useEffect(() => {
+    handleSetWeeklySuperInvites();
+  }, [userInfo?.uid]);
 
   const onReject = async (uid: string, eventId: string) => {
     const activeEventId = activeEvent?.id ? activeEvent?.id : eventId;
@@ -600,7 +549,7 @@ const IO: FC = (): JSX.Element => {
     if (isHost) {
       try {
         analytics().logEvent(`${IOscreen}_reject_${inviteUser}`, {
-          hostUid: userHost?.uid,
+          hostUid: userInfo?.uid,
           guestUid: uid,
         });
       } catch (e) {
@@ -628,7 +577,7 @@ const IO: FC = (): JSX.Element => {
             rejectsByGuestsList: firestore.FieldValue.arrayUnion({uid: rejectUid}),
           };
 
-      await firestore().collection(apiEventsCollection).doc(activeEventId).update(data);
+      firestore().collection(apiEventsCollection).doc(activeEventId).update(data);
 
       setTimeout(() => {
         setEvents(prev =>
@@ -636,7 +585,7 @@ const IO: FC = (): JSX.Element => {
             return isHost ? i?.info?.uid !== uid : i?.info?.id !== eventId;
           }),
         );
-      }, 300);
+      }, 100);
     } catch (error) {
       console.error(error);
     }
@@ -691,13 +640,13 @@ const IO: FC = (): JSX.Element => {
       }
 
       const userInvited = {
-        gender: isHost ? guestData?.gender : userHost?.gender,
-        name: isHost ? guestData?.name : userHost?.name,
+        gender: isHost ? guestData?.gender : userInfo?.gender,
+        name: isHost ? guestData?.name : userInfo?.name,
         status: LIKED,
         superInvite: superInvite ? superInvite : false,
-        uid: isHost ? guestData?.uid : userHost?.uid,
-        userPhoto: isHost ? guestData?.photos[0]?.image : userHost?.photos[0]?.image,
-        createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+        uid: isHost ? guestData?.uid : userInfo?.uid,
+        userPhoto: isHost ? guestData?.photos[0]?.image : userInfo?.photos[0]?.image,
+        createdAt: moment().format('YYYY-MM-DD'),
       };
       const acceptedUsersList = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS);
       if (isHost) {
@@ -728,11 +677,11 @@ const IO: FC = (): JSX.Element => {
             nameHost: event?.hostName,
             nameGuest: matchedGuest?.name,
             imageUri: matchedGuest?.userPhoto,
-            uidHost: userHost?.uid,
+            uidHost: userInfo?.uid,
             uidGuest: matchedGuest?.uid,
             eventId: activeEventId,
             superInvite: superInvite ? superInvite : false,
-            userHostImageUri: userHost?.photos[0]?.image,
+            userHostImageUri: userInfo?.photos[0]?.image,
             joinEvents: guestData.joinEvents,
             location: guestData.location,
             premium: userInfo?.accountPremium,
@@ -758,7 +707,7 @@ const IO: FC = (): JSX.Element => {
           .update(data)
           .then(async () => {
             analytics().logEvent(`${IOscreen}_${inviteUser}`, {
-              hostUid: userHost?.uid,
+              hostUid: userInfo?.uid,
               guestUid: forUserUid,
             });
             if (matchedGuest && matchedGuestData) {
@@ -781,12 +730,12 @@ const IO: FC = (): JSX.Element => {
           });
       } else {
         if (acceptedUsersList?.length < event.male + event.female) {
-          const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userHost?.uid && invUser?.status === LIKED);
+          const matchedGuest = event.usersList?.find(invUser => invUser?.uid === userInfo?.uid && invUser?.status === LIKED);
           let data = {};
           let matchedGuestData: MatchData;
           if (matchedGuest) {
             const updatedUsersList = event?.usersList?.map(invUser => {
-              if (invUser?.uid === userHost?.uid) {
+              if (invUser?.uid === userInfo?.uid) {
                 return {
                   ...invUser,
                   status: INVITE_MATCH_STATUS,
@@ -901,7 +850,7 @@ const IO: FC = (): JSX.Element => {
   };
 
   const handleSuperJoin = () => {
-    if (counterSuperInvites > 0) {
+    if (userInfo?.superInvites > 0 || userInfo?.weeklySuperInvites > 0) {
       setVisibleModalSuperJoin(true);
       setTimeout(() => {
         setVisibleModalSuperJoin(false);
@@ -936,7 +885,7 @@ const IO: FC = (): JSX.Element => {
     );
   };
 
-  async function enrichElementsWithPhotos(elements) {
+  async function enrichElementsWithPhotos(elements: any[]) {
     const promises = elements?.map(async element => {
       const docRef = firestore().collection(apiUserInfoCollection).doc(element?.uid);
       const doc = await docRef?.get();
@@ -951,7 +900,7 @@ const IO: FC = (): JSX.Element => {
     return Promise.all(promises);
   }
 
-  const filterEventByDate = list => {
+  const filterEventByDate = (list: any[]) => {
     if (activeEventDate === ALL) {
       return list;
     }
@@ -978,21 +927,6 @@ const IO: FC = (): JSX.Element => {
     let filteredEvents: any[] = [];
 
     try {
-      let blockedUsersList: string[] = [];
-      let blockedMeUsersList: string[] = [];
-
-      const blockedUsersQuery = await firestore().collection('report').where('uidSender', '==', user.uid).get();
-      if (!blockedUsersQuery.empty) {
-        blockedUsersList = blockedUsersQuery.docs.map(doc => doc.data().uid);
-      }
-
-      const blockedMeUsersQuery = await firestore().collection('report').where('uid', '==', user.uid).get();
-      if (!blockedMeUsersQuery.empty) {
-        blockedMeUsersList = blockedMeUsersQuery.docs.map(doc => doc.data().uidSender);
-      }
-
-      const uniqueBlockedUsers = [...new Set([...blockedUsersList, ...blockedMeUsersList])];
-
       const getGenderFilter = () => {
         if (userInfo?.gender === 'man') {
           return 'male';
@@ -1004,82 +938,89 @@ const IO: FC = (): JSX.Element => {
       };
 
       const genderFilter = getGenderFilter();
-      const eventsQuery = await getEvents({
+      const start = new Date().getTime();
+      const cloudFunctionName = Config.CLOUD_FUNCTION_GET_EVENTS_FOR_USER || 'getEventsForUser';
+      const getEventsForUserCloudFunction = firebase.app().functions('europe-west3').httpsCallable(cloudFunctionName);
+      const eventsQuery = await getEventsForUserCloudFunction({
+        uid: user.uid,
         limit: CARDS_LOADING_LIMIT,
-        lastVisible: lastVisibleRef.current,
-        excludeUids: uniqueBlockedUsers,
+        lastDoc: lastVisibleRef.current ? JSON.stringify(lastVisibleRef.current) : null,
         genderFilter,
       });
+      const end = new Date().getTime();
+      console.warn('time', end - start);
 
-      if (!eventsQuery || !('docs' in eventsQuery)) {
+      if (!('events' in eventsQuery?.data) || !('lastDoc' in eventsQuery?.data)) {
         setEvents([]);
         setLoadingCardsList(false);
         endReachedRef.current = true;
         return;
       }
 
-      if (eventsQuery.docs.length > 0) {
-        lastVisibleRef.current = eventsQuery.docs[eventsQuery.docs.length - 1];
+      const eventsData = eventsQuery?.data?.events;
+      const lastDoc = eventsQuery?.data?.lastDoc ? JSON.parse(eventsQuery.data.lastDoc) : null;
+
+      if ('lastDoc' in eventsQuery?.data) {
+        lastVisibleRef.current = lastDoc;
       }
 
-      if (eventsQuery.docs.length < CARDS_LOADING_LIMIT) {
-        endReachedRef.current = true;
+      if ('endReached' in eventsQuery?.data) {
+        endReachedRef.current = eventsQuery?.data?.endReached;
       }
 
-      filteredEvents = eventsQuery?.docs
-        ?.map(doc => doc.data() as EventData)
-        ?.filter(event => {
-          if (event?.requestsList?.find((requestedUser: Event.User) => requestedUser?.uid === user?.uid)) {
+      filteredEvents = eventsData?.filter(event => {
+        if (event?.requestsList?.find((requestedUser: Event.User) => requestedUser?.uid === user?.uid)) {
+          return false;
+        }
+        if (
+          event?.usersList?.find(
+            (invitedUser: Event.User) =>
+              invitedUser?.uid === user?.uid &&
+              (invitedUser?.status === INVITE_MATCH_STATUS ||
+                invitedUser?.status === APPROVED_STATUS ||
+                invitedUser?.status === ACCEPTED_STATUS ||
+                invitedUser?.status === NOT_ACCEPTED_STATUS ||
+                invitedUser?.status === CANCEL_STATUS),
+          )
+        ) {
+          return false;
+        }
+        if (event?.rejectsByGuestsList?.find((rejectedUid: Event.RejectUser) => rejectedUid.uid === user?.uid)) {
+          return false;
+        }
+        if (event?.date && event?.hour) {
+          const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+          if (adjustedDate.isBefore(moment())) {
             return false;
           }
-          if (
-            event?.usersList?.find(
-              (invitedUser: Event.User) =>
-                invitedUser?.uid === user?.uid &&
-                (invitedUser?.status === INVITE_MATCH_STATUS ||
-                  invitedUser?.status === APPROVED_STATUS ||
-                  invitedUser?.status === ACCEPTED_STATUS ||
-                  invitedUser?.status === NOT_ACCEPTED_STATUS ||
-                  invitedUser?.status === CANCEL_STATUS),
-            )
-          ) {
-            return false;
-          }
-          if (event?.rejectsByGuestsList?.find((rejectedUid: Event.RejectUser) => rejectedUid.uid === user?.uid)) {
-            return false;
-          }
-          if (event?.date && event?.hour) {
-            const adjustedDate = moment(`${event.date}, ${event.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-            if (adjustedDate.isBefore(moment())) {
-              return false;
-            }
-          }
-          return true;
-        });
+        }
+        return true;
+      });
     } catch (e: any) {
       console.error(e);
       Alert.alert('Error', e.message || 'Something went wrong');
     }
 
-    const enrichedEvents = await enrichElementsWithPhotos(filteredEvents);
+    const filteredDataEvents = filterEventByDate(filteredEvents);
+
     const data: any[] = [];
-    const filteredDataEvents = filterEventByDate(enrichedEvents);
 
     for (const event of filteredDataEvents) {
-      const currUserPhotos = event?.userPhotos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
+      const currUserPhotos = [event?.hostImage];
       const eventPhotos = event?.photos?.filter(i => i.image !== null).map((photo: any) => photo?.image);
-      const {
-        online: userEventOnline,
-        accountPremium: userEventAccountPremium,
-        photos: userEventPhotos,
-        date: userEventDate,
-        accountConfirmed: userEventAccountConfirmed,
-      } = await getUserData(event?.uid);
+
+      const hostInfoData = {
+        accountPremium: true,
+        accountType: 'host',
+        name: event?.hostName,
+        photo: event?.hostImage,
+      };
+
       data.push({
         component: (
           <View style={styles.wrapperFakeCard}>
             <TouchingSlider
-              hostInfo={event?.hostInfo}
+              hostInfo={hostInfoData}
               userInfo={userInfo}
               placeName={event?.placeName}
               girls={event?.female + event?.femaleFriend}
@@ -1110,7 +1051,7 @@ const IO: FC = (): JSX.Element => {
               hourEvent={event?.hour}
               usersListLength={event?.usersList.length}
               usersList={event?.usersList}
-              accountType={userInfo?.accountType}
+              accountType={userInfo?.accountType || ''}
               isPreview={false}
               setCurrentEventCardPosition={setCurrentEventCardPosition}
               setScrollPosition={setScrollPosition}
@@ -1120,8 +1061,8 @@ const IO: FC = (): JSX.Element => {
               <MyEventsCard
                 imageBg={event?.photos}
                 list={event}
-                statusEvent={event?.statusEvent}
-                eventReviewed={event?.eventReviewed}
+                statusEvent={true}
+                eventReviewed={true}
                 allPeople={event?.female + event?.male}
                 date={event?.date}
                 textCityName={event?.name}
@@ -1229,10 +1170,10 @@ const IO: FC = (): JSX.Element => {
                   {event?.hostImage && (
                     <View style={{flexDirection: 'row'}}>
                       <FastImage
-                        source={{uri: userEventPhotos?.[0]?.image || event?.hostImage}}
+                        source={{uri: currUserPhotos?.[0]?.image || event?.hostImage}}
                         style={{width: 40, height: 40, borderRadius: 50}}
                       />
-                      {userEventOnline && (
+                      {true && (
                         <View
                           style={{
                             width: 11,
@@ -1270,10 +1211,10 @@ const IO: FC = (): JSX.Element => {
                             fontFamily: Satoshi700,
                             fontSize: RFValue(10, 812),
                           }}>
-                          {event?.hostInfo.accountType}
+                          {hostInfoData?.accountType}
                         </Text>
                       </View>
-                      {userEventAccountPremium && (
+                      {true && (
                         <LinearGradient
                           colors={['#977B4A', '#E5D291', '#A28453']}
                           style={{
@@ -1308,9 +1249,9 @@ const IO: FC = (): JSX.Element => {
                           marginRight: 6,
                         }}>
                         {event?.hostName}
-                        {userEventDate && ', ' + calculateAge(userEventDate)}
+                        {hostInfoData?.date && ', ' + calculateAge(hostInfoData?.date)}
                       </Text>
-                      {userEventAccountConfirmed && <CheckStarWhite />}
+                      {true && <CheckStarWhite />}
                     </View>
                   </View>
                 </View>
@@ -1480,19 +1421,20 @@ const IO: FC = (): JSX.Element => {
         info: event,
       });
     }
-
-    const sortedByInterestsData = sortByInterests(sortByDate(data)?.reverse(), userHost);
-
+    // const sortedByInterestsData = sortByDate(data)?.reverse();
     setEvents(prevEvents => {
       if (refresh) {
-        const updatedEvents = [...prevEvents.reverse(), ...sortedByInterestsData].reverse();
+        const updatedEvents = [...prevEvents.reverse(), ...data].reverse();
         eventsRef.current = updatedEvents;
         return updatedEvents;
       } else {
-        eventsRef.current = sortedByInterestsData;
-        return sortedByInterestsData;
+        eventsRef.current = data;
+        return data;
       }
     });
+    if (refresh) {
+      setIsRefreshing(false);
+    }
     setLoadingCardsList(false);
   };
 
@@ -1502,11 +1444,15 @@ const IO: FC = (): JSX.Element => {
   };
 
   const getCardsListForHost = async (refresh?: boolean) => {
-    const user = auth().currentUser;
-
-    if (!user?.uid || !activeEvent?.id || !userInfo?.uid) {
+    if (!userInfo?.uid || !activeEvent?.id || !userInfo?.uid) {
       return;
     }
+
+    console.warn(
+      refresh,
+      events?.map((i: any) => i?.info?.uid),
+    );
+
     if (!refresh) {
       setLoadingCardsList(true);
     }
@@ -1514,7 +1460,6 @@ const IO: FC = (): JSX.Element => {
       setIsRefreshing(true);
     }
     let users;
-    let getActualDataEvent: EventData | null = null;
     try {
       let listOfUsers = [];
 
@@ -1562,50 +1507,33 @@ const IO: FC = (): JSX.Element => {
         }
       }
 
-      const eventQuery = await firestore().collection(apiEventsCollection).doc(activeEvent.id).get();
-
-      if (!eventQuery.exists && !isDemo) {
-        setLoadingCardsList(false);
-        setEvents([]);
-        endReachedRef.current = true;
-        return;
-      }
-      if (eventQuery.exists) {
-        getActualDataEvent = eventQuery.data() || ({} as EventData);
-      }
-
-      let blockedUsersList = [];
-      let blockedMeUsersList = [];
-
-      const blockedUsersQuery = await firestore().collection('report').where('uidSender', '==', user.uid).get();
-      if (!blockedUsersQuery.empty) {
-        blockedUsersList = blockedUsersQuery.docs.map(doc => doc.data().uid);
-      }
-      const blockedMeUsersQuery = await firestore().collection('report').where('uid', '==', user.uid).get();
-      if (!blockedMeUsersQuery.empty) {
-        blockedMeUsersList = blockedMeUsersQuery.docs.map(doc => doc.data().uidSender);
-      }
-
-      const uniqueRejectsList = getActualDataEvent?.rejectsList?.map((j: Event.RejectUser) => j?.uid) || [];
-      const uniqueUsersListIds = getActualDataEvent?.usersList?.map((j: Event.User) => j?.uid) || [];
-
-      const allUniqueIds = [
-        ...new Set([...blockedUsersList, ...blockedMeUsersList, ...uniqueRejectsList, ...uniqueUsersListIds, userInfo?.uid]),
-      ];
-
       let listOfUsersResponse: any;
       if (!isDemo && userInfo?.accountPremium) {
-        listOfUsersResponse = await functions().httpsCallable('getUsersForEvent')({
-          excludeUids: allUniqueIds,
-          male: activeEvent?.male || 0,
-          female: activeEvent?.female || 0,
+        const start = new Date().getTime();
+        console.warn('start', start);
+
+        const cloudFunctionName = Config.CLOUD_FUNCTION_GET_USERS_FOR_EVENT || 'getUsersForEvent_v2';
+        const getUsersForEventCloudFunction = firebase.app().functions('europe-west3').httpsCallable(cloudFunctionName);
+        listOfUsersResponse = await getUsersForEventCloudFunction({
           limit: CARDS_LOADING_LIMIT,
           lastDoc: lastVisibleRef.current ? JSON.stringify(lastVisibleRef.current) : null,
-          collectionName: apiUserInfoCollection,
+          eventId: activeEvent?.id,
         });
-      }
 
-      const lastDoc = listOfUsersResponse?.data?.lastDoc ? JSON.parse(listOfUsersResponse.data.lastDoc) : null;
+        const lastDoc = listOfUsersResponse?.data?.lastDoc ? JSON.parse(listOfUsersResponse.data.lastDoc) : null;
+
+        if ('lastDoc' in listOfUsersResponse?.data) {
+          lastVisibleRef.current = lastDoc;
+        }
+
+        if ('endReached' in listOfUsersResponse?.data) {
+          endReachedRef.current = listOfUsersResponse?.data?.endReached;
+        }
+
+        console.warn('end', new Date().getTime());
+
+        console.warn('execution time', new Date().getTime() - start);
+      }
 
       if (isDemo) {
         users = listOfUsers;
@@ -1613,30 +1541,32 @@ const IO: FC = (): JSX.Element => {
         users = listOfUsersResponse?.data?.users as UserInfo[];
       }
 
+      console.warn(users?.map((i: any) => i?.uid));
+
       if (!users || !Array.isArray(users)) {
         setLoadingCardsList(false);
         endReachedRef.current = true;
         return;
       }
 
-      if (users?.length > 0) {
-        lastVisibleRef.current = lastDoc;
-      }
-
-      if (users?.length < CARDS_LOADING_LIMIT) {
-        endReachedRef.current = true;
-      }
-
       const data: any[] = [];
 
       users?.map((item: UserInfo, index: number): void => {
-        const {name, bio, accountType, gender, address, homeAddress, height, alcohol, date, accountConfirmed, uid, accountPremium} = item;
-
-        const findSuperJoin = getActualDataEvent?.requestsList?.find((i: Event.User) => {
-          if (item.uid === i.uid && i.superInvite) {
-            return true;
-          }
-        });
+        const {
+          name,
+          bio,
+          accountType,
+          gender,
+          address,
+          homeAddress,
+          height,
+          alcohol,
+          date,
+          accountConfirmed,
+          uid,
+          accountPremium,
+          isSuperInvite,
+        } = item;
 
         setNameUser(name);
         const girlPhotos: string[] = item?.photos
@@ -1673,7 +1603,7 @@ const IO: FC = (): JSX.Element => {
                 }
                 photos={girlPhotos}
                 accountType={accountType}
-                isShowWantsJoin={!!findSuperJoin}
+                isShowWantsJoin={isSuperInvite}
                 isPremium={accountPremium}
                 activeEvent={activeEvent}
                 location={item.location}
@@ -1954,7 +1884,12 @@ const IO: FC = (): JSX.Element => {
       eventsRef.current = data;
       setEvents(prevEvents => {
         if (refresh) {
-          const filteredData = data.filter(event => !prevEvents.some(prevEvent => prevEvent.info.uid === event.info.uid));
+          const filteredData = data.filter(event => {
+            if (prevEvents.some(prevEvent => prevEvent.info.uid === event.info.uid) || swipedCardUids.includes(event.info.uid)) {
+              return false;
+            }
+            return true;
+          });
           const updatedEvents = [...filteredData, ...[...prevEvents].reverse()].reverse();
           eventsRef.current = updatedEvents;
           return updatedEvents;
@@ -1969,16 +1904,11 @@ const IO: FC = (): JSX.Element => {
       }
     } catch (error) {
       console.error('error_getCardsListForHost', error);
+      endReachedRef.current = true;
+      setEvents([]);
+      setIsRefreshing(false);
     } finally {
       setLoadingCardsList(false);
-    }
-  };
-
-  const requestUserPermission = async () => {
-    const authStatus = await messaging().requestPermission();
-    const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    if (enabled) {
-      await fcmHelper();
     }
   };
 
@@ -1992,34 +1922,12 @@ const IO: FC = (): JSX.Element => {
     return eventsForSort;
   };
 
-  const sortByInterests = (dataGuest: any, userHost: any) => {
-    const filteredGuests = dataGuest.filter(guest => guest?.info?.hostInfo);
-
-    if (!userHost?.interests || userHost?.interests.length === 0) {
-      return [];
-    }
-
-    const userInterests = userHost?.interests?.map((interest: User.Interests) => interest?.title);
-
-    const matchedGuests = filteredGuests?.sort(guest => {
-      if (
-        !guest?.info?.hostInfo?.interests ||
-        guest?.info?.hostInfo?.interests?.length === 0 ||
-        guest?.info?.hostInfo?.chooseGuest !== userHost?.chooseGuest
-      ) {
-        return false;
-      }
-      return guest?.info?.hostInfo.interests?.some((interest: User.Interests) => userInterests?.includes(interest.title));
-    });
-    return matchedGuests;
-  };
-
   const handleGoToEarlyAccess = () => {
     navigation.navigate(commonStackPath, {screen: earlyAccessPath} as never);
   };
 
   const goToCreateEvent = (): void => {
-    if (!userHost?.accountConfirmed) {
+    if (!userInfo?.accountConfirmed) {
       return;
     }
     if (!userInfo.accountPremium) {
@@ -2048,6 +1956,10 @@ const IO: FC = (): JSX.Element => {
     if (isHost && activeEvent?.id) {
       lastVisibleRef.current = null;
       endReachedRef.current = false;
+      if (events?.length) {
+        setIsRefreshing(true);
+        getCardsListForHost();
+      }
     }
   }, [activeEvent?.id, isHost]);
 
@@ -2062,11 +1974,11 @@ const IO: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
-      if (userInfo?.uid && isHost && activeEvent?.id && !events?.length) {
+      if (userInfo?.uid && isHost && activeEvent?.id && !events?.length && !loadingCardsList) {
         console.warn('useEffect_getCardsListForHost', events?.length, lastVisibleRef.current, endReachedRef.current);
         getCardsListForHost();
       }
-    }, [userInfo?.uid, activeEvent?.id, loadingMyEvents]),
+    }, [userInfo?.uid, activeEvent?.id, loadingMyEvents, loadingCardsList]),
   );
 
   useFocusEffect(
@@ -2083,33 +1995,35 @@ const IO: FC = (): JSX.Element => {
       if (isHost) {
         if (events?.length <= 2 && lastVisibleRef.current && !endReachedRef.current) {
           console.warn('getCardsListForHost', events?.length, lastVisibleRef.current, endReachedRef.current);
+          setIsRefreshing(true);
           getCardsListForHost(true);
         }
       }
       if (!isHost) {
         if (events?.length <= 2 && lastVisibleRef.current && !endReachedRef.current) {
           console.warn('getCardsListForGuest', events?.length, lastVisibleRef.current, endReachedRef.current);
-
           getCardsListForGuest(true);
         }
       }
     }
   }, [events]);
 
-  useEffect(() => {
-    requestUserPermission();
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (userInfo?.uid && isHost) {
-        fetchMyEvents();
-      }
-      fetchUserInfo();
-    }, [userInfo?.uid]),
-  );
-
   const cardsList = isHost ? [...events].reverse() : events;
+
+  console.warn(endReachedRef.current, lastVisibleRef?.current);
+
+  if (!isFocusedScreen) {
+    return (
+      <>
+        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
+          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+        )}
+      </>
+    );
+  }
+
+  console.warn(cardsList.length, loadingCardsList, isRefreshing);
 
   if (userInfo?.uid && isDemo && isHost && hintStep === 7) {
     return (
@@ -2188,7 +2102,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if ((loadingUser || loadingMyEvents) && !userInfo?.uid && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
+  if (loadingMyEvents && isHost && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
         <Animated.View style={[animatedStyle]}>
@@ -2222,10 +2136,17 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isRefreshing && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite && loadingCardsList) {
+  if (userInfo?.uid && isRefreshing && !cardsList.length && !isVisibleMatch && !visibleModalSuperJoin && !isVisibleSuperInvite) {
     return (
       <>
-        <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
+        <Loading
+          wrapperText={false}
+          textStyle={{
+            opacity: 0.8,
+          }}
+          text={`Finding ${isHost ? 'guests' : 'events'} near you ...`}
+          userInfo={userInfo}
+        />
         {!userInfo?.accountReviewed && !userInfo?.accountConfirmed && (
           <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
         )}
@@ -2270,7 +2191,7 @@ const IO: FC = (): JSX.Element => {
     );
   }
 
-  if (userInfo?.uid && isHost && !loadingCardsList && !myEvents.length && !isVisibleMatch && !isDemo) {
+  if (userInfo?.uid && isHost && !loadingCardsList && !loadingMyEvents && !myEvents.length && !isVisibleMatch && !isDemo) {
     return (
       <>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
@@ -2447,7 +2368,7 @@ const IO: FC = (): JSX.Element => {
             }
             modalReport={modalReport}
             setModalReport={setModalReport}
-            uidSender={userHost?.uid}
+            uidSender={userInfo?.uid}
             uid={reportedItem?.uid}
             activeEvent={reportedItem?.event?.id}
           />

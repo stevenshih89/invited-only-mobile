@@ -63,6 +63,8 @@ const addBuisnessPath: keyof RootStackParamList = '/add-biusness';
 const joinEventsPathRequest: keyof RootStackParamList = '/join-event-request';
 const earlyAccessPath: keyof RootStackParamList = '/early-access';
 const markAttendancePath: keyof RootStackParamList = '/mark-attendance';
+const underMaintenance: keyof RootStackParamList = '/under-maintenance';
+const updateAvailable: keyof RootStackParamList = '/update-available';
 
 const demoIntroPath: keyof RootStackParamList = '/demo-intro';
 const demoEventCreatingPath: keyof RootStackParamList = '/demo-event-creating';
@@ -133,4 +135,6 @@ export {
   demoEventCreatingPath,
   demoIOPath,
   adminChatPath,
+  underMaintenance,
+  updateAvailable
 };

@@ -97,6 +97,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   handleOpenSuperInvite,
   onInvite,
   onReject,
+  hostInfo,
   isShowCardButtons = true,
   isShowLocation = false,
   isShowAccountInfo = true,
@@ -141,7 +142,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   const [visibleModalSuperJoin, setVisibleModalSuperJoin] = useState(false);
 
-  const [userEventInfo, setUserEventInfo] = useState();
+  // const [hostInfo, setUserEventInfo] = useState();
 
   const scrollPosition = useScrollPosition((i: any) => i?.scrollPosition);
 
@@ -152,18 +153,18 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
     return `${monthName}`;
   }
 
-  const getUserEventInfo = async () => {
-    try {
-      const getDoc = await firestore().collection(apiUserInfoCollection).doc(uidUserEvent).get();
-      setUserEventInfo(getDoc?.data());
-    } catch (error) {
-      console.log('error getUserEventInfo', error);
-    }
-  };
+  // const getUserEventInfo = async () => {
+  //   try {
+  //     const getDoc = await firestore().collection(apiUserInfoCollection).doc(uidUserEvent).get();
+  //     setUserEventInfo(getDoc?.data());
+  //   } catch (error) {
+  //     console.log('error getUserEventInfo', error);
+  //   }
+  // };
 
-  useEffect(() => {
-    uidUserEvent ? getUserEventInfo() : null;
-  }, [uidUserEvent]);
+  // useEffect(() => {
+  //   uidUserEvent ? getUserEventInfo() : null;
+  // }, [uidUserEvent]);
 
   const handleSuperInvite = () => {
     if (counterSuperInvites - 1 >= 0) {
@@ -339,7 +340,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                 style={{width: 50, height: 50, borderRadius: 50}}
                 source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
               />
-              {userEventInfo?.online && (
+              {/* {hostInfo?.online && (
                 <View
                   style={{
                     position: 'absolute',
@@ -353,7 +354,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     backgroundColor: lightGreenColor,
                   }}
                 />
-              )}
+              )} */}
             </View>
             <View style={{marginLeft: 10, justifyContent: 'center'}}>
               <View style={{flexDirection: 'row'}}>
@@ -367,18 +368,18 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     borderWidth: 1,
                     borderColor: whiteColor,
                   }}>
-                  {userEventInfo?.accountType === 'guest' && (
+                  {hostInfo?.accountType === 'guest' && (
                     <Text style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
                       Guest
                     </Text>
                   )}
-                  {userEventInfo?.accountType === 'host' && (
+                  {hostInfo?.accountType === 'host' && (
                     <Text style={{color: whiteColor, fontSize: RFValue(10, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
                       Host
                     </Text>
                   )}
                 </View>
-                {userEventInfo?.accountPremium && (
+                {hostInfo?.accountPremium && (
                   <LinearGradient
                     colors={['#977B4A', '#E5D291', '#A28453']}
                     style={{
@@ -412,9 +413,9 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     fontSize: RFValue(16, 812),
                     marginTop: 4,
                   }}>
-                  {userEventInfo?.name}
+                  {hostInfo?.name}
                 </Text>
-                {!isProfile && userEventInfo?.showAge && (
+                {/* {!isProfile && hostInfo?.showAge && (
                   <Text
                     style={{
                       color: whiteColor,
@@ -423,10 +424,12 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                       marginTop: 5,
                     }}>
                     {' ,'}
-                    {calculateAge(userEventInfo?.date)}
+                    {calculateAge(hostInfo?.date)}
                   </Text>
-                )}
-                <View style={{marginLeft: 8}}>{userEventInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} />}</View>
+                )} */}
+                <View style={{marginLeft: 8}}>
+                  <CheckStarWhite width={14} height={14} />
+                </View>
               </View>
             </View>
           </View>

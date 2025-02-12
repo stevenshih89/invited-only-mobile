@@ -19,7 +19,7 @@ import Bugsnag from '@bugsnag/react-native';
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
-  userAppKey: 'lgyhu6m9a8cwsgy',
+  userAppKey: Config.RN_UXCAM_API_KEY || '',
   enableAutomaticScreenNameTagging: false,
   enableAdvancedGestureRecognition: true,
   enableImprovedScreenCapture: true,
@@ -31,7 +31,7 @@ Bugsnag.start();
 
 const App: FC = (): JSX.Element => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const IO_PUBLICK_RC_IOS = 'appl_zMgrNWXsDMnWsICHMLKNhAKHebg';
+  const IO_PUBLICK_RC_IOS = Config.IO_PUBLICK_RC_IOS || '';
 
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
 
@@ -44,6 +44,9 @@ const App: FC = (): JSX.Element => {
       }
 
       const userQuery = await firestore().collection(apiUserInfoCollection).doc(currentUser?.uid).get();
+      if (!userQuery.exists) {
+        return;
+      }
       const userData = userQuery.data();
 
       if (!userData) {
@@ -85,6 +88,7 @@ const App: FC = (): JSX.Element => {
         isExpiredSubscription = false;
       }
 
+      const start = new Date().getTime();
       await firestore()
         .collection(apiUserInfoCollection)
         .doc(currentUser?.uid)
@@ -95,32 +99,38 @@ const App: FC = (): JSX.Element => {
             expirationDate: newExpirationDate || '',
           },
         });
+      const end = new Date().getTime();
+      console.warn('handleUpdateUserSubscriptions', end - start);
     } catch (e) {
       console.error('handleUpdateUserSubscriptions:error ', e);
     }
   };
 
   const initializeTracking = async () => {
+    const start = new Date().getTime();
     const trackingStatus = await requestTrackingPermission();
     if (trackingStatus === 'authorized') {
       Settings.setAdvertiserTrackingEnabled(true);
     } else {
       Settings.setAdvertiserTrackingEnabled(false);
     }
+    const end = new Date().getTime();
+    console.warn('initializeTracking', end - start);
   };
 
   useEffect(() => {
     initializeTracking();
-    if (Platform.OS === 'ios') {
-      if (IO_PUBLICK_RC_IOS) {
-        Purchases.configure({apiKey: IO_PUBLICK_RC_IOS, usesStoreKit2IfAvailable: false});
-      }
+    if (Platform.OS === 'ios' && IO_PUBLICK_RC_IOS) {
+      Purchases.configure({apiKey: IO_PUBLICK_RC_IOS, usesStoreKit2IfAvailable: false});
     }
 
     const getSubscription = async () => {
+      const start = new Date().getTime();
       const activeSubscription = await getActiveSubscription();
       await handleUpdateUserSubscriptions(activeSubscription);
       setCurrentSubscriptions(activeSubscription);
+      const end = new Date().getTime();
+      console.warn('getSubscription', end - start);
     };
     getSubscription();
   }, []);

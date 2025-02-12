@@ -31,6 +31,7 @@ import {useSubscriptions} from 'src/store/subscriptionsStore';
 import {SvgProps} from 'react-native-svg';
 import {screenHeight} from 'constants/common';
 import Config from 'react-native-config';
+import {useUser} from 'src/store/userStore';
 interface WhatGetItem {
   title: string;
   description: string;
@@ -58,21 +59,23 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
 const MyPlan = () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [loaderVisible, setLoaderVisible] = useState(false);
-  const [userInfo, setUserInfo] = useState<any>({});
+
+  const {user: userInfo} = useUser();
+  // const [userInfo, setUserInfo] = useState<any>({});
 
   const whatGet: WhatGetItem[] = [
     {
-      title: `Unlimited Events ${userInfo.accountType === 'host' ? 'Creation' : 'Attendance'}`,
-      titleDescription: userInfo.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited swipe (join)',
+      title: `Unlimited Events ${userInfo?.accountType === 'host' ? 'Creation' : 'Attendance'}`,
+      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited swipe (join)',
       description:
-        userInfo.accountType === 'host'
+        userInfo?.accountType === 'host'
           ? 'Share Unlimited VIP Tables and Events to Invite.'
           : 'Swipe through unlimited events and connections. Join now and explore endless possibilities!',
       icon: CalendarIcon,
     },
     {
       title: 'Unlimited Invitations',
-      titleDescription: userInfo.accountType === 'host' ? 'Unlimited Invitations' : 'Unlimited invitations (getting invites)',
+      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Invitations' : 'Unlimited invitations (getting invites)',
       description:
         userInfo?.accountType === 'host'
           ? 'Send Unlimited Invitations and Create Your Guest List'
@@ -80,25 +83,25 @@ const MyPlan = () => {
       icon: UnlimitedIcon,
     },
     {
-      title: `Unlimited ${userInfo.accountType === 'host' ? 'Guest' : ''} Connections`,
-      titleDescription: userInfo.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited join offers',
+      title: `Unlimited ${userInfo?.accountType === 'host' ? 'Guest' : ''} Connections`,
+      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited join offers',
       description:
-        userInfo.accountType === 'host'
+        userInfo?.accountType === 'host'
           ? 'Enjoy endless connections to build your guests lists.'
           : 'Get unlimited opportunities to join exclusive events. Let`s start right now!',
       icon: IOIcon,
     },
     {
-      title: `5 Super ${userInfo.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
-      titleDescription: userInfo.accountType === 'host' ? 'Unlimited Events Creation' : '5 Super join a week',
-      description: `Send 5 super ${userInfo.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
+      title: `5 Super ${userInfo?.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
+      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : '5 Super join a week',
+      description: `Send 5 super ${userInfo?.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
       icon: FlashIcon,
     },
     {
-      title: `See Who Wants to ${userInfo.accountType === 'host' ? 'Join' : 'Invite'} You`,
-      titleDescription: userInfo.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited Events Join',
+      title: `See Who Wants to ${userInfo?.accountType === 'host' ? 'Join' : 'Invite'} You`,
+      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited Events Join',
       description:
-        userInfo.accountType === 'host'
+        userInfo?.accountType === 'host'
           ? 'View interested guests who want to join you in real-time.'
           : 'View interested hosts who want to invite you in real-time.',
       icon: EyeIcon,
@@ -107,35 +110,35 @@ const MyPlan = () => {
 
   const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions);
 
-  const fetchUserInfo = async () => {
-    // setLoaderVisible(true)
-    const user = auth().currentUser;
+  // const fetchUserInfo = async () => {
+  //   // setLoaderVisible(true)
+  //   const user = auth().currentUser;
 
-    if (user) {
-      try {
-        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
-        if (userInfoDoc.exists) {
-          setUserInfo(userInfoDoc.data());
-        }
-      } catch (error: any) {}
-    }
-    // setLoaderVisible(false)
-  };
+  //   if (user) {
+  //     try {
+  //       const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
+  //       if (userInfoDoc.exists) {
+  //         setUserInfo(userInfoDoc.data());
+  //       }
+  //     } catch (error: any) {}
+  //   }
+  //   // setLoaderVisible(false)
+  // };
 
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
+  // useEffect(() => {
+  //   fetchUserInfo();
+  // }, []);
 
   const navigation = useAppNavigation();
 
-  const loaderVisibleFun = () => {
-    setLoaderVisible(true);
-    setTimeout(() => setLoaderVisible(false), 1000);
-  };
+  // const loaderVisibleFun = () => {
+  //   setLoaderVisible(true);
+  //   setTimeout(() => setLoaderVisible(false), 1000);
+  // };
 
-  const goToManagePath = () => {
-    navigation.navigate(manageSubscriptionPath as never);
-  };
+  // const goToManagePath = () => {
+  //   navigation.navigate(manageSubscriptionPath as never);
+  // };
 
   const goToPaymentPath = () => {
     navigation.navigate(paymentPath as never);
@@ -170,6 +173,8 @@ const MyPlan = () => {
     return <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>{text}</Text>;
   };
 
+  console.warn(userInfo?.superInvites, userInfo?.weeklySuperInvites);
+
   return (
     <View>
       <Loader isVisible={loaderVisible} successfulPay={false} textLoader={'Checking for available spots...'} />
@@ -186,8 +191,8 @@ const MyPlan = () => {
           <View style={{alignItems: 'center', flexDirection: 'row'}}>
             <FlashFillIcon width={18} height={18} />
             <Text style={{fontSize: RFValue(18, 812), marginLeft: 8, color: whiteColor, fontFamily: Satoshi700Italic}}>
-              Super {userInfo.accountType === 'host' ? 'Invite' : 'Join'}{' '}
-              <Text style={{fontFamily: Satoshi400}}>({userInfo?.superInvites || 0 + userInfo?.weeklySuperInvites || 0})</Text>
+              Super {userInfo?.accountType === 'host' ? 'Invite' : 'Join'}{' '}
+              <Text style={{fontFamily: Satoshi400}}>({(userInfo?.superInvites || 0) + (userInfo?.weeklySuperInvites || 0)})</Text>
             </Text>
           </View>
           <TouchableOpacity
