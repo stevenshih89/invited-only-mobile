@@ -830,7 +830,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                 justifyContent: 'center',
                 borderRadius: 18,
                 backgroundColor: lightGray20Color,
-                marginTop: 25,
+                marginTop: 12,
               }}>
               <Text
                 style={{
