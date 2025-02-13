@@ -98,12 +98,29 @@ const Chat: FC<ChatProps> = () => {
   const [eventData, setEventData] = useState<EventData>();
 
   const [searchInput, setSearchInput] = useState('');
-  const [adminChatsWithUsers, setAdminChatsWithUsers] = useState<any>([]);
+  const [adminChatsWithUsers, setAdminChatsWithUsers] = useState<any>([]);  
   const [filterTypeAccount, setFilterTypeAccount] = useState<'host' | 'guest'>('host');
+  const [countHostTypeAccount, setCountHostTypeAccount] = useState(0);
+  const [countGuestTypeAccount, setCountGuestTypeAccount] = useState(0);
   const searchByName = useMemo(
     () => adminChatsWithUsers.filter((item: any) => item.userName?.toLowerCase().startsWith(searchInput.toLowerCase())),
     [adminChatsWithUsers, searchInput],
   );
+  const filterTypeAccountFunc = useMemo(
+    () => {
+      const filterType = searchByName.filter((item: any)=> item.userAccountType === filterTypeAccount)
+      if(filterTypeAccount === 'host') {
+        setCountHostTypeAccount(filterType.length)
+        setCountGuestTypeAccount(searchByName.length - filterType.length)
+      } else {
+        setCountGuestTypeAccount(filterType.length)
+        setCountHostTypeAccount(searchByName.length - filterType.length)
+      }
+      
+      return filterType
+    },
+  [searchByName, filterTypeAccount])
+  
   const [userChatWithAdmin, setUserChatWithAdmin] = useState<any>({});
   const [loadingAdminChatsWithUsers, setLoadingAdminChatsWithUsers] = useState<boolean>(true);
   const [limitAdminChatsWithUsers, setLimitAdminChatsWithUsers] = useState<number>(DEFAULT_LIMIT_ADMIN_CHATS);
@@ -720,7 +737,7 @@ const Chat: FC<ChatProps> = () => {
             style={[styles.button, styles.hostButton, {backgroundColor: filterTypeAccount === 'host' ? '#212121' : '#131313'}]}>
             <Text style={styles.buttonText}>Host</Text>
             <View style={styles.counterContainer}>
-              <Text style={styles.counterText}>2</Text>
+              <Text style={styles.counterText}>{countHostTypeAccount}</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -728,13 +745,13 @@ const Chat: FC<ChatProps> = () => {
             style={[styles.button, styles.guestButton, {backgroundColor: filterTypeAccount === 'guest' ? '#212121' : '#131313'}]}>
             <Text style={styles.buttonText}>Guest</Text>
             <View style={styles.counterContainer}>
-              <Text style={styles.counterText}>2</Text>
+              <Text style={styles.counterText}>{countGuestTypeAccount}</Text>
             </View>
           </TouchableOpacity>
         </View>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={searchByName}
+          data={filterTypeAccountFunc}
           contentContainerStyle={{flexGrow: 1, paddingBottom: 40}}
           onEndReached={handleAddCountAdminChats}
           ItemSeparatorComponent={() => <View style={{height: 10}} />}
