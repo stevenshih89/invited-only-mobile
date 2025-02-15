@@ -21,7 +21,7 @@ import ThreeDoths from 'assets/images/icons/more-white.svg';
 import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
 import Button from 'components/Button/Button.tsx';
-import {backgroundColor, blackColor, grayScale700, lightGray2Color, whiteColor} from 'constants/colors';
+import {blackColor, grayScale700, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import {useFocusEffect} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
@@ -674,6 +674,9 @@ const Chat: FC<ChatProps> = () => {
     }, [activeEvent?.id, loading, activeEventDate]),
   );
 
+  console.log(loadingChats);
+  
+
   if (loadingChats) {
     return (
       <>
@@ -927,6 +930,7 @@ const Chat: FC<ChatProps> = () => {
         <View style={{flex: 1}}>
           <FlatList
             showsVerticalScrollIndicator={false}
+            // @ts-ignore
             data={messages?.chats}
             contentContainerStyle={{flexGrow: 1}}
             ListEmptyComponent={() => (
@@ -978,6 +982,7 @@ const Chat: FC<ChatProps> = () => {
             renderItem={({item}) => {
               return (
                 <ItemEventsJoining
+                  // @ts-ignore
                   image={item.image}
                   title={item.title}
                   chats={item.chats}

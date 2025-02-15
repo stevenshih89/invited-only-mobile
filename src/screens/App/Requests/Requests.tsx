@@ -56,6 +56,7 @@ const Requests: FC = (): ReactElement => {
 
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [isVisibleModalFullEvent, setIsVisibleModalFullEvent] = useState<boolean>(false);
+  // @ts-ignore
   const [matchData, setMatchData] = useState<MatchData>({});
   const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
   const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
@@ -106,7 +107,7 @@ const Requests: FC = (): ReactElement => {
       ?.sort((a: Event.User, b: Event.User) => {
         return a?.uid.localeCompare(b?.uid);
       })
-      .filter((value, index, self) => index === self.findIndex(t => t.uid === value.uid))
+      .filter((value: any, index: number, self: any) => index === self.findIndex((t: {uid: any}) => t.uid === value.uid))
       .slice(0, limitRequestItems);
 
     console.warn('sortedRequests', sortedRequests.length);
@@ -115,7 +116,7 @@ const Requests: FC = (): ReactElement => {
     setLoadingRequestItems(false);
   };
 
-  const filterByUid = (array: EventData[], uid: string) => {
+  const filterByUid = (array: EventData[], uid: string | undefined) => {
     return array?.filter((item: EventData) => {
       if (Array?.isArray(item?.usersList)) {
         return item?.usersList?.some((userItem: Event.User) => userItem?.uid === uid && userItem?.status === LIKED);
@@ -131,7 +132,7 @@ const Requests: FC = (): ReactElement => {
       setLoadingRequestItems(false);
       return;
     }
-    const data = querySnapshot?.docs?.map(i => i?.data()) as EventData[];
+    const data = querySnapshot?.docs?.map((i: {data: () => any}) => i?.data()) as EventData[];
     const filteredRequestsByUid = filterByUid(data, currentUser?.uid);
 
     const filterEventByDate = () => {
@@ -251,6 +252,7 @@ const Requests: FC = (): ReactElement => {
                   />
                 ) : (
                   <ItemRequestGuest
+                    // @ts-ignore
                     list={item}
                     item={item?.usersList?.filter((i: Event.User) => i?.uid === userInfo?.uid)}
                     setDataForGuest={setDataForGuest}
@@ -303,6 +305,7 @@ const Requests: FC = (): ReactElement => {
                 ) : (
                   // @ts-ignore
                   <ItemRequestGuest
+                    // @ts-ignore
                     list={item}
                     item={item?.usersList?.filter((i: Event.User) => i?.uid === userInfo?.uid)}
                     setDataForGuest={setDataForGuest}
@@ -358,7 +361,7 @@ const Requests: FC = (): ReactElement => {
       <View style={styles.container}>
         <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 30, paddingBottom: 70}}>
           <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
-            Let’s create an event
+            Share a Table or Event
           </Text>
           <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), marginBottom: 34}}>
             Get started by creating an event to begin inviting guests.

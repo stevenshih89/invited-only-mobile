@@ -2010,8 +2010,6 @@ const IO: FC = (): JSX.Element => {
 
   const cardsList = isHost ? [...events].reverse() : events;
 
-  console.warn(endReachedRef.current, lastVisibleRef?.current);
-
   if (!isFocusedScreen) {
     return (
       <>
@@ -2022,8 +2020,6 @@ const IO: FC = (): JSX.Element => {
       </>
     );
   }
-
-  console.warn(cardsList.length, loadingCardsList, isRefreshing);
 
   if (userInfo?.uid && isDemo && isHost && hintStep === 7) {
     return (

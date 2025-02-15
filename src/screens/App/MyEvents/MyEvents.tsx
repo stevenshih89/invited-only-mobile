@@ -1070,7 +1070,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                       {userInfo?.accountConfirmed && (
                         <View style={{marginTop: screenHeight / 6}}>
                           <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
-                            Let's create an event
+                            Share a Table or Event
                           </Text>
                           <Text
                             style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>

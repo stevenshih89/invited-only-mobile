@@ -35,6 +35,11 @@ interface MessageProps {
   };
 }
 
+const timeToUnixTimestamp = (timestamp: {_seconds: number, _nanoseconds: number} )  => {
+  return (timestamp._seconds + (timestamp._nanoseconds/1000000000) *1000) * 1000
+
+}
+
 interface NavigationParams {
   navigation: NavigationProp<any, any>;
   route: any;
@@ -126,7 +131,12 @@ const AdminChat: FC<NavigationParams> = () => {
           .collection('messages')
           .orderBy('timestamp', 'asc')
           .onSnapshot(querySnapshot => {
-            const data = querySnapshot.docs.map(doc => doc.data());
+            const data = querySnapshot.docs.map(doc => {
+              return {
+                ...doc.data(),
+                timestamp: doc.data().timestamp ? timeToUnixTimestamp(doc.data().timestamp) : null, // Convert timestamp if it exists
+              };
+            });
             if (!querySnapshot.empty) {
               setMessages(data);
             }

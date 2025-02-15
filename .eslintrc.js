@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: '@react-native',
+  extends: ['@react-native', 'prettier'],
   rules: {
     'react/react-in-jsx-scope': 'off',
     'react/no-unstable-nested-components': 'off',
