@@ -182,7 +182,7 @@ const VerifySocialProfile = () => {
         });
       });
 
-      const userId = await AsyncStorage.getItem('uid');
+      const userId = user?.uid;
       const facePhoto = mergedObject?.facePhoto || '';
 
       const photos = mergedObject?.photos || [];

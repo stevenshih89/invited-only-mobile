@@ -121,7 +121,7 @@ const InvitationCode: FC = (): JSX.Element => {
     return `${day} ${month} ${year}`;
   };
 
-  const handleRegisterUser = async onBoarding => {
+  const handleRegisterUser = async (onBoardingValue: any) => {
     try {
       setLoading(true);
       const registrationDate = new Date();
@@ -132,19 +132,19 @@ const InvitationCode: FC = (): JSX.Element => {
       const mergedObject = {};
       await AsyncStorage.setItem('onBoarding', 'true');
 
-      onBoarding?.forEach(obj => {
+      onBoardingValue?.forEach(obj => {
         Object.keys(obj)?.forEach(key => {
           // @ts-ignore
           mergedObject[key] = obj[key];
         });
       });
 
-      const userId = await AsyncStorage.getItem('uid');
+      const userId = user?.uid;
       const facePhoto = mergedObject?.facePhoto || '';
 
       const photos = mergedObject?.photos || [];
 
-      const isTurnNotifications = onBoarding.find((item: any) => 'notifications' in item);
+      const isTurnNotifications = onBoardingValue.find((item: any) => 'notifications' in item);
 
       const isTurnedNotifications = isTurnNotifications?.notifications ?? false;
 
