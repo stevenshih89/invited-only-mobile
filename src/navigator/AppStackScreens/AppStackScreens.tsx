@@ -85,9 +85,7 @@ import firestore from '@react-native-firebase/firestore';
 import {UserInfo} from 'src/types/userInfo';
 import Config from 'react-native-config';
 import auth from '@react-native-firebase/auth';
-import {useMyEvents} from 'src/store/myEvents';
-import moment from 'moment';
-import {EventData} from 'src/types/event';
+
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
 const CommonStack = createStackNavigator();
@@ -510,61 +508,13 @@ const DemoFlowScreen = () => {
 
 const AppStackScreen = () => {
   const {user, setUser} = useUser();
-  const {myEvents, setMyEvents, setLoadingMyEvents, activeEvent, setActiveEvent} = useMyEvents();
   const {setNotificationsCount} = useNotifications();
   const initialRouteName =
     user?.uid && user?.accountType === 'host' && user?.accountConfirmed && user?.accountReviewed && !user?.isPassedDemo
       ? demoFlowStackPath
       : bottomTabsStackPath;
 
-  const isHost = user?.accountType === 'host';
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-
-  useEffect(() => {
-    let myEventsSubscriber: any;
-    if (isHost) {
-      setLoadingMyEvents(true);
-      myEventsSubscriber = firestore()
-        .collection(apiEventsCollection)
-        .where('uid', '==', user?.uid)
-        .where('isCancelled', '==', false)
-        .orderBy('createdAt', 'desc')
-        .onSnapshot(eventsSnapshot => {
-          const events = eventsSnapshot.docs
-            .map(doc => ({...(doc.data() as EventData), rejectsList: [], requestsList: [], rejectsByGuestsList: []}))
-            .filter((doc: EventData) => {
-              if (doc?.date && doc?.hour) {
-                const adjustedDate = moment(`${doc?.date}, ${doc?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-                if (adjustedDate.isBefore(moment())) {
-                  return false;
-                }
-                return true;
-              }
-              return false;
-            });
-          if (!events?.length) {
-            setActiveEvent({});
-            setLoadingMyEvents(false);
-            return;
-          }
-          if (JSON.stringify(myEvents) !== JSON.stringify(events)) {
-            setMyEvents(events);
-            const currentEvent = events.find((event: EventData) => event?.id === activeEvent?.id);
-            const eventIndex = currentEvent ? events.findIndex((event: any) => event?.id === currentEvent?.id) : 0;
-
-            setActiveEvent(events[eventIndex]);
-          }
-          setLoadingMyEvents(false);
-        });
-    }
-
-    return () => {
-      if (myEventsSubscriber) {
-        myEventsSubscriber();
-      }
-    };
-  }, [user?.accountType]);
 
   useEffect(() => {
     const currentUser = auth().currentUser;

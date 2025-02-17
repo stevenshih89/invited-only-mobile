@@ -33,8 +33,8 @@ import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
 import analytics from '@react-native-firebase/analytics';
 import {chatCorrespondenceScreen} from 'constants/analitycs';
 import Config from 'react-native-config';
-import { showToast } from 'helpers/showToast';
-import { cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
+import {showToast} from 'helpers/showToast';
+import {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 
 interface MessageProps {
   message: {
@@ -97,7 +97,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   useEffect(() => {
     if (uid) {
       const fetchUserInfo = async () => {
-        setLoadingEvents(true)
+        setLoadingEvents(true);
         const currentUser = auth().currentUser;
         if (currentUser) {
           try {
@@ -115,18 +115,17 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
               setUserAccountType(userInfoDoc.data()?.accountType);
               setIsPremium(userInfoDoc.data()?.accountPremium);
             } else {
-              navigation.goBack()
-              setLoadingEvents(false)
+              navigation.goBack();
+              setLoadingEvents(false);
               showToast('inviteMatch', 'This user is no longer available', 'No user data');
-              
             }
           } catch (error: any) {
             console.error(error);
-            setLoadingEvents(false)
+            setLoadingEvents(false);
             Alert.alert('Error', error.message || 'Something went wrong');
           }
         }
-        setLoadingEvents(false)
+        setLoadingEvents(false);
       };
       fetchUserInfo();
       try {
@@ -188,7 +187,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         return;
       }
 
-      setIsSending(true)
+      setIsSending(true);
 
       let updateData = {
         id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
@@ -199,7 +198,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       };
 
       const doc = firestore().collection(apiMessagesCollection).doc(`${activeEvent}`);
-      const chatDataQuery = await doc.get();      
+      const chatDataQuery = await doc.get();
       const chatData = chatDataQuery.data();
       const currentChat = chatData?.chats?.find((i: any) => i?.id === id);
 
@@ -244,7 +243,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         await doc.update({
           chats: [...allChats],
         });
-        setIsSending(false)
+        setIsSending(false);
         analytics().logEvent(`${chatCorrespondenceScreen}_send_message`, {
           hostUid: user?.uid,
           guestUid: uid,
@@ -272,7 +271,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         }
       }
     } catch (e) {
-      setIsSending(false)
+      setIsSending(false);
       // console.log(e);
     }
   };
@@ -367,28 +366,32 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   }, [activeEvent]);
 
   const rotationLoader = useSharedValue(0);
-  
-    useEffect(() => {
-      if (loadingEvents) {
-        rotationLoader.value = withRepeat(
-          withTiming(360, {
-            duration: 2000,
-            easing: Easing.linear,
-          }),
-          -1,
-        );
-      }
-  
-      return () => {
-        cancelAnimation(rotationLoader);
-      };
-    }, [rotationLoader, loadingEvents]);
+
+  useEffect(() => {
+    if (loadingEvents) {
+      rotationLoader.value = withRepeat(
+        withTiming(360, {
+          duration: 2000,
+          easing: Easing.linear,
+        }),
+        -1,
+      );
+    }
+
+    return () => {
+      cancelAnimation(rotationLoader);
+    };
+  }, [rotationLoader, loadingEvents]);
 
   const animatedStyle = useAnimatedStyle(() => {
-      return {
-        transform: [{rotate: `${rotationLoader.value}deg`}],
-      };
-    });
+    return {
+      transform: [{rotate: `${rotationLoader.value}deg`}],
+    };
+  });
+
+  const handleTextChange = useCallback((text: any) => {
+    setMessageUser(text);
+  }, []);
 
   if (loadingEvents) {
     return (
@@ -405,11 +408,6 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       </View>
     );
   }
-
-  const handleTextChange = useCallback((text: any) => {
-    setMessageUser(text);
-  }, []);
-
 
   return (
     <>

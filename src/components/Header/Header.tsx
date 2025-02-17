@@ -170,7 +170,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
 
   useEffect(() => {
     if (!isDemo && userInfo?.uid && isHost) {
-      // fetchMyEvents();
+      fetchMyEvents();
     }
   }, [headerType, userInfo?.uid, isDemo]);
 
