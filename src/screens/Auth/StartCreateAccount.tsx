@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import {ImageBackground, SafeAreaView, Text, TouchableOpacity, View, Linking, Alert} from 'react-native';
 import Background from 'assets/images/auth/bg-create-account.png';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {backgroundGradientColors, black1Color, lightGray19Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, lightGray19Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {eulaPath, signUpPath} from 'constants/pathLocations';

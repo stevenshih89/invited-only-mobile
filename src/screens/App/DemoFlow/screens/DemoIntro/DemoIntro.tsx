@@ -14,14 +14,13 @@ import moment from 'moment';
 import uuid from 'react-native-uuid';
 import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
-import Loading from 'components/Loading/Loading';
 
 const DemoIntro: FC = () => {
   const styles = useStyles();
   const {bottom} = useSafeAreaInsets();
   const navigation = useAppNavigation();
   const {setHintStep, setIsVisibleSwipeGuide, setEvent} = useDemoFlowStore();
-  const {user, setUser} = useUser();
+  const {user} = useUser();
 
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
@@ -77,9 +76,10 @@ const DemoIntro: FC = () => {
     if (user?.uid) {
       try {
         await firestore().collection(apiUserInfoCollection).doc(user?.uid).update({isPassedDemo: true});
-
-        setUser({...user, isPassedDemo: true});
-        navigation.navigate(bottomTabsStackPath as never);
+        navigation.reset({
+          index: 0,
+          routes: [{name: bottomTabsStackPath}],
+        });
       } catch (error) {
         console.error(error);
       }

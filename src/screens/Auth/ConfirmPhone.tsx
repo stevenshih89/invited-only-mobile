@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, RefObject, useState, useEffect} from 'react';
+import {FC, RefObject, useState, useEffect, useCallback} from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -18,19 +18,19 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {backgroundGradientColors, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
-import { bottomTabsStackPath, chooseAccountTypePath, IOPath } from "constants/pathLocations";
+import {bottomTabsStackPath, chooseAccountTypePath} from 'constants/pathLocations';
 import auth from '@react-native-firebase/auth';
 import {showToast} from 'helpers/showToast.ts';
 import firebase from '@react-native-firebase/firestore';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import LinearGradient from 'react-native-linear-gradient';
 import Config from 'react-native-config';
+import {useFocusEffect} from '@react-navigation/native';
 
 const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const mobilePhone = route?.params?.mobilePhone;
   const [code, setCode] = useState<string>('');
-  const [isUserExist, setIsUserExist] = useState<boolean>(false);
   const [nextRoute, setNextRoute] = useState<string>(chooseAccountTypePath);
   const [loadingConfirmation, setLoadingConfirmation] = useState<boolean>(false);
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -44,22 +44,28 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
 
   const onAuthStateChanged = async (user: any) => {
-    console.log(user);
-    if (user) {
-      const userData = await firebase().collection(apiUserInfoCollection).doc(user.uid).get();
+    console.warn(user);
 
-      console.log("userData: ", userData)
-
-      if (userData.exists) {
-        setIsUserExist(true);
-        // // console.warn('user: ', user);
-      } else {
-        setNextRoute(chooseAccountTypePath);
-      }
-      // console.warn('user123: ', user);
-    } else {
+    if (!user?.uid) {
       setNextRoute(chooseAccountTypePath);
+      return;
     }
+
+    const userData = await firebase().collection(apiUserInfoCollection).doc(user.uid).get();
+
+    if (!userData.exists) {
+      setNextRoute(chooseAccountTypePath);
+      return;
+    }
+
+    const userDocument = userData.data();
+
+    if (!userDocument?.uid) {
+      setNextRoute(chooseAccountTypePath);
+      return;
+    }
+
+    setNextRoute(bottomTabsStackPath);
   };
 
   useEffect(() => {
@@ -108,10 +114,15 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
     }
   };
 
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber;
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+      return () => {
+        console.warn('unmount mobile');
+        subscriber();
+      };
+    }, []),
+  );
 
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
