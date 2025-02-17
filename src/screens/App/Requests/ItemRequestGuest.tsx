@@ -42,9 +42,9 @@ const eventTypes = [
   {id: 9, label: 'Restaurants'},
 ];
 
-const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, index}: any) => { 
+const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, index}: any) => {
   console.log('ItemRequestGuest', item);
-   
+
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const [hostInfo, setHostInfo] = useState([]);
@@ -243,7 +243,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
     }
   };
 
-  const handleInvite = ({userItem, withSwipeAnimation}: {userItem: Event.User; withSwipeAnimation: boolean}) => {    
+  const handleInvite = ({userItem, withSwipeAnimation}: {userItem: Event.User; withSwipeAnimation: boolean}) => {
     onInvite(userItem);
     if (withSwipeAnimation) {
       handleSwipeCardRight();
@@ -267,15 +267,13 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
     const monthName = months[parseInt(month) - 1];
     return `${monthName}`;
   }
+  const navigation = useNavigation();
 
   if (item[0]?.uid !== user?.uid) {
     return null;
   }
 
   // console.log('item', item);
-  
-
-  const navigation = useNavigation();
 
   return (
     <>
@@ -567,7 +565,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
                     <Button
                       onPress={() => handleInvite({userItem: item[0], withSwipeAnimation: true})}
                       title="Join"
-                      buttonStyle={{backgroundColor: blackColor}}
+                      buttonStyle={{backgroundColor: blackColor, height: 50}}
                       buttonTitleStyle={{color: whiteColor}}
                     />
                   </View>

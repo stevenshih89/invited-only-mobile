@@ -35,6 +35,7 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import {useUser} from 'src/store/userStore';
 import {getUserData} from 'helpers/getUserData';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
+import moment from 'moment';
 
 interface PlanListItem {
   id: number;
@@ -50,10 +51,32 @@ const SuperInvitePay: FC = (): JSX.Element => {
   const styles = useStyles();
   const navigation = useAppNavigation();
 
+  const [plansList, setPlansList] = useState<PlanListItem[]>([
+    {
+      id: 0,
+      quantity: 30,
+      priceEach: 2.67,
+      save: 51,
+    },
+    {
+      id: 1,
+      quantity: 15,
+      priceEach: 3.06,
+      save: 43,
+    },
+    {
+      id: 2,
+      quantity: 5,
+      priceEach: 5.18,
+      save: 4,
+    },
+  ]);
+
   const user = useUser((i: any) => i?.user);
   const [loadingPurchasing, setLoadingPurchasing] = useState(false);
   const [loadingPurchaseList, setLoadingPurchaseList] = useState(true);
   const [purchaseListError, setPurchaseListError] = useState(false);
+  const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
 
   const rotationLoader = useSharedValue(0);
 
@@ -81,18 +104,25 @@ const SuperInvitePay: FC = (): JSX.Element => {
     };
   }, [rotationLoader, loadingPurchaseList]);
 
-  const updateSuperInvites = async (superInvites: number) => {
+  const updateSuperInvites = async (superInvites: number, price: string) => {
     const user = auth().currentUser;
 
     if (user) {
       try {
         const {superInvites: superInvitesCurrent, weeklySuperInvites: weeklySuperInvitesCurrent} = userData;
-
+        const {inAppPurchase} = userData;
         await firestore()
           .collection(apiUserInfoCollection)
           .doc(user.uid)
           .update({
             superInvites: firestore.FieldValue.increment(superInvites),
+            inAppPurchase: [
+              ...(inAppPurchase ?? []), 
+              { number: superInvites, 
+                purchaseDate: moment().format(), 
+                price,
+              }
+            ]            
           });
         handleNext(superInvitesCurrent + weeklySuperInvitesCurrent + superInvites);
       } catch (error: any) {
@@ -115,29 +145,7 @@ const SuperInvitePay: FC = (): JSX.Element => {
   useEffect(() => {
     fetchUserData();
   }, []);
-
-  const [plansList, setPlansList] = useState<PlanListItem[]>([
-    {
-      id: 0,
-      quantity: 30,
-      priceEach: 2.67,
-      save: 51,
-    },
-    {
-      id: 1,
-      quantity: 15,
-      priceEach: 3.06,
-      save: 43,
-    },
-    {
-      id: 2,
-      quantity: 5,
-      priceEach: 5.18,
-      save: 4,
-    },
-  ]);
-  const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
-
+  
   const handleNext = async (superInvites: number) => {
     navigation.navigate(IOPath as never);
     setLoadingPurchasing(false);
@@ -153,10 +161,10 @@ const SuperInvitePay: FC = (): JSX.Element => {
     navigation.goBack();
   };
 
-  const pay = async (pack: PurchasesPackage, superInvites: number) => {
+  const pay = async (pack: PurchasesPackage, superInvites: number, price: string) => {
     try {
       const {customerInfo} = await Purchases.purchasePackage(pack);
-      updateSuperInvites(superInvites);
+      updateSuperInvites(superInvites, price);
       // console.log('pay successful');
     } catch (e) {
       setLoadingPurchasing(false);
@@ -179,17 +187,17 @@ const SuperInvitePay: FC = (): JSX.Element => {
 
         if (activePayment.id === 0) {
           const product = offeringsHostSubscription.availablePackages[0];
-          pay(product, 30);
+          pay(product, 30, activePayment.priceString);
         }
 
         if (activePayment.id === 1) {
           const product = offeringsHostSubscription.availablePackages[1];
-          pay(product, 15);
+          pay(product, 15, activePayment.priceString);
         }
 
         if (activePayment.id === 2) {
           const product = offeringsHostSubscription.availablePackages[2];
-          pay(product, 5);
+          pay(product, 5, activePayment.priceString);
         }
       }
     } catch (e) {

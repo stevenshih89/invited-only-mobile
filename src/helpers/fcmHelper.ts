@@ -26,7 +26,7 @@ export const fcmHelper = async () => {
         fcmToken: newToken,
       });
     } catch (error) {
-      // console.log('error update token', error);
+      console.error('error update token', error);
     }
     await AsyncStorage.setItem('fcmToken', JSON.stringify(newToken));
     // }
@@ -36,7 +36,7 @@ export const fcmHelper = async () => {
     // await AsyncStorage.setItem('fcmToken', JSON.stringify(fcmToken));
     // // console.log('fcmToken', fcmToken);
   } catch (e) {
-    // console.log('error fcm token', e);
+    console.error('error fcm token', e);
   }
 };
 
@@ -64,7 +64,7 @@ export async function registerAppWithFCM() {
         // console.log('registerDeviceForRemoteMessages status', status);
       })
       .catch(error => {
-        // console.log('registerDeviceForRemoteMessages error ', error);
+        console.error('registerDeviceForRemoteMessages error ', error);
       });
   }
 }
@@ -80,7 +80,7 @@ export async function unRegisterAppWithFCM() {
         // console.log('unregisterDeviceForRemoteMessages status', status);
       })
       .catch(error => {
-        // console.log('unregisterDeviceForRemoteMessages error ', error);
+        console.error('unregisterDeviceForRemoteMessages error ', error);
       });
   }
   await messaging().deleteToken();
@@ -95,14 +95,14 @@ export const checkApplicationNotificationPermission = async () => {
   const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    // console.warn('Authorization status:', authStatus);
+    await fcmHelper();
   }
   request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS)
     .then(result => {
       // // console.log('POST_NOTIFICATIONS status:', result);
     })
     .catch(error => {
-      // console.log('POST_NOTIFICATIONS error ', error);
+      console.error('POST_NOTIFICATIONS error ', error);
     });
 };
 

@@ -340,7 +340,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                 style={{width: 50, height: 50, borderRadius: 50}}
                 source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
               />
-              {hostInfo?.online && (
+              {/* {hostInfo?.online && (
                 <View
                   style={{
                     position: 'absolute',
@@ -354,7 +354,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     backgroundColor: lightGreenColor,
                   }}
                 />
-              )}
+              )} */}
             </View>
             <View style={{marginLeft: 10, justifyContent: 'center'}}>
               <View style={{flexDirection: 'row'}}>
@@ -415,7 +415,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                   }}>
                   {hostInfo?.name}
                 </Text>
-                {!isProfile && hostInfo?.showAge && (
+                {/* {!isProfile && hostInfo?.showAge && (
                   <Text
                     style={{
                       color: whiteColor,
@@ -426,8 +426,10 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                     {' ,'}
                     {calculateAge(hostInfo?.date)}
                   </Text>
-                )}
-                <View style={{marginLeft: 8}}>{hostInfo?.accountConfirmed && <CheckStarWhite width={14} height={14} />}</View>
+                )} */}
+                <View style={{marginLeft: 8}}>
+                  <CheckStarWhite width={14} height={14} />
+                </View>
               </View>
             </View>
           </View>
