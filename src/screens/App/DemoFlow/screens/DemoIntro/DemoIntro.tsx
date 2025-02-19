@@ -22,7 +22,7 @@ const DemoIntro: FC = () => {
   const {bottom} = useSafeAreaInsets();
   const navigation = useAppNavigation();
   const {setHintStep, setIsVisibleSwipeGuide, setEvent} = useDemoFlowStore();
-  const {user, setUser} = useUser();
+  const {user} = useUser();
 
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
@@ -78,9 +78,10 @@ const DemoIntro: FC = () => {
     if (user?.uid) {
       try {
         await firestore().collection(apiUserInfoCollection).doc(user?.uid).update({isPassedDemo: true});
-
-        setUser({...user, isPassedDemo: true});
-        navigation.navigate(bottomTabsStackPath as never);
+        navigation.reset({
+          index: 0,
+          routes: [{name: bottomTabsStackPath}],
+        });
       } catch (error) {
         console.error(error);
         logErrorToSentry(error)

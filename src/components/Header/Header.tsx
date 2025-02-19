@@ -55,6 +55,7 @@ import {useDemoFlowStore} from '../../store/demoFlowStore';
 import {Marquee} from '@animatereactnative/marquee';
 import functions from '@react-native-firebase/functions';
 import firebase from '@react-native-firebase/app';
+import {useNotifications} from 'src/store/notificationsStore';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -96,6 +97,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   const navigation = useAppNavigation();
 
   const setChat = useChat((i: any) => i.setActiveEvent);
+  const {notificationsCount} = useNotifications();
 
   const {user: userInfo} = useUser();
 
@@ -667,31 +669,6 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
     }
   };
 
-  const [countNotifications, setCountNotifications] = useState(0);
-
-  const getCountNotifications = () => {
-    try {
-      return firestore()
-      .collection(apiUserInfoCollection)
-      .doc(userInfo?.uid)
-      .collection('notifications')
-      .onSnapshot(querySnapshot => {
-        setCountNotifications(querySnapshot.docs.length);
-      });
-    } catch (error) {
-      logErrorToSentry(error)
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      const unsubscribe = getCountNotifications();
-      if (unsubscribe) {
-        return () => unsubscribe();
-      }
-    }, []),
-  );
-
   return (
     <View style={[styles.container, headerInsets]}>
       {(!userInfo?.accountConfirmed && headerType !== 'profile') ||
@@ -716,7 +693,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
             {badge && (
               <TouchableOpacity onPress={goToNotifications} activeOpacity={0.7} style={{paddingRight: 6}}>
                 <NotificationIcon width={32} height={32} />
-                <Badge value={countNotifications} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
+                <Badge value={notificationsCount} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
               </TouchableOpacity>
             )}
             {headerType === 'profile' && (

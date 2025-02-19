@@ -79,6 +79,7 @@ import DemoIntro from 'screens/App/DemoFlow/screens/DemoIntro/DemoIntro.tsx';
 import DemoEventCreatingHeader from 'screens/App/IO/screens/EventCreating/components/DemoEventCreatingHeader';
 import MarkAttendance from 'screens/App/MyEvents/MarkAttendance';
 import {useUser} from 'src/store/userStore';
+import {useNotifications} from 'src/store/notificationsStore';
 import AdminChat from 'screens/App/Chat/screens/AdminChat';
 import firestore from '@react-native-firebase/firestore';
 import {UserInfo} from 'src/types/userInfo';
@@ -508,7 +509,7 @@ const DemoFlowScreen = () => {
 
 const AppStackScreen = () => {
   const {user, setUser} = useUser();
-
+  const {setNotificationsCount} = useNotifications();
   const initialRouteName =
     user?.uid && user?.accountType === 'host' && user?.accountConfirmed && user?.accountReviewed && !user?.isPassedDemo
       ? demoFlowStackPath
@@ -520,6 +521,8 @@ const AppStackScreen = () => {
     try {
       const currentUser = auth().currentUser;
     let userDataSubscriber: any;
+    let notificationsCountSubscriber: any;
+
     userDataSubscriber = firestore()
       .collection(apiUserInfoCollection)
       .doc(currentUser?.uid)
@@ -530,10 +533,38 @@ const AppStackScreen = () => {
         }
       });
 
+    if (currentUser) {
+      try {
+        userDataSubscriber = firestore()
+          .collection(apiUserInfoCollection)
+          .doc(currentUser?.uid)
+          .onSnapshot(doc => {
+            const newUserData = doc.data() as UserInfo;
+            if (JSON.stringify(user) !== JSON.stringify(newUserData)) {
+              setUser(newUserData);
+            }
+          });
+
+        notificationsCountSubscriber = firestore()
+          .collection(apiUserInfoCollection)
+          .doc(currentUser?.uid)
+          .collection('notifications')
+          .onSnapshot(doc => {
+            setNotificationsCount(doc.size);
+          });
+      } catch (err) {
+        console.error(err);
+      }
+    }
     return () => {
       console.warn('unmount');
 
-      userDataSubscriber();
+      if (userDataSubscriber) {
+        userDataSubscriber();
+      }
+      if (notificationsCountSubscriber) {
+        notificationsCountSubscriber();
+      }
     };
     } catch (error) {
       logErrorToSentry(error);
