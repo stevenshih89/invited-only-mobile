@@ -19,6 +19,7 @@ import FastImage from 'react-native-fast-image';
 import {formatDate} from 'helpers/formatDate';
 import {ACCEPTED_STATUS, LIKED} from 'constants/common';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const EventsRequest = ({item, list}: any) => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -92,6 +93,7 @@ const EventsRequest = ({item, list}: any) => {
     } catch (e) {
       // console.log(e);
       showToast('inviteMatch', '', "There's been an error");
+      logErrorToSentry(e)
     }
   };
 
@@ -109,6 +111,7 @@ const EventsRequest = ({item, list}: any) => {
         requestsList: updateRequestsList,
       });
     } catch (e) {
+      logErrorToSentry(e)
       // console.log(e);
     }
   };
@@ -124,7 +127,9 @@ const EventsRequest = ({item, list}: any) => {
         const currentUserInfo = await firestore().collection(apiUserInfoCollection).doc(currentUserUid).get();
         setCurrentUserName(currentUserInfo.data()?.name);
       } catch (error: any) {
-        Alert.alert('Error', error.message || 'Something went wrong');
+        showToast('inviteMatch', 'Failed to load user information. Please try again.', 'Error');
+        logErrorToSentry(error)
+        // Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
   };

@@ -30,6 +30,7 @@ import analytics from '@react-native-firebase/analytics';
 import {inviteUser, requestsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fetchHostRequests}: any) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -194,6 +195,7 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
     } catch (e) {
       console.error('error invite', e);
       showToast('inviteMatch', '', "There's been an error");
+      logErrorToSentry(e)
     }
   };
 
@@ -214,6 +216,7 @@ const ItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fet
     } catch (e) {
       console.error(e);
       showToast('inviteMatch', '', "There's been an error");
+      logErrorToSentry(e);
     }
   };
 

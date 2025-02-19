@@ -11,6 +11,7 @@ import {Satoshi500, Satoshi700} from 'constants/fonts';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const ModalLimitedAccess: FC<{
   wrapperStyle?: StyleProp<ViewStyle>;
@@ -31,7 +32,7 @@ const ModalLimitedAccess: FC<{
         setUser({...user, isPassedDemo: true});
         navigation.navigate(paymentPath as never);
       } catch (error) {
-        console.error(error);
+        logErrorToSentry(error)
       }
     }
   };
@@ -46,6 +47,7 @@ const ModalLimitedAccess: FC<{
           routes: [{name: bottomTabsStackPath}],
         });
       } catch (error) {
+        logErrorToSentry(error)
         console.error(error);
       }
     }

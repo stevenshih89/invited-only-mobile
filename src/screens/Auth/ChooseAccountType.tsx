@@ -37,6 +37,7 @@ import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const ChooseAccountType: FC = (): JSX.Element => {
   const HOST = 'host';
@@ -69,6 +70,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
         });
       } catch (e) {
         console.error(e);
+        logErrorToSentry(e)
       }
     };
 

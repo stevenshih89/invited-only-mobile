@@ -12,6 +12,8 @@ import {profilePath, tutorialFlowPath} from 'constants/pathLocations.ts';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Config from 'react-native-config';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 interface LoaderProps {
   isVisible: boolean;
   setVsibleHostPremium: any;
@@ -36,9 +38,14 @@ const HostPremium: FC<LoaderProps> = ({isVisible, setVsibleHostPremium, screen})
   const getUserInfo = async () => {
     const userId = auth().currentUser?.uid;
     if (userId) {
-      const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(userId).get();
-      if (userInfoDoc.exists) {
-        setUserInfo(userInfoDoc.data());
+      try {
+        const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(userId).get();
+        if (userInfoDoc.exists) {
+          setUserInfo(userInfoDoc.data());
+        }
+      } catch (error) {
+        showToast('inviteMatch', 'An error occurred while retrieving your information. Please try again later.', 'Error');
+        logErrorToSentry(error);
       }
     }
   };

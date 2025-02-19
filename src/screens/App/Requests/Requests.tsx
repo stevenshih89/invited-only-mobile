@@ -35,6 +35,7 @@ import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import Loading from 'components/Loading/Loading';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const Requests: FC = (): ReactElement => {
   const COUNT_TO_ADD_REQUEST_ITEMS = 2;
@@ -198,21 +199,29 @@ const Requests: FC = (): ReactElement => {
           setLoadingRequestItems(false);
           return;
         }
-        subcribeHostRequests = firestore()
+        try {
+          subcribeHostRequests = firestore()
           .collection(apiEventsCollection)
           .doc(activeEvent?.id)
           .onSnapshot(querySnapshot => {
             fetchHostRequests(querySnapshot);
           });
+        } catch (error) {
+          logErrorToSentry(error)
+        }
       }
       if (!isHost) {
-        subcribeGuestRequests = firestore()
+        try {
+          subcribeGuestRequests = firestore()
           .collection(apiEventsCollection)
           .where('statusEvent', '==', true)
           .where('isCancelled', '==', false)
           .onSnapshot(querySnapshot => {
             fetchGuestRequests(querySnapshot);
           });
+        } catch (error) {
+          logErrorToSentry(error)
+        }
       }
 
       return () => {

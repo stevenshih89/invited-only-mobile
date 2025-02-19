@@ -23,6 +23,7 @@ import {showToast} from 'helpers/showToast';
 import FastImage from 'react-native-fast-image';
 import Config from 'react-native-config';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface Notifications {
   body: string;
@@ -74,9 +75,13 @@ const Notifications: FC = (): ReactElement => {
 
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const fetchImage = async (uid: string): Promise<string> => {
-    const dataDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-    const photoUri = dataDoc?.data()?.photos?.[0]?.image || '';
-    return photoUri;
+    try {
+      const dataDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+      const photoUri = dataDoc?.data()?.photos?.[0]?.image || '';
+      return photoUri;
+    } catch (error) {
+      logErrorToSentry(error)
+    }
   };
 
   const fetchNotifications = async (uid: string): Promise<Notifications[]> => {
@@ -100,6 +105,7 @@ const Notifications: FC = (): ReactElement => {
       );
       return notificationsWithImages;
     } catch (error) {
+      logErrorToSentry(error);
       console.error('Error fetching notifications:', error);
     } finally {
       setLoading(false);
@@ -108,7 +114,8 @@ const Notifications: FC = (): ReactElement => {
   };
 
   const clearNotifications = async (uid: string): Promise<void> => {
-    await firestore()
+    try {
+      await firestore()
       .collection(apiUserInfoCollection)
       .doc(uid)
       .collection('notifications')
@@ -118,6 +125,9 @@ const Notifications: FC = (): ReactElement => {
           doc.ref.delete();
         });
       });
+    } catch (error) {
+      logErrorToSentry(error);
+    }
   };
 
   const getNotifications = async () => {

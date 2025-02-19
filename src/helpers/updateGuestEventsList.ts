@@ -1,5 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
+import { logErrorToSentry } from './logErrorsToSentry';
 
 export const updateGuestEventsList = async (eventId: string, forUserUid: string) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -10,5 +11,7 @@ export const updateGuestEventsList = async (eventId: string, forUserUid: string)
     await docData.update({
       eventsListVisit: eventsList ? [...eventsList, eventId] : [eventId],
     });
-  } catch (error) {}
+  } catch (error) {
+    logErrorToSentry(error);
+  }
 };

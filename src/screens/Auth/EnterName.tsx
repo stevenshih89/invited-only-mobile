@@ -18,6 +18,7 @@ import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const EnterName: FC = (): JSX.Element => {
   const [name, setName] = useState<string>('');
@@ -62,6 +63,7 @@ const EnterName: FC = (): JSX.Element => {
         });
       } catch (e) {
         console.error(e);
+        logErrorToSentry(e)
       }
     };
 

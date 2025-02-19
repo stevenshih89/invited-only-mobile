@@ -29,6 +29,7 @@ import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast';
 import {sendNotification} from 'helpers/fcmHelper';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface HostMenu {
   hostMenu?: boolean;
@@ -71,29 +72,40 @@ const ModalHostMenu: FC<HostMenu> = ({
 
   useEffect(() => {
     const getEventData = async () => {
-      const getDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
-      const data = getDoc.data();
-      setEventData(data);
+      try {
+        const getDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
+        const data = getDoc.data();
+        setEventData(data);
+      } catch (error) {
+        showToast('inviteMatch', 'An issue occurred while retrieving event data. Please try again later.', 'Error');
+        logErrorToSentry(error)
+      }
     };
     getEventData();
   }, [eventData]);
 
   const getHostData = async () => {
-    if (!hostUid) {
-      return;
+    try {
+      if (!hostUid) {
+        console.warn('Host UID is missing');
+        return;
+      }
+  
+      const hostQuery = await firestore().collection(apiUserInfoCollection).doc(hostUid).get();
+  
+      if (!hostQuery.exists) {
+        console.warn('Host data not found');
+        return;
+      }
+  
+      const hostData = hostQuery.data();
+      setHostData(hostData);
+    } catch (error) {
+      showToast('inviteMatch', 'An issue occurred while retrieving host data. Please try again later.', 'Error');
+      logErrorToSentry(error);
     }
-    const hostQuery = await firestore().collection(apiUserInfoCollection).doc(hostUid).get();
-    // console.warn('hostQuery', hostQuery.data());
-
-    if (!hostQuery.exists) {
-      return;
-    }
-
-    // console.warn('hostQuery', hostQuery.data());
-
-    const hostData = hostQuery.data();
-    setHostData(hostData);
   };
+  
 
   const goToEventInfo = () => {
     setHostMenu(false);
@@ -129,7 +141,9 @@ const ModalHostMenu: FC<HostMenu> = ({
       if (findUser) {
         setStatus(findUser?.status);
       }
-    } catch (error) {}
+    } catch (error) {
+      logErrorToSentry(error)
+    }
   };
 
   useEffect(() => {
@@ -174,7 +188,10 @@ const ModalHostMenu: FC<HostMenu> = ({
           user,
         );
       }
-    } catch (e) {}
+    } catch (e) {
+      showToast('inviteMatch', 'An issue occurred while updating the status. Please try again later.', 'Error');
+      logErrorToSentry(e);
+    }
   };
 
   const CustomButtonsGuest: FC = () => {

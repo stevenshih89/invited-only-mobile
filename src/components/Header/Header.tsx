@@ -55,6 +55,7 @@ import {useDemoFlowStore} from '../../store/demoFlowStore';
 import {Marquee} from '@animatereactnative/marquee';
 import functions from '@react-native-firebase/functions';
 import firebase from '@react-native-firebase/app';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
   showHeaderTop?: boolean;
@@ -669,13 +670,17 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   const [countNotifications, setCountNotifications] = useState(0);
 
   const getCountNotifications = () => {
-    return firestore()
+    try {
+      return firestore()
       .collection(apiUserInfoCollection)
       .doc(userInfo?.uid)
       .collection('notifications')
       .onSnapshot(querySnapshot => {
         setCountNotifications(querySnapshot.docs.length);
       });
+    } catch (error) {
+      logErrorToSentry(error)
+    }
   };
 
   useFocusEffect(

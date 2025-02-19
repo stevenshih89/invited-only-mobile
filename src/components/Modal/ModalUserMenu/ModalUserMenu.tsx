@@ -26,6 +26,7 @@ import {sendNotification} from 'helpers/fcmHelper';
 import ModalReport from '../ModalReport/ModalReport';
 import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 interface ModalUserMenuProps {
   isModalVisible: boolean;
   setModalVisible: boolean | any;
@@ -90,7 +91,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         setEventData(data);
       }
     } catch (e) {
-      // console.log(e);
+      showToast('inviteMatch', 'An error occurred while fetching the event data. Please try again later.', 'Error');
+      logErrorToSentry(e);
     }
   };
 
@@ -142,6 +144,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         await sendNotification(uid, 'Request approved', 'Please confirm your attendence', 'Approve', 'Approved'.toUpperCase(), user);
       }
     } catch (e) {
+      showToast('inviteMatch', 'An error occurred while approving the guest. Please try again later.', 'Error');
+      logErrorToSentry(e);
       // console.log(e);
     }
   };
@@ -215,6 +219,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       }
     } catch (e) {
       console.log('error update status guest', e);
+      showToast('inviteMatch', 'An error occurred while updating the guest status. Please try again later.', 'Error');
+      logErrorToSentry(e)
     }
   };
 
@@ -230,6 +236,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       showToast('inviteMatch', `${title} was removed!`);
       navigation.goBack();
     } catch (e) {
+      showToast('inviteMatch', 'An error occurred while deleting the chat. Please try again later.', 'Error');
+      logErrorToSentry(e);
       console.error('error delete chat', e);
     }
   };
@@ -281,6 +289,8 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       }
     } catch (e) {
       // console.log(e);
+      showToast('inviteMatch', 'An error occurred while accepting the invitation. Please try again later.', 'Error');
+      logErrorToSentry(e);
     }
   };
   const getUserStatusButtonText = () => {

@@ -25,6 +25,7 @@ import firebase from '@react-native-firebase/firestore';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import LinearGradient from 'react-native-linear-gradient';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -46,7 +47,8 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   const onAuthStateChanged = async (user: any) => {
     console.log(user);
     if (user) {
-      const userData = await firebase().collection(apiUserInfoCollection).doc(user.uid).get();
+      try {
+        const userData = await firebase().collection(apiUserInfoCollection).doc(user.uid).get();
 
       console.log("userData: ", userData)
 
@@ -55,6 +57,9 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
         // // console.warn('user: ', user);
       } else {
         setNextRoute(chooseAccountTypePath);
+      }
+      } catch (error) {
+        logErrorToSentry(error)
       }
       // console.warn('user123: ', user);
     } else {

@@ -16,6 +16,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {screenHeight} from 'constants/common';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const EarlyAccess = () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -41,7 +42,9 @@ const EarlyAccess = () => {
         }
       } catch (error: any) {
         setLoadingUser(false);
-        Alert.alert('Error', error.message || 'Something went wrong');
+        showToast('inviteMatch', 'Something went wrong. Please try again.', 'Error');
+        logErrorToSentry(error)
+        // Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
     setLoadingUser(false);

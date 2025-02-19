@@ -18,6 +18,7 @@ import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 interface ModalReportProps {
   modalReport?: boolean;
   setModalReport?: any;
@@ -31,6 +32,7 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
+
   const handleSendReport = async (typeReport: string): Promise<void> => {
     const infoUserUidDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
     const infoUserUidSenderDoc = await firestore().collection(apiUserInfoCollection).doc(uidSender).get();
@@ -121,7 +123,8 @@ const ModalReport: FC<ModalReportProps> = ({modalReport, setModalReport, uidSend
       });
       setModalReport(false);
     } catch (e) {
-      showToast('inviteMatch', '', 'Error!');
+      showToast('inviteMatch', 'Something went wrong while processing your report. Please try again later.', 'Error');
+      logErrorToSentry(e);
     }
   };
 

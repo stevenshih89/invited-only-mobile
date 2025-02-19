@@ -19,6 +19,7 @@ import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
 import firestore from '@react-native-firebase/firestore';
 import {UserInfo} from 'src/types/userInfo';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 const TutorialsFlow: FC = (): JSX.Element => {
   const [active, setActive] = useState<number>(0);
 
@@ -90,6 +91,7 @@ const TutorialsFlow: FC = (): JSX.Element => {
       }
     } catch (err) {
       console.error(err);
+      logErrorToSentry(err);
     }
   };
 

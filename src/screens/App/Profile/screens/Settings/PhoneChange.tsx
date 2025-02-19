@@ -26,6 +26,8 @@ import {CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell} from 'react-na
 import {TextInput} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const PhoneChange = () => {
   const [mobilePhone, setMobilePhone] = useState<string>('');
@@ -116,7 +118,9 @@ const PhoneChange = () => {
         });
       setLoading(false);
     } catch (error) {
-      Alert.alert('Error', 'Something went wrong');
+      // Alert.alert('Error', 'Something went wrong');
+      showToast('inviteMatch', 'Failed to update phone number. Please try again.', 'Error')
+      logErrorToSentry(error);
       setLoading(false);
     }
   };

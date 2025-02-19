@@ -26,6 +26,7 @@ import {sendNotification} from 'helpers/fcmHelper.ts';
 import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common.ts';
 import {Event} from 'src/types/event.ts';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry.ts';
 
 interface ModalUserProfileEventProps {
   isModalVisible?: boolean;
@@ -83,9 +84,14 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     }
   };
   const getUserInfo = async () => {
-    const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-    if (userInfoDoc.exists) {
-      setUserInfo(userInfoDoc.data());
+    try {
+      const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+      if (userInfoDoc.exists) {
+        setUserInfo(userInfoDoc.data());
+      }
+    } catch (error) {
+      showToast('inviteMatch', 'An error occurred while fetching user information. Please try again later.', 'Error');
+      logErrorToSentry(error)
     }
   };
 
@@ -179,6 +185,8 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       }
     } catch (e) {
       console.log('error update status guest', e);
+      showToast('inviteMatch', 'An error occurred while updating the guest status. Please try again later.', 'Error');
+      logErrorToSentry(e);
     }
   };
 
@@ -304,12 +312,14 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
       }
     } catch (e) {
       // console.log(e);
-      showToast('inviteMatch', '', 'Error!');
+      showToast('inviteMatch', 'An error occurred while creating the chat. Please try again later.', 'Error!');
+      logErrorToSentry(e)
     }
   };
 
   const updateChatDocument = async () => {
-    const chatQuery = await firestore().collection(apiMessagesCollection).doc(list?.id).get();
+    try {
+      const chatQuery = await firestore().collection(apiMessagesCollection).doc(list?.id).get();
     if (!chatQuery.exists) {
       return;
     }
@@ -327,10 +337,15 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     await firestore().collection(apiMessagesCollection).doc(list?.id).update({
       chats: updatedChatList,
     });
+    } catch (error) {
+      showToast('inviteMatch', 'An error occurred while updating the chat. Please try again later.', 'Error');
+      logErrorToSentry(error);
+    }
   };
 
   const updateEventDocument = async () => {
-    const eventQuery = await firestore().collection(apiEventsCollection).doc(list?.id).get();
+    try {
+      const eventQuery = await firestore().collection(apiEventsCollection).doc(list?.id).get();
     if (!eventQuery.exists) {
       return;
     }
@@ -348,6 +363,9 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     await firestore().collection(apiEventsCollection).doc(list?.id).update({
       usersList: updatedUsersList,
     });
+    } catch (error) {
+      showToast('inviteMatch', 'An error occurred while updating the event. Please try again later.', 'Error');
+    }
   };
 
   const handleApproveGuestFromHost = async () => {
@@ -373,7 +391,10 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
           status: 'GUEST APPROVED',
         });
       }
-    } catch (e) {}
+    } catch (e) {
+      showToast('inviteMatch', 'An error occurred while approving the guest', 'Error');
+      logErrorToSentry(e)
+    }
   };
 
   const getUserStatusButtonText = () => {

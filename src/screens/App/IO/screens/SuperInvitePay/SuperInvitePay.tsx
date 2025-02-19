@@ -36,6 +36,7 @@ import {useUser} from 'src/store/userStore';
 import {getUserData} from 'helpers/getUserData';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import moment from 'moment';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface PlanListItem {
   id: number;
@@ -127,7 +128,8 @@ const SuperInvitePay: FC = (): JSX.Element => {
         handleNext(superInvitesCurrent + weeklySuperInvitesCurrent + superInvites);
       } catch (error: any) {
         setLoadingPurchasing(false);
-        showToast('inviteMatch', '', 'Failed to update super invites / joins');
+        showToast('inviteMatch', '', 'Failed to update super invites / joins', 'Error');
+        logErrorToSentry(error)
         // console.log('error updateSuperInvites', error);
       }
     }

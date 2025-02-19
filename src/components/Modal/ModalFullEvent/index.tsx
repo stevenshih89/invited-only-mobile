@@ -18,6 +18,8 @@ import FastImage from 'react-native-fast-image';
 import {useUser} from 'src/store/userStore';
 import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
 import Config from 'react-native-config';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface ModalFullEvent {
   isVisible: boolean;
@@ -51,14 +53,19 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
   const user = useUser((i: any) => i?.user);
 
   const getActiveEventData = async () => {
-    const getEventData = await firestore().collection(apiEventsCollection).doc(idEvent).get();
-    if (!getEventData.exists) {
-      return;
+    try {
+      const getEventData = await firestore().collection(apiEventsCollection).doc(idEvent).get();
+      if (!getEventData.exists) {
+        return;
+      }
+      const data = getEventData.data();
+      setActualActiveEventData(data);
+      setTotalQuantityGuests(data?.male + data?.female);
+      setAcceptQuantityGuest(data?.usersList.filter(item => item.status === ACCEPTED_STATUS).length);
+    } catch (error) {
+      showToast('inviteMatch', 'An issue occurred while retrieving event data. Please try again later.', 'Error');
+      logErrorToSentry(error)
     }
-    const data = getEventData.data();
-    setActualActiveEventData(data);
-    setTotalQuantityGuests(data?.male + data?.female);
-    setAcceptQuantityGuest(data?.usersList.filter(item => item.status === ACCEPTED_STATUS).length);
   };
 
   useFocusEffect(

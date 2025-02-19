@@ -36,6 +36,7 @@ import Config from 'react-native-config';
 // import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import {useUser} from 'src/store/userStore';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const Profile: FC = () => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -183,6 +184,7 @@ const Profile: FC = () => {
       }
       setTotalGuests(totalParticipants);
     } catch (error) {
+      logErrorToSentry(error);
       console.error('error fetching guest list: ', error);
     }
   };
@@ -191,12 +193,16 @@ const Profile: FC = () => {
     useCallback(() => {
       let eventsJoiningSubscriber: any;
       if (!isHost) {
-        eventsJoiningSubscriber = firestore()
+        try {
+          eventsJoiningSubscriber = firestore()
           .collection(apiEventsCollection)
           .onSnapshot(async querySnapshot => {
             const count = await getEventsIJoining(querySnapshot, userInfo?.uid);
             setEventsCount(count);
           });
+        } catch (error) {
+          logErrorToSentry(error);
+        }
       }
       return () => {
         console.warn('unsubscribe 213123');

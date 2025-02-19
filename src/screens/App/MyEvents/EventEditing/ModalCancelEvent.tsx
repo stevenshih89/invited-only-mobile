@@ -15,6 +15,7 @@ import {ACCEPTED_STATUS} from 'constants/common';
 import {sendNotification} from 'helpers/fcmHelper';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined; nameEvent: string}> = ({
   id,
@@ -30,9 +31,13 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
   const userData = useUser((i: any) => i?.user);
 
   const getUsersList = async () => {
-    const eventInfoDoc = await firestore().collection(apiEventsCollection).doc(id).get();
-    const usersList = eventInfoDoc.data()?.usersList;
-    return usersList;
+    try {
+      const eventInfoDoc = await firestore().collection(apiEventsCollection).doc(id).get();
+      const usersList = eventInfoDoc.data()?.usersList;
+      return usersList;
+    } catch (error) {
+      logErrorToSentry(error);
+    }
   };
 
   interface usersListI {
@@ -82,7 +87,8 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
       showToast('inviteMatch', 'Create new event', 'Event cancelled');
       navigation?.goBack();
     } catch (e) {
-      showToast('inviteMatch', '', 'Error!');
+      showToast('inviteMatch', 'Failed to cancel the event. Please try again later.', 'Error');
+      logErrorToSentry(e)
       // console.log('error handleCancelEvent', e);
     }
   };

@@ -3,6 +3,7 @@ import {MatchData} from 'screens/App/IO/screens/Match/Match';
 import {showToast} from './showToast';
 import {INVITE_MATCH_STATUS} from 'constants/common';
 import Config from 'react-native-config';
+import { logErrorToSentry } from './logErrorsToSentry';
 
 export const handleCreateChat = async (matchedData: MatchData) => {
   const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
@@ -67,6 +68,7 @@ export const handleCreateChat = async (matchedData: MatchData) => {
     }
   } catch (e) {
     console.log('error create chat', e);
-    showToast('inviteMatch', '', 'Error!');
+    showToast('inviteMatch', 'An error occurred while creating the chat. Please try again later.', 'Error');
+    logErrorToSentry(e)
   }
 };

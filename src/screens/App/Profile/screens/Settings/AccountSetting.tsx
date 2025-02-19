@@ -15,6 +15,7 @@ import firestore from '@react-native-firebase/firestore';
 import ModalConfirmPhone from './ModalConfirmPhone';
 import {showToast} from 'helpers/showToast';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const AccountSetting: FC = ({navigation, route}: any) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -53,6 +54,8 @@ const AccountSetting: FC = ({navigation, route}: any) => {
             });
         });
     } catch (e) {
+      showToast('inviteMatch', 'Failed to update location. Please try again.', 'Error');
+      logErrorToSentry(e)
       // console.log(e);
     }
   };

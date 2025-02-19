@@ -19,6 +19,7 @@ import {useUser} from 'src/store/userStore';
 import firestore from '@react-native-firebase/firestore';
 import {getEventsIJoining} from 'helpers/getEventsIJoining';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 export const tabBarName = (focused: boolean, route: string): ReactElement => {
   const getLabel = (): string =>
@@ -41,7 +42,8 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
   const [newMessage, setNewMessages] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = firestore()
+    try {
+      const unsubscribe = firestore()
       .collection(apiEventsCollection)
       .onSnapshot(async querySnapshot => {
         const count = await getEventsIJoining(querySnapshot, userHost?.uid);
@@ -49,10 +51,14 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
       });
 
     return () => unsubscribe();
+    } catch (error) {
+      logErrorToSentry(error);
+    }
   }, [userHost]);
 
   useEffect(() => {
-    const unsubscribe = firestore()
+    try {
+      const unsubscribe = firestore()
       .collection(apiMessagesCollection)
       .onSnapshot(async documentSnapshot => {
         if (documentSnapshot.empty) {
@@ -79,11 +85,15 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
       });
 
     return () => unsubscribe();
+    } catch (error) {
+      logErrorToSentry(error);
+    }
   }, [userHost]);
 
   useEffect(() => {
     if (userHost?.uid) {
-      firestore()
+      try {
+        firestore()
         .collection(apiEventsCollection)
         .where('uid', '==', `${userHost?.uid}`)
         .onSnapshot(querySnapshot => {
@@ -94,6 +104,9 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
           const filterEvents = data.filter(item => !item.isCancelled);
           setEventsCountHost(filterEvents.length);
         });
+      } catch (error) {
+        logErrorToSentry(error)
+      }
     }
   }, []);
 

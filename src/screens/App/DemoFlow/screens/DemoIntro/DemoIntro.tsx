@@ -15,6 +15,7 @@ import uuid from 'react-native-uuid';
 import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
 import Loading from 'components/Loading/Loading';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const DemoIntro: FC = () => {
   const styles = useStyles();
@@ -82,6 +83,7 @@ const DemoIntro: FC = () => {
         navigation.navigate(bottomTabsStackPath as never);
       } catch (error) {
         console.error(error);
+        logErrorToSentry(error)
       }
     }
   };

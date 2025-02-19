@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Config from 'react-native-config';
+import { logErrorToSentry } from './logErrorsToSentry';
 
 export type AccountInfoFlyWeight = {
   accountConfirmed: boolean;
@@ -18,7 +19,8 @@ const defaultAccountInfo: AccountInfoFlyWeight = {
 };
 
 export const onUserProfileChangeSubscription = (callback: (info: AccountInfoFlyWeight) => void) => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  try {
+    const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const user = auth().currentUser;
 
   return firestore()
@@ -45,6 +47,9 @@ export const onUserProfileChangeSubscription = (callback: (info: AccountInfoFlyW
         isHost: userInfo?.accountType === 'host' ?? false,
       });
     });
+  } catch (error) {
+    logErrorToSentry(error)
+  }
 };
 
 export const useUserProfileChangeSubscription = (): AccountInfoFlyWeight => {

@@ -23,6 +23,7 @@ import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import {AppEventsLogger} from 'react-native-fbsdk-next';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const InvitationCode: FC = (): JSX.Element => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -80,6 +81,7 @@ const InvitationCode: FC = (): JSX.Element => {
           });
         } catch (e) {
           console.error(e);
+          logErrorToSentry(e);
         }
       };
 
@@ -196,13 +198,15 @@ const InvitationCode: FC = (): JSX.Element => {
       });
     } catch (e) {
       console.error(e);
-      showToast('inviteMatch', '', `${e}`);
+      showToast('inviteMatch', 'Failed to complete registration. Please try again.', 'Error');
       setLoading(false);
+      logErrorToSentry(e);
     }
   };
 
   const handleNext = async () => {
-    const usersRef = firestore().collection(apiUserInfoCollection);
+    try {
+      const usersRef = firestore().collection(apiUserInfoCollection);
     const snapshot = await usersRef.get();
     let userUid = null;
 
@@ -267,6 +271,9 @@ const InvitationCode: FC = (): JSX.Element => {
     } else {
       showToast('inviteMatch', 'Please try anther code', 'The invitation code has already been used', {status: 'error'});
       setInvalidCode(true);
+    }
+    } catch (error) {
+      logErrorToSentry(error)
     }
   };
 

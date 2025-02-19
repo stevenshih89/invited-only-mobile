@@ -1,4 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { showToast } from 'helpers/showToast';
 import Config from 'react-native-config';
 
 export const getUsersForEvent = async ({
@@ -14,7 +16,8 @@ export const getUsersForEvent = async ({
   lastVisible?: any;
   excludeUids: string[];
 }) => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  try {
+    const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
   let query = firestore()
     .collection(apiUserInfoCollection)
@@ -43,5 +46,9 @@ export const getUsersForEvent = async ({
   }
   if (female > 0) {
     return query.where('gender', '==', 'woman').get();
+  }
+  } catch (error) {
+    showToast('inviteMatch', 'An issue occurred while fetching the users for the event. Please try again later.', 'Error');
+    logErrorToSentry(error)
   }
 };

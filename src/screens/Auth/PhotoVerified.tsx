@@ -16,6 +16,7 @@ import moment from 'moment';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import analytics from '@react-native-firebase/analytics';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const PhotoVerified = () => {
   const {onBoarding} = useContext(AuthContext);
@@ -87,6 +88,7 @@ const PhotoVerified = () => {
         });
       } catch (e) {
         console.error(e);
+        logErrorToSentry(e)
       }
     };
 

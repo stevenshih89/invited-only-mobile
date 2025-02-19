@@ -40,6 +40,8 @@ import {pipe} from 'helpers/pipe';
 import {EventContext} from 'contexts/EventContext';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import Config from 'react-native-config';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface MyProfileViewProps {
   isShowEditButton?: boolean;
@@ -97,10 +99,11 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
                 setPhotosList(mappedPhotos);
               }
             } else {
-              Alert.alert('Error', 'No user data found in Firestore');
+              showToast('inviteMatch', 'No user data found', 'Error');
             }
           } catch (error: any) {
-            Alert.alert('Error', error.message || 'Something went wrong');
+            showToast('inviteMatch', 'Failed to fetch user information. Please try again later.', 'Error');
+            logErrorToSentry(error);
           }
           setLoading(false);
         }

@@ -8,6 +8,8 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import firestore from '@react-native-firebase/firestore';
 import {INVITE_MATCH_STATUS} from 'constants/common';
 import Config from 'react-native-config';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface FullEventProps {
   activeEvent: any;
@@ -25,9 +27,14 @@ const FullEvent: FC<FullEventProps> = ({activeEvent, totalRequestsGuests, rightC
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
 
   const getActiveEventData = async () => {
-    const getEventData = (await firestore().collection(apiEventsCollection).doc(activeEvent.id).get()).data();
-    if (getEventData) {
-      setActualActiveEventData(getEventData);
+    try {
+      const getEventData = (await firestore().collection(apiEventsCollection).doc(activeEvent.id).get()).data();
+      if (getEventData) {
+        setActualActiveEventData(getEventData);
+      }
+    } catch (error) {
+      showToast('inviteMatch', 'An issue occurred while fetching the event data. Please try again later.', 'Error');
+      logErrorToSentry(error)
     }
   };
 

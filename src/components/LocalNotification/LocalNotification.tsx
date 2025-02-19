@@ -33,6 +33,8 @@ import {
 import {handleCreateChat} from 'helpers/chat';
 import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const LocalNotification = () => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -98,7 +100,10 @@ const LocalNotification = () => {
               hostUid: params.uidHost,
             },
           });
-        } catch (error) {}
+        } catch (error) {
+          showToast('inviteMatch', 'An issue occurred while creating the chat and retrieving event data. Please try again later.', 'Error');
+          logErrorToSentry(error)
+        }
         break;
       default:
         break;
