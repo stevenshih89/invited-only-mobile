@@ -18,6 +18,8 @@ import firestore from '@react-native-firebase/firestore';
 import {useUser} from '../../../../../store/userStore';
 import Button from 'components/Button/Button';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { showToast } from 'helpers/showToast';
 
 interface ModalAlcoholProps {
   isVisible: boolean;
@@ -57,6 +59,7 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
         setUserInfo(userInfoDoc.data());
       }
     } catch (e) {
+      logErrorToSentry(e)
       // console.log(e);
     }
   };
@@ -73,6 +76,8 @@ const ModalAlcohol: FC<ModalAlcoholProps> = ({
         setUserInfo(userInfoDoc.data());
       }
     } catch (e) {
+      showToast('inviteMatch', 'Failed to update alcohol preference. Please try again.', 'Error');
+      logErrorToSentry(e)
       // console.log(e);
     }
   };

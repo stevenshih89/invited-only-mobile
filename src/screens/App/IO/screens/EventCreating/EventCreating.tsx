@@ -32,6 +32,7 @@ import HintCard from 'components/HintCard';
 import {hostHintSteps} from 'constants/hints.ts';
 import {useDemoFlowStore} from '../../../../../store/demoFlowStore';
 import functions from '@react-native-firebase/functions';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const EventCreating = () => {
   const INVITED_ONLY = 'invitedOnly';
@@ -232,6 +233,8 @@ const EventCreating = () => {
       await sendNotificationAcceptedUser();
       // sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details', 'update');
     } catch (e) {
+      showToast('inviteMatch', 'Something went wrong while updating the event. Please try again later.', 'Error');
+      logErrorToSentry(e)
       console.log('error update event', e);
     }
   };
@@ -254,7 +257,9 @@ const EventCreating = () => {
             }));
             setMyEvents(data);
           } catch (error: any) {
-            Alert.alert('Error', error.message || 'Something went wrong');
+            showToast('inviteMatch', 'Failed to load your events. Please try again later.', 'Error');
+            logErrorToSentry(error);
+            // Alert.alert('Error', error.message || 'Something went wrong');
           }
         }
       };
@@ -395,7 +400,8 @@ const EventCreating = () => {
     } catch (e) {
       setLoading(false);
       setLoaderVisible(false);
-      showToast('inviteMatch', '', `${e}`);
+      showToast('inviteMatch', 'Something went wrong while creating the event. Please try again later.', 'Error');
+      logErrorToSentry(e);
     }
   };
 

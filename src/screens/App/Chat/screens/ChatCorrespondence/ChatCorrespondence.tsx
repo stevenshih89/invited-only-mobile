@@ -33,8 +33,9 @@ import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
 import analytics from '@react-native-firebase/analytics';
 import {chatCorrespondenceScreen} from 'constants/analitycs';
 import Config from 'react-native-config';
-import {showToast} from 'helpers/showToast';
-import {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
+import { showToast } from 'helpers/showToast';
+import { cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface MessageProps {
   message: {
@@ -133,6 +134,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
           screen_name: chatCorrespondenceScreen,
         });
       } catch (e) {
+        showToast('inviteMatch', 'Failed to load user information. Please try again.', 'Error');
+        logErrorToSentry(e)
         console.error(e);
       }
     }
@@ -160,7 +163,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   const handleBack = async () => {
     // console.log('handleBack');
 
-    const doc = firestore().collection(apiMessagesCollection).doc(`${activeEvent}`);
+    try {
+      const doc = firestore().collection(apiMessagesCollection).doc(`${activeEvent}`);
 
     const findChat = allChats?.filter(i => i?.id === id);
 
@@ -178,6 +182,10 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         chats: [...allChats],
       });
       // await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
+    }
+    } catch (error) {
+      showToast('inviteMatch', 'Something went wrong while updating chat data.', 'Error');
+      logErrorToSentry(error);
     }
   };
 
@@ -272,7 +280,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       }
     } catch (e) {
       setIsSending(false);
-      // console.log(e);
+      logErrorToSentry(e);
+//       console.log(e);
     }
   };
 
@@ -349,7 +358,8 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
   );
 
   useEffect(() => {
-    const subscriber = firestore()
+    try {
+      const subscriber = firestore()
       .collection(apiMessagesCollection)
       .doc(activeEvent)
       .onSnapshot(documentSnapshot => {
@@ -363,6 +373,9 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
       });
 
     return () => subscriber();
+    } catch (error) {
+      logErrorToSentry(error);
+    }
   }, [activeEvent]);
 
   const rotationLoader = useSharedValue(0);

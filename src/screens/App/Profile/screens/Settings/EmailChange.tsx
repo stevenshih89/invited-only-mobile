@@ -11,6 +11,7 @@ import {KeyboardAvoidingView} from 'react-native';
 import {isEmailValid} from 'helpers/regExpValidators';
 import {ScreenHeight} from '@rneui/base';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const EmailChange = () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -29,7 +30,8 @@ const EmailChange = () => {
       });
       showToast('inviteMatch', 'Email has been changed', 'Success');
     } catch (error) {
-      showToast('inviteMatch', `${error}`, 'Error');
+      showToast('inviteMatch', 'Failed to update email. Please try again.', 'Error');
+      logErrorToSentry(error)
     }
   };
 

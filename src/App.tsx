@@ -16,6 +16,8 @@ import {Settings} from 'react-native-fbsdk-next';
 import moment from 'moment';
 import Config from 'react-native-config';
 import Bugsnag from '@bugsnag/react-native';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { showToast } from 'helpers/showToast';
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
@@ -103,6 +105,8 @@ const App: FC = (): JSX.Element => {
       console.warn('handleUpdateUserSubscriptions', end - start);
     } catch (e) {
       console.error('handleUpdateUserSubscriptions:error ', e);
+      showToast('inviteMatch', 'Subscription process failed. Please try again later.', 'Error');
+      logErrorToSentry(e);
     }
   };
 

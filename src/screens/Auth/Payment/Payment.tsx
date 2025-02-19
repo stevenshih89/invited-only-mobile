@@ -44,6 +44,7 @@ import analytics from '@react-native-firebase/analytics';
 import {paymentScreen} from 'constants/analitycs';
 import Config from 'react-native-config';
 import {screenHeight, screenWidth} from 'constants/common';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface PlanListItem {
   id: number;
@@ -175,6 +176,7 @@ const Payment: FC = (): JSX.Element => {
           },
         });
       } catch (error: any) {
+        logErrorToSentry(error)
         console.log('error user premium update', error);
       }
     }

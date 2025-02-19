@@ -28,6 +28,7 @@ import {requestsScreen} from 'constants/analitycs';
 import {useNavigation} from '@react-navigation/native';
 import {commonStackPath, eventActiveInfoPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const eventTypes = [
   {id: 0, label: 'Vip Tables'},
@@ -64,6 +65,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
       // console.log('host data', host.data());
     } catch (e) {
       setLoading(false);
+      logErrorToSentry(e)
       // console.log(e);
     }
   };
@@ -182,7 +184,9 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
         await updateJoinEvents();
       } catch (e) {
         // console.log(e);
+
         showToast('inviteMatch', '', "There's been an error");
+        logErrorToSentry(e)
       }
     });
   };
@@ -226,6 +230,7 @@ const ItemRequestGuest: FC = ({list, item, setDataForGuest, handleOpenMatch, ind
     } catch (e) {
       console.error(e);
       showToast('inviteMatch', '', "There's been an error");
+      logErrorToSentry(e)
     }
   };
 

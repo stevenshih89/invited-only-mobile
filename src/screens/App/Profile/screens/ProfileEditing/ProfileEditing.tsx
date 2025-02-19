@@ -24,6 +24,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {profileEditing, profileScreen} from 'constants/analitycs';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 const ProfileEditing: FC = (): ReactElement => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [isVisibleSmokeModal, setIsVisibleSmokeModal] = useState<boolean>(false);
@@ -213,7 +214,8 @@ const ProfileEditing: FC = (): ReactElement => {
         photos: imageUrl,
       });
     } catch (e: any) {
-      Alert.alert('Error', e.message || 'Something went wrong');
+      showToast('inviteMatch', 'Failed to update profile photos. Please try again.', 'Error');
+      logErrorToSentry(e)
       // console.error('Error updating user profile image: ', e);
     }
   };
@@ -315,7 +317,8 @@ const ProfileEditing: FC = (): ReactElement => {
           setTextHomeAdress(documentSnapshot.data()?.homeAddress);
         }
       } catch (error: any) {
-        Alert.alert('Error', error.message || 'Something went wrong');
+        showToast('inviteMatch', 'Failed to load profile data. Please try again.', 'Error');
+        logErrorToSentry(error);
       }
       setInterestsLoading(false);
     }
@@ -465,6 +468,7 @@ const ProfileEditing: FC = (): ReactElement => {
       } catch (error: any) {
         // console.log(error?.message);
         // Alert.alert('Error', error.message || 'Something went wrong');
+        logErrorToSentry(error)
         if (saveField) {
           checkSaveField(saveField, false);
         }

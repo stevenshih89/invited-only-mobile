@@ -40,6 +40,7 @@ import {getUsersListAccepted} from 'helpers/getUsersListAccepted.ts';
 import {useScrollPosition} from 'src/store/scrollPosition/index.ts';
 import {eventTypes} from 'src/mocks/eventTypes.ts';
 import Config from 'react-native-config';
+import {screenHeight} from 'constants/common.ts';
 
 export interface Photo {
   url: string;
@@ -91,6 +92,8 @@ interface TouchingSliderProps {
   setCurrentEventCardPosition: (value: number) => void;
   setScrollPosition: (value: number) => void;
 }
+
+const HEIGHT_CARD = screenHeight < 896? screenHeight * 0.64: screenHeight * 0.66
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
   photos,
@@ -207,11 +210,11 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       showToast('inviteMatch', "You don't have Super Joins", 'Super Join');
     }
   };
-
+  
   return (
     // @ts-ignore
     <FastImage
-      style={[styles.imageStyle, styles.container]}
+      style={[styles.imageStyle, styles.container, {height: HEIGHT_CARD}]}
       source={{
         uri:
           userInfo?.accountType === 'guest'

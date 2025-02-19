@@ -16,6 +16,7 @@ import firestore from '@react-native-firebase/firestore';
 import ModalReplacePhoto from './ModalReplacePhoto';
 import {showToast} from 'helpers/showToast';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface MyPhotosProps {
   images: {id: number; image: string | null}[];
@@ -94,7 +95,8 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
   };
 
   useEffect(() => {
-    const unsubscribe = firestore()
+    try {
+      const unsubscribe = firestore()
       .collection(apiUserInfoCollection)
       .doc(userHost.uid)
       .onSnapshot(docSnapshot => {
@@ -103,6 +105,9 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
         setImages(updatedPhotos);
       });
     return () => unsubscribe();
+    } catch (error) {
+      logErrorToSentry(error)
+    }
   }, []);
 
   const replaceImage = async () => {
@@ -130,6 +135,7 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
         showToast('inviteMatch', 'Image successfully replaced', 'Success');
       } catch (error) {
         console.log('error replace photo', error);
+        logErrorToSentry(error)
         setVisibleModalReplace(false);
         setActiveImage(0);
         setSelectImage(0);

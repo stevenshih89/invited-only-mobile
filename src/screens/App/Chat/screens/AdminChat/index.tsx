@@ -23,6 +23,8 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
 import Config from 'react-native-config';
 import FastImage from 'react-native-fast-image';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface MessageProps {
   message: {
@@ -33,6 +35,11 @@ interface MessageProps {
       avatar: any;
     };
   };
+}
+
+const timeToUnixTimestamp = (timestamp: {_seconds: number, _nanoseconds: number} )  => {
+  return (timestamp._seconds + (timestamp._nanoseconds/1000000000) *1000) * 1000
+
 }
 
 interface NavigationParams {
@@ -81,7 +88,8 @@ const AdminChat: FC<NavigationParams> = () => {
   };
 
   const getChatData = async () => {
-    const chatDataQuery = await firestore().collection(apiAdminChatsCollection).doc(chatId).get();
+    try {
+      const chatDataQuery = await firestore().collection(apiAdminChatsCollection).doc(chatId).get();
 
     if (chatDataQuery.exists) {
       const chatDataRes = chatDataQuery.data();
@@ -95,6 +103,10 @@ const AdminChat: FC<NavigationParams> = () => {
           });
         }
       }
+    }
+    } catch (error) {
+      showToast('inviteMatch', 'An error occurred while retrieving chat data. Please try again later.', 'Error');
+      logErrorToSentry(error);
     }
   };
 
@@ -110,6 +122,7 @@ const AdminChat: FC<NavigationParams> = () => {
       await firestore().collection(apiAdminChatsCollection).doc(chatId).update(data);
     } catch (err) {
       console.error(err);
+      logErrorToSentry(err);
     }
   };
 
@@ -126,13 +139,19 @@ const AdminChat: FC<NavigationParams> = () => {
           .collection('messages')
           .orderBy('timestamp', 'asc')
           .onSnapshot(querySnapshot => {
-            const data = querySnapshot.docs.map(doc => doc.data());
+            const data = querySnapshot.docs.map(doc => {
+              return {
+                ...doc.data(),
+                timestamp: doc.data().timestamp ? timeToUnixTimestamp(doc.data().timestamp) : null, // Convert timestamp if it exists
+              };
+            });
             if (!querySnapshot.empty) {
               setMessages(data);
             }
           });
       } catch (err) {
         console.error(err);
+        logErrorToSentry(err);
       }
     }
 
@@ -143,31 +162,36 @@ const AdminChat: FC<NavigationParams> = () => {
   }, [chatId]);
 
   const handleSendMessage = async () => {
-    if (!messageText || !chatId) {
-      return;
+    try {
+      if (!messageText || !chatId) {
+        return;
+      }
+      const data = {
+        message: messageText,
+        timestamp: firestore.FieldValue.serverTimestamp(),
+        senderUid: userData?.uid,
+      };
+  
+      const newChatData: any = {
+        lastMessage: messageText,
+        lastMessageTimestamp: firestore.FieldValue.serverTimestamp(),
+        lastMessageSenderUid: userData?.uid,
+      };
+  
+      if (userData?.isInvitedOnlyAdmin) {
+        newChatData.lastSeenAdminTimestamp = firestore.FieldValue.serverTimestamp();
+      } else {
+        newChatData.lastSeenUserTimestamp = firestore.FieldValue.serverTimestamp();
+      }
+  
+      await firestore().collection(apiAdminChatsCollection).doc(chatId).update(newChatData);
+      await firestore().collection(apiAdminChatsCollection).doc(chatId).collection('messages').add(data);
+  
+      setMessageText('');
+    } catch (error) {
+      showToast('inviteMatch', 'An error occurred while sending the message. Please try again later.', 'Error');
+      logErrorToSentry(error);
     }
-    const data = {
-      message: messageText,
-      timestamp: firestore.FieldValue.serverTimestamp(),
-      senderUid: userData?.uid,
-    };
-
-    const newChatData: any = {
-      lastMessage: messageText,
-      lastMessageTimestamp: firestore.FieldValue.serverTimestamp(),
-      lastMessageSenderUid: userData?.uid,
-    };
-
-    if (userData?.isInvitedOnlyAdmin) {
-      newChatData.lastSeenAdminTimestamp = firestore.FieldValue.serverTimestamp();
-    } else {
-      newChatData.lastSeenUserTimestamp = firestore.FieldValue.serverTimestamp();
-    }
-
-    await firestore().collection(apiAdminChatsCollection).doc(chatId).update(newChatData);
-    await firestore().collection(apiAdminChatsCollection).doc(chatId).collection('messages').add(data);
-
-    setMessageText('');
   };
 
   const getFormattedTime = timestamp => {

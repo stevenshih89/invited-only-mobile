@@ -8,6 +8,7 @@ import ModalTurnOffNotifications from './ModalTurnOffNotifications';
 import firestore from '@react-native-firebase/firestore';
 import {useUser} from '../../../../../store/userStore';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const NotificationSetting: FC = ({navigation, route}: any) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -38,7 +39,8 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
       setSuperJoin(val);
       setMatch(val);
 
-      await firestore()
+      try {
+        await firestore()
         .collection(apiUserInfoCollection)
         .doc(uid)
         .update({
@@ -61,6 +63,9 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
               setUser(res.data());
             });
         });
+      } catch (error) {
+        logErrorToSentry(error);
+      }
     } else {
       setIsVisibleTurnOffNotificationsModal(true);
     }

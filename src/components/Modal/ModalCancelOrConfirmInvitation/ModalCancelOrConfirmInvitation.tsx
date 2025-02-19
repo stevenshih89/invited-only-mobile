@@ -13,6 +13,7 @@ import {showToast} from 'helpers/showToast.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {requestsPath} from 'constants/pathLocations.ts';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 interface ModalCancelInvitationProps {
   cancelInvitation?: boolean;
   setCancelInvitation?: any;
@@ -61,6 +62,8 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
       showToast('inviteMatch', 'You cancelled invitation');
     } catch (error) {
       console.log('error unmatch', error);
+      showToast('inviteMatch', 'An issue occurred while processing the event. Please try again later.', 'Error');
+      logErrorToSentry(error)
     }
   };
 

@@ -21,7 +21,7 @@ import ThreeDoths from 'assets/images/icons/more-white.svg';
 import ChatIcon from 'assets/images/tab-bar/chat-active.svg';
 import IOIcon from 'assets/images/icons/io-logo.svg';
 import Button from 'components/Button/Button.tsx';
-import {backgroundColor, blackColor, grayScale700, lightGray2Color, whiteColor} from 'constants/colors';
+import {blackColor, grayScale700, whiteColor} from 'constants/colors';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import {useFocusEffect} from '@react-navigation/native';
 import {useUser} from 'src/store/userStore';
@@ -44,6 +44,8 @@ import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, wit
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import Input from 'components/Inputs/Input';
 import Loading from 'components/Loading/Loading';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 type ItemProps = {
   title: string;
@@ -236,6 +238,8 @@ const Chat: FC<ChatProps> = () => {
             setLoadingAdminChatsWithUsers(false);
           });
       } catch (error) {
+        showToast('inviteMatch', 'An error occurred while loading chats. Please try again later.', 'Error');
+        logErrorToSentry(error);
         console.error(error);
       }
     }
@@ -282,6 +286,8 @@ const Chat: FC<ChatProps> = () => {
             }
           });
       } catch (error) {
+        showToast('inviteMatch', 'An error occurred while loading chat with the admin. Please try again later.', 'Error');
+        logErrorToSentry(error);
         console.error(error);
       }
     }
@@ -310,13 +316,18 @@ const Chat: FC<ChatProps> = () => {
   });
 
   const fetchEventData = async () => {
-    setLoading(true);
-    const eventDataDoc = await firestore().collection(apiEventsCollection).doc(activeEvent?.id).get();
-    if (eventDataDoc.exists) {
-      const data = eventDataDoc.data();
-      setEventData(data);
+    try {
+      setLoading(true);
+      const eventDataDoc = await firestore().collection(apiEventsCollection).doc(activeEvent?.id).get();
+      if (eventDataDoc.exists) {
+        const data = eventDataDoc.data();
+        setEventData(data);
+      }
+      setLoading(false);
+    } catch (error) {
+      showToast('inviteMatch', 'An error occurred while fetching the event data. Please try again later.', 'Error');
+      logErrorToSentry(error);
     }
-    setLoading(false);
   };
 
   useFocusEffect(
@@ -590,7 +601,8 @@ const Chat: FC<ChatProps> = () => {
       let hostSubscriber: any;
       let guestSubscriber: any;
       if (isHost) {
-        hostSubscriber = firestore()
+        try {
+          hostSubscriber = firestore()
           .collection(apiMessagesCollection)
           .doc(activeEvent?.id)
           .onSnapshot(async documentSnapshot => {
@@ -615,8 +627,13 @@ const Chat: FC<ChatProps> = () => {
             setMessages({...data, chats: mappedMessagesData});
             setLoadingChats(false);
           });
+        } catch (error) {
+          showToast('inviteMatch', 'An error occurred while fetching chat messages. Please try again later.', 'Error');
+          logErrorToSentry(error);
+        }
       } else {
-        guestSubscriber = firestore()
+        try {
+          guestSubscriber = firestore()
           .collection(apiMessagesCollection)
           .onSnapshot(async documentSnapshot => {
             if (documentSnapshot.empty) {
@@ -682,6 +699,10 @@ const Chat: FC<ChatProps> = () => {
             setDATAEventsJoining(filteredDataEvents);
             setLoadingChats(false);
           });
+        } catch (error) {
+          showToast('inviteMatch', 'An error occurred while fetching chats. Please try again later.', 'Error');
+          logErrorToSentry(error);
+        }
       }
 
       return () => {
@@ -690,6 +711,9 @@ const Chat: FC<ChatProps> = () => {
       };
     }, [activeEvent?.id, loading, activeEventDate]),
   );
+
+  console.log(loadingChats);
+  
 
   if (loadingChats) {
     return (
@@ -944,6 +968,7 @@ const Chat: FC<ChatProps> = () => {
         <View style={{flex: 1}}>
           <FlatList
             showsVerticalScrollIndicator={false}
+            // @ts-ignore
             data={messages?.chats}
             contentContainerStyle={{flexGrow: 1}}
             ListEmptyComponent={() => (
@@ -995,6 +1020,7 @@ const Chat: FC<ChatProps> = () => {
             renderItem={({item}) => {
               return (
                 <ItemEventsJoining
+                  // @ts-ignore
                   image={item.image}
                   title={item.title}
                   chats={item.chats}

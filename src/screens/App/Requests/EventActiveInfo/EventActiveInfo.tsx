@@ -23,6 +23,7 @@ import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import {useUser} from 'src/store/userStore';
 import {getUserData} from 'helpers/getUserData';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -71,7 +72,8 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
 
   useFocusEffect(
     useCallback(() => {
-      const unsubscribe = firestore()
+      try {
+        const unsubscribe = firestore()
         .collection(apiEventsCollection)
         .doc(id)
         .onSnapshot(async querySnapshot => {
@@ -92,6 +94,9 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
         });
 
       return () => unsubscribe();
+      } catch (error) {
+        logErrorToSentry(error)
+      }
     }, [list]),
   );
 

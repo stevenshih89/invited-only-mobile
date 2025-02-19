@@ -18,6 +18,8 @@ import firestore from '@react-native-firebase/firestore';
 import {useUser} from '../../../../../store/userStore';
 import Button from 'components/Button/Button';
 import Config from 'react-native-config';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface ModalGenderProps {
   isVisible: boolean;
@@ -57,6 +59,8 @@ const ModalGender: FC<ModalGenderProps> = ({
         setUserInfo(userInfoDoc.data());
       }
     } catch (e) {
+      showToast('inviteMatch', 'Failed to update your gender visibility in the profile. Please try again.', 'Error');
+      logErrorToSentry(e)
       // console.log(e);
     }
   };
@@ -74,6 +78,8 @@ const ModalGender: FC<ModalGenderProps> = ({
         setUserInfo(userInfoDoc.data());
       }
     } catch (e) {
+      showToast('inviteMatch', 'Failed to update your gender in the profile. Please try again.', 'Error');
+      logErrorToSentry(e)
       // console.log(e);
     }
   };

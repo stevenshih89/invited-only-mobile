@@ -16,6 +16,7 @@ import {UserInfo} from 'src/types/userInfo';
 import {calculateAge} from 'helpers/calculateAge';
 import CheckBox from '@react-native-community/checkbox';
 import moment from 'moment';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface MarkUser extends Event.User {
   isPresentMarkedByHost?: boolean;
@@ -116,6 +117,7 @@ const MarkAttendance = () => {
       navigation.goBack();
     } catch (error) {
       console.error(error);
+      logErrorToSentry(error);
     } finally {
       setLoadingSubmit(false);
     }

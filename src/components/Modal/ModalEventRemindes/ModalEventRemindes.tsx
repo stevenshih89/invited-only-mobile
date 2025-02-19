@@ -27,6 +27,7 @@ import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface HostI {
   name: string;
@@ -112,6 +113,8 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
       setPhotoUser(photo);
       setIsPremium(userInfoDoc?.data()?.accountPremium);
     } catch (error) {
+      showToast('inviteMatch', 'An issue occurred while fetching user data. Please try again later', 'Error');
+      logErrorToSentry(error);
       // console.log('error get user info', error);
     }
   };
@@ -236,6 +239,8 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             dateNewViewed: [...dateNewViewed, userUid],
           });
       } catch (error) {
+        showToast('inviteMatch', 'An issue occurred while updating the event data. Please try again later.', 'Error');
+        logErrorToSentry(error)
         // console.log('error update dateNewViewed', error);
       }
     }
@@ -248,6 +253,8 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             hourNewViewed: [...hourNewViewed, userUid],
           });
       } catch (error) {
+        showToast('inviteMatch', 'An issue occurred while updating the event data. Please try again later.', 'Error');
+        logErrorToSentry(error)
         // console.log('error update hourNewViewed', error);
       }
     }
@@ -260,6 +267,8 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             nameNewViewed: [...nameNewViewed, userUid],
           });
       } catch (error) {
+        showToast('inviteMatch', 'An issue occurred while updating the event data. Please try again later.', 'Error');
+        logErrorToSentry(error)
         // console.log('error update nameNewViewed', error);
       }
     }

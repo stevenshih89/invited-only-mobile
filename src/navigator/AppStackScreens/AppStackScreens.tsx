@@ -85,6 +85,7 @@ import firestore from '@react-native-firebase/firestore';
 import {UserInfo} from 'src/types/userInfo';
 import Config from 'react-native-config';
 import auth from '@react-native-firebase/auth';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -517,7 +518,8 @@ const AppStackScreen = () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
   useEffect(() => {
-    const currentUser = auth().currentUser;
+    try {
+      const currentUser = auth().currentUser;
     let userDataSubscriber: any;
     let notificationsCountSubscriber: any;
 
@@ -564,6 +566,9 @@ const AppStackScreen = () => {
         notificationsCountSubscriber();
       }
     };
+    } catch (error) {
+      logErrorToSentry(error);
+    }
   }, []);
 
   return (

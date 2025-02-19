@@ -13,6 +13,7 @@ import {Satoshi400, Satoshi500} from 'constants/fonts';
 import Button from 'components/Button/Button';
 import {screenHeight} from 'constants/common';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const JoinEvents: FC = (): ReactElement => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -43,6 +44,7 @@ const JoinEvents: FC = (): ReactElement => {
 
       setRequestsForHost(matchingDocs);
     } catch (error) {
+      logErrorToSentry(error)
       // console.error("error finding documents:", error);
     }
   };

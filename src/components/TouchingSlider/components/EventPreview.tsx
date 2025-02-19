@@ -29,6 +29,7 @@ import {demoFlowStackPath, demoIntroPath, demoIOPath} from 'constants/pathLocati
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {useUser} from '../../../store/userStore';
 import uuid from 'react-native-uuid';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const EventPreview: FC<{
   photos: any;
@@ -123,17 +124,24 @@ const EventPreview: FC<{
         setImagesUser(userImage);
       }
     } catch (error) {
+      showToast('inviteMatch', 'An error occurred while retrieving user photos. Please try again', 'Error');
+      logErrorToSentry(error);
       // console.log('errorGetUserPhotos', error);
     }
   };
 
   const getUsersList = async () => {
-    const eventInfoDoc = await firestore().collection(apiEventsCollection).doc(id).get();
-    if (!eventInfoDoc.exists) {
-      return;
+    try {
+      const eventInfoDoc = await firestore().collection(apiEventsCollection).doc(id).get();
+      if (!eventInfoDoc.exists) {
+        return;
+      }
+      const usersListData = eventInfoDoc.data()?.usersList;
+      setUsersList(usersListData);
+    } catch (error) {
+      showToast('inviteMatch', 'An error occurred while retrieving the user list. Please try again later.');
+      logErrorToSentry(error);
     }
-    const usersListData = eventInfoDoc.data()?.usersList;
-    setUsersList(usersListData);
   };
 
   useFocusEffect(

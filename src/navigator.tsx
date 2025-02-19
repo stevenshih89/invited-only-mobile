@@ -13,6 +13,8 @@ import Config from 'react-native-config';
 import UnderMaintenance from 'screens/App/UnderMaintenance/UnderMaintenance';
 import DeviceInfo from 'react-native-device-info';
 import UpdateAvailable from 'screens/App/UpdateAvailableScreen/UpdateAvailableScreen';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const Navigator = () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -45,24 +47,28 @@ const Navigator = () => {
   const setOnBoarding = useUser((i: any) => i?.setOnBoarding);
 
   const onAuthStateChanged = async (userState: any) => {
-    if (!userState) {
-      setAuthState(false);
-    }
-    const start = new Date().getTime();
-    const uid = userState?._user?.uid;
-    await AsyncStorage.setItem('uid', `${uid}`);
-    await getOnbordingState();
-    const userDataInfo = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-    const end = new Date().getTime();
-    console.warn('onAuthStateChanged', end - start);
-
-    if (userDataInfo.exists) {
-      setAuthState(!!userState);
-      setUserData(userDataInfo.data());
-    }
-    if (initializing) {
-      setUser([`${uid}`]);
-      setInitializing(false);
+    try {
+      if (!userState) {
+        setAuthState(false);
+      }
+      const start = new Date().getTime();
+      const uid = userState?._user?.uid;
+      await AsyncStorage.setItem('uid', `${uid}`);
+      await getOnbordingState();
+      const userDataInfo = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+      const end = new Date().getTime();
+      console.warn('onAuthStateChanged', end - start);
+  
+      if (userDataInfo.exists) {
+        setAuthState(!!userState);
+        setUserData(userDataInfo.data());
+      }
+      if (initializing) {
+        setUser([`${uid}`]);
+        setInitializing(false);
+      }
+    } catch (error) {
+      logErrorToSentry(error);
     }
   };
 
@@ -107,12 +113,14 @@ const Navigator = () => {
         }
       } catch (error) {
         console.error(error);
+        logErrorToSentry(error);
       }
     }
   };
 
   const handleCheckMaintenance = async () => {
-    const currentUser = auth().currentUser;
+    try {
+      const currentUser = auth().currentUser;
     if (!currentUser?.uid) {
       return;
     }
@@ -125,6 +133,9 @@ const Navigator = () => {
       if (data?.isMaintenance) {
         setMaintenanceData(data);
       }
+    }
+    } catch (error) {
+      logErrorToSentry(error)
     }
   };
 
@@ -152,7 +163,8 @@ const Navigator = () => {
   };
 
   const handleCheckAppVersion = async () => {
-    const currentUser = auth().currentUser;
+    try {
+      const currentUser = auth().currentUser;
     if (!currentUser?.uid) {
       return;
     }
@@ -170,6 +182,9 @@ const Navigator = () => {
           setVersionData({...data, showUpdateAvailable: true});
         }
       }
+    }
+    } catch (error) {
+      logErrorToSentry(error)
     }
   };
 

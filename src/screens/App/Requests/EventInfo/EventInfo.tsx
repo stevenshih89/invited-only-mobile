@@ -23,6 +23,7 @@ import {ActivityIndicator} from '@ant-design/react-native';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 const EventInfo = ({navigation, route}: any) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
@@ -39,6 +40,7 @@ const EventInfo = ({navigation, route}: any) => {
       setLoading(false);
     } catch (e) {
       setLoading(false);
+      logErrorToSentry(e);
       // console.log(e);
     }
   };

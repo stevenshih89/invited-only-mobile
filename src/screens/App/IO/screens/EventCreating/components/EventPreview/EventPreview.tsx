@@ -32,6 +32,7 @@ import {Satoshi500} from 'constants/fonts.ts';
 import {Switch} from '@ant-design/react-native';
 import {eventTypes} from 'src/mocks/eventTypes.ts';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry.ts';
 
 interface EventPreviewProps {
   isEditing?: boolean;
@@ -182,6 +183,8 @@ const EventPreview: FC<EventPreviewProps> = ({
       });
       // console.log('Events image updated successfully.');
     } catch (e) {
+      showToast('inviteMatch', 'There was an issue updating the event image. Please try again later.', 'Error');
+      logErrorToSentry(e);
       // console.error('Error updating events image: ', e);
     }
   };
@@ -215,6 +218,8 @@ const EventPreview: FC<EventPreviewProps> = ({
         meetingSpot,
       });
     } catch (e) {
+      showToast('inviteMatch', 'An error occurred while saving your changes. Please try again later.', 'Error');
+      logErrorToSentry(e);
       // console.log(e);
     }
   };
@@ -286,7 +291,8 @@ const EventPreview: FC<EventPreviewProps> = ({
     } catch (e) {
       setLoading(false);
       // console.log(e);
-      showToast('inviteMatch', '', `${e}`);
+      showToast('inviteMatch', 'There was an issue creating the event. Please try again later.', 'Error');
+      logErrorToSentry(e);
     }
   };
 

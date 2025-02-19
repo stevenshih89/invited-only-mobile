@@ -7,6 +7,7 @@ import firestore from '@react-native-firebase/firestore';
 import {showToast} from './showToast';
 import functions from '@react-native-firebase/functions';
 import Config from 'react-native-config';
+import { logErrorToSentry } from './logErrorsToSentry';
 
 export const fcmHelper = async () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -37,6 +38,7 @@ export const fcmHelper = async () => {
     // // console.log('fcmToken', fcmToken);
   } catch (e) {
     console.error('error fcm token', e);
+    logErrorToSentry(e)
   }
 };
 
@@ -223,8 +225,12 @@ export const sendNotification = async (
   };
 
   const getFcmTokenFromUser = async (uid: string) => {
-    const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-    return userInfoDoc.data()?.fcmToken;
+    try {
+      const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+      return userInfoDoc.data()?.fcmToken;
+    } catch (error) {
+      logErrorToSentry(error);
+    }
   };
 
   const token = await getFcmTokenFromUser(forUserUid);
@@ -287,5 +293,6 @@ export const sendNotification = async (
     await firestore().collection(apiUserInfoCollection).doc(forUserUid).collection('notifications').add(notification);
   } catch (error) {
     console.error('error add notification', error);
+    logErrorToSentry(error)
   }
 };

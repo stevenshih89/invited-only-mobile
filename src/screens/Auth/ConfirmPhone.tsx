@@ -26,6 +26,7 @@ import Loader from 'components/Modal/ModalLoader/Loader';
 import LinearGradient from 'react-native-linear-gradient';
 import Config from 'react-native-config';
 import {useFocusEffect} from '@react-navigation/native';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -44,13 +45,13 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
   const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
 
   const onAuthStateChanged = async (user: any) => {
-    console.warn(user);
-
+      console.warn(user);
+    try{
     if (!user?.uid) {
       setNextRoute(chooseAccountTypePath);
       return;
     }
-
+   
     const userData = await firebase().collection(apiUserInfoCollection).doc(user.uid).get();
 
     if (!userData.exists) {
@@ -64,8 +65,12 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
       setNextRoute(chooseAccountTypePath);
       return;
     }
+          setNextRoute(bottomTabsStackPath);
+    } catch(err){
+      logErrorToSentry(err)
+    }
 
-    setNextRoute(bottomTabsStackPath);
+
   };
 
   useEffect(() => {

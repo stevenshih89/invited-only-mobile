@@ -60,6 +60,7 @@ import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import ModalEventRemindersStarting from 'components/Modal/ModalEventRemindersStarting';
 import Loading from 'components/Loading/Loading';
 import {opacity} from 'react-native-reanimated/lib/typescript/Colors';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const MyEvents: FC<any> = ({navigation}) => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -190,9 +191,13 @@ const MyEvents: FC<any> = ({navigation}) => {
   };
 
   const changeStatusReminders = async item => {
-    await firestore().collection('Events').doc(item.id).update({
-      isReminders: true,
-    });
+    try {
+      await firestore().collection('Events').doc(item.id).update({
+        isReminders: true,
+      });
+    } catch (error) {
+      logErrorToSentry(error)
+    }
   };
 
   const checkTimeEvent = item => {
@@ -236,6 +241,7 @@ const MyEvents: FC<any> = ({navigation}) => {
           usersList: [...filteredGuests, updatedUser],
         });
     } catch (error) {
+      logErrorToSentry(error)
       console.error('error updating guest:', error);
     }
   };
@@ -309,7 +315,9 @@ const MyEvents: FC<any> = ({navigation}) => {
       if (hostDoc.exists) {
         setHostInfo(hostDoc.data());
       }
-    } catch (error) {}
+    } catch (error) {
+      logErrorToSentry(error)
+    }
   };
 
   useEffect(() => {
@@ -324,7 +332,8 @@ const MyEvents: FC<any> = ({navigation}) => {
   };
 
   const handleMarkAttendance = async (isPresentMarkedByGuest: boolean) => {
-    const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(eventDataMarkAttendance?.id).get();
+    try {
+      const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(eventDataMarkAttendance?.id).get();
     const eventDataList = eventQuerySnapshot.data();
     const updatedUsersList = eventDataList?.usersList?.map((userItem: Event.User) => {
       if (userItem.uid === userInfo?.uid) {
@@ -336,6 +345,9 @@ const MyEvents: FC<any> = ({navigation}) => {
       usersList: updatedUsersList,
     });
     setIsVisibleMarkAttendance(false);
+    } catch (error) {
+      logErrorToSentry(error)
+    }
   };
 
   const handleCheckEventMarkAttendanceGuest = () => {
@@ -466,6 +478,7 @@ const MyEvents: FC<any> = ({navigation}) => {
       }
       setIsVisibleAcceptInvitationModal(false);
     } catch (e) {
+      logErrorToSentry(e)
       // console.log(e);
     }
   };
@@ -499,7 +512,8 @@ const MyEvents: FC<any> = ({navigation}) => {
         status: 'REJECTED'.toUpperCase(),
       });
     } catch (e) {
-      showToast('inviteMatch', '', 'Error!');
+      showToast('inviteMatch', 'Failed to decline the invitation. Please try again later.', 'Error');
+      logErrorToSentry(e);
       // console.log(e);
     }
   };
@@ -544,7 +558,8 @@ const MyEvents: FC<any> = ({navigation}) => {
         status: 'REJECTED'.toUpperCase(),
       });
     } catch (e) {
-      showToast('inviteMatch', '', 'Error!');
+      showToast('inviteMatch', 'Failed to cancel the invitation. Please try again later.', 'Error');
+      logErrorToSentry(e)
       // console.log(e);
     }
   };
@@ -582,46 +597,50 @@ const MyEvents: FC<any> = ({navigation}) => {
       let myEventsSubscribe: any;
       let eventsJoiningSubscribe: any;
       if (userInfo?.uid) {
+       try {
         myEventsSubscribe = firestore()
-          .collection(apiEventsCollection)
-          .where('uid', '==', `${userInfo?.uid}`)
-          .onSnapshot(querySnapshot => {
-            if (querySnapshot.empty) {
-              setMyEventsData([]);
-              return;
+        .collection(apiEventsCollection)
+        .where('uid', '==', `${userInfo?.uid}`)
+        .onSnapshot(querySnapshot => {
+          if (querySnapshot.empty) {
+            setMyEventsData([]);
+            return;
+          }
+          const data = querySnapshot?.docs?.map(i => i?.data());
+          const oneMonthAgo = moment().subtract(1, 'months');
+          const filterMonth = data.filter(event => {
+            const eventDate = moment(event.date, 'DD.MM.YYYY');
+            return eventDate.isAfter(oneMonthAgo);
+          });
+          const sortedData = filterMonth.sort((a, b) => {
+            if (a.isCancelled && !b.isCancelled) {
+              return 1;
             }
-            const data = querySnapshot?.docs?.map(i => i?.data());
-            const oneMonthAgo = moment().subtract(1, 'months');
-            const filterMonth = data.filter(event => {
-              const eventDate = moment(event.date, 'DD.MM.YYYY');
-              return eventDate.isAfter(oneMonthAgo);
-            });
-            const sortedData = filterMonth.sort((a, b) => {
-              if (a.isCancelled && !b.isCancelled) {
+            if (!a.isCancelled && b.isCancelled) {
+              return -1;
+            }
+
+            if (a?.date && a?.hour && b?.date && b?.hour) {
+              const adjustedDateA = moment(`${a.date}, ${a.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+              const adjustedDateB = moment(`${b.date}, ${b.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+              const now = moment();
+
+              if (adjustedDateA.isBefore(now) && !adjustedDateB.isBefore(now)) {
                 return 1;
               }
-              if (!a.isCancelled && b.isCancelled) {
+              if (!adjustedDateA.isBefore(now) && adjustedDateB.isBefore(now)) {
                 return -1;
               }
+            }
 
-              if (a?.date && a?.hour && b?.date && b?.hour) {
-                const adjustedDateA = moment(`${a.date}, ${a.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-                const adjustedDateB = moment(`${b.date}, ${b.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-                const now = moment();
-
-                if (adjustedDateA.isBefore(now) && !adjustedDateB.isBefore(now)) {
-                  return 1;
-                }
-                if (!adjustedDateA.isBefore(now) && adjustedDateB.isBefore(now)) {
-                  return -1;
-                }
-              }
-
-              return 0;
-            });
-            setMyEventsData(sortedData);
-            setLoadingEvents(false);
+            return 0;
           });
+          setMyEventsData(sortedData);
+          setLoadingEvents(false);
+        });
+       } catch (error) {
+        logErrorToSentry(error)
+       }
       }
 
       eventsJoiningSubscribe = firestore()
@@ -739,6 +758,7 @@ const MyEvents: FC<any> = ({navigation}) => {
           break;
       }
     } catch (e) {
+      logErrorToSentry(e);
       console.log('error update status guest', e);
     }
   };
@@ -1070,7 +1090,7 @@ const MyEvents: FC<any> = ({navigation}) => {
                       {userInfo?.accountConfirmed && (
                         <View style={{marginTop: screenHeight / 6}}>
                           <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 812), marginBottom: 18}}>
-                            Let's create an event
+                            Share a Table or Event
                           </Text>
                           <Text
                             style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), opacity: 0.8, marginBottom: 34}}>

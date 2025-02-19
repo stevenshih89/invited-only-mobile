@@ -29,6 +29,7 @@ import {showToast} from 'helpers/showToast.ts';
 import Match from '../Match/Match';
 import {onMatchNotificationSubscription} from 'helpers/fcmHelper';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const JoinEvents = ({navigation}: any) => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -243,7 +244,9 @@ const JoinEvents = ({navigation}: any) => {
 
       setEvents([...data]);
     } catch (e: any) {
-      Alert.alert('Error', e.message || 'Something went wrong');
+      showToast('inviteMatch', 'Something went wrong. Error get events', 'Error');
+      logErrorToSentry(e)
+      // Alert.alert('Error', e.message || 'Something went wrong');
     }
   };
 
@@ -268,6 +271,8 @@ const JoinEvents = ({navigation}: any) => {
         });
       showToast('inviteMatch', '', 'The invitation has been successfully withdrawn!');
     } catch (e) {
+      showToast('inviteMatch', 'There was an issue with the invitation. Please try again later.', 'Error');
+      logErrorToSentry(e)
       // console.log(e);
     }
   };

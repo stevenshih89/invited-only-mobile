@@ -18,6 +18,7 @@ import {calculateAge} from 'helpers/calculateAge';
 import {Event} from 'src/types/event';
 import LinearGradient from 'react-native-linear-gradient';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 export interface MatchData {
   type?: string;
@@ -59,7 +60,8 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
 
   const handleCloseMatch = async () => {
     onCloseMatch();
-    const messageCollection = await firestore().collection(apiMessagesCollection).doc(matchData?.eventId).get();
+    try {
+      const messageCollection = await firestore().collection(apiMessagesCollection).doc(matchData?.eventId).get();
     const chatCheck = messageCollection?.data()?.chats?.find(i => i?.uid === matchData.uidGuest);
     const chatDataHost = {
       image: chatCheck?.avatar,
@@ -112,6 +114,9 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
       path: 'chat',
       params: isEventHost ? chatDataHost : chatDataGuest,
     });
+    } catch (error) {
+      logErrorToSentry(error)
+    }
   };
 
   const handleCreateChat = async () => {
@@ -248,7 +253,8 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
       }
     } catch (e) {
       // console.log(e);
-      showToast('inviteMatch', '', 'Error!');
+      showToast('inviteMatch', 'There was an issue creating the chat. Please try again later.', 'Error');
+      logErrorToSentry(e)
     }
   };
 
@@ -269,7 +275,8 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
         }
         return user;
       });
-      await firestore().collection(apiEventsCollection).doc(matchData.eventId).update({usersList: updatedUsersList});
+      try {
+        await firestore().collection(apiEventsCollection).doc(matchData.eventId).update({usersList: updatedUsersList});
       if (matchData?.uidGuest) {
         const getDoc = await firestore().collection(apiUserInfoCollection).doc(matchData?.uidGuest).get();
         const docData = getDoc.data();
@@ -287,6 +294,10 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
           ownerPhoto: matchData?.imageUri,
           status: 'GUEST APPROVED',
         });
+      }
+      } catch (error) {
+        showToast('inviteMatch', 'An error occurred while approve guest. Please try again.', 'Error');
+        logErrorToSentry(error);
       }
       onCloseMatch();
     }

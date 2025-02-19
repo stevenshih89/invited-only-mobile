@@ -23,6 +23,8 @@ import {calculateAge} from 'helpers/calculateAge';
 import {eventTypes} from 'src/mocks/eventTypes';
 import {useUser} from 'src/store/userStore';
 import Config from 'react-native-config';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 interface MyEventsCardProps {
   statusEvent: boolean;
   eventReviewed: boolean;
@@ -66,8 +68,13 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
   const [mainImageEvent, setMainImageEvent] = useState('');
 
   const getUserHostInfo = async () => {
-    const getDoc = await firestore().collection(apiUserInfoCollection).doc(item?.uid).get();
-    setUserHostInfo(getDoc.data());
+    try {
+      const getDoc = await firestore().collection(apiUserInfoCollection).doc(item?.uid).get();
+      setUserHostInfo(getDoc.data());
+    } catch (error) {
+      showToast('inviteMatch', 'An issue occurred while fetching the host user information. Please try again later.', 'Error');
+      logErrorToSentry(error)
+    }
   };
 
   const {user} = useUser(state => state);

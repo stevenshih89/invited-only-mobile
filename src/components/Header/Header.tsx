@@ -56,6 +56,7 @@ import {Marquee} from '@animatereactnative/marquee';
 import functions from '@react-native-firebase/functions';
 import firebase from '@react-native-firebase/app';
 import {useNotifications} from 'src/store/notificationsStore';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
   showHeaderTop?: boolean;

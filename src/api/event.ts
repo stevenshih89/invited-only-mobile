@@ -2,6 +2,8 @@ import firestore, {FirebaseFirestoreTypes} from '@react-native-firebase/firestor
 import {EventData} from 'src/types/event';
 import auth from '@react-native-firebase/auth';
 import Config from 'react-native-config';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
 
@@ -34,8 +36,13 @@ export type IOEvent = {
 };
 
 export async function createEvent(uid: string, event: EventData): Promise<boolean> {
-  await firestore().collection(apiEventsCollection).doc(uid).set(event);
-  return true;
+  try {
+    await firestore().collection(apiEventsCollection).doc(uid).set(event);
+    return true;
+  } catch (error) {
+    showToast('inviteMatch', 'An issue occurred while creating the event. Please try again later.', 'Error');
+    logErrorToSentry(error)
+  }
 }
 
 interface GetEventsParams {
@@ -46,7 +53,8 @@ interface GetEventsParams {
 }
 
 export const getEvents = async ({limit = 10, lastVisible, excludeUids, genderFilter}: GetEventsParams) => {
-  const currentUser = auth().currentUser;
+  try {
+    const currentUser = auth().currentUser;
 
   if (!currentUser) {
     throw new Error('User not found');
@@ -73,4 +81,8 @@ export const getEvents = async ({limit = 10, lastVisible, excludeUids, genderFil
   }
 
   return query.limit(limit).get();
+  } catch (error) {
+    showToast('inviteMatch', 'An issue occurred while fetching the events. Please try again later.', 'Error');
+    logErrorToSentry(error)
+  }
 };

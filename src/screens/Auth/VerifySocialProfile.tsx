@@ -32,6 +32,7 @@ import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import {AppEventsLogger} from 'react-native-fbsdk-next';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 interface Social {
   id: number;
   title: string;
@@ -123,6 +124,7 @@ const VerifySocialProfile = () => {
         });
       } catch (e) {
         console.error(e);
+        logErrorToSentry(e);
       }
     };
 
@@ -239,7 +241,8 @@ const VerifySocialProfile = () => {
       });
     } catch (e) {
       console.error(e);
-      showToast('inviteMatch', '', `${e}`);
+      showToast('inviteMatch', 'Failed to complete registration. Please try again.', 'Error');
+      logErrorToSentry(e);
       setLoading(false);
     }
   };

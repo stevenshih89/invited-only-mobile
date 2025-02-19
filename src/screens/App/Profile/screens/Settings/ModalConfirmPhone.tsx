@@ -13,6 +13,7 @@ import {showToast} from 'helpers/showToast';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verificationId: string}> = ({
   isVisible,
@@ -94,6 +95,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
       });
     } catch (e) {
       console.log('error delete', e);
+      logErrorToSentry(e)
     }
   };
 

@@ -94,6 +94,7 @@ import ModalLimitedAccess from 'components/Modal/ModalLimitedAccess/ModalLimited
 import CardsFakeState from 'components/CardsFakeState';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import firebase from '@react-native-firebase/app';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const IO: FC = (): JSX.Element => {
   const CARDS_LOADING_LIMIT = 6;
@@ -234,6 +235,7 @@ const IO: FC = (): JSX.Element => {
         }
       } catch (error) {
         console.log('error update online', error);
+        logErrorToSentry(error);
       }
       setAppState(nextAppState);
     };
@@ -248,28 +250,32 @@ const IO: FC = (): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       let unsubscribeEvent: any;
-      if (!isDemo && activeEvent?.id) {
-        unsubscribeEvent = firestore()
-          .collection(apiEventsCollection)
-          .doc(activeEvent?.id)
-          .onSnapshot(querySnapshot => {
-            if (!querySnapshot.exists) {
-              // dispatch(setActiveEvent({}));
-              return;
-            }
-            const data = querySnapshot.data();
-            const prevEventReviewed = activeEvent?.eventReviewed;
-            const currentEventReviewed = data?.eventReviewed || false;
-            const prevStatusEvent = activeEvent?.statusEvent;
-            const currentStatusEvent = data?.statusEvent || false;
-            if (prevStatusEvent !== currentStatusEvent || prevEventReviewed !== currentEventReviewed) {
-              setActiveEvent({...activeEvent, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent});
-            }
-          });
+      try {
+        if (!isDemo && activeEvent?.id) {
+          unsubscribeEvent = firestore()
+            .collection(apiEventsCollection)
+            .doc(activeEvent?.id)
+            .onSnapshot(querySnapshot => {
+              if (!querySnapshot.exists) {
+                // dispatch(setActiveEvent({}));
+                return;
+              }
+              const data = querySnapshot.data();
+              const prevEventReviewed = activeEvent?.eventReviewed;
+              const currentEventReviewed = data?.eventReviewed || false;
+              const prevStatusEvent = activeEvent?.statusEvent;
+              const currentStatusEvent = data?.statusEvent || false;
+              if (prevStatusEvent !== currentStatusEvent || prevEventReviewed !== currentEventReviewed) {
+                setActiveEvent({...activeEvent, eventReviewed: currentEventReviewed, statusEvent: currentStatusEvent});
+              }
+            });
+        }
+        return () => {
+          unsubscribeEvent && unsubscribeEvent();
+        };
+      } catch (error) {
+        logErrorToSentry(error)
       }
-      return () => {
-        unsubscribeEvent && unsubscribeEvent();
-      };
     }, [activeEvent?.id]),
   );
 
@@ -432,6 +438,7 @@ const IO: FC = (): JSX.Element => {
           });
       }
     } catch (error) {
+      logErrorToSentry(error)
       console.log('error supert invite', error);
     }
   };
@@ -531,10 +538,14 @@ const IO: FC = (): JSX.Element => {
 
     const isWeek = isWeekPassed(userInfo?.lastUpdateSuperInvite);
     if (isWeek) {
-      await firestore().collection(apiUserInfoCollection).doc(userInfo?.uid).update({
-        lastUpdateSuperInvite: Date.now(),
-        weeklySuperInvites: 5,
-      });
+      try {
+        await firestore().collection(apiUserInfoCollection).doc(userInfo?.uid).update({
+          lastUpdateSuperInvite: Date.now(),
+          weeklySuperInvites: 5,
+        });
+      } catch (error) {
+        logErrorToSentry(error);
+      }
     }
   };
 
@@ -588,6 +599,7 @@ const IO: FC = (): JSX.Element => {
       }, 100);
     } catch (error) {
       console.error(error);
+      logErrorToSentry(error)
     }
   };
 
@@ -614,6 +626,7 @@ const IO: FC = (): JSX.Element => {
         }
       }
     } catch (error) {
+      logErrorToSentry(error);
       console.log('error update guest super joins', error);
     }
   };
@@ -845,6 +858,7 @@ const IO: FC = (): JSX.Element => {
       setEvents(prev => prev.filter(i => (isHost ? i?.info?.uid !== forUserUid : i?.info?.id !== eventId)));
       setScrollPosition(0);
     } catch (error) {
+      logErrorToSentry(error)
       console.error(error);
     }
   };
@@ -1502,6 +1516,7 @@ const IO: FC = (): JSX.Element => {
               listOfUsers.push(data);
             }
           } catch (err) {
+            logErrorToSentry(err)
             console.error('error_getCardsListForHost 3', err);
           }
         }
@@ -2010,8 +2025,6 @@ const IO: FC = (): JSX.Element => {
 
   const cardsList = isHost ? [...events].reverse() : events;
 
-  console.warn(endReachedRef.current, lastVisibleRef?.current);
-
   if (!isFocusedScreen) {
     return (
       <>
@@ -2022,8 +2035,6 @@ const IO: FC = (): JSX.Element => {
       </>
     );
   }
-
-  console.warn(cardsList.length, loadingCardsList, isRefreshing);
 
   if (userInfo?.uid && isDemo && isHost && hintStep === 7) {
     return (

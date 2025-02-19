@@ -30,6 +30,7 @@ import KR from 'src/assets/images/flags/kr.svg';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import Config from 'react-native-config';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry.ts';
 interface ModalSelectLanguagesProps {
   modalLanguages: boolean;
   showLanguages: boolean;
@@ -157,7 +158,8 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
           }),
         );
     } catch (e) {
-      // console.log(e);
+      showToast('inviteMatch', 'An error occurred while updating the language. Please try again.', 'Error');
+      logErrorToSentry(e)
     }
   };
 

@@ -9,7 +9,6 @@ const useStyles = () => {
     container: {
       width: '100%',
       borderRadius: 22,
-      height: screenHeight * 0.661,
     },
     imageStyle: {
       height: '90%',

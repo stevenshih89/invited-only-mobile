@@ -19,6 +19,8 @@ import Config from 'react-native-config';
 import {useUser} from '../../../store/userStore';
 import { screenHeight, screenWidth } from 'constants/common';
 import LinearGradient from 'react-native-linear-gradient';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface RejectAccount {
   isVisible?: boolean;
@@ -44,6 +46,8 @@ const ModalChangeAccountType: FC<RejectAccount> = ({isVisible, setIsVisible, use
         showModalChangeAccountType: false
       });
     } catch (error) {
+      showToast('inviteMatch', 'An issue occurred while updating the user data. Please try again later.', 'Error');
+      logErrorToSentry(error)
       console.log('error showModalAccept', error);
     }
   };

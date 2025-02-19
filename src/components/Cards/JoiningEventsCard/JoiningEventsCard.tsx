@@ -22,6 +22,8 @@ import {calculateAge} from 'helpers/calculateAge';
 import {useFocusEffect} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import Config from 'react-native-config';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface JoiningEventsCardProps {
   estimeTime: string;
@@ -125,9 +127,14 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
   const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
 
   const getUserInfo = async () => {
-    const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(host?.hostUid).get();
-    if (userInfoDoc.exists) {
-      setUserInfo(userInfoDoc.data());
+    try {
+      const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(host?.hostUid).get();
+      if (userInfoDoc.exists) {
+        setUserInfo(userInfoDoc.data());
+      }
+    } catch (error) {
+      showToast('inviteMatch', 'An issue occurred while fetching the user information. Please try again later.', 'Error');
+      logErrorToSentry(error);
     }
   };
 
@@ -234,22 +241,6 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
       plateTitle: 'Active',
       plateBackgroundColor: lightGreenColor,
     };
-  };
-
-  const deleteUserFromCanceled = async () => {
-    const userId = auth().currentUser?.uid;
-    const dataEvents = (await firestore().collection(apiEventsCollection).doc(id).get()).data();
-    const deleteUsers = dataEvents.deleteUsers.filter(item => item !== userId);
-    try {
-      await firestore()
-        .collection(apiEventsCollection)
-        .doc(id)
-        .update({
-          deleteUsers: [...deleteUsers],
-        });
-    } catch (error) {
-      // console.log('error deleteUserFromCanceled', error);
-    }
   };
 
   useEffect(() => {

@@ -33,6 +33,7 @@ import firestore from '@react-native-firebase/firestore';
 import analytics from '@react-native-firebase/analytics';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -86,6 +87,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
         });
       } catch (e) {
         console.error(e);
+        logErrorToSentry(e);
       }
     };
 
