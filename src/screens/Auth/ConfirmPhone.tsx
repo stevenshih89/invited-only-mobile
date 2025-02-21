@@ -202,6 +202,7 @@ const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
                     width: '100%',
                   }}>
                   <CodeField
+                    testID="verification-code-input"
                     ref={ref}
                     {...props}
                     value={code}

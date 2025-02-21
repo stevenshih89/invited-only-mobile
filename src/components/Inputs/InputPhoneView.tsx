@@ -9,6 +9,7 @@ import {Satoshi400} from 'constants/fonts';
 interface IInputPhoneViewProps {
   onChangeFormattedText?: (text: string) => void;
   value: string;
+  testID?: string;
   containerStyle?: StyleProp<ViewStyle>;
   textContainer?: StyleProp<ViewStyle>;
   validationDisabled?: boolean;
@@ -100,6 +101,7 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
       <TouchableOpacity activeOpacity={1} onPress={onPress} style={[styles.container]}>
         <View style={{width: '100%'}}>
           <PhoneInput
+            
             ref={phoneRef}
             autoFocus
             defaultCode={getDefaultCountryCode() as any}

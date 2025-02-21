@@ -94,6 +94,7 @@ const SignUp: FC = (): JSX.Element => {
                 </View>
                 <View style={{width: '100%'}}>
                   <InputPhoneView
+                    testID="phone-input"
                     value={mobilePhone}
                     setIsValid={setIsValidPhone}
                     validationDisabled={isDisabledValidation}

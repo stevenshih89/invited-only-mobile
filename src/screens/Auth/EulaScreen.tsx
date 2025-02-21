@@ -318,13 +318,16 @@ const Eula: FC = (): JSX.Element => {
             <View />
           </View>
           <FlatList
+            testID="eula-scroll"
             data={dataEula}
             keyExtractor={item => item.id.toString()}
             renderItem={({item}) => renderItem(item)}
             onEndReached={onEndReached}
             onEndReachedThreshold={0.1}
           />
-          <View style={{flexDirection: 'row'}}>
+          <View 
+          testID="bottom-view"
+          style={{flexDirection: 'row'}}>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{
@@ -336,13 +339,14 @@ const Eula: FC = (): JSX.Element => {
               <Text style={{color: whiteColor, fontSize: RFValue(20, 932), fontFamily: Satoshi500}}>Deny</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              disabled={!endReached}
+              testID="accept-button"
+              // disabled={!endReached}
               activeOpacity={0.7}
               hitSlop={{top: 26, bottom: 20}}
               onPress={() => navigation.navigate(signUpPath as never)}
               style={{
                 flex: 1.7,
-                backgroundColor: endReached ? whiteColor : lightGray16Color,
+                backgroundColor:  whiteColor,
                 borderRadius: 18,
                 height: screenHeight / 14,
                 flexDirection: 'row',
