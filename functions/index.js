@@ -184,15 +184,19 @@ exports.getUsersForEvent_v2 = functionsV2.https.onCall(async request => {
 
     query = query.orderBy('userBeauty', 'desc').orderBy('uid');
 
-    if (lastDoc) {
-      const parsedLastDoc = JSON.parse(lastDoc);
-      query = query.startAfter(parsedLastDoc.uid);
+    const excludedUids = allUniqueIds.map(user => user.uid);
+    if (excludedUids.length > 0) {
+      query = query.where('uid', 'not-in', excludedUids);
     }
 
-    const snapshot = await query.get();
+    if (lastDoc) {
+      const parsedLastDoc = JSON.parse(lastDoc);
+      query = query.startAfter(parsedLastDoc.userBeauty, parsedLastDoc.uid);
+    }
+
+    const snapshot = await query.get({ source: "server" });
 
     const users = snapshot.docs
-      .filter(doc => !allUniqueIds.some(item => item.uid === doc.id))
       .slice(0, limit)
       .map(doc => {
         const findSuperJoin = event?.requestsList?.find(requestItem => doc.id === requestItem?.uid && requestItem?.superInvite);
