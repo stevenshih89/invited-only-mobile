@@ -100,7 +100,7 @@ const Chat: FC<ChatProps> = () => {
   const [eventData, setEventData] = useState<EventData>();
 
   const [searchInput, setSearchInput] = useState('');
-  const [adminChatsWithUsers, setAdminChatsWithUsers] = useState<any>([]);  
+  const [adminChatsWithUsers, setAdminChatsWithUsers] = useState<any>([]);
   const [filterTypeAccount, setFilterTypeAccount] = useState<'host' | 'guest'>('host');
   const [countHostTypeAccount, setCountHostTypeAccount] = useState(0);
   const [countGuestTypeAccount, setCountGuestTypeAccount] = useState(0);
@@ -118,13 +118,14 @@ const Chat: FC<ChatProps> = () => {
         setCountGuestTypeAccount(filterType.length)
         setCountHostTypeAccount(searchByName.length - filterType.length)
       }
-      
+
       return filterType
     },
   [searchByName, filterTypeAccount])
-  
+
   const [userChatWithAdmin, setUserChatWithAdmin] = useState<any>({});
   const [loadingAdminChatsWithUsers, setLoadingAdminChatsWithUsers] = useState<boolean>(true);
+  const [loadingUserChatWithAdmin, setLoadingUserChatWithAdmin] = useState<boolean>(true);
   const [limitAdminChatsWithUsers, setLimitAdminChatsWithUsers] = useState<number>(DEFAULT_LIMIT_ADMIN_CHATS);
 
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
@@ -144,8 +145,10 @@ const Chat: FC<ChatProps> = () => {
 
   const rotationLoader = useSharedValue(0);
 
+  console.warn(loadingUserChatWithAdmin);
+
   useEffect(() => {
-    if (loading || loadingAdminChatsWithUsers || loadingChats) {
+    if (loading || loadingAdminChatsWithUsers || loadingChats || loadingUserChatWithAdmin) {
       rotationLoader.value = withRepeat(
         withTiming(360, {
           duration: 2000,
@@ -158,7 +161,7 @@ const Chat: FC<ChatProps> = () => {
     return () => {
       cancelAnimation(rotationLoader);
     };
-  }, [rotationLoader, loading, loadingAdminChatsWithUsers, loadingChats]);
+  }, [rotationLoader, loading, loadingAdminChatsWithUsers, loadingChats, loadingUserChatWithAdmin]);
 
   function chunkArray(array: any, chunkSize: number) {
     const results = [];
@@ -249,6 +252,9 @@ const Chat: FC<ChatProps> = () => {
     };
   }, [user?.uid, limitAdminChatsWithUsers]);
 
+
+
+
   const handleUserChatWithAdmin = useCallback(() => {
     let unsubscribeUserChatWithAdmin: () => void;
     if (user?.uid && !user?.isInvitedOnlyAdmin) {
@@ -280,8 +286,10 @@ const Chat: FC<ChatProps> = () => {
                   }, 0);
                 }
                 setUserChatWithAdmin({...chatData, unreadMessagesCount});
+                setLoadingUserChatWithAdmin(false);
               } catch (error) {
                 console.error(error);
+                setLoadingUserChatWithAdmin(false);
               }
             }
           });
@@ -289,6 +297,7 @@ const Chat: FC<ChatProps> = () => {
         showToast('inviteMatch', 'An error occurred while loading chat with the admin. Please try again later.', 'Error');
         logErrorToSentry(error);
         console.error(error);
+        setLoadingUserChatWithAdmin(false);
       }
     }
 
@@ -712,10 +721,8 @@ const Chat: FC<ChatProps> = () => {
     }, [activeEvent?.id, loading, activeEventDate]),
   );
 
-  console.log(loadingChats);
-  
 
-  if (loadingChats) {
+  if (loadingChats || (loadingUserChatWithAdmin && user?.uid && !user?.isInvitedOnlyAdmin && !userChatWithAdmin?.uid)) {
     return (
       <>
         <Loading wrapperText={false} text={'Checking for new messages.\nStay tuned!'} userInfo={user} />
