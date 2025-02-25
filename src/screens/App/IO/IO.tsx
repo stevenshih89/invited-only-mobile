@@ -352,13 +352,18 @@ const IO: FC = (): JSX.Element => {
   }) => {
     setScrollPosition(0);
     handleAddSwipeCardUid(uid);
-    onInvite(uid, id, superInvite);
     setTimeout(() => {
       setCurrentEventCardPosition(prev => prev + 1);
+      setEvents(prev =>
+          prev.filter(i => {
+            return i?.info?.uid !== uid;
+          }),
+      );
     }, 500);
     if (withSwipeAnimation) {
       handleSwipeCardRight();
     }
+    onInvite(uid, id, superInvite);
   };
 
   const setRejectVisible = () => {
