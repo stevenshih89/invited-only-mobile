@@ -4,55 +4,20 @@ import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { RFValue } from 'react-native-responsive-fontsize';
 import ArrowRightIcon from 'assets/images/icons/arrow-right-balck.svg';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import { paymentPath } from 'constants/pathLocations';
 import SafetyAndWellbeing from '../SafetyAndWellbeing/SafetyAndWellbeing';
-import { FC, useEffect, useState } from 'react';
-import { useSubscriptions } from 'src/store/subscriptionsStore';
-import {formatDate} from '../../../../../helpers/formatDate'
+import { FC } from 'react';
 import { Linking } from 'react-native';
+import { useManageSubscription } from 'hooks/useManageSubscription';
 
 const ManageSubscription: FC = () => {
-
-  const [subscriptionName, setSubscriptionName] = useState('')
-
-  const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions)
-
-  const lastSubscriptionName = currentSubscriptions.activeSubscriptions.at(-1)
-  const lastSubscriptionData = currentSubscriptions.latestExpirationDate;
-  const purchaseDates = currentSubscriptions.allPurchaseDates[lastSubscriptionName]
-  
-  useEffect(() => {
-    switch (lastSubscriptionName) {
-      case 'io_59_1w':
-        setSubscriptionName('weekly');
-        break;
-      case 'io_29_3m':
-        setSubscriptionName('3 months');
-        break;
-      case 'io_99_1m':
-        setSubscriptionName('month');
-        break;
-      default:
-        break;
-    }
-  }, []);
-
-  const formateDateFun = (date: string) => {
-    const convertDate = date
-      .split('T')[0]
-      .split('-')
-      .reverse()
-      .join('.');
-      const res = formatDate(convertDate)
-      return res
-  }
-
-  const navigation = useAppNavigation();
-
-  const goToMyPaymentPath= () => {
-    navigation.navigate(paymentPath as never);
-  };
+  const {
+    subscriptionName,
+    currentSubscriptions,
+    lastSubscriptionData,
+    purchaseDates,
+    formateDateFun,
+    goToMyPaymentPath
+  } = useManageSubscription()
   
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: blackColor}}>

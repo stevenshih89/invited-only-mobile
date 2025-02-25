@@ -9,6 +9,7 @@ import {Satoshi400, Satoshi700} from 'constants/fonts';
 import MaskInput from 'react-native-mask-input';
 import {isIos} from 'constants/common';
 import Button from 'components/Button/Button';
+import { useModalBirthday } from 'hooks/useModalBirthday';
 
 interface ModalBirthdayProps {
   isVisible: boolean;
@@ -25,41 +26,11 @@ interface ModalBirthdayProps {
 }
 
 const ModalBirthday: FC<ModalBirthdayProps> = ({isVisible, onClose, month, setMonth, day, setDay, year, setYear, showAge, setShowAge, saveUserInfo}) => {
-  const handleMonthChange = (input: string): void => {
-    const numericInput = input.replace(/[^0-9]/g, '');
-    const trimmedInput = numericInput.slice(0, 2);
-    const monthInt = parseInt(trimmedInput, 10);
-
-    if (trimmedInput.length === 2 && (monthInt < 1 || monthInt > 12)) {
-      return;
-    }
-    setMonth(trimmedInput);
-  };
-
-  const handleDayChange = (input: string): void => {
-    const numericInput = input.replace(/[^0-9]/g, '');
-    const trimmedInput = numericInput.slice(0, 2);
-    const dayInt = parseInt(trimmedInput, 10);
-
-    if (trimmedInput.length === 2 && (dayInt < 1 || dayInt > 31)) {
-      return;
-    }
-
-    setDay(trimmedInput);
-  };
-
-  const handleYearChange = (input: string) => {
-    const numericInput = input.replace(/[^0-9]/g, '');
-    const trimmedInput = numericInput.slice(0, 4);
-    const currentYear = new Date().getFullYear();
-    const yearInt = parseInt(trimmedInput, 10);
-
-    if (trimmedInput.length === 4 && (yearInt < 1900 || yearInt > currentYear)) {
-      return;
-    }
-
-    setYear(trimmedInput);
-  };
+  const {
+    handleMonthChange,
+    handleDayChange,
+    handleYearChange
+  } = useModalBirthday({setMonth, setDay, setYear})
 
   return (
     <Modal

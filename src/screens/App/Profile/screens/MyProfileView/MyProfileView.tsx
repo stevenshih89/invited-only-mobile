@@ -42,6 +42,7 @@ import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import Config from 'react-native-config';
 import { showToast } from 'helpers/showToast';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useMyProfileView } from 'hooks/useMyProfileView';
 
 interface MyProfileViewProps {
   isShowEditButton?: boolean;
@@ -51,69 +52,26 @@ interface MyProfileViewProps {
   route: any;
 }
 
-const filterPhotos = (photos: User.Photo[]): User.Photo[] => photos.filter(p => p.image !== null);
-const mapPhotos = (photos: User.Photo[]): (string | null)[] => photos.map(p => p.image);
+const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible}) => {
 
-const processUserPhotos = pipe<string[]>(filterPhotos, mapPhotos);
+  const {
+    loading,
+    scrollPosition,
+    photosList,
+    isShowEditButton,
+    modalReport,
+    goToProfileEditing,
+    userAge,
+    handleScroll,
+    handleReport,
+    userInfo,
+    setModalReport,
+    userHost,
+    route
+  } = useMyProfileView()
 
-const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible, isShowInstagramPhotos = true}) => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const [loading, setLoading] = useState<boolean>(false);
-  const [userInfo, setUserInfo] = useState<any>({});
-  const [scrollPosition, setScrollPosition] = useState(0);
-
-  const [photosList, setPhotosList] = useState<string[]>([]);
-
-  const route = useRoute();
-
-  const isShowEditButton = route?.params?.isShowEditButton;
   const styles = useStyles();
-  const navigation = useAppNavigation();
-  const userHost = useUser((i: any) => i?.user);
-
-  // const [reportedItem, setReportedItem] = useState<string>('');
-  const [modalReport, setModalReport] = useState<boolean>(false);
-
-  const {activeEvent} = useContext(EventContext);
-
-  const goToProfileEditing = (): void => {
-    navigation.navigate(profileEditingPath as never);
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      const fetchUserInfo = async () => {
-        setLoading(true);
-        const user = userHost?.uid;
-        const uid = route?.params?.uid;
-        if (user) {
-          try {
-            const userUid = uid !== undefined ? uid : user;
-            const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(userUid).get();
-
-            if (userInfoDoc?.exists) {
-              setUserInfo(userInfoDoc?.data());
-              const userPhotos = userInfoDoc?.data()?.photos;
-              if (userPhotos?.length) {
-                const mappedPhotos = processUserPhotos(userPhotos);
-                setPhotosList(mappedPhotos);
-              }
-            } else {
-              showToast('inviteMatch', 'No user data found', 'Error');
-            }
-          } catch (error: any) {
-            showToast('inviteMatch', 'Failed to fetch user information. Please try again later.', 'Error');
-            logErrorToSentry(error);
-          }
-          setLoading(false);
-        }
-      };
-      fetchUserInfo();
-    }, []),
-  );
-
-  const userAge = calculateAge(userInfo?.date);
-
+ 
   if (loading || !userInfo) {
     return (
       <View style={{flex: 1, backgroundColor: blackColor}}>
@@ -149,19 +107,6 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible,
       default:
         return;
     }
-  };
-
-  const handleScroll = event => {
-    const positionY = event.nativeEvent.contentOffset.y;
-    setScrollPosition(positionY);
-  };
-
-  // const isHost = userHost?.accountType === 'host';
-
-  const handleReport = () => {
-    // const currEvent = isHost ? activeEvent : event;
-    // setReportedItem({uid, event: currEvent});
-    setModalReport(true);
   };
 
   return (

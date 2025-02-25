@@ -1,19 +1,12 @@
-import {FlatList, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Invitations from './screens/Invitations/Invitations';
 import SafetyAndWellbeing from './screens/SafetyAndWellbeing/SafetyAndWellbeing';
 import MyPlan from './screens/MyPlan/MyPlan';
-import LoaderIcon from 'assets/images/icons/loader.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import EditBlack from 'assets/images/icons/edit-black.svg';
-import {FC, useCallback, useEffect, useState} from 'react';
+import {FC} from 'react';
 import Button from 'components/Button/Button';
 import useStyles from './styles';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {myProfileViewPath} from 'constants/pathLocations';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import {Alert} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
 import {
   blackColor,
   lightGray9Color,
@@ -22,139 +15,39 @@ import {
   transparentWhite40Color,
   whiteColor,
 } from 'constants/colors';
-import {calculateAge} from 'helpers/calculateAge';
-import Svg, {Circle, G} from 'react-native-svg';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
-import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
-import {getEventsIJoining} from 'helpers/getEventsIJoining';
-import Config from 'react-native-config';
-// import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
-import {useUser} from 'src/store/userStore';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useProfile } from 'hooks/useProfile';
+import { ProgressCircle } from 'components/ProgressCircle/ProgressCircle';
 
 const Profile: FC = () => {
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const [activeTabId, setActiveTabId] = useState(0);
-  // const [percentage, setPercentage] = useState(0);
-  // const [loading, setLoading] = useState(false);
-
-  const [totalGuests, setTotalGuests] = useState(0);
-  const [eventsCount, setEventsCount] = useState(0);
-
-  const {user: userInfo} = useUser();
-
-  const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
-  const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
-  const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
-  const changeAccountTypeModalVisible = useAdminActions((i: any) => i?.changeAccountTypeModalVisible);
-  const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
-  const isHost = userInfo?.accountType === 'host';
-  // const rotationLoader = useSharedValue(0);
-
-  // useEffect(() => {
-  //   if (loading) {
-  //     rotationLoader.value = withRepeat(
-  //       withTiming(360, {
-  //         duration: 2000,
-  //         easing: Easing.linear,
-  //       }),
-  //       -1,
-  //     );
-  //   }
-
-  //   return () => {
-  //     cancelAnimation(rotationLoader);
-  //   };
-  // }, [rotationLoader, loading]);
-
-  // const animatedStyle = useAnimatedStyle(() => {
-  //   return {
-  //     transform: [{rotate: `${rotationLoader.value}deg`}],
-  //   };
-  // });
-
-  const tabList = [
-    {id: 0, title: 'My plan'},
-    {id: 1, title: 'Safety'},
-    {id: 2, title: 'App Invitations'},
-  ];
-
-  const calculateCompleteness = (profile: any) => {
-    if (!profile) {
-      return 0;
-    }
-    const requiredFields = ['chooseGuest', 'date', 'email', 'gender', 'homeAddress', 'interests', 'work', 'imageUser', 'bio', 'photos'];
-    let presentFields = 0;
-
-    for (const field of requiredFields) {
-      if (profile?.hasOwnProperty(field) && profile?.[field] !== null && profile?.[field] !== undefined) {
-        presentFields++;
-      }
-    }
-
-    const completenessPercentage = (presentFields / requiredFields.length) * 100;
-
-    if (completenessPercentage === 100) {
-      return 100;
-    } else {
-      const missingFields = requiredFields.length - presentFields;
-      const deductionPercentage = (missingFields / requiredFields.length) * 100;
-      return completenessPercentage - deductionPercentage;
-    }
-  };
-
-  const percentage = Math.floor(calculateCompleteness(userInfo));
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const fetchUserInfo = async () => {
-  //       setLoading(true);
-  //       const user = auth().currentUser;
-  //       if (user) {
-  //         try {
-  //           const startTime = Date.now();
-  //           const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
-  //           const endTime = Date.now();
-  //           console.warn(`Query execution time: ${endTime - startTime} ms`); //
-
-  //           if (userInfoDoc.exists) {
-  //             setUserInfo(userInfoDoc.data());
-  //             const calculate = Math.floor(calculateCompleteness(userInfoDoc.data()));
-  //             setPercentage(calculate);
-  //             const userImage = userInfoDoc.data()?.photos?.find(({id}: any) => id === 0);
-  //             if (userImage) {
-  //               setMainImage(userImage);
-  //             }
-  //             Image.prefetch(userImage.image).catch(error => {
-  //               console.error('image prefetching error: ', error);
-  //             });
-  //           } else {
-  //             Alert.alert('Error', 'No user data found in Firestore');
-  //           }
-  //         } catch (error: any) {
-  //           Alert.alert('Error', error.message || 'Something went wrong');
-  //         }
-  //         setLoading(false);
-  //       }
-  //     };
-
-  //     fetchUserInfo();
-  //   }, []),
-  // );
+  const {
+    activeTabId,
+    setActiveTabId,
+    percentage,
+    userInfo,
+    userAge,
+    totalGuests,
+    eventsCount,
+    rejectModalVisible,
+    acceptModalVisible,
+    setAcceptModalVisible,
+    changeAccountTypeModalVisible,
+    setChangeAccountModalVisible,
+    tabList,
+    goToMyProfileView} = useProfile();
 
   const styles = useStyles();
-  const navigation = useAppNavigation();
 
   const getTabContent = () => {
     switch (activeTabId) {
       case 0:
-        return <MyPlan />;
+        return <MyPlan/>;
       case 1:
         return <SafetyAndWellbeing />;
       case 2:
@@ -162,106 +55,6 @@ const Profile: FC = () => {
       default:
         return <MyPlan />;
     }
-  };
-
-  const goToMyProfileView = () => {
-    // @ts-ignore
-    navigation.navigate(myProfileViewPath, {
-      isShowEditButton: true,
-      isPreview: false,
-    });
-  };
-
-  const getGuestList = async () => {
-    let totalParticipants = 0;
-    try {
-      for (const eventId of userInfo?.eventsList) {
-        const eventDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
-        if (eventDoc.exists) {
-          const data = eventDoc.data();
-          totalParticipants += data?.male || 0 + data?.female || 0;
-        }
-      }
-      setTotalGuests(totalParticipants);
-    } catch (error) {
-      logErrorToSentry(error);
-      console.error('error fetching guest list: ', error);
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      let eventsJoiningSubscriber: any;
-      if (!isHost) {
-        try {
-          eventsJoiningSubscriber = firestore()
-          .collection(apiEventsCollection)
-          .onSnapshot(async querySnapshot => {
-            const count = await getEventsIJoining(querySnapshot, userInfo?.uid);
-            setEventsCount(count);
-          });
-        } catch (error) {
-          logErrorToSentry(error);
-        }
-      }
-      return () => {
-        console.warn('unsubscribe 213123');
-        if (eventsJoiningSubscriber) {
-          eventsJoiningSubscriber();
-        }
-      };
-    }, [userInfo]),
-  );
-
-  useEffect(() => {
-    if (userInfo?.uid && isHost) {
-      getGuestList();
-    }
-  }, [userInfo?.uid]);
-
-  const userAge = calculateAge(userInfo?.date);
-
-  // if (loading) {
-  //   return (
-  //     <View
-  //       style={{
-  //         backgroundColor: blackColor,
-  //         flex: 1,
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //       }}>
-  //       <Animated.View style={[animatedStyle]}>
-  //         <LoaderIcon />
-  //       </Animated.View>
-  //     </View>
-  //   );
-  // }
-
-  const ProgressCircle = ({size, strokeWidth, progress, color, backgroundColor}) => {
-    const radius = (size - strokeWidth) / 2;
-    const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (progress / 100) * circumference;
-
-    return (
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Svg width={size} height={size} style={{position: 'absolute', zIndex: 10}}>
-          <G rotation="-90" origin={`${size / 2}, ${size / 2}`}>
-            <Circle cx="50%" cy="50%" r={radius} stroke={backgroundColor} strokeWidth={strokeWidth} fill="none" />
-            <Circle
-              cx="50%"
-              cy="50%"
-              r={radius}
-              stroke={color}
-              strokeWidth={strokeWidth}
-              fill="none"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-            />
-          </G>
-        </Svg>
-      </View>
-    );
   };
 
   return (
@@ -346,8 +139,6 @@ const Profile: FC = () => {
             alignItems: 'center',
             paddingVertical: 19,
             marginTop: 30,
-            // justifyContent: 'space-between',
-            // padding: 20
             alignSelf: 'center',
           }}>
           <View style={{alignItems: 'center'}}>

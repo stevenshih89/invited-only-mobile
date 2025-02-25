@@ -1,37 +1,26 @@
-import {FC, useEffect, useState} from 'react';
+import {FC} from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import Clipboard from '@react-native-clipboard/clipboard';
 
 //import components
-import {useUser} from '../../../../../store/userStore';
-import {showToast} from 'helpers/showToast.ts';
 import useStyles from './styles';
 import Copy from 'assets/images/icons/copy.svg';
 import {grayColor, whiteColor} from 'constants/colors';
+import { useInvitations } from 'hooks/useInvitations';
 
 const Invitations: FC = () => {
-  const [numberCodes, setNumberCodes] = useState<number>();
+  const {
+    handleCopy,
+    inviteLink,
+    numberCodes
+  } = useInvitations();
   const styles = useStyles();
-
-  const userHost = useUser((i: any) => i?.user);
-
-  const inviteLink = userHost?.codeForInvitingOtherUsers;
-
-  const handleCopy = (val: string) => {
-    Clipboard.setString(val);
-    showToast('inviteMatch', '', 'Invite code copied!');
-  };
-
-  useEffect(() => {
-    setNumberCodes(inviteLink.length);
-  }, []);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>You have {numberCodes} App invitations codes</Text>
       <Text style={styles.label}>IO Invitations</Text>
       <ScrollView>
-        {inviteLink.map(item => (
+        {inviteLink.map((item: any) => (
           <View style={styles.inviteContainer}>
             <TouchableOpacity
               disabled={!item.isActive}

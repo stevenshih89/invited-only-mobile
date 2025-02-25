@@ -15,8 +15,6 @@ const ModalReplacePhoto: FC<{
   isVisible: boolean;
   onClose: () => void;
   replaceImage: () => void;
-//   setIsVisibleConfirmPhoneModal?: Dispatch<SetStateAction<boolean>>;
-//   sendVerificationCode: () => Promise<void>;
 }> = ({isVisible, onClose, replaceImage}) => {
 
   return (

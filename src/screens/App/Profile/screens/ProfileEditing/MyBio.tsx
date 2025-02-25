@@ -10,8 +10,6 @@ interface MyBioProps {
   setBio: Dispatch<SetStateAction<string>>;
 }
 
-// const [height, setHeight] = useState(40);
-
 const MyBio: FC<MyBioProps> = ({bio, setBio}) => {
   return (
     <View style={styles.view}>

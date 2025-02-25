@@ -3,9 +3,7 @@ import AvatarHelp from 'assets/images/icons/avatar-help.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import useStyles from './styles';
 import {FC} from 'react';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {privacyPath} from 'constants/pathLocations';
-import {useUser} from 'src/store/userStore';
+import { useSafetyAndWellbeing } from 'hooks/useSafetyAndWellbeing';
 
 interface ISafetyAndWellbeing {
   wellbeingShow?: boolean;
@@ -14,13 +12,9 @@ interface ISafetyAndWellbeing {
 const SafetyAndWellbeing: FC<ISafetyAndWellbeing> = ({wellbeingShow = true}) => {
   const styles = useStyles();
 
-  const navigation = useAppNavigation();
-
-  const user = useUser((i: any) => i?.user);
-
-  const handleNavigate = () => {
-    navigation.navigate(privacyPath, {screen: 'SafetyAndWellbeing', accountType: user.accountType} as never);
-  };
+  const {
+    handleNavigate,
+  } = useSafetyAndWellbeing()
 
   return (
     <View>
@@ -30,7 +24,6 @@ const SafetyAndWellbeing: FC<ISafetyAndWellbeing> = ({wellbeingShow = true}) => 
           <AvatarHelp />
           <View style={{marginLeft: 6}}>
             <Text style={styles.avatarText}>support@invitedonly.app</Text>
-            {/* <Text style={styles.onlineText}>Online</Text> */}
           </View>
         </View>
       </View>

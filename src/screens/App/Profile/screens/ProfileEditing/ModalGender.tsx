@@ -14,12 +14,8 @@ import {Switch} from '@ant-design/react-native';
 import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
-import firestore from '@react-native-firebase/firestore';
-import {useUser} from '../../../../../store/userStore';
 import Button from 'components/Button/Button';
-import Config from 'react-native-config';
-import { showToast } from 'helpers/showToast';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useModalGender } from 'hooks/useModalGender';
 
 interface ModalGenderProps {
   isVisible: boolean;
@@ -42,47 +38,12 @@ const ModalGender: FC<ModalGenderProps> = ({
   saveUserInfo,
   listOfGenders,
 }) => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const userHost = useUser((i: any) => i?.user);
-  const setUserInfo = useUser((i: any) => i?.setUser);
+  
+  const {
+    handleUpdateShowInMyProfile,
+    handleUpdateGender
+  } = useModalGender({setShowGender, setActiveGenderItem})
 
-  const handleUpdateShowInMyProfile = async (state: string): Promise<void> => {
-    try {
-      const uid = userHost?.uid;
-      setShowGender(state);
-      await firestore().collection(apiUserInfoCollection).doc(uid).update({
-        showGender: state,
-      });
-      const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-
-      if (userInfoDoc?.exists) {
-        setUserInfo(userInfoDoc.data());
-      }
-    } catch (e) {
-      showToast('inviteMatch', 'Failed to update your gender visibility in the profile. Please try again.', 'Error');
-      logErrorToSentry(e)
-      // console.log(e);
-    }
-  };
-
-  const handleUpdateGender = async (gender: string): Promise<void> => {
-    try {
-      const uid = userHost?.uid;
-      setActiveGenderItem(gender);
-      await firestore().collection(apiUserInfoCollection).doc(uid).update({
-        gender: gender,
-      });
-      const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-
-      if (userInfoDoc?.exists) {
-        setUserInfo(userInfoDoc.data());
-      }
-    } catch (e) {
-      showToast('inviteMatch', 'Failed to update your gender in the profile. Please try again.', 'Error');
-      logErrorToSentry(e)
-      // console.log(e);
-    }
-  };
   return (
     <Modal
       isVisible={isVisible}

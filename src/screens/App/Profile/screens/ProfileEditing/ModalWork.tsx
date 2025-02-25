@@ -34,9 +34,6 @@ const ModalWork: FC<ModalWorkProps> = ({
   textDescription,
   setTextDescription
 }) => {
-
-  
-
   return (
     <Modal
       isVisible={isVisible}

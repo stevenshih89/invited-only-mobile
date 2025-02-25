@@ -1,179 +1,37 @@
 import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {FC, useEffect, useState} from 'react';
-import {Tooltip, TooltipProps} from '@rneui/themed';
+import {FC, useState} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from './styles';
 import {Satoshi400, Satoshi500, Satoshi700Italic} from 'constants/fonts';
 import {blackColor, lightGray5Color, transparentGray90Color, whiteColor} from 'constants/colors';
-import {manageSubscriptionPath, paymentPath, superInvitePayPath} from 'constants/pathLocations';
 
 //import images
 import CheckIcon from 'assets/images/icons/check.svg';
 import ArrowRightIcon from 'assets/images/icons/arrow-right-balck.svg';
-
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
-import FlashIcon from 'assets/images/icons/flash-white.svg';
 import FlashFillIcon from 'assets/images/icons/flash-filled.svg';
 import CloseIcon from 'assets/images/icons/close-circle.svg';
-import CalendarIcon from 'assets/images/icons/calendar-white.svg';
-import UnlimitedIcon from 'assets/images/icons/unlimited-new.svg';
-import IOIcon from 'assets/images/icons/io.svg';
-import EyeIcon from 'assets/images/icons/eye.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import Loader from '../../../../../components/Modal/ModalLoader/Loader';
-import {useSubscriptions} from 'src/store/subscriptionsStore';
-import {SvgProps} from 'react-native-svg';
 import {screenHeight} from 'constants/common';
 import Config from 'react-native-config';
 import {useUser} from 'src/store/userStore';
-interface WhatGetItem {
-  title: string;
-  description: string;
-  icon: React.FC<SvgProps>;
-  titleDescription: string;
-}
+import { ControlledTooltip } from 'components/ControlledTooltip/ControlledTooltip';
+import { whatGet } from 'src/mocks/whatGetSubscribe';
+import { useMyPlan } from 'hooks/useMyPlan';
 
-const ControlledTooltip: FC<TooltipProps | any> = props => {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <Tooltip
-      visible={open}
-      onOpen={() => {
-        setOpen(true);
-      }}
-      onClose={() => {
-        setOpen(false);
-      }}
-      {...props}
-    />
-  );
-};
-
-const MyPlan = () => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const [loaderVisible, setLoaderVisible] = useState(false);
-
-  const {user: userInfo} = useUser();
-  // const [userInfo, setUserInfo] = useState<any>({});
-
-  const whatGet: WhatGetItem[] = [
-    {
-      title: `Unlimited Events ${userInfo?.accountType === 'host' ? 'Creation' : 'Attendance'}`,
-      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited swipe (join)',
-      description:
-        userInfo?.accountType === 'host'
-          ? 'Share Unlimited VIP Tables and Events to Invite.'
-          : 'Swipe through unlimited events and connections. Join now and explore endless possibilities!',
-      icon: CalendarIcon,
-    },
-    {
-      title: 'Unlimited Invitations',
-      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Invitations' : 'Unlimited invitations (getting invites)',
-      description:
-        userInfo?.accountType === 'host'
-          ? 'Send Unlimited Invitations and Create Your Guest List'
-          : 'Receive endless event invitations. Join now and never miss out!',
-      icon: UnlimitedIcon,
-    },
-    {
-      title: `Unlimited ${userInfo?.accountType === 'host' ? 'Guest' : ''} Connections`,
-      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited join offers',
-      description:
-        userInfo?.accountType === 'host'
-          ? 'Enjoy endless connections to build your guests lists.'
-          : 'Get unlimited opportunities to join exclusive events. Let`s start right now!',
-      icon: IOIcon,
-    },
-    {
-      title: `5 Super ${userInfo?.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
-      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : '5 Super join a week',
-      description: `Send 5 super ${userInfo?.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
-      icon: FlashIcon,
-    },
-    {
-      title: `See Who Wants to ${userInfo?.accountType === 'host' ? 'Join' : 'Invite'} You`,
-      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited Events Join',
-      description:
-        userInfo?.accountType === 'host'
-          ? 'View interested guests who want to join you in real-time.'
-          : 'View interested hosts who want to invite you in real-time.',
-      icon: EyeIcon,
-    },
-  ];
-
-  const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions);
-
-  // const fetchUserInfo = async () => {
-  //   // setLoaderVisible(true)
-  //   const user = auth().currentUser;
-
-  //   if (user) {
-  //     try {
-  //       const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
-  //       if (userInfoDoc.exists) {
-  //         setUserInfo(userInfoDoc.data());
-  //       }
-  //     } catch (error: any) {}
-  //   }
-  //   // setLoaderVisible(false)
-  // };
-
-  // useEffect(() => {
-  //   fetchUserInfo();
-  // }, []);
-
-  const navigation = useAppNavigation();
-
-  // const loaderVisibleFun = () => {
-  //   setLoaderVisible(true);
-  //   setTimeout(() => setLoaderVisible(false), 1000);
-  // };
-
-  // const goToManagePath = () => {
-  //   navigation.navigate(manageSubscriptionPath as never);
-  // };
-
-  const goToPaymentPath = () => {
-    navigation.navigate(paymentPath as never);
-  };
-
+const MyPlan: FC = () => {
+  
+  const {
+    loaderVisible,
+    goToPaymentPath,
+    goToSuperInvitePay,
+    userInfo} = useMyPlan();
   const styles = useStyles();
-
-  const goToSuperInvitePay = () => {
-    // @ts-ignore
-    navigation.navigate(superInvitePayPath);
-  };
-
-  const getCurrentPlan = () => {
-    const item = currentSubscriptions.activeSubscriptions.at(-1);
-    let text = '';
-
-    switch (item) {
-      case 'io_59_1w':
-        text = '1 week access';
-        break;
-      case 'io_29_3m':
-        text = '3 month access';
-        break;
-      case 'io_99_1m':
-        text = '1 month access';
-        break;
-      default:
-        text = 'Basic';
-        break;
-    }
-
-    return <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi400}}>{text}</Text>;
-  };
-
-  console.warn(userInfo?.superInvites, userInfo?.weeklySuperInvites);
 
   return (
     <View>
