@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {FC, useState} from 'react';
+import {FC} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 
 //import components
@@ -15,23 +15,79 @@ import ArrowRightIcon from 'assets/images/icons/arrow-right-balck.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import FlashFillIcon from 'assets/images/icons/flash-filled.svg';
 import CloseIcon from 'assets/images/icons/close-circle.svg';
-import {useAppNavigation} from 'hooks/useAppNavigation';
 import Loader from '../../../../../components/Modal/ModalLoader/Loader';
 import {screenHeight} from 'constants/common';
-import Config from 'react-native-config';
-import {useUser} from 'src/store/userStore';
 import { ControlledTooltip } from 'components/ControlledTooltip/ControlledTooltip';
-import { whatGet } from 'src/mocks/whatGetSubscribe';
 import { useMyPlan } from 'hooks/useMyPlan';
+import { SvgProps } from "react-native-svg";
+//icons
+import CalendarIcon from 'assets/images/icons/calendar-white.svg';
+import UnlimitedIcon from 'assets/images/icons/unlimited-new.svg';
+import IOIcon from 'assets/images/icons/io.svg';
+import EyeIcon from 'assets/images/icons/eye.svg';
+import FlashIcon from 'assets/images/icons/flash-white.svg';
 
 const MyPlan: FC = () => {
+
+  const styles = useStyles();
   
   const {
     loaderVisible,
     goToPaymentPath,
     goToSuperInvitePay,
     userInfo} = useMyPlan();
-  const styles = useStyles();
+    
+  interface WhatGetItem {
+    title: string;
+    description: string;
+    icon: React.FC<SvgProps>;
+    titleDescription: string;
+  }
+        
+  const whatGet: WhatGetItem[] = [
+    {
+      title: `Unlimited Events ${userInfo?.accountType === 'host' ? 'Creation' : 'Attendance'}`,
+      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited swipe (join)',
+      description:
+        userInfo?.accountType === 'host'
+          ? 'Share Unlimited VIP Tables and Events to Invite.'
+          : 'Swipe through unlimited events and connections. Join now and explore endless possibilities!',
+      icon: CalendarIcon,
+    },
+    {
+      title: 'Unlimited Invitations',
+      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Invitations' : 'Unlimited invitations (getting invites)',
+      description:
+        userInfo?.accountType === 'host'
+          ? 'Send Unlimited Invitations and Create Your Guest List'
+          : 'Receive endless event invitations. Join now and never miss out!',
+      icon: UnlimitedIcon,
+    },
+    {
+      title: `Unlimited ${userInfo?.accountType === 'host' ? 'Guest' : ''} Connections`,
+      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited join offers',
+      description:
+        userInfo?.accountType === 'host'
+          ? 'Enjoy endless connections to build your guests lists.'
+          : 'Get unlimited opportunities to join exclusive events. Let`s start right now!',
+      icon: IOIcon,
+    },
+    {
+      title: `5 Super ${userInfo?.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
+      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : '5 Super join a week',
+      description: `Send 5 super ${userInfo?.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
+      icon: FlashIcon,
+    },
+    {
+      title: `See Who Wants to ${userInfo?.accountType === 'host' ? 'Join' : 'Invite'} You`,
+      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited Events Join',
+      description:
+        userInfo?.accountType === 'host'
+          ? 'View interested guests who want to join you in real-time.'
+          : 'View interested hosts who want to invite you in real-time.',
+      icon: EyeIcon,
+    },
+  ];
 
   return (
     <View>
