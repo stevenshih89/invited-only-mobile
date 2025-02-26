@@ -1,29 +1,13 @@
-import {FlatList, ImageBackground, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
-import ArrowRight from 'assets/images/icons/arrow-right.svg';
-import ClockOrange from 'assets/images/icons/clock-orange.svg';
-import LoaderIcon from 'assets/images/icons/loader.svg';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {
-  chatCorrespondencePath,
-  commonStackPath,
-  eventActiveInfoPath,
-  invitationCodePath,
-  myEventsPath,
-  requestsPath,
-} from 'constants/pathLocations';
+import {FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import useStyles from './styles';
-import {FC, ReactElement, useCallback, useEffect, useState} from 'react';
-import {useUser} from '../../../../../store/userStore';
+import {FC, ReactElement, useEffect} from 'react';
+import LoaderIcon from 'assets/images/icons/loader.svg'
 import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
-import {useFocusEffect} from '@react-navigation/native';
-import firestore from '@react-native-firebase/firestore';
-import {showToast} from 'helpers/showToast';
 import FastImage from 'react-native-fast-image';
-import Config from 'react-native-config';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useNotifications } from 'hooks/useNotifications';
 
 interface Notifications {
   body: string;
@@ -35,16 +19,16 @@ interface Notifications {
   data?: any;
 }
 
-type NotificationImage = {[key: string]: string};
+const COUNT_NOTIFICATIONS_TO_ADD = 5;
 
 const Notifications: FC = (): ReactElement => {
-  const DEFAULT_NOTIFICATIONS_LIMIT = 20;
-  const COUNT_NOTIFICATIONS_TO_ADD = 5;
-  const [notifications, setNotifications] = useState<Notifications[]>([]);
-  // const [images, setImages] = useState<NotificationImage>({});
-  const navigation = useAppNavigation();
-  const [limitNotifications, setLimitNotifications] = useState<number>(DEFAULT_NOTIFICATIONS_LIMIT);
-  const [loading, setLoading] = useState<boolean>(true);
+  const {
+    loading,
+    notifications,
+    handleClearNotifications,
+    setLimitNotifications,
+    handleNavigate,
+  } = useNotifications()
 
   const rotationLoader = useSharedValue(0);
 
@@ -71,137 +55,7 @@ const Notifications: FC = (): ReactElement => {
   });
 
   const styles = useStyles();
-  const user = useUser((i: any) => i?.user);
-
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const fetchImage = async (uid: string): Promise<string> => {
-    try {
-      const dataDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-      const photoUri = dataDoc?.data()?.photos?.[0]?.image || '';
-      return photoUri;
-    } catch (error) {
-      logErrorToSentry(error)
-    }
-  };
-
-  const fetchNotifications = async (uid: string): Promise<Notifications[]> => {
-    try {
-      const notificationsQuery = await firestore()
-        .collection(apiUserInfoCollection)
-        .doc(uid)
-        .collection('notifications')
-        .limit(limitNotifications)
-        .get();
-
-      const notificationsWithImages = await Promise.all(
-        notificationsQuery.docs.map(async doc => {
-          const notification = doc.data() as Notifications;
-          const photoUri = await fetchImage(notification.uid);
-          return {
-            ...notification,
-            image: photoUri,
-          };
-        }),
-      );
-      return notificationsWithImages;
-    } catch (error) {
-      logErrorToSentry(error);
-      console.error('Error fetching notifications:', error);
-    } finally {
-      setLoading(false);
-    }
-    return [];
-  };
-
-  const clearNotifications = async (uid: string): Promise<void> => {
-    try {
-      await firestore()
-      .collection(apiUserInfoCollection)
-      .doc(uid)
-      .collection('notifications')
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.docs.forEach(doc => {
-          doc.ref.delete();
-        });
-      });
-    } catch (error) {
-      logErrorToSentry(error);
-    }
-  };
-
-  const getNotifications = async () => {
-    const notification = await fetchNotifications(user?.uid ?? '');
-    setNotifications(notification);
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      getNotifications();
-    }, [limitNotifications]),
-  );
-
-  // useEffect(() => {
-  //   const fetchImages = async () => {
-  //     const imagesMap: NotificationImage = {};
-  //     for (const notification of notifications) {
-  //       if (notification.image) {
-  //         imagesMap[notification.uid] = notification.image;
-  //       } else {
-  //         const photoUri = await fetchImage(notification.uid);
-  //         imagesMap[notification.uid] = photoUri;
-  //       }
-  //     }
-  //     setImages(imagesMap);
-  //   };
-
-  //   fetchImages();
-  // }, [notifications]);
-
-  const handleClearNotifications = async () => {
-    setNotifications([]);
-    await clearNotifications(user?.uid);
-    showToast('inviteMatch', 'Notifications have been read', 'Notifications', {status: 'success', ownerPhoto: user?.photos[0].image});
-  };
-
-  const handleNavigate = async (path: string, data: any) => {
-    console.log('data', data);
-
-    switch (path) {
-      case 'invitationCode':
-        navigation.navigate(commonStackPath, {screen: invitationCodePath});
-        break;
-      case 'requests':
-        // @ts-ignore
-        navigation.navigate(requestsPath, {
-          screen: requestsPath,
-        });
-        break;
-      case 'myEvents':
-        // @ts-ignore
-        navigation.navigate(myEventsPath, {
-          screen: myEventsPath,
-        });
-        break;
-      case 'guestsList':
-        // @ts-ignore
-        navigation.navigate(commonStackPath, {
-          screen: eventActiveInfoPath,
-          params: {list: data},
-        } as never);
-        break;
-      case 'chat':
-        // @ts-ignore
-        navigation.navigate(chatCorrespondencePath, {
-          screen: chatCorrespondencePath,
-          params: data,
-        });
-        break;
-      default:
-        break;
-    }
-  };
-
+  
   if (loading) {
     return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
@@ -294,50 +148,6 @@ const Notifications: FC = (): ReactElement => {
           </TouchableOpacity>
         )}
       />
-      {/* <ScrollView
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{paddingTop: 20}}
-        style={styles.containerScroll}>
-        {!user?.accountConfirmed && <NotificationItem />}
-      </ScrollView> */}
-    </View>
-  );
-};
-
-type NotificationItemProps = {
-  user: {photos: [{image: string}]};
-};
-const NotificationItem = ({user}: NotificationItemProps) => {
-  const navigation = useAppNavigation();
-  const styles = useStyles();
-
-  const goToCodeVerification = (): void => {
-    navigation.navigate(commonStackPath, {screen: invitationCodePath});
-  };
-
-  return (
-    <View style={styles.notificationItem}>
-      <View style={styles.notificationImageContainer}>
-        <ImageBackground
-          resizeMode="cover"
-          source={{uri: user?.photos[0].image}}
-          width={40}
-          height={40}
-          style={styles.notificationImageBackground}>
-          <ClockOrange width={14} height={14} />
-        </ImageBackground>
-      </View>
-      <View>
-        <Text style={styles.notificationTitle}>Your User in review</Text>
-        <View style={styles.notificationSubtitleWr}>
-          <Text style={styles.notificationSubtitleText}>Have a code?</Text>
-          <TouchableOpacity style={styles.notificationSubtitlePressableWr} onPress={goToCodeVerification}>
-            <Text style={styles.notificationPressableText}>Click here</Text>
-            <ArrowRight style={styles.notificationArrowRight} width={14} height={14} />
-          </TouchableOpacity>
-        </View>
-      </View>
     </View>
   );
 };

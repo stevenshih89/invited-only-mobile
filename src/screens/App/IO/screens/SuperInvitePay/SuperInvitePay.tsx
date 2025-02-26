@@ -1,17 +1,13 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect} from 'react';
 import {View, Text, SafeAreaView, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {screenWidth} from 'constants/common';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from 'screens/App/IO/screens/SuperInvitePay/styles';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import Button from 'components/Button/Button.tsx';
-import {IOPath} from 'constants/pathLocations.ts';
 import {
   black1Color,
   black2Color90,
@@ -26,17 +22,9 @@ import {
 import LoaderIcon from 'assets/images/icons/loader.svg';
 import FlashIcon from 'assets/images/icons/flash-filled.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
-import Purchases, {PurchasesPackage} from 'react-native-purchases';
-import {showToast} from 'helpers/showToast';
-import {getSuperInvites} from 'src/api/purchase';
-import Config from 'react-native-config';
-
-import getSymbolFromCurrency from 'currency-symbol-map';
-import {useUser} from 'src/store/userStore';
-import {getUserData} from 'helpers/getUserData';
+import {PurchasesPackage} from 'react-native-purchases';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
-import moment from 'moment';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useSuperInvitePay } from 'hooks/useSuperInvitePay';
 
 interface PlanListItem {
   id: number;
@@ -48,40 +36,20 @@ interface PlanListItem {
 }
 
 const SuperInvitePay: FC = (): JSX.Element => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const {
+    loadingPurchaseList,
+    activePayment,
+    setActivePayment,
+    user,
+    handleCloseModal,
+    purchaseListError,
+    plansList,
+    getOfferings,
+    loadingPurchasing
+  } = useSuperInvitePay()
   const styles = useStyles();
-  const navigation = useAppNavigation();
-
-  const [plansList, setPlansList] = useState<PlanListItem[]>([
-    {
-      id: 0,
-      quantity: 30,
-      priceEach: 2.67,
-      save: 51,
-    },
-    {
-      id: 1,
-      quantity: 15,
-      priceEach: 3.06,
-      save: 43,
-    },
-    {
-      id: 2,
-      quantity: 5,
-      priceEach: 5.18,
-      save: 4,
-    },
-  ]);
-
-  const user = useUser((i: any) => i?.user);
-  const [loadingPurchasing, setLoadingPurchasing] = useState(false);
-  const [loadingPurchaseList, setLoadingPurchaseList] = useState(true);
-  const [purchaseListError, setPurchaseListError] = useState(false);
-  const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[1]);
 
   const rotationLoader = useSharedValue(0);
-
-  const [userData, setUserData] = useState({});
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -104,143 +72,6 @@ const SuperInvitePay: FC = (): JSX.Element => {
       cancelAnimation(rotationLoader);
     };
   }, [rotationLoader, loadingPurchaseList]);
-
-  const updateSuperInvites = async (superInvites: number, price: string) => {
-    const user = auth().currentUser;
-
-    if (user) {
-      try {
-        const {superInvites: superInvitesCurrent, weeklySuperInvites: weeklySuperInvitesCurrent} = userData;
-        const {inAppPurchase} = userData;
-        await firestore()
-          .collection(apiUserInfoCollection)
-          .doc(user.uid)
-          .update({
-            superInvites: firestore.FieldValue.increment(superInvites),
-            inAppPurchase: [
-              ...(inAppPurchase ?? []), 
-              { number: superInvites, 
-                purchaseDate: moment().format(), 
-                price,
-              }
-            ]            
-          });
-        handleNext(superInvitesCurrent + weeklySuperInvitesCurrent + superInvites);
-      } catch (error: any) {
-        setLoadingPurchasing(false);
-        showToast('inviteMatch', '', 'Failed to update super invites / joins', 'Error');
-        logErrorToSentry(error)
-        // console.log('error updateSuperInvites', error);
-      }
-    }
-  };
-
-  const fetchUserData = async () => {
-    const currentUser = auth().currentUser;
-    if (!currentUser?.uid) {
-      return;
-    }
-    const userInfo = await getUserData(currentUser?.uid);
-    setUserData(userInfo);
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
-  
-  const handleNext = async (superInvites: number) => {
-    navigation.navigate(IOPath as never);
-    setLoadingPurchasing(false);
-    showToast(
-      'inviteMatch',
-      `You have ${superInvites} super ${userData?.accountType === 'host' ? 'Invites' : 'Joins'}`,
-      `Let's start ${userData?.accountType === 'host' ? 'invite' : 'join'}!`,
-      {ownerPhoto: userData?.photos[0].image, status: 'SUCCESSFUL'},
-    );
-  };
-
-  const handleCloseModal = () => {
-    navigation.goBack();
-  };
-
-  const pay = async (pack: PurchasesPackage, superInvites: number, price: string) => {
-    try {
-      const {customerInfo} = await Purchases.purchasePackage(pack);
-      updateSuperInvites(superInvites, price);
-      // console.log('pay successful');
-    } catch (e) {
-      setLoadingPurchasing(false);
-      showToast('inviteMatch', '', 'Failed to purchase');
-      // console.log('pay error', e);
-    }
-  };
-
-  const getOfferings = async () => {
-    if (!userData?.uid) {
-      setLoadingPurchasing(false);
-      showToast('inviteMatch', '', "There's been an error");
-      return;
-    }
-    setLoadingPurchasing(true);
-    try {
-      const offerings = await Purchases.getOfferings();
-      if (offerings.current !== null) {
-        const offeringsHostSubscription = offerings.all['Super Invite'];
-
-        if (activePayment.id === 0) {
-          const product = offeringsHostSubscription.availablePackages[0];
-          pay(product, 30, activePayment.priceString);
-        }
-
-        if (activePayment.id === 1) {
-          const product = offeringsHostSubscription.availablePackages[1];
-          pay(product, 15, activePayment.priceString);
-        }
-
-        if (activePayment.id === 2) {
-          const product = offeringsHostSubscription.availablePackages[2];
-          pay(product, 5, activePayment.priceString);
-        }
-      }
-    } catch (e) {
-      setLoadingPurchasing(false);
-      showToast('inviteMatch', '', 'Failed to get offerings');
-    }
-  };
-
-  const fetchSuperInvites = async () => {
-    setLoadingPurchaseList(true);
-    await getSuperInvites()
-      .then(response => {
-        if (response?.length) {
-          const products = response.map((offer, idx) => ({
-            id: idx,
-            quantity: plansList[idx].quantity,
-            priceEach: getSymbolFromCurrency(offer.product.currencyCode) + (offer.product.price / plansList[idx].quantity).toFixed(2),
-            priceString: offer.product.priceString,
-            save: plansList[idx].save,
-            package: offer,
-          }));
-          setPlansList(products);
-          setActivePayment(products[1]);
-          setLoadingPurchaseList(false);
-          setPurchaseListError(false);
-        } else {
-          setLoadingPurchaseList(false);
-          setPurchaseListError(true);
-          showToast('inviteMatch', '', "Can't find any purchase");
-        }
-      })
-      .catch(() => {
-        setLoadingPurchaseList(false);
-        setPurchaseListError(true);
-        showToast('inviteMatch', '', "Error: Can't find any purchase");
-      });
-  };
-
-  useEffect(() => {
-    fetchSuperInvites();
-  }, [userData?.uid]);
 
   const renderItem = ({item}: {item: PlanListItem}) => {
     const isActive = activePayment.id === item.id;

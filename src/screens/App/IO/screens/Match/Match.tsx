@@ -4,22 +4,14 @@ import Modal from 'react-native-modal';
 import Close from 'assets/images/icons/close.svg';
 import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight, screenWidth} from 'constants/common';
+import {screenHeight, screenWidth} from 'constants/common';
 import {FC, useEffect} from 'react';
 import Animated, {useSharedValue, useAnimatedStyle, withTiming, withDelay} from 'react-native-reanimated';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {chatCorrespondencePath, commonStackPath} from 'constants/pathLocations';
-import {showToast} from 'helpers/showToast';
-import firestore from '@react-native-firebase/firestore';
-import {useUser} from 'src/store/userStore';
-import {sendNotification} from 'helpers/fcmHelper';
 import MatchInfoCard from 'components/MatchInfoCard';
 import {calculateAge} from 'helpers/calculateAge';
 import {Event} from 'src/types/event';
 import LinearGradient from 'react-native-linear-gradient';
-import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-
+import { useMatch } from 'hooks/useMatch';
 export interface MatchData {
   type?: string;
   nameHost?: string;
@@ -50,259 +42,14 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   onCloseMatch,
   matchData,
 }) => {
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
-  const userHost = useUser((i: any) => i?.user);
-
-  const navigation = useAppNavigation();
-
-  const handleCloseMatch = async () => {
-    onCloseMatch();
-    try {
-      const messageCollection = await firestore().collection(apiMessagesCollection).doc(matchData?.eventId).get();
-    const chatCheck = messageCollection?.data()?.chats?.find(i => i?.uid === matchData.uidGuest);
-    const chatDataHost = {
-      image: chatCheck?.avatar,
-      title: matchData.nameGuest,
-      online: false,
-      messages: chatCheck?.messages,
-      activeEvent: matchData.eventId,
-      id: chatCheck?.id,
-      superInvite: chatCheck?.superInvite,
-      invitedStatus: chatCheck?.invitedStatus,
-      uid: chatCheck?.uid,
-      hostUid: matchData.uidHost,
-      path: 'chat',
-    };
-
-    const chatDataGuest = {
-      image: matchData.userHostImageUri,
-      title: matchData.nameHost,
-      online: false,
-      messages: chatCheck?.messages,
-      activeEvent: matchData.eventId,
-      id: chatCheck?.id,
-      superInvite: chatCheck?.superInvite,
-      invitedStatus: chatCheck?.invitedStatus,
-      uid: matchData.uidHost,
-      hostUid: matchData.uidHost,
-      path: 'chat',
-    };
-    const isEventHost = userHost?.uid === matchData?.uidHost;
-    const uidForNotification = isEventHost ? matchData?.uidGuest : matchData?.uidHost;
-    const ownerPhoto = isEventHost ? matchData?.imageUri : matchData?.userHostImageUri;
-    if (uidForNotification) {
-      const getDoc = await firestore().collection(apiUserInfoCollection).doc(uidForNotification).get();
-      const docData = getDoc.data();
-      if (docData?.notificationSettings?.match) {
-        await sendNotification(
-          uidForNotification,
-          'Say, Hi! 👋',
-          'New connection!',
-          'Connection',
-          'Connection'.toUpperCase(),
-          userHost,
-          JSON.stringify({path: 'chat', data: isEventHost ? chatDataGuest : chatDataHost}),
-        );
-      }
-    }
-    showToast('inviteMatch', 'Say, Hi! 👋', 'New connection!', {
-      ownerPhoto: ownerPhoto,
-      status: 'CONNECTION',
-      path: 'chat',
-      params: isEventHost ? chatDataHost : chatDataGuest,
-    });
-    } catch (error) {
-      logErrorToSentry(error)
-    }
-  };
-
-  const handleCreateChat = async () => {
-    const querySnapshot = await firestore().collection(apiEventsCollection).doc(matchData.eventId).get();
-    if (!querySnapshot.exists) {
-      return;
-    }
-    const list = querySnapshot.data();
-
-    try {
-      const messageCollection = await firestore().collection(apiMessagesCollection).doc(list?.id).get();
-
-      const chatCheck = messageCollection?.data()?.chats?.filter(i => i?.uid === matchData.uidGuest)[0];
-
-      const userHostQuery = await firestore().collection(apiUserInfoCollection).doc(matchData.uidHost).get();
-      const userHostData = userHostQuery?.data();
-
-      const activeEvent = messageCollection?.data()?.activeEvent;
-
-      if (chatCheck) {
-        const name = userHost?.accountType === 'host' ? matchData?.nameGuest : userHostData?.name;
-        const image = userHost?.accountType === 'host' ? matchData?.imageUri : userHostData?.photos[0]?.image;
-        const uid = userHost?.accountType === 'host' ? matchData?.uidGuest : userHostData?.uid;
-        navigation.navigate(commonStackPath, {
-          screen: chatCorrespondencePath,
-          params: {
-            image: image,
-            title: name,
-            online: false,
-            messages: chatCheck?.messages,
-            activeEvent: activeEvent,
-            id: chatCheck?.id,
-            superInvite: chatCheck?.superInvite,
-            invitedStatus: chatCheck?.invitedStatus,
-            hostUid: userHostData?.uid,
-            uid: uid,
-          },
-        });
-        handleCloseMatch();
-      } else {
-        if (messageCollection?.data()) {
-          const prevChats = messageCollection?.data()?.chats;
-          const newChats = {
-            avatar: matchData.imageUri,
-            id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
-            invitedStatus: INVITE_MATCH_STATUS,
-            messages: [],
-            name: matchData.nameGuest,
-            superInvite: matchData?.superInvite,
-            uid: matchData.uidGuest,
-            hostUid: userHost?.uid,
-          };
-          await firestore()
-            .collection(apiMessagesCollection)
-            .doc(list?.id)
-            .update({
-              chats: [...prevChats, newChats],
-            });
-
-          const name = userHost?.accountType === 'host' ? matchData?.nameGuest : userHostData?.name;
-          const image = userHost?.accountType === 'host' ? matchData?.imageUri : userHostData?.photos[0]?.image;
-          const uid = userHost?.accountType === 'host' ? matchData?.uidGuest : userHostData?.uid;
-          navigation.navigate(commonStackPath, {
-            screen: chatCorrespondencePath,
-            params: {
-              image: image,
-              title: name,
-              online: false,
-              messages: [],
-              activeEvent: activeEvent,
-              id: newChats?.id,
-              superInvite: newChats?.superInvite,
-              invitedStatus: newChats?.invitedStatus,
-              hostUid: userHostData?.uid,
-              uid: uid,
-            },
-          });
-
-          handleCloseMatch();
-        } else {
-          const id = list?.id;
-
-          await firestore().collection(apiMessagesCollection).doc(id).set({
-            activeEvent: id,
-            avatarGuest: matchData.imageUri,
-            avatarHost: userHost?.photos[0]?.image,
-            chats: [],
-            inviteStatus: INVITE_MATCH_STATUS,
-            nameGuest: matchData.nameGuest,
-            uidGuest: matchData.uidGuest,
-            uidHost: userHost?.uid,
-          });
-
-          const newChats = {
-            avatar: matchData.imageUri,
-            id: Math.floor(Math.random() * (99999 - 1 + 1)) + 1,
-            invitedStatus: INVITE_MATCH_STATUS,
-            messages: [],
-            name: matchData.nameGuest,
-            superInvite: matchData?.superInvite === 'true' ? true : false,
-            uid: matchData.uidGuest,
-            hostUid: userHost?.uid,
-          };
-
-          await firestore()
-            .collection(apiMessagesCollection)
-            .doc(id)
-            .update({
-              chats: [newChats],
-            });
-
-          const name = userHost?.accountType === 'host' ? matchData?.nameGuest : userHostData?.name;
-          const image = userHost?.accountType === 'host' ? matchData?.imageUri : userHostData?.photos[0]?.image;
-          const uid = userHost?.accountType === 'host' ? matchData?.uidGuest : userHostData?.uid;
-
-          navigation.navigate(commonStackPath, {
-            screen: chatCorrespondencePath,
-            params: {
-              image: image,
-              title: name,
-              online: false,
-              messages: [],
-              activeEvent: id,
-              id: newChats?.id,
-              superInvite: newChats?.superInvite,
-              invitedStatus: newChats?.invitedStatus,
-              hostUid: userHostData?.uid,
-              uid: uid,
-            },
-          });
-
-          handleCloseMatch();
-        }
-      }
-    } catch (e) {
-      // console.log(e);
-      showToast('inviteMatch', 'There was an issue creating the chat. Please try again later.', 'Error');
-      logErrorToSentry(e)
-    }
-  };
-
-  const handleApproveGuestFromHost = async () => {
-    // console.warn(matchData);
-    const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(matchData.eventId).get();
-    if (eventQuerySnapshot.exists) {
-      const eventData = eventQuerySnapshot?.data();
-      const usersList = [...eventData?.usersList];
-      // const userIndex = usersList.findIndex((user: any) => user.uid === matchData.uidGuest);
-
-      const updatedUsersList = usersList.map((user: any) => {
-        if (user.uid === matchData.uidGuest) {
-          return {
-            ...user,
-            status: APPROVED_STATUS,
-          };
-        }
-        return user;
-      });
-      try {
-        await firestore().collection(apiEventsCollection).doc(matchData.eventId).update({usersList: updatedUsersList});
-      if (matchData?.uidGuest) {
-        const getDoc = await firestore().collection(apiUserInfoCollection).doc(matchData?.uidGuest).get();
-        const docData = getDoc.data();
-        if (docData?.notificationSettings?.requests || docData?.notificationSettings?.joinedEvent) {
-          await sendNotification(
-            matchData?.uidGuest,
-            'Request approved',
-            'Please confirm your attendence',
-            'Approve',
-            'Approved'.toUpperCase(),
-            userHost,
-          );
-        }
-        showToast('inviteMatch', `Waiting for ${matchData?.name} to accept your invitation`, 'Almost there!', {
-          ownerPhoto: matchData?.imageUri,
-          status: 'GUEST APPROVED',
-        });
-      }
-      } catch (error) {
-        showToast('inviteMatch', 'An error occurred while approve guest. Please try again.', 'Error');
-        logErrorToSentry(error);
-      }
-      onCloseMatch();
-    }
-  };
-
+  const {
+    handleCloseMatch,
+    userHost,
+    handleApproveGuestFromHost,
+    handleCreateChat
+  } = useMatch(onCloseMatch, matchData)
+  
   // ANIMATED CARD
 
   const rotateCard1 = useSharedValue(0);
@@ -412,7 +159,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
           <Animated.View style={[{position: 'absolute', zIndex: 1000, alignSelf: 'center'}, animatedStyleCard1]}>
             <MatchInfoCard
               isProfile={false}
-              usersList={matchData.usersListHost}
+              usersList={matchData.usersListHost} //
               accountType={matchData.accountTypeHost}
               image={matchData.userHostImageUri}
               imageEvent={matchData.eventImage}

@@ -77,6 +77,7 @@ export const useProfile = () => {
           totalParticipants += data?.male || 0 + data?.female || 0;
         }
       }
+      console.log('totalParticipants before set:', totalParticipants);
       setTotalGuests(totalParticipants);
     } catch (error) {
       logErrorToSentry(error);

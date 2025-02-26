@@ -30,17 +30,27 @@ import Match from '../Match/Match';
 import {onMatchNotificationSubscription} from 'helpers/fcmHelper';
 import Config from 'react-native-config';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useJoinEvents } from 'hooks/useJoinEvents';
+import { userProfilePath } from 'constants/pathLocations';
+
+const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
 const JoinEvents = ({navigation}: any) => {
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const [events, setEvents] = useState<any[]>([]);
-  const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
-  const [ownerEventUserPhoto, setOwnerEventUserPhoto] = useState();
-  const [matchData, setMatchData] = useState<any>({});
+
+  const {
+    apiUserInfoCollection,
+    isVisibleMatch,
+    matchData,
+    onInvite,
+    onRejected,
+    handleCloseMatch,
+    setEvents,
+    events,
+    userHost
+  } = useJoinEvents()
 
   const styles = useStyles();
-  const userHost = useUser((i: any) => i?.user);
 
   const OverlayRight = () => {
     return (
@@ -56,16 +66,6 @@ const JoinEvents = ({navigation}: any) => {
       </View>
     );
   };
-
-  useEffect(() => {
-    const unsubscribe = onMatchNotificationSubscription(message => {
-      const data = message?.data;
-      setMatchData({...data, superInvite: data?.superInvite ? JSON.parse(data?.superInvite as any) : false});
-      setIsVisibleMatch(true);
-    });
-
-    return () => unsubscribe();
-  });
 
   const getListForGuest = async () => {
     const user = auth().currentUser;
@@ -250,50 +250,9 @@ const JoinEvents = ({navigation}: any) => {
     }
   };
 
-  const onInvite = async (list: any) => {
-    try {
-      const activeEvent = list?.id;
-
-      const userLiked = {
-        gender: userHost?.gender,
-        name: userHost?.name,
-        superInvite: false,
-        uid: userHost?.uid,
-        status: LIKED,
-        userPhoto: userHost?.photos[0]?.image,
-      };
-
-      await firestore()
-        .collection(apiEventsCollection)
-        .doc(activeEvent)
-        .update({
-          requestsList: firestore.FieldValue.arrayUnion(userLiked),
-        });
-      showToast('inviteMatch', '', 'The invitation has been successfully withdrawn!');
-    } catch (e) {
-      showToast('inviteMatch', 'There was an issue with the invitation. Please try again later.', 'Error');
-      logErrorToSentry(e)
-      // console.log(e);
-    }
-  };
-
-  const onRejected = async (list: any) => {
-    try {
-      const filterEvents = events?.filter(i => i?.info?.id !== list?.id);
-      setEvents(filterEvents);
-    } catch (e) {
-      // console.log(e);
-    }
-  };
-
   useEffect(() => {
     getListForGuest();
   }, []);
-
-  const handleCloseMatch = (): void => {
-    setIsVisibleMatch(false);
-    showToast('inviteMatch', 'Say, Hi! 👋', 'New Connection!', {ownerPhoto: ownerEventUserPhoto, status: 'INVITE MATCH'});
-  };
 
   return (
     <View style={styles.container}>
