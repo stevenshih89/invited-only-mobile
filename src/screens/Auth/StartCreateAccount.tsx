@@ -86,7 +86,7 @@ const StartCreateAccount: FC = (): JSX.Element => {
                 }}>
                 Have an account?{' '}
               </Text>
-              <TouchableOpacity onPress={() => navigation.navigate(signUpPath as never)}>
+              <TouchableOpacity onPress={() => navigation.navigate(signUpPath as never, {isLogin: true})}>
                 <Text
                   style={{
                     color: whiteColor,

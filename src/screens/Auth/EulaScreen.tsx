@@ -343,7 +343,7 @@ const Eula: FC = (): JSX.Element => {
               // disabled={!endReached}
               activeOpacity={0.7}
               hitSlop={{top: 26, bottom: 20}}
-              onPress={() => navigation.navigate(signUpPath as never)}
+              onPress={() => navigation.navigate(signUpPath as never, {isLogin: false})}
               style={{
                 flex: 1.7,
                 backgroundColor:  whiteColor,

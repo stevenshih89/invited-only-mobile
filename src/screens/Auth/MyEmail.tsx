@@ -20,6 +20,10 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import Config from 'react-native-config';
+import { showToast } from 'helpers/showToast';
+
+const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
 const MyEmail: FC = (): JSX.Element => {
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
@@ -88,7 +92,7 @@ const MyEmail: FC = (): JSX.Element => {
     setEmail(truncatedText);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setIsValidEmail(isEmailValid(email));
     const _isValidEmail = isEmailValid(email);
     if (!email || !_isValidEmail) {
@@ -101,6 +105,12 @@ const MyEmail: FC = (): JSX.Element => {
       },
     ]);
     const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
+
+    const userNumber = await firestore().collection(apiUserInfoCollection).where('email', '==', email).get();
+    if(!userNumber.empty) {
+      showToast('inviteMatch', 'This Email is already exist', 'Fail');
+      return
+    }
 
     // @ts-ignore
     navigation.navigate(privacyPath, {screen: 'MyEmail', accountType: accountType});
