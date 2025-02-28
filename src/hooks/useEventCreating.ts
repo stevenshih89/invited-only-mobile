@@ -20,6 +20,9 @@ import {useFocusEffect, useRoute} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import firestore from '@react-native-firebase/firestore';
 import { eventTypes } from 'src/mocks/eventTypes';
+import {EventMutations} from "../apiv2/mutations/eventMutations.ts";
+import {UserMutations} from "../apiv2/mutations/userMutations.ts";
+import {UserQueries} from "../apiv2/queries/userQueries.ts";
 
 const INVITED_ONLY = 'invitedOnly';
 const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -87,6 +90,10 @@ export const useEventCreating = () => {
     const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
     const isEditing = (route?.params as {isEditing?: boolean})?.isEditing;
     const isEditingItem = (route?.params as {isEditingItems?: any})?.isEditingItems;
+    const {mutate: updateEventMutation} = EventMutations.useUpdateEvent(isEditingItem?.id);
+    const {mutate: createEventMutation} = EventMutations.useCreateEvent();
+    const {mutate: updateUserEventListMutation} = UserMutations.useUpdateUserEventList();
+    const {refetch: fcmTokensFromUsersRefetch} = UserQueries.useFcmTokensFromUsers(false);
 
     useEffect(() => {
     if (hintStep === 3) {
@@ -151,69 +158,32 @@ export const useEventCreating = () => {
     };
 
     const handleSaveChanges = async () => {
-    try {
-        const id = isEditingItem?.id;
-        await firestore().collection(apiEventsCollection).doc(id).update({
-        female,
-        male,
-        femaleFriend,
-        maleFriend,
-        eventTypes,
-        placeName,
-        name,
-        description,
-        date,
-        hour,
-        address,
-        meetingSpot,
-        photos,
-        });
-        analytics().logEvent('event_saved_changes', {
-        eventId: id,
-        });
-        const getDoc = await firestore().collection(apiEventsCollection).doc(id).get();
-        const data = getDoc.data();
-        navigation.navigate(commonStackPath, {
-        screen: eventActiveInfoPath,
-        params: {list: data},
-        } as never);
-        showToast('inviteMatch', 'Continue invite👋', 'Event updated');
-        await sendNotificationAcceptedUser();
-        // sendNotification(`${isEditingItem?.name} has been updated`, 'Click here to see details', 'update');
-    } catch (e) {
-        showToast('inviteMatch', 'Something went wrong while updating the event. Please try again later.', 'Error');
-        logErrorToSentry(e)
-        console.log('error update event', e);
-    }
+        updateEventMutation({
+            eventData: {
+                female,
+                male,
+                femaleFriend,
+                maleFriend,
+                eventTypes,
+                placeName,
+                name,
+                description,
+                date,
+                hour,
+                address,
+                meetingSpot,
+                photos,
+            },
+            onSuccess: async (data: any) => {
+                navigation.navigate(commonStackPath, {
+                    screen: eventActiveInfoPath,
+                    params: {list: data},
+                } as never);
+
+                await sendNotificationAcceptedUser();
+            }
+        })
     };
-
-    useFocusEffect(
-    useCallback(() => {
-        const fetchMyEvents = async () => {
-        const user = auth().currentUser;
-        if (user) {
-            try {
-            const querySnapshot = await firestore().collection(apiEventsCollection).where('uid', '==', user.uid).get();
-
-            if (querySnapshot.empty) {
-                setMyEvents([]);
-                return;
-            }
-            const data = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            setMyEvents(data);
-            } catch (error: any) {
-            showToast('inviteMatch', 'Failed to load your events. Please try again later.', 'Error');
-            logErrorToSentry(error);
-            // Alert.alert('Error', error.message || 'Something went wrong');
-            }
-        }
-        };
-        fetchMyEvents();
-    }, []),
-    );
 
     const uploadImage = async (imagePath: string, userId: string | null) => {
     if (imagePath) {
@@ -287,51 +257,36 @@ export const useEventCreating = () => {
         imagesUri.push({id: i?.id, image: img});
         }
 
-        await createEvent(uid, event);
+        createEventMutation({
+            uid,
+            event
+        }, {
+            onSuccess: async () => {
+                updateUserEventListMutation(uid, {
+                    onSuccess: async () => {
+                        const tokensData = await fcmTokensFromUsersRefetch();
+                        const tokens = tokensData.data ?? [];
 
-        await firestore()
-        .collection(apiUserInfoCollection)
-        .doc(user?.uid)
-        .update({
-            eventsList: firestore.FieldValue.arrayUnion(uid),
-        });
+                        for (const token of tokens) {
+                            const result = await functions().httpsCallable('sendNotification')({
+                                token: token,
+                                priority: 'high',
+                                notification: {
+                                    title: 'Invited Only',
+                                    body: 'A new event was created!',
+                                },
+                            });
+                        }
 
-        const getFcmTokensFromUsers = async () => {
-            const userInfoDocs = await firestore()
-            .collection(apiUserInfoCollection)
-            .where('isInvitedOnlyAdmin', '==', true)
-            .get();
-        
-            const tokens: string[] = [];
-            
-            userInfoDocs.forEach((doc) => {
-            const data = doc.data();
-            if (data.fcmToken) {
-                tokens.push(data.fcmToken);
+
+                        setLoading(false);
+                        setLoaderVisible(false);
+
+                        navigation.navigate(IOPath as never);
+                    }
+                })
             }
-            });
-        
-            return tokens;
-        };
-        
-        const tokens = await getFcmTokensFromUsers();        
-
-        for (const token of tokens) {
-            const result = await functions().httpsCallable('sendNotification')({
-                token: token,
-                priority: 'high',
-                notification: {
-                title: 'Invited Only',
-                body: 'A new event was created!',
-                },
-            });
-        }
-        
-
-        setLoading(false);
-        setLoaderVisible(false);
-
-        navigation.navigate(IOPath as never);
+        })
     } catch (e) {
         setLoading(false);
         setLoaderVisible(false);

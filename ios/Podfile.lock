@@ -2448,7 +2448,7 @@ PODS:
     - SDWebImage/Core (~> 5.10)
   - Sentry/HybridSDK (8.44.0)
   - SocketRocket (0.6.1)
-  - UXCam (3.6.21)
+  - UXCam (3.6.22)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -2900,7 +2900,7 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   Sentry: 0f9bc9adfc0b960e7f3bb5ec67e9a3d8193f3bdb
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  UXCam: 231ca3ed93df030bfdede50bc7c51b46aac3bb12
+  UXCam: 9ff7948ec24c7cad33c7f537dfd1b3b2c27335bf
   Yoga: 08cd7601462818c4985bda7b205b9e6a92a7e66a
 
 PODFILE CHECKSUM: 748860ccb79d1c82ba52a3e4acbecec9264c8d65
