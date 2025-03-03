@@ -1,5 +1,4 @@
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider';
-import {blackColor, transparentWhite56Color} from 'constants/colors';
 import {screenHeight} from 'constants/common';
 import {ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
@@ -14,11 +13,11 @@ import ArrowIcon from 'assets/images/icons/arrow-3.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
-import Animated from 'react-native-reanimated';
 import FastImage from 'react-native-fast-image';
 import useStyles from 'screens/App/IO/styles.ts';
 import {calculateAge} from 'helpers/calculateAge';
 import {useUser} from 'src/store/userStore';
+import * as S from './CardFakeState.style';
 
 const CardsFakeState = ({handleSwipeFakeCard, OverlayRight, OverlayLeft, item}: any) => {
   const cardRef1 = useRef(null);
@@ -97,7 +96,7 @@ const CardsFakeState = ({handleSwipeFakeCard, OverlayRight, OverlayLeft, item}: 
             height: '100%',
           }}>
           <ScrollView scrollEventThrottle={20} showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
-            <View key={'0'} style={styles.wrapperFakeCard}>
+            <S.WrapperFakeCard key={'0'}>
               <TouchingSlider
                 name={'Nina'}
                 age={calculateAge('2025-01-14')}
@@ -122,190 +121,100 @@ const CardsFakeState = ({handleSwipeFakeCard, OverlayRight, OverlayLeft, item}: 
                 userInfo={user}
                 isPreview={false}
               />
-              <View style={styles.bioWrapper}>
-                <Text style={[styles.titleSection, false ? styles.mt31 : {}]}>My basics</Text>
-                <View style={styles.wrapperTextTags}>
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+              <S.BioWrapper>
+                <S.TitleSection style={[false ? styles.mt31 : {}]}>My basics</S.TitleSection>
+                <S.WrapperTextTags>
+                  <S.TextTagsAboutMe style={[styles.ml18]}>
                     <View style={{marginRight: 4}}>
                       <TablerGenderIcon />
                     </View>
                     Woman
-                  </Text>
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                  </S.TextTagsAboutMe>
+                  <S.TextTagsAboutMe style={[styles.ml18]}>
                     <View style={{marginRight: 4}}>
                       <LocationIcon />
                     </View>
                     Dubai
-                  </Text>
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                  </S.TextTagsAboutMe>
+                  <S.TextTagsAboutMe style={[styles.ml18]}>
                     <View style={{marginRight: 4}}>
                       <ArrowIcon />
                     </View>
                     165 см
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    borderTopWidth: 1,
-                    borderStyle: 'solid',
-                    borderTopColor: transparentWhite16Color,
-                    marginTop: screenHeight / 44,
-                    paddingTop: screenHeight / 44,
-                  }}>
-                  <Text style={[styles.titleSection]}>My interests</Text>
-                  <View style={styles.wrapperInterestsTags}>
+                  </S.TextTagsAboutMe>
+                </S.WrapperTextTags>
+                <S.WrapperInterests>
+                  <S.TitleSection>My interests</S.TitleSection>
+                  <S.WrapperInterestsTags>
                     {['Vip Tabels', 'Restaurant', 'Yacht Party'].map((interest: string | null, idx: number) => (
-                      <View key={idx} style={styles.interestsTags}>
-                        <Text style={styles.textTagsInterests}>{interest}</Text>
-                      </View>
+                      <S.InterestsTags key={idx}>
+                        <S.TextTagsInterests>{interest}</S.TextTagsInterests>
+                      </S.InterestsTags>
                     ))}
-                  </View>
-                </View>
-                <View style={styles.wrapperImageSectionFaceGirl}>
+                  </S.WrapperInterestsTags>
+                </S.WrapperInterests>
+                <S.WrapperImageSectionFaceGirl>
                   {girlPhotos1?.map((photo: string, photoIndex: number) => (
                     <FastImage key={photoIndex} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
                   ))}
-                </View>
-                <View style={styles.wrapperButtonsFooter}>
-                  <TouchableOpacity onPress={() => handleSwipeCardLeft(cardRef1)} style={styles.buttonCloseOrCheck}>
-                    <View
+                </S.WrapperImageSectionFaceGirl>
+                <S.WrapperButtonsFooter>
+                  <S.ButtonCloseOrCheck  onPress={() => handleSwipeCardLeft(cardRef1)}>
+                    <S.BorderButton
                       style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
                         top: -1,
                         left: -1,
                       }}
                     />
-                    <View
+                    <S.BorderButton
                       style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
                         right: -1,
                         bottom: -1,
                       }}
                     />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
+                    <S.RoundButton>
                       <CloseIcon />
-                    </View>
-                  </TouchableOpacity>
+                    </S.RoundButton>
+                  </S.ButtonCloseOrCheck>
                   <TouchableWithoutFeedback onPress={() => handleSwipeCardRight(cardRef1)}>
-                    <View style={styles.buttonFlash}>
-                      <View
+                    <S.ButtonFlash>
+                      <S.BorderButton
                         style={{
-                          backgroundColor: transparentWhite56Color,
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: 50,
-                          position: 'absolute',
                           top: -1,
                           left: -1,
                         }}
                       />
-                      <View
+                      <S.BorderButton
                         style={{
-                          backgroundColor: transparentWhite56Color,
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: 50,
-                          position: 'absolute',
                           right: -1,
                           bottom: -1,
                         }}
                       />
-                      <Animated.View
-                        style={[
-                          {
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: blackColor,
-                            borderRadius: 50,
-                            zIndex: 10,
-                            justifyContent: 'center',
-                            position: 'absolute',
-                            alignItems: 'center',
-                          },
-                        ]}>
+                      <S.RoundButton>
                         <FlashIcon />
-                      </Animated.View>
-                      {/* <Animated.View
-                      style={[
-                        {
-                          width: '100%',
-                          height: '100%',
-                          backgroundColor: blackColor,
-                          borderRadius: 50,
-                          zIndex: 10,
-                          position: 'absolute',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        },
-                      ]}>
-                      <Text
-                        style={{
-                          color: whiteColor,
-                          fontSize: 24,
-                          fontWeight: '500',
-                          transform: [{rotateY: '180deg'}],
-                        }}>
-                        0
-                      </Text>
-                    </Animated.View> */}
-                    </View>
+                      </S.RoundButton>
+                    </S.ButtonFlash>
                   </TouchableWithoutFeedback>
-                  <TouchableOpacity onPress={() => handleSwipeCardRight(cardRef1)} style={styles.buttonCloseOrCheck}>
-                    <View
+                  <S.ButtonCloseOrCheck onPress={() => handleSwipeCardRight(cardRef1)}>
+                    <S.BorderButton
                       style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
                         top: -1,
                         left: -1,
                       }}
                     />
-                    <View
+                    <S.BorderButton
                       style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
                         right: -1,
                         bottom: -1,
                       }}
                     />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
+                    <S.RoundButton>
                       <CheckIcon />
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
+                    </S.RoundButton>
+                  </S.ButtonCloseOrCheck>
+                </S.WrapperButtonsFooter>
+              </S.BioWrapper>
+            </S.WrapperFakeCard>
           </ScrollView>
         </TinderCard>
       </View>
@@ -338,7 +247,7 @@ const CardsFakeState = ({handleSwipeFakeCard, OverlayRight, OverlayLeft, item}: 
             height: '100%',
           }}>
           <ScrollView scrollEventThrottle={20} showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
-            <View key={'1'} style={styles.wrapperFakeCard}>
+            <S.WrapperFakeCard key={'1'}>
               <TouchingSlider
                 name={'Kristin'}
                 age={calculateAge('2025-01-14')}
@@ -363,190 +272,100 @@ const CardsFakeState = ({handleSwipeFakeCard, OverlayRight, OverlayLeft, item}: 
                 userInfo={user}
                 isPreview={false}
               />
-              <View style={styles.bioWrapper}>
-                <Text style={[styles.titleSection, false ? styles.mt31 : {}]}>My basics</Text>
-                <View style={styles.wrapperTextTags}>
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+              <S.BioWrapper>
+                <S.TitleSection style={[false ? styles.mt31 : {}]}>My basics</S.TitleSection>
+                <S.WrapperTextTags>
+                  <S.TextTagsAboutMe style={[styles.ml18]}>
                     <View style={{marginRight: 4}}>
                       <TablerGenderIcon />
                     </View>
                     Woman
-                  </Text>
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                  </S.TextTagsAboutMe>
+                  <S.TextTagsAboutMe style={[styles.ml18]}>
                     <View style={{marginRight: 4}}>
                       <LocationIcon />
                     </View>
                     Dubai
-                  </Text>
-                  <Text style={[styles.textTagsAboutMe, styles.ml18]}>
+                  </S.TextTagsAboutMe>
+                  <S.TextTagsAboutMe style={[styles.ml18]}>
                     <View style={{marginRight: 4}}>
                       <ArrowIcon />
                     </View>
                     168 см
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    borderTopWidth: 1,
-                    borderStyle: 'solid',
-                    borderTopColor: transparentWhite16Color,
-                    marginTop: screenHeight / 44,
-                    paddingTop: screenHeight / 44,
-                  }}>
-                  <Text style={[styles.titleSection]}>My interests</Text>
-                  <View style={styles.wrapperInterestsTags}>
+                  </S.TextTagsAboutMe>
+                </S.WrapperTextTags>
+                <S.WrapperInterests>
+                  <S.TitleSection>My interests</S.TitleSection>
+                  <S.WrapperInterestsTags>
                     {['Pool Party', 'Restaurant', 'Yacht Party'].map((interest: string | null, idx: number) => (
-                      <View key={idx} style={styles.interestsTags}>
-                        <Text style={styles.textTagsInterests}>{interest}</Text>
-                      </View>
+                      <S.InterestsTags key={idx}>
+                        <S.TextTagsInterests>{interest}</S.TextTagsInterests>
+                      </S.InterestsTags>
                     ))}
-                  </View>
-                </View>
-                <View style={styles.wrapperImageSectionFaceGirl}>
+                  </S.WrapperInterestsTags>
+                </S.WrapperInterests>
+                <S.WrapperImageSectionFaceGirl>
                   {girlPhotos2?.map((photo: string, photoIndex: number) => (
                     <FastImage key={photoIndex} style={[styles.imageFaceGirl, {marginVertical: screenHeight / 55}]} source={{uri: photo}} />
                   ))}
-                </View>
-                <View style={styles.wrapperButtonsFooter}>
-                  <TouchableOpacity onPress={() => handleSwipeCardLeft(cardRef2)} style={styles.buttonCloseOrCheck}>
-                    <View
+                </S.WrapperImageSectionFaceGirl>
+                <S.WrapperButtonsFooter>
+                  <S.ButtonCloseOrCheck onPress={() => handleSwipeCardLeft(cardRef2)}>
+                    <S.BorderButton
                       style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
                         top: -1,
                         left: -1,
                       }}
                     />
-                    <View
+                    <S.BorderButton
                       style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
                         right: -1,
                         bottom: -1,
                       }}
                     />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
+                    <S.RoundButton>
                       <CloseIcon />
-                    </View>
-                  </TouchableOpacity>
+                    </S.RoundButton>
+                  </S.ButtonCloseOrCheck>
                   <TouchableWithoutFeedback onPress={() => handleSwipeCardRight(cardRef2)}>
-                    <View style={styles.buttonFlash}>
-                      <View
+                    <S.ButtonFlash>
+                      <S.BorderButton
                         style={{
-                          backgroundColor: transparentWhite56Color,
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: 50,
-                          position: 'absolute',
                           top: -1,
                           left: -1,
                         }}
                       />
-                      <View
+                      <S.BorderButton
                         style={{
-                          backgroundColor: transparentWhite56Color,
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: 50,
-                          position: 'absolute',
                           right: -1,
                           bottom: -1,
                         }}
                       />
-                      <Animated.View
-                        style={[
-                          {
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: blackColor,
-                            borderRadius: 50,
-                            zIndex: 10,
-                            justifyContent: 'center',
-                            position: 'absolute',
-                            alignItems: 'center',
-                          },
-                        ]}>
+                      <S.RoundButton>
                         <FlashIcon />
-                      </Animated.View>
-                      {/* <Animated.View
-                      style={[
-                        {
-                          width: '100%',
-                          height: '100%',
-                          backgroundColor: blackColor,
-                          borderRadius: 50,
-                          zIndex: 10,
-                          position: 'absolute',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        },
-                      ]}>
-                      <Text
-                        style={{
-                          color: whiteColor,
-                          fontSize: 24,
-                          fontWeight: '500',
-                          transform: [{rotateY: '180deg'}],
-                        }}>
-                        0
-                      </Text>
-                    </Animated.View> */}
-                    </View>
+                      </S.RoundButton>
+                    </S.ButtonFlash>
                   </TouchableWithoutFeedback>
-                  <TouchableOpacity onPress={() => handleSwipeCardRight(cardRef2)} style={styles.buttonCloseOrCheck}>
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        top: -1,
-                        left: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
-                        right: -1,
-                        bottom: -1,
-                      }}
-                    />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
-                      <CheckIcon />
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
+                  <S.ButtonCloseOrCheck onPress={() => handleSwipeCardRight(cardRef2)}>
+                      <S.BorderButton
+                        style={{
+                          top: -1,
+                          left: -1,
+                        }}
+                      />
+                      <S.BorderButton
+                        style={{
+                          right: -1,
+                          bottom: -1,
+                        }}
+                      />
+                      <S.RoundButton>
+                        <CheckIcon />
+                      </S.RoundButton>
+                  </S.ButtonCloseOrCheck>
+                </S.WrapperButtonsFooter>
+              </S.BioWrapper>
+            </S.WrapperFakeCard>
           </ScrollView>
         </TinderCard>
       </View>

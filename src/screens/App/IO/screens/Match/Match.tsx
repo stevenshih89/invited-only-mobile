@@ -111,7 +111,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
     bottom: whiteLineBottom.value,
     width: whiteLineBottomWidth.value,
   }));
-
+  
   return (
     <LinearGradient colors={[black3Color, blackColor]}>
       <Modal

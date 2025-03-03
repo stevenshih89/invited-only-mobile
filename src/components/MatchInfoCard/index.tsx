@@ -1,6 +1,7 @@
 import {FC} from 'react';
 import {View, Text} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import * as S from './MatchInfoCard.style'
 
 //import components
 import {black4Color, blackColor, lightGreenColor, whiteColor} from 'constants/colors.ts';
@@ -58,218 +59,102 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
     const filter = usersList?.filter(item => item.status === 'invite_match');
     return filter?.length ? filter.length : 0;
   };
-
+  
   return (
-    <FastImage
+    <S.EventImage
       style={[
         {
-          width: screenWidth * 0.53,
-          height: screenHeight * 0.42,
-          borderRadius: 22,
           justifyContent: showHeaderInfo ? 'space-between' : 'flex-end',
         },
         styleContainer,
       ]}
       source={{uri: imageEvent && !isGuest ? imageEvent : image}}>
-      <LinearGradient
-        colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}
-        style={{
-          position: 'absolute',
-          bottom: 68,
-          left: 0,
-          right: 0,
-          height: 40,
-          zIndex: 1,
-        }}
-      />
+      <S.OverlayGradient/>
       {showHeaderInfo && (
         <View style={{flexDirection: 'row', padding: 15}}>
           <View style={{alignSelf: 'flex-start'}}>
             <FastImage style={{width: 30, height: 30, borderRadius: 30}} source={{uri: image}} />
             {online && (
-              <View
-                style={{
-                  position: 'absolute',
-                  bottom: 2,
-                  right: 0,
-                  width: 7,
-                  height: 7,
-                  borderRadius: 7,
-                  borderWidth: 1.25,
-                  borderColor: blackColor,
-                  backgroundColor: lightGreenColor,
-                }}></View>
+              <S.OnlineIndicator />
             )}
           </View>
           <View style={{marginLeft: 6, justifyContent: 'center'}}>
             <View style={{flexDirection: 'row'}}>
-              <View
-                style={{
-                  backgroundColor: blackColor,
-                  borderRadius: 3,
-                  paddingHorizontal: 6,
-                  paddingVertical: 2,
-                  alignSelf: 'flex-start',
-                }}>
+              <S.BadgeContainer>
                 {accountType === 'guest' && (
-                  <Text style={{color: whiteColor, fontSize: RFValue(6, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                  <S.BadgeText>
                     Guest
-                  </Text>
+                  </S.BadgeText>
                 )}
                 {accountType === 'host' && (
-                  <Text style={{color: whiteColor, fontSize: RFValue(6, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                  <S.BadgeText>
                     Host
-                  </Text>
+                  </S.BadgeText>
                 )}
-              </View>
+              </S.BadgeContainer>
               {premium && (
-                <LinearGradient
-                  colors={['#977B4A', '#E5D291', '#A28453']}
-                  style={{
-                    marginLeft: 6,
-                    alignSelf: 'flex-start',
-                    borderRadius: 3,
-                    paddingHorizontal: 6,
-                    paddingVertical: 2,
-                    backgroundColor: blackColor,
-                  }}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}>
+                <S.PremiumGradient>
                   {(premium || accountType === 'guest') && (
-                    <Text
-                      style={{
-                        color: blackColor,
-                        fontSize: RFValue(6, 812),
-                        fontFamily: Satoshi700,
-                      }}>
+                    <S.TextPremium>
                       Premium
-                    </Text>
+                    </S.TextPremium>
                   )}
-                </LinearGradient>
+                </S.PremiumGradient>
               )}
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-              }}>
-              <Text
-                style={{
-                  color: whiteColor,
-                  fontFamily: Satoshi700,
-                  fontSize: RFValue(12, 812),
-                }}>
+            <S.UserInfoWrapper>
+              <S.NameText>
                 {name}
                 <Text>,</Text>
-              </Text>
+              </S.NameText>
               {!isProfile && (
-                <Text
-                  style={{
-                    color: whiteColor,
-                    fontFamily: Satoshi700,
-                    fontSize: RFValue(12, 812),
-                  }}>
+                <S.AgeText>
                   {' '}
                   {age}
-                </Text>
+                </S.AgeText>
               )}
               <View style={{marginLeft: 5}}>{confirmedAccount && <CheckStarWhite width={12} height={12} />}</View>
-            </View>
+            </S.UserInfoWrapper>
           </View>
         </View>
       )}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          marginLeft: 10,
-          marginBottom: 40,
-        }}>
-        <Text
-          style={{
-            color: whiteColor,
-            fontFamily: Satoshi700,
-            fontSize: RFValue(20, 812),
-          }}>
+      <S.FooterContainer>
+        <S.FooterText>
           {name}
-        </Text>
+        </S.FooterText>
         <View style={{marginLeft: 5}}>{confirmedAccount && <CheckStarWhite width={15} height={15} />}</View>
-      </View>
-      <View
-        style={{
-          height: 68,
-          width: '100%',
-          backgroundColor: whiteColor,
-          paddingHorizontal: 10,
-          paddingVertical: 8,
-          justifyContent: 'space-between',
-        }}>
+      </S.FooterContainer>
+      <S.DetailsContainer>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <View style={{flexDirection: 'row'}}>
             <View style={{alignSelf: 'flex-start'}}>
               <FastImage style={{width: 30, height: 30, borderRadius: 30}} source={{uri: image}} />
               {online && (
-                <View
-                  style={{
-                    position: 'absolute',
-                    bottom: 2,
-                    right: 0,
-                    width: 7,
-                    height: 7,
-                    borderRadius: 7,
-                    borderWidth: 1.25,
-                    borderColor: blackColor,
-                    backgroundColor: lightGreenColor,
-                  }}></View>
+                <S.OnlineIndicator />
               )}
             </View>
             <View style={{marginLeft: 6, justifyContent: 'center'}}>
               <View style={{flexDirection: 'row'}}>
-                <View
-                  style={{
-                    backgroundColor: blackColor,
-                    borderRadius: 3,
-                    paddingHorizontal: 6,
-                    paddingVertical: 2,
-                    alignSelf: 'flex-start',
-                  }}>
+                <S.BadgeContainer>
                   {accountType === 'guest' && (
-                    <Text style={{color: whiteColor, fontSize: RFValue(6, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                    <S.BadgeText>
                       Guest
-                    </Text>
+                    </S.BadgeText>
                   )}
                   {accountType === 'host' && (
-                    <Text style={{color: whiteColor, fontSize: RFValue(6, 812), fontFamily: Satoshi700, textTransform: 'capitalize'}}>
+                    <S.BadgeText>
                       Host
-                    </Text>
+                    </S.BadgeText>
                   )}
-                </View>
+                </S.BadgeContainer>
                 {premium && (
-                  <LinearGradient
-                    colors={['#977B4A', '#E5D291', '#A28453']}
-                    style={{
-                      marginLeft: 6,
-                      alignSelf: 'flex-start',
-                      borderRadius: 3,
-                      paddingHorizontal: 6,
-                      paddingVertical: 2,
-                      backgroundColor: blackColor,
-                    }}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0}}>
+                  <S.PremiumGradient>
                     {(premium || accountType === 'guest') && (
-                      <Text
-                        style={{
-                          color: blackColor,
-                          fontSize: RFValue(6, 812),
-                          fontFamily: Satoshi700,
-                        }}>
+                      <S.TextPremium>
                         Premium
-                      </Text>
+                      </S.TextPremium>
                     )}
-                  </LinearGradient>
+                  </S.PremiumGradient>
                 )}
               </View>
               <View
@@ -278,40 +163,25 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
                   alignItems: 'center',
                   justifyContent: 'flex-start',
                 }}>
-                <Text
-                  style={{
-                    color: blackColor,
-                    fontFamily: Satoshi700,
-                    fontSize: RFValue(12, 812),
-                  }}>
+                <S.NameText>
                   {name}
                   {!isProfile && age && <Text>,</Text>}
-                </Text>
+                </S.NameText>
                 {!isProfile && age && (
-                  <Text
-                    style={{
-                      color: blackColor,
-                      fontFamily: Satoshi700,
-                      fontSize: RFValue(12, 812),
-                    }}>
+                  <S.AgeText>
                     {' '}
                     {age}
-                  </Text>
+                  </S.AgeText>
                 )}
                 <View style={{marginLeft: 5}}>{confirmedAccount && <CheckStarBlackIcon width={12} height={12} />}</View>
               </View>
             </View>
           </View>
           {isHost && (
-            <View
+            <S.GuestInfoContainer
               style={{
-                borderWidth: 1,
-                borderColor: blackColor,
-                borderRadius: 6,
-                flexDirection: 'row',
                 paddingHorizontal: screenWidth > 400 ? 8 : 4,
                 paddingVertical: screenWidth > 400 ? 4 : 2,
-                alignItems: 'center',
               }}>
               <FastImage style={{width: 20, height: 20, borderRadius: 20}} source={{uri: imageEvent}} />
               <View style={{marginLeft: 6, alignItems: 'center'}}>
@@ -332,21 +202,14 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
                   Guest List
                 </Text>
               </View>
-            </View>
+            </S.GuestInfoContainer>
           )}
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <CalendarCheckBlackIcon width={12} height={12} />
-          <Text
-            style={{
-              fontSize: RFValue(10, 812),
-              color: black4Color,
-              fontFamily: Satoshi500,
-              marginLeft: 5,
-              marginRight: 10,
-            }}>
+          <S.JoinEventsText>
             Join Events: {joinEvents ? joinEvents : 0}
-          </Text>
+          </S.JoinEventsText>
           {location && (
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <LocationBlackIcon width={12} height={12} />
@@ -362,8 +225,8 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
             </View>
           )}
         </View>
-      </View>
-    </FastImage>
+      </S.DetailsContainer>
+    </S.EventImage>
   );
 };
 

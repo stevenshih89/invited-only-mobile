@@ -139,7 +139,6 @@ const useStyles = () => {
       backgroundColor: blackColor,
     },
     bioWrapper: {
-      // marginTop: screenHeight / 27,
       borderRadius: 11,
       paddingVertical: screenHeight / 38,
     },
