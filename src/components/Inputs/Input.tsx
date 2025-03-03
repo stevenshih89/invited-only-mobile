@@ -1,8 +1,8 @@
 import {Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {FC, useRef} from 'react';
-import {errorColor, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {errorColor, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {InputProps} from 'typescript/interfaces';
-import useStyles from 'components/Inputs/styles.ts';
+import * as S from './Input.style';
 
 const Input: FC<InputProps> = ({
   errorText,
@@ -26,7 +26,6 @@ const Input: FC<InputProps> = ({
 }) => {
   const inputRef = useRef<TextInput>(null);
 
-  const styles = useStyles();
   const handleOnChange = (text: string): void => {
     onChange(text);
   };
@@ -39,18 +38,26 @@ const Input: FC<InputProps> = ({
   return (
     <View style={containerStyle}>
       {label && (
-        <Text style={[styles.titleText, labelStyle]}>
+        <S.TitleText style={labelStyle}>
           {label} {required && <Text style={{color: errorColor}}>*</Text>}
-        </Text>
+        </S.TitleText>
       )}
-      <TouchableOpacity activeOpacity={1} onPress={onPress} style={[styles.container, containerInnerStyle]}>
-        <TextInput
+      <TouchableOpacity activeOpacity={1} onPress={onPress} style={[{      width: '100%',
+      height: 56,
+      borderRadius: 10,
+      borderWidth: 0,
+      backgroundColor: lightGray2Color,
+      flexDirection: 'row',
+      paddingRight: 8,
+      paddingBottom: 8,
+      justifyContent: 'space-between',}, containerInnerStyle]}>
+        <S.InputField
           ref={inputRef}
           onFocus={onPress}
           keyboardType={keyboardType}
           onBlur={onBlur}
           placeholder={placeholder}
-          style={[styles.input, inputStyle, {width: InputIcon ? '90%' : '100%', color: isError ? errorColor : whiteColor}]}
+          style={[inputStyle, {width: InputIcon ? '90%' : '100%', color: isError ? errorColor : whiteColor}]}
           placeholderTextColor={placeholderTextColor}
           keyboardAppearance="dark"
           value={value}
@@ -63,11 +70,11 @@ const Input: FC<InputProps> = ({
           autoCapitalize={'none'}
           textAlignVertical={'center'}
         />
-        {InputIcon && <View style={styles.wrapperInputIcon}>{<InputIcon width={20} height={20} />}</View>}
+        {InputIcon && <S.WrapperInputIcon>{<InputIcon width={20} height={20} />}</S.WrapperInputIcon>}
       </TouchableOpacity>
-      <View style={styles.wrapperErrorText}>
-        <Text style={styles.errorText}>{isError ? errorText : ' '}</Text>
-      </View>
+      <S.WrapperErrorText>
+        <S.ErrorText>{isError ? errorText : ' '}</S.ErrorText>
+      </S.WrapperErrorText>
     </View>
   );
 };

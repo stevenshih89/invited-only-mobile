@@ -1,10 +1,8 @@
-import React, {FC, ReactNode, useCallback, useContext, useEffect, useState} from 'react';
+import React, {FC, ReactNode, useContext, useEffect, useState} from 'react';
 import {View, TouchableOpacity, Text, Image, FlatList, ScrollView, Alert} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
-import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from 'components/Header/styles.ts';
@@ -42,10 +40,8 @@ import MIcon from 'assets/images/icons/M.svg';
 
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
-import {Satoshi500} from 'constants/fonts';
 import {useRoute} from '@react-navigation/native';
 import moment from 'moment';
-import FastImage from 'react-native-fast-image';
 import {EventData} from 'src/types/event';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
@@ -53,7 +49,8 @@ import {useDemoFlowStore} from '../../store/demoFlowStore';
 import {Marquee} from '@animatereactnative/marquee';
 import firebase from '@react-native-firebase/app';
 import {useNotifications} from 'src/store/notificationsStore';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import * as S from './Header.style';
+
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
   showHeaderTop?: boolean;
@@ -131,13 +128,11 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         const filteredEvents = data.filter((eventItem: EventData) => {
           if (eventItem?.date && eventItem?.hour) {
             const adjustedDate = moment(`${eventItem?.date}, ${eventItem?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-
             if (adjustedDate.isBefore(moment())) {
               return false;
             }
             return true;
           }
-
           return false;
         });
 
@@ -222,42 +217,23 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   ];
 
   const Item = ({title, numberBadge, image, date, hour, girlInvitation, event, index}: ItemProps) => (
-    <TouchableOpacity
+    <S.EventButton
       onPress={() => {
         setChat(`${event.id}`);
         setActiveEvent(event);
       }}
-      style={styles.eventButton}>
-      <View style={[styles.eventViewFlatList, {borderColor: activeEvent?.id === event?.id ? whiteColor : lightGray5Color}]}>
-        <FastImage style={styles.imageEvent} source={{uri: image}} />
+      >
+      <S.EventViewFlatList style={{borderColor: activeEvent?.id === event?.id ? whiteColor : lightGray5Color}}>
+        <S.ImageEvent source={{uri: image}} />
         {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
-      </View>
+      </S.EventViewFlatList>
       <View style={{maxWidth: screenWidth / 5, overflow: 'hidden'}}>
         {title.length >= 10 ? (
           <Marquee spacing={MARQUEE_SPACING} speed={MARQUEE_SPEED}>
-            <Text
-              style={{
-                marginTop: screenHeight / 190,
-                color: whiteColor,
-                fontFamily: Satoshi500,
-                fontSize: RFValue(13, 812),
-                textAlign: 'center',
-              }}>
-              {title}
-            </Text>
+            <S.EventTitleText>{title}</S.EventTitleText>
           </Marquee>
         ) : (
-          <Text
-            numberOfLines={1}
-            style={{
-              marginTop: screenHeight / 190,
-              color: whiteColor,
-              fontFamily: Satoshi500,
-              fontSize: RFValue(13, 812),
-              textAlign: 'center',
-            }}>
-            {title}
-          </Text>
+          <S.EventTitleText numberOfLines={1}>{title}</S.EventTitleText>
         )}
       </View>
       <ModalEventRemindes
@@ -269,21 +245,21 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         city={title}
         date={date}
       />
-    </TouchableOpacity>
+    </S.EventButton>
   );
 
   const ItemEventsJoining = ({title, image, date, icon, value}: ItemProps) => (
-    <TouchableOpacity
+    <S.JoinEventButton
       onPress={() => {
         if (userInfo?.accountConfirmed) {
           setActiveEventDate(value);
         }
       }}
-      style={styles.eventButton}>
-      <View style={[styles.eventViewFlatList, {borderColor: activeEventDate === value ? whiteColor : lightGray5Color}]}>
-        <View style={styles.imageEventsJoining}>{icon}</View>
-      </View>
-      <Text style={styles.textButton}>{title}</Text>
+      >
+      <S.EventViewFlatList style={ {borderColor: activeEventDate === value ? whiteColor : lightGray5Color}}>
+        <S.ImageEventsJoining>{icon}</S.ImageEventsJoining>
+      </S.EventViewFlatList>
+      <S.TextButton>{title}</S.TextButton>
       <ModalEventRemindes
         eventStarting={eventStarting}
         setEventStarting={setEventStarting}
@@ -292,7 +268,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         city={title}
         date={date}
       />
-    </TouchableOpacity>
+    </S.JoinEventButton>
   );
 
   const isHost = userInfo?.accountType === 'host';
@@ -324,12 +300,12 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
           <>
             {isHost ? (
               <ScrollView horizontal scrollEnabled={!!myEvents?.length} contentContainerStyle={{marginVertical: screenHeight / 50}}>
-                <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent} disabled={isDemo}>
-                  <View style={styles.eventView}>
+                <S.EventButton onPress={goToCreateEvent} disabled={isDemo}>
+                  <S.EventView>
                     <AddIcon width={26} height={26} />
-                  </View>
-                  <Text style={styles.textButton}>Create event</Text>
-                </TouchableOpacity>
+                  </S.EventView>
+                  <S.TextButton>Create event</S.TextButton>
+                </S.EventButton>
                 {(isDemo || myEvents) &&
                   (isDemo ? [event] : myEvents).map((event: any, index: number) => {
                     const isActive = activeEvent?.id === event?.id;
@@ -338,9 +314,8 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                     const eventIsFull = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
                     return (
-                      <TouchableOpacity
+                      <S.EventButton
                         key={index}
-                        style={styles.eventButton}
                         activeOpacity={0.7}
                         onPress={() => {
                           if (!userInfo?.accountConfirmed) {
@@ -348,68 +323,30 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                           }
                           setActiveEvent(event);
                         }}>
-                        <View
-                          style={{
-                            borderRadius: 50,
-                            borderWidth: 1,
-                            borderColor: eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color,
-                            borderStyle: 'solid',
-                            padding: 3,
-                            width: 55,
-                            height: 55,
-                          }}>
+                        <S.EventSpecialWrapper
+                          borderColor={eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color}>
                           {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                           {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                           {event?.photos?.[0]?.image && (
-                            <FastImage style={{width: '100%', height: '100%', borderRadius: 50}} source={{uri: event?.photos[0]?.image}} />
+                            <S.EventFastImage source={{uri: event?.photos[0]?.image}} />
                           )}
-                        </View>
-                        <View style={{maxWidth: screenWidth / 5, overflow: 'hidden'}}>
+                        </S.EventSpecialWrapper>
+                        <S.EventTitleWrapper>
                           {`${event?.name || event?.placeName}`.length >= 10 ? (
                             <Marquee spacing={MARQUEE_SPACING} speed={MARQUEE_SPEED}>
-                              <Text
-                                style={{
-                                  marginTop: screenHeight / 190,
-                                  color: whiteColor,
-                                  fontFamily: Satoshi500,
-                                  fontSize: RFValue(13, 812),
-                                  textAlign: 'center',
-                                }}>
-                                {`${event?.name || event?.placeName}`}
-                              </Text>
+                              <S.EventTitleText>{`${event?.name || event?.placeName}`}</S.EventTitleText>
                             </Marquee>
                           ) : (
-                            <Text
-                              numberOfLines={1}
-                              style={{
-                                marginTop: screenHeight / 190,
-                                color: whiteColor,
-                                fontFamily: Satoshi500,
-                                fontSize: RFValue(13, 812),
-                                textAlign: 'center',
-                              }}>
-                              {`${event?.name || event?.placeName}`}
-                            </Text>
+                            <S.EventTitleText numberOfLines={1}>{`${event?.name || event?.placeName}`}</S.EventTitleText>
                           )}
-                        </View>
-                        {/* <Text
-                          style={{
-                            marginTop: screenHeight / 190,
-                            color: whiteColor,
-                            fontFamily: Satoshi500,
-                            fontSize: RFValue(13, 812),
-                            textAlign: 'center',
-                          }}>
-                          {event?.name || event?.placeName}
-                        </Text> */}
-                      </TouchableOpacity>
+                        </S.EventTitleWrapper>
+                      </S.EventButton>
                     );
                   })}
               </ScrollView>
             ) : (
               <ScrollView horizontal scrollEnabled={false} contentContainerStyle={{marginVertical: screenHeight / 50}}>
-                <TouchableOpacity
-                  style={styles.eventButton}
+                    <S.EventButton
                   activeOpacity={0.7}
                   onPress={() => {
                     if (!userInfo?.accountConfirmed) {
@@ -417,33 +354,12 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                     }
                     setActiveEventDate(ALL);
                   }}>
-                  <View
-                    style={{
-                      borderRadius: 50,
-                      borderWidth: 1,
-                      borderColor: activeEventDate === ALL ? whiteColor : lightGray5Color,
-                      borderStyle: 'solid',
-                      padding: 3,
-                      width: 63,
-                      height: 63,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
+                  <S.EventIconWrapper borderColor={activeEventDate === ALL ? whiteColor : lightGray5Color}>
                     <CalendarCheckIcon width={26} height={26} />
-                  </View>
-                  <Text
-                    style={{
-                      marginTop: screenHeight / 190,
-                      color: whiteColor,
-                      fontFamily: Satoshi500,
-                      fontSize: RFValue(13, 812),
-                      textAlign: 'center',
-                    }}>
-                    Upcoming Events
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.eventButton}
+                  </S.EventIconWrapper>
+                  <S.EventText>Upcoming Events</S.EventText>
+                </S.EventButton>
+                <S.EventButton
                   activeOpacity={0.7}
                   onPress={() => {
                     if (!userInfo?.accountConfirmed) {
@@ -451,33 +367,12 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                     }
                     setActiveEventDate(THIS_WEEK);
                   }}>
-                  <View
-                    style={{
-                      borderRadius: 50,
-                      borderWidth: 1,
-                      borderColor: activeEventDate === THIS_WEEK ? whiteColor : lightGray5Color,
-                      borderStyle: 'solid',
-                      padding: 3,
-                      width: 63,
-                      height: 63,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
+                  <S.EventIconWrapper borderColor={activeEventDate === THIS_WEEK ? whiteColor : lightGray5Color}>
                     <WIcon />
-                  </View>
-                  <Text
-                    style={{
-                      marginTop: screenHeight / 190,
-                      color: whiteColor,
-                      fontFamily: Satoshi500,
-                      fontSize: RFValue(13, 812),
-                      textAlign: 'center',
-                    }}>
-                    This week
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.eventButton}
+                  </S.EventIconWrapper>
+                  <S.EventText>This week</S.EventText>
+                </S.EventButton>
+                <S.EventButton
                   activeOpacity={0.7}
                   onPress={() => {
                     if (!userInfo?.accountConfirmed) {
@@ -485,31 +380,11 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                     }
                     setActiveEventDate(THIS_MONTH);
                   }}>
-                  <View
-                    style={{
-                      borderRadius: 50,
-                      borderWidth: 1,
-                      borderColor: activeEventDate === THIS_MONTH ? whiteColor : lightGray5Color,
-                      borderStyle: 'solid',
-                      padding: 3,
-                      width: 63,
-                      height: 63,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
+                  <S.EventIconWrapper borderColor={activeEventDate === THIS_MONTH ? whiteColor : lightGray5Color}>
                     <MIcon />
-                  </View>
-                  <Text
-                    style={{
-                      marginTop: screenHeight / 190,
-                      color: whiteColor,
-                      fontFamily: Satoshi500,
-                      fontSize: RFValue(13, 812),
-                      textAlign: 'center',
-                    }}>
-                    This month
-                  </Text>
-                </TouchableOpacity>
+                  </S.EventIconWrapper>
+                  <S.EventText>This month</S.EventText>
+                </S.EventButton>
               </ScrollView>
             )}
           </>
@@ -517,12 +392,12 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
       case 'IO-JE':
         return (
           <View style={{flexDirection: 'row', marginVertical: screenHeight / 50}}>
-            <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
+            <S.EventButton onPress={goToCreateEvent}>
               <View style={styles.eventView}>
                 <AddIcon width={26} height={26} />
               </View>
               <Text style={styles.textButton}>Create event</Text>
-            </TouchableOpacity>
+            </S.EventButton>
           </View>
         );
       case 'myEvents':
@@ -532,12 +407,12 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
       case 'request':
         return isHost ? (
           <ScrollView horizontal scrollEnabled={!!myEvents?.length} contentContainerStyle={{marginVertical: screenHeight / 50}}>
-            <TouchableOpacity style={styles.eventButton} onPress={goToCreateEvent}>
+            <S.EventButton onPress={goToCreateEvent}>
               <View style={styles.eventView}>
                 <AddIcon width={26} height={26} />
               </View>
               <Text style={styles.textButton}>Create event</Text>
-            </TouchableOpacity>
+            </S.EventButton>
             {myEvents?.map((event: any, index: number) => {
               if (event?.eventReviewed && !event?.statusEvent) {
                 return null;
@@ -548,9 +423,8 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
               const eventIsFull = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
               return (
-                <TouchableOpacity
+                <S.EventButton
                   key={index}
-                  style={styles.eventButton}
                   activeOpacity={0.7}
                   onPress={() => {
                     if (!userInfo?.accountConfirmed) {
@@ -562,53 +436,24 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                     }
                     setActiveEvent(event);
                   }}>
-                  <View
-                    style={{
-                      borderRadius: 50,
-                      borderWidth: 1,
-                      borderColor: eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color,
-                      borderStyle: 'solid',
-                      padding: 3,
-                      width: 55,
-                      height: 55,
-                    }}>
+                  <S.EventSpecialWrapper
+                    borderColor={eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color}>
                     {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                     {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                    <Image
-                      // source={{uri: event?.photos?.find(({id}: {id: number}) => id === 0).image}}
+                    <S.EventFastImage
                       source={{uri: event?.photos[0]?.image}}
-                      style={{width: '100%', height: '100%', borderRadius: 50}}
                     />
-                  </View>
+                  </S.EventSpecialWrapper>
                   <View style={{maxWidth: screenWidth / 5, overflow: 'hidden'}}>
                     {`${event?.name || event?.placeName}`.length >= 10 ? (
                       <Marquee spacing={MARQUEE_SPACING} speed={MARQUEE_SPEED}>
-                        <Text
-                          style={{
-                            marginTop: screenHeight / 190,
-                            color: whiteColor,
-                            fontFamily: Satoshi500,
-                            fontSize: RFValue(13, 812),
-                            textAlign: 'center',
-                          }}>
-                          {`${event?.name || event?.placeName}`}
-                        </Text>
+                        <S.EventTitleText>{`${event?.name || event?.placeName}`}</S.EventTitleText>
                       </Marquee>
                     ) : (
-                      <Text
-                        numberOfLines={1}
-                        style={{
-                          marginTop: screenHeight / 190,
-                          color: whiteColor,
-                          fontFamily: Satoshi500,
-                          fontSize: RFValue(13, 812),
-                          textAlign: 'center',
-                        }}>
-                        {`${event?.name || event?.placeName}`}
-                      </Text>
+                      <S.EventTitleText numberOfLines={1}>{`${event?.name || event?.placeName}`}</S.EventTitleText>
                     )}
                   </View>
-                </TouchableOpacity>
+                </S.EventButton>
               );
             })}
           </ScrollView>
@@ -669,46 +514,36 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   };
 
   return (
-    <View style={[styles.container, headerInsets]}>
+    <S.Container style={headerInsets}>
       {(!userInfo?.accountConfirmed && headerType !== 'profile') ||
-        (!userInfo?.isPassedDemo && isDemo && hintStep !== 7 && isVisibleSwipeGuide && <View style={styles.overlayContainer} />)}
+        (!userInfo?.isPassedDemo && isDemo && hintStep !== 7 && isVisibleSwipeGuide && <S.OverlayContainer />)}
       {showHeaderTop && (
-        <View style={styles.wrapperHeader}>
+        <S.WrapperHeader>
           {logoType === 'logo' ? <Logo width={157} height={32} /> : <LogoPrimary width={157} height={32} />}
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <S.HeaderRight>
             {userInfo?.accountType && userInfo?.accountConfirmed && !isHost && headerType !== 'profile' && (
-              <TouchableOpacity style={{marginRight: 10}} onPress={handleGoToEarlyAccess}>
-                <Text
-                  style={{
-                    color: whiteColor,
-                    fontFamily: Satoshi500,
-                    fontSize: RFValue(14, 812),
-                    textDecorationLine: 'underline',
-                  }}>
-                  IO Invitations
-                </Text>
-              </TouchableOpacity>
+              <S.EarlyAccessButton onPress={handleGoToEarlyAccess}>
+                <S.IOInvitationsText>IO Invitations</S.IOInvitationsText>
+              </S.EarlyAccessButton>
             )}
             {badge && (
-              <TouchableOpacity onPress={goToNotifications} activeOpacity={0.7} style={{paddingRight: 6}}>
+              <S.NotificationButton onPress={goToNotifications} activeOpacity={0.7}>
                 <NotificationIcon width={32} height={32} />
                 <Badge value={notificationsCount} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
-              </TouchableOpacity>
+              </S.NotificationButton>
             )}
             {headerType === 'profile' && (
-              <TouchableOpacity
+              <S.SettingsButton
                 activeOpacity={0.7}
-                style={{marginLeft: 10}}
-                hitSlop={{right: 10}}
                 onPress={() => navigation.navigate(commonStackPath, {screen: settingsPath} as never)}>
                 <SettingsIcon width={32} height={32} />
-              </TouchableOpacity>
+              </S.SettingsButton>
             )}
-          </View>
-        </View>
+          </S.HeaderRight>
+        </S.WrapperHeader>
       )}
       {userInfo?.uid && handleCheckType(headerType)}
-    </View>
+    </S.Container>
   );
 };
 

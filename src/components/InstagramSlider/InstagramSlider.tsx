@@ -1,32 +1,31 @@
-import {FlatList, Image, Text, View} from 'react-native';
+import {FlatList, View} from 'react-native';
 import Swiper from 'react-native-swiper';
 import {gray1Color, whiteColor} from 'constants/colors';
-import useStyles from './styles';
 import {FC} from 'react';
+import * as S from './InstagramSlider.style';
 
 interface InstagramSliderProps {
   photosList: any[];
 }
 
 const InstagramSlider: FC<InstagramSliderProps> = ({photosList}) => {
-  const styles = useStyles();
   return (
-    <View style={styles.container}>
-      <View style={styles.titleWr}>
-        <Text style={styles.title}>{photosList?.length} instagram photos</Text>
-      </View>
-      <Swiper showsButtons={false} paginationStyle={styles.pagination} activeDotColor={whiteColor} dotColor={gray1Color}>
+    <S.Container>
+      <S.TitleWrapper>
+        <S.Title>{photosList?.length} instagram photos</S.Title>
+      </S.TitleWrapper>
+      <Swiper showsButtons={false} paginationStyle={{ justifyContent: 'flex-end', alignItems: 'flex-start', height: '102%' }} activeDotColor={whiteColor} dotColor={gray1Color}>
         {photosList?.length >= 1 && (
           <View>
             <FlatList
               data={photosList?.slice(0, 6)}
               scrollEnabled={false}
               numColumns={3}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              ItemSeparatorComponent={() => <S.Separator />}
               renderItem={({item}) => (
-                <View style={styles.imageWr}>
-                  <Image source={{uri: item}} style={styles.image} />
-                </View>
+                <S.ImageWrapper>
+                  <S.Image source={{uri: item}} />
+                </S.ImageWrapper>
               )}
             />
           </View>
@@ -37,11 +36,11 @@ const InstagramSlider: FC<InstagramSliderProps> = ({photosList}) => {
               data={photosList?.slice(6, 12)}
               scrollEnabled={false}
               numColumns={3}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              ItemSeparatorComponent={() => <S.Separator />}
               renderItem={({item}) => (
-                <View style={styles.imageWr}>
-                  <Image source={item} style={styles.image} />
-                </View>
+                <S.ImageWrapper>
+                  <S.Image source={item} />
+                </S.ImageWrapper>
               )}
             />
           </View>
@@ -52,17 +51,17 @@ const InstagramSlider: FC<InstagramSliderProps> = ({photosList}) => {
               data={photosList?.slice(12, 18)}
               scrollEnabled={false}
               numColumns={3}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              ItemSeparatorComponent={() => <S.Separator />}
               renderItem={({item}) => (
-                <View style={styles.imageWr}>
-                  <Image source={item} style={styles.image} />
-                </View>
+                <S.ImageWrapper>
+                  <S.Image source={item} />
+                </S.ImageWrapper>
               )}
             />
           </View>
         )}
       </Swiper>
-    </View>
+    </S.Container>
   );
 };
 

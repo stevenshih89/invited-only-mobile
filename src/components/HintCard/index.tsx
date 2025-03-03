@@ -1,7 +1,7 @@
-import {Text, TouchableOpacity, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import useStyles from './styles.ts';
+import React, { useState} from 'react';
+import { TouchableOpacity} from 'react-native';
 import Button from 'components/Button/Button.tsx';
+import * as S from './index.style';
 
 interface IHintCardProps {
   currentStep: number;
@@ -34,7 +34,6 @@ const HintCard = (props: IHintCardProps) => {
     directionHorizontal = 'start',
   } = props;
   const [hintStep, setHintStep] = useState(currentStep);
-  const styles = useStyles();
 
   const handleNextStep = () => {
     if (hintStep === totalSteps) {
@@ -57,42 +56,36 @@ const HintCard = (props: IHintCardProps) => {
   };
 
   return (
-    <View style={[styles.hintContainer]}>
-      <View
-        style={[
-          styles.triangle,
-          directionHorizontal === 'start' && styles.start,
-          directionHorizontal === 'center' && styles.center,
-          directionHorizontal === 'end' && styles.end,
-          directionVertical === 'top' && styles.top,
-          directionVertical === 'bottom' && styles.bottom,
-        ]}
+    <S.HintContainer>
+      <S.Triangle
+        directionHorizontal={directionHorizontal}
+        directionVertical={directionVertical}
       />
-      <View style={styles.headerContainer}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.totalSteps}>{`${currentStep} of ${totalSteps}`}</Text>
-      </View>
-      <Text style={styles.description}>{description}</Text>
-      <View style={styles.actionBtnsContainer}>
+      <S.HeaderContainer>
+        <S.Title>{title}</S.Title>
+        <S.TotalSteps>{`${currentStep} of ${totalSteps}`}</S.TotalSteps>
+      </S.HeaderContainer>
+      <S.Description>{description}</S.Description>
+      <S.ActionBtnsContainer>
         <TouchableOpacity onPress={onSkipAction}>
-          <Text style={styles.backText}>{currentStep === 1 ? 'Back' : 'Skip'}</Text>
+          <S.BackText>{currentStep === 1 ? 'Back' : 'Skip'}</S.BackText>
         </TouchableOpacity>
-        <View style={styles.navigationBtnsContainer}>
+        <S.NavigationBtnsContainer>
           {currentStep !== 1 && (
             <TouchableOpacity onPress={handlePreviousStep}>
-              <Text style={styles.backText}>Previous</Text>
+              <S.BackText>Previous</S.BackText>
             </TouchableOpacity>
           )}
           <Button
             disabled={isNextBtnDisabled}
             title={'Next'}
             onPress={handleNextStep}
-            buttonStyle={styles.nextBtn}
-            buttonTitleStyle={styles.nextBtnTitle}
+            buttonStyle={S.nextBtn}
+            buttonTitleStyle={S.nextBtnTitle}
           />
-        </View>
-      </View>
-    </View>
+        </S.NavigationBtnsContainer>
+      </S.ActionBtnsContainer>
+    </S.HintContainer>
   );
 };
 

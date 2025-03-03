@@ -5,6 +5,7 @@ import {errorColor, lightGray2Color, transparentGray60Color, transparentWhite30C
 import ArrowDown from 'assets/images/icons/arrow-down.svg';
 import PhoneInput from 'react-native-phone-number-input';
 import {Satoshi400} from 'constants/fonts';
+import * as S from './InputPhoneView.style';
 
 interface IInputPhoneViewProps {
   onChangeFormattedText?: (text: string) => void;
@@ -97,20 +98,19 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
   };
 
   return (
-    <View style={[props.containerStyle, {marginBottom: 16, flexDirection: 'column'}]}>
-      <TouchableOpacity activeOpacity={1} onPress={onPress} style={[styles.container]}>
-        <View style={{width: '100%'}}>
+    <S.Container style={props.containerStyle}>
+      <S.TouchableContainer activeOpacity={1} onPress={onPress}>
+        <S.TextContainerStyle>
           <PhoneInput
-            
             ref={phoneRef}
             autoFocus
             defaultCode={getDefaultCountryCode() as any}
             defaultValue={getDefaultPhoneNumber()}
             placeholder={props.placeholder ? props.placeholder : 'Phone Number'}
             codeTextStyle={[
-              styles.codeText,
               props.codeTextStyle,
-              {color: !phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? errorColor : '#ffffff'},
+              {color: !phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? errorColor : '#ffffff', fontWeight: '400',
+                fontSize: 16,},
             ]}
             onChangeFormattedText={handleOnChangeFormattedText}
             disableArrowIcon={props.arrowDisabled}
@@ -123,7 +123,6 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
               placeholder: props.placeholder ? props.placeholder : 'Phone Number',
             }}
             containerStyle={[
-              styles.containerInput,
               props.containerStyle,
               {
                 width: '100%',
@@ -133,13 +132,14 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
                 borderColor: !phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? errorColor : 'transparent',
                 borderWidth: 1,
                 borderStyle: 'solid',
+                height: 58,
+                borderRadius: 10,
               },
             ]}
-            textContainerStyle={[styles.textContainer, props.textContainer, {backgroundColor: lightGray2Color}]}
+            textContainerStyle={[props.textContainer, {backgroundColor: lightGray2Color, flex: 1, borderRadius: 10, paddingVertical: 0, paddingLeft: 0, padding: 0}]}
             textInputStyle={[
-              styles.text,
               props.textStyle,
-              {color: !phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? errorColor : '#ffffff'},
+              {color: !phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? errorColor : '#ffffff', fontWeight: '400', fontSize: 16, paddingVertical: 0},
             ]}
             countryPickerProps={{
               filterProps: {
@@ -156,86 +156,15 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
                 },
               },
             }}
-            flagButtonStyle={[styles.flagStyle, props.flagButtonStyle]}
+            flagButtonStyle={props.flagButtonStyle}
           />
-        </View>
-      </TouchableOpacity>
-      <View style={styles.wrapperErrorText}>
+        </S.TextContainerStyle>
+      </S.TouchableContainer>
+      <S.WrapperErrorText>
         {!phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? (
-          <Text style={[styles.errorText]}>Incorrect phone number</Text>
+          <S.ErrorText>Incorrect phone number</S.ErrorText>
         ) : null}
-      </View>
-    </View>
+      </S.WrapperErrorText>
+    </S.Container>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    height: 58,
-    borderRadius: 10,
-    width: '100%',
-    borderWidth: 0,
-    flexDirection: 'row',
-    overflow: 'hidden',
-    paddingRight: 0,
-  },
-  wrapperIconError: {
-    position: 'absolute',
-    right: -10,
-    bottom: 10,
-  },
-  emailText: {
-    fontWeight: '500',
-    fontSize: 16,
-  },
-  placeholderText: {
-    fontWeight: '500',
-    fontSize: 11,
-    lineHeight: 12,
-  },
-  input: {
-    minWidth: 300,
-    fontWeight: '600',
-    fontSize: 16,
-    lineHeight: 23,
-  },
-  errorText: {
-    fontSize: 14,
-    width: '100%',
-    fontWeight: '500',
-    lineHeight: 21,
-    color: errorColor,
-    fontFamily: Satoshi400,
-  },
-  wrapperErrorText: {
-    marginTop: 6,
-  },
-  codeText: {
-    fontWeight: '400',
-    fontSize: 16,
-    color: '#ffffff',
-  },
-  text: {
-    fontWeight: '400',
-    fontSize: 16,
-    color: '#ffffff',
-    paddingVertical: 0,
-  },
-  flagStyle: {},
-  disableBlock: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-  },
-  containerInput: {
-    height: 58,
-    borderRadius: 10,
-  },
-  textContainer: {
-    flex: 1,
-    borderRadius: 10,
-    paddingVertical: 0,
-    paddingLeft: 0,
-    padding: 0,
-  },
-});

@@ -1,15 +1,9 @@
 import React, {FC, useEffect} from 'react';
-import {Text, View} from 'react-native';
-import useStyles from 'components/Loading/styles.ts';
 import Subtract from 'src/assets/images/icons/subtract.svg';
 import CheckStarIcon from 'src/assets/images/icons/check-star.svg';
 import Animated, {Easing, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming} from 'react-native-reanimated';
-import {screenHeight, screenWidth} from 'constants/common';
-import {blackColor, whiteColor} from 'constants/colors';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
-import FastImage from 'react-native-fast-image';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {screenHeight, } from 'constants/common';
+import * as S from './Loading.style';
 
 interface LoadingProps {
   text?: string;
@@ -32,7 +26,6 @@ const Loading: FC<LoadingProps> = ({
   styleInnerContainer,
   textStyle,
 }) => {
-  const styles = useStyles();
 
   const firstCircleScale = useSharedValue(0.9);
   const secondCircleScale = useSharedValue(0.9);
@@ -71,89 +64,68 @@ const Loading: FC<LoadingProps> = ({
   }, []);
 
   return (
-    <View style={[styles.container, styleContainer]}>
-      <View style={[{alignItems: 'center', flex: 1}, styleInnerContainer]}>
+    <S.ContainerStyled style={styleContainer}>
+      <S.InnerContainer style={styleInnerContainer}>
         <Animated.View
           style={[
-            styles.firstCircle,
+            {
+              position: 'absolute',
+              backgroundColor: '#222222',
+              borderRadius: 500,
+              alignItems: 'center',
+              justifyContent: 'center',
+            },
             animatedFirstCircleStyle,
             {top: topPosition ? 0 : screenHeight / 2 - 390, height: topPosition ? 360 : 380, width: topPosition ? 360 : 380},
           ]}
         />
         <Animated.View
           style={[
-            styles.secondCircle,
+            {
+              position: 'absolute',
+              backgroundColor: '#454545',
+              borderRadius: 500,
+              alignItems: 'center',
+              justifyContent: 'center',
+            },
             animatedSecondCircleStyle,
             {top: topPosition ? 10 : screenHeight / 2 - 380, height: topPosition ? 340 : 360, width: topPosition ? 340 : 360},
           ]}
         />
-        <View
-          style={[
-            styles.whiteCircle,
-            {top: topPosition ? 35 : screenHeight / 2 - 365, height: topPosition ? 290 : 330, width: topPosition ? 290 : 330},
-          ]}>
+        <S.WhiteCircle
+          style={{
+            top: topPosition ? 35 : screenHeight / 2 - 365,
+            height: topPosition ? 290 : 330,
+            width: topPosition ? 290 : 330,
+          }}
+        >
           {userInfo?.photos && (
-            <FastImage resizeMode="cover" style={{width: 180, height: 180, borderRadius: 100}} source={{uri: userInfo?.photos[0]?.image}} />
+            <S.FastImageStyled resizeMode="cover" source={{uri: userInfo?.photos[0]?.image}} />
           )}
-        </View>
-        {text && (
+        </S.WhiteCircle>
+        {wrapperText ? (
           <>
-            {wrapperText ? (
-              <>
-                <View style={{position: 'absolute', top: screenHeight / 2 - 40}}>
-                  <Subtract />
-                </View>
-                <View style={{alignItems: 'center', position: 'absolute', top: screenHeight / 2 - 10}}>
-                  <View
-                    style={{
-                      backgroundColor: whiteColor,
-                      borderRadius: 17,
-                      paddingHorizontal: 22,
-                      paddingVertical: 11,
-                      marginTop: -8,
-                    }}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <Text
-                        style={{
-                          color: blackColor,
-                          fontSize: RFValue(18, 812),
-                          fontFamily: Satoshi500,
-                          textAlign: 'center',
-                          opacity: 0.8,
-                          ...textStyle,
-                        }}>
-                        {text}
-                      </Text>
-                      {showCheckIcon && <CheckStarIcon style={{marginLeft: 6}} />}
-                    </View>
-                  </View>
-                </View>
-              </>
-            ) : (
-              <View style={{alignItems: 'center', position: 'absolute', top: screenHeight / 2 - 10}}>
-                <View
-                  style={{
-                    width: screenWidth - 32,
-                    marginTop: 20,
-                  }}>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontSize: RFValue(18, 812),
-                      fontFamily: Satoshi400,
-                      textAlign: 'center',
-                      opacity: 0.8,
-                      ...textStyle,
-                    }}>
-                    {text}
-                  </Text>
-                </View>
-              </View>
-            )}
+            <S.SubtractWrapper>
+              <Subtract />
+            </S.SubtractWrapper>
+            <S.TextWrapperAbsolute>
+              <S.TextContainer>
+                <S.RowView>
+                  <S.TextStyled style={textStyle}>{text}</S.TextStyled>
+                  {showCheckIcon && <CheckStarIcon style={{marginLeft: 6}} />}
+                </S.RowView>
+              </S.TextContainer>
+            </S.TextWrapperAbsolute>
           </>
+        ) : (
+          <S.TextWrapperAbsolute>
+            <S.TextContainerAbsolute>
+              <S.TextStyledAbsolute style={textStyle}>{text}</S.TextStyledAbsolute>
+            </S.TextContainerAbsolute>
+          </S.TextWrapperAbsolute>
         )}
-      </View>
-    </View>
+      </S.InnerContainer>
+    </S.ContainerStyled>
   );
 };
 
