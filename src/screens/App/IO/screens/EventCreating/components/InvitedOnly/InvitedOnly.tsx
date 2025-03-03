@@ -40,7 +40,6 @@ interface InvitedOnlyProps {
 
 const InvitedOnly: FC<InvitedOnlyProps> = ({
   setTabState,
-  setIsVisibleSaveModal,
   setCurrentCreateStap,
   isEditing,
   prevFemale,

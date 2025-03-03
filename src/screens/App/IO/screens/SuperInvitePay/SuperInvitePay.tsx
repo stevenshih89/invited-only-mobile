@@ -24,7 +24,7 @@ import FlashIcon from 'assets/images/icons/flash-filled.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import {PurchasesPackage} from 'react-native-purchases';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
-import { useSuperInvitePay } from 'hooks/useSuperInvitePay';
+import {useSuperInvitePay} from 'hooks/useSuperInvitePay';
 
 interface PlanListItem {
   id: number;
@@ -45,8 +45,8 @@ const SuperInvitePay: FC = (): JSX.Element => {
     purchaseListError,
     plansList,
     getOfferings,
-    loadingPurchasing
-  } = useSuperInvitePay()
+    loadingPurchasing,
+  } = useSuperInvitePay();
   const styles = useStyles();
 
   const rotationLoader = useSharedValue(0);

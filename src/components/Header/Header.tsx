@@ -43,9 +43,7 @@ import MIcon from 'assets/images/icons/M.svg';
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
 import {Satoshi500} from 'constants/fonts';
-import {useFocusEffect, useRoute} from '@react-navigation/native';
-import {onUserProfileChangeSubscription} from 'helpers/userProfile';
-import {UserInfo} from 'src/types/userInfo';
+import {useRoute} from '@react-navigation/native';
 import moment from 'moment';
 import FastImage from 'react-native-fast-image';
 import {EventData} from 'src/types/event';
@@ -53,10 +51,9 @@ import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
 import {useDemoFlowStore} from '../../store/demoFlowStore';
 import {Marquee} from '@animatereactnative/marquee';
-import functions from '@react-native-firebase/functions';
 import firebase from '@react-native-firebase/app';
 import {useNotifications} from 'src/store/notificationsStore';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
   showHeaderTop?: boolean;
@@ -134,11 +131,13 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         const filteredEvents = data.filter((eventItem: EventData) => {
           if (eventItem?.date && eventItem?.hour) {
             const adjustedDate = moment(`${eventItem?.date}, ${eventItem?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+
             if (adjustedDate.isBefore(moment())) {
               return false;
             }
             return true;
           }
+
           return false;
         });
 

@@ -17,8 +17,14 @@ export type RootStackParamList = {
     screen?: string;
     params?: any;
   };
-  '/onboard': undefined;
-  '/sign-up': undefined;
+  '/onboard'?: undefined;
+  '/sign-up'?: {
+    isLogin?: boolean;
+  };
+  '/choose-enter-type': undefined;
+  '/onboarding-demo-path'?: {
+    isHost: boolean;
+  };
   '/start-create-account': undefined;
   '/eula': undefined;
   '/confirm-phone'?: {

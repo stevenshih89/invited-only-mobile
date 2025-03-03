@@ -19,7 +19,7 @@ const config = {
   },
   resolver: {
     assetExts: assetExts.filter(ext => ext !== 'svg'),
-    sourceExts: [...sourceExts, 'svg'],
+    sourceExts: [...sourceExts, 'svg', 'mp4'],
     extraNodeModules: {
       'rn-tinder-card-bn-digital': path.resolve(__dirname, 'rn-tinder-card'),
     },

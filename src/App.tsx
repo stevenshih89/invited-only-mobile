@@ -7,7 +7,6 @@ import {blackColor} from 'constants/colors';
 import Purchases, {CustomerInfo} from 'react-native-purchases';
 import {NavigationContainer} from '@react-navigation/native';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
-import {getActiveSubscription} from 'src/api/purchase';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import RNUxcam from 'react-native-ux-cam';
@@ -16,8 +15,8 @@ import {Settings} from 'react-native-fbsdk-next';
 import moment from 'moment';
 import Config from 'react-native-config';
 import Bugsnag from '@bugsnag/react-native';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { showToast } from 'helpers/showToast';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {showToast} from 'helpers/showToast';
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
@@ -129,12 +128,13 @@ const App: FC = (): JSX.Element => {
     }
 
     const getSubscription = async () => {
-      const start = new Date().getTime();
-      const activeSubscription = await getActiveSubscription();
-      await handleUpdateUserSubscriptions(activeSubscription);
-      setCurrentSubscriptions(activeSubscription);
-      const end = new Date().getTime();
-      console.warn('getSubscription', end - start);
+      // const start = new Date().getTime();
+      // const activeSubscription = await getActiveSubscription();
+      // await handleUpdateUserSubscriptions(activeSubscription);
+      // setCurrentSubscriptions(activeSubscription);
+      setCurrentSubscriptions([]);
+      // const end = new Date().getTime();
+      // console.warn('getSubscription', end - start);
     };
     getSubscription();
   }, []);

@@ -9,9 +9,10 @@ const demoFlowStackPath = '/demo-flow-stack';
 
 // Screen paths
 const onboardPath: keyof RootStackParamList = '/onboard';
-const startCreateAccountPath: keyof RootStackParamList = '/start-create-account';
 const eulaPath: keyof RootStackParamList = '/eula';
 const signUpPath: keyof RootStackParamList = '/sign-up';
+const enterTypePath: keyof RootStackParamList = '/choose-enter-type';
+const onBoardingDemoPath: keyof RootStackParamList = '/onboarding-demo-path';
 const confirmPhonePath: keyof RootStackParamList = '/confirm-phone';
 const turnNotificationsPath: keyof RootStackParamList = '/turn-notifications';
 const chooseAccountTypePath: keyof RootStackParamList = '/choose-account-type';
@@ -78,6 +79,8 @@ export {
   commonStackPath,
   onboardPath,
   joinEventsPath,
+  enterTypePath,
+  onBoardingDemoPath,
   signUpPath,
   confirmPhonePath,
   turnNotificationsPath,
@@ -125,7 +128,6 @@ export {
   addBuisnessPath,
   joinEventsPathRequest,
   manageSubscriptionPath,
-  startCreateAccountPath,
   eulaPath,
   emailChangePath,
   earlyAccessPath,
@@ -136,5 +138,5 @@ export {
   demoIOPath,
   adminChatPath,
   underMaintenance,
-  updateAvailable
+  updateAvailable,
 };

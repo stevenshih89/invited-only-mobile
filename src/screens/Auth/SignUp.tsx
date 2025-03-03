@@ -10,7 +10,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 import {confirmPhonePath} from 'constants/pathLocations';
 import auth from '@react-native-firebase/auth';
 import {showToast} from 'helpers/showToast.ts';
-import firestore from '@react-native-firebase/firestore'
+import firestore from '@react-native-firebase/firestore';
 import {InputPhoneView} from '../../components/Inputs/InputPhoneView';
 import LinearGradient from 'react-native-linear-gradient';
 import Config from 'react-native-config';
@@ -19,6 +19,7 @@ const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
 const SignUp: FC = ({route}: any): JSX.Element => {
   const isLogin = route?.params?.isLogin;
+
   const [mobilePhone, setMobilePhone] = useState<string>('');
   const [confirm, setConfirm] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -34,15 +35,15 @@ const SignUp: FC = ({route}: any): JSX.Element => {
       }
       setLoading(true);
 
-      if(!isLogin) {
+      if (!isLogin) {
         const userNumber = await firestore().collection(apiUserInfoCollection).where('phoneNumber', '==', mobilePhone).get();
-        if(!userNumber.empty) {
+        if (!userNumber.empty) {
           setLoading(false);
           showToast('inviteMatch', 'This Phone Number is already exist', 'Fail');
-          return
+          return;
         }
       }
-            
+
       const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
 
       const confirmation = await auth().signInWithPhoneNumber(phone);

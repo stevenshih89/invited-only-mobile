@@ -10,14 +10,7 @@ import auth from '@react-native-firebase/auth';
 //import components
 import useStyles from 'screens/App/IO/styles.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
-import {
-  ACCEPTED_STATUS,
-  APPROVED_STATUS,
-  CANCEL_STATUS,
-  INVITE_MATCH_STATUS,
-  NOT_ACCEPTED_STATUS,
-  screenHeight,
-} from 'constants/common.ts';
+import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS, screenHeight} from 'constants/common.ts';
 import {
   earlyAccessPath,
   commonStackPath,
@@ -70,8 +63,8 @@ import ModalLimitedAccess from 'components/Modal/ModalLimitedAccess/ModalLimited
 import CardsFakeState from 'components/CardsFakeState';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import firebase from '@react-native-firebase/app';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { useIO } from 'hooks/useIO';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {useIO} from 'hooks/useIO';
 
 const CARDS_LOADING_LIMIT = 6;
 
@@ -144,9 +137,9 @@ const IO: FC = (): JSX.Element => {
     handleCloseMatch,
     setCurrentEventCardPosition,
     myEvents,
-    setLastVisible
+    setLastVisible,
   } = useIO();
-  
+
   const OverlayRight = () => {
     return (
       <View style={[styles.overlayLabelContainerInvite]}>
@@ -777,7 +770,7 @@ const IO: FC = (): JSX.Element => {
               listOfUsers.push(data);
             }
           } catch (err) {
-            logErrorToSentry(err)
+            logErrorToSentry(err);
             console.error('error_getCardsListForHost 3', err);
           }
         }
@@ -1657,4 +1650,3 @@ const IO: FC = (): JSX.Element => {
 };
 
 export default gestureHandlerRootHOC(IO);
-

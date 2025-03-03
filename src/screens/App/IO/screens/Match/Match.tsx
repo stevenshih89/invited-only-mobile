@@ -11,7 +11,7 @@ import MatchInfoCard from 'components/MatchInfoCard';
 import {calculateAge} from 'helpers/calculateAge';
 import {Event} from 'src/types/event';
 import LinearGradient from 'react-native-linear-gradient';
-import { useMatch } from 'hooks/useMatch';
+import {useMatch} from 'hooks/useMatch';
 export interface MatchData {
   type?: string;
   nameHost?: string;
@@ -42,14 +42,8 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   onCloseMatch,
   matchData,
 }) => {
+  const {handleCloseMatch, userHost, handleApproveGuestFromHost, handleCreateChat} = useMatch(onCloseMatch, matchData);
 
-  const {
-    handleCloseMatch,
-    userHost,
-    handleApproveGuestFromHost,
-    handleCreateChat
-  } = useMatch(onCloseMatch, matchData)
-  
   // ANIMATED CARD
 
   const rotateCard1 = useSharedValue(0);
@@ -159,7 +153,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
           <Animated.View style={[{position: 'absolute', zIndex: 1000, alignSelf: 'center'}, animatedStyleCard1]}>
             <MatchInfoCard
               isProfile={false}
-              usersList={matchData.usersListHost} //
+              usersList={matchData.usersListHost}
               accountType={matchData.accountTypeHost}
               image={matchData.userHostImageUri}
               imageEvent={matchData.eventImage}
@@ -173,6 +167,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
               showHeaderInfo={false}
               guestsInvited={matchData.guestsInvited}
               isHost={true}
+              isGuest={false}
             />
           </Animated.View>
 
@@ -193,6 +188,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
               guestsInvited={matchData.guestsInvited}
               showHeaderInfo={true}
               isGuest={true}
+              isHost={false}
             />
           </Animated.View>
           <View>

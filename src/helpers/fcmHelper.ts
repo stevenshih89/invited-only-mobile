@@ -7,21 +7,15 @@ import firestore from '@react-native-firebase/firestore';
 import {showToast} from './showToast';
 import functions from '@react-native-firebase/functions';
 import Config from 'react-native-config';
-import { logErrorToSentry } from './logErrorsToSentry';
+import {logErrorToSentry} from './logErrorsToSentry';
 
 export const fcmHelper = async () => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const userUid = auth().currentUser?.uid;
 
   try {
-    // const oldToken = await messaging().getToken();
-    // await messaging().deleteToken(String('422527028413'), '*');
     const newToken = await messaging().getToken();
 
-    // if (oldToken === newToken) {
-    //   // console.log('not refresh');
-    // } else {
-    // console.warn('newToken', newToken, userUid);
     try {
       await firestore().collection(apiUserInfoCollection).doc(userUid).update({
         fcmToken: newToken,
@@ -38,7 +32,7 @@ export const fcmHelper = async () => {
     // // console.log('fcmToken', fcmToken);
   } catch (e) {
     console.error('error fcm token', e);
-    logErrorToSentry(e)
+    logErrorToSentry(e);
   }
 };
 
@@ -293,6 +287,6 @@ export const sendNotification = async (
     await firestore().collection(apiUserInfoCollection).doc(forUserUid).collection('notifications').add(notification);
   } catch (error) {
     console.error('error add notification', error);
-    logErrorToSentry(error)
+    logErrorToSentry(error);
   }
 };

@@ -85,9 +85,9 @@ import firestore from '@react-native-firebase/firestore';
 import {UserInfo} from 'src/types/userInfo';
 import Config from 'react-native-config';
 import auth from '@react-native-firebase/auth';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import {UserQueries} from "../../apiv2/queries/userQueries.ts";
-import {EventQueries} from "../../apiv2/queries/eventQueries.ts";
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {UserQueries} from '../../apiv2/queries/userQueries.ts';
+import {EventQueries} from '../../apiv2/queries/eventQueries.ts';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -525,28 +525,28 @@ const AppStackScreen = () => {
   useEffect(() => {
     try {
       const currentUser = auth().currentUser;
-    let notificationsCountSubscriber: any;
+      let notificationsCountSubscriber: any;
 
-    if (currentUser) {
-      try {
-        notificationsCountSubscriber = firestore()
-          .collection(apiUserInfoCollection)
-          .doc(currentUser?.uid)
-          .collection('notifications')
-          .onSnapshot(doc => {
-            setNotificationsCount(doc.size);
-          });
-      } catch (err) {
-        console.error(err);
+      if (currentUser) {
+        try {
+          notificationsCountSubscriber = firestore()
+            .collection(apiUserInfoCollection)
+            .doc(currentUser?.uid)
+            .collection('notifications')
+            .onSnapshot(doc => {
+              setNotificationsCount(doc.size);
+            });
+        } catch (err) {
+          console.error(err);
+        }
       }
-    }
-    return () => {
-      console.warn('unmount');
+      return () => {
+        console.warn('unmount');
 
-      if (notificationsCountSubscriber) {
-        notificationsCountSubscriber();
-      }
-    };
+        if (notificationsCountSubscriber) {
+          notificationsCountSubscriber();
+        }
+      };
     } catch (error) {
       logErrorToSentry(error);
     }

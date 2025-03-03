@@ -5,7 +5,7 @@ import {backgroundGradientColors, black1Color, lightGray16Color, transparentWhit
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {signUpPath} from 'constants/pathLocations';
+import {enterTypePath} from 'constants/pathLocations';
 import LinearGradient from 'react-native-linear-gradient';
 import {getSubscriptions} from 'src/api/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -325,9 +325,7 @@ const Eula: FC = (): JSX.Element => {
             onEndReached={onEndReached}
             onEndReachedThreshold={0.1}
           />
-          <View 
-          testID="bottom-view"
-          style={{flexDirection: 'row'}}>
+          <View testID="bottom-view" style={{flexDirection: 'row'}}>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{
@@ -340,13 +338,13 @@ const Eula: FC = (): JSX.Element => {
             </TouchableOpacity>
             <TouchableOpacity
               testID="accept-button"
-              // disabled={!endReached}
+              disabled={!endReached}
               activeOpacity={0.7}
               hitSlop={{top: 26, bottom: 20}}
-              onPress={() => navigation.navigate(signUpPath as never, {isLogin: false})}
+              onPress={() => navigation.navigate(enterTypePath as never)}
               style={{
                 flex: 1.7,
-                backgroundColor:  whiteColor,
+                backgroundColor: endReached ? whiteColor : lightGray16Color,
                 borderRadius: 18,
                 height: screenHeight / 14,
                 flexDirection: 'row',

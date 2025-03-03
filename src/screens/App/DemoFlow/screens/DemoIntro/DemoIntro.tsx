@@ -14,8 +14,7 @@ import moment from 'moment';
 import uuid from 'react-native-uuid';
 import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
-import Loading from 'components/Loading/Loading';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const DemoIntro: FC = () => {
   const styles = useStyles();
@@ -84,7 +83,7 @@ const DemoIntro: FC = () => {
         });
       } catch (error) {
         console.error(error);
-        logErrorToSentry(error)
+        logErrorToSentry(error);
       }
     }
   };

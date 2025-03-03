@@ -13,11 +13,11 @@ import LocationBlackIcon from 'assets/images/icons/location-black.svg';
 import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
-import { screenHeight, screenWidth } from 'constants/common';
+import {screenHeight, screenWidth} from 'constants/common';
 
 interface MatchInfoCardI {
   isProfile: boolean;
-  usersList: [];
+  usersList: any[];
   image: string | undefined;
   online: boolean;
   accountType: string;
@@ -52,7 +52,7 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
   imageEvent,
   guestsInvited,
   isGuest,
-  isHost
+  isHost,
 }) => {
   const getUsersListAccepted = () => {
     const filter = usersList?.filter(item => item.status === 'invite_match');

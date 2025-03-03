@@ -26,11 +26,12 @@ import {
   verifySocialProfilePath,
   checkingSpots,
   addBuisnessPath,
-  startCreateAccountPath,
   eulaPath,
+  enterTypePath,
+  onBoardingDemoPath,
 } from 'constants/pathLocations';
 import {NavigationContainer} from '@react-navigation/native';
-import Onboard from 'screens/Auth/Onboard';
+import Onboard from 'screens/Auth/Onboard/Onboard';
 import SignUp from 'screens/Auth/SignUp';
 import ConfirmPhone from 'screens/Auth/ConfirmPhone';
 import TurnNotifications from 'screens/Auth/TurnNotifications';
@@ -55,8 +56,9 @@ import SummaryInfo from 'screens/Auth/SummaryInfo';
 import VerifySocialProfile from 'screens/Auth/VerifySocialProfile';
 import {CheckingSpots} from 'screens/Auth/Payment/CheckingSpots';
 import AddBiusness from 'screens/Auth/AddBuisness';
-import StartCreateAccount from 'screens/Auth/StartCreateAccount';
 import Eula from 'screens/Auth/EulaScreen';
+import EnterTypeScreen from 'screens/Auth/EnterTypeScreen/EnterTypeScreen';
+import DemoVideo from 'screens/Auth/DemoVide/DemoVideo';
 
 const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
@@ -65,8 +67,9 @@ const AuthStackScreens: FC = (): JSX.Element => {
     <NavigationContainer independent={true}>
       <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{headerShown: false}}>
         <AuthStack.Screen key={onboardPath} name={onboardPath} component={Onboard} />
-        <AuthStack.Screen key={startCreateAccountPath} name={startCreateAccountPath} component={StartCreateAccount} />
         <AuthStack.Screen key={eulaPath} name={eulaPath} component={Eula} />
+        <AuthStack.Screen key={enterTypePath} name={enterTypePath} component={EnterTypeScreen} />
+        <AuthStack.Screen key={onBoardingDemoPath} name={onBoardingDemoPath} component={DemoVideo} />
         <AuthStack.Screen key={signUpPath} name={signUpPath} component={SignUp} />
         <AuthStack.Screen key={confirmPhonePath} name={confirmPhonePath} component={ConfirmPhone} />
         <AuthStack.Screen key={turnNotificationsPath} name={turnNotificationsPath} component={TurnNotifications} />

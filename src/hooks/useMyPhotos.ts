@@ -1,17 +1,17 @@
-import { isIos } from "constants/common";
-import { useEffect, useRef, useState } from "react";
-import { Alert, Animated } from "react-native";
-import Config from "react-native-config";
-import { ImagePickerResponse, launchImageLibrary } from "react-native-image-picker";
-import { check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS } from "react-native-permissions";
-import { useUser } from "src/store/userStore";
+import {isIos} from 'constants/common';
+import {useEffect, useRef, useState} from 'react';
+import {Alert, Animated} from 'react-native';
+import Config from 'react-native-config';
+import {ImagePickerResponse, launchImageLibrary} from 'react-native-image-picker';
+import {check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS} from 'react-native-permissions';
+import {useUser} from 'src/store/userStore';
 import firestore from '@react-native-firebase/firestore';
-import { logErrorToSentry } from "helpers/logErrorsToSentry";
-import { showToast } from "helpers/showToast";
-import { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
-import { Gesture } from "react-native-gesture-handler";
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {showToast} from 'helpers/showToast';
+import {runOnJS, useAnimatedStyle, useSharedValue, withSpring} from 'react-native-reanimated';
+import {Gesture} from 'react-native-gesture-handler';
 
-export const useMyPhotos = ({images, setImages}: {images: any, setImages: any}) => {
+export const useMyPhotos = ({images, setImages}: {images: any; setImages: any}) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const userHost = useUser((i: any) => i?.user);
   const isConfirmed = userHost?.accountConfirmed;
@@ -85,16 +85,16 @@ export const useMyPhotos = ({images, setImages}: {images: any, setImages: any}) 
   useEffect(() => {
     try {
       const unsubscribe = firestore()
-      .collection(apiUserInfoCollection)
-      .doc(userHost.uid)
-      .onSnapshot(docSnapshot => {
-        const data = docSnapshot.data();
-        const updatedPhotos = data?.photos || [];
-        setImages(updatedPhotos);
-      });
-    return () => unsubscribe();
+        .collection(apiUserInfoCollection)
+        .doc(userHost.uid)
+        .onSnapshot(docSnapshot => {
+          const data = docSnapshot.data();
+          const updatedPhotos = data?.photos || [];
+          setImages(updatedPhotos);
+        });
+      return () => unsubscribe();
     } catch (error) {
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   }, []);
 
@@ -123,7 +123,7 @@ export const useMyPhotos = ({images, setImages}: {images: any, setImages: any}) 
         showToast('inviteMatch', 'Image successfully replaced', 'Success');
       } catch (error) {
         console.log('error replace photo', error);
-        logErrorToSentry(error)
+        logErrorToSentry(error);
         setVisibleModalReplace(false);
         setActiveImage(0);
         setSelectImage(0);
@@ -263,7 +263,7 @@ export const useMyPhotos = ({images, setImages}: {images: any, setImages: any}) 
     replaceImage,
     isConfirmed,
     createTapGesture,
-    offsetX1, 
+    offsetX1,
     offsetY1,
     viewRef1,
     animatedStyles1,
@@ -276,15 +276,15 @@ export const useMyPhotos = ({images, setImages}: {images: any, setImages: any}) 
     mainImage,
     deleteImage,
     openLibrary,
-    offsetX2, 
+    offsetX2,
     offsetY2,
-    offsetX3, 
+    offsetX3,
     offsetY3,
-    offsetX4, 
+    offsetX4,
     offsetY4,
-    offsetX5, 
+    offsetX5,
     offsetY5,
-    offsetX6, 
+    offsetX6,
     offsetY6,
     viewRef2,
     viewRef3,
@@ -296,5 +296,5 @@ export const useMyPhotos = ({images, setImages}: {images: any, setImages: any}) 
     fourthImage,
     fifthImage,
     sixthImage,
-  }
-}
+  };
+};
