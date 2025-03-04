@@ -1,13 +1,14 @@
 import styled from 'styled-components/native';
-import { blackColor, lightGray2Color, lightGray5Color, lightRedColor, transparent60Color, whiteColor } from 'constants/colors';
-import { Satoshi500, Satoshi700, Satoshi400 } from 'constants/fonts';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { screenHeight, screenWidth } from 'constants/common';
+import {blackColor, lightGray2Color, lightGray5Color, lightRedColor, transparent60Color, whiteColor} from 'constants/colors';
+import {Satoshi500, Satoshi700, Satoshi400} from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {screenHeight, screenWidth} from 'constants/common';
 import FastImage from 'react-native-fast-image';
 
 export const Container = styled.View`
   background-color: ${blackColor};
-  padding-horizontal: ${screenWidth / 15.5}px;
+  padding-left: ${screenWidth / 15.5}px;
+  padding-right: ${screenWidth / 15.5}px;
 `;
 
 export const OverlayContainer = styled.View`
@@ -92,10 +93,10 @@ export const JoinEventButton = styled.TouchableOpacity`
   margin-right: ${screenWidth / 27}px;
 `;
 
-export const EventFastImage  = styled(FastImage)`
-  width: '100%',
-  height: '100%',
-  border-radius: 50px
+export const EventFastImage = styled(FastImage)`
+  width: '100%';
+  height: '100%';
+  border-radius: 50px;
 `;
 
 export const ImageEvent = styled.Image`

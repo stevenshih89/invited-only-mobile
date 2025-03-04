@@ -1,0 +1,18 @@
+import {whiteColor} from 'constants/colors';
+import {Satoshi500} from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
+import styled from 'styled-components/native';
+
+export const EulaTitle = styled.Text`
+  font-family: ${Satoshi500};
+  font-size: ${RFValue(20, 990)};
+  color: ${whiteColor};
+  text-align: center;
+  margin-bottom: 14;
+`;
+export const EulaTitleContainer = styled.View`
+  display: flex;
+  width: 60%;
+  justify-content: center;
+  align-items: center;
+`;

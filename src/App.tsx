@@ -17,6 +17,7 @@ import Config from 'react-native-config';
 import Bugsnag from '@bugsnag/react-native';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {showToast} from 'helpers/showToast';
+import {getActiveSubscription} from './api/purchase';
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
@@ -128,13 +129,17 @@ const App: FC = (): JSX.Element => {
     }
 
     const getSubscription = async () => {
-      // const start = new Date().getTime();
-      // const activeSubscription = await getActiveSubscription();
-      // await handleUpdateUserSubscriptions(activeSubscription);
-      // setCurrentSubscriptions(activeSubscription);
+      const start = new Date().getTime();
+      const activeSubscription = await getActiveSubscription();
+      console.log('activeSubscription', activeSubscription.activeSubscriptions);
+
+      await handleUpdateUserSubscriptions(activeSubscription);
+      console.log(activeSubscription);
+
+      setCurrentSubscriptions(activeSubscription);
       setCurrentSubscriptions([]);
-      // const end = new Date().getTime();
-      // console.warn('getSubscription', end - start);
+      const end = new Date().getTime();
+      console.warn('getSubscription', end - start);
     };
     getSubscription();
   }, []);

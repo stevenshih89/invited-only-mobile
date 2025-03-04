@@ -10,7 +10,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {getSubscriptions} from 'src/api/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {screenHeight} from 'constants/common';
-
+import * as S from './EulaScreen.style';
 interface PlanListItem {
   id: number;
   identifier?: string;
@@ -303,18 +303,9 @@ const Eula: FC = (): JSX.Element => {
             <TouchableOpacity onPress={() => navigation.goBack()} style={{marginTop: 10}}>
               <ArrowLeftArrow width={24} height={24} />
             </TouchableOpacity>
-            <View style={{width: '80%'}}>
-              <Text
-                style={{
-                  fontFamily: Satoshi700,
-                  fontSize: RFValue(24, 932),
-                  color: whiteColor,
-                  textAlign: 'center',
-                  marginBottom: 14,
-                }}>
-                End-User License Agreement (EULA)
-              </Text>
-            </View>
+            <S.EulaTitleContainer>
+              <S.EulaTitle>End-User License Agreement (EULA)</S.EulaTitle>
+            </S.EulaTitleContainer>
             <View />
           </View>
           <FlatList

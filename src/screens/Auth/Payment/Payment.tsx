@@ -6,7 +6,6 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import LottieView from 'lottie-react-native';
 
-
 //import components
 import useStyles from 'screens/Auth/Payment/styles.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
@@ -24,9 +23,6 @@ import EyeIcon from 'assets/images/icons/eye-solid.svg';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import CloseCircleIcon from 'assets/images/icons/close-circle.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
-import SubscriptionWeek from 'assets/images/app/subscription-1-week.png';
-import SubscriptionMonth from 'assets/images/app/subscription-1-month.png';
-import SubscriptionThreeMonth from 'assets/images/app/subscription-3-month.png';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {SvgProps} from 'react-native-svg';
@@ -44,7 +40,7 @@ import analytics from '@react-native-firebase/analytics';
 import {paymentScreen} from 'constants/analitycs';
 import Config from 'react-native-config';
 import {screenHeight, screenWidth} from 'constants/common';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 interface PlanListItem {
   id: number;
@@ -176,7 +172,7 @@ const Payment: FC = (): JSX.Element => {
           },
         });
       } catch (error: any) {
-        logErrorToSentry(error)
+        logErrorToSentry(error);
         console.log('error user premium update', error);
       }
     }
@@ -534,7 +530,12 @@ const Payment: FC = (): JSX.Element => {
               </TouchableOpacity>
             </View>
             <View style={{marginTop: 40}}>
-              <LottieView source={animations[activePayment.id]} autoPlay loop style={{height: screenHeight / 3.58, width: screenWidth / 2.62, alignSelf: 'center'}}/>
+              <LottieView
+                source={animations[activePayment.id]}
+                autoPlay
+                loop
+                style={{height: screenHeight / 3.58, width: screenWidth / 2.62, alignSelf: 'center'}}
+              />
             </View>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 30}}>
               {plansList.map(item => renderItem({item}))}

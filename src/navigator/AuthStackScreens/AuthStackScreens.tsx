@@ -56,7 +56,7 @@ import SummaryInfo from 'screens/Auth/SummaryInfo';
 import VerifySocialProfile from 'screens/Auth/VerifySocialProfile';
 import {CheckingSpots} from 'screens/Auth/Payment/CheckingSpots';
 import AddBiusness from 'screens/Auth/AddBuisness';
-import Eula from 'screens/Auth/EulaScreen';
+import Eula from 'screens/Auth/EulaScreen/EulaScreen';
 import EnterTypeScreen from 'screens/Auth/EnterTypeScreen/EnterTypeScreen';
 import DemoVideo from 'screens/Auth/DemoVide/DemoVideo';
 

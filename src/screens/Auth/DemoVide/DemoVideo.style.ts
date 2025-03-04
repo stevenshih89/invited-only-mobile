@@ -7,4 +7,5 @@ export const DemoVideo = styled(Video)`
   left: 0;
   bottom: 0;
   right: 0;
+  object-fit: cover; /* Ensures the video fills the screen without distortion */
 `;
