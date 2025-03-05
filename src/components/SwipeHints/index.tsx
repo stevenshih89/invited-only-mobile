@@ -1,16 +1,14 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-import { TapGestureHandler, PanGestureHandler, State } from 'react-native-gesture-handler';
+import {TapGestureHandler, PanGestureHandler, State} from 'react-native-gesture-handler';
 import RejectDemoIcon from 'assets/images/icons/reject-demo.svg';
 import InviteDemoIcon from 'assets/images/icons/invite-demo.svg';
 import MoreDetailsDemoIcon from 'assets/images/icons/more-details-demo.svg';
-import useStyles from './styles.ts';
-import { useDemoFlowStore } from "../../store/demoFlowStore";
+import {useDemoFlowStore} from '../../store/demoFlowStore';
 import HandIC from 'assets/images/icons/hand.svg';
+import * as S from './index.style';
 
 const SwipeHints = () => {
-  const styles = useStyles();
-  const { setIsVisibleSwipeGuide } = useDemoFlowStore();
+  const {setIsVisibleSwipeGuide} = useDemoFlowStore();
 
   const handleGestureEvent = (event: any) => {
     if (event.nativeEvent.state === State.END) {
@@ -21,28 +19,34 @@ const SwipeHints = () => {
   return (
     <PanGestureHandler onHandlerStateChange={handleGestureEvent}>
       <TapGestureHandler onHandlerStateChange={handleGestureEvent}>
-        <View style={styles.container}>
-          <View style={styles.fixedOverlayContainer} />
-          <View style={styles.swipeHintsContainer}>
-            <View style={styles.hintRow}>
-              <View style={styles.swipeHintContainer}>
+        <S.Container>
+          <S.FixedOverlayContainer />
+          <S.SwipeHintsContainer>
+            <S.HintRow>
+              <S.SwipeHintMainContainer>
                 <RejectDemoIcon />
-                <HandIC style={styles.handIconContainer1} />
-                <Text style={[styles.swipeHintTitle]}>Reject</Text>
-              </View>
-              <View style={[styles.swipeHintContainer, styles.swipeHintInviteContainer]}>
+                <S.HandIconContainer1>
+                  <HandIC />
+                </S.HandIconContainer1>
+                <S.SwipeHintTitle>Reject</S.SwipeHintTitle>
+              </S.SwipeHintMainContainer>
+              <S.SwipeHintInviteContainer>
                 <InviteDemoIcon />
-                <HandIC style={styles.handIconContainer2} />
-                <Text style={[styles.swipeHintTitle]}>Invite</Text>
-              </View>
-            </View>
-            <View style={[styles.swipeHintContainer, styles.swipeHintMoreContainer]}>
+                <S.HandIconContainer2>
+                  <HandIC />
+                </S.HandIconContainer2>
+                <S.SwipeHintTitle>Invite</S.SwipeHintTitle>
+              </S.SwipeHintInviteContainer>
+            </S.HintRow>
+            <S.SwipeHintMoreContainer>
               <MoreDetailsDemoIcon />
-              <HandIC style={styles.handIconContainer3} />
-              <Text style={[styles.swipeHintTitle, styles.swipeHintTitleWide]}>More Photos and Details</Text>
-            </View>
-          </View>
-        </View>
+              <S.HandIconContainer3>
+                <HandIC />
+              </S.HandIconContainer3>
+              <S.SwipeHintTitleWide>More Photos and Details</S.SwipeHintTitleWide>
+            </S.SwipeHintMoreContainer>
+          </S.SwipeHintsContainer>
+        </S.Container>
       </TapGestureHandler>
     </PanGestureHandler>
   );

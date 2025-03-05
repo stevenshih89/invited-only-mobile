@@ -1,10 +1,9 @@
-import {StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle} from 'react-native';
+import {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {isValidPhoneNumber, parsePhoneNumber, type PhoneNumber} from 'libphonenumber-js';
 import {errorColor, lightGray2Color, transparentGray60Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import ArrowDown from 'assets/images/icons/arrow-down.svg';
 import PhoneInput from 'react-native-phone-number-input';
-import {Satoshi400} from 'constants/fonts';
 import * as S from './InputPhoneView.style';
 
 interface IInputPhoneViewProps {
@@ -109,8 +108,11 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
             placeholder={props.placeholder ? props.placeholder : 'Phone Number'}
             codeTextStyle={[
               props.codeTextStyle,
-              {color: !phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? errorColor : '#ffffff', fontWeight: '400',
-                fontSize: 16,},
+              {
+                color: !phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? errorColor : '#ffffff',
+                fontWeight: '400',
+                fontSize: 16,
+              },
             ]}
             onChangeFormattedText={handleOnChangeFormattedText}
             disableArrowIcon={props.arrowDisabled}
@@ -136,10 +138,18 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
                 borderRadius: 10,
               },
             ]}
-            textContainerStyle={[props.textContainer, {backgroundColor: lightGray2Color, flex: 1, borderRadius: 10, paddingVertical: 0, paddingLeft: 0, padding: 0}]}
+            textContainerStyle={[
+              props.textContainer,
+              {backgroundColor: lightGray2Color, flex: 1, borderRadius: 10, paddingVertical: 0, paddingLeft: 0, padding: 0},
+            ]}
             textInputStyle={[
               props.textStyle,
-              {color: !phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? errorColor : '#ffffff', fontWeight: '400', fontSize: 16, paddingVertical: 0},
+              {
+                color: !phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? errorColor : '#ffffff',
+                fontWeight: '400',
+                fontSize: 16,
+                paddingVertical: 0,
+              },
             ]}
             countryPickerProps={{
               filterProps: {
@@ -161,9 +171,7 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
         </S.TextContainerStyle>
       </S.TouchableContainer>
       <S.WrapperErrorText>
-        {!phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? (
-          <S.ErrorText>Incorrect phone number</S.ErrorText>
-        ) : null}
+        {!phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? <S.ErrorText>Incorrect phone number</S.ErrorText> : null}
       </S.WrapperErrorText>
     </S.Container>
   );

@@ -15,7 +15,8 @@ import {Dispatch, FC, SetStateAction} from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400} from 'constants/fonts';
 import Button from 'components/Button/Button';
-import { useModalGender } from 'hooks/useModalGender';
+import {useModalGender} from 'hooks/useModalGender';
+import * as S from './ModalGender.style';
 
 interface ModalGenderProps {
   isVisible: boolean;
@@ -38,11 +39,7 @@ const ModalGender: FC<ModalGenderProps> = ({
   saveUserInfo,
   listOfGenders,
 }) => {
-  
-  const {
-    handleUpdateShowInMyProfile,
-    handleUpdateGender
-  } = useModalGender({setShowGender, setActiveGenderItem})
+  const {handleUpdateShowInMyProfile, handleUpdateGender} = useModalGender({setShowGender, setActiveGenderItem});
 
   return (
     <Modal
@@ -60,34 +57,14 @@ const ModalGender: FC<ModalGenderProps> = ({
         zIndex: 999,
       }}
       swipeDirection={['down']}>
-      <View
-        style={{
-          backgroundColor: blackColor,
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-          paddingBottom: 40,
-          paddingTop: 16,
-          paddingHorizontal: 30,
-        }}>
-        <View style={{backgroundColor: whiteColor, height: 2, borderRadius: 10, width: 40, alignSelf: 'center', marginBottom: 22}} />
-        <View
-          style={{
-            borderRadius: 100,
-            backgroundColor: transparentGray90Color,
-            height: 84,
-            width: 84,
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignSelf: 'center',
-            marginBottom: 20,
-          }}>
+      <S.Container>
+        <S.HandleBar />
+        <S.IconContainer>
           <Gender width={32} height={32} />
-        </View>
-        <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), textAlign: 'center', marginBottom: 10}}>
-          What is your gender?
-        </Text>
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
-          <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
+        </S.IconContainer>
+        <S.TitleText>What is your gender?</S.TitleText>
+        <S.Row>
+          <S.OptionText>Show in my profile</S.OptionText>
           <Switch
             trackColor={{false: grayColor, true: toggleColor}}
             checked={showGender}
@@ -95,7 +72,7 @@ const ModalGender: FC<ModalGenderProps> = ({
               handleUpdateShowInMyProfile(val);
             }}
           />
-        </View>
+        </S.Row>
         <FlatList
           data={listOfGenders}
           scrollEnabled={false}
@@ -103,28 +80,9 @@ const ModalGender: FC<ModalGenderProps> = ({
           renderItem={({item}) => {
             const isActive = activeGenderItem === item.title;
             return (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => handleUpdateGender(item?.title)}
-                style={{
-                  borderBottomWidth: 1,
-                  borderStyle: 'solid',
-                  borderRadius: isActive ? 10 : 0,
-                  borderBottomColor: isActive ? 'transparent' : transparentWhite16Color,
-                  backgroundColor: isActive ? lightGray15Color : 'transparent',
-                  padding: 16,
-                  // alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    color: isActive ? whiteColor : whiteColor,
-                    fontSize: RFValue(18, 812),
-                    fontFamily: Satoshi400,
-                    textTransform: 'capitalize',
-                  }}>
-                  {item?.title}
-                </Text>
-              </TouchableOpacity>
+              <S.OptionContainer isActive={isActive} activeOpacity={0.8} onPress={() => handleUpdateGender(item?.title)}>
+                <S.OptionText>{item?.title}</S.OptionText>
+              </S.OptionContainer>
             );
           }}
         />
@@ -136,7 +94,7 @@ const ModalGender: FC<ModalGenderProps> = ({
           title="Save"
           buttonStyle={{marginTop: 20}}
         />
-      </View>
+      </S.Container>
     </Modal>
   );
 };

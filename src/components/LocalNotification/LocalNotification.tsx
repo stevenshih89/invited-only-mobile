@@ -29,8 +29,8 @@ import {
 import {handleCreateChat} from 'helpers/chat';
 import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
-import { showToast } from 'helpers/showToast';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {showToast} from 'helpers/showToast';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import * as S from './LocalNotification.style';
 
 const LocalNotification = () => {
@@ -98,7 +98,7 @@ const LocalNotification = () => {
           });
         } catch (error) {
           showToast('inviteMatch', 'An issue occurred while creating the chat and retrieving event data. Please try again later.', 'Error');
-          logErrorToSentry(error)
+          logErrorToSentry(error);
         }
         break;
       default:
@@ -117,12 +117,12 @@ const LocalNotification = () => {
           height: 84,
           opacity: 0.94,
         }}
-        text1Style={{ color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812) }}
-        text2Style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5 }}
+        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}
+        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5}}
         renderLeadingIcon={() => (
           <S.WrapperIcon>
             <Image source={IconBackground} />
-            <TickCircleIcon style={{ position: 'absolute', left: 10, top: 10 }} />
+            <TickCircleIcon style={{position: 'absolute', left: 10, top: 10}} />
           </S.WrapperIcon>
         )}
       />
@@ -138,12 +138,12 @@ const LocalNotification = () => {
           height: 84,
           opacity: 0.94,
         }}
-        text1Style={{ color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812) }}
-        text2Style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5 }}
+        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}
+        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5}}
         renderLeadingIcon={() => (
           <S.WrapperIcon>
             <Image source={IconBackground} />
-            <PendingClockIcon style={{ position: 'absolute', left: 13.5, top: 13.5 }} />
+            <PendingClockIcon style={{position: 'absolute', left: 13.5, top: 13.5}} />
           </S.WrapperIcon>
         )}
       />
@@ -160,12 +160,12 @@ const LocalNotification = () => {
           height: 84,
           opacity: 0.94,
         }}
-        text1Style={{ color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812) }}
-        text2Style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5 }}
+        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}
+        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5}}
         renderLeadingIcon={() => (
           <S.WrapperIcon>
             <Image source={IconBackground} />
-            <XIcon style={{ position: 'absolute', left: 10.5, top: 10.5 }} />
+            <XIcon style={{position: 'absolute', left: 10.5, top: 10.5}} />
           </S.WrapperIcon>
         )}
       />
@@ -176,7 +176,7 @@ const LocalNotification = () => {
         renderLeadingIcon={() => (
           <S.WrapperIcon>
             <Image source={IconBackground} />
-            <InfoCircleOrange style={{ position: 'absolute', left: 10.5, top: 10.5 }} />
+            <InfoCircleOrange style={{position: 'absolute', left: 10.5, top: 10.5}} />
           </S.WrapperIcon>
         )}
         style={{
@@ -188,8 +188,8 @@ const LocalNotification = () => {
           height: 84,
           opacity: 0.94,
         }}
-        text1Style={{ color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812) }}
-        text2Style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5 }}
+        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}
+        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5}}
       />
     ),
     warningGrey: props => (
@@ -198,7 +198,7 @@ const LocalNotification = () => {
         renderLeadingIcon={() => (
           <S.WrapperIcon>
             <Image source={IconBackground} />
-            <InfoCircleGrey style={{ position: 'absolute', left: 10.5, top: 10.5 }} />
+            <InfoCircleGrey style={{position: 'absolute', left: 10.5, top: 10.5}} />
           </S.WrapperIcon>
         )}
         style={{
@@ -210,8 +210,8 @@ const LocalNotification = () => {
           height: 84,
           opacity: 0.94,
         }}
-        text1Style={{ color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812) }}
-        text2Style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5 }}
+        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}
+        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5}}
       />
     ),
     customToast: ({text1, props}: ToastConfigParams<any>) => (
@@ -227,11 +227,7 @@ const LocalNotification = () => {
         <S.InviteMatchContainer>
           <S.InviteMatchInnerContainer>
             <S.InviteMatchRow>
-              {props.ownerPhoto ? (
-                <S.InviteMatchImage source={{uri: props.ownerPhoto}} />
-              ) : (
-                <S.InviteMatchImage source={IOImage} />
-              )}
+              {props.ownerPhoto ? <S.InviteMatchImage source={{uri: props.ownerPhoto}} /> : <S.InviteMatchImage source={IOImage} />}
               <S.InviteMatchTextContainer>
                 <S.InviteMatchTextRow>
                   <S.InviteMatchText>{text1}</S.InviteMatchText>

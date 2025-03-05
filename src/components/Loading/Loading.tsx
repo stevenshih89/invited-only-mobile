@@ -2,7 +2,7 @@ import React, {FC, useEffect} from 'react';
 import Subtract from 'src/assets/images/icons/subtract.svg';
 import CheckStarIcon from 'src/assets/images/icons/check-star.svg';
 import Animated, {Easing, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming} from 'react-native-reanimated';
-import {screenHeight, } from 'constants/common';
+import {screenHeight} from 'constants/common';
 import * as S from './Loading.style';
 
 interface LoadingProps {
@@ -26,7 +26,6 @@ const Loading: FC<LoadingProps> = ({
   styleInnerContainer,
   textStyle,
 }) => {
-
   const firstCircleScale = useSharedValue(0.9);
   const secondCircleScale = useSharedValue(0.9);
 
@@ -97,11 +96,8 @@ const Loading: FC<LoadingProps> = ({
             top: topPosition ? 35 : screenHeight / 2 - 365,
             height: topPosition ? 290 : 330,
             width: topPosition ? 290 : 330,
-          }}
-        >
-          {userInfo?.photos && (
-            <S.FastImageStyled resizeMode="cover" source={{uri: userInfo?.photos[0]?.image}} />
-          )}
+          }}>
+          {userInfo?.photos && <S.FastImageStyled resizeMode="cover" source={{uri: userInfo?.photos[0]?.image}} />}
         </S.WhiteCircle>
         {wrapperText ? (
           <>

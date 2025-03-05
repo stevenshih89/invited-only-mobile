@@ -1,6 +1,7 @@
 import {Text, TouchableOpacity, View, StyleSheet} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {FC, useState} from 'react';
+import styled from 'styled-components/native';
 
 //import components
 import {Satoshi400, Satoshi500} from 'constants/fonts';
@@ -9,50 +10,28 @@ import ModalSelectLanguages from 'components/Modal/ModalSelectLanguages/ModalSel
 
 //import icons
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
+import * as S from './LanguagesKnow.style';
+
 
 const LanguagesKnow: FC = () => {
   const [modalLanguages, setModalLanguages] = useState<boolean>(false)
   const [showLanguages, setShowLanguages] = useState<boolean>(false)
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Languages I know</Text>
-      <TouchableOpacity onPress={() => setModalLanguages(true)} style={styles.rowContainer}>
-        <Text style={styles.labelText}>Choose the languages you know</Text>
+    <S.Container>
+      <S.Title>Languages I know</S.Title>
+      <S.RowContainer onPress={() => setModalLanguages(true)}>
+        <S.LabelText>Choose the languages you know</S.LabelText>
         <ArrowRight />
-      </TouchableOpacity>
+      </S.RowContainer>
       <ModalSelectLanguages
         showLanguages={showLanguages}
         setShowLanguages={setShowLanguages}
         modalLanguages={modalLanguages}
         setModalLanguages={setModalLanguages}
       />
-    </View>
+    </S.Container>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: lightGray5Color,
-    borderRadius: 10,
-    marginTop: 24,
-  },
-  title: {
-    color: whiteColor,
-    fontFamily: Satoshi500,
-    fontSize: RFValue(18, 812),
-  },
-  rowContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 26,
-  },
-  labelText: {
-    color: whiteColor,
-    fontFamily: Satoshi400,
-    fontSize: RFValue(14, 812),
-  },
-});
 
 export default LanguagesKnow;

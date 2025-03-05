@@ -7,8 +7,7 @@ import FastImage from 'react-native-fast-image';
 
 export const Container = styled.View`
   background-color: ${blackColor};
-  padding-left: ${screenWidth / 15.5}px;
-  padding-right: ${screenWidth / 15.5}px;
+  padding-horizontal: ${screenWidth / 15.5}px;
 `;
 
 export const OverlayContainer = styled.View`
@@ -25,6 +24,11 @@ export const WrapperHeader = styled.View`
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
+`;
+
+export const WrapperHeaderJoinEvent = styled.View`
+  flex-direction: row;
+  margin-vertical: ${screenHeight / 50}px;
 `;
 
 export const EventView = styled.View`
@@ -94,9 +98,14 @@ export const JoinEventButton = styled.TouchableOpacity`
 `;
 
 export const EventFastImage = styled(FastImage)`
-  width: '100%';
-  height: '100%';
-  border-radius: 50px;
+  width: '100%',
+  height: '100%',
+  border-radius: 50px
+`;
+
+export const RequestsFlatList = styled.FlatList`
+  margin-top: ${screenHeight / 50}px;
+  margin-bottom: 25px;
 `;
 
 export const ImageEvent = styled.Image`

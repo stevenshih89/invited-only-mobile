@@ -14,7 +14,11 @@ const InstagramSlider: FC<InstagramSliderProps> = ({photosList}) => {
       <S.TitleWrapper>
         <S.Title>{photosList?.length} instagram photos</S.Title>
       </S.TitleWrapper>
-      <Swiper showsButtons={false} paginationStyle={{ justifyContent: 'flex-end', alignItems: 'flex-start', height: '102%' }} activeDotColor={whiteColor} dotColor={gray1Color}>
+      <Swiper
+        showsButtons={false}
+        paginationStyle={{justifyContent: 'flex-end', alignItems: 'flex-start', height: '102%'}}
+        activeDotColor={whiteColor}
+        dotColor={gray1Color}>
         {photosList?.length >= 1 && (
           <View>
             <FlatList

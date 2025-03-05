@@ -12,7 +12,8 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {FC, ReactElement} from 'react';
-import {useUser} from "../../../../../store/userStore";
+import {useUser} from '../../../../../store/userStore';
+import * as S from './MyBasics.style';
 
 const MyBasics: FC<{
   setIsVisibleSmokeModal: (val: boolean) => void;
@@ -45,65 +46,65 @@ const MyBasics: FC<{
   height,
   date,
   location,
-  homeAddress
-}): ReactElement => {  
-  const userHost = useUser((i: any) => i?.user);  
+  homeAddress,
+}): ReactElement => {
+  const userHost = useUser((i: any) => i?.user);
 
   const gender = userHost?.gender?.charAt(0).toUpperCase() + userHost?.gender.slice(1);
   return (
-    <View style={styles.container}>
-      <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>My basics</Text>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleWorkModal(true)}>
-        <View style={styles.iconContainer}>
-          <Job/>
-          <Text style={styles.text}>Work</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Text style={styles.subText}>{work || 'Add'}</Text>
+    <S.Container>
+      <S.Title>My basics</S.Title>
+      <S.ItemContainer activeOpacity={0.7} onPress={() => setIsVisibleWorkModal(true)}>
+        <S.IconContainer>
+          <Job />
+          <S.Text>Work</S.Text>
+        </S.IconContainer>
+        <S.IconContainer>
+          <S.SubText>{work || 'Add'}</S.SubText>
           <ArrowRight />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleGenderModal(true)}>
-        <View style={styles.iconContainer}>
+        </S.IconContainer>
+      </S.ItemContainer>
+      <S.ItemContainer activeOpacity={0.7} onPress={() => setIsVisibleGenderModal(true)}>
+        <S.IconContainer>
           <BiGender />
-          <Text style={styles.text}>Gender</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Text style={styles.subText}>{gender}</Text>
+          <S.Text>Gender</S.Text>
+        </S.IconContainer>
+        <S.IconContainer>
+          <S.SubText>{gender}</S.SubText>
           <ArrowRight />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleLocationModal(true)}>
-        <View style={styles.iconContainer}>
+        </S.IconContainer>
+      </S.ItemContainer>
+      <S.ItemContainer activeOpacity={0.7} onPress={() => setIsVisibleLocationModal(true)}>
+        <S.IconContainer>
           <Location />
-          <Text style={styles.text}>Location</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Text style={styles.subText}>{typeof(location) === 'string' && location || 'Add'}</Text>
+          <S.Text>Location</S.Text>
+        </S.IconContainer>
+        <S.IconContainer>
+          <S.SubText>{(typeof location === 'string' && location) || 'Add'}</S.SubText>
           <ArrowRight />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleHomeAddressModal(true)}>
-        <View style={styles.iconContainer}>
+        </S.IconContainer>
+      </S.ItemContainer>
+      <S.ItemContainer activeOpacity={0.7} onPress={() => setIsVisibleHomeAddressModal(true)}>
+        <S.IconContainer>
           <Home />
-          <Text style={styles.text}>Hometown</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Text style={styles.subText}>{homeAddress || 'Add'}</Text>
+          <S.Text>Hometown</S.Text>
+        </S.IconContainer>
+        <S.IconContainer>
+          <S.SubText>{homeAddress || 'Add'}</S.SubText>
           <ArrowRight />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity activeOpacity={0.7} style={styles.itemContainer} onPress={() => setIsVisibleBirthdayModal(true)}>
-        <View style={styles.iconContainer}>
+        </S.IconContainer>
+      </S.ItemContainer>
+      <S.ItemContainer activeOpacity={0.7} onPress={() => setIsVisibleBirthdayModal(true)}>
+        <S.IconContainer>
           <Cake />
-          <Text style={styles.text}>Date of birthday</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Text style={styles.subText}>{date || 'Add'}</Text>
+          <S.Text>Date of birthday</S.Text>
+        </S.IconContainer>
+        <S.IconContainer>
+          <S.SubText>{date || 'Add'}</S.SubText>
           <ArrowRight />
-        </View>
-      </TouchableOpacity>
-    </View>
+        </S.IconContainer>
+      </S.ItemContainer>
+    </S.Container>
   );
 };
 

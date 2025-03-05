@@ -30,20 +30,20 @@ import FlashIcon from 'assets/images/icons/flash-white.svg';
 const MyPlan: FC = () => {
 
   const styles = useStyles();
-  
+
   const {
     loaderVisible,
     goToPaymentPath,
     goToSuperInvitePay,
     userInfo} = useMyPlan();
-    
+
   interface WhatGetItem {
     title: string;
     description: string;
     icon: React.FC<SvgProps>;
     titleDescription: string;
   }
-        
+
   const whatGet: WhatGetItem[] = [
     {
       title: `Unlimited Events ${userInfo?.accountType === 'host' ? 'Creation' : 'Attendance'}`,

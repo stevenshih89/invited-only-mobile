@@ -1,9 +1,8 @@
-import {TextareaItem} from '@ant-design/react-native';
-import {lightGray2Color, lightGray5Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {lightGray2Color, transparentWhite30Color} from 'constants/colors';
 import {Satoshi500} from 'constants/fonts';
 import {Dispatch, FC, SetStateAction} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
+import * as S from './MyBio.style';
 
 interface MyBioProps {
   bio: string;
@@ -12,52 +11,30 @@ interface MyBioProps {
 
 const MyBio: FC<MyBioProps> = ({bio, setBio}) => {
   return (
-    <View style={styles.view}>
-      <Text style={styles.text}>My bio</Text>
-      <TextareaItem
+    <S.Container>
+      <S.Title>My bio</S.Title>
+      <S.TextAreaInput
         value={bio}
         onChangeText={(text: string) => setBio(text)}
         rows={9}
         placeholder="Enter your bio"
         placeholderTextColor={transparentWhite30Color}
         styles={{
-          container: styles.container,
-          input: styles.input,
+          container: {
+            backgroundColor: lightGray2Color,
+            borderBottomColor: 'transparent',
+            borderRadius: 10,
+          },
+          input: {
+            color: transparentWhite30Color,
+            fontFamily: Satoshi500,
+            fontSize: RFValue(16, 812),
+            margin: 10,
+          },
         }}
-        style={styles.textArea}
       />
-    </View>
+    </S.Container>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: lightGray2Color,
-    borderBottomColor: 'transparent',
-    borderRadius: 10,
-  },
-  input: {
-    color: transparentWhite30Color,
-    fontFamily: Satoshi500,
-    fontSize: RFValue(16, 812),
-    margin: 10,
-  },
-  view: {
-    padding: 20,
-    backgroundColor: lightGray5Color,
-    borderRadius: 10,
-    marginTop: 24,
-  },
-  text: {
-    color: whiteColor,
-    fontFamily: Satoshi500,
-    fontSize: RFValue(18, 812),
-    marginBottom: 26,
-  },
-  textArea: {
-    backgroundColor: 'transparent',
-    color: whiteColor,
-  },
-});
 
 export default MyBio;

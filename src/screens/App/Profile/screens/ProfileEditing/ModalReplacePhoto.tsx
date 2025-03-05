@@ -10,13 +10,13 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {useUser} from '../../../../../store/userStore';
 import {calculateAge} from 'helpers/calculateAge.ts';
 import firestore from '@react-native-firebase/firestore';
+import * as S from './ModalReplacePhoto.style';
 
 const ModalReplacePhoto: FC<{
   isVisible: boolean;
   onClose: () => void;
   replaceImage: () => void;
 }> = ({isVisible, onClose, replaceImage}) => {
-
   return (
     <Modal
       isVisible={isVisible}
@@ -33,26 +33,12 @@ const ModalReplacePhoto: FC<{
         zIndex: 999,
       }}
       swipeDirection={['down']}>
-      <View
-        style={{
-          backgroundColor: blackColor,
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-          paddingBottom: 40,
-          paddingTop: 16,
-          paddingHorizontal: 30,
-        }}>
-        <View style={{backgroundColor: whiteColor, height: 2, borderRadius: 10, width: 40, alignSelf: 'center', marginBottom: 22}} />
-        <Text style={{
-            fontSize: RFValue(24, 812),
-            fontFamily: Satoshi500,
-            color: whiteColor, 
-            marginBottom: 20,
-            textAlign: 'center'
-        }}>Are you sure you want to replace the image?</Text>       
+      <S.Container>
+        <S.HandleBar />
+        <S.TitleText>Are you sure you want to replace the image?</S.TitleText>
         <Button title="Yes, replace" onPress={replaceImage} />
-        <Button title="Cancel" variant="transparent" onPress={onClose} /> 
-      </View>
+        <Button title="Cancel" variant="transparent" onPress={onClose} />
+      </S.Container>
     </Modal>
   );
 };

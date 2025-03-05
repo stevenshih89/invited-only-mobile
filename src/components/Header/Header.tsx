@@ -1,11 +1,10 @@
 import React, {FC, ReactNode, useContext, useEffect, useState} from 'react';
-import {View, TouchableOpacity, Text, Image, FlatList, ScrollView, Alert} from 'react-native';
+import {View, FlatList, ScrollView, Alert} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
 import auth from '@react-native-firebase/auth';
 
 //import components
-import useStyles from 'components/Header/styles.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {
   commonStackPath,
@@ -16,7 +15,7 @@ import {
   paymentPath,
   settingsPath,
 } from 'constants/pathLocations';
-import {lightGray5Color, orangeColor, whiteColor} from 'constants/colors.ts';
+import {blackColor, lightGray5Color, lightRedColor, orangeColor, whiteColor} from 'constants/colors.ts';
 import {screenHeight, THIS_WEEK, ALL, THIS_MONTH, ACCEPTED_STATUS, screenWidth} from 'constants/common.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
 import {EventsDate} from 'contexts/EventsDate';
@@ -50,6 +49,7 @@ import {Marquee} from '@animatereactnative/marquee';
 import firebase from '@react-native-firebase/app';
 import {useNotifications} from 'src/store/notificationsStore';
 import * as S from './Header.style';
+import {Satoshi700} from 'constants/fonts';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -79,13 +79,10 @@ type ItemProps = {
 const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
   const MARQUEE_SPEED = 0.4;
   const MARQUEE_SPACING = 30;
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const route = useRoute();
   const {hintStep, event, isVisibleSwipeGuide} = useDemoFlowStore();
   const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
   const [eventStarting, setEventStarting] = useState<boolean>(false);
-  // const [myEvents, setMyEvents] = useState<Array<any>>();
-  const styles = useStyles();
 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
@@ -221,11 +218,26 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
       onPress={() => {
         setChat(`${event.id}`);
         setActiveEvent(event);
-      }}
-      >
+      }}>
       <S.EventViewFlatList style={{borderColor: activeEvent?.id === event?.id ? whiteColor : lightGray5Color}}>
         <S.ImageEvent source={{uri: image}} />
-        {numberBadge > 0 && <Badge value={numberBadge} badgeStyle={styles.badgeStyleEvent} textStyle={styles.badgeText} />}
+        {numberBadge > 0 && (
+          <Badge
+            value={numberBadge}
+            badgeStyle={{
+              position: 'absolute',
+              borderColor: blackColor,
+              borderWidth: 1,
+              bottom: -4,
+              right: 0,
+              backgroundColor: lightRedColor,
+            }}
+            textStyle={{
+              color: whiteColor,
+              fontFamily: Satoshi700,
+            }}
+          />
+        )}
       </S.EventViewFlatList>
       <View style={{maxWidth: screenWidth / 5, overflow: 'hidden'}}>
         {title.length >= 10 ? (
@@ -254,9 +266,8 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         if (userInfo?.accountConfirmed) {
           setActiveEventDate(value);
         }
-      }}
-      >
-      <S.EventViewFlatList style={ {borderColor: activeEventDate === value ? whiteColor : lightGray5Color}}>
+      }}>
+      <S.EventViewFlatList style={{borderColor: activeEventDate === value ? whiteColor : lightGray5Color}}>
         <S.ImageEventsJoining>{icon}</S.ImageEventsJoining>
       </S.EventViewFlatList>
       <S.TextButton>{title}</S.TextButton>
@@ -323,13 +334,10 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                           }
                           setActiveEvent(event);
                         }}>
-                        <S.EventSpecialWrapper
-                          borderColor={eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color}>
+                        <S.EventSpecialWrapper borderColor={eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color}>
                           {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                           {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                          {event?.photos?.[0]?.image && (
-                            <S.EventFastImage source={{uri: event?.photos[0]?.image}} />
-                          )}
+                          {event?.photos?.[0]?.image && <S.EventFastImage source={{uri: event?.photos[0]?.image}} />}
                         </S.EventSpecialWrapper>
                         <S.EventTitleWrapper>
                           {`${event?.name || event?.placeName}`.length >= 10 ? (
@@ -346,7 +354,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
               </ScrollView>
             ) : (
               <ScrollView horizontal scrollEnabled={false} contentContainerStyle={{marginVertical: screenHeight / 50}}>
-                    <S.EventButton
+                <S.EventButton
                   activeOpacity={0.7}
                   onPress={() => {
                     if (!userInfo?.accountConfirmed) {
@@ -391,14 +399,14 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         );
       case 'IO-JE':
         return (
-          <View style={{flexDirection: 'row', marginVertical: screenHeight / 50}}>
+          <S.WrapperHeaderJoinEvent>
             <S.EventButton onPress={goToCreateEvent}>
-              <View style={styles.eventView}>
+              <S.EventView>
                 <AddIcon width={26} height={26} />
-              </View>
-              <Text style={styles.textButton}>Create event</Text>
+              </S.EventView>
+              <S.TextButton>Create event</S.TextButton>
             </S.EventButton>
-          </View>
+          </S.WrapperHeaderJoinEvent>
         );
       case 'myEvents':
         return null;
@@ -408,10 +416,10 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         return isHost ? (
           <ScrollView horizontal scrollEnabled={!!myEvents?.length} contentContainerStyle={{marginVertical: screenHeight / 50}}>
             <S.EventButton onPress={goToCreateEvent}>
-              <View style={styles.eventView}>
+              <S.EventView>
                 <AddIcon width={26} height={26} />
-              </View>
-              <Text style={styles.textButton}>Create event</Text>
+              </S.EventView>
+              <S.TextButton>Create event</S.TextButton>
             </S.EventButton>
             {myEvents?.map((event: any, index: number) => {
               if (event?.eventReviewed && !event?.statusEvent) {
@@ -436,15 +444,12 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                     }
                     setActiveEvent(event);
                   }}>
-                  <S.EventSpecialWrapper
-                    borderColor={eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color}>
+                  <S.EventSpecialWrapper borderColor={eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color}>
                     {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                     {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                    <S.EventFastImage
-                      source={{uri: event?.photos[0]?.image}}
-                    />
+                    <S.EventFastImage source={{uri: event?.photos[0]?.image}} />
                   </S.EventSpecialWrapper>
-                  <View style={{maxWidth: screenWidth / 5, overflow: 'hidden'}}>
+                  <S.EventTitleWrapper>
                     {`${event?.name || event?.placeName}`.length >= 10 ? (
                       <Marquee spacing={MARQUEE_SPACING} speed={MARQUEE_SPEED}>
                         <S.EventTitleText>{`${event?.name || event?.placeName}`}</S.EventTitleText>
@@ -452,17 +457,16 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                     ) : (
                       <S.EventTitleText numberOfLines={1}>{`${event?.name || event?.placeName}`}</S.EventTitleText>
                     )}
-                  </View>
+                  </S.EventTitleWrapper>
                 </S.EventButton>
               );
             })}
           </ScrollView>
         ) : (
-          <FlatList
+          <S.RequestsFlatList
             data={DATAEventsJoining}
             horizontal={true}
-            style={{marginTop: screenHeight / 50, marginBottom: 25}}
-            renderItem={({item}) => (
+            renderItem={({item}: {item: any}) => (
               <ItemEventsJoining image={item.image} title={item.title} date={item.date} icon={item.icon} value={item.value} />
             )}
             keyExtractor={item => item.id}
@@ -470,9 +474,9 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
         );
       case 'chat':
         return (
-          <View style={[styles.wrapperHeaderButtonsChat, {marginTop: userInfo?.accountType === 'host' ? 0 : screenHeight / 50}]}>
+          <S.WrapperHeaderButtonsChat style={{marginTop: userInfo?.accountType === 'host' ? 0 : screenHeight / 50}}>
             {isHost ? (
-              <View style={[styles.rowButtonsChat, {marginTop: 10}]}>
+              <S.RowButtonsChat style={{marginTop: 10}}>
                 <FlatList
                   data={myEvents}
                   horizontal={true}
@@ -492,9 +496,9 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                   )}
                   keyExtractor={item => item.id}
                 />
-              </View>
+              </S.RowButtonsChat>
             ) : (
-              <View style={[styles.rowButtonsChat]}>
+              <S.RowButtonsChat>
                 <FlatList
                   data={DATAEventsJoining}
                   horizontal={true}
@@ -503,9 +507,9 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                   )}
                   keyExtractor={item => item.id}
                 />
-              </View>
+              </S.RowButtonsChat>
             )}
-          </View>
+          </S.WrapperHeaderButtonsChat>
         );
 
       default:
@@ -529,13 +533,24 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
             {badge && (
               <S.NotificationButton onPress={goToNotifications} activeOpacity={0.7}>
                 <NotificationIcon width={32} height={32} />
-                <Badge value={notificationsCount} badgeStyle={styles.badgeStyle} textStyle={styles.badgeText} />
+                <Badge
+                  value={notificationsCount}
+                  badgeStyle={{
+                    position: 'absolute',
+                    borderColor: lightRedColor,
+                    bottom: -4,
+                    right: 0,
+                    backgroundColor: lightRedColor,
+                  }}
+                  textStyle={{
+                    color: whiteColor,
+                    fontFamily: Satoshi700,
+                  }}
+                />
               </S.NotificationButton>
             )}
             {headerType === 'profile' && (
-              <S.SettingsButton
-                activeOpacity={0.7}
-                onPress={() => navigation.navigate(commonStackPath, {screen: settingsPath} as never)}>
+              <S.SettingsButton activeOpacity={0.7} onPress={() => navigation.navigate(commonStackPath, {screen: settingsPath} as never)}>
                 <SettingsIcon width={32} height={32} />
               </S.SettingsButton>
             )}

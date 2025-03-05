@@ -1,23 +1,16 @@
-import {isIos, screenHeight, screenWidth} from 'constants/common';
-import {FC, useEffect, useRef, useState} from 'react';
-import {Alert, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {screenHeight, screenWidth} from 'constants/common';
+import {FC} from 'react';
+import {ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Close from 'assets/images/icons/close.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import Plus from 'assets/images/icons/plus.svg';
-import {ImagePickerResponse, launchImageLibrary} from 'react-native-image-picker';
 import {blackColor, lightGray2Color, lightGray5Color, orangeClose, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
-import {useUser} from '../../../../../store/userStore';
-import Animated, {runOnJS, useAnimatedStyle, useSharedValue, withSpring} from 'react-native-reanimated';
-import {Gesture, GestureDetector, GestureHandlerRootView} from 'react-native-gesture-handler';
-import firestore from '@react-native-firebase/firestore';
+import Animated from 'react-native-reanimated';
+import {GestureDetector, GestureHandlerRootView} from 'react-native-gesture-handler';
 import ModalReplacePhoto from './ModalReplacePhoto';
-import {showToast} from 'helpers/showToast';
-import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { useMyPhotos } from 'hooks/useMyPhotos';
+import {useMyPhotos} from 'hooks/useMyPhotos';
 
 interface MyPhotosProps {
   images: {id: number; image: string | null}[];
@@ -31,7 +24,7 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
     replaceImage,
     isConfirmed,
     createTapGesture,
-    offsetX1, 
+    offsetX1,
     offsetY1,
     viewRef1,
     animatedStyles1,
@@ -44,15 +37,15 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
     mainImage,
     deleteImage,
     openLibrary,
-    offsetX2, 
+    offsetX2,
     offsetY2,
-    offsetX3, 
+    offsetX3,
     offsetY3,
-    offsetX4, 
+    offsetX4,
     offsetY4,
-    offsetX5, 
+    offsetX5,
     offsetY5,
-    offsetX6, 
+    offsetX6,
     offsetY6,
     viewRef2,
     viewRef3,
@@ -64,8 +57,8 @@ const MyPhotos: FC<MyPhotosProps> = ({images, setImages}): JSX.Element => {
     fourthImage,
     fifthImage,
     sixthImage,
-  } = useMyPhotos({images, setImages})
-  
+  } = useMyPhotos({images, setImages});
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <ModalReplacePhoto isVisible={visibleModalReplace} onClose={() => setVisibleModalReplace(false)} replaceImage={replaceImage} />

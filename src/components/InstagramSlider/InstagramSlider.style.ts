@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
-import { whiteColor } from 'constants/colors';
-import { screenHeight, screenWidth } from 'constants/common';
-import { Satoshi400 } from 'constants/fonts';
-import { RFValue } from 'react-native-responsive-fontsize';
+import {whiteColor} from 'constants/colors';
+import {screenHeight, screenWidth} from 'constants/common';
+import {Satoshi400} from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 export const Container = styled.View`
   width: 100%;

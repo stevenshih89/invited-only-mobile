@@ -1,6 +1,6 @@
-import {Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Text, TextInput, View} from 'react-native';
 import {FC, useRef} from 'react';
-import {errorColor, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {errorColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {InputProps} from 'typescript/interfaces';
 import * as S from './Input.style';
 
@@ -42,15 +42,7 @@ const Input: FC<InputProps> = ({
           {label} {required && <Text style={{color: errorColor}}>*</Text>}
         </S.TitleText>
       )}
-      <TouchableOpacity activeOpacity={1} onPress={onPress} style={[{      width: '100%',
-      height: 56,
-      borderRadius: 10,
-      borderWidth: 0,
-      backgroundColor: lightGray2Color,
-      flexDirection: 'row',
-      paddingRight: 8,
-      paddingBottom: 8,
-      justifyContent: 'space-between',}, containerInnerStyle]}>
+      <S.InputTouchableWrappper activeOpacity={1} onPress={onPress} style={containerInnerStyle}>
         <S.InputField
           ref={inputRef}
           onFocus={onPress}
@@ -71,7 +63,7 @@ const Input: FC<InputProps> = ({
           textAlignVertical={'center'}
         />
         {InputIcon && <S.WrapperInputIcon>{<InputIcon width={20} height={20} />}</S.WrapperInputIcon>}
-      </TouchableOpacity>
+      </S.InputTouchableWrappper>
       <S.WrapperErrorText>
         <S.ErrorText>{isError ? errorText : ' '}</S.ErrorText>
       </S.WrapperErrorText>

@@ -1,39 +1,28 @@
 import {FC} from 'react';
-import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
-
-//import components
-import useStyles from './styles';
+import {ScrollView} from 'react-native';
 import Copy from 'assets/images/icons/copy.svg';
 import {grayColor, whiteColor} from 'constants/colors';
-import { useInvitations } from 'hooks/useInvitations';
+import {useInvitations} from 'hooks/useInvitations';
+import * as S from './Invitations.style';
 
 const Invitations: FC = () => {
-  const {
-    handleCopy,
-    inviteLink,
-    numberCodes
-  } = useInvitations();
-  const styles = useStyles();
+  const {handleCopy, inviteLink, numberCodes} = useInvitations();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>You have {numberCodes} App invitations codes</Text>
-      <Text style={styles.label}>IO Invitations</Text>
+    <S.Container>
+      <S.Title>You have {numberCodes} App invitations codes</S.Title>
+      <S.Label>IO Invitations</S.Label>
       <ScrollView>
         {inviteLink.map((item: any) => (
-          <View style={styles.inviteContainer}>
-            <TouchableOpacity
-              disabled={!item.isActive}
-              activeOpacity={0.7}
-              onPress={() => handleCopy(item.inviteCode)}
-              style={styles.inviteButton}>
-              <Text style={[styles.inviteText, {color: !item.isActive ? grayColor : whiteColor}]}>{item.inviteCode}</Text>
+          <S.InviteContainer key={item.inviteCode}>
+            <S.InviteButton disabled={!item.isActive} activeOpacity={0.7} onPress={() => handleCopy(item.inviteCode)}>
+              <S.InviteText style={{color: !item.isActive ? grayColor : whiteColor}}>{item.inviteCode}</S.InviteText>
               {item.isActive && <Copy />}
-            </TouchableOpacity>
-          </View>
+            </S.InviteButton>
+          </S.InviteContainer>
         ))}
       </ScrollView>
-    </View>
+    </S.Container>
   );
 };
 

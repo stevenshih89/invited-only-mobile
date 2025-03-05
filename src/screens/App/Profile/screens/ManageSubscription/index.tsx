@@ -1,69 +1,55 @@
-import { blackColor, lightGray2Color, whiteColor } from 'constants/colors';
-import { Satoshi400, Satoshi500 } from 'constants/fonts';
-import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { RFValue } from 'react-native-responsive-fontsize';
 import ArrowRightIcon from 'assets/images/icons/arrow-right-balck.svg';
 import SafetyAndWellbeing from '../SafetyAndWellbeing/SafetyAndWellbeing';
-import { FC } from 'react';
-import { Linking } from 'react-native';
-import { useManageSubscription } from 'hooks/useManageSubscription';
+import {FC} from 'react';
+import {Linking} from 'react-native';
+import {useManageSubscription} from 'hooks/useManageSubscription';
+import * as S from './index.style';
 
 const ManageSubscription: FC = () => {
-  const {
-    subscriptionName,
-    currentSubscriptions,
-    lastSubscriptionData,
-    purchaseDates,
-    formateDateFun,
-    goToMyPaymentPath
-  } = useManageSubscription()
-  
+  const {subscriptionName, currentSubscriptions, lastSubscriptionData, purchaseDates, formateDateFun, goToMyPaymentPath} =
+    useManageSubscription();
+
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: blackColor}}>
-      <View style={{flex: 1, paddingHorizontal: 24}}>
-        <View style={{width: '100%', height: 1, marginTop: 8, backgroundColor: lightGray2Color}}></View>
-        <View style={{flex: 1, justifyContent: 'center'}}>
-          <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi500, marginBottom: 24, fontSize: RFValue(48, 812)}}>
-            You subscribed on iOS
-          </Text>
+    <S.SafeAreaView>
+      <S.Container>
+        <S.Divider />
+        <S.Content>
+          <S.Title>You subscribed on iOS</S.Title>
           {currentSubscriptions.activeSubscriptions.length && (
-            <Text style={{color: whiteColor, fontSize: RFValue(16, 812), fontFamily: Satoshi400, textAlign: 'center'}}>
+            <S.Description>
               {`Your ${subscriptionName} subscription began on ${formateDateFun(
                 purchaseDates,
               )}. It will renew on ${formateDateFun(lastSubscriptionData)}.`}
-            </Text>
+            </S.Description>
           )}
-          <Text style={{color: whiteColor, marginVertical: 24, fontSize: RFValue(16, 812), fontFamily: Satoshi400, textAlign: 'center'}}>
+          <S.Description>
             However, if you've already stopped recurring payments through iTunes, then your access will lapse at that time instead of
             renewing, and you won't be charged again.
-          </Text>
-          <Text style={{color: whiteColor, marginBottom: 24, fontSize: RFValue(16, 812), fontFamily: Satoshi400, textAlign: 'center'}}>
-            <Text style={{color: whiteColor}}>
+          </S.Description>
+          <S.Description>
+            <S.Text>
               If you would like to stop recurring payments, you can do so {''}
-              <Text onPress={() => Linking.openURL('app-settings:')} style={{color: whiteColor, fontSize: RFValue(16,812), textDecorationLine: 'underline'}}>here</Text>.
-               {' '}Unfortunately, we're unable to do so on your
-              behalf.
-            </Text>
-          </Text>
+              <S.Link onPress={() => Linking.openURL('app-settings:')}>here</S.Link>. Unfortunately, we're unable to do so on your behalf.
+            </S.Text>
+          </S.Description>
           <SafetyAndWellbeing wellbeingShow={false} />
-        </View>
+        </S.Content>
         {currentSubscriptions.activeSubscriptions.length < 3 && !currentSubscriptions.activeSubscriptions.includes('io_29_3m') && (
-          <TouchableOpacity onPress={goToMyPaymentPath} style={{marginTop: 24}}>
+          <S.UpgradeButton onPress={goToMyPaymentPath}>
             <LinearGradient
               colors={['#977B4A', '#E5D291', '#A28453']}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 0}}
               style={{paddingVertical: 16, borderRadius: 18, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-              <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Upgrade</Text>
+              <S.UpgradeText>Upgrade</S.UpgradeText>
               <ArrowRightIcon width={16} height={16} />
             </LinearGradient>
-          </TouchableOpacity>
+          </S.UpgradeButton>
         )}
-      </View>
-    </SafeAreaView>
+      </S.Container>
+    </S.SafeAreaView>
   );
 };
 
 export default ManageSubscription;
-

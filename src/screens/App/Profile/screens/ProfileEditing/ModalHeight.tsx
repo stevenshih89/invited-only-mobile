@@ -8,6 +8,7 @@ import {Picker} from '@react-native-picker/picker';
 import Modal from 'react-native-modal';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
+import * as S from './ModalHeight.style';
 
 interface ModalHeightProps {
   isVisible: boolean;
@@ -20,8 +21,16 @@ interface ModalHeightProps {
   saveUserInfo: any;
 }
 
-const ModalHeight: FC<ModalHeightProps> = ({isVisible, onClose, showHeight, setShowHeight, height, setHeight, heightsList, saveUserInfo}) => {
-  2;
+const ModalHeight: FC<ModalHeightProps> = ({
+  isVisible,
+  onClose,
+  showHeight,
+  setShowHeight,
+  height,
+  setHeight,
+  heightsList,
+  saveUserInfo,
+}) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -35,49 +44,33 @@ const ModalHeight: FC<ModalHeightProps> = ({isVisible, onClose, showHeight, setS
         justifyContent: 'flex-end',
         zIndex: 999,
       }}>
-      <View
-        style={{
-          backgroundColor: blackColor,
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-          paddingBottom: 40,
-          paddingTop: 16,
-          paddingHorizontal: 30,
-        }}>
-        <View style={{backgroundColor: whiteColor, height: 2, borderRadius: 10, width: 40, alignSelf: 'center', marginBottom: 22}} />
-        <View
-          style={{
-            borderRadius: 100,
-            backgroundColor: transparentGray90Color,
-            height: 84,
-            width: 84,
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignSelf: 'center',
-            marginBottom: 20,
-          }}>
-          <Height height={32} width={32}/>
-        </View>
-        <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), textAlign: 'center', marginBottom: 10}}>
-          What is your height?
-        </Text>
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34}}>
-          <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
+      <S.Container>
+        <S.HandleBar />
+        <S.IconContainer>
+          <Height height={32} width={32} />
+        </S.IconContainer>
+        <S.TitleText>What is your height?</S.TitleText>
+        <S.Row>
+          <S.OptionText>Show in my profile</S.OptionText>
           <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showHeight} onChange={val => setShowHeight(val)} />
-        </View>
-        <View style={{paddingVertical: 16, paddingHorizontal: 20, backgroundColor: lightGray2Color, borderRadius: 10, alignItems: 'center'}}>
-          <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>{height} cm</Text>
-        </View>
+        </S.Row>
+        <S.HeightDisplay>
+          <S.HeightText>{height} cm</S.HeightText>
+        </S.HeightDisplay>
         <Picker selectedValue={height} onValueChange={val => setHeight(val)}>
           {heightsList.map(({id, value, label}) => (
             <Picker.Item value={value} key={id} label={label} color={whiteColor} />
           ))}
         </Picker>
-        <Button onPress={() => {
-          saveUserInfo('Height')
-          onClose()
-        }} title="Save" buttonStyle={{marginTop: 20}} />
-      </View>
+        <Button
+          onPress={() => {
+            saveUserInfo('Height');
+            onClose();
+          }}
+          title="Save"
+          buttonStyle={{marginTop: 20}}
+        />
+      </S.Container>
     </Modal>
   );
 };
