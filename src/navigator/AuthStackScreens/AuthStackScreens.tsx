@@ -38,7 +38,7 @@ import TurnNotifications from 'screens/Auth/TurnNotifications';
 import ChooseAccountType from 'screens/Auth/ChooseAccountType';
 import EnterName from 'screens/Auth/EnterName';
 import AddPhotos from 'screens/Auth/AddPhotos';
-import EnterBirthday from 'screens/Auth/EnterBirthday';
+import EnterBirthday from 'screens/Auth/EnterBirthday/EnterBirthday';
 import Gender from 'screens/Auth/Gender';
 import MyInterests from 'screens/Auth/MyInterests';
 import MyEmail from 'screens/Auth/MyEmail';

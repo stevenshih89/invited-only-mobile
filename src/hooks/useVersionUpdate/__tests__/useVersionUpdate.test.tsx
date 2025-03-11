@@ -4,47 +4,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {renderHook} from '@testing-library/react-hooks';
 import AppSettingsKeys from 'src/apiv2/keys/appSettingsKeys';
 import useVersionStateUpdate from '../useVersionUpdate';
-
-jest.mock('react-native-device-info', () => ({
-  getVersion: jest.fn(() => '1.0.0'),
-  getBuildNumber: jest.fn(() => '1'),
-  getDeviceId: jest.fn(() => 'dummy-device-id'),
-}));
-
-const mockedAppStoreReturnValue = jest.fn();
-const mockedDevVersionReturnValue = jest.fn();
-
-jest.mock('src/apiv2/queries/appSettingsQueries', () => ({
-  AppSettingsQueries: {
-    useAppVersionAppStoreCheckQuery: jest.fn(() => ({
-      data: mockedAppStoreReturnValue(),
-      isFetched: true,
-    })),
-    useAppVersionCheckQuery: jest.fn(() => ({
-      data: mockedDevVersionReturnValue(),
-      isFetched: true,
-    })),
-  },
-}));
-
-jest.mock('@react-native-firebase/firestore', () => {
-  return () => ({
-    collection: jest.fn(() => ({
-      doc: jest.fn(() => ({
-        onSnapshot: jest.fn(() => () => {}),
-        get: jest.fn(() => Promise.resolve({exists: false})),
-      })),
-    })),
-  });
-});
-
-jest.mock('@react-native-firebase/auth', () => {
-  return () => ({
-    currentUser: {uid: '12345', email: 'test@example.com'},
-  });
-});
-
-jest.mock('react-native-config', () => jest.fn());
+import {mockedAppStoreReturnValue, mockedDevVersionReturnValue} from 'jest/mocks/appSettingsQueries.mock';
 
 const createTestQueryClient = () =>
   new QueryClient({
