@@ -36,6 +36,7 @@ import Config from 'react-native-config';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import Loading from 'components/Loading/Loading';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useCreateEvent } from 'hooks/useCreateEvent';
 
 const Requests: FC = (): ReactElement => {
   const COUNT_TO_ADD_REQUEST_ITEMS = 2;
@@ -43,6 +44,8 @@ const Requests: FC = (): ReactElement => {
   const MAX_LIMIT_REQUEST_ITEMS = 40;
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const styles = useStyles();
+
+  const goToCreateEvent = useCreateEvent()
 
   const navigation = useAppNavigation();
   const userInfo = useUser((i: any) => i?.user);
@@ -161,17 +164,6 @@ const Requests: FC = (): ReactElement => {
   const handleOpenMatch = (data: MatchData) => {
     setMatchData(data);
     setIsVisibleMatch(true);
-  };
-
-  const goToCreateEvent = (): void => {
-    if (!userInfo?.accountConfirmed) {
-      return;
-    }
-    if (!userInfo.accountPremium) {
-      navigation.navigate(paymentPath as never);
-    } else {
-      navigation.navigate(eventCreatingStackPath);
-    }
   };
 
   useFocusEffect(

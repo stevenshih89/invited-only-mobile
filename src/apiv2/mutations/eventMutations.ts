@@ -6,8 +6,15 @@ import analytics from "@react-native-firebase/analytics";
 import Config from "react-native-config";
 import {showToast} from "helpers/showToast.ts";
 import {EventData} from "../../types/event.ts";
+import { useUser } from "src/store/userStore/index.ts";
+import { MatchData } from "screens/App/IO/screens/Match/Match.tsx";
+import { INVITE_MATCH_STATUS } from "constants/common.ts";
+import {inviteUser, IOscreen, joinEvent} from 'constants/analitycs';
+import { sendNotification } from "helpers/fcmHelper.ts";
 
 const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+
 const useUpdateEvent = (eventId: string) => {
 
 	const updateEventFn = async (variables: {
@@ -62,7 +69,198 @@ const useCreateEvent = () => {
 	})
 }
 
+const useUpdateWeeklySuperInvites = () => {
+	const updateWeeklySuperInvites = async ({ uid }: { uid: string }) => {
+		await firestore().collection(apiUserInfoCollection).doc(uid).update({
+			lastUpdateSuperInvite: Date.now(),
+			weeklySuperInvites: 5,
+		});
+	}
+
+	return useMutation({
+		mutationKey: ['weeklySuperInvites'],
+		mutationFn: updateWeeklySuperInvites
+	})
+}
+
+export const useRejectEvent = () => {
+	const rejectEvent = async ({
+	  activeEventId,
+	  rejectUid,
+	  isEventOwner,
+	}: {
+	  activeEventId: string;
+	  rejectUid: string;
+	  isEventOwner: boolean;
+	}) => {
+	  try {
+		const data = isEventOwner
+		  ? { rejectsList: firestore.FieldValue.arrayUnion({ uid: rejectUid }) }
+		  : { rejectsByGuestsList: firestore.FieldValue.arrayUnion({ uid: rejectUid }) };
+  
+		await firestore().collection(apiEventsCollection).doc(activeEventId).update(data);
+	  } catch (error) {
+		logErrorToSentry(error);
+		throw error;
+	  }
+	};
+  
+	return useMutation({
+	  mutationKey: ["rejectEvent"],
+	  mutationFn: rejectEvent,
+	});
+  };
+
+const useFetchEventInfo = () => {
+	const fetchEventInfo = async (eventId: string) => {
+		const userDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
+		if (!userDoc.exists) throw new Error('Event not found');
+		return userDoc.data();
+	};
+
+	return useMutation({
+		mutationFn: fetchEventInfo,
+	});
+};
+
+const useInviteUser = () => {
+	const userInvite = async ({
+		matchedGuest,
+		userInvited,
+		event,
+		userInfo,
+		guestData,
+		activeEventId,
+		superInvite,
+		forUserUid,
+		isDemo,
+	  }: {
+		matchedGuest: any;
+		userInvited: any;
+		event: any;
+		userInfo: any;
+		guestData: any;
+		activeEventId: any;
+		superInvite: any;
+		forUserUid: any;
+		isDemo: any;
+	  }) => {
+		let data = {};
+		let matchedGuestData: MatchData | null = null;
+		if (matchedGuest) {
+			data = {
+			requestsList: firestore.FieldValue.arrayRemove(matchedGuest),
+			usersList: firestore.FieldValue.arrayUnion({
+				...userInvited,
+				status: INVITE_MATCH_STATUS,
+			}),
+			};
+			matchedGuestData = {
+			type: 'match',
+			nameHost: event?.hostName,
+			nameGuest: matchedGuest?.name,
+			imageUri: matchedGuest?.userPhoto,
+			uidHost: userInfo?.uid,
+			uidGuest: matchedGuest?.uid,
+			eventId: activeEventId,
+			superInvite: superInvite ? superInvite : false,
+			userHostImageUri: userInfo?.photos[0]?.image,
+			joinEvents: guestData.joinEvents,
+			location: guestData.location,
+			premium: userInfo?.accountPremium,
+			dateHost: userInfo?.date,
+			dateGuest: guestData.date,
+			onlineGuest: guestData.online,
+			accountConfirmedHost: guestData.accountConfirmed,
+			accountConfirmedGuest: userInfo?.accountConfirmed,
+			usersListHost: event.usersList,
+			accountTypeHost: userInfo?.accountType,
+			accountTypeGuest: guestData.accountType,
+			eventImage: event.photos[0].image,
+			guestsInvited: event.male + event.female,
+			};
+		} else {
+			data = {
+			usersList: firestore.FieldValue.arrayUnion(userInvited),
+			};
+		}
+		await firestore()
+		.collection(apiEventsCollection)
+		.doc(activeEventId)
+		.update(data)
+		.then(async () => {
+		analytics().logEvent(`${IOscreen}_${inviteUser}`, {
+			hostUid: userInfo?.uid,
+			guestUid: forUserUid,
+		});
+		if ((guestData.notificationSettings?.match || guestData.notificationSettings?.superInvite) && !isDemo) {
+			await sendNotification(
+			forUserUid,
+			'New invite request',
+			`${userInfo.name} ${superInvite ? 'Super' : 'wants to'} invite you!`,
+			'invite',
+			'Invite Request'.toUpperCase(),
+			userInfo,
+			JSON.stringify({path: 'requests'}),
+			);
+		}
+		});
+
+		return {matchedGuestData}
+	}
+	return useMutation({
+		mutationKey: ["inviteUser"],
+		mutationFn: userInvite
+	})
+}
+
+const useRequestUser = () => {
+	const userRequest = async ({
+		activeEventId,
+		data,
+		event,
+		userInfo,
+		guestData,
+		isDemo
+	}: any) => {
+		try {
+		await firestore()
+		.collection(apiEventsCollection)
+		.doc(activeEventId)
+		.update(data)
+		.then(async () => {
+			analytics().logEvent(`${IOscreen}_${joinEvent}`, {
+			hostUid: event?.uid,
+			guestUid: userInfo?.uid,
+			});
+			if ((guestData.notificationSettings?.match || guestData.notificationSettings?.superJoin) && !isDemo) {
+			await sendNotification(
+				event.uid,
+				'New join request',
+				`${userInfo.name} wants to join you!`,
+				'invite',
+				'Join Request'.toUpperCase(),
+				userInfo,
+				JSON.stringify({path: 'requests'}),
+			);
+			}
+		});
+		} catch (error) {
+			
+		}
+	}
+	return useMutation({
+		mutationKey: ['userRequestEvent'],
+		mutationFn: userRequest
+	})
+}
+
 export const EventMutations = {
 	useUpdateEvent,
-	useCreateEvent
+	useCreateEvent,
+	useUpdateWeeklySuperInvites,
+	useRejectEvent,
+	useFetchEventInfo,
+	useInviteUser,
+	useRequestUser
 }

@@ -1,7 +1,7 @@
-import { Dimensions } from 'react-native';
-import Animated, { runOnJS, withSpring, withTiming, Easing } from 'react-native-reanimated';
+import getDimensions from 'helpers/getDimensions';
+import Animated, {runOnJS, withSpring, withTiming, Easing} from 'react-native-reanimated';
 
-const { width: windowWidth, height: windowHeight } = Dimensions.get('screen');
+const {screenHeight, screenWidth} = getDimensions();
 
 const userConfig = {
   damping: 15,
@@ -12,10 +12,7 @@ const userConfig = {
   restSpeedThreshold: 0.001,
 };
 
-function resetPosition(
-  x: Animated.SharedValue<number>,
-  y: Animated.SharedValue<number>
-): void {
+function resetPosition(x: Animated.SharedValue<number>, y: Animated.SharedValue<number>): void {
   'worklet';
   x.value = withSpring(0, userConfig);
   y.value = withSpring(0, userConfig);
@@ -32,18 +29,18 @@ function updatePosition(
   disableRightSwipe?: boolean,
   disableLeftSwipe?: boolean,
   onSwipedRight?: () => void,
-  onSwipedLeft?: () => void
+  onSwipedLeft?: () => void,
 ) {
   'worklet';
 
   if (Math.sign(destX) === 1 && !disableRightSwipe) {
-    translateX.value = withTiming(Number(windowWidth + windowWidth), {
+    translateX.value = withTiming(Number(screenHeight + screenWidth), {
       duration: 1000,
       easing: Easing.inOut(Easing.linear),
     });
     onSwipedRight && runOnJS(onSwipedRight)();
   } else if (Math.sign(destX) === -1 && !disableLeftSwipe) {
-    translateX.value = withTiming(-windowWidth - windowWidth, {
+    translateX.value = withTiming(-screenHeight - screenWidth, {
       duration: 1000,
       easing: Easing.inOut(Easing.linear),
     });
@@ -53,24 +50,12 @@ function updatePosition(
   }
 }
 
-const snapPoint = (
-  value: number,
-  velocity: number,
-  points: ReadonlyArray<number>
-): number => {
+const snapPoint = (value: number, velocity: number, points: ReadonlyArray<number>): number => {
   'worklet';
   const point = value + 0.2 * velocity;
-  const deltas = points.map((p) => Math.abs(point - p));
+  const deltas = points.map(p => Math.abs(point - p));
   const minDelta = Math.min.apply(null, deltas);
-  return Number(points.filter((p) => Math.abs(point - p) === minDelta)[0]);
+  return Number(points.filter(p => Math.abs(point - p) === minDelta)[0]);
 };
 
-export {
-  resetPosition,
-  updatePosition,
-  snapPoint,
-  userConfig,
-  windowWidth,
-  windowHeight,
-};
-
+export {resetPosition, updatePosition, snapPoint, userConfig};

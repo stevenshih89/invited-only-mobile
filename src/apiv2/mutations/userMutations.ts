@@ -1,4 +1,4 @@
-import {useMutation} from "@tanstack/react-query";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {UserMutationsKeys} from "../keys/userMutationkeys.ts";
 import auth from "@react-native-firebase/auth";
 import {isEmailValid} from "helpers/regExpValidators.ts";
@@ -282,6 +282,86 @@ const useUpdateUserEventList = () => {
 	})
 }
 
+const useUpdateUserStatusOnline = () => {
+	const updateUserOnlineStatus = async (uid: string, isOnline: boolean) => {
+		try {
+		  await firestore()
+			.collection(apiUserInfoCollection)
+			.doc(uid)
+			.update({ online: isOnline });
+		} catch (error) {
+		  logErrorToSentry(error);
+		  throw error;
+		}
+	  };
+	return useMutation({
+	  mutationKey: ['updateUserStatusOnline'],
+	  mutationFn: ({ uid, isOnline }: { uid: string; isOnline: boolean }) =>
+		updateUserOnlineStatus(uid, isOnline),
+	});
+  };
+
+const useUpdateSuperInvites = () => {
+	const updateSuperInvites = async (uid: string, newInvites: Partial<{ weeklySuperInvites: number; superInvites: number }>) => {
+		try {
+			await firestore()
+				.collection(apiUserInfoCollection)
+				.doc(uid)
+				.update(newInvites);
+		} catch (error) {
+			logErrorToSentry(error);
+			throw error;
+		}
+	};
+
+	return useMutation({
+		mutationKey: ['updateSuperInvites'],
+		mutationFn: ({ uid, newInvites }: { uid: string; newInvites: Partial<{ weeklySuperInvites: number; superInvites: number }> }) =>
+			updateSuperInvites(uid, newInvites),
+	});
+};
+
+const useUpdateSuperJoinsUser = () => {
+	const updateSuperJoinsUser = async (uid: string) => {
+	  try {
+		const getDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+		const data = getDoc.data();
+  
+		if (!data) return;
+  
+		if (data.weeklySuperInvites && data.weeklySuperInvites > 0) {
+		  await firestore().collection(apiUserInfoCollection).doc(uid).update({
+			weeklySuperInvites: data.weeklySuperInvites - 1,
+		  });
+		} else if (data.superInvites && data.superInvites > 0) {
+		  await firestore().collection(apiUserInfoCollection).doc(uid).update({
+			superInvites: data.superInvites - 1,
+		  });
+		}
+	  } catch (error) {
+		logErrorToSentry(error);
+		throw error;
+	  }
+	};
+  
+	return useMutation({
+	  mutationKey: ["updateSuperJoinsUser"],
+	  mutationFn: (uid: string) => updateSuperJoinsUser(uid),
+	});
+};
+
+const useFetchUserInfo = () => {
+	const fetchUserInfo = async (userId: string) => {
+		const userDoc = await firestore().collection(apiUserInfoCollection).doc(userId).get();
+		if (!userDoc.exists) throw new Error('User not found');
+		return userDoc.data();
+	};
+
+	return useMutation({
+		mutationFn: fetchUserInfo,
+	});
+};
+
 export const UserMutations = {
 	useUserChangeEmail,
 	useSendVerificationCode,
@@ -290,5 +370,9 @@ export const UserMutations = {
 	useUserUpdateGender,
 	useUserUpdateShowGenderInProfile,
 	useUserUpdateNotificationsSettings,
-	useUpdateUserEventList
+	useUpdateUserEventList,
+	useUpdateUserStatusOnline,
+	useUpdateSuperInvites,
+	useUpdateSuperJoinsUser,
+	useFetchUserInfo
 }

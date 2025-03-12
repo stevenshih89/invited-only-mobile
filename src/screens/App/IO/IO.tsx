@@ -3,7 +3,7 @@ import React, {FC, useEffect, useCallback} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
 import firestore from '@react-native-firebase/firestore';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect} from 'hooks/useAppNavigation';
 import {RFValue} from 'react-native-responsive-fontsize';
 import auth from '@react-native-firebase/auth';
 
@@ -14,16 +14,14 @@ import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NO
 import {
   earlyAccessPath,
   commonStackPath,
-  eventCreatingStackPath,
   myProfileViewPath,
-  paymentPath,
   userProfilePath,
   demoFlowStackPath,
   demoIOPath,
 } from 'constants/pathLocations.ts';
 import Button from 'components/Button/Button.tsx';
 import {calculateAge} from 'helpers/calculateAge';
-import {blackColor, lightGreenColor, transparentWhite16Color, transparentWhite56Color, whiteColor} from 'constants/colors';
+import {blackColor, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 import LoaderIcon from 'assets/images/icons/loader.svg';
@@ -52,7 +50,6 @@ import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import Animated from 'react-native-reanimated';
 import ModalEventLocked from 'components/Modal/ModalEventLocked/ModalEventLocked';
 import FastImage from 'react-native-fast-image';
-import LinearGradient from 'react-native-linear-gradient';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import moment from 'moment';
 import {Event} from 'src/types/event';
@@ -65,6 +62,8 @@ import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import firebase from '@react-native-firebase/app';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {useIO} from 'hooks/useIO';
+import * as S from './IO.style';
+import {useCreateEvent} from 'hooks/useCreateEvent';
 
 const CARDS_LOADING_LIMIT = 6;
 
@@ -140,6 +139,8 @@ const IO: FC = (): JSX.Element => {
     setLastVisible,
   } = useIO();
 
+  const goToCreateEvent = useCreateEvent();
+
   const OverlayRight = () => {
     return (
       <View style={[styles.overlayLabelContainerInvite]}>
@@ -158,17 +159,7 @@ const IO: FC = (): JSX.Element => {
 
   const customButton = (id: string, uid: string) => {
     return (
-      <TouchableOpacity
-        onPress={() => handleInvite({uid, id, withSwipeAnimation: true})}
-        style={{
-          height: 65,
-          width: '100%',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: 18,
-          backgroundColor: blackColor,
-          marginTop: 25,
-        }}>
+      <S.CustomButton testID="middle-join" onPress={() => handleInvite({uid, id, withSwipeAnimation: true})}>
         <Text
           style={{
             color: whiteColor,
@@ -177,7 +168,7 @@ const IO: FC = (): JSX.Element => {
           }}>
           Join
         </Text>
-      </TouchableOpacity>
+      </S.CustomButton>
     );
   };
 
@@ -345,91 +336,30 @@ const IO: FC = (): JSX.Element => {
                 showGuestList={false}
                 customButton={customButton(event?.id, event?.uid)}
               />
-              <Text style={{marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Place name</Text>
-              <Text
-                style={{
-                  marginTop: 6,
-                  color: whiteColor,
-                  fontFamily: Satoshi400,
-                  fontSize: RFValue(16, 812),
-                }}>
-                {event?.placeName}
-              </Text>
-              <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
-              <Text
-                style={[
-                  {
-                    marginTop: 14,
-                    color: whiteColor,
-                    fontFamily: Satoshi700,
-                    fontSize: RFValue(16, 812),
-                  },
-                  {marginTop: 20},
-                ]}>
-                Event name
-              </Text>
-              <Text
-                style={{
-                  marginTop: 6,
-                  color: whiteColor,
-                  fontFamily: Satoshi400,
-                  fontSize: RFValue(16, 812),
-                }}>
-                {event?.name}
-              </Text>
-              <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
-              <Text
-                style={[
-                  {
-                    marginTop: 14,
-                    color: whiteColor,
-                    fontFamily: Satoshi700,
-                    fontSize: RFValue(16, 812),
-                  },
-                  {marginTop: 20},
-                ]}>
-                Event description
-              </Text>
-              <Text style={{marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 812)}}>
-                {event?.description}
-              </Text>
-              <View style={{width: '100%', height: 1, backgroundColor: transparentWhite16Color, marginTop: 14}} />
-              <View style={{marginVertical: 20}}>
-                <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}>Address</Text>
-                <Text
-                  style={{
-                    marginTop: 6,
-                    color: whiteColor,
-                    fontFamily: Satoshi400,
-                    fontSize: RFValue(16, 812),
-                  }}>
-                  {event?.address}
-                </Text>
+              <S.EventInfoTitle>Place name</S.EventInfoTitle>
+              <S.EventInfoText>{event?.placeName}</S.EventInfoText>
+              <S.BorderLineInfoTitle />
+              <S.EventInfoTitle>Event name</S.EventInfoTitle>
+              <S.EventInfoText>{event?.name}</S.EventInfoText>
+              <S.BorderLineInfoTitle />
+              <S.EventInfoTitle>Event description</S.EventInfoTitle>
+              <S.EventInfoText>{event?.description.length > 0 ? event?.description.length : 'No description'}</S.EventInfoText>
+              <S.BorderLineInfoTitle />
+              <View style={{marginBottom: 16}}>
+                <S.EventInfoTitle>Address</S.EventInfoTitle>
+                <S.EventInfoText>{event?.address}</S.EventInfoText>
               </View>
-              <View
-                style={{
-                  marginBottom: screenHeight / 40,
-                  borderStyle: 'solid',
-                  borderTopWidth: 1,
-                  borderTopColor: transparentWhite16Color,
-                  paddingTop: screenHeight / 40,
-                }}>
+              <S.ReportContainer>
                 <TouchableOpacity
                   onPress={() => {
                     handleReport(event.uid, event.id);
                   }}>
                   <Text style={styles.textHideNadSendReport}>Block and Report</Text>
                 </TouchableOpacity>
-              </View>
-              <View>
-                {eventPhotos?.map((image: string) => (
-                  <FastImage
-                    source={{uri: image}}
-                    style={{width: '100%', height: screenHeight / 4, marginVertical: 10, borderRadius: 20}}
-                  />
-                ))}
-              </View>
+              </S.ReportContainer>
+              <View>{eventPhotos?.map((image: string) => <S.EventImages source={{uri: image}} />)}</View>
               <TouchableOpacity // @ts-ignore
+                testID="navigate-from-io-to-profile"
                 onPress={() => {
                   navigation.navigate(userProfilePath, {screen: myProfileViewPath, params: {uid: event?.uid}});
                 }}
@@ -441,86 +371,27 @@ const IO: FC = (): JSX.Element => {
                         source={{uri: currUserPhotos?.[0]?.image || event?.hostImage}}
                         style={{width: 40, height: 40, borderRadius: 50}}
                       />
-                      {true && (
-                        <View
-                          style={{
-                            width: 11,
-                            height: 11,
-                            borderRadius: 11,
-                            backgroundColor: lightGreenColor,
-                            borderWidth: 1.25,
-                            borderColor: blackColor,
-                            position: 'absolute',
-                            bottom: 3,
-                            right: 0,
-                          }}
-                        />
-                      )}
+                      {true && <S.StatusIndicator />}
                     </View>
                   )}
                   <View style={{marginLeft: 13}}>
                     <View style={{flexDirection: 'row'}}>
-                      <View
-                        style={{
-                          borderRadius: 4,
-                          borderColor: whiteColor,
-                          borderWidth: 1,
-                          borderStyle: 'solid',
-                          alignSelf: 'flex-start',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          paddingHorizontal: 6,
-                          paddingVertical: 2,
-                        }}>
-                        <Text
-                          style={{
-                            color: whiteColor,
-                            textTransform: 'capitalize',
-                            fontFamily: Satoshi700,
-                            fontSize: RFValue(10, 812),
-                          }}>
-                          {hostInfoData?.accountType}
-                        </Text>
-                      </View>
+                      <S.AccountTypeContainer>
+                        <S.AccountTypeText>{hostInfoData?.accountType}</S.AccountTypeText>
+                      </S.AccountTypeContainer>
                       {true && (
-                        <LinearGradient
-                          colors={['#977B4A', '#E5D291', '#A28453']}
-                          style={{
-                            marginLeft: 6,
-                            alignSelf: 'flex-start',
-                            borderRadius: 4,
-                            paddingHorizontal: 12,
-                            paddingVertical: 2,
-                            backgroundColor: blackColor,
-                          }}
-                          start={{x: 0, y: 0}}
-                          end={{x: 1, y: 0}}>
-                          {
-                            <Text
-                              style={{
-                                color: blackColor,
-                                fontSize: RFValue(10, 812),
-                                fontFamily: Satoshi700,
-                              }}>
-                              Premium
-                            </Text>
-                          }
-                        </LinearGradient>
+                        <S.PremiumGradient colors={['#977B4A', '#E5D291', '#A28453']} style={{}} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
+                          {<S.TextPremium>Premium</S.TextPremium>}
+                        </S.PremiumGradient>
                       )}
                     </View>
-                    <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4}}>
-                      <Text
-                        style={{
-                          color: whiteColor,
-                          fontFamily: Satoshi700,
-                          fontSize: RFValue(14, 812),
-                          marginRight: 6,
-                        }}>
+                    <S.NameContainer>
+                      <S.UserInfoText>
                         {event?.hostName}
                         {hostInfoData?.date && ', ' + calculateAge(hostInfoData?.date)}
-                      </Text>
+                      </S.UserInfoText>
                       {true && <CheckStarWhite />}
-                    </View>
+                    </S.NameContainer>
                   </View>
                 </View>
                 <View>
@@ -531,150 +402,71 @@ const IO: FC = (): JSX.Element => {
               </TouchableOpacity>
               <View style={styles.wrapperButtonsFooter}>
                 <TouchableOpacity
+                  testID="bottom-guest-reject"
                   onPress={() => handleReject({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
                   style={[styles.buttonCloseOrCheck, {marginLeft: 1}]}>
-                  <View
+                  <S.BorderButton
                     style={{
-                      backgroundColor: transparentWhite56Color,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 50,
-                      position: 'absolute',
                       top: -1,
                       left: -1,
                     }}
                   />
-                  <View
+                  <S.BorderButton
                     style={{
-                      backgroundColor: transparentWhite56Color,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 50,
-                      position: 'absolute',
                       right: -1,
                       bottom: -1,
                     }}
                   />
-                  <View
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      backgroundColor: blackColor,
-                      borderRadius: 50,
-                      zIndex: 10,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
+                  <S.ButtonBottom>
                     <CloseIcon />
-                  </View>
+                  </S.ButtonBottom>
                 </TouchableOpacity>
                 <TouchableWithoutFeedback
+                  testID="bottom-super-join"
                   onPress={() => {
                     setCurrentEventInfo(event);
                     handleSuperInviteBottom(event, 0);
                   }}>
                   <View style={styles.buttonFlash}>
-                    <View
+                    <S.BorderButton
                       style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
                         top: -1,
                         left: -1,
                       }}
                     />
-                    <View
+                    <S.BorderButton
                       style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
                         right: -1,
                         bottom: -1,
                       }}
                     />
-                    <Animated.View
-                      style={[
-                        {
-                          width: '100%',
-                          height: '100%',
-                          backgroundColor: blackColor,
-                          borderRadius: 50,
-                          zIndex: 10,
-                          justifyContent: 'center',
-                          position: 'absolute',
-                          alignItems: 'center',
-                        },
-                        frontAnimatedStyle,
-                      ]}>
+                    <S.AnimatedContainer style={frontAnimatedStyle}>
                       <FlashIcon />
-                    </Animated.View>
-                    <Animated.View
-                      style={[
-                        {
-                          width: '100%',
-                          height: '100%',
-                          backgroundColor: blackColor,
-                          borderRadius: 50,
-                          zIndex: 10,
-                          position: 'absolute',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        },
-                        backAnimatedStyle,
-                      ]}>
-                      <Text
-                        style={{
-                          color: whiteColor,
-                          fontSize: 24,
-                          fontWeight: '500',
-                          transform: [{rotateY: '180deg'}],
-                        }}>
-                        {counterSuperInvites - 1}
-                      </Text>
-                    </Animated.View>
+                    </S.AnimatedContainer>
+                    <S.AnimatedContainer style={backAnimatedStyle}>
+                      <S.CounterSuperJoinInvite>{counterSuperInvites - 1}</S.CounterSuperJoinInvite>
+                    </S.AnimatedContainer>
                   </View>
                 </TouchableWithoutFeedback>
                 <TouchableOpacity
+                  testID="bottom-join"
                   onPress={() => handleInvite({uid: event?.uid, id: event?.id, withSwipeAnimation: true})}
                   style={[styles.buttonCloseOrCheck, {marginRight: 1}]}>
-                  <View
+                  <S.BorderButton
                     style={{
-                      backgroundColor: transparentWhite56Color,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 50,
-                      position: 'absolute',
                       top: -1,
                       left: -1,
                     }}
                   />
-                  <View
+                  <S.BorderButton
                     style={{
-                      backgroundColor: transparentWhite56Color,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 50,
-                      position: 'absolute',
                       right: -1,
                       bottom: -1,
                     }}
                   />
-                  <View
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      backgroundColor: blackColor,
-                      borderRadius: 50,
-                      zIndex: 10,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
+                  <S.ButtonBottom>
                     <CheckIcon />
-                  </View>
+                  </S.ButtonBottom>
                 </TouchableOpacity>
               </View>
               <TouchableOpacity
@@ -942,14 +734,7 @@ const IO: FC = (): JSX.Element => {
                   </>
                 )}
                 {!!interests?.length && (
-                  <View
-                    style={{
-                      borderTopWidth: 1,
-                      borderStyle: 'solid',
-                      borderTopColor: transparentWhite16Color,
-                      marginTop: screenHeight / 44,
-                      paddingTop: screenHeight / 44,
-                    }}>
+                  <S.InterestsContainer>
                     <Text style={[styles.titleSection]}>My interests</Text>
                     <View style={styles.wrapperInterestsTags}>
                       {interests.map((interest: string | null, idx: number) => (
@@ -958,25 +743,17 @@ const IO: FC = (): JSX.Element => {
                         </View>
                       ))}
                     </View>
-                  </View>
+                  </S.InterestsContainer>
                 )}
                 {!isDemo && (
-                  <View
-                    style={{
-                      borderTopWidth: 1,
-                      borderStyle: 'solid',
-                      borderTopColor: transparentWhite16Color,
-                      paddingTop: screenHeight / 34,
-                      marginTop: 10,
-                      marginBottom: screenHeight / 40,
-                    }}>
+                  <S.DemoReportContainer>
                     <TouchableOpacity
                       onPress={() => {
                         handleReport(uid, activeEvent);
                       }}>
                       <Text style={styles.textHideNadSendReport}>Block and Report</Text>
                     </TouchableOpacity>
-                  </View>
+                  </S.DemoReportContainer>
                 )}
                 <View style={styles.wrapperImageSectionFaceGirl}>
                   {girlPhotos?.map((photo: string, photoIndex: number) => (
@@ -985,157 +762,78 @@ const IO: FC = (): JSX.Element => {
                 </View>
                 <View style={styles.wrapperButtonsFooter}>
                   <TouchableOpacity
+                    testID="bottom-reject"
                     onPress={() =>
                       isDemo
                         ? handleDemoSwipeCardLeft({uid, withSwipeAnimation: true})
                         : handleReject({uid, id: item?.id, withSwipeAnimation: true})
                     }
                     style={styles.buttonCloseOrCheck}>
-                    <View
+                    <S.BorderButton
                       style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
                         top: -1,
                         left: -1,
                       }}
                     />
-                    <View
+                    <S.BorderButton
                       style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
                         right: -1,
                         bottom: -1,
                       }}
                     />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
+                    <S.ButtonBottom>
                       <CloseIcon />
-                    </View>
+                    </S.ButtonBottom>
                   </TouchableOpacity>
                   <TouchableWithoutFeedback
+                    testID="bottom-super-invite"
                     onPress={() =>
                       isDemo ? handleDemoSwipeCardLeft({uid, withSwipeAnimation: true}) : handleSuperInviteBottom(item, 400)
                     }>
                     <View style={styles.buttonFlash}>
-                      <View
+                      <S.BorderButton
                         style={{
-                          backgroundColor: transparentWhite56Color,
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: 50,
-                          position: 'absolute',
                           top: -1,
                           left: -1,
                         }}
                       />
-                      <View
+                      <S.BorderButton
                         style={{
-                          backgroundColor: transparentWhite56Color,
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: 50,
-                          position: 'absolute',
                           right: -1,
                           bottom: -1,
                         }}
                       />
-                      <Animated.View
-                        style={[
-                          {
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: blackColor,
-                            borderRadius: 50,
-                            zIndex: 10,
-                            justifyContent: 'center',
-                            position: 'absolute',
-                            alignItems: 'center',
-                          },
-                          frontAnimatedStyle,
-                        ]}>
+                      <S.AnimatedContainer style={frontAnimatedStyle}>
                         <FlashIcon />
-                      </Animated.View>
-                      <Animated.View
-                        style={[
-                          {
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: blackColor,
-                            borderRadius: 50,
-                            zIndex: 10,
-                            position: 'absolute',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                          },
-                          backAnimatedStyle,
-                        ]}>
-                        <Text
-                          style={{
-                            color: whiteColor,
-                            fontSize: 24,
-                            fontWeight: '500',
-                            transform: [{rotateY: '180deg'}],
-                          }}>
-                          {counterSuperInvites}
-                        </Text>
-                      </Animated.View>
+                      </S.AnimatedContainer>
+                      <S.AnimatedContainer style={backAnimatedStyle}>
+                        <S.CounterSuperJoinInvite>{counterSuperInvites}</S.CounterSuperJoinInvite>
+                      </S.AnimatedContainer>
                     </View>
                   </TouchableWithoutFeedback>
                   <TouchableOpacity
+                    testID="bottom-invite"
                     onPress={() =>
                       isDemo
                         ? handleDemoSwipeCardRight({uid, withSwipeAnimation: true})
                         : handleInvite({uid: item?.uid, id: item?.id, withSwipeAnimation: true})
                     }
                     style={styles.buttonCloseOrCheck}>
-                    <View
+                    <S.BorderButton
                       style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
                         top: -1,
                         left: -1,
                       }}
                     />
-                    <View
+                    <S.BorderButton
                       style={{
-                        backgroundColor: transparentWhite56Color,
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: 50,
-                        position: 'absolute',
                         right: -1,
                         bottom: -1,
                       }}
                     />
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: blackColor,
-                        borderRadius: 50,
-                        zIndex: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
+                    <S.ButtonBottom>
                       <CheckIcon />
-                    </View>
+                    </S.ButtonBottom>
                   </TouchableOpacity>
                 </View>
                 {!isDemo && (
@@ -1185,17 +883,6 @@ const IO: FC = (): JSX.Element => {
     navigation.navigate(commonStackPath, {screen: earlyAccessPath} as never);
   };
 
-  const goToCreateEvent = (): void => {
-    if (!userInfo?.accountConfirmed) {
-      return;
-    }
-    if (!userInfo.accountPremium) {
-      navigation.navigate(paymentPath as never);
-    } else {
-      navigation.navigate(eventCreatingStackPath);
-    }
-  };
-
   const handleScroll = event => {
     const positionY = event.nativeEvent.contentOffset.y;
     setScrollPosition(positionY);
@@ -1237,13 +924,14 @@ const IO: FC = (): JSX.Element => {
         console.warn('useEffect_getCardsListForHost', events?.length, lastVisibleRef.current, endReachedRef.current);
         getCardsListForHost();
       }
-    }, [userInfo?.uid, activeEvent?.id, loadingMyEvents, loadingCardsList]),
+    }, [userInfo?.uid, activeEvent?.id]),
   );
 
   useFocusEffect(
     useCallback(() => {
       if (userInfo?.uid && !isHost && activeEventDate && !lastVisibleRef.current && !endReachedRef.current) {
         console.warn('useEffect_getCardsListForGuest', events?.length, lastVisibleRef.current, endReachedRef.current);
+        console.warn('useFocusEffect: calling getCardsListForGuest');
         getCardsListForGuest();
       }
     }, [userInfo?.uid, activeEventDate]),
@@ -1313,10 +1001,10 @@ const IO: FC = (): JSX.Element => {
           <Loading wrapperText={false} text={`Finding ${isHost ? 'guests' : 'events'} near you ...`} userInfo={userInfo} />
         ) : (
           <SafeAreaView style={styles.safeAreaView}>
-            <View style={styles.container}>
+            <View testID="events-list" style={styles.container}>
               {cardsList?.map((item, index) => {
                 return (
-                  <View style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
+                  <View testID={item.id} style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
                     <TinderCard
                       ref={cardRef}
                       // @ts-ignore

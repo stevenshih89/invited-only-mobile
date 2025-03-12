@@ -97,6 +97,7 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
   return (
     <View>
       <Modal
+        testID='modalSuperJoin'
         isVisible={isVisibleMatch}
         coverScreen
         backdropOpacity={1}

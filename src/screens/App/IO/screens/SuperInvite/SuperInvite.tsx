@@ -75,6 +75,7 @@ const SuperInvite: FC<{
 
   return (
     <Modal
+      testID='modalSuperInvite'
       isVisible={isVisibleSuperInvite}
       coverScreen
       animationInTiming={1}
@@ -105,6 +106,7 @@ const SuperInvite: FC<{
         </Animated.View>
         <View style={{alignItems: 'center'}}>
           <TouchableOpacity
+            testID='closeSuperInviteModal'
             onPress={handleClose}
             activeOpacity={0.7}
             style={{

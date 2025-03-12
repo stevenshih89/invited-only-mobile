@@ -115,6 +115,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
   return (
     <LinearGradient colors={[black3Color, blackColor]}>
       <Modal
+        testID='matchModal'
         isVisible={isVisibleMatch}
         coverScreen
         backdropOpacity={1}
@@ -137,6 +138,7 @@ const Match: FC<{isVisibleMatch: boolean; onCloseMatch: () => void; matchData: M
             //animateWhiteLine
           />
           <TouchableOpacity
+            testID='closeMatch'
             activeOpacity={0.7}
             onPress={handleCloseMatch}
             style={{

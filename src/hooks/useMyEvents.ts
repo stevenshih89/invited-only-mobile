@@ -26,6 +26,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import { useMyEvents } from 'src/store/myEvents';
+import { useCreateEvent } from './useCreateEvent';
 
 const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
 const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -47,6 +48,8 @@ export const useMyEventsScreen = (navigation: any) => {
   const setAcceptModalVisible = useAdminActions((i: any) => i?.setAcceptModalVisible);
   const changeAccountTypeModalVisible = useAdminActions((i: any) => i?.changeAccountTypeModalVisible);
   const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
+
+  const goToCreateEvent = useCreateEvent()
 
   const [activeModalEvent, setActiveModalEvent] = useState<any>({
     id: 0,
@@ -348,17 +351,6 @@ export const useMyEventsScreen = (navigation: any) => {
     setActiveModalEvent(eventInfo);
     setActiveUserInfo(userInfo);
     setIsVisibleAcceptInvitationModal(true);
-  };
-
-  const goToCreateEvent = (): void => {
-    if (!userInfo?.accountConfirmed) {
-      return;
-    }
-    if (!userInfo.accountPremium) {
-      navigation.navigate(paymentPath);
-    } else {
-      navigation.navigate(eventCreatingStackPath);
-    }
   };
 
   const goToIOStack = () => {

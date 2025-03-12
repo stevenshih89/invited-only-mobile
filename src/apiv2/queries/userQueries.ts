@@ -75,5 +75,5 @@ const useFcmTokensFromUsers = (isEnabled: boolean = true) => {
 
 export const UserQueries = {
 	useUserInfo,
-	useFcmTokensFromUsers
+	useFcmTokensFromUsers,
 }

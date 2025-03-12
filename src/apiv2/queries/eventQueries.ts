@@ -48,6 +48,41 @@ const useEvents = () => {
 	});
 };
 
+const useEvent = (eventId: string | null) => {
+	const queryClient = useQueryClient();
+	
+	const events = async () => {
+		if (!eventId) return null;
+		return new Promise<EventData | null>((resolve, reject) => {
+			const unsubscribe = firestore()
+				.collection(apiEventsCollection)
+				.doc(eventId)
+				.onSnapshot(
+					(querySnapshot) => {
+						if (!querySnapshot.exists) {
+							resolve(null);
+							return;
+						}
+						const data = querySnapshot.data() as EventData;
+						queryClient.setQueryData(EventQueryKeys.getEvents(eventId), data);
+						resolve(data);
+					},
+					(error) => {
+						logErrorToSentry(error);
+						reject(error);
+					}
+				);
+			return () => unsubscribe();
+		});
+	}
+
+	return useQuery({
+		queryKey: EventQueryKeys.getEvents(eventId ?? ''),
+		queryFn: events
+	});
+};
+
 export const EventQueries = {
-	useEvents
+	useEvents,
+	useEvent
 }

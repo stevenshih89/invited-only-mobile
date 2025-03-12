@@ -50,7 +50,8 @@ import firebase from '@react-native-firebase/app';
 import {useNotifications} from 'src/store/notificationsStore';
 import * as S from './Header.style';
 import {Satoshi700} from 'constants/fonts';
-
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import { useCreateEvent } from 'hooks/useCreateEvent';
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
   showHeaderTop?: boolean;
@@ -83,6 +84,8 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   const {hintStep, event, isVisibleSwipeGuide} = useDemoFlowStore();
   const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
   const [eventStarting, setEventStarting] = useState<boolean>(false);
+
+  const goToCreateEvent = useCreateEvent()
 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
@@ -165,17 +168,6 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
       fetchMyEvents();
     }
   }, [headerType, userInfo?.uid, isDemo]);
-
-  const goToCreateEvent = async (): void => {
-    if (!userInfo?.accountConfirmed) {
-      return;
-    }
-    if (userInfo?.accountPremium) {
-      navigation.navigate(eventCreatingStackPath);
-    } else {
-      navigation.navigate(paymentPath as never);
-    }
-  };
 
   useEffect(() => {
     if (userInfo?.accountType) {
@@ -337,7 +329,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                         <S.EventSpecialWrapper borderColor={eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color}>
                           {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
                           {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                          {event?.photos?.[0]?.image && <S.EventFastImage source={{uri: event?.photos[0]?.image}} />}
+                          {event?.photos[0]?.image && <S.EventFastImage source={{uri: event?.photos[0]?.image}} />}
                         </S.EventSpecialWrapper>
                         <S.EventTitleWrapper>
                           {`${event?.name || event?.placeName}`.length >= 10 ? (

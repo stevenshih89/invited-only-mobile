@@ -197,7 +197,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
     setActive(p => p - 1);
   };
 
-  const handleSuperJoin = () => {
+  const handleSuperJoin = () => {    
     if (counterSuperInvites > 0) {
       setVisibleModalSuperJoin(true);
       setTimeout(() => {
@@ -276,6 +276,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       )}
       {accountType === 'guest' && !isProfile && (
         <TouchableOpacity
+          testID='reject'
           onPress={() => onReject && onReject()}
           style={{
             width: 50,
@@ -294,6 +295,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       )}
       {accountType === 'host' && !isProfile && (
         <TouchableOpacity
+          testID='reject'
           onPress={() => onReject && onReject()}
           style={{
             width: 50,
@@ -591,6 +593,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <TouchableOpacity
+              testID='superJoin'
               onPress={() => {
                 handleSuperJoin();
               }}
@@ -616,6 +619,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             </TouchableOpacity>
             <View style={{width: 16}} />
             <TouchableOpacity
+              testID='join'
               onPress={() => onInvite && onInvite()}
               style={{
                 flex: 1,
@@ -964,6 +968,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <TouchableOpacity
+              testID='superInvite'
               onPress={() => {
                 handleSuperInvite();
               }}
@@ -989,6 +994,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             </TouchableOpacity>
             <View style={{width: 16}} />
             <TouchableOpacity
+              testID='invite'
               onPress={() => onInvite && onInvite()}
               style={{
                 flex: 1,
