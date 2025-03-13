@@ -42,7 +42,7 @@ import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import analytics from '@react-native-firebase/analytics';
 import {showToast} from 'helpers/showToast';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const AddPhotos: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -110,7 +110,7 @@ const AddPhotos: FC = (): JSX.Element => {
             screen: 'add-photos',
           });
       } catch (e) {
-        logErrorToSentry(e)
+        logErrorToSentry(e);
         console.error(e);
       }
     };

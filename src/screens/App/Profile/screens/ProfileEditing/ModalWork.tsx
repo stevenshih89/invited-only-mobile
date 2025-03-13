@@ -1,12 +1,9 @@
-import {KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
 import Job from 'assets/images/icons/job.svg';
-import {blackColor, grayColor, grayScale600, lightGray2Color, toggleColor, transparentGray90Color, whiteColor} from 'constants/colors';
+import {grayColor, grayScale600, toggleColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
-import {Dispatch, FC, SetStateAction, useState} from 'react';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {isIos, screenHeight} from 'constants/common';
+import {Dispatch, FC, SetStateAction} from 'react';
+import {isIos} from 'constants/common';
 import Button from 'components/Button/Button';
 import * as S from './ModalWork.style';
 
@@ -64,7 +61,7 @@ const ModalWork: FC<ModalWorkProps> = ({
             <S.LabelText>Title</S.LabelText>
             <S.TextInput
               value={textNameWork}
-              onChangeText={text => setTextNameWork(text)}
+              onChangeText={(text: string) => setTextNameWork(text)}
               placeholder="Enter your title"
               placeholderTextColor={grayScale600}
             />
@@ -73,7 +70,7 @@ const ModalWork: FC<ModalWorkProps> = ({
             <S.LabelText>Company or industry</S.LabelText>
             <S.TextInput
               value={textDescription}
-              onChangeText={text => setTextDescription(text)}
+              onChangeText={(text: string) => setTextDescription(text)}
               placeholder="Enter company (or just industry)"
               placeholderTextColor={grayScale600}
             />

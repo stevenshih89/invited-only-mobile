@@ -215,7 +215,7 @@ const LocalNotification = () => {
       />
     ),
     customToast: ({text1, props}: ToastConfigParams<any>) => (
-      <S.CustomToast>
+      <S.CustomToast testID="custom-toast">
         <Text>{text1}</Text>
         <Text>
           {props} <ArrowRight />
@@ -223,7 +223,7 @@ const LocalNotification = () => {
       </S.CustomToast>
     ),
     inviteMatch: ({text1, text2, props}) => (
-      <S.InviteMatchTouchableOpacity onPress={() => handlePress(props.path, props.params)}>
+      <S.InviteMatchTouchableOpacity testID="invite-match-toast" onPress={() => handlePress(props.path, props.params)}>
         <S.InviteMatchContainer>
           <S.InviteMatchInnerContainer>
             <S.InviteMatchRow>

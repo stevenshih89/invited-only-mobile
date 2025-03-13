@@ -32,7 +32,7 @@ import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import {AppEventsLogger} from 'react-native-fbsdk-next';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 interface Social {
   id: number;
   title: string;

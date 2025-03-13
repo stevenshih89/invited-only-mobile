@@ -5,14 +5,10 @@ import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
 import {KeyboardAvoidingView} from 'react-native';
 import {ScreenHeight} from '@rneui/base';
-import { useEmailChange } from 'hooks/useEmailChange';
+import {useEmailChange} from 'hooks/useEmailChange';
 
 const EmailChange = () => {
-  
-  const {
-    handleChangeEmail,
-    email,
-    setEmail} = useEmailChange()
+  const {handleChangeEmail, email, setEmail} = useEmailChange();
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

@@ -23,9 +23,12 @@ export const Triangle = styled.View<TriangleProps>`
   height: 0;
   border-style: solid;
   ${({directionHorizontal}: {directionHorizontal: 'start' | 'center' | 'end'}) => directionHorizontal === 'start' && 'left: 8px;'}
-  ${({directionHorizontal}: {directionHorizontal: 'start' | 'center' | 'end'}) => directionHorizontal === 'center' && `left: ${screenWidth / 2 - 36}px;`}
+  ${({directionHorizontal}: {directionHorizontal: 'start' | 'center' | 'end'}) =>
+    directionHorizontal === 'center' && `left: ${screenWidth / 2 - 36}px;`}
   ${({directionHorizontal}: {directionHorizontal: 'start' | 'center' | 'end'}) => directionHorizontal === 'end' && 'right: 8px;'}
-  ${({directionVertical}: {directionVertical: 'top' | 'bottom'}) => directionVertical === 'top' && `
+  ${({directionVertical}: {directionVertical: 'top' | 'bottom'}) =>
+    directionVertical === 'top' &&
+    `
     top: -10px;
     border-left-width: 12px;
     border-right-width: 12px;
@@ -35,7 +38,9 @@ export const Triangle = styled.View<TriangleProps>`
     border-right-color: transparent;
     border-bottom-color: ${gray3Color};
   `}
-  ${({directionVertical}: {directionVertical: 'top' | 'bottom'}) => directionVertical === 'bottom' && `
+  ${({directionVertical}: {directionVertical: 'top' | 'bottom'}) =>
+    directionVertical === 'bottom' &&
+    `
     bottom: -10px;
     border-left-width: 12px;
     border-right-width: 12px;

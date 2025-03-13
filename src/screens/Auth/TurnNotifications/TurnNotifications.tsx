@@ -17,7 +17,7 @@ import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const TurnNotifications: FC = (): JSX.Element => {
   const [notifications, setNotifications] = useState<boolean>(true);

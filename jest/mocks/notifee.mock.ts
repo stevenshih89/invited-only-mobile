@@ -1,6 +1,8 @@
 jest.mock('@notifee/react-native', () => ({
   __esModule: true,
   default: {
+    onBackgroundEvent: jest.fn(),
+    onForegroundEvent: jest.fn(),
     requestPermission: jest.fn(() => Promise.resolve(true)),
     displayNotification: jest.fn(() => Promise.resolve()),
     cancelNotification: jest.fn(() => Promise.resolve()),

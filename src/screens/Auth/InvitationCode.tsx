@@ -23,7 +23,7 @@ import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import {AppEventsLogger} from 'react-native-fbsdk-next';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const InvitationCode: FC = (): JSX.Element => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -207,73 +207,73 @@ const InvitationCode: FC = (): JSX.Element => {
   const handleNext = async () => {
     try {
       const usersRef = firestore().collection(apiUserInfoCollection);
-    const snapshot = await usersRef.get();
-    let userUid = null;
+      const snapshot = await usersRef.get();
+      let userUid = null;
 
-    for (const doc of snapshot.docs) {
-      const userData = doc.data();
-      const inviteCodes = userData.codeForInvitingOtherUsers;
+      for (const doc of snapshot.docs) {
+        const userData = doc.data();
+        const inviteCodes = userData.codeForInvitingOtherUsers;
 
-      if (Array.isArray(inviteCodes)) {
-        const res = inviteCodes.find(item => item.inviteCode === code && item.isActive);
-        if (res) {
-          userUid = userData.uid;
-          break;
+        if (Array.isArray(inviteCodes)) {
+          const res = inviteCodes.find(item => item.inviteCode === code && item.isActive);
+          if (res) {
+            userUid = userData.uid;
+            break;
+          }
         }
       }
-    }
 
-    if (userUid) {
-      const userInfo = await usersRef.doc(userUid).get();
-      const codeForInvitingOtherUsers = userInfo?.data()?.codeForInvitingOtherUsers;
-      const updateCodeInvitions = codeForInvitingOtherUsers.map(item => {
-        if (item.inviteCode === code) {
-          return {
-            ...item,
-            isActive: false,
-          };
-        }
-        return item;
-      });
+      if (userUid) {
+        const userInfo = await usersRef.doc(userUid).get();
+        const codeForInvitingOtherUsers = userInfo?.data()?.codeForInvitingOtherUsers;
+        const updateCodeInvitions = codeForInvitingOtherUsers.map(item => {
+          if (item.inviteCode === code) {
+            return {
+              ...item,
+              isActive: false,
+            };
+          }
+          return item;
+        });
 
-      await usersRef.doc(userUid).update({codeForInvitingOtherUsers: updateCodeInvitions});
+        await usersRef.doc(userUid).update({codeForInvitingOtherUsers: updateCodeInvitions});
 
-      const onboardingData = [
-        ...onBoarding,
-        {
-          invitationCode: code,
-          notificationSettings: {
-            joinedEvent: false,
-            myEvents: false,
-            requests: false,
-            chat: false,
-            superInvite: false,
-            superJoin: false,
-            match: false,
+        const onboardingData = [
+          ...onBoarding,
+          {
+            invitationCode: code,
+            notificationSettings: {
+              joinedEvent: false,
+              myEvents: false,
+              requests: false,
+              chat: false,
+              superInvite: false,
+              superJoin: false,
+              match: false,
+            },
           },
-        },
-      ];
+        ];
 
-      setOnBoarding(onboardingData);
-      if (cameFromSummary) {
-        await handleRegisterUser(onboardingData);
-      } else {
-        try {
-          await firestore().collection(apiUserInfoCollection).doc(auth()?.currentUser?.uid).update({
-            accountReviewed: true,
-            accountConfirmed: true,
-          });
-        } catch (error) {
-          console.log('error update user', error);
+        setOnBoarding(onboardingData);
+        if (cameFromSummary) {
+          await handleRegisterUser(onboardingData);
+        } else {
+          try {
+            await firestore().collection(apiUserInfoCollection).doc(auth()?.currentUser?.uid).update({
+              accountReviewed: true,
+              accountConfirmed: true,
+            });
+          } catch (error) {
+            console.log('error update user', error);
+          }
         }
+        navigation.navigate('/code-verified', {cameFromSummary} as never);
+      } else {
+        showToast('inviteMatch', 'Please try anther code', 'The invitation code has already been used', {status: 'error'});
+        setInvalidCode(true);
       }
-      navigation.navigate('/code-verified', {cameFromSummary} as never);
-    } else {
-      showToast('inviteMatch', 'Please try anther code', 'The invitation code has already been used', {status: 'error'});
-      setInvalidCode(true);
-    }
     } catch (error) {
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   };
 

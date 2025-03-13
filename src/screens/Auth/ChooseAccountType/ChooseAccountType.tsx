@@ -15,7 +15,6 @@ import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {
   black1Color,
-  blackColor,
   lightGray3Color,
   transparentWhite16Color,
   transparentWhite30Color,
@@ -37,7 +36,7 @@ import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const ChooseAccountType: FC = (): JSX.Element => {
   const HOST = 'host';
@@ -70,7 +69,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
         });
       } catch (e) {
         console.error(e);
-        logErrorToSentry(e)
+        logErrorToSentry(e);
       }
     };
 
@@ -86,7 +85,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
   }, []);
 
   const handleNext = async () => {
-    const index = onBoarding.findIndex(item => item.accountType !== undefined);
+    const index = onBoarding.findIndex((item: any) => item.accountType !== undefined);
     if (index > -1) {
       const updatedOnBoarding = [...onBoarding];
       updatedOnBoarding[index] = {accountType: accountType};
@@ -161,6 +160,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
               </View>
               <View style={{width: '100%'}}>
                 <TouchableOpacity
+                  testID="host-button"
                   activeOpacity={0.7}
                   onPress={() => setAccountType(HOST)}
                   style={{
@@ -188,6 +188,7 @@ const ChooseAccountType: FC = (): JSX.Element => {
                   Share a table or event and invite people to join you
                 </Text>
                 <TouchableOpacity
+                  testID="guest-button"
                   activeOpacity={0.7}
                   onPress={() => setAccountType(GUEST)}
                   style={{

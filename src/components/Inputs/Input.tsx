@@ -23,6 +23,7 @@ const Input: FC<InputProps> = ({
   required,
   disabled,
   editable = true,
+  testID,
 }) => {
   const inputRef = useRef<TextInput>(null);
 
@@ -44,6 +45,7 @@ const Input: FC<InputProps> = ({
       )}
       <S.InputTouchableWrappper activeOpacity={1} onPress={onPress} style={containerInnerStyle}>
         <S.InputField
+          testID={testID}
           ref={inputRef}
           onFocus={onPress}
           keyboardType={keyboardType}

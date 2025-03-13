@@ -33,7 +33,7 @@ import firestore from '@react-native-firebase/firestore';
 import analytics from '@react-native-firebase/analytics';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -408,10 +408,10 @@ const VerifySecondStep: FC = (): JSX.Element => {
               ) : (
                 <View>
                   <View>
-                    <Button onPress={openCamera} title="Take a photo" />
+                    <Button testID="take-photo-button" onPress={openCamera} title="Take a photo" />
                   </View>
                   {accountType === 'host' && (
-                    <TouchableOpacity onPress={handleSkip}>
+                    <TouchableOpacity testID="skip-button" onPress={handleSkip}>
                       <Text
                         style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginTop: 20, textAlign: 'center'}}>
                         Skip

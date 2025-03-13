@@ -1,5 +1,5 @@
-import React, { useState} from 'react';
-import { TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
+import {TouchableOpacity} from 'react-native';
 import Button from 'components/Button/Button.tsx';
 import * as S from './index.style';
 
@@ -57,10 +57,7 @@ const HintCard = (props: IHintCardProps) => {
 
   return (
     <S.HintContainer>
-      <S.Triangle
-        directionHorizontal={directionHorizontal}
-        directionVertical={directionVertical}
-      />
+      <S.Triangle directionHorizontal={directionHorizontal} directionVertical={directionVertical} />
       <S.HeaderContainer>
         <S.Title>{title}</S.Title>
         <S.TotalSteps>{`${currentStep} of ${totalSteps}`}</S.TotalSteps>

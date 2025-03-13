@@ -17,7 +17,7 @@ const SwipeHints = () => {
   };
 
   return (
-    <PanGestureHandler onHandlerStateChange={handleGestureEvent}>
+    <PanGestureHandler testID="gesture-handler" onHandlerStateChange={handleGestureEvent}>
       <TapGestureHandler onHandlerStateChange={handleGestureEvent}>
         <S.Container>
           <S.FixedOverlayContainer />

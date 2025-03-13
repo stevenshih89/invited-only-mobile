@@ -12,10 +12,9 @@ import ModalSelectLanguages from 'components/Modal/ModalSelectLanguages/ModalSel
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import * as S from './LanguagesKnow.style';
 
-
 const LanguagesKnow: FC = () => {
-  const [modalLanguages, setModalLanguages] = useState<boolean>(false)
-  const [showLanguages, setShowLanguages] = useState<boolean>(false)
+  const [modalLanguages, setModalLanguages] = useState<boolean>(false);
+  const [showLanguages, setShowLanguages] = useState<boolean>(false);
   return (
     <S.Container>
       <S.Title>Languages I know</S.Title>
@@ -32,6 +31,5 @@ const LanguagesKnow: FC = () => {
     </S.Container>
   );
 };
-
 
 export default LanguagesKnow;

@@ -8,10 +8,9 @@ import {FC, useEffect, useState} from 'react';
 import ModalDeleteMyAccount from './ModalDeleteMyAccount';
 import {phoneChangePath, emailChangePath} from 'constants/pathLocations';
 import ModalConfirmPhone from './ModalConfirmPhone';
-import { useAccountSetting } from 'hooks/useAccountSetting';
+import {useAccountSetting} from 'hooks/useAccountSetting';
 
 const AccountSetting: FC = ({navigation, route}: any) => {
-  
   const {
     userPhone,
     user,
@@ -21,8 +20,8 @@ const AccountSetting: FC = ({navigation, route}: any) => {
     setIsVisibleConfirmPhoneModal,
     sendVerificationCode,
     isVisibleConfirmPhoneModal,
-    verificationId
-  } = useAccountSetting(route)
+    verificationId,
+  } = useAccountSetting(route);
 
   return (
     <>

@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useUser } from "src/store/userStore";
+import {useEffect, useState} from 'react';
+import {useUser} from 'src/store/userStore';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { showToast } from "helpers/showToast";
+import {showToast} from 'helpers/showToast';
 
 export const useInvitations = () => {
   const [numberCodes, setNumberCodes] = useState<number>();
@@ -18,9 +18,9 @@ export const useInvitations = () => {
   useEffect(() => {
     setNumberCodes(inviteLink.length);
   }, []);
-    return {
-        handleCopy,
-        numberCodes,
-        inviteLink
-    }
-}
+  return {
+    handleCopy,
+    numberCodes,
+    inviteLink,
+  };
+};

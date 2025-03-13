@@ -18,7 +18,7 @@ const MyInterests: FC<MyInterestsProps> = ({listOfInterests, setListOfInterests,
   };
 
   if (loading) {
-    return <S.LoadingIndicator />;
+    return <S.LoadingIndicator testID="my-interests-loading-indicator" />;
   }
 
   return (

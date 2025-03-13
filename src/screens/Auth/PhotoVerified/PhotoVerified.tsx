@@ -16,7 +16,7 @@ import moment from 'moment';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import analytics from '@react-native-firebase/analytics';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const PhotoVerified = () => {
   const {onBoarding} = useContext(AuthContext);
@@ -88,7 +88,7 @@ const PhotoVerified = () => {
         });
       } catch (e) {
         console.error(e);
-        logErrorToSentry(e)
+        logErrorToSentry(e);
       }
     };
 
@@ -128,12 +128,14 @@ const PhotoVerified = () => {
                 position: 'relative',
               }}>
               <CheckStarIcon style={{position: 'absolute', top: 0, right: 0, zIndex: 10}} width={36} height={36} />
-              <Image source={{uri: imageUri}} style={{width: 180, height: 180, borderRadius: 180}} />
+              <Image testID="photo-verified-image" source={{uri: imageUri}} style={{width: 180, height: 180, borderRadius: 180}} />
             </View>
             <Text style={{textAlign: 'center', fontFamily: Satoshi400, fontSize: RFValue(18, 812), color: whiteColor, marginTop: 20}}>
               Congratulations! Your photo has been successfully verified. Welcome aboard!
             </Text>
-            <Animated.View style={[animatedStyle, {width: 90, height: 90, alignSelf: 'center', marginTop: 40}]}>
+            <Animated.View
+              testID="photo-verified-loader"
+              style={[animatedStyle, {width: 90, height: 90, alignSelf: 'center', marginTop: 40}]}>
               <Loader width={90} height={90} />
             </Animated.View>
           </View>

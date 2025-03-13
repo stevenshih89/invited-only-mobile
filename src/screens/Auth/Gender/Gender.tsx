@@ -18,7 +18,7 @@ import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const Gender: FC = (): JSX.Element => {
   const MAN = 'man';
@@ -65,7 +65,7 @@ const Gender: FC = (): JSX.Element => {
         });
       } catch (e) {
         console.error(e);
-        logErrorToSentry(e)
+        logErrorToSentry(e);
       }
     };
 
@@ -158,6 +158,7 @@ const Gender: FC = (): JSX.Element => {
                   {isHost ? (
                     <>
                       <TouchableOpacity
+                        testID="man-button"
                         activeOpacity={0.7}
                         onPress={() => setGender(MAN)}
                         style={{
@@ -178,6 +179,7 @@ const Gender: FC = (): JSX.Element => {
                         {gender === MAN ? <CheckCircle /> : <CircleGray />}
                       </TouchableOpacity>
                       <TouchableOpacity
+                        testID="woman-button"
                         activeOpacity={0.7}
                         onPress={() => setGender(WOMAN)}
                         style={{
@@ -201,6 +203,7 @@ const Gender: FC = (): JSX.Element => {
                   ) : (
                     <>
                       <TouchableOpacity
+                        testID="woman-button"
                         activeOpacity={0.7}
                         onPress={() => setGender(WOMAN)}
                         style={{
@@ -221,6 +224,7 @@ const Gender: FC = (): JSX.Element => {
                         {gender === WOMAN ? <CheckCircle /> : <CircleGray />}
                       </TouchableOpacity>
                       <TouchableOpacity
+                        testID="man-button"
                         activeOpacity={0.7}
                         onPress={() => setGender(MAN)}
                         style={{
@@ -243,6 +247,7 @@ const Gender: FC = (): JSX.Element => {
                     </>
                   )}
                   <TouchableOpacity
+                    testID="nonbinary-button"
                     activeOpacity={0.7}
                     onPress={() => setGender(NONBINARY)}
                     style={{
@@ -265,7 +270,7 @@ const Gender: FC = (): JSX.Element => {
                 </View>
               </View>
               <View style={{marginBottom: 4}}>
-                <Button onPress={() => handleNext()} title="Continue" />
+                <Button testID="continue-button" onPress={() => handleNext()} title="Continue" />
               </View>
             </View>
           </SafeAreaView>

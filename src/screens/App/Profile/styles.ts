@@ -1,4 +1,4 @@
-import {blackColor, lightGray6Color, lightGray9Color, whiteColor} from 'constants/colors';
+import {blackColor, lightGray9Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {StyleSheet} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -61,7 +61,7 @@ const useStyles = () =>
       color: whiteColor,
       fontSize: RFValue(18, 812),
       fontFamily: Satoshi700,
-      marginTop: 5
+      marginTop: 5,
     },
     checkStarIcon: {
       marginLeft: 6,
@@ -113,7 +113,7 @@ const useStyles = () =>
       paddingVertical: 6,
       paddingLeft: 14,
       paddingRight: 33,
-      borderRadius: 10
+      borderRadius: 10,
     },
     accountTypeWrapper: {
       marginTop: 12,
@@ -122,7 +122,7 @@ const useStyles = () =>
       paddingHorizontal: 12,
       paddingVertical: 2,
       borderWidth: 1,
-      borderColor: whiteColor
+      borderColor: whiteColor,
     },
     accountTypeWrapperPremium: {
       marginTop: 12,

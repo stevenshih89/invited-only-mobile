@@ -12,7 +12,7 @@ import AuthProgress from 'components/AuthProgress';
 const AddBiusness: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
-  const handleGoBack = async () => {
+  const handleGoBack = () => {
     navigation.goBack();
   };
 
@@ -95,7 +95,7 @@ const AddBiusness: FC = (): JSX.Element => {
               </View>
             </View>
             <View style={{marginBottom: 4, width: '100%', alignItems: 'center', marginTop: 'auto'}}>
-              <TouchableOpacity onPress={handleGoBack}>
+              <TouchableOpacity onPress={handleGoBack} testID="go-back-button">
                 <Text style={{color: 'rgba(62, 62, 62, 1)', fontSize: RFValue(18, 932), fontFamily: Satoshi500}}>Go back</Text>
               </TouchableOpacity>
             </View>

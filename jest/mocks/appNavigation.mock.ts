@@ -1,4 +1,5 @@
 export const mockedNavigateFunction = jest.fn();
+export const mockedGoBackFunction = jest.fn();
 
 jest.mock('hooks/useAppNavigation', () => {
   return {
@@ -7,6 +8,9 @@ jest.mock('hooks/useAppNavigation', () => {
         navigate: (path: string) => {
           mockedNavigateFunction(path);
         },
+        goBack: () => {
+        mockedGoBackFunction();
+      },
       };
     },
     useFocusEffect: (callback: () => {}) => {

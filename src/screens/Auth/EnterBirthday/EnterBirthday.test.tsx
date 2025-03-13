@@ -1,6 +1,6 @@
 import React from 'react';
 import {render, fireEvent, act, waitFor} from '@testing-library/react-native';
-import EnterBirthday from './EnterBirthday';
+import EnterBirthday from 'screens/Auth/EnterBirthday/EnterBirthday';
 import {AuthContext} from 'contexts/AuthContext';
 import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
 

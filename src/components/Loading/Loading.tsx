@@ -66,6 +66,7 @@ const Loading: FC<LoadingProps> = ({
     <S.ContainerStyled style={styleContainer}>
       <S.InnerContainer style={styleInnerContainer}>
         <Animated.View
+          testID="first-circle"
           style={[
             {
               position: 'absolute',
@@ -79,6 +80,7 @@ const Loading: FC<LoadingProps> = ({
           ]}
         />
         <Animated.View
+          testID="second-circle"
           style={[
             {
               position: 'absolute',
@@ -92,6 +94,7 @@ const Loading: FC<LoadingProps> = ({
           ]}
         />
         <S.WhiteCircle
+          testID="white-circle"
           style={{
             top: topPosition ? 35 : screenHeight / 2 - 365,
             height: topPosition ? 290 : 330,
@@ -108,7 +111,7 @@ const Loading: FC<LoadingProps> = ({
               <S.TextContainer>
                 <S.RowView>
                   <S.TextStyled style={textStyle}>{text}</S.TextStyled>
-                  {showCheckIcon && <CheckStarIcon style={{marginLeft: 6}} />}
+                  {showCheckIcon && <CheckStarIcon testID="check-star-icon" style={{marginLeft: 6}} />}
                 </S.RowView>
               </S.TextContainer>
             </S.TextWrapperAbsolute>

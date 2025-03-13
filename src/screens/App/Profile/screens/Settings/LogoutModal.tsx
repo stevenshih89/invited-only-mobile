@@ -7,15 +7,10 @@ import {FC} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import { useLogout } from 'hooks/useLogout';
+import {useLogout} from 'hooks/useLogout';
 
 const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, onClose}) => {
-  
-  const {
-    userHost,
-    userAge,
-    handleLogout
-  } = useLogout(onClose);
+  const {userHost, userAge, handleLogout} = useLogout(onClose);
 
   return (
     <Modal

@@ -12,7 +12,7 @@ const InstagramSlider: FC<InstagramSliderProps> = ({photosList}) => {
   return (
     <S.Container>
       <S.TitleWrapper>
-        <S.Title>{photosList?.length} instagram photos</S.Title>
+        <S.Title testID="instagram-slider-title">{photosList?.length} instagram photos</S.Title>
       </S.TitleWrapper>
       <Swiper
         showsButtons={false}
@@ -22,13 +22,14 @@ const InstagramSlider: FC<InstagramSliderProps> = ({photosList}) => {
         {photosList?.length >= 1 && (
           <View>
             <FlatList
+              testID="instagram-slider-flatlist"
               data={photosList?.slice(0, 6)}
               scrollEnabled={false}
               numColumns={3}
               ItemSeparatorComponent={() => <S.Separator />}
               renderItem={({item}) => (
                 <S.ImageWrapper>
-                  <S.Image source={{uri: item}} />
+                  <S.Image testID="instagram-slider-image-unique" source={{uri: item}} />
                 </S.ImageWrapper>
               )}
             />
@@ -37,13 +38,14 @@ const InstagramSlider: FC<InstagramSliderProps> = ({photosList}) => {
         {photosList?.length > 6 && (
           <View>
             <FlatList
+              testID="instagram-slider-flatlist"
               data={photosList?.slice(6, 12)}
               scrollEnabled={false}
               numColumns={3}
               ItemSeparatorComponent={() => <S.Separator />}
               renderItem={({item}) => (
                 <S.ImageWrapper>
-                  <S.Image source={item} />
+                  <S.Image testID="instagram-slider-image-unique" source={item} />
                 </S.ImageWrapper>
               )}
             />
@@ -52,13 +54,14 @@ const InstagramSlider: FC<InstagramSliderProps> = ({photosList}) => {
         {photosList?.length > 12 && (
           <View>
             <FlatList
+              testID="instagram-slider-flatlist"
               data={photosList?.slice(12, 18)}
               scrollEnabled={false}
               numColumns={3}
               ItemSeparatorComponent={() => <S.Separator />}
               renderItem={({item}) => (
                 <S.ImageWrapper>
-                  <S.Image source={item} />
+                  <S.Image testID="instagram-slider-image-unique" source={item} />
                 </S.ImageWrapper>
               )}
             />

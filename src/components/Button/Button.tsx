@@ -18,6 +18,8 @@ const Button: FC<ButtonProps> = ({
   buttonTitleStyle,
   loading = false,
   variant = 'default',
+  id,
+  testID,
 }): ReactElement => {
   const styles = {
     ['default']: {
@@ -73,7 +75,7 @@ const Button: FC<ButtonProps> = ({
 
   return (
     // @ts-ignore
-    <ButtonAntd style={[buttonStyle]} onPress={onPress} disabled={disabled || loading} styles={styles[variant]}>
+    <ButtonAntd testID={testID} id={id} style={[buttonStyle]} onPress={onPress} disabled={disabled || loading} styles={styles[variant]}>
       {loading ? <ActivityIndicator color={blackColor} size="small" /> : title}
     </ButtonAntd>
   );

@@ -5,6 +5,9 @@ jest.mock('@react-native-firebase/firestore', () => {
         onSnapshot: jest.fn(() => () => {}),
         get: jest.fn(() => Promise.resolve({exists: false})),
       })),
+      where: jest.fn(() => ({
+        get: jest.fn(() => Promise.resolve({exists: false})),
+      })),
     })),
   });
 });

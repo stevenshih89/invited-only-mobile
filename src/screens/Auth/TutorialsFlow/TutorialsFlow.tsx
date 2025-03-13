@@ -1,5 +1,5 @@
 import React, {FC, ReactNode, useContext, useState} from 'react';
-import {View, SafeAreaView, TouchableOpacity, Text, InteractionManager} from 'react-native';
+import {View, SafeAreaView, TouchableOpacity, Text} from 'react-native';
 
 //import components
 import {gray1Color, whiteColor} from 'constants/colors.ts';
@@ -19,7 +19,7 @@ import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
 import firestore from '@react-native-firebase/firestore';
 import {UserInfo} from 'src/types/userInfo';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 const TutorialsFlow: FC = (): JSX.Element => {
   const [active, setActive] = useState<number>(0);
 

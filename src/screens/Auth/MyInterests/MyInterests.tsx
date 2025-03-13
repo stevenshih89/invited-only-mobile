@@ -39,7 +39,7 @@ import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const MyInterests: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -93,7 +93,7 @@ const MyInterests: FC = (): JSX.Element => {
         });
       } catch (e) {
         console.error(e);
-        logErrorToSentry(e)
+        logErrorToSentry(e);
       }
     };
 
@@ -201,6 +201,7 @@ const MyInterests: FC = (): JSX.Element => {
                     ItemSeparatorComponent={() => <View style={{height: screenHeight * 0.021}} />}
                     renderItem={({item: {id, title, isSelected, image}}) => (
                       <TouchableOpacity
+                        testID={`interest-${id}`}
                         onPress={() => handleSelectInterest(id)}
                         activeOpacity={0.7}
                         style={{
@@ -295,8 +296,9 @@ const MyInterests: FC = (): JSX.Element => {
                   />
                 </View>
               </View>
-              <View style={{}}>
+              <View>
                 <Button
+                  testID="continue-button"
                   buttonStyle={{borderRadius: 18}}
                   disabled={listOfInterests.filter(interest => interest.isSelected).length < 3}
                   title={`Continue (${listOfInterests.filter(interest => interest.isSelected).length}/3)`}

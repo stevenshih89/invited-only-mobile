@@ -17,9 +17,9 @@ import FlashFillIcon from 'assets/images/icons/flash-filled.svg';
 import CloseIcon from 'assets/images/icons/close-circle.svg';
 import Loader from '../../../../../components/Modal/ModalLoader/Loader';
 import {screenHeight} from 'constants/common';
-import { ControlledTooltip } from 'components/ControlledTooltip/ControlledTooltip';
-import { useMyPlan } from 'hooks/useMyPlan';
-import { SvgProps } from "react-native-svg";
+import {ControlledTooltip} from 'components/ControlledTooltip/ControlledTooltip';
+import {useMyPlan} from 'hooks/useMyPlan';
+import {SvgProps} from 'react-native-svg';
 //icons
 import CalendarIcon from 'assets/images/icons/calendar-white.svg';
 import UnlimitedIcon from 'assets/images/icons/unlimited-new.svg';
@@ -28,14 +28,9 @@ import EyeIcon from 'assets/images/icons/eye.svg';
 import FlashIcon from 'assets/images/icons/flash-white.svg';
 
 const MyPlan: FC = () => {
-
   const styles = useStyles();
 
-  const {
-    loaderVisible,
-    goToPaymentPath,
-    goToSuperInvitePay,
-    userInfo} = useMyPlan();
+  const {loaderVisible, goToPaymentPath, goToSuperInvitePay, userInfo} = useMyPlan();
 
   interface WhatGetItem {
     title: string;

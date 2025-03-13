@@ -7,24 +7,14 @@ import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {CodeField, Cursor} from 'react-native-confirmation-code-field';
 import {screenHeight} from 'constants/common';
-import { useModalDeleteMyAccount } from 'hooks/useModalDeleteMyAccount';
-
+import {useModalDeleteMyAccount} from 'hooks/useModalDeleteMyAccount';
 
 const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verificationId: string}> = ({
   isVisible,
   onClose,
   verificationId,
 }) => {
-  
-  const {
-    ref,
-    code,
-    props,
-    setCode,
-    CELL_COUNT,
-    getCellOnLayoutHandler,
-    handleConfirm,
-  } = useModalDeleteMyAccount(verificationId)
+  const {ref, code, props, setCode, CELL_COUNT, getCellOnLayoutHandler, handleConfirm} = useModalDeleteMyAccount(verificationId);
 
   return (
     <Modal
@@ -52,7 +42,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
             paddingTop: 16,
             paddingHorizontal: 30,
             flex: 1,
-            justifyContent: 'center', // Center vertically
+            justifyContent: 'center',
           }}>
           <Text style={{color: whiteColor, fontSize: RFValue(24, 812), fontFamily: Satoshi400, marginBottom: 20, textAlign: 'center'}}>
             Please confirm that this is your account

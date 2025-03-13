@@ -18,12 +18,12 @@ import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const Privacy: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const {onBoarding} = useContext(AuthContext);
-  const objWithAccountType = onBoarding.find(obj => obj.hasOwnProperty('accountType'));
+  const objWithAccountType = onBoarding.find((obj: any) => obj.hasOwnProperty('accountType'));
   const route = useRoute();
   const {screen, accountType} = route.params as {screen: string; accountType: string};
   const privaciesListHost = [
@@ -164,8 +164,8 @@ const Privacy: FC = (): JSX.Element => {
                   ? 'Host'
                   : 'Guest'
                 : accountType === 'host'
-                ? 'Host'
-                : 'Guest'}{' '}
+                  ? 'Host'
+                  : 'Guest'}{' '}
               House Rules
             </Text>
           </View>
@@ -178,8 +178,8 @@ const Privacy: FC = (): JSX.Element => {
                   ? privaciesListHost
                   : privaciesListGuest
                 : accountType === 'host'
-                ? privaciesListHost
-                : privaciesListGuest
+                  ? privaciesListHost
+                  : privaciesListGuest
             }
             keyExtractor={({id}) => id.toString()}
             ItemSeparatorComponent={() => <View style={{height: 8}} />}
@@ -195,7 +195,7 @@ const Privacy: FC = (): JSX.Element => {
           />
           {screen !== 'SafetyAndWellbeing' && (
             <View style={{marginTop: 16}}>
-              <Button onPress={() => navigation.navigate(verifyFirstStepPath as never)} title="I Agree, Continue" />
+              <Button testID="agree-button" onPress={() => navigation.navigate(verifyFirstStepPath as never)} title="I Agree, Continue" />
             </View>
           )}
         </View>

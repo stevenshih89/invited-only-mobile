@@ -22,8 +22,8 @@ import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
-import { useProfile } from 'hooks/useProfile';
-import { ProgressCircle } from 'components/ProgressCircle/ProgressCircle';
+import {useProfile} from 'hooks/useProfile';
+import {ProgressCircle} from 'components/ProgressCircle/ProgressCircle';
 
 const Profile: FC = () => {
   const {
@@ -40,14 +40,15 @@ const Profile: FC = () => {
     changeAccountTypeModalVisible,
     setChangeAccountModalVisible,
     tabList,
-    goToMyProfileView} = useProfile();
+    goToMyProfileView,
+  } = useProfile();
 
   const styles = useStyles();
 
   const getTabContent = () => {
     switch (activeTabId) {
       case 0:
-        return <MyPlan/>;
+        return <MyPlan />;
       case 1:
         return <SafetyAndWellbeing />;
       case 2:
@@ -148,7 +149,7 @@ const Profile: FC = () => {
                 fontSize: RFValue(20, 812),
                 fontFamily: Satoshi700,
               }}>
-              {userInfo?.accountType === 'host' ? userInfo?.eventsList?.length || 0 : eventsCount ?? 0}
+              {userInfo?.accountType === 'host' ? userInfo?.eventsList?.length || 0 : (eventsCount ?? 0)}
             </Text>
             <Text
               style={{
@@ -168,7 +169,7 @@ const Profile: FC = () => {
                 fontSize: RFValue(20, 812),
                 fontFamily: Satoshi700,
               }}>
-              {userInfo?.accountType === 'host' ? totalGuests : userInfo?.joinEvents ?? 0}
+              {userInfo?.accountType === 'host' ? totalGuests : (userInfo?.joinEvents ?? 0)}
             </Text>
             <Text
               style={{

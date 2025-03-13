@@ -9,6 +9,8 @@ export interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   variant?: 'default' | 'transparent';
+  id?: string;
+  testID?: string;
 }
 
 export interface InputProps {
@@ -31,7 +33,9 @@ export interface InputProps {
   placeholderTextColor?: string;
   disabled?: boolean;
   editable?: boolean;
+  testID?: string;
 }
 
-
-export interface UserInfo
+export interface UserInfo {
+  name: any;
+}
