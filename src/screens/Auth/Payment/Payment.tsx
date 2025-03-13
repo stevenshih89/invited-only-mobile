@@ -264,12 +264,12 @@ const Payment: FC = (): JSX.Element => {
     }
   };
   const getButtonDisabled = () => {
-    return currentSubscriptions.activeSubscriptions.includes(activePayment.identifier);
+    return currentSubscriptions?.activeSubscriptions?.includes(activePayment.identifier);
   };
 
   const getButtonTitle = () => {
     const {duration, durationName, fullPrice, identifier} = activePayment;
-    if (currentSubscriptions.activeSubscriptions.includes(identifier)) {
+    if (currentSubscriptions?.activeSubscriptions?.includes(identifier)) {
       return 'Current Plan';
     }
 
@@ -283,8 +283,8 @@ const Payment: FC = (): JSX.Element => {
     console.log('item', item);
 
     let isRender = true;
-    const formattedPrice = item.fullPrice;
-    const isCurrentSubscription = currentSubscriptions.activeSubscriptions.includes(item.identifier);
+    // const formattedPrice = item.fullPrice;
+    const isCurrentSubscription = currentSubscriptions?.activeSubscriptions?.includes(item.identifier);
     console.warn('isCurrentSubscription', isCurrentSubscription);
     console.warn('ac', currentSubscriptions.activeSubscriptions);
 
@@ -307,7 +307,7 @@ const Payment: FC = (): JSX.Element => {
     if (isRender) {
       let isActive = activePayment.id === item.id;
 
-      if (currentSubscriptions.activeSubscriptions.length > 1) {
+      if (currentSubscriptions?.activeSubscriptions?.length > 1) {
         isActive = true;
       }
 

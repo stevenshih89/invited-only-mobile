@@ -72,7 +72,7 @@ import Payment from 'screens/Auth/Payment/Payment';
 import ManageSubscription from 'screens/App/Profile/screens/ManageSubscription';
 import SuperInvitePay from 'screens/App/IO/screens/SuperInvitePay/SuperInvitePay';
 import VerifySocialProfile from 'screens/Auth/VerifySocialProfile';
-import Privacy from 'screens/Auth/Privacy';
+import Privacy from 'screens/Auth/Privacy/Privacy.tsx';
 import EmailChange from 'screens/App/Profile/screens/Settings/EmailChange';
 import EarlyAccess from 'screens/App/IO/screens/EarlyAccess/EarlyAccess';
 import DemoIntro from 'screens/App/DemoFlow/screens/DemoIntro/DemoIntro.tsx';

@@ -1,5 +1,5 @@
 import React, {FC, ReactNode, useContext, useEffect, useState} from 'react';
-import {View, FlatList, ScrollView, Alert} from 'react-native';
+import {View, FlatList, ScrollView, Alert, Image} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Badge} from '@rneui/themed';
 import auth from '@react-native-firebase/auth';
@@ -52,6 +52,7 @@ import * as S from './Header.style';
 import {Satoshi700} from 'constants/fonts';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import { useCreateEvent } from 'hooks/useCreateEvent';
+
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
   showHeaderTop?: boolean;
@@ -80,7 +81,7 @@ type ItemProps = {
 const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
   const MARQUEE_SPEED = 0.4;
   const MARQUEE_SPACING = 30;
-  const route = useRoute();
+  const route = useRoute();  
   const {hintStep, event, isVisibleSwipeGuide} = useDemoFlowStore();
   const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
   const [eventStarting, setEventStarting] = useState<boolean>(false);

@@ -1139,7 +1139,7 @@ const IO: FC = (): JSX.Element => {
       <>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
           <View style={{height: 370, marginTop: screenHeight / 26}}>
-            <Loading userInfo={userInfo} topPosition={true} />
+            <Loading userInfo={userInfo} topPosition={true} wrapperText={false}/>
           </View>
           <View>
             <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi500}}>
@@ -1278,6 +1278,9 @@ const IO: FC = (): JSX.Element => {
                   OverlayLabelLeft={OverlayLeft}
                   disableBottomSwipe={true}
                   disableTopSwipe={true}
+                  inputOverlayLabelRightOpacityRange={[0, 40]}
+                  inputOverlayLabelLeftOpacityRange={[0, -40]}
+                  translateXRange={[-70, 0, 70]}
                   cardStyle={styles.card}>
                   <ScrollView
                     onScroll={handleScroll}

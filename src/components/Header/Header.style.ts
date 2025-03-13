@@ -98,8 +98,8 @@ export const JoinEventButton = styled.TouchableOpacity`
 `;
 
 export const EventFastImage = styled(FastImage)`
-  width: '100%';
-  height: '100%';
+  width: 100%;
+  height: 100%;
   border-radius: 50px;
 `;
 

@@ -20,11 +20,16 @@ const OverlayLabel = ({
   opacityValue,
 }: Props) => {
   const animatedStyle = useAnimatedStyle(() => {
+    const isValidArray = (arr: any) => {
+      return arr.every((item: any) => item !== null && item !== undefined && !Number.isNaN(item));
+    };
+    const validInputRange = isValidArray(inputRange) ? inputRange : [0, 1];
+    const validOutputRange = isValidArray(outputRange) ? outputRange : [1, 0];
     return {
       opacity: interpolate(
         opacityValue.value,
-        inputRange ?? [],
-        outputRange ?? [],
+        validOutputRange as readonly number[],
+        validInputRange as readonly number[],
         Extrapolation.CLAMP
       ),
       zIndex: 2,
