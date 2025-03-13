@@ -114,7 +114,7 @@ export const ImageEvent = styled.Image`
   border-radius: 50px;
 `;
 
-export const ImageEventsJoining = styled.Image`
+export const ImageEventsJoining = styled.View`
   width: 55px;
   height: 55px;
   border-radius: 50px;
