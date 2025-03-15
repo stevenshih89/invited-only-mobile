@@ -55,6 +55,7 @@ const ModalDeleteMyAccount: FC<{isVisible: boolean; onClose: () => void; verific
               marginBottom: 20,
             }}>
             <CodeField
+              testID="code-field"
               ref={ref}
               {...props}
               value={code}

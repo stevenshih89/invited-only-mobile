@@ -13,6 +13,7 @@ import './mocks/firebase.functions.mock.ts';
 import './mocks/firebase.app.mock.ts';
 import './mocks/deviceInfo.mock';
 import './mocks/appSettingsQueries.mock';
+import './mocks/useModalDeleteMyAccount.mock.ts';
 require('./mocks/firestore.mock');
 require('./mocks/auth.mock');
 require('./mocks/config.mock');
