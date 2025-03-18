@@ -1,11 +1,6 @@
-import { useEffect, useState } from "react";
-import Config from "react-native-config";
-import { useUser } from "src/store/userStore";
-import firestore from '@react-native-firebase/firestore';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import {UserMutations} from "../apiv2/mutations/userMutations.ts";
+import {useEffect, useState} from 'react';
 
-const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+import {UserMutations} from '../apiv2/mutations/userMutations.ts';
 
 export const useNotificationSetting = (route: any) => {
   const notificationSettings = route?.params?.params?.notificationSettings;
@@ -32,7 +27,7 @@ export const useNotificationSetting = (route: any) => {
       setSuperJoin(val);
       setMatch(val);
 
-      updateNotificationsSettingsMutation(true)
+      updateNotificationsSettingsMutation(true);
     } else {
       setIsVisibleTurnOffNotificationsModal(true);
     }
@@ -49,7 +44,7 @@ export const useNotificationSetting = (route: any) => {
     setMatch(false);
     setIsVisibleTurnOffNotificationsModal(false);
 
-    updateNotificationsSettingsMutation(false)
+    updateNotificationsSettingsMutation(false);
   };
 
   const handleChangeStatus = async () => {
@@ -61,7 +56,7 @@ export const useNotificationSetting = (route: any) => {
       requests: requests,
       superInvite: superInvite,
       superJoin: superJoin,
-    })
+    });
   };
 
   useEffect(() => {
@@ -90,6 +85,6 @@ export const useNotificationSetting = (route: any) => {
     setMatch,
     isVisibleTurnOffNotificationsModal,
     handleConfirmTurnOffNotifications,
-    setIsVisibleTurnOffNotificationsModal
-  }
-}
+    setIsVisibleTurnOffNotificationsModal,
+  };
+};

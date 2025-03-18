@@ -1139,7 +1139,7 @@ const IO: FC = (): JSX.Element => {
       <>
         <View style={{flex: 1, width: '100%', backgroundColor: blackColor}}>
           <View style={{height: 370, marginTop: screenHeight / 26}}>
-            <Loading userInfo={userInfo} topPosition={true} wrapperText={false}/>
+            <Loading userInfo={userInfo} topPosition={true} wrapperText={false} />
           </View>
           <View>
             <Text style={{color: whiteColor, textAlign: 'center', fontSize: RFValue(18, 812), fontFamily: Satoshi500}}>

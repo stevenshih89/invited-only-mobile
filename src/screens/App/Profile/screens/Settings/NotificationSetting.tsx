@@ -5,10 +5,9 @@ import {FC} from 'react';
 import {SafeAreaView, Text, View} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import ModalTurnOffNotifications from './ModalTurnOffNotifications';
-import { useNotificationSetting } from 'hooks/useNotificationSetting';
+import {useNotificationSetting} from 'hooks/useNotificationSetting';
 
 const NotificationSetting: FC = ({navigation, route}: any) => {
-
   const {
     allNotification,
     handleChangeAllNotification,
@@ -24,8 +23,8 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
     setMatch,
     isVisibleTurnOffNotificationsModal,
     handleConfirmTurnOffNotifications,
-    setIsVisibleTurnOffNotificationsModal
-  } = useNotificationSetting(route)
+    setIsVisibleTurnOffNotificationsModal,
+  } = useNotificationSetting(route);
 
   return (
     <>
@@ -44,7 +43,7 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
             }}>
             <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 812)}}>All notifications</Text>
             <Switch
-              testID='all-notifications-switch'
+              testID="all-notifications-switch"
               trackColor={{false: grayColor, true: toggleColor}}
               value={allNotification}
               onValueChange={handleChangeAllNotification}
@@ -59,7 +58,12 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
                 marginBottom: 14,
               }}>
               <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>My events</Text>
-              <Switch testID='my-events-switch' trackColor={{false: grayColor, true: toggleColor}} value={myEvents} onValueChange={setMyEvents} />
+              <Switch
+                testID="my-events-switch"
+                trackColor={{false: grayColor, true: toggleColor}}
+                value={myEvents}
+                onValueChange={setMyEvents}
+              />
             </View>
             <View
               style={{
@@ -72,7 +76,12 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
                 marginBottom: 14,
               }}>
               <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Requests</Text>
-              <Switch testID='requests-switch' trackColor={{false: grayColor, true: toggleColor}} value={requests} onValueChange={setRequests} />
+              <Switch
+                testID="requests-switch"
+                trackColor={{false: grayColor, true: toggleColor}}
+                value={requests}
+                onValueChange={setRequests}
+              />
             </View>
             <View
               style={{
@@ -85,7 +94,7 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
                 marginBottom: 14,
               }}>
               <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Chat</Text>
-              <Switch testID='chat-switch' trackColor={{false: grayColor, true: toggleColor}} value={chat} onValueChange={setChat} />
+              <Switch testID="chat-switch" trackColor={{false: grayColor, true: toggleColor}} value={chat} onValueChange={setChat} />
             </View>
             <View
               style={{
@@ -98,7 +107,12 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
                 marginBottom: 14,
               }}>
               <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Super invite</Text>
-              <Switch testID='super-invite-switch' trackColor={{false: grayColor, true: toggleColor}} value={superInvite} onValueChange={setSuperInvite} />
+              <Switch
+                testID="super-invite-switch"
+                trackColor={{false: grayColor, true: toggleColor}}
+                value={superInvite}
+                onValueChange={setSuperInvite}
+              />
             </View>
             <View
               style={{
@@ -111,7 +125,12 @@ const NotificationSetting: FC = ({navigation, route}: any) => {
                 marginBottom: 14,
               }}>
               <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>New Connection</Text>
-              <Switch testID='new-connection-switch' trackColor={{false: grayColor, true: toggleColor}} value={match} onValueChange={setMatch} />
+              <Switch
+                testID="new-connection-switch"
+                trackColor={{false: grayColor, true: toggleColor}}
+                value={match}
+                onValueChange={setMatch}
+              />
             </View>
           </View>
         </SafeAreaView>
