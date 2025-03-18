@@ -1,4 +1,4 @@
-import {isIos, screenHeight, screenWidth} from 'constants/common';
+import {isIos, screenHeight} from 'constants/common';
 import {FC, useState, useContext, useEffect} from 'react';
 import {
   Alert,
@@ -343,6 +343,7 @@ const AddPhotos: FC = (): JSX.Element => {
                       </View>
                     ) : (
                       <TouchableOpacity
+                        testID="add-photo-button-0"
                         activeOpacity={0.7}
                         onPress={() => openLibrary(photos[0].id)}
                         style={{
@@ -400,6 +401,7 @@ const AddPhotos: FC = (): JSX.Element => {
                         </View>
                       ) : (
                         <TouchableOpacity
+                          testID="add-photo-button-1"
                           activeOpacity={0.7}
                           onPress={() => openLibrary(photos[1].id)}
                           style={{
@@ -442,6 +444,7 @@ const AddPhotos: FC = (): JSX.Element => {
                         </View>
                       ) : (
                         <TouchableOpacity
+                          testID="add-photo-button-2"
                           activeOpacity={0.7}
                           onPress={() => openLibrary(photos[2].id)}
                           style={{

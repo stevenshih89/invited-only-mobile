@@ -23,8 +23,10 @@ const UnderMaintenance: FC<UnderMaintenanceProps> = ({data}) => {
         paddingHorizontal: 24,
       }}>
       <UnderMaintenanceIcon />
-      <Text style={{color: whiteColor, fontSize: RFValue(36, 812), fontFamily: Satoshi500, marginTop: 48}}>Under Maintenance</Text>
-      <Text style={{color: whiteColor, fontSize: RFValue(16, 812), textAlign: 'center', fontFamily: Satoshi400}}>
+      <Text style={{color: whiteColor, fontSize: RFValue(36, 812), fontFamily: Satoshi500, marginTop: 48}} testID="maintenance-title">
+        Under Maintenance
+      </Text>
+      <Text style={{color: whiteColor, fontSize: RFValue(16, 812), textAlign: 'center', fontFamily: Satoshi400}} testID="maintenance-text">
         We’re working on it. Please check back soon! Thank you for your patience!{' '}
         {data?.approximatelyTime ? `(approximately ${data?.approximatelyTime})` : ''}
       </Text>

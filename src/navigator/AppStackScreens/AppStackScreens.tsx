@@ -47,7 +47,7 @@ import {
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
-import InvitationCode from 'screens/Auth/InvitationCode';
+import InvitationCode from 'screens/Auth/InvitationCode/InvitationCode.tsx';
 import PendingScreen from 'screens/Auth/AcceptedScreen/PendingScreen/PendingScreen';
 import AccountRejected from 'screens/Auth/AcceptedScreen/AccountRejected/AccountRejected';
 import CodeVerified from 'screens/Auth/AcceptedScreen/CodeVerified/CodeVerified';
@@ -71,7 +71,7 @@ import SecurePrivacy from 'screens/App/Profile/screens/SecurePrivacy/SecurePriva
 import Payment from 'screens/Auth/Payment/Payment';
 import ManageSubscription from 'screens/App/Profile/screens/ManageSubscription';
 import SuperInvitePay from 'screens/App/IO/screens/SuperInvitePay/SuperInvitePay';
-import VerifySocialProfile from 'screens/Auth/VerifySocialProfile';
+import VerifySocialProfile from 'screens/Auth/VerifySocialProfile/VerifySocialProfile.tsx';
 import Privacy from 'screens/Auth/Privacy/Privacy.tsx';
 import EmailChange from 'screens/App/Profile/screens/Settings/EmailChange';
 import EarlyAccess from 'screens/App/IO/screens/EarlyAccess/EarlyAccess';

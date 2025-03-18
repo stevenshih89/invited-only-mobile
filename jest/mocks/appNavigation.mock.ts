@@ -9,8 +9,8 @@ jest.mock('hooks/useAppNavigation', () => {
           mockedNavigateFunction(path);
         },
         goBack: () => {
-        mockedGoBackFunction();
-      },
+          mockedGoBackFunction();
+        },
       };
     },
     useFocusEffect: (callback: () => {}) => {

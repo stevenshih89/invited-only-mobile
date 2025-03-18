@@ -5,8 +5,12 @@ jest.mock('rn-tinder-card-bn-digital', () => {
   const CardItem = props => {
     return <View {...props}>{props.children}</View>;
   };
+  const TinderCard = props => {
+    return <View {...props}>{props.children}</View>;
+  };
   return {
     __esModule: true,
     default: CardItem,
+    TinderCard,
   };
 });

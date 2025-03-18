@@ -1,6 +1,16 @@
 import {isIos} from 'constants/common';
 import {FC, useContext, useEffect, useState} from 'react';
-import {AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {
+  AppState,
+  Keyboard,
+  KeyboardAvoidingView,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+  ScrollView,
+} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
@@ -14,7 +24,6 @@ import {Outfit500, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
-import {ScrollView} from 'react-native-gesture-handler';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from 'typescript/types';
@@ -35,7 +44,7 @@ const InvitationCode: FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const route = useRoute<RouteProp<RootStackParamList, '/invitation-code'>>();
-  const {cameFromSummary = false} = route.params || {};
+  const {cameFromSummary = false} = route?.params || {};
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
@@ -92,7 +101,7 @@ const InvitationCode: FC = (): JSX.Element => {
       });
     }
     return () => {
-      subscription.remove();
+      subscription?.remove?.();
     };
   }, []);
 
@@ -146,7 +155,7 @@ const InvitationCode: FC = (): JSX.Element => {
 
       const photos = mergedObject?.photos || [];
 
-      const isTurnNotifications = onBoardingValue.find((item: any) => 'notifications' in item);
+      const isTurnNotifications = onBoardingValue?.find((item: any) => 'notifications' in item);
 
       const isTurnedNotifications = isTurnNotifications?.notifications ?? false;
 
@@ -284,7 +293,7 @@ const InvitationCode: FC = (): JSX.Element => {
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
       <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback onPress={Keyboard?.dismiss}>
           <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
             <View
               style={{
@@ -293,7 +302,7 @@ const InvitationCode: FC = (): JSX.Element => {
                 paddingBottom: 0,
                 paddingHorizontal: 24,
               }}>
-              <ScrollView showsVerticalScrollIndicator={false} style={{}}>
+              <ScrollView showsVerticalScrollIndicator={false}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -354,6 +363,7 @@ const InvitationCode: FC = (): JSX.Element => {
                     />
                     <View style={{width: '100%', marginBottom: 40}}>
                       <Input
+                        testID="invitation-code-input"
                         onPressFocus={() => setIsfocusInput(true)}
                         onBlur={() => setIsfocusInput(false)}
                         value={code}
@@ -402,7 +412,13 @@ const InvitationCode: FC = (): JSX.Element => {
                 </View>
               </ScrollView>
               <View style={{marginBottom: 4, marginTop: isFocusInput ? 16 : 0}}>
-                <Button onPress={() => handleNext()} loading={loading} disabled={!code.length} title="Apply code" />
+                <Button
+                  testID="apply-code-button"
+                  onPress={() => handleNext()}
+                  loading={loading}
+                  disabled={!code.length}
+                  title="Apply code"
+                />
                 {!isFocusInput && cameFromSummary && (
                   <Button
                     onPress={() => navigation.navigate(verifySocialProfilePath as never)}

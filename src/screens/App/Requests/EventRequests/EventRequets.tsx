@@ -1,4 +1,4 @@
-import {Alert, Image, View} from 'react-native';
+import {Image, View} from 'react-native';
 import {Text} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {TinderCard} from 'rn-tinder-card-bn-digital';
@@ -19,9 +19,9 @@ import FastImage from 'react-native-fast-image';
 import {formatDate} from 'helpers/formatDate';
 import {ACCEPTED_STATUS, LIKED} from 'constants/common';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
-const EventsRequest = ({item, list}: any) => {
+const EventRequets = ({item, list}: any) => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
@@ -67,11 +67,9 @@ const EventsRequest = ({item, list}: any) => {
   const handleSwipeHostCardInvite = async (item: any): Promise<void> => {
     const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
     const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
-
     if (eventIsFull) {
       return showToast('cancel', 'Go to my events', `Event Full: ${allPeople}/${allPeople} guests invited`);
     }
-
     const userAccepted = {
       gender: item?.gender,
       name: item?.name,
@@ -80,11 +78,9 @@ const EventsRequest = ({item, list}: any) => {
       uid: item?.uid,
       userPhoto: item?.userPhoto,
     };
-
     try {
       const updateUsersList: any = [...list?.usersList, userAccepted];
       const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
-
       await firestore().collection(apiEventsCollection).doc(list?.id).update({
         usersList: updateUsersList,
         requestsList: updateRequestsList,
@@ -93,7 +89,7 @@ const EventsRequest = ({item, list}: any) => {
     } catch (e) {
       // console.log(e);
       showToast('inviteMatch', '', "There's been an error");
-      logErrorToSentry(e)
+      logErrorToSentry(e);
     }
   };
 
@@ -101,23 +97,21 @@ const EventsRequest = ({item, list}: any) => {
     try {
       const allPeople = list?.female + list?.femaleFriend + list?.male + list?.maleFriend;
       const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
-
       if (eventIsFull) {
         return showToast('warning', 'Go to my events', `Event Full: ${eventIsFull}/${eventIsFull} guests invited`);
       }
-
       const updateRequestsList: any = list?.requestsList?.filter((i: any) => i?.uid !== item?.uid);
       await firestore().collection(apiEventsCollection).doc(list?.id).update({
         requestsList: updateRequestsList,
       });
     } catch (e) {
-      logErrorToSentry(e)
+      logErrorToSentry(e);
       // console.log(e);
     }
   };
 
   const fetchItemUserInfo = async () => {
-    const currentUserUid = auth()?.currentUser?.uid;
+    const currentUserUid = auth?.()?.currentUser?.uid;
     if (item.uid) {
       try {
         const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(item.uid).get();
@@ -128,7 +122,7 @@ const EventsRequest = ({item, list}: any) => {
         setCurrentUserName(currentUserInfo.data()?.name);
       } catch (error: any) {
         showToast('inviteMatch', 'Failed to load user information. Please try again.', 'Error');
-        logErrorToSentry(error)
+        logErrorToSentry(error);
         // Alert.alert('Error', error.message || 'Something went wrong');
       }
     }
@@ -137,6 +131,7 @@ const EventsRequest = ({item, list}: any) => {
   useEffect(() => {
     fetchItemUserInfo();
   }, [item]);
+
   return (
     <View style={styles.itemContainer}>
       <TinderCard
@@ -284,4 +279,4 @@ const EventsRequest = ({item, list}: any) => {
   );
 };
 
-export default EventsRequest;
+export default EventRequets;

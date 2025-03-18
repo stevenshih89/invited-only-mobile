@@ -296,6 +296,7 @@ const VerifySocialProfile = () => {
     return (
       <TouchableOpacity
         onPress={() => setOpenedSocial(item)}
+        testID={`social-item-${item.id}`}
         style={{
           backgroundColor: isActive ? lightGray15Color : lightGray2Color,
           borderRadius: 10,
@@ -314,6 +315,7 @@ const VerifySocialProfile = () => {
           <View style={{marginTop: 16}}>
             <Input
               placeholder={`Enter a link to your ${item.title} profile`}
+              testID={`social-input-${item.id}`}
               onPressFocus={() => setIsFocusInput(true)}
               onBlur={() => setIsFocusInput(false)}
               value={socialNickname[item.name]}
@@ -375,6 +377,7 @@ const VerifySocialProfile = () => {
                 </Text>
               </View>
               <KeyboardAwareFlatList
+                testID="social-list"
                 enableAutomaticScroll={false}
                 data={socials}
                 ItemSeparatorComponent={() => <View style={{height: 8}} />}

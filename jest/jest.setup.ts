@@ -28,3 +28,6 @@ require('./mocks/useEmailChange.mock');
 require('./mocks/useLogout.mock');
 // require('./mocks/platform.mock');
 require('./mocks/useIO.mock');
+require('./mocks/imagePicker.mock');
+require('./mocks/fbsdkNext.mock');
+require('./mocks/keyboardAwareScrollView.mock');

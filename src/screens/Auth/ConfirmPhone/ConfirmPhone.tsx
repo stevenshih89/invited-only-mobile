@@ -28,7 +28,17 @@ import Config from 'react-native-config';
 import {useFocusEffect} from '@react-navigation/native';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
-const ConfirmPhone: FC = ({navigation, route}: any): JSX.Element => {
+interface ConfirmPhoneProps {
+  navigation: any;
+  route: {
+    params: {
+      mobilePhone: string;
+      confirm?: any;
+    };
+  };
+}
+
+const ConfirmPhone: FC<ConfirmPhoneProps> = ({navigation, route}: any): JSX.Element => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const mobilePhone = route?.params?.mobilePhone;
   const [code, setCode] = useState<string>('');

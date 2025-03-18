@@ -13,11 +13,10 @@ import {Satoshi400, Satoshi500} from 'constants/fonts';
 import Button from 'components/Button/Button';
 import {screenHeight} from 'constants/common';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const JoinEvents: FC = (): ReactElement => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();
 
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
@@ -44,33 +43,10 @@ const JoinEvents: FC = (): ReactElement => {
 
       setRequestsForHost(matchingDocs);
     } catch (error) {
-      logErrorToSentry(error)
+      logErrorToSentry(error);
       // console.error("error finding documents:", error);
     }
   };
-
-  // const fetchUserInfo = async () => {
-  //   setLoading(true);
-  //   const user = auth().currentUser;
-
-  //   if (user) {
-  //     try {
-  //       const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(user.uid).get();
-  //       if (userInfoDoc.exists) {
-  //         setUserInfo(userInfoDoc.data());
-  //       }
-  //     } catch (error: any) {
-  //       Alert.alert('Error', error.message || 'Something went wrong');
-  //     }
-  //   }
-  //   setLoading(false);
-  // };
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     fetchUserInfo();
-  //   }, []),
-  // );
 
   useFocusEffect(
     useCallback(() => {
@@ -78,14 +54,11 @@ const JoinEvents: FC = (): ReactElement => {
     }, []),
   );
 
-  // if (loading && !requestsForHost) {
-  //   return <ActivityIndicator style={styles.container} />;
-  // }
-
   return (
     <View style={styles.container}>
       {requestsForHost.length > 0 ? (
         <FlatList
+          testID="join-events-list"
           // @ts-ignore
           data={requestsForHost}
           numColumns={2}
@@ -100,6 +73,7 @@ const JoinEvents: FC = (): ReactElement => {
         />
       ) : (
         <View
+          testID="join-events-empty"
           style={{
             paddingHorizontal: 24,
             justifyContent: 'center',

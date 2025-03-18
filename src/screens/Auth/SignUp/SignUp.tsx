@@ -11,7 +11,7 @@ import {confirmPhonePath} from 'constants/pathLocations';
 import auth from '@react-native-firebase/auth';
 import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
-import {InputPhoneView} from '../../components/Inputs/InputPhoneView';
+import {InputPhoneView} from '../../../components/Inputs/InputPhoneView';
 import LinearGradient from 'react-native-linear-gradient';
 import Config from 'react-native-config';
 
