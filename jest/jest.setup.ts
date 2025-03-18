@@ -19,6 +19,7 @@ import './mocks/purchases.mock.ts';
 import './mocks/useSettings.mock.ts';
 import './mocks/usePhoneChange.ts';
 import './mocks/phoneChangeItems.mock.ts';
+import './mocks/useUser.mock.ts';
 require('./mocks/firestore.mock');
 require('./mocks/auth.mock');
 require('./mocks/config.mock');
