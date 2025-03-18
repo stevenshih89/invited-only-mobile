@@ -14,6 +14,7 @@ const ModalLogout: FC<{isVisible: boolean; onClose: () => void}> = ({isVisible, 
 
   return (
     <Modal
+      testID='modal-log-out'
       isVisible={isVisible}
       onBackdropPress={onClose}
       onSwipeComplete={onClose}

@@ -15,6 +15,8 @@ import './mocks/deviceInfo.mock';
 import './mocks/appSettingsQueries.mock';
 import './mocks/useModalDeleteMyAccount.mock.ts';
 import './mocks/useNotificationSetting.mock.ts';
+import './mocks/purchases.mock.ts';
+import './mocks/useSettings.mock.ts';
 require('./mocks/firestore.mock');
 require('./mocks/auth.mock');
 require('./mocks/config.mock');
