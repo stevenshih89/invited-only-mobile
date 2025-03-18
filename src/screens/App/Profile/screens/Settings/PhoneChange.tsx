@@ -23,54 +23,27 @@ import Button from 'components/Button/Button';
 import {TouchableOpacity} from 'react-native';
 import {CodeField, Cursor} from 'react-native-confirmation-code-field';
 import { usePhoneChange } from 'hooks/usePhoneChange';
-
-const items = [
-  {
-    label: '+380',
-    value: 'ua',
-    icon: <FlagAE />,
-  },
-  {
-    label: '+972',
-    value: 'ae',
-    icon: <FlagAE />,
-  },
-  {
-    label: '+300',
-    value: 'fr',
-    icon: <FlagAE />,
-  },
-  {
-    label: '+400',
-    value: 'lo',
-    icon: <FlagAE />,
-  },
-  {
-    label: '+321',
-    value: 'po',
-    icon: <FlagAE />,
-  },
-];
+import { items } from 'src/mocks/itemsPhoneChange';
 
 const PhoneChange = () => {
   const {
     isSecondStep,
-        activeItem,
-        setActiveItem,
-        setIsOpenDropdown,
-        dropdownContainerStyle,
-        mobilePhone,
-        setMobilePhone,
-        loading,
-        handleSendOTPOnPhone,
-        setIsSecondStep,
-        ref,
-        props,
-        code,
-        setCode,
-        CELL_COUNT,
-        handleSendConfirmationCode,
-        getCellOnLayoutHandler
+    activeItem,
+    setActiveItem,
+    setIsOpenDropdown,
+    dropdownContainerStyle,
+    mobilePhone,
+    setMobilePhone,
+    loading,
+    handleSendOTPOnPhone,
+    setIsSecondStep,
+    ref,
+    props,
+    code,
+    setCode,
+    CELL_COUNT,
+    handleSendConfirmationCode,
+    getCellOnLayoutHandler
   } = usePhoneChange()
   
   return (
@@ -88,6 +61,7 @@ const PhoneChange = () => {
                       width: '100%',
                     }}>
                     <Dropdown
+                      testID="phone-change-dropdown"
                       data={items}
                       value={activeItem}
                       valueField="value"
@@ -173,7 +147,7 @@ const PhoneChange = () => {
                       />
                     </View>
                   </View>
-                  <Button title="Send OTP" loading={loading} onPress={handleSendOTPOnPhone} disabled={mobilePhone.length < 11} />
+                  <Button testID="send-otp-button" title="Send OTP" loading={loading} onPress={handleSendOTPOnPhone} disabled={mobilePhone.length < 11} />
                 </>
               ) : (
                 <>
@@ -204,6 +178,7 @@ const PhoneChange = () => {
                       </TouchableOpacity>
                     </View>
                     <Text
+                      testID='verification-text'
                       style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812), textAlign: 'center', marginTop: 34}}>
                       Please enter verification code sent to your mobile{' '}
                       <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(18, 812)}}>
