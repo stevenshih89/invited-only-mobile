@@ -21,7 +21,6 @@ import FemaleExampleSelfie from 'assets/images/auth/female-selfie-example.png';
 import {backgroundGradientColors, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {PERMISSIONS, request} from 'react-native-permissions';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {invitationCodePath, photoVerifiedPath} from 'constants/pathLocations';
@@ -34,11 +33,13 @@ import analytics from '@react-native-firebase/analytics';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {useCameraPermission} from 'hooks/useCameraPermission';
 
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const [imageUri, setImageUri] = useState<string | undefined>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const {requestCameraPermission} = useCameraPermission();
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
@@ -124,9 +125,12 @@ const VerifySecondStep: FC = (): JSX.Element => {
 
   const openCamera = async () => {
     if (isIos) {
-      const cameraPermission = await request(PERMISSIONS.IOS.CAMERA);
+      try {
+        const hasPermission = await requestCameraPermission();
+        if (!hasPermission) {
+          return;
+        }
 
-      if (cameraPermission === 'granted') {
         await launchCamera(
           {
             mediaType: 'photo',
@@ -161,13 +165,15 @@ const VerifySecondStep: FC = (): JSX.Element => {
             if (response.errorCode === 'permission') {
               return Alert.alert('Permission not granted');
             }
+
             if (response.assets) {
               setImageUri(response.assets[0].uri);
             }
           },
         );
-      } else {
-        Alert.alert('Camera permission not granted');
+      } catch (error) {
+        console.error('Error requesting camera permission:', error);
+        Alert.alert('Error', 'Failed to access camera. Please try again.');
       }
     }
   };
