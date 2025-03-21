@@ -1,7 +1,14 @@
 import {create} from 'zustand';
 
-export const useCounterSuperEvents = create(set => ({
+interface CounterSuperEventsState {
+  counterSuperInvites: number;
+  setCounterSuperInvites: (value: number) => void;
+  decrementCounterSuperInvites: (value: number) => void;
+}
+
+export const useCounterSuperEvents = create<CounterSuperEventsState>(set => ({
   counterSuperInvites: 0,
-  setCounterSuperInvites: (value: number) => set(() => ({ counterSuperInvites: value })),
-  decrementCounterSuperInvites: (value: number) => set((state: { counterSuperInvites: number; }) => ({ counterSuperInvites: state.counterSuperInvites - value })),
+  setCounterSuperInvites: (value: number) => set(() => ({counterSuperInvites: value})),
+  decrementCounterSuperInvites: (value: number) =>
+    set((state: CounterSuperEventsState) => ({counterSuperInvites: state.counterSuperInvites - value})),
 }));

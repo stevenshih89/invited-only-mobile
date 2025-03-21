@@ -1,3 +1,3 @@
-jest.mock('../../src/hooks/useIO', () => ({
-    useIO: jest.fn(),
+jest.mock('../../src/hooks/useIO/useIO', () => ({
+  useIO: jest.fn(),
 }));

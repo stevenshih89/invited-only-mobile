@@ -1,7 +1,7 @@
 import {fireEvent, render, waitFor, act} from '@testing-library/react-native';
 import IO from './IO';
 import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
-import {useIO} from 'hooks/useIO';
+import {useIO} from 'hooks/useIO/useIO';
 import {Text, View} from 'react-native';
 
 describe('IO Component', () => {
@@ -15,23 +15,23 @@ describe('IO Component', () => {
   it('renders correctly loading for guest', async () => {
     (useIO as jest.Mock).mockReturnValue({
       isHost: false,
-      events: []
+      events: [],
     });
-  
+
     const {findByText} = render(<IO />);
-    
+
     const loadingText = await findByText('Finding events near you ...');
     expect(loadingText).toBeTruthy();
   });
-  
+
   it('renders correctly loading for host', async () => {
     (useIO as jest.Mock).mockReturnValue({
       isHost: true,
-      events: []
+      events: [],
     });
-  
+
     const {findByText} = render(<IO />);
-  
+
     const loadingText = await findByText('Finding guests near you ...');
     expect(loadingText).toBeTruthy();
   });
@@ -42,12 +42,14 @@ describe('IO Component', () => {
       events: [],
       userInfo: {
         accountReviewed: false,
-        accountConfirmed: false
-      }
+        accountConfirmed: false,
+      },
     });
-  
+
     const {findByText} = render(<IO />);
-    const noEventsText = await findByText('Your account is under review. Thank you for your patience. You will be notified if your account is accepted');
+    const noEventsText = await findByText(
+      'Your account is under review. Thank you for your patience. You will be notified if your account is accepted',
+    );
     expect(noEventsText).toBeTruthy();
   });
 
@@ -57,12 +59,14 @@ describe('IO Component', () => {
       events: [],
       userInfo: {
         accountReviewed: false,
-        accountConfirmed: false
-      }
+        accountConfirmed: false,
+      },
     });
-  
+
     const {findByText} = render(<IO />);
-    const noEventsText = await findByText('Your account is under review. Thank you for your patience. You will be notified if your account is accepted');
+    const noEventsText = await findByText(
+      'Your account is under review. Thank you for your patience. You will be notified if your account is accepted',
+    );
     expect(noEventsText).toBeTruthy();
   });
 
@@ -70,7 +74,7 @@ describe('IO Component', () => {
 
   // it('renders correctly if events are empty and triggers getCardsListForGuest', async () => {
   //   const getCardsListForGuestMock = jest.fn();
-  
+
   //   (useIO as jest.Mock).mockReturnValue({
   //     isHost: false,
   //     events: [],
@@ -84,12 +88,12 @@ describe('IO Component', () => {
   //     endReachedRef: { current: false },
   //     getCardsListForGuest: getCardsListForGuestMock,
   //   });
-  
+
   //   render(<IO />);
-  
+
   //   await waitFor(() => expect(getCardsListForGuestMock).toHaveBeenCalled());
   // });
-  
+
   // it('renders correctly if events is empty', async () => {
   //   (useIO as jest.Mock).mockReturnValue({
   //     isHost: false,
@@ -107,41 +111,37 @@ describe('IO Component', () => {
   //       accountConfirmed: true
   //     },
   //   });
-  
+
   //   const {findByText} = render(<IO />);
   //   expect(findByText('Soon, Everything Changes.')).toBeTruthy;
   // });
 
   ////////////////////////////////////////////////////////////
-  
-  
+
   // it('handles tap user info', async () => {
   //   (useIO as jest.Mock).mockReturnValue({
   //     isHost: false,
   //     events: [],
   //   });
-  
+
   //   const { findByTestId, queryByText, debug, findByText} = render(<IO />);
   //   await findByText('Finding events near you ...');
 
-  
   //   await waitFor(() => {
   //     const element = queryByText('Finding events near you ...');
   //     expect(element).toBeNull();
   //   });
-  
+
   //   debug();
-  
+
   //   const button = await findByTestId('navigate-from-io-to-profile');
-  
+
   //   fireEvent.press(button);
-  
+
   //   await waitFor(() => {
   //     expect(mockedNavigateFunction).toHaveBeenCalledWith('/user-profile');
   //   });
   // }, 10000);
-  
-
 
   // it('renders correctly cards if is host', async () => {
   //   (useIO as jest.Mock).mockReturnValue({
@@ -224,21 +224,21 @@ describe('IO Component', () => {
   //   });
   //   const {getByText} = render(<IO />);
   //   expect(getByText('Event 1')).toBeTruthy();
-    // expect(getByText('Super Join')).toBeTruthy();
-    // expect(getByText('Join')).toBeTruthy();
-    // expect(getByText('Host')).toBeTruthy();
-    // expect(getByText('Guest Invitation')).toBeTruthy();
-    // expect(getByText('Event Details')).toBeTruthy();
-    // expect(getByText('Name')).toBeTruthy();
-    // expect(getByText('Date')).toBeTruthy();
-    // expect(getByText('Time')).toBeTruthy();
-    // expect(getByText('Location')).toBeTruthy();
-    // expect(getByText('Invitations')).toBeTruthy();
-    // expect(getByText('Place name')).toBeTruthy();
-    // expect(getByText('Event name')).toBeTruthy();
-    // expect(getByText('Event description')).toBeTruthy();
-    // expect(getByText('Address')).toBeTruthy();
-    // expect(getByText('Block and Report')).toBeTruthy();
+  // expect(getByText('Super Join')).toBeTruthy();
+  // expect(getByText('Join')).toBeTruthy();
+  // expect(getByText('Host')).toBeTruthy();
+  // expect(getByText('Guest Invitation')).toBeTruthy();
+  // expect(getByText('Event Details')).toBeTruthy();
+  // expect(getByText('Name')).toBeTruthy();
+  // expect(getByText('Date')).toBeTruthy();
+  // expect(getByText('Time')).toBeTruthy();
+  // expect(getByText('Location')).toBeTruthy();
+  // expect(getByText('Invitations')).toBeTruthy();
+  // expect(getByText('Place name')).toBeTruthy();
+  // expect(getByText('Event name')).toBeTruthy();
+  // expect(getByText('Event description')).toBeTruthy();
+  // expect(getByText('Address')).toBeTruthy();
+  // expect(getByText('Block and Report')).toBeTruthy();
   // });
 
   // it('render cross in card', async () => {

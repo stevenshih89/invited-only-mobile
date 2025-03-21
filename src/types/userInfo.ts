@@ -95,4 +95,5 @@ export interface UserInfo extends User.Info {
   languges?: User.Languages[];
   socialNickname: User.SocialNickname;
   notificationSettings: User.NotificationSettings;
+  joinEvents: number;
 }

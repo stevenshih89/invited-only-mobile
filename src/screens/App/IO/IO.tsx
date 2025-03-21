@@ -61,7 +61,7 @@ import CardsFakeState from 'components/CardsFakeState';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import firebase from '@react-native-firebase/app';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {useIO} from 'hooks/useIO';
+import {useIO} from 'hooks/useIO/useIO';
 import * as S from './IO.style';
 import {useCreateEvent} from 'hooks/useCreateEvent';
 
