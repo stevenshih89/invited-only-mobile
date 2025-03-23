@@ -6,7 +6,7 @@ import {AuthProvider} from 'contexts/AuthContext.tsx';
 import LocalNotification from 'components/LocalNotification/LocalNotification.tsx';
 import {EventProvider} from 'contexts/EventContext';
 import {EventsDateProvider} from 'contexts/EventsDate';
-import Navigator from './Navigator';
+import Navigator from './navigator';
 
 const Main = () => {
   return (

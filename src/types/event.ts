@@ -14,6 +14,7 @@ export namespace Event {
     superInvite: boolean;
     userPhoto: string;
     createdAt?: string;
+    isSuperInvite?: boolean;
   }
   export interface RejectUser {
     uid: string;
