@@ -1,32 +1,20 @@
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {Event, EventData} from 'src/types/event';
 import {cancelAnimation, Easing, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
 import {sendNotification} from 'helpers/fcmHelper';
-import {
-    commonStackPath,
-    eventCreatingStackPath,
-    IOPath,
-    markAttendancePath,
-    paymentPath,
-  } from 'constants/pathLocations';
-import {
-    ACCEPTED_STATUS,
-    APPROVED_STATUS,
-    CANCEL_STATUS,
-    INVITE_MATCH_STATUS,
-    NOT_ACCEPTED_STATUS,
-} from 'constants/common.ts';
+import {commonStackPath, eventCreatingStackPath, IOPath, markAttendancePath, paymentPath} from 'constants/pathLocations';
+import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common.ts';
 import {useAdminActions} from 'src/store/adminActions';
-import { useUser } from 'src/store/userStore';
+import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast.ts';
 import {useFocusEffect} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import {useCallback, useEffect, useRef, useState} from 'react';
-import { useMyEvents } from 'src/store/myEvents';
-import { useCreateEvent } from './useCreateEvent';
+import {useMyEvents} from 'src/store/myEvents';
+import {useCreateEvent} from './useCreateEvent';
 
 const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
 const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -49,7 +37,7 @@ export const useMyEventsScreen = (navigation: any) => {
   const changeAccountTypeModalVisible = useAdminActions((i: any) => i?.changeAccountTypeModalVisible);
   const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
 
-  const goToCreateEvent = useCreateEvent()
+  const goToCreateEvent = useCreateEvent();
 
   const [activeModalEvent, setActiveModalEvent] = useState<any>({
     id: 0,
@@ -91,7 +79,6 @@ export const useMyEventsScreen = (navigation: any) => {
       cancelAnimation(rotationLoader);
     };
   }, [rotationLoader, loadingEvents]);
-
 
   const calculateHoursUntilEvent = (eventDate, eventTime) => {
     const now = new Date();
@@ -147,7 +134,7 @@ export const useMyEventsScreen = (navigation: any) => {
         isReminders: true,
       });
     } catch (error) {
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   };
 
@@ -192,7 +179,7 @@ export const useMyEventsScreen = (navigation: any) => {
           usersList: [...filteredGuests, updatedUser],
         });
     } catch (error) {
-      logErrorToSentry(error)
+      logErrorToSentry(error);
       console.error('error updating guest:', error);
     }
   };
@@ -246,7 +233,7 @@ export const useMyEventsScreen = (navigation: any) => {
         setHostInfo(hostDoc.data());
       }
     } catch (error) {
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   };
 
@@ -264,19 +251,19 @@ export const useMyEventsScreen = (navigation: any) => {
   const handleMarkAttendance = async (isPresentMarkedByGuest: boolean) => {
     try {
       const eventQuerySnapshot = await firestore().collection(apiEventsCollection).doc(eventDataMarkAttendance?.id).get();
-    const eventDataList = eventQuerySnapshot.data();
-    const updatedUsersList = eventDataList?.usersList?.map((userItem: Event.User) => {
-      if (userItem.uid === userInfo?.uid) {
-        return {...userItem, isPresentMarkedByGuest};
-      }
-      return userItem;
-    });
-    await firestore().collection(apiEventsCollection).doc(eventDataMarkAttendance?.id).update({
-      usersList: updatedUsersList,
-    });
-    setIsVisibleMarkAttendance(false);
+      const eventDataList = eventQuerySnapshot.data();
+      const updatedUsersList = eventDataList?.usersList?.map((userItem: Event.User) => {
+        if (userItem.uid === userInfo?.uid) {
+          return {...userItem, isPresentMarkedByGuest};
+        }
+        return userItem;
+      });
+      await firestore().collection(apiEventsCollection).doc(eventDataMarkAttendance?.id).update({
+        usersList: updatedUsersList,
+      });
+      setIsVisibleMarkAttendance(false);
     } catch (error) {
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   };
 
@@ -397,7 +384,7 @@ export const useMyEventsScreen = (navigation: any) => {
       }
       setIsVisibleAcceptInvitationModal(false);
     } catch (e) {
-      logErrorToSentry(e)
+      logErrorToSentry(e);
       // console.log(e);
     }
   };
@@ -478,7 +465,7 @@ export const useMyEventsScreen = (navigation: any) => {
       });
     } catch (e) {
       showToast('inviteMatch', 'Failed to cancel the invitation. Please try again later.', 'Error');
-      logErrorToSentry(e)
+      logErrorToSentry(e);
       // console.log(e);
     }
   };
@@ -516,50 +503,50 @@ export const useMyEventsScreen = (navigation: any) => {
       let myEventsSubscribe: any;
       let eventsJoiningSubscribe: any;
       if (userInfo?.uid) {
-       try {
-        myEventsSubscribe = firestore()
-        .collection(apiEventsCollection)
-        .where('uid', '==', `${userInfo?.uid}`)
-        .onSnapshot(querySnapshot => {
-          if (querySnapshot.empty) {
-            setMyEventsData([]);
-            return;
-          }
-          const data = querySnapshot?.docs?.map(i => i?.data());
-          const oneMonthAgo = moment().subtract(1, 'months');
-          const filterMonth = data.filter(event => {
-            const eventDate = moment(event.date, 'DD.MM.YYYY');
-            return eventDate.isAfter(oneMonthAgo);
-          });
-          const sortedData = filterMonth.sort((a, b) => {
-            if (a.isCancelled && !b.isCancelled) {
-              return 1;
-            }
-            if (!a.isCancelled && b.isCancelled) {
-              return -1;
-            }
-
-            if (a?.date && a?.hour && b?.date && b?.hour) {
-              const adjustedDateA = moment(`${a.date}, ${a.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-              const adjustedDateB = moment(`${b.date}, ${b.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-              const now = moment();
-
-              if (adjustedDateA.isBefore(now) && !adjustedDateB.isBefore(now)) {
-                return 1;
+        try {
+          myEventsSubscribe = firestore()
+            .collection(apiEventsCollection)
+            .where('uid', '==', `${userInfo?.uid}`)
+            .onSnapshot(querySnapshot => {
+              if (querySnapshot.empty) {
+                setMyEventsData([]);
+                return;
               }
-              if (!adjustedDateA.isBefore(now) && adjustedDateB.isBefore(now)) {
-                return -1;
-              }
-            }
+              const data = querySnapshot?.docs?.map(i => i?.data());
+              const oneMonthAgo = moment().subtract(1, 'months');
+              const filterMonth = data.filter(event => {
+                const eventDate = moment(event.date, 'DD.MM.YYYY');
+                return eventDate.isAfter(oneMonthAgo);
+              });
+              const sortedData = filterMonth.sort((a, b) => {
+                if (a.isCancelled && !b.isCancelled) {
+                  return 1;
+                }
+                if (!a.isCancelled && b.isCancelled) {
+                  return -1;
+                }
 
-            return 0;
-          });
-          setMyEventsData(sortedData);
-          setLoadingEvents(false);
-        });
-       } catch (error) {
-        logErrorToSentry(error)
-       }
+                if (a?.date && a?.hour && b?.date && b?.hour) {
+                  const adjustedDateA = moment(`${a.date}, ${a.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+                  const adjustedDateB = moment(`${b.date}, ${b.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
+                  const now = moment();
+
+                  if (adjustedDateA.isBefore(now) && !adjustedDateB.isBefore(now)) {
+                    return 1;
+                  }
+                  if (!adjustedDateA.isBefore(now) && adjustedDateB.isBefore(now)) {
+                    return -1;
+                  }
+                }
+
+                return 0;
+              });
+              setMyEventsData(sortedData);
+              setLoadingEvents(false);
+            });
+        } catch (error) {
+          logErrorToSentry(error);
+        }
       }
 
       eventsJoiningSubscribe = firestore()
@@ -695,5 +682,5 @@ export const useMyEventsScreen = (navigation: any) => {
     goToMarkAttendance,
     handleMarkAttendance,
     incrementCount,
-  }   
-}
+  };
+};
