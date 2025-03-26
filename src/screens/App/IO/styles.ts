@@ -2,15 +2,7 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
 //import components
-import {
-  black2Color,
-  black60Color,
-  blackColor,
-  lightGray6Color,
-  lightGreenColor,
-  lightRed1Color,
-  whiteColor
-} from "constants/colors.ts";
+import {black60Color, blackColor, lightGray6Color, lightGreenColor, lightRed1Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi400, Satoshi700, Satoshi500} from 'constants/fonts.ts';
 
 const screenHeight: number = Dimensions.get('window').height;

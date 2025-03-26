@@ -1,4 +1,9 @@
-import React, {forwardRef, useImperativeHandle, useCallback, PropsWithRef} from 'react';
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useCallback,
+  PropsWithRef,
+} from 'react';
 import Animated, {
   useSharedValue,
   withSpring,
@@ -9,12 +14,18 @@ import Animated, {
   runOnJS,
   withTiming,
   Easing,
-  withDecay,
 } from 'react-native-reanimated';
-import {PanGestureHandler, PanGestureHandlerGestureEvent} from 'react-native-gesture-handler';
-import {CardItemHandle, TinderCardOptions} from 'rn-tinder-card-bn-digital';
+import {
+  PanGestureHandler,
+  PanGestureHandlerGestureEvent,
+} from 'react-native-gesture-handler';
+import { CardItemHandle, TinderCardOptions } from 'rn-tinder-card-bn-digital';
 
-import {resetPosition, updatePosition, snapPoint, windowWidth, windowHeight, userConfig} from './utils';
+import { resetPosition, updatePosition, snapPoint, userConfig } from './utils';
+import {
+  screenWidth as windowWidth,
+  screenHeight as windowHeight,
+} from 'constants/common';
 import OverlayLabel from './components/OverlayLabel';
 
 const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
@@ -51,7 +62,7 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
       children,
       disableVerticalSwipe,
     },
-    ref,
+    ref
   ) => {
     const translateX = useSharedValue(0);
     const translateY = useSharedValue(0);
@@ -73,18 +84,26 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
             easing: Easing.inOut(Easing.ease),
           });
       },
-      onActive: ({translationX, translationY}, ctx) => {
+      onActive: ({ translationX, translationY }, ctx) => {
         translateX.value = translationX + ctx.startX;
 
         if (!disableVerticalSwipe) {
           translateY.value = translationY + ctx.startY;
         }
       },
-      onEnd: ({velocityX, velocityY, translationX, translationY}) => {
+      onEnd: ({ velocityX, velocityY, translationX, translationY }) => {
         const positiveX = Math.abs(translationX);
         const positiveY = Math.abs(translationY);
-        const destX = snapPoint(translateX.value, velocityX, translateXRange ?? []);
-        const destY = snapPoint(translateY.value, velocityY, translateYRange ?? []);
+        const destX = snapPoint(
+          translateX.value,
+          velocityX,
+          translateXRange ?? []
+        );
+        const destY = snapPoint(
+          translateY.value,
+          velocityY,
+          translateYRange ?? []
+        );
         if (positiveX > positiveY) {
           updatePosition(
             destX,
@@ -95,15 +114,23 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
             disableRightSwipe,
             disableLeftSwipe,
             onSwipedRight,
-            onSwipedLeft,
+            onSwipedLeft
           );
         } else if (!disableVerticalSwipe && destY) {
-          if (positiveY > positiveX && Math.sign(translationY) === -1 && !disableTopSwipe) {
+          if (
+            positiveY > positiveX &&
+            Math.sign(translationY) === -1 &&
+            !disableTopSwipe
+          ) {
             translateY.value = withSpring(-windowHeight, {
               velocity: velocityY,
             });
             onSwipedTop && runOnJS(onSwipedTop)();
-          } else if (positiveY > positiveX && Math.sign(translationY) === 1 && !disableBottomSwipe) {
+          } else if (
+            positiveY > positiveX &&
+            Math.sign(translationY) === 1 &&
+            !disableBottomSwipe
+          ) {
             translateY.value = withSpring(windowHeight, {
               velocity: velocityY,
             });
@@ -122,9 +149,14 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
     });
 
     const animatedStyle = useAnimatedStyle(() => {
-      const translationX = interpolate(translateX.value, inputRotationRange ?? [], outputRotationRange ?? [], {
-        extrapolateRight: Extrapolation.CLAMP,
-      });
+      const translationX = interpolate(
+        translateX.value,
+        inputRotationRange ?? [],
+        outputRotationRange ?? [],
+        {
+          extrapolateRight: Extrapolation.CLAMP,
+        }
+      );
 
       return {
         transform: [
@@ -147,8 +179,23 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
       translateY.value = withSpring(0, userConfig);
       const destX = snapPoint(windowWidth, 100, translateXRange ?? []);
 
-      updatePosition(destX, translateX, translateY, cardWidth, 100, disableRightSwipe, disableLeftSwipe);
-    }, [translateY, translateX, translateXRange, cardWidth, disableRightSwipe, disableLeftSwipe]);
+      updatePosition(
+        destX,
+        translateX,
+        translateY,
+        cardWidth,
+        100,
+        disableRightSwipe,
+        disableLeftSwipe
+      );
+    }, [
+      translateY,
+      translateX,
+      translateXRange,
+      cardWidth,
+      disableRightSwipe,
+      disableLeftSwipe,
+    ]);
 
     const swipeCardLeft = useCallback(() => {
       translateY.value = withSpring(0, userConfig);
@@ -162,16 +209,42 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
 
         -100,
         disableRightSwipe,
-        disableLeftSwipe,
+        disableLeftSwipe
       );
-    }, [translateY, translateX, translateXRange, cardWidth, disableRightSwipe, disableLeftSwipe]);
+    }, [
+      translateY,
+      translateX,
+      translateXRange,
+      cardWidth,
+      disableRightSwipe,
+      disableLeftSwipe,
+    ]);
 
     const swipeRight = useCallback(() => {
       translateY.value = withSpring(0, userConfig);
       const destX = snapPoint(windowWidth, 100, translateXRange ?? []);
 
-      updatePosition(destX, translateX, translateY, cardWidth, 100, disableRightSwipe, disableLeftSwipe, onSwipedRight, onSwipedLeft);
-    }, [translateY, translateX, translateXRange, cardWidth, disableRightSwipe, disableLeftSwipe, onSwipedRight, onSwipedLeft]);
+      updatePosition(
+        destX,
+        translateX,
+        translateY,
+        cardWidth,
+        100,
+        disableRightSwipe,
+        disableLeftSwipe,
+        onSwipedRight,
+        onSwipedLeft
+      );
+    }, [
+      translateY,
+      translateX,
+      translateXRange,
+      cardWidth,
+      disableRightSwipe,
+      disableLeftSwipe,
+      onSwipedRight,
+      onSwipedLeft,
+    ]);
 
     const swipeLeft = useCallback(() => {
       translateY.value = withSpring(0, userConfig);
@@ -187,9 +260,18 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
         disableRightSwipe,
         disableLeftSwipe,
         onSwipedRight,
-        onSwipedLeft,
+        onSwipedLeft
       );
-    }, [translateY, translateX, translateXRange, cardWidth, disableRightSwipe, disableLeftSwipe, onSwipedRight, onSwipedLeft]);
+    }, [
+      translateY,
+      translateX,
+      translateXRange,
+      cardWidth,
+      disableRightSwipe,
+      disableLeftSwipe,
+      onSwipedRight,
+      onSwipedLeft,
+    ]);
 
     const swipeTop = useCallback(() => {
       translateY.value = withSpring(-windowHeight, userConfig);
@@ -229,7 +311,8 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
               height: cardHeight,
             },
             animatedStyle,
-          ]}>
+          ]}
+        >
           {OverlayLabelLeft && (
             <OverlayLabel
               inputRange={inputOverlayLabelLeftOpacityRange}
@@ -267,7 +350,7 @@ const CardItem = forwardRef<CardItemHandle, PropsWithRef<TinderCardOptions>>(
         </Animated.View>
       </PanGestureHandler>
     );
-  },
+  }
 );
 
 export default CardItem;

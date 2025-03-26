@@ -1004,23 +1004,15 @@ const IO: FC = (): JSX.Element => {
             <View testID="events-list" style={styles.container}>
               {cardsList?.map((item, index) => {
                 return (
-                  <View testID={item.id} style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
+                  <View testID={item.info.id} style={styles.cardContainer} pointerEvents="box-none" key={index.toString()}>
                     <TinderCard
                       ref={cardRef}
                       // @ts-ignore
                       cardWidth="100%"
                       // @ts-ignore
                       cardHeight="100%"
-                      onSwipedLeft={() =>
-                        isDemo
-                          ? handleDemoSwipeCardLeft({uid: item?.info?.uid, withSwipeAnimation: false})
-                          : handleReject({uid: item?.info?.uid, id: item?.info?.id, withSwipeAnimation: false})
-                      }
-                      onSwipedRight={() =>
-                        isDemo
-                          ? handleDemoSwipeCardRight({uid: item?.info?.uid, withSwipeAnimation: false})
-                          : handleInvite({uid: item?.info?.uid, id: item?.info?.id, withSwipeAnimation: false})
-                      }
+                      onSwipedLeft={() => handleDemoSwipeCardLeft({uid: item?.info?.uid, withSwipeAnimation: false})}
+                      onSwipedRight={() => handleDemoSwipeCardRight({uid: item?.info?.uid, withSwipeAnimation: false})}
                       OverlayLabelRight={OverlayRight}
                       OverlayLabelLeft={OverlayLeft}
                       disableBottomSwipe={true}
@@ -1335,7 +1327,7 @@ const IO: FC = (): JSX.Element => {
           )}
         </View>
       </SafeAreaView>
-      <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} />
+      {isVisibleMatch && <Match isVisibleMatch={isVisibleMatch} matchData={matchData} onCloseMatch={handleCloseMatch} />}
     </>
   );
 };

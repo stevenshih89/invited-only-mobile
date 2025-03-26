@@ -21,7 +21,10 @@ const OverlayLabel = ({
 }: Props) => {
   const animatedStyle = useAnimatedStyle(() => {
     const isValidArray = (arr: any) => {
-      return arr.every((item: any) => item !== null && item !== undefined && !Number.isNaN(item));
+      return arr.every(
+        (item: any) =>
+          item !== null && item !== undefined && !Number.isNaN(item)
+      );
     };
     const validInputRange = isValidArray(inputRange) ? inputRange : [0, 1];
     const validOutputRange = isValidArray(outputRange) ? outputRange : [1, 0];

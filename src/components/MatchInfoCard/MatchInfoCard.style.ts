@@ -1,9 +1,9 @@
 import styled from 'styled-components/native';
-import {black4Color, blackColor, lightGreenColor, orangeClose, transparentWhite30Color, whiteColor } from 'constants/colors';
-import { Satoshi500, Satoshi700 } from 'constants/fonts';
-import { RFValue } from 'react-native-responsive-fontsize';
+import {black4Color, blackColor, lightGreenColor, whiteColor} from 'constants/colors';
+import {Satoshi500, Satoshi700} from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
-import { screenHeight, screenWidth } from 'constants/common';
+import {screenHeight, screenWidth} from 'constants/common';
 import LinearGradient from 'react-native-linear-gradient';
 
 export const EventImage = styled(FastImage)`
@@ -13,14 +13,14 @@ export const EventImage = styled(FastImage)`
 `;
 
 export const OverlayGradient = styled(LinearGradient).attrs({
-    colors: ['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)'],
-  })`
-    position: absolute;
-    bottom: 68px;
-    left: 0;
-    right: 0;
-    height: 40px;
-    z-index: 1;
+  colors: ['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)'],
+})`
+  position: absolute;
+  bottom: 68px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  z-index: 1;
 `;
 
 export const OnlineIndicator = styled.View`
@@ -50,34 +50,33 @@ export const BadgeText = styled.Text`
 `;
 
 export const PremiumGradient = styled(LinearGradient).attrs({
-    colors: ['#977B4A', '#E5D291', '#A28453'],
-    start: {x: 0, y: 0},
-    end: {x: 1, y: 0}
+  colors: ['#977B4A', '#E5D291', '#A28453'],
+  start: {x: 0, y: 0},
+  end: {x: 1, y: 0},
 })`
   margin-left: 6px;
   aligns-self: flex-start;
   border-radius: 3px;
   padding: 2px 6px;
-  backgroundColor: ${blackColor};
-`
+  backgroundcolor: ${blackColor};
+`;
 export const TextPremium = styled.Text`
   color: ${blackColor};
   font-family: ${Satoshi700};
   font-size: ${RFValue(6, 812)}px;
-`
+`;
 
 export const UserInfoWrapper = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-`
+`;
 
 export const NameText = styled.Text`
   color: ${whiteColor};
   font-family: ${Satoshi700};
   font-size: ${RFValue(12, 812)}px;
 `;
-
 
 export const AgeText = styled.Text`
   color: ${whiteColor};
@@ -113,7 +112,7 @@ export const GuestInfoContainer = styled.View`
   border-radius: 6px;
   flex-direction: row;
   align-items: center;
-`
+`;
 
 export const JoinEventsText = styled.Text`
   font-size: ${RFValue(10, 812)}px;
@@ -121,5 +120,4 @@ export const JoinEventsText = styled.Text`
   font-family: ${Satoshi500};
   margin-left: 5px;
   margin-right: 10px;
-`
-
+`;

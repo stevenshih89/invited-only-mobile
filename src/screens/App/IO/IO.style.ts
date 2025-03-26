@@ -1,10 +1,10 @@
-import { blackColor, lightGreenColor, transparentWhite16Color, transparentWhite56Color, whiteColor } from 'constants/colors';
-import { screenHeight } from 'constants/common';
-import { Satoshi400, Satoshi700 } from 'constants/fonts';
+import {blackColor, lightGreenColor, transparentWhite16Color, transparentWhite56Color, whiteColor} from 'constants/colors';
+import {screenHeight} from 'constants/common';
+import {Satoshi400, Satoshi700} from 'constants/fonts';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated from 'react-native-reanimated';
-import { RFValue } from 'react-native-responsive-fontsize';
+import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 
 export const CustomButton = styled.TouchableOpacity`
@@ -164,4 +164,3 @@ export const DemoReportContainer = styled.View`
   margin-top: 10px;
   margin-bottom: ${screenHeight / 40}px;
 `;
-

@@ -1,8 +1,6 @@
-import {fireEvent, render, waitFor, act} from '@testing-library/react-native';
+import {render} from '@testing-library/react-native';
 import IO from './IO';
-import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
 import {useIO} from 'hooks/useIO/useIO';
-import {Text, View} from 'react-native';
 
 describe('IO Component', () => {
   beforeEach(() => {

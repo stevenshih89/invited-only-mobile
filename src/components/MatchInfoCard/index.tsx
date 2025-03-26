@@ -1,10 +1,9 @@
 import {FC} from 'react';
 import {View, Text} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import * as S from './MatchInfoCard.style'
+import * as S from './MatchInfoCard.style';
 
 //import components
-import {black4Color, blackColor, lightGreenColor, whiteColor} from 'constants/colors.ts';
+import {black4Color, blackColor} from 'constants/colors.ts';
 
 //import icons
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
@@ -14,7 +13,7 @@ import LocationBlackIcon from 'assets/images/icons/location-black.svg';
 import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
-import {screenHeight, screenWidth} from 'constants/common';
+import {screenWidth} from 'constants/common';
 
 interface MatchInfoCardI {
   isProfile: boolean;
@@ -59,7 +58,7 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
     const filter = usersList?.filter(item => item.status === 'invite_match');
     return filter?.length ? filter.length : 0;
   };
-  
+
   return (
     <S.EventImage
       style={[
@@ -69,37 +68,21 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
         styleContainer,
       ]}
       source={{uri: imageEvent && !isGuest ? imageEvent : image}}>
-      <S.OverlayGradient/>
+      <S.OverlayGradient />
       {showHeaderInfo && (
         <View style={{flexDirection: 'row', padding: 15}}>
           <View style={{alignSelf: 'flex-start'}}>
             <FastImage style={{width: 30, height: 30, borderRadius: 30}} source={{uri: image}} />
-            {online && (
-              <S.OnlineIndicator />
-            )}
+            {online && <S.OnlineIndicator />}
           </View>
           <View style={{marginLeft: 6, justifyContent: 'center'}}>
             <View style={{flexDirection: 'row'}}>
               <S.BadgeContainer>
-                {accountType === 'guest' && (
-                  <S.BadgeText>
-                    Guest
-                  </S.BadgeText>
-                )}
-                {accountType === 'host' && (
-                  <S.BadgeText>
-                    Host
-                  </S.BadgeText>
-                )}
+                {accountType === 'guest' && <S.BadgeText>Guest</S.BadgeText>}
+                {accountType === 'host' && <S.BadgeText>Host</S.BadgeText>}
               </S.BadgeContainer>
               {premium && (
-                <S.PremiumGradient>
-                  {(premium || accountType === 'guest') && (
-                    <S.TextPremium>
-                      Premium
-                    </S.TextPremium>
-                  )}
-                </S.PremiumGradient>
+                <S.PremiumGradient>{(premium || accountType === 'guest') && <S.TextPremium>Premium</S.TextPremium>}</S.PremiumGradient>
               )}
             </View>
             <S.UserInfoWrapper>
@@ -107,21 +90,14 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
                 {name}
                 <Text>,</Text>
               </S.NameText>
-              {!isProfile && (
-                <S.AgeText>
-                  {' '}
-                  {age}
-                </S.AgeText>
-              )}
+              {!isProfile && <S.AgeText> {age}</S.AgeText>}
               <View style={{marginLeft: 5}}>{confirmedAccount && <CheckStarWhite width={12} height={12} />}</View>
             </S.UserInfoWrapper>
           </View>
         </View>
       )}
       <S.FooterContainer>
-        <S.FooterText>
-          {name}
-        </S.FooterText>
+        <S.FooterText>{name}</S.FooterText>
         <View style={{marginLeft: 5}}>{confirmedAccount && <CheckStarWhite width={15} height={15} />}</View>
       </S.FooterContainer>
       <S.DetailsContainer>
@@ -129,32 +105,16 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
           <View style={{flexDirection: 'row'}}>
             <View style={{alignSelf: 'flex-start'}}>
               <FastImage style={{width: 30, height: 30, borderRadius: 30}} source={{uri: image}} />
-              {online && (
-                <S.OnlineIndicator />
-              )}
+              {online && <S.OnlineIndicator />}
             </View>
             <View style={{marginLeft: 6, justifyContent: 'center'}}>
               <View style={{flexDirection: 'row'}}>
                 <S.BadgeContainer>
-                  {accountType === 'guest' && (
-                    <S.BadgeText>
-                      Guest
-                    </S.BadgeText>
-                  )}
-                  {accountType === 'host' && (
-                    <S.BadgeText>
-                      Host
-                    </S.BadgeText>
-                  )}
+                  {accountType === 'guest' && <S.BadgeText>Guest</S.BadgeText>}
+                  {accountType === 'host' && <S.BadgeText>Host</S.BadgeText>}
                 </S.BadgeContainer>
                 {premium && (
-                  <S.PremiumGradient>
-                    {(premium || accountType === 'guest') && (
-                      <S.TextPremium>
-                        Premium
-                      </S.TextPremium>
-                    )}
-                  </S.PremiumGradient>
+                  <S.PremiumGradient>{(premium || accountType === 'guest') && <S.TextPremium>Premium</S.TextPremium>}</S.PremiumGradient>
                 )}
               </View>
               <View
@@ -167,12 +127,7 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
                   {name}
                   {!isProfile && age && <Text>,</Text>}
                 </S.NameText>
-                {!isProfile && age && (
-                  <S.AgeText>
-                    {' '}
-                    {age}
-                  </S.AgeText>
-                )}
+                {!isProfile && age && <S.AgeText> {age}</S.AgeText>}
                 <View style={{marginLeft: 5}}>{confirmedAccount && <CheckStarBlackIcon width={12} height={12} />}</View>
               </View>
             </View>
@@ -207,9 +162,7 @@ const MatchInfoCard: FC<MatchInfoCardI> = ({
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <CalendarCheckBlackIcon width={12} height={12} />
-          <S.JoinEventsText>
-            Join Events: {joinEvents ? joinEvents : 0}
-          </S.JoinEventsText>
+          <S.JoinEventsText>Join Events: {joinEvents ? joinEvents : 0}</S.JoinEventsText>
           {location && (
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <LocationBlackIcon width={12} height={12} />

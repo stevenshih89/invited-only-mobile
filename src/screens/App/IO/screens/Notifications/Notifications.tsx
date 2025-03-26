@@ -1,13 +1,13 @@
 import {FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import useStyles from './styles';
 import {FC, ReactElement, useEffect} from 'react';
-import LoaderIcon from 'assets/images/icons/loader.svg'
+import LoaderIcon from 'assets/images/icons/loader.svg';
 import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import FastImage from 'react-native-fast-image';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
-import { useNotifications } from 'hooks/useNotifications';
+import {useNotifications} from 'hooks/useNotifications';
 
 interface Notifications {
   body: string;
@@ -22,13 +22,7 @@ interface Notifications {
 const COUNT_NOTIFICATIONS_TO_ADD = 5;
 
 const Notifications: FC = (): ReactElement => {
-  const {
-    loading,
-    notifications,
-    handleClearNotifications,
-    setLimitNotifications,
-    handleNavigate,
-  } = useNotifications()
+  const {loading, notifications, handleClearNotifications, setLimitNotifications, handleNavigate} = useNotifications();
 
   const rotationLoader = useSharedValue(0);
 
@@ -55,7 +49,7 @@ const Notifications: FC = (): ReactElement => {
   });
 
   const styles = useStyles();
-  
+
   if (loading) {
     return (
       <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: blackColor}}>
