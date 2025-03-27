@@ -1017,6 +1017,7 @@ const IO: FC = (): JSX.Element => {
                       OverlayLabelLeft={OverlayLeft}
                       disableBottomSwipe={true}
                       disableTopSwipe={true}
+                      translateXRange={[-70, 0, 70]}
                       cardStyle={styles.card}>
                       <ScrollView
                         onScroll={handleScroll}
@@ -1270,8 +1271,6 @@ const IO: FC = (): JSX.Element => {
                   OverlayLabelLeft={OverlayLeft}
                   disableBottomSwipe={true}
                   disableTopSwipe={true}
-                  inputOverlayLabelRightOpacityRange={[0, 40]}
-                  inputOverlayLabelLeftOpacityRange={[0, -40]}
                   translateXRange={[-70, 0, 70]}
                   cardStyle={styles.card}>
                   <ScrollView

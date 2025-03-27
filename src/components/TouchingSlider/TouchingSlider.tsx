@@ -93,7 +93,7 @@ interface TouchingSliderProps {
   setScrollPosition: (value: number) => void;
 }
 
-const HEIGHT_CARD = screenHeight < 896? screenHeight * 0.64: screenHeight * 0.66
+const HEIGHT_CARD = screenHeight < 896 ? screenHeight * 0.64 : screenHeight * 0.66;
 
 const TouchingSlider: FC<TouchingSliderProps> = ({
   photos,
@@ -197,7 +197,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
     setActive(p => p - 1);
   };
 
-  const handleSuperJoin = () => {    
+  const handleSuperJoin = () => {
     if (counterSuperInvites > 0) {
       setVisibleModalSuperJoin(true);
       setTimeout(() => {
@@ -210,7 +210,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       showToast('inviteMatch', "You don't have Super Joins", 'Super Join');
     }
   };
-  
+
   return (
     // @ts-ignore
     <FastImage
@@ -220,8 +220,8 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           userInfo?.accountType === 'guest'
             ? eventPhotos && eventPhotos[active]?.image
             : photos?.[active]?.image
-            ? photos?.[active]?.image
-            : photos?.[active],
+              ? photos?.[active]?.image
+              : photos?.[active],
         headers: {Authorization: 'someAuthToken'},
         priority: FastImage.priority.normal,
       }}
@@ -276,7 +276,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       )}
       {accountType === 'guest' && !isProfile && (
         <TouchableOpacity
-          testID='reject'
+          testID="reject"
           onPress={() => onReject && onReject()}
           style={{
             width: 50,
@@ -295,7 +295,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
       )}
       {accountType === 'host' && !isProfile && (
         <TouchableOpacity
-          testID='reject'
+          testID="reject"
           onPress={() => onReject && onReject()}
           style={{
             width: 50,
@@ -593,7 +593,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <TouchableOpacity
-              testID='superJoin'
+              testID="superJoin"
               onPress={() => {
                 handleSuperJoin();
               }}
@@ -619,7 +619,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             </TouchableOpacity>
             <View style={{width: 16}} />
             <TouchableOpacity
-              testID='join'
+              testID="join"
               onPress={() => onInvite && onInvite()}
               style={{
                 flex: 1,
@@ -968,7 +968,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <TouchableOpacity
-              testID='superInvite'
+              testID="superInvite"
               onPress={() => {
                 handleSuperInvite();
               }}
@@ -994,7 +994,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
             </TouchableOpacity>
             <View style={{width: 16}} />
             <TouchableOpacity
-              testID='invite'
+              testID="invite"
               onPress={() => onInvite && onInvite()}
               style={{
                 flex: 1,
