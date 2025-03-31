@@ -5,6 +5,7 @@ export const Container = styled(View)`
   display: flex;
   flex-direction: column;
   gap: 24px;
+
   width: 100%;
 `;
 
@@ -16,7 +17,7 @@ export const Card = styled(View)`
   padding: 16px;
   gap: 24px;
   width: 100%;
-
+  background-color: 'rgba(255, 255,255, 0.04)';
   backdrop-filter: blur(10px);
   border-radius: 20px;
   margin-bottom: 16px;
@@ -65,7 +66,7 @@ export const Input = styled(View)`
 `;
 
 export const StyledTextInput = styled(TextInput)`
-  color: #FFFFFF;
+  color: #ffffff;
   width: 100%;
   font-family: 'Satoshi';
   font-size: 18px;
