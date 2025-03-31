@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
 import * as S from './Card.style';
-import {View} from 'react-native';
+import {View, Dimensions} from 'react-native';
 import {GestureDetector, PanGesture} from 'react-native-gesture-handler';
 import Animated, {AnimatedStyle} from 'react-native-reanimated';
 
@@ -31,14 +31,20 @@ const Card: React.FC<CardProps> = ({
   nopeOpacityStyle,
   isStatic = false,
 }) => {
+  // Get screen dimensions for responsive sizing
+  const {height: screenHeight} = Dimensions.get('window');
   // Render static card without animations
   if (isStatic) {
     return (
-      <S.Card key={uid} index={index}>
-        <View>
-          <S.CardImage source={{uri: backgroundUrl}} />
+      <S.Card key={uid} index={index} style={{height: screenHeight * 0.6}}>
+        <View style={{height: '100%'}}>
+          <S.CardImage source={{uri: backgroundUrl}} style={{height: '100%'}} />
           {index > 0 && <S.CardOverlay />}
-          <S.CardGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']} locations={[0, 0.5, 1]} />
+          <S.CardGradient 
+            colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']} 
+            locations={[0, 0.5, 1]} 
+            style={{height: '100%'}}
+          />
           {children}
         </View>
       </S.Card>
@@ -48,11 +54,15 @@ const Card: React.FC<CardProps> = ({
   // Render animated card with gesture detection
   return (
     <GestureDetector gesture={gestureHandler!}>
-      <S.Card key={uid} index={index}>
-        <Animated.View style={animatedStyle}>
-          <S.CardImage source={{uri: backgroundUrl}} />
+      <S.Card key={uid} index={index} style={{height: screenHeight * 0.6}}>
+        <Animated.View style={[animatedStyle, {height: '100%'}]}>
+          <S.CardImage source={{uri: backgroundUrl}} style={{height: '100%'}} />
           {index > 0 && <S.CardOverlay />}
-          <S.CardGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']} locations={[0, 0.5, 1]} />
+          <S.CardGradient 
+            colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']} 
+            locations={[0, 0.5, 1]} 
+            style={{height: '100%'}}
+          />
           <S.LikeAnimatedOpacity style={likeOpacityStyle}>
             <S.LabelTextLike>LIKE</S.LabelTextLike>
           </S.LikeAnimatedOpacity>
