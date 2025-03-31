@@ -60,7 +60,7 @@ const EventPlaceStep = () => {
                   placeholder="00:00"
                   placeholderTextColor="#767676"
                   value={values.hour}
-                  // onChangeText={handleChange('hour')}
+                  onChangeText={(value: string) => setFieldValue('hour', value)}
                 />
               </S.Input>
             </S.HalfFieldContainer>
@@ -74,7 +74,7 @@ const EventPlaceStep = () => {
                 placeholder="Enter description"
                 placeholderTextColor="#767676"
                 value={values.description}
-                // onChangeText={handleChange('description')}
+                onChangeText={(value: string) => setFieldValue('description', value)}
               />
             </S.Input>
           </S.FieldContainer>
@@ -92,7 +92,7 @@ const EventPlaceStep = () => {
                 placeholder="Enter place name"
                 placeholderTextColor="#767676"
                 value={values.placeName}
-                // onChangeText={handleChange('placeName')}
+                onChangeText={(value: string) => setFieldValue('placeName', value)}
               />
             </S.Input>
           </S.FieldContainer>
@@ -105,7 +105,7 @@ const EventPlaceStep = () => {
                 placeholder="Enter address"
                 placeholderTextColor="#767676"
                 value={values.address}
-                // onChangeText={handleChange('address')}
+                onChangeText={(value: string) => setFieldValue('address', value)}
               />
             </S.Input>
           </S.FieldContainer>
@@ -118,7 +118,7 @@ const EventPlaceStep = () => {
                 placeholder="Enter meeting spot"
                 placeholderTextColor="#767676"
                 value={values.meetingSpot}
-                // onChangeText={handleChange('meetingSpot')}
+                onChangeText={(value: string) => setFieldValue('meetingSpot', value)}
               />
             </S.Input>
           </S.FieldContainer>
