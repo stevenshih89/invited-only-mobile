@@ -1,12 +1,17 @@
 import {View} from 'react-native';
 import * as S from './GuestInvitationStep.style';
-import {useState} from 'react';
-import {useFormik} from 'formik';
+import {useFormikContext} from 'formik';
 import {CreateEventFormValues} from '../../CreateEventFlow';
 
 const GuestInvitationStep = () => {
-  const [female, setFemale] = useState<number>(0);
-  const [male, setMale] = useState<number>(0);
+  const {values, setFieldValue} = useFormikContext<CreateEventFormValues>();
+  const {female, male} = values;
+
+  const incrementFemale = () => setFieldValue('female', female + 1);
+  const decrementFemale = () => female > 0 && setFieldValue('female', female - 1);
+  
+  const incrementMale = () => setFieldValue('male', male + 1);
+  const decrementMale = () => male > 0 && setFieldValue('male', male - 1);
 
   return (
     <S.WrapperSelectYourDesiredCompany>
@@ -15,13 +20,13 @@ const GuestInvitationStep = () => {
         <View>
           <S.TextPersonGender>Woman</S.TextPersonGender>
           <S.RowButtons>
-            <S.ButtonPress onPress={() => female !== 0 && setFemale(female - 1)}>
+            <S.ButtonPress onPress={decrementFemale}>
               <S.TextButton>-</S.TextButton>
             </S.ButtonPress>
             <S.WrapperTextCount>
               <S.TextCount>{female}</S.TextCount>
             </S.WrapperTextCount>
-            <S.ButtonPress onPress={() => setFemale(female + 1)}>
+            <S.ButtonPress onPress={incrementFemale}>
               <S.TextButton>+</S.TextButton>
             </S.ButtonPress>
           </S.RowButtons>
@@ -30,14 +35,14 @@ const GuestInvitationStep = () => {
         <S.RowMale>
           <S.TextPersonGender>Male</S.TextPersonGender>
           <S.RowButtons>
-            <S.ButtonPress onPress={() => male !== 0 && setMale(male - 1)}>
+            <S.ButtonPress onPress={decrementMale}>
               <S.TextButton>-</S.TextButton>
             </S.ButtonPress>
             <S.WrapperTextCount>
               <S.TextCount>{male}</S.TextCount>
             </S.WrapperTextCount>
 
-            <S.ButtonPress onPress={() => setMale(male + 1)}>
+            <S.ButtonPress onPress={incrementMale}>
               <S.TextButton>+</S.TextButton>
             </S.ButtonPress>
           </S.RowButtons>
