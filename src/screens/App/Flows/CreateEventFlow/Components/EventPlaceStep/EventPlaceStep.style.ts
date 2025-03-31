@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import {Text, View, TouchableOpacity} from 'react-native';
+import {Text, View, TouchableOpacity, TextInput} from 'react-native';
 
 export const Container = styled(View)`
   display: flex;
@@ -62,6 +62,13 @@ export const Input = styled(View)`
   height: 56px;
   background: rgba(255, 255, 255, 0.04);
   border-radius: 99px;
+`;
+
+export const StyledTextInput = styled(TextInput)`
+  color: #FFFFFF;
+  width: 100%;
+  font-family: 'Satoshi';
+  font-size: 18px;
 `;
 
 export const InputText = styled(Text)`

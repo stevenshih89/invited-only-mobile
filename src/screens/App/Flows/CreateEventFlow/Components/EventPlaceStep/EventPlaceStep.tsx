@@ -1,5 +1,5 @@
 import React from 'react';
-import {TextInput, View} from 'react-native';
+import {View} from 'react-native';
 import {useFormikContext} from 'formik';
 import * as S from './EventPlaceStep.style';
 import {CreateEventFormValues} from '../../CreateEventFlow';
@@ -17,10 +17,9 @@ const EventPlaceStep = () => {
         <S.FieldContainer>
           <S.FieldLabel>Event name</S.FieldLabel>
           <S.Input>
-            <TextInput
+            <S.StyledTextInput
               placeholder="Enter event name"
               placeholderTextColor="#767676"
-              style={{color: '#FFFFFF', width: '100%', fontFamily: 'Satoshi'}}
               value={values.eventName}
               onChangeText={handleChange('eventName')}
             />
@@ -33,10 +32,9 @@ const EventPlaceStep = () => {
           <S.HalfFieldContainer>
             <S.FieldLabel>Date *</S.FieldLabel>
             <S.Input>
-              <TextInput
+              <S.StyledTextInput
                 placeholder="MM/DD/YY"
                 placeholderTextColor="#767676"
-                style={{color: '#FFFFFF', width: '100%', fontFamily: 'Satoshi'}}
                 value={values.date}
                 onChangeText={handleChange('date')}
               />
@@ -47,10 +45,9 @@ const EventPlaceStep = () => {
           <S.HalfFieldContainer>
             <S.FieldLabel>Hour *</S.FieldLabel>
             <S.Input>
-              <TextInput
+              <S.StyledTextInput
                 placeholder="00:00"
                 placeholderTextColor="#767676"
-                style={{color: '#FFFFFF', width: '100%', fontFamily: 'Satoshi'}}
                 value={values.hour}
                 onChangeText={handleChange('hour')}
               />
@@ -62,10 +59,9 @@ const EventPlaceStep = () => {
         <S.FieldContainer>
           <S.FieldLabel>Description</S.FieldLabel>
           <S.Input>
-            <TextInput
+            <S.StyledTextInput
               placeholder="Enter description"
               placeholderTextColor="#767676"
-              style={{color: '#FFFFFF', width: '100%', fontFamily: 'Satoshi'}}
               value={values.description}
               onChangeText={handleChange('description')}
             />
@@ -81,10 +77,9 @@ const EventPlaceStep = () => {
         <S.FieldContainer>
           <S.FieldLabel>Place name *</S.FieldLabel>
           <S.Input>
-            <TextInput
+            <S.StyledTextInput
               placeholder="Enter place name"
               placeholderTextColor="#767676"
-              style={{color: '#FFFFFF', width: '100%', fontFamily: 'Satoshi'}}
               value={values.placeName}
               onChangeText={handleChange('placeName')}
             />
@@ -95,10 +90,9 @@ const EventPlaceStep = () => {
         <S.FieldContainer>
           <S.FieldLabel>Address *</S.FieldLabel>
           <S.Input>
-            <TextInput
+            <S.StyledTextInput
               placeholder="Enter address"
               placeholderTextColor="#767676"
-              style={{color: '#FFFFFF', width: '100%', fontFamily: 'Satoshi'}}
               value={values.address}
               onChangeText={handleChange('address')}
             />
@@ -109,10 +103,9 @@ const EventPlaceStep = () => {
         <S.FieldContainer>
           <S.FieldLabel>Meeting spot</S.FieldLabel>
           <S.Input>
-            <TextInput
+            <S.StyledTextInput
               placeholder="Enter meeting spot"
               placeholderTextColor="#767676"
-              style={{color: '#FFFFFF', width: '100%', fontFamily: 'Satoshi'}}
               value={values.meetingSpot}
               onChangeText={handleChange('meetingSpot')}
             />
