@@ -1,15 +1,18 @@
 import styled from 'styled-components/native';
-import {Text, View, TouchableOpacity, TextInput} from 'react-native';
+import {Text, View, TouchableOpacity, TextInput, Dimensions} from 'react-native';
 import {screenHeight} from 'constants/common';
 import {ScrollView} from 'react-native-gesture-handler';
+
+const {height} = Dimensions.get('window');
 
 export const Container = styled(ScrollView)`
   display: flex;
   flex-direction: column;
   gap: 24px;
   width: 100%;
-  height: 500px;
+  height: ${height * 0.65}px;
   padding-top: 16px;
+  padding-bottom: 24px;
 `;
 
 export const Card = styled(View)`
@@ -20,7 +23,7 @@ export const Card = styled(View)`
   padding: 16px;
   gap: 24px;
   width: 100%;
-  background-color: 'rgba(255, 255,255, 0.04)';
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(10px);
   border-radius: 20px;
   margin-bottom: 16px;
