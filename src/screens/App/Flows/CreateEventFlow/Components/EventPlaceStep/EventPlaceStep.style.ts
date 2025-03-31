@@ -1,0 +1,159 @@
+import styled from 'styled-components/native';
+import {Text, View, TouchableOpacity} from 'react-native';
+
+export const Container = styled(View)`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+`;
+
+export const Card = styled(View)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 24px;
+  width: 100%;
+  background: radial-gradient(140.01% 127.28% at 99% 10%, rgba(26, 26, 26, 0.4) 0%, rgba(0, 0, 0, 0) 69.5%), rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  margin-bottom: 16px;
+`;
+
+export const CardTitle = styled(Text)`
+  font-family: 'Satoshi';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  text-align: center;
+  color: #FFFFFF;
+`;
+
+export const FieldContainer = styled(View)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+  width: 100%;
+`;
+
+export const FieldLabel = styled(Text)`
+  font-family: 'Satoshi';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 96.9%;
+  text-align: center;
+  color: #FFFFFF;
+`;
+
+export const Input = styled(View)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px;
+  gap: 10px;
+  width: 100%;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 99px;
+`;
+
+export const InputText = styled(Text)`
+  font-family: 'Satoshi';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  color: #767676;
+`;
+
+export const RowContainer = styled(View)`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 10px;
+  width: 100%;
+`;
+
+export const HalfFieldContainer = styled(View)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+  width: 48%;
+`;
+
+export const PhotosContainer = styled(View)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 14px;
+  width: 100%;
+`;
+
+export const MainPhotoContainer = styled(View)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 10px;
+  width: 100%;
+  height: 180px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+`;
+
+export const SmallPhotoContainer = styled(View)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 10px;
+  width: 48%;
+  height: 180px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+`;
+
+export const PhotosRow = styled(View)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 14px;
+  width: 100%;
+  height: 180px;
+`;
+
+export const AddPhotoButton = styled(TouchableOpacity)`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 7px 18px;
+  gap: 18px;
+  background: radial-gradient(155.33% 163.64% at 109.46% -1.43%, rgba(26, 26, 26, 0.4) 0%, rgba(0, 0, 0, 0) 69.5%), rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border-radius: 60px;
+`;
+
+export const AddPhotoText = styled(Text)`
+  font-family: 'Satoshi';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  color: #FFFFFF;
+`;
