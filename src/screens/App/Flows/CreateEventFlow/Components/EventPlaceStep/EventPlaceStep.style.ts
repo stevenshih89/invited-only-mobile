@@ -1,11 +1,14 @@
 import styled from 'styled-components/native';
 import {Text, View, TouchableOpacity, TextInput} from 'react-native';
+import {screenHeight} from 'constants/common';
+import {ScrollView} from 'react-native-gesture-handler';
 
-export const Container = styled(View)`
+export const Container = styled(ScrollView)`
   display: flex;
   flex-direction: column;
   gap: 24px;
   width: 100%;
+  height: 500px;
   padding-top: 16px;
 `;
 
