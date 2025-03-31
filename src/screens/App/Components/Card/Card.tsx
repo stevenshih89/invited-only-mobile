@@ -1,12 +1,14 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useState} from 'react';
 import * as S from './Card.style';
-import {View, Dimensions} from 'react-native';
+import {View} from 'react-native';
 import {GestureDetector, PanGesture} from 'react-native-gesture-handler';
 import Animated, {AnimatedStyle} from 'react-native-reanimated';
+import {screenHeight} from 'constants/common';
+import InvisibleTouchZone from './Components/InvisibleTouchZone/InvisibleTouchZone';
 
 interface CardProps {
   uid: string;
-  backgroundUrl: string;
+  backgroundUrls: string[];
   index: number;
   isTopCard?: boolean;
   onReject?: () => void;
@@ -22,7 +24,7 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({
   uid,
-  backgroundUrl,
+  backgroundUrls,
   index,
   children,
   gestureHandler,
@@ -31,12 +33,14 @@ const Card: React.FC<CardProps> = ({
   nopeOpacityStyle,
   isStatic = false,
 }) => {
-  const {height: screenHeight} = Dimensions.get('window');
+  const [imageIndex, setImageIndex] = useState<number>(0);
+
   if (isStatic) {
     return (
       <S.Card key={uid} index={index} style={{height: screenHeight * 0.6}}>
+        <InvisibleTouchZone setImageIndex={setImageIndex} imageCount={backgroundUrls.length} />
         <View style={{height: '100%'}}>
-          <S.CardImage source={{uri: backgroundUrl}} style={{height: '100%'}} />
+          <S.CardImage source={{uri: backgroundUrls[imageIndex]}} style={{height: '100%'}} />
           {index > 0 && <S.CardOverlay />}
           <S.CardGradient
             colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']}
@@ -52,8 +56,9 @@ const Card: React.FC<CardProps> = ({
   return (
     <GestureDetector gesture={gestureHandler!}>
       <S.Card key={uid} index={index} style={{height: screenHeight * 0.6}}>
+        <InvisibleTouchZone setImageIndex={setImageIndex} imageCount={backgroundUrls.length} />
         <Animated.View style={[animatedStyle, {height: '100%'}]}>
-          <S.CardImage source={{uri: backgroundUrl}} style={{height: '100%'}} />
+          <S.CardImage source={{uri: backgroundUrls[imageIndex]}} style={{height: '100%'}} />
           {index > 0 && <S.CardOverlay />}
           <S.CardGradient
             colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']}

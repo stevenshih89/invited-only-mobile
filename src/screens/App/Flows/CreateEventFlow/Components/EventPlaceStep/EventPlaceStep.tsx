@@ -3,64 +3,18 @@ import {View, Image} from 'react-native';
 import {useFormikContext} from 'formik';
 import * as S from './EventPlaceStep.style';
 import {CreateEventFormValues} from '../../CreateEventFlow';
-import {ScrollView} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import ModalAddPhoto from './AddPhotoMoald/ModalAddPhoto';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+
+import useAddModalPhotos from './AddPhotoMoald/useAddPhotoModal';
+import FastImage from 'react-native-fast-image';
 
 const EventPlaceStep = () => {
   const {values, setFieldValue} = useFormikContext<CreateEventFormValues>();
-  const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number | null>(null);
-  const [photos, setPhotos] = useState<{[key: number]: string | null}>({
-    1: null, // Main photo
-    2: null, // Additional photo 1
-    3: null, // Additional photo 2
-  });
+  console.log('values are: ', values);
 
-  const handleOpenPhotoModal = (index: number) => {
-    setCurrentPhotoIndex(index);
-    setIsPhotoModalVisible(true);
-  };
-
-  const handleOpenCamera = async () => {
-    const result = await launchCamera({
-      mediaType: 'photo',
-      quality: 0.8,
-    });
-
-    if (result.assets && result.assets.length > 0 && currentPhotoIndex !== null) {
-      const photoUri = result.assets[0].uri;
-      if (photoUri) {
-        setPhotos(prev => ({...prev, [currentPhotoIndex]: photoUri}));
-        setIsPhotoModalVisible(false);
-      }
-    }
-  };
-
-  const handleOpenLibrary = async () => {
-    const result = await launchImageLibrary({
-      mediaType: 'photo',
-      quality: 0.8,
-    });
-
-    if (result.assets && result.assets.length > 0 && currentPhotoIndex !== null) {
-      const photoUri = result.assets[0].uri;
-      if (photoUri) {
-        setPhotos(prev => ({...prev, [currentPhotoIndex]: photoUri}));
-        setIsPhotoModalVisible(false);
-      }
-    }
-  };
-
-  const handleAddPlaceholderPhoto = () => {
-    if (currentPhotoIndex !== null) {
-      // Use a placeholder image URL or local asset
-      const placeholderUri = 'https://via.placeholder.com/300';
-      setPhotos(prev => ({...prev, [currentPhotoIndex]: placeholderUri}));
-      setIsPhotoModalVisible(false);
-    }
-  };
+  const {handleAddPlaceholderPhoto, handleOpenCamera, handleOpenLibrary, handleOpenPhotoModal, isPhotoModalVisible, closeModal} =
+    useAddModalPhotos();
 
   return (
     <View>
@@ -176,15 +130,14 @@ const EventPlaceStep = () => {
           </S.FieldContainer>
         </S.Card>
 
-        {/* Event Photos Card */}
         <S.Card>
           <S.CardTitle>Event Photos</S.CardTitle>
           <S.PhotosContainer>
             {/* Main Photo */}
             <S.MainPhotoContainer>
-              {photos[1] ? (
+              {values?.photos?.main ? (
                 <S.AddPhotoButton onPress={() => handleOpenPhotoModal(1)}>
-                  <Image source={{uri: photos[1]}} style={{width: '100%', height: '100%', borderRadius: 10}} />
+                  <S.EventImage source={{uri: values.photos.main}} />
                 </S.AddPhotoButton>
               ) : (
                 <S.AddPhotoButton onPress={() => handleOpenPhotoModal(1)}>
@@ -193,12 +146,11 @@ const EventPlaceStep = () => {
               )}
             </S.MainPhotoContainer>
 
-            {/* Additional Photos Row */}
             <S.PhotosRow>
               <S.SmallPhotoContainer>
-                {photos[2] ? (
+                {values?.photos?.photo2 ? (
                   <S.AddPhotoButton onPress={() => handleOpenPhotoModal(2)}>
-                    <Image source={{uri: photos[2]}} style={{width: '100%', height: '100%', borderRadius: 10}} />
+                    <FastImage source={{uri: values.photos.photo2}} style={{width: '100%', height: '100%', borderRadius: 10}} />
                   </S.AddPhotoButton>
                 ) : (
                   <S.AddPhotoButton onPress={() => handleOpenPhotoModal(2)}>
@@ -207,9 +159,9 @@ const EventPlaceStep = () => {
                 )}
               </S.SmallPhotoContainer>
               <S.SmallPhotoContainer>
-                {photos[3] ? (
+                {values?.photos?.photo3 ? (
                   <S.AddPhotoButton onPress={() => handleOpenPhotoModal(3)}>
-                    <Image source={{uri: photos[3]}} style={{width: '100%', height: '100%', borderRadius: 10}} />
+                    <FastImage source={{uri: values.photos.photo3}} style={{width: '100%', height: '100%', borderRadius: 10}} />
                   </S.AddPhotoButton>
                 ) : (
                   <S.AddPhotoButton onPress={() => handleOpenPhotoModal(3)}>
@@ -224,7 +176,7 @@ const EventPlaceStep = () => {
 
       <ModalAddPhoto
         isVisible={isPhotoModalVisible}
-        onClose={() => setIsPhotoModalVisible(false)}
+        onClose={closeModal}
         openCamera={handleOpenCamera}
         openLibrary={handleOpenLibrary}
         addPlaceholderPhoto={handleAddPlaceholderPhoto}

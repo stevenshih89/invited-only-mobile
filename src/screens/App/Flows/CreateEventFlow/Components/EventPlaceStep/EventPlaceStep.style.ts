@@ -10,7 +10,7 @@ export const Container = styled(ScrollView)`
   flex-direction: column;
   gap: 24px;
   width: 100%;
-  height: ${height * 0.65}px;
+  height: ${height * 0.6}px;
   padding-top: 16px;
   padding-bottom: 24px;
 `;
@@ -111,18 +111,14 @@ export const PhotosContainer = styled(View)`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding: 0px;
   gap: 14px;
-  width: 100%;
 `;
 
 export const MainPhotoContainer = styled(View)`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 20px;
-  gap: 10px;
   width: 100%;
   height: 180px;
   background: rgba(255, 255, 255, 0.04);
@@ -134,8 +130,6 @@ export const SmallPhotoContainer = styled(View)`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 20px;
-  gap: 10px;
   width: 48%;
   height: 180px;
   background: rgba(255, 255, 255, 0.04);
@@ -153,13 +147,12 @@ export const PhotosRow = styled(View)`
 `;
 
 export const AddPhotoButton = styled(TouchableOpacity)`
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 7px 18px;
-  gap: 18px;
-  backdrop-filter: blur(10px);
   border-radius: 60px;
 `;
 
@@ -169,4 +162,10 @@ export const AddPhotoText = styled(Text)`
   font-weight: 500;
   font-size: 12px;
   color: #ffffff;
+`;
+
+export const EventImage = styled.Image`
+  height: 100%;
+  width: 100%;
+  border-radius: 5px;
 `;

@@ -43,7 +43,7 @@ export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, 
   return (
     <Card
       uid={guest.uid}
-      backgroundUrl={guest.imageUser || ''}
+      backgroundUrls={guest.imageUser}
       index={index}
       isTopCard={isTopCard}
       onInvite={onInvite}

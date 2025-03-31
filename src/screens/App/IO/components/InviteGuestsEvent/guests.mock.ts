@@ -14,7 +14,10 @@ export const sampleGuests: User.Info[] = [
     facePhoto: 'https://images.pexels.com/photos/2625122/pexels-photo-2625122.jpeg?cs=srgb&dl=pexels-alipazani-2625122.jpg&fm=jpg',
     fcmToken: 'fcm-token-1',
     gender: 'woman',
-    imageUser: 'https://images.pexels.com/photos/2625122/pexels-photo-2625122.jpeg?cs=srgb&dl=pexels-alipazani-2625122.jpg&fm=jpg',
+    imageUser: [
+      'https://images.pexels.com/photos/2625122/pexels-photo-2625122.jpeg?cs=srgb&dl=pexels-alipazani-2625122.jpg&fm=jpg',
+      'https://i.pinimg.com/564x/f8/93/07/f89307d32adb803b45e55072a709ad0b.jpg',
+    ],
     lastUpdateSuperInvite: Date.now(),
     name: 'Sarah',
     location: 'New York, NY',
@@ -55,8 +58,9 @@ export const sampleGuests: User.Info[] = [
       'https://people.com/thmb/Mus7baJtdlO5tN5rjbAeR63xM2M=/4000x0/filters:no_upscale():max_bytes(150000):strip_icc():focal(862x0:864x2)/beautiful-any-age-kaia-gerber-2000-c22e06e4e78e4ee78118ab7d64d49bf0.jpg',
     fcmToken: 'fcm-token-2',
     gender: 'man',
-    imageUser:
+    imageUser: [
       'https://people.com/thmb/Mus7baJtdlO5tN5rjbAeR63xM2M=/4000x0/filters:no_upscale():max_bytes(150000):strip_icc():focal(862x0:864x2)/beautiful-any-age-kaia-gerber-2000-c22e06e4e78e4ee78118ab7d64d49bf0.jpg',
+    ],
     lastUpdateSuperInvite: Date.now() - 86400000,
     name: 'Michael',
     location: 'Los Angeles, CA',
@@ -95,7 +99,7 @@ export const sampleGuests: User.Info[] = [
     facePhoto: 'https://images.pexels.com/photos/2816544/pexels-photo-2816544.jpeg?cs=srgb&dl=pexels-alipazani-2816544.jpg&fm=jpg',
     fcmToken: 'fcm-token-3',
     gender: 'woman',
-    imageUser: 'https://images.pexels.com/photos/2816544/pexels-photo-2816544.jpeg?cs=srgb&dl=pexels-alipazani-2816544.jpg&fm=jpg',
+    imageUser: ['https://images.pexels.com/photos/2816544/pexels-photo-2816544.jpeg?cs=srgb&dl=pexels-alipazani-2816544.jpg&fm=jpg'],
     lastUpdateSuperInvite: Date.now() - 172800000,
     name: 'Jessica',
     location: 'Chicago, IL',
@@ -134,7 +138,7 @@ export const sampleGuests: User.Info[] = [
     facePhoto: 'https://fabfashionfix.com/wp-content/uploads/2013/06/tumblr_mjskrjim9i1rchw7ao1_1280.jpg',
     fcmToken: 'fcm-token-4',
     gender: 'woman',
-    imageUser: 'https://fabfashionfix.com/wp-content/uploads/2013/06/tumblr_mjskrjim9i1rchw7ao1_1280.jpg',
+    imageUser: ['https://fabfashionfix.com/wp-content/uploads/2013/06/tumblr_mjskrjim9i1rchw7ao1_1280.jpg'],
     lastUpdateSuperInvite: Date.now() - 259200000,
     name: 'Jemma',
     location: 'San Francisco, CA',
@@ -174,8 +178,9 @@ export const sampleGuests: User.Info[] = [
       'https://st3.depositphotos.com/12985790/18312/i/450/depositphotos_183124496-stock-photo-portrait-beautiful-young-woman-sitting.jpg',
     fcmToken: 'fcm-token-5',
     gender: 'woman',
-    imageUser:
+    imageUser: [
       'https://st3.depositphotos.com/12985790/18312/i/450/depositphotos_183124496-stock-photo-portrait-beautiful-young-woman-sitting.jpg',
+    ],
     lastUpdateSuperInvite: Date.now() - 345600000,
     name: 'Emma',
     location: 'Miami, FL',

@@ -6,6 +6,7 @@ import * as S from './CreateEvent.style';
 import CreateEventFlowStepper from './Components/CreateEventFlowStepper/CreateEventFlowStepper';
 import GuestInvitationStep from './Components/GuestInvitationStep/GuestInvitationStep';
 import EventPlaceStep from './Components/EventPlaceStep/EventPlaceStep';
+import PreviewEventStep from './Components/PreviewEventStep/PreviewEventStep';
 
 export interface CreateEventFormValues {
   male: number;
@@ -52,6 +53,7 @@ const CreateEventFlow = () => {
             <CreateEventFlowStepper currentStep={currentStep} />
             {currentStep === 1 && <GuestInvitationStep />}
             {currentStep === 2 && <EventPlaceStep />}
+            {currentStep === 3 && <PreviewEventStep />}
           </S.StepsContainer>
           <S.ButtonsContainer>
             {currentStep !== 1 && (
@@ -60,7 +62,7 @@ const CreateEventFlow = () => {
               </S.CancelButton>
             )}
             <S.ContinueButton onPress={nextStep}>
-              <S.ContinueButtonText>Continue</S.ContinueButtonText>
+              <S.ContinueButtonText>{currentStep === 3 ? 'Create Event' : 'Continue'}</S.ContinueButtonText>
             </S.ContinueButton>
           </S.ButtonsContainer>
         </S.Container>

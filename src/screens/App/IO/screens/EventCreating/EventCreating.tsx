@@ -12,8 +12,7 @@ import {Satoshi500} from 'constants/fonts';
 import EventPreview from 'components/TouchingSlider/components/EventPreview';
 import Check from 'src/assets/images/icons/Check-black.svg';
 import {eventTypes} from 'src/mocks/eventTypes';
-import HintCard from 'components/HintCard';
-import {hostHintSteps} from 'constants/hints.ts';
+
 import {useEventCreating} from 'hooks/useEventCreating';
 
 const EventCreating = () => {

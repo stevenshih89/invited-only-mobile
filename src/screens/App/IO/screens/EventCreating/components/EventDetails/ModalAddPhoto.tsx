@@ -9,7 +9,7 @@ import {Text, TouchableOpacity, View} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import Modal from 'react-native-modal';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {openPhotoPicker} from "react-native-permissions";
+import {openPhotoPicker} from 'react-native-permissions';
 
 interface ModalAddProps {
   isVisible: boolean;
@@ -17,11 +17,6 @@ interface ModalAddProps {
   openCamera: () => void;
   openLibrary: () => void;
   addPlaceholderPhoto: () => void;
-  //   showHeight: boolean;
-  //   setShowHeight: Dispatch<SetStateAction<boolean>>;
-  //   height: string | null;
-  //   setHeight: Dispatch<SetStateAction<string | null>>;
-  //   heightsList: {id: number; value: number; label: string}[];
 }
 
 const ModalAddPhoto: FC<ModalAddProps> = ({isVisible, onClose, openLibrary, openCamera, addPlaceholderPhoto}) => {
@@ -51,7 +46,9 @@ const ModalAddPhoto: FC<ModalAddProps> = ({isVisible, onClose, openLibrary, open
         <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(24, 812), textAlign: 'center', marginBottom: 10}}>
           Event photos
         </Text>
-        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 16, paddingHorizontal: 20}} onPress={openCamera}>
+        <TouchableOpacity
+          style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 16, paddingHorizontal: 20}}
+          onPress={openCamera}>
           <CameraIcon />
           <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginLeft: 10}}>Use a camera</Text>
         </TouchableOpacity>

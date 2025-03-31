@@ -43,6 +43,7 @@ import {useNotifications} from 'src/store/notificationsStore';
 import * as S from './Header.style';
 import {Satoshi700} from 'constants/fonts';
 import {useCreateEvent} from 'hooks/useCreateEvent';
+import {Text} from 'react-native';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -53,322 +54,28 @@ interface HeaderTypeProps {
   typeEvents?: boolean;
 }
 
-type ItemProps = {
-  title: string;
-  allPeople: number;
-  filledTo: number;
-  image: any;
-  numberBadge: number;
-  date?: string;
-  activeEvent?: string;
-  hour?: string;
-  girlInvitation?: number | string;
-  icon?: ReactNode;
-  index?: number;
-  value?: string;
-  event?: EventData;
-};
-
-const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
-  const MARQUEE_SPEED = 0.4;
-  const MARQUEE_SPACING = 30;
+const Header: FC<HeaderTypeProps> = ({badge, logoType, headerType, showHeaderTop = true}) => {
   const route = useRoute();
-  const {hintStep, event, isVisibleSwipeGuide} = useDemoFlowStore();
-  const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
-  const [eventStarting, setEventStarting] = useState<boolean>(false);
-
-  const goToCreateEvent = useCreateEvent();
 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
 
-  const setChat = useChat((i: any) => i.setActiveEvent);
   const {notificationsCount} = useNotifications();
 
   const {user: userInfo} = useUser();
-
-  const {setActiveEvent, activeEvent, myEvents, setMyEvents, setLoadingMyEvents} = useMyEvents(state => state);
-
-  const {activeEventDate, setActiveEventDate} = useContext(EventsDate);
-
-  const fetchMyEvents = async () => {
-    const user = auth().currentUser;
-    if (user) {
-      try {
-        setLoadingMyEvents(true);
-
-        const start = new Date().getTime();
-        const cloudFunctionName = Config.CLOUD_FUNCTION_GET_USER_EVENTS || 'getUserEvents';
-        const getUserEventsCloudFunction = firebase.app().functions('europe-west3').httpsCallable(cloudFunctionName);
-        const querySnapshot = await getUserEventsCloudFunction({
-          uid: user.uid,
-        });
-
-        const end = new Date().getTime();
-        console.warn('fetchMyEvents Header', end - start);
-
-        if (!querySnapshot?.data?.events?.length) {
-          setMyEvents([]);
-          setActiveEvent({});
-          setChat('');
-          setLoadingMyEvents(false);
-          return;
-        }
-
-        const data = querySnapshot?.data?.events || [];
-
-        const filteredEvents = data.filter((eventItem: EventData) => {
-          if (eventItem?.date && eventItem?.hour) {
-            const adjustedDate = moment(`${eventItem?.date}, ${eventItem?.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-            if (adjustedDate.isBefore(moment())) {
-              return false;
-            }
-            return true;
-          }
-          return false;
-        });
-
-        if (!filteredEvents.length) {
-          setMyEvents([]);
-          setActiveEvent({});
-          setChat('');
-          setLoadingMyEvents(false);
-          return;
-        }
-
-        setMyEvents(filteredEvents);
-
-        const currentEvent = filteredEvents.find((event: EventData) => event?.id === activeEvent?.id);
-        const eventIndex = currentEvent ? filteredEvents.findIndex((event: any) => event?.id === currentEvent?.id) : 0;
-
-        setActiveEvent(filteredEvents[eventIndex]);
-        setChat(filteredEvents[eventIndex]?.id);
-      } catch (error: any) {
-        Alert.alert('Error', error.message || 'Something went wrong');
-      } finally {
-        setLoadingMyEvents(false);
-      }
-    }
-  };
-
-  const handleGoToEarlyAccess = () => {
-    navigation.navigate(commonStackPath, {screen: earlyAccessPath} as never);
-  };
-
-  useEffect(() => {
-    if (!isDemo && userInfo?.uid && isHost) {
-      fetchMyEvents();
-    }
-  }, [headerType, userInfo?.uid, isDemo]);
-
-  useEffect(() => {
-    if (userInfo?.accountType) {
-      setTypeEvents && setTypeEvents(userInfo?.accountType?.toLowerCase() === 'host' ? false : true);
-    }
-  }, [userInfo?.accountType]);
-
-  useEffect(() => {
-    if (isDemo) {
-      setActiveEvent(event);
-    }
-  }, [isDemo, hintStep]);
-
-  const DATAEventsJoining = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'Upcoming Events',
-      value: ALL,
-      image: CalendarIcon,
-      icon: <CalendarCheckIcon width={26} height={26} color={whiteColor} />,
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'This week',
-      value: THIS_WEEK,
-      image: EventBG,
-      icon: <WIcon color={whiteColor} />,
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      title: 'This month',
-      value: THIS_MONTH,
-      image: EventBG,
-      icon: <MIcon color={whiteColor} />,
-    },
-  ];
-
-  const Item = ({title, numberBadge, image, date, hour, girlInvitation, event, index}: ItemProps) => (
-    <S.EventButton
-      onPress={() => {
-        setChat(`${event.id}`);
-        setActiveEvent(event);
-      }}>
-      <S.EventViewFlatList style={{borderColor: activeEvent?.id === event?.id ? whiteColor : lightGray5Color}}>
-        <S.ImageEvent source={{uri: image}} />
-        {numberBadge > 0 && (
-          <Badge
-            value={numberBadge}
-            badgeStyle={{
-              position: 'absolute',
-              borderColor: blackColor,
-              borderWidth: 1,
-              bottom: -4,
-              right: 0,
-              backgroundColor: lightRedColor,
-            }}
-            textStyle={{
-              color: whiteColor,
-              fontFamily: Satoshi700,
-            }}
-          />
-        )}
-      </S.EventViewFlatList>
-      <View style={{maxWidth: screenWidth / 5, overflow: 'hidden'}}>
-        {title.length >= 10 ? (
-          <Marquee spacing={MARQUEE_SPACING} speed={MARQUEE_SPEED}>
-            <S.EventTitleText>{title}</S.EventTitleText>
-          </Marquee>
-        ) : (
-          <S.EventTitleText numberOfLines={1}>{title}</S.EventTitleText>
-        )}
-      </View>
-      <ModalEventRemindes
-        girlInvitation={girlInvitation}
-        eventStarting={eventStarting}
-        setEventStarting={setEventStarting}
-        time={hour}
-        image={image}
-        city={title}
-        date={date}
-      />
-    </S.EventButton>
-  );
-
-  const ItemEventsJoining = ({title, image, date, icon, value}: ItemProps) => (
-    <S.JoinEventButton
-      onPress={() => {
-        if (userInfo?.accountConfirmed) {
-          setActiveEventDate(value);
-        }
-      }}>
-      <S.EventViewFlatList style={{borderColor: activeEventDate === value ? whiteColor : lightGray5Color}}>
-        <S.ImageEventsJoining>{icon}</S.ImageEventsJoining>
-      </S.EventViewFlatList>
-      <S.TextButton>{title}</S.TextButton>
-      <ModalEventRemindes
-        eventStarting={eventStarting}
-        setEventStarting={setEventStarting}
-        time="24h"
-        image={image}
-        city={title}
-        date={date}
-      />
-    </S.JoinEventButton>
-  );
-
-  const isHost = userInfo?.accountType === 'host';
-
-  const isEventFinished = (eventDate: string, eventHour: string) => {
-    if (eventDate && eventHour) {
-      const adjustedDate = moment(`${eventDate}, ${eventHour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
-      if (adjustedDate.isBefore(moment())) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  };
-
-  const goToNotifications = (): void => {
-    // @ts-ignore
-    navigation.navigate(notificationsStackPath, {screen: notificationsPath, userInfo});
-  };
 
   const headerInsets = {
     paddingTop: insets.top,
   };
 
-  const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | 'IO-JE' | undefined) => {
-    switch (type) {
-      case 'IO':
-        return <></>;
-      case 'IO-JE':
-        return <></>;
-      case 'myEvents':
-        return null;
-      case 'profile':
-        return null;
-      case 'request':
-        return <></>;
-      case 'chat':
-        return (
-          <S.WrapperHeaderButtonsChat style={{marginTop: userInfo?.accountType === 'host' ? 0 : screenHeight / 50}}>
-            {isHost ? (
-              <S.RowButtonsChat style={{marginTop: 10}}>
-                <FlatList
-                  data={myEvents}
-                  horizontal={true}
-                  renderItem={({item, index}) => (
-                    <Item
-                      event={item}
-                      filledTo={item?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length}
-                      allPeople={item.female + item.male}
-                      image={item.photos[0]?.image}
-                      girlInvitation={item.male + item.maleFriend}
-                      numberBadge={item.numberBadge}
-                      title={item.name || item.placeName}
-                      date={item.date}
-                      hour={item.hour}
-                      index={index}
-                    />
-                  )}
-                  keyExtractor={item => item.id}
-                />
-              </S.RowButtonsChat>
-            ) : (
-              <S.RowButtonsChat>
-                <FlatList
-                  data={DATAEventsJoining}
-                  horizontal={true}
-                  renderItem={({item}) => (
-                    <ItemEventsJoining
-                      image={item.image}
-                      title={item.title}
-                      date={item.date}
-                      icon={item.icon}
-                      value={item.value}
-                      allPeople={0}
-                      filledTo={0}
-                      numberBadge={0}
-                    />
-                  )}
-                  keyExtractor={item => item.id}
-                />
-              </S.RowButtonsChat>
-            )}
-          </S.WrapperHeaderButtonsChat>
-        );
-
-      default:
-        return null;
-    }
-  };
-
   return (
     <S.Container style={headerInsets}>
-      {(!userInfo?.accountConfirmed && headerType !== 'profile') ||
-        (!userInfo?.isPassedDemo && isDemo && hintStep !== 7 && isVisibleSwipeGuide && <S.OverlayContainer />)}
       {showHeaderTop && (
         <S.WrapperHeader>
           {logoType === 'logo' ? <Logo width={157} height={32} /> : <LogoPrimary width={157} height={32} />}
           <S.HeaderRight>
-            {userInfo?.accountType && userInfo?.accountConfirmed && !isHost && headerType !== 'profile' && (
-              <S.EarlyAccessButton onPress={handleGoToEarlyAccess}>
-                <S.IOInvitationsText>IO Invitations</S.IOInvitationsText>
-              </S.EarlyAccessButton>
-            )}
             {badge && (
-              <S.NotificationButton onPress={goToNotifications} activeOpacity={0.7}>
+              <S.NotificationButton onPress={() => navigation.navigate('/notifications')} activeOpacity={0.7}>
                 <NotificationIcon width={32} height={32} />
                 <Badge
                   value={notificationsCount}
@@ -394,7 +101,7 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
           </S.HeaderRight>
         </S.WrapperHeader>
       )}
-      {userInfo?.uid && handleCheckType(headerType)}
+      <Text>{userInfo?.uid}</Text>
     </S.Container>
   );
 };

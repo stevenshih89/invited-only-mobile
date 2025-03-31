@@ -49,7 +49,7 @@ export namespace User {
     facePhoto: string | null;
     fcmToken: string;
     gender: Gender;
-    imageUser: string | null;
+    imageUser: string[];
     lastUpdateSuperInvite: number;
     name: string;
     location: string | null;
@@ -97,4 +97,5 @@ export interface UserInfo extends User.Info {
   socialNickname: User.SocialNickname;
   notificationSettings: User.NotificationSettings;
   joinEvents: number;
+  eventsList: any[];
 }

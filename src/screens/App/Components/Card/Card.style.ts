@@ -1,5 +1,8 @@
-import {lightGreenColor, lightRedColor, white0Color} from 'constants/colors';
+import {blackColor, lightGreenColor, lightRedColor, white0Color} from 'constants/colors';
 import {Satoshi500} from 'constants/fonts';
+import {TouchableOpacity} from 'react-native';
+import FastImage from 'react-native-fast-image';
+
 import LinearGradient from 'react-native-linear-gradient';
 import Animated from 'react-native-reanimated';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -16,7 +19,7 @@ export const Card = styled(Animated.View)<{index: number}>`
 
   opacity: ${({index}: {index: number}) => (index > 4 ? 0.9 - (index - 4) * 0.15 : 1)};
 `;
-export const CardImage = styled.Image`
+export const CardImage = styled(FastImage)`
   width: 100%;
   height: 100%;
   border-radius: 20px;

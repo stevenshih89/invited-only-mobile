@@ -1,19 +1,20 @@
-import { useState, useCallback, useEffect } from 'react';
+import {useState, useCallback, useEffect, useContext} from 'react';
 import firestore from '@react-native-firebase/firestore';
-import { useFocusEffect } from '@react-navigation/native';
-import { useAdminActions } from 'src/store/adminActions';
-import { useUser } from 'src/store/userStore';
-import { myProfileViewPath } from 'constants/pathLocations';
-import { calculateAge } from 'helpers/calculateAge';
-import { getEventsIJoining } from 'helpers/getEventsIJoining';
-import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { useAppNavigation } from 'hooks/useAppNavigation';
+import {useFocusEffect} from '@react-navigation/native';
+import {useAdminActions} from 'src/store/adminActions';
+import {useUser} from 'src/store/userStore';
+import {myProfileViewPath} from 'constants/pathLocations';
+import {calculateAge} from 'helpers/calculateAge';
+import {getEventsIJoining} from 'helpers/getEventsIJoining';
 
-const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 export const useProfile = () => {
-  const [activeTabId, setActiveTabId] = useState(0);  
+  const {events: apiEventsCollection} = useContext(FirebaseCollectionsContext);
+
+  const [activeTabId, setActiveTabId] = useState(0);
   const [totalGuests, setTotalGuests] = useState(0);
   const [eventsCount, setEventsCount] = useState(0);
 
@@ -57,7 +58,7 @@ export const useProfile = () => {
 
   const percentage = Math.floor(calculateCompleteness(userInfo));
 
-  const navigation = useAppNavigation();  
+  const navigation = useAppNavigation();
 
   const goToMyProfileView = () => {
     // @ts-ignore
@@ -71,8 +72,13 @@ export const useProfile = () => {
     let totalParticipants = 0;
     try {
       for (const eventId of userInfo?.eventsList) {
+        console.log('fetching guest list for', eventId);
+
         const eventDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
+        console.log(eventDoc);
         if (eventDoc.exists) {
+          console.log('events exist!');
+
           const data = eventDoc.data();
           totalParticipants += data?.male || 0 + data?.female || 0;
         }
@@ -88,23 +94,23 @@ export const useProfile = () => {
   useFocusEffect(
     useCallback(() => {
       let eventsJoiningSubscriber: any;
-      
+
       // Only set up the listener if we're not a host and have a valid user ID
       if (!isHost && userInfo?.uid) {
         try {
           // Create a variable to track if the component is focused
           let isFocused = true;
-          
+
           eventsJoiningSubscriber = firestore()
             .collection(apiEventsCollection)
-            .onSnapshot(async querySnapshot => {
+            .onSnapshot(async (querySnapshot: any) => {
               // Only process updates if the component is still focused
               if (isFocused) {
                 const count = await getEventsIJoining(querySnapshot, userInfo?.uid);
                 setEventsCount(count);
               }
             });
-            
+
           return () => {
             isFocused = false;
             if (eventsJoiningSubscriber) {
@@ -115,7 +121,7 @@ export const useProfile = () => {
           logErrorToSentry(error);
         }
       }
-      
+
       return () => {
         if (eventsJoiningSubscriber) {
           eventsJoiningSubscriber();

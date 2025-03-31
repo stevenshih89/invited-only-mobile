@@ -29,7 +29,7 @@ import {demoFlowStackPath, demoIntroPath, demoIOPath} from 'constants/pathLocati
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {useUser} from '../../../store/userStore';
 import uuid from 'react-native-uuid';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const EventPreview: FC<{
   photos: any;

@@ -9,7 +9,7 @@ const GuestInvitationStep = () => {
 
   const incrementFemale = () => setFieldValue('female', female + 1);
   const decrementFemale = () => female > 0 && setFieldValue('female', female - 1);
-  
+
   const incrementMale = () => setFieldValue('male', male + 1);
   const decrementMale = () => male > 0 && setFieldValue('male', male - 1);
 

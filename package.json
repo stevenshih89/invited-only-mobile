@@ -65,6 +65,7 @@
     "currency-symbol-map": "^5.1.0",
     "eslint-plugin-prettier": "^5.2.3",
     "firebase-tools": "^13.5.2",
+    "formik": "^2.4.6",
     "lottie-ios": "3.4.1",
     "lottie-react-native": "5.1.4",
     "moment": "^2.30.1",

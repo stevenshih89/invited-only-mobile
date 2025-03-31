@@ -1,4 +1,5 @@
 import {blackColor, whiteColor} from 'constants/colors';
+import {screenHeight} from 'constants/common';
 import {Satoshi500} from 'constants/fonts';
 import styled from 'styled-components/native';
 
@@ -7,6 +8,8 @@ export const Container = styled.View`
   justify-content: space-between;
   display: flex;
   height: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
 `;
 
 export const StepsContainer = styled.View`
