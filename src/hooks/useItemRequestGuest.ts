@@ -2,7 +2,6 @@ import {black4Color, blackColor, grayColor, lightGreenColor, lightRed1Color, tra
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {Animated, Text, TouchableOpacity, View} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {TinderCard} from 'rn-tinder-card-bn-digital';
 import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
 import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
 import CloseIcon from 'assets/images/icons/close.svg';

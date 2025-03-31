@@ -21,34 +21,47 @@ const defaultAccountInfo: AccountInfoFlyWeight = {
 export const onUserProfileChangeSubscription = (callback: (info: AccountInfoFlyWeight) => void) => {
   try {
     const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const user = auth().currentUser;
+    const user = auth().currentUser;
+    
+    // If no user is logged in, return a no-op function
+    if (!user?.uid) {
+      console.warn('No user ID available for profile subscription');
+      return () => {};
+    }
 
-  return firestore()
-    .collection(apiUserInfoCollection)
-    .doc(user?.uid ?? undefined)
-    .onSnapshot(snap => {
-      if (!snap.exists) {
-        return;
-      }
+    // Create a variable to track if the subscription is still active
+    let isActive = true;
+    
+    const unsubscribe = firestore()
+      .collection(apiUserInfoCollection)
+      .doc(user.uid)
+      .onSnapshot(snap => {
+        // Only process updates if the subscription is still active
+        if (!isActive) return;
+        
+        if (!snap.exists) {
+          return;
+        }
 
-      const userInfo = snap.data();
+        const userInfo = snap.data();
 
-      const accountInfo = {
-        accountConfirmed: userInfo?.accountConfirmed ?? false,
-        accountPremium: userInfo?.accountPremium ?? false,
-        accountReviewed: userInfo?.accountReviewed ?? false,
-        isHost: userInfo?.accountType === 'host' ?? false,
-      };
-
-      // DEVNOTE: just keep it for safety
-      // callback(accountInfo);
-      callback({
-        ...userInfo,
-        isHost: userInfo?.accountType === 'host' ?? false,
+        // Only call the callback if the subscription is still active
+        if (isActive) {
+          callback({
+            ...userInfo,
+            isHost: userInfo?.accountType === 'host' ?? false,
+          });
+        }
       });
-    });
+      
+    // Return a function that both sets the flag and unsubscribes
+    return () => {
+      isActive = false;
+      unsubscribe();
+    };
   } catch (error) {
-    logErrorToSentry(error)
+    logErrorToSentry(error);
+    return () => {}; // Return a no-op function in case of error
   }
 };
 

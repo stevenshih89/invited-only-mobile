@@ -1,3 +1,5 @@
+const {wrapWithReanimatedMetroConfig} = require('react-native-reanimated/metro-config');
+
 const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 const path = require('path');
 
@@ -20,11 +22,7 @@ const config = {
   resolver: {
     assetExts: assetExts.filter(ext => ext !== 'svg'),
     sourceExts: [...sourceExts, 'svg', 'mp4'],
-    extraNodeModules: {
-      'rn-tinder-card-bn-digital': path.resolve(__dirname, 'rn-tinder-card'),
-    },
   },
-  watchFolders: ['./rn-tinder-card'],
 };
 
-module.exports = mergeConfig(defaultConfig, config);
+module.exports = wrapWithReanimatedMetroConfig(mergeConfig(defaultConfig, config));

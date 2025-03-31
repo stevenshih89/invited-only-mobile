@@ -315,31 +315,6 @@ export const useMyEventsScreen = (navigation: any) => {
     handleCheckEventMarkAttendanceHost();
   }, [myEventsData.length]);
 
-  const handleOpenCancelAttendingModal = (
-    eventInfo: {list: any; host: any; image: string; textCityName: string; date: string; numberOfGirlsInvited: string},
-    userInfo,
-  ) => {
-    setActiveModalEvent(eventInfo);
-    setActiveUserInfo(userInfo);
-    setIsVisibleCancelAttendingModal(true);
-  };
-
-  const handleOpenAcceptInvitationModal = (
-    eventInfo: {
-      list: any;
-      host: any;
-      image: string;
-      textCityName: string;
-      date: string;
-      numberOfGirlsInvited: string;
-    },
-    userInfo,
-  ) => {
-    setActiveModalEvent(eventInfo);
-    setActiveUserInfo(userInfo);
-    setIsVisibleAcceptInvitationModal(true);
-  };
-
   const goToIOStack = () => {
     navigation.navigate(IOPath);
   };
@@ -502,12 +477,17 @@ export const useMyEventsScreen = (navigation: any) => {
     useCallback(() => {
       let myEventsSubscribe: any;
       let eventsJoiningSubscribe: any;
+      let isFocused = true;
+      
       if (userInfo?.uid) {
         try {
           myEventsSubscribe = firestore()
             .collection(apiEventsCollection)
             .where('uid', '==', `${userInfo?.uid}`)
             .onSnapshot(querySnapshot => {
+              // Only update state if the component is still focused
+              if (!isFocused) return;
+              
               if (querySnapshot.empty) {
                 setMyEventsData([]);
                 return;
@@ -549,17 +529,24 @@ export const useMyEventsScreen = (navigation: any) => {
         }
       }
 
-      eventsJoiningSubscribe = firestore()
-        .collection(apiEventsCollection)
-        .onSnapshot(querySnapshot => {
-          handleGetEventsIJoining(querySnapshot);
-        });
+      // Only set up the joining events listener if we have a valid user
+      if (userInfo?.uid) {
+        eventsJoiningSubscribe = firestore()
+          .collection(apiEventsCollection)
+          .onSnapshot(querySnapshot => {
+            // Only update state if the component is still focused
+            if (isFocused) {
+              handleGetEventsIJoining(querySnapshot);
+            }
+          });
+      }
 
       return () => {
-        myEventsSubscribe && myEventsSubscribe();
-        eventsJoiningSubscribe && eventsJoiningSubscribe();
+        isFocused = false;
+        if (myEventsSubscribe) myEventsSubscribe();
+        if (eventsJoiningSubscribe) eventsJoiningSubscribe();
       };
-    }, [setIsVisibleCancelAttendingModal, isVisibleCancelAttendingModal]),
+    }, [userInfo?.uid]), // Only re-run if userInfo?.uid changes, not on modal state changes
   );
 
   const changeStatusGuestUsersList = async (

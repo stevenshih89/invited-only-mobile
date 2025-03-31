@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Text, Image} from 'react-native';
 import Toast, {BaseToast, ToastConfig, ToastConfigParams} from 'react-native-toast-message';
 
@@ -32,10 +32,10 @@ import Config from 'react-native-config';
 import {showToast} from 'helpers/showToast';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import * as S from './LocalNotification.style';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 const LocalNotification = () => {
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
+  const {events: apiEventsCollection, messages: apiMessagesCollection} = useContext(FirebaseCollectionsContext);
   const navigation = useAppNavigation();
   const handlePress = async (path: string, params?: any) => {
     switch (path) {

@@ -15,6 +15,7 @@ import {
   onboardPath,
   privacyPath,
   signUpPath,
+  signInPath,
   turnNotificationsPath,
   accountRejectedPath,
   codeVerifiedPath,
@@ -33,7 +34,8 @@ import {
 import {NavigationContainer} from '@react-navigation/native';
 import Onboard from 'screens/Auth/Onboard/Onboard';
 import SignUp from 'screens/Auth/SignUp/SignUp';
-import ConfirmPhone from 'screens/Auth/ConfirmPhone/ConfirmPhone';
+import SignIn from 'screens/Auth/SignIn/SignIn';
+
 import TurnNotifications from 'screens/Auth/TurnNotifications/TurnNotifications';
 import ChooseAccountType from 'screens/Auth/ChooseAccountType/ChooseAccountType';
 import EnterName from 'screens/Auth/EnterName/EnterName';
@@ -50,7 +52,6 @@ import CodeVerified from 'screens/Auth/AcceptedScreen/CodeVerified/CodeVerified.
 import VerifyFirstStep from 'screens/Auth/VerifyFirstStep/VerifyFirstStep';
 import InvitationCode from 'screens/Auth/InvitationCode/InvitationCode';
 import Payment from 'screens/Auth/Payment/Payment.tsx';
-import TutorialsFlow from 'screens/Auth/TutorialsFlow/TutorialsFlow.tsx';
 import PhotoVerified from 'screens/Auth/PhotoVerified/PhotoVerified';
 import SummaryInfo from 'screens/Auth/SummaryInfo/SummaryInfo';
 import VerifySocialProfile from 'screens/Auth/VerifySocialProfile/VerifySocialProfile';
@@ -59,6 +60,7 @@ import AddBiusness from 'screens/Auth/AddBuisness/AddBuisness';
 import Eula from 'screens/Auth/EulaScreen/EulaScreen';
 import EnterTypeScreen from 'screens/Auth/EnterTypeScreen/EnterTypeScreen';
 import DemoVideo from 'screens/Auth/DemoVide/DemoVideo';
+import ConfirmPhone from 'screens/Auth/ConfirmPhone/ConfirmPhone';
 
 const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
@@ -71,6 +73,7 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={enterTypePath} name={enterTypePath} component={EnterTypeScreen} />
         <AuthStack.Screen key={onBoardingDemoPath} name={onBoardingDemoPath} component={DemoVideo} />
         <AuthStack.Screen key={signUpPath} name={signUpPath} component={SignUp} />
+        <AuthStack.Screen key={signInPath} name={signInPath} component={SignIn} />
         <AuthStack.Screen key={confirmPhonePath} name={confirmPhonePath} component={ConfirmPhone} />
         <AuthStack.Screen key={turnNotificationsPath} name={turnNotificationsPath} component={TurnNotifications} />
         <AuthStack.Screen key={chooseAccountTypePath} name={chooseAccountTypePath} component={ChooseAccountType} />

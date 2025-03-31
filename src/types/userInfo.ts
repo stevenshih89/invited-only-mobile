@@ -74,6 +74,7 @@ export namespace User {
     userBeauty?: number;
     isPassedDemo?: boolean;
     isInvitedOnlyAdmin?: boolean;
+    age?: number;
   }
 
   export interface Photo {

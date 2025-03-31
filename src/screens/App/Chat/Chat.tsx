@@ -3,6 +3,7 @@ import {View, Text, FlatList, TouchableOpacity, TextInput} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import { FirebaseCollectionsContext } from 'src/contexts/FirebaseCollectionNamesContext';
 
 //import components
 import useStyles from 'screens/App/Chat/styles.ts';
@@ -87,10 +88,7 @@ const Chat: FC<ChatProps> = () => {
   const COUNT_TO_ADD_ADMIN_CHATS = 5;
   const DEFAULT_LIMIT_ADMIN_CHATS = 9;
   const MAX_LIMIT_ADMIN_CHATS = 40;
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
-  const apiAdminChatsCollection = Config.API_ADMIN_CHATS_COLLECTION || 'adminChats';
+  const {userInfo: apiUserInfoCollection, events: apiEventsCollection, messages: apiMessagesCollection, adminChats: apiAdminChatsCollection} = useContext(FirebaseCollectionsContext);
 
   const [hostMenu, setHostMenu] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);

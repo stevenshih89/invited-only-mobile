@@ -1,4 +1,4 @@
-import {FC, ReactElement, useEffect, useState} from 'react';
+import {FC, ReactElement, useState} from 'react';
 import {View, TouchableOpacity, Text} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -28,11 +28,9 @@ import FlashBlackIcon from 'assets/images/icons/flash-black.svg';
 import FlashFilledBlackIcon from 'assets/images/icons/flash-filled-black.svg';
 import Lock from 'assets/images/icons/lock.svg';
 import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
-import {calculateAge} from 'helpers/calculateAge.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites/index.ts';
-import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin.tsx';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat.ts';
@@ -123,7 +121,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   activeEvent,
   joinEvents,
   online,
-  uidUserEvent,
   hourEvent,
   usersListLength,
   usersList,
@@ -134,7 +131,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
   male,
   female,
 }): ReactElement => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const [active, setActive] = useState<number>(0);
   const numberPhotos = photos?.length;
 
@@ -151,23 +147,10 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
 
   function getMonth() {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const [day, month, year] = date.split('.');
-    const monthName = months[parseInt(month) - 1];
+    const [_day, month, _year] = date.split('.');
+    const monthName = months[parseInt(month, 10) - 1];
     return `${monthName}`;
   }
-
-  // const getUserEventInfo = async () => {
-  //   try {
-  //     const getDoc = await firestore().collection(apiUserInfoCollection).doc(uidUserEvent).get();
-  //     setUserEventInfo(getDoc?.data());
-  //   } catch (error) {
-  //     console.log('error getUserEventInfo', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   uidUserEvent ? getUserEventInfo() : null;
-  // }, [uidUserEvent]);
 
   const handleSuperInvite = () => {
     if (counterSuperInvites - 1 >= 0) {

@@ -1,5 +1,5 @@
 import {StyleProp, Text, TouchableOpacity, View, ViewStyle} from 'react-native';
-import {FC} from 'react';
+import {FC, useContext} from 'react';
 import CloseIcon from 'assets/images/icons/close.svg';
 import useStyles from './styles';
 import {useAppNavigation} from 'hooks/useAppNavigation';
@@ -8,10 +8,9 @@ import {transparent60Color, whiteColor} from 'constants/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
-import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
-import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {UserMutations} from 'src/apiv2/mutations/userMutations';
+import {showToast} from 'helpers/showToast';
 
 const ModalLimitedAccess: FC<{
   wrapperStyle?: StyleProp<ViewStyle>;
@@ -20,36 +19,69 @@ const ModalLimitedAccess: FC<{
 }> = ({wrapperStyle, showNotNow = true, showCloseIcon = true}) => {
   const styles = useStyles();
   const {user, setUser} = useUser();
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-
   const navigation = useAppNavigation();
 
+  const {
+    mutate: updateUserPassedDemoMutation,
+    isSuccess,
+    isError,
+    isPending,
+  } = UserMutations.useUpdateUserPassedDemo(() => {
+    setUser({...user, isPassedDemo: true});
+
+    navigation.navigate('/payment');
+  });
+  console.log('mutate success?', isSuccess);
+  console.log('mutate error?', isError);
+  console.log('mutate pending?', isPending);
+
   const goToPayment = async () => {
-    // @ts-ignore
-    if (user?.uid) {
-      try {
-        await firestore().collection(apiUserInfoCollection).doc(user?.uid).update({isPassedDemo: true});
-        setUser({...user, isPassedDemo: true});
-        navigation.navigate(paymentPath as never);
-      } catch (error) {
-        logErrorToSentry(error)
+    console.log('goToPayment called, user uid:', user?.uid);
+    try {
+      if (!user?.uid) {
+        console.error('No user UID available');
+        showToast('inviteMatch', 'User information is missing', 'Error');
+        return;
       }
+
+      try {
+        showToast('inviteMatch', 'Processing your request...', 'Pending');
+        updateUserPassedDemoMutation();
+      } catch (mutationError) {
+        showToast('inviteMatch', 'We encountered an issue, but you can continue', 'Error', mutationError);
+      }
+    } catch (error) {
+      console.error('Exception in goToPayment:', error);
+      showToast('inviteMatch', 'An unexpected error occurred', 'Error');
     }
   };
 
   const setUserPassedDemo = async () => {
+    console.log('setUserPassedDemo called, user uid:', user?.uid);
     if (user?.uid) {
       try {
-        await firestore().collection(apiUserInfoCollection).doc(user?.uid).update({isPassedDemo: true});
+        // Use mutateAsync to wait for the mutation to complete
+        const result = await updateUserPassedDemoMutation.mutateAsync();
+        console.log('Mutation result:', result);
+
+        // Update local user state
         setUser({...user, isPassedDemo: true});
-        navigation.reset({
-          index: 0,
-          routes: [{name: bottomTabsStackPath}],
-        });
+
+        // Force a small delay to ensure state updates before navigation
+        setTimeout(() => {
+          console.log('Resetting navigation to bottom tabs');
+          navigation.reset({
+            index: 0,
+            routes: [{name: bottomTabsStackPath}],
+          });
+        }, 100);
       } catch (error) {
-        logErrorToSentry(error)
-        console.error(error);
+        console.error('Mutation error:', error);
+        showToast('inviteMatch', 'Failed to update user status', 'Error');
       }
+    } else {
+      console.error('User UID is missing');
+      showToast('inviteMatch', 'User information is missing', 'Error');
     }
   };
 

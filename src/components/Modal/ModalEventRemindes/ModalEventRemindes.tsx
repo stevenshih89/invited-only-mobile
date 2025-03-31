@@ -1,4 +1,4 @@
-import React, {FC, RefObject, useEffect, useState} from 'react';
+import React, {FC, RefObject, useContext, useEffect, useState} from 'react';
 import {View, Text, Image, ImageBackground, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
 import firestore from '@react-native-firebase/firestore';
@@ -26,8 +26,9 @@ import {calculateAge} from 'helpers/calculateAge';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
-import Config from 'react-native-config';
+
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 interface HostI {
   name: string;
@@ -99,8 +100,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
   const [isPremium, setIsPremium] = useState();
 
   const styles = useStyles();
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const {userInfo: apiUserInfoCollection, events: apiEventsCollection} = useContext(FirebaseCollectionsContext);
 
   const getUserInfo = async () => {
     try {

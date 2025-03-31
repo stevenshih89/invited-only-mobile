@@ -30,7 +30,7 @@ import KR from 'src/assets/images/flags/kr.svg';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry.ts';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry.ts';
 interface ModalSelectLanguagesProps {
   modalLanguages: boolean;
   showLanguages: boolean;
@@ -113,10 +113,8 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
   const userHost = useUser((i: any) => i?.user);
 
   const setUserData = useUser((i: any) => i?.setUser);
-  const languagesTitle = userHost?.languages?.title;
   const uid = userHost?.uid;
   const [selectLanguage, setSelectLanguage] = useState<any>([]);
-  // console.log('selectLanguage', selectLanguage);
 
   useEffect(() => {
     if (userHost.languages) {
@@ -126,17 +124,6 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
       setShowLanguages(userHost.showLanguages);
     }
   }, []);
-
-  // const handleSetShowInMyProfile = async (state: boolean): Promise<void> => {
-  //   try {
-  //     setShowLanguages(state);
-  //     await firestore().collection(apiUserInfoCollection).doc(uid).update({
-  //       showLanguages: state,
-  //     });
-  //   } catch (e) {
-  //     // console.log(e);
-  //   }
-  // };
 
   const handleSetLanguages = async (): Promise<void> => {
     try {
@@ -159,7 +146,7 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
         );
     } catch (e) {
       showToast('inviteMatch', 'An error occurred while updating the language. Please try again.', 'Error');
-      logErrorToSentry(e)
+      logErrorToSentry(e);
     }
   };
 
@@ -223,7 +210,6 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
             showsVerticalScrollIndicator={false}
             renderItem={({item}) => {
               const isActive = selectLanguage?.some((selected: any) => selected.title === item.title);
-              // console.log('item', item);
 
               return (
                 <TouchableOpacity

@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useContext} from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
 import Modal from 'react-native-modal';
 import {blackColor, whiteColor} from 'constants/colors';
@@ -12,8 +12,9 @@ import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
 import {useUser} from '../../../store/userStore';
-import { showToast } from 'helpers/showToast';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {showToast} from 'helpers/showToast';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 interface RejectAccount {
   isVisible?: boolean;
@@ -23,7 +24,7 @@ interface RejectAccount {
 }
 
 const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userInfo}) => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
   const navigation = useNavigation();
   const {user} = useUser();
 
@@ -42,7 +43,7 @@ const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userI
     } catch (error) {
       console.log('error showModalAccept', error);
       showToast('inviteMatch', 'An issue occurred while updating user data. Please try again later.', 'Error');
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   };
 

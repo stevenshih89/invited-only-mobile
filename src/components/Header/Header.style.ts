@@ -28,12 +28,13 @@ export const WrapperHeader = styled.View`
 
 export const WrapperHeaderJoinEvent = styled.View`
   flex-direction: row;
-  margin-vertical: ${screenHeight / 50}px;
+  margin-top: ${screenHeight / 50}px;
+  margin-bottom: ${screenHeight / 50}px;
 `;
 
 export const EventView = styled.View`
-  width: 55px;
-  height: 55px;
+  width: 35px;
+  height: 35px;
   justify-content: center;
   align-items: center;
   border-width: 1px;
@@ -48,13 +49,13 @@ export const JoinEventActive = styled.View`
   justify-content: center;
   align-items: center;
   padding: 3px;
-  width: 55px;
-  height: 55px;
+  width: 35px;
+  height: 35px;
 `;
 
 export const JoinEventView = styled.View`
-  width: 55px;
-  height: 55px;
+  width: 35px;
+  height: 35px;
   justify-content: center;
   align-items: center;
   border-width: 1px;
@@ -83,8 +84,8 @@ export const EventSpecialWrapper = styled.View<{borderColor: string}>`
   border-style: solid;
   border-color: ${({borderColor}: {borderColor: string}) => borderColor};
   padding: 3px;
-  width: 55px;
-  height: 55px;
+  width: 35px;
+  height: 35px;
 `;
 
 export const EventButton = styled.TouchableOpacity`
@@ -109,14 +110,14 @@ export const RequestsFlatList = styled.FlatList`
 `;
 
 export const ImageEvent = styled.Image`
-  width: 50px;
-  height: 50px;
+  width: 80px;
+  height: 80px;
   border-radius: 50px;
 `;
 
 export const ImageEventsJoining = styled.View`
-  width: 55px;
-  height: 55px;
+  width: 85px;
+  height: 85px;
   border-radius: 50px;
   align-items: center;
   justify-content: center;
@@ -274,8 +275,8 @@ export const EventIconWrapper = styled.View<{borderColor: string}>`
   border-style: solid;
   border-color: ${({borderColor}: {borderColor: string}) => borderColor};
   padding: 3px;
-  width: 63px;
-  height: 63px;
+  width: 93px;
+  height: 93px;
   justify-content: center;
   align-items: center;
 `;

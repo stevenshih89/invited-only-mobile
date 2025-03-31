@@ -2,12 +2,12 @@ import firestore from '@react-native-firebase/firestore';
 import {MatchData} from 'screens/App/IO/screens/Match/Match';
 import {showToast} from './showToast';
 import {INVITE_MATCH_STATUS} from 'constants/common';
-import Config from 'react-native-config';
 import { logErrorToSentry } from './logErrorsToSentry';
+import { useContext } from 'react';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
 
-export const handleCreateChat = async (matchedData: MatchData) => {
-  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+export const handleCreateChat = async (matchedData: MatchData, collectionNames = { messages: 'messages', events: 'Events' }) => {
+  const { messages: apiMessagesCollection = 'messages', events: apiEventsCollection = 'Events' } = collectionNames;
   const querySnapshot = await firestore().collection(apiEventsCollection).doc(matchedData.eventId).get();
   if (!querySnapshot.exists) {
     return;

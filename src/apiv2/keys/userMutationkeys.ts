@@ -7,4 +7,5 @@ export const UserMutationsKeys = {
 	updateUserNotificationsSettings: (userId: string) => ["update-user-notification-settings", userId],
 	updateUserEventList: (userId: string) => ["update-user-event-list", userId],
 	sendVerificationCode: () => ["send-verification-code"],
+	updateUserPassedDemo: (userId: string) => ["update-user-passed-demo", userId],
 }

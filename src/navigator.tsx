@@ -9,36 +9,38 @@ import {getFcmToken, registerListenerWithFCM} from 'helpers/fcmHelper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
-import Config from 'react-native-config';
 import UnderMaintenance from 'screens/App/UnderMaintenance/UnderMaintenance';
 import useMaintenanceState from 'hooks/useMaintenanceState';
 import UpdateAvailable from 'screens/App/UpdateAvailableScreen/UpdateAvailableScreen';
 import useVersionStateUpdate from 'hooks/useVersionUpdate/useVersionUpdate';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 const Navigator = () => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const apiAdminChatsCollection = Config.API_ADMIN_CHATS_COLLECTION || 'adminChats';
   const [initializing, setInitializing] = useState<boolean>(true);
   const [authState, setAuthState] = useState(false);
   const {user, setUser} = useContext(AuthContext);
+  const {userInfo: apiUserInfoCollection, adminChats} = useContext(FirebaseCollectionsContext);
   const setUserData = useUser((i: any) => i?.setUser);
   const userData = useUser((i: any) => i?.user);
   const onBoarding = useUser((i: any) => i?.onBoarding);
   const setOnBoarding = useUser((i: any) => i?.setOnBoarding);
   const {maintenanceData} = useMaintenanceState();
   const {versionData} = useVersionStateUpdate();
+
   const onAuthStateChanged = async (userState: any) => {
     try {
       if (!userState) {
         setAuthState(false);
       }
       const uid = userState?._user?.uid;
-      console.log('uid', uid);
 
       await AsyncStorage.setItem('uid', `${uid}`);
       await getOnbordingState();
+      console.log('fetching from ', apiUserInfoCollection, uid);
       const userDataInfo = await firestore().collection(apiUserInfoCollection).doc(uid).get();
+      console.log(userDataInfo, 'user data??');
+      console.log('user data exist?', userDataInfo.exists);
 
       if (userDataInfo.exists) {
         setAuthState(!!userState);
@@ -78,9 +80,9 @@ const Navigator = () => {
 
     if (!isAdmin && userData?.uid) {
       try {
-        const chatQuery = await firestore().collection(apiAdminChatsCollection).doc(userData?.uid).get();
+        const chatQuery = await firestore().collection(adminChats).doc(userData?.uid).get();
         if (!chatQuery.exists) {
-          await firestore().collection(apiAdminChatsCollection).doc(userData?.uid).set({
+          await firestore().collection(adminChats).doc(userData?.uid).set({
             uid: userData?.uid,
             lastMessageTimestamp: firestore.FieldValue.serverTimestamp(),
             lastSeenUserTimestamp: firestore.FieldValue.serverTimestamp(),
@@ -89,7 +91,7 @@ const Navigator = () => {
         } else if (chatQuery.exists) {
           const data = chatQuery.data();
           if (!data?.lastMessageTimestamp && !data?.uid) {
-            await firestore().collection(apiAdminChatsCollection).doc(userData?.uid).set({
+            await firestore().collection(adminChats).doc(userData?.uid).set({
               uid: userData?.uid,
               lastMessageTimestamp: firestore.FieldValue.serverTimestamp(),
               lastSeenUserTimestamp: firestore.FieldValue.serverTimestamp(),
@@ -112,6 +114,7 @@ const Navigator = () => {
 
   useEffect(() => {
     const subcriber = auth().onAuthStateChanged(onAuthStateChanged);
+
     return () => {
       subcriber();
     };
@@ -128,6 +131,7 @@ const Navigator = () => {
   if (maintenanceData?.isMaintenance) {
     return <UnderMaintenance data={maintenanceData} />;
   }
+  console.log('auth state', authState);
 
   return authState ? <AppStackScreens /> : <AuthStackScreens />;
 };

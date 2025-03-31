@@ -33,7 +33,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "InvitedOnlyTests.xctest"
+               BuildableName = "InvitedOnlyTests"
                BlueprintName = "InvitedOnlyTests"
                ReferencedContainer = "container:InvitedOnly.xcodeproj">
             </BuildableReference>
@@ -60,6 +60,12 @@
             ReferencedContainer = "container:InvitedOnly.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "-FIRDebugEnabled"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

@@ -20,10 +20,9 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import Config from 'react-native-config';
-import {showToast} from 'helpers/showToast';
 
-const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+import {showToast} from 'helpers/showToast';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 const MyEmail: FC = (): JSX.Element => {
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
@@ -31,6 +30,7 @@ const MyEmail: FC = (): JSX.Element => {
   const {email, setEmail} = useUser();
 
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
 
   useEffect(() => {
     let subscription: any;

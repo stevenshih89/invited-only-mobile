@@ -1,4 +1,4 @@
 export const EventMutationsKeys = {
-	updateEvent: (eventId: string) => ["update-event", eventId],
-	createEvent: () => ["create-event"]
-}
+  updateEvent: (eventId: string) => ['update-event', eventId],
+  createEvent: () => ['create-event'],
+};

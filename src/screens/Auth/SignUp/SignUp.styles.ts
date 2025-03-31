@@ -1,0 +1,51 @@
+import styled from 'styled-components/native';
+import {screenHeight} from 'constants/common';
+import {whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
+import LogoPrimary from 'assets/images/auth/logo-primary-2.svg';
+
+export const Container = styled.View`
+  padding-top: ${screenHeight / 21}px;
+  flex: 1;
+  justify-content: space-between;
+  padding-bottom: 0;
+`;
+
+export const ContentContainer = styled.View`
+  padding-horizontal: 24px;
+  width: 100%;
+`;
+
+export const LogoContainer = styled.View`
+  align-items: center;
+`;
+
+export const LogoImage = styled(LogoPrimary)``;
+
+export const HeaderContainer = styled.View`
+  margin-bottom: ${screenHeight / 30}px;
+  margin-top: ${screenHeight / 12}px;
+`;
+
+export const Title = styled.Text`
+  color: ${whiteColor};
+  font-family: ${Satoshi500};
+  font-size: ${RFValue(48, 932)}px;
+  margin-bottom: 8px;
+`;
+
+export const Subtitle = styled.Text`
+  color: ${whiteColor};
+  font-family: ${Satoshi400};
+  font-size: ${RFValue(16, 932)}px;
+`;
+
+export const InputContainer = styled.View`
+  width: 100%;
+`;
+
+export const ButtonContainer = styled.View`
+  padding-horizontal: 24px;
+  margin-bottom: 4px;
+`;

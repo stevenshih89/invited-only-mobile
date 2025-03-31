@@ -1,5 +1,5 @@
 import {isIos, screenHeight} from 'constants/common';
-import {FC, RefObject, useState, useEffect, useCallback} from 'react';
+import {RefObject, useState, useEffect, useContext} from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -18,15 +18,19 @@ import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {backgroundGradientColors, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
-import {bottomTabsStackPath, chooseAccountTypePath} from 'constants/pathLocations';
+import {chooseAccountTypePath} from 'constants/pathLocations';
 import auth from '@react-native-firebase/auth';
 import {showToast} from 'helpers/showToast.ts';
 import firebase from '@react-native-firebase/firestore';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import LinearGradient from 'react-native-linear-gradient';
-import Config from 'react-native-config';
-import {useFocusEffect} from '@react-navigation/native';
+
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AuthContext} from 'contexts/AuthContext';
+import {useUser} from 'src/store/userStore';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 interface ConfirmPhoneProps {
   navigation: any;
@@ -34,15 +38,16 @@ interface ConfirmPhoneProps {
     params: {
       mobilePhone: string;
       confirm?: any;
+      isLogin?: boolean;
     };
   };
 }
 
-const ConfirmPhone: FC<ConfirmPhoneProps> = ({navigation, route}: any): JSX.Element => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
   const mobilePhone = route?.params?.mobilePhone;
+  const isLogin = route?.params?.isLogin || false;
   const [code, setCode] = useState<string>('');
-  const [nextRoute, setNextRoute] = useState<string>(chooseAccountTypePath);
   const [loadingConfirmation, setLoadingConfirmation] = useState<boolean>(false);
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: code,
@@ -54,30 +59,33 @@ const ConfirmPhone: FC<ConfirmPhoneProps> = ({navigation, route}: any): JSX.Elem
   const CELL_COUNT: number = 6;
   const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
 
-  const onAuthStateChanged = async (user: any) => {
-    console.warn(user);
-    try {
-      if (!user?.uid) {
-        setNextRoute(chooseAccountTypePath);
-        return;
-      }
+  const setUserData = useUser((i: any) => i?.setUser);
+  const {setUser} = useContext(AuthContext);
 
-      const userData = await firebase().collection(apiUserInfoCollection).doc(user.uid).get();
+  const checkUserExists = async (uid: string) => {
+    try {
+      const userData = await firebase().collection(apiUserInfoCollection).doc(uid).get();
 
       if (!userData.exists) {
-        setNextRoute(chooseAccountTypePath);
-        return;
+        return false;
       }
 
       const userDocument = userData.data();
-
       if (!userDocument?.uid) {
-        setNextRoute(chooseAccountTypePath);
-        return;
+        return false;
       }
-      setNextRoute(bottomTabsStackPath);
+
+      // If this is a login and user exists, set user data
+      if (isLogin) {
+        await AsyncStorage.setItem('uid', uid);
+        setUserData(userDocument);
+        setUser([uid]);
+      }
+
+      return true;
     } catch (err) {
       logErrorToSentry(err);
+      return false;
     }
   };
 
@@ -104,38 +112,45 @@ const ConfirmPhone: FC<ConfirmPhoneProps> = ({navigation, route}: any): JSX.Elem
       setConfirm(confirmation);
     } catch (e: any) {
       showToast('inviteMatch', `${e?.message.split(']')[1]}`);
-      // console.warn(e);
     }
   }
 
   const handleConfirmPhoneNumber = async () => {
     try {
       setLoadingConfirmation(true);
-      // console.warn(isUserExist);
+
       await confirm.confirm(code);
-      setTimeout(() => {
-        navigation.navigate(nextRoute);
-      }, 1000);
-      // navigation.navigate(bottomTabsStackPath, {
-      //   screen: IOPath,
-      // });
+      const uid = auth().currentUser?.uid;
+
+      if (isLogin && uid) {
+        // For login flow
+        const userExists = await checkUserExists(uid);
+
+        if (!userExists) {
+          showToast('inviteMatch', 'User account not found', 'Fail');
+          await auth().signOut();
+          setLoadingConfirmation(false);
+          return;
+        }
+
+        // User exists and is logged in, navigate to app
+        // Use the correct navigation path without the leading slash
+        setTimeout(() => {
+          navigation.navigate('bottom-tabs-stack');
+        }, 1000);
+      } else {
+        // For signup flow, navigate to account type selection
+        setTimeout(() => {
+          navigation.navigate(chooseAccountTypePath);
+        }, 1000);
+      }
+
       setLoadingConfirmation(false);
     } catch (e: any) {
-      // console.log(e);
       showToast('inviteMatch', '', `${e}`);
       setLoadingConfirmation(false);
     }
   };
-
-  useFocusEffect(
-    useCallback(() => {
-      const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-      return () => {
-        console.warn('unmount mobile');
-        subscriber();
-      };
-    }, []),
-  );
 
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
@@ -153,6 +168,7 @@ const ConfirmPhone: FC<ConfirmPhoneProps> = ({navigation, route}: any): JSX.Elem
                     marginTop: screenHeight / 29,
                   }}>
                   <TouchableOpacity
+                    testID="back-button"
                     onPress={() => navigation.goBack()}
                     activeOpacity={0.7}
                     hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}

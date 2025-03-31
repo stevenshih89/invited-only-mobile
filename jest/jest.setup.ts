@@ -5,7 +5,6 @@ import './mocks/dimensions.mock';
 jest.useFakeTimers();
 
 // Import our individual mock files
-import './mocks/tindercard.mock';
 import './mocks/asyncStorage.mock';
 import './mocks/firebaseMessage.mock';
 import './mocks/notifee.mock';
@@ -37,3 +36,4 @@ import './mocks/useIO.mock';
 import './mocks/imagePicker.mock';
 import './mocks/fbsdkNext.mock';
 import './mocks/keyboardAwareScrollView.mock';
+import './mocks/backhandle.mock';

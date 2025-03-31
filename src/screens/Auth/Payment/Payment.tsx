@@ -1,5 +1,5 @@
-import React, {FC, useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, ScrollView, TouchableOpacity, FlatList, Image} from 'react-native';
+import React, {FC, useContext, useEffect, useState} from 'react';
+import {View, Text, SafeAreaView, ScrollView, TouchableOpacity, FlatList} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Tooltip, TooltipProps} from '@rneui/themed';
 import auth from '@react-native-firebase/auth';
@@ -38,9 +38,9 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import {openLink} from 'helpers/links';
 import analytics from '@react-native-firebase/analytics';
 import {paymentScreen} from 'constants/analitycs';
-import Config from 'react-native-config';
 import {screenHeight, screenWidth} from 'constants/common';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 interface PlanListItem {
   id: number;
@@ -77,10 +77,10 @@ const ControlledTooltip: FC<TooltipProps | any> = props => {
 };
 
 const Payment: FC = (): JSX.Element => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
   const styles = useStyles();
   const navigation = useAppNavigation();
-  const [spotsLeft, setSpotsLeft] = useState<number>(0);
+  const [_spotsLeft, setSpotsLeft] = useState<number>(0);
   const minProgress = 10;
   const maxProgress = 300;
 

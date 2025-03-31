@@ -18,6 +18,9 @@ import Bugsnag from '@bugsnag/react-native';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {showToast} from 'helpers/showToast';
 import {getActiveSubscription} from './api/purchase';
+import {AppSettingsQueries} from './apiv2/queries/appSettingsQueries';
+import FirestoreTestScreen from 'screens/App/FirestoreTestScreen/FirestoreTestScreen';
+import {APP_ENV, BACKEND_BASE_64_AUTH, IS_FIREBASE_TEST_MODE} from '@env';
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
@@ -32,8 +35,8 @@ RNUxcam.startWithConfiguration(configuration);
 Bugsnag.start();
 
 const App: FC = (): JSX.Element => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const IO_PUBLICK_RC_IOS = Config.IO_PUBLICK_RC_IOS || '';
+  const {data: collectionNames} = AppSettingsQueries.useFirebaseCollectionNameQuery();
 
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
 
@@ -44,8 +47,12 @@ const App: FC = (): JSX.Element => {
       if (!currentUser?.uid) {
         return;
       }
+      if (!collectionNames) {
+        return;
+      }
+      const userQuery = await firestore().collection(collectionNames.userInfo).doc(currentUser?.uid).get();
+      console.log(userQuery);
 
-      const userQuery = await firestore().collection(apiUserInfoCollection).doc(currentUser?.uid).get();
       if (!userQuery.exists) {
         return;
       }
@@ -92,7 +99,7 @@ const App: FC = (): JSX.Element => {
 
       const start = new Date().getTime();
       await firestore()
-        .collection(apiUserInfoCollection)
+        .collection(collectionNames.userInfo)
         .doc(currentUser?.uid)
         .update({
           accountPremium: !isExpiredSubscription,
@@ -131,10 +138,7 @@ const App: FC = (): JSX.Element => {
     const getSubscription = async () => {
       const start = new Date().getTime();
       const activeSubscription = await getActiveSubscription();
-      console.log('activeSubscription', activeSubscription.activeSubscriptions);
-
-      await handleUpdateUserSubscriptions(activeSubscription);
-      console.log(activeSubscription);
+      // await handleUpdateUserSubscriptions(activeSubscription);
 
       setCurrentSubscriptions(activeSubscription);
       setCurrentSubscriptions([]);
@@ -143,6 +147,13 @@ const App: FC = (): JSX.Element => {
     };
     getSubscription();
   }, []);
+  console.log('firebase test mode', IS_FIREBASE_TEST_MODE);
+  console.log('app env', APP_ENV);
+  console.log('app env', BACKEND_BASE_64_AUTH);
+
+  if (IS_FIREBASE_TEST_MODE === 'true') {
+    return <FirestoreTestScreen />;
+  }
 
   return (
     <SafeAreaProvider>

@@ -86,6 +86,8 @@ const ChooseAccountType: FC = (): JSX.Element => {
 
   const handleNext = async () => {
     const index = onBoarding.findIndex((item: any) => item.accountType !== undefined);
+    console.log(index);
+
     if (index > -1) {
       const updatedOnBoarding = [...onBoarding];
       updatedOnBoarding[index] = {accountType: accountType};

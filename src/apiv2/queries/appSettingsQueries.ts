@@ -5,6 +5,7 @@ import Config from 'react-native-config';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import AppSettingsKeys from '../keys/appSettingsKeys';
 import {useEffect} from 'react';
+import {BACKEND_BASE_64_AUTH, BACKEND_BASE_URL} from '@env';
 
 interface AppVersionCheckProps {
   appStoreAppId: string;
@@ -67,34 +68,59 @@ interface AppVersionDataResponse {
   lastAvailableVersion?: string;
 }
 
+export interface FirebaseCollectionsResponse {
+  adminChats: string;
+  admins: string;
+  appSettings: string;
+  messages: string;
+  report: string;
+  unfinishedRegistrationUsers: string;
+  userInfo: string;
+  events: string;
+}
+
 const apiAppSettingsCollection = Config.APP_SETTINGS_COLLECTION || 'appSettings';
-const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
 const useMaintenanceQuery = () => {
   const queryClient = useQueryClient();
+  
+  // Set up the snapshot listener only once when the hook is first called
   useEffect(() => {
+    // Use a ref to track if this is mounted to prevent updates after unmount
+    let isMounted = true;
+    
     const unsubscribe = firestore()
       .collection(apiAppSettingsCollection)
       .doc('maintenance')
       .onSnapshot(
         doc => {
-          if (doc.exists) {
-            const data = doc.data() as {
-              isMaintenance: boolean;
-              approximatelyTime: string | null;
-            };
+          // Only update if component is still mounted
+          if (isMounted) {
+            if (doc.exists) {
+              const data = doc.data() as {
+                isMaintenance: boolean;
+                approximatelyTime: string | null;
+              };
 
-            queryClient.setQueryData(AppSettingsKeys.getMaintenanceQueryKey(), data);
-          } else {
-            queryClient.setQueryData(AppSettingsKeys.getMaintenanceQueryKey(), null);
+              queryClient.setQueryData(AppSettingsKeys.getMaintenanceQueryKey(), data);
+            } else {
+              queryClient.setQueryData(AppSettingsKeys.getMaintenanceQueryKey(), null);
+            }
           }
         },
         error => {
-          logErrorToSentry(error);
+          if (isMounted) {
+            logErrorToSentry(error);
+          }
         },
       );
-    return () => unsubscribe();
-  }, [apiAppSettingsCollection, queryClient]);
+      
+    // Clean up function that runs when the component unmounts
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
+  }, []); // Empty dependency array ensures this effect runs only once
 
   const handleCheckMaintenance = async (): Promise<{
     isMaintenance: boolean;
@@ -130,6 +156,10 @@ const useMaintenanceQuery = () => {
 };
 
 const useAppVersionAppStoreCheckQuery = ({appStoreAppId, currentUser}: AppVersionCheckProps) => {
+  const queryClient = useQueryClient();
+  const firebaseCollectionNames = queryClient.getQueryData<FirebaseCollectionsResponse>(
+    AppSettingsKeys.getFirebaseCollectionNameQueryKey(),
+  );
   const checkAppStoreVersion = async (): Promise<string> => {
     if (!appStoreAppId || !currentUser?.uid) {
       return '';
@@ -142,25 +172,29 @@ const useAppVersionAppStoreCheckQuery = ({appStoreAppId, currentUser}: AppVersio
       if (data.results.length > 0) {
         return data.results[0].version;
       }
-      return ''; // Return a fallback value if no results are found
+      return '';
     } catch (error) {
       console.error('Error checking for new version:', error);
-      return ''; // Return a fallback value on error
+      return '';
     }
   };
 
   return useQuery<string>({
     queryKey: AppSettingsKeys.getAppVersionAppStoreCheckQueryKey(),
     queryFn: checkAppStoreVersion,
-    enabled: apiUserInfoCollection === 'userInfo',
+    enabled: firebaseCollectionNames?.userInfo === 'userInfo',
   });
 };
 
 const useAppVersionCheckQuery = () => {
+  const queryClient = useQueryClient();
+  const firebaseCollectionNames = queryClient.getQueryData<FirebaseCollectionsResponse>(
+    AppSettingsKeys.getFirebaseCollectionNameQueryKey(),
+  );
+
   const checkAppStoreVersion = async (): Promise<AppVersionDataResponse> => {
     try {
       const result = await firestore().collection(apiAppSettingsCollection).doc('version').get();
-      console.log('results', result.data());
       return result.data() || {};
     } catch (error) {
       console.error('Error checking for new version:', error);
@@ -170,8 +204,46 @@ const useAppVersionCheckQuery = () => {
   return useQuery<AppVersionDataResponse>({
     queryKey: AppSettingsKeys.getAppVersionCheckQueryKey(),
     queryFn: checkAppStoreVersion,
-    enabled: apiUserInfoCollection === 'devUserInfo',
+    enabled: firebaseCollectionNames?.userInfo === 'devUserInfo',
   });
 };
 
-export const AppSettingsQueries = {useMaintenanceQuery, useAppVersionAppStoreCheckQuery, useAppVersionCheckQuery};
+export const useFirebaseCollectionsNameQuery = () => {
+  const fetchFirebaseCollections = async (): Promise<FirebaseCollectionsResponse> => {
+    try {
+      const headers = new Headers();
+      headers.append('Authorization', `Basic ${BACKEND_BASE_64_AUTH}`);
+
+      const requestOptions = {
+        method: 'GET',
+        headers: headers,
+      };
+
+      return fetch(`${BACKEND_BASE_URL}/config/firebase/collections`, requestOptions)
+        .then(response => {
+          return response.json();
+        })
+        .then(res => {
+          return res;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    } catch (error) {
+      console.error('Error fetching firebase collections:', error);
+      throw new Error('Failed to fetch collection names');
+    }
+  };
+
+  return useQuery<FirebaseCollectionsResponse>({
+    queryKey: AppSettingsKeys.getFirebaseCollectionNameQueryKey(),
+    queryFn: fetchFirebaseCollections,
+  });
+};
+
+export const AppSettingsQueries = {
+  useMaintenanceQuery,
+  useAppVersionAppStoreCheckQuery,
+  useAppVersionCheckQuery,
+  useFirebaseCollectionNameQuery: useFirebaseCollectionsNameQuery,
+};

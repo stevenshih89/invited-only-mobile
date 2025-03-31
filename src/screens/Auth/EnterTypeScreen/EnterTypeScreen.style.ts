@@ -1,9 +1,11 @@
 import {black1Color, whiteColor} from 'constants/colors';
 import {screenHeight, screenWidth} from 'constants/common';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {Dimensions} from 'react-native';
 import Animated from 'react-native-reanimated';
 import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
+const {height} = Dimensions.get('window');
 
 export const MainContainer = styled.View`
   display: flex;
@@ -11,12 +13,12 @@ export const MainContainer = styled.View`
 `;
 
 export const BackgroundImage = styled.ImageBackground`
+  display: flex;
   position: fixed;
   justify-content: center;
   align-items: center;
-  display: flex;
-  height: 533;
-  width: max-content;
+  height: ${height * 0.6}px;
+  width: 100%;
 `;
 
 export const ButtonsContainer = styled.View`
@@ -35,14 +37,14 @@ export const EnterButton = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
   margin-top: ${screenWidth / 39};
-  max-height: 64;
+  max-height: 64px;
 `;
 
 export const ButtonText = styled.Text`
   color: ${black1Color};
   font-family: ${Satoshi500};
   font-size: ${RFValue(16, 812)};
-  margin-right: 4;
+  margin-right: 4px;
 `;
 
 export const AnimatedWordsStyle = styled(Animated.Text)`

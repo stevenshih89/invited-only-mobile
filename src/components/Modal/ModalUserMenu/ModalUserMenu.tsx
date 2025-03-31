@@ -1,4 +1,4 @@
-import React, {Dispatch, FC, SetStateAction, useCallback, useState} from 'react';
+import React, {Dispatch, FC, SetStateAction, useCallback, useContext, useState} from 'react';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -25,8 +25,9 @@ import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import ModalReport from '../ModalReport/ModalReport';
 import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common';
-import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {User as UserType} from 'src/types/userInfo';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 interface ModalUserMenuProps {
   isModalVisible: boolean;
   setModalVisible: boolean | any;
@@ -50,24 +51,25 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   hostUid,
   checkIsFullGuestsFun,
   setIsVisibleModalFullEvent,
-  handleCloseReport,
 }) => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
   const [removingState, setRemovingState] = useState<boolean>(false);
   const [blockAndReportState, setBlockAndReportState] = useState<boolean>(false);
   const [cancelInvitationState, setCancelInvitationState] = useState<boolean>(false);
   const [deleteChatState, setDeleteChatState] = useState<boolean>(false);
   const [eventData, setEventData] = useState({usersList: []});
+  const {
+    events: apiEventsCollection,
+    userInfo: apiUserInfoCollection,
+    messages: apiMessagesCollection,
+  } = useContext(FirebaseCollectionsContext);
   const styles = useStyles();
 
   const user = useUser((state: any) => state.user);
 
   const userGuest =
     uid === hostUid
-      ? eventData.usersList?.filter((i: any) => i?.uid === user?.uid)[0]
-      : eventData.usersList?.filter((i: any) => i?.uid === uid)[0];
+      ? eventData.usersList?.filter((i: UserType.Info) => i?.uid === user?.uid)[0]
+      : eventData.usersList?.filter((i: UserType.Info) => i?.uid === uid)[0];
 
   const navigation = useNavigation();
 
@@ -134,7 +136,6 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       await firestore().collection(apiEventsCollection).doc(activeEvent).update({
         usersList: updatedUsersList,
       });
-      console.log('userGuest', userGuest);
 
       showToast('inviteMatch', `Waiting for ${userGuest?.name} to accept your invitation`, 'Almost there!', {
         ownerPhoto: userGuest?.userPhoto,
@@ -146,7 +147,6 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     } catch (e) {
       showToast('inviteMatch', 'An error occurred while approving the guest. Please try again later.', 'Error');
       logErrorToSentry(e);
-      // console.log(e);
     }
   };
 
@@ -220,7 +220,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     } catch (e) {
       console.log('error update status guest', e);
       showToast('inviteMatch', 'An error occurred while updating the guest status. Please try again later.', 'Error');
-      logErrorToSentry(e)
+      logErrorToSentry(e);
     }
   };
 
@@ -288,7 +288,6 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         );
       }
     } catch (e) {
-      // console.log(e);
       showToast('inviteMatch', 'An error occurred while accepting the invitation. Please try again later.', 'Error');
       logErrorToSentry(e);
     }

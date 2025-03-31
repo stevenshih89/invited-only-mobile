@@ -31,8 +31,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import {AppEventsLogger} from 'react-native-fbsdk-next';
-import Config from 'react-native-config';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 interface Social {
   id: number;
   title: string;
@@ -40,7 +40,7 @@ interface Social {
 }
 
 const VerifySocialProfile = () => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
   const [openedSocial, setOpenedSocial] = useState<Social | null>(null);
   const [socialNickname, setSocialNickname] = useState<any>({});
   const [errorInput, setErrorInput] = useState<number[]>([]);
@@ -377,6 +377,7 @@ const VerifySocialProfile = () => {
                 </Text>
               </View>
               <KeyboardAwareFlatList
+                key={renderItem.name}
                 testID="social-list"
                 enableAutomaticScroll={false}
                 data={socials}

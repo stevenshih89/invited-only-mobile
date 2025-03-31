@@ -1,15 +1,16 @@
-import React, {ReactElement, useEffect, useState} from 'react';
+import React, {FC, ReactElement, useEffect, useState} from 'react';
 import {View, Text} from 'react-native';
 import Profile from 'assets/images/tab-bar/profile.svg';
 import ProfileActive from 'assets/images/tab-bar/profile-active.svg';
-import Requests from 'assets/images/tab-bar/requests.svg';
-import RequestsActive from 'assets/images/tab-bar/requests-active.svg';
+
 import MyEvents from 'assets/images/tab-bar/my-events.svg';
 import MyEventsActive from 'assets/images/tab-bar/my-events-active.svg';
 import Chat from 'assets/images/tab-bar/direct-inbox.svg';
 import ChatActive from 'assets/images/tab-bar/direct-inbox-active.svg';
+import JoinEventActive from 'assets/images/tab-bar/join-events-active.svg';
+import JoinEvents from 'assets/images/tab-bar/joint-events.svg';
 import IO from 'assets/images/tab-bar/io.svg';
-import {IOPath, chatPath, myEventsPath, profilePath, requestsPath} from 'constants/pathLocations';
+import {IOPath, chatPath, joinEventsPath, myEventsPath, profilePath} from 'constants/pathLocations';
 import {blackColor, grayColor, lightRedColor, whiteColor} from 'constants/colors';
 import {RootStackParamList} from 'typescript/types';
 import styles from './styles';
@@ -19,21 +20,21 @@ import {useUser} from 'src/store/userStore';
 import firestore from '@react-native-firebase/firestore';
 import {getEventsIJoining} from 'helpers/getEventsIJoining';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
-export const tabBarName = (focused: boolean, route: string): ReactElement => {
+export const TabBarName = (focused: boolean, route: string) => {
   const getLabel = (): string =>
     ({
       [profilePath]: 'Profile',
-      [requestsPath]: 'Requests',
+      [joinEventsPath]: 'Join Events',
       [myEventsPath]: 'My Events',
       [chatPath]: 'Inbox',
-    }[route as keyof RootStackParamList]);
+    })[route as keyof RootStackParamList];
 
   return <Text style={[styles.label, {color: focused ? whiteColor : grayColor}]}>{getLabel()}</Text>;
 };
 
-export const tabIcon = (focused: boolean, route: string): ReactElement => {
+export const TabIcon = (focused: boolean, route: string): ReactElement => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
   const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
   const userHost = useUser((i: any) => i?.user);
@@ -44,13 +45,13 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
   useEffect(() => {
     try {
       const unsubscribe = firestore()
-      .collection(apiEventsCollection)
-      .onSnapshot(async querySnapshot => {
-        const count = await getEventsIJoining(querySnapshot, userHost?.uid);
-        setEventsCount(count);
-      });
+        .collection(apiEventsCollection)
+        .onSnapshot(async querySnapshot => {
+          const count = await getEventsIJoining(querySnapshot, userHost?.uid);
+          setEventsCount(count);
+        });
 
-    return () => unsubscribe();
+      return () => unsubscribe();
     } catch (error) {
       logErrorToSentry(error);
     }
@@ -59,32 +60,32 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
   useEffect(() => {
     try {
       const unsubscribe = firestore()
-      .collection(apiMessagesCollection)
-      .onSnapshot(async documentSnapshot => {
-        if (documentSnapshot.empty) {
-          setNewMessages(0);
-          return;
-        }
+        .collection(apiMessagesCollection)
+        .onSnapshot(async documentSnapshot => {
+          if (documentSnapshot.empty) {
+            setNewMessages(0);
+            return;
+          }
 
-        let newMessages = 0;
+          let newMessages = 0;
 
-        const chatData = documentSnapshot.docs.map(i => i.data());
-        const filteredChats = chatData.filter(chatDataItem => {
-          return userHost?.accountType === 'host' ? chatDataItem?.uidHost === userHost?.uid : chatDataItem?.uidGuest === userHost?.uid;
-        });
-        for (const item of filteredChats) {
-          for (const messages of item.chats) {
-            if (userHost?.accountType === 'host') {
-              newMessages += messages.newMessagesGuest ? messages.newMessagesGuest : 0;
-            } else {
-              newMessages += messages.newMessagesHost ? messages.newMessagesHost : 0;
+          const chatData = documentSnapshot.docs.map(i => i.data());
+          const filteredChats = chatData.filter(chatDataItem => {
+            return userHost?.accountType === 'host' ? chatDataItem?.uidHost === userHost?.uid : chatDataItem?.uidGuest === userHost?.uid;
+          });
+          for (const item of filteredChats) {
+            for (const messages of item.chats) {
+              if (userHost?.accountType === 'host') {
+                newMessages += messages.newMessagesGuest ? messages.newMessagesGuest : 0;
+              } else {
+                newMessages += messages.newMessagesHost ? messages.newMessagesHost : 0;
+              }
             }
           }
-        }
-        setNewMessages(newMessages);
-      });
+          setNewMessages(newMessages);
+        });
 
-    return () => unsubscribe();
+      return () => unsubscribe();
     } catch (error) {
       logErrorToSentry(error);
     }
@@ -94,18 +95,18 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
     if (userHost?.uid) {
       try {
         firestore()
-        .collection(apiEventsCollection)
-        .where('uid', '==', `${userHost?.uid}`)
-        .onSnapshot(querySnapshot => {
-          if (querySnapshot.empty) {
-            return;
-          }
-          const data = querySnapshot?.docs?.map(i => i?.data());
-          const filterEvents = data.filter(item => !item.isCancelled);
-          setEventsCountHost(filterEvents.length);
-        });
+          .collection(apiEventsCollection)
+          .where('uid', '==', `${userHost?.uid}`)
+          .onSnapshot(querySnapshot => {
+            if (querySnapshot.empty) {
+              return;
+            }
+            const data = querySnapshot?.docs?.map(i => i?.data());
+            const filterEvents = data.filter(item => !item.isCancelled);
+            setEventsCountHost(filterEvents.length);
+          });
       } catch (error) {
-        logErrorToSentry(error)
+        logErrorToSentry(error);
       }
     }
   }, []);
@@ -113,11 +114,11 @@ export const tabIcon = (focused: boolean, route: string): ReactElement => {
   const getIcon = (): ReactElement =>
     ({
       [profilePath]: focused ? <ProfileActive /> : <Profile />,
-      [requestsPath]: focused ? <RequestsActive /> : <Requests />,
+      [joinEventsPath]: focused ? <JoinEventActive /> : <JoinEvents />,
       [IOPath]: <IO />,
       [myEventsPath]: focused ? <MyEventsActive /> : <MyEvents />,
       [chatPath]: focused ? <ChatActive /> : <Chat />,
-    }[route as keyof RootStackParamList]);
+    })[route as keyof RootStackParamList];
 
   return (
     <View style={[styles.iconWr, {borderTopColor: focused ? whiteColor : 'transparent'}]}>

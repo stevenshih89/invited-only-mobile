@@ -332,7 +332,11 @@ const Eula: FC = (): JSX.Element => {
               disabled={!endReached}
               activeOpacity={0.7}
               hitSlop={{top: 26, bottom: 20}}
-              onPress={() => navigation.navigate(enterTypePath as never)}
+              onPress={() => {
+                if (endReached) {
+                  navigation.navigate(enterTypePath as never);
+                }
+              }}
               style={{
                 flex: 1.7,
                 backgroundColor: endReached ? whiteColor : lightGray16Color,
@@ -343,6 +347,7 @@ const Eula: FC = (): JSX.Element => {
                 justifyContent: 'center',
                 marginTop: screenHeight / 39,
                 maxHeight: 64,
+                paddingVertical: 10,
               }}>
               <Text
                 style={{

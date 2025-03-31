@@ -6,15 +6,7 @@ import auth from '@react-native-firebase/auth';
 
 //import components
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {
-  commonStackPath,
-  earlyAccessPath,
-  eventCreatingStackPath,
-  notificationsPath,
-  notificationsStackPath,
-  paymentPath,
-  settingsPath,
-} from 'constants/pathLocations';
+import {commonStackPath, earlyAccessPath, notificationsPath, notificationsStackPath, settingsPath} from 'constants/pathLocations';
 import {blackColor, lightGray5Color, lightRedColor, orangeColor, whiteColor} from 'constants/colors.ts';
 import {screenHeight, THIS_WEEK, ALL, THIS_MONTH, ACCEPTED_STATUS, screenWidth} from 'constants/common.ts';
 import ModalEventRemindes from 'components/Modal/ModalEventRemindes/ModalEventRemindes.tsx';
@@ -50,8 +42,7 @@ import firebase from '@react-native-firebase/app';
 import {useNotifications} from 'src/store/notificationsStore';
 import * as S from './Header.style';
 import {Satoshi700} from 'constants/fonts';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import { useCreateEvent } from 'hooks/useCreateEvent';
+import {useCreateEvent} from 'hooks/useCreateEvent';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -81,12 +72,12 @@ type ItemProps = {
 const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType, showHeaderTop = true}) => {
   const MARQUEE_SPEED = 0.4;
   const MARQUEE_SPACING = 30;
-  const route = useRoute();  
+  const route = useRoute();
   const {hintStep, event, isVisibleSwipeGuide} = useDemoFlowStore();
   const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
   const [eventStarting, setEventStarting] = useState<boolean>(false);
 
-  const goToCreateEvent = useCreateEvent()
+  const goToCreateEvent = useCreateEvent();
 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
@@ -300,171 +291,15 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
   const handleCheckType = (type: 'IO' | 'myEvents' | 'profile' | 'request' | 'chat' | 'IO-JE' | undefined) => {
     switch (type) {
       case 'IO':
-        return (
-          <>
-            {isHost ? (
-              <ScrollView horizontal scrollEnabled={!!myEvents?.length} contentContainerStyle={{marginVertical: screenHeight / 50}}>
-                <S.EventButton onPress={goToCreateEvent} disabled={isDemo}>
-                  <S.EventView>
-                    <AddIcon width={26} height={26} />
-                  </S.EventView>
-                  <S.TextButton>Create event</S.TextButton>
-                </S.EventButton>
-                {(isDemo || myEvents) &&
-                  (isDemo ? [event] : myEvents).map((event: any, index: number) => {
-                    const isActive = activeEvent?.id === event?.id;
-                    const eventIsFinished = isEventFinished(event?.date, event?.hour);
-                    const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
-                    const eventIsFull = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
-
-                    return (
-                      <S.EventButton
-                        key={index}
-                        activeOpacity={0.7}
-                        onPress={() => {
-                          if (!userInfo?.accountConfirmed) {
-                            return;
-                          }
-                          setActiveEvent(event);
-                        }}>
-                        <S.EventSpecialWrapper borderColor={eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color}>
-                          {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                          {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                          {event?.photos[0]?.image && <S.EventFastImage source={{uri: event?.photos[0]?.image}} />}
-                        </S.EventSpecialWrapper>
-                        <S.EventTitleWrapper>
-                          {`${event?.name || event?.placeName}`.length >= 10 ? (
-                            <Marquee spacing={MARQUEE_SPACING} speed={MARQUEE_SPEED}>
-                              <S.EventTitleText>{`${event?.name || event?.placeName}`}</S.EventTitleText>
-                            </Marquee>
-                          ) : (
-                            <S.EventTitleText numberOfLines={1}>{`${event?.name || event?.placeName}`}</S.EventTitleText>
-                          )}
-                        </S.EventTitleWrapper>
-                      </S.EventButton>
-                    );
-                  })}
-              </ScrollView>
-            ) : (
-              <ScrollView horizontal scrollEnabled={false} contentContainerStyle={{marginVertical: screenHeight / 50}}>
-                <S.EventButton
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    if (!userInfo?.accountConfirmed) {
-                      return;
-                    }
-                    setActiveEventDate(ALL);
-                  }}>
-                  <S.EventIconWrapper borderColor={activeEventDate === ALL ? whiteColor : lightGray5Color}>
-                    <CalendarCheckIcon width={26} height={26} />
-                  </S.EventIconWrapper>
-                  <S.EventText>Upcoming Events</S.EventText>
-                </S.EventButton>
-                <S.EventButton
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    if (!userInfo?.accountConfirmed) {
-                      return;
-                    }
-                    setActiveEventDate(THIS_WEEK);
-                  }}>
-                  <S.EventIconWrapper borderColor={activeEventDate === THIS_WEEK ? whiteColor : lightGray5Color}>
-                    <WIcon />
-                  </S.EventIconWrapper>
-                  <S.EventText>This week</S.EventText>
-                </S.EventButton>
-                <S.EventButton
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    if (!userInfo?.accountConfirmed) {
-                      return;
-                    }
-                    setActiveEventDate(THIS_MONTH);
-                  }}>
-                  <S.EventIconWrapper borderColor={activeEventDate === THIS_MONTH ? whiteColor : lightGray5Color}>
-                    <MIcon />
-                  </S.EventIconWrapper>
-                  <S.EventText>This month</S.EventText>
-                </S.EventButton>
-              </ScrollView>
-            )}
-          </>
-        );
+        return <></>;
       case 'IO-JE':
-        return (
-          <S.WrapperHeaderJoinEvent>
-            <S.EventButton onPress={goToCreateEvent}>
-              <S.EventView>
-                <AddIcon width={26} height={26} />
-              </S.EventView>
-              <S.TextButton>Create event</S.TextButton>
-            </S.EventButton>
-          </S.WrapperHeaderJoinEvent>
-        );
+        return <></>;
       case 'myEvents':
         return null;
       case 'profile':
         return null;
       case 'request':
-        return isHost ? (
-          <ScrollView horizontal scrollEnabled={!!myEvents?.length} contentContainerStyle={{marginVertical: screenHeight / 50}}>
-            <S.EventButton onPress={goToCreateEvent}>
-              <S.EventView>
-                <AddIcon width={26} height={26} />
-              </S.EventView>
-              <S.TextButton>Create event</S.TextButton>
-            </S.EventButton>
-            {myEvents?.map((event: any, index: number) => {
-              if (event?.eventReviewed && !event?.statusEvent) {
-                return null;
-              }
-              const isActive = activeEvent?.id === event.id;
-              const eventIsFinished = isEventFinished(event?.date, event?.hour);
-              const allPeople = event?.female + event?.femaleFriend + event?.male + event?.maleFriend;
-              const eventIsFull = event?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
-
-              return (
-                <S.EventButton
-                  key={index}
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    if (!userInfo?.accountConfirmed) {
-                      return;
-                    }
-
-                    if (eventIsFinished) {
-                      showToast('inviteMatch', 'Create new event', `Event is ended: ${event?.date}`, {ownerPhoto: event.photos[0].image});
-                    }
-                    setActiveEvent(event);
-                  }}>
-                  <S.EventSpecialWrapper borderColor={eventIsFull ? orangeColor : isActive ? whiteColor : lightGray5Color}>
-                    {eventIsFinished && <InfoCircleGrayIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                    {eventIsFull && <InfoCircleOrangeIcon style={{position: 'absolute', left: '35%', top: '35%', zIndex: 999}} />}
-                    <S.EventFastImage source={{uri: event?.photos[0]?.image}} />
-                  </S.EventSpecialWrapper>
-                  <S.EventTitleWrapper>
-                    {`${event?.name || event?.placeName}`.length >= 10 ? (
-                      <Marquee spacing={MARQUEE_SPACING} speed={MARQUEE_SPEED}>
-                        <S.EventTitleText>{`${event?.name || event?.placeName}`}</S.EventTitleText>
-                      </Marquee>
-                    ) : (
-                      <S.EventTitleText numberOfLines={1}>{`${event?.name || event?.placeName}`}</S.EventTitleText>
-                    )}
-                  </S.EventTitleWrapper>
-                </S.EventButton>
-              );
-            })}
-          </ScrollView>
-        ) : (
-          <S.RequestsFlatList
-            data={DATAEventsJoining}
-            horizontal={true}
-            renderItem={({item}: {item: any}) => (
-              <ItemEventsJoining image={item.image} title={item.title} date={item.date} icon={item.icon} value={item.value} />
-            )}
-            keyExtractor={item => item.id}
-          />
-        );
+        return <></>;
       case 'chat':
         return (
           <S.WrapperHeaderButtonsChat style={{marginTop: userInfo?.accountType === 'host' ? 0 : screenHeight / 50}}>
@@ -496,7 +331,16 @@ const Header: FC<HeaderTypeProps> = ({setTypeEvents, badge, logoType, headerType
                   data={DATAEventsJoining}
                   horizontal={true}
                   renderItem={({item}) => (
-                    <ItemEventsJoining image={item.image} title={item.title} date={item.date} icon={item.icon} value={item.value} />
+                    <ItemEventsJoining
+                      image={item.image}
+                      title={item.title}
+                      date={item.date}
+                      icon={item.icon}
+                      value={item.value}
+                      allPeople={0}
+                      filledTo={0}
+                      numberBadge={0}
+                    />
                   )}
                   keyExtractor={item => item.id}
                 />

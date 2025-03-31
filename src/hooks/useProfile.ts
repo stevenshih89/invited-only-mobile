@@ -88,25 +88,40 @@ export const useProfile = () => {
   useFocusEffect(
     useCallback(() => {
       let eventsJoiningSubscriber: any;
-      if (!isHost) {
+      
+      // Only set up the listener if we're not a host and have a valid user ID
+      if (!isHost && userInfo?.uid) {
         try {
+          // Create a variable to track if the component is focused
+          let isFocused = true;
+          
           eventsJoiningSubscriber = firestore()
-          .collection(apiEventsCollection)
-          .onSnapshot(async querySnapshot => {
-            const count = await getEventsIJoining(querySnapshot, userInfo?.uid);
-            setEventsCount(count);
-          });
+            .collection(apiEventsCollection)
+            .onSnapshot(async querySnapshot => {
+              // Only process updates if the component is still focused
+              if (isFocused) {
+                const count = await getEventsIJoining(querySnapshot, userInfo?.uid);
+                setEventsCount(count);
+              }
+            });
+            
+          return () => {
+            isFocused = false;
+            if (eventsJoiningSubscriber) {
+              eventsJoiningSubscriber();
+            }
+          };
         } catch (error) {
           logErrorToSentry(error);
         }
       }
+      
       return () => {
-        console.warn('unsubscribe 213123');
         if (eventsJoiningSubscriber) {
           eventsJoiningSubscriber();
         }
       };
-    }, [userInfo]),
+    }, [isHost, userInfo?.uid]), // Only re-run if isHost or userInfo?.uid changes
   );
 
   useEffect(() => {

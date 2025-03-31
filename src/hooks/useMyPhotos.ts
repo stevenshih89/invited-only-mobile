@@ -83,20 +83,33 @@ export const useMyPhotos = ({images, setImages}: {images: any; setImages: any}) 
   };
 
   useEffect(() => {
+    // Only set up the listener if we have a valid userHost.uid
+    if (!userHost?.uid) return;
+    
+    let isMounted = true;
     try {
       const unsubscribe = firestore()
         .collection(apiUserInfoCollection)
         .doc(userHost.uid)
         .onSnapshot(docSnapshot => {
-          const data = docSnapshot.data();
-          const updatedPhotos = data?.photos || [];
-          setImages(updatedPhotos);
+          // Only update state if component is still mounted
+          if (isMounted) {
+            const data = docSnapshot.data();
+            const updatedPhotos = data?.photos || [];
+            setImages(updatedPhotos);
+          }
         });
-      return () => unsubscribe();
+      return () => {
+        isMounted = false;
+        unsubscribe();
+      };
     } catch (error) {
       logErrorToSentry(error);
+      return () => {
+        isMounted = false;
+      };
     }
-  }, []);
+  }, [userHost?.uid]); // Only re-run if userHost.uid changes
 
   const replaceImage = async () => {
     if (selectImage && activeImage) {

@@ -1,5 +1,5 @@
 import {StyleProp, Text, View, ViewStyle} from 'react-native';
-import {FC, ReactNode, useEffect, useState} from 'react';
+import {FC, ReactNode, useContext, useEffect, useState} from 'react';
 import {blackColor, orangeClose, transparentWhite30Color, whiteColor} from 'constants/colors';
 import CheckCircleIcon from 'assets/images/icons/check-circle.svg';
 import {Image} from 'react-native';
@@ -8,9 +8,10 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import firestore from '@react-native-firebase/firestore';
 import {INVITE_MATCH_STATUS} from 'constants/common';
 import Config from 'react-native-config';
-import { showToast } from 'helpers/showToast';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import * as S from './FullEvent.style'
+import {showToast} from 'helpers/showToast';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import * as S from './FullEvent.style';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 interface FullEventProps {
   activeEvent: any;
@@ -24,8 +25,7 @@ interface FullEventProps {
 
 const FullEvent: FC<FullEventProps> = ({activeEvent, totalRequestsGuests, rightComponent, text, styleContainer}) => {
   const [actualActiveEventData, setActualActiveEventData] = useState([]);
-
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
+  const {events: apiEventsCollection} = useContext(FirebaseCollectionsContext);
 
   const getActiveEventData = async () => {
     try {
@@ -35,7 +35,7 @@ const FullEvent: FC<FullEventProps> = ({activeEvent, totalRequestsGuests, rightC
       }
     } catch (error) {
       showToast('inviteMatch', 'An issue occurred while fetching the event data. Please try again later.', 'Error');
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   };
 
@@ -52,9 +52,7 @@ const FullEvent: FC<FullEventProps> = ({activeEvent, totalRequestsGuests, rightC
               return (
                 <S.User key={item.uid}>
                   {index < 1 ? (
-                    <S.Avatar
-                      source={{uri: item.userPhoto}}
-                    />
+                    <S.Avatar source={{uri: item.userPhoto}} />
                   ) : (
                     <S.Avatar
                       style={{
@@ -77,9 +75,7 @@ const FullEvent: FC<FullEventProps> = ({activeEvent, totalRequestsGuests, rightC
                 transform: [{translateX: activeEvent?.usersList?.length >= 2 ? -20 : -10}],
               }}>
               <S.RequestsCountWrapper>
-                <S.TextCount>
-                  {`+${totalRequestsGuests}`}
-                </S.TextCount>
+                <S.TextCount>{`+${totalRequestsGuests}`}</S.TextCount>
               </S.RequestsCountWrapper>
             </S.RequestsWrapper>
           ) : null}

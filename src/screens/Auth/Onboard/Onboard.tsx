@@ -1,5 +1,5 @@
 import React, {FC, useContext, useEffect} from 'react';
-import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ViewBase} from 'react-native';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
 import WelcomeBcgCards from 'assets/images/auth/welcom-screen-cards.png';
 import BgDottedLineLeft from 'assets/images/auth/background-dotted-line-left.png';
@@ -28,22 +28,17 @@ const backgroundCardsStyle = StyleSheet.create({
 const Onboard: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
-  const {setOnBoarding} = useContext(AuthContext);
-
   useEffect(() => {
-    setOnBoarding([]);
-  }, []);
-
-  const getId = async () => {
-    try {
-      const value = await AsyncStorage.getItem('uid');
-      if (value !== null) {
-        return value;
+    const setOnboardingState = async () => {
+      try {
+        await AsyncStorage.setItem('onBoarding', 'true');
+      } catch (e) {
+        console.error('Error setting onBoarding state:', e);
       }
-    } catch (e) {}
-  };
+    };
 
-  getId();
+    setOnboardingState();
+  }, []);
 
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
@@ -92,7 +87,10 @@ const Onboard: FC = (): JSX.Element => {
                 }}>
                 Have an account?{' '}
               </Text>
-              <TouchableOpacity onPress={() => navigation.navigate('/sign-up', {isLogin: true})}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('/sign-in');
+                }}>
                 <Text
                   style={{
                     color: whiteColor,

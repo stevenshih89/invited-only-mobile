@@ -56,7 +56,7 @@ const Input: FC<InputProps> = ({
           keyboardAppearance="dark"
           value={value}
           onChangeText={handleOnChange}
-          onSubmitEditing={() => console.log('onSubmitEditing')}
+          onSubmitEditing={() => console.warn('Not implemented??')}
           blurOnSubmit={false}
           editable={editable}
           autoComplete={'off'}

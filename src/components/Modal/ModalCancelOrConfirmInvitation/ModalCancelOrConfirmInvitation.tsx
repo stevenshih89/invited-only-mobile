@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useContext} from 'react';
 import {View, Text, Image} from 'react-native';
 import PersonIcon from 'assets/images/icons/profile-2user.svg';
 import CalendarIcon from 'assets/images/icons/calendar.svg';
@@ -13,7 +13,8 @@ import {showToast} from 'helpers/showToast.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.ts';
 import {requestsPath} from 'constants/pathLocations.ts';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 interface ModalCancelInvitationProps {
   cancelInvitation?: boolean;
   setCancelInvitation?: any;
@@ -42,8 +43,7 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
   const styles = useStyles();
   const navigation = useAppNavigation();
 
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
+  const {events: apiEventsCollection, messages: apiMessagesCollection} = useContext(FirebaseCollectionsContext);
 
   const handleUnmatchEvent = async () => {
     try {
@@ -63,7 +63,7 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
     } catch (error) {
       console.log('error unmatch', error);
       showToast('inviteMatch', 'An issue occurred while processing the event. Please try again later.', 'Error');
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   };
 

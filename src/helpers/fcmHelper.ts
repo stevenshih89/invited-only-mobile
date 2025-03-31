@@ -8,9 +8,9 @@ import {showToast} from './showToast';
 import functions from '@react-native-firebase/functions';
 import Config from 'react-native-config';
 import {logErrorToSentry} from './logErrorsToSentry';
+import {FirebaseCollectionsResponse} from 'src/apiv2/queries/appSettingsQueries';
 
-export const fcmHelper = async () => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+export const fcmHelper = async ({apiUserInfoCollection}: {apiUserInfoCollection: keyof FirebaseCollectionsResponse}) => {
   const userUid = auth().currentUser?.uid;
 
   try {
@@ -24,28 +24,22 @@ export const fcmHelper = async () => {
       console.error('error update token', error);
     }
     await AsyncStorage.setItem('fcmToken', JSON.stringify(newToken));
-    // }
-    // // console.log('frc token', newToken);
+
     return newToken;
-    // const fcmToken = await messaging().getToken();
-    // await AsyncStorage.setItem('fcmToken', JSON.stringify(fcmToken));
-    // // console.log('fcmToken', fcmToken);
   } catch (e) {
     console.error('error fcm token', e);
     logErrorToSentry(e);
   }
 };
 
-//method was called to get FCM tiken for notification
-export const getFcmToken = async () => {
+export const getFcmToken = async ({apiUserInfoCollection}: {apiUserInfoCollection: keyof FirebaseCollectionsResponse}) => {
   let token = null;
-  await checkApplicationNotificationPermission();
+  await checkApplicationNotificationPermission({apiUserInfoCollection});
   await registerAppWithFCM();
   try {
     token = await messaging().getToken();
-    // console.warn('getFcmToken-->', token);
   } catch (error) {
-    // console.log('getFcmToken Device Token error ', error);
+    logErrorToSentry(error);
   }
   return token;
 };
@@ -57,7 +51,7 @@ export async function registerAppWithFCM() {
     await messaging()
       .registerDeviceForRemoteMessages()
       .then(status => {
-        // console.log('registerDeviceForRemoteMessages status', status);
+        console.log('registerDeviceForRemoteMessages status', status);
       })
       .catch(error => {
         console.error('registerDeviceForRemoteMessages error ', error);
@@ -73,7 +67,7 @@ export async function unRegisterAppWithFCM() {
     await messaging()
       .unregisterDeviceForRemoteMessages()
       .then(status => {
-        // console.log('unregisterDeviceForRemoteMessages status', status);
+        console.log('unregisterDeviceForRemoteMessages status', status);
       })
       .catch(error => {
         console.error('unregisterDeviceForRemoteMessages error ', error);
@@ -83,7 +77,11 @@ export async function unRegisterAppWithFCM() {
   // // console.log('unRegisterAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
 }
 
-export const checkApplicationNotificationPermission = async () => {
+export const checkApplicationNotificationPermission = async ({
+  apiUserInfoCollection,
+}: {
+  apiUserInfoCollection: keyof FirebaseCollectionsResponse;
+}) => {
   const authStatus = await messaging().requestPermission();
 
   // console.warn('Authorization status1:', authStatus);
@@ -91,11 +89,11 @@ export const checkApplicationNotificationPermission = async () => {
   const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    await fcmHelper();
+    await fcmHelper({apiUserInfoCollection});
   }
   request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS)
     .then(result => {
-      // // console.log('POST_NOTIFICATIONS status:', result);
+      console.log('POST_NOTIFICATIONS status:', result);
     })
     .catch(error => {
       console.error('POST_NOTIFICATIONS error ', error);
@@ -108,13 +106,23 @@ export function registerListenerWithFCM() {
   const unsubscribe = messaging().onMessage(async remoteMessage => {
     // console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
     if (remoteMessage?.notification?.title && remoteMessage?.notification?.body) {
-      onDisplayNotification(remoteMessage.notification?.title, remoteMessage.notification?.body, remoteMessage?.data);
+      onDisplayNotification(
+        remoteMessage.notification?.title,
+        remoteMessage.notification?.body,
+        remoteMessage?.data,
+        () => {
+          console.log('Not implemented?');
+        },
+        () => {
+          console.log('Not implemented?');
+        },
+      );
     }
   });
   notifee.onForegroundEvent(({type, detail}) => {
     switch (type) {
       case EventType.DISMISSED:
-        // console.log('User dismissed notification', detail.notification);
+        console.log('User dismissed notification', detail.notification);
         break;
       case EventType.PRESS:
         // console.log('User pressed notification', detail.notification);
@@ -128,7 +136,7 @@ export function registerListenerWithFCM() {
   });
 
   messaging().onNotificationOpenedApp(async remoteMessage => {
-    // console.log('onNotificationOpenedApp Received', JSON.stringify(remoteMessage));
+    console.log('onNotificationOpenedApp Received', JSON.stringify(remoteMessage));
     // if (remoteMessage?.data?.clickAction) {
     //   onNotificationClickActionHandling(remoteMessage.data.clickAction);
     // }
@@ -146,7 +154,13 @@ export function registerListenerWithFCM() {
 }
 
 //method was called to display notification
-async function onDisplayNotification(title, body, data, setRejectVisible: () => void, setAcceptModalVisible: () => void) {
+async function onDisplayNotification(
+  title: string,
+  body: string,
+  data: any,
+  setRejectVisible: () => void,
+  setAcceptModalVisible: () => void,
+) {
   try {
     let paramsParse = {};
     if (data.params && typeof data.params === 'string') {

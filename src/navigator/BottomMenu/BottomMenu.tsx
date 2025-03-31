@@ -9,6 +9,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {
   IOPath,
   chatPath,
+  joinEventsPath,
   joinEventsPathRequest,
   myEventsPath,
   myProfileViewPath,
@@ -18,7 +19,7 @@ import {
 } from 'constants/pathLocations';
 import Requests from 'screens/App/Requests/Requests';
 import Header from 'components/Header/Header';
-import {tabBarName, tabIcon} from 'navigator/TabBar/TabBar';
+import {TabBarName, TabIcon} from 'navigator/TabBar/TabBar';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Edit from 'assets/images/icons/edit.svg';
 import Profile from 'screens/App/Profile/Profile';
@@ -26,33 +27,25 @@ import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileVi
 import ProfileEditing from 'screens/App/Profile/screens/ProfileEditing/ProfileEditing';
 import {TouchableOpacity} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import JoinEvents from 'screens/App/Requests/JoinEvents/JoinEvents';
-import {useUser} from 'src/store/userStore';
 
-const RequestsStackScreen = () => {
-  const RequestsStack = createStackNavigator();
+import {useUser} from 'src/store/userStore';
+import JoinEvents from 'screens/App/JoinEvents/JoinEvents';
+
+const JoinEventsStackScreen = () => {
+  const JoinEventsStack = createStackNavigator();
 
   return (
-    <RequestsStack.Navigator initialRouteName={requestsPath}>
-      <RequestsStack.Screen
-        key={requestsPath}
-        name={requestsPath}
-        component={Requests}
+    <JoinEventsStack.Navigator initialRouteName={joinEventsPath}>
+      <JoinEventsStack.Screen
+        key={joinEventsPath}
+        name={joinEventsPath}
+        component={JoinEvents}
         options={{
           headerShown: true,
           header: () => <Header badge={true} logoType="logo" headerType="request" />,
         }}
       />
-      <RequestsStack.Screen
-        options={{
-          headerShown: true,
-          header: () => <Header badge={true} logoType="logo" headerType="IO-JE" />,
-        }}
-        name={joinEventsPathRequest}
-        key={joinEventsPathRequest}
-        component={JoinEvents}
-      />
-    </RequestsStack.Navigator>
+    </JoinEventsStack.Navigator>
   );
 };
 
@@ -129,12 +122,12 @@ const BottomMenu: FC = (): JSX.Element => {
         headerTransparent: false,
         tabBarActiveTintColor: whiteColor,
         tabBarStyle: styles.tabNavigator,
-        tabBarIcon: ({focused}: {focused: boolean}) => tabIcon(focused, route.name),
-        tabBarLabel: ({focused}: {focused: boolean}) => tabBarName(focused, route.name),
+        tabBarIcon: ({focused}: {focused: boolean}) => TabIcon(focused, route.name),
+        tabBarLabel: ({focused}: {focused: boolean}) => TabBarName(focused, route.name),
       })}
       initialRouteName={initialRouteName}>
       {!isInvitedOnlyAdmin && <Tab.Screen name={profilePath} component={ProfileStackScreen} />}
-      {!isInvitedOnlyAdmin && <Tab.Screen name={requestsPath} component={RequestsStackScreen} />}
+      {!isInvitedOnlyAdmin && <Tab.Screen name={joinEventsPath} component={JoinEventsStackScreen} />}
       {!isInvitedOnlyAdmin && <Tab.Screen name={IOPath} component={IOStackNavigation} />}
       <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation} />
       <Tab.Screen name={chatPath} component={ChatStackScreen} />

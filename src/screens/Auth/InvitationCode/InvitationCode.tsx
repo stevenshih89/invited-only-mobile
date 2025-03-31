@@ -31,11 +31,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import {AppEventsLogger} from 'react-native-fbsdk-next';
-import Config from 'react-native-config';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 const InvitationCode: FC = (): JSX.Element => {
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
   const [code, setCode] = useState<string>('');
   const [invalidCode, setInvalidCode] = useState(false);
   const [isFocusInput, setIsfocusInput] = useState<boolean>(false);

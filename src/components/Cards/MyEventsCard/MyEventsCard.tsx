@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -22,9 +22,10 @@ import firestore from '@react-native-firebase/firestore';
 import {calculateAge} from 'helpers/calculateAge';
 import {eventTypes} from 'src/mocks/eventTypes';
 import {useUser} from 'src/store/userStore';
-import Config from 'react-native-config';
-import { showToast } from 'helpers/showToast';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+
+import {showToast} from 'helpers/showToast';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 interface MyEventsCardProps {
   statusEvent: boolean;
   eventReviewed: boolean;
@@ -61,7 +62,8 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
     isMyEvents = false,
     isReview,
   } = props;
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+
   const styles = useStyles();
   const [userHostInfo, setUserHostInfo] = useState();
 
@@ -73,7 +75,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
       setUserHostInfo(getDoc.data());
     } catch (error) {
       showToast('inviteMatch', 'An issue occurred while fetching the host user information. Please try again later.', 'Error');
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   };
 
@@ -119,12 +121,12 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
     if (item?.date && item?.hour) {
       const adjustedDate = moment(`${item.date}, ${item.hour}`, 'DD.MM.YYYY, HH:mm').add(12, 'hours');
       if (adjustedDate.isBefore(moment())) {
-        return true
-      } else false
+        return true;
+      } else false;
     }
-  }
+  };
 
-  const isExpired = eventIsExpired()
+  const isExpired = eventIsExpired();
 
   const getEventStatus = () => {
     if (item?.isCancelled) {
@@ -134,7 +136,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
       };
     }
 
-    if(isExpired) {
+    if (isExpired) {
       return {
         plateTitle: 'Expired',
         plateBackgroundColor: grayScale600,
@@ -482,7 +484,7 @@ const MyEventsCard: FC<MyEventsCardProps> = props => {
             <Image style={{width: screenWidth - 48 - 48}} source={LineImage} />
           </View>
         )}
-        {!isExpired? <View style={{marginBottom: 20, paddingHorizontal: 24}}>{customButton ? customButton : null}</View>: null}
+        {!isExpired ? <View style={{marginBottom: 20, paddingHorizontal: 24}}>{customButton ? customButton : null}</View> : null}
       </View>
     </>
   );

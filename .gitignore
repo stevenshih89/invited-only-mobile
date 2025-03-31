@@ -77,3 +77,4 @@ yarn-error.log
 .env.staging
 .env.test
 .qodo
+.aider*

@@ -18,8 +18,8 @@ import FastImage from 'react-native-fast-image';
 import {useUser} from 'src/store/userStore';
 import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
 import Config from 'react-native-config';
-import { showToast } from 'helpers/showToast';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {showToast} from 'helpers/showToast';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 interface ModalFullEvent {
   isVisible: boolean;
@@ -37,13 +37,10 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
   setIsVisibleModalFullEvent,
   actualActiveEventDataProps,
   totalQuantityGuestsProps,
-  acceptQuantityGuestProps,
-  totalRequestsGuestsProps,
 }) => {
   const [actualActiveEventData, setActualActiveEventData] = useState([]);
   const [totalQuantityGuests, setTotalQuantityGuests] = useState<number>(0);
   const [acceptQuantityGuest, setAcceptQuantityGuest] = useState<number>(0);
-  const [totalRequestsGuests, setTotalRequestsGuests] = useState<number>(0);
 
   const styles = useStyles();
 
@@ -64,7 +61,7 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
       setAcceptQuantityGuest(data?.usersList.filter(item => item.status === ACCEPTED_STATUS).length);
     } catch (error) {
       showToast('inviteMatch', 'An issue occurred while retrieving event data. Please try again later.', 'Error');
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   };
 

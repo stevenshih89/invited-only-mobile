@@ -1,4 +1,4 @@
-import React, {FC, useState, useEffect, useCallback} from 'react';
+import React, {FC, useState, useEffect, useCallback, useContext} from 'react';
 import {View, Text, ImageBackground, TouchableOpacity, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
@@ -21,16 +21,17 @@ import firestore from '@react-native-firebase/firestore';
 import {calculateAge} from 'helpers/calculateAge';
 import {useFocusEffect} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
-import Config from 'react-native-config';
-import { showToast } from 'helpers/showToast';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+
+import {showToast} from 'helpers/showToast';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 interface JoiningEventsCardProps {
   estimeTime: string;
   uid: string;
   id: string;
   activeState: boolean;
-  host: {image: string; name: string};
+  host: {image: string; name: string; hostUid?: string};
   image: string;
   list: any;
   allPeople: number;
@@ -47,6 +48,7 @@ interface JoiningEventsCardProps {
   oldDate: string;
   oldName: string;
   oldHour: string;
+  status: string;
   joinedPeopleCount: number;
   isAcceptedInvitation: boolean;
   handleAcceptInvitation: any;
@@ -77,9 +79,7 @@ interface JoiningEventsCardProps {
 
 const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
   activeState,
-  uid,
-  id,
-  estimeTime,
+
   date,
   oldDate,
   // usersList,
@@ -102,18 +102,15 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
   status,
   handleOpenCancelAttendingModal,
   handleOpenAcceptInvitationModal,
-  handleAcceptInvitation,
-  handleGetEventsIJoining,
 }) => {
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const [eventStarting, setEventStarting] = useState<boolean>(true);
+  const [_eventStarting, setEventStarting] = useState<boolean>(true);
   const [updateEvent, setUpdateEvent] = useState<string | null>(null);
-  const [visibleUserDelete, setVisibleUserDelete] = useState(true);
+  const [_visibleUserDelete, _setVisibleUserDelete] = useState(true);
   const [userDelete, setUserDelete] = useState<string | null>(null);
 
   const [userInfo, setUserInfo] = useState<any>();
-  const [eventData, setEventData] = useState({
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const [_eventData, setEventData] = useState({
     time: '',
     image: '',
     city: '',
@@ -142,7 +139,6 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
 
   const isInviteMatchStatus = status === INVITE_MATCH_STATUS;
   const isApprovedStatus = status === APPROVED_STATUS;
-  const isAcceptedStatus = status === ACCEPTED_STATUS;
   const eventIsFull = list?.usersList?.filter(i => i?.status === ACCEPTED_STATUS)?.length === allPeople;
 
   useFocusEffect(
@@ -427,14 +423,17 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
                     <TouchableOpacity
                       activeOpacity={0.7}
                       onPress={() =>
-                        handleOpenCancelAttendingModal({
-                          image,
-                          textCityName,
-                          date,
-                          numberOfGirlsInvited,
-                          host,
-                          list,
-                        })
+                        handleOpenCancelAttendingModal(
+                          {
+                            image,
+                            textCityName,
+                            date,
+                            numberOfGirlsInvited,
+                            host,
+                            list,
+                          },
+                          userInfo,
+                        )
                       }
                       style={{
                         flex: 1,
@@ -449,14 +448,17 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
                     <TouchableOpacity
                       activeOpacity={0.7}
                       onPress={() =>
-                        handleOpenAcceptInvitationModal({
-                          image,
-                          textCityName,
-                          date,
-                          numberOfGirlsInvited,
-                          host,
-                          list,
-                        })
+                        handleOpenAcceptInvitationModal(
+                          {
+                            image,
+                            textCityName,
+                            date,
+                            numberOfGirlsInvited,
+                            host,
+                            list,
+                          },
+                          userInfo,
+                        )
                       }
                       style={{
                         flex: 1,
@@ -485,14 +487,17 @@ const JoiningEventsCard: FC<JoiningEventsCardProps> = ({
                     <TouchableOpacity
                       activeOpacity={0.7}
                       onPress={() =>
-                        handleOpenCancelAttendingModal({
-                          image,
-                          textCityName,
-                          date,
-                          numberOfGirlsInvited,
-                          host,
-                          list,
-                        })
+                        handleOpenCancelAttendingModal(
+                          {
+                            image,
+                            textCityName,
+                            date,
+                            numberOfGirlsInvited,
+                            host,
+                            list,
+                          },
+                          userInfo,
+                        )
                       }
                       style={{
                         flex: 1,

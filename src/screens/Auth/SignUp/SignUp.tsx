@@ -1,10 +1,7 @@
-import {isIos, screenHeight} from 'constants/common';
-import React, {FC, useState} from 'react';
-import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View} from 'react-native';
-import LogoPrimary from 'assets/images/auth/logo-primary-2.svg';
-import {backgroundGradientColors, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
+import {isIos} from 'constants/common';
+import React, {FC, useState, useContext} from 'react';
+import {Keyboard, KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback} from 'react-native';
+import {backgroundGradientColors} from 'constants/colors';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {confirmPhonePath} from 'constants/pathLocations';
@@ -13,59 +10,55 @@ import {showToast} from 'helpers/showToast.ts';
 import firestore from '@react-native-firebase/firestore';
 import {InputPhoneView} from '../../../components/Inputs/InputPhoneView';
 import LinearGradient from 'react-native-linear-gradient';
-import Config from 'react-native-config';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import * as S from './SignUp.styles';
 
-const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-
-const SignUp: FC = ({route}: any): JSX.Element => {
-  const isLogin = route?.params?.isLogin;
-
+const SignUp: FC = (): JSX.Element => {
   const [mobilePhone, setMobilePhone] = useState<string>('');
-  const [confirm, setConfirm] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isValidPhone, setIsValidPhone] = useState<boolean>(false);
   const [isDisabledValidation, setIsDisabledValidation] = useState<boolean>(true);
 
   const navigation = useAppNavigation();
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
 
-  async function signInWithPhoneNumber() {
+  async function signUpWithPhoneNumber() {
     try {
       if (!mobilePhone) {
         return;
       }
       setLoading(true);
 
-      if (!isLogin) {
-        const userNumber = await firestore().collection(apiUserInfoCollection).where('phoneNumber', '==', mobilePhone).get();
-        if (!userNumber.empty) {
-          setLoading(false);
-          showToast('inviteMatch', 'This Phone Number is already exist', 'Fail');
-          return;
-        }
+      const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
+      console.log(`looking in ${apiUserInfoCollection} for the phone number`);
+
+      // Sign up flow - check if phone number already exists
+      const userNumber = await firestore().collection(apiUserInfoCollection).where('phoneNumber', '==', mobilePhone).get();
+      if (!userNumber.empty) {
+        setLoading(false);
+        showToast('inviteMatch', 'This Phone Number is already exist', 'Fail');
+        return;
       }
 
-      const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
-
       const confirmation = await auth().signInWithPhoneNumber(phone);
-      // @ts-ignore
-      setConfirm(confirmation);
-      // @ts-ignore
-      navigation.navigate(confirmPhonePath, {confirm: confirmation, mobilePhone: phone});
+      navigation.navigate(confirmPhonePath, {
+        confirm: confirmation,
+        mobilePhone: phone,
+        isLogin: false,
+      });
       setLoading(false);
     } catch (e: any) {
       setLoading(false);
-
-      console.error(e);
-
-      showToast('inviteMatch', `${e?.message.split(']')[1]}`);
-      // console.warn(e);
+      logErrorToSentry(e);
+      showToast('inviteMatch', `${e?.message.split(']')[1] || 'Error processing request'}`);
     }
   }
 
   const handleSignUp = () => {
     setIsDisabledValidation(false);
     if (isValidPhone) {
-      signInWithPhoneNumber();
+      signUpWithPhoneNumber();
     }
   };
 
@@ -74,41 +67,16 @@ const SignUp: FC = ({route}: any): JSX.Element => {
       <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
-            <View
-              style={{
-                paddingTop: screenHeight / 21,
-                flex: 1,
-                justifyContent: 'space-between',
-                paddingBottom: 0,
-              }}>
-              <View style={{paddingHorizontal: 24, width: '100%'}}>
-                <View style={{alignItems: 'center'}}>
-                  <LogoPrimary />
-                </View>
-                <View
-                  style={{
-                    marginBottom: screenHeight / 30,
-                    marginTop: screenHeight / 12,
-                  }}>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi500,
-                      fontSize: RFValue(48, 932),
-                      marginBottom: 8,
-                    }}>
-                    Your phone
-                  </Text>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi400,
-                      fontSize: RFValue(16, 932),
-                    }}>
-                    We protect our community by ensuring the authenticity of everyone in IO.
-                  </Text>
-                </View>
-                <View style={{width: '100%'}}>
+            <S.Container>
+              <S.ContentContainer>
+                <S.LogoContainer>
+                  <S.LogoImage />
+                </S.LogoContainer>
+                <S.HeaderContainer>
+                  <S.Title>Your phone</S.Title>
+                  <S.Subtitle>We protect our community by ensuring the authenticity of everyone in IO.</S.Subtitle>
+                </S.HeaderContainer>
+                <S.InputContainer>
                   <InputPhoneView
                     testID="phone-input"
                     value={mobilePhone}
@@ -116,12 +84,12 @@ const SignUp: FC = ({route}: any): JSX.Element => {
                     validationDisabled={isDisabledValidation}
                     onChangeFormattedText={val => setMobilePhone(val)}
                   />
-                </View>
-              </View>
-              <View style={{paddingHorizontal: 24, marginBottom: 4}}>
-                <Button disabled={!isValidPhone && !loading && !confirm} loading={loading} onPress={handleSignUp} title="Continue" />
-              </View>
-            </View>
+                </S.InputContainer>
+              </S.ContentContainer>
+              <S.ButtonContainer>
+                <Button disabled={!isValidPhone && !loading} loading={loading} onPress={handleSignUp} title="Continue" />
+              </S.ButtonContainer>
+            </S.Container>
           </SafeAreaView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

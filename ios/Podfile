@@ -7,15 +7,16 @@ def node_require(script)
       {paths: [process.argv[1]]},
     )", __dir__]).strip
 end
-use_modular_headers!
+
+# Only use one of these - using both causes conflicts
+# use_modular_headers!
 use_frameworks! :linkage => :static
 $RNFirebaseAsStaticFramework = true
 
 node_require('react-native/scripts/react_native_pods.rb')
 node_require('react-native-permissions/scripts/setup.rb')
-use_modular_headers!
 
-platform :ios, '13.4'
+platform :ios, '16.0'
 prepare_react_native_project!
 
 setup_permissions([
@@ -23,16 +24,7 @@ setup_permissions([
   'PhotoLibrary',
 ])
 
-# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
-# because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
-#
-# To fix this you can also exclude `react-native-flipper` using a `react-native.config.js`
-# ```js
-# module.exports = {
-#   dependencies: {
-#     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
-# ```
-# flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+ENV['USE_FRAMEWORKS'] ||= 'static'
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -45,22 +37,14 @@ target 'InvitedOnly' do
   $RNFirebaseAsStaticFramework = true
   
   pod 'react-native-config/Extension', :path => '../node_modules/react-native-config'
+  pod 'RCT-Folly', :podspec => '../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec'
+
 
   use_react_native!(
     :path => config[:reactNativePath],
-    # Enables Flipper.
-    #
-    # Note that if you have use_frameworks! enabled, Flipper will not work and
-    # you should disable the next line.
-    # :flipper_configuration => flipper_config,
-    # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'InvitedOnlyTests' do
-    inherit! :complete
-    # Pods for testing
-  end
 
   post_install do |installer|
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
@@ -69,6 +53,11 @@ target 'InvitedOnly' do
       config[:reactNativePath],
       :mac_catalyst_enabled => false
     )
+    
+    # This is necessary for Xcode 14+
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
     installer.pods_project.targets.each do |target|
       if target.name == 'BoringSSL-GRPC'
         target.source_build_phase.files.each do |file|
@@ -77,6 +66,13 @@ target 'InvitedOnly' do
             flags.reject! { |flag| flag == '-GCC_WARN_INHIBIT_ALL_WARNINGS' }
             file.settings['COMPILER_FLAGS'] = flags.join(' ')
           end
+        end
+      end 
+      # Set C++ language standard to C++17 for gRPC-Core and gRPC-C++
+      if ['gRPC-Core', 'gRPC-C++'].include?(target.name)
+        target.build_configurations.each do |config|
+          config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+          config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
         end
       end
     end

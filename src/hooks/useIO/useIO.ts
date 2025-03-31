@@ -44,8 +44,8 @@ export const useIO = () => {
   const [isVisibleSuperInvite, setIsVisibleSuperInvite] = useState<boolean>(false);
   const [isVisibleMatch, setIsVisibleMatch] = useState<boolean>(false);
   const [events, setEvents] = useState<{info: EventData; component: JSX.Element}[]>([]);
-  const [nameUser, setNameUser] = useState<string>('');
-  const [currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
+  const [_nameUser, setNameUser] = useState<string>('');
+  const [_currentEventCardPosition, setCurrentEventCardPosition] = useState(1);
   const [reportedItem, setReportedItem] = useState<{uid: string; event: EventData | null}>({uid: '', event: null});
   const [matchData, setMatchData] = useState<MatchData | null>(null);
   const [modalReport, setModalReport] = useState<boolean>(false);
@@ -60,7 +60,7 @@ export const useIO = () => {
   const [swipedCardsCount, setSwipedCardsCount] = useState<number>(0);
   const [isOpenModalLimitedAccess, setIsOpenModalLimitedAccess] = useState<boolean>(false);
   const [swipedCardUids, setSwipedCardUids] = useState<string[]>([]);
-  const [lastVisible, setLastVisible] = useState<boolean>(false);
+  const [_, setLastVisible] = useState<boolean>(false);
   const {setCounterSuperInvites, counterSuperInvites} = useCounterSuperEvents();
   const {loadingCardsList, setLoadingCardsList, myEvents, loadingMyEvents, activeEvent, setActiveEvent} = useMyEvents();
 

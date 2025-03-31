@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {showToast} from 'helpers/showToast';
-import Config from 'react-native-config';
+import {FirebaseCollectionsResponse} from 'src/apiv2/queries/appSettingsQueries';
 
 export const getUsersForEvent = async ({
   male,
@@ -9,18 +9,18 @@ export const getUsersForEvent = async ({
   limit = 10,
   lastVisible,
   excludeUids,
+  collectionName,
 }: {
   male: number;
   female: number;
   limit?: number;
   lastVisible?: any;
   excludeUids: string[];
+  collectionName: keyof FirebaseCollectionsResponse;
 }) => {
   try {
-    const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-
     let query = firestore()
-      .collection(apiUserInfoCollection)
+      .collection(collectionName)
       .orderBy('userBeauty', 'asc')
       .orderBy('uid')
       .where('accountType', '==', 'guest')

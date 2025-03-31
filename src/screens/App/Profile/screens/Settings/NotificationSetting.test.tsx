@@ -3,6 +3,13 @@ import React from 'react';
 import NotificationSetting from './NotificationSetting';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {useNotificationSetting} from 'hooks/useNotificationSetting';
+import {BackHandler} from 'react-native';
+
+// Mock BackHandler
+jest.mock('react-native/Libraries/Utilities/BackHandler', () => ({
+  addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+  removeEventListener: jest.fn(),
+}));
 
 describe('NotificationSetting Components', () => {
   const queryClient = new QueryClient();

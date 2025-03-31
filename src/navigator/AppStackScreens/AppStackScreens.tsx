@@ -75,19 +75,18 @@ import VerifySocialProfile from 'screens/Auth/VerifySocialProfile/VerifySocialPr
 import Privacy from 'screens/Auth/Privacy/Privacy.tsx';
 import EmailChange from 'screens/App/Profile/screens/Settings/EmailChange';
 import EarlyAccess from 'screens/App/IO/screens/EarlyAccess/EarlyAccess';
-import DemoIntro from 'screens/App/DemoFlow/screens/DemoIntro/DemoIntro.tsx';
 import DemoEventCreatingHeader from 'screens/App/IO/screens/EventCreating/components/DemoEventCreatingHeader';
 import MarkAttendance from 'screens/App/MyEvents/MarkAttendance';
 import {useUser} from 'src/store/userStore';
 import {useNotifications} from 'src/store/notificationsStore';
 import AdminChat from 'screens/App/Chat/screens/AdminChat';
 import firestore from '@react-native-firebase/firestore';
-import {UserInfo} from 'src/types/userInfo';
 import Config from 'react-native-config';
 import auth from '@react-native-firebase/auth';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {UserQueries} from '../../apiv2/queries/userQueries.ts';
 import {EventQueries} from '../../apiv2/queries/eventQueries.ts';
+import CreateEventFlow from 'screens/App/Flows/CreateEventFlow/CreateEventFlow.tsx';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -391,7 +390,7 @@ const EventCreatingStackScreen = () => {
         headerTitle: 'Create new event',
         headerShown: true,
       }}>
-      <EventCreatingStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={EventCreating} />
+      <EventCreatingStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={CreateEventFlow} />
     </EventCreatingStack.Navigator>
   );
 };

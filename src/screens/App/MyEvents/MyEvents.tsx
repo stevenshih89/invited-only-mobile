@@ -1,38 +1,21 @@
 import React, {FC} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {Text, View} from 'react-native';
 // import firestore from '@react-native-firebase/firestore';
 import {FlatList} from 'react-native';
 // import {useFocusEffect} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
 //import components
-import useStyles from 'screens/App/MyEvents/styles.ts';
 import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard.tsx';
 // import {useMyEvents} from '../../../store/myEvents';
 // import {showToast} from 'helpers/showToast.ts';
-import {
-  backgroundColor,
-  blackColor,
-  lightGray13Color,
-  lightGray20Color,
-  lightGray2Color,
-  lightGreenColor,
-  whiteColor,
-} from 'constants/colors';
+import {blackColor, lightGray2Color, whiteColor} from 'constants/colors';
 import JoiningEventsCard from 'components/Cards/JoiningEventsCard/JoiningEventsCard';
 import ModalCancelAttending from './ModalCancelAttending';
 import ModalAcceptInvitation from './ModalAcceptInvitation';
 // import {useUser} from '../../../store/userStore';
-import {
-  ACCEPTED_STATUS,
-  APPROVED_STATUS,
-  CANCEL_STATUS,
-  INVITE_MATCH_STATUS,
-  NOT_ACCEPTED_STATUS,
-  screenHeight,
-  screenWidth,
-} from 'constants/common.ts';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
+import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS, screenHeight} from 'constants/common.ts';
+import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
 import ModalRejectAccount from 'components/Modal/ModalRejectAccount';
 // import {useAdminActions} from 'src/store/adminActions';
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';

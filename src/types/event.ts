@@ -49,4 +49,5 @@ export interface EventData extends Event.Info {
   rejectsByGuestsList: Event.RejectUser[];
   requestsList: Event.User[];
   usersList: Event.User[];
+  createdAt?: string;
 }

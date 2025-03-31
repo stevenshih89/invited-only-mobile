@@ -1,79 +1,81 @@
-import { useUser } from "src/store/userStore";
-import { useAppNavigation } from "./useAppNavigation";
+import {useUser} from 'src/store/userStore';
+import {useAppNavigation} from './useAppNavigation';
 import {chatCorrespondencePath, commonStackPath} from 'constants/pathLocations';
 import {showToast} from 'helpers/showToast';
 import firestore from '@react-native-firebase/firestore';
 import {sendNotification} from 'helpers/fcmHelper';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {APPROVED_STATUS, INVITE_MATCH_STATUS} from 'constants/common';
-import Config from 'react-native-config';
-
-const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
-const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+import {useContext} from 'react';
+import {FirebaseCollectionsContext} from 'src/contexts/FirebaseCollectionNamesContext';
 
 export const useMatch = (onCloseMatch: () => void, matchData: any) => {
   const userHost = useUser((i: any) => i?.user);
   const navigation = useAppNavigation();
+  const {
+    events: apiEventsCollection,
+    messages: apiMessagesCollection,
+    userInfo: apiUserInfoCollection,
+  } = useContext(FirebaseCollectionsContext);
 
   const handleCloseMatch = async () => {
     onCloseMatch();
     try {
       const messageCollection = await firestore().collection(apiMessagesCollection).doc(matchData?.eventId).get();
-    const chatCheck = messageCollection?.data()?.chats?.find(i => i?.uid === matchData.uidGuest);
-    const chatDataHost = {
-      image: chatCheck?.avatar,
-      title: matchData.nameGuest,
-      online: false,
-      messages: chatCheck?.messages,
-      activeEvent: matchData.eventId,
-      id: chatCheck?.id,
-      superInvite: chatCheck?.superInvite,
-      invitedStatus: chatCheck?.invitedStatus,
-      uid: chatCheck?.uid,
-      hostUid: matchData.uidHost,
-      path: 'chat',
-    };
+      const chatCheck = messageCollection?.data()?.chats?.find(i => i?.uid === matchData.uidGuest);
+      const chatDataHost = {
+        image: chatCheck?.avatar,
+        title: matchData.nameGuest,
+        online: false,
+        messages: chatCheck?.messages,
+        activeEvent: matchData.eventId,
+        id: chatCheck?.id,
+        superInvite: chatCheck?.superInvite,
+        invitedStatus: chatCheck?.invitedStatus,
+        uid: chatCheck?.uid,
+        hostUid: matchData.uidHost,
+        path: 'chat',
+      };
 
-    const chatDataGuest = {
-      image: matchData.userHostImageUri,
-      title: matchData.nameHost,
-      online: false,
-      messages: chatCheck?.messages,
-      activeEvent: matchData.eventId,
-      id: chatCheck?.id,
-      superInvite: chatCheck?.superInvite,
-      invitedStatus: chatCheck?.invitedStatus,
-      uid: matchData.uidHost,
-      hostUid: matchData.uidHost,
-      path: 'chat',
-    };
-    const isEventHost = userHost?.uid === matchData?.uidHost;
-    const uidForNotification = isEventHost ? matchData?.uidGuest : matchData?.uidHost;
-    const ownerPhoto = isEventHost ? matchData?.imageUri : matchData?.userHostImageUri;
-    if (uidForNotification) {
-      const getDoc = await firestore().collection(apiUserInfoCollection).doc(uidForNotification).get();
-      const docData = getDoc.data();
-      if (docData?.notificationSettings?.match) {
-        await sendNotification(
-          uidForNotification,
-          'Say, Hi! 👋',
-          'New connection!',
-          'Connection',
-          'Connection'.toUpperCase(),
-          userHost,
-          JSON.stringify({path: 'chat', data: isEventHost ? chatDataGuest : chatDataHost}),
-        );
+      const chatDataGuest = {
+        image: matchData.userHostImageUri,
+        title: matchData.nameHost,
+        online: false,
+        messages: chatCheck?.messages,
+        activeEvent: matchData.eventId,
+        id: chatCheck?.id,
+        superInvite: chatCheck?.superInvite,
+        invitedStatus: chatCheck?.invitedStatus,
+        uid: matchData.uidHost,
+        hostUid: matchData.uidHost,
+        path: 'chat',
+      };
+      const isEventHost = userHost?.uid === matchData?.uidHost;
+      const uidForNotification = isEventHost ? matchData?.uidGuest : matchData?.uidHost;
+      const ownerPhoto = isEventHost ? matchData?.imageUri : matchData?.userHostImageUri;
+      if (uidForNotification) {
+        const getDoc = await firestore().collection(apiUserInfoCollection).doc(uidForNotification).get();
+        const docData = getDoc.data();
+        if (docData?.notificationSettings?.match) {
+          await sendNotification(
+            uidForNotification,
+            'Say, Hi! 👋',
+            'New connection!',
+            'Connection',
+            'Connection'.toUpperCase(),
+            userHost,
+            JSON.stringify({path: 'chat', data: isEventHost ? chatDataGuest : chatDataHost}),
+          );
+        }
       }
-    }
-    showToast('inviteMatch', 'Say, Hi! 👋', 'New connection!', {
-      ownerPhoto: ownerPhoto,
-      status: 'CONNECTION',
-      path: 'chat',
-      params: isEventHost ? chatDataHost : chatDataGuest,
-    });
+      showToast('inviteMatch', 'Say, Hi! 👋', 'New connection!', {
+        ownerPhoto: ownerPhoto,
+        status: 'CONNECTION',
+        path: 'chat',
+        params: isEventHost ? chatDataHost : chatDataGuest,
+      });
     } catch (error) {
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   };
 
@@ -212,7 +214,7 @@ export const useMatch = (onCloseMatch: () => void, matchData: any) => {
     } catch (e) {
       // console.log(e);
       showToast('inviteMatch', 'There was an issue creating the chat. Please try again later.', 'Error');
-      logErrorToSentry(e)
+      logErrorToSentry(e);
     }
   };
 
@@ -235,24 +237,24 @@ export const useMatch = (onCloseMatch: () => void, matchData: any) => {
       });
       try {
         await firestore().collection(apiEventsCollection).doc(matchData.eventId).update({usersList: updatedUsersList});
-      if (matchData?.uidGuest) {
-        const getDoc = await firestore().collection(apiUserInfoCollection).doc(matchData?.uidGuest).get();
-        const docData = getDoc.data();
-        if (docData?.notificationSettings?.requests || docData?.notificationSettings?.joinedEvent) {
-          await sendNotification(
-            matchData?.uidGuest,
-            'Request approved',
-            'Please confirm your attendence',
-            'Approve',
-            'Approved'.toUpperCase(),
-            userHost,
-          );
+        if (matchData?.uidGuest) {
+          const getDoc = await firestore().collection(apiUserInfoCollection).doc(matchData?.uidGuest).get();
+          const docData = getDoc.data();
+          if (docData?.notificationSettings?.requests || docData?.notificationSettings?.joinedEvent) {
+            await sendNotification(
+              matchData?.uidGuest,
+              'Request approved',
+              'Please confirm your attendence',
+              'Approve',
+              'Approved'.toUpperCase(),
+              userHost,
+            );
+          }
+          showToast('inviteMatch', `Waiting for ${matchData?.name} to accept your invitation`, 'Almost there!', {
+            ownerPhoto: matchData?.imageUri,
+            status: 'GUEST APPROVED',
+          });
         }
-        showToast('inviteMatch', `Waiting for ${matchData?.name} to accept your invitation`, 'Almost there!', {
-          ownerPhoto: matchData?.imageUri,
-          status: 'GUEST APPROVED',
-        });
-      }
       } catch (error) {
         showToast('inviteMatch', 'An error occurred while approve guest. Please try again.', 'Error');
         logErrorToSentry(error);
@@ -265,6 +267,6 @@ export const useMatch = (onCloseMatch: () => void, matchData: any) => {
     handleCloseMatch,
     userHost,
     handleApproveGuestFromHost,
-    handleCreateChat
-  }
-}
+    handleCreateChat,
+  };
+};

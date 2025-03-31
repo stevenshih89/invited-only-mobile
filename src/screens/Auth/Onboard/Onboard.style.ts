@@ -1,4 +1,3 @@
-import MaskedView from '@react-native-masked-view/masked-view';
 import {lightGray19Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {Dimensions} from 'react-native';
@@ -12,12 +11,6 @@ export const OnBoardingTextTitle = styled.Text`
   width: 300;
   font-family: ${Satoshi700};
   font-size: ${RFValue(22, 812)};
-`;
-
-export const BgCardImageMasked = styled(MaskedView)`
-  flex: 1;
-  flex-direction: column;
-  width: 400;
 `;
 
 export const BgCardImage = styled.Image`

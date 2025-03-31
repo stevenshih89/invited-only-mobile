@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import useStyles from 'screens/App/IO/screens/EventCreating/styles.ts';
 import {blackColor, grayScale700, lightGray2Color, whiteColor} from 'constants/colors.ts';
 import InvitedOnly from 'screens/App/IO/screens/EventCreating/components/InvitedOnly/InvitedOnly.tsx';
-import TrashCanIcon from 'assets/images/icons/trash.svg'
+import TrashCanIcon from 'assets/images/icons/trash.svg';
 import EventDetails from 'screens/App/IO/screens/EventCreating/components/EventDetails/EventDetails.tsx';
 import ModalSaveEventChanges from 'screens/App/MyEvents/EventEditing/ModalSaveEventChanges';
 import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
@@ -14,70 +14,69 @@ import Check from 'src/assets/images/icons/Check-black.svg';
 import {eventTypes} from 'src/mocks/eventTypes';
 import HintCard from 'components/HintCard';
 import {hostHintSteps} from 'constants/hints.ts';
-import { useEventCreating } from 'hooks/useEventCreating';
+import {useEventCreating} from 'hooks/useEventCreating';
 
 const EventCreating = () => {
-
   const {
     isEditing,
-        navigation,
-        setIsVisibleCancelModal,
-        isDemo,
-        hintStep,
-        currentCreateStep,
-        handleSkipHints,
-        setHintStep,
-        handlePreviousStep,
-        tabState,
-        setMaleFriend,
-        setFemaleFriend,
-        female,
-        femaleFriend,
-        male,
-        setMale,
-        maleFriend,
-        setFemale,
-        setTabState,
-        editingItems,
-        setIsVisibleSaveModal,
-        setCurrentCreateStap,
-        isEditingItem,
-        setMainImage,
-        photos,
-        setImages,
-        activeType,
-        setActiveType,
-        placeName,
-        setPlaceName,
-        name,
-        setName,
-        description,
-        setDescription,
-        datePicker,
-        setDatePicker,
-        hourPicker,
-        setHourPicker,
-        date,
-        setDate,
-        hour,
-        setHour,
-        address,
-        setAddress,
-        meetingSpot,
-        setMeetingSpot,
-        loading,
-        setLoading,
-        open,
-        setOpen,
-        openHour,
-        setOpenHour,
-        userHost,
-        handleCreateEvent,
-        loaderVisible,
-        handleSaveChanges,
-        isVisibleSaveModal,
-        isVisibleCancelModal,
-  } = useEventCreating()
+    navigation,
+    setIsVisibleCancelModal,
+    isDemo,
+    hintStep,
+    currentCreateStep,
+    handleSkipHints,
+    setHintStep,
+    handlePreviousStep,
+    tabState,
+    setMaleFriend,
+    setFemaleFriend,
+    female,
+    femaleFriend,
+    male,
+    setMale,
+    maleFriend,
+    setFemale,
+    setTabState,
+    editingItems,
+    setIsVisibleSaveModal,
+    setCurrentCreateStap,
+    isEditingItem,
+    setMainImage,
+    photos,
+    setImages,
+    activeType,
+    setActiveType,
+    placeName,
+    setPlaceName,
+    name,
+    setName,
+    description,
+    setDescription,
+    datePicker,
+    setDatePicker,
+    hourPicker,
+    setHourPicker,
+    date,
+    setDate,
+    hour,
+    setHour,
+    address,
+    setAddress,
+    meetingSpot,
+    setMeetingSpot,
+    loading,
+    setLoading,
+    open,
+    setOpen,
+    openHour,
+    setOpenHour,
+    userHost,
+    handleCreateEvent,
+    loaderVisible,
+    handleSaveChanges,
+    isVisibleSaveModal,
+    isVisibleCancelModal,
+  } = useEventCreating();
 
   const styles = useStyles();
 
@@ -91,12 +90,11 @@ const EventCreating = () => {
         ),
       });
     }
-        }, []);
+  }, []);
 
   return (
     <>
       <View style={styles.container}>
-        {isDemo && <View style={styles.overlayContainer} />}
         <View
           style={{
             ...styles.wrapperTabSelections,
@@ -205,20 +203,6 @@ const EventCreating = () => {
                   </Text>
                 </View>
               </View>
-              {isDemo && (hintStep === 1 || hintStep === 3) && (
-                <View style={styles.step1HintContainer}>
-                  <HintCard
-                    currentStep={hintStep}
-                    description={hostHintSteps[hintStep - 1]?.description}
-                    onSkipAction={handleSkipHints}
-                    onStepChange={setHintStep}
-                    onPreviousAction={handlePreviousStep}
-                    totalSteps={hostHintSteps.length}
-                    directionHorizontal={hintStep === 3 ? 'center' : 'start'}
-                    title={hostHintSteps[hintStep - 1]?.title}
-                  />
-                </View>
-              )}
             </View>
           </View>
         </View>

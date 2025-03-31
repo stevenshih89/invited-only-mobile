@@ -1,10 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Alert} from 'react-native';
-import {TinderCard} from 'rn-tinder-card-bn-digital';
+import React, {useEffect, useContext} from 'react';
+import {View, Text, SafeAreaView, Image, TouchableOpacity} from 'react-native';
 
 //import components
 import useStyles from 'screens/App/IO/screens/JoinEvents/styles.ts';
-import {LIKED, screenHeight} from 'constants/common.ts';
+
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 
 //import icons
@@ -24,31 +23,17 @@ import firestore from '@react-native-firebase/firestore';
 import {whiteColor} from 'constants/colors.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {useUser} from '../../../../../store/userStore';
 import {showToast} from 'helpers/showToast.ts';
 import Match from '../Match/Match';
-import {onMatchNotificationSubscription} from 'helpers/fcmHelper';
-import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { useJoinEvents } from 'hooks/useJoinEvents';
-import { userProfilePath } from 'constants/pathLocations';
-
-const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {useJoinEvents} from 'hooks/useJoinEvents';
+import {userProfilePath} from 'constants/pathLocations';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 const JoinEvents = ({navigation}: any) => {
+  const {events: apiEventsCollection = 'Events', userInfo: apiUserInfoCollection = 'userInfo'} = useContext(FirebaseCollectionsContext);
 
-  const {
-    apiUserInfoCollection,
-    isVisibleMatch,
-    matchData,
-    onInvite,
-    onRejected,
-    handleCloseMatch,
-    setEvents,
-    events,
-    userHost
-  } = useJoinEvents()
+  const {isVisibleMatch, matchData, onInvite, onRejected, handleCloseMatch, setEvents, events, userHost} = useJoinEvents();
 
   const styles = useStyles();
 
@@ -245,7 +230,7 @@ const JoinEvents = ({navigation}: any) => {
       setEvents([...data]);
     } catch (e: any) {
       showToast('inviteMatch', 'Something went wrong. Error get events', 'Error');
-      logErrorToSentry(e)
+      logErrorToSentry(e);
       // Alert.alert('Error', e.message || 'Something went wrong');
     }
   };
@@ -258,26 +243,7 @@ const JoinEvents = ({navigation}: any) => {
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1, justifyContent: 'space-between'}}>
         {events?.map((item, index) => {
-          return (
-            <View style={styles.cardContainer} pointerEvents="box-none" key={index}>
-              <TinderCard
-                // @ts-ignore
-                cardWidth="100%"
-                // @ts-ignore
-                cardHeight="100%"
-                OverlayLabelRight={OverlayRight}
-                onSwipedRight={() => onInvite(item?.info)}
-                onSwipedLeft={() => onRejected(item.info?.uid)}
-                OverlayLabelLeft={OverlayLeft}
-                disableBottomSwipe={true}
-                disableTopSwipe={true}
-                cardStyle={styles.card}>
-                <ScrollView showsVerticalScrollIndicator={false} style={{borderRadius: 22, height: screenHeight - 250}}>
-                  {item?.component}
-                </ScrollView>
-              </TinderCard>
-            </View>
-          );
+          return <View style={styles.cardContainer} pointerEvents="box-none" key={index}></View>;
         })}
         <Match isVisibleMatch={isVisibleMatch} onCloseMatch={handleCloseMatch} guestInfo={userHost} matchData={matchData} />
       </SafeAreaView>

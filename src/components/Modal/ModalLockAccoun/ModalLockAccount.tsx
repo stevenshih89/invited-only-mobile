@@ -1,24 +1,20 @@
-import {StyleProp, Text, TouchableOpacity, View, ViewStyle} from 'react-native';
+import {StyleProp, TouchableOpacity, ViewStyle} from 'react-native';
 import {FC} from 'react';
 import Lock from 'assets/images/icons/lock.svg';
-import useStyles from './styles';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, invitationCodePath, paymentPath} from 'constants/pathLocations';
-import {transparent60Color, transparent80Color} from 'constants/colors';
-import LinearGradient from 'react-native-linear-gradient';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi500} from 'constants/fonts';
+import * as S from './ModalLockAccount.style';
 
-const ModalLockAccount: FC<{
+interface ModalLockAccountProps {
   isPremium?: boolean;
   isVisibleButton: boolean;
   wrapperStyle?: StyleProp<ViewStyle>;
   text?: string;
   haveCode?: boolean;
   accountType?: string;
-}> = ({isVisibleButton, isPremium, text, wrapperStyle, haveCode = true, accountType}) => {
-  const styles = useStyles();
+}
 
+const ModalLockAccount: FC<ModalLockAccountProps> = ({isVisibleButton, isPremium, text, wrapperStyle, haveCode = true, accountType}) => {
   const navigation = useAppNavigation();
 
   const goToCodeConfirmation = (): void => {
@@ -33,49 +29,36 @@ const ModalLockAccount: FC<{
   };
 
   return (
-    <View
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: transparent60Color,
-        zIndex: 1000,
-      }}>
-      <View style={[styles.lockedWrapper, wrapperStyle]}>
-        <View style={styles.lockIconWr}>
+    <S.Container>
+      <S.LockedWrapper style={wrapperStyle}>
+        <S.LockIconWrapper>
           <Lock width={24} height={24} />
-        </View>
-        <View style={styles.lockDescWr}>
-          <Text style={styles.lockedTitle}>Locked</Text>
-          <Text style={styles.lockedSubtitle}>
+        </S.LockIconWrapper>
+        <S.LockDescriptionWrapper>
+          <S.LockedTitle>Locked</S.LockedTitle>
+          <S.LockedSubtitle>
             {text ? text : 'Your account is under review. Thank you for your patience. You will be notified if your account is accepted'}
-          </Text>
+          </S.LockedSubtitle>
           {haveCode && (
-            <View style={styles.lockedHaveCodeWr}>
-              <Text style={styles.lockedHaveCodeTitle}>Have a code?</Text>
+            <S.LockedHaveCodeWrapper>
+              <S.LockedHaveCodeTitle>Have a code?</S.LockedHaveCodeTitle>
               <TouchableOpacity activeOpacity={0.7} onPress={goToCodeConfirmation}>
-                <Text style={styles.lockedHaveCodePressableText}>Click here</Text>
+                <S.LockedHaveCodePressableText>Click here</S.LockedHaveCodePressableText>
               </TouchableOpacity>
-            </View>
+            </S.LockedHaveCodeWrapper>
           )}
-        </View>
-      </View>
+        </S.LockDescriptionWrapper>
+      </S.LockedWrapper>
       {isVisibleButton && !isPremium && accountType === 'host' && (
-        <TouchableOpacity
-          onPress={goToMyProfileView}
-          style={{position: 'absolute', bottom: 120, zIndex: 2000, width: '100%', paddingHorizontal: 24}}>
-          <LinearGradient
-            colors={['#977B4A', '#E5D291', '#A28453']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            style={{paddingVertical: 13, width: '100%', alignItems: 'center', borderRadius: 10, zIndex: 3000}}>
-            <Text style={{fontSize: RFValue(20, 812), fontFamily: Satoshi500}}>Get Access</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        <S.ButtonWrapper>
+          <TouchableOpacity activeOpacity={0.7} onPress={goToMyProfileView} style={{width: '100%'}}>
+            <S.GradientButton colors={['#977B4A', '#E5D291', '#A28453']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
+              <S.ButtonText>Get Access</S.ButtonText>
+            </S.GradientButton>
+          </TouchableOpacity>
+        </S.ButtonWrapper>
       )}
-    </View>
+    </S.Container>
   );
 };
 

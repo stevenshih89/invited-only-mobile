@@ -1,120 +1,110 @@
 import functions from '@react-native-firebase/functions';
-import {useCallback, useEffect, useState} from 'react';
 import {Alert, Platform} from 'react-native';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { useDemoFlowStore } from 'src/store/demoFlowStore';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {useDemoFlowStore} from 'src/store/demoFlowStore';
 import {Event, EventData} from 'src/types/event';
 import moment from 'moment';
 import {sendNotification} from 'helpers/fcmHelper';
-import analytics from '@react-native-firebase/analytics';
-import Config from 'react-native-config';
+
 import {commonStackPath, demoFlowStackPath, demoIOPath, eventActiveInfoPath, IOPath} from 'constants/pathLocations';
 import storage from '@react-native-firebase/storage';
-import {createEvent} from 'src/api/event';
 import uuid from 'react-native-uuid';
 import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast.ts';
 import auth from '@react-native-firebase/auth';
 import {ACCEPTED_STATUS} from 'constants/common';
-import {useFocusEffect, useRoute} from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import firestore from '@react-native-firebase/firestore';
-import { eventTypes } from 'src/mocks/eventTypes';
-import {EventMutations} from "../apiv2/mutations/eventMutations.ts";
-import {UserMutations} from "../apiv2/mutations/userMutations.ts";
-import {UserQueries} from "../apiv2/queries/userQueries.ts";
+
+import {eventTypes} from 'src/mocks/eventTypes';
+import {EventMutations} from '../apiv2/mutations/eventMutations.ts';
+import {UserMutations} from '../apiv2/mutations/userMutations.ts';
+import {UserQueries} from '../apiv2/queries/userQueries.ts';
+import {useEffect, useState} from 'react';
 
 const INVITED_ONLY = 'invitedOnly';
-const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
 export const useEventCreating = () => {
-    const {hintStep, setHintStep, setIsVisibleSwipeGuide, setEvent} = useDemoFlowStore();
-    const [tabState, setTabState] = useState<string>(INVITED_ONLY);
-    const [isVisibleSaveModal, setIsVisibleSaveModal] = useState<boolean>(false);
-    const [isVisibleCancelModal, setIsVisibleCancelModal] = useState<boolean>(false);
+  const {hintStep, setHintStep, setIsVisibleSwipeGuide, setEvent} = useDemoFlowStore();
+  const [tabState, setTabState] = useState<string>(INVITED_ONLY);
+  const [isVisibleSaveModal, setIsVisibleSaveModal] = useState<boolean>(false);
+  const [isVisibleCancelModal, setIsVisibleCancelModal] = useState<boolean>(false);
 
-    const [female, setFemale] = useState<number>(0);
-    const [male, setMale] = useState<number>(0);
-    const [femaleFriend, setFemaleFriend] = useState<number>(0);
-    const [maleFriend, setMaleFriend] = useState<number>(0);
-    const [loaderVisible, setLoaderVisible] = useState<boolean>(false);
-    const {user} = useUser();
+  const [female, setFemale] = useState<number>(0);
+  const [male, setMale] = useState<number>(0);
+  const [femaleFriend, setFemaleFriend] = useState<number>(0);
+  const [maleFriend, setMaleFriend] = useState<number>(0);
+  const [loaderVisible, setLoaderVisible] = useState<boolean>(false);
+  const {user} = useUser();
 
-    const [myEvents, setMyEvents] = useState();
+  const [_mainImage, setMainImage] = useState<any>();
+  const [currentCreateStep, setCurrentCreateStap] = useState<number>(1);
 
-    const [mainImage, setMainImage] = useState<any>();
-    const [currentCreateStep, setCurrentCreateStap] = useState<number>(1);
+  const [activeType, setActiveType] = useState(eventTypes[0].id);
+  const [placeName, setPlaceName] = useState(hintStep > 4 ? 'Irisol Dubai' : '');
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [datePicker, setDatePicker] = useState(new Date());
+  const [hourPicker, setHourPicker] = useState(new Date());
+  const [date, setDate] = useState('');
+  const [hour, setHour] = useState('');
+  const [address, setAddress] = useState(hintStep > 4 ? 'Nad AJ Sheba 1 - Dubai' : '');
+  const [meetingSpot, setMeetingSpot] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState(false);
+  const [openHour, setOpenHour] = useState(false);
+  const userHost = useUser((i: any) => i?.user);
 
-    const [activeType, setActiveType] = useState(eventTypes[0].id);
-    const [placeName, setPlaceName] = useState(hintStep > 4 ? 'Irisol Dubai' : '');
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [datePicker, setDatePicker] = useState(new Date());
-    const [hourPicker, setHourPicker] = useState(new Date());
-    const [date, setDate] = useState('');
-    const [hour, setHour] = useState('');
-    const [address, setAddress] = useState(hintStep > 4 ? 'Nad AJ Sheba 1 - Dubai' : '');
-    const [meetingSpot, setMeetingSpot] = useState('');
-    const [loading, setLoading] = useState<boolean>(false);
-    const [open, setOpen] = useState(false);
-    const [openHour, setOpenHour] = useState(false);
-    const userHost = useUser((i: any) => i?.user);
-
-    const [photos, setImages] = useState<Event.Photo[]>([
+  const [photos, setImages] = useState<Event.Photo[]>([
     {
-        id: 0,
-        image:
+      id: 0,
+      image:
         'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805',
     },
     {
-        id: 1,
-        image:
+      id: 1,
+      image:
         'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805',
     },
     {
-        id: 2,
-        image:
+      id: 2,
+      image:
         'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2Fevent_preview.png?alt=media&token=0de5918d-5690-48fb-9b0a-018c73948805',
     },
-    ]);
+  ]);
 
-    const navigation = useAppNavigation();
+  const navigation = useAppNavigation();
 
-    const handleSetTabState = (type: string): void => {
-    setTabState(type);
-    };
+  const route = useRoute();
 
-    const route = useRoute();
+  const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
+  const isEditing = (route?.params as {isEditing?: boolean})?.isEditing;
+  const isEditingItem = (route?.params as {isEditingItems?: any})?.isEditingItems;
+  const {mutate: updateEventMutation} = EventMutations.useUpdateEvent(isEditingItem?.id);
+  const {mutate: createEventMutation} = EventMutations.useCreateEvent();
+  const {mutate: updateUserEventListMutation} = UserMutations.useUpdateUserEventList();
+  const {refetch: fcmTokensFromUsersRefetch} = UserQueries.useFcmTokensFromUsers(false);
 
-    const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
-    const isEditing = (route?.params as {isEditing?: boolean})?.isEditing;
-    const isEditingItem = (route?.params as {isEditingItems?: any})?.isEditingItems;
-    const {mutate: updateEventMutation} = EventMutations.useUpdateEvent(isEditingItem?.id);
-    const {mutate: createEventMutation} = EventMutations.useCreateEvent();
-    const {mutate: updateUserEventListMutation} = UserMutations.useUpdateUserEventList();
-    const {refetch: fcmTokensFromUsersRefetch} = UserQueries.useFcmTokensFromUsers(false);
-
-    useEffect(() => {
+  useEffect(() => {
     if (hintStep === 3) {
-        setPlaceName('Irisol Dubai');
-        setAddress('Nad AJ Sheba 1 - Dubai');
-        setName('Red Mirage');
-        setDescription('A night of elegance and excitement');
-        setDate('07.02.2025');
-        setHour('21:30');
-        setMeetingSpot('Main Entrance');
-        setImages([
+      setPlaceName('Irisol Dubai');
+      setAddress('Nad AJ Sheba 1 - Dubai');
+      setName('Red Mirage');
+      setDescription('A night of elegance and excitement');
+      setDate('07.02.2025');
+      setHour('21:30');
+      setMeetingSpot('Main Entrance');
+      setImages([
         {
-            id: 0,
-            image:
+          id: 0,
+          image:
             'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2FImage.png?alt=media&token=14b8e084-7280-4e49-abd4-0aeb3503c133',
         },
-        ]);
+      ]);
     }
-    }, [hintStep]);
+  }, [hintStep]);
 
-    const editingItems = {
+  const editingItems = {
     prevImages: isEditingItem?.photos ? [...isEditingItem?.photos] : [],
     prevActiveType: isEditingItem?.activeType,
     prevPlaceName: isEditingItem?.placeName,
@@ -128,99 +118,100 @@ export const useEventCreating = () => {
     prevMale: isEditingItem?.male,
     prevFemaleFriend: isEditingItem?.femaleFriend,
     prevMaleFriend: isEditingItem?.maleFriend,
-    };
+  };
 
-    interface usersListI {
+  interface usersListI {
     status: string;
-    }
+    uid: string;
+  }
 
-    const getUsersListAccepted = (usersList: usersListI[]) => {
+  const getUsersListAccepted = (usersList: usersListI[]) => {
     const filter = usersList?.filter(item => item.status === ACCEPTED_STATUS);
     return filter;
-    };
+  };
 
-    const sendNotificationAcceptedUser = async () => {
+  const sendNotificationAcceptedUser = async () => {
     const usersAccepted = getUsersListAccepted(isEditingItem?.usersList);
-    for (const user of usersAccepted) {
-        try {
+    for (const acceptedUser of usersAccepted) {
+      try {
         await sendNotification(
-            user.uid,
-            'Event update',
-            `${isEditingItem?.name} event has been updated`,
-            'Event Reminders',
-            'Event',
-            userHost,
+          acceptedUser.uid,
+          'Event update',
+          `${isEditingItem?.name} event has been updated`,
+          'Event Reminders',
+          'Event',
+          userHost,
         );
-        } catch (error) {
+      } catch (error) {
         console.error('error sendNotificationAcceptedUser', error);
-        }
+      }
     }
-    };
+  };
 
-    const handleSaveChanges = async () => {
-        updateEventMutation({
-            eventData: {
-                female,
-                male,
-                femaleFriend,
-                maleFriend,
-                eventTypes,
-                placeName,
-                name,
-                description,
-                date,
-                hour,
-                address,
-                meetingSpot,
-                photos,
-            },
-            onSuccess: async (data: any) => {
-                navigation.navigate(commonStackPath, {
-                    screen: eventActiveInfoPath,
-                    params: {list: data},
-                } as never);
+  const handleSaveChanges = async () => {
+    updateEventMutation({
+      eventData: {
+        female,
+        male,
+        femaleFriend,
+        maleFriend,
+        eventTypes,
+        placeName,
+        name,
+        description,
+        date,
+        hour,
+        address,
+        meetingSpot,
+        photos,
+      },
+      onSuccess: async (data: any) => {
+        navigation.navigate(commonStackPath, {
+          screen: eventActiveInfoPath,
+          params: {list: data},
+        } as never);
 
-                await sendNotificationAcceptedUser();
-            }
-        })
-    };
+        await sendNotificationAcceptedUser();
+      },
+    });
+  };
 
-    const uploadImage = async (imagePath: string, userId: string | null) => {
+  const uploadImage = async (imagePath: string, userId: string | null) => {
     if (imagePath) {
-        if (imagePath.includes('https://')) {
+      if (imagePath.includes('https://')) {
         return imagePath;
-        } else {
+      } else {
         const uploadUri = Platform.OS === 'ios' ? imagePath : `file://${imagePath}`;
         const filename = `${userId}_${new Date().getTime()}`;
         const storageRef = storage().ref(`images/${filename}`);
         try {
-            await storageRef.putFile(uploadUri);
-            const url = await storageRef.getDownloadURL();
-            return url;
+          await storageRef.putFile(uploadUri);
+          const url = await storageRef.getDownloadURL();
+          return url;
         } catch (e) {
-            console.error('Error uploading image:', e);
-            return null;
+          console.error('Error uploading image:', e);
+          return null;
         }
-        }
+      }
     }
-    };
+  };
 
-    const handleCreateEvent = async () => {
+  const handleCreateEvent = async () => {
     setLoaderVisible(true);
     try {
-        setLoading(true);
-        const uid: string = uuid.v4() as string;
-        const user = auth().currentUser;
-        if (!user) {
+      setLoading(true);
+      const uid: string = uuid.v4() as string;
+      const currUser = auth().currentUser;
+      if (!currUser) {
         return;
-        }
-        if (photos[0] === null) {
+      }
+      if (photos[0] === null) {
         Alert.alert('Please add the main picture');
-        }
+      }
 
-        let imagesUri: any[] = [];
+      let imagesUri: any[] = [];
 
-        const event: EventData = {
+      const event: EventData = {
         activeType: activeType,
         female: female,
         name: name,
@@ -234,7 +225,7 @@ export const useEventCreating = () => {
         maleFriend: maleFriend,
         placeName: placeName,
         id: uid,
-        uid: user?.uid,
+        uid: currUser?.uid,
         rejectsList: [],
         requestsList: [],
         usersList: [],
@@ -245,62 +236,66 @@ export const useEventCreating = () => {
         photos: imagesUri,
         isCancelled: false,
         createdAt: moment().format('YYYY-MM-DD'),
-        };
+        rejectsByGuestsList: [],
+        hostFcmToken: '',
+      };
 
-        showToast('inviteMatch', 'Go to my events >', 'Event successfully created ');
-        showToast('inviteMatch', 'Your event in review.', 'Estimate time review 2h');
+      showToast('inviteMatch', 'Go to my events >', 'Event successfully created ');
+      showToast('inviteMatch', 'Your event in review.', 'Estimate time review 2h');
 
-        isEditing ? setIsVisibleSaveModal(true) : null;
+      isEditing ? setIsVisibleSaveModal(true) : null;
 
-        for (const i of photos) {
+      for (const i of photos) {
         const img = await uploadImage(i?.image, userHost.uid);
         imagesUri.push({id: i?.id, image: img});
-        }
+      }
 
-        createEventMutation({
-            uid,
-            event
-        }, {
-            onSuccess: async () => {
-                updateUserEventListMutation(uid, {
-                    onSuccess: async () => {
-                        const tokensData = await fcmTokensFromUsersRefetch();
-                        const tokens = tokensData.data ?? [];
+      createEventMutation(
+        {
+          uid,
+          event,
+        },
+        {
+          onSuccess: async () => {
+            updateUserEventListMutation(uid, {
+              onSuccess: async () => {
+                const tokensData = await fcmTokensFromUsersRefetch();
+                const tokens = tokensData.data ?? [];
 
-                        for (const token of tokens) {
-                            const result = await functions().httpsCallable('sendNotification')({
-                                token: token,
-                                priority: 'high',
-                                notification: {
-                                    title: 'Invited Only',
-                                    body: 'A new event was created!',
-                                },
-                            });
-                        }
+                for (const token of tokens) {
+                  await functions().httpsCallable('sendNotification')({
+                    token: token,
+                    priority: 'high',
+                    notification: {
+                      title: 'Invited Only',
+                      body: 'A new event was created!',
+                    },
+                  });
+                }
 
+                setLoading(false);
+                setLoaderVisible(false);
 
-                        setLoading(false);
-                        setLoaderVisible(false);
-
-                        navigation.navigate(IOPath as never);
-                    }
-                })
-            }
-        })
+                navigation.navigate(IOPath as never);
+              },
+            });
+          },
+        },
+      );
     } catch (e) {
-        setLoading(false);
-        setLoaderVisible(false);
-        showToast('inviteMatch', 'Something went wrong while creating the event. Please try again later.', 'Error');
-        logErrorToSentry(e);
+      setLoading(false);
+      setLoaderVisible(false);
+      showToast('inviteMatch', 'Something went wrong while creating the event. Please try again later.', 'Error');
+      logErrorToSentry(e);
     }
-    };
+  };
 
-    const handleSkipHints = () => {
+  const handleSkipHints = () => {
     if (hintStep === 1) {
-        navigation.goBack();
+      navigation.goBack();
     } else {
-        const uid: string = uuid.v4() as string;
-        const demoEvent = {
+      const uid: string = uuid.v4() as string;
+      const demoEvent = {
         name: 'Red Mirage',
         date: '07.02.2025',
         hour: '21:30',
@@ -317,87 +312,87 @@ export const useEventCreating = () => {
         hostImage: user?.photos?.[0]?.image,
         hostName: user?.name,
         photos: [
-            {
+          {
             id: 0,
             image:
-                'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2FImage.png?alt=media&token=14b8e084-7280-4e49-abd4-0aeb3503c133',
-            },
+              'https://firebasestorage.googleapis.com/v0/b/invited-only-app.appspot.com/o/event_placeholder%2FImage.png?alt=media&token=14b8e084-7280-4e49-abd4-0aeb3503c133',
+          },
         ],
         isCancelled: false,
         createdAt: moment().format('YYYY-MM-DD'),
-        };
-        setEvent(demoEvent);
-        navigation.navigate(demoFlowStackPath, {screen: demoIOPath} as never);
-        setHintStep(8);
-        setIsVisibleSwipeGuide(true);
+      };
+      setEvent(demoEvent);
+      navigation.navigate(demoFlowStackPath, {screen: demoIOPath} as never);
+      setHintStep(8);
+      setIsVisibleSwipeGuide(true);
     }
-    };
+  };
 
-    const handlePreviousStep = () => {
+  const handlePreviousStep = () => {
     if (hintStep === 3) {
-        setTabState('invitedOnly');
-        setCurrentCreateStap(1);
+      setTabState('invitedOnly');
+      setCurrentCreateStap(1);
     }
-    };
+  };
 
-    return {
-        isEditing,
-        navigation,
-        setIsVisibleCancelModal,
-        isDemo,
-        hintStep,
-        currentCreateStep,
-        handleSkipHints,
-        setHintStep,
-        handlePreviousStep,
-        tabState,
-        setMaleFriend,
-        setFemaleFriend,
-        female,
-        femaleFriend,
-        male,
-        setMale,
-        maleFriend,
-        setFemale,
-        setTabState,
-        editingItems,
-        setIsVisibleSaveModal,
-        setCurrentCreateStap,
-        isEditingItem,
-        setMainImage,
-        photos,
-        setImages,
-        activeType,
-        setActiveType,
-        placeName,
-        setPlaceName,
-        name,
-        setName,
-        description,
-        setDescription,
-        datePicker,
-        setDatePicker,
-        hourPicker,
-        setHourPicker,
-        date,
-        setDate,
-        hour,
-        setHour,
-        address,
-        setAddress,
-        meetingSpot,
-        setMeetingSpot,
-        loading,
-        setLoading,
-        open,
-        setOpen,
-        openHour,
-        setOpenHour,
-        userHost,
-        handleCreateEvent,
-        loaderVisible,
-        handleSaveChanges,
-        isVisibleSaveModal,
-        isVisibleCancelModal,
-    }
-}
+  return {
+    isEditing,
+    navigation,
+    setIsVisibleCancelModal,
+    isDemo,
+    hintStep,
+    currentCreateStep,
+    handleSkipHints,
+    setHintStep,
+    handlePreviousStep,
+    tabState,
+    setMaleFriend,
+    setFemaleFriend,
+    female,
+    femaleFriend,
+    male,
+    setMale,
+    maleFriend,
+    setFemale,
+    setTabState,
+    editingItems,
+    setIsVisibleSaveModal,
+    setCurrentCreateStap,
+    isEditingItem,
+    setMainImage,
+    photos,
+    setImages,
+    activeType,
+    setActiveType,
+    placeName,
+    setPlaceName,
+    name,
+    setName,
+    description,
+    setDescription,
+    datePicker,
+    setDatePicker,
+    hourPicker,
+    setHourPicker,
+    date,
+    setDate,
+    hour,
+    setHour,
+    address,
+    setAddress,
+    meetingSpot,
+    setMeetingSpot,
+    loading,
+    setLoading,
+    open,
+    setOpen,
+    openHour,
+    setOpenHour,
+    userHost,
+    handleCreateEvent,
+    loaderVisible,
+    handleSaveChanges,
+    isVisibleSaveModal,
+    isVisibleCancelModal,
+  };
+};
