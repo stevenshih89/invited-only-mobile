@@ -5,8 +5,8 @@ export const Container = styled(View)`
   display: flex;
   flex-direction: column;
   gap: 24px;
-
   width: 100%;
+  padding-top: 16px;
 `;
 
 export const Card = styled(View)`

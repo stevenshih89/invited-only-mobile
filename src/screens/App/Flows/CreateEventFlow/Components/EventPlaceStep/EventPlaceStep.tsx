@@ -9,8 +9,12 @@ const EventPlaceStep = () => {
   const {values, handleChange, setFieldValue} = useFormikContext<CreateEventFormValues>();
 
   return (
-    <S.Container>
-      <ScrollView>
+    <ScrollView 
+      style={{flex: 1, width: '100%'}}
+      contentContainerStyle={{paddingBottom: 80}}
+      showsVerticalScrollIndicator={false}
+    >
+      <S.Container>
         <S.Card>
           <S.CardTitle>Overview</S.CardTitle>
           <S.FieldContainer>
@@ -138,8 +142,8 @@ const EventPlaceStep = () => {
             </S.PhotosRow>
           </S.PhotosContainer>
         </S.Card>
-      </ScrollView>
-    </S.Container>
+      </S.Container>
+    </ScrollView>
   );
 };
 
