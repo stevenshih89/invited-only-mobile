@@ -1,14 +1,66 @@
-import React from 'react';
-import {View} from 'react-native';
+import React, {useState} from 'react';
+import {View, Image} from 'react-native';
 import {useFormikContext} from 'formik';
 import * as S from './EventPlaceStep.style';
 import {CreateEventFormValues} from '../../CreateEventFlow';
 import {ScrollView} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
+import ModalAddPhoto from './AddPhotoMoald/ModalAddPhoto';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 const EventPlaceStep = () => {
   const {values, setFieldValue} = useFormikContext<CreateEventFormValues>();
-  console.log(values);
+  const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number | null>(null);
+  const [photos, setPhotos] = useState<{[key: number]: string | null}>({
+    1: null, // Main photo
+    2: null, // Additional photo 1
+    3: null, // Additional photo 2
+  });
+
+  const handleOpenPhotoModal = (index: number) => {
+    setCurrentPhotoIndex(index);
+    setIsPhotoModalVisible(true);
+  };
+
+  const handleOpenCamera = async () => {
+    const result = await launchCamera({
+      mediaType: 'photo',
+      quality: 0.8,
+    });
+
+    if (result.assets && result.assets.length > 0 && currentPhotoIndex !== null) {
+      const photoUri = result.assets[0].uri;
+      if (photoUri) {
+        setPhotos(prev => ({...prev, [currentPhotoIndex]: photoUri}));
+        setIsPhotoModalVisible(false);
+      }
+    }
+  };
+
+  const handleOpenLibrary = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      quality: 0.8,
+    });
+
+    if (result.assets && result.assets.length > 0 && currentPhotoIndex !== null) {
+      const photoUri = result.assets[0].uri;
+      if (photoUri) {
+        setPhotos(prev => ({...prev, [currentPhotoIndex]: photoUri}));
+        setIsPhotoModalVisible(false);
+      }
+    }
+  };
+
+  const handleAddPlaceholderPhoto = () => {
+    if (currentPhotoIndex !== null) {
+      // Use a placeholder image URL or local asset
+      const placeholderUri = 'https://via.placeholder.com/300';
+      setPhotos(prev => ({...prev, [currentPhotoIndex]: placeholderUri}));
+      setIsPhotoModalVisible(false);
+    }
+  };
 
   return (
     <View>
@@ -130,27 +182,53 @@ const EventPlaceStep = () => {
           <S.PhotosContainer>
             {/* Main Photo */}
             <S.MainPhotoContainer>
-              <S.AddPhotoButton onPress={() => console.log('Add main photo')}>
-                <S.AddPhotoText>Main</S.AddPhotoText>
-              </S.AddPhotoButton>
+              {photos[1] ? (
+                <S.AddPhotoButton onPress={() => handleOpenPhotoModal(1)}>
+                  <Image source={{uri: photos[1]}} style={{width: '100%', height: '100%', borderRadius: 10}} />
+                </S.AddPhotoButton>
+              ) : (
+                <S.AddPhotoButton onPress={() => handleOpenPhotoModal(1)}>
+                  <S.AddPhotoText>Main</S.AddPhotoText>
+                </S.AddPhotoButton>
+              )}
             </S.MainPhotoContainer>
 
             {/* Additional Photos Row */}
             <S.PhotosRow>
               <S.SmallPhotoContainer>
-                <S.AddPhotoButton onPress={() => console.log('Add photo 2')}>
-                  <S.AddPhotoText>2</S.AddPhotoText>
-                </S.AddPhotoButton>
+                {photos[2] ? (
+                  <S.AddPhotoButton onPress={() => handleOpenPhotoModal(2)}>
+                    <Image source={{uri: photos[2]}} style={{width: '100%', height: '100%', borderRadius: 10}} />
+                  </S.AddPhotoButton>
+                ) : (
+                  <S.AddPhotoButton onPress={() => handleOpenPhotoModal(2)}>
+                    <S.AddPhotoText>2</S.AddPhotoText>
+                  </S.AddPhotoButton>
+                )}
               </S.SmallPhotoContainer>
               <S.SmallPhotoContainer>
-                <S.AddPhotoButton onPress={() => console.log('Add photo 3')}>
-                  <S.AddPhotoText>3</S.AddPhotoText>
-                </S.AddPhotoButton>
+                {photos[3] ? (
+                  <S.AddPhotoButton onPress={() => handleOpenPhotoModal(3)}>
+                    <Image source={{uri: photos[3]}} style={{width: '100%', height: '100%', borderRadius: 10}} />
+                  </S.AddPhotoButton>
+                ) : (
+                  <S.AddPhotoButton onPress={() => handleOpenPhotoModal(3)}>
+                    <S.AddPhotoText>3</S.AddPhotoText>
+                  </S.AddPhotoButton>
+                )}
               </S.SmallPhotoContainer>
             </S.PhotosRow>
           </S.PhotosContainer>
         </S.Card>
       </S.Container>
+
+      <ModalAddPhoto
+        isVisible={isPhotoModalVisible}
+        onClose={() => setIsPhotoModalVisible(false)}
+        openCamera={handleOpenCamera}
+        openLibrary={handleOpenLibrary}
+        addPlaceholderPhoto={handleAddPlaceholderPhoto}
+      />
     </View>
   );
 };
