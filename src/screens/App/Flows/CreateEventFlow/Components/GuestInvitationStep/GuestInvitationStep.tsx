@@ -1,10 +1,13 @@
 import {View} from 'react-native';
 import * as S from './GuestInvitationStep.style';
 import {useState} from 'react';
+import {useFormik} from 'formik';
+import {CreateEventFormValues} from '../../CreateEventFlow';
 
 const GuestInvitationStep = () => {
   const [female, setFemale] = useState<number>(0);
   const [male, setMale] = useState<number>(0);
+
   return (
     <S.WrapperSelectYourDesiredCompany>
       <S.TextSelectYourDesiredCompany>How many Guests would you like to invite?</S.TextSelectYourDesiredCompany>
