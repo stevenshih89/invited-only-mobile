@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
 import * as S from './Card.style';
-
+import {View} from 'react-native';
 import {GestureDetector, PanGesture} from 'react-native-gesture-handler';
 import Animated, {AnimatedStyle} from 'react-native-reanimated';
 
@@ -8,15 +8,16 @@ interface CardProps {
   uid: string;
   backgroundUrl: string;
   index: number;
-  isTopCard: boolean;
-  onReject: () => void;
-  onSuperInvite: () => void;
-  onInvite: () => void;
+  isTopCard?: boolean;
+  onReject?: () => void;
+  onSuperInvite?: () => void;
+  onInvite?: () => void;
   children: ReactNode;
-  gestureHandler: PanGesture;
-  animatedStyle: AnimatedStyle;
-  likeOpacityStyle: AnimatedStyle;
-  nopeOpacityStyle: AnimatedStyle;
+  gestureHandler?: PanGesture;
+  animatedStyle?: AnimatedStyle;
+  likeOpacityStyle?: AnimatedStyle;
+  nopeOpacityStyle?: AnimatedStyle;
+  isStatic?: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -28,17 +29,29 @@ const Card: React.FC<CardProps> = ({
   animatedStyle,
   likeOpacityStyle,
   nopeOpacityStyle,
+  isStatic = false,
 }) => {
-  // Use the custom hook for card animation
+  // Render static card without animations
+  if (isStatic) {
+    return (
+      <S.Card key={uid} index={index}>
+        <View>
+          <S.CardImage source={{uri: backgroundUrl}} />
+          {index > 0 && <S.CardOverlay />}
+          <S.CardGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']} locations={[0, 0.5, 1]} />
+          {children}
+        </View>
+      </S.Card>
+    );
+  }
 
+  // Render animated card with gesture detection
   return (
-    <GestureDetector gesture={gestureHandler}>
+    <GestureDetector gesture={gestureHandler!}>
       <S.Card key={uid} index={index}>
         <Animated.View style={animatedStyle}>
           <S.CardImage source={{uri: backgroundUrl}} />
-
           {index > 0 && <S.CardOverlay />}
-
           <S.CardGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']} locations={[0, 0.5, 1]} />
           <S.LikeAnimatedOpacity style={likeOpacityStyle}>
             <S.LabelTextLike>LIKE</S.LabelTextLike>
