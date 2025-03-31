@@ -4,15 +4,26 @@ import {useFormikContext} from 'formik';
 import * as S from './EventPlaceStep.style';
 import {CreateEventFormValues} from '../../CreateEventFlow';
 import {ScrollView} from 'react-native-gesture-handler';
+import LinearGradient from 'react-native-linear-gradient';
 
 const EventPlaceStep = () => {
-  const {values, handleChange, setFieldValue} = useFormikContext<CreateEventFormValues>();
+  const {values, setFieldValue} = useFormikContext<CreateEventFormValues>();
+  console.log(values);
 
   return (
-    <ScrollView
-      style={{flex: 1, width: '100%'}}
-      contentContainerStyle={{paddingBottom: 80}}
-      showsVerticalScrollIndicator={false}>
+    <View>
+      <LinearGradient
+        colors={['black', 'transparent']}
+        style={{position: 'absolute', top: 0, left: 0, right: 0, height: 20, zIndex: 1}}
+        pointerEvents="none"
+      />
+
+      {/* Bottom Fade (black) */}
+      <LinearGradient
+        colors={['transparent', 'black']}
+        style={{position: 'absolute', bottom: 0, left: 0, right: 0, height: 20, zIndex: 1}}
+        pointerEvents="none"
+      />
       <S.Container>
         <S.Card>
           <S.CardTitle>Overview</S.CardTitle>
@@ -20,17 +31,15 @@ const EventPlaceStep = () => {
             <S.FieldLabel>Event name</S.FieldLabel>
             <S.Input>
               <S.StyledTextInput
+                name={'eventName'}
                 placeholder="Enter event name"
                 placeholderTextColor="#767676"
                 value={values.eventName}
-                onChangeText={handleChange('eventName')}
+                onChangeText={(value: string) => setFieldValue('eventName', value)}
               />
             </S.Input>
           </S.FieldContainer>
-
-          {/* Date and Hour Row */}
           <S.RowContainer>
-            {/* Date Field */}
             <S.HalfFieldContainer>
               <S.FieldLabel>Date *</S.FieldLabel>
               <S.Input>
@@ -38,7 +47,7 @@ const EventPlaceStep = () => {
                   placeholder="MM/DD/YY"
                   placeholderTextColor="#767676"
                   value={values.date}
-                  onChangeText={handleChange('date')}
+                  onChangeText={(value: string) => setFieldValue('date', value)}
                 />
               </S.Input>
             </S.HalfFieldContainer>
@@ -51,7 +60,7 @@ const EventPlaceStep = () => {
                   placeholder="00:00"
                   placeholderTextColor="#767676"
                   value={values.hour}
-                  onChangeText={handleChange('hour')}
+                  // onChangeText={handleChange('hour')}
                 />
               </S.Input>
             </S.HalfFieldContainer>
@@ -65,7 +74,7 @@ const EventPlaceStep = () => {
                 placeholder="Enter description"
                 placeholderTextColor="#767676"
                 value={values.description}
-                onChangeText={handleChange('description')}
+                // onChangeText={handleChange('description')}
               />
             </S.Input>
           </S.FieldContainer>
@@ -83,7 +92,7 @@ const EventPlaceStep = () => {
                 placeholder="Enter place name"
                 placeholderTextColor="#767676"
                 value={values.placeName}
-                onChangeText={handleChange('placeName')}
+                // onChangeText={handleChange('placeName')}
               />
             </S.Input>
           </S.FieldContainer>
@@ -96,7 +105,7 @@ const EventPlaceStep = () => {
                 placeholder="Enter address"
                 placeholderTextColor="#767676"
                 value={values.address}
-                onChangeText={handleChange('address')}
+                // onChangeText={handleChange('address')}
               />
             </S.Input>
           </S.FieldContainer>
@@ -109,7 +118,7 @@ const EventPlaceStep = () => {
                 placeholder="Enter meeting spot"
                 placeholderTextColor="#767676"
                 value={values.meetingSpot}
-                onChangeText={handleChange('meetingSpot')}
+                // onChangeText={handleChange('meetingSpot')}
               />
             </S.Input>
           </S.FieldContainer>
@@ -142,7 +151,7 @@ const EventPlaceStep = () => {
           </S.PhotosContainer>
         </S.Card>
       </S.Container>
-    </ScrollView>
+    </View>
   );
 };
 
