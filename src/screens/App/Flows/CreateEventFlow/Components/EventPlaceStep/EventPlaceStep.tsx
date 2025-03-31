@@ -3,17 +3,16 @@ import {View} from 'react-native';
 import {useFormikContext} from 'formik';
 import * as S from './EventPlaceStep.style';
 import {CreateEventFormValues} from '../../CreateEventFlow';
-import FadeScrollView from 'components/FadeScrollView/FadeScrollView';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const EventPlaceStep = () => {
   const {values, handleChange, setFieldValue} = useFormikContext<CreateEventFormValues>();
 
   return (
-    <FadeScrollView
+    <ScrollView
       style={{flex: 1, width: '100%'}}
       contentContainerStyle={{paddingBottom: 80}}
-      showsVerticalScrollIndicator={false}
-      fadeColor="#000000">
+      showsVerticalScrollIndicator={false}>
       <S.Container>
         <S.Card>
           <S.CardTitle>Overview</S.CardTitle>
@@ -143,7 +142,7 @@ const EventPlaceStep = () => {
           </S.PhotosContainer>
         </S.Card>
       </S.Container>
-    </FadeScrollView>
+    </ScrollView>
   );
 };
 
