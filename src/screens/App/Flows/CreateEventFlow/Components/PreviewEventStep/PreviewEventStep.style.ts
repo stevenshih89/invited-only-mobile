@@ -6,9 +6,9 @@ import Invite from 'src/assets/images/icons/Invite.svg';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500} from 'constants/fonts';
 
-export const CardNameAndAge = styled.View`
+export const EventNameAndDate = styled.View`
   display: flex;
-  flex-direction: row;
+
   align-items: center;
   justify-content: baseline;
   gap: 10px;

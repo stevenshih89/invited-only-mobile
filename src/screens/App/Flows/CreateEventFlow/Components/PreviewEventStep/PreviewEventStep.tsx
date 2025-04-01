@@ -12,9 +12,12 @@ const PreviewEventStep = () => {
       <Card isStatic backgroundUrls={[values.photos.main, values.photos.photo2, values.photos.photo3]} index={0} uid="1">
         <View>
           <S.CardContent>
-            <S.CardNameAndAge>
-              <S.CardName>{values.eventName},</S.CardName>
-            </S.CardNameAndAge>
+            <S.EventNameAndDate>
+              <S.CardName>{values.eventName}</S.CardName>
+              <S.CardGuestAge>
+                {values.date}, {values.hour}
+              </S.CardGuestAge>
+            </S.EventNameAndDate>
             <S.ButtonsContainer>
               <S.RejectButton>
                 <S.RejectIcon />

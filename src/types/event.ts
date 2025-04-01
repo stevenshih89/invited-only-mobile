@@ -34,7 +34,7 @@ export namespace Event {
     isCancelled: boolean;
     statusEvent: boolean;
     hostName: string;
-    hostImage: string;
+    hostImage: string[];
     hostFcmToken: string;
     male: number;
     maleFriend: number;

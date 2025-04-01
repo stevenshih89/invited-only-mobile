@@ -7,6 +7,8 @@ import CreateEventFlowStepper from './Components/CreateEventFlowStepper/CreateEv
 import GuestInvitationStep from './Components/GuestInvitationStep/GuestInvitationStep';
 import EventPlaceStep from './Components/EventPlaceStep/EventPlaceStep';
 import PreviewEventStep from './Components/PreviewEventStep/PreviewEventStep';
+import {EventMutations} from 'src/apiv2/mutations/eventMutations';
+import {View} from 'react-native';
 
 export interface CreateEventFormValues {
   male: number;
@@ -27,10 +29,46 @@ export interface CreateEventFormValues {
 
 const CreateEventFlow = () => {
   const {currentStep, nextStep, backStep} = useCreateEventFlowStep();
+  const {mutate: createEvent} = EventMutations.useCreateEvent();
 
   return (
     <Formik<CreateEventFormValues>
-      onSubmit={() => {}}
+      onSubmit={({address, date, description, eventName, female, hour, male, meetingSpot, photos, placeName}) => {
+        createEvent({
+          event: {
+            activeType: 1,
+            address: address,
+            date,
+            description,
+            meetingSpot,
+            male,
+            hour,
+            placeName,
+            name: eventName,
+            photos: [
+              {id: 1, image: photos.main},
+              {id: 2, image: photos.main},
+              {id: 3, image: photos.main},
+            ],
+            rejectsList: [],
+            rejectsByGuestsList: [],
+            requestsList: [],
+            usersList: [],
+            uid: '',
+            id: '',
+            eventReviewed: false,
+            isCancelled: false,
+            statusEvent: false,
+            hostName: '',
+            hostImage: [],
+            hostFcmToken: '',
+            maleFriend: 0,
+            female: 0,
+            femaleFriend: 0,
+          },
+          uid: '',
+        });
+      }}
       initialValues={{
         female: 0,
         male: 0,
@@ -47,26 +85,35 @@ const CreateEventFlow = () => {
           photo3: '',
         },
       }}>
-      <DefaultBackground>
-        <S.Container>
-          <S.StepsContainer>
-            <CreateEventFlowStepper currentStep={currentStep} />
-            {currentStep === 1 && <GuestInvitationStep />}
-            {currentStep === 2 && <EventPlaceStep />}
-            {currentStep === 3 && <PreviewEventStep />}
-          </S.StepsContainer>
-          <S.ButtonsContainer>
-            {currentStep !== 1 && (
-              <S.CancelButton onPress={backStep}>
-                <S.CancelButtonText>Cancel</S.CancelButtonText>
-              </S.CancelButton>
-            )}
-            <S.ContinueButton onPress={nextStep}>
-              <S.ContinueButtonText>{currentStep === 3 ? 'Create Event' : 'Continue'}</S.ContinueButtonText>
-            </S.ContinueButton>
-          </S.ButtonsContainer>
-        </S.Container>
-      </DefaultBackground>
+      {({submitForm}) => (
+        <DefaultBackground>
+          <S.Container>
+            <S.StepsContainer>
+              <CreateEventFlowStepper currentStep={currentStep} />
+              {currentStep === 1 && <GuestInvitationStep />}
+              {currentStep === 2 && <EventPlaceStep />}
+              {currentStep === 3 && <PreviewEventStep />}
+            </S.StepsContainer>
+            <S.ButtonsContainer>
+              {currentStep !== 1 && (
+                <S.CancelButton onPress={backStep}>
+                  <S.CancelButtonText>Cancel</S.CancelButtonText>
+                </S.CancelButton>
+              )}
+              <S.ContinueButton
+                onPress={() => {
+                  if (currentStep === 3) {
+                    submitForm();
+                  } else {
+                    nextStep();
+                  }
+                }}>
+                <S.ContinueButtonText>{currentStep === 3 ? 'Create Event' : 'Continue'}</S.ContinueButtonText>
+              </S.ContinueButton>
+            </S.ButtonsContainer>
+          </S.Container>
+        </DefaultBackground>
+      )}
     </Formik>
   );
 };

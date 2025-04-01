@@ -49,8 +49,9 @@ const EventCard = ({onInvite, onReject, isTopCard, event, index}: Props) => {
 
   return (
     <Card
+      isStatic
       uid={event.uid}
-      backgroundUrl={event.hostImage}
+      backgroundUrls={event.hostImage}
       index={index}
       isTopCard={isTopCard}
       onReject={onClickReject}

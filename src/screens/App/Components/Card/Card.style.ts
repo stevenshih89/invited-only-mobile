@@ -1,6 +1,5 @@
-import {blackColor, lightGreenColor, lightRedColor, white0Color} from 'constants/colors';
+import {lightGreenColor, lightRedColor, white0Color} from 'constants/colors';
 import {Satoshi500} from 'constants/fonts';
-import {TouchableOpacity} from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import LinearGradient from 'react-native-linear-gradient';
@@ -11,17 +10,13 @@ import styled from 'styled-components/native';
 export const Card = styled(Animated.View)<{index: number}>`
   position: absolute;
   display: flex;
-  width: ${({index}: {index: number}) => `${100 - index * 2}%`};
-  height: ${({index}: {index: number}) => `${100 - index * 2}%`};
-  border-radius: 20px;
-  background-color: ${white0Color};
+  width: ${({index}: {index: number}) => `${100 - index * 5}%`};
+  height: ${({index}: {index: number}) => `${100 - index * 5}%`};
   z-index: ${({index}: {index: number}) => 10 - index};
-
   opacity: ${({index}: {index: number}) => (index > 4 ? 0.9 - (index - 4) * 0.15 : 1)};
+  background-color: transparent;
 `;
 export const CardImage = styled(FastImage)`
-  width: 100%;
-  height: 100%;
   border-radius: 20px;
 `;
 
@@ -31,7 +26,8 @@ export const CardOverlay = styled.View`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.8);
+  outline: 1px solid transparent;
   border-radius: 20px;
   z-index: 1;
 `;
@@ -42,8 +38,6 @@ export const CardGradient = styled(LinearGradient)`
   left: 0;
   right: 0;
   height: 70%;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
   z-index: 2;
 `;
 

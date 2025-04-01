@@ -24,6 +24,7 @@ export const sampleGuests: User.Info[] = [
     phoneNumber: '+1234567890',
     registrationDate: '2023-01-15',
     showAge: true,
+    age: 27,
     showLocation: true,
     superInvites: 3,
     uid: 'uid-1',
@@ -42,7 +43,6 @@ export const sampleGuests: User.Info[] = [
     userBeauty: 4.8,
     isPassedDemo: true,
     isInvitedOnlyAdmin: false,
-    age: 25,
   },
   {
     id: '2',
@@ -57,9 +57,10 @@ export const sampleGuests: User.Info[] = [
     facePhoto:
       'https://people.com/thmb/Mus7baJtdlO5tN5rjbAeR63xM2M=/4000x0/filters:no_upscale():max_bytes(150000):strip_icc():focal(862x0:864x2)/beautiful-any-age-kaia-gerber-2000-c22e06e4e78e4ee78118ab7d64d49bf0.jpg',
     fcmToken: 'fcm-token-2',
-    gender: 'man',
+    gender: 'woman',
     imageUser: [
       'https://people.com/thmb/Mus7baJtdlO5tN5rjbAeR63xM2M=/4000x0/filters:no_upscale():max_bytes(150000):strip_icc():focal(862x0:864x2)/beautiful-any-age-kaia-gerber-2000-c22e06e4e78e4ee78118ab7d64d49bf0.jpg',
+      'https://img.freepik.com/free-photo/beautiful-girl-stands-park_8353-5084.jpg',
     ],
     lastUpdateSuperInvite: Date.now() - 86400000,
     name: 'Michael',
@@ -69,6 +70,7 @@ export const sampleGuests: User.Info[] = [
     showAge: true,
     showLocation: true,
     superInvites: 5,
+    age: 22,
     uid: 'uid-2',
     weeklySuperInvites: 2,
     bio: 'Fitness enthusiast and dog lover',

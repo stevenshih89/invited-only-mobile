@@ -16,8 +16,8 @@ interface UseCardGestureProps {
 
 export const useCardGesture = ({onSwipeLeft, onSwipeRight, enabled, index, isTopCard}: UseCardGestureProps) => {
   const translateX = useSharedValue(index === 0 ? 0 : (index % 2 === 0 ? -1 : 1) * (index * 5));
-  const translateY = useSharedValue(index === 0 ? 0 : -12 * index);
-  const rotation = useSharedValue(index === 0 ? 0 : (index % 2 === 0 ? -1 : 1) * (index * 2));
+  const translateY = useSharedValue(index === 0 ? 0 : -6 * index);
+  const rotation = useSharedValue(index === 0 ? 0 : (index % 2 === 0 ? -1 : 1) * (index * 0.8));
   const scale = useSharedValue(1);
 
   const [wasTopCard, setWasTopCard] = useState(isTopCard);

@@ -5,6 +5,8 @@ import {GestureDetector, PanGesture} from 'react-native-gesture-handler';
 import Animated, {AnimatedStyle} from 'react-native-reanimated';
 import {screenHeight} from 'constants/common';
 import InvisibleTouchZone from './Components/InvisibleTouchZone/InvisibleTouchZone';
+import ImageIndicator from './Components/ImageIndicator/ImageIndicator';
+import FastImage from 'react-native-fast-image';
 
 interface CardProps {
   uid: string;
@@ -20,6 +22,7 @@ interface CardProps {
   likeOpacityStyle?: AnimatedStyle;
   nopeOpacityStyle?: AnimatedStyle;
   isStatic?: boolean;
+  showDots?: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -32,21 +35,25 @@ const Card: React.FC<CardProps> = ({
   likeOpacityStyle,
   nopeOpacityStyle,
   isStatic = false,
+  showDots = true,
+  isTopCard,
 }) => {
   const [imageIndex, setImageIndex] = useState<number>(0);
+  const showImageIndexIndicator = isTopCard && showDots && backgroundUrls.length > 1;
 
   if (isStatic) {
     return (
-      <S.Card key={uid} index={index} style={{height: screenHeight * 0.6}}>
+      <S.Card shouldRasterizeIOS key={uid} index={index} style={{height: screenHeight * 0.6}}>
         <InvisibleTouchZone setImageIndex={setImageIndex} imageCount={backgroundUrls.length} />
         <View style={{height: '100%'}}>
-          <S.CardImage source={{uri: backgroundUrls[imageIndex]}} style={{height: '100%'}} />
+          <S.CardImage shouldRasterizeIOS source={{uri: backgroundUrls[imageIndex]}} style={{height: '100%'}} />
           {index > 0 && <S.CardOverlay />}
           <S.CardGradient
             colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']}
             locations={[0, 0.5, 1]}
             style={{height: '100%'}}
           />
+          {showImageIndexIndicator && <ImageIndicator currentIndex={imageIndex} totalImages={backgroundUrls.length} />}
           {children}
         </View>
       </S.Card>
@@ -58,19 +65,22 @@ const Card: React.FC<CardProps> = ({
       <S.Card key={uid} index={index} style={{height: screenHeight * 0.6}}>
         <InvisibleTouchZone setImageIndex={setImageIndex} imageCount={backgroundUrls.length} />
         <Animated.View style={[animatedStyle, {height: '100%'}]}>
-          <S.CardImage source={{uri: backgroundUrls[imageIndex]}} style={{height: '100%'}} />
+          <S.CardImage resizeMode={FastImage.resizeMode.cover} source={{uri: backgroundUrls[imageIndex]}} style={{height: '100%'}} />
           {index > 0 && <S.CardOverlay />}
+
           <S.CardGradient
             colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']}
             locations={[0, 0.5, 1]}
             style={{height: '100%'}}
           />
+
           <S.LikeAnimatedOpacity style={likeOpacityStyle}>
             <S.LabelTextLike>LIKE</S.LabelTextLike>
           </S.LikeAnimatedOpacity>
           <S.NopeAnimatedOpacity style={nopeOpacityStyle}>
             <S.LabelTextNope>NOPE</S.LabelTextNope>
           </S.NopeAnimatedOpacity>
+          {backgroundUrls.length > 1 && <ImageIndicator currentIndex={imageIndex} totalImages={backgroundUrls.length} />}
           {children}
         </Animated.View>
       </S.Card>
