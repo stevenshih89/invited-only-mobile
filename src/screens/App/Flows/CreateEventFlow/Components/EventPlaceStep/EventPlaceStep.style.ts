@@ -1,18 +1,24 @@
 import styled from 'styled-components/native';
 import {Text, View, TouchableOpacity, TextInput, Dimensions} from 'react-native';
-import {screenHeight} from 'constants/common';
+
 import {ScrollView} from 'react-native-gesture-handler';
+import {lightRedColor} from 'constants/colors';
 
 const {height} = Dimensions.get('window');
 
-export const Container = styled(ScrollView)`
+export const Container = styled.View`
+  display: flex;
+  width: 100%;
+`;
+
+export const ScrollContainer = styled(ScrollView)`
   display: flex;
   flex-direction: column;
   gap: 24px;
   width: 100%;
   height: ${height * 0.6}px;
+
   padding-top: 16px;
-  padding-bottom: 24px;
 `;
 
 export const Card = styled(View)`
@@ -59,7 +65,7 @@ export const FieldLabel = styled(Text)`
   color: #ffffff;
 `;
 
-export const Input = styled(View)`
+export const Input = styled.TouchableOpacity`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -168,4 +174,13 @@ export const EventImage = styled.Image`
   height: 100%;
   width: 100%;
   border-radius: 5px;
+`;
+
+export const ErrorText = styled.Text`
+  font-family: 'Satoshi';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  color: ${lightRedColor};
+  margin-top: 4px;
 `;

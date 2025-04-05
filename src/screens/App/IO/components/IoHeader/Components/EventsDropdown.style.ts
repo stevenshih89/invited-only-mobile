@@ -8,10 +8,7 @@ export const EventCounter = styled.Text`
   margin-left: auto;
 `;
 
-export const DropdownContainer = styled.View`
-  flex: 1;
-  margin-right: 16px;
-`;
+export const DropdownContainer = styled.View``;
 
 export const DropdownButton = styled.TouchableOpacity`
   flex-direction: row;

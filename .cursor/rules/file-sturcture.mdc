@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+all the components under src needs to be in this file structure pattern
+/src/{ComponentName}/{ComponentsName}.tsx   --- The main component file
+/src/{ComponentName}/{ComponentsName}.style.ts   --- the styling
+/src/{ComponentName}/Components/{SubComponentName}/{SubComponentName}.tsx
+/src/{ComponentName}/Components/{SubComponentName}/{SubComponentName}.style.ts
+
+//hooks
+/src/{ComponentName}/hooks/..
+/src/{ComponentName}/Components/{SubComponentName}/hooks/..
+
+// Testing
+/src/{ComponentName}/
+/src/{ComponentName}/Components/{SubComponentName}/__tests__/{SubComponentName}.text.tsx

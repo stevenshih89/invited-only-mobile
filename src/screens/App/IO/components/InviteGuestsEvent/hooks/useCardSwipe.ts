@@ -1,54 +1,50 @@
 import {useState} from 'react';
+import {Event} from 'src/types/event';
 import {User} from 'src/types/userInfo';
 
 interface UseCardSwipeProps {
-  guests: User.Info[];
+  cardsData: User.Info[] | Event.Info[];
 }
 
 interface UseCardSwipeReturn {
-  currentIndex: number;
   handleSwipeLeft: () => void;
   handleSwipeRight: () => void;
   handleSuperInvite: () => void;
-  visibleCards: User.Info[];
+  cards: User.Info[] | Event.Info[];
   hasCards: boolean;
   hasMoreCards: boolean;
 }
 
-const useCardSwipe = ({guests}: UseCardSwipeProps): UseCardSwipeReturn => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+const useCardSwipe = ({cardsData}: UseCardSwipeProps): UseCardSwipeReturn => {
+  const [cards, setCards] = useState<User.Info[] | Event.Info[]>(cardsData);
 
   const handleSwipeLeft = () => {
-    if (currentIndex < guests.length) {
-      setCurrentIndex(prevIndex => prevIndex + 1);
-    }
+    if (cards?.length === 0) return;
+    setCards(prevCards => prevCards.slice(0, -1));
   };
 
   const handleSwipeRight = () => {
-    if (currentIndex < guests.length) {
-      setCurrentIndex(prevIndex => prevIndex + 1);
-    }
+    if (cards?.length === 0) return;
+    setCards(prevCards => prevCards.slice(0, -1));
   };
 
   const handleSuperInvite = () => {
-    if (currentIndex < guests.length) {
-      console.log('Super Invite:', guests[currentIndex].name);
-      setCurrentIndex(prevIndex => prevIndex + 1);
-    }
+    if (cards?.length === 0) return;
+    console.log('Super Invite for:', cards[cards.length - 1].name);
+
+    setCards(prevCards => prevCards.slice(0, -1));
   };
 
-  const visibleCards = guests.slice(currentIndex, currentIndex + 4);
-  const hasCards = guests.length > 0;
-  const hasMoreCards = currentIndex < guests.length;
+  const hasCards = cards?.length > 0;
+  const hasMoreCards = cards?.length === 0;
 
   return {
-    currentIndex,
     handleSwipeLeft,
     handleSwipeRight,
     handleSuperInvite,
-    visibleCards,
     hasCards,
     hasMoreCards,
+    cards,
   };
 };
 

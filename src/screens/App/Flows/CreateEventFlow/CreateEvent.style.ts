@@ -14,6 +14,9 @@ export const Container = styled.View`
 
 export const StepsContainer = styled.View`
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   margin-vertical: 24px;
 `;
 

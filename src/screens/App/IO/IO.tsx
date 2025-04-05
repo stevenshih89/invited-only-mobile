@@ -9,27 +9,29 @@ import * as S from './IO.style';
 import {sampleGuests} from './Components/InviteGuestsEvent/guests.mock';
 import InviteGuestsEvent from './Components/InviteGuestsEvent/InviteGuestsEvent';
 import IoHeader from './Components/IoHeader/IoHeader';
-import {Event} from 'src/types/event';
-import {mockInfoList} from './events.mock';
+import {EventApiResponse, EventQueries} from 'src/apiv2/queries/eventQueries';
+import AppLoader from '../AppLoader/AppLoader';
 
-// Sample events data - replace with actual data from your API
 
-const IO = () => {
+interface Props {
+  events: EventApiResponse[];
+}
+
+const IO = ({events}: Props) => {
   const {user: userInfo} = useUser();
-  const [selectedEvent, setSelectedEvent] = useState(mockInfoList[0]);
-
-  // Handle event selection
-  const handleEventSelect = (event: Event.Info) => {
+  const [selectedEvent, setSelectedEvent] = useState<EventApiResponse>(events[0]);
+  const {data: guests, isLoading} = EventQueries.useGetUserForEvent(selectedEvent.id);
+  const handleEventSelect = (event: EventApiResponse) => {
     setSelectedEvent(event);
-    console.log(`Selected event: ${event.name}`);
   };
 
-  // Handle request button press
-  const handleRequestPress = () => {
-    // Navigate to requests screen
-    // navigation.navigate('Requests');
-  };
-
+  if (isLoading) {
+    return (
+      <DefaultBackground>
+        <AppLoader />  
+      </DefaultBackground>
+    );
+  }
   return (
     <DefaultBackground>
       <S.IoContainer>
@@ -38,13 +40,13 @@ const IO = () => {
         ) : (
           <>
             <IoHeader
-              events={mockInfoList}
+              events={events}
               selectedEvent={selectedEvent}
-              requestsCount={5}
+              requestsCount={0}
               onEventSelect={handleEventSelect}
-              onRequestPress={handleRequestPress}
+              onRequestPress={() => {}}
             />
-            <InviteGuestsEvent guests={sampleGuests} />
+            <InviteGuestsEvent guests={guests?.users || []} />
           </>
         )}
       </S.IoContainer>

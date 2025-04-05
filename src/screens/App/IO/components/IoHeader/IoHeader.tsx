@@ -1,8 +1,10 @@
 import React from 'react';
 import * as S from './IoHeader.style';
 import {EventsDropdown} from './Components/EventsDropdown';
-import {Event} from 'src/types/event';
 import CreateEventButton from './Components/CreateEventButton/CreateEventButton';
+import AppLoader from 'screens/App/AppLoader/AppLoader';
+import auth from '@react-native-firebase/auth';
+import {EventApiResponse} from 'src/apiv2/queries/eventQueries';
 
 interface Event {
   id: string;
@@ -12,27 +14,32 @@ interface Event {
 interface IoHeaderProps {
   requestsCount: number;
   onRequestPress: () => void;
-  events: Event.Info[];
-  selectedEvent: Event.Info | null;
-  onEventSelect: (event: Event.Info) => void;
+  events: EventApiResponse[];
+  selectedEvent: EventApiResponse;
+  onEventSelect: (event: EventApiResponse) => void;
 }
 
 const IoHeader: React.FC<IoHeaderProps> = ({events, selectedEvent, requestsCount, onEventSelect, onRequestPress}) => {
+  const currentUser = auth().currentUser;
+  if (!currentUser) {
+    return <AppLoader />;
+  }
+
   return (
     <S.HeaderContainer>
-      {events.length < 0 ? (
-        <>
+      {events.length > 0 ? (
+        <S.RequestAndEventsContainer>
           <EventsDropdown events={events} onEventSelect={onEventSelect} selectedEvent={selectedEvent} />
+          {requestsCount > 0 && (
+            <S.RequestButton onPress={onRequestPress}>
+              <S.RequestButtonText>Requests</S.RequestButtonText>
 
-          <S.RequestButton onPress={onRequestPress}>
-            <S.RequestButtonText>Requests</S.RequestButtonText>
-            {requestsCount > 0 && (
               <S.RequestBadge>
                 <S.RequestBadgeText>{requestsCount}</S.RequestBadgeText>
               </S.RequestBadge>
-            )}
-          </S.RequestButton>
-        </>
+            </S.RequestButton>
+          )}
+        </S.RequestAndEventsContainer>
       ) : (
         <CreateEventButton />
       )}

@@ -10,7 +10,7 @@ export const TapZoneContainer = styled.View`
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 100%;
+  height: 85%;
   position: absolute;
   background-color: transparent;
   z-index: 3;

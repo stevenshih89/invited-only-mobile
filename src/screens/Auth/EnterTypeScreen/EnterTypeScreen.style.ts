@@ -31,19 +31,19 @@ export const ButtonsContainer = styled.View`
 export const EnterButton = styled.TouchableOpacity`
   background-color: ${whiteColor};
   border-radius: 18px;
-  height: ${screenHeight / 14};
-  width: ${screenWidth / 1.1};
+  height: ${screenHeight / 14}px;
+  width: ${screenWidth / 1.1}px;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin-top: ${screenWidth / 39};
+  margin-top: ${screenWidth / 39}px;
   max-height: 64px;
 `;
 
 export const ButtonText = styled.Text`
   color: ${black1Color};
   font-family: ${Satoshi500};
-  font-size: ${RFValue(16, 812)};
+  font-size: ${RFValue(16, 812)}px;
   margin-right: 4px;
 `;
 

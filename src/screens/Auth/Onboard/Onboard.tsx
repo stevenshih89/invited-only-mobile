@@ -1,5 +1,5 @@
-import React, {FC, useContext, useEffect} from 'react';
-import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ViewBase} from 'react-native';
+import React, {FC, JSX, useContext, useEffect} from 'react';
+import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
 import WelcomeBcgCards from 'assets/images/auth/welcom-screen-cards.png';
 import BgDottedLineLeft from 'assets/images/auth/background-dotted-line-left.png';
@@ -12,13 +12,11 @@ import {eulaPath} from 'constants/pathLocations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import Button from 'components/Button/Button';
-import {AuthContext} from 'contexts/AuthContext';
 import * as S from './Onboard.style';
 import {openLink} from 'helpers/links';
 
 const backgroundCardsStyle = StyleSheet.create({
   rotatedImage: {
-    // These values match your provided measurements; feel free to adjust or round them
     width: 400,
     height: 414,
     opacity: 0.7,

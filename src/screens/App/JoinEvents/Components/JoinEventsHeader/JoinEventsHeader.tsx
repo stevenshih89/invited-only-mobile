@@ -7,17 +7,17 @@ interface JoinEventsHeaderProps {
 }
 
 const JoinEventsHeader: FC<JoinEventsHeaderProps> = ({onMyEventsPress, onJoinEventsPress}) => {
-  const [activeTab, setActiveTab] = useState<'myEvents' | 'joinEvents'>('joinEvents');
+  const [activeTab, setActiveTab] = useState<'explore' | 'invites'>('explore');
 
-  const handleMyEventsPress = () => {
-    setActiveTab('myEvents');
+  const exploreEvents = () => {
+    setActiveTab('explore');
     if (onMyEventsPress) {
       onMyEventsPress();
     }
   };
 
-  const handleJoinEventsPress = () => {
-    setActiveTab('joinEvents');
+  const handleInvitesPress = () => {
+    setActiveTab('invites');
     if (onJoinEventsPress) {
       onJoinEventsPress();
     }
@@ -26,14 +26,14 @@ const JoinEventsHeader: FC<JoinEventsHeaderProps> = ({onMyEventsPress, onJoinEve
   return (
     <S.HeaderContainer>
       <S.TabContainer>
-        <S.TabButton onPress={handleMyEventsPress}>
-          {activeTab === 'myEvents' ? <S.ActiveTabText>Explore events</S.ActiveTabText> : <S.TabText>Explore Events</S.TabText>}
-          {activeTab === 'myEvents' && <S.Underline />}
+        <S.TabButton onPress={exploreEvents}>
+          {activeTab === 'explore' ? <S.ActiveTabText>Explore events</S.ActiveTabText> : <S.TabText>Explore Events</S.TabText>}
+          {activeTab === 'explore' && <S.Underline />}
         </S.TabButton>
 
-        <S.TabButton disabled onPress={handleJoinEventsPress}>
-          {activeTab === 'joinEvents' ? <S.ActiveTabText>Invites</S.ActiveTabText> : <S.TabText>Invites</S.TabText>}
-          {activeTab === 'joinEvents' && <S.Underline />}
+        <S.TabButton disabled onPress={handleInvitesPress}>
+          {activeTab === 'invites' ? <S.ActiveTabText>Invites</S.ActiveTabText> : <S.TabText>Invites</S.TabText>}
+          {activeTab === 'invites' && <S.Underline />}
         </S.TabButton>
       </S.TabContainer>
     </S.HeaderContainer>

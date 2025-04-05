@@ -38,6 +38,8 @@ target 'InvitedOnly' do
   
   pod 'react-native-config/Extension', :path => '../node_modules/react-native-config'
   pod 'RCT-Folly', :podspec => '../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec'
+  pod 'SDWebImage'
+  
 
 
   use_react_native!(
@@ -69,12 +71,12 @@ target 'InvitedOnly' do
         end
       end 
       # Set C++ language standard to C++17 for gRPC-Core and gRPC-C++
-      if ['gRPC-Core', 'gRPC-C++'].include?(target.name)
-        target.build_configurations.each do |config|
-          config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
-          config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
-        end
-      end
+      # if ['gRPC-Core', 'gRPC-C++'].include?(target.name)
+      #   target.build_configurations.each do |config|
+      #     config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+      #     config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
+      #   end
+      # end
     end
   end
 end

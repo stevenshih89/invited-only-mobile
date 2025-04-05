@@ -7,45 +7,45 @@ import styled from 'styled-components/native';
 export const OnBoardingTextTitle = styled.Text`
   color: white;
   text-align: center;
-  word-spacing: 120;
-  width: 300;
+  word-spacing: 120px;
+  width: 300px;
   font-family: ${Satoshi700};
-  font-size: ${RFValue(22, 812)};
+  font-size: ${RFValue(22, 812)}px;
 `;
 
 export const BgCardImage = styled.Image`
-  width: 400;
-  height: 414;
+  width: 400px;
+  height: 414px;
 `;
 
 export const OnBoardingTopViewContainer = styled.View`
-  gap: 20;
+  gap: 20px;
   display: flex;
   justify-content: center;
-  width: 400;
-  height: 800;
+  width: 400px;
+  height: 800px;
   align-items: center;
 `;
 
 export const BackgroundDottedLineLeft = styled.Image`
   position: absolute;
-  width: 300;
-  height: 220;
-  top: 50;
+  width: 300px;
+  height: 220px;
+  top: 50px;
   background-color: transparent;
 `;
 
 export const BackgroundDottedLineRight = styled.Image`
   position: absolute;
-  width: 280;
-  top: 20;
-  height: 300;
-  left: 210;
+  width: 280px;
+  top: 20px;
+  height: 300px;
+  left: 210px;
 `;
 
 export const GetAccessContainer = styled.View`
-  margin-bottom: ${Dimensions.get('window').height / 30};
-  margin-top: 10;
+  margin-bottom: ${Dimensions.get('window').height / 30}px;
+  margin-top: 10px;
   justify-content: center;
   display: flex;
   align-items: center;
@@ -56,21 +56,21 @@ export const GetAccessContainer = styled.View`
 export const AcceptPolicyTop = styled.Text`
   font-family: ${Satoshi700};
   font-weight: 100;
-  font-size: ${RFValue(14, 932)};
+  font-size: ${RFValue(14, 932)}px;
   color: ${lightGray19Color};
 `;
 
 export const AcceptPolicyMid = styled.Text`
   font-family: ${Satoshi700};
   font-weight: 500;
-  font-size: ${RFValue(14, 932)};
+  font-size: ${RFValue(14, 932)}px;
   color: ${whiteColor};
 `;
 
 export const AcceptPolicyBottom = styled.Text`
   font-family: ${Satoshi700};
   font-weight: 500;
-  font-size: ${RFValue(14, 932)};
+  font-size: ${RFValue(14, 932)}px;
   color: ${whiteColor};
 `;
 

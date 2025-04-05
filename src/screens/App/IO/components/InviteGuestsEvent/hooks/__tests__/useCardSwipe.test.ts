@@ -30,7 +30,7 @@ describe('useCardSwipe Hook', () => {
   ];
 
   it('initializes with correct values', () => {
-    const {result} = renderHook(() => useCardSwipe({guests: mockGuests}));
+    const {result} = renderHook(() => useCardSwipe({cardsData: mockGuests}));
 
     expect(result.current.currentIndex).toBe(0);
     expect(result.current.visibleCards).toEqual(mockGuests.slice(0, 4));
@@ -39,7 +39,7 @@ describe('useCardSwipe Hook', () => {
   });
 
   it('increments currentIndex after handleSwipeLeft', () => {
-    const {result} = renderHook(() => useCardSwipe({guests: mockGuests}));
+    const {result} = renderHook(() => useCardSwipe({cardsData: mockGuests}));
 
     act(() => {
       result.current.handleSwipeLeft();
@@ -55,7 +55,7 @@ describe('useCardSwipe Hook', () => {
   });
 
   it('increments currentIndex after handleSwipeRight', () => {
-    const {result} = renderHook(() => useCardSwipe({guests: mockGuests}));
+    const {result} = renderHook(() => useCardSwipe({cardsData: mockGuests}));
 
     act(() => {
       result.current.handleSwipeRight();
@@ -71,7 +71,7 @@ describe('useCardSwipe Hook', () => {
   });
 
   it('handles empty guests array', () => {
-    const {result} = renderHook(() => useCardSwipe({guests: []}));
+    const {result} = renderHook(() => useCardSwipe({cardsData: []}));
 
     expect(result.current.currentIndex).toBe(0);
     expect(result.current.visibleCards).toEqual([]);
@@ -80,7 +80,7 @@ describe('useCardSwipe Hook', () => {
   });
 
   it('sets hasMoreCards to false when all cards have been swiped', () => {
-    const {result} = renderHook(() => useCardSwipe({guests: mockGuests}));
+    const {result} = renderHook(() => useCardSwipe({cardsData: mockGuests}));
 
     // Swipe through all cards
     act(() => {

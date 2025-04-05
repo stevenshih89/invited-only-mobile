@@ -1,4 +1,4 @@
-import React, {FC, useState, useContext} from 'react';
+import React, {FC, useState, useContext, JSX} from 'react';
 import {Keyboard, KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback, View} from 'react-native';
 import {isIos} from 'constants/common';
 import {backgroundGradientColors} from 'constants/colors';
@@ -45,9 +45,7 @@ const SignIn: FC = (): JSX.Element => {
 
         const confirmation = await auth().signInWithPhoneNumber(phone);
         navigation.navigate('/confirm-phone', {
-          confirm: confirmation,
-          mobilePhone: phone,
-          isLogin: true,
+          phone: phone
         });
         setLoading(false);
       } catch (error: any) {

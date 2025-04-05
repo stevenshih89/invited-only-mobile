@@ -1,10 +1,17 @@
 import {View} from 'react-native';
 import * as S from './LockedFeatureComponent.style';
 import LockeFeature from 'src/assets/images/icons/locked-feature-icon.svg';
+import HostBadge from 'screens/App/JoinEvents/Components/EventCard/Components/HostBadge';
 
-const LockedFeatureComponent = () => {
+interface Props {
+  hostName: string;
+  hostImage: string;
+}
+
+const LockedFeatureComponent = ({hostImage, hostName}: Props) => {
   return (
-    <View>
+    <S.EventCardParent>
+      <HostBadge imageUrl={hostImage} totalGuests={4} />
       <S.EventCardContentContainer>
         <LockeFeature scale={10} />
         <S.LockedBigText>Coming soon</S.LockedBigText>
@@ -13,7 +20,7 @@ const LockedFeatureComponent = () => {
       <S.LockedFeatureContainer>
         <S.LockedFeatureBlueView blurType="light" blurAmount="10" />
       </S.LockedFeatureContainer>
-    </View>
+    </S.EventCardParent>
   );
 };
 export default LockedFeatureComponent;

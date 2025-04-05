@@ -12,14 +12,20 @@ interface UseCardGestureProps {
   enabled: boolean;
   index: number;
   isTopCard: boolean;
+  topIndex: number;
 }
 
-export const useCardGesture = ({onSwipeLeft, onSwipeRight, enabled, index, isTopCard}: UseCardGestureProps) => {
-  const translateX = useSharedValue(index === 0 ? 0 : (index % 2 === 0 ? -1 : 1) * (index * 5));
-  const translateY = useSharedValue(index === 0 ? 0 : -6 * index);
-  const rotation = useSharedValue(index === 0 ? 0 : (index % 2 === 0 ? -1 : 1) * (index * 0.8));
-  const scale = useSharedValue(1);
+export const useCardGesture = ({onSwipeLeft, onSwipeRight, topIndex, enabled, index, isTopCard}: UseCardGestureProps) => {
+  const distanceFromTop = topIndex - index;
+  const sign = distanceFromTop % 2 === 0 ? 1 : -1;
+  const offsetX = distanceFromTop * 5;
+  const offsetY = distanceFromTop * 2;
+  const offsetRotation = distanceFromTop * 0.5;
 
+  const translateX = useSharedValue(sign * offsetX);
+  const translateY = useSharedValue(-offsetY - 6);
+  const rotation = useSharedValue(sign * offsetRotation);
+  const scale = useSharedValue(1);
   const [wasTopCard, setWasTopCard] = useState(isTopCard);
 
   useEffect(() => {
@@ -56,7 +62,6 @@ export const useCardGesture = ({onSwipeLeft, onSwipeRight, enabled, index, isTop
   const animateReject = swipeLeft;
   const animateInvite = swipeRight;
 
-  // Super invite with a small scale effect before swiping right
   const animateSuperInvite = () => {
     if (!enabled) return;
 

@@ -1,20 +1,28 @@
 import {black1Color, blackColor, whiteColor} from 'constants/colors';
 import styled from 'styled-components/native';
+import {Image} from 'react-native';
 import Reject from 'src/assets/images/icons/reject.svg';
 import SuperInvite from 'src/assets/images/icons/super-invite.svg';
 import Invite from 'src/assets/images/icons/Invite.svg';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500} from 'constants/fonts';
+import {screenHeight} from 'constants/common';
 
 export const EventNameAndDate = styled.View`
   display: flex;
-
   align-items: center;
   justify-content: baseline;
   gap: 10px;
   margin-bottom: 5px;
 `;
 
+export const Container = styled.View`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: ${screenHeight * 0.61}px;
+`;
 export const CardContent = styled.View`
   display: flex;
   align-items: center;
@@ -129,4 +137,11 @@ export const InviteButtonText = styled.Text`
   color: ${whiteColor};
   font-size: ${RFValue(14, 932)}px;
   font-family: ${Satoshi500};
+`;
+
+export const BadgeContainer = styled.View`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  height: 20%;
 `;

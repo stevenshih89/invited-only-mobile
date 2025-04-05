@@ -18,6 +18,7 @@ export const CardNameAndAge = styled.View`
 
 export const CardContent = styled.View`
   display: flex;
+
   align-items: center;
   position: absolute;
   bottom: 0;
@@ -26,7 +27,7 @@ export const CardContent = styled.View`
   padding: 20px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-  z-index: 3;
+  z-index: 2000;
 `;
 
 export const CardName = styled.Text`

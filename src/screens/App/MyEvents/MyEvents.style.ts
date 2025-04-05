@@ -17,7 +17,6 @@ import LinearGradient from 'react-native-linear-gradient';
 export const Container = styled.View`
   background-color: ${blackColor};
   flex: 1;
-  padding-horizontal: ${screenWidth / 15.5}px;
 `;
 
 export const WrapperHeaderButtonMyEvents = styled.View`

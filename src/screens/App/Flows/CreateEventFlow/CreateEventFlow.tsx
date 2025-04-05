@@ -1,20 +1,23 @@
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import React from 'react';
 import {Formik} from 'formik';
+import * as Yup from 'yup';
 import useCreateEventFlowStep from './hooks/useCreateEventFlowStep';
 import * as S from './CreateEvent.style';
 import CreateEventFlowStepper from './Components/CreateEventFlowStepper/CreateEventFlowStepper';
 import GuestInvitationStep from './Components/GuestInvitationStep/GuestInvitationStep';
 import EventPlaceStep from './Components/EventPlaceStep/EventPlaceStep';
 import PreviewEventStep from './Components/PreviewEventStep/PreviewEventStep';
-import {EventMutations} from 'src/apiv2/mutations/eventMutations';
-import {View} from 'react-native';
+import useCreateEvent from './hooks/useCreateEvnet';
+import AppLoader from 'screens/App/AppLoader/AppLoader';
+import {showToast} from 'helpers/showToast';
+import {handleNextStep, initialValues, validationSchema} from './CreateEvent.form';
 
 export interface CreateEventFormValues {
   male: number;
   female: number;
   eventName: string;
-  date: string;
+  date: Date;
   hour: string;
   description: string;
   placeName: string;
@@ -29,89 +32,48 @@ export interface CreateEventFormValues {
 
 const CreateEventFlow = () => {
   const {currentStep, nextStep, backStep} = useCreateEventFlowStep();
-  const {mutate: createEvent} = EventMutations.useCreateEvent();
+  const {createEvent, isLoading} = useCreateEvent();
 
   return (
     <Formik<CreateEventFormValues>
-      onSubmit={({address, date, description, eventName, female, hour, male, meetingSpot, photos, placeName}) => {
-        createEvent({
-          event: {
-            activeType: 1,
-            address: address,
-            date,
-            description,
-            meetingSpot,
-            male,
-            hour,
-            placeName,
-            name: eventName,
-            photos: [
-              {id: 1, image: photos.main},
-              {id: 2, image: photos.main},
-              {id: 3, image: photos.main},
-            ],
-            rejectsList: [],
-            rejectsByGuestsList: [],
-            requestsList: [],
-            usersList: [],
-            uid: '',
-            id: '',
-            eventReviewed: false,
-            isCancelled: false,
-            statusEvent: false,
-            hostName: '',
-            hostImage: [],
-            hostFcmToken: '',
-            maleFriend: 0,
-            female: 0,
-            femaleFriend: 0,
-          },
-          uid: '',
-        });
+      validationSchema={validationSchema}
+      onSubmit={values => {
+        createEvent(values);
       }}
-      initialValues={{
-        female: 0,
-        male: 0,
-        eventName: '',
-        date: '',
-        hour: '',
-        description: '',
-        placeName: '',
-        address: '',
-        meetingSpot: '',
-        photos: {
-          main: '',
-          photo2: '',
-          photo3: '',
-        },
-      }}>
-      {({submitForm}) => (
+      initialValues={initialValues}>
+      {({submitForm, isSubmitting, values, validateForm}) => (
         <DefaultBackground>
-          <S.Container>
-            <S.StepsContainer>
-              <CreateEventFlowStepper currentStep={currentStep} />
-              {currentStep === 1 && <GuestInvitationStep />}
-              {currentStep === 2 && <EventPlaceStep />}
-              {currentStep === 3 && <PreviewEventStep />}
-            </S.StepsContainer>
-            <S.ButtonsContainer>
-              {currentStep !== 1 && (
-                <S.CancelButton onPress={backStep}>
-                  <S.CancelButtonText>Cancel</S.CancelButtonText>
-                </S.CancelButton>
-              )}
-              <S.ContinueButton
-                onPress={() => {
-                  if (currentStep === 3) {
-                    submitForm();
-                  } else {
-                    nextStep();
-                  }
-                }}>
-                <S.ContinueButtonText>{currentStep === 3 ? 'Create Event' : 'Continue'}</S.ContinueButtonText>
-              </S.ContinueButton>
-            </S.ButtonsContainer>
-          </S.Container>
+          {isLoading || isSubmitting ? (
+            <AppLoader />
+          ) : (
+            <S.Container>
+              <S.StepsContainer>
+                <CreateEventFlowStepper currentStep={currentStep} />
+                {currentStep === 1 && <GuestInvitationStep />}
+                {currentStep === 2 && <EventPlaceStep />}
+                {currentStep === 3 && <PreviewEventStep />}
+              </S.StepsContainer>
+              <S.ButtonsContainer>
+                {currentStep !== 1 && (
+                  <S.CancelButton onPress={backStep}>
+                    <S.CancelButtonText>Cancel</S.CancelButtonText>
+                  </S.CancelButton>
+                )}
+                <S.ContinueButton
+                  onPress={async () => {
+                    handleNextStep({
+                      currentStep,
+                      nextStep,
+                      submitForm,
+                      validateForm,
+                      values,
+                    });
+                  }}>
+                  <S.ContinueButtonText>{currentStep === 3 ? 'Create Event' : 'Continue'}</S.ContinueButtonText>
+                </S.ContinueButton>
+              </S.ButtonsContainer>
+            </S.Container>
+          )}
         </DefaultBackground>
       )}
     </Formik>

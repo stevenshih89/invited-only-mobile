@@ -37,10 +37,7 @@ const Navigator = () => {
 
       await AsyncStorage.setItem('uid', `${uid}`);
       await getOnbordingState();
-      console.log('fetching from ', apiUserInfoCollection, uid);
       const userDataInfo = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-      console.log(userDataInfo, 'user data??');
-      console.log('user data exist?', userDataInfo.exists);
 
       if (userDataInfo.exists) {
         setAuthState(!!userState);
@@ -131,7 +128,6 @@ const Navigator = () => {
   if (maintenanceData?.isMaintenance) {
     return <UnderMaintenance data={maintenanceData} />;
   }
-  console.log('auth state', authState);
 
   return authState ? <AppStackScreens /> : <AuthStackScreens />;
 };

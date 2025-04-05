@@ -2,7 +2,7 @@ import {User} from 'src/types/userInfo';
 import * as S from './GuestBioCard.style';
 
 interface Props {
-  guestInfo: User.Info;
+  guestInfo: any;
 }
 const GuestBioCard = ({guestInfo}: Props) => {
   return (

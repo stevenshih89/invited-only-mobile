@@ -5,7 +5,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
 // Colors and Fonts (assuming you're importing them)
-import {black60Color, black3Color, whiteColor, lightGray5Color, lightGray9Color} from 'constants/colors';
+import {black60Color, black3Color, whiteColor, lightGray5Color, lightGray9Color, lightRedColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 
 // Containers
@@ -135,6 +135,13 @@ export const TextCount = styled.Text`
   font-size: ${RFValue(14, 812)}px;
   color: ${whiteColor};
   text-align: center;
+`;
+
+export const ErrorText = styled.Text`
+  font-family: ${Satoshi400};
+  font-size: ${RFValue(14, 812)}px;
+  color: ${lightRedColor};
+  margin-bottom: 10px;
 `;
 
 // Buttons

@@ -5,7 +5,6 @@ import EnterTypeScreenBg from 'assets/images/auth/enter-type-screen-bg.png';
 import EnterTypeWordsAnimation from './EnterTypeWordsAnimation';
 
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {signInPath, signUpPath} from 'constants/pathLocations';
 
 const EnterTypeScreen = () => {
   const navigation = useAppNavigation();

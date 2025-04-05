@@ -2,9 +2,10 @@ import {View} from 'react-native';
 import * as S from './GuestInvitationStep.style';
 import {useFormikContext} from 'formik';
 import {CreateEventFormValues} from '../../CreateEventFlow';
+import * as Yup from 'yup';
 
 const GuestInvitationStep = () => {
-  const {values, setFieldValue} = useFormikContext<CreateEventFormValues>();
+  const {values, setFieldValue, errors, touched} = useFormikContext<CreateEventFormValues>();
   const {female, male} = values;
 
   const incrementFemale = () => setFieldValue('female', female + 1);
@@ -16,6 +17,7 @@ const GuestInvitationStep = () => {
   return (
     <S.WrapperSelectYourDesiredCompany>
       <S.TextSelectYourDesiredCompany>How many Guests would you like to invite?</S.TextSelectYourDesiredCompany>
+      {touched.male && touched.female && male === 0 && female === 0 && <S.ErrorText>At least one guest is required</S.ErrorText>}
       <View>
         <View>
           <S.TextPersonGender>Woman</S.TextPersonGender>

@@ -49,6 +49,7 @@ export namespace User {
     facePhoto: string | null;
     fcmToken: string;
     gender: Gender;
+    photos: User.Photo[];
     imageUser: string[];
     lastUpdateSuperInvite: number;
     name: string;

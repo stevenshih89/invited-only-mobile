@@ -7,7 +7,7 @@ export const HeaderContainer = styled.View`
   background-color: ${blackColor};
   border-bottom-width: 1px;
   border-bottom-color: ${grayColor}20;
-  padding-vertical: 12px;
+  padding-top: 12px;
 `;
 
 export const TabContainer = styled.View`

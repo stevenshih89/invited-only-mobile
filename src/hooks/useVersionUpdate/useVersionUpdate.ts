@@ -32,8 +32,6 @@ const useVersionStateUpdate = (): {versionData: VersionResponse} => {
   }
 
   if (appVersionFetched && versionData?.lastAvailableVersion) {
-    console.log(appVersion, versionData.lastAvailableVersion);
-
     if (semver.lt(appVersion, versionData.lastAvailableVersion)) {
       return {versionData: {...versionData, showUpdateAvailable: true}};
     }

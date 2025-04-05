@@ -7,17 +7,20 @@ const useAddModalPhotos = () => {
   const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number | null>(null);
 
-  const {setFieldValue} = useFormikContext<CreateEventFormValues>();
+  const {setFieldValue, setFieldTouched} = useFormikContext<CreateEventFormValues>();
 
   const handlePhotoAdded = (index: number, photo: string) => {
     if (index === 1) {
       setFieldValue('photos.main', photo);
+      setFieldTouched('photos.main', true);
     }
     if (index === 2) {
       setFieldValue('photos.photo2', photo);
+      setFieldTouched('photos.photo2', true);
     }
     if (index === 3) {
       setFieldValue('photos.photo3', photo);
+      setFieldTouched('photos.photo3', true);
     }
   };
 

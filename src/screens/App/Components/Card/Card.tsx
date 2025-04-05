@@ -1,18 +1,19 @@
 import React, {ReactNode, useState} from 'react';
 import * as S from './Card.style';
-import {View} from 'react-native';
 import {GestureDetector, PanGesture} from 'react-native-gesture-handler';
-import Animated, {AnimatedStyle} from 'react-native-reanimated';
-import {screenHeight} from 'constants/common';
+import {AnimatedStyle} from 'react-native-reanimated';
 import InvisibleTouchZone from './Components/InvisibleTouchZone/InvisibleTouchZone';
 import ImageIndicator from './Components/ImageIndicator/ImageIndicator';
-import FastImage from 'react-native-fast-image';
+
+import {User} from 'src/types/userInfo';
+import CardImage from './Components/CardImage/CardImage';
 
 interface CardProps {
   uid: string;
-  backgroundUrls: string[];
+  backgroundUrls: User.Photo[];
   index: number;
   isTopCard?: boolean;
+  distanceFromTop: number;
   onReject?: () => void;
   onSuperInvite?: () => void;
   onInvite?: () => void;
@@ -24,6 +25,29 @@ interface CardProps {
   isStatic?: boolean;
   showDots?: boolean;
 }
+
+const PhysicCard = ({
+  children,
+  uid,
+  index,
+  setImageIndex,
+  backgroundUrls,
+  distanceFromTheTop,
+}: {
+  children: ReactNode;
+  uid: string;
+  index: number;
+  setImageIndex: any;
+  backgroundUrls: User.Photo[];
+  distanceFromTheTop: number;
+}) => {
+  return (
+    <S.Card key={uid} distanceFromTheTop={distanceFromTheTop} index={index}>
+      <InvisibleTouchZone setImageIndex={setImageIndex} imageCount={backgroundUrls?.length} />
+      {children}
+    </S.Card>
+  );
+};
 
 const Card: React.FC<CardProps> = ({
   uid,
@@ -37,17 +61,22 @@ const Card: React.FC<CardProps> = ({
   isStatic = false,
   showDots = true,
   isTopCard,
+  distanceFromTop,
 }) => {
   const [imageIndex, setImageIndex] = useState<number>(0);
-  const showImageIndexIndicator = isTopCard && showDots && backgroundUrls.length > 1;
 
   if (isStatic) {
+    const showImageIndexIndicator = isTopCard && showDots && backgroundUrls.length > 1;
     return (
-      <S.Card shouldRasterizeIOS key={uid} index={index} style={{height: screenHeight * 0.6}}>
-        <InvisibleTouchZone setImageIndex={setImageIndex} imageCount={backgroundUrls.length} />
-        <View style={{height: '100%'}}>
-          <S.CardImage shouldRasterizeIOS source={{uri: backgroundUrls[imageIndex]}} style={{height: '100%'}} />
-          {index > 0 && <S.CardOverlay />}
+      <PhysicCard
+        distanceFromTheTop={distanceFromTop}
+        index={index}
+        uid={uid}
+        backgroundUrls={backgroundUrls}
+        setImageIndex={setImageIndex}>
+        <S.StyledNotAnimatedView>
+          <CardImage imageSource={backgroundUrls[imageIndex].image} isTopCard={isTopCard} imageIndex={imageIndex} />
+
           <S.CardGradient
             colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']}
             locations={[0, 0.5, 1]}
@@ -55,18 +84,22 @@ const Card: React.FC<CardProps> = ({
           />
           {showImageIndexIndicator && <ImageIndicator currentIndex={imageIndex} totalImages={backgroundUrls.length} />}
           {children}
-        </View>
-      </S.Card>
+        </S.StyledNotAnimatedView>
+      </PhysicCard>
     );
   }
 
   return (
     <GestureDetector gesture={gestureHandler!}>
-      <S.Card key={uid} index={index} style={{height: screenHeight * 0.6}}>
-        <InvisibleTouchZone setImageIndex={setImageIndex} imageCount={backgroundUrls.length} />
-        <Animated.View style={[animatedStyle, {height: '100%'}]}>
-          <S.CardImage resizeMode={FastImage.resizeMode.cover} source={{uri: backgroundUrls[imageIndex]}} style={{height: '100%'}} />
-          {index > 0 && <S.CardOverlay />}
+      <PhysicCard
+        distanceFromTheTop={distanceFromTop}
+        index={index}
+        uid={uid}
+        backgroundUrls={backgroundUrls}
+        setImageIndex={setImageIndex}>
+        <InvisibleTouchZone setImageIndex={setImageIndex} imageCount={backgroundUrls?.length} />
+        <S.StyledAnimatedView style={[animatedStyle]}>
+          <CardImage imageSource={backgroundUrls[imageIndex].image} isTopCard={isTopCard} imageIndex={imageIndex} />
 
           <S.CardGradient
             colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']}
@@ -82,8 +115,8 @@ const Card: React.FC<CardProps> = ({
           </S.NopeAnimatedOpacity>
           {backgroundUrls.length > 1 && <ImageIndicator currentIndex={imageIndex} totalImages={backgroundUrls.length} />}
           {children}
-        </Animated.View>
-      </S.Card>
+        </S.StyledAnimatedView>
+      </PhysicCard>
     </GestureDetector>
   );
 };

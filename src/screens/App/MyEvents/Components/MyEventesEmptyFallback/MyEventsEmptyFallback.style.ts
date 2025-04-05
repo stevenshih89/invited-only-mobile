@@ -1,0 +1,59 @@
+import {whiteColor} from 'constants/colors';
+import {screenHeight} from 'constants/common';
+import {Satoshi400} from 'constants/fonts';
+import {TouchableOpacity} from 'react-native';
+import FastImage from 'react-native-fast-image';
+
+import {RFValue} from 'react-native-responsive-fontsize';
+import styled from 'styled-components/native';
+
+export const Container = styled.View`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+  height: ${screenHeight * 0.75}px;
+`;
+export const EmptyFallbackImage = styled(FastImage)`
+  height: 275px;
+  width: 250px;
+`;
+
+export const FallbackTextContainer = styled.Text`
+  display: flex;
+  flex-direction: row;
+  width: 60%;
+  text-align: center;
+
+  padding: 10px;
+`;
+
+export const TextContainer = styled.View`
+  padding-bottom: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+`;
+
+export const FallbackTitleText = styled.Text`
+  font-family: ${Satoshi400};
+  flex-direction: column;
+  align-items: center;
+
+  justify-content: center;
+  gap: 8px;
+  color: ${whiteColor};
+  font-size: ${RFValue(24, 812)};
+`;
+
+export const FallbackInstructorTex = styled.Text`
+  font-family: ${Satoshi400};
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  color: ${whiteColor};
+  opacity: 0.7;
+  font-size: ${RFValue(16, 812)};
+`;

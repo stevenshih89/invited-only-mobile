@@ -40,9 +40,9 @@ import {pipe} from 'helpers/pipe';
 import {EventContext} from 'contexts/EventContext';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import Config from 'react-native-config';
-import { showToast } from 'helpers/showToast';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { useMyProfileView } from 'hooks/useMyProfileView';
+import {showToast} from 'helpers/showToast';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {useMyProfileView} from 'hooks/useMyProfileView';
 
 interface MyProfileViewProps {
   isShowEditButton?: boolean;
@@ -53,7 +53,6 @@ interface MyProfileViewProps {
 }
 
 const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible}) => {
-
   const {
     loading,
     scrollPosition,
@@ -67,11 +66,11 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible}
     userInfo,
     setModalReport,
     userHost,
-    route
-  } = useMyProfileView()
+    route,
+  } = useMyProfileView();
 
   const styles = useStyles();
- 
+
   if (loading || !userInfo) {
     return (
       <View style={{flex: 1, backgroundColor: blackColor}}>

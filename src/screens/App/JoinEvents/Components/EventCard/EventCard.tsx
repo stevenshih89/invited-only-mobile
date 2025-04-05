@@ -23,6 +23,7 @@ const EventCard = ({onInvite, onReject, isTopCard, event, index}: Props) => {
       enabled: isTopCard,
       index: index,
       isTopCard: isTopCard,
+      topIndex: 0,
     });
 
   const disabledGesture = Gesture.Pan()
@@ -51,7 +52,7 @@ const EventCard = ({onInvite, onReject, isTopCard, event, index}: Props) => {
     <Card
       isStatic
       uid={event.uid}
-      backgroundUrls={event.hostImage}
+      backgroundUrls={[event.photos[0]]}
       index={index}
       isTopCard={isTopCard}
       onReject={onClickReject}
@@ -60,8 +61,9 @@ const EventCard = ({onInvite, onReject, isTopCard, event, index}: Props) => {
       gestureHandler={userInfo.gender === 'man' ? disabledGesture : gestureHandler}
       animatedStyle={animatedStyle}
       likeOpacityStyle={likeOpacityStyle}
-      nopeOpacityStyle={nopeOpacityStyle}>
-      <LockedFeatureComponent />
+      nopeOpacityStyle={nopeOpacityStyle}
+      distanceFromTop={0}>
+      <LockedFeatureComponent hostImage={event.hostImage} hostName={event.hostName} />
     </Card>
   );
 };

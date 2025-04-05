@@ -10,9 +10,10 @@ interface Props {
   onInvite: () => void;
   guest: User.Info;
   index: number;
+  topIndex: number;
 }
 
-export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, index}: Props) => {
+export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex}: Props) => {
   const {gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite} =
     useCardGesture({
       onSwipeLeft: onReject,
@@ -20,6 +21,7 @@ export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, 
       enabled: isTopCard,
       index: index,
       isTopCard: isTopCard,
+      topIndex,
     });
 
   const onClickReject = () => {
@@ -29,6 +31,8 @@ export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, 
   };
 
   const onClickInvite = () => {
+    console.log('click??');
+
     if (isTopCard) {
       animateInvite();
     }
@@ -42,8 +46,9 @@ export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, 
 
   return (
     <Card
+      distanceFromTop={topIndex - index}
       uid={guest.uid}
-      backgroundUrls={guest.imageUser}
+      backgroundUrls={guest.photos}
       index={index}
       isTopCard={isTopCard}
       onInvite={onInvite}
@@ -53,13 +58,13 @@ export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, 
       animatedStyle={animatedStyle}
       likeOpacityStyle={likeOpacityStyle}
       nopeOpacityStyle={nopeOpacityStyle}>
-      <S.CardContent>
-        <S.CardNameAndAge>
-          <S.StyledCheckStar />
-          <S.CardName>{guest.name},</S.CardName>
-          <S.CardGuestAge>{guest.age}</S.CardGuestAge>
-        </S.CardNameAndAge>
-        {isTopCard && (
+      {isTopCard && (
+        <S.CardContent>
+          <S.CardNameAndAge>
+            <S.StyledCheckStar />
+            <S.CardName>{guest.name},</S.CardName>
+            <S.CardGuestAge>{guest.age}</S.CardGuestAge>
+          </S.CardNameAndAge>
           <S.ButtonsContainer>
             <S.RejectButton onPress={onClickReject}>
               <S.RejectIcon />
@@ -69,14 +74,13 @@ export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, 
               <S.SuperInviteIcon style={{opacity: 1}} />
               <S.SuperInviteButtonText>Super Invite</S.SuperInviteButtonText>
             </S.SuperInviteButton>
-
             <S.InviteButton onPress={onClickInvite}>
               <S.InviteIcon style={{opacity: 1}} />
               <S.InviteButtonText>Invite</S.InviteButtonText>
             </S.InviteButton>
           </S.ButtonsContainer>
-        )}
-      </S.CardContent>
+        </S.CardContent>
+      )}
     </Card>
   );
 };

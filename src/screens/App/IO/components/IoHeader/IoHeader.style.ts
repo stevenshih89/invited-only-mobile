@@ -1,33 +1,36 @@
 import styled from 'styled-components/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {blackColor, grayColor, whiteColor} from 'constants/colors';
-
 export const HeaderContainer = styled.View`
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding-horizontal: 16px;
-  padding-vertical: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 12px;
+  padding-bottom: 12px;
   background-color: ${blackColor};
   border-bottom-width: 1px;
   border-bottom-color: ${grayColor}20;
 `;
 
 export const DropdownContainer = styled.View`
-  flex: 1;
-  margin-right: 16px;
+  align-items: center;
+  margin-right: 8px;
+`;
+
+export const RequestAndEventsContainer = styled.View`
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
 `;
 
 export const DropdownButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  width: 204px;
   height: 40px;
   border-radius: 100px;
-  padding-top: 8px;
-  padding-right: 16px;
-  padding-bottom: 8px;
-  padding-left: 16px;
   background-color: rgba(255, 255, 255, 0.16);
 `;
 
@@ -81,5 +84,6 @@ export const RequestBadgeText = styled.Text`
   font-size: ${RFValue(12, 932)}px;
   color: ${whiteColor};
   font-weight: 700;
-  padding-horizontal: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
 `;

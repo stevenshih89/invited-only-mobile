@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useEffect, useState} from 'react';
+import React, {FC, JSX, useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import ArrowLeftArrow from 'assets/images/icons/arrow-left.svg';
 import {backgroundGradientColors, black1Color, lightGray16Color, transparentWhite16Color, whiteColor} from 'constants/colors';

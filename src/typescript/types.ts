@@ -44,6 +44,7 @@ export type RootStackParamList = {
   '/my-interests': undefined;
   '/my-email': undefined;
   '/connect-social-media': undefined;
+  '/connect': string;
   '/privacy': undefined;
   '/pending-screen': undefined;
   '/account-rejected': undefined;

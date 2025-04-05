@@ -1,4 +1,4 @@
-import {lightGreenColor, lightRedColor, white0Color} from 'constants/colors';
+import {blackColor, lightGreenColor, lightRedColor, white0Color} from 'constants/colors';
 import {Satoshi500} from 'constants/fonts';
 import FastImage from 'react-native-fast-image';
 
@@ -7,17 +7,21 @@ import Animated from 'react-native-reanimated';
 import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 
-export const Card = styled(Animated.View)<{index: number}>`
+export const Card = styled.View<{index: number; distanceFromTheTop: number}>`
   position: absolute;
   display: flex;
-  width: ${({index}: {index: number}) => `${100 - index * 5}%`};
-  height: ${({index}: {index: number}) => `${100 - index * 5}%`};
-  z-index: ${({index}: {index: number}) => 10 - index};
-  opacity: ${({index}: {index: number}) => (index > 4 ? 0.9 - (index - 4) * 0.15 : 1)};
-  background-color: transparent;
-`;
-export const CardImage = styled(FastImage)`
+  width: ${({distanceFromTheTop}: {distanceFromTheTop: number}) => `${105 - distanceFromTheTop * 5}%`};
+  height: ${({distanceFromTheTop}: {distanceFromTheTop: number}) => `${100 - distanceFromTheTop * 5}%`};
+  height: 100%;
+  z-index: ${({index}: {index: number}) => index};
   border-radius: 20px;
+  shadow-color: #000;
+  box-shadow: 10px 5px 5px ${blackColor};
+  shadow-offset: 5px 4px;
+  shadow-opacity: 0.9;
+  shadow-radius: 15px;
+  /* Android Elevation: higher index => bigger shadow */
+  elevation: ${({distanceFromTheTop}: {distanceFromTheTop: number}) => distanceFromTheTop * 2};
 `;
 
 export const CardOverlay = styled.View`
@@ -26,8 +30,7 @@ export const CardOverlay = styled.View`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  outline: 1px solid transparent;
+  background-color: rgba(0, 0, 0, 0.4);
   border-radius: 20px;
   z-index: 1;
 `;
@@ -39,6 +42,16 @@ export const CardGradient = styled(LinearGradient)`
   right: 0;
   height: 70%;
   z-index: 2;
+  border-radius: 20px;
+`;
+
+export const StyledAnimatedView = styled(Animated.View)`
+  display: flex;
+  justify-content: flex-end;
+`;
+export const StyledNotAnimatedView = styled.View`
+  display: flex;
+  justify-content: flex-end;
 `;
 
 export const LikeAnimatedOpacity = styled(Animated.View)`

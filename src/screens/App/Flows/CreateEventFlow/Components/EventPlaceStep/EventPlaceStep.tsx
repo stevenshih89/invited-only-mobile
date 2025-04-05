@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, Image} from 'react-native';
+import React from 'react';
+import {View} from 'react-native';
 import {useFormikContext} from 'formik';
 import * as S from './EventPlaceStep.style';
 import {CreateEventFormValues} from '../../CreateEventFlow';
@@ -8,16 +8,16 @@ import ModalAddPhoto from './AddPhotoMoald/ModalAddPhoto';
 
 import useAddModalPhotos from './AddPhotoMoald/useAddPhotoModal';
 import FastImage from 'react-native-fast-image';
+import EventDatePicker from './EventDatePicker/EventDatePicker';
 
 const EventPlaceStep = () => {
-  const {values, setFieldValue} = useFormikContext<CreateEventFormValues>();
-  console.log('values are: ', values);
+  const {values, setFieldValue, errors, touched, setFieldTouched} = useFormikContext<CreateEventFormValues>();
 
   const {handleAddPlaceholderPhoto, handleOpenCamera, handleOpenLibrary, handleOpenPhotoModal, isPhotoModalVisible, closeModal} =
     useAddModalPhotos();
 
   return (
-    <View>
+    <S.Container>
       <LinearGradient
         colors={['black', 'transparent']}
         style={{position: 'absolute', top: 0, left: 0, right: 0, height: 20, zIndex: 1}}
@@ -30,7 +30,7 @@ const EventPlaceStep = () => {
         style={{position: 'absolute', bottom: 0, left: 0, right: 0, height: 20, zIndex: 1}}
         pointerEvents="none"
       />
-      <S.Container>
+      <S.ScrollContainer>
         <S.Card>
           <S.CardTitle>Overview</S.CardTitle>
           <S.FieldContainer>
@@ -42,35 +42,12 @@ const EventPlaceStep = () => {
                 placeholderTextColor="#767676"
                 value={values.eventName}
                 onChangeText={(value: string) => setFieldValue('eventName', value)}
+                onBlur={() => setFieldTouched('eventName', true)}
               />
             </S.Input>
+            {touched.eventName && errors.eventName && <S.ErrorText>{errors.eventName}</S.ErrorText>}
           </S.FieldContainer>
-          <S.RowContainer>
-            <S.HalfFieldContainer>
-              <S.FieldLabel>Date *</S.FieldLabel>
-              <S.Input>
-                <S.StyledTextInput
-                  placeholder="MM/DD/YY"
-                  placeholderTextColor="#767676"
-                  value={values.date}
-                  onChangeText={(value: string) => setFieldValue('date', value)}
-                />
-              </S.Input>
-            </S.HalfFieldContainer>
-
-            {/* Hour Field */}
-            <S.HalfFieldContainer>
-              <S.FieldLabel>Hour *</S.FieldLabel>
-              <S.Input>
-                <S.StyledTextInput
-                  placeholder="00:00"
-                  placeholderTextColor="#767676"
-                  value={values.hour}
-                  onChangeText={(value: string) => setFieldValue('hour', value)}
-                />
-              </S.Input>
-            </S.HalfFieldContainer>
-          </S.RowContainer>
+          <EventDatePicker />
 
           {/* Description Field */}
           <S.FieldContainer>
@@ -99,8 +76,10 @@ const EventPlaceStep = () => {
                 placeholderTextColor="#767676"
                 value={values.placeName}
                 onChangeText={(value: string) => setFieldValue('placeName', value)}
+                onBlur={() => setFieldTouched('placeName', true)}
               />
             </S.Input>
+            {touched.placeName && errors.placeName && <S.ErrorText>{errors.placeName}</S.ErrorText>}
           </S.FieldContainer>
 
           {/* Address Field */}
@@ -112,8 +91,10 @@ const EventPlaceStep = () => {
                 placeholderTextColor="#767676"
                 value={values.address}
                 onChangeText={(value: string) => setFieldValue('address', value)}
+                onBlur={() => setFieldTouched('address', true)}
               />
             </S.Input>
+            {touched.address && errors.address && <S.ErrorText>{errors.address}</S.ErrorText>}
           </S.FieldContainer>
 
           {/* Meeting Spot Field */}
@@ -145,6 +126,7 @@ const EventPlaceStep = () => {
                 </S.AddPhotoButton>
               )}
             </S.MainPhotoContainer>
+            {touched.photos?.main && errors.photos?.main && !values.photos.main && <S.ErrorText>Main photo is required</S.ErrorText>}
 
             <S.PhotosRow>
               <S.SmallPhotoContainer>
@@ -172,7 +154,7 @@ const EventPlaceStep = () => {
             </S.PhotosRow>
           </S.PhotosContainer>
         </S.Card>
-      </S.Container>
+      </S.ScrollContainer>
 
       <ModalAddPhoto
         isVisible={isPhotoModalVisible}
@@ -181,7 +163,7 @@ const EventPlaceStep = () => {
         openLibrary={handleOpenLibrary}
         addPlaceholderPhoto={handleAddPlaceholderPhoto}
       />
-    </View>
+    </S.Container>
   );
 };
 

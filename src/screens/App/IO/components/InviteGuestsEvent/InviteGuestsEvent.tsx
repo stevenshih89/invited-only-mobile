@@ -13,38 +13,33 @@ interface InviteGuestsEvent {
 }
 
 const InviteGuestsEvent: React.FC<InviteGuestsEvent> = ({guests = []}) => {
-  const {handleSwipeLeft, handleSwipeRight, handleSuperInvite, visibleCards, hasCards, currentIndex} = useCardSwipe({guests});
+  const {handleSwipeLeft, handleSwipeRight, handleSuperInvite, hasCards, cards} = useCardSwipe({cardsData: guests});
 
   const renderCards = () => {
     if (!hasCards) {
       return <S.NoCardsText>No guests to show!</S.NoCardsText>;
     }
 
-    if (visibleCards.length === 0) {
-      return <S.NoCardsText>No more guests to show!</S.NoCardsText>;
-    }
-
-    return visibleCards
-      .map((guest, index) => (
-        <GuestCard
-          key={guest.id}
-          guest={guest}
-          index={index}
-          isTopCard={index === 0}
-          onReject={handleSwipeLeft}
-          onSuperInvite={handleSuperInvite}
-          onInvite={handleSwipeRight}
-        />
-      ))
-      .reverse();
+    return cards.map((guest, index) => (
+      <GuestCard
+        key={index}
+        guest={guest as User.Info}
+        index={index}
+        isTopCard={index === cards.length - 1}
+        onReject={handleSwipeLeft}
+        onSuperInvite={handleSuperInvite}
+        onInvite={handleSwipeRight}
+        topIndex={cards.length - 1}
+      />
+    ));
   };
 
   return (
     <ScrollView>
       <S.Container>
         <S.CardContainer>{renderCards()}</S.CardContainer>
-        {guests[currentIndex] && <GuestBasicInfoCard guestInfo={guests[currentIndex]} />}
-        {guests[currentIndex] && <GuestBioCard guestInfo={guests[currentIndex]} />}
+        {cards[cards.length - 1] && <GuestBasicInfoCard guestInfo={cards[cards.length - 1]} />}
+        {guests[cards.length - 1] && <GuestBioCard guestInfo={cards[cards.length - 1]} />}
       </S.Container>
     </ScrollView>
   );

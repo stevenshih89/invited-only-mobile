@@ -1,16 +1,16 @@
 import React, {FC, ReactElement, useEffect, useState} from 'react';
 import {View, Text} from 'react-native';
-import Profile from 'assets/images/tab-bar/profile.svg';
-import ProfileActive from 'assets/images/tab-bar/profile-active.svg';
+import Connect from 'assets/images/tab-bar/connect.svg';
+import ConnectActive from 'assets/images/tab-bar/connect-active.svg';
 
 import MyEvents from 'assets/images/tab-bar/my-events.svg';
 import MyEventsActive from 'assets/images/tab-bar/my-events-active.svg';
-import Chat from 'assets/images/tab-bar/direct-inbox.svg';
-import ChatActive from 'assets/images/tab-bar/direct-inbox-active.svg';
+import Chat from 'assets/images/tab-bar/chat.svg';
+import ChatActive from 'assets/images/tab-bar/chat-active.svg';
 import JoinEventActive from 'assets/images/tab-bar/join-events-active.svg';
 import JoinEvents from 'assets/images/tab-bar/joint-events.svg';
 import IO from 'assets/images/tab-bar/io.svg';
-import {IOPath, chatPath, joinEventsPath, myEventsPath, profilePath} from 'constants/pathLocations';
+import {IOPath, chatPath, connectPath, joinEventsPath, myEventsPath} from 'constants/pathLocations';
 import {blackColor, grayColor, lightRedColor, whiteColor} from 'constants/colors';
 import {RootStackParamList} from 'typescript/types';
 import styles from './styles';
@@ -25,10 +25,11 @@ import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 export const TabBarName = (focused: boolean, route: string) => {
   const getLabel = (): string =>
     ({
-      [profilePath]: 'Profile',
+      [connectPath]: 'Connect',
       [joinEventsPath]: 'Join Events',
-      [myEventsPath]: 'My Events',
-      [chatPath]: 'Inbox',
+      [myEventsPath]: 'Events',
+      [chatPath]: 'Chat',
+      [IOPath]: 'Invite',
     })[route as keyof RootStackParamList];
 
   return <Text style={[styles.label, {color: focused ? whiteColor : grayColor}]}>{getLabel()}</Text>;
@@ -113,7 +114,7 @@ export const TabIcon = (focused: boolean, route: string): ReactElement => {
 
   const getIcon = (): ReactElement =>
     ({
-      [profilePath]: focused ? <ProfileActive /> : <Profile />,
+      [connectPath]: focused ? <ConnectActive /> : <Connect />,
       [joinEventsPath]: focused ? <JoinEventActive /> : <JoinEvents />,
       [IOPath]: <IO />,
       [myEventsPath]: focused ? <MyEventsActive /> : <MyEvents />,

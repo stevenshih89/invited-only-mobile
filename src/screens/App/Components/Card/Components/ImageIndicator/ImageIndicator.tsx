@@ -11,7 +11,7 @@ const ImageIndicator: React.FC<ImageIndicatorProps> = ({currentIndex, totalImage
   return (
     <S.Container>
       {Array.from({length: totalImages}).map((_, index) => (
-        <S.Dot isActive={index === currentIndex} />
+        <S.Dot key={index} isActive={index === currentIndex} />
       ))}
     </S.Container>
   );

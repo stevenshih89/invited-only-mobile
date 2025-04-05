@@ -3,7 +3,7 @@ import * as S from './GuestBasicInfoCard.style';
 import TablerGenderIcon from 'src/assets/images/icons/gender-girl.svg';
 
 interface Props {
-  guestInfo: User.Info;
+  guestInfo: any;
 }
 const GuestBasicInfoCard = ({guestInfo}: Props) => {
   return (

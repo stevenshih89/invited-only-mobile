@@ -15,10 +15,6 @@ import {
   codeVerifiedPath,
   commonStackPath,
   contactAndFAQPath,
-  demoEventCreatingPath,
-  demoFlowStackPath,
-  demoIntroPath,
-  demoIOPath,
   earlyAccessPath,
   emailChangePath,
   eventActiveInfoPath,
@@ -56,7 +52,6 @@ import EventCreating from 'screens/App/IO/screens/EventCreating/EventCreating.ts
 import MyEvents from 'screens/App/MyEvents/MyEvents.tsx';
 import Chat from 'screens/App/Chat/Chat.tsx';
 import ChatCorrespondence from 'screens/App/Chat/screens/ChatCorrespondence/ChatCorrespondence.tsx';
-import JoinEvents from 'screens/App/IO/screens/JoinEvents/JoinEvents.tsx';
 import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView.tsx';
 import {TouchableOpacity} from 'react-native';
 import ThreeDotsIcon from 'assets/images/icons/more-white.svg';
@@ -85,8 +80,10 @@ import Config from 'react-native-config';
 import auth from '@react-native-firebase/auth';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {UserQueries} from '../../apiv2/queries/userQueries.ts';
-import {EventQueries} from '../../apiv2/queries/eventQueries.ts';
 import CreateEventFlow from 'screens/App/Flows/CreateEventFlow/CreateEventFlow.tsx';
+import IOWrapper from 'screens/App/IO/IOWrapper.tsx';
+import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper.tsx';
+import Events from 'screens/App/MyEvents/Events.tsx';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -113,7 +110,7 @@ export const IOStackNavigation: FC = () => {
         }}
         name={IOPath}
         key={IOPath}
-        component={IO}
+        component={IOWrapper}
       />
       <Stack.Screen
         options={{
@@ -122,7 +119,7 @@ export const IOStackNavigation: FC = () => {
         }}
         name={joinEventsPath}
         key={joinEventsPath}
-        component={JoinEvents}
+        component={JoinEventsWrapper}
       />
       <Stack.Screen
         options={{
@@ -153,7 +150,7 @@ export const MyEventsStackNavigation: FC = () => {
         }}
         name={myEventsPath}
         key={myEventsPath}
-        component={MyEvents}
+        component={Events}
       />
     </Stack.Navigator>
   );
@@ -425,6 +422,7 @@ const UserProfileStackScreen = () => {
             isModalVisible={isModalVisible}
             isShowEditButton={false}
             isShowInstagramPhotos={false}
+            route={undefined}
           />
         )}
         options={{
@@ -476,56 +474,13 @@ const ManageSubscriptionScreen = () => {
   );
 };
 
-const DemoFlowScreen = () => {
-  return (
-    <DemoFlowStack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-      initialRouteName={demoIntroPath}>
-      <DemoFlowStack.Screen name={demoIntroPath} key={demoIntroPath} component={DemoIntro} />
-      <DemoFlowStack.Screen
-        name={demoEventCreatingPath}
-        key={demoEventCreatingPath}
-        options={{
-          headerShown: true,
-          header: DemoEventCreatingHeader,
-        }}
-        component={EventCreating}
-        initialParams={{isDemo: true}}
-      />
-      <DemoFlowStack.Screen
-        options={{
-          headerShown: true,
-          header: () => <Header badge={true} logoType="logo" headerType="IO" />,
-        }}
-        name={demoIOPath}
-        key={demoIOPath}
-        component={IO}
-        initialParams={{isDemo: true}}
-      />
-    </DemoFlowStack.Navigator>
-  );
-};
-
 const AppStackScreen = () => {
-  const {user, setUser} = useUser();
   const {setNotificationsCount} = useNotifications();
-  const initialRouteName =
-    user?.uid && user?.accountType === 'host' && user?.accountConfirmed && user?.accountReviewed && !user?.isPassedDemo
-      ? demoFlowStackPath
-      : bottomTabsStackPath;
-
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-
-  UserQueries.useUserInfo();
-  EventQueries.useEvents();
-
   useEffect(() => {
     try {
       const currentUser = auth().currentUser;
       let notificationsCountSubscriber: any;
-
       if (currentUser) {
         try {
           notificationsCountSubscriber = firestore()
@@ -541,7 +496,6 @@ const AppStackScreen = () => {
       }
       return () => {
         console.warn('unmount');
-
         if (notificationsCountSubscriber) {
           notificationsCountSubscriber();
         }
@@ -552,14 +506,13 @@ const AppStackScreen = () => {
   }, []);
 
   return (
-    <AppStack.Navigator initialRouteName={initialRouteName} screenOptions={{headerShown: false}}>
+    <AppStack.Navigator initialRouteName={bottomTabsStackPath} screenOptions={{headerShown: false}}>
       <AppStack.Screen key={bottomTabsStackPath} name={bottomTabsStackPath} component={BottomTabsStackScreen} />
       <AppStack.Screen key={notificationsStackPath} name={notificationsStackPath} component={NotificationsStackScreen} />
       <AppStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={EventCreatingStackScreen} />
       <AppStack.Screen key={chatCorrespondencePath} name={chatCorrespondencePath} component={ChatCorrespondenceStackScreen} />
       <AppStack.Screen key={userProfilePath} name={userProfilePath} component={UserProfileStackScreen} />
       <AppStack.Screen key={commonStackPath} name={commonStackPath} component={CommonStackScreen} />
-      <AppStack.Screen key={demoFlowStackPath} name={demoFlowStackPath} component={DemoFlowScreen} />
       <AppStack.Screen key={paymentPath} name={paymentPath} component={PaymentStackScreen} />
       <AppStack.Screen key={verifySocialProfilePath} name={verifySocialProfilePath} component={VerifySocialProfile} />
       <AppStack.Screen key={manageSubscriptionPath} name={manageSubscriptionPath} component={ManageSubscriptionScreen} />

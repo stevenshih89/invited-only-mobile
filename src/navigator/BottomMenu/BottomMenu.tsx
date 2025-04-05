@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, JSX} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 //import components
@@ -9,15 +9,14 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {
   IOPath,
   chatPath,
+  connectPath,
   joinEventsPath,
-  joinEventsPathRequest,
   myEventsPath,
   myProfileViewPath,
   profileEditingPath,
   profilePath,
-  requestsPath,
 } from 'constants/pathLocations';
-import Requests from 'screens/App/Requests/Requests';
+
 import Header from 'components/Header/Header';
 import {TabBarName, TabIcon} from 'navigator/TabBar/TabBar';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -29,7 +28,7 @@ import {TouchableOpacity} from 'react-native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 
 import {useUser} from 'src/store/userStore';
-import JoinEvents from 'screens/App/JoinEvents/JoinEvents';
+import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper';
 
 const JoinEventsStackScreen = () => {
   const JoinEventsStack = createStackNavigator();
@@ -39,7 +38,7 @@ const JoinEventsStackScreen = () => {
       <JoinEventsStack.Screen
         key={joinEventsPath}
         name={joinEventsPath}
-        component={JoinEvents}
+        component={JoinEventsWrapper}
         options={{
           headerShown: true,
           header: () => <Header badge={true} logoType="logo" headerType="request" />,
@@ -126,10 +125,10 @@ const BottomMenu: FC = (): JSX.Element => {
         tabBarLabel: ({focused}: {focused: boolean}) => TabBarName(focused, route.name),
       })}
       initialRouteName={initialRouteName}>
-      {!isInvitedOnlyAdmin && <Tab.Screen name={profilePath} component={ProfileStackScreen} />}
+      <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation} />
       {!isInvitedOnlyAdmin && <Tab.Screen name={joinEventsPath} component={JoinEventsStackScreen} />}
       {!isInvitedOnlyAdmin && <Tab.Screen name={IOPath} component={IOStackNavigation} />}
-      <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation} />
+      {!isInvitedOnlyAdmin && <Tab.Screen name={connectPath} component={ProfileStackScreen} />}
       <Tab.Screen name={chatPath} component={ChatStackScreen} />
     </Tab.Navigator>
   );

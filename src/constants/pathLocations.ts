@@ -23,6 +23,7 @@ const enterBirthdayPath: keyof RootStackParamList = '/enter-birthday';
 const genderPath: keyof RootStackParamList = '/gender';
 const myInterestsPath: keyof RootStackParamList = '/my-interests';
 const myEmailPath: keyof RootStackParamList = '/my-email';
+const connectPath: keyof RootStackParamList = '/connect';
 const connectSocialMediaPath: keyof RootStackParamList = '/connect-social-media';
 const privacyPath: keyof RootStackParamList = '/privacy';
 const pendingScreenPath: keyof RootStackParamList = '/pending-screen';
@@ -95,6 +96,7 @@ export {
   myInterestsPath,
   myEmailPath,
   connectSocialMediaPath,
+  connectPath,
   privacyPath,
   pendingScreenPath,
   accountRejectedPath,

@@ -83,12 +83,12 @@ const apiAppSettingsCollection = Config.APP_SETTINGS_COLLECTION || 'appSettings'
 
 const useMaintenanceQuery = () => {
   const queryClient = useQueryClient();
-  
+
   // Set up the snapshot listener only once when the hook is first called
   useEffect(() => {
     // Use a ref to track if this is mounted to prevent updates after unmount
     let isMounted = true;
-    
+
     const unsubscribe = firestore()
       .collection(apiAppSettingsCollection)
       .doc('maintenance')
@@ -114,7 +114,7 @@ const useMaintenanceQuery = () => {
           }
         },
       );
-      
+
     // Clean up function that runs when the component unmounts
     return () => {
       isMounted = false;

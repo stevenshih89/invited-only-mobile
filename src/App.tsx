@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC, JSX, useEffect} from 'react';
 import {Platform, StatusBar, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Main from 'src';
@@ -20,7 +20,6 @@ import {showToast} from 'helpers/showToast';
 import {getActiveSubscription} from './api/purchase';
 import {AppSettingsQueries} from './apiv2/queries/appSettingsQueries';
 import FirestoreTestScreen from 'screens/App/FirestoreTestScreen/FirestoreTestScreen';
-import {APP_ENV, BACKEND_BASE_64_AUTH, IS_FIREBASE_TEST_MODE} from '@env';
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
@@ -51,7 +50,6 @@ const App: FC = (): JSX.Element => {
         return;
       }
       const userQuery = await firestore().collection(collectionNames.userInfo).doc(currentUser?.uid).get();
-      console.log(userQuery);
 
       if (!userQuery.exists) {
         return;
@@ -147,13 +145,6 @@ const App: FC = (): JSX.Element => {
     };
     getSubscription();
   }, []);
-  console.log('firebase test mode', IS_FIREBASE_TEST_MODE);
-  console.log('app env', APP_ENV);
-  console.log('app env', BACKEND_BASE_64_AUTH);
-
-  if (IS_FIREBASE_TEST_MODE === 'true') {
-    return <FirestoreTestScreen />;
-  }
 
   return (
     <SafeAreaProvider>

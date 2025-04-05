@@ -1,0 +1,49 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+all styling myst be as styled component and locate in a folder with the name of the component with addition of .style.ts
+
+
+# Styled Components CSS Comments Rule
+
+**Problem:**
+
+Using CSS comments, both inline (`//`) and multi-line (`/* */`), directly within the template literal (backticks `` ` ``) of styled-component definitions can cause runtime `CssSyntaxError: Unknown word` errors, even if the CSS syntax itself is valid. The parser used by styled-components can misinterpret these comments.
+
+**Solution:**
+
+**Avoid placing any CSS comments 
+
+**Examples:**
+
+```typescript
+// Incorrect: May cause CssSyntaxError
+const ErrorProneContainer = styled.View`
+  padding: 10px; // Add padding
+  /* background-color: lightblue; */
+  margin-bottom: 5px; // Spacing
+`;
+
+// Correct: Comments outside the template literal
+// Container with padding and margin
+const SafeContainer = styled.View`
+  padding: 10px;
+  margin-bottom: 5px;
+`;
+
+// Correct: Commenting out a line using JS/TS comments
+const AnotherSafeContainer = styled.View`
+  padding: 10px;
+  // background-color: lightblue; 
+  margin-bottom: 5px;
+`;
+```
+
+**Reasoning:**
+
+The internal CSS parser used by styled-components seems sensitive to comments within the template literals, leading to unexpected syntax errors. Removing all comments from within the backticks is the safest way to prevent these issues.
+for example App.tsx will have style file App.style.ts
+# Your rule content
+
