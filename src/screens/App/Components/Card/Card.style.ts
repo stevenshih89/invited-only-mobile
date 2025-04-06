@@ -10,6 +10,8 @@ import styled from 'styled-components/native';
 export const Card = styled.View<{index: number; distanceFromTheTop: number}>`
   position: absolute;
   display: flex;
+
+  rotate: ${(props: {distanceFromTheTop: number}) => `rotate(${props.distanceFromTheTop * 0.2}deg)`};
   width: ${({distanceFromTheTop}: {distanceFromTheTop: number}) => `${105 - distanceFromTheTop * 5}%`};
   height: ${({distanceFromTheTop}: {distanceFromTheTop: number}) => `${100 - distanceFromTheTop * 5}%`};
   height: 100%;
@@ -37,10 +39,10 @@ export const CardOverlay = styled.View`
 
 export const CardGradient = styled(LinearGradient)`
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   right: 0;
-  height: 70%;
+  height: 100%;
   z-index: 2;
   border-radius: 20px;
 `;

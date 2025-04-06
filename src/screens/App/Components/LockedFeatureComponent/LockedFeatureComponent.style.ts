@@ -24,10 +24,13 @@ export const LockedFeatureBlueView = styled(BlurView)`
   bottom: 0;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  border-radius: 20px;
 `;
 
 export const EventCardParent = styled.View`
   display: flex;
+  justify-content: center;
   height: 90%;
   width: 100%;
   position: absolute;
@@ -44,21 +47,19 @@ export const EventCardContentContainer = styled.View`
   left: 0;
   right: 0;
   padding: 20px;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+  border-radius: 20px;
   z-index: 3;
+  overflow: hidden;
 `;
 
 export const LockedBigText = styled.Text`
   font-family: ${Satoshi500};
   font-size: 24px;
-
   color: ${whiteColor};
 `;
 
 export const LockedSmallText = styled.Text`
   font-family: ${Satoshi500};
   font-size: 16px;
-
   color: ${whiteColor};
 `;

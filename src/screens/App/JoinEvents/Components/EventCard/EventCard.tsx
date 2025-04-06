@@ -4,7 +4,7 @@ import {useCardGesture} from 'screens/App/IO/Components/InviteGuestsEvent/hooks/
 import {Event} from 'src/types/event';
 import {Gesture} from 'react-native-gesture-handler';
 import {useUser} from 'src/store/userStore';
-import LockedFeatureComponent from 'screens/App/IO/Components/LockedFeatureComponent/LockedFeatureComponent';
+import LockedFeatureComponent from 'screens/App/Components/LockedFeatureComponent/LockedFeatureComponent';
 
 interface Props {
   onReject: () => void;
@@ -63,7 +63,12 @@ const EventCard = ({onInvite, onReject, isTopCard, event, index}: Props) => {
       likeOpacityStyle={likeOpacityStyle}
       nopeOpacityStyle={nopeOpacityStyle}
       distanceFromTop={0}>
-      <LockedFeatureComponent hostImage={event.hostImage} hostName={event.hostName} />
+      <LockedFeatureComponent
+        hostImage={event.hostImage}
+        hostName={event.hostName}
+        lockedBigText="Coming soon"
+        lockedSmallText="Join Coming soon"
+      />
     </Card>
   );
 };

@@ -6,16 +6,19 @@ import HostBadge from 'screens/App/JoinEvents/Components/EventCard/Components/Ho
 interface Props {
   hostName: string;
   hostImage: string;
+  lockedBigText: string;
+  lockedSmallText: string;
+  withHostBadge?: boolean;
 }
 
-const LockedFeatureComponent = ({hostImage, hostName}: Props) => {
+const LockedFeatureComponent = ({hostImage, hostName, lockedBigText, lockedSmallText, withHostBadge = true}: Props) => {
   return (
     <S.EventCardParent>
-      <HostBadge imageUrl={hostImage} totalGuests={4} />
+      {withHostBadge && <HostBadge imageUrl={hostImage} totalGuests={4} />}
       <S.EventCardContentContainer>
         <LockeFeature scale={10} />
-        <S.LockedBigText>Coming soon</S.LockedBigText>
-        <S.LockedSmallText>Join Coming soon</S.LockedSmallText>
+        <S.LockedBigText>{lockedBigText}</S.LockedBigText>
+        <S.LockedSmallText>{lockedSmallText}</S.LockedSmallText>
       </S.EventCardContentContainer>
       <S.LockedFeatureContainer>
         <S.LockedFeatureBlueView blurType="light" blurAmount="10" />

@@ -6,12 +6,10 @@ import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {useUser} from 'src/store/userStore';
 import * as S from './IO.style';
 
-import {sampleGuests} from './Components/InviteGuestsEvent/guests.mock';
 import InviteGuestsEvent from './Components/InviteGuestsEvent/InviteGuestsEvent';
 import IoHeader from './Components/IoHeader/IoHeader';
 import {EventApiResponse, EventQueries} from 'src/apiv2/queries/eventQueries';
 import AppLoader from '../AppLoader/AppLoader';
-
 
 interface Props {
   events: EventApiResponse[];
@@ -28,7 +26,7 @@ const IO = ({events}: Props) => {
   if (isLoading) {
     return (
       <DefaultBackground>
-        <AppLoader />  
+        <AppLoader />
       </DefaultBackground>
     );
   }

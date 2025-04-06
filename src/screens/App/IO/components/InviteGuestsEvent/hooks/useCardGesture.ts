@@ -5,6 +5,8 @@ import {useEffect, useState} from 'react';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
+const VERTICAL_THRESHOLD = 5; // Max vertical distance before swipe fails
+const HORIZONTAL_THRESHOLD = 10; // Min horizontal distance to activate swipe
 
 interface UseCardGestureProps {
   onSwipeLeft: () => void;
@@ -72,16 +74,16 @@ export const useCardGesture = ({onSwipeLeft, onSwipeRight, topIndex, enabled, in
   };
 
   const gestureHandler = Gesture.Pan()
+    .activeOffsetX([-HORIZONTAL_THRESHOLD, HORIZONTAL_THRESHOLD])
+    .failOffsetY([-VERTICAL_THRESHOLD, VERTICAL_THRESHOLD])
     .onBegin(() => {})
     .onUpdate(event => {
       if (!enabled) return;
       translateX.value = event.translationX;
-      translateY.value = event.translationY;
-      rotation.value = (event.translationX / SCREEN_WIDTH) * 15; // 15 degrees max
+      rotation.value = (event.translationX / SCREEN_WIDTH) * 15;
     })
     .onEnd(event => {
       if (!enabled) return;
-
       if (event.translationX > SWIPE_THRESHOLD) {
         translateX.value = withTiming(SCREEN_WIDTH * 1.5, {duration: 300}, () => {
           runOnJS(onSwipeRight)();
@@ -93,7 +95,7 @@ export const useCardGesture = ({onSwipeLeft, onSwipeRight, topIndex, enabled, in
         });
         rotation.value = withTiming(-15, {duration: 300});
       } else {
-        // Reset position with spring for bounce effect
+        // Reset if swipe wasn't decisive enough
         translateX.value = withSpring(0);
         translateY.value = withSpring(0);
         rotation.value = withSpring(0);

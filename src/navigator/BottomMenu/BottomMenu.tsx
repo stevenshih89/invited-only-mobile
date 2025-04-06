@@ -29,6 +29,7 @@ import {useAppNavigation} from 'hooks/useAppNavigation';
 
 import {useUser} from 'src/store/userStore';
 import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper';
+import ConnectStackScreen from 'navigator/AppStackScreens/ConnectStackScreen/ConnectStackScreen';
 
 const JoinEventsStackScreen = () => {
   const JoinEventsStack = createStackNavigator();
@@ -116,7 +117,7 @@ const BottomMenu: FC = (): JSX.Element => {
 
   return (
     <Tab.Navigator
-      screenOptions={({route}) => ({
+      screenOptions={({route}: {route: {name: string}}) => ({
         headerShown: false,
         headerTransparent: false,
         tabBarActiveTintColor: whiteColor,
@@ -128,7 +129,7 @@ const BottomMenu: FC = (): JSX.Element => {
       <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation} />
       {!isInvitedOnlyAdmin && <Tab.Screen name={joinEventsPath} component={JoinEventsStackScreen} />}
       {!isInvitedOnlyAdmin && <Tab.Screen name={IOPath} component={IOStackNavigation} />}
-      {!isInvitedOnlyAdmin && <Tab.Screen name={connectPath} component={ProfileStackScreen} />}
+      {!isInvitedOnlyAdmin && <Tab.Screen name={connectPath} component={ConnectStackScreen} />}
       <Tab.Screen name={chatPath} component={ChatStackScreen} />
     </Tab.Navigator>
   );

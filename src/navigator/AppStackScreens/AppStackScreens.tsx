@@ -14,6 +14,7 @@ import {
   chatPath,
   codeVerifiedPath,
   commonStackPath,
+  connectPath,
   contactAndFAQPath,
   earlyAccessPath,
   emailChangePath,
@@ -84,13 +85,13 @@ import CreateEventFlow from 'screens/App/Flows/CreateEventFlow/CreateEventFlow.t
 import IOWrapper from 'screens/App/IO/IOWrapper.tsx';
 import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper.tsx';
 import Events from 'screens/App/MyEvents/Events.tsx';
+import Connect from 'screens/App/Connect/Connect.tsx';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
 const CommonStack = createStackNavigator();
 const NotificationsStack = createStackNavigator();
 const EventCreatingStack = createStackNavigator();
-const DemoFlowStack = createStackNavigator();
 
 export const IOStackNavigation: FC = () => {
   const styles = useStyles();
@@ -352,7 +353,7 @@ export const ChatStackScreen = () => {
   const styles = useStyles();
   return (
     <Stack.Navigator
-      initialRouteName={myEventsPath}
+      initialRouteName={chatPath}
       screenOptions={{
         headerShown: true,
         headerTransparent: false,
@@ -512,6 +513,7 @@ const AppStackScreen = () => {
       <AppStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={EventCreatingStackScreen} />
       <AppStack.Screen key={chatCorrespondencePath} name={chatCorrespondencePath} component={ChatCorrespondenceStackScreen} />
       <AppStack.Screen key={userProfilePath} name={userProfilePath} component={UserProfileStackScreen} />
+      <AppStack.Screen key={connectPath} name={connectPath} component={Connect} />
       <AppStack.Screen key={commonStackPath} name={commonStackPath} component={CommonStackScreen} />
       <AppStack.Screen key={paymentPath} name={paymentPath} component={PaymentStackScreen} />
       <AppStack.Screen key={verifySocialProfilePath} name={verifySocialProfilePath} component={VerifySocialProfile} />

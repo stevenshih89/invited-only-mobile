@@ -1,5 +1,5 @@
 import {SafeAreaView, View, Text, Alert} from 'react-native';
-import React, {FC, useEffect, useCallback} from 'react';
+import React, {FC, useEffect, useCallback, JSX} from 'react';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {useFocusEffect} from 'hooks/useAppNavigation';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -38,7 +38,6 @@ import {Event} from 'src/types/event';
 import HostCardContent from './Components/HostCardContent.tsx';
 import EmptyStateView from './Components/EmptyStateView/EmptyStateView.tsx';
 import {Satoshi700} from 'constants/fonts.ts';
-import GuestCardContent from './Components/GuestCardContent/GuestCardContent.tsx';
 
 const CARDS_LOADING_LIMIT = 6;
 
@@ -205,29 +204,6 @@ const IO: FC = (): JSX.Element => {
 
     const data: any[] = [];
 
-    for (const event of filteredDataEvents) {
-      data.push({
-        component: (
-          <GuestCardContent
-            event={event}
-            userInfo={userInfo}
-            handleReject={handleReject}
-            handleInvite={handleInvite}
-            handleReport={handleReport}
-            handleSuperInviteBottom={handleSuperInviteBottom}
-            setCurrentEventInfo={setCurrentEventInfo}
-            navigation={navigation}
-            frontAnimatedStyle={frontAnimatedStyle}
-            backAnimatedStyle={backAnimatedStyle}
-            counterSuperInvites={counterSuperInvites}
-            setCurrentEventCardPosition={setCurrentEventCardPosition}
-            setScrollPosition={setScrollPosition}
-          />
-        ),
-        info: event,
-      });
-    }
-
     setEvents(prevEvents => {
       if (refresh) {
         const updatedEvents = [...prevEvents.reverse(), ...data].reverse();
@@ -312,6 +288,7 @@ const IO: FC = (): JSX.Element => {
         data.push({
           component: (
             <HostCardContent
+              isDemo={false}
               item={item}
               userInfo={userInfo}
               activeEvent={activeEvent}

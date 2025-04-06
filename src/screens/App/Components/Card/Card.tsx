@@ -77,11 +77,7 @@ const Card: React.FC<CardProps> = ({
         <S.StyledNotAnimatedView>
           <CardImage imageSource={backgroundUrls[imageIndex].image} isTopCard={isTopCard} imageIndex={imageIndex} />
 
-          <S.CardGradient
-            colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']}
-            locations={[0, 0.5, 1]}
-            style={{height: '100%'}}
-          />
+          <S.CardGradient colors={['rgba(0, 0, 0, 0.1)', 'rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.9)']} locations={[0, 0.4, 1]} />
           {showImageIndexIndicator && <ImageIndicator currentIndex={imageIndex} totalImages={backgroundUrls.length} />}
           {children}
         </S.StyledNotAnimatedView>
@@ -101,11 +97,7 @@ const Card: React.FC<CardProps> = ({
         <S.StyledAnimatedView style={[animatedStyle]}>
           <CardImage imageSource={backgroundUrls[imageIndex].image} isTopCard={isTopCard} imageIndex={imageIndex} />
 
-          <S.CardGradient
-            colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']}
-            locations={[0, 0.5, 1]}
-            style={{height: '100%'}}
-          />
+          <S.CardGradient colors={['rgba(0, 0, 0, 0), 0)', 'rgba(0, 0, 0, 0.2)', 'rgba(0, 0, 0, 0.9)']} locations={[0, 0.7, 1]} />
 
           <S.LikeAnimatedOpacity style={likeOpacityStyle}>
             <S.LabelTextLike>LIKE</S.LabelTextLike>
