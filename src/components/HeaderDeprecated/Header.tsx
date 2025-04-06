@@ -31,13 +31,10 @@ import MIcon from 'assets/images/icons/M.svg';
 
 //import images
 import EventBG from 'assets/images/app/card-event-bg.png';
-import {useRoute} from '@react-navigation/native';
 import moment from 'moment';
 import {EventData} from 'src/types/event';
 import {useMyEvents} from 'src/store/myEvents';
-import Config from 'react-native-config';
 import {Marquee} from '@animatereactnative/marquee';
-import firebase from '@react-native-firebase/app';
 import {useNotifications} from 'src/store/notificationsStore';
 import * as S from './Header.style';
 import {Satoshi700} from 'constants/fonts';
@@ -52,7 +49,6 @@ interface HeaderTypeProps {
   setTypeEvents?: any;
   typeEvents?: boolean;
 }
-
 
 type ItemProps = {
   title: string;

@@ -18,9 +18,9 @@ interface UseCardGestureProps {
 export const useCardGesture = ({onSwipeLeft, onSwipeRight, topIndex, enabled, index, isTopCard}: UseCardGestureProps) => {
   const distanceFromTop = topIndex - index;
   const sign = distanceFromTop % 2 === 0 ? 1 : -1;
-  const offsetX = distanceFromTop * 5;
-  const offsetY = distanceFromTop * 2;
-  const offsetRotation = distanceFromTop * 0.5;
+  const offsetX = distanceFromTop * 2;
+  const offsetY = distanceFromTop;
+  const offsetRotation = distanceFromTop * 0.2;
 
   const translateX = useSharedValue(sign * offsetX);
   const translateY = useSharedValue(-offsetY - 6);

@@ -2,6 +2,7 @@ import FastImage from 'react-native-fast-image';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import * as S from './CardImage.style';
 import {useState} from 'react';
+import React from 'react';
 
 interface Props {
   isTopCard: boolean | undefined;

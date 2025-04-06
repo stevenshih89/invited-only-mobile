@@ -48,10 +48,18 @@ export const CardGradient = styled(LinearGradient)`
 export const StyledAnimatedView = styled(Animated.View)`
   display: flex;
   justify-content: flex-end;
+  overflow: hidden;
+  border-radius: 20px;
+  height: 100%;
+  width: 100%;
 `;
 export const StyledNotAnimatedView = styled.View`
   display: flex;
   justify-content: flex-end;
+  overflow: hidden;
+  border-radius: 20px;
+  height: 100%;
+  width: 100%;
 `;
 
 export const LikeAnimatedOpacity = styled(Animated.View)`

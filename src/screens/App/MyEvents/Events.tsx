@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import * as S from './Events.style';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground'; // Assuming path
 import MyEvents from './MyEvents'; // Your existing list component
 import JoinedEventsScreen from './Components/JoinedEventsScreen/JoinedEventsScreen'; // The placeholder
+import EventsHeader from './Components/EventsHeader/EventsHeader';
 
 type TabType = 'MyEvents' | 'JoinedEvents';
 
@@ -12,23 +13,14 @@ const Events = () => {
   return (
     <DefaultBackground>
       <S.ScreenContainer>
+        <EventsHeader />
         <S.TabsRow>
-          <S.TabButton 
-            isActive={activeTab === 'MyEvents'} 
-            onPress={() => setActiveTab('MyEvents')}
-          >
-            <S.TabButtonText isActive={activeTab === 'MyEvents'}>
-              My Events
-            </S.TabButtonText>
+          <S.TabButton isActive={activeTab === 'MyEvents'} onPress={() => setActiveTab('MyEvents')}>
+            <S.TabButtonText isActive={activeTab === 'MyEvents'}>My Events</S.TabButtonText>
           </S.TabButton>
 
-          <S.TabButton 
-            isActive={activeTab === 'JoinedEvents'} 
-            onPress={() => setActiveTab('JoinedEvents')}
-          >
-            <S.TabButtonText isActive={activeTab === 'JoinedEvents'}>
-              Joined Events
-            </S.TabButtonText>
+          <S.TabButton isActive={activeTab === 'JoinedEvents'} onPress={() => setActiveTab('JoinedEvents')}>
+            <S.TabButtonText isActive={activeTab === 'JoinedEvents'}>Joined Events</S.TabButtonText>
           </S.TabButton>
         </S.TabsRow>
 
@@ -36,10 +28,9 @@ const Events = () => {
           {activeTab === 'MyEvents' && <MyEvents />}
           {activeTab === 'JoinedEvents' && <JoinedEventsScreen />}
         </S.ContentContainer>
-
       </S.ScreenContainer>
     </DefaultBackground>
   );
 };
 
-export default Events; 
+export default Events;
