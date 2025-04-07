@@ -45,7 +45,9 @@ const SignIn: FC = (): JSX.Element => {
 
         const confirmation = await auth().signInWithPhoneNumber(phone);
         navigation.navigate('/confirm-phone', {
-          phone: phone
+          confirm: confirmation,
+          mobilePhone: phone,
+          isLogin: true,
         });
         setLoading(false);
       } catch (error: any) {

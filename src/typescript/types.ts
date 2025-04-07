@@ -1,3 +1,5 @@
+import {FirebaseAuthTypes} from '@react-native-firebase/auth';
+
 export type RootStackParamList = {
   '/bottom-tabs-stack': undefined;
   '/my-events'?: {
@@ -29,7 +31,9 @@ export type RootStackParamList = {
   '/start-create-account': undefined;
   '/eula': undefined;
   '/confirm-phone'?: {
-    phone: string;
+    confirm: FirebaseAuthTypes.ConfirmationResult;
+    isLogin: boolean;
+    mobilePhone: string;
   };
   '/email-change': undefined;
   '/under-maintenance': undefined;

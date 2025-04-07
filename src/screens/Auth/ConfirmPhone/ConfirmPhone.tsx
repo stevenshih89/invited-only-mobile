@@ -215,7 +215,7 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
                         fontSize: RFValue(18, 932),
                         opacity: 0.8,
                       }}>
-                      {mobilePhone.slice(-3)}
+                      {mobilePhone?.slice(-3)}
                     </Text>
                   </Text>
                 </View>

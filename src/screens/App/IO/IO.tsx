@@ -18,11 +18,10 @@ interface Props {
 const IO = ({events}: Props) => {
   const {user: userInfo} = useUser();
   const [selectedEvent, setSelectedEvent] = useState<EventApiResponse>(events[0]);
-  const {data: guests, isLoading} = EventQueries.useGetUserForEvent(selectedEvent.id);
+  const {data: guests, isLoading} = EventQueries.useGetUserForEvent(selectedEvent?.id);
   const handleEventSelect = (event: EventApiResponse) => {
     setSelectedEvent(event);
   };
-
   if (isLoading) {
     return (
       <DefaultBackground>

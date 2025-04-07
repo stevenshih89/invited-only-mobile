@@ -20,6 +20,10 @@ class AppDelegate: RCTAppDelegate {
  
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+  
+  override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) -> Bool {
+      return true
+  }
  
   override func sourceURL(for bridge: RCTBridge) -> URL? {
     self.bundleURL()
