@@ -30,7 +30,7 @@ import {
   enterTypePath,
   onBoardingDemoPath,
 } from 'constants/pathLocations';
-import {NavigationContainer, NavigationIndependentTree} from '@react-navigation/native';
+import {NavigationIndependentTree} from '@react-navigation/native';
 import Onboard from 'screens/Auth/Onboard/Onboard';
 import SignUp from 'screens/Auth/SignUp/SignUp';
 import SignIn from 'screens/Auth/SignIn/SignIn';
