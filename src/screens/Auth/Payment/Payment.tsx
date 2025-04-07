@@ -1,10 +1,9 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
+import React, {FC, JSX, useContext, useEffect, useState} from 'react';
 import {View, Text, SafeAreaView, ScrollView, TouchableOpacity, FlatList} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Tooltip, TooltipProps} from '@rneui/themed';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import LottieView from 'lottie-react-native';
 
 //import components
 import useStyles from 'screens/Auth/Payment/styles.ts';
