@@ -21,7 +21,6 @@ import {
   codeVerifiedPath,
   verifyFirstStepPath,
   paymentPath,
-  tutorialFlowPath,
   photoVerifiedPath,
   summaryInfoPath,
   verifySocialProfilePath,
@@ -31,7 +30,7 @@ import {
   enterTypePath,
   onBoardingDemoPath,
 } from 'constants/pathLocations';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, NavigationIndependentTree} from '@react-navigation/native';
 import Onboard from 'screens/Auth/Onboard/Onboard';
 import SignUp from 'screens/Auth/SignUp/SignUp';
 import SignIn from 'screens/Auth/SignIn/SignIn';
@@ -66,7 +65,7 @@ const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
 
   return (
-    <NavigationContainer independent={true}>
+    <NavigationIndependentTree>
       <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{headerShown: false}}>
         <AuthStack.Screen key={onboardPath} name={onboardPath} component={Onboard} />
         <AuthStack.Screen key={eulaPath} name={eulaPath} component={Eula} />
@@ -97,7 +96,7 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={verifySocialProfilePath} name={verifySocialProfilePath} component={VerifySocialProfile} />
         <AuthStack.Screen key={checkingSpots} name={checkingSpots} component={CheckingSpots} />
       </AuthStack.Navigator>
-    </NavigationContainer>
+    </NavigationIndependentTree>
   );
 };
 

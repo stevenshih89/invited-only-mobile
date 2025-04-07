@@ -30,7 +30,7 @@ export const LockedFeatureBlueView = styled(BlurView)`
 
 export const EventCardParent = styled.View`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   height: 90%;
   width: 100%;
   position: absolute;
