@@ -10,6 +10,7 @@ import FirebaseCollectionsProvider from 'contexts/FirebaseCollectionNamesContext
 import {AppSettingsQueries} from './apiv2/queries/appSettingsQueries';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import Navigator from './navigator';
+import {blackColor, goldColor} from 'constants/colors';
 
 const Main = () => {
   const {data: firebaseCollectionNames, isLoading} = AppSettingsQueries.useFirebaseCollectionNameQuery();
@@ -19,7 +20,7 @@ const Main = () => {
   }
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <View style={{flex: 1, backgroundColor: 'transparent'}}>
+      <View style={{flex: 1, backgroundColor: blackColor}}>
         <FirebaseCollectionsProvider firebaseCollectionNames={firebaseCollectionNames}>
           <AuthProvider>
             <EventProvider>

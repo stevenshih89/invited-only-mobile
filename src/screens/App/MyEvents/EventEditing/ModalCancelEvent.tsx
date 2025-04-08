@@ -8,14 +8,14 @@ import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 import {useUser} from 'src/store/userStore';
 import {EventContext} from 'contexts/EventContext';
 import {ACCEPTED_STATUS} from 'constants/common';
 import {sendNotification} from 'helpers/fcmHelper';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any; id?: string | undefined; nameEvent: string}> = ({
   id,
@@ -88,7 +88,7 @@ const ModalCancelEvent: FC<{isVisible: boolean; onClose: () => void; image: any;
       navigation?.goBack();
     } catch (e) {
       showToast('inviteMatch', 'Failed to cancel the event. Please try again later.', 'Error');
-      logErrorToSentry(e)
+      logErrorToSentry(e);
       // console.log('error handleCancelEvent', e);
     }
   };

@@ -5,7 +5,7 @@ import {Dimensions, SafeAreaView, Text, View, Image} from 'react-native';
 import useStyles from 'screens/Auth/AcceptedScreen/AccountRejected/styles.ts';
 import Button from 'components/Button/Button.tsx';
 import {onboardPath} from 'constants/pathLocations.ts';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 
 //import images
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';

@@ -1,6 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
-import { logErrorToSentry } from './logErrorsToSentry';
+import {logErrorToSentry} from './logErrorsToSentry';
 
 // Start of Selection
 interface UserData {
@@ -58,7 +58,7 @@ export const getUserData = async (userUid: string): Promise<UserData> => {
     }
   } catch (e) {
     console.error(e);
-    logErrorToSentry(e)
+    logErrorToSentry(e);
     return deaultValues;
   }
 };

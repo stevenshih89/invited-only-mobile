@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import {createStackNavigator, StackNavigationOptions} from '@react-navigation/stack';
 
 //import components
 import IO from 'screens/App/IO/IO.tsx';
@@ -50,7 +50,6 @@ import AccountRejected from 'screens/Auth/AcceptedScreen/AccountRejected/Account
 import CodeVerified from 'screens/Auth/AcceptedScreen/CodeVerified/CodeVerified';
 import useStyles from 'navigator/AppStackScreens/styles.ts';
 import EventCreating from 'screens/App/IO/screens/EventCreating/EventCreating.tsx';
-import MyEvents from 'screens/App/MyEvents/MyEvents.tsx';
 import Chat from 'screens/App/Chat/Chat.tsx';
 import ChatCorrespondence from 'screens/App/Chat/screens/ChatCorrespondence/ChatCorrespondence.tsx';
 import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView.tsx';
@@ -86,6 +85,8 @@ import IOWrapper from 'screens/App/IO/IOWrapper.tsx';
 import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper.tsx';
 import Events from 'screens/App/MyEvents/Events.tsx';
 import Connect from 'screens/App/Connect/Connect.tsx';
+import {backgroundColor, blackColor} from 'constants/colors.ts';
+import DefaultBackground from 'components/DefaultBackground/DefaultBackground.tsx';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -93,6 +94,10 @@ const CommonStack = createStackNavigator();
 const NotificationsStack = createStackNavigator();
 const EventCreatingStack = createStackNavigator();
 
+const screenOptions = {
+  cardOverlayEnabled: true,
+  cardStyle: {backgroundColor: blackColor},
+} as StackNavigationOptions;
 export const IOStackNavigation: FC = () => {
   const styles = useStyles();
 
@@ -103,6 +108,7 @@ export const IOStackNavigation: FC = () => {
         headerShown: true,
         headerTransparent: false,
         headerStyle: styles.headerStyle,
+        ...screenOptions,
       }}>
       <Stack.Screen
         options={{
@@ -335,6 +341,7 @@ const NotificationsStackScreen = () => {
     <NotificationsStack.Navigator
       initialRouteName={notificationsPath}
       screenOptions={{
+        backgroundColor: blackColor,
         headerStyle: styles.headerStyle,
         headerTitleStyle: styles.headerTitleStyle,
         headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
@@ -387,6 +394,7 @@ const EventCreatingStackScreen = () => {
         headerBackTitleVisible: false,
         headerTitle: 'Create new event',
         headerShown: true,
+        ...screenOptions,
       }}>
       <EventCreatingStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={CreateEventFlow} />
     </EventCreatingStack.Navigator>
@@ -508,9 +516,16 @@ const AppStackScreen = () => {
   console.log('on app stack');
 
   return (
-    <AppStack.Navigator initialRouteName={bottomTabsStackPath} screenOptions={{headerShown: false}}>
+    <AppStack.Navigator
+      initialRouteName={bottomTabsStackPath}
+      screenOptions={{headerShown: false, cardOverlayEnabled: true, ...screenOptions}}>
       <AppStack.Screen key={bottomTabsStackPath} name={bottomTabsStackPath} component={BottomTabsStackScreen} />
-      <AppStack.Screen key={notificationsStackPath} name={notificationsStackPath} component={NotificationsStackScreen} />
+      <AppStack.Screen
+        key={notificationsStackPath}
+        name={notificationsStackPath}
+        component={NotificationsStackScreen}
+        screenOptions={screenOptions}
+      />
       <AppStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={EventCreatingStackScreen} />
       <AppStack.Screen key={chatCorrespondencePath} name={chatCorrespondencePath} component={ChatCorrespondenceStackScreen} />
       <AppStack.Screen key={userProfilePath} name={userProfilePath} component={UserProfileStackScreen} />

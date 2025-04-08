@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Config from 'react-native-config';
-import { logErrorToSentry } from './logErrorsToSentry';
+import {logErrorToSentry} from './logErrorsToSentry';
 
 export type AccountInfoFlyWeight = {
   accountConfirmed: boolean;
@@ -22,7 +22,7 @@ export const onUserProfileChangeSubscription = (callback: (info: AccountInfoFlyW
   try {
     const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
     const user = auth().currentUser;
-    
+
     // If no user is logged in, return a no-op function
     if (!user?.uid) {
       console.warn('No user ID available for profile subscription');
@@ -31,14 +31,14 @@ export const onUserProfileChangeSubscription = (callback: (info: AccountInfoFlyW
 
     // Create a variable to track if the subscription is still active
     let isActive = true;
-    
+
     const unsubscribe = firestore()
       .collection(apiUserInfoCollection)
       .doc(user.uid)
       .onSnapshot(snap => {
         // Only process updates if the subscription is still active
         if (!isActive) return;
-        
+
         if (!snap.exists) {
           return;
         }
@@ -53,7 +53,7 @@ export const onUserProfileChangeSubscription = (callback: (info: AccountInfoFlyW
           });
         }
       });
-      
+
     // Return a function that both sets the flag and unsubscribes
     return () => {
       isActive = false;

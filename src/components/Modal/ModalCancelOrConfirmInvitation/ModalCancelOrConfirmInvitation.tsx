@@ -10,7 +10,7 @@ import auth from '@react-native-firebase/auth';
 import useStyles from 'components/Modal/ModalCancelOrConfirmInvitation/styles.ts';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 import {requestsPath} from 'constants/pathLocations.ts';
 import Config from 'react-native-config';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';

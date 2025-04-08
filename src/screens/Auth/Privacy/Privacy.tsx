@@ -1,5 +1,5 @@
 import {screenHeight} from 'constants/common';
-import {FC, useContext, useEffect} from 'react';
+import {FC, JSX, useContext, useEffect} from 'react';
 import {AppState, FlatList, SafeAreaView, Text, View} from 'react-native';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
@@ -8,11 +8,10 @@ import {backgroundGradientColors, lightGray3Color, lightGray4Color, transparentW
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import {useAppNavigation, useRoute} from 'hooks/useAppNavigation';
 import {verifyFirstStepPath} from 'constants/pathLocations';
 import {TouchableOpacity} from 'react-native';
 import {AuthContext} from 'contexts/AuthContext';
-import {useRoute} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';

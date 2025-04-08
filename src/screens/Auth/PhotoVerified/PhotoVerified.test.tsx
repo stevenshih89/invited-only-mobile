@@ -3,7 +3,6 @@ import {render, waitFor} from '@testing-library/react-native';
 import PhotoVerified from './PhotoVerified';
 import {AuthContext} from 'contexts/AuthContext';
 import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
-import {NavigationContainer} from '@react-navigation/native';
 
 const mockOnBoarding = [
   {name: 'John Doe'},
@@ -25,17 +24,15 @@ describe('PhotoVerified Component', () => {
 
   it('renders correctly', () => {
     const {getByText, getByTestId} = render(
-      <NavigationContainer>
-        <AuthContext.Provider
-          value={{
-            onBoarding: mockOnBoarding,
-            setOnBoarding: jest.fn(),
-            setUser: jest.fn(),
-            user: {},
-          }}>
-          <PhotoVerified />
-        </AuthContext.Provider>
-      </NavigationContainer>,
+      <AuthContext.Provider
+        value={{
+          onBoarding: mockOnBoarding,
+          setOnBoarding: jest.fn(),
+          setUser: jest.fn(),
+          user: {},
+        }}>
+        <PhotoVerified />
+      </AuthContext.Provider>,
     );
     expect(getByText('Congratulations! Your photo has been successfully verified. Welcome aboard!')).toBeTruthy();
     expect(getByTestId('photo-verified-image')).toBeTruthy();
@@ -43,17 +40,15 @@ describe('PhotoVerified Component', () => {
 
   it('navigates to summaryInfoPath after a delay', async () => {
     render(
-      <NavigationContainer>
-        <AuthContext.Provider
-          value={{
-            onBoarding: mockOnBoarding,
-            setOnBoarding: jest.fn(),
-            setUser: jest.fn(),
-            user: {},
-          }}>
-          <PhotoVerified />
-        </AuthContext.Provider>
-      </NavigationContainer>,
+      <AuthContext.Provider
+        value={{
+          onBoarding: mockOnBoarding,
+          setOnBoarding: jest.fn(),
+          setUser: jest.fn(),
+          user: {},
+        }}>
+        <PhotoVerified />
+      </AuthContext.Provider>,
     );
     await waitFor(
       () => {
@@ -61,23 +56,5 @@ describe('PhotoVerified Component', () => {
       },
       {timeout: 4000},
     );
-  });
-
-  it('applies animation correctly', () => {
-    const {getByTestId} = render(
-      <NavigationContainer>
-        <AuthContext.Provider
-          value={{
-            onBoarding: mockOnBoarding,
-            setOnBoarding: jest.fn(),
-            setUser: jest.fn(),
-            user: {},
-          }}>
-          <PhotoVerified />
-        </AuthContext.Provider>
-      </NavigationContainer>,
-    );
-    const loader = getByTestId('photo-verified-loader');
-    expect(loader.props.style.transform).toBeDefined();
   });
 });

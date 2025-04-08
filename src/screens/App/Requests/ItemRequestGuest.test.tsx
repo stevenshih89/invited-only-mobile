@@ -19,7 +19,7 @@ describe('ItemRequestGuest Component', () => {
   it('correctly renders the component tree', async () => {
     // Use more complete mock data
     const mockList = {
-      photos: [{uri: 'https://example.com/photo.jpg'}],
+      photos: [{id: 1, image: 'https://example.com/photo.jpg'}],
       uid: 'event-123',
       hour: '20:00',
       date: new Date().toISOString(),
@@ -31,9 +31,9 @@ describe('ItemRequestGuest Component', () => {
     };
 
     const mockItem = {
-      gender: 'man',
+      gender: 'man' as const,
       name: 'test-user',
-      status: 'accepted',
+      status: 'accepted' as const,
       superInvite: true,
       userPhoto: 'https://example.com/user.jpg',
       uid: 'test-uid',
@@ -44,9 +44,9 @@ describe('ItemRequestGuest Component', () => {
 
     const {toJSON, debug} = render(
       <TestWrapper>
-        <NavigationContainer>
-          <ItemRequestGuest list={mockList} item={mockItem} handleOpenMatch={mockHandleOpenMatch} index={0} />
-        </NavigationContainer>
+        {/* <NavigationContainer> */}
+        <ItemRequestGuest list={mockList} item={mockItem} handleOpenMatch={mockHandleOpenMatch} index={0} />
+        {/* </NavigationContainer> */}
       </TestWrapper>,
     );
 

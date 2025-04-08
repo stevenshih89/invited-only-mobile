@@ -1,6 +1,6 @@
 import {Text, TouchableOpacity, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import React from 'react';
 import useStyles from './styles.ts';

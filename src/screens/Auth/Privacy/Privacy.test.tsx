@@ -3,7 +3,6 @@ import {render, fireEvent, waitFor} from '@testing-library/react-native';
 import Privacy from './Privacy';
 import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
 import {AuthContext} from 'contexts/AuthContext';
-import {NavigationContainer} from '@react-navigation/native';
 
 const mockOnBoarding = [
   {name: 'John Doe'},
@@ -36,17 +35,15 @@ describe('Privacy Component', () => {
   });
   it('renders correctly for guest account type', () => {
     const {getByText} = render(
-      <NavigationContainer>
-        <AuthContext.Provider
-          value={{
-            onBoarding: mockOnBoarding,
-            setOnBoarding: jest.fn(),
-            setUser: jest.fn(),
-            user: {},
-          }}>
-          <Privacy />
-        </AuthContext.Provider>
-      </NavigationContainer>,
+      <AuthContext.Provider
+        value={{
+          onBoarding: mockOnBoarding,
+          setOnBoarding: jest.fn(),
+          setUser: jest.fn(),
+          user: {},
+        }}>
+        <Privacy />
+      </AuthContext.Provider>,
     );
     expect(getByText('Welcome')).toBeTruthy();
     expect(getByText('Please follow these Guest House Rules')).toBeTruthy();
@@ -58,17 +55,15 @@ describe('Privacy Component', () => {
 
   it('navigates to verifyFirstStepPath on button press', async () => {
     const {getByTestId} = render(
-      <NavigationContainer>
-        <AuthContext.Provider
-          value={{
-            onBoarding: mockOnBoarding,
-            setOnBoarding: jest.fn(),
-            setUser: jest.fn(),
-            user: {},
-          }}>
-          <Privacy />
-        </AuthContext.Provider>
-      </NavigationContainer>,
+      <AuthContext.Provider
+        value={{
+          onBoarding: mockOnBoarding,
+          setOnBoarding: jest.fn(),
+          setUser: jest.fn(),
+          user: {},
+        }}>
+        <Privacy />
+      </AuthContext.Provider>,
     );
     const agreeButton = getByTestId('agree-button');
 

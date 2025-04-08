@@ -4,7 +4,7 @@ import useStyles from './styles';
 import {Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {lightRed1Color, whiteColor} from 'constants/colors';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 import {myProfileViewPath, userProfilePath} from 'constants/pathLocations.ts';
 import {screenHeight} from 'constants/common';
 import {useItemRequestHost} from 'hooks/useItemRequestHost';

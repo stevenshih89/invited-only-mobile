@@ -16,7 +16,7 @@ import {isIos} from 'constants/common';
 import {gray1Color, orangeClose, toggleColor, whiteColor} from 'constants/colors';
 import {showToast} from 'helpers/showToast.ts';
 import {uploadImage} from 'helpers/uploadImage.ts';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 
 //import icons
 import Plus from 'assets/images/icons/plus.svg';
@@ -32,7 +32,7 @@ import {Satoshi500} from 'constants/fonts.ts';
 import {Switch} from '@ant-design/react-native';
 import {eventTypes} from 'src/mocks/eventTypes.ts';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry.ts';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry.ts';
 
 interface EventPreviewProps {
   isEditing?: boolean;

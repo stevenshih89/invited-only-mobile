@@ -34,7 +34,7 @@ export const fcmHelper = async ({apiUserInfoCollection}: {apiUserInfoCollection:
 
 export const getFcmToken = async ({apiUserInfoCollection}: {apiUserInfoCollection: string}) => {
   let token = null;
-  await checkApplicationNotificationPermission({apiUserInfoCollection});
+  await checkApplicationNotificationPermission({apiUserInfoCollection: apiUserInfoCollection as keyof FirebaseCollectionsResponse});
   await registerAppWithFCM();
   try {
     token = await messaging().getToken();

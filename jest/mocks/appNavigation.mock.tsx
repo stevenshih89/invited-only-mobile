@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const mockedNavigateFunction = jest.fn();
 export const mockedGoBackFunction = jest.fn();
 
@@ -33,6 +35,16 @@ jest.mock('hooks/useAppNavigation', () => {
     },
     useFocusEffect: (callback: () => {}) => {
       callback();
+    },
+    useRoute: () => {
+      return {
+        params: {},
+      };
+    },
+    RouteProp: () => {
+      return {
+        params: {},
+      };
     },
   };
 });

@@ -34,10 +34,10 @@ import {useDemoFlowStore} from '../../../../../../../store/demoFlowStore';
 import {useRoute} from '@react-navigation/native';
 import HandIC from 'assets/images/icons/hand.svg';
 import {demoFlowStackPath, demoIOPath} from 'constants/pathLocations.ts';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 import uuid from 'react-native-uuid';
 import {useUser} from 'src/store/userStore/index.ts';
-import {openCamera} from "helpers/photopicker.ts";
+import {openCamera} from 'helpers/photopicker.ts';
 
 interface ImageType {
   image: null | string;
@@ -268,7 +268,7 @@ const EventDetails: FC<EventDetailsProps> = ({
   const handleCamera = async () => {
     const assets = await openCamera('back');
 
-    if(assets && assets.uri) {
+    if (assets && assets.uri) {
       const image = {
         uri: assets.uri,
         type: assets.type,
@@ -286,7 +286,7 @@ const EventDetails: FC<EventDetailsProps> = ({
       setImages(newImages);
       setModalAddPhotoVisible(false);
     }
-  }
+  };
 
   const addPlaceholderPhoto = () => {
     const newPhotos = photos.map(img => {
@@ -807,7 +807,8 @@ const EventDetails: FC<EventDetailsProps> = ({
         onClose={() => setModalAddPhotoVisible(false)}
         openLibrary={openLibrary}
         addPlaceholderPhoto={addPlaceholderPhoto}
-        openCamera={handleCamera}/>
+        openCamera={handleCamera}
+      />
     </View>
   );
 };

@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React from 'react';
 import {render, fireEvent} from '@testing-library/react-native';
 import Card from '../../../../Components/Card/Card';
 import {useCardGesture} from '../hooks/useCardGesture';
@@ -50,8 +50,9 @@ describe.skip('Card Component', () => {
   it('renders correctly', () => {
     const {getByText} = render(
       <Card
+        distanceFromTop={0}
         uid={''}
-        backgroundUrl={''}
+        backgroundUrls={[]}
         children={undefined}
         gestureHandler={Gesture.Pan()}
         animatedStyle={{}}
@@ -82,8 +83,9 @@ describe.skip('Card Component', () => {
 
     const {getByText} = render(
       <Card
+        distanceFromTop={0}
         uid={''}
-        backgroundUrl={''}
+        backgroundUrls={[]}
         children={undefined}
         gestureHandler={Gesture.Pan()}
         animatedStyle={{}}
@@ -111,8 +113,9 @@ describe.skip('Card Component', () => {
 
     const {getByText} = render(
       <Card
+        distanceFromTop={0}
         uid={''}
-        backgroundUrl={''}
+        backgroundUrls={[]}
         children={undefined}
         gestureHandler={Gesture.Pan()}
         animatedStyle={{}}
@@ -129,8 +132,9 @@ describe.skip('Card Component', () => {
   it('does not show buttons when not the top card', () => {
     const {queryByText} = render(
       <Card
+        distanceFromTop={0}
         uid={''}
-        backgroundUrl={''}
+        backgroundUrls={[]}
         children={undefined}
         gestureHandler={Gesture.Pan()}
         animatedStyle={{}}

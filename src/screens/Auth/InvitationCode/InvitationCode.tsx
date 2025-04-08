@@ -14,7 +14,8 @@ import {
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation, useRoute} from 'hooks/useAppNavigation';
+import {RouteProp} from '@react-navigation/native';
 import {verifySocialProfilePath} from 'constants/pathLocations.ts';
 import {AuthContext} from 'contexts/AuthContext.tsx';
 import firestore from '@react-native-firebase/firestore';
@@ -25,7 +26,6 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import {RouteProp, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from 'typescript/types';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';

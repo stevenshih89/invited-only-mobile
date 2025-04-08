@@ -15,6 +15,8 @@ import {useUser} from '../../../store/userStore';
 import {showToast} from 'helpers/showToast';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {RootStackParamList} from 'typescript/types';
 
 interface RejectAccount {
   isVisible?: boolean;
@@ -23,9 +25,35 @@ interface RejectAccount {
   // image: any;
 }
 
-const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userInfo}) => {
+const useChangeModalAccepted = () => {
+  const queryClient = useQueryClient();
+  const user = useUser((i: any) => i.user);
   const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
-  const navigation = useNavigation();
+
+  const acceptAccountMutation = useMutation({
+    mutationFn: async (uid: string) => {
+      try {
+        await firestore().collection(apiUserInfoCollection).doc(uid).update({showModalAccept: false});
+        queryClient.invalidateQueries({queryKey: ['userInfo', uid]});
+      } catch (error) {
+        logErrorToSentry(error, 'error showModalAccept');
+        throw error; // Rethrow the error after logging
+      }
+    },
+    onSuccess: () => {
+      // Optional: Handle success if needed, like showing a success message
+    },
+    onError: error => {
+      // Optional: Handle error if needed, like showing an error message
+    },
+  });
+
+  return {acceptAccountMutation};
+};
+
+const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userInfo}) => {
+  const navigation = useNavigation<RootStackParamList>();
+  const {acceptAccountMutation} = useChangeModalAccepted();
   const {user} = useUser();
 
   const handleContinue = async () => {
@@ -37,11 +65,8 @@ const ModalAcceptedAccount: FC<RejectAccount> = ({isVisible, setIsVisible, userI
 
     setIsVisible(false);
     try {
-      await firestore().collection(apiUserInfoCollection).doc(user.uid).update({
-        showModalAccept: false,
-      });
+      await acceptAccountMutation.mutateAsync(user.uid);
     } catch (error) {
-      console.log('error showModalAccept', error);
       showToast('inviteMatch', 'An issue occurred while updating user data. Please try again later.', 'Error');
       logErrorToSentry(error);
     }

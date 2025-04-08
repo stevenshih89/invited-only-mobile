@@ -13,7 +13,7 @@ export const Container = styled.View`
   align-items: center;
   width: 100%;
   gap: 20px;
-  height: ${screenHeight * 0.75}px;
+  height: ${screenHeight * 0.7}px;
 `;
 export const EmptyFallbackImage = styled(FastImage)`
   height: 275px;

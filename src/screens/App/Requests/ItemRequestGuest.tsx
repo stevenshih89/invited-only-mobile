@@ -14,13 +14,15 @@ import {screenHeight} from 'constants/common';
 import {calculateAge} from 'helpers/calculateAge';
 import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat';
 import Button from 'components/Button/Button';
-import {useNavigation} from '@react-navigation/native';
+
 import {commonStackPath, eventActiveInfoPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations';
 import {useItemRequestGuest} from 'hooks/useItemRequestGuest';
 import {eventTypes} from 'src/mocks/eventTypes';
 import {Event} from 'src/types/event';
 import {User} from 'src/types/userInfo';
 import {MatchData} from '../IO/screens/Match/Match';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import React from 'react';
 
 interface Props {
   list: {
@@ -82,7 +84,7 @@ const ItemRequestGuest = ({list, item, handleOpenMatch, index}: Props) => {
     );
   };
 
-  const navigation = useNavigation();
+  const navigation = useAppNavigation();
 
   if (item?.uid !== user?.uid) {
     return null;

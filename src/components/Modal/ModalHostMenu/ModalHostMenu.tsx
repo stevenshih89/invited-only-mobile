@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useState} from 'react';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 
 //import components
 import useStyles from 'components/Modal/ModalHostMenu/styles.ts';
@@ -29,7 +29,7 @@ import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast';
 import {sendNotification} from 'helpers/fcmHelper';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 interface HostMenu {
   hostMenu?: boolean;
@@ -78,7 +78,7 @@ const ModalHostMenu: FC<HostMenu> = ({
         setEventData(data);
       } catch (error) {
         showToast('inviteMatch', 'An issue occurred while retrieving event data. Please try again later.', 'Error');
-        logErrorToSentry(error)
+        logErrorToSentry(error);
       }
     };
     getEventData();
@@ -90,14 +90,14 @@ const ModalHostMenu: FC<HostMenu> = ({
         console.warn('Host UID is missing');
         return;
       }
-  
+
       const hostQuery = await firestore().collection(apiUserInfoCollection).doc(hostUid).get();
-  
+
       if (!hostQuery.exists) {
         console.warn('Host data not found');
         return;
       }
-  
+
       const hostData = hostQuery.data();
       setHostData(hostData);
     } catch (error) {
@@ -105,7 +105,6 @@ const ModalHostMenu: FC<HostMenu> = ({
       logErrorToSentry(error);
     }
   };
-  
 
   const goToEventInfo = () => {
     setHostMenu(false);
@@ -142,7 +141,7 @@ const ModalHostMenu: FC<HostMenu> = ({
         setStatus(findUser?.status);
       }
     } catch (error) {
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   };
 

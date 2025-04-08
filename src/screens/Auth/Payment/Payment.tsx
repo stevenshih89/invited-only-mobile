@@ -7,7 +7,7 @@ import firestore from '@react-native-firebase/firestore';
 
 //import components
 import useStyles from 'screens/Auth/Payment/styles.ts';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 import Button from 'components/Button/Button.tsx';
 import {profilePath, tutorialFlowPath} from 'constants/pathLocations.ts';
 import {backgroundGradientColors, black2Color, blackColor, lightGray2Color, lightGray5Color, whiteColor} from 'constants/colors.ts';

@@ -2,18 +2,12 @@ import React from 'react';
 import {render, fireEvent, waitFor} from '@testing-library/react-native';
 import InvitationCode from './InvitationCode';
 import {AuthContext} from 'contexts/AuthContext';
-import {NavigationContainer} from '@react-navigation/native';
 
 const mockRoute = {
   params: {
     cameFromSummary: true,
   },
 };
-
-jest.mock('@react-navigation/native', () => ({
-  ...jest.requireActual('@react-navigation/native'),
-  useRoute: () => mockRoute,
-}));
 
 const mockAuthContext = {
   onBoarding: [
@@ -32,11 +26,9 @@ const mockAuthContext = {
 
 const renderComponent = (props = {}) =>
   render(
-    <NavigationContainer>
-      <AuthContext.Provider value={mockAuthContext}>
-        <InvitationCode {...props} />
-      </AuthContext.Provider>
-    </NavigationContainer>,
+    <AuthContext.Provider value={mockAuthContext}>
+      <InvitationCode {...props} />
+    </AuthContext.Provider>,
   );
 
 describe('InvitationCode Component', () => {

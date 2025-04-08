@@ -13,7 +13,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import CheckWhite from 'assets/images/icons/check.svg';
 import {black1Color, grayScale700, whiteColor} from 'constants/colors.ts';
 import {chatCorrespondencePath, commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
 import {useUser} from '../../../store/userStore';
 import firestore from '@react-native-firebase/firestore';

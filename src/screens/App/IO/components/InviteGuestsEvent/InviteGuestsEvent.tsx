@@ -20,7 +20,7 @@ const InviteGuestsEvent: React.FC<InviteGuestsEvent> = ({guests = []}) => {
       return <S.NoCardsText>No guests to show!</S.NoCardsText>;
     }
 
-    return cards.map((guest, index) => (
+    return cards?.map((guest, index) => (
       <GuestCard
         key={index}
         guest={guest as User.Info}
@@ -38,8 +38,12 @@ const InviteGuestsEvent: React.FC<InviteGuestsEvent> = ({guests = []}) => {
     <ScrollView>
       <S.Container>
         <S.CardContainer>{renderCards()}</S.CardContainer>
-        {cards[cards.length - 1] && <GuestBasicInfoCard guestInfo={cards[cards.length - 1]} />}
-        {guests[cards.length - 1] && <GuestBioCard guestInfo={cards[cards.length - 1]} />}
+        {cards?.length > 0 && cards[cards.length - 1] && (
+          <>
+            <GuestBasicInfoCard guestInfo={cards[cards.length - 1]} />
+            <GuestBioCard guestInfo={cards[cards.length - 1]} />
+          </>
+        )}
       </S.Container>
     </ScrollView>
   );

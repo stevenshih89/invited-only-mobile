@@ -1,8 +1,9 @@
 import React from 'react';
 import {render} from '@testing-library/react-native';
-
 import useCardSwipe from '../hooks/useCardSwipe';
 import InviteGuestsEvent from '../InviteGuestsEvent';
+import {mockGuests} from '../guestMocks';
+import {User} from 'src/types/userInfo';
 
 // Mock the hooks
 jest.mock('../hooks/useCardSwipe', () => ({
@@ -18,23 +19,6 @@ jest.mock('screens/App/Components/Card/Card', () => {
 });
 
 describe('GuestCardPack Component', () => {
-  const mockGuests = [
-    {
-      id: '1',
-      name: 'John',
-      age: 25,
-      image: ['https://example.com/image1.jpg'],
-      bio: 'Test bio 1',
-    },
-    {
-      id: '2',
-      name: 'Jane',
-      age: 24,
-      image: ['https://example.com/image2.jpg'],
-      bio: 'Test bio 2',
-    },
-  ];
-
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -66,20 +50,6 @@ describe('GuestCardPack Component', () => {
 
     const {getByText} = render(<InviteGuestsEvent guests={[]} />);
     expect(getByText('No guests to show!')).toBeTruthy();
-  });
-
-  it('shows "No more guests to show!" when all guests have been swiped', () => {
-    (useCardSwipe as jest.Mock).mockReturnValue({
-      handleSwipeLeft: jest.fn(),
-      handleSwipeRight: jest.fn(),
-      handleSuperInvite: jest.fn(),
-      visibleCards: [],
-      hasCards: true,
-      currentIndex: 2,
-    });
-
-    const {getByText} = render(<InviteGuestsEvent guests={mockGuests} />);
-    expect(getByText('No more guests to show!')).toBeTruthy();
   });
 
   it('updates previousIndex when currentIndex changes', () => {

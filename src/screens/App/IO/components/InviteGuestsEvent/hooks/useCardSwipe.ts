@@ -20,23 +20,24 @@ const useCardSwipe = ({cardsData}: UseCardSwipeProps): UseCardSwipeReturn => {
 
   const handleSwipeLeft = () => {
     if (cards?.length === 0) return;
+
     setCards(prevCards => prevCards.slice(0, -1));
   };
 
   const handleSwipeRight = () => {
     if (cards?.length === 0) return;
+
     setCards(prevCards => prevCards.slice(0, -1));
   };
 
   const handleSuperInvite = () => {
     if (cards?.length === 0) return;
-    console.log('Super Invite for:', cards[cards.length - 1].name);
 
     setCards(prevCards => prevCards.slice(0, -1));
   };
 
   const hasCards = cards?.length > 0;
-  const hasMoreCards = cards?.length === 0;
+  const hasMoreCards = cards?.length > 0;
 
   return {
     handleSwipeLeft,

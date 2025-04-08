@@ -32,7 +32,7 @@ export const mockUserInfo = {
     city: 'New York',
     country: 'USA',
     latitude: 40.7128,
-    longitude: -74.0060,
+    longitude: -74.006,
   },
   interests: [
     {

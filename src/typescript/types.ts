@@ -23,7 +23,7 @@ export type RootStackParamList = {
   '/sign-up'?: {
     isLogin?: boolean;
   };
-  '/sign-in'?: string;
+  '/sign-in'?: undefined;
   '/choose-enter-type': undefined;
   '/onboarding-demo-path'?: {
     isHost: boolean;

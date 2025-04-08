@@ -4,7 +4,7 @@ import {SafeAreaView, View, Text, Image} from 'react-native';
 //import components
 import useStyles from 'screens/Auth/AcceptedScreen/ReusableStyles/styles.ts';
 import Button from 'components/Button/Button.tsx';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 import {IOPath, tutorialFlowPath} from 'constants/pathLocations.ts';
 
 //import images

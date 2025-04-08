@@ -2,7 +2,6 @@ import React from 'react';
 import {render, fireEvent, waitFor} from '@testing-library/react-native';
 import ConfirmPhone from '../ConfirmPhone';
 import {AuthContext} from 'contexts/AuthContext';
-import {NavigationContainer} from '@react-navigation/native';
 import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
 import 'jest/mocks/appNavigation.mock';
 
@@ -71,47 +70,45 @@ const mockAuthContext = {
 import {mockUserInfo} from 'jest/mocks/userInfoMock';
 import FirebaseCollectionsProvider from 'contexts/FirebaseCollectionNamesContext';
 
-const RenderComponent = (props = {}) => {
+const RenderComponent = (props = {route: {params: {}}}) => {
   return render(
-    <NavigationContainer>
-      <FirebaseCollectionsProvider
-        firebaseCollectionNames={{
-          adminChats: '',
-          userInfo: 'testUserInfo',
-          admins: '',
-          appSettings: '',
-          events: '',
-          messages: '',
-          report: '',
-          unfinishedRegistrationUsers: '',
-        }}>
-        <AuthContext.Provider value={mockAuthContext}>
-          <ConfirmPhone
-            {...props}
-            navigation={{
-              navigate: mockedNavigateFn,
-              goBack: mockedGoBackFn,
-              reset: jest.fn(),
-              setParams: jest.fn(),
-              dispatch: jest.fn(),
-              setOptions: jest.fn(),
-              isFocused: jest.fn(() => true),
-              addListener: jest.fn(() => jest.fn()),
-              removeListener: jest.fn(),
-            }}
-            route={{
-              params: {
-                mobilePhone: '+1234567890',
-                confirm: {
-                  confirm: jest.fn(() => Promise.resolve()),
-                },
-                ...props.route?.params,
+    <FirebaseCollectionsProvider
+      firebaseCollectionNames={{
+        adminChats: '',
+        userInfo: 'testUserInfo',
+        admins: '',
+        appSettings: '',
+        events: '',
+        messages: '',
+        report: '',
+        unfinishedRegistrationUsers: '',
+      }}>
+      <AuthContext.Provider value={mockAuthContext}>
+        <ConfirmPhone
+          {...props}
+          navigation={{
+            navigate: mockedNavigateFn,
+            goBack: mockedGoBackFn,
+            reset: jest.fn(),
+            setParams: jest.fn(),
+            dispatch: jest.fn(),
+            setOptions: jest.fn(),
+            isFocused: jest.fn(() => true),
+            addListener: jest.fn(() => jest.fn()),
+            removeListener: jest.fn(),
+          }}
+          route={{
+            params: {
+              mobilePhone: '+1234567890',
+              confirm: {
+                confirm: jest.fn(() => Promise.resolve()),
               },
-            }}
-          />
-        </AuthContext.Provider>
-      </FirebaseCollectionsProvider>
-    </NavigationContainer>,
+              ...props.route?.params,
+            },
+          }}
+        />
+      </AuthContext.Provider>
+    </FirebaseCollectionsProvider>,
   );
 };
 
@@ -139,13 +136,8 @@ describe('ConfirmPhone Component', () => {
 
   it('verifies with a valid code', async () => {
     const confirmMock = {confirm: jest.fn(() => Promise.resolve())};
-    const navigation = {
-      ...mockedNavigateFunction,
-      navigate: jest.fn(),
-    };
 
     const {getByTestId, getByText} = RenderComponent({
-      navigation,
       route: {
         params: {
           confirm: confirmMock,

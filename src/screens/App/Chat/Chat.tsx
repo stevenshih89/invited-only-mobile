@@ -1,9 +1,9 @@
 import React, {FC, useState, useEffect, useContext, useCallback, useMemo} from 'react';
 import {View, Text, FlatList, TouchableOpacity, TextInput} from 'react-native';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import { FirebaseCollectionsContext } from 'src/contexts/FirebaseCollectionNamesContext';
+import {FirebaseCollectionsContext} from 'src/contexts/FirebaseCollectionNamesContext';
 
 //import components
 import useStyles from 'screens/App/Chat/styles.ts';
@@ -45,8 +45,8 @@ import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, wit
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import Input from 'components/Inputs/Input';
 import Loading from 'components/Loading/Loading';
-import { showToast } from 'helpers/showToast';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {showToast} from 'helpers/showToast';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 type ItemProps = {
   title: string;
@@ -88,7 +88,12 @@ const Chat: FC<ChatProps> = () => {
   const COUNT_TO_ADD_ADMIN_CHATS = 5;
   const DEFAULT_LIMIT_ADMIN_CHATS = 9;
   const MAX_LIMIT_ADMIN_CHATS = 40;
-  const {userInfo: apiUserInfoCollection, events: apiEventsCollection, messages: apiMessagesCollection, adminChats: apiAdminChatsCollection} = useContext(FirebaseCollectionsContext);
+  const {
+    userInfo: apiUserInfoCollection,
+    events: apiEventsCollection,
+    messages: apiMessagesCollection,
+    adminChats: apiAdminChatsCollection,
+  } = useContext(FirebaseCollectionsContext);
 
   const [hostMenu, setHostMenu] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -106,20 +111,18 @@ const Chat: FC<ChatProps> = () => {
     () => adminChatsWithUsers.filter((item: any) => item.userName?.toLowerCase().startsWith(searchInput.toLowerCase())),
     [adminChatsWithUsers, searchInput],
   );
-  const filterTypeAccountFunc = useMemo(
-    () => {
-      const filterType = searchByName.filter((item: any)=> item.userAccountType === filterTypeAccount)
-      if(filterTypeAccount === 'host') {
-        setCountHostTypeAccount(filterType.length)
-        setCountGuestTypeAccount(searchByName.length - filterType.length)
-      } else {
-        setCountGuestTypeAccount(filterType.length)
-        setCountHostTypeAccount(searchByName.length - filterType.length)
-      }
+  const filterTypeAccountFunc = useMemo(() => {
+    const filterType = searchByName.filter((item: any) => item.userAccountType === filterTypeAccount);
+    if (filterTypeAccount === 'host') {
+      setCountHostTypeAccount(filterType.length);
+      setCountGuestTypeAccount(searchByName.length - filterType.length);
+    } else {
+      setCountGuestTypeAccount(filterType.length);
+      setCountHostTypeAccount(searchByName.length - filterType.length);
+    }
 
-      return filterType
-    },
-  [searchByName, filterTypeAccount])
+    return filterType;
+  }, [searchByName, filterTypeAccount]);
 
   const [userChatWithAdmin, setUserChatWithAdmin] = useState<any>({});
   const [loadingAdminChatsWithUsers, setLoadingAdminChatsWithUsers] = useState<boolean>(true);
@@ -249,9 +252,6 @@ const Chat: FC<ChatProps> = () => {
       unsubscribeAdminChatsWithUsers && unsubscribeAdminChatsWithUsers();
     };
   }, [user?.uid, limitAdminChatsWithUsers]);
-
-
-
 
   const handleUserChatWithAdmin = useCallback(() => {
     let unsubscribeUserChatWithAdmin: () => void;
@@ -610,30 +610,30 @@ const Chat: FC<ChatProps> = () => {
       if (isHost) {
         try {
           hostSubscriber = firestore()
-          .collection(apiMessagesCollection)
-          .doc(activeEvent?.id)
-          .onSnapshot(async documentSnapshot => {
-            if (!documentSnapshot.exists) {
-              setMessages([]);
-              setLoadingChats(false);
-              return;
-            }
-            const data = documentSnapshot.data();
-            const mappedMessagesData = [];
-            for (const chat of data.chats) {
-              if (!chat?.uid) {
-                continue;
+            .collection(apiMessagesCollection)
+            .doc(activeEvent?.id)
+            .onSnapshot(async documentSnapshot => {
+              if (!documentSnapshot.exists) {
+                setMessages([]);
+                setLoadingChats(false);
+                return;
               }
-              const {photos} = await getUserData(chat?.uid);
-              mappedMessagesData.push({
-                ...chat,
-                avatar: photos?.[0]?.image || chat?.avatar,
-              });
-            }
+              const data = documentSnapshot.data();
+              const mappedMessagesData = [];
+              for (const chat of data.chats) {
+                if (!chat?.uid) {
+                  continue;
+                }
+                const {photos} = await getUserData(chat?.uid);
+                mappedMessagesData.push({
+                  ...chat,
+                  avatar: photos?.[0]?.image || chat?.avatar,
+                });
+              }
 
-            setMessages({...data, chats: mappedMessagesData});
-            setLoadingChats(false);
-          });
+              setMessages({...data, chats: mappedMessagesData});
+              setLoadingChats(false);
+            });
         } catch (error) {
           showToast('inviteMatch', 'An error occurred while fetching chat messages. Please try again later.', 'Error');
           logErrorToSentry(error);
@@ -641,71 +641,71 @@ const Chat: FC<ChatProps> = () => {
       } else {
         try {
           guestSubscriber = firestore()
-          .collection(apiMessagesCollection)
-          .onSnapshot(async documentSnapshot => {
-            if (documentSnapshot.empty) {
-              setDATAEventsJoining([]);
-              setLoadingChats(false);
-              return;
-            }
-            const chatData = documentSnapshot.docs.map(i => i.data());
-            const filteredChats = chatData.filter(chatDataItem => {
-              return chatDataItem?.chats?.some(chat => {
-                return chat?.uid === user?.uid;
+            .collection(apiMessagesCollection)
+            .onSnapshot(async documentSnapshot => {
+              if (documentSnapshot.empty) {
+                setDATAEventsJoining([]);
+                setLoadingChats(false);
+                return;
+              }
+              const chatData = documentSnapshot.docs.map(i => i.data());
+              const filteredChats = chatData.filter(chatDataItem => {
+                return chatDataItem?.chats?.some(chat => {
+                  return chat?.uid === user?.uid;
+                });
               });
-            });
 
-            const mappedChats: any = [];
+              const mappedChats: any = [];
 
-            for (const chat of filteredChats) {
-              const eventQuery = await firestore().collection(apiEventsCollection).doc(chat?.activeEvent).get();
-              if (!eventQuery.exists) {
-                continue;
+              for (const chat of filteredChats) {
+                const eventQuery = await firestore().collection(apiEventsCollection).doc(chat?.activeEvent).get();
+                if (!eventQuery.exists) {
+                  continue;
+                }
+                const eventData = eventQuery.data();
+                const {photos: hostPhotos} = await getUserData(eventData?.uid);
+                const data = {
+                  id: chat?.activeEvent,
+                  girlInvitation: eventData?.female,
+                  maleInvitation: eventData?.male,
+                  date: eventData?.date,
+                  hour: eventData?.hour,
+                  status: eventData?.activeType,
+                  image: eventData?.photos[0]?.image,
+                  hostImage: eventData?.hostImage,
+                  title: eventData?.name,
+                  hostUid: eventData?.uid,
+                  activeEvent: chat?.activeEvent,
+                  usersList: eventData?.usersList,
+                  statusEvent: eventData?.statusEvent,
+                  chats: chat?.chats
+                    .filter(chat => chat.uid === user?.uid)
+                    .map(chat => ({
+                      ...chat,
+                      avatar: hostPhotos.length ? hostPhotos[0]?.image : eventData?.hostImage,
+                      name: eventData?.hostName,
+                    })),
+                };
+                mappedChats.push(data);
               }
-              const eventData = eventQuery.data();
-              const {photos: hostPhotos} = await getUserData(eventData?.uid);
-              const data = {
-                id: chat?.activeEvent,
-                girlInvitation: eventData?.female,
-                maleInvitation: eventData?.male,
-                date: eventData?.date,
-                hour: eventData?.hour,
-                status: eventData?.activeType,
-                image: eventData?.photos[0]?.image,
-                hostImage: eventData?.hostImage,
-                title: eventData?.name,
-                hostUid: eventData?.uid,
-                activeEvent: chat?.activeEvent,
-                usersList: eventData?.usersList,
-                statusEvent: eventData?.statusEvent,
-                chats: chat?.chats
-                  .filter(chat => chat.uid === user?.uid)
-                  .map(chat => ({
-                    ...chat,
-                    avatar: hostPhotos.length ? hostPhotos[0]?.image : eventData?.hostImage,
-                    name: eventData?.hostName,
-                  })),
-              };
-              mappedChats.push(data);
-            }
 
-            const filterEventByDate = () => {
-              if (activeEventDate === ALL) {
+              const filterEventByDate = () => {
+                if (activeEventDate === ALL) {
+                  return mappedChats;
+                }
+                if (activeEventDate === THIS_WEEK) {
+                  return filterEventsByThisWeek(mappedChats);
+                }
+                if (activeEventDate === THIS_MONTH) {
+                  return filterEventsByThisMonth(mappedChats);
+                }
                 return mappedChats;
-              }
-              if (activeEventDate === THIS_WEEK) {
-                return filterEventsByThisWeek(mappedChats);
-              }
-              if (activeEventDate === THIS_MONTH) {
-                return filterEventsByThisMonth(mappedChats);
-              }
-              return mappedChats;
-            };
+              };
 
-            const filteredDataEvents = filterEventByDate();
-            setDATAEventsJoining(filteredDataEvents);
-            setLoadingChats(false);
-          });
+              const filteredDataEvents = filterEventByDate();
+              setDATAEventsJoining(filteredDataEvents);
+              setLoadingChats(false);
+            });
         } catch (error) {
           showToast('inviteMatch', 'An error occurred while fetching chats. Please try again later.', 'Error');
           logErrorToSentry(error);
@@ -718,7 +718,6 @@ const Chat: FC<ChatProps> = () => {
       };
     }, [activeEvent?.id, loading, activeEventDate]),
   );
-
 
   if (loadingChats || (loadingUserChatWithAdmin && user?.uid && !user?.isInvitedOnlyAdmin && !userChatWithAdmin?.uid)) {
     return (

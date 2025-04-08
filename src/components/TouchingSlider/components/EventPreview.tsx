@@ -26,7 +26,7 @@ import {useDemoFlowStore} from '../../../store/demoFlowStore';
 import HintCard from 'components/HintCard';
 import {hostHintSteps} from 'constants/hints.ts';
 import {demoFlowStackPath, demoIntroPath, demoIOPath} from 'constants/pathLocations.ts';
-import {useAppNavigation} from 'hooks/useAppNavigation.ts';
+import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 import {useUser} from '../../../store/userStore';
 import uuid from 'react-native-uuid';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
