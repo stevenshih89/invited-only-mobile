@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "996985328099",
+    "project_id": "invited-only-app",
+    "storage_bucket": "invited-only-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996985328099:android:0e20969ebcde1c1a7490d6",
+        "android_client_info": {
+          "package_name": "com.invitedonly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "996985328099-n0ameebdvglonnv9lr368lqj05dnqpmi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqLzEnZdXx3TMeE0r0ArRKKaTZFmUP5oA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "996985328099-n0ameebdvglonnv9lr368lqj05dnqpmi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "996985328099-33c954nkvbdpr76hjgme5f0dlpalrb4g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.invited.only"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
