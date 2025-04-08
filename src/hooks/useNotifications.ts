@@ -8,21 +8,24 @@ import {
   requestsPath,
 } from 'constants/pathLocations';
 import {useCallback, useState} from 'react';
-import { useUser } from 'src/store/userStore';
+import {useUser} from 'src/store/userStore';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import firestore from '@react-native-firebase/firestore';
-import { showToast } from 'helpers/showToast';
-import { useFocusEffect } from '@react-navigation/native';
+import {showToast} from 'helpers/showToast';
+import {useFocusEffect} from '@react-navigation/native';
+import {Timestamp} from '@firebase/firestore';
 
-interface Notifications {
-    body: string;
-    id: string;
-    mark: string;
-    title: string;
-    uid: string;
-    path?: string;
-    data?: any;
+export interface Notifications {
+  id: string;
+  title: string;
+  body: string;
+  image: string;
+  path?: string;
+  data?: any;
+  mark: string;
+  createdAt: Timestamp;
+  docId: string;
 }
 
 const DEFAULT_NOTIFICATIONS_LIMIT = 20;
@@ -42,7 +45,7 @@ export const useNotifications = () => {
       const photoUri = dataDoc?.data()?.photos?.[0]?.image || '';
       return photoUri;
     } catch (error) {
-      logErrorToSentry(error)
+      logErrorToSentry(error);
     }
   };
 
@@ -61,6 +64,7 @@ export const useNotifications = () => {
           const photoUri = await fetchImage(notification.uid);
           return {
             ...notification,
+            docId: doc.id,
             image: photoUri,
           };
         }),
@@ -78,15 +82,15 @@ export const useNotifications = () => {
   const clearNotifications = async (uid: string): Promise<void> => {
     try {
       await firestore()
-      .collection(apiUserInfoCollection)
-      .doc(uid)
-      .collection('notifications')
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.docs.forEach(doc => {
-          doc.ref.delete();
+        .collection(apiUserInfoCollection)
+        .doc(uid)
+        .collection('notifications')
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.docs.forEach(doc => {
+            doc.ref.delete();
+          });
         });
-      });
     } catch (error) {
       logErrorToSentry(error);
     }
@@ -147,11 +151,21 @@ export const useNotifications = () => {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    try {
+      await firestore().collection(apiUserInfoCollection).doc(user?.uid).collection('notifications').doc(id).delete();
+      setNotifications(notifications.filter(notification => notification.docId !== id));
+    } catch (error) {
+      logErrorToSentry(error);
+    }
+  };
+
   return {
     loading,
     notifications,
     handleClearNotifications,
     setLimitNotifications,
     handleNavigate,
-  }
-}
+    handleDelete,
+  };
+};
