@@ -28,7 +28,6 @@ export interface EventApiResponse {
 }
 
 const useEvent = (eventId: string | null) => {
-
   const queryClient = useQueryClient();
   const {events: apiEventsCollection} = useContext(FirebaseCollectionsContext);
 
@@ -71,7 +70,10 @@ const useGetMyEvents = () => {
     };
 
     return fetch(`${BACKEND_BASE_URL}/events/host-events/${currentUser?.uid}`, requestOptions)
-      .then(response => response.json())
+      .then(response => {
+        console.log('response', response);
+        return response.json();
+      })
       .catch(error => console.error(error));
   };
 

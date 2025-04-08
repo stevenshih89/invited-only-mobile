@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "996985328099-0pj1ih1kcq6jbeddr72ff7fi2d1sk7u9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.invitedonly",
+            "certificate_hash": "2b95a6d34b9d46a5cc8210be9074d1d1e571cb23"
+          }
+        },
+        {
+          "client_id": "996985328099-8lo1p4l2q6gct23ffj3n13slet2ogasj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.invitedonly",
+            "certificate_hash": "f349bd62a14b2c28bc56af7de70edd78b2887136"
+          }
+        },
+        {
           "client_id": "996985328099-n0ameebdvglonnv9lr368lqj05dnqpmi.apps.googleusercontent.com",
           "client_type": 3
         }

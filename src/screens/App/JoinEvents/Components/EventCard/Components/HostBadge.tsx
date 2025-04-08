@@ -13,7 +13,7 @@ const HostBadge = ({imageUrl, totalGuests}: Props) => {
           <S.HostImage source={imageUrl} />
           <S.HostName>Host</S.HostName>
           <S.GuestCountBadge>
-            <S.GuestCountText>+{totalGuests}</S.GuestCountText>
+            <S.GuestCountText>{totalGuests}</S.GuestCountText>
           </S.GuestCountBadge>
         </S.HostInfoRow>
       </S.HostBadge>

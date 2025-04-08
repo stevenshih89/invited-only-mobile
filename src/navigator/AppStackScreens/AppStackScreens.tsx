@@ -505,6 +505,7 @@ const AppStackScreen = () => {
       logErrorToSentry(error);
     }
   }, []);
+  console.log('on app stack');
 
   return (
     <AppStack.Navigator initialRouteName={bottomTabsStackPath} screenOptions={{headerShown: false}}>

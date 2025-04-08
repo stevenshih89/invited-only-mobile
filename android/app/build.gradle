@@ -4,74 +4,24 @@ apply plugin: "com.facebook.react"
 apply plugin: 'com.google.gms.google-services'
 
 /**
- * This is the configuration block to customize your React Native Android app.
- * By default you don't need to apply any configuration, just uncomment the lines you need.
+ * React Native configuration: this block can be customized as needed.
  */
 react {
-    /* Folders */
-    //   The root of your project, i.e. where "package.json" lives. Default is '../..'
-    // root = file("../../")
-    //   The folder where the react-native NPM package is. Default is ../../node_modules/react-native
-    // reactNativeDir = file("../../node_modules/react-native")
-    //   The folder where the react-native Codegen package is. Default is ../../node_modules/@react-native/codegen
-    // codegenDir = file("../../node_modules/@react-native/codegen")
-    //   The cli.js file which is the React Native CLI entrypoint. Default is ../../node_modules/react-native/cli.js
-    // cliFile = file("../../node_modules/react-native/cli.js")
-
-    /* Variants */
-    //   The list of variants to that are debuggable. For those we're going to
-    //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
-    //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
-    // debuggableVariants = ["liteDebug", "prodDebug"]
-
-    /* Bundling */
-    //   A list containing the node command and its flags. Default is just 'node'.
-    // nodeExecutableAndArgs = ["node"]
-    //
-    //   The command to run when bundling. By default is 'bundle'
-    // bundleCommand = "ram-bundle"
-    //
-    //   The path to the CLI configuration file. Default is empty.
-    // bundleConfig = file(../rn-cli.config.js)
-    //
-    //   The name of the generated asset file containing your JS bundle
-    // bundleAssetName = "MyApplication.android.bundle"
-    //
-    //   The entry file for bundle generation. Default is 'index.android.js' or 'index.js'
-    // entryFile = file("../js/MyApplication.android.js")
-    //
-    //   A list of extra flags to pass to the 'bundle' commands.
-    //   See https://github.com/react-native-community/cli/blob/main/docs/commands.md#bundle
-    // extraPackagerArgs = []
-
-    /* Hermes Commands */
-    //   The hermes compiler command to run. By default it is 'hermesc'
-    // hermesCommand = "$rootDir/my-custom-hermesc/bin/hermesc"
-    //
-    //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
-    // hermesFlags = ["-O", "-output-source-map"]
-
-    /* Autolinking */
     autolinkLibrariesWithApp()
 }
 
 /**
- * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
+ * Set this to true if you want Proguard (or R8) to shrink your release build.
  */
 def enableProguardInReleaseBuilds = false
 
 /**
- * The preferred build flavor of JavaScriptCore (JSC)
- *
- * For example, to use the international variant, you can use:
- * `def jscFlavor = io.github.react-native-community:jsc-android-intl:2026004.+`
- *
- * The international variant includes ICU i18n library and necessary data
- * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
- * give correct results when using with locales other than en-US. Note that
- * this variant is about 6MiB larger per architecture than default.
+ * Specify the preferred JSC flavor.
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
+
+// Define hermesEnabled. You can override via gradle properties if needed.
+def hermesEnabled = project.hasProperty("hermesEnabled") ? project.getProperty("hermesEnabled") : "false"
 
 android {
     ndkVersion rootProject.ext.ndkVersion
@@ -88,37 +38,48 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            storeFile file(System.env.HOME + "/.android/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
         }
+//        release {
+//            // Specify your release keystore file and credentials.
+//            storeFile file(System.env.HOME + "/io-invitedonly-release.keystore")
+//            storePassword "123456"
+//            keyAlias "io-invitedonly"
+//            keyPassword "123456"
+//        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
             buildConfigField("String", "BUILD_TIME", "\"0\"")
-
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            buildConfigField("String", "BUILD_TIME", "\"0\"")
-
-            signingConfig signingConfigs.debug
+//            signingConfig signingConfigs.release
+            // Use the provided flag for minification (set true/false via enableProguardInReleaseBuilds)
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            // Define ProGuard/R8 rules for release builds.
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "BUILD_TIME", "\"0\"")
         }
     }
 }
 
 dependencies {
-    // The version of react-native is set by the React Native Gradle Plugin
+    // The version of react-native is managed by the React Native Gradle Plugin.
     implementation("com.facebook.react:react-android")
+
+    // Firebase dependencies via BOM.
     implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+
+    // Facebook Android SDK - consider specifying a concrete version if "latest.release" causes issues.
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'
+
+    // Select Hermes (if enabled) or JSC as JavaScript engine.
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {

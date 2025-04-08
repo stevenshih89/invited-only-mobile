@@ -3,6 +3,7 @@ import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 import {AppSettingsQueries} from 'src/apiv2/queries/appSettingsQueries';
 import semver from 'semver';
+import {Platform} from 'react-native';
 
 const appStoreAppId = Config.APP_STORE_APP_ID || '';
 
@@ -21,6 +22,10 @@ const useVersionStateUpdate = (): {versionData: VersionResponse} => {
     currentUser: currentUser,
   });
 
+  if (Platform.OS === 'android') {
+    return {versionData: {showUpdateAvailable: false}};
+  }
+
   const {data: versionData, isFetched: appVersionFetched} = AppSettingsQueries.useAppVersionCheckQuery();
 
   if (appStoreDataFetched && appStoreVersionData) {
@@ -32,6 +37,8 @@ const useVersionStateUpdate = (): {versionData: VersionResponse} => {
   }
 
   if (appVersionFetched && versionData?.lastAvailableVersion) {
+    console.log(appVersion, versionData.lastAvailableBuild);
+
     if (semver.lt(appVersion, versionData.lastAvailableVersion)) {
       return {versionData: {...versionData, showUpdateAvailable: true}};
     }

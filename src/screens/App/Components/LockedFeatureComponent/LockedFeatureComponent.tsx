@@ -14,7 +14,7 @@ interface Props {
 const LockedFeatureComponent = ({hostImage, hostName, lockedBigText, lockedSmallText, withHostBadge = true}: Props) => {
   return (
     <S.EventCardParent>
-      {withHostBadge && <HostBadge imageUrl={hostImage} totalGuests={4} />}
+      {/* {withHostBadge && <HostBadge imageUrl={hostImage} totalGuests={4} />} */}
       <S.EventCardContentContainer>
         <LockeFeature scale={10} />
         <S.LockedBigText>{lockedBigText}</S.LockedBigText>
