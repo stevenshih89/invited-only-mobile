@@ -6,18 +6,16 @@ import * as S from './JoinEvents.style';
 import {ScrollView} from 'react-native-gesture-handler';
 import EventCard from './Components/EventCard/EventCard';
 import useCardSwipe from '../IO/Components/InviteGuestsEvent/hooks/useCardSwipe';
-import {Event} from 'src/types/event';
+import {components} from 'src/api/v1';
 
 interface Props {
-  events: Event.Info[];
+  events: components['schemas']['EventData'][];
 }
 
 const JoinEvents = ({events}: Props): ReactElement => {
   const {handleSuperInvite, handleSwipeLeft, handleSwipeRight, cards} = useCardSwipe({
     cardsData: events,
   });
-
-  console.log(cards);
 
   return (
     <DefaultBackground>
@@ -27,8 +25,8 @@ const JoinEvents = ({events}: Props): ReactElement => {
           <S.EventCardContainer>
             {cards?.map((event, index) => (
               <EventCard
-                key={event.id}
-                event={event as Event.Info}
+                key={event.uid}
+                event={event}
                 index={index}
                 isTopCard={index === cards.length - 1}
                 onReject={handleSwipeLeft}

@@ -5,17 +5,24 @@ import AppLoader from 'screens/App/AppLoader/AppLoader';
 import * as S from './FindConnections.style';
 import Card from 'screens/App/Components/Card/Card';
 import LockedFeatureComponent from 'screens/App/Components/LockedFeatureComponent/LockedFeatureComponent';
+import invitedOnlyBackendApi from 'src/api/backend-api';
 
 const FindConnections = () => {
-  const {data: userRespoonse, isLoading} = EventQueries.useGetUserForEvent('temp-user');
+  const {data: userRespoonse, isLoading} = invitedOnlyBackendApi.useQuery('get', '/users/event/{eventId}', {
+    params: {
+      path: {
+        eventId: 'no-user',
+      },
+    },
+  });
   if (isLoading) {
     return <AppLoader />;
   }
   return (
     <DefaultBackground>
       <S.Container>
-        {userRespoonse?.users.map(user => (
-          <Card isStatic key={user.uid} uid={user.uid} backgroundUrls={user.photos} index={0} distanceFromTop={0}>
+        {userRespoonse?.map(user => (
+          <Card isStatic key={user.uid} uid={user.uid} backgroundUrls={user.photos || []} index={0} distanceFromTop={0}>
             <LockedFeatureComponent
               hostName={''}
               withHostBadge={false}

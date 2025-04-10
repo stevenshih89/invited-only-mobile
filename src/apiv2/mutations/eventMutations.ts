@@ -31,7 +31,6 @@ const useUpdateEvent = (eventId: string) => {
     } catch (e) {
       showToast('inviteMatch', 'Something went wrong while updating the event. Please try again later.', 'Error');
       logErrorToSentry(e);
-      console.log('error update event', e);
     }
   };
 

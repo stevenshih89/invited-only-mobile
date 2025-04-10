@@ -53,7 +53,7 @@ const Header: FC<HeaderTypeProps> = ({badge, logoType, showHeaderTop = true}) =>
             </S.ProfileButton>
             {badge && (
               <S.NotificationButton onPress={() => navigation.navigate('/notifications-stack')} activeOpacity={0.7}>
-                <NotificationIcon width={32} height={32} />
+                <NotificationBellIcon width={32} height={32} />
 
                 <Badge
                   value={notificationsCount}

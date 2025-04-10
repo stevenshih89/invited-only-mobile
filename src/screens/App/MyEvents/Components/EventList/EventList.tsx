@@ -1,19 +1,14 @@
 import React from 'react';
-import { EventApiResponse } from 'src/apiv2/queries/eventQueries';
+import {EventApiResponse} from 'src/apiv2/queries/eventQueries';
 import EventListItem from '../EventListItem/EventListItem';
 import * as S from './EventList.style';
-
+import {components} from 'src/api/v1';
 interface EventListProps {
-  events: EventApiResponse[];
-  // Add navigation handlers if needed, e.g.:
-  // onEventPress: (eventId: string) => void;
-  // onViewRequestsPress: (eventId: string) => void;
-  // onManagePress: (eventId: string) => void;
+  events: components['schemas']['EventData'][];
 }
 
-const EventList: React.FC<EventListProps> = ({ events }) => {
-  const renderItem = ({ item }: { item: EventApiResponse }) => {
-    
+const EventList: React.FC<EventListProps> = ({events}) => {
+  const renderItem = ({item}: {item: components['schemas']['EventData']}) => {
     // Determine status string
     let statusString = 'Unknown';
     if (item.isCancelled) {
@@ -24,31 +19,20 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
       statusString = 'Inactive'; // Or 'Past', 'Upcoming' based on date?
     }
 
-    // Get first photo URL
     const firstPhotoUrl = item.photos && item.photos.length > 0 ? item.photos[0] : undefined;
-    
-    return (
-      <EventListItem 
-        event={item} // Pass the whole event object for potential use inside
-        imageUrl={firstPhotoUrl}
-        status={statusString}
-        attendees={[]} // Not available in EventApiResponse from useGetMyEvents
-        requestCount={0} // Not available - explicitly setting 0 to hide badge
 
-      />
-    );
+    return <EventListItem event={item} imageUrl={firstPhotoUrl?.image} status={statusString} attendees={[]} requestCount={0} />;
   };
 
   return (
     <S.ListContainer
       data={events}
       renderItem={renderItem}
-      
-      keyExtractor={(item: EventApiResponse) => item.id}
-      contentContainerStyle={{ paddingBottom: 20 }}
+      keyExtractor={(item: EventApiResponse) => item.uid}
+      contentContainerStyle={{paddingBottom: 20}}
       // Add other FlatList props as needed (e.g., ItemSeparatorComponent)
     />
   );
 };
 
-export default EventList; 
+export default EventList;

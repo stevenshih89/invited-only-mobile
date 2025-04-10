@@ -8,10 +8,11 @@ import CreateEventFlowStepper from './Components/CreateEventFlowStepper/CreateEv
 import GuestInvitationStep from './Components/GuestInvitationStep/GuestInvitationStep';
 import EventPlaceStep from './Components/EventPlaceStep/EventPlaceStep';
 import PreviewEventStep from './Components/PreviewEventStep/PreviewEventStep';
-import useCreateEvent from './hooks/useCreateEvnet';
+
 import AppLoader from 'screens/App/AppLoader/AppLoader';
-import {showToast} from 'helpers/showToast';
 import {handleNextStep, initialValues, validationSchema} from './CreateEvent.form';
+import useCreateEvent from './hooks/useCreateEvent';
+import {useAppNavigation, useNavigationState} from 'hooks/useAppNavigation';
 
 export interface CreateEventFormValues {
   male: number;
@@ -33,7 +34,9 @@ export interface CreateEventFormValues {
 const CreateEventFlow = () => {
   const {currentStep, nextStep, backStep} = useCreateEventFlowStep();
   const {createEvent, isLoading} = useCreateEvent();
-
+  const {navigate} = useAppNavigation();
+  const screens = useNavigationState(state => state.routes);
+  console.log('screens', screens);
   return (
     <Formik<CreateEventFormValues>
       validationSchema={validationSchema}
@@ -44,7 +47,10 @@ const CreateEventFlow = () => {
       {({submitForm, isSubmitting, values, validateForm}) => (
         <DefaultBackground>
           {isLoading || isSubmitting ? (
-            <AppLoader />
+            <DefaultBackground>
+              <S.CreatingEventText>Creating event...</S.CreatingEventText>
+              <AppLoader />
+            </DefaultBackground>
           ) : (
             <S.Container>
               <S.StepsContainer>

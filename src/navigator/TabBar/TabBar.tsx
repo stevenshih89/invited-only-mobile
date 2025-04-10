@@ -54,6 +54,7 @@ export const TabIcon = (focused: boolean, route: string): ReactElement => {
 
       return () => unsubscribe();
     } catch (error) {
+      console.error('Error fetching events:', error);
       logErrorToSentry(error);
     }
   }, [userHost]);
@@ -88,6 +89,7 @@ export const TabIcon = (focused: boolean, route: string): ReactElement => {
 
       return () => unsubscribe();
     } catch (error) {
+      console.error('Error fetching messages:', error);
       logErrorToSentry(error);
     }
   }, [userHost]);
@@ -107,6 +109,7 @@ export const TabIcon = (focused: boolean, route: string): ReactElement => {
             setEventsCountHost(filterEvents.length);
           });
       } catch (error) {
+        console.error('Error fetching events:', error);
         logErrorToSentry(error);
       }
     }

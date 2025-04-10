@@ -1196,7 +1196,7 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.37):
     - BoringSSL-GRPC/Interface (= 0.0.37)
   - BoringSSL-GRPC/Interface (0.0.37)
-  - BugsnagReactNative (8.3.0):
+  - BugsnagReactNative (8.2.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1221,21 +1221,21 @@ PODS:
     - React-Core
   - DoubleConversion (1.1.6)
   - fast_float (6.1.4)
-  - FBAEMKit (18.0.0):
-    - FBSDKCoreKit_Basics (= 18.0.0)
+  - FBAEMKit (17.4.0):
+    - FBSDKCoreKit_Basics (= 17.4.0)
   - FBLazyVector (0.78.0)
-  - FBSDKCoreKit (18.0.0):
-    - FBAEMKit (= 18.0.0)
-    - FBSDKCoreKit_Basics (= 18.0.0)
-  - FBSDKCoreKit_Basics (18.0.0)
-  - FBSDKGamingServicesKit (18.0.0):
-    - FBSDKCoreKit (= 18.0.0)
-    - FBSDKCoreKit_Basics (= 18.0.0)
-    - FBSDKShareKit (= 18.0.0)
-  - FBSDKLoginKit (18.0.0):
-    - FBSDKCoreKit (= 18.0.0)
-  - FBSDKShareKit (18.0.0):
-    - FBSDKCoreKit (= 18.0.0)
+  - FBSDKCoreKit (17.4.0):
+    - FBAEMKit (= 17.4.0)
+    - FBSDKCoreKit_Basics (= 17.4.0)
+  - FBSDKCoreKit_Basics (17.4.0)
+  - FBSDKGamingServicesKit (17.4.0):
+    - FBSDKCoreKit (= 17.4.0)
+    - FBSDKCoreKit_Basics (= 17.4.0)
+    - FBSDKShareKit (= 17.4.0)
+  - FBSDKLoginKit (17.4.0):
+    - FBSDKCoreKit (= 17.4.0)
+  - FBSDKShareKit (17.4.0):
+    - FBSDKCoreKit (= 17.4.0)
   - Firebase/Analytics (11.10.0):
     - Firebase/Core
   - Firebase/Auth (11.10.0):
@@ -1507,6 +1507,10 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
+  - lottie-ios (3.4.1)
+  - lottie-react-native (5.1.4):
+    - lottie-ios (~> 3.4.0)
+    - React-Core
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
     - nanopb/encode (= 3.30910.0)
@@ -2766,7 +2770,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-cameraroll (7.10.0):
+  - react-native-cameraroll (7.8.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2787,11 +2791,11 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-config (1.5.5):
-    - react-native-config/App (= 1.5.5)
-  - react-native-config/App (1.5.5):
+  - react-native-config (1.5.3):
+    - react-native-config/App (= 1.5.3)
+  - react-native-config/App (1.5.3):
     - React-Core
-  - react-native-config/Extension (1.5.5)
+  - react-native-config/Extension (1.5.3)
   - react-native-date-picker (4.4.2):
     - DoubleConversion
     - glog
@@ -2813,20 +2817,20 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-fbsdk-next (13.4.1):
+  - react-native-fbsdk-next (13.3.0):
     - React-Core
-    - react-native-fbsdk-next/Core (= 13.4.1)
-    - react-native-fbsdk-next/Login (= 13.4.1)
-    - react-native-fbsdk-next/Share (= 13.4.1)
-  - react-native-fbsdk-next/Core (13.4.1):
-    - FBSDKCoreKit (~> 18.0)
+    - react-native-fbsdk-next/Core (= 13.3.0)
+    - react-native-fbsdk-next/Login (= 13.3.0)
+    - react-native-fbsdk-next/Share (= 13.3.0)
+  - react-native-fbsdk-next/Core (13.3.0):
+    - FBSDKCoreKit (~> 17.4)
     - React-Core
-  - react-native-fbsdk-next/Login (13.4.1):
-    - FBSDKLoginKit (~> 18.0)
+  - react-native-fbsdk-next/Login (13.3.0):
+    - FBSDKLoginKit (~> 17.4)
     - React-Core
-  - react-native-fbsdk-next/Share (13.4.1):
-    - FBSDKGamingServicesKit (~> 18.0)
-    - FBSDKShareKit (~> 18.0)
+  - react-native-fbsdk-next/Share (13.3.0):
+    - FBSDKGamingServicesKit (~> 17.4)
+    - FBSDKShareKit (~> 17.4)
     - React-Core
   - react-native-geolocation (3.4.0):
     - DoubleConversion
@@ -2849,7 +2853,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-image-picker (7.2.3):
+  - react-native-image-picker (7.1.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3006,7 +3010,7 @@ PODS:
     - React-Core
   - react-native-tracking-transparency (0.1.2):
     - React
-  - react-native-video (6.12.0):
+  - react-native-video (6.10.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3019,7 +3023,7 @@ PODS:
     - React-featureflags
     - React-graphics
     - React-ImageManager
-    - react-native-video/Video (= 6.12.0)
+    - react-native-video/Video (= 6.10.2)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -3028,7 +3032,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-video/Fabric (6.12.0):
+  - react-native-video/Fabric (6.10.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3049,7 +3053,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-video/Video (6.12.0):
+  - react-native-video/Video (6.10.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3405,7 +3409,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNCPicker (2.11.0):
+  - RNCPicker (2.9.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3462,7 +3466,7 @@ PODS:
     - Firebase/Storage (= 11.10.0)
     - React-Core
     - RNFBApp
-  - RNGestureHandler (2.25.0):
+  - RNGestureHandler (2.24.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3513,7 +3517,7 @@ PODS:
   - RNPurchases (8.9.3):
     - PurchasesHybridCommon (= 13.26.1)
     - React-Core
-  - RNReanimated (3.17.2):
+  - RNReanimated (3.17.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3535,10 +3539,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 3.17.2)
-    - RNReanimated/worklets (= 3.17.2)
+    - RNReanimated/reanimated (= 3.17.3)
+    - RNReanimated/worklets (= 3.17.3)
     - Yoga
-  - RNReanimated/reanimated (3.17.2):
+  - RNReanimated/reanimated (3.17.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3560,9 +3564,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 3.17.2)
+    - RNReanimated/reanimated/apple (= 3.17.3)
     - Yoga
-  - RNReanimated/reanimated/apple (3.17.2):
+  - RNReanimated/reanimated/apple (3.17.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3585,7 +3589,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated/worklets (3.17.2):
+  - RNReanimated/worklets (3.17.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3607,9 +3611,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/worklets/apple (= 3.17.2)
+    - RNReanimated/worklets/apple (= 3.17.3)
     - Yoga
-  - RNReanimated/worklets/apple (3.17.2):
+  - RNReanimated/worklets/apple (3.17.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3807,6 +3811,8 @@ DEPENDENCIES:
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
+  - lottie-ios (from `../node_modules/lottie-ios`)
+  - lottie-react-native (from `../node_modules/lottie-react-native`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCT-Folly/Fabric (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
@@ -3975,6 +3981,10 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2025-01-13-RNv0.78.0-a942ef374897d85da38e9c8904574f8376555388
+  lottie-ios:
+    :path: "../node_modules/lottie-ios"
+  lottie-react-native:
+    :path: "../node_modules/lottie-react-native"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTDeprecation:
@@ -4175,17 +4185,17 @@ SPEC CHECKSUMS:
   BEMCheckBox: 5ba6e37ade3d3657b36caecc35c8b75c6c2b1a4e
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508
-  BugsnagReactNative: a77ea6d0344654ebdb37fa69e485f5358a891ae0
+  BugsnagReactNative: 6b90ab47571278ba378fcbbf57961609da1a426e
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
-  FBAEMKit: e34530df538b8eb8aeb53c35867715ba6c63ef0c
+  FBAEMKit: 58cb5f302cdd715a56d4c1d0dfdd2e423ac1421a
   FBLazyVector: 6fe148afcef2e3213e484758e3459609d40d57f5
-  FBSDKCoreKit: d3f479a69127acebb1c6aad91c1a33907bcf6c2f
-  FBSDKCoreKit_Basics: 017b6dc2a1862024815a8229e75661e627ac1e29
-  FBSDKGamingServicesKit: cdb625419879a651d07906d8f874fc76291be660
-  FBSDKLoginKit: 5875762d1fe09ddcb05d03365d4f5dc34413843d
-  FBSDKShareKit: 082d1b087d6481af36f8d8433542f25f2fc2c8dd
+  FBSDKCoreKit: 94d7461d0cecf441b1ba7c41acfff41daa8ccd41
+  FBSDKCoreKit_Basics: 151b43db8b834d3f0e02f95d36a44ffd36265e45
+  FBSDKGamingServicesKit: 55a13febe0cd117bf5f8f61f315d75aab9b7876e
+  FBSDKLoginKit: 5c1cd53c91a2282b3a4fe6e6d3dcf2b8b0d33d55
+  FBSDKShareKit: 00546a02dce72f37a4209cd68aaf5fb749185c3b
   Firebase: 1fe1c0a7d9aaea32efe01fbea5f0ebd8d70e53a2
   FirebaseAnalytics: 4e42333f02cf78ed93703a5c36f36dd518aebdef
   FirebaseAppCheckInterop: f23709c9ce92d810aa53ff4ce12ad3e666a3c7be
@@ -4213,6 +4223,8 @@ SPEC CHECKSUMS:
   hermes-engine: b417d2b2aee3b89b58e63e23a51e02be91dc876d
   leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
+  lottie-ios: 016449b5d8be0c3dcbcfa0a9988469999cd04c5d
+  lottie-react-native: 61e02fe80b8873ae42c45df06b5941d158b46776
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PurchasesHybridCommon: aeebb5b2a956514f8f3ebde2a1574e07d2164ae8
@@ -4247,19 +4259,19 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 9fbb496e7d6f7c34d5e617365ee778bf96d14eae
   React-microtasksnativemodule: 36adde22631838680d1be62776e8ccb83186c06a
   react-native-blur: 745703f35133ed6a1210d4bbff358a631911f002
-  react-native-cameraroll: 10054f480dfd6e0bd02fdf08fb6d82f80b362575
-  react-native-config: 644074ab88db883fcfaa584f03520ec29589d7df
+  react-native-cameraroll: 5072f5953448d5737ea68a5b0b6dd3444cd23fea
+  react-native-config: ea75335a7cca1d3326de1da384227e580a7c082e
   react-native-date-picker: 1232d66db29e0d5e65b41cd794e485ba0b5af419
-  react-native-fbsdk-next: 52f81e60eb3e8e0e06cf9728b4572d3509ca9d01
+  react-native-fbsdk-next: 8dc76b449a731540591366c7f2874df3701da8bd
   react-native-geolocation: 57a4a35c149d8613f81b89ff155e6ae28e76aea0
-  react-native-image-picker: 2f036771bd560df0a88405ea4b506f74923707c1
+  react-native-image-picker: cd2f427dae73bd0e06f5394ce5daa17bb8873f48
   react-native-pager-view: f7f13e312fd72e7b800f76ff54b2bfe736cfb366
   react-native-safe-area-context: 33fadf89988c8813cfac57797a3bc53708863dd1
   react-native-segmented-control: be570ddc1678933470a39471e0ebd824f23e39a8
   react-native-slider: eec56ab0c824fbe25ab410bc66c5c2afdda030c4
   react-native-splash-screen: 95994222cc95c236bd3cdc59fe45ed5f27969594
   react-native-tracking-transparency: 15eb319f2b982070eb9831582af27d87badfa624
-  react-native-video: 1cd4bd25438a30158d7ed5c2de9236230ddb0369
+  react-native-video: 3a5e96aa38af78393c9e9b17bb9f02e6c6dd2a87
   React-NativeModulesApple: ec44c21ae0bbb5f9a2df72db00294e33a00e07f0
   React-perflogger: 9e8d3c0dc0194eb932162812a168aa5dc662f418
   React-performancetimeline: 350424518f433dd43f063dc5f2cf3195c1a5b60f
@@ -4293,7 +4305,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 5321442ed26760d7581b26effab82399ea5ff18b
   RNCCheckbox: 450ce156f3e29e25efa0315c96cfbabe5a39ded1
   RNCClipboard: 86342298a16010051a6f2fa92688fb83dfd3f4c4
-  RNCPicker: 21ca53c5927e9a7ad03eb4712dc55395114ebcc8
+  RNCPicker: c3fbbcda8235e16492d595a7dfca9bf95efc87da
   RNCPushNotificationIOS: 6c4ca3388c7434e4a662b92e4dfeeee858e6f440
   RNDeviceInfo: d863506092aef7e7af3a1c350c913d867d795047
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87
@@ -4304,11 +4316,11 @@ SPEC CHECKSUMS:
   RNFBFunctions: 4675adfe6256ac50c9f6808263ad4935a1de5711
   RNFBMessaging: f0760e86d85a314e39281301b4ea3e337ef12d96
   RNFBStorage: 82226bb12b3d77cc37506d23b5457aeccc79619e
-  RNGestureHandler: 96fc2de36a25cf6bece93e030c2ed9a5e95d33dd
+  RNGestureHandler: f7b3a72c099e1e29b5b81688678bc9108d44057c
   RNNotifee: 271cfeb505183d2cd1b858c14c3968b6ca30a642
   RNPermissions: addd44e7c7a678665fd348b4d27c3f04f5f4bfa0
   RNPurchases: 647a3b5c6b01f44f35a9943e8a8cec1757596ab6
-  RNReanimated: 8eace4d10dd1f18cfe85c111c29af5dae32caaef
+  RNReanimated: acc53b78db4f930b635a0e0f67ce327e57cd0d6e
   RNScreens: 04304337930029a5d0db297b22eb0f07adc31a2c
   RNSentry: 6b65442704168221642f7d797bbcf554092c71c9
   RNSVG: 71e35e78add645b84b52b0c6f203f91028e1ab5e

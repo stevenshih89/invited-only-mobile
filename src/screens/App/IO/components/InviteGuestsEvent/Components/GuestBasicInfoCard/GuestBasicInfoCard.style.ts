@@ -12,6 +12,25 @@ export const Container = styled.View`
   padding: 20px;
   gap: 15px;
 `;
+
+export const BasicsContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: flex-start;
+  border-radius: 20px;
+  padding: 20px;
+  gap: 15px;
+`;
+
+export const InterestsContainer = styled.View`
+  flex: 1;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  border-radius: 20px;
+  gap: 15px;
+  flex-wrap: wrap;
+`;
 export const CardLabel = styled.Text`
   font-family: ${Satoshi500};
   color: ${whiteColor};
@@ -51,4 +70,10 @@ export const WhiteGrayInfo = styled.Text`
   font-family: ${Satoshi500};
   color: ${whiteColor};
   opacity: 0.5;
+`;
+
+export const InterestImage = styled.Image`
+  width: 20px;
+  height: 20px;
+  border-radius: 100px;
 `;

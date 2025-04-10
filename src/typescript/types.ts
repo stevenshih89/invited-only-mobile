@@ -49,7 +49,7 @@ export type RootStackParamList = {
   '/my-email': undefined;
   '/connect-social-media': undefined;
   '/connect'?: undefined;
-  '/find-connections': string;
+  '/find-connections': any;
   '/my-connections': undefined;
   '/privacy': undefined;
   '/pending-screen': undefined;

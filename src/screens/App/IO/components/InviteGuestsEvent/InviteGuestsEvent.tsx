@@ -1,29 +1,30 @@
 import React from 'react';
 import * as S from './InviteGuestsEvent.styled';
-
 import useCardSwipe from './hooks/useCardSwipe';
-import {User} from 'src/types/userInfo';
-import GuestBasicInfoCard from './Components/GuestBasicInfoCard/GuestBasicInfoCard';
 import {ScrollView} from 'react-native-gesture-handler';
+import GuestBasicInfoCard from './Components/GuestBasicInfoCard/GuestBasicInfoCard';
 import GuestBioCard from './Components/GuestBioCard/GuestBioCard';
 import {GuestCard} from './Components/GuestCard/GuestCard';
-
+import {components} from 'src/api/v1';
+import GuestLanguagesCard from './Components/GuestLanguagesCard/GuestLanguagesCard';
 interface InviteGuestsEvent {
-  guests: User.Info[];
+  guests: components['schemas']['User'][];
 }
 
-const InviteGuestsEvent: React.FC<InviteGuestsEvent> = ({guests = []}) => {
-  const {handleSwipeLeft, handleSwipeRight, handleSuperInvite, hasCards, cards} = useCardSwipe({cardsData: guests});
-
+const InviteGuestsEvent = ({guests}: InviteGuestsEvent) => {
+  const {handleSwipeLeft, handleSwipeRight, handleSuperInvite, hasCards, cards} = useCardSwipe({
+    cardsData: guests,
+  });
+  console.log('cards', cards);
   const renderCards = () => {
     if (!hasCards) {
-      return <S.NoCardsText>No guests to show!</S.NoCardsText>;
+      return <S.NoCardsText>No more guests to show.</S.NoCardsText>;
     }
 
     return cards?.map((guest, index) => (
       <GuestCard
-        key={index}
-        guest={guest as User.Info}
+        key={guest.uid}
+        guest={guest}
         index={index}
         isTopCard={index === cards.length - 1}
         onReject={handleSwipeLeft}
@@ -42,6 +43,12 @@ const InviteGuestsEvent: React.FC<InviteGuestsEvent> = ({guests = []}) => {
           <>
             <GuestBasicInfoCard guestInfo={cards[cards.length - 1]} />
             <GuestBioCard guestInfo={cards[cards.length - 1]} />
+            <GuestLanguagesCard guestInfo={cards[cards.length - 1]} />
+            <S.BlockAndReportContainer>
+              <S.BlockAndReportButton>
+                <S.BlockText>Block and Report</S.BlockText>
+              </S.BlockAndReportButton>
+            </S.BlockAndReportContainer>
           </>
         )}
       </S.Container>

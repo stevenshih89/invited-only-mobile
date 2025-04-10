@@ -10,10 +10,11 @@ import FirebaseCollectionsProvider from 'contexts/FirebaseCollectionNamesContext
 import {AppSettingsQueries} from './apiv2/queries/appSettingsQueries';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import Navigator from './navigator';
-import {blackColor, goldColor} from 'constants/colors';
+import {blackColor} from 'constants/colors';
+import invitedOnlyBackendApi from './api/backend-api';
 
 const Main = () => {
-  const {data: firebaseCollectionNames, isLoading} = AppSettingsQueries.useFirebaseCollectionNameQuery();
+  const {data: firebaseCollectionNames, isLoading} = invitedOnlyBackendApi.useQuery('get', '/config/firebase/collections');
 
   if (isLoading) {
     return <AppLoader />;

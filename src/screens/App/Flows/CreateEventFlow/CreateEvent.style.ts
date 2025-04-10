@@ -54,3 +54,9 @@ export const CancelButtonText = styled.Text`
   color: ${whiteColor};
   font-family: ${Satoshi500};
 `;
+
+export const CreatingEventText = styled.Text`
+  color: ${whiteColor};
+  font-family: ${Satoshi500};
+  font-size: 24px;
+`;

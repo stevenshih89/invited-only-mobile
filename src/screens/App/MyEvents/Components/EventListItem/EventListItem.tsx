@@ -1,16 +1,16 @@
 import React from 'react';
-import { EventApiResponse } from 'src/apiv2/queries/eventQueries';
-import { View } from 'react-native';
+import {EventApiResponse} from 'src/apiv2/queries/eventQueries';
+import {View} from 'react-native';
 import * as S from './EventListItem.style';
 import ManageEventIcon from 'src/assets/images/icons/manage-event-icon.svg';
-
+import {components} from 'src/api/v1';
 // Define more specific props based on the layout
 interface EventListItemProps {
-  event: EventApiResponse;
+  event: components['schemas']['EventData'];
 
   imageUrl?: string; // URL for the main background image
   status?: string; // e.g., 'Active'
-  attendees?: { avatarUrl?: string }[]; // List of attendee avatars (URLs)
+  attendees?: {avatarUrl?: string}[]; // List of attendee avatars (URLs)
   requestCount?: number; // Make optional or allow 0
   onPress?: (eventId: string) => void;
   onViewRequests?: (eventId: string) => void;
@@ -34,42 +34,35 @@ const formatDate = (dateString: string | Date) => {
 
 const EventListItem: React.FC<EventListItemProps> = ({
   event,
-  imageUrl, // Receive imageUrl (could be undefined now)
-  status = 'Unknown', // Default status
-  attendees = [], // Default empty attendees
-  requestCount, // Receive optional/0 count
+  imageUrl,
+  status = 'Unknown',
+  attendees = [],
+  requestCount,
   onPress,
   onViewRequests,
-  onManage
+  onManage,
 }) => {
+  const handlePress = () => onPress && onPress(event.uid);
+  const handleViewRequests = () => onViewRequests && onViewRequests(event.uid);
+  const handleManage = () => onManage && onManage(event.uid);
 
-  const handlePress = () => onPress && onPress(event.id);
-  const handleViewRequests = () => onViewRequests && onViewRequests(event.id);
-  const handleManage = () => onManage && onManage(event.id);
-
-  const displayedAttendees = attendees.slice(0, 2); // Show max 2 avatars + count
+  const displayedAttendees = attendees.slice(0, 2);
   const remainingAttendees = attendees.length - displayedAttendees.length;
 
   const showRequestsButton = requestCount !== undefined && requestCount > 0;
+  console.log('imageUrl', imageUrl);
 
   return (
     <S.CardContainer onPress={handlePress} activeOpacity={0.8}>
-      
       {imageUrl ? (
-        <S.EventImageBackground
-          source={{ uri: imageUrl }}
-          resizeMode="cover"
-        >
+        <S.EventImageBackground source={{uri: imageUrl}} resizeMode="cover">
           <S.ImageOverlay>
             <S.StatusButton>
               <S.StatusText>{status}</S.StatusText>
             </S.StatusButton>
             <S.UserAvatarContainer>
               {displayedAttendees.map((attendee, index) => (
-                <S.AvatarImage
-                  key={index}
-                  source={{ uri: attendee.avatarUrl || 'https://via.placeholder.com/32' }}
-                />
+                <S.AvatarImage key={index} source={{uri: attendee.avatarUrl || 'https://via.placeholder.com/32'}} />
               ))}
               {remainingAttendees > 0 && (
                 <S.AvatarCountBadge>
@@ -90,22 +83,23 @@ const EventListItem: React.FC<EventListItemProps> = ({
 
       <S.ContentContainer>
         <S.InfoContainer>
-          <S.DateText>{formatDate(event.createdAt)}</S.DateText>
+          <S.DateText>{formatDate(event.createdAt || '')}</S.DateText>
           <S.EventNameText>{event.name}</S.EventNameText>
-          {event.description && <S.LocationText>{event.description}</S.LocationText>}
+          {event.location && <S.LocationText>{event.location}</S.LocationText>}
         </S.InfoContainer>
 
         <S.ActionsContainer>
           {showRequestsButton ? (
             <S.ViewRequestsButton onPress={handleViewRequests} activeOpacity={0.7}>
               <S.ViewRequestsText>View Requests</S.ViewRequestsText>
-              {requestCount && <S.RequestCountBadge>
-                <S.RequestCountText>{requestCount}
-                </S.RequestCountText>
-              </S.RequestCountBadge>}
+              {requestCount && (
+                <S.RequestCountBadge>
+                  <S.RequestCountText>{requestCount}</S.RequestCountText>
+                </S.RequestCountBadge>
+              )}
             </S.ViewRequestsButton>
           ) : (
-            <View style={{ flex: 1 }} />
+            <View style={{flex: 1}} />
           )}
           <S.ManageButton onPress={handleManage} activeOpacity={0.7}>
             <ManageEventIcon />
@@ -116,4 +110,4 @@ const EventListItem: React.FC<EventListItemProps> = ({
   );
 };
 
-export default EventListItem; 
+export default EventListItem;

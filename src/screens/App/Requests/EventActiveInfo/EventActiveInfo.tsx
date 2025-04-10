@@ -23,7 +23,7 @@ import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import {useUser} from 'src/store/userStore';
 import {getUserData} from 'helpers/getUserData';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -74,28 +74,29 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
     useCallback(() => {
       try {
         const unsubscribe = firestore()
-        .collection(apiEventsCollection)
-        .doc(id)
-        .onSnapshot(async querySnapshot => {
-          if (querySnapshot.exists) {
-            const data = querySnapshot.data();
-            const mappedUsersList: Event.User[] = [];
-            for (const user of data?.usersList) {
-              if (user?.uid) {
-                const {photos} = await getUserData(user.uid);
-                mappedUsersList.push({
-                  ...user,
-                  userPhoto: photos?.[0]?.image || user?.userPhoto,
-                });
+          .collection(apiEventsCollection)
+          .doc(id)
+          .onSnapshot(async querySnapshot => {
+            if (querySnapshot.exists) {
+              const data = querySnapshot.data();
+              const mappedUsersList: Event.User[] = [];
+              for (const user of data?.usersList) {
+                if (user?.uid) {
+                  const {photos} = await getUserData(user.uid);
+                  mappedUsersList.push({
+                    ...user,
+                    userPhoto: photos?.[0]?.image || user?.userPhoto,
+                  });
+                }
               }
+              setUsersListsData(mappedUsersList);
             }
-            setUsersListsData(mappedUsersList);
-          }
-        });
+          });
 
-      return () => unsubscribe();
+        return () => unsubscribe();
       } catch (error) {
-        logErrorToSentry(error)
+        console.error('Error fetching event info:', error);
+        logErrorToSentry(error);
       }
     }, [list]),
   );

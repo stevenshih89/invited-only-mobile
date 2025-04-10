@@ -5,6 +5,7 @@ import CreateEventButton from './Components/CreateEventButton/CreateEventButton'
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import auth from '@react-native-firebase/auth';
 import {EventApiResponse} from 'src/apiv2/queries/eventQueries';
+import {components} from 'src/api/v1';
 
 interface Event {
   id: string;
@@ -14,9 +15,9 @@ interface Event {
 interface IoHeaderProps {
   requestsCount: number;
   onRequestPress: () => void;
-  events: EventApiResponse[];
-  selectedEvent: EventApiResponse;
-  onEventSelect: (event: EventApiResponse) => void;
+  events: components['schemas']['EventData'][];
+  selectedEvent: components['schemas']['EventData'];
+  onEventSelect: (event: components['schemas']['EventData']) => void;
 }
 
 const IoHeader: React.FC<IoHeaderProps> = ({events, selectedEvent, requestsCount, onEventSelect, onRequestPress}) => {
@@ -24,6 +25,7 @@ const IoHeader: React.FC<IoHeaderProps> = ({events, selectedEvent, requestsCount
   if (!currentUser) {
     return <AppLoader />;
   }
+  console.log('events', events);
 
   return (
     <S.HeaderContainer>

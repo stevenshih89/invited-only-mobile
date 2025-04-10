@@ -1,8 +1,9 @@
 import {User} from 'src/types/userInfo';
 import * as S from './GuestBioCard.style';
+import {components} from 'src/api/v1';
 
 interface Props {
-  guestInfo: any;
+  guestInfo: components['schemas']['User'];
 }
 const GuestBioCard = ({guestInfo}: Props) => {
   return (

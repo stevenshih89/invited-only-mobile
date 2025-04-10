@@ -1,11 +1,11 @@
-import { logErrorToSentry } from "helpers/logErrorsToSentry";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import storage from '@react-native-firebase/storage';
 import {isIos} from 'constants/common';
-import { Alert } from "react-native";
+import {Alert} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import Config from "react-native-config";
-import { showToast } from "helpers/showToast";
+import Config from 'react-native-config';
+import {showToast} from 'helpers/showToast';
 import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
 import {profileEditing, profileScreen} from 'constants/analitycs';
@@ -199,7 +199,7 @@ export const useProfileProfileEditing = () => {
       });
     } catch (e: any) {
       showToast('inviteMatch', 'Failed to update profile photos. Please try again.', 'Error');
-      logErrorToSentry(e)
+      logErrorToSentry(e);
       // console.error('Error updating user profile image: ', e);
     }
   };
@@ -450,7 +450,7 @@ export const useProfileProfileEditing = () => {
             await fetchImages(user);
           });
       } catch (error: any) {
-        logErrorToSentry(error)
+        logErrorToSentry(error);
         if (saveField) {
           checkSaveField(saveField, false);
         }
@@ -461,77 +461,77 @@ export const useProfileProfileEditing = () => {
     }
   };
 
-    return {
-        images,
-        setImages,
-        listOfInterests,
-        setListOfInterests,
-        interestsLoading,
-        saveBtnInterestsVisible,
-        saveUserInfo,
-        loadingSaveInterests,
-        bio,
-        setBio,
-        saveBtnBioVisible,
-        loadingSaveBoi,
-        textNameWork,
-        activeAlcoholItem,
-        activeSmokeItem,
-        height,
-        bithdate,
-        location,
-        textHomeAdress,
-        setIsVisibleSmokeModal,
-        setIsVisibleGenderModal,
-        setIsVisibleHeightModal,
-        setIsVisibleWorkModal,
-        setIsVisibleAlcoholModal,
-        setIsVisibleBirthdayModal,
-        setIsVisibleLocationModal,
-        setIsVisibleHomeAddressModal,
-        showSmoke,
-        setShowSmoke,
-        setActiveSmokeItem,
-        listOfSmokes,
-        isVisibleSmokeModal,
-        showGender,
-        setShowGender,
-        activeGenderItem,
-        setActiveGenderItem,
-        listOfGenders,
-        isVisibleGenderModal,
-        showHeight,
-        setShowHeight,
-        heightsList,
-        setHeight,
-        showWork,
-        setShowWork,
-        textDescription,
-        setTextNameWork,
-        setTextDescription,
-        isVisibleWorkModal,
-        showAlcohol,
-        setShowAlcohol,
-        setActiveAlcoholItem,
-        listOfAlcohols,
-        isVisibleAlcoholModal,
-        day,
-        setDay,
-        month,
-        setMonth,
-        year,
-        setYear,
-        setShowAge,
-        showAge,
-        isVisibleBirthdayModal,
-        setLocation,
-        setShowLocation,
-        showLocation,
-        isVisibleLocationModal,
-        setTextHomeAdress,
-        setShowHomeAdress,
-        showHomeAdress,
-        isVisibleHomeAddressModal,
-        isVisibleHeightModal
-    }
-}
+  return {
+    images,
+    setImages,
+    listOfInterests,
+    setListOfInterests,
+    interestsLoading,
+    saveBtnInterestsVisible,
+    saveUserInfo,
+    loadingSaveInterests,
+    bio,
+    setBio,
+    saveBtnBioVisible,
+    loadingSaveBoi,
+    textNameWork,
+    activeAlcoholItem,
+    activeSmokeItem,
+    height,
+    bithdate,
+    location,
+    textHomeAdress,
+    setIsVisibleSmokeModal,
+    setIsVisibleGenderModal,
+    setIsVisibleHeightModal,
+    setIsVisibleWorkModal,
+    setIsVisibleAlcoholModal,
+    setIsVisibleBirthdayModal,
+    setIsVisibleLocationModal,
+    setIsVisibleHomeAddressModal,
+    showSmoke,
+    setShowSmoke,
+    setActiveSmokeItem,
+    listOfSmokes,
+    isVisibleSmokeModal,
+    showGender,
+    setShowGender,
+    activeGenderItem,
+    setActiveGenderItem,
+    listOfGenders,
+    isVisibleGenderModal,
+    showHeight,
+    setShowHeight,
+    heightsList,
+    setHeight,
+    showWork,
+    setShowWork,
+    textDescription,
+    setTextNameWork,
+    setTextDescription,
+    isVisibleWorkModal,
+    showAlcohol,
+    setShowAlcohol,
+    setActiveAlcoholItem,
+    listOfAlcohols,
+    isVisibleAlcoholModal,
+    day,
+    setDay,
+    month,
+    setMonth,
+    year,
+    setYear,
+    setShowAge,
+    showAge,
+    isVisibleBirthdayModal,
+    setLocation,
+    setShowLocation,
+    showLocation,
+    isVisibleLocationModal,
+    setTextHomeAdress,
+    setShowHomeAdress,
+    showHomeAdress,
+    isVisibleHomeAddressModal,
+    isVisibleHeightModal,
+  };
+};

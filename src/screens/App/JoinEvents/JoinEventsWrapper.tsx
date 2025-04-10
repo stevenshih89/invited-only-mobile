@@ -3,15 +3,28 @@ import {FC, ReactElement} from 'react';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 
 import AppLoader from '../AppLoader/AppLoader';
-import {EventQueries} from 'src/apiv2/queries/eventQueries';
+import auth from '@react-native-firebase/auth';
 import JoinEvents from './JoinEvents';
 import {ErrorText} from 'components/Inputs/InputPhoneView.style';
+import invitedOnlyBackendApi from 'src/api/backend-api';
 
 const JoinEventsWrapper = (): ReactElement => {
-  console.log('on the wrapper ');
-  const {data: eventsResponse, isLoading, isError} = EventQueries.useGetEventsForUser();
-  console.log('on the wrapper ', eventsResponse);
+  const user = auth().currentUser;
+  const {
+    data: eventsResponse,
+    isLoading,
+    isError,
+  } = invitedOnlyBackendApi.useQuery('get', '/events/user/{userId}', {
+    params: {
+      path: {
+        userId: user?.uid || '',
+      },
+    },
+  });
 
+  console.log('on the wrapper ', eventsResponse);
+  console.log('isLoading', isLoading);
+  console.log('isError', isError);
   if (isLoading) {
     return (
       <DefaultBackground>

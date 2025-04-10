@@ -32,7 +32,7 @@ import {useRoute} from '@react-navigation/native';
 import {showToast} from 'helpers/showToast';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
 import ModalUpgradeSuccessful from 'components/Modal/ModalUpgradeSuccessful/ModalUpgradeSuccessful';
-import {getActiveSubscription, getSubscriptions} from 'src/api/purchase';
+import {getActiveSubscription, getSubscriptions} from 'src/api.deprecated/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {openLink} from 'helpers/links';
 import analytics from '@react-native-firebase/analytics';

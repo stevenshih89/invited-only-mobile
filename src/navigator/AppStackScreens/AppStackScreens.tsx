@@ -79,7 +79,6 @@ import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
 import auth from '@react-native-firebase/auth';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {UserQueries} from '../../apiv2/queries/userQueries.ts';
 import CreateEventFlow from 'screens/App/Flows/CreateEventFlow/CreateEventFlow.tsx';
 import IOWrapper from 'screens/App/IO/IOWrapper.tsx';
 import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper.tsx';
@@ -500,6 +499,7 @@ const AppStackScreen = () => {
               setNotificationsCount(doc.size);
             });
         } catch (err) {
+          console.error('Error fetching notifications:', err);
           console.error(err);
         }
       }
@@ -513,7 +513,6 @@ const AppStackScreen = () => {
       logErrorToSentry(error);
     }
   }, []);
-  console.log('on app stack');
 
   return (
     <AppStack.Navigator
@@ -527,12 +526,8 @@ const AppStackScreen = () => {
         screenOptions={screenOptions}
       />
       <AppStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={EventCreatingStackScreen} />
-      <AppStack.Screen key={chatCorrespondencePath} name={chatCorrespondencePath} component={ChatCorrespondenceStackScreen} />
       <AppStack.Screen key={userProfilePath} name={userProfilePath} component={UserProfileStackScreen} />
       <AppStack.Screen key={connectPath} name={connectPath} component={Connect} />
-      <AppStack.Screen key={commonStackPath} name={commonStackPath} component={CommonStackScreen} />
-      <AppStack.Screen key={paymentPath} name={paymentPath} component={PaymentStackScreen} />
-      <AppStack.Screen key={verifySocialProfilePath} name={verifySocialProfilePath} component={VerifySocialProfile} />
       <AppStack.Screen key={manageSubscriptionPath} name={manageSubscriptionPath} component={ManageSubscriptionScreen} />
       <AppStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
     </AppStack.Navigator>

@@ -10,16 +10,27 @@ import InviteGuestsEvent from './Components/InviteGuestsEvent/InviteGuestsEvent'
 import IoHeader from './Components/IoHeader/IoHeader';
 import {EventApiResponse, EventQueries} from 'src/apiv2/queries/eventQueries';
 import AppLoader from '../AppLoader/AppLoader';
+import {components, paths} from 'src/api/v1';
+import invitedOnlyBackendApi from 'src/api/backend-api';
 
 interface Props {
-  events: EventApiResponse[];
+  events: components['schemas']['EventData'][];
 }
 
 const IO = ({events}: Props) => {
   const {user: userInfo} = useUser();
-  const [selectedEvent, setSelectedEvent] = useState<EventApiResponse>(events[0]);
-  const {data: guests, isLoading} = EventQueries.useGetUserForEvent(selectedEvent?.id);
-  const handleEventSelect = (event: EventApiResponse) => {
+  const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
+  const {data: guests, isLoading} = invitedOnlyBackendApi.useQuery('get', '/users/event/{eventId}', {
+    params: {
+      path: {
+        eventId: selectedEvent?.uid || 'no-event',
+      },
+    },
+  });
+
+  console.log('guests for event', selectedEvent?.uid, selectedEvent.name, guests);
+
+  const handleEventSelect = (event: components['schemas']['EventData']) => {
     setSelectedEvent(event);
   };
   if (isLoading) {
@@ -43,7 +54,7 @@ const IO = ({events}: Props) => {
               onEventSelect={handleEventSelect}
               onRequestPress={() => {}}
             />
-            <InviteGuestsEvent guests={guests?.users || []} />
+            <InviteGuestsEvent selectedEvent={selectedEvent} guests={guests || []} />
           </>
         )}
       </S.IoContainer>

@@ -1,16 +1,17 @@
-import React, {ReactNode, useState} from 'react';
+import React, {ReactNode, Dispatch, SetStateAction} from 'react';
 import * as S from './Card.style';
 import {GestureDetector, PanGesture} from 'react-native-gesture-handler';
 import {AnimatedStyle} from 'react-native-reanimated';
 import InvisibleTouchZone from './Components/InvisibleTouchZone/InvisibleTouchZone';
 import ImageIndicator from './Components/ImageIndicator/ImageIndicator';
-
-import {User} from 'src/types/userInfo';
 import CardImage from './Components/CardImage/CardImage';
+import {components} from 'src/api/v1';
+import AnimatedCard from './AnimatedCard';
+import StaticCard from './StaticCard';
 
 interface CardProps {
   uid: string;
-  backgroundUrls: User.Photo[];
+  backgroundUrls: components['schemas']['UserPhoto'][];
   index: number;
   isTopCard?: boolean;
   distanceFromTop: number;
@@ -26,7 +27,7 @@ interface CardProps {
   showDots?: boolean;
 }
 
-const PhysicCard = ({
+export const PhysicCard = ({
   children,
   uid,
   index,
@@ -37,8 +38,8 @@ const PhysicCard = ({
   children: ReactNode;
   uid: string;
   index: number;
-  setImageIndex: any;
-  backgroundUrls: User.Photo[];
+  setImageIndex: Dispatch<SetStateAction<number>>;
+  backgroundUrls: components['schemas']['UserPhoto'][];
   distanceFromTheTop: number;
 }) => {
   return (
@@ -49,68 +50,29 @@ const PhysicCard = ({
   );
 };
 
-const Card: React.FC<CardProps> = ({
-  uid,
-  backgroundUrls,
-  index,
-  children,
-  gestureHandler,
-  animatedStyle,
-  likeOpacityStyle,
-  nopeOpacityStyle,
-  isStatic = false,
-  showDots = true,
-  isTopCard,
-  distanceFromTop,
-}) => {
-  const [imageIndex, setImageIndex] = useState<number>(0);
+const Card: React.FC<CardProps> = props => {
+  const {isStatic = false, gestureHandler, animatedStyle} = props;
 
   if (isStatic) {
-    const showImageIndexIndicator = isTopCard && showDots && backgroundUrls.length > 1;
     return (
-      <PhysicCard
-        distanceFromTheTop={distanceFromTop}
-        index={index}
-        uid={uid}
-        backgroundUrls={backgroundUrls}
-        setImageIndex={setImageIndex}>
-        <S.StyledNotAnimatedView>
-          <CardImage imageSource={backgroundUrls[imageIndex].image} isTopCard={isTopCard} imageIndex={imageIndex} />
-
-          <S.CardGradient colors={['rgba(0, 0, 0, 0.1)', 'rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.9)']} locations={[0, 0.4, 1]} />
-          {showImageIndexIndicator && <ImageIndicator currentIndex={imageIndex} totalImages={backgroundUrls.length} />}
-          {children}
-        </S.StyledNotAnimatedView>
-      </PhysicCard>
+      <StaticCard
+        uid={props.uid}
+        backgroundUrls={props.backgroundUrls}
+        index={props.index}
+        distanceFromTop={props.distanceFromTop}
+        isTopCard={props.isTopCard}
+        showDots={props.showDots}>
+        {props.children}
+      </StaticCard>
     );
   }
 
-  return (
-    <GestureDetector gesture={gestureHandler!}>
-      <PhysicCard
-        distanceFromTheTop={distanceFromTop}
-        index={index}
-        uid={uid}
-        backgroundUrls={backgroundUrls}
-        setImageIndex={setImageIndex}>
-        <InvisibleTouchZone setImageIndex={setImageIndex} imageCount={backgroundUrls?.length} />
-        <S.StyledAnimatedView style={[animatedStyle]}>
-          <CardImage imageSource={backgroundUrls[imageIndex].image} isTopCard={isTopCard} imageIndex={imageIndex} />
+  if (!gestureHandler || !animatedStyle) {
+    console.error('Gesture handler and animated style are required for non-static cards.');
+    return null;
+  }
 
-          <S.CardGradient colors={['rgba(0, 0, 0, 0), 0)', 'rgba(0, 0, 0, 0.2)', 'rgba(0, 0, 0, 0.9)']} locations={[0, 0.7, 1]} />
-
-          <S.LikeAnimatedOpacity style={likeOpacityStyle}>
-            <S.LabelTextLike>LIKE</S.LabelTextLike>
-          </S.LikeAnimatedOpacity>
-          <S.NopeAnimatedOpacity style={nopeOpacityStyle}>
-            <S.LabelTextNope>NOPE</S.LabelTextNope>
-          </S.NopeAnimatedOpacity>
-          {backgroundUrls.length > 1 && <ImageIndicator currentIndex={imageIndex} totalImages={backgroundUrls.length} />}
-          {children}
-        </S.StyledAnimatedView>
-      </PhysicCard>
-    </GestureDetector>
-  );
+  return <AnimatedCard {...props} gestureHandler={gestureHandler} animatedStyle={animatedStyle} />;
 };
 
 export default Card;

@@ -1,0 +1,1011 @@
+openapi: 3.0.0
+info:
+  title: Invited Only Server API
+  version: 1.0.0
+  description: API for managing events, users, and configurations
+
+# Add servers definition for different environments
+servers:
+  - url: http://localhost:8082/
+    description: Local development server
+  - url: https://api.invitedonly.app/dev/
+    description: Remote development server
+  - url: https://api.invitedonly.app/prod/
+    description: Production server
+
+security:
+  - ApiTokenAuth: []
+    FirebaseTokenAuth: []
+
+paths:
+  /events/user/{userId}:
+    get:
+      summary: Get events visible to a specific user
+      operationId: getEventsForUser
+      tags:
+        - Events
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The UID of the user requesting the events.
+        - name: lastdoc
+          in: header
+          required: false
+          schema:
+            type: string
+          description: The last document ID for pagination.
+        - name: genderfilter
+          in: header
+          required: false
+          schema:
+            type: string
+            enum: [male, female]
+          description: Filter events based on the host's gender.
+        - name: limit
+          in: header
+          required: false
+          schema:
+            type: integer
+            default: 7
+          description: Maximum number of events to return.
+      responses:
+        '200':
+          description: A list of events and pagination info.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventsResponse'
+        '400':
+          description: Bad request (e.g., invalid parameters).
+        '500':
+          description: Internal server error.
+
+  /events/host/{hostId}:
+    get:
+      summary: Get events hosted by a specific user
+      operationId: getHostEvents
+      tags:
+        - Events
+      parameters:
+        - name: hostId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The UID of the host.
+      responses:
+        '200':
+          description: List of events hosted by the user.
+          content:
+            application/json:
+              schema:
+                type: array # Assuming response is array of EventData, adjust if needed
+                items:
+                  $ref: '#/components/schemas/EventData'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+  /events:
+    post:
+      summary: Create a new event
+      operationId: createEvent
+      tags:
+        - Events
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventData'
+      responses:
+        '201':
+          description: Event created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventData'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+
+  /events/{eventId}:
+    patch:
+      summary: Update an existing event
+      operationId: updateEvent
+      tags:
+        - Events
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the event to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventData'
+      responses:
+        '200':
+          description: Event updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventData'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+    delete:
+      summary: Delete an event
+      operationId: deleteEvent
+      tags:
+        - Events
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the event to delete.
+      responses:
+        '200':
+          description: Event deleted successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+  /users/event/{eventId}:
+    get:
+      summary: Get users for an event (alternative endpoint)
+      operationId: getUsersForEvent_alt # Needs distinct operationId
+      tags:
+        - Users
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the event to update.
+        - name: excludeuids
+          in: header
+          required: false
+          schema:
+            type: string
+            description: JSON string array of UIDs to exclude.
+        - name: lastdoc
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: male
+          in: header
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: female
+          in: header
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: header
+          required: false
+          schema:
+            type: integer
+            default: 7
+      responses:
+        '200':
+          description: List of users.
+          content:
+            application/json:
+              schema:
+                type: array # Assuming response is array of User, adjust if needed
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+  /users:
+    post:
+      summary: Create a new user
+      operationId: createUser
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+  /users/{id}:
+    delete:
+      summary: Delete a user account
+      operationId: deleteUserAccount
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The UID of the user to delete.
+      responses:
+        '200':
+          description: Confirmation of deletion.
+          content:
+            application/json:
+              schema:
+                type: object # Define actual success response
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+    patch:
+      summary: Update a user account
+      operationId: updateUserAccount
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The UID of the user to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+    get:
+      summary: Get a user by ID
+      operationId: getUserById
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The UID of the user to get.
+      responses:
+        '200':
+          description: User found successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /eventAttendees/create:
+    post:
+      summary: Create an event attendance record
+      operationId: createEventAttend
+      tags:
+        - Event Attendees
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                guestId:
+                  type: string
+                eventId:
+                  type: string
+                guest_swipe:
+                  type: string
+                  enum: [left, right, none]
+                  nullable: true
+                host_swipe:
+                  type: string
+                  enum: [left, right, none]
+                  nullable: true
+                guest_swipe_at:
+                  type: string
+                  format: date-time
+                  nullable: true
+                host_swipe_at:
+                  type: string
+                  format: date-time
+              required:
+                - guestId
+                - eventId
+      responses:
+        '200':
+          description: Event attendance created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventConfirmation' # Assuming this is returned, adjust if needed
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+
+  /eventAttendees/guest/{guestId}:
+    get:
+      summary: Get event attendance records for a guest
+      operationId: getGuestEventAttend
+      tags:
+        - Event Attendees
+      parameters:
+        - name: guestId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The UID of the guest.
+      responses:
+        '200':
+          description: List of event attendance records for the guest.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventConfirmation'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+
+  /eventAttendees/host/{hostId}:
+    get:
+      summary: Get event attendance records for events hosted by a user
+      operationId: getHostEventAttend
+      tags:
+        - Event Attendees
+      parameters:
+        - name: hostId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of event attendance records for the host's events.
+          content:
+            application/json:
+              schema:
+                type: array # Define actual response structure
+                items:
+                  $ref: '#/components/schemas/EventConfirmation' # Assuming this, adjust if needed
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+
+  /eventAttendees/{id}:
+    patch:
+      summary: Update an event attendance record
+      operationId: updateEventAttend
+      tags:
+        - Event Attendees
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the event attendance record.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventConfirmation' # Assuming partial update, define actual body
+      responses:
+        '200':
+          description: Event attendance updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventConfirmation' # Assuming updated record is returned
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+    delete:
+      summary: Delete an event attendance record
+      operationId: deleteEventAttend
+      tags:
+        - Event Attendees
+      parameters:
+        - name: id # Parameter name likely needs correction to attendance ID
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the event attendance record to delete.
+      responses:
+        '200':
+          description: Confirmation of deletion.
+          content:
+            application/json:
+              schema:
+                type: object # Define actual success response
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+
+  /config/flags:
+    get:
+      summary: Get remote configuration flags
+      operationId: getRemoteConfigFlags
+      tags:
+        - Config
+      responses:
+        '200':
+          description: Remote config flags.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemoteConfigFlagsResponse'
+        '500':
+          description: Internal server error.
+
+  /config/firebase/collections:
+    get:
+      summary: Get Firebase collection names for the current environment
+      operationId: getFirebaseCollectionNames
+      tags:
+        - Config
+      responses:
+        '200':
+          description: Collection names.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionNamesResponse'
+        '500':
+          description: Internal server error.
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        notificationSettings:
+          $ref: '#/components/schemas/UserNotificationSettings'
+        location:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        age:
+          type: number
+          nullable: true
+        gender:
+          type: string
+          enum: [man, woman, other]
+        facePhoto:
+          type: string
+        activeSubscription:
+          $ref: '#/components/schemas/ActiveSubscription'
+        phoneNumber:
+          type: string
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserPhoto'
+        notifications:
+          type: array
+          items: {} # Define notification structure if known
+          description: Structure unknown, defined as array of any.
+        name:
+          type: string
+        showAge:
+          type: boolean
+        lastUpdateSuperInvite:
+          type: number
+          format: timestamp # Assuming epoch time
+        accountReviewed:
+          type: boolean
+        socialNickname:
+          $ref: '#/components/schemas/SocialNickname'
+        weeklySuperInvites:
+          type: integer
+        fcmToken:
+          type: string
+        createdAt:
+          type: string
+          format: date-time # Or just string if not consistently formatted
+        accountType:
+          type: string
+          enum: [guest, user, admin]
+        email:
+          type: string
+          format: email
+        languages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Language'
+        accountPremium:
+          type: boolean
+        chooseGuest:
+          type: string # Clarify purpose/type if possible
+        userBeauty:
+          type: number # Consider integer if always whole number
+        interests:
+          type: array
+          items:
+            $ref: '#/components/schemas/Interest'
+        showLocation:
+          type: boolean
+        online:
+          type: boolean
+        date: # Seems redundant with createdAt/registrationDate? Clarify purpose.
+          type: string
+          format: date-time
+        superInvites:
+          type: integer
+        superInvite:
+          type: boolean # Purpose? Seems related to invites count/settings
+        uid:
+          type: string
+        registrationDate:
+          type: string
+          format: date-time
+        codeForInvitingOtherUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/InviteCode'
+        accountConfirmed:
+          type: boolean
+        homeAddress:
+          type: string
+          nullable: true
+        work:
+          $ref: '#/components/schemas/Work'
+      required: # Add required fields based on actual usage
+        - uid
+        - name
+        - gender
+        # ... other mandatory fields
+
+    UserNotificationSettings:
+      type: object
+      properties:
+        chat:
+          type: boolean
+        match:
+          type: boolean
+        myEvents:
+          type: boolean
+        superInvite:
+          type: boolean
+        superJoin:
+          type: boolean
+        joinedEvent:
+          type: boolean
+        requests:
+          type: boolean
+
+    UserPhoto:
+      type: object
+      properties:
+        id:
+          type: integer
+        image:
+          type: string
+          nullable: true
+
+    # Schemas based on src/model/event.model.ts
+    EventsResponse:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventData'
+        lastDoc:
+          type: string
+          nullable: true
+        endReached:
+          type: boolean
+
+    EventData: # This seems to combine User and Event details, potentially needs refinement
+      type: object
+      properties: # Event specific or overrides
+        uid:
+          type: string
+          nullable: false
+        showModalAccept:
+          type: boolean
+        hostId:
+          type: string
+          nullable: false
+        name:
+          type: string
+          nullable: false
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Photo'
+        meetingSpot:
+          type: string
+        placeName:
+          type: string
+        location:
+          type: string
+        male:
+          type: number
+        female:
+          type: number
+        maleFriend:
+          type: number
+        femaleFriend:
+          type: number
+        hostImage:
+          type: string
+        hostName:
+          type: string
+        date:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        eventReviewed:
+          type: boolean
+        hour:
+          type: string
+        eventsListVisit:
+          type: array
+          items:
+            type: string # Assuming array of event IDs or UIDs
+        requestsList:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserRequest'
+        usersList: # Attendees?
+          type: array
+          items:
+            $ref: '#/components/schemas/EventUser' # Check if same as UserRequest structure
+        rejectsByGuestsList:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventUser' # Define if structure is different
+        isCancelled:
+          type: boolean
+          nullable: true
+        statusEvent:
+          type: boolean
+          nullable: true
+      required:
+        - uid
+
+    InviteCode:
+      type: object
+      properties:
+        inviteCode:
+          type: string
+        isActive:
+          type: boolean
+
+    NotificationSettings: # Shared between User and EventData? Rename if distinct
+      type: object
+      properties:
+        chat:
+          type: boolean
+        joinedEvent:
+          type: boolean
+        match:
+          type: boolean
+        myEvents:
+          type: boolean
+        requests:
+          type: boolean
+        superInvite:
+          type: boolean
+        superJoin:
+          type: boolean
+
+    SocialNickname:
+      type: object
+      properties:
+        instagram:
+          type: string
+        tiktok:
+          type: string
+
+    ActiveSubscription:
+      type: object
+      properties:
+        expirationDate:
+          type: string
+          format: date-time
+        subscriptionId:
+          type: string
+
+    Language:
+      type: object
+      properties:
+        flag:
+          type: string
+        id:
+          type: string
+        title:
+          type: string
+
+    Photo: # Shared between User and EventData? Rename if distinct
+      type: object
+      properties:
+        id:
+          type: integer
+        image:
+          type: string
+    Work:
+      type: object
+      properties:
+        description:
+          type: string
+        title:
+          type: string
+    Interest:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+      required:
+        - id
+
+    UserRequest: # Structure for join requests?
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        gender:
+          type: string
+        name:
+          type: string
+        status:
+          type: string # Define possible statuses (e.g., pending, accepted, rejected)
+        superInvite:
+          type: boolean
+        uid:
+          type: string
+        userPhoto:
+          type: string
+
+    EventUser: # Structure for attendees? Very similar to UserRequest
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        gender:
+          type: string
+        name:
+          type: string
+        status:
+          type: string # Define possible statuses
+        superInvite:
+          type: boolean
+        uid:
+          type: string
+        userPhoto:
+          type: string
+
+    EventConfirmation: # Structure for attendance records
+      type: object
+      properties:
+        event_id:
+          type: string
+          nullable: true
+        user_id:
+          type: string
+          nullable: true
+        host_id:
+          type: string
+        guest_swipe:
+          type: string
+          enum: [left, right, none]
+          nullable: true
+          default: none
+        guest_swipe_at:
+          type: string
+          format: date-time
+          nullable: true
+        guest_confirm:
+          nullable: true
+          type: boolean
+        guest_confirm_at:
+          type: string
+          format: date-time
+          nullable: true
+        guest_reject:
+          type: boolean
+          nullable: true
+        guest_reject_at:
+          type: string
+          format: date-time
+          nullable: true
+        host_swipe:
+          type: string
+          enum: [left, right, none]
+          nullable: true
+          default: none
+        host_swipe_at:
+          type: string
+          format: date-time
+          nullable: true
+        host_confirm:
+          type: boolean
+          nullable: true
+        host_confirm_at:
+          type: string
+          format: date-time
+          nullable: true
+        host_reject:
+          type: boolean
+          nullable: true
+        host_reject_at:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          enum: [pending-host, pending-guest, host-reject, guest-reject, invitation-complete]
+          nullable: true
+
+    RemoteConfigFlagsResponse:
+      type: object
+      description: >-
+        Represents the Firebase Remote Config template structure, including ETag,
+        parameters, and potentially conditions and parameter groups.
+      properties:
+        etag:
+          type: string
+          description: ETag of the template.
+        parameters:
+          type: object
+          description: Dictionary of parameter keys to their values/definitions.
+          additionalProperties:
+            $ref: '#/components/schemas/FirebaseRemoteConfigParameterValue'
+        conditions:
+          type: array
+          description: Optional list of conditions defined in the template.
+          items:
+            type: object # Define condition structure if needed
+        parameterGroups:
+          type: object
+          description: Optional dictionary of parameter groups.
+          additionalProperties:
+            type: object # Define group structure if needed
+        version:
+          type: object
+          description: Optional version information.
+      required:
+        - etag
+        - parameters
+      # Example removed as the full structure is complex
+
+    CollectionNamesResponse:
+      type: object
+      description: Mapping of logical collection types to their actual Firestore collection names based on the environment.
+      properties:
+        adminChats:
+          type: string
+        admins:
+          type: string
+        appSettings:
+          type: string
+        messages:
+          type: string
+        report:
+          type: string
+        unfinishedRegistrationUsers:
+          type: string
+        userInfo: # Renamed from users
+          type: string
+        events:
+          type: string
+        attendees: # Renamed from eventAttendees
+          type: string
+        # Removed notifications
+      required:
+        - adminChats
+        - admins
+        - appSettings
+        - messages
+        - report
+        - unfinishedRegistrationUsers
+        - userInfo
+        - events
+        - attendees
+      example:
+        adminChats: devAdminChats
+        admins: admins
+        appSettings: devAppSettings
+        messages: devMessages
+        report: report
+        unfinishedRegistrationUsers: unfinishedRegistrationUsers
+        userInfo: devUserInfo
+        events: devEvents
+        attendees: devEventAttendees
+
+    FirebaseRemoteConfigParameterValue: # New schema definition
+      type: object
+      description: Represents the value of a Firebase Remote Config parameter.
+      properties:
+        defaultValue:
+          type: object
+          properties:
+            value:
+              type: string
+            useInAppDefault:
+              type: boolean
+          description: Either an explicit value or instruction to use the app's default.
+        conditionalValues:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: string
+          description: Values assigned based on conditions.
+        description:
+          type: string
+        valueType:
+          type: string
+          enum: [BOOLEAN, NUMBER, STRING, JSON]
+
+  # Add security schemes definitions
+  securitySchemes:
+    ApiTokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Static API Key for service access. Use format "Bearer YOUR_API_TOKEN".
+    FirebaseTokenAuth:
+      type: apiKey
+      in: header
+      name: token # Custom header name used in middleware
+      description: Firebase ID token for user authentication (required when Firebase validation is enabled server-side).

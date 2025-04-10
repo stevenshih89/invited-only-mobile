@@ -17,9 +17,8 @@ import Config from 'react-native-config';
 import Bugsnag from '@bugsnag/react-native';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {showToast} from 'helpers/showToast';
-import {getActiveSubscription} from './api/purchase';
+import {getActiveSubscription} from './api.deprecated/purchase';
 import {AppSettingsQueries} from './apiv2/queries/appSettingsQueries';
-import FirestoreTestScreen from 'screens/App/FirestoreTestScreen/FirestoreTestScreen';
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {

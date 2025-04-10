@@ -1,5 +1,5 @@
 import Card from 'screens/App/Components/Card/Card';
-import {User} from 'src/types/userInfo';
+import {components} from 'src/api/v1';
 import * as S from './GuestCard.style';
 import {useCardGesture} from '../../hooks/useCardGesture';
 
@@ -8,7 +8,7 @@ interface Props {
   onReject: () => void;
   onSuperInvite: () => void;
   onInvite: () => void;
-  guest: User.Info;
+  guest: components['schemas']['User'];
   index: number;
   topIndex: number;
 }
@@ -16,8 +16,14 @@ interface Props {
 export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex}: Props) => {
   const {gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite} =
     useCardGesture({
-      onSwipeLeft: onReject,
-      onSwipeRight: onInvite,
+      onSwipeLeft: () => {
+        console.log('swipe left');
+        onReject();
+      },
+      onSwipeRight: () => {
+        console.log('swipe right');
+        onInvite();
+      },
       enabled: isTopCard,
       index: index,
       isTopCard: isTopCard,
@@ -48,7 +54,7 @@ export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, 
     <Card
       distanceFromTop={topIndex - index}
       uid={guest.uid}
-      backgroundUrls={guest.photos}
+      backgroundUrls={guest.photos || []}
       index={index}
       isTopCard={isTopCard}
       onInvite={onInvite}

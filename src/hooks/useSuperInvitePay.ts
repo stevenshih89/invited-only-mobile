@@ -5,7 +5,7 @@ import {useEffect, useState} from 'react';
 import {IOPath} from 'constants/pathLocations.ts';
 import Purchases, {PurchasesPackage} from 'react-native-purchases';
 import {showToast} from 'helpers/showToast';
-import {getSuperInvites} from 'src/api/purchase';
+import {getSuperInvites} from 'src/api.deprecated/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {useUser} from 'src/store/userStore';
 import {getUserData} from 'helpers/getUserData';

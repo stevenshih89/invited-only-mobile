@@ -38,15 +38,12 @@ const Navigator = () => {
       await AsyncStorage.setItem('uid', `${uid}`);
       await getOnbordingState();
       const userDataInfo = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-      console.log(userDataInfo);
 
       if (userDataInfo.exists) {
         setAuthState(!!userState);
         setUserData(userDataInfo.data());
       }
       if (initializing) {
-        console.log(initializing);
-
         setUser([`${uid}`]);
         setInitializing(false);
       }
@@ -118,7 +115,7 @@ const Navigator = () => {
     return () => {
       subcriber();
     };
-  }, [onBoarding, user]);
+  }, []);
 
   if (initializing) {
     return null;

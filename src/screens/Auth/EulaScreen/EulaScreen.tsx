@@ -7,7 +7,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {enterTypePath} from 'constants/pathLocations';
 import LinearGradient from 'react-native-linear-gradient';
-import {getSubscriptions} from 'src/api/purchase';
+import {getSubscriptions} from 'src/api.deprecated/purchase';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {screenHeight} from 'constants/common';
 import * as S from './EulaScreen.style';

@@ -12,6 +12,7 @@ interface Props {
 
 const CardImage = ({imageSource, isTopCard, imageIndex}: Props) => {
   const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
+
   const handleLoad = () => {
     setLoadedImages(prev => ({
       ...prev,

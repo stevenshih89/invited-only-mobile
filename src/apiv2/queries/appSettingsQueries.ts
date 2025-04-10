@@ -110,6 +110,7 @@ const useMaintenanceQuery = () => {
         },
         error => {
           if (isMounted) {
+            console.error('Error fetching maintenance:', error);
             logErrorToSentry(error);
           }
         },

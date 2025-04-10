@@ -18,7 +18,6 @@ const Events = () => {
           <S.TabButton isActive={activeTab === 'MyEvents'} onPress={() => setActiveTab('MyEvents')}>
             <S.TabButtonText isActive={activeTab === 'MyEvents'}>My Events</S.TabButtonText>
           </S.TabButton>
-
           <S.TabButton isActive={activeTab === 'JoinedEvents'} onPress={() => setActiveTab('JoinedEvents')}>
             <S.TabButtonText isActive={activeTab === 'JoinedEvents'}>Joined Events</S.TabButtonText>
           </S.TabButton>

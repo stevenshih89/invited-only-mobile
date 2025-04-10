@@ -29,6 +29,7 @@ const useUserInfo = () => {
           setUser(updatedUserInfo);
         });
     } catch (error) {
+      console.error('Error fetching user info:', error);
       logErrorToSentry(error);
       // Return a no-op function in case of error to prevent undefined returns
       return () => {};

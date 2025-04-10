@@ -1,18 +1,33 @@
 import {EventQueries} from 'src/apiv2/queries/eventQueries';
 import IO from './IO';
-
+import auth from '@react-native-firebase/auth';
 import AppLoader from '../AppLoader/AppLoader';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
+import invitedOnlyBackendApi from 'src/api/backend-api';
+import {ApiPaths} from 'src/api/v1';
+import {Text} from 'react-native';
 
 const IOWrapper = () => {
-  const {data: events, isLoading, error} = EventQueries.useGetMyEvents();
-  console.log('events', events, 'error?', error, 'is loading?', isLoading);
-  console.log('on IO wrapper');
+  const user = auth().currentUser;
+  const {data: events, isLoading} = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
+    params: {
+      path: {
+        hostId: user?.uid || '',
+      },
+    },
+  });
 
   if (isLoading || !events) {
     return (
       <DefaultBackground>
         <AppLoader />
+      </DefaultBackground>
+    );
+  }
+  if (events.length === 0) {
+    return (
+      <DefaultBackground>
+        <Text style={{color: 'white'}}>No events found</Text>
       </DefaultBackground>
     );
   }

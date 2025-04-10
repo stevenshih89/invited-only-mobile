@@ -31,28 +31,32 @@ export const onUserProfileChangeSubscription = (callback: (info: AccountInfoFlyW
 
     // Create a variable to track if the subscription is still active
     let isActive = true;
+    try {
+      const unsubscribe = firestore()
+        .collection(apiUserInfoCollection)
+        .doc(user.uid)
+        .onSnapshot(snap => {
+          // Only process updates if the subscription is still active
+          if (!isActive) return;
 
-    const unsubscribe = firestore()
-      .collection(apiUserInfoCollection)
-      .doc(user.uid)
-      .onSnapshot(snap => {
-        // Only process updates if the subscription is still active
-        if (!isActive) return;
+          if (!snap.exists) {
+            return;
+          }
 
-        if (!snap.exists) {
-          return;
-        }
+          const userInfo = snap.data();
 
-        const userInfo = snap.data();
-
-        // Only call the callback if the subscription is still active
-        if (isActive) {
-          callback({
-            ...userInfo,
-            isHost: userInfo?.accountType === 'host' ?? false,
-          });
-        }
-      });
+          // Only call the callback if the subscription is still active
+          if (isActive) {
+            callback({
+              ...userInfo,
+              isHost: userInfo?.accountType === 'host' ?? false,
+            });
+          }
+        });
+    } catch (error) {
+      logErrorToSentry(error);
+      return () => {}; // Return a no-op function in case of error
+    }
 
     // Return a function that both sets the flag and unsubscribes
     return () => {
