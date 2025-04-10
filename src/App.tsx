@@ -19,7 +19,7 @@ import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {showToast} from 'helpers/showToast';
 import {getActiveSubscription} from './api.deprecated/purchase';
 import {AppSettingsQueries} from './apiv2/queries/appSettingsQueries';
-
+import invitedOnlyBackendApi from 'src/api/backend-api';
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
   userAppKey: Config.RN_UXCAM_API_KEY || '',
@@ -34,7 +34,7 @@ Bugsnag.start();
 
 const App: FC = (): JSX.Element => {
   const IO_PUBLICK_RC_IOS = Config.IO_PUBLICK_RC_IOS || '';
-  const {data: collectionNames} = AppSettingsQueries.useFirebaseCollectionNameQuery();
+  const {data: collectionNames} = invitedOnlyBackendApi.useQuery('get', '/config/firebase/collections');
 
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
 

@@ -15,6 +15,7 @@ import invitedOnlyBackendApi from './api/backend-api';
 
 const Main = () => {
   const {data: firebaseCollectionNames, isLoading} = invitedOnlyBackendApi.useQuery('get', '/config/firebase/collections');
+  console.log('firebaseCollectionNames', firebaseCollectionNames);
 
   if (isLoading) {
     return <AppLoader />;

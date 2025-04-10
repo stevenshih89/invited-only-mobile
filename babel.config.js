@@ -33,7 +33,6 @@ module.exports = {
         whitelist: null, // DEPRECATED
         safe: false,
         allowUndefined: false,
-        verbose: true,
       },
     ],
     'react-native-reanimated/plugin',
