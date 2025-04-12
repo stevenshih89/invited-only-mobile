@@ -484,35 +484,6 @@ const ManageSubscriptionScreen = () => {
 
 const AppStackScreen = () => {
   const {setNotificationsCount} = useNotifications();
-  const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  useEffect(() => {
-    try {
-      const currentUser = auth().currentUser;
-      let notificationsCountSubscriber: any;
-      if (currentUser) {
-        try {
-          notificationsCountSubscriber = firestore()
-            .collection(apiUserInfoCollection)
-            .doc(currentUser?.uid)
-            .collection('notifications')
-            .onSnapshot(doc => {
-              setNotificationsCount(doc.size);
-            });
-        } catch (err) {
-          console.error('Error fetching notifications:', err);
-          console.error(err);
-        }
-      }
-      return () => {
-        console.warn('unmount');
-        if (notificationsCountSubscriber) {
-          notificationsCountSubscriber();
-        }
-      };
-    } catch (error) {
-      logErrorToSentry(error);
-    }
-  }, []);
 
   return (
     <AppStack.Navigator

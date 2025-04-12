@@ -33,9 +33,9 @@ import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
 import analytics from '@react-native-firebase/analytics';
 import {chatCorrespondenceScreen} from 'constants/analitycs';
 import Config from 'react-native-config';
-import { showToast } from 'helpers/showToast';
-import { cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {showToast} from 'helpers/showToast';
+import {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 interface MessageProps {
   message: {
@@ -135,7 +135,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
         });
       } catch (e) {
         showToast('inviteMatch', 'Failed to load user information. Please try again.', 'Error');
-        logErrorToSentry(e)
+        logErrorToSentry(e);
         console.error(e);
       }
     }
@@ -166,23 +166,23 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     try {
       const doc = firestore().collection(apiMessagesCollection).doc(`${activeEvent}`);
 
-    const findChat = allChats?.filter(i => i?.id === id);
+      const findChat = allChats?.filter(i => i?.id === id);
 
-    if (findChat && findChat.length > 0) {
-      if (user?.accountType === 'host') {
-        if (typeof findChat[0].newMessagesGuest === 'number') {
-          findChat[0].newMessagesGuest = 0;
+      if (findChat && findChat.length > 0) {
+        if (user?.accountType === 'host') {
+          if (typeof findChat[0].newMessagesGuest === 'number') {
+            findChat[0].newMessagesGuest = 0;
+          }
+        } else {
+          if (typeof findChat[0].newMessagesHost === 'number') {
+            findChat[0].newMessagesHost = 0;
+          }
         }
-      } else {
-        if (typeof findChat[0].newMessagesHost === 'number') {
-          findChat[0].newMessagesHost = 0;
-        }
+        await doc.update({
+          chats: [...allChats],
+        });
+        // await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
       }
-      await doc.update({
-        chats: [...allChats],
-      });
-      // await sendNotification(uid, `${currentUserName} sent you a new message`, 'Invited Only', 'message', 'Message'.toUpperCase(), user);
-    }
     } catch (error) {
       showToast('inviteMatch', 'Something went wrong while updating chat data.', 'Error');
       logErrorToSentry(error);
@@ -281,7 +281,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     } catch (e) {
       setIsSending(false);
       logErrorToSentry(e);
-//       console.log(e);
+      //       console.log(e);
     }
   };
 
@@ -306,7 +306,7 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     ({
       host: 'Host',
       guest: 'Guest',
-    }[userAccountType]);
+    })[userAccountType];
 
   const goToProfileView = (currentUid: string) => {
     setModalVisible(false);
@@ -356,27 +356,6 @@ const ChatCorrespondence: FC<NavigationParams> = ({navigation, route}) => {
     },
     [anotherUserData?.uid],
   );
-
-  useEffect(() => {
-    try {
-      const subscriber = firestore()
-      .collection(apiMessagesCollection)
-      .doc(activeEvent)
-      .onSnapshot(documentSnapshot => {
-        const data = documentSnapshot.data()?.chats;
-        const findChat = data?.find(j => j?.id === id);
-        if (!findChat) {
-          navigation.goBack();
-        }
-        setAllChats(data);
-        setMessages(findChat ? findChat?.messages : null);
-      });
-
-    return () => subscriber();
-    } catch (error) {
-      logErrorToSentry(error);
-    }
-  }, [activeEvent]);
 
   const rotationLoader = useSharedValue(0);
 

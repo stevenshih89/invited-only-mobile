@@ -2,7 +2,6 @@ import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import FindConnections from './Components/FindConnections/FindConnections';
 import MyConnections from './Components/MyConnections/MyConnections';
-import Requests from 'screens/App/Requests/Requests'; // Path as per user's last edit
 import {whiteColor, white40Color} from 'constants/colors'; // Using white for indicator
 import {ParamListBase, RouteProp} from '@react-navigation/native';
 import {tabBarStyle, tabBarLabelStyle, tabBarIndicatorStyle, tabBarItemStyle} from './ConnectTabs.style';
@@ -38,7 +37,6 @@ const ConnectTabs = () => {
           },
         }}
       />
-      <Tab.Screen name="/requests" component={Requests} options={{title: 'Requests'}} />
     </Tab.Navigator>
   );
 };

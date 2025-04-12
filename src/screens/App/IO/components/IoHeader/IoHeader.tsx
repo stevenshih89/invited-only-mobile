@@ -4,13 +4,7 @@ import {EventsDropdown} from './Components/EventsDropdown';
 import CreateEventButton from './Components/CreateEventButton/CreateEventButton';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import auth from '@react-native-firebase/auth';
-import {EventApiResponse} from 'src/apiv2/queries/eventQueries';
 import {components} from 'src/api/v1';
-
-interface Event {
-  id: string;
-  title: string;
-}
 
 interface IoHeaderProps {
   requestsCount: number;
@@ -35,7 +29,6 @@ const IoHeader: React.FC<IoHeaderProps> = ({events, selectedEvent, requestsCount
           {requestsCount > 0 && (
             <S.RequestButton onPress={onRequestPress}>
               <S.RequestButtonText>Requests</S.RequestButtonText>
-
               <S.RequestBadge>
                 <S.RequestBadgeText>{requestsCount}</S.RequestBadgeText>
               </S.RequestBadge>

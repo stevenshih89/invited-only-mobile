@@ -17,9 +17,7 @@ import {useRoute} from '@react-navigation/native';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 
 import {eventTypes} from 'src/mocks/eventTypes';
-import {EventMutations} from '../apiv2/mutations/eventMutations.ts';
-import {UserMutations} from '../apiv2/mutations/userMutations.ts';
-import {UserQueries} from '../apiv2/queries/userQueries.ts';
+
 import {useEffect, useState} from 'react';
 
 const INVITED_ONLY = 'invitedOnly';
@@ -80,10 +78,6 @@ export const useEventCreating = () => {
   const isDemo = (route?.params as {isDemo?: boolean})?.isDemo;
   const isEditing = (route?.params as {isEditing?: boolean})?.isEditing;
   const isEditingItem = (route?.params as {isEditingItems?: any})?.isEditingItems;
-  const {mutate: updateEventMutation} = EventMutations.useUpdateEvent(isEditingItem?.id);
-  const {mutate: createEventMutation} = EventMutations.useCreateEvent();
-  const {mutate: updateUserEventListMutation} = UserMutations.useUpdateUserEventList();
-  const {refetch: fcmTokensFromUsersRefetch} = UserQueries.useFcmTokensFromUsers(false);
 
   useEffect(() => {
     if (hintStep === 3) {
@@ -148,33 +142,7 @@ export const useEventCreating = () => {
     }
   };
 
-  const handleSaveChanges = async () => {
-    updateEventMutation({
-      eventData: {
-        female,
-        male,
-        femaleFriend,
-        maleFriend,
-        eventTypes,
-        placeName,
-        name,
-        description,
-        date,
-        hour,
-        address,
-        meetingSpot,
-        photos,
-      },
-      onSuccess: async (data: any) => {
-        navigation.navigate(commonStackPath, {
-          screen: eventActiveInfoPath,
-          params: {list: data},
-        } as never);
-
-        await sendNotificationAcceptedUser();
-      },
-    });
-  };
+  const handleSaveChanges = async () => {};
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
     if (imagePath) {
@@ -249,39 +217,6 @@ export const useEventCreating = () => {
         const img = await uploadImage(i?.image, userHost.uid);
         imagesUri.push({id: i?.id, image: img});
       }
-
-      createEventMutation(
-        {
-          uid,
-          event,
-        },
-        {
-          onSuccess: async () => {
-            updateUserEventListMutation(uid, {
-              onSuccess: async () => {
-                const tokensData = await fcmTokensFromUsersRefetch();
-                const tokens = tokensData.data ?? [];
-
-                for (const token of tokens) {
-                  await functions().httpsCallable('sendNotification')({
-                    token: token,
-                    priority: 'high',
-                    notification: {
-                      title: 'Invited Only',
-                      body: 'A new event was created!',
-                    },
-                  });
-                }
-
-                setLoading(false);
-                setLoaderVisible(false);
-
-                navigation.navigate(IOPath as never);
-              },
-            });
-          },
-        },
-      );
     } catch (e) {
       setLoading(false);
       setLoaderVisible(false);

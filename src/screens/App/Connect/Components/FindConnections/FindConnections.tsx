@@ -16,7 +16,11 @@ const FindConnections = () => {
     },
   });
   if (isLoading) {
-    return <AppLoader />;
+    return (
+      <DefaultBackground>
+        <AppLoader />
+      </DefaultBackground>
+    );
   }
   return (
     <DefaultBackground>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useMemo, useCallback} from 'react';
 
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
@@ -8,10 +8,13 @@ import * as S from './IO.style';
 
 import InviteGuestsEvent from './Components/InviteGuestsEvent/InviteGuestsEvent';
 import IoHeader from './Components/IoHeader/IoHeader';
-import {EventApiResponse, EventQueries} from 'src/apiv2/queries/eventQueries';
 import AppLoader from '../AppLoader/AppLoader';
-import {components, paths} from 'src/api/v1';
+import {components} from 'src/api/v1';
 import invitedOnlyBackendApi from 'src/api/backend-api';
+import usePersistentCardSwipe from './hooks/usePersistentCardSwipe';
+import {Text} from 'react-native';
+
+type GuestUser = components['schemas']['User'];
 
 interface Props {
   events: components['schemas']['EventData'][];
@@ -20,26 +23,41 @@ interface Props {
 const IO = ({events}: Props) => {
   const {user: userInfo} = useUser();
   const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
-  const {data: guests, isLoading} = invitedOnlyBackendApi.useQuery('get', '/users/event/{eventId}', {
+
+  const {data: guestsData, isLoading: isGuestsLoading} = invitedOnlyBackendApi.useQuery('get', '/users/event/{eventId}', {
     params: {
       path: {
         eventId: selectedEvent?.uid || 'no-event',
       },
     },
+    enabled: !!selectedEvent?.uid, // Only fetch if an event is selected
   });
 
-  console.log('guests for event', selectedEvent?.uid, selectedEvent.name, guests);
+  const guests = useMemo(() => guestsData || [], [guestsData]);
+
+  const {
+    cards: currentEventCards,
+    hasCards,
+    handleSwipeLeft,
+    handleSwipeRight,
+    handleSuperInvite,
+  } = usePersistentCardSwipe<GuestUser>({
+    cardsData: guests,
+    eventId: selectedEvent?.uid,
+  });
 
   const handleEventSelect = (event: components['schemas']['EventData']) => {
     setSelectedEvent(event);
   };
-  if (isLoading) {
+
+  if (isGuestsLoading) {
     return (
       <DefaultBackground>
         <AppLoader />
       </DefaultBackground>
     );
   }
+
   return (
     <DefaultBackground>
       <S.IoContainer>
@@ -50,11 +68,26 @@ const IO = ({events}: Props) => {
             <IoHeader
               events={events}
               selectedEvent={selectedEvent}
-              requestsCount={0}
+              requestsCount={0} // Placeholder
               onEventSelect={handleEventSelect}
-              onRequestPress={() => {}}
+              onRequestPress={() => {}} // Placeholder
             />
-            <InviteGuestsEvent selectedEvent={selectedEvent} guests={guests || []} />
+            {!hasCards && guests.length > 0 ? (
+              <DefaultBackground>
+                <S.IoContainer style={{justifyContent: 'center', alignItems: 'center'}}>
+                  <Text style={{color: 'white'}}>No cards to show</Text>
+                </S.IoContainer>
+              </DefaultBackground>
+            ) : (
+              <InviteGuestsEvent
+                selectedEvent={selectedEvent}
+                cardsToShow={currentEventCards}
+                isLoading={!hasCards && guests.length > 0}
+                onSwipeLeft={handleSwipeLeft}
+                onSwipeRight={handleSwipeRight}
+                onSuperInvite={handleSuperInvite}
+              />
+            )}
           </>
         )}
       </S.IoContainer>

@@ -5,10 +5,6 @@ export const HeaderContainer = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 12px;
-  padding-bottom: 12px;
   background-color: ${blackColor};
   border-bottom-width: 1px;
   border-bottom-color: ${grayColor}20;
@@ -16,7 +12,6 @@ export const HeaderContainer = styled.View`
 
 export const DropdownContainer = styled.View`
   align-items: center;
-  margin-right: 8px;
 `;
 
 export const RequestAndEventsContainer = styled.View`
@@ -29,7 +24,6 @@ export const RequestAndEventsContainer = styled.View`
 export const DropdownButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  height: 40px;
   border-radius: 100px;
   background-color: rgba(255, 255, 255, 0.16);
 `;

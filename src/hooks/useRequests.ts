@@ -14,9 +14,9 @@ import analytics from '@react-native-firebase/analytics';
 import {requestsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
 import Config from 'react-native-config';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { MatchData } from 'screens/App/IO/screens/Match/Match';
-import { useUser } from 'src/store/userStore';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {MatchData} from 'screens/App/IO/screens/Match/Match';
+import {useUser} from 'src/store/userStore';
 
 const COUNT_TO_ADD_REQUEST_ITEMS = 2;
 const DEFAULT_LIMIT_REQUEST_ITEMS = 6;
@@ -24,12 +24,11 @@ const MAX_LIMIT_REQUEST_ITEMS = 40;
 const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
 
 export const useRequests = () => {
-
   const {activeEventDate} = useContext(EventsDate);
   const [requestsForHost, setRequestsForHost] = useState<any>([]);
   const userInfo = useUser((i: any) => i?.user);
   const {activeEvent} = useMyEvents(state => state);
-  
+
   // const [userInfo, setUserInfoData] = useState<UserInfo>({});
   const [dataForGuest, setDataForGuest] = useState<EventData[]>([]);
 
@@ -153,51 +152,6 @@ export const useRequests = () => {
     }, []),
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      let subcribeHostRequests: any;
-      let subcribeGuestRequests: any;
-      if (!currentUser) {
-        return;
-      }
-      if (isHost) {
-        if (!activeEvent?.id) {
-          setRequestsForHost([]);
-          setLoadingRequestItems(false);
-          return;
-        }
-        try {
-          subcribeHostRequests = firestore()
-          .collection(apiEventsCollection)
-          .doc(activeEvent?.id)
-          .onSnapshot(querySnapshot => {
-            fetchHostRequests(querySnapshot);
-          });
-        } catch (error) {
-          logErrorToSentry(error)
-        }
-      }
-      if (!isHost) {
-        try {
-          subcribeGuestRequests = firestore()
-          .collection(apiEventsCollection)
-          .where('statusEvent', '==', true)
-          .where('isCancelled', '==', false)
-          .onSnapshot(querySnapshot => {
-            fetchGuestRequests(querySnapshot);
-          });
-        } catch (error) {
-          logErrorToSentry(error)
-        }
-      }
-
-      return () => {
-        subcribeHostRequests && subcribeHostRequests();
-        subcribeGuestRequests && subcribeGuestRequests();
-      };
-    }, [activeEvent?.id, isHost, activeEventDate, limitRequestItems]),
-  );
-
   return {
     isHost,
     handleAddCountRequestItems,
@@ -219,6 +173,6 @@ export const useRequests = () => {
     setChangeAccountModalVisible,
     isVisibleModalFullEvent,
     matchData,
-    handleCloseMatch
-  }
-}
+    handleCloseMatch,
+  };
+};

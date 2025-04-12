@@ -5,8 +5,8 @@ import {useEffect, useState} from 'react';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
-const VERTICAL_THRESHOLD = 5; // Max vertical distance before swipe fails
-const HORIZONTAL_THRESHOLD = 10; // Min horizontal distance to activate swipe
+const VERTICAL_THRESHOLD = 2;
+const HORIZONTAL_THRESHOLD = 5;
 
 interface UseCardGestureProps {
   onSwipeLeft: () => void;

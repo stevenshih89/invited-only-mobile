@@ -70,37 +70,6 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
 
   const [isVisibleCancelModal, setIsVisibleCancelModal] = useState(false);
 
-  useFocusEffect(
-    useCallback(() => {
-      try {
-        const unsubscribe = firestore()
-          .collection(apiEventsCollection)
-          .doc(id)
-          .onSnapshot(async querySnapshot => {
-            if (querySnapshot.exists) {
-              const data = querySnapshot.data();
-              const mappedUsersList: Event.User[] = [];
-              for (const user of data?.usersList) {
-                if (user?.uid) {
-                  const {photos} = await getUserData(user.uid);
-                  mappedUsersList.push({
-                    ...user,
-                    userPhoto: photos?.[0]?.image || user?.userPhoto,
-                  });
-                }
-              }
-              setUsersListsData(mappedUsersList);
-            }
-          });
-
-        return () => unsubscribe();
-      } catch (error) {
-        console.error('Error fetching event info:', error);
-        logErrorToSentry(error);
-      }
-    }, [list]),
-  );
-
   useEffect(() => {
     if (!isCancelled && !isGuest) {
       navigation.setOptions({

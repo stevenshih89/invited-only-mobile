@@ -36,84 +36,10 @@ export const TabBarName = (focused: boolean, route: string) => {
 };
 
 export const TabIcon = (focused: boolean, route: string): ReactElement => {
-  const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const apiMessagesCollection = Config.API_MESSAGES_COLLECTION || 'messages';
   const userHost = useUser((i: any) => i?.user);
   const [eventsCount, setEventsCount] = useState(0);
   const [eventsCountHost, setEventsCountHost] = useState(0);
   const [newMessage, setNewMessages] = useState(0);
-
-  useEffect(() => {
-    try {
-      const unsubscribe = firestore()
-        .collection(apiEventsCollection)
-        .onSnapshot(async querySnapshot => {
-          const count = await getEventsIJoining(querySnapshot, userHost?.uid);
-          setEventsCount(count);
-        });
-
-      return () => unsubscribe();
-    } catch (error) {
-      console.error('Error fetching events:', error);
-      logErrorToSentry(error);
-    }
-  }, [userHost]);
-
-  useEffect(() => {
-    try {
-      const unsubscribe = firestore()
-        .collection(apiMessagesCollection)
-        .onSnapshot(async documentSnapshot => {
-          if (documentSnapshot.empty) {
-            setNewMessages(0);
-            return;
-          }
-
-          let newMessages = 0;
-
-          const chatData = documentSnapshot.docs.map(i => i.data());
-          const filteredChats = chatData.filter(chatDataItem => {
-            return userHost?.accountType === 'host' ? chatDataItem?.uidHost === userHost?.uid : chatDataItem?.uidGuest === userHost?.uid;
-          });
-          for (const item of filteredChats) {
-            for (const messages of item.chats) {
-              if (userHost?.accountType === 'host') {
-                newMessages += messages.newMessagesGuest ? messages.newMessagesGuest : 0;
-              } else {
-                newMessages += messages.newMessagesHost ? messages.newMessagesHost : 0;
-              }
-            }
-          }
-          setNewMessages(newMessages);
-        });
-
-      return () => unsubscribe();
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-      logErrorToSentry(error);
-    }
-  }, [userHost]);
-
-  useEffect(() => {
-    if (userHost?.uid) {
-      try {
-        firestore()
-          .collection(apiEventsCollection)
-          .where('uid', '==', `${userHost?.uid}`)
-          .onSnapshot(querySnapshot => {
-            if (querySnapshot.empty) {
-              return;
-            }
-            const data = querySnapshot?.docs?.map(i => i?.data());
-            const filterEvents = data.filter(item => !item.isCancelled);
-            setEventsCountHost(filterEvents.length);
-          });
-      } catch (error) {
-        console.error('Error fetching events:', error);
-        logErrorToSentry(error);
-      }
-    }
-  }, []);
 
   const getIcon = (): ReactElement =>
     ({

@@ -12,7 +12,6 @@ import './mocks/permissions.mock';
 import './mocks/firebase.functions.mock';
 import './mocks/firebase.app.mock';
 import './mocks/deviceInfo.mock';
-import './mocks/appSettingsQueries.mock';
 import './mocks/useModalDeleteMyAccount.mock';
 import './mocks/useNotificationSetting.mock';
 import './mocks/purchases.mock';

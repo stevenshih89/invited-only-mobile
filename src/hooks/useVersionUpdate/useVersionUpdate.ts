@@ -1,9 +1,10 @@
 import auth from '@react-native-firebase/auth';
 import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
-import {AppSettingsQueries} from 'src/apiv2/queries/appSettingsQueries';
+
 import semver from 'semver';
 import {Platform} from 'react-native';
+import {AppSettingsQueries} from 'src/apiv2/queries/appSettingsQueries';
 
 const appStoreAppId = Config.APP_STORE_APP_ID || '';
 

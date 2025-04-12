@@ -1,8 +1,8 @@
-import {useEffect, useState} from "react";
-import {useUser} from "src/store/userStore";
+import {useEffect, useState} from 'react';
+import {useUser} from 'src/store/userStore';
 import auth from '@react-native-firebase/auth';
 import Geolocation from '@react-native-community/geolocation';
-import {UserMutations} from "../apiv2/mutations/userMutations.ts";
+import invitedOnlyBackendApi from 'src/api/backend-api';
 
 export const useAccountSetting = (route: any) => {
   const locationState = route?.params?.params?.locationState;
@@ -12,13 +12,9 @@ export const useAccountSetting = (route: any) => {
   const [location, setLocation] = useState<boolean>(locationState);
   const [loading, setLoading] = useState<boolean>(true);
   const [verificationId, setVerificationId] = useState('');
-  const {
-    mutate: sendVerificationCodeMutation
-  } = UserMutations.useSendVerificationCode();
+  const {mutate: sendVerificationCodeMutation} = UserMutations.useSendVerificationCode();
 
-  const {
-    mutate: userChangeLocationMutation
-  } = UserMutations.useUserChangeLocation();
+  const {mutate: userChangeLocationMutation} = invitedOnlyBackendApi.useMutation('patch', '/users/{id}');
 
   const user = useUser((i: any) => i?.user);
   const userPhone = auth()?.currentUser?.phoneNumber;
@@ -33,7 +29,19 @@ export const useAccountSetting = (route: any) => {
       position => {
         // console.log('Granted', position);
         setLocation(true);
-        userChangeLocationMutation(true);
+        userChangeLocationMutation({
+          body: {
+            location: position.coords.latitude.toString() + ',' + position.coords.longitude.toString(),
+            gender: 'man',
+            name: '',
+            uid: '',
+          },
+          params: {
+            path: {
+              id: user?.uid,
+            },
+          },
+        });
         setIsChechked(true);
         setLoading(false);
       },
@@ -62,8 +70,8 @@ export const useAccountSetting = (route: any) => {
       },
       hideConfirmPhoneModal: () => {
         setIsVisibleConfirmPhoneModal(false);
-      }
-    })
+      },
+    });
   };
 
   return {
@@ -75,6 +83,6 @@ export const useAccountSetting = (route: any) => {
     setIsVisibleConfirmPhoneModal,
     sendVerificationCode,
     isVisibleConfirmPhoneModal,
-    verificationId
-  }
-}
+    verificationId,
+  };
+};
