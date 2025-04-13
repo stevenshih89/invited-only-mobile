@@ -3,8 +3,6 @@ info:
   title: Invited Only Server API
   version: 1.0.0
   description: API for managing events, users, and configurations
-
-# Add servers definition for different environments
 servers:
   - url: http://localhost:8082/
     description: Local development server
@@ -12,11 +10,9 @@ servers:
     description: Remote development server
   - url: https://api.invitedonly.app/prod/
     description: Production server
-
 security:
   - ApiTokenAuth: []
     FirebaseTokenAuth: []
-
 paths:
   /events/user/{userId}:
     get:
@@ -42,7 +38,9 @@ paths:
           required: false
           schema:
             type: string
-            enum: [male, female]
+            enum:
+              - male
+              - female
           description: Filter events based on the host's gender.
         - name: limit
           in: header
@@ -62,7 +60,6 @@ paths:
           description: Bad request (e.g., invalid parameters).
         '500':
           description: Internal server error.
-
   /events/host/{hostId}:
     get:
       summary: Get events hosted by a specific user
@@ -82,7 +79,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array # Assuming response is array of EventData, adjust if needed
+                type: array
                 items:
                   $ref: '#/components/schemas/EventData'
         '400':
@@ -112,7 +109,6 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
-
   /events/{eventId}:
     patch:
       summary: Update an existing event
@@ -169,7 +165,7 @@ paths:
   /users/event/{eventId}:
     get:
       summary: Get users for an event (alternative endpoint)
-      operationId: getUsersForEvent_alt # Needs distinct operationId
+      operationId: getUsersForEvent_alt
       tags:
         - Users
       parameters:
@@ -214,7 +210,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array # Assuming response is array of User, adjust if needed
+                type: array
                 items:
                   $ref: '#/components/schemas/User'
         '400':
@@ -263,7 +259,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object # Define actual success response
+                type: object
         '400':
           description: Bad request.
         '500':
@@ -335,11 +331,17 @@ paths:
                   type: string
                 guest_swipe:
                   type: string
-                  enum: [left, right, none]
+                  enum:
+                    - left
+                    - right
+                    - none
                   nullable: true
                 host_swipe:
                   type: string
-                  enum: [left, right, none]
+                  enum:
+                    - left
+                    - right
+                    - none
                   nullable: true
                 guest_swipe_at:
                   type: string
@@ -357,12 +359,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EventConfirmation' # Assuming this is returned, adjust if needed
+                $ref: '#/components/schemas/EventConfirmation'
         '400':
           description: Bad request.
         '500':
           description: Internal server error.
-
   /eventAttendees/guest/{guestId}:
     get:
       summary: Get event attendance records for a guest
@@ -389,7 +390,6 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
-
   /eventAttendees/host/{hostId}:
     get:
       summary: Get event attendance records for events hosted by a user
@@ -408,14 +408,13 @@ paths:
           content:
             application/json:
               schema:
-                type: array # Define actual response structure
+                type: array
                 items:
-                  $ref: '#/components/schemas/EventConfirmation' # Assuming this, adjust if needed
+                  $ref: '#/components/schemas/EventConfirmation'
         '400':
           description: Bad request.
         '500':
           description: Internal server error.
-
   /eventAttendees/{id}:
     patch:
       summary: Update an event attendance record
@@ -434,14 +433,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EventConfirmation' # Assuming partial update, define actual body
+              $ref: '#/components/schemas/EventConfirmation'
       responses:
         '200':
           description: Event attendance updated successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EventConfirmation' # Assuming updated record is returned
+                $ref: '#/components/schemas/EventConfirmation'
         '400':
           description: Bad request.
         '500':
@@ -452,7 +451,7 @@ paths:
       tags:
         - Event Attendees
       parameters:
-        - name: id # Parameter name likely needs correction to attendance ID
+        - name: id
           in: path
           required: true
           schema:
@@ -464,12 +463,11 @@ paths:
           content:
             application/json:
               schema:
-                type: object # Define actual success response
+                type: object
         '400':
           description: Bad request.
         '500':
           description: Internal server error.
-
   /config/flags:
     get:
       summary: Get remote configuration flags
@@ -485,7 +483,6 @@ paths:
                 $ref: '#/components/schemas/RemoteConfigFlagsResponse'
         '500':
           description: Internal server error.
-
   /config/firebase/collections:
     get:
       summary: Get Firebase collection names for the current environment
@@ -499,6 +496,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CollectionNamesResponse'
+        '500':
+          description: Internal server error.
+  /chat:
+    summary: chats related api
+    post:
+      summary: Create a new chat
+      operationId: createChat
+      tags:
+        - Chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Chat'
+      responses:
+        '200':
+          description: Chat created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chat'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+  /chat/{userId}:
+    get:
+      summary: Get chats for a user
+      operationId: getChatsForUser
+      tags:
+        - Chat
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of chats for the user.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Chat'
+        '400':
+          description: Bad request.
         '500':
           description: Internal server error.
 
@@ -520,7 +566,10 @@ components:
           nullable: true
         gender:
           type: string
-          enum: [man, woman, other]
+          enum:
+            - man
+            - woman
+            - other
         facePhoto:
           type: string
         activeSubscription:
@@ -533,7 +582,7 @@ components:
             $ref: '#/components/schemas/UserPhoto'
         notifications:
           type: array
-          items: {} # Define notification structure if known
+          items: {}
           description: Structure unknown, defined as array of any.
         name:
           type: string
@@ -541,7 +590,7 @@ components:
           type: boolean
         lastUpdateSuperInvite:
           type: number
-          format: timestamp # Assuming epoch time
+          format: timestamp
         accountReviewed:
           type: boolean
         socialNickname:
@@ -552,10 +601,13 @@ components:
           type: string
         createdAt:
           type: string
-          format: date-time # Or just string if not consistently formatted
+          format: date-time
         accountType:
           type: string
-          enum: [guest, user, admin]
+          enum:
+            - guest
+            - user
+            - admin
         email:
           type: string
           format: email
@@ -566,9 +618,9 @@ components:
         accountPremium:
           type: boolean
         chooseGuest:
-          type: string # Clarify purpose/type if possible
+          type: string
         userBeauty:
-          type: number # Consider integer if always whole number
+          type: number
         interests:
           type: array
           items:
@@ -577,13 +629,13 @@ components:
           type: boolean
         online:
           type: boolean
-        date: # Seems redundant with createdAt/registrationDate? Clarify purpose.
+        date:
           type: string
           format: date-time
         superInvites:
           type: integer
         superInvite:
-          type: boolean # Purpose? Seems related to invites count/settings
+          type: boolean
         uid:
           type: string
         registrationDate:
@@ -600,12 +652,10 @@ components:
           nullable: true
         work:
           $ref: '#/components/schemas/Work'
-      required: # Add required fields based on actual usage
+      required:
         - uid
         - name
         - gender
-        # ... other mandatory fields
-
     UserNotificationSettings:
       type: object
       properties:
@@ -623,7 +673,6 @@ components:
           type: boolean
         requests:
           type: boolean
-
     UserPhoto:
       type: object
       properties:
@@ -632,8 +681,6 @@ components:
         image:
           type: string
           nullable: true
-
-    # Schemas based on src/model/event.model.ts
     EventsResponse:
       type: object
       properties:
@@ -646,10 +693,34 @@ components:
           nullable: true
         endReached:
           type: boolean
-
-    EventData: # This seems to combine User and Event details, potentially needs refinement
+    Chat:
       type: object
-      properties: # Event specific or overrides
+      properties:
+        guestId:
+          type: string
+        hostId:
+          type: string
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatMessage'
+    ChatMessage:
+      type: object
+      properties:
+        sentAt:
+          type: string
+          format: datetime
+        chatId:
+          type: string
+        message:
+          type: string
+        seenByHost:
+          type: boolean
+        seenByGuest:
+          type: boolean
+    EventData:
+      type: object
+      properties:
         uid:
           type: string
           nullable: false
@@ -696,19 +767,19 @@ components:
         eventsListVisit:
           type: array
           items:
-            type: string # Assuming array of event IDs or UIDs
+            type: string
         requestsList:
           type: array
           items:
             $ref: '#/components/schemas/UserRequest'
-        usersList: # Attendees?
+        usersList:
           type: array
           items:
-            $ref: '#/components/schemas/EventUser' # Check if same as UserRequest structure
+            $ref: '#/components/schemas/EventUser'
         rejectsByGuestsList:
           type: array
           items:
-            $ref: '#/components/schemas/EventUser' # Define if structure is different
+            $ref: '#/components/schemas/EventUser'
         isCancelled:
           type: boolean
           nullable: true
@@ -717,7 +788,6 @@ components:
           nullable: true
       required:
         - uid
-
     InviteCode:
       type: object
       properties:
@@ -725,8 +795,7 @@ components:
           type: string
         isActive:
           type: boolean
-
-    NotificationSettings: # Shared between User and EventData? Rename if distinct
+    NotificationSettings:
       type: object
       properties:
         chat:
@@ -743,7 +812,6 @@ components:
           type: boolean
         superJoin:
           type: boolean
-
     SocialNickname:
       type: object
       properties:
@@ -751,7 +819,6 @@ components:
           type: string
         tiktok:
           type: string
-
     ActiveSubscription:
       type: object
       properties:
@@ -760,7 +827,6 @@ components:
           format: date-time
         subscriptionId:
           type: string
-
     Language:
       type: object
       properties:
@@ -770,8 +836,7 @@ components:
           type: string
         title:
           type: string
-
-    Photo: # Shared between User and EventData? Rename if distinct
+    Photo:
       type: object
       properties:
         id:
@@ -794,8 +859,7 @@ components:
           type: string
       required:
         - id
-
-    UserRequest: # Structure for join requests?
+    UserRequest:
       type: object
       properties:
         createdAt:
@@ -806,15 +870,14 @@ components:
         name:
           type: string
         status:
-          type: string # Define possible statuses (e.g., pending, accepted, rejected)
+          type: string
         superInvite:
           type: boolean
         uid:
           type: string
         userPhoto:
           type: string
-
-    EventUser: # Structure for attendees? Very similar to UserRequest
+    EventUser:
       type: object
       properties:
         createdAt:
@@ -825,15 +888,14 @@ components:
         name:
           type: string
         status:
-          type: string # Define possible statuses
+          type: string
         superInvite:
           type: boolean
         uid:
           type: string
         userPhoto:
           type: string
-
-    EventConfirmation: # Structure for attendance records
+    EventConfirmation:
       type: object
       properties:
         event_id:
@@ -846,7 +908,10 @@ components:
           type: string
         guest_swipe:
           type: string
-          enum: [left, right, none]
+          enum:
+            - left
+            - right
+            - none
           nullable: true
           default: none
         guest_swipe_at:
@@ -869,7 +934,10 @@ components:
           nullable: true
         host_swipe:
           type: string
-          enum: [left, right, none]
+          enum:
+            - left
+            - right
+            - none
           nullable: true
           default: none
         host_swipe_at:
@@ -892,14 +960,18 @@ components:
           nullable: true
         status:
           type: string
-          enum: [pending-host, pending-guest, host-reject, guest-reject, invitation-complete]
+          enum:
+            - pending-host
+            - pending-guest
+            - host-reject
+            - guest-reject
+            - invitation-complete
           nullable: true
-
     RemoteConfigFlagsResponse:
       type: object
       description: >-
-        Represents the Firebase Remote Config template structure, including ETag,
-        parameters, and potentially conditions and parameter groups.
+        Represents the Firebase Remote Config template structure, including
+        ETag, parameters, and potentially conditions and parameter groups.
       properties:
         etag:
           type: string
@@ -913,23 +985,23 @@ components:
           type: array
           description: Optional list of conditions defined in the template.
           items:
-            type: object # Define condition structure if needed
+            type: object
         parameterGroups:
           type: object
           description: Optional dictionary of parameter groups.
           additionalProperties:
-            type: object # Define group structure if needed
+            type: object
         version:
           type: object
           description: Optional version information.
       required:
         - etag
         - parameters
-      # Example removed as the full structure is complex
-
     CollectionNamesResponse:
       type: object
-      description: Mapping of logical collection types to their actual Firestore collection names based on the environment.
+      description: >-
+        Mapping of logical collection types to their actual Firestore collection
+        names based on the environment.
       properties:
         adminChats:
           type: string
@@ -943,13 +1015,12 @@ components:
           type: string
         unfinishedRegistrationUsers:
           type: string
-        userInfo: # Renamed from users
+        userInfo:
           type: string
         events:
           type: string
-        attendees: # Renamed from eventAttendees
+        attendees:
           type: string
-        # Removed notifications
       required:
         - adminChats
         - admins
@@ -970,8 +1041,7 @@ components:
         userInfo: devUserInfo
         events: devEvents
         attendees: devEventAttendees
-
-    FirebaseRemoteConfigParameterValue: # New schema definition
+    FirebaseRemoteConfigParameterValue:
       type: object
       description: Represents the value of a Firebase Remote Config parameter.
       properties:
@@ -995,9 +1065,11 @@ components:
           type: string
         valueType:
           type: string
-          enum: [BOOLEAN, NUMBER, STRING, JSON]
-
-  # Add security schemes definitions
+          enum:
+            - BOOLEAN
+            - NUMBER
+            - STRING
+            - JSON
   securitySchemes:
     ApiTokenAuth:
       type: apiKey
@@ -1007,5 +1079,7 @@ components:
     FirebaseTokenAuth:
       type: apiKey
       in: header
-      name: token # Custom header name used in middleware
-      description: Firebase ID token for user authentication (required when Firebase validation is enabled server-side).
+      name: token
+      description: >-
+        Firebase ID token for user authentication (required when Firebase
+        validation is enabled server-side).

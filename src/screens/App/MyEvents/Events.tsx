@@ -22,7 +22,6 @@ const Events = () => {
             <S.TabButtonText isActive={activeTab === 'JoinedEvents'}>Joined Events</S.TabButtonText>
           </S.TabButton>
         </S.TabsRow>
-
         <S.ContentContainer>
           {activeTab === 'MyEvents' && <MyEvents />}
           {activeTab === 'JoinedEvents' && <JoinedEventsScreen />}

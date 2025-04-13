@@ -1,5 +1,4 @@
 import React from 'react';
-import {EventQueries, EventApiResponse} from 'src/apiv2/queries/eventQueries'; // Use EventApiResponse for consistency
 import * as S from './MyEvents.style';
 import MyEventsEmptyFallback from './Components/MyEventesEmptyFallback/MyEventesEmptyFallback';
 import AppLoader from 'screens/App/AppLoader/AppLoader'; // Assuming location

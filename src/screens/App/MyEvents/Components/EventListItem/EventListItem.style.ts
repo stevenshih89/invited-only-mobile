@@ -1,7 +1,6 @@
 import styled from 'styled-components/native';
-import { View, Text, Image, TouchableOpacity, ImageBackground } from 'react-native';
-// Assuming font variables are defined elsewhere, e.g., constants/fonts
-import { Satoshi400, Satoshi500 } from 'src/constants/fonts'; // Adjust path if needed
+import {View, Text, Image, TouchableOpacity, ImageBackground} from 'react-native';
+import {Satoshi400, Satoshi500} from 'src/constants/fonts'; // Adjust path if needed
 
 // Main card container - Adapted from 'AppClip'
 export const CardContainer = styled(TouchableOpacity)`
@@ -24,7 +23,7 @@ export const ImageFallbackContainer = styled(View)`
 `;
 
 export const FallbackText = styled(Text)`
-  color: #FFFFFF;
+  color: #ffffff;
   font-family: ${Satoshi500};
   font-size: 16px;
 `;
@@ -59,7 +58,7 @@ export const AvatarImage = styled(Image)`
   width: 32px;
   height: 32px;
   border-radius: 16px;
-  border: 1px solid #FFFFFF;
+  border: 1px solid #ffffff;
   margin-left: -16px;
 `;
 
@@ -71,14 +70,14 @@ export const AvatarCountBadge = styled(View)`
   justify-content: center;
   align-items: center;
   margin-left: -16px;
-  border: 1px solid #FFFFFF;
+  border: 1px solid #ffffff;
 `;
 
 export const AvatarCountText = styled(Text)`
   font-family: ${Satoshi500};
   font-size: 14px;
   line-height: 17px;
-  color: #FFFFFF;
+  color: #ffffff;
 `;
 
 // Status Button - Adapted from 'button' under Image
@@ -98,7 +97,7 @@ export const StatusText = styled(Text)`
   font-family: ${Satoshi500};
   font-size: 14px;
   line-height: 17px;
-  color: #FFFFFF;
+  color: #ffffff;
 `;
 
 // Content section below image - Adapted from 'Name + Desc. + Open Button'
@@ -121,14 +120,14 @@ export const DateText = styled(Text)`
   font-size: 14px;
   line-height: 17px;
   opacity: 0.5;
-  color: #FFFFFF;
+  color: #ffffff;
 `;
 
 export const EventNameText = styled(Text)`
   font-family: ${Satoshi500};
   font-size: 20px;
   line-height: 24px;
-  color: #FFFFFF;
+  color: #ffffff;
 `;
 
 export const LocationText = styled(Text)`
@@ -136,7 +135,7 @@ export const LocationText = styled(Text)`
   font-size: 14px;
   line-height: 17px;
   opacity: 0.5;
-  color: #FFFFFF;
+  color: #ffffff;
 `;
 
 export const ActionsContainer = styled(View)`
@@ -167,7 +166,7 @@ export const ViewRequestsText = styled(Text)`
   font-family: ${Satoshi500};
   font-size: 14px;
   line-height: 17px;
-  color: #FFFFFF;
+  color: #ffffff;
 `;
 
 export const RequestCountBadge = styled(View)`
@@ -184,12 +183,10 @@ export const RequestCountText = styled(Text)`
   font-family: ${Satoshi500};
   font-size: 14px;
   line-height: 17px;
-  color: #FFFFFF;
+  color: #ffffff;
 `;
 
 // Manage Button - Adapted from 'Frame 2085661847'
 export const ManageButton = styled(ActionButtonBase)`
   width: 48px;
 `;
-
-

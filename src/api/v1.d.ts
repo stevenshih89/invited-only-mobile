@@ -229,6 +229,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a new chat */
+        post: operations["createChat"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/chat/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get chats for a user */
+        get: operations["getChatsForUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -296,6 +330,19 @@ export interface components {
             events?: components["schemas"]["EventData"][];
             lastDoc?: string | null;
             endReached?: boolean;
+        };
+        Chat: {
+            guestId?: string;
+            hostId?: string;
+            messages?: components["schemas"]["ChatMessage"][];
+        };
+        ChatMessage: {
+            /** Format: datetime */
+            sentAt?: string;
+            chatId?: string;
+            message?: string;
+            seenByHost?: boolean;
+            seenByGuest?: boolean;
         };
         EventData: {
             uid: string;
@@ -1118,6 +1165,80 @@ export interface operations {
             };
         };
     };
+    createChat: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Chat"];
+            };
+        };
+        responses: {
+            /** @description Chat created successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Chat"];
+                };
+            };
+            /** @description Bad request. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getChatsForUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of chats for the user. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Chat"][];
+                };
+            };
+            /** @description Bad request. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
 }
 export enum ApiPaths {
     getEventsForUser = "/events/user/:userId",
@@ -1136,5 +1257,7 @@ export enum ApiPaths {
     updateEventAttend = "/eventAttendees/:id",
     deleteEventAttend = "/eventAttendees/:id",
     getRemoteConfigFlags = "/config/flags",
-    getFirebaseCollectionNames = "/config/firebase/collections"
+    getFirebaseCollectionNames = "/config/firebase/collections",
+    createChat = "/chat",
+    getChatsForUser = "/chat/:userId"
 }

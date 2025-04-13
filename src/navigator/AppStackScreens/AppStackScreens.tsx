@@ -1,8 +1,7 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {createStackNavigator, StackNavigationOptions} from '@react-navigation/stack';
 
 //import components
-import IO from 'screens/App/IO/IO.tsx';
 import BottomMenu from 'navigator/BottomMenu/BottomMenu.tsx';
 import Header from 'components/Header/Header.tsx';
 import {
@@ -11,9 +10,7 @@ import {
   adminChatPath,
   bottomTabsStackPath,
   chatCorrespondencePath,
-  chatPath,
   codeVerifiedPath,
-  commonStackPath,
   connectPath,
   contactAndFAQPath,
   earlyAccessPath,
@@ -22,6 +19,7 @@ import {
   eventCreatingStackPath,
   eventEditingPath,
   eventInfoPath,
+  eventRequestStackPath,
   invitationCodePath,
   IOPath,
   joinEventsPath,
@@ -40,7 +38,6 @@ import {
   settingsPath,
   superInvitePayPath,
   userProfilePath,
-  verifySocialProfilePath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -50,8 +47,6 @@ import AccountRejected from 'screens/Auth/AcceptedScreen/AccountRejected/Account
 import CodeVerified from 'screens/Auth/AcceptedScreen/CodeVerified/CodeVerified';
 import useStyles from 'navigator/AppStackScreens/styles.ts';
 import EventCreating from 'screens/App/IO/screens/EventCreating/EventCreating.tsx';
-import Chat from 'screens/App/Chat/Chat.tsx';
-import ChatCorrespondence from 'screens/App/Chat/screens/ChatCorrespondence/ChatCorrespondence.tsx';
 import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView.tsx';
 import {TouchableOpacity} from 'react-native';
 import ThreeDotsIcon from 'assets/images/icons/more-white.svg';
@@ -66,26 +61,17 @@ import SecurePrivacy from 'screens/App/Profile/screens/SecurePrivacy/SecurePriva
 import Payment from 'screens/Auth/Payment/Payment';
 import ManageSubscription from 'screens/App/Profile/screens/ManageSubscription';
 import SuperInvitePay from 'screens/App/IO/screens/SuperInvitePay/SuperInvitePay';
-import VerifySocialProfile from 'screens/Auth/VerifySocialProfile/VerifySocialProfile.tsx';
 import Privacy from 'screens/Auth/Privacy/Privacy.tsx';
 import EmailChange from 'screens/App/Profile/screens/Settings/EmailChange';
 import EarlyAccess from 'screens/App/IO/screens/EarlyAccess/EarlyAccess';
-import DemoEventCreatingHeader from 'screens/App/IO/screens/EventCreating/components/DemoEventCreatingHeader';
 import MarkAttendance from 'screens/App/MyEvents/MarkAttendance';
-import {useUser} from 'src/store/userStore';
-import {useNotifications} from 'src/store/notificationsStore';
-import AdminChat from 'screens/App/Chat/screens/AdminChat';
-import firestore from '@react-native-firebase/firestore';
-import Config from 'react-native-config';
-import auth from '@react-native-firebase/auth';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import CreateEventFlow from 'screens/App/Flows/CreateEventFlow/CreateEventFlow.tsx';
 import IOWrapper from 'screens/App/IO/IOWrapper.tsx';
 import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper.tsx';
 import Events from 'screens/App/MyEvents/Events.tsx';
 import Connect from 'screens/App/Connect/Connect.tsx';
-import {backgroundColor, blackColor} from 'constants/colors.ts';
-import DefaultBackground from 'components/DefaultBackground/DefaultBackground.tsx';
+import {blackColor} from 'constants/colors.ts';
+import EventRequestsStackScreen from './RequestStackScreen/RequestStackScreen';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -172,13 +158,7 @@ const CommonStackScreen = () => {
       <CommonStack.Screen key={pendingScreenPath} name={pendingScreenPath} options={{headerShown: false}} component={PendingScreen} />
       <CommonStack.Screen key={accountRejectedPath} name={accountRejectedPath} options={{headerShown: false}} component={AccountRejected} />
       <CommonStack.Screen key={codeVerifiedPath} name={codeVerifiedPath} options={{headerShown: false}} component={CodeVerified} />
-      <CommonStack.Screen
-        key={chatCorrespondencePath}
-        name={chatCorrespondencePath}
-        options={{headerShown: false}}
-        component={ChatCorrespondence}
-      />
-      <CommonStack.Screen key={adminChatPath} name={adminChatPath} options={{headerShown: false}} component={AdminChat} />
+      <CommonStack.Screen key={eventInfoPath} name={eventInfoPath} options={{headerShown: false}} component={EventInfo} />
       <CommonStack.Screen
         key={eventInfoPath}
         name={eventInfoPath}
@@ -353,33 +333,6 @@ const NotificationsStackScreen = () => {
   );
 };
 
-export const ChatStackScreen = () => {
-  const [typeEvents, setTypeEvents] = useState<boolean>(false);
-
-  const styles = useStyles();
-  return (
-    <Stack.Navigator
-      initialRouteName={chatPath}
-      screenOptions={{
-        headerShown: true,
-        headerTransparent: false,
-        headerStyle: styles.headerStyle,
-      }}>
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          header: () => (
-            <Header typeEvents={typeEvents} setTypeEvents={setTypeEvents} headerType="chat" showHeaderTop={true} logoType="logo" badge />
-          ),
-        }}
-        name={chatPath}
-        key={chatPath}>
-        {() => <Chat typeEvents={typeEvents} />}
-      </Stack.Screen>
-    </Stack.Navigator>
-  );
-};
-
 const EventCreatingStackScreen = () => {
   const styles = useStyles();
 
@@ -396,18 +349,6 @@ const EventCreatingStackScreen = () => {
         ...screenOptions,
       }}>
       <EventCreatingStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={CreateEventFlow} />
-    </EventCreatingStack.Navigator>
-  );
-};
-
-const ChatCorrespondenceStackScreen = () => {
-  return (
-    <EventCreatingStack.Navigator
-      initialRouteName={chatCorrespondencePath}
-      screenOptions={{
-        headerShown: false,
-      }}>
-      <EventCreatingStack.Screen key={chatCorrespondencePath} name={chatCorrespondencePath} component={ChatCorrespondence} />
     </EventCreatingStack.Navigator>
   );
 };
@@ -483,8 +424,6 @@ const ManageSubscriptionScreen = () => {
 };
 
 const AppStackScreen = () => {
-  const {setNotificationsCount} = useNotifications();
-
   return (
     <AppStack.Navigator
       initialRouteName={bottomTabsStackPath}
@@ -496,6 +435,8 @@ const AppStackScreen = () => {
         component={NotificationsStackScreen}
         screenOptions={screenOptions}
       />
+
+      <AppStack.Screen key={eventRequestStackPath} name={eventRequestStackPath} component={EventRequestsStackScreen} />
       <AppStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={EventCreatingStackScreen} />
       <AppStack.Screen key={userProfilePath} name={userProfilePath} component={UserProfileStackScreen} />
       <AppStack.Screen key={connectPath} name={connectPath} component={Connect} />

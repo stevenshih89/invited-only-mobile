@@ -3,7 +3,8 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 //import components
 import useStyles from 'navigator/BottomMenu/styles.ts';
-import {IOStackNavigation, MyEventsStackNavigation, ChatStackScreen} from 'navigator/AppStackScreens/AppStackScreens.tsx';
+import {IOStackNavigation, MyEventsStackNavigation} from 'navigator/AppStackScreens/AppStackScreens.tsx';
+import ChatStackScreen from 'navigator/AppStackScreens/ChatStackScreen/ChatStackScreen.tsx';
 import {whiteColor} from 'constants/colors.ts';
 import {createStackNavigator} from '@react-navigation/stack';
 import {

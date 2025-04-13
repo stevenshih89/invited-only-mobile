@@ -52,7 +52,7 @@ const usePersistentCardSwipe = <T extends GuestUser>({
       });
     },
     [eventId, currentEventCards],
-  ); // Dependencies for the handler
+  );
 
   const handleSwipeLeft = useCallback(() => handleSwipe('left'), [handleSwipe]);
   const handleSwipeRight = useCallback(() => handleSwipe('right'), [handleSwipe]);

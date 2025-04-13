@@ -1,7 +1,6 @@
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import React from 'react';
 import {Formik} from 'formik';
-import * as Yup from 'yup';
 import useCreateEventFlowStep from './hooks/useCreateEventFlowStep';
 import * as S from './CreateEvent.style';
 import CreateEventFlowStepper from './Components/CreateEventFlowStepper/CreateEventFlowStepper';

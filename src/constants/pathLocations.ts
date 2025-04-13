@@ -3,6 +3,7 @@ import {RootStackParamList} from 'typescript/types';
 const bottomTabsStackPath = '/bottom-tabs-stack';
 const notificationsStackPath = '/notifications-stack';
 const eventCreatingStackPath = '/event-creating-stack';
+const eventRequestStackPath = '/events/requests';
 const commonStackPath = '/common-stack';
 
 const demoFlowStackPath = '/demo-flow-stack';
@@ -147,4 +148,5 @@ export {
   updateAvailable,
   findConnectionsPath,
   myConnectionsPath,
+  eventRequestStackPath,
 };

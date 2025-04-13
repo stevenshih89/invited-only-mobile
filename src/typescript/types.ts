@@ -11,6 +11,9 @@ export type RootStackParamList = {
   '/event-creating-stack'?: {
     screen?: string;
   };
+  '/events/requests'?: {
+    screen?: string;
+  };
   '/common-stack'?: {
     screen?: string;
     params?: any;

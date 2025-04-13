@@ -1,5 +1,5 @@
 import React from 'react';
-import {EventApiResponse} from 'src/apiv2/queries/eventQueries';
+
 import EventListItem from '../EventListItem/EventListItem';
 import * as S from './EventList.style';
 import {components} from 'src/api/v1';
@@ -9,14 +9,13 @@ interface EventListProps {
 
 const EventList: React.FC<EventListProps> = ({events}) => {
   const renderItem = ({item}: {item: components['schemas']['EventData']}) => {
-    // Determine status string
     let statusString = 'Unknown';
     if (item.isCancelled) {
       statusString = 'Cancelled';
     } else if (item.statusEvent) {
       statusString = 'Active';
     } else {
-      statusString = 'Inactive'; // Or 'Past', 'Upcoming' based on date?
+      statusString = 'Inactive';
     }
 
     const firstPhotoUrl = item.photos && item.photos.length > 0 ? item.photos[0] : undefined;
@@ -28,9 +27,8 @@ const EventList: React.FC<EventListProps> = ({events}) => {
     <S.ListContainer
       data={events}
       renderItem={renderItem}
-      keyExtractor={(item: EventApiResponse) => item.uid}
+      keyExtractor={(item: components['schemas']['EventData']) => item.uid}
       contentContainerStyle={{paddingBottom: 20}}
-      // Add other FlatList props as needed (e.g., ItemSeparatorComponent)
     />
   );
 };

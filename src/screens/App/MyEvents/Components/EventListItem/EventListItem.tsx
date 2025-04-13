@@ -1,9 +1,10 @@
 import React from 'react';
-import {EventApiResponse} from 'src/apiv2/queries/eventQueries';
 import {View} from 'react-native';
 import * as S from './EventListItem.style';
 import ManageEventIcon from 'src/assets/images/icons/manage-event-icon.svg';
 import {components} from 'src/api/v1';
+import {eventRequestStackPath} from 'constants/pathLocations';
+import {useAppNavigation} from 'hooks/useAppNavigation';
 // Define more specific props based on the layout
 interface EventListItemProps {
   event: components['schemas']['EventData'];
@@ -43,14 +44,11 @@ const EventListItem: React.FC<EventListItemProps> = ({
   onManage,
 }) => {
   const handlePress = () => onPress && onPress(event.uid);
-  const handleViewRequests = () => onViewRequests && onViewRequests(event.uid);
-  const handleManage = () => onManage && onManage(event.uid);
 
+  const handleManage = () => onManage && onManage(event.uid);
+  const {navigate} = useAppNavigation();
   const displayedAttendees = attendees.slice(0, 2);
   const remainingAttendees = attendees.length - displayedAttendees.length;
-
-  const showRequestsButton = requestCount !== undefined && requestCount > 0;
-  console.log('imageUrl', imageUrl);
 
   return (
     <S.CardContainer onPress={handlePress} activeOpacity={0.8}>
@@ -87,20 +85,19 @@ const EventListItem: React.FC<EventListItemProps> = ({
           <S.EventNameText>{event.name}</S.EventNameText>
           {event.location && <S.LocationText>{event.location}</S.LocationText>}
         </S.InfoContainer>
-
         <S.ActionsContainer>
-          {showRequestsButton ? (
-            <S.ViewRequestsButton onPress={handleViewRequests} activeOpacity={0.7}>
-              <S.ViewRequestsText>View Requests</S.ViewRequestsText>
-              {requestCount && (
-                <S.RequestCountBadge>
-                  <S.RequestCountText>{requestCount}</S.RequestCountText>
-                </S.RequestCountBadge>
-              )}
-            </S.ViewRequestsButton>
-          ) : (
-            <View style={{flex: 1}} />
-          )}
+          <S.ViewRequestsButton
+            onPress={() => {
+              navigate('/events/requests');
+            }}
+            activeOpacity={0.7}>
+            <S.ViewRequestsText>View Requests</S.ViewRequestsText>
+            {requestCount ? (
+              <S.RequestCountBadge>
+                <S.RequestCountText>{requestCount}</S.RequestCountText>
+              </S.RequestCountBadge>
+            ) : null}
+          </S.ViewRequestsButton>
           <S.ManageButton onPress={handleManage} activeOpacity={0.7}>
             <ManageEventIcon />
           </S.ManageButton>

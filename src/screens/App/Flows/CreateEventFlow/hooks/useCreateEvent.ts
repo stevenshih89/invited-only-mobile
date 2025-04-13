@@ -187,6 +187,8 @@ const useCreateEvent = () => {
               level: 'info',
               data: {eventUid},
             });
+            showToast('success', 'Your event has been created! We will notify you when it is approved.', 'Success');
+            navigate('/bottom-tabs-stack');
           },
           onError: (mutationError: any) => {
             console.error('Error creating event via mutation:', mutationError);
