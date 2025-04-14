@@ -14,6 +14,7 @@ interface UsePersistentCardSwipeReturn<T extends GuestUser> {
   handleSuperInvite: () => void;
   cards: T[]; // Derived list of remaining cards
   hasCards: boolean;
+  resetDeck: (eventId: string) => void;
   // isLoading could potentially be added here too if needed
 }
 
@@ -21,10 +22,8 @@ const usePersistentCardSwipe = <T extends GuestUser>({
   cardsData,
   eventId,
 }: UsePersistentCardSwipeProps<T>): UsePersistentCardSwipeReturn<T> => {
-  // State for dismissed card UIDs, managed within the hook
   const [dismissedCardsPerEvent, setDismissedCardsPerEvent] = useState<Record<string, Set<string>>>({});
 
-  // Memoize the derived list of cards to show for the current event
   const currentEventCards = useMemo(() => {
     if (!eventId || !cardsData) {
       return [];
@@ -33,14 +32,16 @@ const usePersistentCardSwipe = <T extends GuestUser>({
     return cardsData.filter((guest: T) => !dismissedIds.has(guest.uid));
   }, [eventId, cardsData, dismissedCardsPerEvent]);
 
-  // Swipe Handlers defined within the hook
   const handleSwipe = useCallback(
     (direction: 'left' | 'right' | 'super') => {
+      console.log('handleSwipe', direction);
       if (!eventId || currentEventCards.length === 0) return;
 
       const swipedCardUid = currentEventCards[currentEventCards.length - 1]?.uid;
+      console.log('swipedCardUid', swipedCardUid);
+      console.log('currentEventCards', currentEventCards);
       if (!swipedCardUid) return;
-
+      console.log('swipedCardUid', swipedCardUid);
       setDismissedCardsPerEvent(prev => {
         const currentDismissed = prev[eventId] || new Set<string>();
         const newDismissed = new Set<string>(currentDismissed);
@@ -58,6 +59,14 @@ const usePersistentCardSwipe = <T extends GuestUser>({
   const handleSwipeRight = useCallback(() => handleSwipe('right'), [handleSwipe]);
   const handleSuperInvite = useCallback(() => handleSwipe('super'), [handleSwipe]);
 
+  const resetDeck = useCallback((eventIdToReset: string) => {
+    setDismissedCardsPerEvent(prev => {
+      const newState = {...prev};
+      delete newState[eventIdToReset];
+      return newState;
+    });
+  }, []);
+
   const hasCards = currentEventCards.length > 0;
 
   return {
@@ -66,6 +75,7 @@ const usePersistentCardSwipe = <T extends GuestUser>({
     handleSwipeLeft,
     handleSwipeRight,
     handleSuperInvite,
+    resetDeck,
   };
 };
 

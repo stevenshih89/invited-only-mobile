@@ -1,4 +1,4 @@
-import React, {FC, ReactElement, useEffect, useState} from 'react';
+import React, {ReactElement, useState} from 'react';
 import {View, Text} from 'react-native';
 import Connect from 'assets/images/tab-bar/connect.svg';
 import ConnectActive from 'assets/images/tab-bar/connect-active.svg';
@@ -13,14 +13,10 @@ import IO from 'assets/images/tab-bar/io.svg';
 import {IOPath, chatPath, connectPath, joinEventsPath, myEventsPath} from 'constants/pathLocations';
 import {blackColor, grayColor, lightRedColor, whiteColor} from 'constants/colors';
 import {RootStackParamList} from 'typescript/types';
-import styles from './styles';
-import {RFValue} from 'react-native-responsive-fontsize';
+import {Label, IconWrapper} from './styles';
+
 import {Satoshi700} from 'constants/fonts';
 import {useUser} from 'src/store/userStore';
-import firestore from '@react-native-firebase/firestore';
-import {getEventsIJoining} from 'helpers/getEventsIJoining';
-import Config from 'react-native-config';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 export const TabBarName = (focused: boolean, route: string) => {
   const getLabel = (): string =>
@@ -32,7 +28,7 @@ export const TabBarName = (focused: boolean, route: string) => {
       [IOPath]: 'Invite',
     })[route as keyof RootStackParamList];
 
-  return <Text style={[styles.label, {color: focused ? whiteColor : grayColor}]}>{getLabel()}</Text>;
+  return <Label style={{color: focused ? whiteColor : grayColor}}>{getLabel()}</Label>;
 };
 
 export const TabIcon = (focused: boolean, route: string): ReactElement => {
@@ -51,7 +47,7 @@ export const TabIcon = (focused: boolean, route: string): ReactElement => {
     })[route as keyof RootStackParamList];
 
   return (
-    <View style={[styles.iconWr, {borderTopColor: focused ? whiteColor : 'transparent'}]}>
+    <IconWrapper style={{borderTopColor: focused ? whiteColor : 'transparent'}}>
       {getIcon()}
       {((route === '/chat' && newMessage > 0) || (eventsCount > 0 && route === '/my-events')) && (
         <View
@@ -68,7 +64,6 @@ export const TabIcon = (focused: boolean, route: string): ReactElement => {
           }}>
           <Text
             style={{
-              fontSize: RFValue(10, 812),
               fontFamily: Satoshi700,
               color: whiteColor,
             }}>
@@ -76,6 +71,6 @@ export const TabIcon = (focused: boolean, route: string): ReactElement => {
           </Text>
         </View>
       )}
-    </View>
+    </IconWrapper>
   );
 };

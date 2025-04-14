@@ -1,4 +1,3 @@
-import {EventQueries} from 'src/apiv2/queries/eventQueries';
 import IO from './IO';
 import auth from '@react-native-firebase/auth';
 import AppLoader from '../AppLoader/AppLoader';

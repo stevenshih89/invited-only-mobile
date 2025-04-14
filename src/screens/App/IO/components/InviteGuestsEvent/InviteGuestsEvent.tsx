@@ -7,6 +7,7 @@ import {GuestCard} from './Components/GuestCard/GuestCard';
 import {components} from 'src/api/v1';
 import GuestLanguagesCard from './Components/GuestLanguagesCard/GuestLanguagesCard';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
+import invitedOnlyBackendApi from 'src/api/backend-api';
 
 // Define the guest type alias
 type GuestUser = components['schemas']['User'];
@@ -24,7 +25,14 @@ interface InviteGuestsEventProps {
 const InviteGuestsEvent = ({selectedEvent, cardsToShow, isLoading, onSwipeLeft, onSwipeRight, onSuperInvite}: InviteGuestsEventProps) => {
   const hasCards = cardsToShow.length > 0;
   const currentCard = hasCards ? cardsToShow[cardsToShow.length - 1] : null;
-
+  const {mutate: createEventAttendee} = invitedOnlyBackendApi.useMutation('post', '/eventAttendees/create', {
+    onSuccess: req => {
+      console.log('req', req);
+    },
+    onError: err => {
+      console.log('err', err);
+    },
+  });
   const renderCards = () => {
     if (isLoading) {
       return <AppLoader />;
@@ -39,9 +47,29 @@ const InviteGuestsEvent = ({selectedEvent, cardsToShow, isLoading, onSwipeLeft, 
         guest={guest} // Already correct type GuestUser
         index={index}
         isTopCard={index === cardsToShow.length - 1}
-        onReject={onSwipeLeft} // Use passed handler
+        onReject={() => {
+          onSwipeLeft();
+          createEventAttendee({
+            body: {
+              guestId: currentCard?.uid || '',
+              hostId: selectedEvent.hostId || '',
+              eventId: selectedEvent.uid,
+              guest_swipe: 'left',
+            },
+          });
+        }} // Use passed handler
         onSuperInvite={onSuperInvite} // Use passed handler
-        onInvite={onSwipeRight} // Use passed handler
+        onInvite={() => {
+          onSwipeRight();
+          createEventAttendee({
+            body: {
+              guestId: currentCard?.uid || '',
+              hostId: selectedEvent.hostId || '',
+              eventId: selectedEvent.uid,
+              guest_swipe: 'right',
+            },
+          });
+        }} // Use passed handler
         topIndex={cardsToShow.length - 1}
       />
     ));

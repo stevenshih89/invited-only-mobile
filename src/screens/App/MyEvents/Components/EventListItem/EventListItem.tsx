@@ -3,22 +3,18 @@ import {View} from 'react-native';
 import * as S from './EventListItem.style';
 import ManageEventIcon from 'src/assets/images/icons/manage-event-icon.svg';
 import {components} from 'src/api/v1';
-import {eventRequestStackPath} from 'constants/pathLocations';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-// Define more specific props based on the layout
 interface EventListItemProps {
   event: components['schemas']['EventData'];
-
-  imageUrl?: string; // URL for the main background image
-  status?: string; // e.g., 'Active'
-  attendees?: {avatarUrl?: string}[]; // List of attendee avatars (URLs)
-  requestCount?: number; // Make optional or allow 0
+  imageUrl?: string;
+  statusEvent?: string;
+  attendees?: {avatarUrl?: string}[];
+  requestCount?: number;
   onPress?: (eventId: string) => void;
   onViewRequests?: (eventId: string) => void;
   onManage?: (eventId: string) => void;
 }
 
-// Helper to format date (you might have a utils function for this)
 const formatDate = (dateString: string | Date) => {
   try {
     return new Intl.DateTimeFormat('en-GB', {
@@ -33,22 +29,14 @@ const formatDate = (dateString: string | Date) => {
   }
 };
 
-const EventListItem: React.FC<EventListItemProps> = ({
-  event,
-  imageUrl,
-  status = 'Unknown',
-  attendees = [],
-  requestCount,
-  onPress,
-  onViewRequests,
-  onManage,
-}) => {
+const EventListItem: React.FC<EventListItemProps> = ({event, imageUrl, statusEvent, attendees = [], requestCount, onPress, onManage}) => {
   const handlePress = () => onPress && onPress(event.uid);
 
   const handleManage = () => onManage && onManage(event.uid);
   const {navigate} = useAppNavigation();
   const displayedAttendees = attendees.slice(0, 2);
   const remainingAttendees = attendees.length - displayedAttendees.length;
+  console.log('statusEvent', statusEvent);
 
   return (
     <S.CardContainer onPress={handlePress} activeOpacity={0.8}>
@@ -56,7 +44,7 @@ const EventListItem: React.FC<EventListItemProps> = ({
         <S.EventImageBackground source={{uri: imageUrl}} resizeMode="cover">
           <S.ImageOverlay>
             <S.StatusButton>
-              <S.StatusText>{status}</S.StatusText>
+              <S.StatusText>{statusEvent}</S.StatusText>
             </S.StatusButton>
             <S.UserAvatarContainer>
               {displayedAttendees.map((attendee, index) => (
@@ -73,7 +61,7 @@ const EventListItem: React.FC<EventListItemProps> = ({
       ) : (
         <S.ImageFallbackContainer>
           <S.StatusButton>
-            <S.StatusText>{status}</S.StatusText>
+            <S.StatusText>{statusEvent}</S.StatusText>
           </S.StatusButton>
           <S.FallbackText>No Image Available</S.FallbackText>
         </S.ImageFallbackContainer>

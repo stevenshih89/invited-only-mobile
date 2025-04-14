@@ -1,4 +1,4 @@
-import React, {useState, useMemo, useCallback} from 'react';
+import React, {useState, useMemo, useCallback, useEffect} from 'react';
 
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
@@ -10,9 +10,10 @@ import InviteGuestsEvent from './Components/InviteGuestsEvent/InviteGuestsEvent'
 import IoHeader from './Components/IoHeader/IoHeader';
 import AppLoader from '../AppLoader/AppLoader';
 import {components} from 'src/api/v1';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import usePersistentCardSwipe from './hooks/usePersistentCardSwipe';
+
 import {Text} from 'react-native';
+import {useEventGuests} from './hooks/useEventGuests';
 
 type GuestUser = components['schemas']['User'];
 
@@ -24,23 +25,18 @@ const IO = ({events}: Props) => {
   const {user: userInfo} = useUser();
   const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
 
-  const {data: guestsData, isLoading: isGuestsLoading} = invitedOnlyBackendApi.useQuery('get', '/users/event/{eventId}', {
-    params: {
-      path: {
-        eventId: selectedEvent?.uid || 'no-event',
-      },
-    },
-    enabled: !!selectedEvent?.uid, // Only fetch if an event is selected
-  });
-
-  const guests = useMemo(() => guestsData || [], [guestsData]);
-
+  const {guests, isLoading: isGuestsLoading, isFetchingNextPage, hasNextPage, fetchNextPage, status} = useEventGuests(selectedEvent?.uid);
+  console.log('status', status);
+  console.log('hasNextPage', hasNextPage);
+  console.log('isFetchingNextPage', isFetchingNextPage);
+  console.log('guests', guests);
   const {
     cards: currentEventCards,
     hasCards,
     handleSwipeLeft,
     handleSwipeRight,
     handleSuperInvite,
+    resetDeck,
   } = usePersistentCardSwipe<GuestUser>({
     cardsData: guests,
     eventId: selectedEvent?.uid,
@@ -49,6 +45,10 @@ const IO = ({events}: Props) => {
   const handleEventSelect = (event: components['schemas']['EventData']) => {
     setSelectedEvent(event);
   };
+  if (!hasCards && status === 'success') {
+    resetDeck(selectedEvent?.uid ?? '');
+    fetchNextPage();
+  }
 
   if (isGuestsLoading) {
     return (
@@ -68,21 +68,21 @@ const IO = ({events}: Props) => {
             <IoHeader
               events={events}
               selectedEvent={selectedEvent}
-              requestsCount={0} // Placeholder
+              requestsCount={0}
               onEventSelect={handleEventSelect}
-              onRequestPress={() => {}} // Placeholder
+              onRequestPress={() => {}}
             />
-            {!hasCards && guests.length > 0 ? (
+            {!isGuestsLoading && !hasCards && guests.length > 0 ? (
               <DefaultBackground>
                 <S.IoContainer style={{justifyContent: 'center', alignItems: 'center'}}>
-                  <Text style={{color: 'white'}}>No cards to show</Text>
+                  <Text style={{color: 'white'}}>No more guests for this event.</Text>
                 </S.IoContainer>
               </DefaultBackground>
             ) : (
               <InviteGuestsEvent
                 selectedEvent={selectedEvent}
                 cardsToShow={currentEventCards}
-                isLoading={!hasCards && guests.length > 0}
+                isLoading={isGuestsLoading || isFetchingNextPage}
                 onSwipeLeft={handleSwipeLeft}
                 onSwipeRight={handleSwipeRight}
                 onSuperInvite={handleSuperInvite}

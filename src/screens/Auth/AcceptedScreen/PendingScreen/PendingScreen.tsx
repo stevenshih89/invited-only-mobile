@@ -24,7 +24,7 @@ const PendingScreen: FC = (): JSX.Element => {
   const {onBoarding} = useContext(AuthContext);
 
   const handleNext = () => {
-    navigation.navigate(tutorialFlowPath as never);
+    navigation.navigate('/bottom-tabs-stack');
   };
   const flattenedPhotos = onBoarding.filter((item: {photos: []}) => item.photos)[0]?.photos;
   const imageUser = flattenedPhotos?.find((photo: {id: number}) => photo.id === 0)?.image;

@@ -28,11 +28,11 @@ paths:
             type: string
           description: The UID of the user requesting the events.
         - name: lastdoc
-          in: header
+          in: query
           required: false
           schema:
             type: string
-          description: The last document ID for pagination.
+          description: The last document ID used for pagination.
         - name: genderfilter
           in: header
           required: false
@@ -182,7 +182,7 @@ paths:
             type: string
             description: JSON string array of UIDs to exclude.
         - name: lastdoc
-          in: header
+          in: query
           required: false
           schema:
             type: string
@@ -327,6 +327,8 @@ paths:
               properties:
                 guestId:
                   type: string
+                hostId:
+                  type: string
                 eventId:
                   type: string
                 guest_swipe:
@@ -352,6 +354,7 @@ paths:
                   format: date-time
               required:
                 - guestId
+                - hostId
                 - eventId
       responses:
         '200':

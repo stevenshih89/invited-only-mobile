@@ -534,10 +534,11 @@ export type $defs = Record<string, never>;
 export interface operations {
     getEventsForUser: {
         parameters: {
-            query?: never;
-            header?: {
-                /** @description The last document ID for pagination. */
+            query?: {
+                /** @description The last document ID used for pagination. */
                 lastdoc?: string;
+            };
+            header?: {
                 /** @description Filter events based on the host's gender. */
                 genderfilter?: "male" | "female";
                 /** @description Maximum number of events to return. */
@@ -731,10 +732,11 @@ export interface operations {
     };
     getUsersForEvent_alt: {
         parameters: {
-            query?: never;
+            query?: {
+                lastdoc?: string;
+            };
             header?: {
                 excludeuids?: string;
-                lastdoc?: string;
                 male?: number;
                 female?: number;
                 limit?: number;
@@ -922,6 +924,7 @@ export interface operations {
             content: {
                 "application/json": {
                     guestId: string;
+                    hostId: string;
                     eventId: string;
                     /** @enum {string|null} */
                     guest_swipe?: "left" | "right" | "none" | null;

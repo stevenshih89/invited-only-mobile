@@ -17,8 +17,6 @@ interface Props {
   index: number;
 }
 const EventCard = ({onInvite, onReject, isTopCard, event, index}: Props) => {
-  console.log('event card renders?');
-
   const {gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite} =
     useCardGesture({
       onSwipeLeft: onReject,

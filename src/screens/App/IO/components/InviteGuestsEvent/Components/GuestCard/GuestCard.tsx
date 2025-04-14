@@ -17,11 +17,9 @@ export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, 
   const {gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite} =
     useCardGesture({
       onSwipeLeft: () => {
-        console.log('swipe left');
         onReject();
       },
       onSwipeRight: () => {
-        console.log('swipe right');
         onInvite();
       },
       enabled: isTopCard,
@@ -37,8 +35,6 @@ export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, 
   };
 
   const onClickInvite = () => {
-    console.log('click??');
-
     if (isTopCard) {
       animateInvite();
     }

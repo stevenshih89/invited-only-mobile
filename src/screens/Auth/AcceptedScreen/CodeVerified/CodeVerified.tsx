@@ -28,7 +28,7 @@ const CodeVerified: FC = (): JSX.Element => {
 
   const handleNext = () => {
     if (cameFromSummary) {
-      navigation.navigate(tutorialFlowPath as never);
+      navigation.navigate('/bottom-tabs-stack');
     } else {
       navigation.navigate(IOPath as never);
     }

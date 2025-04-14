@@ -77,8 +77,6 @@ export const useProfile = () => {
         const eventDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
         console.log(eventDoc);
         if (eventDoc.exists) {
-          console.log('events exist!');
-
           const data = eventDoc.data();
           totalParticipants += data?.male || 0 + data?.female || 0;
         }

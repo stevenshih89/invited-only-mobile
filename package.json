@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "ios:dev": "react-native run-ios --scheme 'development'",
-    "dev-local": "ENV_FILE=.env.development.local npx react-native start --reset-cache",
+    "dev-local": "ENV_FILE=.env.local npx react-native start --reset-cache",
     "dev": "ENV_FILE=.env.development npx react-native start --reset-cache",
     "staging": "ENV_FILE=.env.staging npx react-native start --reset-cache",
     "prod": "ENV_FILE=.env.production npx react-native start --reset-cache",

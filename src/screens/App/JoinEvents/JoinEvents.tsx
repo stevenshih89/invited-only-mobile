@@ -16,7 +16,7 @@ interface Props {
 const JoinEvents = ({events}: Props): ReactElement => {
   const {handleSuperInvite, handleSwipeLeft, handleSwipeRight, cards} = usePersistentCardSwipe({
     cardsData: events,
-    eventId: events[0].uid,
+    eventId: events[0]?.uid,
   });
 
   return (

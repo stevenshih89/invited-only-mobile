@@ -181,7 +181,6 @@ const EventPreview: FC<EventPreviewProps> = ({
       await firestore().collection(apiEventsCollection).doc(userId).update({
         photos: imageUrl,
       });
-      // console.log('Events image updated successfully.');
     } catch (e) {
       showToast('inviteMatch', 'There was an issue updating the event image. Please try again later.', 'Error');
       logErrorToSentry(e);

@@ -19,7 +19,6 @@ const IoHeader: React.FC<IoHeaderProps> = ({events, selectedEvent, requestsCount
   if (!currentUser) {
     return <AppLoader />;
   }
-  console.log('events', events);
 
   return (
     <S.HeaderContainer>

@@ -14,7 +14,6 @@ import IT from 'src/assets/images/flags/it.svg';
 export type CountryCode = 'AE' | 'ES' | 'UA' | 'FR' | 'PL' | 'IL' | 'PT' | 'US' | 'UK' | 'DE' | 'IT';
 
 const Flags = ({countryCode}: {countryCode: CountryCode}) => {
-  console.log('countryCode', countryCode);
   switch (countryCode) {
     case 'AE':
       return <AE />;

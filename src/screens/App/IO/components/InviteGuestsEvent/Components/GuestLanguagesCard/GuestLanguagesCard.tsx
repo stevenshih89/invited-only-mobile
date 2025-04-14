@@ -14,7 +14,6 @@ const GuestLanguagesCard: React.FC<GuestLanguagesCardProps> = ({guestInfo}) => {
   if (!languages || languages.length === 0) {
     return null; // Don't render anything if there are no languages
   }
-  console.log(languages);
   return (
     <S.Container>
       <S.CardLabel>Languages</S.CardLabel>
