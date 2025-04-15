@@ -263,6 +263,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/chat/{eventId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get chats for an event */
+        get: operations["getChatsForEvent"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -334,15 +351,19 @@ export interface components {
         Chat: {
             guestId?: string;
             hostId?: string;
+            eventId?: string;
+            hostImageUrl?: string;
+            guestImageUrl?: string;
             messages?: components["schemas"]["ChatMessage"][];
         };
         ChatMessage: {
+            id?: string;
+            content?: string;
+            senderId?: string;
             /** Format: datetime */
-            sentAt?: string;
-            chatId?: string;
-            message?: string;
-            seenByHost?: boolean;
-            seenByGuest?: boolean;
+            timestamp?: string;
+            /** @description Whether the message has been read by the recipient */
+            read?: boolean;
         };
         EventData: {
             uid: string;
@@ -1242,6 +1263,42 @@ export interface operations {
             };
         };
     };
+    getChatsForEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of chats for the event. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Chat"][];
+                };
+            };
+            /** @description Bad request. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
 }
 export enum ApiPaths {
     getEventsForUser = "/events/user/:userId",
@@ -1262,5 +1319,6 @@ export enum ApiPaths {
     getRemoteConfigFlags = "/config/flags",
     getFirebaseCollectionNames = "/config/firebase/collections",
     createChat = "/chat",
-    getChatsForUser = "/chat/:userId"
+    getChatsForUser = "/chat/:userId",
+    getChatsForEvent = "/chat/:eventId"
 }

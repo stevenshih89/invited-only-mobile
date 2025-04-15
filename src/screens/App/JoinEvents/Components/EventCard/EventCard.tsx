@@ -4,7 +4,7 @@ import {Event} from 'src/types/event';
 import {Gesture} from 'react-native-gesture-handler';
 import {useUser} from 'src/store/userStore';
 import LockedFeatureComponent from 'screens/App/Components/LockedFeatureComponent/LockedFeatureComponent';
-import {useCardGesture} from 'screens/App/IO/Components/InviteGuestsEvent/hooks/useCardGesture';
+import {useCardGesture} from 'screens/App/IO/components/InviteGuestsEvent/hooks/useCardGesture';
 import {components} from 'src/api/v1';
 import {Text} from 'react-native';
 

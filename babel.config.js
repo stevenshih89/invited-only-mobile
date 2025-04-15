@@ -26,7 +26,7 @@ module.exports = {
       'module:react-native-dotenv',
       {
         moduleName: '@env',
-        path: '.env.development',
+        path: '.env',
         blocklist: null,
         allowlist: null,
         blacklist: null, // DEPRECATED

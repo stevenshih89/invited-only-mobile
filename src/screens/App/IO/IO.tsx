@@ -6,14 +6,17 @@ import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {useUser} from 'src/store/userStore';
 import * as S from './IO.style';
 
-import InviteGuestsEvent from './Components/InviteGuestsEvent/InviteGuestsEvent';
-import IoHeader from './Components/IoHeader/IoHeader';
+
+
 import AppLoader from '../AppLoader/AppLoader';
 import {components} from 'src/api/v1';
 import usePersistentCardSwipe from './hooks/usePersistentCardSwipe';
 
 import {Text} from 'react-native';
 import {useEventGuests} from './hooks/useEventGuests';
+import IoHeader from './components/IoHeader/IoHeader';
+import InviteGuestsEvent from './components/InviteGuestsEvent/InviteGuestsEvent';
+
 
 type GuestUser = components['schemas']['User'];
 

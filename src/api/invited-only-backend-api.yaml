@@ -550,6 +550,31 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
+  /chat/{eventId}:
+    get:
+      summary: Get chats for an event
+      operationId: getChatsForEvent
+      tags:
+        - Chat
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of chats for the event.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Chat'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
 
 components:
   schemas:
@@ -703,6 +728,12 @@ components:
           type: string
         hostId:
           type: string
+        eventId:
+          type: string
+        hostImageUrl:
+          type: string
+        guestImageUrl:
+          type: string
         messages:
           type: array
           items:
@@ -710,17 +741,18 @@ components:
     ChatMessage:
       type: object
       properties:
-        sentAt:
+        id:
+          type: string
+        content:
+          type: string
+        senderId:
+          type: string
+        timestamp:
           type: string
           format: datetime
-        chatId:
-          type: string
-        message:
-          type: string
-        seenByHost:
+        read:
           type: boolean
-        seenByGuest:
-          type: boolean
+          description: Whether the message has been read by the recipient
     EventData:
       type: object
       properties:
