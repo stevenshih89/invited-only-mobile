@@ -26,10 +26,6 @@ const IO = ({events}: Props) => {
   const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
 
   const {guests, isLoading: isGuestsLoading, isFetchingNextPage, hasNextPage, fetchNextPage, status} = useEventGuests(selectedEvent?.uid);
-  console.log('status', status);
-  console.log('hasNextPage', hasNextPage);
-  console.log('isFetchingNextPage', isFetchingNextPage);
-  console.log('guests', guests);
   const {
     cards: currentEventCards,
     hasCards,
@@ -45,7 +41,7 @@ const IO = ({events}: Props) => {
   const handleEventSelect = (event: components['schemas']['EventData']) => {
     setSelectedEvent(event);
   };
-  if (!hasCards && status === 'success') {
+  if (!hasCards && status === 'success' && hasNextPage) {
     resetDeck(selectedEvent?.uid ?? '');
     fetchNextPage();
   }

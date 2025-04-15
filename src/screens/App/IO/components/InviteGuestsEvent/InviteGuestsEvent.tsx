@@ -54,7 +54,7 @@ const InviteGuestsEvent = ({selectedEvent, cardsToShow, isLoading, onSwipeLeft, 
               guestId: currentCard?.uid || '',
               hostId: selectedEvent.hostId || '',
               eventId: selectedEvent.uid,
-              guest_swipe: 'left',
+              host_swipe: 'left',
             },
           });
         }} // Use passed handler
@@ -66,7 +66,7 @@ const InviteGuestsEvent = ({selectedEvent, cardsToShow, isLoading, onSwipeLeft, 
               guestId: currentCard?.uid || '',
               hostId: selectedEvent.hostId || '',
               eventId: selectedEvent.uid,
-              guest_swipe: 'right',
+              host_swipe: 'right',
             },
           });
         }} // Use passed handler
