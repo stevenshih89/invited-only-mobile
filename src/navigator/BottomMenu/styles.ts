@@ -1,7 +1,7 @@
-import {StyleSheet} from 'react-native';
-import {blackColor, whiteColor} from 'constants/colors.ts';
-import {Satoshi400} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { StyleSheet } from 'react-native';
+import { blackColor, whiteColor } from 'constants/colors.ts';
+import { Satoshi400 } from 'constants/fonts';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 //import components
 

@@ -2,12 +2,14 @@ import {AppRegistry} from 'react-native';
 import App from './src/App';
 import {name as appName} from './app.json';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 const queryClient = new QueryClient();
 
 const AppWithQueryClient = () => (
   <QueryClientProvider client={queryClient}>
-    <App />
+    <KeyboardProvider>
+      <App />
+    </KeyboardProvider>
   </QueryClientProvider>
 );
 

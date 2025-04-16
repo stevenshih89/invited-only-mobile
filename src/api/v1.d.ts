@@ -143,6 +143,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/eventAttendees/host-request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get pending join requests for host */
+        get: operations["getPendingGuests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/eventAttendees/guest-invitation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get event invitations for guest */
+        get: operations["getEventInvitation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/eventAttendees/guest/{guestId}": {
         parameters: {
             query?: never;
@@ -246,7 +280,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/chat/{userId}": {
+    "/chat/user/{userId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -263,7 +297,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/chat/{eventId}": {
+    "/chat/event/{eventId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -274,6 +308,24 @@ export interface paths {
         get: operations["getChatsForEvent"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/chat/message/{chatId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get messages by chat id */
+        get: operations["getMessages"];
+        put?: never;
+        /** Create a new message */
+        post: operations["createMessage"];
         delete?: never;
         options?: never;
         head?: never;
@@ -349,15 +401,18 @@ export interface components {
             endReached?: boolean;
         };
         Chat: {
+            id?: string | null;
             guestId?: string;
             hostId?: string;
             eventId?: string;
             hostImageUrl?: string;
             guestImageUrl?: string;
-            messages?: components["schemas"]["ChatMessage"][];
+            guestName?: string;
+            hostName?: string;
         };
         ChatMessage: {
             id?: string;
+            chatId?: string;
             content?: string;
             senderId?: string;
             /** Format: datetime */
@@ -484,6 +539,60 @@ export interface components {
             host_reject_at?: string | null;
             /** @enum {string|null} */
             status?: "pending-host" | "pending-guest" | "host-reject" | "guest-reject" | "invitation-complete" | null;
+        };
+        ConnectionRequest: {
+            /** @description Unique identifier, e.g. `${eventId}_${guestId}` */
+            connectionId: string;
+            eventId: string;
+            guestId: string;
+            hostId: string;
+            /** @enum {string} */
+            guestSwipe: "left" | "right" | "none";
+            /** Format: date-time */
+            guestSwipeAt?: string;
+            /** @enum {string} */
+            hostSwipe: "left" | "right" | "none";
+            /** Format: date-time */
+            hostSwipeAt?: string;
+            guestConfirm?: boolean | null;
+            /** Format: date-time */
+            guestConfirmAt?: string;
+            hostConfirm?: boolean | null;
+            /** Format: date-time */
+            hostConfirmAt?: string;
+            guestAttending?: boolean | null;
+            /** Format: date-time */
+            guestAttendingAt?: string;
+            hostAttending?: boolean | null;
+            /** Format: date-time */
+            hostAttendingAt?: string;
+            /** @enum {string} */
+            status: "pending-swipe" | "pending-confirmation" | "rejected" | "confirmed" | "pending-attendance" | "attending" | "completed";
+            /** Format: date-time */
+            matchedAt?: string;
+            /** Format: date-time */
+            confirmedAt?: string;
+            /** Format: date-time */
+            attendingAt?: string;
+            /** Format: date-time */
+            completedAt?: string;
+            /** @enum {string} */
+            rejectedBy?: "guest" | "host";
+            /** Format: date-time */
+            rejectedAt?: string;
+            rejectionReason?: string;
+            history?: {
+                /** @enum {string} */
+                phase: "swipe" | "confirmed" | "rejected" | "attending" | "completed";
+                /** Format: date-time */
+                at: string;
+                /** @enum {string} */
+                by: "guest" | "host" | "system";
+            }[];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
         };
         /** @description Represents the Firebase Remote Config template structure, including ETag, parameters, and potentially conditions and parameter groups. */
         RemoteConfigFlagsResponse: {
@@ -984,6 +1093,82 @@ export interface operations {
             };
         };
     };
+    getPendingGuests: {
+        parameters: {
+            query: {
+                /** @description The UID of the host */
+                host_id: string;
+                /** @description The ID of the event */
+                event_id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Guest invitation details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getEventInvitation: {
+        parameters: {
+            query: {
+                /** @description The UID of the host */
+                guest_id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event invitations for guest */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getGuestEventAttend: {
         parameters: {
             query?: never;
@@ -1299,6 +1484,82 @@ export interface operations {
             };
         };
     };
+    getMessages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                chatId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Message created successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatMessage"][];
+                };
+            };
+            /** @description Bad request. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    createMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                chatId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatMessage"];
+            };
+        };
+        responses: {
+            /** @description Message created successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatMessage"];
+                };
+            };
+            /** @description Bad request. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
 }
 export enum ApiPaths {
     getEventsForUser = "/events/user/:userId",
@@ -1312,6 +1573,8 @@ export enum ApiPaths {
     updateUserAccount = "/users/:id",
     getUserById = "/users/:id",
     createEventAttend = "/eventAttendees/create",
+    getPendingGuests = "/eventAttendees/host-request",
+    getEventInvitation = "/eventAttendees/guest-invitation",
     getGuestEventAttend = "/eventAttendees/guest/:guestId",
     getHostEventAttend = "/eventAttendees/host/:hostId",
     updateEventAttend = "/eventAttendees/:id",
@@ -1319,6 +1582,8 @@ export enum ApiPaths {
     getRemoteConfigFlags = "/config/flags",
     getFirebaseCollectionNames = "/config/firebase/collections",
     createChat = "/chat",
-    getChatsForUser = "/chat/:userId",
-    getChatsForEvent = "/chat/:eventId"
+    getChatsForUser = "/chat/user/:userId",
+    getChatsForEvent = "/chat/event/:eventId",
+    createMessage = "/chat/message/:chatId",
+    getMessages = "/chat/message/:chatId"
 }

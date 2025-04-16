@@ -367,6 +367,62 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
+
+  /eventAttendees/host-request:
+    get:
+      summary: Get pending join requests for host
+      operationId: getPendingGuests
+      tags:
+        - Event Attendees
+      parameters:
+        - name: host_id
+          in: query
+          required: true
+          description: The UID of the host
+          schema:
+            type: string
+        - name: event_id
+          in: query
+          required: true
+          description: The ID of the event
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Guest invitation details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error.
+  /eventAttendees/guest-invitation:
+    get:
+      summary: Get event invitations for guest
+      operationId: getEventInvitation
+      tags:
+        - Event Attendees
+      parameters:
+        - name: guest_id
+          in: query
+          required: true
+          description: The UID of the host
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Event invitations for guest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error.
   /eventAttendees/guest/{guestId}:
     get:
       summary: Get event attendance records for a guest
@@ -501,6 +557,7 @@ paths:
                 $ref: '#/components/schemas/CollectionNamesResponse'
         '500':
           description: Internal server error.
+
   /chat:
     summary: chats related api
     post:
@@ -525,7 +582,7 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
-  /chat/{userId}:
+  /chat/user/{userId}:
     get:
       summary: Get chats for a user
       operationId: getChatsForUser
@@ -550,7 +607,7 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
-  /chat/{eventId}:
+  /chat/event/{eventId}:
     get:
       summary: Get chats for an event
       operationId: getChatsForEvent
@@ -575,7 +632,59 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
-
+  /chat/message/{chatId}:
+    post:
+      summary: Create a new message
+      operationId: createMessage
+      tags:
+        - Chat
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessage'
+      responses:
+        '200':
+          description: Message created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessage'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+    get:
+      summary: Get messages by chat id
+      operationId: getMessages
+      tags:
+        - Chat
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Message created successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatMessage'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
 components:
   schemas:
     User:
@@ -724,6 +833,9 @@ components:
     Chat:
       type: object
       properties:
+        id:
+          type: string
+          nullable: true
         guestId:
           type: string
         hostId:
@@ -734,15 +846,18 @@ components:
           type: string
         guestImageUrl:
           type: string
-        messages:
-          type: array
-          items:
-            $ref: '#/components/schemas/ChatMessage'
+        guestName:
+          type: string
+        hostName:
+          type: string
     ChatMessage:
       type: object
       properties:
         id:
           type: string
+        chatId:
+          type: string
+          nullable: false
         content:
           type: string
         senderId:
@@ -1002,6 +1117,123 @@ components:
             - guest-reject
             - invitation-complete
           nullable: true
+    ConnectionRequest:
+      type: object
+      required:
+        - connectionId
+        - eventId
+        - guestId
+        - hostId
+        - guestSwipe
+        - hostSwipe
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        connectionId:
+          type: string
+          description: Unique identifier, e.g. `${eventId}_${guestId}`
+        eventId:
+          type: string
+        guestId:
+          type: string
+        hostId:
+          type: string
+
+        guestSwipe:
+          type: string
+          enum: [left, right, none]
+        guestSwipeAt:
+          type: string
+          format: date-time
+        hostSwipe:
+          type: string
+          enum: [left, right, none]
+        hostSwipeAt:
+          type: string
+          format: date-time
+
+        guestConfirm:
+          type: boolean
+          nullable: true
+        guestConfirmAt:
+          type: string
+          format: date-time
+        hostConfirm:
+          type: boolean
+          nullable: true
+        hostConfirmAt:
+          type: string
+          format: date-time
+
+        guestAttending:
+          type: boolean
+          nullable: true
+        guestAttendingAt:
+          type: string
+          format: date-time
+        hostAttending:
+          type: boolean
+          nullable: true
+        hostAttendingAt:
+          type: string
+          format: date-time
+
+        status:
+          type: string
+          enum:
+            - pending-swipe
+            - pending-confirmation
+            - rejected
+            - confirmed
+            - pending-attendance
+            - attending
+            - completed
+
+        matchedAt:
+          type: string
+          format: date-time
+        confirmedAt:
+          type: string
+          format: date-time
+        attendingAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+
+        rejectedBy:
+          type: string
+          enum: [guest, host]
+        rejectedAt:
+          type: string
+          format: date-time
+        rejectionReason:
+          type: string
+
+        history:
+          type: array
+          items:
+            type: object
+            required: [phase, at, by]
+            properties:
+              phase:
+                type: string
+                enum: [swipe, confirmed, rejected, attending, completed]
+              at:
+                type: string
+                format: date-time
+              by:
+                type: string
+                enum: [guest, host, system]
+
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
     RemoteConfigFlagsResponse:
       type: object
       description: >-

@@ -2,7 +2,6 @@ import {useState} from 'react';
 import * as S from './EventsDropdown.style';
 import ArrowDown from 'src/assets/images/icons/arrow-down.svg';
 import ArrowUp from 'src/assets/images/icons/arrow-up-thin.svg';
-import {EventApiResponse} from 'src/apiv2/queries/eventQueries';
 import {components} from 'src/api/v1';
 
 interface EventsDropDownProps {
@@ -61,3 +60,5 @@ export const EventsDropdown = ({events, onEventSelect, selectedEvent}: EventsDro
     </S.DropdownContainer>
   );
 };
+
+export default EventsDropdown;

@@ -1,9 +1,9 @@
-import React, {useState, ReactNode} from 'react';
+import React, { useState, ReactNode } from 'react';
 import * as S from './Card.style';
 import ImageIndicator from './Components/ImageIndicator/ImageIndicator';
 import CardImage from './Components/CardImage/CardImage';
-import {PhysicCard} from './Card'; // Assuming PhysicCard remains in Card.tsx or is exported
-import {components} from 'src/api/v1';
+import { PhysicCard } from './Card'; // Assuming PhysicCard remains in Card.tsx or is exported
+import { components } from 'src/api/v1';
 
 interface StaticCardProps {
   uid: string;
@@ -15,10 +15,9 @@ interface StaticCardProps {
   distanceFromTop: number;
 }
 
-const StaticCard: React.FC<StaticCardProps> = ({uid, backgroundUrls, index, children, showDots = true, isTopCard, distanceFromTop}) => {
+const StaticCard: React.FC<StaticCardProps> = ({ uid, backgroundUrls, index, children, showDots = true, isTopCard, distanceFromTop }) => {
   const [imageIndex, setImageIndex] = useState<number>(0);
   const showImageIndexIndicator = isTopCard && showDots && backgroundUrls.length > 1;
-  console.log('backgroundUrls', backgroundUrls);
 
   return (
     <PhysicCard distanceFromTheTop={distanceFromTop} index={index} uid={uid} backgroundUrls={backgroundUrls} setImageIndex={setImageIndex}>

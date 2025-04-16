@@ -1,4 +1,5 @@
-import {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { components } from 'src/api/v1';
 
 export type RootStackParamList = {
   '/bottom-tabs-stack': undefined;
@@ -13,6 +14,9 @@ export type RootStackParamList = {
   };
   '/events/requests'?: {
     screen?: string;
+  };
+  '/chat/chat-window'?: {
+    chat: components['schemas']['Chat'];
   };
   '/common-stack'?: {
     screen?: string;
@@ -60,7 +64,7 @@ export type RootStackParamList = {
   '/code-verified': undefined;
   '/verify-first-step': undefined;
   '/verify-second-step': undefined;
-  '/invitation-code': {cameFromSummary: boolean};
+  '/invitation-code': { cameFromSummary: boolean };
   '/payment': undefined;
   '/manage-subscription': undefined;
   '/tutorial-flow': undefined;

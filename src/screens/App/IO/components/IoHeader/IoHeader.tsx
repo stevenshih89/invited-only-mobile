@@ -1,6 +1,6 @@
 import React from 'react';
 import * as S from './IoHeader.style';
-import {EventsDropdown} from './Components/EventsDropdown';
+import {EventsDropdown} from '../../../Components/EventsDropdown/EventsDropdown';
 import CreateEventButton from './Components/CreateEventButton/CreateEventButton';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import auth from '@react-native-firebase/auth';

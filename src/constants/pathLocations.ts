@@ -1,4 +1,4 @@
-import {RootStackParamList} from 'typescript/types';
+import { RootStackParamList } from 'typescript/types';
 // Stacks paths
 const bottomTabsStackPath = '/bottom-tabs-stack';
 const notificationsStackPath = '/notifications-stack';
@@ -47,6 +47,7 @@ const myProfileViewPath: keyof RootStackParamList = '/my-profile-view';
 const profileEditingPath: keyof RootStackParamList = '/profile-editing';
 const myEventsPath: keyof RootStackParamList = '/my-events';
 const chatPath: keyof RootStackParamList = '/chat';
+const chatWindowPath: keyof RootStackParamList = '/chat/chat-window';
 const chatCorrespondencePath: keyof RootStackParamList = '/chat-correspondence';
 const adminChatPath: keyof RootStackParamList = '/admin-chat';
 const userProfilePath: keyof RootStackParamList = '/user-profile';
@@ -149,4 +150,5 @@ export {
   findConnectionsPath,
   myConnectionsPath,
   eventRequestStackPath,
+  chatWindowPath
 };

@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
-import {MatchData} from 'screens/App/IO/screens/Match/Match';
-import {showToast} from './showToast';
-import {INVITE_MATCH_STATUS} from 'constants/common';
+import { MatchData } from 'screens/App/IO/screens/Match/Match';
+import { showToast } from './showToast';
+import { INVITE_MATCH_STATUS } from 'constants/common';
 import { logErrorToSentry } from './logErrorsToSentry';
 import { useContext } from 'react';
 import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
@@ -29,7 +29,7 @@ export const handleCreateChat = async (matchedData: MatchData, collectionNames =
         uid: matchedData.uidGuest,
         hostUid: matchedData?.uidHost,
       };
-      const chatExist = prevChats.find((chat: {uid: string}) => chat.uid === matchedData.uidGuest);
+      const chatExist = prevChats.find((chat: { uid: string }) => chat.uid === matchedData.uidGuest);
       if (chatExist) {
         return;
       }
