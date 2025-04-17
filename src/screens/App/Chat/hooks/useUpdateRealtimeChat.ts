@@ -1,5 +1,5 @@
 import invitedOnlyBackendApi from "src/api/backend-api";
-import { useFirestoreSubscription } from "src/api/hooks/useFirestoreSubscription";
+import { useFirestoreSubscription } from "src/api/realtime/useFirestoreSubscription";
 import { components } from "src/api/v1";
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 import { useMemo } from "react";

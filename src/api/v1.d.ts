@@ -332,6 +332,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/chat/{chatId}/seen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Mark chat as seen by user */
+        patch: operations["markChatAsSeen"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -409,6 +426,15 @@ export interface components {
             guestImageUrl?: string;
             guestName?: string;
             hostName?: string;
+            lastMessage?: string;
+            /** Format: date-time */
+            lastMessageTimestamp?: string;
+            unreadMessages?: number;
+            userLastSeen?: {
+                userId?: string;
+                /** Format: date-time */
+                lastSeen?: string;
+            }[];
         };
         ChatMessage: {
             id?: string;
@@ -417,8 +443,6 @@ export interface components {
             senderId?: string;
             /** Format: datetime */
             timestamp?: string;
-            /** @description Whether the message has been read by the recipient */
-            read?: boolean;
         };
         EventData: {
             uid: string;
@@ -591,8 +615,6 @@ export interface components {
             }[];
             /** Format: date-time */
             createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
         };
         /** @description Represents the Firebase Remote Config template structure, including ETag, parameters, and potentially conditions and parameter groups. */
         RemoteConfigFlagsResponse: {
@@ -1560,6 +1582,56 @@ export interface operations {
             };
         };
     };
+    markChatAsSeen: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the chat to mark as seen. */
+                chatId: string;
+            };
+            cookie?: never;
+        };
+        /** @description The user ID marking the chat as seen. */
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description The UID of the user who has seen the chat. */
+                    userId: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Successfully marked as seen (No Content). */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request (e.g., missing userId in body or invalid chatId/userId format). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Chat not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
 }
 export enum ApiPaths {
     getEventsForUser = "/events/user/:userId",
@@ -1585,5 +1657,6 @@ export enum ApiPaths {
     getChatsForUser = "/chat/user/:userId",
     getChatsForEvent = "/chat/event/:eventId",
     createMessage = "/chat/message/:chatId",
-    getMessages = "/chat/message/:chatId"
+    getMessages = "/chat/message/:chatId",
+    markChatAsSeen = "/chat/:chatId/seen"
 }

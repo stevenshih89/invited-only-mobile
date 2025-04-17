@@ -685,6 +685,41 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
+  /chat/{chatId}/seen:
+    patch:
+      summary: Mark chat as seen by user
+      operationId: markChatAsSeen
+      tags:
+        - Chat
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the chat to mark as seen.
+      requestBody:
+        required: true
+        description: The user ID marking the chat as seen.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: The UID of the user who has seen the chat.
+              required:
+                - userId
+      responses:
+        '204':
+          description: Successfully marked as seen (No Content).
+        '400':
+          description: Bad request (e.g., missing userId in body or invalid chatId/userId format).
+        '404':
+          description: Chat not found.
+        '500':
+          description: Internal server error.
 components:
   schemas:
     User:
@@ -850,6 +885,23 @@ components:
           type: string
         hostName:
           type: string
+        lastMessage:
+          type: string
+        lastMessageTimestamp:
+          type: string
+          format: date-time
+        unreadMessages:
+          type: integer
+        userLastSeen:
+          type: array
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+              lastSeen:
+                type: string
+                format: date-time
     ChatMessage:
       type: object
       properties:
@@ -865,9 +917,6 @@ components:
         timestamp:
           type: string
           format: datetime
-        read:
-          type: boolean
-          description: Whether the message has been read by the recipient
     EventData:
       type: object
       properties:
@@ -1128,7 +1177,6 @@ components:
         - hostSwipe
         - status
         - createdAt
-        - updatedAt
       properties:
         connectionId:
           type: string
@@ -1227,13 +1275,10 @@ components:
               by:
                 type: string
                 enum: [guest, host, system]
-
         createdAt:
           type: string
           format: date-time
-        updatedAt:
-          type: string
-          format: date-time
+
     RemoteConfigFlagsResponse:
       type: object
       description: >-
