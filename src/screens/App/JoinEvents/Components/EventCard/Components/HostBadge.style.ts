@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-
+import { Satoshi500 } from 'constants/fonts';
 export const HostBadgeContainer = styled.View`
   position: absolute;
   width: 100%;
@@ -19,6 +19,7 @@ export const HostBadge = styled.View`
   height: 40px;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 100px;
+
 `;
 
 export const HostInfoRow = styled.View`
@@ -52,9 +53,7 @@ export const GuestCountBadge = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 5px 6px;
-  gap: 10px;
-  width: 31px;
+  width: 24px;
   height: 24px;
   background: rgba(255, 255, 255, 0.4);
   background-blend-mode: overlay;
@@ -62,9 +61,7 @@ export const GuestCountBadge = styled.View`
 `;
 
 export const GuestCountText = styled.Text`
-  width: 19px;
-  height: 17px;
-  font-family: 'Satoshi';
+  font-family: ${Satoshi500};
   font-style: normal;
   font-weight: 500;
   font-size: 14px;

@@ -1,7 +1,7 @@
-import {useState, useMemo, useCallback} from 'react';
+import { useState, useMemo, useCallback } from 'react';
 
 // Define Guest type or import if shared
-type GuestUser = {uid: string; [key: string]: any}; // Basic structure, adjust if needed
+type GuestUser = { uid: string;[key: string]: any }; // Basic structure, adjust if needed
 
 interface UsePersistentCardSwipeProps<T extends GuestUser> {
   cardsData: T[] | undefined;
@@ -34,14 +34,9 @@ const usePersistentCardSwipe = <T extends GuestUser>({
 
   const handleSwipe = useCallback(
     (direction: 'left' | 'right' | 'super') => {
-      console.log('handleSwipe', direction);
       if (!eventId || currentEventCards.length === 0) return;
-
       const swipedCardUid = currentEventCards[currentEventCards.length - 1]?.uid;
-      console.log('swipedCardUid', swipedCardUid);
-      console.log('currentEventCards', currentEventCards);
       if (!swipedCardUid) return;
-      console.log('swipedCardUid', swipedCardUid);
       setDismissedCardsPerEvent(prev => {
         const currentDismissed = prev[eventId] || new Set<string>();
         const newDismissed = new Set<string>(currentDismissed);
@@ -61,7 +56,7 @@ const usePersistentCardSwipe = <T extends GuestUser>({
 
   const resetDeck = useCallback((eventIdToReset: string) => {
     setDismissedCardsPerEvent(prev => {
-      const newState = {...prev};
+      const newState = { ...prev };
       delete newState[eventIdToReset];
       return newState;
     });

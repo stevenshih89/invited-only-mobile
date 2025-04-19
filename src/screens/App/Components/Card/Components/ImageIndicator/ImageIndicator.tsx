@@ -7,11 +7,11 @@ interface ImageIndicatorProps {
   totalImages: number;
 }
 
-const ImageIndicator: React.FC<ImageIndicatorProps> = ({currentIndex, totalImages}) => {
+const ImageIndicator: React.FC<ImageIndicatorProps> = ({ currentIndex, totalImages }) => {
   return (
     <S.Container>
-      {Array.from({length: totalImages}).map((_, index) => (
-        <S.Dot key={index} isActive={index === currentIndex} />
+      {Array.from({ length: totalImages }).map((_, index) => (
+        <S.Line key={index} isActive={index === currentIndex} />
       ))}
     </S.Container>
   );

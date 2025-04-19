@@ -8,14 +8,13 @@ import invitedOnlyBackendApi from 'src/api/backend-api';
 import auth from '@react-native-firebase/auth';
 
 const MyEvents = () => {
-  const {data: events, isLoading} = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
+  const { data: events, isLoading } = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
     params: {
       path: {
         hostId: auth().currentUser?.uid || '',
       },
     },
   });
-
   console.log('events', events);
 
   if (isLoading) {

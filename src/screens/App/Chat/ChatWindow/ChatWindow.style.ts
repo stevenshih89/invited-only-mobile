@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 import { Platform, FlatList } from "react-native";
 import { Satoshi400 } from "src/constants/fonts";
-import { black3Color, blackColor } from "constants/colors";
+import { blackColor } from "constants/colors";
 import { components } from "src/api/v1";
 import { screenHeight } from "constants/common";
 import { ScrollView } from "react-native-gesture-handler";
@@ -14,7 +14,7 @@ export const Container = styled.View`
     display: flex;
     height: ${screenHeight * 0.9}px;
     flex-direction: column;
-    background-color: ${black3Color};
+    background-color: ${blackColor};
     padding: 16px;
     /* border: 3px solid blue; // Removed border */
 `;

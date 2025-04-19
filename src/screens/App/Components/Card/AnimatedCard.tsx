@@ -1,11 +1,12 @@
-import React, {useState, ReactNode} from 'react';
+import React, { useState, ReactNode } from 'react';
 import * as S from './Card.style';
-import {GestureDetector, PanGesture} from 'react-native-gesture-handler';
-import {AnimatedStyle} from 'react-native-reanimated';
+import { GestureDetector, PanGesture } from 'react-native-gesture-handler';
+import { AnimatedStyle } from 'react-native-reanimated';
 import ImageIndicator from './Components/ImageIndicator/ImageIndicator';
 import CardImage from './Components/CardImage/CardImage';
-import {PhysicCard} from './Card'; // Assuming PhysicCard remains in Card.tsx or is exported
-import {components} from 'src/api/v1';
+import { PhysicCard } from './Card'; // Assuming PhysicCard remains in Card.tsx or is exported
+import { components } from 'src/api/v1';
+import { NopeRejectBadge } from './Components/NopeRejectBadge/NopeRejectBadge';
 
 interface AnimatedCardProps {
   uid: string;
@@ -39,23 +40,24 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
 
   return (
     <GestureDetector gesture={gestureHandler}>
+
       <PhysicCard
         distanceFromTheTop={distanceFromTop}
         index={index}
         uid={uid}
         backgroundUrls={backgroundUrls}
         setImageIndex={setImageIndex}>
+
         <S.StyledAnimatedView style={animatedStyle}>
+          {showImageIndexIndicator && <ImageIndicator currentIndex={imageIndex} totalImages={backgroundUrls.length} />}
           <CardImage imageSource={backgroundUrls[imageIndex]?.image || null} isTopCard={isTopCard} imageIndex={imageIndex} />
           <S.CardGradient colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 0.2)', 'rgba(0, 0, 0, 0.9)']} locations={[0, 0.7, 1]} />
-
           <S.LikeAnimatedOpacity style={likeOpacityStyle}>
-            <S.LabelTextLike>LIKE</S.LabelTextLike>
+            <NopeRejectBadge text="Invite" />
           </S.LikeAnimatedOpacity>
           <S.NopeAnimatedOpacity style={nopeOpacityStyle}>
-            <S.LabelTextNope>NOPE</S.LabelTextNope>
+            <NopeRejectBadge text="Reject" />
           </S.NopeAnimatedOpacity>
-          {showImageIndexIndicator && <ImageIndicator currentIndex={imageIndex} totalImages={backgroundUrls.length} />}
           {children}
         </S.StyledAnimatedView>
       </PhysicCard>

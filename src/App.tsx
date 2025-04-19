@@ -1,24 +1,24 @@
-import React, {FC, JSX, useEffect} from 'react';
-import {Platform, StatusBar, View} from 'react-native';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import React, { FC, JSX, useEffect } from 'react';
+import { Platform, StatusBar, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Main from 'src';
 import 'react-native-gesture-handler';
-import {blackColor} from 'constants/colors';
-import Purchases, {CustomerInfo} from 'react-native-purchases';
-import {NavigationContainer} from '@react-navigation/native';
-import {useSubscriptions} from 'src/store/subscriptionsStore';
+import { blackColor } from 'constants/colors';
+import Purchases, { CustomerInfo } from 'react-native-purchases';
+import { NavigationContainer } from '@react-navigation/native';
+import { useSubscriptions } from 'src/store/subscriptionsStore';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import RNUxcam from 'react-native-ux-cam';
-import {requestTrackingPermission} from 'react-native-tracking-transparency';
-import {Settings} from 'react-native-fbsdk-next';
+import { requestTrackingPermission } from 'react-native-tracking-transparency';
+import { Settings } from 'react-native-fbsdk-next';
 import moment from 'moment';
 import Config from 'react-native-config';
 import Bugsnag from '@bugsnag/react-native';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {showToast} from 'helpers/showToast';
-import {getActiveSubscription} from './api.deprecated/purchase';
-import {AppSettingsQueries} from './apiv2/queries/appSettingsQueries';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { showToast } from 'helpers/showToast';
+import { getActiveSubscription } from './api.deprecated/purchase';
+import { AppSettingsQueries } from './apiv2/queries/appSettingsQueries';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
@@ -34,10 +34,9 @@ Bugsnag.start();
 
 const App: FC = (): JSX.Element => {
   const IO_PUBLICK_RC_IOS = Config.IO_PUBLICK_RC_IOS || '';
-  const {data: collectionNames} = invitedOnlyBackendApi.useQuery('get', '/config/firebase/collections');
+  const { data: collectionNames } = invitedOnlyBackendApi.useQuery('get', '/config/firebase/collections');
 
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
-
   const handleUpdateUserSubscriptions = async (activeSubscription: CustomerInfo | null) => {
     try {
       const currentUser = auth().currentUser;
@@ -129,7 +128,7 @@ const App: FC = (): JSX.Element => {
   useEffect(() => {
     initializeTracking();
     if (Platform.OS === 'ios' && IO_PUBLICK_RC_IOS) {
-      Purchases.configure({apiKey: IO_PUBLICK_RC_IOS, usesStoreKit2IfAvailable: false});
+      Purchases.configure({ apiKey: IO_PUBLICK_RC_IOS, });
     }
 
     const getSubscription = async () => {
@@ -149,7 +148,7 @@ const App: FC = (): JSX.Element => {
     <SafeAreaProvider>
       <NavigationContainer>
         <StatusBar />
-        <View style={{flex: 1, backgroundColor: blackColor}}>
+        <View style={{ flex: 1, backgroundColor: blackColor }}>
           <Main />
         </View>
       </NavigationContainer>

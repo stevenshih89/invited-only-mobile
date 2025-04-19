@@ -1,7 +1,7 @@
 import FastImage from 'react-native-fast-image';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import * as S from './CardImage.style';
-import {useState} from 'react';
+import { useState } from 'react';
 import React from 'react';
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
   imageIndex: number;
 }
 
-const CardImage = ({imageSource, isTopCard, imageIndex}: Props) => {
+const CardImage = ({ imageSource, isTopCard, imageIndex }: Props) => {
   const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
 
   const handleLoad = () => {

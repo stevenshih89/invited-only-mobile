@@ -4,8 +4,8 @@ import * as S from './Chat.style';
 import auth from '@react-native-firebase/auth';
 
 import AppLoader from '../AppLoader/AppLoader';
+import { EmptyStateChatFallback } from './Components/EmtryStateChatFallback';
 import EventChats from './EventChats/EventChats';
-
 const Chat = () => {
   const { data: events, isLoading: isEventsLoading } = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
     params: {
@@ -18,17 +18,11 @@ const Chat = () => {
   if (isEventsLoading) {
     return <AppLoader />;
   }
-
+  console.log(events);
   if (events?.length === 0) {
     return (
       <S.ChatContainer>
-        <S.EmptyStateContainer>
-          <S.EmptyStateTitle>No chats</S.EmptyStateTitle>
-          <S.EmptyStateDescription>
-            Chats for your events and connections will be here! Just create an event to start.
-          </S.EmptyStateDescription>
-        </S.EmptyStateContainer>
-        <CreateEventButton />
+        <EmptyStateChatFallback emptyType="no-events" />
       </S.ChatContainer>
     );
   }

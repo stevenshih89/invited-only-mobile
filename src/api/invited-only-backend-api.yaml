@@ -362,7 +362,36 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EventConfirmation'
+                $ref: '#/components/schemas/ConnectionRequest'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+    patch:
+      summary: Update an event attendance record
+      operationId: updateEventAttend
+      tags:
+        - Event Attendees
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the event attendance record to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionRequest'
+      responses:
+        '200':
+          description: Event attendance updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionRequest'
         '400':
           description: Bad request.
         '500':
@@ -444,7 +473,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/EventConfirmation'
+                  $ref: '#/components/schemas/ConnectionRequest'
         '400':
           description: Bad request.
         '500':
@@ -469,7 +498,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/EventConfirmation'
+                  $ref: '#/components/schemas/ConnectionRequest'
         '400':
           description: Bad request.
         '500':
@@ -492,14 +521,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EventConfirmation'
+              $ref: '#/components/schemas/ConnectionRequest'
       responses:
         '200':
           description: Event attendance updated successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EventConfirmation'
+                $ref: '#/components/schemas/ConnectionRequest'
         '400':
           description: Bad request.
         '500':
@@ -1094,89 +1123,12 @@ components:
           type: string
         userPhoto:
           type: string
-    EventConfirmation:
-      type: object
-      properties:
-        event_id:
-          type: string
-          nullable: true
-        user_id:
-          type: string
-          nullable: true
-        host_id:
-          type: string
-        guest_swipe:
-          type: string
-          enum:
-            - left
-            - right
-            - none
-          nullable: true
-          default: none
-        guest_swipe_at:
-          type: string
-          format: date-time
-          nullable: true
-        guest_confirm:
-          nullable: true
-          type: boolean
-        guest_confirm_at:
-          type: string
-          format: date-time
-          nullable: true
-        guest_reject:
-          type: boolean
-          nullable: true
-        guest_reject_at:
-          type: string
-          format: date-time
-          nullable: true
-        host_swipe:
-          type: string
-          enum:
-            - left
-            - right
-            - none
-          nullable: true
-          default: none
-        host_swipe_at:
-          type: string
-          format: date-time
-          nullable: true
-        host_confirm:
-          type: boolean
-          nullable: true
-        host_confirm_at:
-          type: string
-          format: date-time
-          nullable: true
-        host_reject:
-          type: boolean
-          nullable: true
-        host_reject_at:
-          type: string
-          format: date-time
-          nullable: true
-        status:
-          type: string
-          enum:
-            - pending-host
-            - pending-guest
-            - host-reject
-            - guest-reject
-            - invitation-complete
-          nullable: true
     ConnectionRequest:
       type: object
       required:
-        - connectionId
         - eventId
         - guestId
         - hostId
-        - guestSwipe
-        - hostSwipe
-        - status
-        - createdAt
       properties:
         connectionId:
           type: string
@@ -1231,12 +1183,12 @@ components:
           type: string
           enum:
             - pending-swipe
+            - connection-complete
             - pending-confirmation
-            - rejected
-            - confirmed
+            - confirmation-complete
             - pending-attendance
-            - attending
             - completed
+            - rejected
 
         matchedAt:
           type: string
@@ -1250,10 +1202,9 @@ components:
         completedAt:
           type: string
           format: date-time
-
         rejectedBy:
           type: string
-          enum: [guest, host]
+          enum: [guest, host, none]
         rejectedAt:
           type: string
           format: date-time

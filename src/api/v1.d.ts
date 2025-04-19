@@ -140,7 +140,8 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /** Update an event attendance record */
+        patch: operations["updateEventAttend"];
         trace?: never;
     };
     "/eventAttendees/host-request": {
@@ -531,51 +532,18 @@ export interface components {
             uid?: string;
             userPhoto?: string;
         };
-        EventConfirmation: {
-            event_id?: string | null;
-            user_id?: string | null;
-            host_id?: string;
-            /**
-             * @default none
-             * @enum {string|null}
-             */
-            guest_swipe: "left" | "right" | "none";
-            /** Format: date-time */
-            guest_swipe_at?: string | null;
-            guest_confirm?: boolean | null;
-            /** Format: date-time */
-            guest_confirm_at?: string | null;
-            guest_reject?: boolean | null;
-            /** Format: date-time */
-            guest_reject_at?: string | null;
-            /**
-             * @default none
-             * @enum {string|null}
-             */
-            host_swipe: "left" | "right" | "none";
-            /** Format: date-time */
-            host_swipe_at?: string | null;
-            host_confirm?: boolean | null;
-            /** Format: date-time */
-            host_confirm_at?: string | null;
-            host_reject?: boolean | null;
-            /** Format: date-time */
-            host_reject_at?: string | null;
-            /** @enum {string|null} */
-            status?: "pending-host" | "pending-guest" | "host-reject" | "guest-reject" | "invitation-complete" | null;
-        };
         ConnectionRequest: {
             /** @description Unique identifier, e.g. `${eventId}_${guestId}` */
-            connectionId: string;
+            connectionId?: string;
             eventId: string;
             guestId: string;
             hostId: string;
             /** @enum {string} */
-            guestSwipe: "left" | "right" | "none";
+            guestSwipe?: "left" | "right" | "none";
             /** Format: date-time */
             guestSwipeAt?: string;
             /** @enum {string} */
-            hostSwipe: "left" | "right" | "none";
+            hostSwipe?: "left" | "right" | "none";
             /** Format: date-time */
             hostSwipeAt?: string;
             guestConfirm?: boolean | null;
@@ -591,7 +559,7 @@ export interface components {
             /** Format: date-time */
             hostAttendingAt?: string;
             /** @enum {string} */
-            status: "pending-swipe" | "pending-confirmation" | "rejected" | "confirmed" | "pending-attendance" | "attending" | "completed";
+            status?: "pending-swipe" | "connection-complete" | "pending-confirmation" | "confirmation-complete" | "pending-attendance" | "completed" | "rejected";
             /** Format: date-time */
             matchedAt?: string;
             /** Format: date-time */
@@ -601,7 +569,7 @@ export interface components {
             /** Format: date-time */
             completedAt?: string;
             /** @enum {string} */
-            rejectedBy?: "guest" | "host";
+            rejectedBy?: "guest" | "host" | "none";
             /** Format: date-time */
             rejectedAt?: string;
             rejectionReason?: string;
@@ -614,7 +582,7 @@ export interface components {
                 by: "guest" | "host" | "system";
             }[];
             /** Format: date-time */
-            createdAt: string;
+            createdAt?: string;
         };
         /** @description Represents the Firebase Remote Config template structure, including ETag, parameters, and potentially conditions and parameter groups. */
         RemoteConfigFlagsResponse: {
@@ -1096,7 +1064,48 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["EventConfirmation"];
+                    "application/json": components["schemas"]["ConnectionRequest"];
+                };
+            };
+            /** @description Bad request. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    updateEventAttend: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the event attendance record to update. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConnectionRequest"];
+            };
+        };
+        responses: {
+            /** @description Event attendance updated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionRequest"];
                 };
             };
             /** @description Bad request. */
@@ -1209,7 +1218,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["EventConfirmation"][];
+                    "application/json": components["schemas"]["ConnectionRequest"][];
                 };
             };
             /** @description Bad request. */
@@ -1245,7 +1254,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["EventConfirmation"][];
+                    "application/json": components["schemas"]["ConnectionRequest"][];
                 };
             };
             /** @description Bad request. */
@@ -1313,7 +1322,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["EventConfirmation"];
+                "application/json": components["schemas"]["ConnectionRequest"];
             };
         };
         responses: {
@@ -1323,7 +1332,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["EventConfirmation"];
+                    "application/json": components["schemas"]["ConnectionRequest"];
                 };
             };
             /** @description Bad request. */
@@ -1645,6 +1654,7 @@ export enum ApiPaths {
     updateUserAccount = "/users/:id",
     getUserById = "/users/:id",
     createEventAttend = "/eventAttendees/create",
+    updateEventAttend = "/eventAttendees/create",
     getPendingGuests = "/eventAttendees/host-request",
     getEventInvitation = "/eventAttendees/guest-invitation",
     getGuestEventAttend = "/eventAttendees/guest/:guestId",

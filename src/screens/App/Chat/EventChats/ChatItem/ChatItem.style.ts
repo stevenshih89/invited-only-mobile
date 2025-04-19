@@ -9,72 +9,91 @@ export const Container = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  padding: 16px 0px;
-  gap: 16px;
   width: 100%;
   height: 131px;
-  background: #0C0C0C;
+  background: rgba(12, 12, 12, 0.5);
+
 `;
+
+export const NarrowLeftContainer = styled.View`
+  padding: 10px;
+  display: flex;
+  flex: 1;
+  height: 100%;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-start;
+`;
+
+export const WideRightContainer = styled.View`
+  padding: 10px;
+  display: flex;
+  flex: 4;
+  height: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 5px;
+`;
+
 
 export const AvatarContainer = styled.View`
   flex: none;
   order: 0;
   flex-grow: 0;
-  z-index: 0;
 `;
 
 export const AvatarImage = styled.Image`
-  width: 56px;
-  height: 56px;
-  border-radius: 28px;
+  width: 66px;
+  height: 66px;
+
+  border-radius: 66px;
   background-color: ${whiteColor};
 `;
 
 export const ContentContainer = styled.View`
-  flex: none;
-  order: 1;
-  flex-grow: 0;
-  z-index: 1;
-  width: 309px;
-  height: 99px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  align-items: space-between;
+  height: 99px;
+  display: flex;
+  width: 80%;
+  flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
+
   gap: 10px;
 `;
+export const ContentContainerInner = styled.View`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: space-between;
+  width: 100%;
+  text-wrap: wrap;
 
-export const HeaderContainer = styled.View`
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-  width: 309px;
-  height: 24px;
+`;
+export const InnerRowContainer
+  = styled.View`
+  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
-  padding: 0px;
-  gap: 122px;
+  align-items: space-between;
+  flex-wrap: wrap;
 `;
 
 export const StatusBadge = styled.View`
-  margin: 0 auto;
-  width: 107px;
   height: 24px;
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 40px;
+  border-radius: 20px;
   display: flex;
-  flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 4px 8px;
-  gap: 10px;
+  padding: 10px;
 `;
 
 export const StatusText = styled.Text`
-  width: 91px;
   height: 17px;
   font-family: ${Satoshi500};
   font-size: 12px;
@@ -83,8 +102,7 @@ export const StatusText = styled.Text`
 `;
 
 export const TimeText = styled.Text`
-  margin: 0 auto;
-  width: 76px;
+
   height: 20px;
   font-family: ${Satoshi500};
   font-size: 14px;
@@ -97,12 +115,12 @@ export const TextContainer = styled.View`
   order: 1;
   align-self: stretch;
   flex-grow: 0;
-  width: 309px;
+  width: 95%;
   height: 65px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
+
   gap: 4px;
 `;
 
@@ -110,14 +128,13 @@ export const NameContainer = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0px;
-  gap: 6px;
+
   width: 76px;
   height: 22px;
 `;
 
 export const NameText = styled.Text`
-  width: 48px;
+
   height: 22px;
   font-family: ${Satoshi700};
   font-size: 16px;
@@ -125,35 +142,44 @@ export const NameText = styled.Text`
   color: #FFFFFF;
 `;
 
-export const UnreadBadge = styled.View`
-  width: 22px;
+export const LastMessageTimestamp = styled.Text`
   height: 22px;
-  background: #FFFFFF;
-  border-radius: 38px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 6px;
-  gap: 10px;
+  font-family: ${Satoshi400};
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: left;
+`;
+export const LastMessageText = styled.Text`
+  font-family: ${Satoshi400};
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: left;
+  width: 90%;
+  text-wrap: wrap;
+`;
+export const UnreadBadgeAndNameContainer = styled.View`
+display: flex;
+flex-direction: row;
+align-items: center;
+gap: 10px;
+`;
+
+export const UnreadBadge = styled.View`
+width: 25px;
+height: 25px;
+background: #FFFFFF;
+border-radius: 38px;
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
 `;
 
 export const UnreadCount = styled.Text`
-  width: 8px;
-  height: 17px;
-  font-family: ${Satoshi500};
-  font-size: 14px;
-  line-height: 121%;
-  display: flex;
-  align-items: center;
-  color: #010101;
-`;
-
-export const MessageText = styled.Text`
-  width: 309px;
-  height: 39px;
-  font-family: ${Satoshi400};
-  font-size: 14px;
-  line-height: 140%;
-  color: rgba(255, 255, 255, 0.5);
+font-family: ${Satoshi500};
+font-size: 14px;
+line-height: 121 %;
+display: flex;
+align-items: center;
+color: #010101;
 `;

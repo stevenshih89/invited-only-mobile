@@ -1,7 +1,8 @@
 import Card from 'screens/App/Components/Card/Card';
-import {components} from 'src/api/v1';
+import { components } from 'src/api/v1';
 import * as S from './GuestCard.style';
-import {useCardGesture} from '../../hooks/useCardGesture';
+import { useCardGesture } from '../../hooks/useCardGesture';
+import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
 
 interface Props {
   isTopCard: boolean;
@@ -13,8 +14,8 @@ interface Props {
   topIndex: number;
 }
 
-export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex}: Props) => {
-  const {gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite} =
+export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex }: Props) => {
+  const { gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite } =
     useCardGesture({
       onSwipeLeft: () => {
         onReject();
@@ -67,20 +68,7 @@ export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, 
             <S.CardName>{guest.name},</S.CardName>
             <S.CardGuestAge>{guest.age}</S.CardGuestAge>
           </S.CardNameAndAge>
-          <S.ButtonsContainer>
-            <S.RejectButton onPress={onClickReject}>
-              <S.RejectIcon />
-              <S.RejectButtonText>Reject</S.RejectButtonText>
-            </S.RejectButton>
-            <S.SuperInviteButton onPress={onClickSuperLike}>
-              <S.SuperInviteIcon style={{opacity: 1}} />
-              <S.SuperInviteButtonText>Super Invite</S.SuperInviteButtonText>
-            </S.SuperInviteButton>
-            <S.InviteButton onPress={onClickInvite}>
-              <S.InviteIcon style={{opacity: 1}} />
-              <S.InviteButtonText>Invite</S.InviteButtonText>
-            </S.InviteButton>
-          </S.ButtonsContainer>
+          <CardActionsButtons disabled={true} onReject={onClickReject} onSuperInvite={onClickSuperLike} onInvite={onClickInvite} />
         </S.CardContent>
       )}
     </Card>
