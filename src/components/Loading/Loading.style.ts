@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
-import {blackColor, whiteColor} from 'constants/colors';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi500, Satoshi400} from 'constants/fonts';
 import FastImage from 'react-native-fast-image';
+import {blackColor, whiteColor} from 'constants/colors';
+import {Satoshi500, Satoshi400} from 'constants/fonts';
 import {screenHeight, screenWidth} from 'constants/common';
 
 export const ContainerStyled = styled.View`

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { EventQueries } from 'src/apiv2/queries/eventQueries';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';

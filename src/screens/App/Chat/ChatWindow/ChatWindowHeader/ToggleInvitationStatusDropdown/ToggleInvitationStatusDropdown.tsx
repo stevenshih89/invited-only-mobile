@@ -1,6 +1,6 @@
 import React from 'react';
-import * as S from './ToggleInvitationStatusDropdown.style';
 import { Modal, TouchableWithoutFeedback, View } from 'react-native';
+import * as S from './ToggleInvitationStatusDropdown.style';
 
 // Define the possible invitation statuses - you might want to get these from your API types
 // TODO: Replace with actual types/enum if available

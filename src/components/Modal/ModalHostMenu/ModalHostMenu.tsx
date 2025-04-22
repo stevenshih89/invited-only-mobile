@@ -1,6 +1,11 @@
 import React, {FC, useEffect, useState} from 'react';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
+import firestore from '@react-native-firebase/firestore';
+import FastImage from 'react-native-fast-image';
+import LinearGradient from 'react-native-linear-gradient';
+import {RFValue} from 'react-native-responsive-fontsize';
+import Config from 'react-native-config';
 import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 
 //import components
@@ -18,17 +23,12 @@ import LineImage from 'assets/images/app/Line.png';
 import {commonStackPath, eventActiveInfoPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {blackColor, deleteColor, gray1Color, lightGray18Color, lightGray20Color, lightGreenColor, whiteColor} from 'constants/colors.ts';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
-import firestore from '@react-native-firebase/firestore';
-import FastImage from 'react-native-fast-image';
-import LinearGradient from 'react-native-linear-gradient';
-import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {calculateAge} from 'helpers/calculateAge';
 import {ACCEPTED_STATUS, APPROVED_STATUS, screenWidth} from 'constants/common';
 import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast';
 import {sendNotification} from 'helpers/fcmHelper';
-import Config from 'react-native-config';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 interface HostMenu {

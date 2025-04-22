@@ -1,5 +1,5 @@
-import { screenHeight } from 'constants/common';
 import styled from 'styled-components/native';
+import { screenHeight } from 'constants/common';
 
 export const Container = styled.View`
   flex-direction: row;

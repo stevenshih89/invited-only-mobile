@@ -1,25 +1,25 @@
-import React, {FC, JSX, useContext, useEffect} from 'react';
+import React, {FC, JSX, useEffect} from 'react';
 import {Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LinearGradient from 'react-native-linear-gradient';
+import * as S from './Onboard.style';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
 import WelcomeBcgCards from 'assets/images/auth/welcom-screen-cards.png';
 import BgDottedLineLeft from 'assets/images/auth/background-dotted-line-left.png';
 import BgDottedLineRight from 'assets/images/auth/background-dotted-right.png';
 import {backgroundGradientColors, lightGray19Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {eulaPath} from 'constants/pathLocations';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import LinearGradient from 'react-native-linear-gradient';
 import Button from 'components/Button/Button';
-import * as S from './Onboard.style';
 import {openLink} from 'helpers/links';
 
 const backgroundCardsStyle = StyleSheet.create({
   rotatedImage: {
-    width: 400,
     height: 414,
     opacity: 0.7,
+    width: 400,
   },
 });
 

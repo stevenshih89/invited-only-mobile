@@ -3,6 +3,9 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
 
 //import components
+import firestore from '@react-native-firebase/firestore';
+import analytics from '@react-native-firebase/analytics';
+import Config from 'react-native-config';
 import useStyles from 'components/Modal/ModalReport/styles.ts';
 
 //import icons
@@ -15,10 +18,8 @@ import MoreCircle from 'assets/images/icons/more-circle.svg';
 import EightPlusIcon from 'assets/images/icons/18+.svg';
 import EmojiSadIcon from 'assets/images/icons/emoji-sad.svg';
 import {showToast} from 'helpers/showToast.ts';
-import firestore from '@react-native-firebase/firestore';
-import analytics from '@react-native-firebase/analytics';
-import Config from 'react-native-config';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+
 interface ModalReportProps {
   modalReport?: boolean;
   setModalReport?: any;

@@ -1,8 +1,8 @@
+import { View, Text, TouchableOpacity } from "react-native";
+import styled from "styled-components/native";
 import { Satoshi400, Satoshi500, Satoshi700 } from "constants/fonts";
 import { whiteColor, blackColor } from "constants/colors";
 import { screenWidth, screenHeight } from "constants/common";
-import { View, Text, TouchableOpacity } from "react-native";
-import styled from "styled-components/native";
 
 export const Container = styled(View)`
   display: flex;

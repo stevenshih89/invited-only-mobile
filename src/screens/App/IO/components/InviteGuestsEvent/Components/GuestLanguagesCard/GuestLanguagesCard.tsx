@@ -1,7 +1,6 @@
 import React from 'react';
-import {components} from 'src/api/v1';
 import * as S from './GuestLanguagesCard.style';
-import {CountryCode} from 'libphonenumber-js';
+import {components} from 'src/api/v1';
 
 interface GuestLanguagesCardProps {
   guestInfo: components['schemas']['User'];

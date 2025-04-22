@@ -1,9 +1,9 @@
 import {StyleProp, TouchableOpacity, ViewStyle} from 'react-native';
 import {FC} from 'react';
+import * as S from './ModalLockAccount.style';
 import Lock from 'assets/images/icons/lock.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {commonStackPath, invitationCodePath, paymentPath} from 'constants/pathLocations';
-import * as S from './ModalLockAccount.style';
 
 interface ModalLockAccountProps {
   isPremium?: boolean;

@@ -1,13 +1,13 @@
 import { View } from 'react-native';
-import * as S from './PreviewEventStep.style';
-import Card from 'screens/App/Components/Card/Card';
 import { useFormikContext } from 'formik';
 import { CreateEventFormValues } from '../../CreateEventFlow';
-import { getDateString } from '../EventPlaceStep/EventDatePicker/EventDatePicker';
+import * as S from './PreviewEventStep.style';
+import Card from 'screens/App/Components/Card/Card';
 import { useUser } from 'src/store/userStore';
 import HostBadge from 'screens/App/JoinEvents/Components/EventCard/Components/HostBadge';
 import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
 import CardsNameAndDate from 'screens/App/Components/Card/Components/CardsNameAndDate/CardsNameAndDate';
+
 const PreviewEventStep = () => {
   const { values } = useFormikContext<CreateEventFormValues>();
 

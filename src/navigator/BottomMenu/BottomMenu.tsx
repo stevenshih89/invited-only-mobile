@@ -1,36 +1,20 @@
-import React, {FC, JSX} from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React, { FC, JSX } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 //import components
-import useStyles from 'navigator/BottomMenu/styles.ts';
-import {IOStackNavigation, MyEventsStackNavigation} from 'navigator/AppStackScreens/AppStackScreens.tsx';
-import ChatStackScreen from 'navigator/AppStackScreens/ChatStackScreen/ChatStackScreen.tsx';
-import {whiteColor} from 'constants/colors.ts';
-import {createStackNavigator} from '@react-navigation/stack';
-import {
-  IOPath,
-  chatPath,
-  connectPath,
-  joinEventsPath,
-  myEventsPath,
-  myProfileViewPath,
-  profileEditingPath,
-  profilePath,
-} from 'constants/pathLocations';
+import { createStackNavigator } from '@react-navigation/stack';
+import useStyles from 'src/Navigator/BottomMenu/styles';
+import { IOStackNavigation, MyEventsStackNavigation } from 'src/Navigator/AppStackScreens/AppStackScreens';
+import ChatStackScreen from 'src/Navigator/AppStackScreens/ChatStackScreen/ChatStackScreen';
+import { whiteColor } from 'constants/colors.ts';
+import { IOPath, chatPath, connectPath, joinEventsPath, myEventsPath } from 'constants/pathLocations';
 
 import Header from 'components/Header/Header';
-import {TabBarName, TabIcon} from 'navigator/TabBar/TabBar';
-import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import Edit from 'assets/images/icons/edit.svg';
-import Profile from 'screens/App/Profile/Profile';
-import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView';
-import ProfileEditing from 'screens/App/Profile/screens/ProfileEditing/ProfileEditing';
-import {TouchableOpacity} from 'react-native';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { TabBarName, TabIcon } from 'src/Navigator/TabBar/TabBar';
 
-import {useUser} from 'src/store/userStore';
+import { useUser } from 'src/store/userStore';
 import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper';
-import ConnectStackScreen from 'navigator/AppStackScreens/ConnectStackScreen/ConnectStackScreen';
+import ConnectStackScreen from 'src/Navigator/AppStackScreens/ConnectStackScreen/ConnectStackScreen';
 
 const JoinEventsStackScreen = () => {
   const JoinEventsStack = createStackNavigator();
@@ -50,67 +34,11 @@ const JoinEventsStackScreen = () => {
   );
 };
 
-const ProfileStackScreen = () => {
-  const ProfileStack = createStackNavigator();
-  const styles = useStyles();
-
-  const navigation = useAppNavigation();
-
-  const goToProfileEditing = (): void => {
-    navigation.navigate(profileEditingPath as never);
-  };
-
-  return (
-    <ProfileStack.Navigator initialRouteName={profilePath}>
-      <ProfileStack.Screen
-        key={profilePath}
-        name={profilePath}
-        component={Profile}
-        options={{
-          headerShown: true,
-          header: () => <Header badge={true} logoType="logo" headerType="profile" />,
-        }}
-      />
-      <ProfileStack.Screen
-        key={myProfileViewPath}
-        name={myProfileViewPath}
-        component={MyProfileView}
-        options={{
-          headerStyle: styles.headerStyle,
-          headerTitleStyle: styles.headerTitleStyle,
-          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
-          headerBackTitleVisible: false,
-          headerRight: () => (
-            <TouchableOpacity activeOpacity={0.7} onPress={goToProfileEditing}>
-              <Edit style={{marginHorizontal: 12, marginVertical: 10}} />
-            </TouchableOpacity>
-          ),
-          headerTitle: 'User profile',
-          headerShown: true,
-        }}
-      />
-      <ProfileStack.Screen
-        key={profileEditingPath}
-        name={profileEditingPath}
-        component={ProfileEditing}
-        options={{
-          headerStyle: styles.headerStyle,
-          headerTitleStyle: styles.headerTitleStyle,
-          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
-          headerBackTitleVisible: false,
-          headerTitle: 'Profile editing',
-          headerShown: true,
-        }}
-      />
-    </ProfileStack.Navigator>
-  );
-};
-
 const BottomMenu: FC = (): JSX.Element => {
   const styles = useStyles();
   const Tab = createBottomTabNavigator();
 
-  const {user} = useUser();
+  const { user } = useUser();
 
   const isInvitedOnlyAdmin = user?.isInvitedOnlyAdmin;
 
@@ -118,13 +46,13 @@ const BottomMenu: FC = (): JSX.Element => {
 
   return (
     <Tab.Navigator
-      screenOptions={({route}: {route: {name: string}}) => ({
+      screenOptions={({ route }: { route: { name: string } }) => ({
         headerShown: false,
         headerTransparent: false,
         tabBarActiveTintColor: whiteColor,
         tabBarStyle: styles.tabNavigator,
-        tabBarIcon: ({focused}: {focused: boolean}) => TabIcon(focused, route.name),
-        tabBarLabel: ({focused}: {focused: boolean}) => TabBarName(focused, route.name),
+        tabBarIcon: ({ focused }: { focused: boolean }) => TabIcon(focused, route.name),
+        tabBarLabel: ({ focused }: { focused: boolean }) => TabBarName(focused, route.name),
       })}
       initialRouteName={initialRouteName}>
       <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation} />

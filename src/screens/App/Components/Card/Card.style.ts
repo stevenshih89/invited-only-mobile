@@ -1,11 +1,10 @@
-import { blackColor, lightGreenColor, lightRedColor, white0Color } from 'constants/colors';
-import { Satoshi500 } from 'constants/fonts';
-import FastImage from 'react-native-fast-image';
 
 import LinearGradient from 'react-native-linear-gradient';
 import Animated from 'react-native-reanimated';
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
+import { Satoshi500 } from 'constants/fonts';
+import { blackColor, lightGreenColor, lightRedColor } from 'constants/colors';
 
 export const Card = styled.View<{ index: number; distanceFromTheTop: number }>`
   position: absolute;

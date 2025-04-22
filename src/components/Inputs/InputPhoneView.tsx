@@ -1,10 +1,10 @@
 import {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {isValidPhoneNumber, parsePhoneNumber, type PhoneNumber} from 'libphonenumber-js';
-import {errorColor, lightGray2Color, transparentGray60Color, transparentWhite30Color, whiteColor} from 'constants/colors';
-import ArrowDown from 'assets/images/icons/arrow-down.svg';
 import PhoneInput from 'react-native-phone-number-input';
 import * as S from './InputPhoneView.style';
+import {errorColor, lightGray2Color, transparentGray60Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import ArrowDown from 'assets/images/icons/arrow-down.svg';
 
 interface IInputPhoneViewProps {
   onChangeFormattedText?: (text: string) => void;

@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {blackColor, grayColor, whiteColor} from 'constants/colors';
+
 export const HeaderContainer = styled.View`
   flex-direction: row;
   justify-content: center;

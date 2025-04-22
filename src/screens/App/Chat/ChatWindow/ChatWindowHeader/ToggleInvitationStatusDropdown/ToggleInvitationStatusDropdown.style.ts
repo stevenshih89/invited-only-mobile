@@ -1,6 +1,6 @@
+import styled from 'styled-components/native';
 import { blackColor } from 'constants/colors';
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
-import styled from 'styled-components/native';
 
 const dropdownBackgroundColor = 'rgb(0, 0, 0)';
 

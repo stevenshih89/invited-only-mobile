@@ -1,9 +1,9 @@
-import {inviteUser, IOscreen, joinEvent} from 'constants/analitycs';
 import {EventMutations} from 'src/apiv2/mutations/eventMutations';
 import analytics from '@react-native-firebase/analytics';
+import {Dispatch, SetStateAction} from 'react';
+import {inviteUser, IOscreen, joinEvent} from 'constants/analitycs';
 import {useUser} from 'src/store/userStore';
 import {useMyEvents} from 'src/store/myEvents';
-import {Dispatch, SetStateAction} from 'react';
 import {EventData} from 'src/types/event';
 
 interface UseRejectProps {

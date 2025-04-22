@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
+import {RFValue} from 'react-native-responsive-fontsize';
 import {blackColor, lightGray2Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 
 export const SafeAreaView = styled.SafeAreaView`
   flex: 1;

@@ -1,14 +1,14 @@
-import {Image, Text, TouchableOpacity, View} from 'react-native';
-import FlashIcon from 'assets/images/icons/flash-filled.svg';
-import {blackColor, lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
+import { Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
-import {Outfit500, Satoshi700Italic} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Dispatch, FC, SetStateAction, useEffect} from 'react';
-import {screenHeight} from 'constants/common';
 import Animated, {useSharedValue, withTiming, Easing, useAnimatedStyle} from 'react-native-reanimated';
-import Close from 'assets/images/icons/close.svg';
 import FastImage from 'react-native-fast-image';
+import FlashIcon from 'assets/images/icons/flash-filled.svg';
+import {blackColor, lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
+import {Outfit500, Satoshi700Italic} from 'constants/fonts';
+import {screenHeight} from 'constants/common';
+import Close from 'assets/images/icons/close.svg';
 
 const SuperInvite: FC<{
   isVisibleSuperInvite: boolean;

@@ -1,4 +1,6 @@
-import {useAppNavigation} from 'hooks/useAppNavigation';
+/* eslint-disable import/order */
+import { useCallback, useState } from 'react';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 import {
   chatCorrespondencePath,
   commonStackPath,
@@ -7,14 +9,12 @@ import {
   myEventsPath,
   requestsPath,
 } from 'constants/pathLocations';
-import {useCallback, useState} from 'react';
-import {useUser} from 'src/store/userStore';
+import { useUser } from 'src/store/userStore';
 import Config from 'react-native-config';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import firestore from '@react-native-firebase/firestore';
-import {showToast} from 'helpers/showToast';
-import {useFocusEffect} from '@react-navigation/native';
-import {Timestamp} from '@firebase/firestore';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import firestore, { Timestamp } from '@react-native-firebase/firestore';
+import { showToast } from 'helpers/showToast';
+import { useFocusEffect } from '@react-navigation/native';
 
 export interface Notifications {
   id: string;
@@ -110,7 +110,7 @@ export const useNotifications = () => {
   const handleClearNotifications = async () => {
     setNotifications([]);
     await clearNotifications(user?.uid);
-    showToast('inviteMatch', 'Notifications have been read', 'Notifications', {status: 'success', ownerPhoto: user?.photos[0].image});
+    showToast('inviteMatch', 'Notifications have been read', 'Notifications', { status: 'success', ownerPhoto: user?.photos[0].image });
   };
 
   const handleNavigate = async (path: string, data: any) => {
@@ -118,7 +118,7 @@ export const useNotifications = () => {
 
     switch (path) {
       case 'invitationCode':
-        navigation.navigate(commonStackPath, {screen: invitationCodePath});
+        navigation.navigate(commonStackPath, { screen: invitationCodePath });
         break;
       case 'requests':
         // @ts-ignore
@@ -136,7 +136,7 @@ export const useNotifications = () => {
         // @ts-ignore
         navigation.navigate(commonStackPath, {
           screen: eventActiveInfoPath,
-          params: {list: data},
+          params: { list: data },
         } as never);
         break;
       case 'chat':

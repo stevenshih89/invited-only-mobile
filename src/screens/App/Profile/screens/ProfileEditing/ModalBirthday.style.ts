@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {blackColor, whiteColor, transparentGray90Color, lightGray2Color, backgroundColor} from 'constants/colors';
-import {Satoshi400, Satoshi700} from 'constants/fonts';
 import MaskInput from 'react-native-mask-input';
+import {blackColor, whiteColor, transparentGray90Color, lightGray2Color} from 'constants/colors';
+import {Satoshi400, Satoshi700} from 'constants/fonts';
 
 export const KeyboardAvoidingView = styled.KeyboardAvoidingView`
   padding-bottom: 0;

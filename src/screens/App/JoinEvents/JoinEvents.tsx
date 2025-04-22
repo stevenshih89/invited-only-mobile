@@ -1,13 +1,13 @@
-import { FC, ReactElement } from 'react';
+import { ReactElement } from 'react';
 
-import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
+import { ScrollView } from 'react-native-gesture-handler';
+import usePersistentCardSwipe from '../IO/hooks/usePersistentCardSwipe';
 import JoinEventsHeader from './Components/JoinEventsHeader/JoinEventsHeader';
 import * as S from './JoinEvents.style';
-import { ScrollView } from 'react-native-gesture-handler';
 import EventCard from './Components/EventCard/EventCard';
+import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 
 import { components } from 'src/api/v1';
-import usePersistentCardSwipe from '../IO/hooks/usePersistentCardSwipe';
 
 interface Props {
   events: components['schemas']['EventData'][];

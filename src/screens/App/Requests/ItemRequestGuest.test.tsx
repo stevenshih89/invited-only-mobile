@@ -1,8 +1,7 @@
 import {render, waitFor} from '@testing-library/react-native';
 import React, {ReactNode} from 'react';
-import ItemRequestGuest from './ItemRequestGuest';
-import {NavigationContainer} from '@react-navigation/native';
 import {Text, View} from 'react-native';
+import ItemRequestGuest from './ItemRequestGuest';
 
 // Mock any dependencies that might be causing issues
 jest.mock('react-native-modal', () => {

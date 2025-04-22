@@ -1,4 +1,3 @@
-import {User} from 'src/types/userInfo';
 import * as S from './GuestBioCard.style';
 import {components} from 'src/api/v1';
 

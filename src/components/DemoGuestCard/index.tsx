@@ -1,4 +1,10 @@
 import { Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import FastImage from "react-native-fast-image";
+import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import React, { memo, useMemo } from "react";
+import { useUser } from "../../store/userStore";
+import { User, UserInfo } from "../../types/userInfo.ts";
+import useStyles from "./styles.ts";
 import type { Photo } from "components/TouchingSlider/TouchingSlider.tsx";
 import TouchingSlider from "components/TouchingSlider/TouchingSlider.tsx";
 import TablerGenderIcon from "assets/images/icons/tabler_gender-bigender.svg";
@@ -9,15 +15,9 @@ import WineIcon from "assets/images/icons/milk.svg";
 import SmokeIcon from "assets/images/icons/smoke.svg";
 import { blackColor, transparentWhite16Color, transparentWhite56Color, whiteColor } from "constants/colors.ts";
 import { screenHeight } from "constants/common.ts";
-import FastImage from "react-native-fast-image";
 import CloseIcon from "assets/images/icons/close.svg";
-import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import FlashIcon from "assets/images/icons/flash.svg";
 import CheckIcon from "assets/images/icons/check.svg";
-import React, { memo, useMemo } from "react";
-import useStyles from "./styles.ts";
-import { useUser } from "../../store/userStore";
-import { User, UserInfo } from "../../types/userInfo.ts";
 import { calculateAge } from "helpers/calculateAge.ts";
 
 interface IDemoGuestCardProps {
@@ -189,7 +189,7 @@ const DemoGuestCard = (props: IDemoGuestCardProps) => {
               marginTop: screenHeight / 44,
               paddingTop: screenHeight / 44,
             }}>
-            <Text style={[styles.titleSection]}>My interests</Text>
+            <Text style={styles.titleSection}>My interests</Text>
             <View style={styles.wrapperInterestsTags}>
               {userInterests.map((interest: string | null, idx: number) => (
                 <View key={idx} style={styles.interestsTags}>

@@ -1,69 +1,69 @@
 import {StyleSheet} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
 import {blackColor, lightGray2Color, lightGray5Color, lightRedColor, whiteColor} from 'constants/colors.ts';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 
 const useStyles = () =>
   StyleSheet.create({
+    addEventButton: {
+      alignItems: 'center',
+    },
+    addEventView: {
+      borderColor: lightGray5Color,
+      borderRadius: 50,
+      borderWidth: 1,
+      marginLeft: screenWidth / 25,
+      padding: 10,
+    },
+    buttonEventsJoining: {
+      backgroundColor: lightGray2Color,
+      borderRadius: 8,
+      flexDirection: 'row',
+      marginLeft: screenWidth / 65,
+      paddingHorizontal: screenWidth / 32,
+      paddingVertical: screenHeight / 130,
+    },
+    buttonMyEvents: {
+      backgroundColor: whiteColor,
+      borderRadius: 8,
+      paddingHorizontal: screenHeight / 70,
+      paddingVertical: screenWidth / 60,
+    },
     container: {
       backgroundColor: blackColor,
       flex: 1,
       paddingHorizontal: screenWidth / 15.5,
     },
-    wrapperHeaderButtonMyEvents: {
-      marginTop: screenHeight / 43,
-      marginBottom: screenHeight / 30,
-      alignItems: 'center',
-      flexDirection: 'row',
-    },
     eventButton: {
       alignItems: 'center',
       marginRight: screenWidth / 27,
     },
-    textMyEvents: {
-      color: blackColor,
-      fontFamily: Satoshi500,
-      fontSize: RFValue(16, 812),
+    rowTextCountEvents: {
+      backgroundColor: lightRedColor,
+      borderRadius: 35,
+      marginLeft: 4,
+    },
+    textCountEvents: {
+      color: whiteColor,
+      paddingHorizontal: 5,
+      paddingVertical: 2,
     },
     textEventsJoining: {
       color: whiteColor,
       fontFamily: Satoshi400,
       fontSize: RFValue(16, 812),
     },
-    buttonEventsJoining: {
-      backgroundColor: lightGray2Color,
-      paddingVertical: screenHeight / 130,
-      paddingHorizontal: screenWidth / 32,
-      borderRadius: 8,
-      marginLeft: screenWidth / 65,
-      flexDirection: 'row',
+    textMyEvents: {
+      color: blackColor,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(16, 812),
     },
-    buttonMyEvents: {
-      backgroundColor: whiteColor,
-      paddingVertical: screenWidth / 60,
-      paddingHorizontal: screenHeight / 70,
-      borderRadius: 8,
-    },
-    rowTextCountEvents: {
-      borderRadius: 35,
-      backgroundColor: lightRedColor,
-      marginLeft: 4,
-    },
-    addEventButton: {
+    wrapperHeaderButtonMyEvents: {
       alignItems: 'center',
-    },
-    textCountEvents: {
-      color: whiteColor,
-      paddingVertical: 2,
-      paddingHorizontal: 5,
-    },
-    addEventView: {
-      padding: 10,
-      borderWidth: 1,
-      borderColor: lightGray5Color,
-      borderRadius: 50,
-      marginLeft: screenWidth / 25,
+      flexDirection: 'row',
+      marginBottom: screenHeight / 30,
+      marginTop: screenHeight / 43,
     },
   });
 

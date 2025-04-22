@@ -1,8 +1,7 @@
 import React from 'react';
-import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
-import {EventQueries} from 'src/apiv2/queries/eventQueries';
-import AppLoader from 'screens/App/AppLoader/AppLoader';
 import * as S from './FindConnections.style';
+import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
+import AppLoader from 'screens/App/AppLoader/AppLoader';
 import Card from 'screens/App/Components/Card/Card';
 import LockedFeatureComponent from 'screens/App/Components/LockedFeatureComponent/LockedFeatureComponent';
 import invitedOnlyBackendApi from 'src/api/backend-api';

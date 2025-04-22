@@ -1,130 +1,130 @@
+import {StyleSheet} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
 import {blackColor, darkRedColor, transparent60Color, whiteColor} from 'constants/colors';
 import {screenHeight} from 'constants/common';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {StyleSheet} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
 
 const useStyles = () =>
   StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: blackColor,
-    },
-    itemContainer: {
-      flex: 1,
-      width: '100%',
-      paddingHorizontal: 7,
-      borderRadius: 12,
-    },
-    itemSeparator: {
-      height: 14,
-    },
-    imageBackground: {
-      borderRadius: 20,
-      flex: 1,
-      width: '100%',
-      height: '100%',
-      overflow: 'hidden',
-    },
-    listContentContainer: {
-      paddingHorizontal: 13,
-      paddingBottom: screenHeight / 7,
-      flexGrow: 1,
-    },
-    superLikeContainer: {
-      backgroundColor: darkRedColor,
-      borderRadius: 10,
-      margin: 10,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingHorizontal: 12,
-      paddingVertical: 10,
-    },
-    superLikeRow: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    superLikeText: {
-      marginRight: 'auto',
-      color: whiteColor,
-      fontSize: RFValue(10, 812),
-      fontFamily: Satoshi500,
-      marginLeft: 4,
-    },
-    superLikeIcon: {
-      marginLeft: 'auto',
-    },
-    itemContentContainer: {
-      flex: 1,
-    },
-    linearGradient: {
-      flex: 1,
-      padding: 17,
-    },
-    accountTypeWrapperPremium: {
-      marginLeft: 6,
-      borderRadius: 4,
-      paddingHorizontal: 6,
-      paddingVertical: 2,
-      backgroundColor: blackColor,
-    },
     accountTypePremium: {
       color: blackColor,
-      fontSize: RFValue(10, 812),
       fontFamily: Satoshi700,
+      fontSize: RFValue(10, 812),
+    },
+    accountTypeWrapperPremium: {
+      backgroundColor: blackColor,
+      borderRadius: 4,
+      marginLeft: 6,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+    },
+    ageText: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(10, 812),
+      marginLeft: 4,
     },
     buttonContainer: {
       borderRadius: 10,
       paddingVertical: 4,
     },
-    nameContainer: {
-      flexDirection: 'row',
+    container: {
+      backgroundColor: blackColor,
+      flex: 1,
+    },
+    distanceContainer: {
       alignItems: 'center',
+      flexDirection: 'row',
+    },
+    distanceText: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(10, 812),
+      marginLeft: 4,
+    },
+    imageBackground: {
+      borderRadius: 20,
+      flex: 1,
+      height: '100%',
+      overflow: 'hidden',
+      width: '100%',
+    },
+    itemContainer: {
+      borderRadius: 12,
+      flex: 1,
+      paddingHorizontal: 7,
+      width: '100%',
+    },
+    itemContentContainer: {
+      flex: 1,
+    },
+    itemSeparator: {
+      height: 14,
+    },
+    linearGradient: {
+      flex: 1,
+      padding: 17,
+    },
+    listContentContainer: {
+      flexGrow: 1,
+      paddingBottom: screenHeight / 7,
+      paddingHorizontal: 13,
+    },
+    locationContainer: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      backgroundColor: transparent60Color,
+      borderRadius: 50,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 6,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+    },
+    locationRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    locationText: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(10, 812),
+      marginLeft: 4,
+    },
+    nameContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
       marginBottom: 3,
     },
     nameText: {
       color: whiteColor,
-      fontFamily: Satoshi700,
       flexShrink: 1,
+      fontFamily: Satoshi700,
     },
-    ageText: {
-      color: whiteColor,
-      fontSize: RFValue(10, 812),
-      fontFamily: Satoshi400,
-      marginLeft: 4,
-    },
-    locationContainer: {
-      flexDirection: 'row',
-      alignSelf: 'flex-start',
+    superLikeContainer: {
       alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: 6,
-      backgroundColor: transparent60Color,
-      paddingVertical: 8,
+      backgroundColor: darkRedColor,
+      borderRadius: 10,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      margin: 10,
       paddingHorizontal: 12,
-      borderRadius: 50,
+      paddingVertical: 10,
     },
-    locationRow: {
-      flexDirection: 'row',
+    superLikeIcon: {
+      marginLeft: 'auto',
+    },
+    superLikeRow: {
       alignItems: 'center',
-    },
-    locationText: {
-      color: whiteColor,
-      fontSize: RFValue(10, 812),
-      fontFamily: Satoshi400,
-      marginLeft: 4,
-    },
-    distanceContainer: {
+      flex: 1,
       flexDirection: 'row',
-      alignItems: 'center',
     },
-    distanceText: {
+    superLikeText: {
       color: whiteColor,
+      fontFamily: Satoshi500,
       fontSize: RFValue(10, 812),
-      fontFamily: Satoshi400,
       marginLeft: 4,
+      marginRight: 'auto',
     },
   });
 

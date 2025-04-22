@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
+import { RFValue } from 'react-native-responsive-fontsize';
 import {blackColor, orangeClose, transparentWhite30Color, whiteColor } from 'constants/colors';
 import { Satoshi700 } from 'constants/fonts';
-import { RFValue } from 'react-native-responsive-fontsize';
 
 export const Container = styled.View`
   padding-horizontal: 20px;

@@ -1,6 +1,6 @@
-import { blackColor, whiteColor } from 'constants/colors';
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
+import { blackColor, whiteColor } from 'constants/colors';
 
 export const EventCounter = styled.Text`
   font-size: ${RFValue(12, 932)}px;

@@ -1,5 +1,5 @@
 import { collection, getFirestore, query } from "@react-native-firebase/firestore";
-import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryKey, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { components } from "../v1";
 

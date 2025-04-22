@@ -1,10 +1,8 @@
 import styled from "styled-components/native";
-import { Platform, FlatList } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { Satoshi400 } from "src/constants/fonts";
 import { blackColor } from "constants/colors";
-import { components } from "src/api/v1";
 import { screenHeight } from "constants/common";
-import { ScrollView } from "react-native-gesture-handler";
 
 interface IsOwnProps {
     isOwn: boolean;

@@ -1,19 +1,16 @@
+import {StyleSheet} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {FC, ReactElement} from 'react';
+import {useUser} from '../../../../../store/userStore';
+import * as S from './MyBasics.style';
 import {lightGray5Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 import Job from 'assets/images/icons/job.svg';
 import BiGender from 'assets/images/icons/tabler_gender-bigender.svg';
 import Cake from 'assets/images/icons/cake.svg';
-import Arrows from 'assets/images/icons/arrow-3.svg';
-import Wine from 'assets/images/icons/milk.svg';
-import Smoke from 'assets/images/icons/smoke.svg';
 import Location from 'assets/images/icons/location.svg';
 import Home from 'assets/images/icons/home.svg';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {FC, ReactElement} from 'react';
-import {useUser} from '../../../../../store/userStore';
-import * as S from './MyBasics.style';
 
 const MyBasics: FC<{
   setIsVisibleSmokeModal: (val: boolean) => void;
@@ -110,27 +107,28 @@ const MyBasics: FC<{
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
     backgroundColor: lightGray5Color,
     borderRadius: 10,
     marginTop: 24,
-  },
-  title: {
-    color: whiteColor,
-    fontFamily: Satoshi500,
-    fontSize: RFValue(18, 812),
-  },
-  itemContainer: {
-    paddingVertical: 24,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: transparentWhite16Color,
+    padding: 20,
   },
   iconContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
+  },
+  itemContainer: {
+    alignItems: 'center',
+    borderBottomColor: transparentWhite16Color,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 24,
+  },
+  subText: {
+    color: whiteColor,
+    fontFamily: Satoshi400,
+    fontSize: RFValue(14, 812),
+    marginRight: 8,
   },
   text: {
     color: whiteColor,
@@ -138,11 +136,10 @@ const styles = StyleSheet.create({
     fontSize: RFValue(16, 812),
     marginLeft: 10,
   },
-  subText: {
+  title: {
     color: whiteColor,
-    fontFamily: Satoshi400,
-    fontSize: RFValue(14, 812),
-    marginRight: 8,
+    fontFamily: Satoshi500,
+    fontSize: RFValue(18, 812),
   },
 });
 

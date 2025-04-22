@@ -1,238 +1,117 @@
-import {blackColor, transparentWhite16Color} from 'constants/colors';
-import {FC, ReactElement} from 'react';
-import {SafeAreaView, View} from 'react-native';
-import MyPhotos from './MyPhotos';
-import MyInterests from './MyInterests';
-import {screenHeight} from 'constants/common';
-import MyBio from './MyBio';
-import LanguagesKnow from './LanguagesKnow';
-import Button from 'components/Button/Button';
-import MyBasics from './MyBasics';
-import ModalSmoke from './ModalSmoke';
-import ModalGender from './ModalGender';
+import { FC, ReactElement } from 'react';
+import { View } from 'react-native';
+import { Formik } from 'formik';
+import MyPhotos from './MyPhotos/MyPhotos';
+import MyInterests from './MyInterests/MyInterests';
+import MyBio from './MyBio/MyBio';
+import MyLanguagesKnow from './MyLanguages/MyLanguagesKnow';
 import ModalHeight from './ModalHeight';
-import ModalWork from './ModalWork';
-import ModalAlcohol from './ModalAlcohol';
-import ModalBirthday from './ModalBirthday';
-import ModalLocation from './ModalLocation';
-import ModalHomeAdress from './ModalHomeAdress';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import { useProfileProfileEditing } from 'hooks/useProfileEditing';
-
-const SAVE_FIELD_INTERESTS = 'interests';
-const SAVE_FIELD_BIO = 'bio';
+import MyWork from './MyWork/MyWork';
+import MyGeneral from './MyGeneral/MyGeneral';
+import MyLocation from './MyLocation/MyLocation';
+import * as S from './ProfileEditing.style';
+import useUpdateUser from './hooks/useUpdateUser';
+import { useAuthStore } from 'src/store/authStore';
+import AppLoader from 'screens/App/AppLoader/AppLoader';
+import ModalSelectInterests from 'components/Modal/ModalSelectInterests/ModalSelectInterests';
+import Button from 'components/Button/Button';
+import invitedOnlyBackendApi from 'src/api/backend-api';
 
 const ProfileEditing: FC = (): ReactElement => {
-  const {
-    images,
-    setImages,
-    listOfInterests,
-    setListOfInterests,
-    interestsLoading,
-    isVisibleHeightModal,
-    saveBtnInterestsVisible,
-    saveUserInfo,
-    loadingSaveInterests,
-    bio,
-    setBio,
-    saveBtnBioVisible,
-    loadingSaveBoi,
-    textNameWork,
-    activeAlcoholItem,
-    activeSmokeItem,
-    height,
-    bithdate,
-    location,
-    textHomeAdress,
-    setIsVisibleSmokeModal,
-    setIsVisibleGenderModal,
-    setIsVisibleHeightModal,
-    setIsVisibleWorkModal,
-    setIsVisibleAlcoholModal,
-    setIsVisibleBirthdayModal,
-    setIsVisibleLocationModal,
-    setIsVisibleHomeAddressModal,
-    showSmoke,
-    setShowSmoke,
-    setActiveSmokeItem,
-    listOfSmokes,
-    isVisibleSmokeModal,
-    showGender,
-    setShowGender,
-    activeGenderItem,
-    setActiveGenderItem,
-    listOfGenders,
-    isVisibleGenderModal,
-    showHeight,
-    setShowHeight,
-    heightsList,
-    setHeight,
-    showWork,
-    setShowWork,
-    textDescription,
-    setTextNameWork,
-    setTextDescription,
-    isVisibleWorkModal,
-    showAlcohol,
-    setShowAlcohol,
-    setActiveAlcoholItem,
-    listOfAlcohols,
-    isVisibleAlcoholModal,
-    day,
-    setDay,
-    month,
-    setMonth,
-    year,
-    setYear,
-    setShowAge,
-    showAge,
-    isVisibleBirthdayModal,
-    setLocation,
-    setShowLocation,
-    showLocation,
-    isVisibleLocationModal,
-    setTextHomeAdress,
-    setShowHomeAdress,
-    showHomeAdress,
-    isVisibleHomeAddressModal
-} = useProfileProfileEditing()
-  
+  const { userMetadata } = useAuthStore();
+  const { data: user, isLoading } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
+    params: {
+      path: {
+        id: userMetadata.uid
+      }
+    }
+  })
+  const { update, isPending } = useUpdateUser();
+  if (isLoading) {
+    return <AppLoader />
+  }
+
   return (
-    <>
-      <SafeAreaView style={{flex: 1, backgroundColor: blackColor}}>
-        <View style={{flex: 1, paddingTop: screenHeight / 48, paddingHorizontal: 20}}>
-          <KeyboardAwareScrollView
-            showsHorizontalScrollIndicator={false}
-            enableResetScrollToCoords={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{paddingTop: 20, paddingBottom: 80}}
-            style={{flex: 1, borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid'}}>
-            <MyPhotos images={images} setImages={setImages} />
-            <MyInterests listOfInterests={listOfInterests} setListOfInterests={setListOfInterests} loading={interestsLoading} />
-            {saveBtnInterestsVisible && (
-              <Button
-                title="Save"
-                buttonStyle={{marginTop: 20}}
-                onPress={() => saveUserInfo('', SAVE_FIELD_INTERESTS)}
-                loading={loadingSaveInterests}
-              />
-            )}
-            <MyBio bio={bio} setBio={setBio} />
-            {saveBtnBioVisible && (
-              <Button
-                title="Save"
-                buttonStyle={{marginTop: 20}}
-                onPress={() => saveUserInfo('', SAVE_FIELD_BIO)}
-                loading={loadingSaveBoi}
-              />
-            )}
-            <MyBasics
-              // activeWorkItem={activeWorkItem}
-              work={textNameWork}
-              activeAlcoholItem={activeAlcoholItem}
-              activeSmokeItem={activeSmokeItem}
-              height={height}
-              date={bithdate}
-              location={location}
-              homeAddress={textHomeAdress}
-              setIsVisibleSmokeModal={setIsVisibleSmokeModal}
-              setIsVisibleGenderModal={setIsVisibleGenderModal}
-              setIsVisibleHeightModal={setIsVisibleHeightModal}
-              setIsVisibleWorkModal={setIsVisibleWorkModal}
-              setIsVisibleAlcoholModal={setIsVisibleAlcoholModal}
-              setIsVisibleBirthdayModal={setIsVisibleBirthdayModal}
-              setIsVisibleLocationModal={setIsVisibleLocationModal}
-              setIsVisibleHomeAddressModal={setIsVisibleHomeAddressModal}
-            />
-            <LanguagesKnow />
-            {/* <Button title="Save" buttonStyle={{marginTop: 34}} onPress={saveUserInfo} loading={loadingSave} /> */}
-          </KeyboardAwareScrollView>
+    <Formik
+      initialValues={{
+        name: user?.name || '',
+        gender: user?.gender || null,
+        birthday: user?.birthday || '',
+        showAge: user?.showAge || true,
+        work: {
+          title: user?.work?.title || '',
+          description: user?.work?.description || '',
+        },
+        location: user?.location || '',
+        bio: user?.bio || '',
+      }}
+      onSubmit={(values) => {
+        update(values);
+      }}
+    >
+      {({ setFieldValue, submitForm, values }) => (
+        <View style={{ flex: 1, backgroundColor: 'black' }}>
+          <S.SafeAreaContainer>
+            <S.MainContainer>
+              <S.ScrollContainer
+                showsHorizontalScrollIndicator={false}
+                enableResetScrollToCoords={false}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingTop: 20, paddingBottom: 80 }}>
+                <MyPhotos images={user?.photos || []} setImages={() => { }} />
+                <MyGeneral
+                  name={values.name || ''}
+                  gender={values.gender || null}
+                  date={values.birthday || ''}
+                  showAge={values.showAge || true}
+                  setShowAge={(value) => { setFieldValue('showAge', value) }}
+                  setDate={(value) => { setFieldValue('birthday', value) }}
+                  setIsVisibleHeightModal={() => { }}
+                />
+                <MyWork
+                  textNameWork={values.work.title || ''}
+                  setTextNameWork={(value) => { setFieldValue('work.title', value) }}
+                  textDescription={values.work.description || ''}
+                  setTextDescription={(value) => { setFieldValue('work.description', value) }}
+                />
+                <MyLocation homeAddress={values.location || ''} setHomeAddress={(value) => { setFieldValue('location', value) }} country={values.location || ''} setCountry={(value) => { setFieldValue('location', value) }} />
+                <MyBio bio={values.bio || ''} setBio={(value) => { setFieldValue('bio', value) }} />
+                {true && (
+                  <S.SaveButtonContainer>
+                    <Button title="Save" onPress={() => { submitForm() }} loading={false} />
+                  </S.SaveButtonContainer>
+                )}
+                <MyInterests
+                  listOfInterests={[]}
+                  setIsVisibleInterestsModal={() => { }}
+                  loading={false}
+                />
+                <MyLanguagesKnow />
+              </S.ScrollContainer>
+            </S.MainContainer>
+          </S.SafeAreaContainer>
+          <ModalSelectInterests
+            modalInterests={false}
+            setModalInterests={() => { }}
+            onSave={() => { }}
+            setListOfInterests={() => { }}
+            listOfInterests={[]}
+          />
+          <ModalHeight
+            saveUserInfo={() => { }}
+            showHeight={false}
+            setShowHeight={() => { }}
+            heightsList={[]}
+            height={null}
+            setHeight={() => { }}
+            isVisible={false}
+            onClose={() => { }}
+          />
         </View>
-      </SafeAreaView>
-      <ModalSmoke
-        saveUserInfo={saveUserInfo}
-        showSmoke={showSmoke}
-        setShowSmoke={setShowSmoke}
-        activeSmokeItem={activeSmokeItem}
-        setActiveSmokeItem={setActiveSmokeItem}
-        listOfSmokes={listOfSmokes}
-        isVisible={isVisibleSmokeModal}
-        onClose={() => setIsVisibleSmokeModal(false)}
-      />
-      <ModalGender
-        saveUserInfo={saveUserInfo}
-        showGender={showGender}
-        setShowGender={setShowGender}
-        activeGenderItem={activeGenderItem}
-        setActiveGenderItem={setActiveGenderItem}
-        listOfGenders={listOfGenders}
-        isVisible={isVisibleGenderModal}
-        onClose={() => setIsVisibleGenderModal(false)}
-      />
-      <ModalHeight
-        saveUserInfo={saveUserInfo}
-        showHeight={showHeight}
-        setShowHeight={setShowHeight}
-        heightsList={heightsList}
-        height={height}
-        setHeight={setHeight}
-        isVisible={isVisibleHeightModal}
-        onClose={() => setIsVisibleHeightModal(false)}
-      />
-      <ModalWork
-        showWork={showWork}
-        setShowWork={setShowWork}
-        textNameWork={textNameWork}
-        textDescription={textDescription}
-        setTextNameWork={setTextNameWork}
-        setTextDescription={setTextDescription}
-        isVisible={isVisibleWorkModal}
-        onClose={() => setIsVisibleWorkModal(false)}
-        saveUserInfo={saveUserInfo}
-      />
-      <ModalAlcohol
-        saveUserInfo={saveUserInfo}
-        showAlcohol={showAlcohol}
-        setShowAlcohol={setShowAlcohol}
-        activeAlcoholItem={activeAlcoholItem}
-        setActiveAlcoholItem={setActiveAlcoholItem}
-        listOfAlcohols={listOfAlcohols}
-        isVisible={isVisibleAlcoholModal}
-        onClose={() => setIsVisibleAlcoholModal(false)}
-      />
-      <ModalBirthday
-        day={day}
-        setDay={setDay}
-        month={month}
-        setMonth={setMonth}
-        year={year}
-        setYear={setYear}
-        setShowAge={setShowAge}
-        showAge={showAge}
-        isVisible={isVisibleBirthdayModal}
-        onClose={() => setIsVisibleBirthdayModal(false)}
-        saveUserInfo={saveUserInfo}
-      />
-      <ModalLocation
-        saveUserInfo={saveUserInfo}
-        location={location}
-        setLocation={setLocation}
-        setShowLocation={setShowLocation}
-        showLocation={showLocation}
-        isVisible={isVisibleLocationModal}
-        onClose={() => setIsVisibleLocationModal(false)}
-      />
-      <ModalHomeAdress
-        saveUserInfo={saveUserInfo}
-        textHomeAdress={textHomeAdress}
-        setTextHomeAdress={setTextHomeAdress}
-        setShowHomeAdress={setShowHomeAdress}
-        showHomeAdress={showHomeAdress}
-        isVisible={isVisibleHomeAddressModal}
-        onClose={() => setIsVisibleHomeAddressModal(false)}
-      />
-    </>
+      )}
+    </Formik>
   );
 };
 
 export default ProfileEditing;
+

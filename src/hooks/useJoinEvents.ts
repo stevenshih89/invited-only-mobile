@@ -1,8 +1,8 @@
-import { onMatchNotificationSubscription } from "helpers/fcmHelper";
 import { useEffect, useState } from "react";
-import { useUser } from "src/store/userStore";
 import firestore from '@react-native-firebase/firestore';
 import Config from "react-native-config";
+import { useUser } from "src/store/userStore";
+import { onMatchNotificationSubscription } from "helpers/fcmHelper";
 import { showToast } from "helpers/showToast";
 import { logErrorToSentry } from "helpers/logErrorsToSentry";
 import { LIKED } from "constants/common";

@@ -1,5 +1,5 @@
-import { useUser } from "src/store/userStore";
 import { useAppNavigation } from "./useAppNavigation";
+import { useUser } from "src/store/userStore";
 import { privacyPath } from "constants/pathLocations";
 
 export const useSafetyAndWellbeing = () => {

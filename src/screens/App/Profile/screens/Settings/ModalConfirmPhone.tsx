@@ -1,11 +1,11 @@
 import {StyleSheet, Text, View, KeyboardAvoidingView, Platform} from 'react-native';
 import Modal from 'react-native-modal';
-import {blackColor, lightGray2Color, whiteColor} from 'constants/colors';
 import {type FC} from 'react';
-import Button from 'components/Button/Button';
-import {Satoshi400} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {CodeField, Cursor} from 'react-native-confirmation-code-field';
+import {blackColor, lightGray2Color, whiteColor} from 'constants/colors';
+import Button from 'components/Button/Button';
+import {Satoshi400} from 'constants/fonts';
 import {screenHeight} from 'constants/common';
 import {useModalDeleteMyAccount} from 'hooks/useModalDeleteMyAccount';
 
@@ -93,17 +93,17 @@ export default ModalDeleteMyAccount;
 
 const styles = StyleSheet.create({
   cell: {
-    lineHeight: 38,
-    marginTop: 'auto',
-    marginBottom: 'auto',
-    marginVertical: 'auto',
-    fontSize: RFValue(16, 812),
-    textAlign: 'center',
     color: whiteColor,
     fontFamily: Satoshi400,
+    fontSize: RFValue(16, 812),
+    lineHeight: 38,
+    marginBottom: 'auto',
+    marginTop: 'auto',
+    marginVertical: 'auto',
+    textAlign: 'center',
   },
   focusCell: {
-    borderRadius: 20,
     borderColor: '#000',
+    borderRadius: 20,
   },
 });

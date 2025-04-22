@@ -1,10 +1,11 @@
-import auth from '@react-native-firebase/auth';
+
 import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 
 import semver from 'semver';
-import {Platform} from 'react-native';
-import {AppSettingsQueries} from 'src/apiv2/queries/appSettingsQueries';
+import { Platform } from 'react-native';
+import { AppSettingsQueries } from 'src/apiv2/queries/appSettingsQueries';
+import { useAuthStore } from 'src/store/authStore';
 
 const appStoreAppId = Config.APP_STORE_APP_ID || '';
 
@@ -14,26 +15,27 @@ interface VersionResponse {
   showUpdateAvailable: boolean;
 }
 
-const useVersionStateUpdate = (): {versionData: VersionResponse} => {
-  const currentUser = auth().currentUser;
+const useVersionStateUpdate = (): { versionData: VersionResponse } => {
+  const { userMetadata } = useAuthStore.getState();
+  const currentUser = userMetadata.uid;
   const appVersion = DeviceInfo.getVersion();
 
-  const {data: appStoreVersionData, isFetched: appStoreDataFetched} = AppSettingsQueries.useAppVersionAppStoreCheckQuery({
+  const { data: appStoreVersionData, isFetched: appStoreDataFetched } = AppSettingsQueries.useAppVersionAppStoreCheckQuery({
     appStoreAppId,
-    currentUser: currentUser,
+    currentUser: { uid: currentUser },
   });
 
   if (Platform.OS === 'android') {
-    return {versionData: {showUpdateAvailable: false}};
+    return { versionData: { showUpdateAvailable: false } };
   }
 
-  const {data: versionData, isFetched: appVersionFetched} = AppSettingsQueries.useAppVersionCheckQuery();
+  const { data: versionData, isFetched: appVersionFetched } = AppSettingsQueries.useAppVersionCheckQuery();
 
   if (appStoreDataFetched && appStoreVersionData) {
     const latestVersion = appStoreVersionData;
 
     if (latestVersion !== appVersion) {
-      return {versionData: {lastAvailableVersion: latestVersion, showUpdateAvailable: true}};
+      return { versionData: { lastAvailableVersion: latestVersion, showUpdateAvailable: true } };
     }
   }
 
@@ -41,10 +43,10 @@ const useVersionStateUpdate = (): {versionData: VersionResponse} => {
     console.log(appVersion, versionData.lastAvailableBuild);
 
     if (semver.lt(appVersion, versionData.lastAvailableVersion)) {
-      return {versionData: {...versionData, showUpdateAvailable: true}};
+      return { versionData: { ...versionData, showUpdateAvailable: true } };
     }
   }
 
-  return {versionData: {showUpdateAvailable: false}};
+  return { versionData: { showUpdateAvailable: false } };
 };
 export default useVersionStateUpdate;

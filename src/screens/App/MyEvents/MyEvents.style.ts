@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { RFValue } from 'react-native-responsive-fontsize';
+import LinearGradient from 'react-native-linear-gradient';
 import { 
   blackColor, 
   whiteColor, 
@@ -12,7 +13,6 @@ import {
 } from 'constants/colors';
 import { screenWidth, screenHeight } from 'constants/common';
 import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
-import LinearGradient from 'react-native-linear-gradient';
 
 export const Container = styled.View`
   background-color: ${blackColor};

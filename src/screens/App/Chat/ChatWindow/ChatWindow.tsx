@@ -1,15 +1,12 @@
-import { View, Text, TextInput, Platform, ScrollView, KeyboardAvoidingView } from "react-native";
-import { components } from "src/api/v1";
+import { View, Platform, ScrollView, KeyboardAvoidingView } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { RootStackParamList } from "typescript/types";
 import * as S from "./ChatWindow.style";
-import { useUser } from "src/store/userStore";
-import { useState, useEffect, useRef } from "react";
-import SendIcon from "src/assets/images/icons/send-message.svg";
 import { ChatWindowHeader } from "./ChatWindowHeader/ChatWindowHeader";
-import invitedOnlyBackendApi from "src/api/backend-api";
 import useRealtimeChatMessages from "./hooks/useRealtimeChatMessages";
 import useChatWindowMutations from "./hooks/useChatWindowMutations";
+import { RootStackParamList } from "typescript/types";
+import { useUser } from "src/store/userStore";
+import SendIcon from "src/assets/images/icons/send-message.svg";
 
 
 type ChatWindowRouteParams = RootStackParamList['/chat/chat-window'];

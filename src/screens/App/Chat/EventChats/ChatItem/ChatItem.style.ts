@@ -1,8 +1,7 @@
-import { blackColor, white10Color, whiteColor } from "constants/colors";
-import { screenHeight } from "constants/common";
+import styled from "styled-components/native";
+import { whiteColor } from "constants/colors";
 import { Satoshi400, Satoshi500, Satoshi700 } from "constants/fonts";
 
-import styled from "styled-components/native";
 
 export const Container = styled.View`
   display: flex;

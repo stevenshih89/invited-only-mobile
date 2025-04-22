@@ -1,10 +1,8 @@
 import firestore from '@react-native-firebase/firestore';
-import { MatchData } from 'screens/App/IO/screens/Match/Match';
 import { showToast } from './showToast';
-import { INVITE_MATCH_STATUS } from 'constants/common';
 import { logErrorToSentry } from './logErrorsToSentry';
-import { useContext } from 'react';
-import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
+import { MatchData } from 'screens/App/IO/screens/Match/Match';
+import { INVITE_MATCH_STATUS } from 'constants/common';
 
 export const handleCreateChat = async (matchedData: MatchData, collectionNames = { messages: 'messages', events: 'Events' }) => {
   const { messages: apiMessagesCollection = 'messages', events: apiEventsCollection = 'Events' } = collectionNames;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import ModalConfirmPhone from './ModalConfirmPhone';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ModalConfirmPhone from './ModalConfirmPhone';
 
 describe('ModalConfirmPhone Components', () => {
     beforeEach(() => {

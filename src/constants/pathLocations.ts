@@ -35,17 +35,22 @@ const codeVerifiedPath: keyof RootStackParamList = '/code-verified';
 const verifyFirstStepPath: keyof RootStackParamList = '/verify-first-step';
 const verifySecondStepPath: keyof RootStackParamList = '/verify-second-step';
 const invitationCodePath: keyof RootStackParamList = '/invitation-code';
-const paymentPath: keyof RootStackParamList = '/payment';
-const manageSubscriptionPath: keyof RootStackParamList = '/manage-subscription';
+const paymentPath: keyof RootStackParamList = '/profile/payment';
+const manageSubscriptionPath: keyof RootStackParamList = '/profile/manage-subscription';
 const tutorialFlowPath: keyof RootStackParamList = '/tutorial-flow';
 const IOPath: keyof RootStackParamList = '/io';
 const joinEventsPath: keyof RootStackParamList = '/join-events';
 const notificationsPath: keyof RootStackParamList = '/notifications';
 const requestsPath: keyof RootStackParamList = '/requests';
-const profilePath: keyof RootStackParamList = '/profile';
 const myProfileViewPath: keyof RootStackParamList = '/my-profile-view';
-const profileEditingPath: keyof RootStackParamList = '/profile-editing';
+const profileEditingPath: keyof RootStackParamList = '/profile/profile-editing';
 const myEventsPath: keyof RootStackParamList = '/my-events';
+const profilePath: keyof RootStackParamList = '/profile';
+const invitationsPath: keyof RootStackParamList = '/profile/invitations';
+const myPlanPath: keyof RootStackParamList = '/profile/my-plan';
+const faqPath: keyof RootStackParamList = '/profile/faq';
+const helpAndSecurityPath: keyof RootStackParamList = '/profile/help-and-security';
+const notificationSettingPath: keyof RootStackParamList = '/profile/notification-setting';
 const chatPath: keyof RootStackParamList = '/chat';
 const chatWindowPath: keyof RootStackParamList = '/chat/chat-window';
 const chatCorrespondencePath: keyof RootStackParamList = '/chat-correspondence';
@@ -54,13 +59,9 @@ const userProfilePath: keyof RootStackParamList = '/user-profile';
 const eventInfoPath: keyof RootStackParamList = '/event-info';
 const eventActiveInfoPath: keyof RootStackParamList = '/event-active-info';
 const eventEditingPath: keyof RootStackParamList = '/event-editing';
-const settingsPath: keyof RootStackParamList = '/settings';
 const accountSettingPath: keyof RootStackParamList = '/account-setting';
 const securePrivacyPath: keyof RootStackParamList = '/secure-privacy';
 const phoneChangePath: keyof RootStackParamList = '/phone-change';
-const emailChangePath: keyof RootStackParamList = '/email-change';
-const notificationSettingPath: keyof RootStackParamList = '/notification-setting';
-const contactAndFAQPath: keyof RootStackParamList = '/contact-and-faq';
 const photoVerifiedPath: keyof RootStackParamList = '/photo-verified';
 const summaryInfoPath: keyof RootStackParamList = '/summary-info';
 const verifySocialProfilePath: keyof RootStackParamList = '/verify-social-profile';
@@ -72,7 +73,7 @@ const earlyAccessPath: keyof RootStackParamList = '/early-access';
 const markAttendancePath: keyof RootStackParamList = '/mark-attendance';
 const underMaintenance: keyof RootStackParamList = '/under-maintenance';
 const updateAvailable: keyof RootStackParamList = '/update-available';
-
+const profileStackPath: keyof RootStackParamList = '/profile/profile-stack';
 const demoIntroPath: keyof RootStackParamList = '/demo-intro';
 const demoEventCreatingPath: keyof RootStackParamList = '/demo-event-creating';
 
@@ -123,11 +124,9 @@ export {
   eventInfoPath,
   eventActiveInfoPath,
   eventEditingPath,
-  settingsPath,
   accountSettingPath,
   phoneChangePath,
   notificationSettingPath,
-  contactAndFAQPath,
   photoVerifiedPath,
   summaryInfoPath,
   verifySocialProfilePath,
@@ -137,7 +136,6 @@ export {
   joinEventsPathRequest,
   manageSubscriptionPath,
   eulaPath,
-  emailChangePath,
   earlyAccessPath,
   markAttendancePath,
   demoFlowStackPath,
@@ -149,6 +147,11 @@ export {
   updateAvailable,
   findConnectionsPath,
   myConnectionsPath,
+  invitationsPath,
+  myPlanPath,
+  faqPath,
+  helpAndSecurityPath,
   eventRequestStackPath,
-  chatWindowPath
+  chatWindowPath,
+  profileStackPath,
 };

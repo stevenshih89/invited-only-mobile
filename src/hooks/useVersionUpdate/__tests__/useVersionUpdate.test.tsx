@@ -1,11 +1,13 @@
 // useVersionStateUpdate.test.tsx
 import React from 'react';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {renderHook, act} from '@testing-library/react-hooks';
-import useVersionStateUpdate from '../useVersionUpdate';
-import AppSettingsKeys from 'src/apiv2/keys/appSettingsKeys';
+import {renderHook} from '@testing-library/react-hooks';
 import DeviceInfo from 'react-native-device-info';
-import {Platform as ReactNativePlatform} from 'react-native'; // Import the real Platform
+import {Platform as ReactNativePlatform} from 'react-native';
+import useVersionStateUpdate from '../useVersionUpdate';
+
+// Import AFTER the mocks have been defined
+import {AppSettingsQueries} from 'src/apiv2/queries/appSettingsQueries'; // Import the real Platform
 
 // Mock dependencies
 jest.mock('react-native-device-info', () => ({
@@ -26,9 +28,6 @@ jest.mock('src/apiv2/queries/appSettingsQueries', () => ({
     useAppVersionCheckQuery: jest.fn(),
   },
 }));
-
-// Import AFTER the mocks have been defined
-import {AppSettingsQueries} from 'src/apiv2/queries/appSettingsQueries';
 
 const createTestQueryClient = () =>
   new QueryClient({

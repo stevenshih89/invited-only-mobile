@@ -1,5 +1,5 @@
-import {Satoshi500} from 'constants/fonts';
 import styled from 'styled-components/native';
+import {Satoshi500} from 'constants/fonts';
 
 export const CreateEventButtonContainer = styled.TouchableOpacity`
   display: flex;

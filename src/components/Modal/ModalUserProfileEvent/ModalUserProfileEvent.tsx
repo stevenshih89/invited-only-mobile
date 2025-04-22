@@ -2,30 +2,30 @@ import React, {Dispatch, FC, SetStateAction, useCallback, useEffect, useState} f
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 
 //import components
-import useStyles from './styles.ts';
 import Modal from 'react-native-modal';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import firestore from '@react-native-firebase/firestore';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {useFocusEffect} from '@react-navigation/native';
+import Config from 'react-native-config';
+import {useUser} from '../../../store/userStore';
+import useStyles from './styles.ts';
 import UserIcon from 'assets/images/icons/user.svg';
 import ChatIcon from 'assets/images/icons/messages.svg';
 import ReportIcon from 'assets/images/icons/block_and_report.svg';
 import CloseIcon from 'assets/images/icons/close-circle-red.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 import CheckWhite from 'assets/images/icons/check.svg';
 import {black1Color, grayScale700, whiteColor} from 'constants/colors.ts';
 import {chatCorrespondencePath, commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
-import {useUser} from '../../../store/userStore';
-import firestore from '@react-native-firebase/firestore';
 import {showToast} from 'helpers/showToast.ts';
 import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
-import {RFValue} from 'react-native-responsive-fontsize';
 import {calculateAge} from 'helpers/calculateAge.ts';
-import {useFocusEffect} from '@react-navigation/native';
 import {sendNotification} from 'helpers/fcmHelper.ts';
 import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common.ts';
 import {Event} from 'src/types/event.ts';
-import Config from 'react-native-config';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry.ts';
 
 interface ModalUserProfileEventProps {

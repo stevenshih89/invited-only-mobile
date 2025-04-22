@@ -1,4 +1,5 @@
 import * as S from './AppLoader.style';
+
 const AppLoader = () => {
   return (
     <S.AppLoaderContainer>

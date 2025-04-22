@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
-import { blackColor, whiteColor } from 'constants/colors.ts';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { blackColor, whiteColor } from 'constants/colors.ts';
 import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts.ts';
 import { screenHeight } from 'constants/common.ts';
 

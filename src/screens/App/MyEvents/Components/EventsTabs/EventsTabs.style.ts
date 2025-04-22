@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
+import {View, Text, ViewStyle} from 'react-native'; // Import base components and ViewStyle, TextStyle
+import {RFValue} from 'react-native-responsive-fontsize'; // For responsive font size
 import {whiteColor, blackColor} from 'constants/colors'; // Import needed colors
 import {Satoshi500} from 'constants/fonts'; // Import needed font
-import {View, Text, ViewStyle, TextStyle, FlexAlignType} from 'react-native'; // Import base components and ViewStyle, TextStyle
-import {RFValue} from 'react-native-responsive-fontsize'; // For responsive font size
 
 export const TabBarLabel = styled(Text)`
   font-family: ${Satoshi500};

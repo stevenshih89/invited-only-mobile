@@ -1,4 +1,8 @@
 import {EventMutations} from 'src/apiv2/mutations/eventMutations';
+import moment from 'moment';
+import {useRoute} from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+import {Dispatch, SetStateAction} from 'react';
 import {UserMutations} from 'src/apiv2/mutations/userMutations';
 import {Event, EventData} from 'src/types/event';
 import {UserInfo} from 'src/types/userInfo';
@@ -6,15 +10,11 @@ import {showToast} from 'helpers/showToast.ts';
 import {useUser} from 'src/store/userStore';
 import {useMyEvents} from 'src/store/myEvents';
 import {ACCEPTED_STATUS, INVITE_MATCH_STATUS, LIKED} from 'constants/common';
-import moment from 'moment';
 import {MatchData} from 'screens/App/IO/screens/Match/Match.tsx';
-import {useRoute} from '@react-navigation/native';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {handleCreateChat} from 'helpers/chat';
 import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
-import firestore from '@react-native-firebase/firestore';
 import {useScrollPosition} from 'src/store/scrollPosition';
-import {Dispatch, SetStateAction} from 'react';
 
 interface UseInviteProps {
   setIsVisibleModalFullEvent: Dispatch<SetStateAction<boolean>>;

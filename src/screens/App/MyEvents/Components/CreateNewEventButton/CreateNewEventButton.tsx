@@ -1,5 +1,5 @@
-import {useAppNavigation} from 'hooks/useAppNavigation';
 import * as S from './CreateNewEventButton.style';
+import {useAppNavigation} from 'hooks/useAppNavigation';
 import CreateEventIcon from 'src/assets/images/icons/plus-black.svg';
 
 const CreateNewEventButton = () => {

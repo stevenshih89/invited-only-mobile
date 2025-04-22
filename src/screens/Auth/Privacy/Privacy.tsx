@@ -1,30 +1,30 @@
-import {screenHeight} from 'constants/common';
-import {FC, JSX, useContext, useEffect} from 'react';
-import {AppState, FlatList, SafeAreaView, Text, View} from 'react-native';
-import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import CheckIcon from 'assets/images/icons/check.svg';
-import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import {backgroundGradientColors, lightGray3Color, lightGray4Color, transparentWhite30Color, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import Button from 'components/Button/Button';
-import {useAppNavigation, useRoute} from 'hooks/useAppNavigation';
-import {verifyFirstStepPath} from 'constants/pathLocations';
-import {TouchableOpacity} from 'react-native';
-import {AuthContext} from 'contexts/AuthContext';
+import { FC, JSX, useContext, useEffect } from 'react';
+import { AppState, FlatList, SafeAreaView, Text, View, TouchableOpacity } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import { screenHeight } from 'constants/common';
+import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
+import CheckIcon from 'assets/images/icons/check.svg';
+import ArrowLeft from 'assets/images/icons/arrow-left.svg';
+import { backgroundGradientColors, lightGray3Color, lightGray4Color, transparentWhite30Color, whiteColor } from 'constants/colors';
+import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
+import Button from 'components/Button/Button';
+import { useAppNavigation, useRoute } from 'hooks/useAppNavigation';
+import { verifyFirstStepPath } from 'constants/pathLocations';
+import { AuthContext } from 'contexts/AuthContext';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useAuthStore } from 'src/store/authStore';
 
 const Privacy: FC = (): JSX.Element => {
+  const { userMetadata: user } = useAuthStore();
   const navigation = useAppNavigation();
-  const {onBoarding} = useContext(AuthContext);
-  const objWithAccountType = onBoarding.find((obj: any) => obj.hasOwnProperty('accountType'));
+  const { onBoarding } = useContext(AuthContext);
+  const objWithAccountType = onBoarding.find((obj: any) => obj.accountType);
   const route = useRoute();
-  const {screen, accountType} = route.params as {screen: string; accountType: string};
+  const { screen, accountType } = route.params as { screen: string; accountType: string };
   const privaciesListHost = [
     {
       id: 0,
@@ -78,14 +78,14 @@ const Privacy: FC = (): JSX.Element => {
     const email = onBoarding.find((item: any) => item.email)?.email;
     const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
     const date = onBoarding.find((item: any) => item.date)?.date;
-    const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
+    const gender = onBoarding.find((item: { gender: string }) => item?.gender)?.gender;
     const photos = onBoarding.find((item: any) => item.photos)?.photos;
 
     const handleAppClose = async () => {
       try {
         await firestore()
           .collection('unfinishedRegistrationUsers')
-          .doc(auth()?.currentUser?.uid)
+          .doc(user?.uid)
           .set({
             name,
             email,
@@ -93,7 +93,7 @@ const Privacy: FC = (): JSX.Element => {
             date,
             gender,
             photos,
-            phoneNumber: auth()?.currentUser?.phoneNumber,
+            phoneNumber: user?.phoneNumber,
             createdAt: moment().format('YYYY-MM-DD'),
             screen: 'house-rules',
           });
@@ -104,7 +104,7 @@ const Privacy: FC = (): JSX.Element => {
           date,
           gender,
           photos,
-          phoneNumber: auth()?.currentUser?.phoneNumber,
+          phoneNumber: user?.phoneNumber,
           createdAt: moment().format('YYYY-MM-DD'),
           screen: 'house-rules',
         });
@@ -126,9 +126,9 @@ const Privacy: FC = (): JSX.Element => {
   }, []);
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <SafeAreaView style={{flex: 1}}>
-        <View style={{flex: 1, paddingHorizontal: 24}}>
+    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={{ flex: 1, paddingHorizontal: 24 }}>
           <View
             style={{
               flexDirection: 'row',
@@ -140,7 +140,7 @@ const Privacy: FC = (): JSX.Element => {
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               activeOpacity={0.7}
-              hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+              hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
               style={{
                 borderRadius: 50,
                 width: 40,
@@ -152,11 +152,11 @@ const Privacy: FC = (): JSX.Element => {
               <ArrowLeft />
             </TouchableOpacity>
             <LogoPrimary2 />
-            <View style={{width: 40}} />
+            <View style={{ width: 40 }} />
           </View>
-          <View style={{marginBottom: screenHeight / 30, marginTop: screenHeight / (screen ? 11.5 : 15)}}>
-            <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 932), marginBottom: 8}}>Welcome</Text>
-            <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932)}}>
+          <View style={{ marginBottom: screenHeight / 30, marginTop: screenHeight / (screen ? 11.5 : 15) }}>
+            <Text style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 932), marginBottom: 8 }}>Welcome</Text>
+            <Text style={{ color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932) }}>
               Please follow these{' '}
               {objWithAccountType?.accountType
                 ? objWithAccountType?.accountType === 'host'
@@ -169,7 +169,7 @@ const Privacy: FC = (): JSX.Element => {
             </Text>
           </View>
           <FlatList
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             showsVerticalScrollIndicator={false}
             data={
               objWithAccountType?.accountType
@@ -180,20 +180,20 @@ const Privacy: FC = (): JSX.Element => {
                   ? privaciesListHost
                   : privaciesListGuest
             }
-            keyExtractor={({id}) => id.toString()}
-            ItemSeparatorComponent={() => <View style={{height: 8}} />}
-            renderItem={({item: {title, subtitle}}) => (
-              <View style={{width: '100%', padding: 20, backgroundColor: lightGray3Color, borderRadius: 10}}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            keyExtractor={({ id }) => id.toString()}
+            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+            renderItem={({ item: { title, subtitle } }) => (
+              <View style={{ width: '100%', padding: 20, backgroundColor: lightGray3Color, borderRadius: 10 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <CheckIcon />
-                  <Text style={{color: whiteColor, fontSize: RFValue(16, 932), fontFamily: Satoshi700, marginLeft: 8}}>{title}</Text>
+                  <Text style={{ color: whiteColor, fontSize: RFValue(16, 932), fontFamily: Satoshi700, marginLeft: 8 }}>{title}</Text>
                 </View>
-                <Text style={{color: lightGray4Color, fontSize: RFValue(14, 932), fontFamily: Satoshi400, marginTop: 10}}>{subtitle}</Text>
+                <Text style={{ color: lightGray4Color, fontSize: RFValue(14, 932), fontFamily: Satoshi400, marginTop: 10 }}>{subtitle}</Text>
               </View>
             )}
           />
           {screen !== 'SafetyAndWellbeing' && (
-            <View style={{marginTop: 16}}>
+            <View style={{ marginTop: 16 }}>
               <Button testID="agree-button" onPress={() => navigation.navigate(verifyFirstStepPath as never)} title="I Agree, Continue" />
             </View>
           )}

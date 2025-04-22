@@ -1,14 +1,11 @@
 import {Switch} from '@ant-design/react-native';
-import {blackColor, grayColor, lightGray2Color, toggleColor, transparentGray90Color, whiteColor} from 'constants/colors';
-import {Satoshi400} from 'constants/fonts';
-import Height from 'assets/images/icons/arrow-3.svg';
 import {Dispatch, FC, SetStateAction} from 'react';
-import {Text, View} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import Modal from 'react-native-modal';
-import {RFValue} from 'react-native-responsive-fontsize';
-import Button from 'components/Button/Button';
 import * as S from './ModalHeight.style';
+import Button from 'components/Button/Button';
+import Height from 'assets/images/icons/arrow-3.svg';
+import { grayColor, toggleColor, whiteColor} from 'constants/colors';
 
 interface ModalHeightProps {
   isVisible: boolean;

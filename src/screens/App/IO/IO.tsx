@@ -1,22 +1,19 @@
-import React, {useState, useMemo, useCallback, useEffect} from 'react';
+import React, { useState } from 'react';
 
+import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
+import { Text } from 'react-native';
+import AppLoader from '../AppLoader/AppLoader';
+import * as S from './IO.style';
+import usePersistentCardSwipe from './hooks/usePersistentCardSwipe';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
-import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
-import {useUser} from 'src/store/userStore';
-import * as S from './IO.style';
 
+import { components } from 'src/api/v1';
 
-
-import AppLoader from '../AppLoader/AppLoader';
-import {components} from 'src/api/v1';
-import usePersistentCardSwipe from './hooks/usePersistentCardSwipe';
-
-import {Text} from 'react-native';
-import {useEventGuests} from './hooks/useEventGuests';
-import IoHeader from './components/IoHeader/IoHeader';
-import InviteGuestsEvent from './components/InviteGuestsEvent/InviteGuestsEvent';
-
+import { useEventGuests } from 'screens/App/IO/hooks/useEventGuests';
+import IoHeader from 'screens/App/IO/components/IoHeader/IoHeader';
+import InviteGuestsEvent from 'screens/App/IO/components/InviteGuestsEvent/InviteGuestsEvent';
+import { useAuthStore } from 'src/store/authStore';
 
 type GuestUser = components['schemas']['User'];
 
@@ -24,11 +21,11 @@ interface Props {
   events: components['schemas']['EventData'][];
 }
 
-const IO = ({events}: Props) => {
-  const {user: userInfo} = useUser();
+const IO = ({ events }: Props) => {
+  const { userMetadata: user } = useAuthStore();
   const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
 
-  const {guests, isLoading: isGuestsLoading, isFetchingNextPage, hasNextPage, fetchNextPage, status} = useEventGuests(selectedEvent?.uid);
+  const { guests, isLoading: isGuestsLoading, isFetchingNextPage, hasNextPage, fetchNextPage, status } = useEventGuests(selectedEvent?.uid);
   const {
     cards: currentEventCards,
     hasCards,
@@ -61,7 +58,7 @@ const IO = ({events}: Props) => {
     <DefaultBackground>
       <S.IoContainer>
         {false ? (
-          <ModalLockAccount haveCode isPremium={userInfo?.accountPremium} accountType={userInfo?.accountType} isVisibleButton={true} />
+          <ModalLockAccount haveCode isPremium={user?.accountPremium} accountType={user?.accountType} isVisibleButton={true} />
         ) : (
           <>
             <IoHeader
@@ -69,12 +66,12 @@ const IO = ({events}: Props) => {
               selectedEvent={selectedEvent}
               requestsCount={0}
               onEventSelect={handleEventSelect}
-              onRequestPress={() => {}}
+              onRequestPress={() => { }}
             />
             {!isGuestsLoading && !hasCards && guests.length > 0 ? (
               <DefaultBackground>
-                <S.IoContainer style={{justifyContent: 'center', alignItems: 'center'}}>
-                  <Text style={{color: 'white'}}>No more guests for this event.</Text>
+                <S.IoContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={{ color: 'white' }}>No more guests for this event.</Text>
                 </S.IoContainer>
               </DefaultBackground>
             ) : (

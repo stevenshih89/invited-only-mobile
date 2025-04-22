@@ -3,6 +3,8 @@ import {View, TouchableOpacity, Text} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 //import components
+import {RFValue} from 'react-native-responsive-fontsize';
+import FastImage from 'react-native-fast-image';
 import useStyles from 'components/TouchingSlider/styles.ts';
 import {
   black4Color,
@@ -28,8 +30,6 @@ import FlashBlackIcon from 'assets/images/icons/flash-black.svg';
 import FlashFilledBlackIcon from 'assets/images/icons/flash-filled-black.svg';
 import Lock from 'assets/images/icons/lock.svg';
 import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import FastImage from 'react-native-fast-image';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites/index.ts';
 import {showToast} from 'helpers/showToast.ts';
 import SuperJoin from 'components/Modal/ModalSuperJoin/SuperJoin.tsx';
@@ -37,7 +37,6 @@ import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat.ts';
 import {getUsersListAccepted} from 'helpers/getUsersListAccepted.ts';
 import {useScrollPosition} from 'src/store/scrollPosition/index.ts';
 import {eventTypes} from 'src/mocks/eventTypes.ts';
-import Config from 'react-native-config';
 import {screenHeight} from 'constants/common.ts';
 
 export interface Photo {
@@ -328,21 +327,6 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
                 style={{width: 50, height: 50, borderRadius: 50}}
                 source={{uri: photos?.[active]?.image ? photos?.[active]?.image : photos?.[active]}}
               />
-              {/* {hostInfo?.online && (
-                <View
-                  style={{
-                    position: 'absolute',
-                    bottom: 2,
-                    right: 0,
-                    width: 12,
-                    height: 12,
-                    borderRadius: 12,
-                    borderWidth: 1.25,
-                    borderColor: blackColor,
-                    backgroundColor: lightGreenColor,
-                  }}
-                />
-              )} */}
             </View>
             <View style={{marginLeft: 10, justifyContent: 'center'}}>
               <View style={{flexDirection: 'row'}}>

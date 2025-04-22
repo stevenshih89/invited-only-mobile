@@ -1,12 +1,12 @@
 import {StyleProp, Text, TouchableOpacity, View, ViewStyle} from 'react-native';
-import {FC, useContext} from 'react';
-import CloseIcon from 'assets/images/icons/close.svg';
-import useStyles from './styles';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {bottomTabsStackPath, paymentPath} from 'constants/pathLocations';
-import {transparent60Color, whiteColor} from 'constants/colors';
+import {FC} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
+import useStyles from './styles';
+import CloseIcon from 'assets/images/icons/close.svg';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {bottomTabsStackPath} from 'constants/pathLocations';
+import {transparent60Color, whiteColor} from 'constants/colors';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {useUser} from 'src/store/userStore';
 import {UserMutations} from 'src/apiv2/mutations/userMutations';

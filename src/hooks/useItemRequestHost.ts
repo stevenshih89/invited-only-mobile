@@ -1,19 +1,19 @@
+import firestore from '@react-native-firebase/firestore';
+import {useRef, useState} from 'react';
+import analytics from '@react-native-firebase/analytics';
+import Config from 'react-native-config';
 import {User} from 'src/types/userInfo';
 import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import {showToast} from 'helpers/showToast.ts';
-import firestore from '@react-native-firebase/firestore';
-import {useRef, useState} from 'react';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
 import {handleCreateChat} from 'helpers/chat';
 import {ACCEPTED_STATUS, INVITE_MATCH_STATUS} from 'constants/common';
 import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
 import {Event} from 'src/types/event';
-import analytics from '@react-native-firebase/analytics';
 import {inviteUser, requestsScreen} from 'constants/analitycs';
 import {useMyEvents} from 'src/store/myEvents';
-import Config from 'react-native-config';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {MatchData} from 'screens/App/IO/screens/Match/Match';
 

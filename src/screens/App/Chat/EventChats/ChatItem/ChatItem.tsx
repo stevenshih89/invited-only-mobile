@@ -1,10 +1,10 @@
-import { components } from 'src/api/v1';
-import * as S from './ChatItem.style';
 import { TouchableOpacity } from 'react-native';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import auth from '@react-native-firebase/auth';
 import { formatDistance } from 'date-fns';
 import { StrictMode } from 'react';
+import * as S from './ChatItem.style';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { components } from 'src/api/v1';
+import { useAuthStore } from 'src/store/authStore';
 
 interface ChatItemProps {
     chat: components['schemas']['Chat'];
@@ -12,7 +12,8 @@ interface ChatItemProps {
 
 export const ChatItem = ({ chat }: ChatItemProps) => {
     const navigation = useAppNavigation();
-    const userLastSeen = chat.userLastSeen?.some((user) => user.userId === auth().currentUser?.uid);
+    const { userMetadata } = useAuthStore.getState();
+    const userLastSeen = chat.userLastSeen?.some((user) => user.userId === userMetadata.uid);
 
     return (
         <StrictMode>

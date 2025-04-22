@@ -1,6 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import * as S from './GuestCard.styled';
-import {useCardGesture} from './hooks/useCardGesture';
 import {GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -8,6 +6,8 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
+import * as S from './GuestCard.styled';
+import {useCardGesture} from './hooks/useCardGesture';
 
 interface CardProps {
   guest: {

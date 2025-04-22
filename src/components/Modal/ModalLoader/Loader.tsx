@@ -1,14 +1,13 @@
-import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import { SafeAreaView, Text, View} from 'react-native';
+import Modal from 'react-native-modal';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {FC, useEffect} from 'react';
+import Animated, {useSharedValue, withTiming, Easing, useAnimatedStyle, withRepeat, cancelAnimation} from 'react-native-reanimated';
 import LoaderIcon from 'assets/images/icons/loader.svg';
 import CheckBlackIcon from 'assets/images/icons/Check-black.svg';
 import LogoIcon from 'assets/images/icons/logo.svg';
-import {blackColor, lightGray10Color, whiteColor} from 'constants/colors';
-import Modal from 'react-native-modal';
-import {Outfit500, Satoshi400, Satoshi700Italic} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {FC, useEffect, useRef} from 'react';
-import {screenHeight} from 'constants/common';
-import Animated, {useSharedValue, withTiming, Easing, useAnimatedStyle, withRepeat, cancelAnimation} from 'react-native-reanimated';
+import {blackColor, whiteColor} from 'constants/colors';
+import { Satoshi400} from 'constants/fonts';
 
 interface LoaderProps {
   isVisible: boolean;
@@ -74,7 +73,7 @@ const Loader: FC<LoaderProps> = ({isVisible, textLoader, successfulPay}, props) 
               </View>
             )}
             {!successfulPay && (
-              <Animated.View style={[animatedStyle]}>
+              <Animated.View style={animatedStyle}>
                 <LoaderIcon />
               </Animated.View>
             )}

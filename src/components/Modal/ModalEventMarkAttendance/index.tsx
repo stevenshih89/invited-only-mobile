@@ -1,17 +1,17 @@
 import React, {FC} from 'react';
 import {Linking, Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
+import FastImage from 'react-native-fast-image';
+import {RFValue} from 'react-native-responsive-fontsize';
+import Clipboard from '@react-native-clipboard/clipboard';
+import LinearGradient from 'react-native-linear-gradient';
 import {blackColor, whiteColor} from 'constants/colors';
 import CloseIcon from 'assets/images/icons/close.svg';
-import FastImage from 'react-native-fast-image';
 import {screenHeight} from 'constants/common';
-import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {EventData} from 'src/types/event';
 import Button from 'components/Button/Button';
 import {useUser} from 'src/store/userStore';
-import Clipboard from '@react-native-clipboard/clipboard';
-import LinearGradient from 'react-native-linear-gradient';
 
 interface RejectAccount {
   isVisible?: boolean;

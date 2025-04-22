@@ -1,7 +1,7 @@
-import {whiteColor} from 'constants/colors';
-import {Satoshi400} from 'constants/fonts';
 import {TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
+import {whiteColor} from 'constants/colors';
+import {Satoshi400} from 'constants/fonts';
 
 export const CreateEventButton = styled(TouchableOpacity)`
   flex-direction: row;

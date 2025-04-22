@@ -1,10 +1,10 @@
 import LinearGradient from 'react-native-linear-gradient';
-import ArrowRightIcon from 'assets/images/icons/arrow-right-balck.svg';
-import SafetyAndWellbeing from '../SafetyAndWellbeing/SafetyAndWellbeing';
 import {FC} from 'react';
 import {Linking} from 'react-native';
-import {useManageSubscription} from 'hooks/useManageSubscription';
+import SafetyAndWellbeing from '../SafetyAndWellbeing/SafetyAndWellbeing';
 import * as S from './index.style';
+import {useManageSubscription} from 'hooks/useManageSubscription';
+import ArrowRightIcon from 'assets/images/icons/arrow-right-balck.svg';
 
 const ManageSubscription: FC = () => {
   const {subscriptionName, currentSubscriptions, lastSubscriptionData, purchaseDates, formateDateFun, goToMyPaymentPath} =
@@ -16,7 +16,7 @@ const ManageSubscription: FC = () => {
         <S.Divider />
         <S.Content>
           <S.Title>You subscribed on iOS</S.Title>
-          {currentSubscriptions.activeSubscriptions.length && (
+          {!!currentSubscriptions?.activeSubscriptions?.length && (
             <S.Description>
               {`Your ${subscriptionName} subscription began on ${formateDateFun(
                 purchaseDates,
@@ -35,7 +35,7 @@ const ManageSubscription: FC = () => {
           </S.Description>
           <SafetyAndWellbeing wellbeingShow={false} />
         </S.Content>
-        {currentSubscriptions.activeSubscriptions.length < 3 && !currentSubscriptions.activeSubscriptions.includes('io_29_3m') && (
+        {currentSubscriptions?.activeSubscriptions?.length < 3 && !currentSubscriptions?.activeSubscriptions?.includes('io_29_3m') && (
           <S.UpgradeButton onPress={goToMyPaymentPath}>
             <LinearGradient
               colors={['#977B4A', '#E5D291', '#A28453']}

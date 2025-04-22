@@ -1,6 +1,6 @@
+import {Dispatch, SetStateAction} from 'react';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {showToast} from 'helpers/showToast';
-import {Dispatch, SetStateAction} from 'react';
 import {UserMutations} from 'src/apiv2/mutations/userMutations';
 import {useCounterSuperEvents} from 'src/store/counterSuperInvites';
 import {useUser} from 'src/store/userStore';

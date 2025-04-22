@@ -1,6 +1,7 @@
-import CreateEventButton from 'screens/App/IO/components/IoHeader/Components/CreateEventButton/CreateEventButton';
 import * as S from './EmtryStateChatFallback.style';
+import CreateEventButton from 'screens/App/IO/components/IoHeader/Components/CreateEventButton/CreateEventButton';
 import { useAppNavigation } from 'hooks/useAppNavigation';
+
 interface EmptyStateChatFallbackProps {
     emptyType: 'no-chats' | 'no-events';
 }

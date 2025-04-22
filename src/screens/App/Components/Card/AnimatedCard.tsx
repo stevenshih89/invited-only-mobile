@@ -1,12 +1,12 @@
 import React, { useState, ReactNode } from 'react';
-import * as S from './Card.style';
 import { GestureDetector, PanGesture } from 'react-native-gesture-handler';
 import { AnimatedStyle } from 'react-native-reanimated';
+import * as S from './Card.style';
 import ImageIndicator from './Components/ImageIndicator/ImageIndicator';
 import CardImage from './Components/CardImage/CardImage';
 import { PhysicCard } from './Card'; // Assuming PhysicCard remains in Card.tsx or is exported
-import { components } from 'src/api/v1';
 import { NopeRejectBadge } from './Components/NopeRejectBadge/NopeRejectBadge';
+import { components } from 'src/api/v1';
 
 interface AnimatedCardProps {
   uid: string;
@@ -37,10 +37,8 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
 }) => {
   const [imageIndex, setImageIndex] = useState<number>(0);
   const showImageIndexIndicator = isTopCard && showDots && backgroundUrls.length > 1;
-
   return (
     <GestureDetector gesture={gestureHandler}>
-
       <PhysicCard
         distanceFromTheTop={distanceFromTop}
         index={index}

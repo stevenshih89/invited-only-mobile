@@ -1,15 +1,16 @@
-import {FC, ReactElement} from 'react';
+import { ReactElement } from 'react';
 
-import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
+
 
 import AppLoader from '../AppLoader/AppLoader';
-import auth from '@react-native-firebase/auth';
 import JoinEvents from './JoinEvents';
-import {ErrorText} from 'components/Inputs/InputPhoneView.style';
+import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
+import { ErrorText } from 'components/Inputs/InputPhoneView.style';
 import invitedOnlyBackendApi from 'src/api/backend-api';
+import { useAuthStore } from 'src/store/authStore';
 
 const JoinEventsWrapper = (): ReactElement => {
-  const user = auth().currentUser;
+  const { userMetadata } = useAuthStore.getState();
   const {
     data: eventsResponse,
     isLoading,
@@ -17,7 +18,7 @@ const JoinEventsWrapper = (): ReactElement => {
   } = invitedOnlyBackendApi.useQuery('get', '/events/user/{userId}', {
     params: {
       path: {
-        userId: user?.uid || '',
+        userId: userMetadata.uid || '',
       },
     },
   });

@@ -13,8 +13,8 @@ const FirestoreTestScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: blackColor,
+    flex: 1,
   },
 });
 

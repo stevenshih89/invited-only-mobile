@@ -1,11 +1,11 @@
 import {FlatList} from 'react-native';
 import {FC, ReactElement, useEffect} from 'react';
-import LoaderIcon from 'assets/images/icons/loader.svg';
 import Animated, {cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
-import {useNotifications} from 'hooks/useNotifications';
 import EmptyState from './Components/EmptyState/EmptyState';
 import NotificationRow from './Components/NotificationRow/NotificationRow';
 import * as S from './Notifications.style';
+import {useNotifications} from 'hooks/useNotifications';
+import LoaderIcon from 'assets/images/icons/loader.svg';
 
 interface Notifications {
   body: string;

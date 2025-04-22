@@ -14,6 +14,128 @@ security:
   - ApiTokenAuth: []
     FirebaseTokenAuth: []
 paths:
+  /auth/send-otp:
+    post:
+      summary: Request an OTP via Twilio Verify
+      operationId: sendOtp
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                  description: The phone number (E.164 format) to send the OTP to.
+                  example: '+14155550123'
+              required:
+                - phone
+      responses:
+        '200':
+          description: OTP sent successfully.
+        '400':
+          description: Bad request (e.g., invalid phone format).
+        '500':
+          description: Internal server error (e.g., Twilio API issue).
+  /auth/verify-otp:
+    post:
+      summary: Verify an OTP and get auth tokens
+      operationId: verifyOtp
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                  description: The phone number (E.164 format) that received the OTP.
+                  example: '+14155550123'
+                code:
+                  type: string
+                  description: The OTP code entered by the user.
+                  example: '123456'
+              required:
+                - phone
+                - code
+      responses:
+        '200':
+          description: OTP verified successfully, tokens issued.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: Short-lived JWT access token.
+                  refreshToken:
+                    type: string
+                    description: Long-lived refresh token (used to get new access tokens).
+                required:
+                  - accessToken
+                  - refreshToken
+        '400':
+          description: Bad request (e.g., missing parameters).
+        '401':
+          description: Unauthorized (e.g., invalid or expired OTP).
+        '500':
+          description: Internal server error.
+  /auth/refresh:
+    post:
+      summary: Refresh the JWT access token using a refresh token
+      operationId: refreshAccessToken
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                  description: The phone number (E.164 format) associated with the refresh token.
+                  example: '+14155550123'
+                refreshToken:
+                  type: string
+                  description: The refresh token obtained during login/previous refresh.
+              required:
+                - phone
+                - refreshToken
+      responses:
+        '200':
+          description: Access token refreshed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: Newly issued short-lived JWT access token.
+                  refreshToken:
+                    type: string
+                    description: Newly issued long-lived refresh token (rotated).
+                required:
+                  - accessToken
+                  - refreshToken
+        '400':
+          description: Bad request (e.g., missing parameters).
+        '403':
+          description: Forbidden (e.g., invalid or expired refresh token).
+        '404':
+          description: User not found for the given phone number.
+        '500':
+          description: Internal server error.
+
   /events/user/{userId}:
     get:
       summary: Get events visible to a specific user
@@ -224,11 +346,19 @@ paths:
       tags:
         - Users
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              type: object
+              properties:
+                phoneNumber:
+                  type: string
+                  description: The phone number of the user.
+                  example: '+14155550123'
+              required:
+                - phoneNumber
+
       responses:
         '201':
           description: User created successfully.
@@ -312,6 +442,75 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+  /users/phone/{phone}:
+    get:
+      summary: Get a user by phone number
+      operationId: getUserByPhone
+      tags:
+        - Users
+      parameters:
+        - name: phone
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User found successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found.
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+  /users/{id}/fcmToken:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The UID of the user.
+    post:
+      summary: Add FCM token for a user
+      operationId: addFcmTokenToUser
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - fcm_token
+              properties:
+                fcm_token:
+                  type: string
+                  description: Firebase Cloud Messaging token
+      responses:
+        '200':
+          description: FCM token saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: FCM token saved successfully
+        '400':
+          description: Invalid FCM token
+        '500':
+          description: Internal server error
+
   /eventAttendees/create:
     post:
       summary: Create an event attendance record
@@ -359,35 +558,6 @@ paths:
       responses:
         '200':
           description: Event attendance created successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConnectionRequest'
-        '400':
-          description: Bad request.
-        '500':
-          description: Internal server error.
-    patch:
-      summary: Update an event attendance record
-      operationId: updateEventAttend
-      tags:
-        - Event Attendees
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: The ID of the event attendance record to update.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConnectionRequest'
-      responses:
-        '200':
-          description: Event attendance updated successfully.
           content:
             application/json:
               schema:
@@ -762,9 +932,9 @@ components:
         bio:
           type: string
           nullable: true
-        age:
-          type: number
-          nullable: true
+        birthday:
+          type: string
+          format: date-time
         gender:
           type: string
           enum:
@@ -806,9 +976,8 @@ components:
         accountType:
           type: string
           enum:
+            - host
             - guest
-            - user
-            - admin
         email:
           type: string
           format: email
@@ -853,10 +1022,6 @@ components:
           nullable: true
         work:
           $ref: '#/components/schemas/Work'
-      required:
-        - uid
-        - name
-        - gender
     UserNotificationSettings:
       type: object
       properties:
@@ -1334,15 +1499,8 @@ components:
             - STRING
             - JSON
   securitySchemes:
-    ApiTokenAuth:
+    JwtAuth:
       type: apiKey
       in: header
       name: Authorization
-      description: Static API Key for service access. Use format "Bearer YOUR_API_TOKEN".
-    FirebaseTokenAuth:
-      type: apiKey
-      in: header
-      name: token
-      description: >-
-        Firebase ID token for user authentication (required when Firebase
-        validation is enabled server-side).
+      description: JWT token for user authentication. Use format "Bearer YOUR_JWT_TOKEN".

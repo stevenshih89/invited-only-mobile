@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import * as S from './Events.style';
-import DefaultBackground from 'components/DefaultBackground/DefaultBackground'; // Assuming path
 import MyEvents from './MyEvents'; // Your existing list component
 import JoinedEventsScreen from './Components/JoinedEventsScreen/JoinedEventsScreen'; // The placeholder
 import EventsHeader from './Components/EventsHeader/EventsHeader';
+import DefaultBackground from 'components/DefaultBackground/DefaultBackground'; // Assuming path
 
 type TabType = 'MyEvents' | 'JoinedEvents';
 

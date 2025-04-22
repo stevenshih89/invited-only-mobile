@@ -1,6 +1,6 @@
-import {blackColor, whiteColor, white40Color} from 'constants/colors';
-import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {TextStyle, ViewStyle} from 'react-native';
+import {blackColor, whiteColor} from 'constants/colors';
+import {Satoshi500} from 'constants/fonts';
 
 // Style for the tab bar container itself
 export const tabBarStyle: ViewStyle = {

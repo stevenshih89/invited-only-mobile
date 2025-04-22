@@ -1,17 +1,13 @@
-import {KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
+import {Switch} from '@ant-design/react-native';
+import {Dispatch, FC, SetStateAction} from 'react';
+import * as S from './ModalHomeAdress.style';
 import Home from 'assets/images/icons/home.svg';
 import CloseCircle from 'assets/images/icons/close-circle.svg';
 import Search from 'assets/images/icons/search.svg';
-import {blackColor, grayColor, lightGray2Color, toggleColor, transparentGray90Color, whiteColor} from 'constants/colors';
-import {Switch} from '@ant-design/react-native';
-import {Dispatch, FC, SetStateAction} from 'react';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import MaskInput from 'react-native-mask-input';
+import { grayColor, toggleColor, whiteColor} from 'constants/colors';
 import {isIos} from 'constants/common';
 import Button from 'components/Button/Button';
-import * as S from './ModalHomeAdress.style';
 
 interface ModalHomeAdressProps {
   isVisible: boolean;

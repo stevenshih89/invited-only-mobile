@@ -2,10 +2,13 @@ import React, {FC, useContext} from 'react';
 import {SafeAreaView, View, Text, Image} from 'react-native';
 
 //import components
+import {RFValue} from 'react-native-responsive-fontsize';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 import useStyles from 'screens/Auth/AcceptedScreen/ReusableStyles/styles.ts';
 import Button from 'components/Button/Button.tsx';
 import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
-import {IOPath, tutorialFlowPath} from 'constants/pathLocations.ts';
+import {IOPath} from 'constants/pathLocations.ts';
 
 //import images
 import IconVerifyFilledAccepted from 'assets/images/icons/check-star.svg';
@@ -13,10 +16,7 @@ import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import {backgroundGradientColors, blackColor, whiteColor} from 'constants/colors';
 import {AuthContext} from 'contexts/AuthContext';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {RouteProp, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from 'typescript/types';
-import LinearGradient from 'react-native-linear-gradient';
 
 const CodeVerified: FC = (): JSX.Element => {
   const styles = useStyles();

@@ -1,21 +1,20 @@
 import React, {FC, useContext} from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
 import Modal from 'react-native-modal';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {useNavigation} from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {useUser} from '../../../store/userStore';
 import {blackColor, whiteColor} from 'constants/colors';
 import Logo from 'assets/images/icons/logo.svg';
-import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import Loading from 'components/Loading/Loading';
 import Button from 'components/Button/Button';
 import {commonStackPath, demoFlowStackPath, demoIntroPath, earlyAccessPath} from 'constants/pathLocations';
-import {useNavigation} from '@react-navigation/native';
-import firestore from '@react-native-firebase/firestore';
-import Config from 'react-native-config';
-import {useUser} from '../../../store/userStore';
 import {showToast} from 'helpers/showToast';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {RootStackParamList} from 'typescript/types';
 
 interface RejectAccount {

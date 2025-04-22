@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import * as S from './EnterTypeWordsAnimation.style';
 import {useSharedValue, useAnimatedStyle, withTiming, Easing} from 'react-native-reanimated';
+import * as S from './EnterTypeWordsAnimation.style';
 
 const EnterTypeWordsAnimation = () => {
   const words = ['Connect', 'Invite', 'Meet', 'Join'];

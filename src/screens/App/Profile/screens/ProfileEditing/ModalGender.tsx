@@ -1,22 +1,15 @@
-import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList} from 'react-native';
 import Modal from 'react-native-modal';
-import Gender from 'assets/images/icons/tabler_gender-bigender.svg';
-import {
-  blackColor,
-  grayColor,
-  lightGray15Color,
-  toggleColor,
-  transparentGray90Color,
-  transparentWhite16Color,
-  whiteColor,
-} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
 import {Dispatch, FC, SetStateAction} from 'react';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi400} from 'constants/fonts';
+import * as S from './ModalGender.style';
+import Gender from 'assets/images/icons/tabler_gender-bigender.svg';
+import {
+  grayColor,
+  toggleColor,
+} from 'constants/colors';
 import Button from 'components/Button/Button';
 import {useModalGender} from 'hooks/useModalGender';
-import * as S from './ModalGender.style';
 
 interface ModalGenderProps {
   isVisible: boolean;

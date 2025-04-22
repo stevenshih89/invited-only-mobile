@@ -1,9 +1,9 @@
-import {black1Color, blackColor, whiteColor} from 'constants/colors';
 import styled from 'styled-components/native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {black1Color, blackColor, whiteColor} from 'constants/colors';
 import Reject from 'src/assets/images/icons/reject.svg';
 import SuperInvite from 'src/assets/images/icons/super-invite.svg';
 import Invite from 'src/assets/images/icons/Invite.svg';
-import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi500} from 'constants/fonts';
 import CheckStar from 'src/assets/images/icons/check-star-white.svg';
 

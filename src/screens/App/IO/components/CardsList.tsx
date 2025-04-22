@@ -1,8 +1,7 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View,Text} from 'react-native';
 
 import useStyles from '../styles.ts';
-import {Text} from 'react-native';
 
 interface CardsListProps {
   cardsList: any[];

@@ -1,12 +1,12 @@
-import {useUser} from 'src/store/userStore';
+import firestore from '@react-native-firebase/firestore';
+import {useContext} from 'react';
 import {useAppNavigation} from './useAppNavigation';
+import {useUser} from 'src/store/userStore';
 import {chatCorrespondencePath, commonStackPath} from 'constants/pathLocations';
 import {showToast} from 'helpers/showToast';
-import firestore from '@react-native-firebase/firestore';
 import {sendNotification} from 'helpers/fcmHelper';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {APPROVED_STATUS, INVITE_MATCH_STATUS} from 'constants/common';
-import {useContext} from 'react';
 import {FirebaseCollectionsContext} from 'src/contexts/FirebaseCollectionNamesContext';
 
 export const useMatch = (onCloseMatch: () => void, matchData: any) => {

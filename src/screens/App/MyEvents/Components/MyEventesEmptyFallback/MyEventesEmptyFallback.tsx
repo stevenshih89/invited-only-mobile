@@ -1,8 +1,9 @@
+import CreateNewEventButton from '../CreateNewEventButton/CreateNewEventButton';
 import * as S from './MyEventsEmptyFallback.style';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 
 import MyEventsFallbackImage from 'src/assets/images/app/my-events-empty-fallback.png';
-import CreateNewEventButton from '../CreateNewEventButton/CreateNewEventButton';
+
 const MyEventsEmptyFallback = () => {
   return (
     <DefaultBackground>

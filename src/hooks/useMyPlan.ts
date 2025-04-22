@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useUser } from "src/store/userStore";
-import { useAppNavigation } from "./useAppNavigation";
-import { paymentPath, superInvitePayPath } from "constants/pathLocations";
+import {useState} from 'react';
+import {useAppNavigation} from './useAppNavigation';
+import {useUser} from 'src/store/userStore';
+import {paymentPath, superInvitePayPath} from 'constants/pathLocations';
 
 export const useMyPlan = () => {
   const [loaderVisible, setLoaderVisible] = useState(false);
@@ -25,6 +25,6 @@ export const useMyPlan = () => {
     loaderVisible,
     goToPaymentPath,
     goToSuperInvitePay,
-    userInfo
-  }
-}
+    userInfo,
+  };
+};

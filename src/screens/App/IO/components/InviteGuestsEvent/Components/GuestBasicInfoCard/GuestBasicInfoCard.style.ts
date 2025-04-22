@@ -1,6 +1,6 @@
+import styled from 'styled-components/native';
 import {whiteColor} from 'constants/colors';
 import {Satoshi500} from 'constants/fonts';
-import styled from 'styled-components/native';
 
 export const Container = styled.View`
   flex: 1;

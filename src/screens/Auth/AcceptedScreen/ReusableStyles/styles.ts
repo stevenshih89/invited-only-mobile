@@ -10,45 +10,36 @@ const dimensionsWidth = Dimensions.get('window').width;
 
 const useStyles = () => {
   return StyleSheet.create({
-    imageBackground: {
-      flex: 1,
-    },
-    logoSecondaryWrapper: {
-      alignItems: 'center',
-      paddingHorizontal: dimensionsHeight / 38,
-      opacity: 0.4,
-    },
-    wrapperContainerVerified: {
-      flex: 1,
-      justifyContent: 'center',
-    },
-    safeAreaView: {
-      flex: 1,
-      paddingBottom: 0,
+    buttonContinue: {
+      width: '100%',
     },
     container: {
+      alignItems: 'center',
       backgroundColor: lightGray5Color,
       borderRadius: 10,
-      paddingVertical: dimensionsHeight / 30,
-      paddingHorizontal: dimensionsWidth / 22,
       marginHorizontal: dimensionsWidth / 20,
-      alignItems: 'center',
+      paddingHorizontal: dimensionsWidth / 22,
+      paddingVertical: dimensionsHeight / 30,
+    },
+    iconVerifyFilled: {
+      bottom: 42,
+      left: 65,
+      position: 'relative',
+    },
+    imageBackground: {
+      flex: 1,
     },
     logoPrimary: {
       marginBottom: dimensionsHeight / 34,
     },
-    iconVerifyFilled: {
-      position: 'relative',
-      left: 65,
-      bottom: 42,
+    logoSecondaryWrapper: {
+      alignItems: 'center',
+      opacity: 0.4,
+      paddingHorizontal: dimensionsHeight / 38,
     },
-    wrapperIconVerifyFilledAccepted: {
-      backgroundColor: whiteColor,
-      padding: 8.8,
-      position: 'relative',
-      left: 65,
-      bottom: 42,
-      borderRadius: 7,
+    safeAreaView: {
+      flex: 1,
+      paddingBottom: 0,
     },
     textInReview: {
       color: whiteColor,
@@ -62,11 +53,20 @@ const useStyles = () => {
       fontFamily: Satoshi400,
       fontSize: RFValue(18, 812),
       marginBottom: dimensionsHeight / 28,
-      textAlign: 'center',
       opacity: 0.8,
+      textAlign: 'center',
     },
-    buttonContinue: {
-      width: '100%',
+    wrapperContainerVerified: {
+      flex: 1,
+      justifyContent: 'center',
+    },
+    wrapperIconVerifyFilledAccepted: {
+      backgroundColor: whiteColor,
+      borderRadius: 7,
+      bottom: 42,
+      left: 65,
+      padding: 8.8,
+      position: 'relative',
     },
   });
 };

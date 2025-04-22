@@ -3,6 +3,7 @@ import React from 'react';
 import EventListItem from '../EventListItem/EventListItem';
 import * as S from './EventList.style';
 import {components} from 'src/api/v1';
+
 interface EventListProps {
   events: components['schemas']['EventData'][];
 }

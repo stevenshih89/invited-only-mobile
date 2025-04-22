@@ -1,8 +1,4 @@
-import {useEffect, useState} from 'react';
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
-import Config from 'react-native-config';
-import {logErrorToSentry} from './logErrorsToSentry';
+import { useState} from 'react';
 
 export type AccountInfoFlyWeight = {
   accountConfirmed: boolean;

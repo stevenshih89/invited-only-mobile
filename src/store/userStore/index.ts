@@ -1,5 +1,5 @@
-import {UserInfo} from 'src/types/userInfo';
-import {create} from 'zustand';
+import { create } from 'zustand';
+import { UserInfo } from 'src/types/userInfo';
 
 interface IUserStore {
   onBoarding: boolean;
@@ -17,8 +17,8 @@ export const useUser = create<IUserStore>(set => ({
   premium: false,
   user: {} as UserInfo,
   email: '',
-  setOnBoarding: (state: boolean) => set(() => ({onBoarding: state})),
-  setPremium: (state: boolean) => set(() => ({premium: state})),
-  setUser: (state: UserInfo) => set(() => ({user: state})),
-  setEmail: (email: string) => set(() => ({email})),
+  setOnBoarding: (state: boolean) => set(() => ({ onBoarding: state })),
+  setPremium: (state: boolean) => set(() => ({ premium: state })),
+  setUser: (state: UserInfo) => set(() => ({ user: state })),
+  setEmail: (email: string) => set(() => ({ email })),
 }));

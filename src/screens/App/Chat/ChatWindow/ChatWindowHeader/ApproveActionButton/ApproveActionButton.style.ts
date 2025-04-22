@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
-import { Satoshi500 } from 'src/constants/fonts';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { Satoshi500 } from 'src/constants/fonts';
 
 export const ButtonContainer = styled.TouchableOpacity`
   display: flex;

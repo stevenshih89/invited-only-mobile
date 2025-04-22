@@ -1,8 +1,9 @@
 import firestore from '@react-native-firebase/firestore';
-import {ACCEPTED_STATUS} from 'constants/common';
 import Config from 'react-native-config';
 import { showToast } from './showToast';
 import { logErrorToSentry } from './logErrorsToSentry';
+import {ACCEPTED_STATUS} from 'constants/common';
+
 export const checkIsFullGuests = async (idEvent: string) => {
   try {
     const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';

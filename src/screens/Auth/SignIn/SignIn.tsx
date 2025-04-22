@@ -1,62 +1,63 @@
-import React, {FC, useState, useContext, JSX} from 'react';
-import {Keyboard, KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback, View} from 'react-native';
-import {isIos} from 'constants/common';
-import {backgroundGradientColors} from 'constants/colors';
-import Button from 'components/Button/Button';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-
-import auth from '@react-native-firebase/auth';
-import {showToast} from 'helpers/showToast.ts';
+import React, { FC, useState, useContext, JSX } from 'react';
+import { Keyboard, KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import {InputPhoneView} from '../../../components/Inputs/InputPhoneView';
 import LinearGradient from 'react-native-linear-gradient';
-
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import Loader from 'components/Modal/ModalLoader/Loader';
+import { InputPhoneView } from '../../../components/Inputs/InputPhoneView';
 import * as S from './SignIn.styles';
+import { isIos } from 'constants/common';
+import { backgroundGradientColors } from 'constants/colors';
+import Button from 'components/Button/Button';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { showToast } from 'helpers/showToast.ts';
+
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import Loader from 'components/Modal/ModalLoader/Loader';
+import invitedOnlyBackendApi from 'src/api/backend-api';
+import { useAuthStore } from 'src/store/authStore';
 
 const SignIn: FC = (): JSX.Element => {
+
   const [mobilePhone, setMobilePhone] = useState<string>('');
-  const [loading, setLoading] = useState(false);
   const [isValidPhone, setIsValidPhone] = useState<boolean>(false);
   const [isDisabledValidation, setIsDisabledValidation] = useState<boolean>(true);
 
   const navigation = useAppNavigation();
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
+  const { mutate: sendOtp, isPending: isSendingOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
+  const { setUserMetadata } = useAuthStore();
 
   async function signInWithPhoneNumber() {
     try {
       if (!mobilePhone) {
         return;
       }
-      setLoading(true);
-
       const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
 
-      // Check if user exists first
       try {
-        const userNumber = await firestore().collection(apiUserInfoCollection).where('phoneNumber', '==', mobilePhone).get();
-        if (userNumber.empty) {
-          setLoading(false);
+        const user = await firestore().collection(apiUserInfoCollection).where('phoneNumber', '==', mobilePhone).get();
+        if (user.empty) {
           showToast('inviteMatch', 'No account found with this phone number', 'Fail');
           return;
         }
 
-        const confirmation = await auth().signInWithPhoneNumber(phone);
+        setUserMetadata({
+          uid: user.docs[0].id,
+          phoneNumber: mobilePhone,
+        });
+
+        await sendOtp({ body: { phone: mobilePhone } });
+
         navigation.navigate('/confirm-phone', {
-          confirm: confirmation,
           mobilePhone: phone,
           isLogin: true,
         });
-        setLoading(false);
+
       } catch (error: any) {
-        setLoading(false);
         logErrorToSentry(error);
         showToast('inviteMatch', `${error?.message.split(']')[1] || 'Error signing in'}`);
       }
     } catch (e: any) {
-      setLoading(false);
       logErrorToSentry(e);
       showToast('inviteMatch', `${e?.message.split(']')[1] || 'Error processing request'}`);
     }
@@ -72,10 +73,10 @@ const SignIn: FC = (): JSX.Element => {
   };
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
+    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1, paddingBottom: 0 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+          <SafeAreaView style={{ flex: 1, paddingBottom: 0 }}>
             <S.Container>
               <S.ContentContainer>
                 <S.LogoContainer>
@@ -96,12 +97,12 @@ const SignIn: FC = (): JSX.Element => {
                 </S.InputContainer>
               </S.ContentContainer>
               <S.ButtonContainer>
-                <Button disabled={!isValidPhone || loading} loading={loading} onPress={handleSignIn} title="Sign In" />
+                <Button disabled={!isValidPhone || isSendingOtp} loading={isSendingOtp} onPress={handleSignIn} title="Sign In" />
               </S.ButtonContainer>
             </S.Container>
           </SafeAreaView>
         </TouchableWithoutFeedback>
-        <Loader isVisible={loading} textLoader="Signing in..." successfulPay={false} />
+        <Loader isVisible={isSendingOtp} textLoader="Signing in..." successfulPay={false} />
       </KeyboardAvoidingView>
     </LinearGradient>
   );

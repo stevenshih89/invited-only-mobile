@@ -1,4 +1,3 @@
-import {isIos, screenHeight} from 'constants/common';
 import {FC, useState} from 'react';
 import {
   ImageBackground,
@@ -10,13 +9,14 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {isIos, screenHeight} from 'constants/common';
 import LogoSecondary from 'assets/images/auth/logo-secondary.svg';
 import HalfBackground from 'assets/images/auth/half-background.png';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import InstagramIcon from 'assets/images/auth/instagram.svg';
 import {lightGray2Color, toggleColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {privacyPath} from 'constants/pathLocations';

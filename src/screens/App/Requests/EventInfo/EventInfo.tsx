@@ -2,6 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, ScrollView, Image, TouchableOpacity} from 'react-native';
 
 //import components
+import firestore from '@react-native-firebase/firestore';
+import {ActivityIndicator} from '@ant-design/react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import Config from 'react-native-config';
 import useStyles from './styles';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
@@ -18,12 +22,9 @@ import MapIcon from 'assets/images/icons/location.svg';
 
 //import images
 import {transparentWhite16Color, whiteColor} from 'constants/colors';
-import firestore from '@react-native-firebase/firestore';
-import {ActivityIndicator} from '@ant-design/react-native';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import Config from 'react-native-config';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+
 const EventInfo = ({navigation, route}: any) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const styles = useStyles();

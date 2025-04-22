@@ -1,7 +1,5 @@
-import {View} from 'react-native';
 import * as S from './LockedFeatureComponent.style';
 import LockeFeature from 'src/assets/images/icons/locked-feature-icon.svg';
-import HostBadge from 'screens/App/JoinEvents/Components/EventCard/Components/HostBadge';
 
 interface Props {
   hostName: string;

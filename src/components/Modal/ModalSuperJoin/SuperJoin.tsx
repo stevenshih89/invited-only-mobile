@@ -1,12 +1,12 @@
-import {blackColor, whiteColor} from 'constants/colors';
 import {Text, View, SafeAreaView, Dimensions} from 'react-native';
 import Modal from 'react-native-modal';
-import Flash from 'assets/images/icons/flash-filled.svg';
-import {Outfit500, Satoshi700Italic} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight} from 'constants/common';
 import {FC, useEffect} from 'react';
 import Animated, {useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay} from 'react-native-reanimated';
+import Flash from 'assets/images/icons/flash-filled.svg';
+import {Outfit500, Satoshi700Italic} from 'constants/fonts';
+import {screenHeight} from 'constants/common';
+import {blackColor, whiteColor} from 'constants/colors';
 
 const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: string}> = ({isVisibleMatch, nameEvent, imageEvent}) => {
   const opacityWrapper = useSharedValue(0);
@@ -140,15 +140,13 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
               ]}>
               <View style={{marginTop: -50, flexWrap: 'wrap', flexDirection: 'row', alignSelf: 'flex-end'}}>
                 <Text
-                  style={[
-                    {
+                  style={{
                       color: whiteColor,
                       fontFamily: Outfit500,
                       fontSize: nameEvent?.length > 10 ? RFValue(36, 812) : RFValue(42, 812),
                       letterSpacing: -5,
                       lineHeight: 55,
-                    },
-                  ]}>
+                    }}>
                   {nameEvent}
                 </Text>
                 <Text style={{color: whiteColor, position: 'absolute', right: 0, bottom: -10, fontSize: RFValue(13, 812)}}>Event</Text>

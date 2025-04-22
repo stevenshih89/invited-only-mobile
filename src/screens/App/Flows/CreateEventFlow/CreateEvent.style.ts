@@ -1,7 +1,6 @@
-import {blackColor, whiteColor} from 'constants/colors';
-import {screenHeight} from 'constants/common';
-import {Satoshi500} from 'constants/fonts';
 import styled from 'styled-components/native';
+import {blackColor, whiteColor} from 'constants/colors';
+import {Satoshi500} from 'constants/fonts';
 
 export const Container = styled.View`
   align-items: center;

@@ -1,5 +1,6 @@
 import React, {ReactElement, useState} from 'react';
 import {View, Text} from 'react-native';
+import {Label, IconWrapper} from './styles';
 import Connect from 'assets/images/tab-bar/connect.svg';
 import ConnectActive from 'assets/images/tab-bar/connect-active.svg';
 
@@ -13,7 +14,6 @@ import IO from 'assets/images/tab-bar/io.svg';
 import {IOPath, chatPath, connectPath, joinEventsPath, myEventsPath} from 'constants/pathLocations';
 import {blackColor, grayColor, lightRedColor, whiteColor} from 'constants/colors';
 import {RootStackParamList} from 'typescript/types';
-import {Label, IconWrapper} from './styles';
 
 import {Satoshi700} from 'constants/fonts';
 import {useUser} from 'src/store/userStore';

@@ -1,6 +1,6 @@
-import {blackColor} from 'constants/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import styled from 'styled-components/native';
+import {blackColor} from 'constants/colors';
 
 export const MainContainer = styled.SafeAreaView`
   flex: 1;

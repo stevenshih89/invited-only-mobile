@@ -1,8 +1,8 @@
 import React from 'react';
 import {render, fireEvent} from '@testing-library/react-native';
+import {Gesture} from 'react-native-gesture-handler';
 import Card from '../../../../Components/Card/Card';
 import {useCardGesture} from '../hooks/useCardGesture';
-import {Gesture} from 'react-native-gesture-handler';
 
 jest.mock('../hooks/useCardGesture', () => ({
   useCardGesture: jest.fn(),

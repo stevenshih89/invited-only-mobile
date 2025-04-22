@@ -1,5 +1,5 @@
-import { showToast } from 'helpers/showToast';
 import { useEffect } from 'react';
+import { showToast } from 'helpers/showToast';
 
 export const useAccountReviewNotification = (userInfo: any) => {
   useEffect(() => {

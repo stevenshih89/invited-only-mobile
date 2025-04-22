@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import Modal from 'react-native-modal';
+import * as S from './ModalAddPhoto.styles';
 import PlusIcon from 'assets/images/icons/plus.svg';
 import ImageIcon from 'assets/images/icons/image.svg';
 import CameraIcon from 'assets/images/icons/camera.svg';
-import * as S from './ModalAddPhoto.styles';
 
 interface ModalAddProps {
   isVisible: boolean;

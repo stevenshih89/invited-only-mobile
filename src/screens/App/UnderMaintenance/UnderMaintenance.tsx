@@ -1,9 +1,9 @@
-import {blackColor, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
 import React, {FC} from 'react';
 import {View, Text} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import UnderMaintenanceIcon from '../../../assets/images/icons/under-maintenance.svg';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {blackColor, whiteColor} from 'constants/colors';
 
 interface UnderMaintenanceProps {
   data: {

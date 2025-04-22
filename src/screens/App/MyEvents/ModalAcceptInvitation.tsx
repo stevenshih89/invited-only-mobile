@@ -1,5 +1,10 @@
-import {ImageBackground, Text, TouchableOpacity, View} from 'react-native';
+import {ImageBackground, Text, TouchableOpacity, View,Image} from 'react-native';
 import Modal from 'react-native-modal';
+import {FC} from 'react';
+import {RFValue} from 'react-native-responsive-fontsize';
+import moment from 'moment';
+import {useNavigation} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 import {
   blackColor,
   lightGreenColor,
@@ -14,17 +19,11 @@ import Users from 'assets/images/icons/Users.svg';
 import UserIcon from 'assets/images/icons/user.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
-import {FC} from 'react';
 import Button from 'components/Button/Button';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Image} from 'react-native';
 import {screenHeight} from 'constants/common';
-import moment from 'moment';
 import {commonStackPath, eventInfoPath} from 'constants/pathLocations';
-import {useNavigation} from '@react-navigation/native';
 import {calculateAge} from 'helpers/calculateAge';
-import LinearGradient from 'react-native-linear-gradient';
 
 const ModalAcceptInvitation: FC<{
   isVisible: boolean;

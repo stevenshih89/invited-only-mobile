@@ -1,11 +1,11 @@
-import {isIos, screenHeight} from 'constants/common';
 import React, {FC} from 'react';
 import {Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {isIos, screenHeight} from 'constants/common';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {black1Color, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import AuthProgress from 'components/AuthProgress';
 

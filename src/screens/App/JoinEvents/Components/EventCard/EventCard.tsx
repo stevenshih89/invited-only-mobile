@@ -1,15 +1,14 @@
-import Card from 'screens/App/Components/Card/Card';
-
-
-import { useCardGesture } from 'screens/App/IO/components/InviteGuestsEvent/hooks/useCardGesture';
-import { components } from 'src/api/v1';
 import * as S from './EventCard.style';
 import HostBadge from './Components/HostBadge';
-import auth from '@react-native-firebase/auth';
+import Card from 'screens/App/Components/Card/Card';
+
+import { useCardGesture } from 'screens/App/IO/components/InviteGuestsEvent/hooks/useCardGesture';
 import invitedOnlyBackendApi from 'src/api/backend-api';
-import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
+import { components } from 'src/api/v1';
+import { useAuthStore } from 'src/store/authStore';
 import CardsNameAndDate from 'screens/App/Components/Card/Components/CardsNameAndDate/CardsNameAndDate';
-import { View } from 'react-native';
+import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
+
 
 interface Props {
   onReject: () => void;
@@ -22,6 +21,7 @@ interface Props {
 
 
 const EventCard = ({ onInvite, onReject, isTopCard, event, index }: Props) => {
+  const { userMetadata: user } = useAuthStore();
   const { gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite } =
     useCardGesture({
       onSwipeLeft: onReject,
@@ -40,12 +40,11 @@ const EventCard = ({ onInvite, onReject, isTopCard, event, index }: Props) => {
       console.log('Error creating event attendee');
     },
   });
-  console.log('event', event);
   const onClickReject = () => {
     if (isTopCard) {
       createEventAttendee({
         body: {
-          guestId: auth().currentUser?.uid || '',
+          guestId: user?.uid || '',
           hostId: event.hostId || '',
           eventId: event.uid || '',
           guest_swipe: 'left',
@@ -61,7 +60,7 @@ const EventCard = ({ onInvite, onReject, isTopCard, event, index }: Props) => {
     if (isTopCard) {
       createEventAttendee({
         body: {
-          guestId: auth().currentUser?.uid || '',
+          guestId: user?.uid || '',
           hostId: event.hostId || '',
           eventId: event.uid || '',
           guest_swipe: 'right',

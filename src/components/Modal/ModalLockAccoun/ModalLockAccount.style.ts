@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
 import {RFValue} from 'react-native-responsive-fontsize';
+import LinearGradient from 'react-native-linear-gradient';
 import {blackColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
-import LinearGradient from 'react-native-linear-gradient';
 
 export const Container = styled.View`
   position: absolute;

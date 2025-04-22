@@ -2,10 +2,11 @@ import React, {FC, useContext} from 'react';
 import {SafeAreaView, View, Text, Image} from 'react-native';
 
 //import components
+import {RFValue} from 'react-native-responsive-fontsize';
+import LinearGradient from 'react-native-linear-gradient';
 import useStyles from 'screens/Auth/AcceptedScreen/ReusableStyles/styles.ts';
 import Button from 'components/Button/Button.tsx';
 import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
-import {tutorialFlowPath} from 'constants/pathLocations.ts';
 
 //import images
 import TimerIcon from 'assets/images/icons/timer.svg';
@@ -13,8 +14,6 @@ import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import {backgroundGradientColors, blackColor, whiteColor} from 'constants/colors';
 import {AuthContext} from 'contexts/AuthContext';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import LinearGradient from 'react-native-linear-gradient';
 import {screenHeight} from 'constants/common';
 
 const PendingScreen: FC = (): JSX.Element => {

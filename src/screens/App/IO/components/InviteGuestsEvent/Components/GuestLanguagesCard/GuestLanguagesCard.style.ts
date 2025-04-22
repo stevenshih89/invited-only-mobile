@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi700, Satoshi500} from 'constants/fonts';
-import {black1Color, black2Color, grayColor, lightGrayColor, lightGreenColor, whiteColor} from 'constants/colors';
+import { grayColor, lightGrayColor, whiteColor} from 'constants/colors';
 import Flags from 'screens/App/Components/Flags/Flgas';
 
 export const Container = styled.View`

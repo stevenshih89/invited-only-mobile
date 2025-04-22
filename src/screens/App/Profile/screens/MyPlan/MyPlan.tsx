@@ -1,83 +1,64 @@
-import React from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import {FC} from 'react';
-import {RFValue} from 'react-native-responsive-fontsize';
-
-//import components
-import useStyles from './styles';
-import {Satoshi400, Satoshi500, Satoshi700Italic} from 'constants/fonts';
-import {blackColor, lightGray5Color, transparentGray90Color, whiteColor} from 'constants/colors';
-
-//import images
-import CheckIcon from 'assets/images/icons/check.svg';
-import ArrowRightIcon from 'assets/images/icons/arrow-right-balck.svg';
-import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
-import FlashFillIcon from 'assets/images/icons/flash-filled.svg';
-import CloseIcon from 'assets/images/icons/close-circle.svg';
-import Loader from '../../../../../components/Modal/ModalLoader/Loader';
-import {screenHeight} from 'constants/common';
-import {ControlledTooltip} from 'components/ControlledTooltip/ControlledTooltip';
-import {useMyPlan} from 'hooks/useMyPlan';
-import {SvgProps} from 'react-native-svg';
-//icons
-import CalendarIcon from 'assets/images/icons/calendar-white.svg';
-import UnlimitedIcon from 'assets/images/icons/unlimited-new.svg';
+import React, { FC } from 'react';
+import { SvgProps } from 'react-native-svg';
+import HostPremiumCard from '../../components/HostPremium/HostPremium';
+import * as S from './MyPlan.style';
+import WhatGetItem from './Components/WhatGetItem';
+import { useUser } from 'src/store/userStore';
+import CalendarIcon from 'assets/images/icons/calendar-event.svg';
+import ExportIcon from 'assets/images/icons/export.svg';
 import IOIcon from 'assets/images/icons/io.svg';
-import EyeIcon from 'assets/images/icons/eye.svg';
-import FlashIcon from 'assets/images/icons/flash-white.svg';
+import EyeIcon from 'assets/images/icons/eye-solid.svg';
+import FlashIcon from 'assets/images/icons/lightning-fill.svg';
+
+interface WhatGetItem {
+  title: string;
+  description: string;
+  icon: React.FC<SvgProps>;
+  titleDescription: string;
+}
 
 const MyPlan: FC = () => {
-  const styles = useStyles();
-
-  const {loaderVisible, goToPaymentPath, goToSuperInvitePay, userInfo} = useMyPlan();
-
-  interface WhatGetItem {
-    title: string;
-    description: string;
-    icon: React.FC<SvgProps>;
-    titleDescription: string;
-  }
+  const { user: userData } = useUser();
 
   const whatGet: WhatGetItem[] = [
     {
-      title: `Unlimited Events ${userInfo?.accountType === 'host' ? 'Creation' : 'Attendance'}`,
-      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited swipe (join)',
+      title: `Unlimited Table/Events ${userData?.accountType === 'host' ? 'Sharing' : 'Attendance'}`,
+      titleDescription: userData?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited swipe (join)',
       description:
-        userInfo?.accountType === 'host'
+        userData?.accountType === 'host'
           ? 'Share Unlimited VIP Tables and Events to Invite.'
           : 'Swipe through unlimited events and connections. Join now and explore endless possibilities!',
       icon: CalendarIcon,
     },
     {
       title: 'Unlimited Invitations',
-      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Invitations' : 'Unlimited invitations (getting invites)',
+      titleDescription: userData?.accountType === 'host' ? 'Unlimited Invitations' : 'Unlimited invitations (getting invites)',
       description:
-        userInfo?.accountType === 'host'
+        userData?.accountType === 'host'
           ? 'Send Unlimited Invitations and Create Your Guest List'
           : 'Receive endless event invitations. Join now and never miss out!',
-      icon: UnlimitedIcon,
+      icon: ExportIcon,
     },
     {
-      title: `Unlimited ${userInfo?.accountType === 'host' ? 'Guest' : ''} Connections`,
-      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited join offers',
+      title: `Unlimited Swipes`,
+      titleDescription: userData?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited join offers',
       description:
-        userInfo?.accountType === 'host'
+        userData?.accountType === 'host'
           ? 'Enjoy endless connections to build your guests lists.'
           : 'Get unlimited opportunities to join exclusive events. Let`s start right now!',
       icon: IOIcon,
     },
     {
-      title: `5 Super ${userInfo?.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
-      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : '5 Super join a week',
-      description: `Send 5 super ${userInfo?.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
+      title: `5 Super ${userData?.accountType === 'host' ? 'Invites' : 'Join'} a week.`,
+      titleDescription: userData?.accountType === 'host' ? 'Unlimited Events Creation' : '5 Super join a week',
+      description: `Send 5 super ${userData?.accountType === 'host' ? 'Invites' : 'Join'} each week.`,
       icon: FlashIcon,
     },
     {
-      title: `See Who Wants to ${userInfo?.accountType === 'host' ? 'Join' : 'Invite'} You`,
-      titleDescription: userInfo?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited Events Join',
+      title: `See who wants to ${userData?.accountType === 'host' ? 'join' : 'invite'} you`,
+      titleDescription: userData?.accountType === 'host' ? 'Unlimited Events Creation' : 'Unlimited Events Join',
       description:
-        userInfo?.accountType === 'host'
+        userData?.accountType === 'host'
           ? 'View interested guests who want to join you in real-time.'
           : 'View interested hosts who want to invite you in real-time.',
       icon: EyeIcon,
@@ -85,97 +66,19 @@ const MyPlan: FC = () => {
   ];
 
   return (
-    <View>
-      <Loader isVisible={loaderVisible} successfulPay={false} textLoader={'Checking for available spots...'} />
-      <View>
-        <View
-          style={{
-            alignItems: 'center',
-            padding: 24,
-            backgroundColor: transparentGray90Color,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            borderRadius: 18,
-          }}>
-          <View style={{alignItems: 'center', flexDirection: 'row'}}>
-            <FlashFillIcon width={18} height={18} />
-            <Text style={{fontSize: RFValue(18, 812), marginLeft: 8, color: whiteColor, fontFamily: Satoshi700Italic}}>
-              Super {userInfo?.accountType === 'host' ? 'Invite' : 'Join'}{' '}
-              <Text style={{fontFamily: Satoshi400}}>({(userInfo?.superInvites || 0) + (userInfo?.weeklySuperInvites || 0)})</Text>
-            </Text>
-          </View>
-          <TouchableOpacity
-            onPress={goToSuperInvitePay}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              backgroundColor: whiteColor,
-              borderRadius: 10,
-            }}>
-            <Text style={{fontSize: RFValue(16, 812), marginRight: 4, fontFamily: Satoshi500, color: blackColor}}>Add more</Text>
-            <ArrowRightIcon width={16} height={16} />
-          </TouchableOpacity>
-        </View>
-        {userInfo?.accountType === 'host' && (
-          <View style={{width: '100%'}}>
-            <TouchableOpacity onPress={goToPaymentPath} style={{marginTop: 24, width: '100%'}}>
-              <LinearGradient
-                colors={['#977B4A', '#E5D291', '#A28453']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 0}}
-                style={{
-                  height: screenHeight / 14,
-                  maxHeight: 60,
-                  borderRadius: 18,
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '100%',
-                }}>
-                <Text style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, marginRight: 4}}>Subscriptions</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
-      {userInfo?.accountType === 'host' && (
-        <View>
-          <View style={styles.listColumnWrapper}>
-            <Text style={styles.textWhatYouGet}>What you {userInfo?.accountType === 'host' ? 'get' : 'have'}:</Text>
-            {userInfo?.accountType === 'host' && <Text style={styles.textPremium}>Premium</Text>}
-          </View>
-          {whatGet.map(item => (
-            <View key={item.title} style={styles.itemInTheList}>
-              <View style={styles.rowTextAndCheckCircleIcon}>
-                <View style={styles.wrapperIcon}>
-                  <item.icon />
-                </View>
-                <Text style={styles.textFromTheList}>{item.title}</Text>
-                <ControlledTooltip
-                  width={300}
-                  height={100}
-                  backgroundColor={lightGray5Color}
-                  withOverlay={false}
-                  popover={
-                    <View style={styles.tooltipWrapper}>
-                      <View style={styles.rowTitleTooltip}>
-                        <Text style={styles.textUnlimitedEventsCreation}>{item.titleDescription}</Text>
-                        <CloseIcon />
-                      </View>
-                      <Text style={styles.textHostAccessIsLimited}>{item.description}</Text>
-                    </View>
-                  }>
-                  <InfoCircleIcon />
-                </ControlledTooltip>
-              </View>
-              <CheckIcon />
-            </View>
-          ))}
-        </View>
+    <S.Container>
+      {userData.accountType === 'host' && <HostPremiumCard />}
+      {userData?.accountType === 'host' && (
+        <S.FeaturesCard>
+          <S.ListColumnWrapper>
+            <S.WhatYouGetText>What you {userData?.accountType === 'host' ? 'get' : 'have'}:</S.WhatYouGetText>
+          </S.ListColumnWrapper>
+          {whatGet.map(item => {
+            return <WhatGetItem key={item.title} {...item} />;
+          })}
+        </S.FeaturesCard>
       )}
-    </View>
+    </S.Container>
   );
 };
 

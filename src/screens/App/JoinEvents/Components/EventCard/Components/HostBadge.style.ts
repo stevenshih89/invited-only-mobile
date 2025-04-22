@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { Satoshi500 } from 'constants/fonts';
+
 export const HostBadgeContainer = styled.View`
   position: absolute;
   width: 100%;

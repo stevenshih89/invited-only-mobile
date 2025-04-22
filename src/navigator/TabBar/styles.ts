@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 import {Text, View} from 'react-native';
-import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import {Satoshi500} from 'constants/fonts';
 import {screenHeight} from 'constants/common';
 
 export const Label = styled(Text)`

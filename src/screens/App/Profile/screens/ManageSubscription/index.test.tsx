@@ -1,7 +1,7 @@
 import React from 'react';
 import {render, fireEvent} from '@testing-library/react-native';
-import ManageSubscription from './index';
 import {Linking} from 'react-native';
+import ManageSubscription from './index';
 
 const mockGoToMyPaymentPath = jest.fn();
 

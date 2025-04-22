@@ -1,20 +1,9 @@
-import TouchingSlider from 'components/TouchingSlider/TouchingSlider';
-import {screenHeight} from 'constants/common';
-import {ScrollView, TouchableWithoutFeedback, View} from 'react-native';
+import { View} from 'react-native';
 import React, {useRef} from 'react';
 
 //import icons
-import LocationIcon from 'assets/images/icons/location.svg';
-import TablerGenderIcon from 'assets/images/icons/tabler_gender-bigender.svg';
-import ArrowIcon from 'assets/images/icons/arrow-3.svg';
-import CloseIcon from 'assets/images/icons/close.svg';
-import CheckIcon from 'assets/images/icons/check.svg';
-import FlashIcon from 'assets/images/icons/flash.svg';
-import FastImage from 'react-native-fast-image';
 import useStyles from 'screens/App/IO/styles.ts';
-import {calculateAge} from 'helpers/calculateAge';
 import {useUser} from 'src/store/userStore';
-import * as S from './CardFakeState.style';
 
 const CardsFakeState = ({handleSwipeFakeCard, OverlayRight, OverlayLeft, item}: any) => {
   const cardRef1 = useRef(null);

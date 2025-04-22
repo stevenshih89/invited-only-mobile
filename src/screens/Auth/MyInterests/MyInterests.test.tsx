@@ -1,8 +1,9 @@
 import React from 'react';
-import {render, fireEvent, waitFor} from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import MyInterests from './MyInterests';
-import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
-import {AuthContext} from 'contexts/AuthContext';
+import { mockedNavigateFunction } from 'jest/mocks/appNavigation.mock';
+import { AuthContext } from 'contexts/AuthContext';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
 
 describe('MyInterests Component', () => {
   beforeEach(() => {
@@ -12,7 +13,7 @@ describe('MyInterests Component', () => {
     jest.clearAllMocks();
   });
   it('renders correctly', () => {
-    const {getByText} = render(
+    const { getByText } = render(
       <AuthContext.Provider
         value={{
           onBoarding: [],
@@ -28,7 +29,7 @@ describe('MyInterests Component', () => {
   });
 
   it('allows user to select interests', () => {
-    const {getByTestId} = render(
+    const { getByTestId } = render(
       <AuthContext.Provider
         value={{
           onBoarding: [],
@@ -54,7 +55,7 @@ describe('MyInterests Component', () => {
   });
 
   it('handles next button press correctly', async () => {
-    const {getByTestId} = render(
+    const { getByTestId } = render(
       <AuthContext.Provider
         value={{
           onBoarding: [],
@@ -83,7 +84,7 @@ describe('MyInterests Component', () => {
   });
 
   it('handles skip button press correctly', async () => {
-    const {getByText} = render(
+    const { getByText } = render(
       <AuthContext.Provider
         value={{
           onBoarding: [],
@@ -104,7 +105,7 @@ describe('MyInterests Component', () => {
   });
 
   it('disables the continue button when fewer than 3 interests are selected', () => {
-    const {getByTestId} = render(
+    const { getByTestId } = render(
       <AuthContext.Provider
         value={{
           onBoarding: [],
@@ -133,16 +134,18 @@ describe('MyInterests Component', () => {
   });
 
   it('limits the selection to 3 interests', () => {
-    const {getByTestId} = render(
-      <AuthContext.Provider
-        value={{
-          onBoarding: [],
-          setOnBoarding: jest.fn(),
-          setUser: jest.fn(),
-          user: {},
-        }}>
-        <MyInterests />
-      </AuthContext.Provider>,
+    const { getByTestId } = render(
+      <FirebaseCollectionsContext.Provider value={{ userInfo: 'test', adminChats: 'adminChats', admins: 'admins', appSettings: 'appSettings', messages: 'messages', report: 'report', unfinishedRegistrationUsers: 'unfinishedRegistrationUsers', events: 'events' }}>
+        <AuthContext.Provider
+          value={{
+            onBoarding: [],
+            setOnBoarding: jest.fn(),
+            setUser: jest.fn(),
+            user: {},
+          }}>
+          <MyInterests />
+        </AuthContext.Provider>
+      </FirebaseCollectionsContext.Provider>,
     );
 
     const vipTablesButton = getByTestId('interest-0');

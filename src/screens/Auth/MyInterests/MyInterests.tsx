@@ -1,5 +1,4 @@
-import {isIos, screenHeight} from 'constants/common';
-import {FC, useContext, useEffect, useState} from 'react';
+import { FC, JSX, useContext, useEffect, useState } from 'react';
 import {
   AppState,
   FlatList,
@@ -13,6 +12,12 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
+import firestore from '@react-native-firebase/firestore';
+import analytics from '@react-native-firebase/analytics';
+import { isIos, screenHeight } from 'constants/common';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
@@ -26,35 +31,31 @@ import YachtParty from 'assets/images/auth/interests/yacht-party.png';
 import Concert from 'assets/images/auth/interests/concerts.png';
 import UserOne from 'assets/images/auth/interests/user-one.png';
 import UserTwo from 'assets/images/auth/interests/user-two.png';
-import {backgroundGradientColors, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { backgroundGradientColors, blackColor, transparentWhite30Color, whiteColor } from 'constants/colors';
+import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
 import Button from 'components/Button/Button';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {myEmailPath} from 'constants/pathLocations';
-import {AuthContext} from 'contexts/AuthContext.tsx';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { myEmailPath } from 'constants/pathLocations';
+import { AuthContext } from 'contexts/AuthContext.tsx';
 import AuthProgress from 'components/AuthProgress';
-import LinearGradient from 'react-native-linear-gradient';
-import moment from 'moment';
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
-import analytics from '@react-native-firebase/analytics';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useAuthStore } from 'src/store/authStore';
 
 const MyInterests: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
-  const {onBoarding, setOnBoarding} = useContext(AuthContext);
+  const { userMetadata: user } = useAuthStore();
+  const { onBoarding, setOnBoarding } = useContext(AuthContext);
 
   const [listOfInterests, setListOfInterests] = useState([
-    {id: 0, title: 'Vip Tables', isSelected: false, image: VipTables},
-    {id: 1, title: 'Concerts', isSelected: false, image: Concert},
-    {id: 2, title: 'Exclusive', isSelected: false, image: Exclusive},
-    {id: 3, title: 'Yacht Party', isSelected: false, image: YachtParty},
-    {id: 4, title: 'Pool Party', isSelected: false, image: PoolParty},
-    {id: 5, title: 'Private', isSelected: false, image: Private},
-    {id: 6, title: 'Birthday Party', isSelected: false, image: BirthdayParty},
-    {id: 7, title: 'Restaurant', isSelected: false, image: Restaurant},
+    { id: 0, title: 'Vip Tables', isSelected: false, image: VipTables },
+    { id: 1, title: 'Concerts', isSelected: false, image: Concert },
+    { id: 2, title: 'Exclusive', isSelected: false, image: Exclusive },
+    { id: 3, title: 'Yacht Party', isSelected: false, image: YachtParty },
+    { id: 4, title: 'Pool Party', isSelected: false, image: PoolParty },
+    { id: 5, title: 'Private', isSelected: false, image: Private },
+    { id: 6, title: 'Birthday Party', isSelected: false, image: BirthdayParty },
+    { id: 7, title: 'Restaurant', isSelected: false, image: Restaurant },
   ]);
 
   useEffect(() => {
@@ -63,21 +64,20 @@ const MyInterests: FC = (): JSX.Element => {
     const name = onBoarding.find((item: any) => item.name)?.name;
     const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
     const date = onBoarding.find((item: any) => item.date)?.date;
-    const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
+    const gender = onBoarding.find((item: { gender: string }) => item?.gender)?.gender;
     const photos = onBoarding.find((item: any) => item.photos)?.photos;
-
     const handleAppClose = async () => {
       try {
         await firestore()
           .collection('unfinishedRegistrationUsers')
-          .doc(auth()?.currentUser?.uid)
+          .doc(user?.uid)
           .set({
             name,
             accountType,
             date,
             gender,
             photos,
-            phoneNumber: auth()?.currentUser?.phoneNumber,
+            phoneNumber: user?.phoneNumber,
             createdAt: moment().format('YYYY-MM-DD'),
             screen: 'my-interests',
           });
@@ -87,7 +87,7 @@ const MyInterests: FC = (): JSX.Element => {
           date,
           gender,
           photos,
-          phoneNumber: auth()?.currentUser?.phoneNumber,
+          phoneNumber: user?.phoneNumber,
           createdAt: moment().format('YYYY-MM-DD'),
           screen: 'my-interests',
         });
@@ -106,12 +106,12 @@ const MyInterests: FC = (): JSX.Element => {
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [onBoarding, user]);
 
   const handleSelectInterest = (id: number) => {
     const updatedInterests = listOfInterests.map(interest => {
       const selectedInterestsCount = listOfInterests.filter(item => item.isSelected).length;
-      return interest.id === id ? {...interest, isSelected: selectedInterestsCount === 3 ? false : !interest.isSelected} : interest;
+      return interest.id === id ? { ...interest, isSelected: selectedInterestsCount === 3 ? false : !interest.isSelected } : interest;
     });
     setListOfInterests(updatedInterests);
   };
@@ -119,7 +119,7 @@ const MyInterests: FC = (): JSX.Element => {
   const handleNext = () => {
     const reqInterests = listOfInterests.reduce((acc: any[], curr) => {
       if (curr.isSelected) {
-        acc.push({id: curr.id, title: curr.title});
+        acc.push({ id: curr.id, title: curr.title });
       }
       return acc;
     }, []);
@@ -132,13 +132,13 @@ const MyInterests: FC = (): JSX.Element => {
     navigation.navigate(myEmailPath as never);
   };
 
-  const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
+  const accountType = onBoarding.find((item: { accountType: string }) => item.accountType)?.accountType;
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
+    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1, paddingBottom: 0 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+          <SafeAreaView style={{ flex: 1, paddingBottom: 0 }}>
             <View
               style={{
                 flex: 1,
@@ -147,12 +147,12 @@ const MyInterests: FC = (): JSX.Element => {
                 paddingHorizontal: 24,
                 paddingTop: screenHeight / 29,
               }}>
-              <View style={{alignItems: 'center'}}>
-                <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+              <View style={{ alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
                   <TouchableOpacity
                     onPress={() => navigation.goBack()}
                     activeOpacity={0.7}
-                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                     style={{
                       borderRadius: 50,
                       width: 40,
@@ -187,19 +187,19 @@ const MyInterests: FC = (): JSX.Element => {
                       fontFamily: Satoshi400,
                       fontSize: RFValue(17, 932),
                     }}>
-                    Choose up to <Text style={{fontWeight: '700'}}>3 event types</Text> you love to help us find the right{' '}
+                    Choose up to <Text style={{ fontWeight: '700' }}>3 event types</Text> you love to help us find the right{' '}
                     {accountType === 'host' ? 'guests for your events.' : 'events for you.'}
                   </Text>
                 </View>
-                <View style={{width: '100%', height: screenHeight / 2}}>
+                <View style={{ width: '100%', height: screenHeight / 2 }}>
                   <FlatList
                     data={listOfInterests}
                     numColumns={2}
-                    keyExtractor={({id}) => id.toString()}
+                    keyExtractor={({ id }) => id.toString()}
                     showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{width: '100%'}}
-                    ItemSeparatorComponent={() => <View style={{height: screenHeight * 0.021}} />}
-                    renderItem={({item: {id, title, isSelected, image}}) => (
+                    contentContainerStyle={{ width: '100%' }}
+                    ItemSeparatorComponent={() => <View style={{ height: screenHeight * 0.021 }} />}
+                    renderItem={({ item: { id, title, isSelected, image } }) => (
                       <TouchableOpacity
                         testID={`interest-${id}`}
                         onPress={() => handleSelectInterest(id)}
@@ -214,8 +214,8 @@ const MyInterests: FC = (): JSX.Element => {
                           borderColor: isSelected ? whiteColor : blackColor,
                           marginHorizontal: 2,
                         }}>
-                        <View style={{width: '100%', height: screenHeight * 0.268, borderRadius: 12, overflow: 'hidden'}}>
-                          <ImageBackground source={image} style={{width: '100%', height: '100%', justifyContent: 'space-between'}}>
+                        <View style={{ width: '100%', height: screenHeight * 0.268, borderRadius: 12, overflow: 'hidden' }}>
+                          <ImageBackground source={image} style={{ width: '100%', height: '100%', justifyContent: 'space-between' }}>
                             <TouchableOpacity
                               style={{
                                 backgroundColor: whiteColor,
@@ -239,11 +239,11 @@ const MyInterests: FC = (): JSX.Element => {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                               }}>
-                              <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
-                                <Text style={{color: blackColor, fontSize: RFValue(14, 932), fontFamily: Satoshi700, marginLeft: 16}}>
+                              <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+                                <Text style={{ color: blackColor, fontSize: RFValue(14, 932), fontFamily: Satoshi700, marginLeft: 16 }}>
                                   {title}
                                 </Text>
-                                <View style={{flexDirection: 'row'}}>
+                                <View style={{ flexDirection: 'row' }}>
                                   <Image
                                     source={UserOne}
                                     style={{
@@ -262,7 +262,7 @@ const MyInterests: FC = (): JSX.Element => {
                                       borderRadius: 18,
                                       borderWidth: 1,
                                       borderColor: whiteColor,
-                                      transform: [{translateX: -8}],
+                                      transform: [{ translateX: -8 }],
                                     }}
                                   />
                                   <View
@@ -275,7 +275,7 @@ const MyInterests: FC = (): JSX.Element => {
                                       borderColor: whiteColor,
                                       alignItems: 'center',
                                       justifyContent: 'center',
-                                      transform: [{translateX: -16}],
+                                      transform: [{ translateX: -16 }],
                                     }}>
                                     <Text
                                       style={{
@@ -299,7 +299,7 @@ const MyInterests: FC = (): JSX.Element => {
               <View>
                 <Button
                   testID="continue-button"
-                  buttonStyle={{borderRadius: 18}}
+                  buttonStyle={{ borderRadius: 18 }}
                   disabled={listOfInterests.filter(interest => interest.isSelected).length < 3}
                   title={`Continue (${listOfInterests.filter(interest => interest.isSelected).length}/3)`}
                   onPress={() => handleNext()}

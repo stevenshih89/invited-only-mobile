@@ -4,7 +4,6 @@ import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import OnBoardingHostVideo from 'assets/videos/onboarding/onboarding_host_video.mp4';
 import OnBoardingGuestVideo from 'assets/videos/onboarding/onboarding_guest_video.mp4';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import { View } from 'react-native';
 
 const DemoVideo = ({route}: any) => {
   const isHost = route?.params?.isHost;

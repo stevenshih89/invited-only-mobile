@@ -1,6 +1,6 @@
-import {SENTRY_DNS, APP_ENV} from '@env';
+import { SENTRY_DNS, APP_ENV } from '@env';
 import * as Sentry from '@sentry/react-native';
-import auth from '@react-native-firebase/auth';
+import { useAuthStore } from 'src/store/authStore';
 
 Sentry.init({
   dsn: SENTRY_DNS,
@@ -8,8 +8,8 @@ Sentry.init({
 });
 
 interface SentryContext {
-  tags?: {[key: string]: string | number | boolean};
-  extra?: {[key: string]: any};
+  tags?: { [key: string]: string | number | boolean };
+  extra?: { [key: string]: any };
   level?: Sentry.SeverityLevel;
 }
 
@@ -22,9 +22,9 @@ interface SentryContext {
 export const logErrorToSentry = (error: unknown, context?: SentryContext) => {
   try {
     Sentry.withScope(scope => {
-      const user = auth().currentUser;
-      if (user) {
-        scope.setUser({id: user.uid, email: user.email || undefined});
+      const { userMetadata } = useAuthStore.getState();
+      if (userMetadata) {
+        scope.setUser({ id: userMetadata.uid, email: userMetadata.phoneNumber || undefined });
       }
 
       if (context?.tags) {

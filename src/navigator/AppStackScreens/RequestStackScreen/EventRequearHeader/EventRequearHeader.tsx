@@ -1,6 +1,6 @@
 import React from 'react';
 import {GestureResponderEvent} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Example icon set
+// Example icon set
 
 import * as S from './EventRequearHeader.style';
 

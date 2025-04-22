@@ -1,9 +1,8 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, TouchableWithoutFeedback, ScrollView} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
-import {Satoshi400, Satoshi700} from 'constants/fonts.ts';
-import {whiteColor} from 'constants/colors.ts';
+import useStyles from '../styles.ts';
+import * as S from '../IO.style.deprecated.ts';
 import {screenHeight} from 'constants/common.ts';
 import {calculateAge} from 'helpers/calculateAge';
 import CloseIcon from 'assets/images/icons/close.svg';
@@ -15,8 +14,6 @@ import HomeIcon from 'assets/images/icons/home.svg';
 import ArrowIcon from 'assets/images/icons/arrow-3.svg';
 import WineIcon from 'assets/images/icons/milk.svg';
 import SmokeIcon from 'assets/images/icons/smoke.svg';
-import useStyles from '../styles.ts';
-import * as S from '../IO.style.deprecated.ts';
 import {User} from 'src/types/userInfo';
 
 interface HostCardContentProps {
@@ -182,7 +179,7 @@ const HostCardContent: React.FC<HostCardContentProps> = ({
           )}
           {!!interests?.length && (
             <S.InterestsContainer>
-              <Text style={[styles.titleSection]}>My interests</Text>
+              <Text style={styles.titleSection}>My interests</Text>
               <View style={styles.wrapperInterestsTags}>
                 {interests.map((interest: string | null, idx: number) => (
                   <View key={idx} style={styles.interestsTags}>

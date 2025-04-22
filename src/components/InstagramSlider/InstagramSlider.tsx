@@ -1,8 +1,8 @@
 import {FlatList, View} from 'react-native';
 import Swiper from 'react-native-swiper';
-import {gray1Color, whiteColor} from 'constants/colors';
 import {FC} from 'react';
 import * as S from './InstagramSlider.style';
+import {gray1Color, whiteColor} from 'constants/colors';
 
 interface InstagramSliderProps {
   photosList: any[];

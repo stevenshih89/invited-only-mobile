@@ -1,12 +1,12 @@
 import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {Dimensions} from 'react-native';
 import MyEvents from '../../MyEvents'; // The screen showing the list of hosted events
 import JoinedEventsScreen from '../JoinedEventsScreen/JoinedEventsScreen';
-import {Dimensions} from 'react-native';
-import {Satoshi500} from 'src/constants/fonts'; // Adjust path if needed
+import {TabBarLabel, tabBarStyle, tabBarIndicatorStyle, tabBarItemStyle} from './EventsTabs.style';
+// Adjust path if needed
 import {whiteColor, white64Color} from 'constants/colors'; // Keep color imports for tint colors
 // Import styles from the .style file
-import {TabBarLabel, tabBarStyle, tabBarIndicatorStyle, tabBarItemStyle} from './EventsTabs.style';
 
 const Tab = createMaterialTopTabNavigator();
 const screenWidth = Dimensions.get('window').width;

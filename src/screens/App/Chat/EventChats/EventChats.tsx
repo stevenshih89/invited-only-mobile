@@ -1,12 +1,13 @@
-import { components } from "src/api/v1";
-import * as S from './EventChats.style';
-import EventsDropdown from "src/screens/App/Components/EventsDropdown/EventsDropdown";
 import { useCallback, useState } from "react";
-import AppLoader from "screens/App/AppLoader/AppLoader";
-import { ChatItem } from "./ChatItem/ChatItem";
-import invitedOnlyBackendApi from "src/api/backend-api";
 import { useFocusEffect } from "@react-navigation/native";
 import { EmptyStateChatFallback } from "../Components/EmtryStateChatFallback";
+import * as S from './EventChats.style';
+import { ChatItem } from "./ChatItem/ChatItem";
+import { components } from "src/api/v1";
+import EventsDropdown from "src/screens/App/Components/EventsDropdown/EventsDropdown";
+import AppLoader from "screens/App/AppLoader/AppLoader";
+import invitedOnlyBackendApi from "src/api/backend-api";
+
 interface EventChatsProps {
     events: components['schemas']['EventData'][];
 }

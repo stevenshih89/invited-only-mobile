@@ -1,9 +1,9 @@
 import React from 'react';
-import {View} from 'react-native';
 import * as S from './EventListItem.style';
 import ManageEventIcon from 'src/assets/images/icons/manage-event-icon.svg';
 import {components} from 'src/api/v1';
 import {useAppNavigation} from 'hooks/useAppNavigation';
+
 interface EventListItemProps {
   event: components['schemas']['EventData'];
   imageUrl?: string;

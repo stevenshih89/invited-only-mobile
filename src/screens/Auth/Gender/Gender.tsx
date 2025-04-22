@@ -1,40 +1,40 @@
-import {isIos, screenHeight} from 'constants/common';
-import {FC, useContext, useEffect, useState} from 'react';
-import {AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
-import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import {backgroundGradientColors, lightGray3Color, transparentWhite16Color, transparentWhite30Color, whiteColor} from 'constants/colors';
-import CheckCircle from 'assets/images/icons/check-circle.svg';
-import CircleGray from 'assets/images/icons/circle-gray.svg';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import Button from 'components/Button/Button';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {myInterestsPath} from 'constants/pathLocations';
-import {AuthContext} from 'contexts/AuthContext.tsx';
-import AuthProgress from 'components/AuthProgress';
+import { FC, JSX, useContext, useEffect, useState } from 'react';
+import { AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import { isIos, screenHeight } from 'constants/common';
+import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
+import ArrowLeft from 'assets/images/icons/arrow-left.svg';
+import { backgroundGradientColors, lightGray3Color, transparentWhite16Color, transparentWhite30Color, whiteColor } from 'constants/colors';
+import CheckCircle from 'assets/images/icons/check-circle.svg';
+import CircleGray from 'assets/images/icons/circle-gray.svg';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import Button from 'components/Button/Button';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { myInterestsPath } from 'constants/pathLocations';
+import { AuthContext } from 'contexts/AuthContext.tsx';
+import AuthProgress from 'components/AuthProgress';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useAuthStore } from 'src/store/authStore';
 
 const Gender: FC = (): JSX.Element => {
   const MAN = 'man';
   const WOMAN = 'woman';
   const NONBINARY = 'nonbinary';
 
-  const {onBoarding, setOnBoarding} = useContext(AuthContext);
-  const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
+  const { onBoarding, setOnBoarding } = useContext(AuthContext);
+  const accountType = onBoarding.find((item: { accountType: string }) => item.accountType)?.accountType;
   const isHost = accountType.toLowerCase() === 'host';
 
   const [gender, setGender] = useState<string>(isHost ? MAN : WOMAN);
-
+  const { userMetadata: user } = useAuthStore();
   useEffect(() => {
     let subscription: any;
 
-    const name = onBoarding.find((item: {name: string}) => item?.name)?.name;
+    const name = onBoarding.find((item: { name: string }) => item?.name)?.name;
     const date = onBoarding.find((item: any) => item.date)?.date;
     const photos = onBoarding.find((item: any) => item.photos)?.photos;
 
@@ -42,14 +42,14 @@ const Gender: FC = (): JSX.Element => {
       try {
         await firestore()
           .collection('unfinishedRegistrationUsers')
-          .doc(auth()?.currentUser?.uid)
+          .doc(user?.uid)
           .set({
             name,
             accountType,
             date,
             photos,
             gender,
-            phoneNumber: auth()?.currentUser?.phoneNumber,
+            phoneNumber: user?.phoneNumber,
             createdAt: moment().format('YYYY-MM-DD'),
             screen: 'my-gender',
           });
@@ -59,7 +59,7 @@ const Gender: FC = (): JSX.Element => {
           date,
           photos,
           gender,
-          phoneNumber: auth()?.currentUser?.phoneNumber,
+          phoneNumber: user?.phoneNumber,
           createdAt: moment().format('YYYY-MM-DD'),
           screen: 'my-gender',
         });
@@ -81,19 +81,19 @@ const Gender: FC = (): JSX.Element => {
   }, []);
 
   const handleNext = () => {
-    const data = isHost ? {gender: gender} : {gender: gender, chooseGuest: 'any'};
+    const data = isHost ? { gender: gender } : { gender: gender, chooseGuest: 'any' };
 
     setOnBoarding([...onBoarding, data]);
-    navigation.navigate(myInterestsPath as never);
+    navigation.navigate('/my-interests');
   };
 
   const navigation = useAppNavigation();
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
+    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1, paddingBottom: 0 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+          <SafeAreaView style={{ flex: 1, paddingBottom: 0 }}>
             <View
               style={{
                 flex: 1,
@@ -102,12 +102,12 @@ const Gender: FC = (): JSX.Element => {
                 paddingHorizontal: 24,
                 paddingTop: screenHeight / 29,
               }}>
-              <View style={{alignItems: 'center'}}>
-                <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+              <View style={{ alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
                   <TouchableOpacity
                     onPress={() => navigation.goBack()}
                     activeOpacity={0.7}
-                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                     style={{
                       borderRadius: 50,
                       width: 40,
@@ -154,9 +154,9 @@ const Gender: FC = (): JSX.Element => {
                     Choose the gender that best represents you.
                   </Text>
                 </View>
-                <View style={{width: '100%'}}>
+                <View style={{ width: '100%' }}>
                   {isHost ? (
-                    <>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                       <TouchableOpacity
                         testID="man-button"
                         activeOpacity={0.7}
@@ -175,7 +175,7 @@ const Gender: FC = (): JSX.Element => {
                           paddingHorizontal: 20,
                           marginBottom: 8,
                         }}>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Man</Text>
+                        <Text style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932) }}>Man</Text>
                         {gender === MAN ? <CheckCircle /> : <CircleGray />}
                       </TouchableOpacity>
                       <TouchableOpacity
@@ -196,12 +196,12 @@ const Gender: FC = (): JSX.Element => {
                           paddingHorizontal: 20,
                           marginBottom: 8,
                         }}>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Woman</Text>
+                        <Text style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932) }}>Woman</Text>
                         {gender === WOMAN ? <CheckCircle /> : <CircleGray />}
                       </TouchableOpacity>
-                    </>
+                    </View>
                   ) : (
-                    <>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                       <TouchableOpacity
                         testID="woman-button"
                         activeOpacity={0.7}
@@ -220,7 +220,7 @@ const Gender: FC = (): JSX.Element => {
                           paddingHorizontal: 20,
                           marginBottom: 8,
                         }}>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Woman</Text>
+                        <Text style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932) }}>Woman</Text>
                         {gender === WOMAN ? <CheckCircle /> : <CircleGray />}
                       </TouchableOpacity>
                       <TouchableOpacity
@@ -241,10 +241,10 @@ const Gender: FC = (): JSX.Element => {
                           paddingHorizontal: 20,
                           marginBottom: 8,
                         }}>
-                        <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Man</Text>
+                        <Text style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932) }}>Man</Text>
                         {gender === MAN ? <CheckCircle /> : <CircleGray />}
                       </TouchableOpacity>
-                    </>
+                    </View>
                   )}
                   <TouchableOpacity
                     testID="nonbinary-button"
@@ -264,12 +264,12 @@ const Gender: FC = (): JSX.Element => {
                       paddingHorizontal: 20,
                       marginBottom: 8,
                     }}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932)}}>Nonbinary</Text>
+                    <Text style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(18, 932) }}>Nonbinary</Text>
                     {gender === NONBINARY ? <CheckCircle /> : <CircleGray />}
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={{marginBottom: 4}}>
+              <View style={{ marginBottom: 4 }}>
                 <Button testID="continue-button" onPress={() => handleNext()} title="Continue" />
               </View>
             </View>

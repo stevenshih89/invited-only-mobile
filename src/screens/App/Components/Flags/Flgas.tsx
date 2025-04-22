@@ -1,4 +1,3 @@
-import {View} from 'react-native';
 import AE from 'src/assets/images/flags/ae.svg';
 import ES from 'src/assets/images/flags/es.svg';
 import UA from 'src/assets/images/flags/ua.svg';

@@ -1,8 +1,8 @@
-import {lightGray19Color, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi700} from 'constants/fonts';
 import {Dimensions} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
+import {Satoshi400, Satoshi700} from 'constants/fonts';
+import {lightGray19Color, whiteColor} from 'constants/colors';
 
 export const OnBoardingTextTitle = styled.Text`
   color: white;

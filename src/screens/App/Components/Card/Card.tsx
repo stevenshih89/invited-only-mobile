@@ -1,13 +1,11 @@
-import React, {ReactNode, Dispatch, SetStateAction} from 'react';
+import React, { ReactNode, Dispatch, SetStateAction } from 'react';
+import { PanGesture } from 'react-native-gesture-handler';
+import { AnimatedStyle } from 'react-native-reanimated';
 import * as S from './Card.style';
-import {GestureDetector, PanGesture} from 'react-native-gesture-handler';
-import {AnimatedStyle} from 'react-native-reanimated';
 import InvisibleTouchZone from './Components/InvisibleTouchZone/InvisibleTouchZone';
-import ImageIndicator from './Components/ImageIndicator/ImageIndicator';
-import CardImage from './Components/CardImage/CardImage';
-import {components} from 'src/api/v1';
 import AnimatedCard from './AnimatedCard';
 import StaticCard from './StaticCard';
+import { components } from 'src/api/v1';
 
 interface CardProps {
   uid: string;
@@ -51,7 +49,7 @@ export const PhysicCard = ({
 };
 
 const Card: React.FC<CardProps> = props => {
-  const {isStatic = false, gestureHandler, animatedStyle} = props;
+  const { isStatic = false, gestureHandler, animatedStyle } = props;
 
   if (isStatic) {
     return (

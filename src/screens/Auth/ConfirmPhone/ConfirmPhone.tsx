@@ -1,5 +1,4 @@
-import {isIos, screenHeight} from 'constants/common';
-import {RefObject, useState, useEffect, useContext} from 'react';
+import { RefObject, useState, useContext } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -11,95 +10,58 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
+import { RFValue } from 'react-native-responsive-fontsize';
+import firestore from '@react-native-firebase/firestore';
+import LinearGradient from 'react-native-linear-gradient';
+import { isIos, screenHeight } from 'constants/common';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import {CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell} from 'react-native-confirmation-code-field';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {backgroundGradientColors, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
+import { backgroundGradientColors, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor } from 'constants/colors';
 import Button from 'components/Button/Button';
-import {chooseAccountTypePath} from 'constants/pathLocations';
-import auth from '@react-native-firebase/auth';
-import {showToast} from 'helpers/showToast.ts';
-import firebase from '@react-native-firebase/firestore';
+import { chooseAccountTypePath } from 'constants/pathLocations';
+import { showToast } from 'helpers/showToast.ts';
 import Loader from 'components/Modal/ModalLoader/Loader';
-import LinearGradient from 'react-native-linear-gradient';
 
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {AuthContext} from 'contexts/AuthContext';
-import {useUser} from 'src/store/userStore';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
+import invitedOnlyBackendApi from 'src/api/backend-api';
+import { useAuthStore } from 'src/store/authStore';
+import { components } from 'src/api/v1';
 
 interface ConfirmPhoneProps {
   navigation: any;
   route: {
     params: {
       mobilePhone: string;
-      confirm?: any;
       isLogin?: boolean;
     };
   };
 }
 
-const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+const ConfirmPhone = ({ route, navigation }: ConfirmPhoneProps) => {
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const mobilePhone = route?.params?.mobilePhone;
   const isLogin = route?.params?.isLogin || false;
   const [code, setCode] = useState<string>('');
-  const [loadingConfirmation, setLoadingConfirmation] = useState<boolean>(false);
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: code,
     setValue: setCode,
   });
-  const [confirm, setConfirm] = useState<any>(route?.params?.confirm);
+
   const [resendTimer, setResendTimer] = useState(0);
 
   const CELL_COUNT: number = 6;
-  const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
+  const ref: RefObject<TextInput> = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
 
-  const setUserData = useUser((i: any) => i?.setUser);
-  const {setUser} = useContext(AuthContext);
+  console.log('resendTimer', resendTimer);
 
-  const checkUserExists = async (uid: string) => {
-    try {
-      const userData = await firebase().collection(apiUserInfoCollection).doc(uid).get();
+  const { setOnBoarding, setAccessToken, setRefreshToken, setUserMetadata } = useAuthStore();
+  console.log('setOnBoarding', setOnBoarding);
+  const { mutate: verifyOtp, isPending: isLoadingVerifyOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/verify-otp');
+  const { mutate: sendOtp, isPending: isLoadingSendOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
 
-      if (!userData.exists) {
-        return false;
-      }
-
-      const userDocument = userData.data();
-      if (!userDocument?.uid) {
-        return false;
-      }
-
-      // If this is a login and user exists, set user data
-      if (isLogin) {
-        await AsyncStorage.setItem('uid', uid);
-        setUserData(userDocument);
-        setUser([uid]);
-      }
-
-      return true;
-    } catch (err) {
-      logErrorToSentry(err);
-      return false;
-    }
-  };
-
-  useEffect(() => {
-    let timer: any;
-    if (resendTimer > 0) {
-      timer = setInterval(() => {
-        setResendTimer(prev => prev - 1);
-      }, 1000);
-    } else {
-      clearInterval(timer);
-    }
-    return () => clearInterval(timer);
-  }, [resendTimer]);
 
   async function signInWithPhoneNumber() {
     try {
@@ -108,8 +70,8 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
       }
       setResendTimer(59);
       const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
-      const confirmation = await auth().signInWithPhoneNumber(phone);
-      setConfirm(confirmation);
+      await sendOtp({ body: { phone } });
+
     } catch (e: any) {
       showToast('inviteMatch', `${e?.message.split(']')[1]}`);
     }
@@ -117,27 +79,52 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
 
   const handleConfirmPhoneNumber = async () => {
     try {
-      setLoadingConfirmation(true);
 
-      await confirm.confirm(code);
-      const uid = auth().currentUser?.uid;
 
-      if (isLogin && uid) {
-        // For login flow
-        const userExists = await checkUserExists(uid);
+      if (isLogin) {
+        const userQuerySnapshot = await firestore()
+          .collection(apiUserInfoCollection)
+          .where('phoneNumber', '==', mobilePhone)
+          .limit(1) // Limit to 1 result for efficiency
+          .get();
 
-        if (!userExists) {
-          showToast('inviteMatch', 'User account not found', 'Fail');
-          await auth().signOut();
-          setLoadingConfirmation(false);
+        // Correctly check if the query snapshot is empty
+        if (userQuerySnapshot.empty) {
+          showToast('inviteMatch', 'No account found with this phone number', 'Fail');
           return;
         }
 
-        // User exists and is logged in, navigate to app
-        // Use the correct navigation path without the leading slash
-        setTimeout(() => {
-          navigation.navigate('bottom-tabs-stack');
-        }, 1000);
+        const userData = userQuerySnapshot.docs[0].data() as components['schemas']['User'];
+
+        verifyOtp({ body: { phone: mobilePhone, code } }, {
+          onSuccess: (data) => {
+            setOnBoarding({
+              isOnboardingCompleted: true,
+              userType: userData.accountType as 'host' | 'guest', // Use userData
+              onboardingStep: '/onboarding-demo-path',
+            });
+
+            setAccessToken(data.accessToken);
+            setRefreshToken(data.refreshToken);
+
+
+            if (userData.uid && userData.phoneNumber) {
+              setUserMetadata({
+                uid: userData.uid,
+                phoneNumber: userData.phoneNumber,
+              });
+            } else {
+              console.error("User data from Firestore missing uid or phoneNumber:", userData);
+              // Handle this error appropriately - perhaps show a different toast?
+              showToast('inviteMatch', 'Failed to retrieve user details.', 'Error');
+            }
+          },
+          onError: (error) => {
+            console.error("Verify OTP Error:", error);
+            // Handle verifyOtp specific errors (e.g., incorrect code)
+            showToast('inviteMatch', 'Verification failed. Please check the code.', 'Error');
+          }
+        });
       } else {
         // For signup flow, navigate to account type selection
         setTimeout(() => {
@@ -145,20 +132,19 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
         }, 1000);
       }
 
-      setLoadingConfirmation(false);
     } catch (e: any) {
-      showToast('inviteMatch', '', `${e}`);
-      setLoadingConfirmation(false);
+      console.error("handleConfirmPhoneNumber Error:", e);
+      showToast('inviteMatch', '', `An unexpected error occurred.`);
     }
   };
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1}}>
+    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{flex: 1}}>
-            <View style={{flex: 1, justifyContent: 'space-between'}}>
-              <View style={{alignItems: 'center', paddingHorizontal: 24}}>
+          <SafeAreaView style={{ flex: 1 }}>
+            <View style={{ flex: 1, justifyContent: 'space-between' }}>
+              <View style={{ alignItems: 'center', paddingHorizontal: 24 }}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -171,7 +157,7 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
                     testID="back-button"
                     onPress={() => navigation.goBack()}
                     activeOpacity={0.7}
-                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                     style={{
                       borderRadius: 50,
                       width: 40,
@@ -235,7 +221,7 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
                     keyboardType="number-pad"
                     keyboardAppearance="dark"
                     textContentType="oneTimeCode"
-                    renderCell={({index, symbol, isFocused}) => (
+                    renderCell={({ index, symbol, isFocused }) => (
                       <View
                         key={index}
                         style={{
@@ -265,10 +251,10 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
                       fontFamily: Satoshi500,
                       fontSize: RFValue(13, 932),
                     }}>
-                    Didn't receive the code?{' '}
+                    Didn&apos;t receive the code?{' '}
                   </Text>
                   {!resendTimer ? (
-                    <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{bottom: 10, right: 20}}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{ bottom: 10, right: 20 }}>
                       <Text
                         style={{
                           color: whiteColor,
@@ -291,40 +277,37 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
                   )}
                 </View>
               </View>
-              <View style={{paddingHorizontal: 38, marginBottom: 4}}>
+              <View style={{ paddingHorizontal: 38, marginBottom: 4 }}>
                 <Button
                   title="Verify"
                   disabled={code.length < 6}
-                  loading={loadingConfirmation}
+                  loading={isLoadingVerifyOtp || isLoadingSendOtp}
                   onPress={() => handleConfirmPhoneNumber()}
                 />
               </View>
             </View>
           </SafeAreaView>
         </TouchableWithoutFeedback>
-        <Loader isVisible={loadingConfirmation} textLoader="Please wait..." successfulPay={false} />
+        <Loader isVisible={isLoadingVerifyOtp} textLoader="Please wait..." successfulPay={false} />
       </KeyboardAvoidingView>
     </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {flex: 1, padding: 20},
-  title: {textAlign: 'center', fontSize: 30},
-  codeFieldRoot: {marginTop: 20},
   cell: {
-    lineHeight: 38,
-    marginTop: 'auto',
-    marginBottom: 'auto',
-    marginVertical: 'auto',
-    fontSize: RFValue(16, 932),
-    textAlign: 'center',
     color: whiteColor,
     fontFamily: Satoshi400,
+    fontSize: RFValue(16, 932),
+    lineHeight: 38,
+    marginBottom: 'auto',
+    marginTop: 'auto',
+    marginVertical: 'auto',
+    textAlign: 'center',
   },
   focusCell: {
-    borderRadius: 20,
     borderColor: '#000',
+    borderRadius: 20,
   },
 });
 

@@ -1,20 +1,14 @@
 import React, {FC, useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, FlatList, TextInput} from 'react-native';
-import Modal from 'react-native-modal';
+import {FlatList} from 'react-native';
 
-//import components
-import useStyles from './styles.ts';
+import firestore from '@react-native-firebase/firestore';
+import Config from 'react-native-config';
+import {useUser} from '../../../store/userStore';
+import IconCheckBoxSelected from "../../../assets/images/icons/check-fill.svg";
+import * as S from './ModalSelectLanguages.style';
+import {blackColor, whiteColor} from 'constants/colors.ts';
 
 //import icons
-import IconCheckBoxSelected from './../../../assets/images/icons/checkbox-selected.svg';
-import {grayColor, lightGray14Color, lightGray2Color, toggleColor, whiteColor} from 'constants/colors.ts';
-import {Satoshi400} from 'constants/fonts.ts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Switch} from '@ant-design/react-native';
-import firestore from '@react-native-firebase/firestore';
-import {useUser} from '../../../store/userStore';
-
-import CloseCircle from 'src/assets/images/icons/close-circle.svg';
 import Search from 'src/assets/images/icons/search.svg';
 import US from 'src/assets/images/flags/us.svg';
 import AE from 'src/assets/images/flags/ae.svg';
@@ -29,16 +23,23 @@ import IT from 'src/assets/images/flags/it.svg';
 import KR from 'src/assets/images/flags/kr.svg';
 import Button from 'components/Button/Button.tsx';
 import {showToast} from 'helpers/showToast.ts';
-import Config from 'react-native-config';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry.ts';
+
 interface ModalSelectLanguagesProps {
   modalLanguages: boolean;
   showLanguages: boolean;
-  setModalLanguages: any;
-  setShowLanguages: any;
+  setModalLanguages: (value: boolean) => void;
+  setShowLanguages: (value: boolean) => void;
 }
 
-const DATA = [
+interface Language {
+  id: string;
+  title: string;
+  flag: string;
+  flagShow: React.FC<any>;
+}
+
+const DATA: Language[] = [
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
     title: 'English',
@@ -109,12 +110,11 @@ const DATA = [
 
 const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, showLanguages, modalLanguages, setModalLanguages}) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const styles = useStyles();
   const userHost = useUser((i: any) => i?.user);
 
   const setUserData = useUser((i: any) => i?.setUser);
   const uid = userHost?.uid;
-  const [selectLanguage, setSelectLanguage] = useState<any>([]);
+  const [selectLanguage, setSelectLanguage] = useState<Language[]>([]);
 
   useEffect(() => {
     if (userHost.languages) {
@@ -150,7 +150,7 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
     }
   };
 
-  const handleSelectLanguage = (language: any) => {
+  const handleSelectLanguage = (language: Language) => {
     const isSelected = selectLanguage?.some((item: any) => item.title === language.title);
     if (isSelected) {
       setSelectLanguage(selectLanguage?.filter((item: any) => item.title !== language.title));
@@ -160,104 +160,61 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
   };
 
   return (
-    <Modal
+    <S.StyledModal
       isVisible={modalLanguages}
       useNativeDriver={false}
       propagateSwipe={true}
-      backdropColor={'rgba(0, 0, 0, 0.94)'}
-      testID={'bottom-half-modal-open-button'}
+      backdropColor="rgba(0, 0, 0, 0.94)"
+      testID="bottom-half-modal-open-button"
       onBackdropPress={() => setModalLanguages(false)}
       onSwipeComplete={() => setModalLanguages(false)}
-      style={{
-        margin: 0,
-        justifyContent: 'flex-end',
-        zIndex: 999,
-      }}
       swipeDirection={['down']}>
-      <View style={styles.wrapper}>
-        <View style={styles.whiteLine} />
-        <Text style={styles.textReport}>Select the languages</Text>
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 34, width: '100%'}}>
-          <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 812)}}>Show in my profile</Text>
-          <Switch trackColor={{false: grayColor, true: toggleColor}} checked={showLanguages} onChange={val => setShowLanguages(val)} />
-        </View>
-        <View style={{width: '100%', marginBottom: 34, alignItems: 'center'}}>
-          <View style={{position: 'absolute', zIndex: 20, left: 20, top: 22}}>
-            <Search width={16} height={16} />
-          </View>
-          <TouchableOpacity style={{position: 'absolute', zIndex: 20, right: 20, top: 22}}>
-            <CloseCircle width={16} height={16} />
-          </TouchableOpacity>
-          <TextInput
-            style={{
-              paddingVertical: 16,
-              paddingLeft: 44,
-              paddingRight: 44,
-              backgroundColor: lightGray2Color,
-              borderRadius: 10,
-              width: '100%',
-              fontSize: RFValue(18, 812),
-              fontFamily: Satoshi400,
-              color: whiteColor,
-            }}
-            placeholderTextColor={whiteColor}
+      <S.Wrapper>
+        <S.WhiteLine />
+        <S.Title>Select Languages</S.Title>
+        <S.ShowProfileRow>
+          <S.ShowProfileText>Show in my profile</S.ShowProfileText>
+          <S.StyledSwitch
+            trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
+            thumbColor={showLanguages ? blackColor : whiteColor}
+            checked={showLanguages}
+            onChange={(value: boolean) => setShowLanguages(value)}
           />
-        </View>
-        <View style={{height: '70%', width: '100%'}}>
+        </S.ShowProfileRow>
+        <S.SearchContainer>
+          <S.SearchIconContainer>
+            <Search width={20} height={20} />
+          </S.SearchIconContainer>
+          <S.SearchInput placeholder="Search" placeholderTextColor="#767676" />
+        </S.SearchContainer>
+        <S.ListContainer>
           <FlatList
             data={DATA}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}
+            ItemSeparatorComponent={() => <S.ListSeparator />}
             renderItem={({item}) => {
               const isActive = selectLanguage?.some((selected: any) => selected.title === item.title);
+              const FlagIcon = item.flagShow;
 
               return (
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() => handleSelectLanguage(item)}
-                  style={{
-                    borderStyle: 'solid',
-                    borderRadius: 10,
-                    borderColor: isActive ? whiteColor : 'transparent',
-                    backgroundColor: isActive ? lightGray14Color : lightGray2Color,
-                    paddingVertical: 16,
-                    marginVertical: 4,
-                    alignItems: 'flex-start',
-                    paddingHorizontal: 20,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <item.flagShow />
-                    <Text style={{color: whiteColor, fontSize: RFValue(18, 812), marginLeft: 10, fontFamily: Satoshi400}}>
-                      {item.title}
-                    </Text>
-                  </View>
-                  {isActive ? (
-                    <View
-                      style={{
-                        width: 20,
-                        height: 20,
-                        borderWidth: 1,
-                        borderColor: whiteColor,
-                        borderRadius: 5,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <IconCheckBoxSelected />
-                    </View>
-                  ) : (
-                    <View
-                      style={{
-                        width: 20,
-                        height: 20,
-                        borderWidth: 1,
-                        borderColor: '#323232',
-                        borderRadius: 5,
-                      }}
-                    />
-                  )}
-                </TouchableOpacity>
+                <S.LanguageButton isActive={isActive} activeOpacity={0.8} onPress={() => handleSelectLanguage(item)}>
+                  <S.StyledRadialGradient
+                    colors={[
+                      'rgba(26, 26, 26, 0.40)',
+                      'rgba(0, 0, 0, 0.00)',
+                      isActive ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.04)',
+                    ]}
+                    stops={[0, 0.695, 1]}
+                    center={[220, -386]}
+                    radius={400}>
+                    <S.LanguageContent>
+                      <FlagIcon />
+                      <S.LanguageText>{item.title}</S.LanguageText>
+                    </S.LanguageContent>
+                    <S.CheckboxContainer isActive={isActive}>{isActive && <IconCheckBoxSelected />}</S.CheckboxContainer>
+                  </S.StyledRadialGradient>
+                </S.LanguageButton>
               );
             }}
           />
@@ -266,12 +223,12 @@ const ModalSelectLanguages: FC<ModalSelectLanguagesProps> = ({setShowLanguages, 
               handleSetLanguages();
               setModalLanguages(false);
             }}
-            title="Save"
+            title="Save Changes"
             buttonStyle={{marginTop: 20, marginBottom: 20}}
           />
-        </View>
-      </View>
-    </Modal>
+        </S.ListContainer>
+      </S.Wrapper>
+    </S.StyledModal>
   );
 };
 

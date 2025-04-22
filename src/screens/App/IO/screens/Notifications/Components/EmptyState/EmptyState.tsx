@@ -1,8 +1,7 @@
-import {TouchableOpacity} from 'react-native';
-import PlusIcon from 'assets/images/icons/plus.svg';
 import {useNavigation} from '@react-navigation/native';
-import {eventCreatingStackPath} from 'constants/pathLocations';
 import * as S from './EmptyState.style';
+import PlusIcon from 'assets/images/icons/plus.svg';
+import {eventCreatingStackPath} from 'constants/pathLocations';
 
 const EmptyState = () => {
   const navigation = useNavigation();

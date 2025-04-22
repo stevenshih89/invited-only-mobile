@@ -1,11 +1,11 @@
 import React from 'react';
 import {TapGestureHandler, PanGestureHandler, State} from 'react-native-gesture-handler';
+import {useDemoFlowStore} from '../../store/demoFlowStore';
+import * as S from './index.style';
 import RejectDemoIcon from 'assets/images/icons/reject-demo.svg';
 import InviteDemoIcon from 'assets/images/icons/invite-demo.svg';
 import MoreDetailsDemoIcon from 'assets/images/icons/more-details-demo.svg';
-import {useDemoFlowStore} from '../../store/demoFlowStore';
 import HandIC from 'assets/images/icons/hand.svg';
-import * as S from './index.style';
 
 const SwipeHints = () => {
   const {setIsVisibleSwipeGuide} = useDemoFlowStore();

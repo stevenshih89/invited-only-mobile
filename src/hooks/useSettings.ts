@@ -1,16 +1,16 @@
+import Purchases from 'react-native-purchases';
+import analytics from '@react-native-firebase/analytics';
+import {useEffect, useState} from 'react';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {accountSettingPath, contactAndFAQPath, notificationSettingPath} from 'constants/pathLocations';
+import {accountSettingPath, notificationSettingPath} from 'constants/pathLocations';
 import {openLink} from 'helpers/links';
 import {showToast} from 'helpers/showToast';
-import Purchases from 'react-native-purchases';
 import {useSubscriptions} from 'src/store/subscriptionsStore';
-import analytics from '@react-native-firebase/analytics';
 import {settingsScreen} from 'constants/analitycs';
-import { useEffect, useState } from 'react';
-import { useUser } from 'src/store/userStore';
+import {useUser} from 'src/store/userStore';
 
 export const useSettings = () => {
-    const [isVisibleLogoutModal, setIsVisibleLogoutModal] = useState(false);
+  const [isVisibleLogoutModal, setIsVisibleLogoutModal] = useState(false);
 
   const navigation = useAppNavigation();
   const user = useUser((i: any) => i?.user);
@@ -40,10 +40,6 @@ export const useSettings = () => {
     const notificationSettings = user?.notificationSettings;
     // @ts-ignore
     navigation.navigate(notificationSettingPath, {params: {notificationSettings: notificationSettings}});
-  };
-
-  const goToContactAndFAQ = () => {
-    navigation.navigate(contactAndFAQPath as never);
   };
 
   const goToTermsOfUse = () => {
@@ -96,11 +92,9 @@ export const useSettings = () => {
     goToNotificationSetting,
     goToTermsOfUse,
     goToPrivacyPolicy,
-    goToContactAndFAQ,
     restorePurchases,
     openLogoutModal,
     isVisibleLogoutModal,
-    setIsVisibleLogoutModal
-  }
-
-}
+    setIsVisibleLogoutModal,
+  };
+};

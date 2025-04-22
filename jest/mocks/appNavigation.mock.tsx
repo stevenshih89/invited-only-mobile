@@ -1,4 +1,3 @@
-import React from 'react';
 
 export const mockedNavigateFunction = jest.fn();
 export const mockedGoBackFunction = jest.fn();

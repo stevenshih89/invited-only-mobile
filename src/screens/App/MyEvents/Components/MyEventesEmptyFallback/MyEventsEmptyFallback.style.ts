@@ -1,11 +1,10 @@
-import {whiteColor} from 'constants/colors';
-import {screenHeight} from 'constants/common';
-import {Satoshi400} from 'constants/fonts';
-import {TouchableOpacity} from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
+import {Satoshi400} from 'constants/fonts';
+import {screenHeight} from 'constants/common';
+import {whiteColor} from 'constants/colors';
 
 export const Container = styled.View`
   display: flex;

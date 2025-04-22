@@ -1,34 +1,34 @@
 import { StyleSheet } from 'react-native';
-import { blackColor, whiteColor } from 'constants/colors.ts';
-import { Satoshi400 } from 'constants/fonts';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { blackColor, whiteColor } from 'constants/colors.ts';
+import { Satoshi500 } from 'constants/fonts';
 
-//import components
 
 const useStyles = () =>
   StyleSheet.create({
-    tabNavigator: {
-      backgroundColor: blackColor,
-      borderTopWidth: 0,
-      position: 'absolute',
-      borderTopLeftRadius: 33,
-      borderTopRightRadius: 33,
-      shadowOffset: {
-        height: 0,
-        width: 0,
-      },
-    },
     headerStyle: {
       backgroundColor: blackColor,
       shadowOffset: {
         height: 0,
         width: 0,
       },
+      shadowOpacity: 0,
     },
     headerTitleStyle: {
-      fontFamily: Satoshi400,
-      fontSize: RFValue(24, 812),
       color: whiteColor,
+      fontFamily: Satoshi500,
+      fontSize: RFValue(24, 932),
+    },
+    tabNavigator: {
+      backgroundColor: blackColor,
+      borderTopLeftRadius: 33,
+      borderTopRightRadius: 33,
+      borderTopWidth: 0,
+      position: 'absolute',
+      shadowOffset: {
+        height: 0,
+        width: 0,
+      },
     },
   });
 

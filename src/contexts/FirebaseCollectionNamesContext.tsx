@@ -1,5 +1,5 @@
-import {createContext, ReactNode} from 'react';
-import {FirebaseCollectionsResponse} from 'src/apiv2/queries/appSettingsQueries';
+import { createContext, ReactNode } from 'react';
+import { FirebaseCollectionsResponse } from 'src/apiv2/queries/appSettingsQueries';
 
 interface CollectionsProvider {
   children: ReactNode;
@@ -19,7 +19,7 @@ const initialAuthContext: FirebaseCollectionsResponse = {
 
 export const FirebaseCollectionsContext = createContext<FirebaseCollectionsResponse>(initialAuthContext);
 
-const FirebaseCollectionsProvider = ({children, firebaseCollectionNames}: CollectionsProvider) => {
+const FirebaseCollectionsProvider = ({ children, firebaseCollectionNames }: CollectionsProvider) => {
   return (
     <FirebaseCollectionsContext.Provider value={firebaseCollectionNames ? firebaseCollectionNames : initialAuthContext}>
       {children}

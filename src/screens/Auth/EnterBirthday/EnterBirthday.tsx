@@ -1,32 +1,32 @@
-import {isIos, screenHeight} from 'constants/common';
-import {FC, useContext, useEffect, useState} from 'react';
-import {AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
-import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import {backgroundGradientColors, grayColor, lightGray2Color, toggleColor, transparentWhite30Color, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import Button from 'components/Button/Button';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {genderPath} from 'constants/pathLocations';
-import {Switch} from '@ant-design/react-native';
+import { FC, JSX, useContext, useEffect, useState } from 'react';
+import { AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { Switch } from '@ant-design/react-native';
 import MaskInput from 'react-native-mask-input';
-import {AuthContext} from 'contexts/AuthContext.tsx';
-import AuthProgress from 'components/AuthProgress';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 import analytics from '@react-native-firebase/analytics';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import { isIos, screenHeight } from 'constants/common';
+import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
+import ArrowLeft from 'assets/images/icons/arrow-left.svg';
+import { backgroundGradientColors, grayColor, lightGray2Color, toggleColor, transparentWhite30Color, whiteColor } from 'constants/colors';
+import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
+import Button from 'components/Button/Button';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { genderPath } from 'constants/pathLocations';
+import { AuthContext } from 'contexts/AuthContext.tsx';
+import AuthProgress from 'components/AuthProgress';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useAuthStore } from 'src/store/authStore';
 
 const EnterBirthday: FC = (): JSX.Element => {
   const [month, setMonth] = useState<string>('');
   const [day, setDay] = useState<string>('');
   const [year, setYear] = useState<string>('');
   const [showAge, setShowAge] = useState<boolean>(false);
-  const {onBoarding, setOnBoarding} = useContext(AuthContext);
-
+  const { onBoarding, setOnBoarding } = useContext(AuthContext);
+  const { userMetadata: user } = useAuthStore();
   useEffect(() => {
     let subscription: any;
 
@@ -38,13 +38,13 @@ const EnterBirthday: FC = (): JSX.Element => {
       try {
         await firestore()
           .collection('unfinishedRegistrationUsers')
-          .doc(auth()?.currentUser?.uid)
+          .doc(user?.uid)
           .set({
             name,
             accountType,
             photos,
             date: `${month}.${day}.${year}`,
-            phoneNumber: auth()?.currentUser?.phoneNumber,
+            phoneNumber: user?.phoneNumber,
             createdAt: moment().format('YYYY-MM-DD'),
             screen: 'enter-birthday',
           });
@@ -53,7 +53,7 @@ const EnterBirthday: FC = (): JSX.Element => {
           accountType,
           photos,
           date: `${month}.${day}.${year}`,
-          phoneNumber: auth()?.currentUser?.phoneNumber,
+          phoneNumber: user?.phoneNumber,
           createdAt: moment().format('YYYY-MM-DD'),
           screen: 'enter-birthday',
         });
@@ -131,22 +131,22 @@ const EnterBirthday: FC = (): JSX.Element => {
       return;
     }
 
-    setOnBoarding([...onBoarding, {showAge: showAge, date: `${month}.${day}.${year}`}]);
+    setOnBoarding([...onBoarding, { showAge: showAge, date: `${month}.${day}.${year}` }]);
     navigation.navigate(genderPath as never);
   };
 
   const handleSkip = () => {
-    setOnBoarding([...onBoarding, {showAge: false, date: ''}]);
+    setOnBoarding([...onBoarding, { showAge: false, date: '' }]);
     navigation.navigate(genderPath as never);
   };
 
   const navigation = useAppNavigation();
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
+    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1, paddingBottom: 0 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+          <SafeAreaView style={{ flex: 1, paddingBottom: 0 }}>
             <View
               style={{
                 flex: 1,
@@ -155,12 +155,12 @@ const EnterBirthday: FC = (): JSX.Element => {
                 paddingHorizontal: 24,
                 paddingTop: screenHeight / 29,
               }}>
-              <View style={{alignItems: 'center'}}>
-                <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+              <View style={{ alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
                   <TouchableOpacity
                     onPress={() => navigation.goBack()}
                     activeOpacity={0.7}
-                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                     style={{
                       borderRadius: 50,
                       width: 40,
@@ -198,9 +198,9 @@ const EnterBirthday: FC = (): JSX.Element => {
                     {'Add your birthday. You can change it later (optional)'}
                   </Text>
                 </View>
-                <View style={{width: '100%', flexDirection: 'row'}}>
-                  <View style={{flex: 1, marginRight: 6}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 932)}}>Month</Text>
+                <View style={{ width: '100%', flexDirection: 'row' }}>
+                  <View style={{ flex: 1, marginRight: 6 }}>
+                    <Text style={{ color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 932) }}>Month</Text>
                     <MaskInput
                       style={{
                         color: whiteColor,
@@ -220,8 +220,8 @@ const EnterBirthday: FC = (): JSX.Element => {
                       mask={[/\d/, /\d/]}
                     />
                   </View>
-                  <View style={{flex: 1, marginHorizontal: 6}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 932)}}>Day</Text>
+                  <View style={{ flex: 1, marginHorizontal: 6 }}>
+                    <Text style={{ color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 932) }}>Day</Text>
                     <MaskInput
                       style={{
                         color: whiteColor,
@@ -242,8 +242,8 @@ const EnterBirthday: FC = (): JSX.Element => {
                       mask={[/\d/, /\d/]}
                     />
                   </View>
-                  <View style={{flex: 1, marginLeft: 6}}>
-                    <Text style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 932)}}>Year</Text>
+                  <View style={{ flex: 1, marginLeft: 6 }}>
+                    <Text style={{ color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 932) }}>Year</Text>
                     <MaskInput
                       style={{
                         color: whiteColor,
@@ -272,9 +272,9 @@ const EnterBirthday: FC = (): JSX.Element => {
                     justifyContent: 'space-between',
                     marginTop: screenHeight / 26,
                   }}>
-                  <Text style={{color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 932)}}>Show my age on my profile</Text>
+                  <Text style={{ color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 932) }}>Show my age on my profile</Text>
                   <Switch
-                    trackColor={{false: grayColor, true: toggleColor}}
+                    trackColor={{ false: grayColor, true: toggleColor }}
                     thumbTintColor={whiteColor}
                     checked={showAge}
                     onChange={handleShowAge}

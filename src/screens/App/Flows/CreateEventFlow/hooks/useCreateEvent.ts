@@ -1,33 +1,33 @@
 import uuid from 'react-native-uuid';
-import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import * as Sentry from '@sentry/react-native';
 
-import {useState} from 'react';
-import {Alert, Platform} from 'react-native';
-import {CreateEventFormValues} from '../CreateEventFlow';
+import { useState } from 'react';
+import { Alert, Platform } from 'react-native';
 import moment from 'moment';
+import { CreateEventFormValues } from '../CreateEventFlow';
 
-import {showToast, UseToastType} from 'helpers/showToast';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {components} from 'src/api/v1';
+import { showToast, UseToastType } from 'helpers/showToast';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { components } from 'src/api/v1';
 import invitedOnlyBackendApi from 'src/api/backend-api';
+import { useAuthStore } from 'src/store/authStore';
 
-const UPDATE_USER_EVENT_LIST_PATH = '/users/{id}/events'; // Example path, verify this!
 
 const useCreateEvent = () => {
-  const {data: userHost} = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
+  const { userMetadata } = useAuthStore.getState();
+  const { data: userHost } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
     params: {
       path: {
-        id: auth().currentUser?.uid ?? '',
+        id: userMetadata.uid ?? '',
       },
     },
   });
 
-  const {mutate: createEventMutation} = invitedOnlyBackendApi.useMutation('post', '/events');
+  const { mutate: createEventMutation } = invitedOnlyBackendApi.useMutation('post', '/events');
 
-  const {navigate, goBack} = useAppNavigation();
+  const { navigate, goBack } = useAppNavigation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const uploadImage = async (imagePath: string | null | undefined, userId: string): Promise<string | null> => {
@@ -35,7 +35,7 @@ const useCreateEvent = () => {
       category: 'upload',
       message: 'Starting image upload',
       level: 'info',
-      data: {userId, imagePath: imagePath?.substring(imagePath.length - 50)},
+      data: { userId, imagePath: imagePath?.substring(imagePath.length - 50) },
     });
     if (!imagePath) return null;
     if (imagePath.startsWith('https://')) {
@@ -53,14 +53,14 @@ const useCreateEvent = () => {
         category: 'upload',
         message: 'Image upload successful',
         level: 'info',
-        data: {userId, filename, url},
+        data: { userId, filename, url },
       });
       return url;
     } catch (e: any) {
       console.error('Error uploading image:', e);
       logErrorToSentry(e, {
-        tags: {action: 'uploadImage'},
-        extra: {userId, imagePath, filename, uploadUri},
+        tags: { action: 'uploadImage' },
+        extra: { userId, imagePath, filename, uploadUri },
         level: 'error',
       });
       showToast('error' as UseToastType, `Upload failed: ${e.message || 'Unknown error'}`, 'Upload Error');
@@ -73,21 +73,21 @@ const useCreateEvent = () => {
       category: 'event_creation',
       message: 'Starting createEvent process',
       level: 'info',
-      data: {eventName: props.eventName},
+      data: { eventName: props.eventName },
     });
     setIsLoading(true);
     let eventUid: string | null = null;
     try {
-      const currUser = auth().currentUser;
+      const currUser = userMetadata.uid;
       if (!currUser || !userHost) {
         showToast('error' as UseToastType, 'User data not available. Please log in again.', 'Error');
-        logErrorToSentry('User data not available in createEvent', {tags: {action: 'createEventValidation'}});
+        logErrorToSentry('User data not available in createEvent', { tags: { action: 'createEventValidation' } });
         setIsLoading(false);
         return;
       }
       if (!props?.photos.main) {
         Alert.alert('Main event picture is required.');
-        Sentry.addBreadcrumb({category: 'event_creation', message: 'Missing main photo', level: 'warning'});
+        Sentry.addBreadcrumb({ category: 'event_creation', message: 'Missing main photo', level: 'warning' });
         setIsLoading(false);
         return;
       }
@@ -97,9 +97,15 @@ const useCreateEvent = () => {
         category: 'event_creation',
         message: 'Attempting to upload photos',
         level: 'info',
-        data: {photoCount: photoPaths.length},
+        data: { photoCount: photoPaths.length },
       });
-      const uploadPromises = photoPaths.map(path => uploadImage(path, userHost.uid));
+      if (!userHost) {
+        showToast('error' as UseToastType, 'User data not available. Please log in again.', 'Error');
+        logErrorToSentry('User data not available in createEvent', { tags: { action: 'createEventValidation' } });
+        setIsLoading(false);
+        return;
+      }
+      const uploadPromises = photoPaths.map(path => uploadImage(path, userHost?.uid ?? ''));
       let uploadedUrls: (string | null)[] = [];
       try {
         uploadedUrls = await Promise.all(uploadPromises);
@@ -115,8 +121,8 @@ const useCreateEvent = () => {
       } catch (uploadError: any) {
         console.error('Error during Promise.all for image uploads:', uploadError);
         logErrorToSentry(uploadError, {
-          tags: {action: 'uploadImagesPromiseAll'},
-          extra: {photoPaths},
+          tags: { action: 'uploadImagesPromiseAll' },
+          extra: { photoPaths },
           level: 'error',
         });
         showToast('error' as UseToastType, 'Failed to upload images. Cannot create event.', 'Error');
@@ -129,8 +135,8 @@ const useCreateEvent = () => {
       if (uploadedUrls[0] === null) {
         Alert.alert('Error uploading the main event image. Cannot create event.');
         logErrorToSentry('Main image upload failed', {
-          tags: {action: 'createEventValidation'},
-          extra: {photoPaths, uploadedUrls},
+          tags: { action: 'createEventValidation' },
+          extra: { photoPaths, uploadedUrls },
         });
         setIsLoading(false);
         goBack();
@@ -146,12 +152,12 @@ const useCreateEvent = () => {
         category: 'event_creation',
         message: 'Event payload constructed',
         level: 'debug',
-        data: {eventUid},
+        data: { eventUid },
       });
 
       const eventPayload: components['schemas']['EventData'] = {
         uid: eventUid,
-        hostId: currUser.uid,
+        hostId: currUser,
         hostImage: userHost?.photos?.[0]?.image ?? '',
         hostName: userHost?.name ?? 'Host Name Unavailable',
         photos: eventPhotos,
@@ -173,19 +179,19 @@ const useCreateEvent = () => {
         category: 'event_creation',
         message: 'Calling createEvent mutation',
         level: 'info',
-        data: {eventUid},
+        data: { eventUid },
       });
       createEventMutation(
         {
           body: eventPayload,
         },
         {
-          onSuccess: async createdEventData => {
+          onSuccess: async (_createdEventData) => {
             Sentry.addBreadcrumb({
               category: 'event_creation',
               message: 'createEvent mutation successful',
               level: 'info',
-              data: {eventUid},
+              data: { eventUid },
             });
             showToast('success', 'Your event has been created! We will notify you when it is approved.', 'Success');
             navigate('/bottom-tabs-stack');
@@ -193,8 +199,8 @@ const useCreateEvent = () => {
           onError: (mutationError: any) => {
             console.error('Error creating event via mutation:', mutationError);
             logErrorToSentry(mutationError, {
-              tags: {action: 'createEventMutation'},
-              extra: {eventUid, eventName: props.eventName},
+              tags: { action: 'createEventMutation' },
+              extra: { eventUid, eventName: props.eventName },
               level: 'error',
             });
             showToast('error' as UseToastType, 'Failed to create event. Please try again.', 'Error');
@@ -205,8 +211,8 @@ const useCreateEvent = () => {
     } catch (e: any) {
       console.error('General error in createEvent function:', e);
       logErrorToSentry(e, {
-        tags: {action: 'createEventCatchAll'},
-        extra: {eventUid, eventName: props.eventName},
+        tags: { action: 'createEventCatchAll' },
+        extra: { eventUid, eventName: props.eventName },
         level: 'error',
       });
       setIsLoading(false);
@@ -214,7 +220,7 @@ const useCreateEvent = () => {
     }
   };
 
-  return {createEvent, isLoading};
+  return { createEvent, isLoading };
 };
 
 export default useCreateEvent;

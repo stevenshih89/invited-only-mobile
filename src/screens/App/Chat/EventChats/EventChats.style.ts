@@ -1,6 +1,6 @@
+import styled from "styled-components/native";
 import { blackColor } from "constants/colors";
 import { screenHeight } from "constants/common";
-import styled from "styled-components/native";
 
 export const Container = styled.View`
   flex: 1;

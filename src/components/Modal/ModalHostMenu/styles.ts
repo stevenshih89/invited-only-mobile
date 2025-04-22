@@ -1,59 +1,59 @@
 import {StyleSheet} from 'react-native';
-import {black2Color, blackColor, gray1Color, lightGray11Color, lightGreenColor, whiteColor} from 'constants/colors.ts';
-import {screenHeight, screenWidth} from 'constants/common.ts';
-import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
 import {RFValue} from 'react-native-responsive-fontsize';
+import {black2Color, blackColor, gray1Color, lightGreenColor, whiteColor} from 'constants/colors.ts';
+import {screenHeight} from 'constants/common.ts';
+import { Satoshi500} from 'constants/fonts.ts';
 
 const useStyles = () => {
   return StyleSheet.create({
-    whiteLine: {
-      backgroundColor: whiteColor,
-      height: 2,
-      width: 40,
-      marginTop: screenHeight / 50,
-      marginBottom: screenHeight / 48,
-      borderRadius: 10,
-    },
-    imageBg: {},
-    wrapper: {
-      backgroundColor: black2Color,
-      marginBottom: 30,
-      borderTopLeftRadius: 30,
-      borderTopRightRadius: 30,
+    buttonEvent: {
       alignItems: 'center',
-      paddingHorizontal: 24,
-    },
-    userPhoto: {
-      width: 50,
-      height: 50,
-      borderRadius: 50,
+      borderTopColor: gray1Color,
+      borderTopWidth: 1,
+      flexDirection: 'row',
+      paddingVertical: 22,
     },
     greenCircle: {
-      borderWidth: 2,
-      borderColor: blackColor,
-      width: 11,
-      height: 11,
       backgroundColor: lightGreenColor,
+      borderColor: blackColor,
       borderRadius: 50,
-      position: 'absolute',
+      borderWidth: 2,
       bottom: 5,
+      height: 11,
+      position: 'absolute',
       right: 0,
-    },
-    buttonEvent: {
-      paddingVertical: 22,
-      flexDirection: 'row',
-      borderTopWidth: 1,
-      borderTopColor: gray1Color,
-      alignItems: 'center',
+      width: 11,
     },
     iconButton: {
       marginLeft: 20,
     },
+    imageBg: {},
     textButton: {
       color: whiteColor,
       fontFamily: Satoshi500,
       fontSize: RFValue(18, 812),
       marginLeft: 10,
+    },
+    userPhoto: {
+      borderRadius: 50,
+      height: 50,
+      width: 50,
+    },
+    whiteLine: {
+      backgroundColor: whiteColor,
+      borderRadius: 10,
+      height: 2,
+      marginBottom: screenHeight / 48,
+      marginTop: screenHeight / 50,
+      width: 40,
+    },
+    wrapper: {
+      alignItems: 'center',
+      backgroundColor: black2Color,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      marginBottom: 30,
+      paddingHorizontal: 24,
     },
   });
 };

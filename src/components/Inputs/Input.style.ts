@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
+import {RFValue} from 'react-native-responsive-fontsize';
 import {errorColor, lightGray2Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 
 export const Container = styled.View`
   width: 100%;

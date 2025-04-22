@@ -1,10 +1,11 @@
 import React from 'react';
+import { EventsDropdown } from '../../../Components/EventsDropdown/EventsDropdown';
 import * as S from './IoHeader.style';
-import {EventsDropdown} from '../../../Components/EventsDropdown/EventsDropdown';
+
 import CreateEventButton from './Components/CreateEventButton/CreateEventButton';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
-import auth from '@react-native-firebase/auth';
-import {components} from 'src/api/v1';
+import { components } from 'src/api/v1';
+import { useAuthStore } from 'src/store/authStore';
 
 interface IoHeaderProps {
   requestsCount: number;
@@ -14,9 +15,9 @@ interface IoHeaderProps {
   onEventSelect: (event: components['schemas']['EventData']) => void;
 }
 
-const IoHeader: React.FC<IoHeaderProps> = ({events, selectedEvent, requestsCount, onEventSelect, onRequestPress}) => {
-  const currentUser = auth().currentUser;
-  if (!currentUser) {
+const IoHeader: React.FC<IoHeaderProps> = ({ events, selectedEvent, requestsCount, onEventSelect, onRequestPress }) => {
+  const { userMetadata: user } = useAuthStore();
+  if (!user) {
     return <AppLoader />;
   }
 

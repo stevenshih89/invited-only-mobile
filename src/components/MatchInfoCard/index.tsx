@@ -1,5 +1,7 @@
 import {FC} from 'react';
 import {View, Text} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import FastImage from 'react-native-fast-image';
 import * as S from './MatchInfoCard.style';
 
 //import components
@@ -11,8 +13,6 @@ import CheckStarBlackIcon from 'assets/images/icons/check-star.svg';
 import CalendarCheckBlackIcon from 'assets/images/icons/calendar-check-black.svg';
 import LocationBlackIcon from 'assets/images/icons/location-black.svg';
 import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import FastImage from 'react-native-fast-image';
 import {screenWidth} from 'constants/common';
 
 interface MatchInfoCardI {

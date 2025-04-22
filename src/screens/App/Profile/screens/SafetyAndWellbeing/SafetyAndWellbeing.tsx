@@ -1,8 +1,8 @@
 import {Text, TouchableOpacity, View} from 'react-native';
+import {FC} from 'react';
+import useStyles from './styles';
 import AvatarHelp from 'assets/images/icons/avatar-help.svg';
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
-import useStyles from './styles';
-import {FC} from 'react';
 import { useSafetyAndWellbeing } from 'hooks/useSafetyAndWellbeing';
 
 interface ISafetyAndWellbeing {

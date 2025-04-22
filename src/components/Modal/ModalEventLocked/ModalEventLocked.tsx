@@ -1,8 +1,8 @@
 import {StyleProp, Text, View, ViewStyle} from 'react-native';
 import {FC} from 'react';
+import useStyles from './styles';
 import Lock from 'assets/images/icons/clock-white.svg';
 import Bing from 'assets/images/icons/notification-bing.svg';
-import useStyles from './styles';
 import {transparent60Color} from 'constants/colors';
 
 const ModalEventLocked: FC<{

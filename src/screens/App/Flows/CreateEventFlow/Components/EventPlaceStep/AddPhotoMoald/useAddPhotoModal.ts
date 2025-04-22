@@ -1,13 +1,13 @@
-import {useFormikContext} from 'formik';
-import {useState} from 'react';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {CreateEventFormValues} from '../../../CreateEventFlow';
+import { useFormikContext } from 'formik';
+import { useState } from 'react';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { CreateEventFormValues } from '../../../CreateEventFlow';
 
 const useAddModalPhotos = () => {
   const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number | null>(null);
 
-  const {setFieldValue, setFieldTouched} = useFormikContext<CreateEventFormValues>();
+  const { setFieldValue, setFieldTouched } = useFormikContext<CreateEventFormValues>();
 
   const handlePhotoAdded = (index: number, photo: string) => {
     if (index === 1) {

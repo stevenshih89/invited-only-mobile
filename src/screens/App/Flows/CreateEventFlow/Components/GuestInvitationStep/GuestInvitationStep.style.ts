@@ -2,11 +2,11 @@ import styled from 'styled-components/native';
 import {Dimensions} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
-const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
-
 // Colors and Fonts (assuming you're importing them)
 import {black60Color, black3Color, whiteColor, lightGray5Color, lightGray9Color, lightRedColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
+
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
 // Containers
 export const Container = styled.View`

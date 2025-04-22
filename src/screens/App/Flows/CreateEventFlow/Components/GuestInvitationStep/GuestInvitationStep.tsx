@@ -1,8 +1,7 @@
 import {View} from 'react-native';
-import * as S from './GuestInvitationStep.style';
 import {useFormikContext} from 'formik';
 import {CreateEventFormValues} from '../../CreateEventFlow';
-import * as Yup from 'yup';
+import * as S from './GuestInvitationStep.style';
 
 const GuestInvitationStep = () => {
   const {values, setFieldValue, errors, touched} = useFormikContext<CreateEventFormValues>();

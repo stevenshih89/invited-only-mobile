@@ -1,16 +1,7 @@
-import {ImageBackground, Text, View} from 'react-native';
 import Modal from 'react-native-modal';
-import {blackColor, deleteColor, transparentWhite16Color, whiteColor} from 'constants/colors';
-import TrashBlack from 'assets/images/icons/trash-black.svg';
-import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
-import type {Dispatch, FC, SetStateAction} from 'react';
-import Button from 'components/Button/Button';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {useUser} from '../../../../../store/userStore';
-import {calculateAge} from 'helpers/calculateAge.ts';
-import firestore from '@react-native-firebase/firestore';
+import type { FC} from 'react';
 import * as S from './ModalReplacePhoto.style';
+import Button from 'components/Button/Button';
 
 const ModalReplacePhoto: FC<{
   isVisible: boolean;

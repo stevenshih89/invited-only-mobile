@@ -1,8 +1,8 @@
 import {useState} from 'react';
-import * as S from './EventDatePicker.styled';
 import DatePicker from 'react-native-date-picker';
 import {useFormikContext} from 'formik';
 import {CreateEventFormValues} from '../../../CreateEventFlow';
+import * as S from './EventDatePicker.styled';
 
 export const getDateString = (date: Date) => {
   const month = String(date.getMonth() + 1).padStart(2, '0');

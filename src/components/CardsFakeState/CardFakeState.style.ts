@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
+import {RFValue} from 'react-native-responsive-fontsize';
 import {blackColor, lightGray6Color, transparentWhite16Color, transparentWhite56Color, whiteColor} from 'constants/colors';
 import {screenHeight} from 'constants/common';
 import {Satoshi400, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 
 export const BorderButton = styled.View`
   background-color: ${transparentWhite56Color};

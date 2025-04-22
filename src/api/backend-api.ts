@@ -1,11 +1,12 @@
 import createFetchClient, { Middleware } from 'openapi-fetch';
 import createClient from 'openapi-react-query';
-import type { paths } from './v1';
+// eslint-disable-next-line import/no-unresolved
 import { BACKEND_BASE_64_AUTH, BACKEND_BASE_URL } from '@env';
+import type { paths } from './v1';
 
 const myMiddleware: Middleware = {
   onError: error => {
-    console.log('error', error);
+    console.error('error while fetching', error);
   },
   async onRequest({ request }) {
     const headers = new Headers();

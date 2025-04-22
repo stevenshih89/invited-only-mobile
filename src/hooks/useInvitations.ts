@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
-import {useUser} from 'src/store/userStore';
 import Clipboard from '@react-native-clipboard/clipboard';
+import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast';
 
 export const useInvitations = () => {

@@ -1,9 +1,9 @@
 import React, {FC, useEffect} from 'react';
+import Animated, {Easing, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming} from 'react-native-reanimated';
+import * as S from './Loading.style';
 import Subtract from 'src/assets/images/icons/subtract.svg';
 import CheckStarIcon from 'src/assets/images/icons/check-star.svg';
-import Animated, {Easing, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming} from 'react-native-reanimated';
 import {screenHeight} from 'constants/common';
-import * as S from './Loading.style';
 
 interface LoadingProps {
   text?: string;

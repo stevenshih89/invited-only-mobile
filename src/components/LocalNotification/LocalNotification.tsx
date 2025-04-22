@@ -3,6 +3,9 @@ import {Text, Image} from 'react-native';
 import Toast, {BaseToast, ToastConfig, ToastConfigParams} from 'react-native-toast-message';
 
 //import icons
+import {RFValue} from 'react-native-responsive-fontsize';
+import firestore from '@react-native-firebase/firestore';
+import * as S from './LocalNotification.style';
 import TickCircleIcon from 'assets/images/icons/tick-circle.svg';
 import PendingClockIcon from 'assets/images/icons/pending-clock.svg';
 import InfoCircleOrange from 'assets/images/icons/info-circle-orange.svg';
@@ -15,7 +18,6 @@ import IOImage from 'assets/images/app/IO.png';
 import IconBackground from 'assets/images/app/bcon-background.png';
 import {whiteColor, lightGray3Color} from 'constants/colors';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 import {INVITE_MATCH_STATUS} from 'constants/common';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {
@@ -27,11 +29,8 @@ import {
   requestsPath,
 } from 'constants/pathLocations';
 import {handleCreateChat} from 'helpers/chat';
-import firestore from '@react-native-firebase/firestore';
-import Config from 'react-native-config';
 import {showToast} from 'helpers/showToast';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import * as S from './LocalNotification.style';
 import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 const LocalNotification = () => {

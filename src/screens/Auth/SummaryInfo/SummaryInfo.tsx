@@ -1,15 +1,15 @@
-import {backgroundGradientColors, lightGray16Color, whiteColor} from 'constants/colors';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {useContext} from 'react';
+import {RFValue} from 'react-native-responsive-fontsize';
+import LinearGradient from 'react-native-linear-gradient';
+import {backgroundGradientColors, lightGray16Color, whiteColor} from 'constants/colors';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {AuthContext} from 'contexts/AuthContext';
-import {useContext} from 'react';
 import LogoSecondary2 from 'assets/images/auth/logo-secondary-2.svg';
 import {Outfit500} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight, screenWidth} from 'constants/common';
 import Button from 'components/Button/Button';
-import LinearGradient from 'react-native-linear-gradient';
 
 const SummaryInfo = () => {
   const navigation = useAppNavigation();

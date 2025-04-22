@@ -19,7 +19,6 @@ describe('Invitations Component', () => {
   it('renders correctly with invitation details', () => {
     const {getByText} = render(<Invitations />);
     expect(getByText('You have 2 App invitations codes')).toBeTruthy();
-    expect(getByText('IO Invitations')).toBeTruthy();
     expect(getByText('ABC123')).toBeTruthy();
     expect(getByText('DEF456')).toBeTruthy();
   });

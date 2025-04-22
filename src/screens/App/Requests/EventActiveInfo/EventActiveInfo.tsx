@@ -1,29 +1,24 @@
+import {FlatList, Image, ImageBackground, Text, TouchableOpacity,ScrollView, View} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import React, {FC, useEffect, useState} from 'react';
+import FastImage from 'react-native-fast-image';
+import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
+import Config from 'react-native-config';
+import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
 import {black3Color, blackColor, lightGray2Color, lightGreenColor, transparentWhite16Color, whiteColor} from 'constants/colors';
 import TrashRed from 'assets/images/icons/trash-red.svg';
 import ClockFilledIcon from 'assets/images/icons/clock-white-fill.svg';
 import AcceptIcon from 'assets/images/icons/accept.svg';
 import CloseCircleFillIcon from 'assets/images/icons/close-circle-fill.svg';
-import {FlatList, Image, ImageBackground, Text, TouchableOpacity} from 'react-native';
-import {ScrollView, View} from 'react-native';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 import Button from 'components/Button/Button';
 import {commonStackPath, eventEditingPath} from 'constants/pathLocations';
-import React, {FC, useCallback, useEffect, useState} from 'react';
-import ModalCancelEvent from 'screens/App/MyEvents/EventEditing/ModalCancelEvent';
 import ModalUserProfileEvent from 'components/Modal/ModalUserProfileEvent/ModalUserProfileEvent.tsx';
 import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS, screenHeight, screenWidth} from 'constants/common';
 import {checkIsFullGuests} from 'helpers/checkIsFullGuests';
 import ModalFullEvent from 'components/Modal/ModalFullEvent';
-import {useFocusEffect} from '@react-navigation/native';
-import firestore from '@react-native-firebase/firestore';
 import {Event, EventData} from 'src/types/event';
-import FastImage from 'react-native-fast-image';
-import MyEventsCard from 'components/Cards/MyEventsCard/MyEventsCard';
 import {useUser} from 'src/store/userStore';
-import {getUserData} from 'helpers/getUserData';
-import Config from 'react-native-config';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 
 const EventActiveInfo: FC<any> = ({navigation, route}) => {
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
@@ -459,14 +454,12 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                 borderTopColor: transparentWhite16Color,
               }}>
               <Text
-                style={[
-                  {
+                style={{
                     color: whiteColor,
                     fontFamily: Satoshi700,
                     fontSize: RFValue(18, 812),
                     marginBottom: 17,
-                  },
-                ]}>
+                  }}>
                 Event details
               </Text>
               <MyEventsCard
@@ -549,19 +542,16 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
               ]}
               onPress={() => setActiveTab(GUEST_LIST)}>
               <Text
-                style={[
-                  {
+                style={{
                     fontFamily: Satoshi500,
                     fontSize: RFValue(16, 812),
                     color: activeTab === GUEST_LIST ? blackColor : whiteColor,
-                  },
-                ]}>
+                  }}>
                 Guests list
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[
-                {
+              style={{
                   paddingVertical: screenHeight / 130,
                   paddingHorizontal: screenWidth / 32,
                   borderRadius: 8,
@@ -571,17 +561,14 @@ const EventActiveInfo: FC<any> = ({navigation, route}) => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   backgroundColor: activeTab === EVENT_INFO ? whiteColor : lightGray2Color,
-                },
-              ]}
+                }}
               onPress={() => setActiveTab(EVENT_INFO)}>
               <Text
-                style={[
-                  {
+                style={{
                     fontFamily: Satoshi400,
                     fontSize: RFValue(16, 812),
                     color: activeTab === EVENT_INFO ? blackColor : whiteColor,
-                  },
-                ]}>
+                  }}>
                 Event info
               </Text>
             </TouchableOpacity>

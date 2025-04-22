@@ -1,43 +1,49 @@
 import {StyleSheet} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
 import {black2Color, black2Color90, blackColor, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors.ts';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
-import {RFValue} from 'react-native-responsive-fontsize';
 
 const useStyles = () => {
   return StyleSheet.create({
+    button: {
+      marginBottom: 30,
+      marginTop: 20,
+      width: '100%',
+    },
+    cancelEventImage: {
+      borderRadius: 50,
+      height: 84,
+      width: 84,
+    },
     container: {
       flex: 1,
     },
-    wrapper: {
-      backgroundColor: black2Color90,
-      alignItems: 'center',
-      paddingHorizontal: 20,
-      borderRadius: 30
+    eventImage: {
+      borderRadius: 20,
+      height: screenHeight * 0.23,
+      justifyContent: 'flex-end',
+      padding: 20
     },
-    wrapperCancelEvent: {
-      backgroundColor: black2Color,
-      height: '65%',
-      borderTopLeftRadius: 30,
-      borderTopRightRadius: 30,
-      alignItems: 'center',
-      paddingHorizontal: screenWidth / 10.5,
+    fdr: {
+      alignItems: 'center', 
+      backgroundColor: transparent60Color, 
+      borderRadius: 100, 
+      flexDirection: 'row', 
+      marginLeft: 2,
+      paddingHorizontal: 12,
+      paddingVertical: 8
     },
-    wrapperOnTheWay: {
-      backgroundColor: black2Color,
-      height: '55%',
-      borderTopLeftRadius: 30,
-      borderTopRightRadius: 30,
-      alignItems: 'center',
-      paddingHorizontal: screenWidth / 10.5,
-    },
-    whiteLine: {
-      backgroundColor: whiteColor,
-      height: 2,
-      width: 40,
-      marginTop: screenHeight / 50,
-      marginBottom: screenHeight / 48,
-      borderRadius: 10,
+    greenCircle: {
+      backgroundColor: lightGreenColor,
+      borderColor: blackColor,
+      borderRadius: 50,
+      borderWidth: 2,
+      bottom: 5,
+      height: 19,
+      position: 'absolute',
+      right: 0,
+      width: 19,
     },
     main: {
       flexDirection: 'row',
@@ -46,10 +52,43 @@ const useStyles = () => {
       width: '100%',
       // justifyContent: 'space-between',
     },
-    cancelEventImage: {
-      width: 84,
-      height: 84,
-      borderRadius: 50,
+    modalStyles: {
+      justifyContent: 'flex-end',
+      margin: 0,
+      zIndex: 999,
+    },
+    textAreYouSure: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(24, 812),
+      marginTop: 20,
+      textAlign: 'center',
+    },
+    textCity: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(14, 812),
+      marginLeft: 3,
+    },
+    textDate: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(12, 812),
+      marginLeft: 4,
+    },
+    textDescription: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(18, 812),
+      marginTop: screenHeight / 85,
+      opacity: 0.8,
+      textAlign: 'center',
+    },
+    textGirlInvitation: {
+      color: whiteColor,
+      fontFamily: Satoshi400,
+      fontSize: RFValue(12, 812),
+      textAlign: 'center',
     },
     textYouCantGoToThisEvent: {
       color: whiteColor,
@@ -58,85 +97,46 @@ const useStyles = () => {
       marginTop: screenHeight / 85,
       opacity: 0.8,
     },
-    textCity: {
-      marginLeft: 3,
-      color: whiteColor,
-      fontFamily: Satoshi400,
-      fontSize: RFValue(14, 812),
-    },
     title: {
-      marginRight: 5,
       color: whiteColor,
       fontFamily: Satoshi500,
       fontSize: RFValue(20, 812),
+      marginRight: 5,
     },
     userPhoto: {
-      width: 84,
+      borderRadius: 50,
       height: 84,
-      borderRadius: 50,
+      width: 84,
     },
-    greenCircle: {
-      borderWidth: 2,
-      borderColor: blackColor,
-      width: 19,
-      height: 19,
-      backgroundColor: lightGreenColor,
-      borderRadius: 50,
-      position: 'absolute',
-      bottom: 5,
-      right: 0,
+    whiteLine: {
+      backgroundColor: whiteColor,
+      borderRadius: 10,
+      height: 2,
+      marginBottom: screenHeight / 48,
+      marginTop: screenHeight / 50,
+      width: 40,
     },
-    textDate: {
-      color: whiteColor,
-      fontFamily: Satoshi400,
-      fontSize: RFValue(12, 812),
-      marginLeft: 4,
+    wrapper: {
+      alignItems: 'center',
+      backgroundColor: black2Color90,
+      borderRadius: 30,
+      paddingHorizontal: 20
     },
-    textGirlInvitation: {
-      color: whiteColor,
-      fontFamily: Satoshi400,
-      textAlign: 'center',
-      fontSize: RFValue(12, 812),
+    wrapperCancelEvent: {
+      alignItems: 'center',
+      backgroundColor: black2Color,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      height: '65%',
+      paddingHorizontal: screenWidth / 10.5,
     },
-    textAreYouSure: {
-      color: whiteColor,
-      fontFamily: Satoshi400,
-      textAlign: 'center',
-      fontSize: RFValue(24, 812),
-      marginTop: 20,
-    },
-    button: {
-      width: '100%',
-      marginTop: 20,
-      marginBottom: 30,
-    },
-    textDescription: {
-      color: whiteColor,
-      fontFamily: Satoshi400,
-      textAlign: 'center',
-      opacity: 0.8,
-      fontSize: RFValue(18, 812),
-      marginTop: screenHeight / 85,
-    },
-    eventImage: {
-      height: screenHeight * 0.23,
-      borderRadius: 20,
-      justifyContent: 'flex-end',
-      padding: 20
-    },
-    fdr: {
-      backgroundColor: transparent60Color, 
-      flexDirection: 'row', 
-      alignItems: 'center', 
-      paddingHorizontal: 12, 
-      paddingVertical: 8,
-      borderRadius: 100,
-      marginLeft: 2
-    },
-    modalStyles: {
-      margin: 0,
-      justifyContent: 'flex-end',
-      zIndex: 999,
+    wrapperOnTheWay: {
+      alignItems: 'center',
+      backgroundColor: black2Color,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      height: '55%',
+      paddingHorizontal: screenWidth / 10.5,
     },
   });
 };

@@ -1,11 +1,7 @@
-import { blackColor, whiteColor } from "constants/colors";
-import { black1Color } from "constants/colors";
-import { Satoshi500 } from "constants/fonts";
 import { RFValue } from "react-native-responsive-fontsize";
-import Reject from 'src/assets/images/icons/reject.svg';
-import SuperInvite from 'src/assets/images/icons/super-invite.svg';
-import Invite from 'src/assets/images/icons/Invite.svg';
 import styled from "styled-components/native";
+import { whiteColor  } from "constants/colors";
+import { Satoshi500 } from "constants/fonts";
 
 export const CardContent = styled.View`
   display: flex;

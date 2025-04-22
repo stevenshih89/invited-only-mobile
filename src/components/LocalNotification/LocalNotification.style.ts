@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
+import {RFValue} from 'react-native-responsive-fontsize';
 import {lightGray3Color, whiteColor, blackColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 
 export const Success = styled.View`
   background-color: ${lightGray3Color};

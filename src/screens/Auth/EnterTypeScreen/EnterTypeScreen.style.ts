@@ -1,10 +1,11 @@
-import {black1Color, whiteColor} from 'constants/colors';
-import {screenHeight, screenWidth} from 'constants/common';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {Dimensions} from 'react-native';
 import Animated from 'react-native-reanimated';
 import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {screenHeight, screenWidth} from 'constants/common';
+import {black1Color, whiteColor} from 'constants/colors';
+
 const {height} = Dimensions.get('window');
 
 export const MainContainer = styled.View`

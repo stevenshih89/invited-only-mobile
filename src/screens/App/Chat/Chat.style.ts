@@ -1,8 +1,7 @@
-import { blackColor, whiteColor } from 'constants/colors';
-import { screenWidth } from 'constants/common';
-import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import styled from 'styled-components/native';
+import { blackColor } from 'constants/colors';
+import { screenWidth } from 'constants/common';
 
 export const ChatContainer = styled(View)`
   flex: 1;

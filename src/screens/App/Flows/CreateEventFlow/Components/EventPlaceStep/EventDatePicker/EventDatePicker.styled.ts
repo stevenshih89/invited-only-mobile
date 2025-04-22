@@ -1,7 +1,7 @@
-import {lightRedColor} from 'constants/colors';
-import {Satoshi500} from 'constants/fonts';
 import {Text, TextInput, View} from 'react-native';
 import styled from 'styled-components/native';
+import {lightRedColor} from 'constants/colors';
+import {Satoshi500} from 'constants/fonts';
 
 export const RowContainer = styled(View)`
   display: flex;

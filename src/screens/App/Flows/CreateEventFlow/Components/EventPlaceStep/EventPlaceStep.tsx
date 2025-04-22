@@ -1,13 +1,12 @@
 import React from 'react';
-import {View} from 'react-native';
 import {useFormikContext} from 'formik';
-import * as S from './EventPlaceStep.style';
-import {CreateEventFormValues} from '../../CreateEventFlow';
 import LinearGradient from 'react-native-linear-gradient';
+import FastImage from 'react-native-fast-image';
+import {CreateEventFormValues} from '../../CreateEventFlow';
+import * as S from './EventPlaceStep.style';
 import ModalAddPhoto from './AddPhotoMoald/ModalAddPhoto';
 
 import useAddModalPhotos from './AddPhotoMoald/useAddPhotoModal';
-import FastImage from 'react-native-fast-image';
 import EventDatePicker from './EventDatePicker/EventDatePicker';
 
 const EventPlaceStep = () => {

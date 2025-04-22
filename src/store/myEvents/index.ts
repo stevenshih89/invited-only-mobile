@@ -1,5 +1,5 @@
-import {EventData} from 'src/types/event';
 import {create} from 'zustand';
+import {EventData} from 'src/types/event';
 
 interface MyEventsState {
   eventsImJoining: EventData[];

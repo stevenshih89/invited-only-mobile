@@ -1,7 +1,7 @@
 import React from 'react';
 import {render, fireEvent} from '@testing-library/react-native';
-import Input from './Input';
 import {View, KeyboardType} from 'react-native';
+import Input from './Input';
 
 const mockProps = {
   errorText: 'Error message',

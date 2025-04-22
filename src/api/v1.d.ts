@@ -4,6 +4,57 @@
  */
 
 export interface paths {
+    "/auth/send-otp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request an OTP via Twilio Verify */
+        post: operations["sendOtp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/verify-otp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify an OTP and get auth tokens */
+        post: operations["verifyOtp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh the JWT access token using a refresh token */
+        post: operations["refreshAccessToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/events/user/{userId}": {
         parameters: {
             query?: never;
@@ -126,6 +177,43 @@ export interface paths {
         patch: operations["updateUserAccount"];
         trace?: never;
     };
+    "/users/phone/{phone}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a user by phone number */
+        get: operations["getUserByPhone"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{id}/fcmToken": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The UID of the user. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add FCM token for a user */
+        post: operations["addFcmTokenToUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/eventAttendees/create": {
         parameters: {
             query?: never;
@@ -140,8 +228,7 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Update an event attendance record */
-        patch: operations["updateEventAttend"];
+        patch?: never;
         trace?: never;
     };
     "/eventAttendees/host-request": {
@@ -358,16 +445,17 @@ export interface components {
             notificationSettings?: components["schemas"]["UserNotificationSettings"];
             location?: string | null;
             bio?: string | null;
-            age?: number | null;
+            /** Format: date-time */
+            birthday?: string;
             /** @enum {string} */
-            gender: "man" | "woman" | "other";
+            gender?: "man" | "woman" | "other";
             facePhoto?: string;
             activeSubscription?: components["schemas"]["ActiveSubscription"];
             phoneNumber?: string;
             photos?: components["schemas"]["UserPhoto"][];
             /** @description Structure unknown, defined as array of any. */
             notifications?: unknown[];
-            name: string;
+            name?: string;
             showAge?: boolean;
             /** Format: timestamp */
             lastUpdateSuperInvite?: number;
@@ -378,7 +466,7 @@ export interface components {
             /** Format: date-time */
             createdAt?: string;
             /** @enum {string} */
-            accountType?: "guest" | "user" | "admin";
+            accountType?: "host" | "guest";
             /** Format: email */
             email?: string;
             languages?: components["schemas"]["Language"][];
@@ -392,7 +480,7 @@ export interface components {
             date?: string;
             superInvites?: number;
             superInvite?: boolean;
-            uid: string;
+            uid?: string;
             /** Format: date-time */
             registrationDate?: string;
             codeForInvitingOtherUsers?: components["schemas"]["InviteCode"][];
@@ -652,6 +740,174 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    sendOtp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description The phone number (E.164 format) to send the OTP to.
+                     * @example +14155550123
+                     */
+                    phone: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OTP sent successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request (e.g., invalid phone format). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error (e.g., Twilio API issue). */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    verifyOtp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description The phone number (E.164 format) that received the OTP.
+                     * @example +14155550123
+                     */
+                    phone: string;
+                    /**
+                     * @description The OTP code entered by the user.
+                     * @example 123456
+                     */
+                    code: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OTP verified successfully, tokens issued. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description Short-lived JWT access token. */
+                        accessToken: string;
+                        /** @description Long-lived refresh token (used to get new access tokens). */
+                        refreshToken: string;
+                    };
+                };
+            };
+            /** @description Bad request (e.g., missing parameters). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized (e.g., invalid or expired OTP). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    refreshAccessToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description The phone number (E.164 format) associated with the refresh token.
+                     * @example +14155550123
+                     */
+                    phone: string;
+                    /** @description The refresh token obtained during login/previous refresh. */
+                    refreshToken: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Access token refreshed successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description Newly issued short-lived JWT access token. */
+                        accessToken: string;
+                        /** @description Newly issued long-lived refresh token (rotated). */
+                        refreshToken: string;
+                    };
+                };
+            };
+            /** @description Bad request (e.g., missing parameters). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden (e.g., invalid or expired refresh token). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User not found for the given phone number. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getEventsForUser: {
         parameters: {
             query?: {
@@ -901,9 +1157,15 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
+        requestBody?: {
             content: {
-                "application/json": components["schemas"]["User"];
+                "application/json": {
+                    /**
+                     * @description The phone number of the user.
+                     * @example +14155550123
+                     */
+                    phoneNumber: string;
+                };
             };
         };
         responses: {
@@ -1033,6 +1295,98 @@ export interface operations {
             };
         };
     };
+    getUserByPhone: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                phone: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User found successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
+                };
+            };
+            /** @description Bad request. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    addFcmTokenToUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The UID of the user. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Firebase Cloud Messaging token */
+                    fcm_token: string;
+                };
+            };
+        };
+        responses: {
+            /** @description FCM token saved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        /** @example FCM token saved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid FCM token */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     createEventAttend: {
         parameters: {
             query?: never;
@@ -1059,47 +1413,6 @@ export interface operations {
         };
         responses: {
             /** @description Event attendance created successfully. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ConnectionRequest"];
-                };
-            };
-            /** @description Bad request. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    updateEventAttend: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description The ID of the event attendance record to update. */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ConnectionRequest"];
-            };
-        };
-        responses: {
-            /** @description Event attendance updated successfully. */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -1643,6 +1956,9 @@ export interface operations {
     };
 }
 export enum ApiPaths {
+    sendOtp = "/auth/send-otp",
+    verifyOtp = "/auth/verify-otp",
+    refreshAccessToken = "/auth/refresh",
     getEventsForUser = "/events/user/:userId",
     getHostEvents = "/events/host/:hostId",
     createEvent = "/events",
@@ -1653,8 +1969,9 @@ export enum ApiPaths {
     deleteUserAccount = "/users/:id",
     updateUserAccount = "/users/:id",
     getUserById = "/users/:id",
+    getUserByPhone = "/users/phone/:phone",
+    addFcmTokenToUser = "/users/:id/fcmToken",
     createEventAttend = "/eventAttendees/create",
-    updateEventAttend = "/eventAttendees/create",
     getPendingGuests = "/eventAttendees/host-request",
     getEventInvitation = "/eventAttendees/guest-invitation",
     getGuestEventAttend = "/eventAttendees/guest/:guestId",

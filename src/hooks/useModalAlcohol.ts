@@ -1,8 +1,8 @@
+import firestore from '@react-native-firebase/firestore';
+import Config from 'react-native-config';
 import { useUser } from "src/store/userStore";
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import { showToast } from 'helpers/showToast';
-import firestore from '@react-native-firebase/firestore';
-import Config from 'react-native-config';
 
 const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 

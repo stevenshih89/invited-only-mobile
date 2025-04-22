@@ -1,9 +1,9 @@
-import {blackColor, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
 import React, {FC} from 'react';
 import {View, Text} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import UpdateAvailableIcon from '../../../assets/images/icons/update-available.svg';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {blackColor, whiteColor} from 'constants/colors';
 
 interface UpdateAvailableProps {
   data?: {

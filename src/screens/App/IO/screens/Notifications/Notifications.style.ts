@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
-import {blackColor} from 'constants/colors';
 import {SafeAreaView} from 'react-native';
+import {blackColor} from 'constants/colors';
 
 export const Container = styled.View`
   flex: 1;

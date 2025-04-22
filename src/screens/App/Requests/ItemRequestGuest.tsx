@@ -1,28 +1,18 @@
-import {black4Color, blackColor, grayColor, lightGreenColor, lightRed1Color, transparent60Color, whiteColor} from 'constants/colors';
-import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {Animated, Text, TouchableOpacity, View} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
-import useStyles from './styles';
-import FlashFillBlack from 'assets/images/icons/flash-filled-black.svg';
-import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
-import CloseIcon from 'assets/images/icons/close.svg';
 import {ActivityIndicator} from '@ant-design/react-native';
+import React from 'react';
 import {useUser} from '../../../store/userStore';
-import LinearGradient from 'react-native-linear-gradient';
-import FastImage from 'react-native-fast-image';
-import {screenHeight} from 'constants/common';
-import {calculateAge} from 'helpers/calculateAge';
-import {convertToPmAmFormat} from 'helpers/convertToPmAmFormat';
-import Button from 'components/Button/Button';
+import {MatchData} from '../IO/screens/Match/Match';
+import useStyles from './styles';
+import { lightRed1Color, whiteColor} from 'constants/colors';
+import { Satoshi700} from 'constants/fonts';
 
-import {commonStackPath, eventActiveInfoPath, myProfileViewPath, userProfilePath} from 'constants/pathLocations';
+import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
 import {useItemRequestGuest} from 'hooks/useItemRequestGuest';
-import {eventTypes} from 'src/mocks/eventTypes';
 import {Event} from 'src/types/event';
 import {User} from 'src/types/userInfo';
-import {MatchData} from '../IO/screens/Match/Match';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import React from 'react';
 
 interface Props {
   list: {

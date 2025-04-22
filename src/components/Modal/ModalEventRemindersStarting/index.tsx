@@ -1,12 +1,12 @@
-import { black4Color, blackColor, lightGray18Color, lightGreenColor, whiteColor } from "constants/colors";
 import { FC } from "react";
 import { Text, View } from "react-native";
-import Button from 'components/Button/Button.tsx';
 import Modal from 'react-native-modal';
-import useStyles from "./styles";
 import FastImage from "react-native-fast-image";
-import { Satoshi400, Satoshi500, Satoshi700 } from "constants/fonts";
 import { RFValue } from "react-native-responsive-fontsize";
+import useStyles from "./styles";
+import { Satoshi400, Satoshi500, Satoshi700 } from "constants/fonts";
+import Button from 'components/Button/Button.tsx';
+import { black4Color, blackColor, lightGray18Color, lightGreenColor, whiteColor } from "constants/colors";
 import { getUsersListAccepted } from "helpers/getUsersListAccepted";
 
 interface RemindersStartingI {
@@ -56,7 +56,7 @@ const ModalEventRemindersStarting: FC<RemindersStartingI> = ({
         <View style={styles.whiteLine} />
         <View style={{width: '100%', backgroundColor: whiteColor, borderRadius: 30, padding: 9}}>
           <View style={{width: '100%'}}>
-            <FastImage resizeMode="cover" source={{uri: currentEvent?.photos?.[0]?.image}} style={[styles.eventImage]}>
+            <FastImage resizeMode="cover" source={{uri: currentEvent?.photos?.[0]?.image}} style={styles.eventImage}>
               <View
                 style={{
                   paddingHorizontal: 6,

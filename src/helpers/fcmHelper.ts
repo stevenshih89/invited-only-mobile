@@ -1,17 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import messaging, {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
-import notifee, {EventType} from '@notifee/react-native';
-import {PERMISSIONS, request} from 'react-native-permissions';
-import auth from '@react-native-firebase/auth';
+import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+import notifee, { EventType } from '@notifee/react-native';
+import { PERMISSIONS, request } from 'react-native-permissions';
 import firestore from '@react-native-firebase/firestore';
-import {showToast} from './showToast';
 import functions from '@react-native-firebase/functions';
 import Config from 'react-native-config';
-import {logErrorToSentry} from './logErrorsToSentry';
-import {FirebaseCollectionsResponse} from 'src/apiv2/queries/appSettingsQueries';
+import { showToast } from './showToast';
+import { logErrorToSentry } from './logErrorsToSentry';
+import { useAuthStore } from 'src/store/authStore';
+import { FirebaseCollectionsResponse } from 'src/apiv2/queries/appSettingsQueries';
 
-export const fcmHelper = async ({apiUserInfoCollection}: {apiUserInfoCollection: keyof FirebaseCollectionsResponse}) => {
-  const userUid = auth().currentUser?.uid;
+export const fcmHelper = async ({ apiUserInfoCollection }: { apiUserInfoCollection: keyof FirebaseCollectionsResponse }) => {
+  const { userMetadata } = useAuthStore.getState();
+  const userUid = userMetadata.uid;
 
   try {
     const newToken = await messaging().getToken();
@@ -32,9 +33,9 @@ export const fcmHelper = async ({apiUserInfoCollection}: {apiUserInfoCollection:
   }
 };
 
-export const getFcmToken = async ({apiUserInfoCollection}: {apiUserInfoCollection: string}) => {
+export const getFcmToken = async ({ apiUserInfoCollection }: { apiUserInfoCollection: string }) => {
   let token = null;
-  await checkApplicationNotificationPermission({apiUserInfoCollection: apiUserInfoCollection as keyof FirebaseCollectionsResponse});
+  await checkApplicationNotificationPermission({ apiUserInfoCollection: apiUserInfoCollection as keyof FirebaseCollectionsResponse });
   await registerAppWithFCM();
   try {
     token = await messaging().getToken();
@@ -89,7 +90,7 @@ export const checkApplicationNotificationPermission = async ({
   const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    await fcmHelper({apiUserInfoCollection});
+    await fcmHelper({ apiUserInfoCollection });
   }
   request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS)
     .then(result => {
@@ -119,7 +120,7 @@ export function registerListenerWithFCM() {
       );
     }
   });
-  notifee.onForegroundEvent(({type, detail}) => {
+  notifee.onForegroundEvent(({ type, detail }) => {
     switch (type) {
       case EventType.DISMISSED:
         console.log('User dismissed notification', detail.notification);
@@ -172,7 +173,7 @@ async function onDisplayNotification(
     }
     const path = paramsParse.path || null;
 
-    showToast('inviteMatch', title, body, {status: data.status, ownerPhoto: data.image, path, params: paramsParse.data});
+    showToast('inviteMatch', title, body, { status: data.status, ownerPhoto: data.image, path, params: paramsParse.data });
     if (title === 'Your Account is Not Approved') {
       setRejectVisible();
     }
@@ -200,8 +201,8 @@ export function onMatchNotificationSubscription(
       handler(remoteMessage);
     }
     onDisplayNotification(
-      remoteMessage.notification?.title,
-      remoteMessage.notification?.body,
+      remoteMessage.notification?.title || '',
+      remoteMessage.notification?.body || '',
       remoteMessage?.data,
       setRejectVisible,
       setAcceptModalVisible,

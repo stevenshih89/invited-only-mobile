@@ -1,11 +1,11 @@
 import {FC} from 'react';
 import {TouchableOpacity} from 'react-native';
-import {Notifications} from 'hooks/useNotifications';
 import SwipeableItem, {useSwipeableItemParams} from 'react-native-swipeable-item';
-import DeleteIcon from 'assets/images/icons/trashcan-white.svg';
-import * as S from './NotificationRow.style';
-import {blackColor} from 'constants/colors';
 import {formatDistance} from 'date-fns';
+import * as S from './NotificationRow.style';
+import {Notifications} from 'hooks/useNotifications';
+import DeleteIcon from 'assets/images/icons/trashcan-white.svg';
+import {blackColor} from 'constants/colors';
 
 interface NotificationRowProps {
   item: Notifications;

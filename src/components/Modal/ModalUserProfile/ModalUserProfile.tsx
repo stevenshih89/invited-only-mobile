@@ -2,11 +2,11 @@ import React, {Dispatch, FC, SetStateAction} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 
 //import components
-import useStyles from 'components/Modal/ModalUserProfile/styles.ts';
 import Modal from 'react-native-modal';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import useStyles from 'components/Modal/ModalUserProfile/styles.ts';
 import {screenHeight} from 'constants/common.ts';
 import FlashIcon from 'assets/images/icons/flash.svg';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 import InfoIcon from 'assets/images/icons/block_and_report.svg';
 
 interface ModalUserProfileProps {

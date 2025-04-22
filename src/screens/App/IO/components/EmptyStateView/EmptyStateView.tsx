@@ -1,9 +1,9 @@
 import React from 'react';
 import {TouchableOpacity} from 'react-native';
+import * as S from './EmptyStateView.style';
 import {screenHeight} from 'constants/common.ts';
 import Button from 'components/Button/Button.tsx';
 import Loading from 'components/Loading/Loading';
-import * as S from './EmptyStateView.style';
 
 interface EmptyStateViewProps {
   userInfo: any;

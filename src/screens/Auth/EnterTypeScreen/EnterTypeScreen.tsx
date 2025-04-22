@@ -1,8 +1,8 @@
-import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import * as S from './EnterTypeScreen.style';
+import EnterTypeWordsAnimation from './EnterTypeWordsAnimation';
+import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import EnterTypeScreenBg from 'assets/images/auth/enter-type-screen-bg.png';
 
-import EnterTypeWordsAnimation from './EnterTypeWordsAnimation';
 
 import {useAppNavigation} from 'hooks/useAppNavigation';
 

@@ -1,16 +1,11 @@
-import {StyleProp, Text, View, ViewStyle} from 'react-native';
+import {StyleProp, View, ViewStyle} from 'react-native';
 import {FC, ReactNode, useContext, useEffect, useState} from 'react';
-import {blackColor, orangeClose, transparentWhite30Color, whiteColor} from 'constants/colors';
-import CheckCircleIcon from 'assets/images/icons/check-circle.svg';
-import {Image} from 'react-native';
-import {Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 import firestore from '@react-native-firebase/firestore';
+import * as S from './FullEvent.style';
+import CheckCircleIcon from 'assets/images/icons/check-circle.svg';
 import {INVITE_MATCH_STATUS} from 'constants/common';
-import Config from 'react-native-config';
 import {showToast} from 'helpers/showToast';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import * as S from './FullEvent.style';
 import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 interface FullEventProps {
@@ -44,7 +39,7 @@ const FullEvent: FC<FullEventProps> = ({activeEvent, totalRequestsGuests, rightC
   }, [activeEvent]);
 
   return (
-    <S.Container style={[styleContainer]}>
+    <S.Container style={styleContainer}>
       <S.EventWrapper>
         <S.UsersWrapper>
           {actualActiveEventData?.usersList?.map((item, index) => {

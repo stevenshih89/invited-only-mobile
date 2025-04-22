@@ -2,20 +2,20 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {useEffect, useState} from 'react';
 import {ActivityIndicator, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import Config from 'react-native-config';
-import {Event, EventData} from 'src/types/event';
 import firestore from '@react-native-firebase/firestore';
-import {backgroundGradientColors, blackColor, whiteColor} from 'constants/colors';
-import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
+import FastImage from 'react-native-fast-image';
+import CheckBox from '@react-native-community/checkbox';
+import moment from 'moment';
+import {Event, EventData} from 'src/types/event';
+import {backgroundGradientColors, blackColor, whiteColor} from 'constants/colors';
+import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {ACCEPTED_STATUS, APPROVED_STATUS, INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import Button from 'components/Button/Button';
-import FastImage from 'react-native-fast-image';
 import {UserInfo} from 'src/types/userInfo';
 import {calculateAge} from 'helpers/calculateAge';
-import CheckBox from '@react-native-community/checkbox';
-import moment from 'moment';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface MarkUser extends Event.User {

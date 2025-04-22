@@ -1,13 +1,13 @@
 import React, { useState, useRef } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { components } from "src/api/v1";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as S from "./ChatWindowHeader.style";
+import { ToggleInvitationStatusDropdown } from "./ToggleInvitationStatusDropdown/ToggleInvitationStatusDropdown";
+import { ApproveActionButton } from "./ApproveActionButton/ApproveActionButton";
+import { components } from "src/api/v1";
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 
 import { useAppNavigation } from "hooks/useAppNavigation";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ToggleInvitationStatusDropdown } from "./ToggleInvitationStatusDropdown/ToggleInvitationStatusDropdown";
-import { ApproveActionButton } from "./ApproveActionButton/ApproveActionButton";
 
 interface ChatWindowHeaderProps {
     chat: components['schemas']['Chat'];

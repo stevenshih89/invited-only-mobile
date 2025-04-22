@@ -1,11 +1,11 @@
 import {SafeAreaView, Text, View} from 'react-native';
+import Modal from 'react-native-modal';
+import {FC} from 'react';
+import {RFValue} from 'react-native-responsive-fontsize';
 import {blackColor, whiteColor} from 'constants/colors';
 import CheckIcon from 'src/assets/images/icons/Check-black.svg';
 import LogoIcon from 'assets/images/icons/logo.svg';
-import Modal from 'react-native-modal';
-import {FC} from 'react';
 import {Satoshi400} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 
 interface LoaderProps {
   isVisible: boolean;

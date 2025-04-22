@@ -1,15 +1,15 @@
-import {isIos} from 'constants/common';
-import {useEffect, useRef, useState} from 'react';
+import { useRef, useState} from 'react';
 import {Alert, Animated} from 'react-native';
 import Config from 'react-native-config';
 import {ImagePickerResponse, launchImageLibrary} from 'react-native-image-picker';
 import {check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS} from 'react-native-permissions';
-import {useUser} from 'src/store/userStore';
 import firestore from '@react-native-firebase/firestore';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {showToast} from 'helpers/showToast';
 import {runOnJS, useAnimatedStyle, useSharedValue, withSpring} from 'react-native-reanimated';
 import {Gesture} from 'react-native-gesture-handler';
+import {useUser} from 'src/store/userStore';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {showToast} from 'helpers/showToast';
+import {isIos} from 'constants/common';
 
 export const useMyPhotos = ({images, setImages}: {images: any; setImages: any}) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';

@@ -1,7 +1,7 @@
-import {isIos} from "constants/common.ts";
 import {PERMISSIONS, request} from "react-native-permissions";
-import {Asset, CameraType, ImagePickerResponse, launchCamera} from "react-native-image-picker";
+import {Asset, CameraType, launchCamera} from "react-native-image-picker";
 import {Alert} from "react-native";
+import {isIos} from "constants/common.ts";
 
 export const openCamera = async (cameraType?: CameraType, onDidCancel?: () => void) : Promise<Asset | undefined | null> => {
 	if (isIos) {

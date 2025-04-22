@@ -1,12 +1,12 @@
 import Modal from 'react-native-modal';
-import Cake from 'assets/images/icons/cake.svg';
-import {grayColor, toggleColor, whiteColor} from 'constants/colors';
 import {Switch} from '@ant-design/react-native';
 import {Dispatch, FC, SetStateAction} from 'react';
+import * as S from './ModalBirthday.style';
+import Cake from 'assets/images/icons/cake.svg';
+import {grayColor, toggleColor, whiteColor} from 'constants/colors';
 import {isIos} from 'constants/common';
 import Button from 'components/Button/Button';
 import {useModalBirthday} from 'hooks/useModalBirthday';
-import * as S from './ModalBirthday.style';
 
 interface ModalBirthdayProps {
   isVisible: boolean;

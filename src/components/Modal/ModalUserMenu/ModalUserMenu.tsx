@@ -4,6 +4,10 @@ import Modal from 'react-native-modal';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 //import components
+import {RFValue} from 'react-native-responsive-fontsize';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+import ModalReport from '../ModalReport/ModalReport';
 import useStyles from 'components/Modal/ModalUserMenu/styles.ts';
 import Button from 'components/Button/Button.tsx';
 import {black1Color, blackColor, errorColor, gray1Color, grayScale700, whiteColor} from 'constants/colors.ts';
@@ -17,17 +21,14 @@ import User from 'assets/images/icons/user.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
-import firestore from '@react-native-firebase/firestore';
 import {useUser} from 'src/store/userStore';
 import {sendNotification} from 'helpers/fcmHelper';
-import ModalReport from '../ModalReport/ModalReport';
 import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {User as UserType} from 'src/types/userInfo';
 import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
+
 interface ModalUserMenuProps {
   isModalVisible: boolean;
   setModalVisible: boolean | any;

@@ -1,17 +1,18 @@
-import {black3Color, blackColor, lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
 import {Text, TouchableOpacity, View, SafeAreaView} from 'react-native';
 import Modal from 'react-native-modal';
-import Close from 'assets/images/icons/close.svg';
-import {Satoshi500} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight, screenWidth} from 'constants/common';
 import {FC, useEffect} from 'react';
 import Animated, {useSharedValue, useAnimatedStyle, withTiming, withDelay} from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
+import {black3Color, blackColor, lightGray10Color, transparentGray60Color, whiteColor} from 'constants/colors';
+import Close from 'assets/images/icons/close.svg';
+import {Satoshi500} from 'constants/fonts';
+import {screenHeight, screenWidth} from 'constants/common';
 import MatchInfoCard from 'components/MatchInfoCard';
 import {calculateAge} from 'helpers/calculateAge';
 import {Event} from 'src/types/event';
-import LinearGradient from 'react-native-linear-gradient';
 import {useMatch} from 'hooks/useMatch';
+
 export interface MatchData {
   type?: string;
   nameHost?: string;

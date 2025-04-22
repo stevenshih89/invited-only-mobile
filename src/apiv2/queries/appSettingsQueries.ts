@@ -1,15 +1,16 @@
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import firestore from '@react-native-firebase/firestore';
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+
 import Config from 'react-native-config';
-import {useQuery, useQueryClient} from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { BACKEND_BASE_64_AUTH, BACKEND_BASE_URL } from '@env';
 import AppSettingsKeys from '../keys/appSettingsKeys';
-import {useEffect} from 'react';
-import {BACKEND_BASE_64_AUTH, BACKEND_BASE_URL} from '@env';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useAuthStore } from 'src/store/authStore.ts';
 
 interface AppVersionCheckProps {
   appStoreAppId: string;
-  currentUser: FirebaseAuthTypes.User | null;
+  currentUser: { uid: string } | null;
 }
 export interface AppLookupResponse {
   resultCount: number;
@@ -128,9 +129,9 @@ const useMaintenanceQuery = () => {
     approximatelyTime: string | null;
   }> => {
     try {
-      const currentUser = auth().currentUser;
-      if (!currentUser?.uid) {
-        return {approximatelyTime: null, isMaintenance: false};
+      const { userMetadata } = useAuthStore();
+      if (!userMetadata?.uid) {
+        return { approximatelyTime: null, isMaintenance: false };
       }
       const maintenanceQuery = await firestore().collection(apiAppSettingsCollection).doc('maintenance').get();
       if (maintenanceQuery.exists) {
@@ -140,7 +141,7 @@ const useMaintenanceQuery = () => {
         };
         return data;
       }
-      return {approximatelyTime: null, isMaintenance: false};
+      return { approximatelyTime: null, isMaintenance: false };
     } catch (error) {
       logErrorToSentry(error);
       return {
@@ -156,7 +157,7 @@ const useMaintenanceQuery = () => {
   });
 };
 
-const useAppVersionAppStoreCheckQuery = ({appStoreAppId, currentUser}: AppVersionCheckProps) => {
+const useAppVersionAppStoreCheckQuery = ({ appStoreAppId, currentUser }: AppVersionCheckProps) => {
   const queryClient = useQueryClient();
   const firebaseCollectionNames = queryClient.getQueryData<FirebaseCollectionsResponse>(
     AppSettingsKeys.getFirebaseCollectionNameQueryKey(),

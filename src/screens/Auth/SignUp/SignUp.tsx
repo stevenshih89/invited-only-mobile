@@ -1,27 +1,27 @@
-import {isIos} from 'constants/common';
-import React, {FC, useState, useContext} from 'react';
-import {Keyboard, KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback} from 'react-native';
-import {backgroundGradientColors} from 'constants/colors';
-import Button from 'components/Button/Button';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {confirmPhonePath} from 'constants/pathLocations';
-import auth from '@react-native-firebase/auth';
-import {showToast} from 'helpers/showToast.ts';
+import React, { FC, useState, useContext, JSX } from 'react';
+import { Keyboard, KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
+
 import firestore from '@react-native-firebase/firestore';
-import {InputPhoneView} from '../../../components/Inputs/InputPhoneView';
 import LinearGradient from 'react-native-linear-gradient';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import { InputPhoneView } from '../../../components/Inputs/InputPhoneView';
 import * as S from './SignUp.styles';
+import { isIos } from 'constants/common';
+import { backgroundGradientColors } from 'constants/colors';
+import Button from 'components/Button/Button';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { showToast } from 'helpers/showToast.ts';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import invitedOnlyBackendApi from 'src/api/backend-api';
 
 const SignUp: FC = (): JSX.Element => {
   const [mobilePhone, setMobilePhone] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [isValidPhone, setIsValidPhone] = useState<boolean>(false);
   const [isDisabledValidation, setIsDisabledValidation] = useState<boolean>(true);
-
+  const { mutate: sendPhoneNumber } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
   const navigation = useAppNavigation();
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
 
   async function signUpWithPhoneNumber() {
     try {
@@ -37,13 +37,15 @@ const SignUp: FC = (): JSX.Element => {
       const userNumber = await firestore().collection(apiUserInfoCollection).where('phoneNumber', '==', mobilePhone).get();
       if (!userNumber.empty) {
         setLoading(false);
-        showToast('inviteMatch', 'This Phone Number is already exist', 'Fail');
+        showToast('inviteMatch', 'This phone number is already in use', 'Fail');
         return;
       }
-
-      const confirmation = await auth().signInWithPhoneNumber(phone);
-      navigation.navigate(confirmPhonePath, {
-        confirm: confirmation,
+      await sendPhoneNumber({
+        body: {
+          phone: phone,
+        },
+      });
+      navigation.navigate('/confirm-phone', {
         mobilePhone: phone,
         isLogin: false,
       });
@@ -63,10 +65,10 @@ const SignUp: FC = (): JSX.Element => {
   };
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
+    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1, paddingBottom: 0 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+          <SafeAreaView style={{ flex: 1, paddingBottom: 0 }}>
             <S.Container>
               <S.ContentContainer>
                 <S.LogoContainer>

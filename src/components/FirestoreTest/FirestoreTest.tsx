@@ -1,14 +1,14 @@
-import React, {useState} from 'react';
-import {View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-import auth from '@react-native-firebase/auth';
-import {showToast} from 'helpers/showToast';
-import {whiteColor} from 'constants/colors';
-import {Satoshi500, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { showToast } from 'helpers/showToast';
+import { whiteColor } from 'constants/colors';
+import { Satoshi500, Satoshi700 } from 'constants/fonts';
 
-import {AppSettingsQueries} from 'src/apiv2/queries/appSettingsQueries';
+import { AppSettingsQueries } from 'src/apiv2/queries/appSettingsQueries';
+import { useAuthStore } from 'src/store/authStore.ts';
 
 const FirestoreTest: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -21,9 +21,9 @@ const FirestoreTest: React.FC = () => {
   const [fieldValue, setFieldValue] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  const {data: firebaseCollections} = AppSettingsQueries.useFirebaseCollectionNameQuery();
-  const currentUser = auth().currentUser;
-  console.log('current user is', currentUser);
+  const { data: firebaseCollections } = AppSettingsQueries.useFirebaseCollectionNameQuery();
+  const { userMetadata } = useAuthStore();
+  console.log('current user is', userMetadata);
 
   const testConnection = async () => {
     setLoading(true);
@@ -247,68 +247,39 @@ const FirestoreTest: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#111',
-    padding: 16,
-  },
-  title: {
-    fontSize: RFValue(24, 812),
-    fontFamily: Satoshi700,
-    color: whiteColor,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  section: {
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 8,
-    padding: 16,
-  },
-  sectionTitle: {
-    fontSize: RFValue(18, 812),
-    fontFamily: Satoshi700,
-    color: whiteColor,
-    marginBottom: 12,
-  },
-  label: {
-    fontSize: RFValue(14, 812),
-    fontFamily: Satoshi500,
-    color: whiteColor,
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 8,
-    padding: 12,
-    color: whiteColor,
-    marginBottom: 16,
-    fontFamily: Satoshi500,
-  },
   button: {
+    alignItems: 'center',
     backgroundColor: '#977B4A',
     borderRadius: 8,
-    padding: 14,
-    alignItems: 'center',
     justifyContent: 'center',
     marginTop: 8,
+    padding: 14,
   },
   buttonText: {
     color: whiteColor,
     fontFamily: Satoshi700,
     fontSize: RFValue(16, 812),
   },
-  resultContainer: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 8,
-    padding: 12,
-    maxHeight: 200,
+  collectionItem: {
+    borderBottomColor: 'rgba(255,255,255,0.1)',
+    borderBottomWidth: 1,
+    padding: 8,
   },
-  resultText: {
+  collectionText: {
     color: whiteColor,
     fontFamily: Satoshi500,
     fontSize: RFValue(14, 812),
+  },
+  collectionsContainer: {
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    borderRadius: 8,
+    maxHeight: 120,
+    padding: 8,
+  },
+  container: {
+    backgroundColor: '#111',
+    flex: 1,
+    padding: 16,
   },
   errorText: {
     color: '#ff6b6b',
@@ -316,21 +287,50 @@ const styles = StyleSheet.create({
     fontSize: RFValue(14, 812),
     padding: 12,
   },
-  collectionsContainer: {
-    maxHeight: 120,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+  input: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 8,
-    padding: 8,
+    color: whiteColor,
+    fontFamily: Satoshi500,
+    marginBottom: 16,
+    padding: 12,
   },
-  collectionItem: {
-    padding: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.1)',
-  },
-  collectionText: {
+  label: {
     color: whiteColor,
     fontFamily: Satoshi500,
     fontSize: RFValue(14, 812),
+    marginBottom: 8,
+  },
+  resultContainer: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 8,
+    maxHeight: 200,
+    padding: 12,
+  },
+  resultText: {
+    color: whiteColor,
+    fontFamily: Satoshi500,
+    fontSize: RFValue(14, 812),
+  },
+  section: {
+    borderColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 8,
+    borderWidth: 1,
+    marginBottom: 24,
+    padding: 16,
+  },
+  sectionTitle: {
+    color: whiteColor,
+    fontFamily: Satoshi700,
+    fontSize: RFValue(18, 812),
+    marginBottom: 12,
+  },
+  title: {
+    color: whiteColor,
+    fontFamily: Satoshi700,
+    fontSize: RFValue(24, 812),
+    marginBottom: 20,
+    textAlign: 'center',
   },
 });
 

@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
 import {RFValue} from 'react-native-responsive-fontsize';
+import {KeyboardAvoidingView as KAV} from 'react-native';
 import {blackColor, whiteColor, transparentGray90Color, lightGray2Color} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {KeyboardAvoidingView as KAV} from 'react-native';
 
 export const KeyboardAvoidingView = styled(KAV)`
   padding-bottom: 0;

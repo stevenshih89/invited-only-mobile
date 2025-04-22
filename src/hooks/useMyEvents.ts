@@ -1,20 +1,20 @@
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {Event, EventData} from 'src/types/event';
 import {cancelAnimation, Easing, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
 import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
+import {useFocusEffect} from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCreateEvent} from './useCreateEvent';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {Event, EventData} from 'src/types/event';
 import {sendNotification} from 'helpers/fcmHelper';
-import {commonStackPath, eventCreatingStackPath, IOPath, markAttendancePath, paymentPath} from 'constants/pathLocations';
+import {commonStackPath, IOPath, markAttendancePath} from 'constants/pathLocations';
 import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common.ts';
 import {useAdminActions} from 'src/store/adminActions';
 import {useUser} from 'src/store/userStore';
 import {showToast} from 'helpers/showToast.ts';
-import {useFocusEffect} from '@react-navigation/native';
-import firestore from '@react-native-firebase/firestore';
-import {useCallback, useEffect, useRef, useState} from 'react';
 import {useMyEvents} from 'src/store/myEvents';
-import {useCreateEvent} from './useCreateEvent';
 
 const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
 const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';

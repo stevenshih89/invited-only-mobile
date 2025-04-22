@@ -1,45 +1,35 @@
 import {StyleSheet} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
 import {black2Color, blackColor, gray1Color, lightGreenColor, whiteColor} from 'constants/colors.ts';
 import {screenHeight, screenWidth} from 'constants/common.ts';
 import {Satoshi400, Satoshi500} from 'constants/fonts.ts';
-import {RFValue} from 'react-native-responsive-fontsize';
 
 const useStyles = () => {
   return StyleSheet.create({
+    buttonFooter: {
+      alignItems: 'center',
+      borderBottomColor: gray1Color,
+      borderBottomWidth: 1,
+      borderTopColor: gray1Color,
+      borderTopWidth: 1,
+      flexDirection: 'row',
+      marginTop: 34,
+      paddingVertical: screenHeight / 38,
+      width: '100%',
+    },
     container: {
       // flex: 1,
     },
-    wrapper: {
-      backgroundColor: black2Color,
-      height: '35%',
-      borderTopLeftRadius: 30,
-      borderTopRightRadius: 30,
-      alignItems: 'center',
-      paddingHorizontal: screenWidth / 10.5,
-    },
-    whiteLine: {
-      backgroundColor: whiteColor,
-      height: 2,
-      width: 40,
-      marginTop: screenHeight / 50,
-      marginBottom: screenHeight / 48,
-      borderRadius: 10,
-    },
-    userPhoto: {
-      width: 84,
-      height: 84,
-      borderRadius: 50,
-    },
     greenCircle: {
-      borderWidth: 2,
-      borderColor: blackColor,
-      width: 19,
-      height: 19,
       backgroundColor: lightGreenColor,
+      borderColor: blackColor,
       borderRadius: 50,
-      position: 'absolute',
+      borderWidth: 2,
       bottom: 5,
+      height: 19,
+      position: 'absolute',
       right: 0,
+      width: 19,
     },
     textButton: {
       color: whiteColor,
@@ -47,22 +37,32 @@ const useStyles = () => {
       fontSize: RFValue(18, 812),
       marginLeft: 10,
     },
-    buttonFooter: {
-      width: '100%',
-      paddingVertical: screenHeight / 38,
-      borderTopColor: gray1Color,
-      borderBottomColor: gray1Color,
-      borderBottomWidth: 1,
-      borderTopWidth: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginTop: 34,
-    },
     title: {
-      marginRight: 5,
       color: whiteColor,
       fontFamily: Satoshi500,
       fontSize: RFValue(20, 812),
+      marginRight: 5,
+    },
+    userPhoto: {
+      borderRadius: 50,
+      height: 84,
+      width: 84,
+    },
+    whiteLine: {
+      backgroundColor: whiteColor,
+      borderRadius: 10,
+      height: 2,
+      marginBottom: screenHeight / 48,
+      marginTop: screenHeight / 50,
+      width: 40,
+    },
+    wrapper: {
+      alignItems: 'center',
+      backgroundColor: black2Color,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      height: '35%',
+      paddingHorizontal: screenWidth / 10.5,
     },
   });
 };

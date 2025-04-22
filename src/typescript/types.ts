@@ -1,5 +1,5 @@
-import { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import { components } from 'src/api/v1';
+import { components } from "src/api/v1";
+
 
 export type RootStackParamList = {
   '/bottom-tabs-stack': undefined;
@@ -38,7 +38,6 @@ export type RootStackParamList = {
   '/start-create-account': undefined;
   '/eula': undefined;
   '/confirm-phone'?: {
-    confirm: FirebaseAuthTypes.ConfirmationResult;
     isLogin: boolean;
     mobilePhone: string;
   };
@@ -65,8 +64,7 @@ export type RootStackParamList = {
   '/verify-first-step': undefined;
   '/verify-second-step': undefined;
   '/invitation-code': { cameFromSummary: boolean };
-  '/payment': undefined;
-  '/manage-subscription': undefined;
+
   '/tutorial-flow': undefined;
   '/io': undefined;
   '/join-events': undefined;
@@ -74,7 +72,6 @@ export type RootStackParamList = {
   '/requests': undefined;
   '/profile': undefined;
   '/my-profile-view': undefined;
-  '/profile-editing': undefined;
   '/chat': undefined;
   '/chat-correspondence': undefined;
   '/user-profile': undefined;
@@ -86,11 +83,9 @@ export type RootStackParamList = {
   '/event-editing': {
     isEditing?: boolean;
   };
-  '/settings': undefined;
   '/account-setting': undefined;
   '/secure-privacy': undefined;
   '/phone-change': undefined;
-  '/notification-setting': undefined;
   '/contact-and-faq': undefined;
   '/photo-verified': undefined;
   '/summary-info': undefined;
@@ -106,4 +101,15 @@ export type RootStackParamList = {
   '/admin-chat': {
     chatId?: string;
   };
+  '/profile/settings': undefined;
+  '/profile/notification-setting': undefined;
+  '/profile/invitations': undefined;
+  '/profile/my-plan': undefined;
+  '/profile/profile-editing': undefined;
+  '/profile/faq': undefined;
+  '/profile/help-and-security': undefined;
+  '/profile/profile-stack': undefined;
+  '/profile/manage-subscription-stack': undefined;
+  '/profile/manage-subscription': undefined;
+  '/profile/payment': undefined;
 };

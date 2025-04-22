@@ -1,6 +1,5 @@
-import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
-import {Text, View} from 'react-native';
 import ConnectTabs from './ConnectTabs';
+import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 
 const Connect = () => {
   return (

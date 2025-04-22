@@ -1,19 +1,19 @@
-import {useMutation} from '@tanstack/react-query';
-import {UserMutationsKeys} from '../keys/userMutationkeys.ts';
-import auth from '@react-native-firebase/auth';
-import {isEmailValid} from 'helpers/regExpValidators.ts';
-import {showToast} from 'helpers/showToast.ts';
+import { useMutation } from '@tanstack/react-query';
 import firestore from '@react-native-firebase/firestore';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry.ts';
-
-import {useUser} from '../../store/userStore';
 import messaging from '@react-native-firebase/messaging';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext.tsx';
-import {useContext} from 'react';
+import { useContext } from 'react';
+import { UserMutationsKeys } from '../keys/userMutationkeys.ts';
+import { useUser } from '../../store/userStore';
+import { isEmailValid } from 'helpers/regExpValidators.ts';
+import { showToast } from 'helpers/showToast.ts';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry.ts';
+
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext.tsx';
+import { useAuthStore } from 'src/store/authStore.ts';
 
 const useUserChangeEmail = () => {
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
-  const currentUser = auth()?.currentUser;
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
+  const { userMetadata } = useAuthStore();
 
   const changeEmailFn = async (email: string) => {
     const _isValidEmail = isEmailValid(email);
@@ -22,7 +22,7 @@ const useUserChangeEmail = () => {
       return;
     }
     try {
-      await firestore().collection(apiUserInfoCollection).doc(currentUser?.uid).update({
+      await firestore().collection(apiUserInfoCollection).doc(userMetadata?.uid).update({
         email,
       });
       showToast('inviteMatch', 'Email has been changed', 'Success');
@@ -33,17 +33,17 @@ const useUserChangeEmail = () => {
   };
 
   return useMutation({
-    mutationKey: UserMutationsKeys.changeUserEmail(currentUser?.uid || ''),
+    mutationKey: UserMutationsKeys.changeUserEmail(userMetadata?.uid || ''),
     mutationFn: changeEmailFn,
   });
 };
 
 const useUserChangeLocation = () => {
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
-  const currentUser = auth()?.currentUser;
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
+  const { userMetadata } = useAuthStore();
 
   const changeLocationFn = async (state: boolean) => {
-    const uid = currentUser?.uid;
+    const uid = userMetadata?.uid;
     try {
       await firestore().collection(apiUserInfoCollection).doc(uid).update({
         location: state,
@@ -55,56 +55,29 @@ const useUserChangeLocation = () => {
   };
 
   return useMutation({
-    mutationKey: UserMutationsKeys.changeUserLocation(currentUser?.uid || ''),
+    mutationKey: UserMutationsKeys.changeUserLocation(userMetadata?.uid || ''),
     mutationFn: changeLocationFn,
   });
 };
 
-const useSendVerificationCode = () => {
-  const currentUser = auth().currentUser;
-  const sendVerificationCodeFn = async (onSetVerificationId: (verificationId: string) => void, hideConfirmPhoneModal: () => void) => {
-    const phoneNumber = currentUser?.phoneNumber;
-    if (!phoneNumber) {
-      return;
-    }
-    try {
-      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-      onSetVerificationId(confirmation?.verificationId ?? '');
-    } catch (error: any | {code: string}) {
-      console.error('Failed to send verification code:', error);
-      if (error.code === 'auth/too-many-requests') {
-        hideConfirmPhoneModal();
-        showToast('inviteMatch', 'We have blocked all requests from this device due to unusual activity. Try again later.', 'Failed');
-      }
-    }
-  };
-
-  return useMutation({
-    mutationKey: UserMutationsKeys.sendVerificationCode(),
-    mutationFn: (callbacks: {onSetVerificationId: (verificationId: string) => void; hideConfirmPhoneModal: () => void}) =>
-      sendVerificationCodeFn(callbacks.onSetVerificationId, callbacks.hideConfirmPhoneModal),
-  });
-};
 
 const useUserDeleteAccount = () => {
-  const currentUser = auth().currentUser;
+  const { userMetadata } = useAuthStore();
   const userHost = useUser((i: any) => i?.user);
   const {
     userInfo: apiUserInfoCollection,
     events: apiEventsCollection,
     messages: apiMessagesCollection,
   } = useContext(FirebaseCollectionsContext);
-  const deleteUserAccountFn = async (variables: {verificationId: string; code: string}) => {
-    const {verificationId, code} = variables;
+  const deleteUserAccountFn = async (variables: { verificationId: string; code: string }) => {
+    const { verificationId, code } = variables;
 
     if (!verificationId || !code) {
       return;
     }
     try {
-      const credential = auth.PhoneAuthProvider.credential(verificationId, code);
-      await auth().currentUser?.reauthenticateWithCredential(credential);
       await deleteUser();
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const deleteUser = async () => {
@@ -145,9 +118,7 @@ const useUserDeleteAccount = () => {
         }
       }
       await messaging().deleteToken();
-      await auth().currentUser?.delete();
       await firestore().collection(apiUserInfoCollection).doc(userHost.uid).delete();
-      await auth().signOut();
       showToast('inviteMatch', '', 'Your account has been deleted', {
         ownerPhoto: userHost?.photos[0].image,
         status: 'SUCCESSED',
@@ -159,18 +130,18 @@ const useUserDeleteAccount = () => {
   };
 
   return useMutation({
-    mutationKey: UserMutationsKeys.deleteUserAccount(currentUser?.uid || ''),
+    mutationKey: UserMutationsKeys.deleteUserAccount(userMetadata?.uid || ''),
     mutationFn: deleteUserAccountFn,
   });
 };
 
 const useUserUpdateGender = () => {
-  const currentUser = auth().currentUser;
+  const { userMetadata } = useAuthStore();
   const userHost = useUser((i: any) => i?.user);
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
-  const updateUserGenderFn = async (variables: {gender: string; changeActiveGenderItem: () => void}) => {
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
+  const updateUserGenderFn = async (variables: { gender: string; changeActiveGenderItem: () => void }) => {
     try {
-      const {gender, changeActiveGenderItem} = variables;
+      const { gender, changeActiveGenderItem } = variables;
       const uid = userHost?.uid;
       changeActiveGenderItem();
       await firestore().collection(apiUserInfoCollection).doc(uid).update({
@@ -183,18 +154,18 @@ const useUserUpdateGender = () => {
   };
 
   return useMutation({
-    mutationKey: UserMutationsKeys.updateUserGender(currentUser?.uid || ''),
+    mutationKey: UserMutationsKeys.updateUserGender(userMetadata?.uid || ''),
     mutationFn: updateUserGenderFn,
   });
 };
 
 const useUserUpdateShowGenderInProfile = () => {
-  const currentUser = auth().currentUser;
+  const { userMetadata } = useAuthStore();
   const userHost = useUser((i: any) => i?.user);
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
-  const updateShowGenderInProfileFn = async (variables: {state: string; changeShowGenderState: () => void}) => {
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
+  const updateShowGenderInProfileFn = async (variables: { state: string; changeShowGenderState: () => void }) => {
     try {
-      const {state, changeShowGenderState} = variables;
+      const { state, changeShowGenderState } = variables;
       const uid = userHost?.uid;
       await firestore().collection(apiUserInfoCollection).doc(uid).update({
         showGender: state,
@@ -207,15 +178,15 @@ const useUserUpdateShowGenderInProfile = () => {
   };
 
   return useMutation({
-    mutationKey: UserMutationsKeys.updateUserShowGenderInProfile(currentUser?.uid || ''),
+    mutationKey: UserMutationsKeys.updateUserShowGenderInProfile(userMetadata?.uid || ''),
     mutationFn: updateShowGenderInProfileFn,
   });
 };
 
 const useUserUpdateNotificationsSettings = () => {
-  const currentUser = auth().currentUser;
-  const uid = currentUser?.uid;
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userMetadata } = useAuthStore();
+  const uid = userMetadata?.uid;
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const updateNotificationsSettingsFn = async (mode: boolean | Record<string, boolean>) => {
     try {
       await firestore()
@@ -225,14 +196,14 @@ const useUserUpdateNotificationsSettings = () => {
           notificationSettings:
             typeof mode === 'boolean'
               ? {
-                  chat: mode,
-                  joinedEvent: mode,
-                  match: mode,
-                  myEvents: mode,
-                  requests: mode,
-                  superInvite: mode,
-                  superJoin: mode,
-                }
+                chat: mode,
+                joinedEvent: mode,
+                match: mode,
+                myEvents: mode,
+                requests: mode,
+                superInvite: mode,
+                superJoin: mode,
+              }
               : mode,
         });
     } catch (error) {
@@ -241,15 +212,15 @@ const useUserUpdateNotificationsSettings = () => {
   };
 
   return useMutation({
-    mutationKey: UserMutationsKeys.updateUserNotificationsSettings(currentUser?.uid || ''),
+    mutationKey: UserMutationsKeys.updateUserNotificationsSettings(userMetadata?.uid || ''),
     mutationFn: updateNotificationsSettingsFn,
   });
 };
 
 const useUpdateUserEventList = () => {
-  const currentUser = auth().currentUser;
-  const userUid = currentUser?.uid ?? '';
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userMetadata } = useAuthStore();
+  const userUid = userMetadata?.uid ?? '';
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const updateUserEventListFn = async (uid: string) => {
     try {
       await firestore()
@@ -270,10 +241,10 @@ const useUpdateUserEventList = () => {
 };
 
 const useUpdateUserStatusOnline = () => {
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const updateUserOnlineStatus = async (uid: string, isOnline: boolean) => {
     try {
-      await firestore().collection(apiUserInfoCollection).doc(uid).update({online: isOnline});
+      await firestore().collection(apiUserInfoCollection).doc(uid).update({ online: isOnline });
     } catch (error) {
       logErrorToSentry(error);
       throw error;
@@ -281,13 +252,13 @@ const useUpdateUserStatusOnline = () => {
   };
   return useMutation({
     mutationKey: ['updateUserStatusOnline'],
-    mutationFn: ({uid, isOnline}: {uid: string; isOnline: boolean}) => updateUserOnlineStatus(uid, isOnline),
+    mutationFn: ({ uid, isOnline }: { uid: string; isOnline: boolean }) => updateUserOnlineStatus(uid, isOnline),
   });
 };
 
 const useUpdateSuperInvites = () => {
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
-  const updateSuperInvites = async (uid: string, newInvites: Partial<{weeklySuperInvites: number; superInvites: number}>) => {
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
+  const updateSuperInvites = async (uid: string, newInvites: Partial<{ weeklySuperInvites: number; superInvites: number }>) => {
     try {
       await firestore().collection(apiUserInfoCollection).doc(uid).update(newInvites);
     } catch (error) {
@@ -298,13 +269,13 @@ const useUpdateSuperInvites = () => {
 
   return useMutation({
     mutationKey: ['updateSuperInvites'],
-    mutationFn: ({uid, newInvites}: {uid: string; newInvites: Partial<{weeklySuperInvites: number; superInvites: number}>}) =>
+    mutationFn: ({ uid, newInvites }: { uid: string; newInvites: Partial<{ weeklySuperInvites: number; superInvites: number }> }) =>
       updateSuperInvites(uid, newInvites),
   });
 };
 
 const useUpdateSuperJoinsUser = () => {
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const updateSuperJoinsUser = async (uid: string) => {
     try {
       const getDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
@@ -340,7 +311,7 @@ const useUpdateSuperJoinsUser = () => {
 };
 
 const useFetchUserInfo = () => {
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const fetchUserInfo = async (userId: string) => {
     const userDoc = await firestore().collection(apiUserInfoCollection).doc(userId).get();
     if (!userDoc.exists) throw new Error('User not found');
@@ -353,9 +324,9 @@ const useFetchUserInfo = () => {
 };
 
 const useUpdateUserPassedDemo = (onSuccess: () => void) => {
-  const currentUser = auth().currentUser;
-  const uid = currentUser?.uid ?? '';
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userMetadata } = useAuthStore();
+  const uid = userMetadata?.uid ?? '';
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
 
   const updateUserPassedDemoFn = async () => {
     console.log('updateUserPassedDemoFn called, uid:', uid, 'collection:', apiUserInfoCollection);
@@ -380,7 +351,7 @@ const useUpdateUserPassedDemo = (onSuccess: () => void) => {
         firestore()
           .collection(apiUserInfoCollection)
           .doc(uid)
-          .update({isPassedDemo: true})
+          .update({ isPassedDemo: true })
           .then(() => {
             console.log('Promise resolved Successfully updated isPassedDemo');
             return true; // Return a value to indicate success
@@ -410,7 +381,6 @@ const useUpdateUserPassedDemo = (onSuccess: () => void) => {
 
 export const UserMutations = {
   useUserChangeEmail,
-  useSendVerificationCode,
   useUserChangeLocation,
   useUserDeleteAccount,
   useUserUpdateGender,

@@ -4,20 +4,20 @@ import Modal from 'react-native-modal';
 import firestore from '@react-native-firebase/firestore';
 
 //import components
+import {RFValue} from 'react-native-responsive-fontsize';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import FastImage from 'react-native-fast-image';
+import Config from 'react-native-config';
 import useStyles from 'components/Modal/ModalEventRemindes/styles.ts';
 import Button from 'components/Button/Button.tsx';
 
 //import icons
 import {black4Color, blackColor, lightGray18Color, lightGreenColor, whiteColor} from 'constants/colors';
-import {RFValue} from 'react-native-responsive-fontsize';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {commonStackPath, eventEditingPath} from 'constants/pathLocations';
 import {ACCEPTED_STATUS} from 'constants/common';
-import FastImage from 'react-native-fast-image';
 import {useUser} from 'src/store/userStore';
 import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
-import Config from 'react-native-config';
 import {showToast} from 'helpers/showToast';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 

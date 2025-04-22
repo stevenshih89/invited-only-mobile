@@ -1,5 +1,7 @@
-import {FC} from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import { FC, JSX } from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationIndependentTree } from '@react-navigation/native';
+
 import {
   addPhotosPath,
   chooseAccountTypePath,
@@ -9,7 +11,6 @@ import {
   enterNamePath,
   genderPath,
   pendingScreenPath,
-  invitationCodePath,
   myEmailPath,
   myInterestsPath,
   onboardPath,
@@ -20,17 +21,13 @@ import {
   accountRejectedPath,
   codeVerifiedPath,
   verifyFirstStepPath,
-  paymentPath,
   photoVerifiedPath,
   summaryInfoPath,
-  verifySocialProfilePath,
-  checkingSpots,
   addBuisnessPath,
   eulaPath,
   enterTypePath,
   onBoardingDemoPath,
 } from 'constants/pathLocations';
-import {NavigationIndependentTree} from '@react-navigation/native';
 import Onboard from 'screens/Auth/Onboard/Onboard';
 import SignUp from 'screens/Auth/SignUp/SignUp';
 import SignIn from 'screens/Auth/SignIn/SignIn';
@@ -49,12 +46,8 @@ import PendingScreen from 'screens/Auth/AcceptedScreen/PendingScreen/PendingScre
 import AccountRejected from 'screens/Auth/AcceptedScreen/AccountRejected/AccountRejected.tsx';
 import CodeVerified from 'screens/Auth/AcceptedScreen/CodeVerified/CodeVerified.tsx';
 import VerifyFirstStep from 'screens/Auth/VerifyFirstStep/VerifyFirstStep';
-import InvitationCode from 'screens/Auth/InvitationCode/InvitationCode';
-import Payment from 'screens/Auth/Payment/Payment.tsx';
 import PhotoVerified from 'screens/Auth/PhotoVerified/PhotoVerified';
 import SummaryInfo from 'screens/Auth/SummaryInfo/SummaryInfo';
-import VerifySocialProfile from 'screens/Auth/VerifySocialProfile/VerifySocialProfile';
-import {CheckingSpots} from 'screens/Auth/Payment/CheckingSpots';
 import AddBiusness from 'screens/Auth/AddBuisness/AddBuisness';
 import Eula from 'screens/Auth/EulaScreen/EulaScreen';
 import EnterTypeScreen from 'screens/Auth/EnterTypeScreen/EnterTypeScreen';
@@ -66,7 +59,7 @@ const AuthStackScreens: FC = (): JSX.Element => {
 
   return (
     <NavigationIndependentTree>
-      <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{headerShown: false}}>
+      <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{ headerShown: false }}>
         <AuthStack.Screen key={onboardPath} name={onboardPath} component={Onboard} />
         <AuthStack.Screen key={eulaPath} name={eulaPath} component={Eula} />
         <AuthStack.Screen key={enterTypePath} name={enterTypePath} component={EnterTypeScreen} />
@@ -89,12 +82,9 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={accountRejectedPath} name={accountRejectedPath} component={AccountRejected} />
         <AuthStack.Screen key={codeVerifiedPath} name={codeVerifiedPath} component={CodeVerified} />
         <AuthStack.Screen key={verifyFirstStepPath} name={verifyFirstStepPath} component={VerifyFirstStep} />
-        <AuthStack.Screen key={invitationCodePath} name={invitationCodePath} component={InvitationCode} />
-        <AuthStack.Screen key={paymentPath} name={paymentPath} component={Payment} />
         <AuthStack.Screen key={photoVerifiedPath} name={photoVerifiedPath} component={PhotoVerified} />
         <AuthStack.Screen key={summaryInfoPath} name={summaryInfoPath} component={SummaryInfo} />
-        <AuthStack.Screen key={verifySocialProfilePath} name={verifySocialProfilePath} component={VerifySocialProfile} />
-        <AuthStack.Screen key={checkingSpots} name={checkingSpots} component={CheckingSpots} />
+
       </AuthStack.Navigator>
     </NavigationIndependentTree>
   );

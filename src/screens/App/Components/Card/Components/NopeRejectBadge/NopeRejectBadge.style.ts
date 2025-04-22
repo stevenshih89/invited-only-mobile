@@ -1,7 +1,7 @@
 import { BlurView } from "@react-native-community/blur";
-import { blackColor, whiteColor } from "constants/colors";
-import { Satoshi500 } from "constants/fonts";
 import styled from "styled-components/native";
+import { whiteColor } from "constants/colors";
+import { Satoshi500 } from "constants/fonts";
 
 export const NopeRejectBadgeContainer = styled.View`
   width: 100%;

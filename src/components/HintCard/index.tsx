@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {TouchableOpacity} from 'react-native';
-import Button from 'components/Button/Button.tsx';
 import * as S from './index.style';
+import Button from 'components/Button/Button.tsx';
 
 interface IHintCardProps {
   currentStep: number;

@@ -1,8 +1,8 @@
 import {Text, TextInput, View} from 'react-native';
 import {FC, useRef} from 'react';
+import * as S from './Input.style';
 import {errorColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {InputProps} from 'typescript/interfaces';
-import * as S from './Input.style';
 
 const Input: FC<InputProps> = ({
   errorText,

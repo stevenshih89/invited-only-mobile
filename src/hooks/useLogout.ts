@@ -1,26 +1,16 @@
-import {useContext} from 'react';
-import auth from '@react-native-firebase/auth';
-import {AuthContext} from 'contexts/AuthContext.tsx';
-import {calculateAge} from 'helpers/calculateAge.ts';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {showToast} from 'helpers/showToast';
 import messaging from '@react-native-firebase/messaging';
-import {useUser} from 'src/store/userStore';
+import { showToast } from 'helpers/showToast';
+import { useAuthStore } from 'src/store/authStore';
+
 
 export const useLogout = (onClose: () => void) => {
-  const {setUser} = useContext(AuthContext);
-  const userHost = useUser((i: any) => i?.user);
-  const setHookUser = useUser((i: any) => i?.setUser);
 
-  const userAge = calculateAge(userHost?.date);
+  const { logout } = useAuthStore();
 
   const handleLogout = async () => {
     try {
-      await auth().signOut();
-      showToast('inviteMatch', '', 'You logged out from your account', {ownerPhoto: userHost?.photos[0].image, status: 'SUCCESSFULY'});
-      setUser([]);
-      setHookUser(null);
-      await AsyncStorage.removeItem('uid');
+      showToast('inviteMatch', '', 'You logged out from your account', { status: 'SUCCESSFULY' });
+      logout();
       await messaging().deleteToken();
       onClose();
     } catch (error) {
@@ -29,8 +19,6 @@ export const useLogout = (onClose: () => void) => {
   };
 
   return {
-    userHost,
-    userAge,
     handleLogout,
   };
 };

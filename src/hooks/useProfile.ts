@@ -1,11 +1,9 @@
-import {useState, useCallback, useEffect, useContext} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import firestore from '@react-native-firebase/firestore';
-import {useFocusEffect} from '@react-navigation/native';
 import {useAdminActions} from 'src/store/adminActions';
 import {useUser} from 'src/store/userStore';
 import {myProfileViewPath} from 'constants/pathLocations';
 import {calculateAge} from 'helpers/calculateAge';
-import {getEventsIJoining} from 'helpers/getEventsIJoining';
 
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {useAppNavigation} from 'hooks/useAppNavigation';

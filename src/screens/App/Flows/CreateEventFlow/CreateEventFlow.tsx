@@ -1,4 +1,3 @@
-import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import React from 'react';
 import {Formik} from 'formik';
 import useCreateEventFlowStep from './hooks/useCreateEventFlowStep';
@@ -8,9 +7,10 @@ import GuestInvitationStep from './Components/GuestInvitationStep/GuestInvitatio
 import EventPlaceStep from './Components/EventPlaceStep/EventPlaceStep';
 import PreviewEventStep from './Components/PreviewEventStep/PreviewEventStep';
 
-import AppLoader from 'screens/App/AppLoader/AppLoader';
 import {handleNextStep, initialValues, validationSchema} from './CreateEvent.form';
 import useCreateEvent from './hooks/useCreateEvent';
+import AppLoader from 'screens/App/AppLoader/AppLoader';
+import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import {useAppNavigation, useNavigationState} from 'hooks/useAppNavigation';
 
 export interface CreateEventFormValues {

@@ -1,4 +1,3 @@
-import { View } from "react-native"
 import * as S from './CardActionsButtons.style';
 
 interface CardActionsButtonsProps {

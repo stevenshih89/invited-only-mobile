@@ -1,20 +1,20 @@
-import React, {FC, useContext} from 'react';
-import {View, Text, Image} from 'react-native';
-import PersonIcon from 'assets/images/icons/profile-2user.svg';
-import CalendarIcon from 'assets/images/icons/calendar.svg';
+import React, { FC, useContext } from 'react';
+import { View, Text, Image } from 'react-native';
 import Modal from 'react-native-modal';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
+import PersonIcon from 'assets/images/icons/profile-2user.svg';
+import CalendarIcon from 'assets/images/icons/calendar.svg';
+import { useAuthStore } from 'src/store/authStore.ts';
 
 //import components
 import useStyles from 'components/Modal/ModalCancelOrConfirmInvitation/styles.ts';
 import Button from 'components/Button/Button.tsx';
-import {showToast} from 'helpers/showToast.ts';
-import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
-import {requestsPath} from 'constants/pathLocations.ts';
-import Config from 'react-native-config';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
+import { showToast } from 'helpers/showToast.ts';
+import { useAppNavigation } from 'hooks/useAppNavigation.tsx';
+import { requestsPath } from 'constants/pathLocations.ts';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
+
 interface ModalCancelInvitationProps {
   cancelInvitation?: boolean;
   setCancelInvitation?: any;
@@ -43,11 +43,11 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
   const styles = useStyles();
   const navigation = useAppNavigation();
 
-  const {events: apiEventsCollection, messages: apiMessagesCollection} = useContext(FirebaseCollectionsContext);
+  const { events: apiEventsCollection, messages: apiMessagesCollection } = useContext(FirebaseCollectionsContext);
 
   const handleUnmatchEvent = async () => {
     try {
-      const user = auth().currentUser;
+      const { userMetadata } = useAuthStore();
       await firestore().collection(apiMessagesCollection).doc(eventId).delete();
       const getDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
       const data = getDoc.data();
@@ -55,7 +55,7 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
         .collection(apiEventsCollection)
         .doc(eventId)
         .update({
-          usersList: data?.usersList.filter(item => item.uid !== user?.uid),
+          usersList: data?.usersList.filter((item: any) => item.uid !== userMetadata?.uid),
         });
       setCancelInvitation(false);
       setHostMenu(false);
@@ -84,17 +84,17 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
       swipeDirection={['down']}>
       <View style={styles.wrapper}>
         <View style={styles.whiteLine} />
-        <View style={{width: '100%'}}>
-          <Image resizeMode="contain" source={{uri: imageBg}} style={{width: '100%'}} />
-          <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, marginBottom: 21}}>
-            <Text style={{color: 'white'}}>{title}</Text>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{ width: '100%' }}>
+          <Image resizeMode="contain" source={{ uri: imageBg }} style={{ width: '100%' }} />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, marginBottom: 21 }}>
+            <Text style={{ color: 'white' }}>{title}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <PersonIcon width={12} height={12} />
-              <Text style={{color: 'white', marginLeft: 5}}>{girlInvitation} x Guest invitation</Text>
+              <Text style={{ color: 'white', marginLeft: 5 }}>{girlInvitation} x Guest invitation</Text>
             </View>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <CalendarIcon width={12} height={12} />
-              <Text style={{color: 'white', marginLeft: 5}}>{data}</Text>
+              <Text style={{ color: 'white', marginLeft: 5 }}>{data}</Text>
             </View>
           </View>
         </View>
@@ -110,7 +110,7 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
               showToast('inviteMatch', 'Go to my events >', 'Successfully! See you on Nammos Dubai');
             }
           }}
-          buttonStyle={{width: '100%'}}
+          buttonStyle={{ width: '100%' }}
           title={typeModal === 'cancel' ? 'Yes, cancel invitation' : 'Yes, accept invitation'}
         />
         <Button
@@ -124,7 +124,7 @@ const ModalCancelOrConfirmInvitation: FC<ModalCancelInvitationProps> = ({
               showToast('inviteMatch', '', 'You rejected invitation');
             }
           }}
-          buttonStyle={{width: '100%'}}
+          buttonStyle={{ width: '100%' }}
           variant="transparent"
           title={typeModal === 'cancel' ? 'Cancel' : 'No, cancel invitation'}
         />

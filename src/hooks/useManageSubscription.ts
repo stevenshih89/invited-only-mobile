@@ -1,18 +1,18 @@
-import { formatDate } from "helpers/formatDate";
-import { useAppNavigation } from "./useAppNavigation";
-import { paymentPath } from "constants/pathLocations";
-import { useSubscriptions } from "src/store/subscriptionsStore";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from 'react';
+import {useAppNavigation} from './useAppNavigation';
+import {formatDate} from 'helpers/formatDate';
+import {paymentPath} from 'constants/pathLocations';
+import {useSubscriptions} from 'src/store/subscriptionsStore';
 
 export const useManageSubscription = () => {
-    const [subscriptionName, setSubscriptionName] = useState('')
+  const [subscriptionName, setSubscriptionName] = useState('');
 
-  const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions)
+  const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions);
 
-  const lastSubscriptionName = currentSubscriptions.activeSubscriptions.at(-1)
-  const lastSubscriptionData = currentSubscriptions.latestExpirationDate;
-  const purchaseDates = currentSubscriptions.allPurchaseDates[lastSubscriptionName]
-  
+  const lastSubscriptionName = currentSubscriptions?.activeSubscriptions?.at(-1);
+  const lastSubscriptionData = currentSubscriptions?.latestExpirationDate;
+  const purchaseDates = currentSubscriptions?.allPurchaseDates?.[lastSubscriptionName];
+
   useEffect(() => {
     switch (lastSubscriptionName) {
       case 'io_59_1w':
@@ -30,18 +30,14 @@ export const useManageSubscription = () => {
   }, []);
 
   const formateDateFun = (date: string) => {
-    const convertDate = date
-      .split('T')[0]
-      .split('-')
-      .reverse()
-      .join('.');
-      const res = formatDate(convertDate)
-      return res
-  }
+    const convertDate = date.split('T')[0].split('-').reverse().join('.');
+    const res = formatDate(convertDate);
+    return res;
+  };
 
   const navigation = useAppNavigation();
 
-  const goToMyPaymentPath= () => {
+  const goToMyPaymentPath = () => {
     navigation.navigate(paymentPath as never);
   };
 
@@ -51,6 +47,6 @@ export const useManageSubscription = () => {
     lastSubscriptionData,
     purchaseDates,
     formateDateFun,
-    goToMyPaymentPath
-  }
-}
+    goToMyPaymentPath,
+  };
+};

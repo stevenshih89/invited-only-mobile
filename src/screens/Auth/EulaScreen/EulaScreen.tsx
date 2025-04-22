@@ -1,16 +1,17 @@
 import React, {FC, JSX, useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import LinearGradient from 'react-native-linear-gradient';
+import getSymbolFromCurrency from 'currency-symbol-map';
+import * as S from './EulaScreen.style';
 import ArrowLeftArrow from 'assets/images/icons/arrow-left.svg';
 import {backgroundGradientColors, black1Color, lightGray16Color, transparentWhite16Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {enterTypePath} from 'constants/pathLocations';
-import LinearGradient from 'react-native-linear-gradient';
 import {getSubscriptions} from 'src/api.deprecated/purchase';
-import getSymbolFromCurrency from 'currency-symbol-map';
 import {screenHeight} from 'constants/common';
-import * as S from './EulaScreen.style';
+
 interface PlanListItem {
   id: number;
   identifier?: string;

@@ -1,10 +1,10 @@
 import styled from 'styled-components/native';
-import {black4Color, blackColor, lightGreenColor, whiteColor} from 'constants/colors';
-import {Satoshi500, Satoshi700} from 'constants/fonts';
 import {RFValue} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
-import {screenHeight, screenWidth} from 'constants/common';
 import LinearGradient from 'react-native-linear-gradient';
+import {black4Color, blackColor, lightGreenColor, whiteColor} from 'constants/colors';
+import {Satoshi500, Satoshi700} from 'constants/fonts';
+import {screenHeight, screenWidth} from 'constants/common';
 
 export const EventImage = styled(FastImage)`
   width: ${screenWidth * 0.53}px;
