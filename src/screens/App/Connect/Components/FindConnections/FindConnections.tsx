@@ -5,6 +5,7 @@ import AppLoader from 'screens/App/AppLoader/AppLoader';
 import Card from 'screens/App/Components/Card/Card';
 import LockedFeatureComponent from 'screens/App/Components/LockedFeatureComponent/LockedFeatureComponent';
 import invitedOnlyBackendApi from 'src/api/backend-api';
+import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 
 const FindConnections = () => {
   const {data: userRespoonse, isLoading} = invitedOnlyBackendApi.useQuery('get', '/users/event/{eventId}', {
@@ -14,6 +15,7 @@ const FindConnections = () => {
       },
     },
   });
+
   if (isLoading) {
     return (
       <DefaultBackground>
@@ -36,6 +38,7 @@ const FindConnections = () => {
           </Card>
         ))}
       </S.Container>
+      <ModalLockedAccount />
     </DefaultBackground>
   );
 };

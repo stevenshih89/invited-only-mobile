@@ -8,7 +8,7 @@ const MyEventsEmptyFallback = () => {
   return (
     <DefaultBackground>
       <S.Container>
-        <S.EmptyFallbackImage source={MyEventsFallbackImage} />
+        <S.EmptyFallbackImage resizeMode="contain" source={MyEventsFallbackImage} />
         <S.FallbackTextContainer>
           <S.TextContainer>
             <S.FallbackTitleText>No events</S.FallbackTitleText>

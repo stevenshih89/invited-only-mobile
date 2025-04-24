@@ -1,0 +1,23 @@
+import * as S from './ExploreEventsEmptyFallback.style';
+import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
+import MyEventsFallbackImage from 'src/assets/images/app/joined-events-empty-fallback.png';
+
+const ExploreEventsEmptyFallback = () => {
+  return (
+    <DefaultBackground>
+      <S.Container>
+        <S.EmptyFallbackImage resizeMode="contain" source={MyEventsFallbackImage} />
+        <S.FallbackTextContainer>
+          <S.TextContainer>
+            <S.FallbackTitleText>{`Build Your Profile,\nGet More Invites`}</S.FallbackTitleText>
+          </S.TextContainer>
+          <S.TextContainer>
+            <S.FallbackInstructorTex>Add details to attract invites!</S.FallbackInstructorTex>
+          </S.TextContainer>
+        </S.FallbackTextContainer>
+      </S.Container>
+    </DefaultBackground>
+  );
+};
+
+export default ExploreEventsEmptyFallback;

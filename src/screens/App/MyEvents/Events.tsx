@@ -3,7 +3,8 @@ import * as S from './Events.style';
 import MyEvents from './MyEvents'; // Your existing list component
 import JoinedEventsScreen from './Components/JoinedEventsScreen/JoinedEventsScreen'; // The placeholder
 import EventsHeader from './Components/EventsHeader/EventsHeader';
-import DefaultBackground from 'components/DefaultBackground/DefaultBackground'; // Assuming path
+import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
+import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 
 type TabType = 'MyEvents' | 'JoinedEvents';
 
@@ -27,6 +28,7 @@ const Events = () => {
           {activeTab === 'JoinedEvents' && <JoinedEventsScreen />}
         </S.ContentContainer>
       </S.ScreenContainer>
+      <ModalLockedAccount />
     </DefaultBackground>
   );
 };

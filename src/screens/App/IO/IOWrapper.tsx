@@ -1,16 +1,16 @@
-import { Text } from 'react-native';
+import {Text} from 'react-native';
 import AppLoader from '../AppLoader/AppLoader';
 import IO from './IO';
-
+import {useAuthStore} from 'src/store/authStore';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import invitedOnlyBackendApi from 'src/api/backend-api';
-
-import { useAuthStore } from 'src/store/authStore';
+import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
+import ModalUpgradeAccount from 'components/Modal/ModalUpgradeAccount/ModalUpgradeAccount';
 
 const IOWrapper = () => {
-  const { userMetadata: user } = useAuthStore();
+  const {userMetadata: user} = useAuthStore();
   console.log('user', user);
-  const { data: events, isLoading } = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
+  const {data: events, isLoading} = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
     params: {
       path: {
         hostId: user?.uid || '',
@@ -22,13 +22,17 @@ const IOWrapper = () => {
     return (
       <DefaultBackground>
         <AppLoader />
+        <ModalLockedAccount />
+        <ModalUpgradeAccount />
       </DefaultBackground>
     );
   }
   if (events.length === 0) {
     return (
       <DefaultBackground>
-        <Text style={{ color: 'white' }}>No events found</Text>
+        <Text style={{color: 'white'}}>No events found</Text>
+        <ModalLockedAccount />
+        <ModalUpgradeAccount />
       </DefaultBackground>
     );
   }

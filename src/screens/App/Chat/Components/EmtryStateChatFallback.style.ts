@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
-import { Satoshi400, Satoshi500, Satoshi700 } from "constants/fonts";
+import { Satoshi400, Satoshi500 } from "constants/fonts";
 import { whiteColor, blackColor } from "constants/colors";
 import { screenWidth, screenHeight } from "constants/common";
 
@@ -11,11 +11,11 @@ export const Container = styled(View)`
   justify-content: center;
   gap: ${screenWidth * 0.06}px;
   height: ${screenHeight * 0.5}px;
-  width: ${screenWidth * 0.7}px;    
+  width: ${screenWidth * 0.7}px;
 `;
 export const EmptyStateTitle = styled(Text)`
-  font-size: 20px;
-  font-family: ${Satoshi700};
+  font-size: 24px;
+  font-family: ${Satoshi500};
   color: ${whiteColor};
 `;
 

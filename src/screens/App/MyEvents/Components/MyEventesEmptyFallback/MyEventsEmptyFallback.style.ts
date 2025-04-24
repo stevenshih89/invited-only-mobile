@@ -2,30 +2,29 @@ import FastImage from 'react-native-fast-image';
 
 import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
-import {Satoshi400} from 'constants/fonts';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 import {screenHeight} from 'constants/common';
 import {whiteColor} from 'constants/colors';
 
 export const Container = styled.View`
   display: flex;
-  justify-content: center;
+  margin-top: ${screenHeight / 20}px;
   align-items: center;
   width: 100%;
-  gap: 20px;
-  height: ${screenHeight * 0.7}px;
+  gap: 10px;
+  height: 100%;
 `;
 export const EmptyFallbackImage = styled(FastImage)`
-  height: 275px;
   width: 250px;
+  aspect-ratio: 1;
 `;
 
-export const FallbackTextContainer = styled.Text`
+export const FallbackTextContainer = styled.View`
   display: flex;
-  flex-direction: row;
   width: 60%;
   text-align: center;
-
-  padding: 10px;
+  margin-top: ${screenHeight / 40}px;
+  padding-horizontal: 10px;
 `;
 
 export const TextContainer = styled.View`
@@ -36,14 +35,14 @@ export const TextContainer = styled.View`
 `;
 
 export const FallbackTitleText = styled.Text`
-  font-family: ${Satoshi400};
   flex-direction: column;
+  font-family: ${Satoshi500};
   align-items: center;
 
   justify-content: center;
   gap: 8px;
   color: ${whiteColor};
-  font-size: ${RFValue(24, 812)};
+  font-size: ${RFValue(24, 932)};
 `;
 
 export const FallbackInstructorTex = styled.Text`
@@ -54,5 +53,5 @@ export const FallbackInstructorTex = styled.Text`
   gap: 8px;
   color: ${whiteColor};
   opacity: 0.7;
-  font-size: ${RFValue(16, 812)};
+  font-size: ${RFValue(16, 932)};
 `;
