@@ -1,5 +1,4 @@
-import {isIos} from 'constants/common';
-import {FC, JSX, useContext, useEffect, useState} from 'react';
+import { RouteProp } from '@react-navigation/native';
 import {
   AppState,
   Keyboard,
@@ -11,31 +10,31 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import Button from 'components/Button/Button';
-import Input from 'components/Inputs/Input';
-import {useAppNavigation, useRoute} from 'hooks/useAppNavigation';
-import {RouteProp} from '@react-navigation/native';
-import {verifySocialProfilePath} from 'constants/pathLocations.ts';
-import {AuthContext} from 'contexts/AuthContext.tsx';
+import { FC, JSX, useContext, useEffect, useState } from 'react';
 import firestore from '@react-native-firebase/firestore';
-import {showToast} from 'helpers/showToast.ts';
-import {backgroundGradientColors, errorColor, transparentWhite30Color, whiteColor} from 'constants/colors';
-import {Outfit500, Satoshi500} from 'constants/fonts';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import auth from '@react-native-firebase/auth';
-import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import {RootStackParamList} from 'typescript/types';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
-import {AppEventsLogger} from 'react-native-fbsdk-next';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
+import { AppEventsLogger } from 'react-native-fbsdk-next';
+import { isIos } from 'constants/common';
+import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
+import Button from 'components/Button/Button';
+import Input from 'components/Inputs/Input';
+import { useAppNavigation, useRoute } from 'hooks/useAppNavigation';
+import { verifySocialProfilePath } from 'constants/pathLocations.ts';
+import { AuthContext } from 'contexts/AuthContext.tsx';
+import { showToast } from 'helpers/showToast.ts';
+import { backgroundGradientColors, errorColor, transparentWhite30Color, whiteColor } from 'constants/colors';
+import { Outfit500, Satoshi500 } from 'constants/fonts';
+import ArrowLeft from 'assets/images/icons/arrow-left.svg';
+import { RootStackParamList } from 'typescript/types';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
 
 const InvitationCode: FC = (): JSX.Element => {
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const [code, setCode] = useState<string>('');
   const [invalidCode, setInvalidCode] = useState(false);
   const [isFocusInput, setIsfocusInput] = useState<boolean>(false);
@@ -44,66 +43,9 @@ const InvitationCode: FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const route = useRoute<RouteProp<RootStackParamList, '/invitation-code'>>();
-  const {cameFromSummary = false} = route?.params || {};
+  const { cameFromSummary = false } = route?.params || {};
 
-  const {onBoarding, setOnBoarding} = useContext(AuthContext);
-
-  useEffect(() => {
-    let subscription: any;
-    if (cameFromSummary) {
-      const name = onBoarding.find((item: any) => item.name)?.name;
-      const email = onBoarding.find((item: any) => item.email)?.email;
-      const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
-      const date = onBoarding.find((item: any) => item.date)?.date;
-      const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
-      const photos = onBoarding.find((item: any) => item.photos)?.photos;
-      const facePhoto = onBoarding.find((item: any) => item.facePhoto)?.facePhoto;
-
-      const handleAppClose = async () => {
-        try {
-          await firestore()
-            .collection('unfinishedRegistrationUsers')
-            .doc(auth()?.currentUser?.uid)
-            .set({
-              name,
-              email,
-              accountType,
-              date,
-              gender,
-              photos,
-              facePhoto,
-              phoneNumber: auth()?.currentUser?.phoneNumber,
-              createdAt: moment().format('YYYY-MM-DD'),
-              screen: 'invitation-code',
-            });
-          analytics().logEvent('invitation_code_app_closed', {
-            name,
-            email,
-            accountType,
-            date,
-            gender,
-            photos,
-            facePhoto,
-            phoneNumber: auth()?.currentUser?.phoneNumber,
-            createdAt: moment().format('YYYY-MM-DD'),
-            screen: 'invitation-code',
-          });
-        } catch (e) {
-          console.error(e);
-          logErrorToSentry(e);
-        }
-      };
-
-      subscription = AppState.addEventListener('change', nextAppState => {
-        if (nextAppState === 'background') {
-          handleAppClose();
-        }
-      });
-    }
-    return () => {
-      subscription?.remove?.();
-    };
-  }, []);
+  const { onBoarding, setOnBoarding } = useContext(AuthContext);
 
   const generateInviteCode = () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -118,7 +60,7 @@ const InvitationCode: FC = (): JSX.Element => {
         const randomIndex = Math.floor(Math.random() * characters.length);
         inviteCode += characters.charAt(randomIndex);
       }
-      inviteCodes.push({isActive: true, inviteCode: inviteCode});
+      inviteCodes.push({ isActive: true, inviteCode: inviteCode });
     }
 
     return inviteCodes;
@@ -132,86 +74,7 @@ const InvitationCode: FC = (): JSX.Element => {
     return `${day} ${month} ${year}`;
   };
 
-  const handleRegisterUser = async (onBoardingValue: any) => {
-    try {
-      setLoading(true);
-      const registrationDate = new Date();
-      const formattedDate = formatDate(registrationDate);
-      const user = auth().currentUser;
-      const phoneNumber = user?.phoneNumber;
 
-      const mergedObject = {};
-      await AsyncStorage.setItem('onBoarding', 'true');
-
-      onBoardingValue?.forEach(obj => {
-        Object.keys(obj)?.forEach(key => {
-          // @ts-ignore
-          mergedObject[key] = obj[key];
-        });
-      });
-
-      const userId = user?.uid;
-      const facePhoto = mergedObject?.facePhoto || '';
-
-      const photos = mergedObject?.photos || [];
-
-      const isTurnNotifications = onBoardingValue?.find((item: any) => 'notifications' in item);
-
-      const isTurnedNotifications = isTurnNotifications?.notifications ?? false;
-
-      const createdAt = moment().format('YYYY-MM-DD');
-      const newUserData = {
-        ...mergedObject,
-        uid: userId,
-        codeForInvitingOtherUsers: generateInviteCode(),
-        registrationDate: formattedDate,
-        createdAt,
-        phoneNumber: phoneNumber,
-        accountConfirmed: true,
-        accountReviewed: true,
-        accountPremium: false,
-        notifications: [],
-        weeklySuperInvites: 5,
-        superInvites: 0,
-        facePhoto: facePhoto,
-        photos: photos,
-        lastUpdateSuperInvite: Date.now(),
-        notificationSettings: {
-          chat: isTurnedNotifications,
-          joinedEvent: isTurnedNotifications,
-          match: isTurnedNotifications,
-          myEvents: isTurnedNotifications,
-          requests: isTurnedNotifications,
-          superInvite: isTurnedNotifications,
-          superJoin: isTurnedNotifications,
-        },
-        userBeauty: 1,
-      };
-
-      await firestore()
-        .collection(apiUserInfoCollection)
-        .doc(`${userId}`)
-        .set(newUserData)
-        .finally(() => {
-          setLoading(false);
-        });
-      await firestore().collection('unfinishedRegistrationUsers').doc(`${userId}`).delete();
-
-      AppEventsLogger.logEvent('registration_completed', {
-        userId: userId as string,
-        createdAt,
-        name: mergedObject?.name,
-        accountType: mergedObject?.accountType,
-        date: mergedObject?.date,
-        gender: mergedObject?.gender,
-      });
-    } catch (e) {
-      console.error(e);
-      showToast('inviteMatch', 'Failed to complete registration. Please try again.', 'Error');
-      setLoading(false);
-      logErrorToSentry(e);
-    }
-  };
 
   const handleNext = async () => {
     try {
@@ -245,7 +108,7 @@ const InvitationCode: FC = (): JSX.Element => {
           return item;
         });
 
-        await usersRef.doc(userUid).update({codeForInvitingOtherUsers: updateCodeInvitions});
+        await usersRef.doc(userUid).update({ codeForInvitingOtherUsers: updateCodeInvitions });
 
         const onboardingData = [
           ...onBoarding,
@@ -265,7 +128,7 @@ const InvitationCode: FC = (): JSX.Element => {
 
         setOnBoarding(onboardingData);
         if (cameFromSummary) {
-          await handleRegisterUser(onboardingData);
+          /// TODO: add logic for summary
         } else {
           try {
             await firestore().collection(apiUserInfoCollection).doc(auth()?.currentUser?.uid).update({
@@ -276,9 +139,9 @@ const InvitationCode: FC = (): JSX.Element => {
             console.log('error update user', error);
           }
         }
-        navigation.navigate('/code-verified', {cameFromSummary} as never);
+        navigation.navigate('/code-verified', { cameFromSummary } as never);
       } else {
-        showToast('inviteMatch', 'Please try anther code', 'The invitation code has already been used', {status: 'error'});
+        showToast('inviteMatch', 'Please try anther code', 'The invitation code has already been used', { status: 'error' });
         setInvalidCode(true);
       }
     } catch (error) {
@@ -291,10 +154,10 @@ const InvitationCode: FC = (): JSX.Element => {
   }, [code]);
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
+    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1, paddingBottom: 0 }}>
         <TouchableWithoutFeedback onPress={Keyboard?.dismiss}>
-          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
+          <SafeAreaView style={{ flex: 1, paddingBottom: 0 }}>
             <View
               style={{
                 flex: 1,
@@ -316,7 +179,7 @@ const InvitationCode: FC = (): JSX.Element => {
                     <TouchableOpacity
                       onPress={() => navigation.goBack()}
                       activeOpacity={0.7}
-                      hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                      hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                       style={{
                         position: 'absolute',
                         left: 0,
@@ -333,7 +196,7 @@ const InvitationCode: FC = (): JSX.Element => {
                   <LogoPrimary2 />
                 </View>
                 <View />
-                <View style={{marginTop: 64}}>
+                <View style={{ marginTop: 64 }}>
                   <View
                     style={{
                       paddingHorizontal: 36,
@@ -345,8 +208,8 @@ const InvitationCode: FC = (): JSX.Element => {
                       borderBottomWidth: 0,
                       borderWidth: 1,
                     }}>
-                    <View style={{width: '100%'}}>
-                      <Text style={{color: whiteColor, textAlign: 'center', fontFamily: Satoshi500, fontSize: RFValue(34, 812)}}>
+                    <View style={{ width: '100%' }}>
+                      <Text style={{ color: whiteColor, textAlign: 'center', fontFamily: Satoshi500, fontSize: RFValue(34, 812) }}>
                         Do you have an invitation code?
                       </Text>
                     </View>
@@ -361,7 +224,7 @@ const InvitationCode: FC = (): JSX.Element => {
                         marginVertical: 20,
                       }}
                     />
-                    <View style={{width: '100%', marginBottom: 40}}>
+                    <View style={{ width: '100%', marginBottom: 40 }}>
                       <Input
                         testID="invitation-code-input"
                         onPressFocus={() => setIsfocusInput(true)}
@@ -405,13 +268,13 @@ const InvitationCode: FC = (): JSX.Element => {
                         borderStyle: 'dashed',
                       }}
                     />
-                    <Text style={{color: whiteColor, fontFamily: Outfit500, textAlign: 'center', fontSize: RFValue(14, 812)}}>
+                    <Text style={{ color: whiteColor, fontFamily: Outfit500, textAlign: 'center', fontSize: RFValue(14, 812) }}>
                       THIS APP IS FOR INVITED ONLY.
                     </Text>
                   </View>
                 </View>
               </ScrollView>
-              <View style={{marginBottom: 4, marginTop: isFocusInput ? 16 : 0}}>
+              <View style={{ marginBottom: 4, marginTop: isFocusInput ? 16 : 0 }}>
                 <Button
                   testID="apply-code-button"
                   onPress={() => handleNext()}
@@ -422,7 +285,7 @@ const InvitationCode: FC = (): JSX.Element => {
                 {!isFocusInput && cameFromSummary && (
                   <Button
                     onPress={() => navigation.navigate(verifySocialProfilePath as never)}
-                    buttonTitleStyle={{textDecorationLine: 'underline'}}
+                    buttonTitleStyle={{ textDecorationLine: 'underline' }}
                     title="I don't have a code"
                     variant="transparent"
                   />

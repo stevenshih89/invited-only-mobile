@@ -23,16 +23,13 @@ import {
   notificationsStackPath,
   privacyPath,
   profileStackPath,
-  superInvitePayPath,
+
   userProfilePath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
 import InvitationCode from 'screens/Auth/InvitationCode/InvitationCode.tsx';
-import PendingScreen from 'screens/Auth/AcceptedScreen/PendingScreen/PendingScreen';
-import AccountRejected from 'screens/Auth/AcceptedScreen/AccountRejected/AccountRejected';
-import CodeVerified from 'screens/Auth/AcceptedScreen/CodeVerified/CodeVerified';
-import useStyles from 'navigator/AppStackScreens/styles.ts';
+import useStyles from 'src/Navigator/AppStackScreens/styles.ts';
 import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView.tsx';
 import ThreeDotsIcon from 'assets/images/icons/more-white.svg';
 import Privacy from 'screens/Auth/Privacy/Privacy.tsx';
@@ -42,6 +39,7 @@ import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper.tsx';
 import Events from 'screens/App/MyEvents/Events.tsx';
 import Connect from 'screens/App/Connect/Connect.tsx';
 import { blackColor } from 'constants/colors.ts';
+import Chat from 'screens/App/Chat/Chat';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -228,7 +226,7 @@ const AppStackScreen = () => {
         screenOptions={screenOptions}
       />
       <AppStack.Screen key={profileStackPath} name={profileStackPath} component={ProfileStackScreen} />
- <AppStack.Screen key={invitationCodePath} name={invitationCodePath} component={InvitationCode} />
+      <AppStack.Screen key={invitationCodePath} name={invitationCodePath} component={InvitationCode} />
       <AppStack.Screen key={eventRequestStackPath} name={eventRequestStackPath} component={EventRequestsStackScreen} />
       <AppStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={EventCreatingStackScreen} />
       <AppStack.Screen key={userProfilePath} name={userProfilePath} component={UserProfileStackScreen} screenOptions={{ cardStyle: { backgroundColor: blackColor } }} />
