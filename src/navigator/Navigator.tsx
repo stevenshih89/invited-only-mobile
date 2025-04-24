@@ -13,10 +13,11 @@ const Navigator = () => {
     messaging().onMessage(async () => { });
   }, []);
 
-
   return <S.NavigatorContainer>
     {onBoarding.isOnboardingCompleted ? <AppStackScreens /> : <AuthStackScreens />}
   </S.NavigatorContainer>;
+
+
 };
 
 export default Navigator;
