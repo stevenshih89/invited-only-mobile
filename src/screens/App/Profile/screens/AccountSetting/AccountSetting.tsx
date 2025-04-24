@@ -1,20 +1,28 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { Switch } from '@rneui/themed';
-import { View } from 'react-native';
 import ModalConfirmPhone from '../Settings/ModalConfirmPhone';
 import * as S from './AccountSetting.style';
 import ArrowRight from 'assets/images/icons/arrow-right-s-line.svg';
 import TrashIcon from 'assets/images/icons/trash-solid.svg';
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
 import Button from 'components/Button/Button';
-import { blackColor, whiteColor } from 'constants/colors';
+import { whiteColor } from 'constants/colors';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
+import AppLoader from 'screens/App/AppLoader/AppLoader';
 
-const AccountSetting: FC<{
-  route: any;
-}> = ({ route }) => {
+const AccountSetting: FC = () => {
+  const { logout } = useAuthStore();
   const { userMetadata: user } = useAuthStore();
+  const { mutate: deleteUser, isPending: isDeletingUser } = invitedOnlyBackendApi.useMutation('delete', '/users/{id}', {
+    onSuccess: () => {
+      logout();
+    },
+    onError: (error) => {
+      console.error(error);
+    }
+  })
+
   const { data: userData } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
     params: {
       path: {
@@ -23,11 +31,17 @@ const AccountSetting: FC<{
     },
   });
 
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+
+
   const userPhone = userData?.phoneNumber;
 
+  if (isDeletingUser) {
+    return <AppLoader />
+  }
   return (
-    <View>
-      <S.Container>
+    <S.Container>
+      <S.InnerContainer>
         <S.StyledScrollView>
           <S.ContactSection>
             <S.ContactTitle>Contact</S.ContactTitle>
@@ -41,7 +55,7 @@ const AccountSetting: FC<{
               </S.PhoneNumberContainer>
             </S.PhoneContainer>
             <S.EmailLabel>Email</S.EmailLabel>
-            <S.EmailInput value={''} onChangeText={''} />
+            <S.EmailInput value={userData?.email} onChangeText={''} />
           </S.ContactSection>
           <S.LocationSection>
             <S.LocationHeader>
@@ -51,13 +65,13 @@ const AccountSetting: FC<{
                 style={{ transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }] }}
                 trackColor={{ false: 'rgba(29, 29, 29, 1)', true: whiteColor }}
                 thumbColor={''}
-                value={false}
+                value={userData?.showLocation}
                 onValueChange={() => { }}
               />
             </S.LocationHeader>
             <S.LocationDescription>Share your city with other</S.LocationDescription>
           </S.LocationSection>
-          <S.DeleteAccountButton onPress={() => { }}>
+          <S.DeleteAccountButton onPress={() => { setIsDeleteModalVisible(true) }}>
             <S.DeleteAccountContent>
               <S.IconContainer>
                 <TrashIcon />
@@ -74,11 +88,19 @@ const AccountSetting: FC<{
           }}
           onPress={() => { }}
         />
-      </S.Container>
+      </S.InnerContainer>
       <ModalDefault
-        isVisible={false}
-        onClose={() => { }}
-        onConfirm={() => { }}
+        isVisible={isDeleteModalVisible}
+        onClose={() => { setIsDeleteModalVisible(false) }}
+        onConfirm={() => {
+          deleteUser({
+            params: {
+              path: {
+                id: user?.uid,
+              },
+            },
+          })
+        }}
         confirmText="Delete"
         cancelText="Cancel"
         title="Are You Sure You Want to Delete Your Account?"
@@ -89,7 +111,7 @@ const AccountSetting: FC<{
         onClose={() => { }}
         verificationId={''}
       />
-    </View>
+    </S.Container>
   );
 };
 

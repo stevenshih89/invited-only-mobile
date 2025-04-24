@@ -56,10 +56,10 @@ const MyPhotos: FC<MyPhotosProps> = ({ images, setImages }) => {
 
   const renderPhoto = (image: components['schemas']['UserPhoto'], index: number, isMain: boolean = false) => {
     const imageRefs = [viewRef1, viewRef2, viewRef3, viewRef4, viewRef5, viewRef6];
+    console.log('image', image);
     const offsetsX = [offsetX1, offsetX2, offsetX3, offsetX4, offsetX5, offsetX6];
     const offsetsY = [offsetY1, offsetY2, offsetY3, offsetY4, offsetY5, offsetY6];
     const animatedStyles = [animatedStyles1, animatedStyles2, animatedStyles3, animatedStyles4, animatedStyles5, animatedStyles6];
-    console.log('image', image);
     return (
       <GestureDetector key={index} gesture={createTapGesture(index + 1, offsetsX[index], offsetsY[index])}>
         <S.PhotoContainer ref={imageRefs[index]} onLayout={() => handleLayout(index + 1)} style={animatedStyles[index]}>
@@ -69,13 +69,13 @@ const MyPhotos: FC<MyPhotosProps> = ({ images, setImages }) => {
                 <S.ButtonsContainer>
                   <S.ButtonWrapper>
                     <S.ButtonBlur blurType="light" blurAmount={10} reducedTransparencyFallbackColor="white" />
-                    <S.Button activeOpacity={0.7} hitSlop={{ left: 15, bottom: 10 }} onPress={() => openLibrary(image?.id || 0)}>
+                    <S.Button activeOpacity={0.7} hitSlop={{ left: 15, bottom: 10 }} onPress={() => openLibrary(index + 1 || 0)}>
                       <PencilWhiteIcon />
                     </S.Button>
                   </S.ButtonWrapper>
                   <S.ButtonWrapper>
                     <S.ButtonBlur blurType="light" blurAmount={10} reducedTransparencyFallbackColor="white" />
-                    <S.Button activeOpacity={0.7} hitSlop={{ left: 15, bottom: 10 }} onPress={() => deleteImage(image.id || 0)}>
+                    <S.Button activeOpacity={0.7} hitSlop={{ left: 15, bottom: 10 }} onPress={() => deleteImage(index + 1 || 0)}>
                       <Close />
                     </S.Button>
                   </S.ButtonWrapper>
@@ -83,7 +83,7 @@ const MyPhotos: FC<MyPhotosProps> = ({ images, setImages }) => {
               </S.StyledImageBackground>
             </S.ImageContainer>
           ) : (
-            <S.PlusButton activeOpacity={0.7} onPress={() => openLibrary(image?.id || 0)}>
+            <S.PlusButton activeOpacity={0.7} onPress={() => openLibrary(index + 1 || 0)}>
               <Plus />
             </S.PlusButton>
           )}

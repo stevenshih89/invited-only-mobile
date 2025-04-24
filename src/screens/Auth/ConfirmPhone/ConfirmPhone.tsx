@@ -79,8 +79,6 @@ const ConfirmPhone = ({ route, navigation }: ConfirmPhoneProps) => {
 
   const handleConfirmPhoneNumber = async () => {
     try {
-
-
       if (isLogin) {
         const userQuerySnapshot = await firestore()
           .collection(apiUserInfoCollection)
@@ -100,7 +98,7 @@ const ConfirmPhone = ({ route, navigation }: ConfirmPhoneProps) => {
           onSuccess: (data) => {
             setOnBoarding({
               isOnboardingCompleted: true,
-              userType: userData.accountType as 'host' | 'guest', // Use userData
+              userType: userData.accountType as 'host' | 'guest',
               onboardingStep: '/onboarding-demo-path',
             });
 
@@ -115,21 +113,37 @@ const ConfirmPhone = ({ route, navigation }: ConfirmPhoneProps) => {
               });
             } else {
               console.error("User data from Firestore missing uid or phoneNumber:", userData);
-              // Handle this error appropriately - perhaps show a different toast?
               showToast('inviteMatch', 'Failed to retrieve user details.', 'Error');
             }
           },
           onError: (error) => {
             console.error("Verify OTP Error:", error);
-            // Handle verifyOtp specific errors (e.g., incorrect code)
             showToast('inviteMatch', 'Verification failed. Please check the code.', 'Error');
           }
         });
       } else {
-        // For signup flow, navigate to account type selection
-        setTimeout(() => {
-          navigation.navigate(chooseAccountTypePath);
-        }, 1000);
+
+        verifyOtp({ body: { phone: mobilePhone, code } }, {
+          onSuccess: (data) => {
+            console.log('sucess verify otp data', data);
+            setOnBoarding({
+              isOnboardingCompleted: false,
+              userType: 'guest',
+              onboardingStep: '/enter-name',
+            });
+            setAccessToken(data.accessToken);
+            setRefreshToken(data.refreshToken);
+            setUserMetadata({
+              uid: data.uid,
+              phoneNumber: mobilePhone,
+            });
+            navigation.navigate('/enter-name');
+          },
+          onError: (error) => {
+            console.error("Verify OTP Error:", error);
+            showToast('inviteMatch', 'Verification failed. Please check the code.', 'Error');
+          }
+        });
       }
 
     } catch (e: any) {

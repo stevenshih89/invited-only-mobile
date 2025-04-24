@@ -5,4 +5,4 @@ const isEmailValid = (value: string) =>
   );
 const isName = (value: string) => /^[a-zA-Zа-яА-ЯёЁ]+$/.test(value);
 
-export {isOnlyNumbers, isEmailValid, isName};
+export { isOnlyNumbers, isEmailValid, isName };

@@ -3,6 +3,7 @@ import firestore from '@react-native-firebase/firestore';
 import Config from 'react-native-config';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
+// eslint-disable-next-line import/no-unresolved
 import { BACKEND_BASE_64_AUTH, BACKEND_BASE_URL } from '@env';
 import AppSettingsKeys from '../keys/appSettingsKeys';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
@@ -78,6 +79,7 @@ export interface FirebaseCollectionsResponse {
   unfinishedRegistrationUsers: string;
   userInfo: string;
   events: string;
+  userPhoneUids: string;
 }
 
 const apiAppSettingsCollection = Config.APP_SETTINGS_COLLECTION || 'appSettings';

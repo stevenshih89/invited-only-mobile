@@ -1,16 +1,16 @@
-import React, {FC, JSX, useCallback, useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
+import React, { FC, JSX, useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import * as S from './EulaScreen.style';
 import ArrowLeftArrow from 'assets/images/icons/arrow-left.svg';
-import {backgroundGradientColors, black1Color, lightGray16Color, transparentWhite16Color, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {enterTypePath} from 'constants/pathLocations';
-import {getSubscriptions} from 'src/api.deprecated/purchase';
-import {screenHeight} from 'constants/common';
+import { backgroundGradientColors, black1Color, lightGray16Color, transparentWhite16Color, whiteColor } from 'constants/colors';
+import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { enterTypePath } from 'constants/pathLocations';
+import { getSubscriptions } from 'src/api.deprecated/purchase';
+import { screenHeight } from 'constants/common';
 
 interface PlanListItem {
   id: number;
@@ -280,9 +280,9 @@ const Eula: FC = (): JSX.Element => {
 
   if (loading) {
     return (
-      <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-        <SafeAreaView style={{flex: 1}}>
-          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <ActivityIndicator color={whiteColor} />
           </View>
         </SafeAreaView>
@@ -291,9 +291,9 @@ const Eula: FC = (): JSX.Element => {
   }
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <SafeAreaView style={{flex: 1}}>
-        <View style={{flex: 1, paddingHorizontal: 24}}>
+    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={{ flex: 1, paddingHorizontal: 24 }}>
           <View
             style={{
               flexDirection: 'row',
@@ -301,7 +301,7 @@ const Eula: FC = (): JSX.Element => {
               borderBottomWidth: 1,
               borderBottomColor: transparentWhite16Color,
             }}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={{marginTop: 10}}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 10 }}>
               <ArrowLeftArrow width={24} height={24} />
             </TouchableOpacity>
             <S.EulaTitleContainer>
@@ -313,11 +313,11 @@ const Eula: FC = (): JSX.Element => {
             testID="eula-scroll"
             data={dataEula}
             keyExtractor={item => item.id.toString()}
-            renderItem={({item}) => renderItem(item)}
+            renderItem={({ item }) => renderItem(item)}
             onEndReached={onEndReached}
             onEndReachedThreshold={0.1}
           />
-          <View testID="bottom-view" style={{flexDirection: 'row'}}>
+          <View testID="bottom-view" style={{ flexDirection: 'row' }}>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{
@@ -326,16 +326,16 @@ const Eula: FC = (): JSX.Element => {
                 marginTop: 24,
                 alignItems: 'center',
               }}>
-              <Text style={{color: whiteColor, fontSize: RFValue(20, 932), fontFamily: Satoshi500}}>Deny</Text>
+              <Text style={{ color: whiteColor, fontSize: RFValue(20, 932), fontFamily: Satoshi500 }}>Deny</Text>
             </TouchableOpacity>
             <TouchableOpacity
               testID="accept-button"
               disabled={!endReached}
               activeOpacity={0.7}
-              hitSlop={{top: 26, bottom: 20}}
+              hitSlop={{ top: 26, bottom: 20 }}
               onPress={() => {
                 if (endReached) {
-                  navigation.navigate(enterTypePath as never);
+                  navigation.navigate('/choose-enter-type');
                 }
               }}
               style={{

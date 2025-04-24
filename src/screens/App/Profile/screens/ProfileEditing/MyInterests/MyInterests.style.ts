@@ -27,6 +27,7 @@ export const Title = styled.Text`
 export const InterestsContainer = styled.View`
   flex-direction: row;
   align-items: center;
+  width: 100%;
   flex-wrap: wrap;
 `;
 

@@ -1,12 +1,12 @@
 import * as S from './GuestBasicInfoCard.style';
 import TablerGenderIcon from 'src/assets/images/icons/gender-girl.svg';
-import {components} from 'src/api/v1';
-import InterestImageUrl from 'screens/App/Components/Intrests/InterestImage';
+import { components } from 'src/api/v1';
+import InterestImageSmallList from 'screens/App/Components/Intrests/InterestImageSmallList';
 
 interface Props {
   guestInfo: components['schemas']['User'];
 }
-const GuestBasicInfoCard = ({guestInfo}: Props) => {
+const GuestBasicInfoCard = ({ guestInfo }: Props) => {
   return (
     <S.Container>
       <S.BasicsContainer>
@@ -25,14 +25,7 @@ const GuestBasicInfoCard = ({guestInfo}: Props) => {
             <S.WhiteTextInfo>{guestInfo.work?.title}</S.WhiteTextInfo>
           </S.RoundedTextViewContainer>
         </S.DescriptionTextContainer>
-        <S.InterestsContainer>
-          {guestInfo.interests?.map((interest, index) => (
-            <S.RoundedTextViewContainer key={index}>
-              <S.InterestImage source={InterestImageUrl({interestId: interest.id})} />
-              <S.WhiteTextInfo>{typeof interest === 'string' ? interest : interest.title}</S.WhiteTextInfo>
-            </S.RoundedTextViewContainer>
-          ))}
-        </S.InterestsContainer>
+        <InterestImageSmallList interests={guestInfo.interests || []} />
       </S.BasicsContainer>
     </S.Container>
   );

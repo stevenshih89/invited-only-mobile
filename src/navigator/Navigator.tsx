@@ -7,12 +7,16 @@ import AuthStackScreens from 'src/Navigator/AuthStackScreens/AuthStackScreens';
 
 const Navigator = () => {
   const { onBoarding } = useAuthStore();
+
   useEffect(() => {
+
     messaging().onMessage(async () => { });
   }, []);
 
 
-  return <S.NavigatorContainer>{onBoarding.isOnboardingCompleted ? <AppStackScreens /> : <AuthStackScreens />}</S.NavigatorContainer>;
+  return <S.NavigatorContainer>
+    {onBoarding.isOnboardingCompleted ? <AppStackScreens /> : <AuthStackScreens />}
+  </S.NavigatorContainer>;
 };
 
 export default Navigator;

@@ -5,7 +5,6 @@ import MyPhotos from './MyPhotos/MyPhotos';
 import MyInterests from './MyInterests/MyInterests';
 import MyBio from './MyBio/MyBio';
 import MyLanguagesKnow from './MyLanguages/MyLanguagesKnow';
-import ModalHeight from './ModalHeight';
 import MyWork from './MyWork/MyWork';
 import MyGeneral from './MyGeneral/MyGeneral';
 import MyLocation from './MyLocation/MyLocation';
@@ -16,10 +15,12 @@ import AppLoader from 'screens/App/AppLoader/AppLoader';
 import ModalSelectInterests from 'components/Modal/ModalSelectInterests/ModalSelectInterests';
 import Button from 'components/Button/Button';
 import invitedOnlyBackendApi from 'src/api/backend-api';
+import AvailableInterests from 'screens/App/Components/Intrests/AvailableInterests';
+import { showToast } from 'helpers/showToast';
 
 const ProfileEditing: FC = (): ReactElement => {
   const { userMetadata } = useAuthStore();
-  const { data: user, isLoading } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
+  const { data: user, isLoading, isRefetching } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
     params: {
       path: {
         id: userMetadata.uid
@@ -27,7 +28,7 @@ const ProfileEditing: FC = (): ReactElement => {
     }
   })
   const { update, isPending } = useUpdateUser();
-  if (isLoading) {
+  if (isLoading || isPending || isRefetching) {
     return <AppLoader />
   }
 
@@ -44,71 +45,70 @@ const ProfileEditing: FC = (): ReactElement => {
         },
         location: user?.location || '',
         bio: user?.bio || '',
+        interests: user?.interests || [],
+        photos: user?.photos || []
       }}
-      onSubmit={(values) => {
-        update(values);
+      onSubmit={async (values) => {
+        console.log('values', values);
+        await update(values);
+        showToast('success', 'Profile updated successfully');
       }}
     >
-      {({ setFieldValue, submitForm, values }) => (
-        <View style={{ flex: 1, backgroundColor: 'black' }}>
-          <S.SafeAreaContainer>
-            <S.MainContainer>
-              <S.ScrollContainer
-                showsHorizontalScrollIndicator={false}
-                enableResetScrollToCoords={false}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingTop: 20, paddingBottom: 80 }}>
-                <MyPhotos images={user?.photos || []} setImages={() => { }} />
-                <MyGeneral
-                  name={values.name || ''}
-                  gender={values.gender || null}
-                  date={values.birthday || ''}
-                  showAge={values.showAge || true}
-                  setShowAge={(value) => { setFieldValue('showAge', value) }}
-                  setDate={(value) => { setFieldValue('birthday', value) }}
-                  setIsVisibleHeightModal={() => { }}
-                />
-                <MyWork
-                  textNameWork={values.work.title || ''}
-                  setTextNameWork={(value) => { setFieldValue('work.title', value) }}
-                  textDescription={values.work.description || ''}
-                  setTextDescription={(value) => { setFieldValue('work.description', value) }}
-                />
-                <MyLocation homeAddress={values.location || ''} setHomeAddress={(value) => { setFieldValue('location', value) }} country={values.location || ''} setCountry={(value) => { setFieldValue('location', value) }} />
-                <MyBio bio={values.bio || ''} setBio={(value) => { setFieldValue('bio', value) }} />
-                {true && (
-                  <S.SaveButtonContainer>
-                    <Button title="Save" onPress={() => { submitForm() }} loading={false} />
-                  </S.SaveButtonContainer>
-                )}
-                <MyInterests
-                  listOfInterests={[]}
-                  setIsVisibleInterestsModal={() => { }}
-                  loading={false}
-                />
-                <MyLanguagesKnow />
-              </S.ScrollContainer>
-            </S.MainContainer>
-          </S.SafeAreaContainer>
-          <ModalSelectInterests
-            modalInterests={false}
-            setModalInterests={() => { }}
-            onSave={() => { }}
-            setListOfInterests={() => { }}
-            listOfInterests={[]}
-          />
-          <ModalHeight
-            saveUserInfo={() => { }}
-            showHeight={false}
-            setShowHeight={() => { }}
-            heightsList={[]}
-            height={null}
-            setHeight={() => { }}
-            isVisible={false}
-            onClose={() => { }}
-          />
-        </View>
-      )}
+      {({ setFieldValue, submitForm, values, dirty }) => {
+        console.log('dirty', dirty);
+        console.log('values', values);
+        return (
+          <View style={{ flex: 1, backgroundColor: 'black' }}>
+            <S.SafeAreaContainer>
+              <S.MainContainer>
+                <S.ScrollContainer
+                  showsHorizontalScrollIndicator={false}
+                  enableResetScrollToCoords={false}
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{ paddingTop: 20, paddingBottom: 80 }}>
+                  <MyPhotos images={values.photos || []} setImages={(value) => { setFieldValue('photos', value) }} />
+                  <MyGeneral
+                    name={values.name || ''}
+                    gender={values.gender || null}
+                    date={values.birthday || ''}
+                    showAge={values.showAge || true}
+                    setShowAge={(value) => { setFieldValue('showAge', value) }}
+                    setDate={(value) => { setFieldValue('birthday', value) }}
+
+                  />
+                  <MyWork
+                    textNameWork={values.work.title || ''}
+                    setTextNameWork={(value) => { setFieldValue('work.title', value) }}
+                    textDescription={values.work.description || ''}
+                    setTextDescription={(value) => { setFieldValue('work.description', value) }}
+                  />
+                  <MyLocation homeAddress={values.location || ''} setHomeAddress={(value) => { setFieldValue('location', value) }} country={values.location || ''} setCountry={(value) => { setFieldValue('location', value) }} />
+                  <MyBio bio={values.bio || ''} setBio={(value) => { setFieldValue('bio', value) }} />
+                  {dirty && (
+                    <S.SaveButtonContainer>
+                      <Button title="Save" onPress={() => { submitForm() }} loading={false} />
+                    </S.SaveButtonContainer>
+                  )}
+                  <MyInterests
+                    availableInterests={AvailableInterests}
+                    loading={false}
+                  />
+                  <MyLanguagesKnow />
+                </S.ScrollContainer>
+              </S.MainContainer>
+            </S.SafeAreaContainer>
+            <ModalSelectInterests
+              modalInterests={false}
+              setModalInterests={() => { }}
+              availableInterests={AvailableInterests}
+              formikFieldName="interests"
+              formikValues={values}
+              setFieldValue={setFieldValue}
+            />
+
+          </View>
+        )
+      }}
     </Formik>
   );
 };

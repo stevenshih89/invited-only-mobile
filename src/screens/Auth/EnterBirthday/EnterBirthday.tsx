@@ -1,12 +1,10 @@
-import { FC, JSX, useContext, useEffect, useState } from 'react';
-import { AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { FC, JSX, useState } from 'react';
+import { Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Switch } from '@ant-design/react-native';
 import MaskInput from 'react-native-mask-input';
 import LinearGradient from 'react-native-linear-gradient';
-import moment from 'moment';
-import firestore from '@react-native-firebase/firestore';
-import analytics from '@react-native-firebase/analytics';
+
 import { isIos, screenHeight } from 'constants/common';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -14,10 +12,9 @@ import { backgroundGradientColors, grayColor, lightGray2Color, toggleColor, tran
 import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
 import Button from 'components/Button/Button';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import { genderPath } from 'constants/pathLocations';
-import { AuthContext } from 'contexts/AuthContext.tsx';
+
 import AuthProgress from 'components/AuthProgress';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+
 import { useAuthStore } from 'src/store/authStore';
 
 const EnterBirthday: FC = (): JSX.Element => {
@@ -25,59 +22,13 @@ const EnterBirthday: FC = (): JSX.Element => {
   const [day, setDay] = useState<string>('');
   const [year, setYear] = useState<string>('');
   const [showAge, setShowAge] = useState<boolean>(false);
-  const { onBoarding, setOnBoarding } = useContext(AuthContext);
-  const { userMetadata: user } = useAuthStore();
-  useEffect(() => {
-    let subscription: any;
+  const { onBoarding, setOnBoarding } = useAuthStore();
 
-    const name = onBoarding.find((item: any) => item.name)?.name;
-    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
-    const photos = onBoarding.find((item: any) => item.photos)?.photos;
 
-    const handleAppClose = async () => {
-      try {
-        await firestore()
-          .collection('unfinishedRegistrationUsers')
-          .doc(user?.uid)
-          .set({
-            name,
-            accountType,
-            photos,
-            date: `${month}.${day}.${year}`,
-            phoneNumber: user?.phoneNumber,
-            createdAt: moment().format('YYYY-MM-DD'),
-            screen: 'enter-birthday',
-          });
-        analytics().logEvent('enter_birthday_app_closed', {
-          name,
-          accountType,
-          photos,
-          date: `${month}.${day}.${year}`,
-          phoneNumber: user?.phoneNumber,
-          createdAt: moment().format('YYYY-MM-DD'),
-          screen: 'enter-birthday',
-        });
-      } catch (e) {
-        console.error(e);
-        logErrorToSentry(e);
-      }
-    };
-
-    subscription = AppState.addEventListener('change', nextAppState => {
-      if (nextAppState === 'background') {
-        handleAppClose();
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
 
   const handleShowAge = (value: boolean): void => {
     setShowAge(value);
   };
-
   const handleMonthChange = (input: string): void => {
     const numericInput = input.replace(/[^0-9]/g, '');
     const trimmedInput = numericInput.slice(0, 2);
@@ -131,13 +82,28 @@ const EnterBirthday: FC = (): JSX.Element => {
       return;
     }
 
-    setOnBoarding([...onBoarding, { showAge: showAge, date: `${month}.${day}.${year}` }]);
-    navigation.navigate(genderPath as never);
+    setOnBoarding({
+      ...onBoarding,
+      onboardingStep: '/my-email',
+      registrationDetails: {
+        ...onBoarding.registrationDetails,
+        showAge: showAge,
+        date: `${month}.${day}.${year}`,
+      },
+    });
+    navigation.navigate('/my-email');
   };
 
   const handleSkip = () => {
-    setOnBoarding([...onBoarding, { showAge: false, date: '' }]);
-    navigation.navigate(genderPath as never);
+    setOnBoarding({
+      ...onBoarding,
+      onboardingStep: '/my-email',
+      registrationDetails: {
+        ...onBoarding.registrationDetails,
+        showAge: false,
+        date: '',
+      },
+    });
   };
 
   const navigation = useAppNavigation();

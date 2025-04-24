@@ -437,6 +437,65 @@ export interface paths {
         patch: operations["markChatAsSeen"];
         trace?: never;
     };
+    "/report/user/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get reports by user ID
+         * @description Returns a list of reports associated with the specified user ID.
+         */
+        get: operations["getReportsByUserId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/report/create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a new report */
+        post: operations["createReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/report/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a report by ID (via query parameter)
+         * @description Fetches a single report based on the provided `id` query parameter.
+         */
+        get: operations["getReport"];
+        put?: never;
+        post?: never;
+        /** Delete a report by ID */
+        delete: operations["deleteReport"];
+        options?: never;
+        head?: never;
+        /** Update a report by ID */
+        patch: operations["updateReport"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -714,6 +773,10 @@ export interface components {
             events: string;
             attendees: string;
         };
+        UserPhoneUid: {
+            uid?: string;
+            phone?: string;
+        };
         /** @description Represents the value of a Firebase Remote Config parameter. */
         FirebaseRemoteConfigParameterValue: {
             /** @description Either an explicit value or instruction to use the app's default. */
@@ -817,6 +880,8 @@ export interface operations {
                         accessToken: string;
                         /** @description Long-lived refresh token (used to get new access tokens). */
                         refreshToken: string;
+                        /** @description The UID of the user. */
+                        uid: string;
                     };
                 };
             };
@@ -1159,13 +1224,7 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": {
-                    /**
-                     * @description The phone number of the user.
-                     * @example +14155550123
-                     */
-                    phoneNumber: string;
-                };
+                "application/json": components["schemas"]["User"];
             };
         };
         responses: {
@@ -1954,6 +2013,241 @@ export interface operations {
             };
         };
     };
+    getReportsByUserId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Unique identifier of the user */
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A list of reports for the given user ID */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        name?: string;
+                        nameSender?: string;
+                        phone?: string;
+                        phoneSender?: string;
+                        /** Format: uri */
+                        photo?: string;
+                        /** Format: uri */
+                        photoSender?: string;
+                        typeReport?: string;
+                        uid?: string;
+                        uidSender?: string;
+                    }[];
+                };
+            };
+            /** @description Invalid user ID */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    createReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    nameSender?: string;
+                    phone?: string;
+                    phoneSender?: string;
+                    /** Format: uri */
+                    photo?: string;
+                    /** Format: uri */
+                    photoSender?: string;
+                    typeReport?: string;
+                    uid?: string;
+                    uidSender?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Report created successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Unique identifier of the report */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Report object returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        name?: string;
+                        nameSender?: string;
+                        phone?: string;
+                        phoneSender?: string;
+                        /** Format: uri */
+                        photo?: string;
+                        /** Format: uri */
+                        photoSender?: string;
+                        typeReport?: string;
+                        uid?: string;
+                        uidSender?: string;
+                    };
+                };
+            };
+            /** @description Missing or invalid ID */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    deleteReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Report deleted successfully or not found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid report ID */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    updateReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    nameSender?: string;
+                    phone?: string;
+                    phoneSender?: string;
+                    /** Format: uri */
+                    photo?: string;
+                    /** Format: uri */
+                    photoSender?: string;
+                    typeReport?: string;
+                    uid?: string;
+                    uidSender?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Report updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid record ID */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
 }
 export enum ApiPaths {
     sendOtp = "/auth/send-otp",
@@ -1985,5 +2279,10 @@ export enum ApiPaths {
     getChatsForEvent = "/chat/event/:eventId",
     createMessage = "/chat/message/:chatId",
     getMessages = "/chat/message/:chatId",
-    markChatAsSeen = "/chat/:chatId/seen"
+    markChatAsSeen = "/chat/:chatId/seen",
+    getReportsByUserId = "/report/user/:userId",
+    createReport = "/report/create",
+    getReport = "/report/:id",
+    updateReport = "/report/:id",
+    deleteReport = "/report/:id"
 }

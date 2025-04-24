@@ -16,10 +16,10 @@ import invitedOnlyBackendApi from 'src/api/backend-api';
 
 const SignUp: FC = (): JSX.Element => {
   const [mobilePhone, setMobilePhone] = useState<string>('');
-  const [loading, setLoading] = useState(false);
+
   const [isValidPhone, setIsValidPhone] = useState<boolean>(false);
   const [isDisabledValidation, setIsDisabledValidation] = useState<boolean>(true);
-  const { mutate: sendPhoneNumber } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
+  const { mutate: sendPhoneNumber, isPending: isLoading } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
   const navigation = useAppNavigation();
   const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
 
@@ -28,15 +28,11 @@ const SignUp: FC = (): JSX.Element => {
       if (!mobilePhone) {
         return;
       }
-      setLoading(true);
-
       const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
       console.log(`looking in ${apiUserInfoCollection} for the phone number`);
 
-      // Sign up flow - check if phone number already exists
       const userNumber = await firestore().collection(apiUserInfoCollection).where('phoneNumber', '==', mobilePhone).get();
       if (!userNumber.empty) {
-        setLoading(false);
         showToast('inviteMatch', 'This phone number is already in use', 'Fail');
         return;
       }
@@ -49,9 +45,8 @@ const SignUp: FC = (): JSX.Element => {
         mobilePhone: phone,
         isLogin: false,
       });
-      setLoading(false);
+
     } catch (e: any) {
-      setLoading(false);
       logErrorToSentry(e);
       showToast('inviteMatch', `${e?.message.split(']')[1] || 'Error processing request'}`);
     }
@@ -89,7 +84,7 @@ const SignUp: FC = (): JSX.Element => {
                 </S.InputContainer>
               </S.ContentContainer>
               <S.ButtonContainer>
-                <Button disabled={!isValidPhone && !loading} loading={loading} onPress={handleSignUp} title="Continue" />
+                <Button disabled={!isValidPhone && isLoading} loading={isLoading} onPress={handleSignUp} title="Continue" />
               </S.ButtonContainer>
             </S.Container>
           </SafeAreaView>

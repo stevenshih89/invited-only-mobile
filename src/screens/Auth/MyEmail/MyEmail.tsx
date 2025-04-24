@@ -12,76 +12,23 @@ import { backgroundGradientColors, transparentWhite30Color, whiteColor } from 'c
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
 import Button from 'components/Button/Button';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import { privacyPath } from 'constants/pathLocations';
 import Input from 'components/Inputs/Input';
 import { isEmailValid } from 'helpers/regExpValidators';
-import { AuthContext } from 'contexts/AuthContext.tsx';
 import AuthProgress from 'components/AuthProgress';
 import { useUser } from 'src/store/userStore';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import { useAuthStore } from 'src/store/authStore';
 import { showToast } from 'helpers/showToast';
 import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
+import invitedOnlyBackendApi from 'src/api/backend-api';
+import AppLoader from 'screens/App/AppLoader/AppLoader';
 
 const MyEmail: FC = (): JSX.Element => {
+  const { mutate: createUser, isPending } = invitedOnlyBackendApi.useMutation('post', '/users');
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
-  const { userMetadata: user } = useAuthStore();
   const { email, setEmail } = useUser();
 
-  const { onBoarding, setOnBoarding } = useContext(AuthContext);
+  const { onBoarding, setOnBoarding, userMetadata } = useAuthStore();
   const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
-
-  useEffect(() => {
-    let subscription: any;
-
-    const name = onBoarding.find((item: any) => item.name)?.name;
-    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
-    const date = onBoarding.find((item: any) => item.date)?.date;
-    const gender = onBoarding.find((item: { gender: string }) => item?.gender)?.gender;
-    const photos = onBoarding.find((item: any) => item.photos)?.photos;
-    const handleAppClose = async () => {
-      try {
-        await firestore()
-          .collection('unfinishedRegistrationUsers')
-          .doc(user?.uid)
-          .set({
-            name,
-            email,
-            accountType,
-            date,
-            gender,
-            photos,
-            phoneNumber: user?.phoneNumber,
-            createdAt: moment().format('YYYY-MM-DD'),
-            screen: 'my-email',
-          });
-        analytics().logEvent('my_email_app_closed', {
-          name,
-          email,
-          accountType,
-          date,
-          gender,
-          photos,
-          phoneNumber: user?.phoneNumber,
-          createdAt: moment().format('YYYY-MM-DD'),
-          screen: 'my-email',
-        });
-      } catch (e) {
-        console.error(e);
-        logErrorToSentry(e);
-      }
-    };
-
-    subscription = AppState.addEventListener('change', nextAppState => {
-      if (nextAppState === 'background') {
-        handleAppClose();
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
 
   const handleEmailChange = (value: string) => {
     const truncatedText = value.slice(0, 40);
@@ -97,25 +44,35 @@ const MyEmail: FC = (): JSX.Element => {
     if (!email || !_isValidEmail) {
       return;
     }
-    setOnBoarding([
-      ...onBoarding,
-      {
-        email: email,
-      },
-    ]);
-    const accountType = onBoarding.find((item: { accountType: string }) => item.accountType)?.accountType;
-
     const userNumber = await firestore().collection(apiUserInfoCollection).where('email', '==', email).get();
     if (!userNumber.empty) {
       showToast('inviteMatch', 'This Email is already exist', 'Fail');
       return;
     }
 
-    // @ts-ignore
-    navigation.navigate(privacyPath, { screen: 'MyEmail', accountType: accountType });
+    setOnBoarding({
+      ...onBoarding,
+      registrationDetails: {
+        ...onBoarding.registrationDetails,
+        email: email,
+      },
+      isOnboardingCompleted: true,
+    });
+    createUser({
+      body: {
+        ...onBoarding.registrationDetails,
+        phoneNumber: userMetadata?.phoneNumber,
+        uid: userMetadata?.uid,
+      },
+    });
+
   };
 
   const navigation = useAppNavigation();
+
+  if (isPending) {
+    return <AppLoader />;
+  }
 
   return (
     <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>

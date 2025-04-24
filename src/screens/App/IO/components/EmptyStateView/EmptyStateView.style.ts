@@ -2,7 +2,7 @@ import styled from 'styled-components/native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { blackColor, whiteColor } from 'constants/colors.ts';
 import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts.ts';
-import { screenHeight } from 'constants/common.ts';
+import { screenHeight, screenWidth } from 'constants/common.ts';
 
 export const Container = styled.View`
   flex: 1;
@@ -30,42 +30,42 @@ export const ButtonContainer = styled.View`
   margin-bottom: ${screenHeight / 14}px;
 `;
 
-export const GuestContainer = styled.View`
+export const OuterContainer = styled.View`
   flex: 1;
   background-color: ${blackColor};
-  padding-horizontal: 24px;
+  padding-bottom: ${screenHeight / 10}px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+
 `;
 
-export const WelcomeContainer = styled.View`
-  position: absolute;
-  top: ${screenHeight / 2.2}px;
-  left: 0;
-  right: 0;
+
+export const CardsSwipeImage = styled.Image`
+  resize-mode: contain;
+`;
+
+export const CreateEventContainer = styled.View`
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-export const WelcomeTitle = styled.Text`
+export const CreateEventTitle = styled.Text`
   color: ${whiteColor};
-  font-weight: 700;
-  font-size: ${RFValue(22, 932)}px;
-  letter-spacing: 22px;
+  width: ${screenWidth / 1.5}px;
+  font-size: ${RFValue(30, 932)}px;
   font-family: ${Satoshi500};
   text-align: center;
-  margin-right: -22px;
+
 `;
 
-export const WelcomeSubtitle = styled.Text`
-  font-family: ${Satoshi700};
-  font-size: ${RFValue(18, 932)}px;
-  color: ${whiteColor};
-  margin-top: ${screenHeight / 50}px;
-`;
 
 export const WelcomeDescription = styled.Text`
   font-family: ${Satoshi400};
   font-size: ${RFValue(18, 932)}px;
+  width: ${screenWidth / 1.6}px;
   color: ${whiteColor};
   text-align: center;
   margin-top: ${screenHeight / 50}px;

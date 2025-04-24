@@ -1,9 +1,14 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {blackColor, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { blackColor, whiteColor } from 'constants/colors';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
 
 export const Container = styled.View`
+  flex: 1;
+`;
+
+
+export const InnerContainer = styled.View`
   background-color: ${blackColor};
   flex: 1;
   padding-horizontal: 20px;
@@ -60,7 +65,7 @@ export const PhoneNumberText = styled.Text`
 
 export const ChangePhoneButton = styled.TouchableOpacity.attrs({
   activeOpacity: 0.7,
-  hitSlop: {top: 20, left: 10, right: 10, bottom: 10},
+  hitSlop: { top: 20, left: 10, right: 10, bottom: 10 },
 })`
   flex-direction: row;
   align-items: center;

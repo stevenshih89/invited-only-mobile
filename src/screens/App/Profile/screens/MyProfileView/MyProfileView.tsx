@@ -75,8 +75,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({ isModalVisible, setModalVisible
                 homeAddress={userInfo?.homeAddress || ''}
                 work={{ title: userInfo?.work?.title || '' }}
                 gender={userInfo?.gender || 'other'}
-                interests={userInfo?.interests?.map((interest) => ({ id: String(interest.id), title: interest.title || '' })) || []}
-                listOfInterestsImages={[]}
+                listOfInterestsImages={userInfo?.interests || []}
               />
               <Bio bio={userInfo?.bio || ''} />
               <Languages languages={userInfo?.languages || []} />

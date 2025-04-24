@@ -10,7 +10,7 @@ import { logErrorToSentry } from './logErrorsToSentry';
 import { useAuthStore } from 'src/store/authStore';
 import { FirebaseCollectionsResponse } from 'src/apiv2/queries/appSettingsQueries';
 
-export const fcmHelper = async ({ apiUserInfoCollection }: { apiUserInfoCollection: keyof FirebaseCollectionsResponse }) => {
+export const fcmHelper = async ({ userPhoneUids }: { userPhoneUids: keyof FirebaseCollectionsResponse }) => {
   const { userMetadata } = useAuthStore.getState();
   const userUid = userMetadata.uid;
 
@@ -18,7 +18,7 @@ export const fcmHelper = async ({ apiUserInfoCollection }: { apiUserInfoCollecti
     const newToken = await messaging().getToken();
 
     try {
-      await firestore().collection(apiUserInfoCollection).doc(userUid).update({
+      await firestore().collection(userPhoneUids).doc(userUid).update({
         fcmToken: newToken,
       });
     } catch (error) {
@@ -33,9 +33,9 @@ export const fcmHelper = async ({ apiUserInfoCollection }: { apiUserInfoCollecti
   }
 };
 
-export const getFcmToken = async ({ apiUserInfoCollection }: { apiUserInfoCollection: string }) => {
+export const getFcmToken = async ({ userPhoneUids }: { userPhoneUids: string }) => {
   let token = null;
-  await checkApplicationNotificationPermission({ apiUserInfoCollection: apiUserInfoCollection as keyof FirebaseCollectionsResponse });
+  await checkApplicationNotificationPermission({ userPhoneUids: userPhoneUids as keyof FirebaseCollectionsResponse });
   await registerAppWithFCM();
   try {
     token = await messaging().getToken();
@@ -79,9 +79,9 @@ export async function unRegisterAppWithFCM() {
 }
 
 export const checkApplicationNotificationPermission = async ({
-  apiUserInfoCollection,
+  userPhoneUids,
 }: {
-  apiUserInfoCollection: keyof FirebaseCollectionsResponse;
+  userPhoneUids: keyof FirebaseCollectionsResponse;
 }) => {
   const authStatus = await messaging().requestPermission();
 
@@ -90,7 +90,7 @@ export const checkApplicationNotificationPermission = async ({
   const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    await fcmHelper({ apiUserInfoCollection });
+    await fcmHelper({ userPhoneUids });
   }
   request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS)
     .then(result => {
@@ -219,6 +219,8 @@ export const sendNotification = async (
   userInfo: any,
   params?: any,
 ) => {
+
+  /// TODO
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
   const isDevEnvironment = Config.API_USERINFO_COLLECTION === 'devUserInfo';

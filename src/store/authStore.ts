@@ -17,22 +17,21 @@ export type OnBoardingStep =
     | '/gender'
     | '/my-interests'
     | '/my-email'
-    | '/connect-social-media'
     | '/privacy'
     | '/verify-first-step'
     | '/invitation-code'
-    | '/payment'
     | '/photo-verified'
     | '/summary-info'
     | '/verify-social-profile';
 
 type User = Partial<components['schemas']['User']>;
 
-// Define the structure for the onBoarding state
+
 interface OnboardingState {
     isOnboardingCompleted: boolean;
-    userType: 'host' | 'guest' | null; // Example types, adjust as needed
-    onboardingStep: string | null; // Or use your specific path type if available
+    userType: 'host' | 'guest' | null;
+    onboardingStep: OnBoardingStep | null;
+    registrationDetails: Partial<components['schemas']['User']> | null;
 }
 
 interface UserMetadata {
@@ -54,17 +53,17 @@ interface AuthState {
     setUserPhoneNumber: (phoneNumber: string) => void;
     setAccessToken: (token: string) => void;
     setRefreshToken: (token: string) => void;
-    logout: () => void; // Action to clear auth state
+    logout: () => void;
 }
 
-// Define the initial state using the OnboardingState structure
 const initialOnboardingState: OnboardingState = {
     isOnboardingCompleted: false,
     userType: null,
-    onboardingStep: '/onboard', // Or your initial onboarding route
+    onboardingStep: '/onboard',
+    registrationDetails: null,
 };
 
-const initialState = {
+const getInitialState = (set: (partial: AuthState | Partial<AuthState> | ((state: AuthState) => AuthState | Partial<AuthState>), replace?: boolean | undefined) => void): AuthState => ({
     userMetadata: {
         uid: '',
         phoneNumber: '',
@@ -74,30 +73,26 @@ const initialState = {
     accessToken: '',
     refreshToken: '',
     isStorageReady: false,
-};
+    setIsStorageReady: () => { },
+    setUserMetadata: (userMetadata) => set({ userMetadata: { ...userMetadata, uid: userMetadata.uid ?? '', phoneNumber: userMetadata.phoneNumber ?? '' } }),
+    setOnBoarding: (onBoardingUpdate) =>
+        set((state) => ({ onBoarding: { ...state.onBoarding, ...onBoardingUpdate } })),
+    setUserPhoneNumber: (userPhoneNumber) => set({ userPhoneNumber }),
+    setAccessToken: (accessToken) => set({ accessToken: accessToken ?? '' }),
+    setRefreshToken: (refreshToken) => set({ refreshToken: refreshToken ?? '' }),
+    logout: () => set((state) => ({
+        userMetadata: { ...getInitialState(set).userMetadata },
+        onBoarding: { ...initialOnboardingState },
+        accessToken: '',
+        refreshToken: '',
+        isStorageReady: state.isStorageReady
+    })),
+});
 
 export const useAuthStore = create<AuthState>()(
     persist(
         (set) => ({
-            ...initialState,
-            userMetadata: {
-                uid: '',
-                phoneNumber: '',
-            },
-            setUserMetadata: (userMetadata) => set({ userMetadata: { ...userMetadata, uid: userMetadata.uid ?? '', phoneNumber: userMetadata.phoneNumber ?? '' } }),
-            setOnBoarding: (onBoardingUpdate) =>
-                set((state) => ({ onBoarding: { ...state.onBoarding, ...onBoardingUpdate } })),
-            setUserPhoneNumber: (userPhoneNumber) => set({ userPhoneNumber }),
-            setAccessToken: (accessToken) => set({ accessToken: accessToken ?? '' }),
-            setRefreshToken: (refreshToken) => set({ refreshToken: refreshToken ?? '' }),
-            logout: () => set((state) => ({
-                userMetadata: { ...initialState.userMetadata },
-                onBoarding: { ...initialOnboardingState },
-                accessToken: '',
-                refreshToken: '',
-                isStorageReady: state.isStorageReady
-            }), true),
-            setIsStorageReady: (isStorageReady) => set({ isStorageReady }),
+            ...getInitialState(set),
         }),
         {
             name: 'auth-storage',

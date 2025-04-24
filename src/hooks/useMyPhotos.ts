@@ -1,22 +1,23 @@
-import { useRef, useState} from 'react';
-import {Alert, Animated} from 'react-native';
+import { useRef, useState } from 'react';
+import { Alert, Animated } from 'react-native';
 import Config from 'react-native-config';
-import {ImagePickerResponse, launchImageLibrary} from 'react-native-image-picker';
-import {check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS} from 'react-native-permissions';
+import { ImagePickerResponse, launchImageLibrary } from 'react-native-image-picker';
+import { check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS } from 'react-native-permissions';
 import firestore from '@react-native-firebase/firestore';
-import {runOnJS, useAnimatedStyle, useSharedValue, withSpring} from 'react-native-reanimated';
-import {Gesture} from 'react-native-gesture-handler';
-import {useUser} from 'src/store/userStore';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {showToast} from 'helpers/showToast';
-import {isIos} from 'constants/common';
+import { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { Gesture } from 'react-native-gesture-handler';
+import { useUser } from 'src/store/userStore';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { showToast } from 'helpers/showToast';
+import { isIos } from 'constants/common';
+import { components } from 'src/api/v1';
 
-export const useMyPhotos = ({images, setImages}: {images: any; setImages: any}) => {
+export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any }) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
   const userHost = useUser((i: any) => i?.user);
   const isConfirmed = userHost?.accountConfirmed;
   const [visibleModalReplace, setVisibleModalReplace] = useState(false);
-
+  console.log('images', images);
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
     const result = await check(permission);
     switch (result) {
@@ -54,18 +55,12 @@ export const useMyPhotos = ({images, setImages}: {images: any; setImages: any}) 
           return;
         }
         if (response.assets[0].uri) {
-          const image = {
-            uri: response.assets[0].uri,
-            type: response.assets[0].type,
-            name: response.assets[0].fileName,
+          const image: components['schemas']['UserPhoto'] = {
+            id: imageId,
+            image: response.assets[0].uri,
           };
 
-          const newImages = images.map(img => {
-            if (img.id === imageId) {
-              return {...img, image: image.uri};
-            }
-            return img;
-          });
+          const newImages = [...images, image];
           setImages(newImages);
         }
       },
@@ -73,12 +68,7 @@ export const useMyPhotos = ({images, setImages}: {images: any; setImages: any}) 
   };
 
   const deleteImage = (imageId: number): void => {
-    const newImages = images.map(img => {
-      if (img.id === imageId) {
-        return {...img, image: null};
-      }
-      return img;
-    });
+    const newImages = images.filter((img: components['schemas']['UserPhoto']) => img.id !== imageId);
     setImages(newImages);
   };
 
@@ -98,9 +88,7 @@ export const useMyPhotos = ({images, setImages}: {images: any; setImages: any}) 
         const temp = photos[activeImage - 1].image;
         photos[activeImage - 1].image = photos[selectImage - 1].image;
         photos[selectImage - 1].image = temp;
-        await firestore().collection(apiUserInfoCollection).doc(userHost.uid).update({
-          photos,
-        });
+
         setVisibleModalReplace(false);
         setActiveImage(0);
         setSelectImage(0);
@@ -115,12 +103,17 @@ export const useMyPhotos = ({images, setImages}: {images: any; setImages: any}) 
     }
   };
 
-  const mainImage = images[images.findIndex(item => item.id === 0)];
-  const secondImage = images[images.findIndex(item => item.id === 1)];
-  const thirdImage = images[images.findIndex(item => item.id === 2)];
-  const fourthImage = images[images.findIndex(item => item.id === 3)];
-  const fifthImage = images[images.findIndex(item => item.id === 4)];
-  const sixthImage = images[images.findIndex(item => item.id === 5)];
+  const mainImage = images[images.findIndex((item: components['schemas']['UserPhoto']) => item.id === 1)];
+
+  const secondImage = images[images.findIndex((item: components['schemas']['UserPhoto']) => item.id === 2)];
+
+  const thirdImage = images[images.findIndex((item: components['schemas']['UserPhoto']) => item.id === 3)];
+
+  const fourthImage = images[images.findIndex((item: components['schemas']['UserPhoto']) => item.id === 4)];
+
+  const fifthImage = images[images.findIndex((item: components['schemas']['UserPhoto']) => item.id === 5)];
+
+  const sixthImage = images[images.findIndex((item: components['schemas']['UserPhoto']) => item.id === 6)];
 
   const viewRef1 = useRef(null);
   const viewRef2 = useRef(null);
@@ -214,10 +207,10 @@ export const useMyPhotos = ({images, setImages}: {images: any; setImages: any}) 
   const createAnimatedStyle = (offsetX, offsetY, id) =>
     useAnimatedStyle(() => ({
       transform: [
-        {translateX: offsetX.value},
-        {translateY: offsetY.value},
+        { translateX: offsetX.value },
+        { translateY: offsetY.value },
         {
-          scale: withSpring(activeImage === 0 || activeImage === id ? 1 : selectImage === id ? 1 : 0.8, {damping: 15, stiffness: 100}),
+          scale: withSpring(activeImage === 0 || activeImage === id ? 1 : selectImage === id ? 1 : 0.8, { damping: 15, stiffness: 100 }),
         },
       ],
     }));
@@ -236,7 +229,7 @@ export const useMyPhotos = ({images, setImages}: {images: any; setImages: any}) 
 
     if (ref && ref.current) {
       ref.current.measure((x, y, width, height, pageX, pageY) => {
-        setLayout(prev => [...prev, {imageId, x: pageX, y: pageY, width, height}]);
+        setLayout(prev => [...prev, { imageId, x: pageX, y: pageY, width, height }]);
       });
     }
   };

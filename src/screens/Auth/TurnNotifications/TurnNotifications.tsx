@@ -13,74 +13,34 @@ import { Satoshi400, Satoshi500 } from 'constants/fonts';
 import Button from 'components/Button/Button';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { addPhotosPath } from 'constants/pathLocations';
-import { AuthContext } from 'contexts/AuthContext.tsx';
-import { getFcmToken } from 'helpers/fcmHelper';
 import AuthProgress from 'components/AuthProgress';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import { useAuthStore } from 'src/store/authStore';
+import { getFcmToken } from 'helpers/fcmHelper';
+import { useFirebaseCollectionsNameQuery } from 'src/apiv2/queries/appSettingsQueries';
 
 const TurnNotifications: FC = (): JSX.Element => {
   const [notifications, setNotifications] = useState<boolean>(true);
-  const [showLocation] = useState<boolean>(false);
-  const { onBoarding, setOnBoarding } = useContext(AuthContext);
-  const { userMetadata: user } = useAuthStore();
+  const { data: collectionsNames } = useFirebaseCollectionsNameQuery();
+  const { onBoarding, setOnBoarding } = useAuthStore();
   const navigation = useAppNavigation();
 
-  useEffect(() => {
-    let subscription: any;
-
-    const name = onBoarding.find((item: any) => item.name)?.name;
-    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
-
-    const handleAppClose = async () => {
-      try {
-        await firestore()
-          .collection('unfinishedRegistrationUsers')
-          .doc(user?.uid)
-          .set({
-            name,
-            accountType,
-            phoneNumber: user?.phoneNumber,
-            createdAt: moment().format('YYYY-MM-DD'),
-            screen: 'turn-notifications',
-          });
-        analytics().logEvent('turn_notifications_app_closed', {
-          name,
-          accountType,
-          phoneNumber: user?.phoneNumber,
-          createdAt: moment().format('YYYY-MM-DD'),
-          screen: 'turn-notifications',
-        });
-      } catch (e) {
-        console.error(e);
-        logErrorToSentry(e);
-      }
-    };
-
-    subscription = AppState.addEventListener('change', nextAppState => {
-      if (nextAppState === 'background') {
-        handleAppClose();
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
 
   const handleNext = async () => {
-    setOnBoarding([
+    setOnBoarding({
       ...onBoarding,
-      {
-        notifications: notifications,
-        location: null,
-        showLocation: showLocation,
+      onboardingStep: '/add-photos',
+      registrationDetails: {
+        ...onBoarding.registrationDetails,
+        notificationSettings: {
+          ...onBoarding.registrationDetails?.notificationSettings,
+          match: notifications,
+        },
       },
-    ]);
+    });
     if (notifications) {
-      await getFcmToken({ apiUserInfoCollection: user?.uid });
+      await getFcmToken({ userPhoneUids: collectionsNames?.userPhoneUids || '' });
     }
-    navigation.navigate(addPhotosPath as never);
+    navigation.navigate('/add-photos');
   };
 
   const handleNotificationsChange = (value: boolean): void => {

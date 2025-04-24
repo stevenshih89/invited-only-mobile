@@ -1,3 +1,5 @@
+import { View } from 'react-native';
+import * as S from './InterestImge.style';
 import BirthdayParty from 'src/assets/images/auth/interests/birthday-party.png';
 import Exclusive from 'src/assets/images/auth/interests/exclusive.png';
 import PoolParty from 'src/assets/images/auth/interests/pool-party.png';
@@ -5,12 +7,13 @@ import Private from 'src/assets/images/auth/interests/private.png';
 import Restaurant from 'src/assets/images/auth/interests/restaurant.png';
 import VipTables from 'src/assets/images/auth/interests/vip-tables.png';
 import YachtParty from 'src/assets/images/auth/interests/yacht-party.png';
+import { components } from 'src/api/v1';
 
 interface InterestImageProps {
-  interestId: number;
+  interests: components['schemas']['Interest'][];
 }
 
-const InterestImage = ({interestId}: InterestImageProps) => {
+const getInterestImageUrl = (interestId: number) => {
   switch (interestId) {
     case 1:
       return BirthdayParty;
@@ -26,7 +29,23 @@ const InterestImage = ({interestId}: InterestImageProps) => {
       return VipTables;
     case 7:
       return YachtParty;
+    default:
+      return null;
   }
 };
 
-export default InterestImage;
+const InterestImageSmallList = ({ interests }: InterestImageProps) => {
+  console.log('interests', interests);
+  return (
+    <S.InterestsContainer>
+      {interests?.map((interest, index) => (
+        <S.RoundedTextViewContainer key={index}>
+          <S.InterestImageRoundSmall source={getInterestImageUrl(interest.id)} />
+          <S.WhiteTextInfo>{interest.title}</S.WhiteTextInfo>
+        </S.RoundedTextViewContainer>
+      ))}
+    </S.InterestsContainer>
+  );
+};
+
+export default InterestImageSmallList;

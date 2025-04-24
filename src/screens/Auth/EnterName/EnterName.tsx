@@ -17,14 +17,13 @@ import Input from 'components/Inputs/Input';
 import { AuthContext } from 'contexts/AuthContext.tsx';
 import { isName } from 'helpers/regExpValidators';
 import AuthProgress from 'components/AuthProgress';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import { useAuthStore } from 'src/store/authStore';
 
 const EnterName: FC = (): JSX.Element => {
-  const { userMetadata: user } = useAuthStore();
-  const [name, setName] = useState<string>('');
-  const { onBoarding, setOnBoarding } = useContext(AuthContext);
+  const { onBoarding, setOnBoarding, userMetadata } = useAuthStore();
+
   const [errorInputName, setErrorInputName] = useState<boolean>(false);
+  const [name, setName] = useState<string>(onBoarding.registrationDetails?.name || '');
 
   const handleNameChange = (value: string) => {
     const formattedValue = value.charAt(0).toUpperCase() + value.slice(1);
@@ -39,59 +38,13 @@ const EnterName: FC = (): JSX.Element => {
 
   const navigation = useAppNavigation();
 
-  useEffect(() => {
-    let subscription: any;
-    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
-
-    const handleAppClose = async () => {
-      try {
-        await firestore()
-          .collection('unfinishedRegistrationUsers')
-          .doc(user?.uid)
-          .set({
-            name,
-            accountType,
-            phoneNumber: user?.phoneNumber,
-            createdAt: moment().format('YYYY-MM-DD'),
-            screen: 'enter-name',
-          });
-        analytics().logEvent('enter_name_app_closed', {
-          name,
-          accountType,
-          phoneNumber: user?.phoneNumber,
-          createdAt: moment().format('YYYY-MM-DD'),
-          screen: 'enter-name',
-        });
-      } catch (e) {
-        console.error(e);
-        logErrorToSentry(e);
-      }
-    };
-
-    subscription = AppState.addEventListener('change', nextAppState => {
-      if (nextAppState === 'background') {
-        handleAppClose();
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
 
   const handleNext = async () => {
     if (!name) {
       return;
     }
-    const data = [
-      ...onBoarding,
-      {
-        name: name,
-      },
-    ];
-
-    setOnBoarding(data);
-    navigation.navigate(turnNotificationsPath as never);
+    setOnBoarding({ ...onBoarding, onboardingStep: '/turn-notifications', registrationDetails: { ...onBoarding.registrationDetails, name: name } });
+    navigation.navigate('/turn-notifications');
   };
 
   return (

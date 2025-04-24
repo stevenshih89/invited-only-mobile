@@ -28,3 +28,10 @@ export const ProgressBar = styled.View<{ width: string }>`
   background-color: ${whiteColor};
   border-radius: 2px;
 `;
+
+export const SkipButtonContainer = styled.View`
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  z-index: 10;
+`;

@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, fireEvent} from '@testing-library/react-native';
+import { render, fireEvent } from '@testing-library/react-native';
 import ModalSelectInterests from './ModalSelectInterests';
 
 // Mock SVG components
@@ -8,7 +8,7 @@ jest.mock('assets/images/icons/Check-black.svg', () => 'CheckIcon');
 
 // Mock Button component
 jest.mock('components/Button/Button', () => {
-  return function MockButton({title, onPress}: {title: string; onPress: () => void}) {
+  return function MockButton({ title, onPress }: { title: string; onPress: () => void }) {
     return (
       <div data-testid="save-button" onClick={onPress}>
         {title}
@@ -19,8 +19,8 @@ jest.mock('components/Button/Button', () => {
 
 describe('ModalSelectInterests', () => {
   const mockInterests = [
-    {id: 1, title: 'Sports', image: null, isSelected: false},
-    {id: 2, title: 'Music', image: null, isSelected: true},
+    { id: 1, title: 'Sports', image: null, isSelected: false },
+    { id: 2, title: 'Music', image: null, isSelected: true },
   ];
 
   const mockProps = {
@@ -32,14 +32,18 @@ describe('ModalSelectInterests', () => {
   };
 
   it('renders correctly', () => {
-    const {getByText, getByPlaceholderText} = render(<ModalSelectInterests {...mockProps} />);
+    const { getByText, getByPlaceholderText } = render(<ModalSelectInterests availableInterests={[]} formikFieldName={''} formikValues={{}} setFieldValue={function (field: string, value: any, shouldValidate?: boolean): void {
+      throw new Error('Function not implemented.');
+    }} {...mockProps} />);
 
     expect(getByText('Select Interests')).toBeTruthy();
     expect(getByPlaceholderText('Search')).toBeTruthy();
   });
 
   it('handles search input', () => {
-    const {getByPlaceholderText} = render(<ModalSelectInterests {...mockProps} />);
+    const { getByPlaceholderText } = render(<ModalSelectInterests availableInterests={[]} formikFieldName={''} formikValues={{}} setFieldValue={function (field: string, value: any, shouldValidate?: boolean): void {
+      throw new Error('Function not implemented.');
+    }} {...mockProps} />);
 
     const searchInput = getByPlaceholderText('Search');
     fireEvent.changeText(searchInput, 'sport');

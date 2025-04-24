@@ -1,20 +1,40 @@
-import { Dispatch, FC, SetStateAction } from 'react';
+import { FC, useState, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
+import { useFormikContext } from 'formik';
 import * as S from './MyInterests.style';
+import ModalSelectInterests from './ModalSelectInterests/ModalSelectInterests';
 import ArrowRight from 'assets/images/icons/arrow-right-s-line.svg';
+import { components } from 'src/api/v1';
+import InterestImageSmallList from 'screens/App/Components/Intrests/InterestImageSmallList';
 
-interface MyInterestsProps {
-  listOfInterests: { id: number; title: string; isSelected: boolean; image: any }[];
-  loading: boolean;
-  setIsVisibleInterestsModal: Dispatch<SetStateAction<boolean>>;
+type Interest = components['schemas']['Interest'];
+
+interface MyInterestsFormikValues {
+  interestIds?: number[];
+  [key: string]: any;
 }
 
-const MyInterests: FC<MyInterestsProps> = ({ listOfInterests, loading, setIsVisibleInterestsModal }) => {
-  const visibleInterests = listOfInterests.filter(interest => interest.isSelected).slice(0, 2);
-  const remainingCount =
-    listOfInterests.filter(interest => interest.isSelected).length > 2
-      ? listOfInterests.filter(interest => interest.isSelected).length - 2
-      : 0;
+interface MyInterestsProps {
+  availableInterests: Interest[];
+  loading: boolean;
+}
+
+const MyInterests: FC<MyInterestsProps> = ({ availableInterests, loading }) => {
+  const [isVisibleInterestsModal, setIsVisibleInterestsModal] = useState(false);
+  const { values, setFieldValue } = useFormikContext<MyInterestsFormikValues>();
+
+  const selectedInterests = useMemo(() => {
+    const selectedInterests = values.interests || [];
+    const availableInterestsMap = new Map(availableInterests?.map(interest => [interest.id, interest]));
+    return selectedInterests?.length > 0
+      ? selectedInterests
+        .map((interest: Interest) => availableInterestsMap.get(interest.id))
+        .filter((interest: Interest | undefined): interest is Interest => interest !== undefined)
+      : [];
+  }, [values.interests, availableInterests]);
+
+  const visibleInterests = selectedInterests.slice(0, 2);
+  const hiddenInterestsCount = selectedInterests.length - visibleInterests.length;
 
   if (loading) {
     return <S.LoadingIndicator testID="my-interests-loading-indicator" />;
@@ -33,21 +53,25 @@ const MyInterests: FC<MyInterestsProps> = ({ listOfInterests, loading, setIsVisi
         onPress={() => setIsVisibleInterestsModal(true)}>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
           <S.InterestsContainer>
-            {visibleInterests.map(interest => (
-              <S.InterestItem key={interest.id}>
-                <S.InterestImage source={interest.image} />
-                <S.InterestText>{interest.title}</S.InterestText>
-              </S.InterestItem>
-            ))}
-            {remainingCount > 0 && (
+            <InterestImageSmallList interests={visibleInterests} />
+            {hiddenInterestsCount > 0 && (
               <S.CounterContainer>
-                <S.CounterText>+{remainingCount}</S.CounterText>
+                <S.CounterText>+{hiddenInterestsCount}</S.CounterText>
               </S.CounterContainer>
             )}
           </S.InterestsContainer>
         </View>
         <ArrowRight />
       </TouchableOpacity>
+
+      <ModalSelectInterests
+        modalInterests={isVisibleInterestsModal}
+        setModalInterests={setIsVisibleInterestsModal}
+        availableInterests={availableInterests}
+        formikFieldName="interests"
+        formikValues={values}
+        setFieldValue={setFieldValue}
+      />
     </S.StyledRadialGradient>
   );
 };

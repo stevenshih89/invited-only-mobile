@@ -15,7 +15,14 @@ interface ModalDefaultProps {
 
 const ModalDefault: FC<ModalDefaultProps> = ({ isVisible, onConfirm, onClose, confirmText, cancelText, title, description }) => {
   return (
-    <S.StyledModal isVisible={isVisible} onBackdropPress={onClose} onSwipeComplete={onClose}>
+    <S.StyledModal
+      isVisible={isVisible}
+      onBackdropPress={onClose}
+      onSwipeComplete={onClose}
+      hideModalContentWhileAnimating={true}
+      useNativeDriverForBackdrop={true}
+      useNativeDriver={true}
+    >
       <S.ModalContent>
         <S.CloseButton onPress={onClose}>
           <CloseIcon width={14} height={14} />

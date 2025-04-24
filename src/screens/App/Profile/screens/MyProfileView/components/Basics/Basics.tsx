@@ -2,17 +2,18 @@ import { FC } from 'react';
 import { View } from 'react-native';
 import * as S from './Basics.style';
 import { useGenderSpecs } from 'hooks/useGenderSpecs';
+import InterestImageSmallList from 'screens/App/Components/Intrests/InterestImageSmallList';
+import { components } from 'src/api/v1';
 
 interface BasicsProps {
   location: string;
   homeAddress: string;
   work: { title: string };
   gender: 'man' | 'woman' | 'other';
-  interests: { id: string; title: string }[];
-  listOfInterestsImages: { id: number; image: any }[];
+  listOfInterestsImages: components['schemas']['Interest'][];
 }
 
-const Basics: FC<BasicsProps> = ({ location, homeAddress, work, gender, interests, listOfInterestsImages }) => {
+const Basics: FC<BasicsProps> = ({ location, homeAddress, work, gender, listOfInterestsImages }) => {
   const { genderIcon: GenderIcon, genderText } = useGenderSpecs(gender);
 
   return (
@@ -54,17 +55,12 @@ const Basics: FC<BasicsProps> = ({ location, homeAddress, work, gender, interest
           </>
         )}
       </S.TagsContainer>
-      {!!interests?.length && (
+      {!!listOfInterestsImages?.length && (
         <View style={{ marginTop: 24 }}>
           <S.SectionTitle>Interests</S.SectionTitle>
           <S.InterestsContainer>
             <S.InterestTagsContainer>
-              {interests?.map((interest: any) => (
-                <S.InterestTag key={interest.id}>
-                  <S.InterestImage source={listOfInterestsImages.find(item => item.id === interest.id)?.image} />
-                  <S.InterestText>{interest.title}</S.InterestText>
-                </S.InterestTag>
-              ))}
+              <InterestImageSmallList interests={listOfInterestsImages} />
             </S.InterestTagsContainer>
           </S.InterestsContainer>
         </View>

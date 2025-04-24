@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, { FC } from 'react';
 import * as S from './MyLocation.style';
 import LockIcon from 'assets/images/icons/lock-02.svg';
 
@@ -9,7 +9,7 @@ interface MyLocationProps {
   setHomeAddress: (text: string) => void;
 }
 
-const MyLocation: FC<MyLocationProps> = ({country, setCountry, homeAddress, setHomeAddress}) => {
+const MyLocation: FC<MyLocationProps> = ({ country, setCountry, homeAddress, setHomeAddress }) => {
   return (
     <S.StyledRadialGradient
       colors={['rgba(26, 26, 26, 0.40)', 'rgba(0, 0, 0, 0.00)', 'rgba(255, 255, 255, 0.07)']}
@@ -26,8 +26,6 @@ const MyLocation: FC<MyLocationProps> = ({country, setCountry, homeAddress, setH
           <LockIcon />
         </S.CityContainer>
       </S.InputContainer>
-      <S.InputLabel>Company or industry</S.InputLabel>
-      <S.StyledInput value={homeAddress} onChangeText={setHomeAddress} placeholder="Enter your home address" />
     </S.StyledRadialGradient>
   );
 };

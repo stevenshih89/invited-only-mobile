@@ -8,13 +8,12 @@ interface MyGeneralProps {
   gender: string | null;
   date: string;
   showAge: boolean;
-  setIsVisibleHeightModal: (value: boolean) => void;
   setDate: (value: string) => void;
   setShowAge: (value: boolean) => void;
   name: string;
 }
 
-const MyGeneral: FC<MyGeneralProps> = ({ gender, date, showAge, setShowAge, setIsVisibleHeightModal, setDate, name }) => {
+const MyGeneral: FC<MyGeneralProps> = ({ gender, date, showAge, setShowAge, setDate, name }) => {
   return (
     <S.StyledRadialGradient
       colors={['rgba(26, 26, 26, 0.40)', 'rgba(0, 0, 0, 0.00)', 'rgba(255, 255, 255, 0.07)']}

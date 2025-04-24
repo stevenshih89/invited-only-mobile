@@ -78,9 +78,13 @@ paths:
                   refreshToken:
                     type: string
                     description: Long-lived refresh token (used to get new access tokens).
+                  uid:
+                    type: string
+                    description: The UID of the user.
                 required:
                   - accessToken
                   - refreshToken
+                  - uid
         '400':
           description: Bad request (e.g., missing parameters).
         '401':
@@ -350,14 +354,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                phoneNumber:
-                  type: string
-                  description: The phone number of the user.
-                  example: '+14155550123'
-              required:
-                - phoneNumber
+              $ref: '#/components/schemas/User'
 
       responses:
         '201':
@@ -919,6 +916,209 @@ paths:
           description: Chat not found.
         '500':
           description: Internal server error.
+
+
+
+  /report/user/{userId}:
+    get:
+      summary: Get reports by user ID
+      description: Returns a list of reports associated with the specified user ID.
+      operationId: getReportsByUserId
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier of the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of reports for the given user ID
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    nameSender:
+                      type: string
+                    phone:
+                      type: string
+                    phoneSender:
+                      type: string
+                    photo:
+                      type: string
+                      format: uri
+                    photoSender:
+                      type: string
+                      format: uri
+                    typeReport:
+                      type: string
+                    uid:
+                      type: string
+                    uidSender:
+                      type: string
+        '400':
+          description: Invalid user ID
+        '500':
+          description: Internal server error
+  /report/create:
+    post:
+      summary: Create a new report
+      operationId: createReport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                nameSender:
+                  type: string
+                phone:
+                  type: string
+                phoneSender:
+                  type: string
+                photo:
+                  type: string
+                  format: uri
+                photoSender:
+                  type: string
+                  format: uri
+                typeReport:
+                  type: string
+                uid:
+                  type: string
+                uidSender:
+                  type: string
+
+      responses:
+        '200':
+          description: Report created successfully
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+  /report/{id}:
+    get:
+      summary: Get a report by ID (via query parameter)
+      description: Fetches a single report based on the provided `id` query parameter.
+      operationId: getReport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the report
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Report object returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  nameSender:
+                    type: string
+                  phone:
+                    type: string
+                  phoneSender:
+                    type: string
+                  photo:
+                    type: string
+                    format: uri
+                  photoSender:
+                    type: string
+                    format: uri
+                  typeReport:
+                    type: string
+                  uid:
+                    type: string
+                  uidSender:
+                    type: string
+        '400':
+          description: Missing or invalid ID
+        '500':
+          description: Internal server error
+    patch:
+      summary: Update a report by ID
+      operationId: updateReport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Partial update for ReportModel
+              properties:
+                name:
+                  type: string
+                nameSender:
+                  type: string
+                phone:
+                  type: string
+                phoneSender:
+                  type: string
+                photo:
+                  type: string
+                  format: uri
+                photoSender:
+                  type: string
+                  format: uri
+                typeReport:
+                  type: string
+                uid:
+                  type: string
+                uidSender:
+                  type: string
+      responses:
+        '200':
+          description: Report updated successfully
+        '400':
+          description: Invalid record ID
+        '500':
+          description: Internal server error
+
+    delete:
+      summary: Delete a report by ID
+      operationId: deleteReport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Report deleted successfully or not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Invalid report ID
+        '500':
+          description: Internal server error
 components:
   schemas:
     User:
@@ -1469,6 +1669,13 @@ components:
         userInfo: devUserInfo
         events: devEvents
         attendees: devEventAttendees
+    UserPhoneUid:
+      type: object
+      properties:
+        uid:
+          type: string
+        phone:
+          type: string
     FirebaseRemoteConfigParameterValue:
       type: object
       description: Represents the value of a Firebase Remote Config parameter.

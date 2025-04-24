@@ -1,7 +1,7 @@
-import { FC, useState, useContext, useEffect, JSX } from 'react';
+import { FC, useState, JSX } from 'react';
 import {
   Alert,
-  AppState,
+
   ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
@@ -16,10 +16,7 @@ import { ImagePickerResponse, launchImageLibrary } from 'react-native-image-pick
 import { RFValue } from 'react-native-responsive-fontsize';
 import { PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request } from 'react-native-permissions';
 import LinearGradient from 'react-native-linear-gradient';
-import moment from 'moment';
-import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import analytics from '@react-native-firebase/analytics';
 import { isIos, screenHeight } from 'constants/common';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -38,15 +35,13 @@ import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
 import Button from 'components/Button/Button';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { enterBirthdayPath } from 'constants/pathLocations';
-import { AuthContext } from 'contexts/AuthContext.tsx';
 import AuthProgress from 'components/AuthProgress';
 import { showToast } from 'helpers/showToast';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import { useAuthStore } from 'src/store/authStore';
+import { components } from 'src/api/v1';
 
 const AddPhotos: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
-  const { userMetadata: user } = useAuthStore();
   const [photos, setImages] = useState<{ image: null | string; id: number }[]>([
     {
       id: 0,
@@ -74,7 +69,7 @@ const AddPhotos: FC = (): JSX.Element => {
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  const { onBoarding, setOnBoarding } = useContext(AuthContext);
+  const { onBoarding, setOnBoarding } = useAuthStore();
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
     const result = await check(permission);
     switch (result) {
@@ -92,41 +87,6 @@ const AddPhotos: FC = (): JSX.Element => {
 
     return result;
   };
-
-  useEffect(() => {
-    let subscription: any;
-
-    const name = onBoarding.find((item: any) => item.name)?.name;
-    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
-
-    const handleAppClose = async () => {
-      try {
-        await firestore()
-          .collection('unfinishedRegistrationUsers')
-          .doc(user?.uid)
-          .set({
-            name,
-            accountType,
-            phoneNumber: user?.phoneNumber,
-            createdAt: moment().format('YYYY-MM-DD'),
-            screen: 'add-photos',
-          });
-      } catch (e) {
-        logErrorToSentry(e);
-        console.error(e);
-      }
-    };
-
-    subscription = AppState.addEventListener('change', nextAppState => {
-      if (nextAppState === 'background') {
-        handleAppClose();
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
     if (imagePath) {
@@ -205,19 +165,29 @@ const AddPhotos: FC = (): JSX.Element => {
   }
 
   const handleNext = async () => {
-    const { userMetadata: user } = useAuthStore.getState();
-    if (!hasPhoto(photos) || !user?.uid) {
+
+
+    if (!hasPhoto(photos)) {
       return;
     }
     setIsLoading(true);
-    let photosList = [];
+    let photosList: components['schemas']['UserPhoto'][] = [];
     try {
       for (const i of photos) {
         if (i?.image) {
-          const img = await uploadImage(i.image, user?.uid);
-          photosList.push({ id: i?.id, image: img });
+          const img = await uploadImage(i.image, onBoarding?.registrationDetails?.uid || '');
+          console.log('img', img);
+          photosList.push({ id: i?.id + 1, image: img });
         }
       }
+      setOnBoarding({
+        ...onBoarding,
+        onboardingStep: '/enter-birthday',
+        registrationDetails: {
+          ...onBoarding.registrationDetails,
+          photos: photosList,
+        },
+      });
     } catch (e) {
       console.error(e);
     } finally {
@@ -225,21 +195,9 @@ const AddPhotos: FC = (): JSX.Element => {
     }
 
     if (photosList.length) {
-      const onBoardingWithUserPhotos = onBoarding.filter((onboardItem: any) => !onboardItem.photos).concat([{ photos: photosList }]);
-      setOnBoarding(onBoardingWithUserPhotos);
       navigation.navigate(enterBirthdayPath as never);
     } else {
       showToast('inviteMatch', '', 'Failed to upload photos');
-    }
-    try {
-      analytics().logEvent('add_photos_continue_button_press', {
-        userId: user?.uid,
-        name: onBoarding.find((item: any) => item.name)?.name,
-        screen: 'add-photos',
-        action: 'continue',
-      });
-    } catch (e) {
-      console.error(e);
     }
   };
 
