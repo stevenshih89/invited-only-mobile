@@ -20,8 +20,7 @@ jest.mock('hooks/user/useUpdateUser', () => ({
 
 describe('ShareSocialLink', () => {
   it('renders correctly', () => {
-    const { getByText, getByPlaceholderText, getByTestId } = render(<ShareSocialLink />);
-
+    const { getByText } = render(<ShareSocialLink />);
     expect(getByText('Want to join?')).toBeTruthy();
     expect(getByText("This app is invite-only. Drop a link to one of your social profiles, and we'll check it out.")).toBeTruthy();
     expect(getByText('How to get your profile link?')).toBeTruthy();

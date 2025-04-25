@@ -13,7 +13,7 @@ export const Container = styled.View`
     height: ${screenHeight * 0.9}px;
     flex-direction: column;
     background-color: ${blackColor};
-    padding: 16px;
+    padding-top: 16px;
     /* border: 3px solid blue; // Removed border */
 `;
 

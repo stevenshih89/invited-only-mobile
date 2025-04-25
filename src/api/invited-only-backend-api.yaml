@@ -1512,7 +1512,7 @@ components:
         - guestId
         - hostId
       properties:
-        connectionId:
+        id:
           type: string
           description: Unique identifier, e.g. `${eventId}_${guestId}`
         eventId:

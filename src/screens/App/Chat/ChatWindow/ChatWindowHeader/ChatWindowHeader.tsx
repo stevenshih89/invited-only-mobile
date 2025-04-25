@@ -1,28 +1,74 @@
 import React, { useState, useRef } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as S from "./ChatWindowHeader.style";
 import { ToggleInvitationStatusDropdown } from "./ToggleInvitationStatusDropdown/ToggleInvitationStatusDropdown";
 import { ApproveActionButton } from "./ApproveActionButton/ApproveActionButton";
+import useConnectionRealtimeStatus from "./hooks/useConnectionRealtimeStatus";
 import { components } from "src/api/v1";
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 
 import { useAppNavigation } from "hooks/useAppNavigation";
+import { whiteColor } from "constants/colors";
 
 interface ChatWindowHeaderProps {
     chat: components['schemas']['Chat'];
+}
+
+type connecitonStatus = 'connectionInitiated' | 'hostApprovePendingForGuest' | 'guestApprovePendingForHost' | 'attendingComplete' | 'completed' | 'rejected' | undefined;
+
+
+
+const getInvitationStatus = (connectionStatus: components['schemas']['ConnectionRequest'] | undefined): connecitonStatus => {
+    if (!connectionStatus?.hostConfirm && !connectionStatus?.guestConfirm) {
+        return 'connectionInitiated';
+    }
+    if (connectionStatus?.hostConfirm && !connectionStatus?.guestConfirm) {
+        return 'hostApprovePendingForGuest';
+    }
+    if (connectionStatus?.hostConfirm && !connectionStatus?.guestConfirm) {
+        return 'guestApprovePendingForHost';
+    }
+    if (connectionStatus?.hostConfirm && connectionStatus?.guestConfirm) {
+        return 'attendingComplete';
+    }
+    if (connectionStatus?.hostConfirm && connectionStatus?.guestConfirm) {
+        return 'completed';
+    }
+    if (connectionStatus?.hostConfirm && connectionStatus?.guestConfirm) {
+        return 'rejected';
+    }
+
+
 }
 
 export const ChatWindowHeader = ({ chat }: ChatWindowHeaderProps) => {
     const { goBack } = useAppNavigation();
     const insets = useSafeAreaInsets();
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-    const invitationStatusRef = useRef<View>(null);
 
+    const { connectionStatus } = useConnectionRealtimeStatus({ chatId: chat.id || '' });
+    console.log('connectionStatus', connectionStatus);
+    const invitationStatus = getInvitationStatus(connectionStatus);
+    console.log('invitationStatus', invitationStatus);
     const toggleDropdown = () => {
         setIsDropdownVisible(!isDropdownVisible);
     };
-
+    console.log('invitationStatus', invitationStatus);
+    const renderActionButton = () => {
+        if (invitationStatus === 'hostApprovePendingForGuest') {
+            return <S.WaitingContainer>
+                <ActivityIndicator size="small" color={whiteColor} />
+                <S.WaitingText>Waiting</S.WaitingText>
+            </S.WaitingContainer>
+        }
+        if (invitationStatus === 'connectionInitiated') {
+            return <ApproveActionButton chat={chat} />
+        }
+        if (invitationStatus === 'attendingComplete') {
+            return <ApproveActionButton chat={chat} />
+        }
+    }
 
     return (
         <S.HeaderContainer style={{ paddingTop: insets.top }}>
@@ -43,7 +89,7 @@ export const ChatWindowHeader = ({ chat }: ChatWindowHeaderProps) => {
             </S.HeaderRow>
             <S.HeaderRow>
 
-                <View ref={invitationStatusRef}>
+                <S.HeaderCollapsedContainer>
                     <TouchableOpacity onPress={toggleDropdown} activeOpacity={0.7}>
                         <S.InvitationStatusContainer>
                             <S.InvitationLeftContainer>
@@ -54,19 +100,21 @@ export const ChatWindowHeader = ({ chat }: ChatWindowHeaderProps) => {
                                 </S.InvitationStatusTextContainer>
                             </S.InvitationLeftContainer>
                             <S.InvitationRightContainer>
-                                <ApproveActionButton chat={chat} />
+                                {renderActionButton()}
                             </S.InvitationRightContainer>
                         </S.InvitationStatusContainer>
                     </TouchableOpacity>
-                </View>
+                    <S.DropdownWrapper>
+                        <ToggleInvitationStatusDropdown
+                            isVisible={isDropdownVisible}
+                            onClose={() => setIsDropdownVisible(false)}
+                            invitationStatus={invitationStatus || ''}
+                        />
+                    </S.DropdownWrapper>
+                </S.HeaderCollapsedContainer>
 
             </S.HeaderRow>
-            <ToggleInvitationStatusDropdown
-                isVisible={isDropdownVisible}
-                anchorElementRef={invitationStatusRef}
-                onClose={() => setIsDropdownVisible(false)}
-                currentStatus={1}
-            />
+
         </S.HeaderContainer>
     );
 };

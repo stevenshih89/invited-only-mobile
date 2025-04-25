@@ -2,21 +2,38 @@ import styled from "styled-components/native";
 import { Satoshi400, Satoshi500 } from "src/constants/fonts";
 import { screenHeight, screenWidth } from "constants/common";
 import Arrow from 'assets/images/icons/arrow-down.svg';
+import { whiteColor } from "constants/colors";
 
 export const HeaderContainer = styled.View`
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    gap: 12px;
+    width: ${screenWidth * 1}px;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 12px;
 
 `;
+export const HeaderCollapsedContainer = styled.View`
+    display: flex;
+`;
+
+export const DropdownWrapper = styled.View`
+    position: absolute;
+    top: 100%; /* Position below the parent (HeaderCollapsedContainer) */
+    left: 0;
+    width: 100%;
+    z-index: 10; /* Ensure it's above other content */
+    background-color: rgba(12, 12, 12, 1);
+`;
+
 export const HeaderRow = styled.View`
     display: flex;
+
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    width: ${screenWidth * 1}px;
 `;
 
 export const BackButton = styled.TouchableOpacity`
@@ -63,18 +80,39 @@ export const MoreButton = styled.TouchableOpacity`
     height: 20px;
 `;
 
+export const WaitingContainer = styled.View`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 100px;
+    background-color: rgba(12, 12, 12, 1);
+    padding: 4px 10px;
+    gap: 8px;
+    width: 92px;
+    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+
+`;
+
+export const WaitingText = styled.Text`
+    font-family: ${Satoshi500};
+    font-size: 12px;
+    line-height: 120%;
+    color:${whiteColor};
+`;
 export const InvitationStatusContainer = styled.View`
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     gap: 4px;
-    transform: translateX(-30px);
     width: ${screenWidth * 1}px;
     padding-left: 20px;
-    background-color: rgba(12, 12, 12, 0.4);
+    background-color:rgba(12, 12, 12, 1);
     height: ${screenHeight * 0.07}px;
-    border-radius: 12px;
+    padding-right: 10px;
+
+    
 `;
 export const InvitationLeftContainer = styled.View`
     display: flex;

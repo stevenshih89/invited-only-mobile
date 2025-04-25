@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import Modal from 'react-native-modal';
 import * as S from './ModalDefault.style';
 import CloseIcon from 'assets/images/icons/close.svg';
 import Button from 'components/Button/Button';
@@ -15,7 +16,7 @@ interface ModalDefaultProps {
 
 const ModalDefault: FC<ModalDefaultProps> = ({ isVisible, onConfirm, onClose, confirmText, cancelText, title, description }) => {
   return (
-    <S.StyledModal
+    <Modal
       isVisible={isVisible}
       onBackdropPress={onClose}
       onSwipeComplete={onClose}
@@ -34,7 +35,7 @@ const ModalDefault: FC<ModalDefaultProps> = ({ isVisible, onConfirm, onClose, co
         </S.ButtonContainer>
         <Button title={cancelText} variant="gray" onPress={onClose} />
       </S.ModalContent>
-    </S.StyledModal>
+    </Modal>
   );
 };
 

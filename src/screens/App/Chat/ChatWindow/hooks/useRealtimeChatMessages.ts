@@ -11,7 +11,10 @@ const useRealtimeChatMessages = (chatId: string) => {
             }
         }
     })
-    useFirestoreSubscription(`devChats/${chatId}/devMessages`, ['get', '/chat/message/{chatId}', { params: { path: { chatId } } }])
+    useFirestoreSubscription({
+        path: `devChats/${chatId}/devMessages`,
+        queryKey: ['get', '/chat/message/{chatId}', { params: { path: { chatId } } }]
+    })
 
     return {
         chatMessages,

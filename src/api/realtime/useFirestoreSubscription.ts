@@ -3,7 +3,12 @@ import { QueryKey, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { components } from "../v1";
 
-const useFirestoreSubscription = (path: string, queryKey: QueryKey) => {
+interface UseFirestoreSubscriptionProps {
+    path: string;
+    queryKey: QueryKey;
+}
+
+const useFirestoreSubscription = ({ path, queryKey }: UseFirestoreSubscriptionProps) => {
     const db = getFirestore();
     const queryClient = useQueryClient();
 

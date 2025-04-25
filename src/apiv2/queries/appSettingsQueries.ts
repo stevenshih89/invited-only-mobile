@@ -80,6 +80,8 @@ export interface FirebaseCollectionsResponse {
   userInfo: string;
   events: string;
   userPhoneUids: string;
+  attendees: string;
+  connectionRequests: string;
 }
 
 const apiAppSettingsCollection = Config.APP_SETTINGS_COLLECTION || 'appSettings';

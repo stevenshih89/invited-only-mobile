@@ -17,7 +17,7 @@ export const ApproveActionButton: React.FC<ApproveActionButtonProps> = ({ chat, 
     return (
         <S.ButtonContainer onPress={() => approveChat({
             body: {
-                connectionId: chat.id ?? '',
+                id: chat.id ?? '',
                 guestId: chat.guestId ?? '',
                 hostId: chat.hostId ?? '',
                 eventId: chat.eventId ?? '',

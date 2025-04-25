@@ -689,7 +689,7 @@ export interface components {
         };
         ConnectionRequest: {
             /** @description Unique identifier, e.g. `${eventId}_${guestId}` */
-            connectionId?: string;
+            id?: string;
             eventId: string;
             guestId: string;
             hostId: string;

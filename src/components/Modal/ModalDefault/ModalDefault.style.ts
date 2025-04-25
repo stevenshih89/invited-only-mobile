@@ -1,21 +1,8 @@
 import styled from 'styled-components/native';
-import Modal from 'react-native-modal';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
 import { whiteColor } from 'constants/colors';
 
-export const StyledModal = styled(Modal).attrs({
-  backdropColor: 'rgba(0, 0, 0, 0.99)',
-  backdropOpacity: 0.8,
-  coverScreen: true,
-  useNativeDriver: false,
-  propagateSwipe: true,
-  swipeDirection: ['down'],
-})`
-  margin: 0;
-  justify-content: center;
-  z-index: 999;
-`;
 
 export const ModalContent = styled.View`
   margin-horizontal: 24px;
