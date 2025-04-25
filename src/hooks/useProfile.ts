@@ -1,22 +1,22 @@
-import {useState, useEffect, useContext} from 'react';
+import { useState, useEffect, useContext } from 'react';
 import firestore from '@react-native-firebase/firestore';
-import {useAdminActions} from 'src/store/adminActions';
-import {useUser} from 'src/store/userStore';
-import {myProfileViewPath} from 'constants/pathLocations';
-import {calculateAge} from 'helpers/calculateAge';
+import { useAdminActions } from 'src/store/adminActions';
+import useUser from 'hooks/user/useUser';
+import { myProfileViewPath } from 'constants/pathLocations';
+import { calculateAge } from 'helpers/calculateAge';
 
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
 
 export const useProfile = () => {
-  const {events: apiEventsCollection} = useContext(FirebaseCollectionsContext);
+  const { events: apiEventsCollection } = useContext(FirebaseCollectionsContext);
 
   const [activeTabId, setActiveTabId] = useState(0);
   const [totalGuests, setTotalGuests] = useState(0);
   const [eventsCount, setEventsCount] = useState(0);
 
-  const {user: userInfo} = useUser();
+  const { user: userInfo } = useUser();
 
   const rejectModalVisible = useAdminActions((i: any) => i?.rejectModalVisible);
   const acceptModalVisible = useAdminActions((i: any) => i?.acceptModalVisible);
@@ -25,9 +25,9 @@ export const useProfile = () => {
   const setChangeAccountModalVisible = useAdminActions((i: any) => i?.setChangeAccountModalVisible);
   const isHost = userInfo?.accountType === 'host';
   const tabList = [
-    {id: 0, title: 'My plan'},
-    {id: 1, title: 'Safety'},
-    {id: 2, title: 'App Invitations'},
+    { id: 0, title: 'My plan' },
+    { id: 1, title: 'Safety' },
+    { id: 2, title: 'App Invitations' },
   ];
 
   const calculateCompleteness = (profile: any) => {
@@ -38,7 +38,7 @@ export const useProfile = () => {
     let presentFields = 0;
 
     for (const field of requiredFields) {
-      if (profile?.hasOwnProperty(field) && profile?.[field] !== null && profile?.[field] !== undefined) {
+      if (profile?.[field] !== null && profile?.[field] !== undefined) {
         presentFields++;
       }
     }
@@ -93,7 +93,7 @@ export const useProfile = () => {
     }
   }, [userInfo?.uid]);
 
-  const userAge = calculateAge(userInfo?.date);
+  const userAge = userInfo?.date ? calculateAge(userInfo?.date) : 0;
 
   return {
     activeTabId,

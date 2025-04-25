@@ -1,9 +1,9 @@
 import styled from 'styled-components/native';
-import {BlurView} from '@react-native-community/blur';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight} from 'constants/common';
-import {whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import { BlurView } from '@react-native-community/blur';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { screenHeight, screenWidth } from 'constants/common';
+import { whiteColor } from 'constants/colors';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
 import Button from 'components/Button/Button';
 
 export const Container = styled.View`
@@ -18,7 +18,7 @@ export const Container = styled.View`
 export const ModalWrapper = styled.View`
   margin-top: auto;
   margin-bottom: ${screenHeight / 10}px;
-  width: 100%;
+  width: 105%;
   border-radius: 20px;
   align-items: center;
   justify-content: center;

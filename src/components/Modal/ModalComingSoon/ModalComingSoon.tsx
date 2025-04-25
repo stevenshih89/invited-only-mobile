@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, { FC } from 'react';
 import * as S from './ModalComingSoon.style';
 import LockIcon from 'assets/images/icons/key-rounded.svg';
 
@@ -22,8 +22,8 @@ const ModalComingSoon: FC = () => {
                 until={50000}
                 showSeparator
                 timeToShow={['H', 'M', 'S']}
-                onFinish={() => {}}
-                onPress={() => {}}
+                onFinish={() => { }}
+                onPress={() => { }}
                 size={36}
               />
             </S.CountdownWrapper>

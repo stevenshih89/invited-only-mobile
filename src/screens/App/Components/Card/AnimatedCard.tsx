@@ -8,6 +8,7 @@ import { PhysicCard } from './Card'; // Assuming PhysicCard remains in Card.tsx 
 import { NopeRejectBadge } from './Components/NopeRejectBadge/NopeRejectBadge';
 import { components } from 'src/api/v1';
 
+
 interface AnimatedCardProps {
   uid: string;
   backgroundUrls: components['schemas']['UserPhoto'][];
@@ -58,6 +59,7 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
           </S.NopeAnimatedOpacity>
           {children}
         </S.StyledAnimatedView>
+
       </PhysicCard>
     </GestureDetector>
   );

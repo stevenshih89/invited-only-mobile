@@ -6,15 +6,22 @@ import { check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS } fr
 import firestore from '@react-native-firebase/firestore';
 import { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { Gesture } from 'react-native-gesture-handler';
-import { useUser } from 'src/store/userStore';
+import useUser from 'src/hooks/user/useUser';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import { showToast } from 'helpers/showToast';
 import { isIos } from 'constants/common';
 import { components } from 'src/api/v1';
 
+// Define a type for the layout objects
+interface ImageLayout {
+  imageId: number;
+  x: number;
+  y: number;
+}
+
 export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any }) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const userHost = useUser((i: any) => i?.user);
+  const { user: userHost } = useUser();
   const isConfirmed = userHost?.accountConfirmed;
   const [visibleModalReplace, setVisibleModalReplace] = useState(false);
   console.log('images', images);
@@ -73,6 +80,7 @@ export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any
   };
 
   const replaceImage = async () => {
+    if (!userHost?.uid) return;
     if (selectImage && activeImage) {
       try {
         const getDoc = await firestore().collection(apiUserInfoCollection).doc(userHost.uid).get();
@@ -122,7 +130,8 @@ export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any
   const viewRef5 = useRef(null);
   const viewRef6 = useRef(null);
 
-  const [layout, setLayout] = useState([]);
+  // Apply the type to the layout state
+  const [layout, setLayout] = useState<ImageLayout[]>([]);
 
   const [activeImage, setActiveImage] = useState(0);
 
@@ -149,7 +158,8 @@ export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any
   const MIN_DISTANCE_THRESHOLD = 50;
 
   const handleChange = (offsetX: number, offsetY: number, imageId: number) => {
-    const activeItem = layout.find(item => item.imageId === imageId);
+    // Use the defined type here
+    const activeItem = layout.find((item: ImageLayout) => item.imageId === imageId);
 
     if (!activeItem) {
       return;
@@ -168,7 +178,8 @@ export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any
     let closestImageId = imageId;
     let minDistance = Infinity;
 
-    layout.forEach(item => {
+    // Use the defined type here
+    layout.forEach((item: ImageLayout) => {
       if (item.imageId !== imageId) {
         const distance = Math.sqrt(Math.pow(item.x - activeItemPositionX, 2) + Math.pow(item.y - activeItemPositionY, 2));
 

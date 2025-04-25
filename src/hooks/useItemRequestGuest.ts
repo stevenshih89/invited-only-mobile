@@ -1,42 +1,42 @@
-import {Animated} from 'react-native';
-import { useEffect, useRef, useState} from 'react';
+import { Animated } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
-import {showToast} from 'helpers/showToast.ts';
-import {sendNotification} from 'helpers/fcmHelper';
-import {handleCreateChat} from 'helpers/chat';
-import {INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
-import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
-import {Event} from 'src/types/event';
-import {joinEvent,requestsScreen} from 'constants/analitycs';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {useUser} from 'src/store/userStore';
+import { showToast } from 'helpers/showToast.ts';
+import { sendNotification } from 'helpers/fcmHelper';
+import { INVITE_MATCH_STATUS, screenHeight } from 'constants/common';
+import { updateGuestEventsList } from 'helpers/updateGuestEventsList';
+import { Event } from 'src/types/event';
+import { joinEvent, requestsScreen } from 'constants/analitycs';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import useUser from 'src/hooks/user/useUser';
+import { components } from 'src/api/v1';
 
 const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
 
-export const useItemRequestGuest = ({list, handleOpenMatch}: any) => {
-  const {photos, uid, hour, date, female, male, name, usersList, activeType, placeName} = list;
-  const [hostInfo, setHostInfo] = useState([]);
+type User = components['schemas']['User'];
+
+export const useItemRequestGuest = ({ list, handleOpenMatch }: any) => {
+  const { photos, uid, hour, date, female, male, name, usersList, activeType, placeName } = list;
+  const [hostInfo, setHostInfo] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   const cardRef = useRef(null);
 
   const [heightAnim] = useState(new Animated.Value(screenHeight * 0.4));
 
-  const user = useUser((i: any) => i?.user);
+  const { user } = useUser();
 
   const getHostInfo = async (uid: string) => {
     try {
       const host = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-      setHostInfo(host.data());
+      setHostInfo(host.data() as User | null);
       setLoading(false);
-      // console.log('host data', host.data());
     } catch (e) {
       setLoading(false);
       logErrorToSentry(e);
-      // console.log(e);
     }
   };
 
@@ -85,7 +85,7 @@ export const useItemRequestGuest = ({list, handleOpenMatch}: any) => {
           usersListHost: usersList,
           accountTypeHost: hostInfo?.accountType,
           accountTypeGuest: user?.accountType,
-          eventImage: photos[0].image,
+          eventImage: photos[0]?.image,
           guestsInvited: male + female,
         };
 
@@ -99,26 +99,28 @@ export const useItemRequestGuest = ({list, handleOpenMatch}: any) => {
             analytics().logEvent(`${requestsScreen}_${joinEvent}`, {
               eventId: list?.id,
             });
-            await handleCreateChat(matchedData);
-            await updateGuestEventsList(event?.id, user?.uid);
+
+            await updateGuestEventsList(event?.id, user?.uid ?? '');
             handleOpenMatch(matchedData);
             const getDoc = await firestore().collection(apiUserInfoCollection).doc(event.uid).get();
             const docData = getDoc.data();
-            if (docData?.notificationSettings.joinedEvent) {
-              await sendNotification(
-                event.uid,
-                'New join request',
-                `${user.name} wants to join you!`,
-                'invite',
-                'Join Request'.toUpperCase(),
-                user,
-              );
+            if (docData?.notificationSettings?.joinedEvent) {
+              if (user) {
+                await sendNotification(
+                  event.uid,
+                  'New join request',
+                  `${user.name} wants to join you!`,
+                  'invite',
+                  'Join Request'.toUpperCase(),
+                  user,
+                );
+              }
             }
           });
-        await updateJoinEvents();
+        if (user) {
+          await updateJoinEvents();
+        }
       } catch (e) {
-        // console.log(e);
-
         showToast('inviteMatch', '', "There's been an error");
         logErrorToSentry(e);
       }
@@ -126,6 +128,7 @@ export const useItemRequestGuest = ({list, handleOpenMatch}: any) => {
   };
 
   const updateJoinEvents = async () => {
+    if (!user?.uid) return;
     try {
       const doc = firestore().collection(apiUserInfoCollection).doc(user.uid);
       const data = (await doc.get()).data();
@@ -150,7 +153,7 @@ export const useItemRequestGuest = ({list, handleOpenMatch}: any) => {
         .doc(list?.id)
         .update({
           usersList: firestore.FieldValue.arrayRemove(userItem),
-          rejectsList: firestore.FieldValue.arrayUnion({uid: userItem.uid}),
+          rejectsList: firestore.FieldValue.arrayUnion({ uid: userItem.uid }),
         });
       analytics().logEvent(`${requestsScreen}_reject_${joinEvent}`, {
         eventId: list?.id,
@@ -158,8 +161,10 @@ export const useItemRequestGuest = ({list, handleOpenMatch}: any) => {
       showToast('inviteMatch', '', 'You reject invitation');
       const getDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
       const docData = getDoc.data();
-      if (docData?.notificationSettings.myEvents) {
-        await sendNotification(uid, 'Not now.', `${userItem?.name} reject your invitation.`, 'rejected', 'Rejected'.toUpperCase(), user);
+      if (docData?.notificationSettings?.myEvents) {
+        if (user) {
+          await sendNotification(uid, 'Not now.', `${userItem?.name} reject your invitation.`, 'rejected', 'Rejected'.toUpperCase(), user);
+        }
       }
     } catch (e) {
       console.error(e);
@@ -182,14 +187,14 @@ export const useItemRequestGuest = ({list, handleOpenMatch}: any) => {
     }
   };
 
-  const handleInvite = ({userItem, withSwipeAnimation}: {userItem: Event.User; withSwipeAnimation: boolean}) => {
+  const handleInvite = ({ userItem, withSwipeAnimation }: { userItem: Event.User; withSwipeAnimation: boolean }) => {
     onInvite(userItem);
     if (withSwipeAnimation) {
       handleSwipeCardRight();
     }
   };
 
-  const handleReject = ({userItem, withSwipeAnimation}: {userItem: Event.User; withSwipeAnimation: boolean}) => {
+  const handleReject = ({ userItem, withSwipeAnimation }: { userItem: Event.User; withSwipeAnimation: boolean }) => {
     onReject(userItem);
     if (withSwipeAnimation) {
       handleSwipeCardLeft();

@@ -5,4 +5,6 @@ export const IoContainer = styled.View`
   height: 100%;
   padding-bottom: 10px;
   gap: 10px;
+  justify-content: center;
+  align-items: center;
 `;

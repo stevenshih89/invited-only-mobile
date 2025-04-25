@@ -1,19 +1,19 @@
 import Purchases from 'react-native-purchases';
 import analytics from '@react-native-firebase/analytics';
-import {useEffect, useState} from 'react';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {accountSettingPath, notificationSettingPath} from 'constants/pathLocations';
-import {openLink} from 'helpers/links';
-import {showToast} from 'helpers/showToast';
-import {useSubscriptions} from 'src/store/subscriptionsStore';
-import {settingsScreen} from 'constants/analitycs';
-import {useUser} from 'src/store/userStore';
+import { useEffect, useState } from 'react';
+import useUser from './user/useUser';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { accountSettingPath, notificationSettingPath } from 'constants/pathLocations';
+import { openLink } from 'helpers/links';
+import { showToast } from 'helpers/showToast';
+import { useSubscriptions } from 'src/store/subscriptionsStore';
+import { settingsScreen } from 'constants/analitycs';
 
 export const useSettings = () => {
   const [isVisibleLogoutModal, setIsVisibleLogoutModal] = useState(false);
 
   const navigation = useAppNavigation();
-  const user = useUser((i: any) => i?.user);
+  const { user } = useUser();
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
 
   useEffect(() => {
@@ -33,13 +33,13 @@ export const useSettings = () => {
   const goToAccountSetting = () => {
     const locationState = user?.location;
     // @ts-ignore
-    navigation.navigate(accountSettingPath, {params: {locationState: locationState}});
+    navigation.navigate(accountSettingPath, { params: { locationState: locationState } });
   };
 
   const goToNotificationSetting = async () => {
     const notificationSettings = user?.notificationSettings;
     // @ts-ignore
-    navigation.navigate(notificationSettingPath, {params: {notificationSettings: notificationSettings}});
+    navigation.navigate(notificationSettingPath, { params: { notificationSettings: notificationSettings } });
   };
 
   const goToTermsOfUse = () => {
@@ -59,19 +59,19 @@ export const useSettings = () => {
       if (purchaserInfo.activeSubscriptions.length > 0) {
         switch (purchaserInfo.activeSubscriptions[0]) {
           case 'io_59_1w':
-            showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', {status: 'success'});
+            showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', { status: 'success' });
 
-            setCurrentSubscriptions({activeSubscriptions: ['io_59_1w']});
+            setCurrentSubscriptions({ activeSubscriptions: ['io_59_1w'] });
             // navigation.navigate('/profile');
             break;
           case 'io_99_1m':
-            showToast('inviteMatch', 'Month subscription restored', 'Restore purchases', {status: 'success'});
-            setCurrentSubscriptions({activeSubscriptions: ['io_99_1m']});
+            showToast('inviteMatch', 'Month subscription restored', 'Restore purchases', { status: 'success' });
+            setCurrentSubscriptions({ activeSubscriptions: ['io_99_1m'] });
             // navigation.navigate('/profile');
             break;
           case 'io_29_3m':
-            showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', {status: 'success'});
-            setCurrentSubscriptions({activeSubscriptions: ['io_29_3m']});
+            showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', { status: 'success' });
+            setCurrentSubscriptions({ activeSubscriptions: ['io_29_3m'] });
             // navigation.navigate('/profile');
             break;
           default:
@@ -80,7 +80,7 @@ export const useSettings = () => {
         // console.log('purchases restore', purchaserInfo.activeSubscriptions[0]);
       } else {
         // console.log('purchases not found');
-        showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', {status: 'fail'});
+        showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', { status: 'fail' });
       }
     } catch (e) {
       // console.error('error restore purchases', e);

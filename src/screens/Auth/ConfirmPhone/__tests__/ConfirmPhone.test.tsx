@@ -51,7 +51,7 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 }));
 
 // Mock userStore
-jest.mock('src/store/userStore', () => ({
+jest.mock('hooks/user/useUser', () => ({
   useUser: () => jest.fn(),
 }));
 

@@ -1,25 +1,25 @@
-import React, {FC, useCallback, useState} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import React, { FC, useCallback, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 import Modal from 'react-native-modal';
 import firestore from '@react-native-firebase/firestore';
 
 //import components
-import {RFValue} from 'react-native-responsive-fontsize';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
 import Config from 'react-native-config';
 import useStyles from 'components/Modal/ModalEventRemindes/styles.ts';
 import Button from 'components/Button/Button.tsx';
 
 //import icons
-import {black4Color, blackColor, lightGray18Color, lightGreenColor, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {commonStackPath, eventEditingPath} from 'constants/pathLocations';
-import {ACCEPTED_STATUS} from 'constants/common';
-import {useUser} from 'src/store/userStore';
-import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
-import {showToast} from 'helpers/showToast';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import { black4Color, blackColor, lightGray18Color, lightGreenColor, whiteColor } from 'constants/colors';
+import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
+import { commonStackPath, eventEditingPath } from 'constants/pathLocations';
+import { ACCEPTED_STATUS } from 'constants/common';
+import useUser from 'hooks/user/useUser';
+import { getUsersListAccepted } from 'helpers/getUsersListAccepted';
+import { showToast } from 'helpers/showToast';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 
 interface ModalFullEvent {
   isVisible: boolean;
@@ -47,7 +47,7 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
   const navigation = useNavigation();
 
   const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
-  const user = useUser((i: any) => i?.user);
+  const { user } = useUser();
 
   const getActiveEventData = async () => {
     try {
@@ -86,7 +86,7 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
         swipeDirection={['down']}>
         <View style={styles.wrapper}>
           <View style={styles.whiteLine} />
-          <View style={{width: '100%', padding: 9, backgroundColor: whiteColor, borderRadius: 30}}>
+          <View style={{ width: '100%', padding: 9, backgroundColor: whiteColor, borderRadius: 30 }}>
             <FastImage
               resizeMode="cover"
               source={{
@@ -94,7 +94,7 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
                   ? actualActiveEventDataProps?.photos?.[0]?.image
                   : actualActiveEventData?.photos?.[0]?.image,
               }}
-              style={[styles.eventImage, {justifyContent: 'flex-end'}]}>
+              style={[styles.eventImage, { justifyContent: 'flex-end' }]}>
               {actualActiveEventData?.statusEvent && (
                 <View
                   style={{
@@ -153,9 +153,9 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
                   alignItems: 'center',
                 }}>
                 {user && user.photos?.[0]?.image && (
-                  <FastImage style={{width: 40, height: 40, borderRadius: 40}} source={{uri: user?.photos[0]?.image}} />
+                  <FastImage style={{ width: 40, height: 40, borderRadius: 40 }} source={{ uri: user?.photos[0]?.image }} />
                 )}
-                <View style={{marginLeft: 10, alignItems: 'center'}}>
+                <View style={{ marginLeft: 10, alignItems: 'center' }}>
                   <Text
                     style={{
                       fontSize: RFValue(26, 812),
@@ -184,10 +184,9 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
               textAlign: 'center',
               marginTop: 20,
               width: '90%',
-            }}>{`Change guest list from ${totalQuantityGuestsProps ? totalQuantityGuestsProps : totalQuantityGuests} to ${
-            totalQuantityGuestsProps ? totalQuantityGuestsProps : totalQuantityGuests + 1
-          }?`}</Text>
-          <View style={{width: '100%'}}>
+            }}>{`Change guest list from ${totalQuantityGuestsProps ? totalQuantityGuestsProps : totalQuantityGuests} to ${totalQuantityGuestsProps ? totalQuantityGuestsProps : totalQuantityGuests + 1
+              }?`}</Text>
+          <View style={{ width: '100%' }}>
             <Button
               onPress={() => {
                 navigation.navigate(commonStackPath, {
@@ -202,7 +201,7 @@ const ModalFullEvent: FC<ModalFullEvent> = ({
               title="Yes, change my guest list"
               buttonStyle={styles.button}
             />
-            <TouchableOpacity style={{marginBottom: 30}} onPress={() => setIsVisibleModalFullEvent(false)}>
+            <TouchableOpacity style={{ marginBottom: 30 }} onPress={() => setIsVisibleModalFullEvent(false)}>
               <Text
                 style={{
                   color: whiteColor,

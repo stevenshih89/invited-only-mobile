@@ -9,12 +9,10 @@ import { useEventGuests } from './hooks/useEventGuests';
 import IoHeader from './components/IoHeader/IoHeader';
 import InviteGuestsEvent from './components/InviteGuestsEvent/InviteGuestsEvent';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
-import ModalLockAccount from 'components/Modal/ModalLockAccoun/ModalLockAccount';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import ModalUpgradeAccount from 'components/Modal/ModalUpgradeAccount/ModalUpgradeAccount';
 import { components } from 'src/api/v1';
-import { useAuthStore } from 'src/store/authStore';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+
 
 type GuestUser = components['schemas']['User'];
 
@@ -23,15 +21,8 @@ interface Props {
 }
 
 const IO = ({ events }: Props) => {
-  const { userMetadata: user } = useAuthStore();
+
   const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
-  const { data: userData } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
-    params: {
-      path: {
-        id: user?.uid,
-      },
-    },
-  });
   const { guests, isLoading: isGuestsLoading, isFetchingNextPage, hasNextPage, fetchNextPage, status } = useEventGuests(selectedEvent?.uid);
   const {
     cards: currentEventCards,
@@ -53,7 +44,7 @@ const IO = ({ events }: Props) => {
     fetchNextPage();
   }
 
-  if (isGuestsLoading) {
+  if (isGuestsLoading || isFetchingNextPage) {
     return (
       <DefaultBackground>
         <AppLoader />
@@ -64,37 +55,33 @@ const IO = ({ events }: Props) => {
   return (
     <DefaultBackground>
       <S.IoContainer>
-        {!userData?.accountConfirmed ? (
-          <ModalLockAccount haveCode isPremium={userData?.accountPremium} accountType={userData?.accountType} isVisibleButton={true} />
-        ) : (
-          <>
-            <IoHeader
-              events={events}
+        <>
+          <IoHeader
+            events={events}
+            selectedEvent={selectedEvent}
+            requestsCount={0}
+            onEventSelect={handleEventSelect}
+            onRequestPress={() => { }}
+          />
+          {!isGuestsLoading && !hasCards && guests.length > 0 ? (
+            <DefaultBackground>
+              <S.IoContainer>
+                <Text style={{ color: 'white' }}>No more guests for this event.</Text>
+              </S.IoContainer>
+            </DefaultBackground>
+          ) : (
+            <InviteGuestsEvent
               selectedEvent={selectedEvent}
-              requestsCount={0}
-              onEventSelect={handleEventSelect}
-              onRequestPress={() => { }}
+              cardsToShow={currentEventCards}
+              isLoading={isGuestsLoading || isFetchingNextPage}
+              onSwipeLeft={handleSwipeLeft}
+              onSwipeRight={handleSwipeRight}
+              onSuperInvite={handleSuperInvite}
             />
-            {!isGuestsLoading && !hasCards && guests.length > 0 ? (
-              <DefaultBackground>
-                <S.IoContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{ color: 'white' }}>No more guests for this event.</Text>
-                </S.IoContainer>
-              </DefaultBackground>
-            ) : (
-              <InviteGuestsEvent
-                selectedEvent={selectedEvent}
-                cardsToShow={currentEventCards}
-                isLoading={isGuestsLoading || isFetchingNextPage}
-                onSwipeLeft={handleSwipeLeft}
-                onSwipeRight={handleSwipeRight}
-                onSuperInvite={handleSuperInvite}
-              />
-            )}
-          </>
-        )}
+          )}
+        </>
       </S.IoContainer>
-      <ModalLockedAccount />
+      {isGuestsLoading || isFetchingNextPage || !hasCards && guests.length > 0 ? null : <ModalLockedAccount />}
       <ModalUpgradeAccount />
     </DefaultBackground>
   );

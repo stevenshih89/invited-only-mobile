@@ -5,7 +5,7 @@ import TabsList from './components/TabsList/TabsList';
 import HostPremium from './components/HostPremium/HostPremium';
 import SuperInviteBlock from './components/SuperInviteBlock/SuperInviteBlock';
 import ProfileImage from './components/ProfileImage/ProfileImage';
-import CheckStarWhite from 'assets/images/icons/check-star-white.svg';
+
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
 import { useProfile } from 'hooks/useProfile';
@@ -13,28 +13,18 @@ import { useSettings } from 'hooks/useSettings';
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
 import { useLogout } from 'hooks/useLogout';
 import { openLink } from 'helpers/links';
-import { useAuthStore } from 'src/store/authStore';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import useUser from 'hooks/user/useUser';
 
 const Profile: FC = () => {
   const {
     userAge,
-    rejectModalVisible,
     acceptModalVisible,
     setAcceptModalVisible,
     changeAccountTypeModalVisible,
     setChangeAccountModalVisible,
   } = useProfile();
 
-  const { userMetadata } = useAuthStore();
-  const { data: user, isLoading } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
-    enabled: !!userMetadata.uid,
-    params: {
-      path: {
-        id: userMetadata.uid,
-      },
-    },
-  });
+  const { user, isLoading } = useUser();
 
   const { openLogoutModal, isVisibleLogoutModal, setIsVisibleLogoutModal } = useSettings();
   const { handleLogout } = useLogout(() => setIsVisibleLogoutModal(false));
@@ -60,7 +50,7 @@ const Profile: FC = () => {
             <S.NameAgeContainer>
               <S.NameText>{`${user?.name}${user?.date ? ',' : ''}`}</S.NameText>
               <S.AgeText>{` ${`${userAge}`}`}</S.AgeText>
-              {user?.accountConfirmed && <CheckStarWhite style={{ marginLeft: 6 }} />}
+              {user?.accountConfirmed && <S.CheckStarWhite />}
             </S.NameAgeContainer>
             <S.AccountTypeContainer>
               <S.AccountTypeWrapper>

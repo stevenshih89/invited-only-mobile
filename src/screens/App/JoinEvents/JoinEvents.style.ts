@@ -5,7 +5,7 @@ import { screenHeight } from 'constants/common';
 export const EventCardContainer = styled.View`
   align-items: center;
   justify-content: center;
-  width: 90%;
+  width: 89%;
   height: 100%;
 `;
 

@@ -2,9 +2,8 @@ import { FC, JSX, useContext, useEffect, useState } from 'react';
 import { AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
-import moment from 'moment';
+
 import firestore from '@react-native-firebase/firestore';
-import analytics from '@react-native-firebase/analytics';
 import { isIos, screenHeight } from 'constants/common';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -15,7 +14,7 @@ import { useAppNavigation } from 'hooks/useAppNavigation';
 import Input from 'components/Inputs/Input';
 import { isEmailValid } from 'helpers/regExpValidators';
 import AuthProgress from 'components/AuthProgress';
-import { useUser } from 'src/store/userStore';
+import useUser from 'hooks/user/useUser';
 import { useAuthStore } from 'src/store/authStore';
 import { showToast } from 'helpers/showToast';
 import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
@@ -25,7 +24,8 @@ import AppLoader from 'screens/App/AppLoader/AppLoader';
 const MyEmail: FC = (): JSX.Element => {
   const { mutate: createUser, isPending } = invitedOnlyBackendApi.useMutation('post', '/users');
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
-  const { email, setEmail } = useUser();
+  const [email, setEmail] = useState<string>('');
+  const { user: userData } = useUser();
 
   const { onBoarding, setOnBoarding, userMetadata } = useAuthStore();
   const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);

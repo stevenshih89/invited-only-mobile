@@ -22,7 +22,7 @@ const Chat = () => {
   if (events?.length === 0) {
     return (
       <S.ChatContainer>
-        <EmptyStateChatFallback />
+        <EmptyStateChatFallback emptyType="no-events" />
         <ModalLockedAccount />
       </S.ChatContainer>
     );

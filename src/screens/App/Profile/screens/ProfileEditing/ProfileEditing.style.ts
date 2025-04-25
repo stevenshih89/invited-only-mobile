@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {blackColor} from 'constants/colors';
-import {screenHeight} from 'constants/common';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { blackColor } from 'constants/colors';
+import { screenHeight } from 'constants/common';
 
 export const SafeAreaContainer = styled.SafeAreaView`
   flex: 1;
@@ -20,4 +20,5 @@ export const ScrollContainer = styled(KeyboardAwareScrollView)`
 
 export const SaveButtonContainer = styled.View`
   margin-top: 20px;
+  width: 100%;
 `;

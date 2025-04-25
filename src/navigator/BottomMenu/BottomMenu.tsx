@@ -12,7 +12,7 @@ import { IOPath, chatPath, connectPath, joinEventsPath, myEventsPath } from 'con
 import Header from 'components/Header/Header';
 import { TabBarName, TabIcon } from 'src/Navigator/TabBar/TabBar';
 
-import { useUser } from 'src/store/userStore';
+import useUser from 'hooks/user/useUser';
 import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper';
 import ConnectStackScreen from 'src/Navigator/AppStackScreens/ConnectStackScreen/ConnectStackScreen';
 
@@ -38,11 +38,6 @@ const BottomMenu: FC = (): JSX.Element => {
   const styles = useStyles();
   const Tab = createBottomTabNavigator();
 
-  const { user } = useUser();
-
-  const isInvitedOnlyAdmin = user?.isInvitedOnlyAdmin;
-
-  const initialRouteName = isInvitedOnlyAdmin ? chatPath : IOPath;
 
   return (
     <Tab.Navigator
@@ -54,11 +49,11 @@ const BottomMenu: FC = (): JSX.Element => {
         tabBarIcon: ({ focused }: { focused: boolean }) => TabIcon(focused, route.name),
         tabBarLabel: ({ focused }: { focused: boolean }) => TabBarName(focused, route.name),
       })}
-      initialRouteName={initialRouteName}>
+      initialRouteName={IOPath}>
       <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation} />
-      {!isInvitedOnlyAdmin && <Tab.Screen name={joinEventsPath} component={JoinEventsStackScreen} />}
-      {!isInvitedOnlyAdmin && <Tab.Screen name={IOPath} component={IOStackNavigation} />}
-      {!isInvitedOnlyAdmin && <Tab.Screen name={connectPath} component={ConnectStackScreen} />}
+      <Tab.Screen name={joinEventsPath} component={JoinEventsStackScreen} />
+      <Tab.Screen name={IOPath} component={IOStackNavigation} />
+      <Tab.Screen name={connectPath} component={ConnectStackScreen} />
       <Tab.Screen name={chatPath} component={ChatStackScreen} />
     </Tab.Navigator>
   );

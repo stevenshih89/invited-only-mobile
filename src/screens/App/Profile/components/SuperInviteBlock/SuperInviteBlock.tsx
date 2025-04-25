@@ -1,9 +1,9 @@
 import * as S from './SuperInviteBlock.style';
-import {useUser} from 'src/store/userStore';
+import useUser from 'hooks/user/useUser';
 import LightningIcon from 'assets/images/icons/lightning.svg';
 
 const SuperInviteBlock = () => {
-  const {user: userData} = useUser();
+  const { user: userData } = useUser();
 
   return (
     <S.SuperContainer>
@@ -17,7 +17,7 @@ const SuperInviteBlock = () => {
         </S.SuperDivider>
         <S.SuperInfoContainer>
           <S.SuperCountContainer>
-            <S.SuperCount>{userData?.superInvites || 0 + userData?.weeklySuperInvites || 0}</S.SuperCount>
+            <S.SuperCount>{userData?.superInvites || 0 + (userData?.weeklySuperInvites || 0)}</S.SuperCount>
             <S.SuperLabel>Super {userData?.accountType === 'host' ? 'Invite' : 'Join'}</S.SuperLabel>
           </S.SuperCountContainer>
           <S.AddMoreButton>

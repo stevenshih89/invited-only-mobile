@@ -2,6 +2,7 @@ import styled from 'styled-components/native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
 import { blackColor, whiteColor } from 'constants/colors';
+import CheckStar from 'assets/images/icons/check-star-white.svg';
 
 export const Container = styled.View`
   flex: 1;
@@ -107,4 +108,8 @@ export const NameAgeContainer = styled.View`
 export const AccountTypeContainer = styled.View`
   flex-direction: row;
   margin-bottom: 32px;
+`;
+
+export const CheckStarWhite = styled(CheckStar)`
+  color: ${whiteColor};
 `;

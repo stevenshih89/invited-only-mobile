@@ -5,7 +5,7 @@ import { ChatWindowHeader } from "./ChatWindowHeader/ChatWindowHeader";
 import useRealtimeChatMessages from "./hooks/useRealtimeChatMessages";
 import useChatWindowMutations from "./hooks/useChatWindowMutations";
 import { RootStackParamList } from "typescript/types";
-import { useUser } from "src/store/userStore";
+import useUser from "hooks/user/useUser";
 import SendIcon from "src/assets/images/icons/send-message.svg";
 
 
@@ -17,7 +17,7 @@ export const ChatWindow = () => {
     const chat = params?.chat;
     const chatId = `${chat?.eventId}_${chat?.hostId}_${chat?.guestId}`;
     const { chatMessages } = useRealtimeChatMessages(chatId);
-    const user = useUser((state) => state.user);
+    const { user } = useUser();
     const { newMessage, setNewMessage, scrollViewRef, handleSendMessage } = useChatWindowMutations({
         chatId: chatId,
         userId: user?.uid || '',

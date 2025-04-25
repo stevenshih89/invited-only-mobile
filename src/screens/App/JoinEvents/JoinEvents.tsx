@@ -1,6 +1,6 @@
-import {FC, ReactElement} from 'react';
+import { FC, ReactElement } from 'react';
 
-import {ScrollView} from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import usePersistentCardSwipe from '../IO/hooks/usePersistentCardSwipe';
 import JoinEventsHeader from './Components/JoinEventsHeader/JoinEventsHeader';
 import ExploreEventsEmptyFallback from './Components/ExploreEventsEmptyFallback/ExploreEventsEmptyFallback';
@@ -9,22 +9,22 @@ import EventCard from './Components/EventCard/EventCard';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 
-import {components} from 'src/api/v1';
+import { components } from 'src/api/v1';
 
 interface Props {
   events: components['schemas']['EventData'][];
 }
 
-const JoinEvents: FC<Props> = ({events}): ReactElement => {
-  const {handleSuperInvite, handleSwipeLeft, handleSwipeRight, cards} = usePersistentCardSwipe({
+const JoinEvents: FC<Props> = ({ events }): ReactElement => {
+  const { handleSuperInvite, handleSwipeLeft, handleSwipeRight, cards } = usePersistentCardSwipe({
     cardsData: events,
     eventId: events[0]?.uid,
   });
 
   return (
     <DefaultBackground>
-      <JoinEventsHeader onMyEventsPress={() => {}} />
-      {false ? (
+      <JoinEventsHeader onMyEventsPress={() => { }} />
+      {events.length > 0 ? (
         <ScrollView>
           <S.Container>
             <S.EventCardContainer>

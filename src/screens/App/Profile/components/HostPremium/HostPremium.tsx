@@ -1,13 +1,13 @@
 import * as S from './HostPremium.style';
-import {useUser} from 'src/store/userStore';
+import useUser from 'hooks/user/useUser';
 import RocketIcon from 'assets/images/icons/rocket-white.svg';
 import IOGradient from 'assets/images/icons/io-gradient.svg';
-import {useSubscriptions} from 'src/store/subscriptionsStore';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {paymentPath} from 'constants/pathLocations';
+import { useSubscriptions } from 'src/store/subscriptionsStore';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { paymentPath } from 'constants/pathLocations';
 
 const HostPremiumCard = () => {
-  const {user: userData} = useUser();
+  const { user: userData } = useUser();
 
   const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions);
   const navigation = useAppNavigation();

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { useUser } from 'src/store/userStore';
+import useUser from 'src/hooks/user/useUser';
 import { showToast } from 'helpers/showToast';
 
 export const useInvitations = () => {
   const [numberCodes, setNumberCodes] = useState<number>();
 
-  const userHost = useUser((i: any) => i?.user);
+  const { user: userHost } = useUser();
 
   const inviteLink = userHost?.codeForInvitingOtherUsers;
 

@@ -1,18 +1,18 @@
-import {Animated, Text, TouchableOpacity, View} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {ActivityIndicator} from '@ant-design/react-native';
+import { Animated, Text, TouchableOpacity, View } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { ActivityIndicator } from '@ant-design/react-native';
 import React from 'react';
-import {useUser} from '../../../store/userStore';
-import {MatchData} from '../IO/screens/Match/Match';
+import { MatchData } from '../IO/screens/Match/Match';
 import useStyles from './styles';
-import { lightRed1Color, whiteColor} from 'constants/colors';
-import { Satoshi700} from 'constants/fonts';
+import useUser from 'hooks/user/useUser';
+import { lightRed1Color, whiteColor } from 'constants/colors';
+import { Satoshi700 } from 'constants/fonts';
 
-import {commonStackPath, eventActiveInfoPath} from 'constants/pathLocations';
-import {useItemRequestGuest} from 'hooks/useItemRequestGuest';
-import {Event} from 'src/types/event';
-import {User} from 'src/types/userInfo';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { commonStackPath, eventActiveInfoPath } from 'constants/pathLocations';
+import { useItemRequestGuest } from 'hooks/useItemRequestGuest';
+import { Event } from 'src/types/event';
+import { User } from 'src/types/userInfo';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 
 interface Props {
   list: {
@@ -30,13 +30,13 @@ interface Props {
   index: number;
 }
 
-const ItemRequestGuest = ({list, item, handleOpenMatch, index}: Props) => {
-  const {photos, uid, hour, date, name, usersList, activeType, placeName} = list;
+const ItemRequestGuest = ({ list, item, handleOpenMatch, index }: Props) => {
+  const { photos, uid, hour, date, name, usersList, activeType, placeName } = list;
 
   const styles = useStyles();
-  const user = useUser((i: any) => i?.user);
+  const { user } = useUser();
 
-  const {loading, heightAnim, cardRef, handleInvite, handleReject, hostInfo, getMonth} = useItemRequestGuest({list, handleOpenMatch});
+  const { loading, heightAnim, cardRef, handleInvite, handleReject, hostInfo, getMonth } = useItemRequestGuest({ list, handleOpenMatch });
 
   const OverlayRight = () => {
     return (
@@ -49,8 +49,8 @@ const ItemRequestGuest = ({list, item, handleOpenMatch, index}: Props) => {
           zIndex: 1000,
           alignItems: 'center',
         }}>
-        <View style={{borderRadius: 5, paddingHorizontal: 13, paddingVertical: 6, borderWidth: 2, borderColor: whiteColor}}>
-          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>ACCEPT</Text>
+        <View style={{ borderRadius: 5, paddingHorizontal: 13, paddingVertical: 6, borderWidth: 2, borderColor: whiteColor }}>
+          <Text style={{ fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor }}>ACCEPT</Text>
         </View>
       </View>
     );
@@ -67,8 +67,8 @@ const ItemRequestGuest = ({list, item, handleOpenMatch, index}: Props) => {
           zIndex: 1000,
           alignItems: 'center',
         }}>
-        <View style={{borderRadius: 5, paddingHorizontal: 13, paddingVertical: 6, borderWidth: 2, borderColor: lightRed1Color}}>
-          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: lightRed1Color}}>REJECT</Text>
+        <View style={{ borderRadius: 5, paddingHorizontal: 13, paddingVertical: 6, borderWidth: 2, borderColor: lightRed1Color }}>
+          <Text style={{ fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: lightRed1Color }}>REJECT</Text>
         </View>
       </View>
     );
@@ -83,14 +83,14 @@ const ItemRequestGuest = ({list, item, handleOpenMatch, index}: Props) => {
   return (
     <>
       {loading ? (
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           <ActivityIndicator color={whiteColor} size="small" />
         </View>
       ) : (
-        <Animated.View style={[styles.itemContainer, {height: heightAnim, marginTop: index ? 30 : 0}]}>
+        <Animated.View style={[styles.itemContainer, { height: heightAnim, marginTop: index ? 30 : 0 }]}>
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate(commonStackPath, {screen: eventActiveInfoPath, params: {list, isGuest: true}} as never)
+              navigation.navigate(commonStackPath, { screen: eventActiveInfoPath, params: { list, isGuest: true } } as never)
             }></TouchableOpacity>
         </Animated.View>
       )}

@@ -5,8 +5,8 @@ import { Badge } from '@rneui/themed';
 //import components
 import { Text } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useUser } from '../../store/userStore';
 import * as S from './Header.style';
+import useUser from 'hooks/user/useUser';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { profileStackPath } from 'constants/pathLocations';
 import { whiteColor } from 'constants/colors.ts';

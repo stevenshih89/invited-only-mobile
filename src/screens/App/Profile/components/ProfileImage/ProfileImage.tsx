@@ -4,6 +4,7 @@ import { ProgressCircle } from 'components/ProgressCircle/ProgressCircle';
 import { transparentGray60Color } from 'constants/colors';
 import { useProfile } from 'hooks/useProfile';
 import { components } from 'src/api/v1';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 
 interface ProfileImageProps {
   userData: components['schemas']['User'];
@@ -11,9 +12,11 @@ interface ProfileImageProps {
 
 const ProfileImage = ({ userData }: ProfileImageProps) => {
   const { percentage } = useProfile();
-
+  const navigation = useAppNavigation();
   return (
-    <S.ProfileImageContainer>
+    <S.ProfileImageContainer onPress={() => {
+      navigation.navigate('/profile/profile-editing');
+    }}>
       <S.OverlayContainer>
         <S.GradientContainer>
           <S.PercentageTextBlur blurType="light" blurAmount={10} reducedTransparencyFallbackColor="white" />

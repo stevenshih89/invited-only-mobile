@@ -1,17 +1,16 @@
 import { useAppNavigation } from "./useAppNavigation";
-import { useUser } from "src/store/userStore";
-import { privacyPath } from "constants/pathLocations";
+import useUser from "hooks/user/useUser";
 
 export const useSafetyAndWellbeing = () => {
     const navigation = useAppNavigation();
-    
-    const user = useUser((i: any) => i?.user);
+
+    const { user } = useUser();
 
     const handleNavigate = () => {
-    navigation.navigate(privacyPath, {screen: 'SafetyAndWellbeing', accountType: user.accountType} as never);
+        navigation.navigate('/privacy', { screen: 'SafetyAndWellbeing', accountType: user?.accountType } as never);
     };
 
     return {
         handleNavigate,
-    }
-}
+    };
+};

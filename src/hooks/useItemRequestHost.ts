@@ -1,31 +1,31 @@
 import firestore from '@react-native-firebase/firestore';
-import {useRef, useState} from 'react';
+import { useRef, useState } from 'react';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
-import {User} from 'src/types/userInfo';
-import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
-import {commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
-import {showToast} from 'helpers/showToast.ts';
-import {useUser} from 'src/store/userStore';
-import {sendNotification} from 'helpers/fcmHelper';
-import {handleCreateChat} from 'helpers/chat';
-import {ACCEPTED_STATUS, INVITE_MATCH_STATUS} from 'constants/common';
-import {updateGuestEventsList} from 'helpers/updateGuestEventsList';
-import {Event} from 'src/types/event';
-import {inviteUser, requestsScreen} from 'constants/analitycs';
-import {useMyEvents} from 'src/store/myEvents';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {MatchData} from 'screens/App/IO/screens/Match/Match';
+import { User } from 'src/types/userInfo';
+import { useAppNavigation } from 'hooks/useAppNavigation.tsx';
+import { commonStackPath, myProfileViewPath } from 'constants/pathLocations.ts';
+import { showToast } from 'helpers/showToast.ts';
+import useUser from 'src/hooks/user/useUser';
+import { sendNotification } from 'helpers/fcmHelper';
+import { handleCreateChat } from 'helpers/chat';
+import { ACCEPTED_STATUS, INVITE_MATCH_STATUS } from 'constants/common';
+import { updateGuestEventsList } from 'helpers/updateGuestEventsList';
+import { Event } from 'src/types/event';
+import { inviteUser, requestsScreen } from 'constants/analitycs';
+import { useMyEvents } from 'src/store/myEvents';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { MatchData } from 'screens/App/IO/screens/Match/Match';
 
 const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
 
-export const useItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFullEvent, fetchHostRequests}: any) => {
+export const useItemRequestHost = ({ item, handleOpenMatch, setIsVisibleModalFullEvent, fetchHostRequests }: any) => {
   const navigation = useAppNavigation();
-  const [userInfo, setUserInfo] = useState<Partial<User.Info>>({accountType: 'host'});
-  const user = useUser((state: any) => state.user);
+  const [userInfo, setUserInfo] = useState<Partial<User.Info>>({ accountType: 'host' });
+  const { user, isLoading: userIsLoading, error: userError } = useUser();
   const [currentUserName, setCurrentUserName] = useState();
-  const {activeEvent} = useMyEvents();
+  const { activeEvent } = useMyEvents();
   const cardRef = useRef(null);
   const handleSwipeCardRight = () => {
     if (cardRef.current) {
@@ -41,14 +41,14 @@ export const useItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFull
     }
   };
 
-  const handleInvite = ({userItem, withSwipeAnimation}: {userItem: Event.User; withSwipeAnimation: boolean}) => {
+  const handleInvite = ({ userItem, withSwipeAnimation }: { userItem: Event.User; withSwipeAnimation: boolean }) => {
     onInvite(userItem);
     if (withSwipeAnimation) {
       handleSwipeCardRight();
     }
   };
 
-  const handleReject = ({userItem, withSwipeAnimation}: {userItem: Event.User; withSwipeAnimation: boolean}) => {
+  const handleReject = ({ userItem, withSwipeAnimation }: { userItem: Event.User; withSwipeAnimation: boolean }) => {
     onReject(userItem);
     if (withSwipeAnimation) {
       handleSwipeCardLeft();
@@ -97,7 +97,7 @@ export const useItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFull
         nameHost: currentUserName,
         eventId: activeEvent?.id,
         superInvite: false,
-        userHostImageUri: user?.photos[0]?.image,
+        userHostImageUri: user?.photos?.[0]?.image,
         joinEvents: guest?.joinEvents,
         location: guest?.location,
         premium: user?.accountPremium,
@@ -130,14 +130,16 @@ export const useItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFull
           const getDoc = await firestore().collection(apiUserInfoCollection).doc(userItem?.uid).get();
           const docData = getDoc.data();
           if (docData?.notificationSettings.requests) {
-            await sendNotification(
-              userItem?.uid,
-              'New invite request',
-              `${user?.name} wants to invite you!`,
-              'invite',
-              'Invite Request'.toUpperCase(),
-              user,
-            );
+            if (user) {
+              await sendNotification(
+                userItem?.uid,
+                'New invite request',
+                `${user?.name} wants to invite you!`,
+                'invite',
+                'Invite Request'.toUpperCase(),
+                user,
+              );
+            }
           }
         });
     } catch (e) {
@@ -156,7 +158,7 @@ export const useItemRequestHost = ({item, handleOpenMatch, setIsVisibleModalFull
         .doc(activeEvent?.id)
         .update({
           requestsList: firestore.FieldValue.arrayRemove(userItem),
-          rejectsList: firestore.FieldValue.arrayUnion({uid: userItem?.uid}),
+          rejectsList: firestore.FieldValue.arrayUnion({ uid: userItem?.uid }),
         });
       analytics().logEvent(`${requestsScreen}_reject_${inviteUser}`, {
         eventId: activeEvent?.id,

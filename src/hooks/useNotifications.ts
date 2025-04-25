@@ -9,12 +9,12 @@ import {
   myEventsPath,
   requestsPath,
 } from 'constants/pathLocations';
-import { useUser } from 'src/store/userStore';
 import Config from 'react-native-config';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
 import { showToast } from 'helpers/showToast';
 import { useFocusEffect } from '@react-navigation/native';
+import useUser from 'hooks/user/useUser';
 
 export interface Notifications {
   id: string;
@@ -36,48 +36,10 @@ export const useNotifications = () => {
   const [limitNotifications, setLimitNotifications] = useState<number>(DEFAULT_NOTIFICATIONS_LIMIT);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const user = useUser((i: any) => i?.user);
+  const { user } = useUser();
 
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const fetchImage = async (uid: string): Promise<string> => {
-    try {
-      const dataDoc = await firestore().collection(apiUserInfoCollection).doc(uid).get();
-      const photoUri = dataDoc?.data()?.photos?.[0]?.image || '';
-      return photoUri;
-    } catch (error) {
-      logErrorToSentry(error);
-    }
-  };
 
-  const fetchNotifications = async (uid: string): Promise<Notifications[]> => {
-    try {
-      const notificationsQuery = await firestore()
-        .collection(apiUserInfoCollection)
-        .doc(uid)
-        .collection('notifications')
-        .limit(limitNotifications)
-        .get();
-
-      const notificationsWithImages = await Promise.all(
-        notificationsQuery.docs.map(async doc => {
-          const notification = doc.data() as Notifications;
-          const photoUri = await fetchImage(notification.uid);
-          return {
-            ...notification,
-            docId: doc.id,
-            image: photoUri,
-          };
-        }),
-      );
-      return notificationsWithImages;
-    } catch (error) {
-      logErrorToSentry(error);
-      console.error('Error fetching notifications:', error);
-    } finally {
-      setLoading(false);
-    }
-    return [];
-  };
 
   const clearNotifications = async (uid: string): Promise<void> => {
     try {
@@ -96,21 +58,11 @@ export const useNotifications = () => {
     }
   };
 
-  const getNotifications = async () => {
-    const notification = await fetchNotifications(user?.uid ?? '');
-    setNotifications(notification);
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      getNotifications();
-    }, [limitNotifications]),
-  );
 
   const handleClearNotifications = async () => {
     setNotifications([]);
-    await clearNotifications(user?.uid);
-    showToast('inviteMatch', 'Notifications have been read', 'Notifications', { status: 'success', ownerPhoto: user?.photos[0].image });
+    await clearNotifications(user?.uid ?? '');
+    showToast('inviteMatch', 'Notifications have been read', 'Notifications', { status: 'success', ownerPhoto: user?.photos?.[0]?.image });
   };
 
   const handleNavigate = async (path: string, data: any) => {

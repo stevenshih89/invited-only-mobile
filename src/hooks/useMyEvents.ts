@@ -1,20 +1,19 @@
-import {cancelAnimation, Easing, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
+import { cancelAnimation, Easing, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import moment from 'moment';
 import analytics from '@react-native-firebase/analytics';
 import Config from 'react-native-config';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {useCreateEvent} from './useCreateEvent';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {Event, EventData} from 'src/types/event';
-import {sendNotification} from 'helpers/fcmHelper';
-import {commonStackPath, IOPath, markAttendancePath} from 'constants/pathLocations';
-import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common.ts';
-import {useAdminActions} from 'src/store/adminActions';
-import {useUser} from 'src/store/userStore';
-import {showToast} from 'helpers/showToast.ts';
-import {useMyEvents} from 'src/store/myEvents';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { Event, EventData } from 'src/types/event';
+import { sendNotification } from 'helpers/fcmHelper';
+import { commonStackPath, IOPath, markAttendancePath } from 'constants/pathLocations';
+import { ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS } from 'constants/common.ts';
+import { useAdminActions } from 'src/store/adminActions';
+import useUser from 'src/hooks/user/useUser';
+import { showToast } from 'helpers/showToast.ts';
+import { useMyEvents } from 'src/store/myEvents';
 
 const apiEventsCollection = Config.API_EVENTS_COLLECTION || 'Events';
 const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
@@ -56,7 +55,7 @@ export const useMyEventsScreen = (navigation: any) => {
   const [eventsJoiningData, setEventsJoiningData] = useState<EventData[]>([]);
   const [hoursUntilEvent, setHoursUntilEvent] = useState<number>();
   const [currentEvent, setCurrentEvent] = useState();
-  const {user: userInfo, setUser: setUserInfo} = useUser();
+  const { user: userInfo } = useUser();
   const setEventsImJoining = useMyEvents((i: any) => i?.setEventsImJoining);
   const isHost = userInfo?.accountType === 'host';
 
@@ -244,7 +243,7 @@ export const useMyEventsScreen = (navigation: any) => {
   }, [activeModalEvent]);
 
   const goToMarkAttendance = (eventId: string) => {
-    navigation.navigate(commonStackPath, {screen: markAttendancePath, params: {eventId}} as never);
+    navigation.navigate(commonStackPath, { screen: markAttendancePath, params: { eventId } } as never);
     setIsVisibleMarkAttendance(false);
   };
 
@@ -254,7 +253,7 @@ export const useMyEventsScreen = (navigation: any) => {
       const eventDataList = eventQuerySnapshot.data();
       const updatedUsersList = eventDataList?.usersList?.map((userItem: Event.User) => {
         if (userItem.uid === userInfo?.uid) {
-          return {...userItem, isPresentMarkedByGuest};
+          return { ...userItem, isPresentMarkedByGuest };
         }
         return userItem;
       });
@@ -516,7 +515,7 @@ export const useMyEventsScreen = (navigation: any) => {
             'Accepted',
             'Accepted'.toUpperCase(),
             userInfo,
-            JSON.stringify({path: 'guestsList', data: item}),
+            JSON.stringify({ path: 'guestsList', data: item }),
           );
           break;
         case NOT_ACCEPTED_STATUS:

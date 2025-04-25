@@ -10,25 +10,17 @@ import MyGeneral from './MyGeneral/MyGeneral';
 import MyLocation from './MyLocation/MyLocation';
 import * as S from './ProfileEditing.style';
 import useUpdateUser from './hooks/useUpdateUser';
-import { useAuthStore } from 'src/store/authStore';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import ModalSelectInterests from 'components/Modal/ModalSelectInterests/ModalSelectInterests';
 import Button from 'components/Button/Button';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import AvailableInterests from 'screens/App/Components/Intrests/AvailableInterests';
 import { showToast } from 'helpers/showToast';
+import useUser from 'hooks/user/useUser';
 
 const ProfileEditing: FC = (): ReactElement => {
-  const { userMetadata } = useAuthStore();
-  const { data: user, isLoading, isRefetching } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
-    params: {
-      path: {
-        id: userMetadata.uid
-      }
-    }
-  })
+  const { user } = useUser();
   const { update, isPending } = useUpdateUser();
-  if (isLoading || isPending || isRefetching) {
+  if (isPending) {
     return <AppLoader />
   }
 
@@ -49,16 +41,13 @@ const ProfileEditing: FC = (): ReactElement => {
         photos: user?.photos || []
       }}
       onSubmit={async (values) => {
-        console.log('values', values);
         await update(values);
         showToast('success', 'Profile updated successfully');
       }}
     >
       {({ setFieldValue, submitForm, values, dirty }) => {
-        console.log('dirty', dirty);
-        console.log('values', values);
         return (
-          <View style={{ flex: 1, backgroundColor: 'black' }}>
+          <View style={{ flex: 1, backgroundColor: 'black', marginBottom: 30 }}>
             <S.SafeAreaContainer>
               <S.MainContainer>
                 <S.ScrollContainer
@@ -71,7 +60,7 @@ const ProfileEditing: FC = (): ReactElement => {
                     name={values.name || ''}
                     gender={values.gender || null}
                     date={values.birthday || ''}
-                    showAge={values.showAge || true}
+                    showAge={values.showAge}
                     setShowAge={(value) => { setFieldValue('showAge', value) }}
                     setDate={(value) => { setFieldValue('birthday', value) }}
 
@@ -84,11 +73,7 @@ const ProfileEditing: FC = (): ReactElement => {
                   />
                   <MyLocation homeAddress={values.location || ''} setHomeAddress={(value) => { setFieldValue('location', value) }} country={values.location || ''} setCountry={(value) => { setFieldValue('location', value) }} />
                   <MyBio bio={values.bio || ''} setBio={(value) => { setFieldValue('bio', value) }} />
-                  {dirty && (
-                    <S.SaveButtonContainer>
-                      <Button title="Save" onPress={() => { submitForm() }} loading={false} />
-                    </S.SaveButtonContainer>
-                  )}
+
                   <MyInterests
                     availableInterests={AvailableInterests}
                     loading={false}
@@ -105,7 +90,11 @@ const ProfileEditing: FC = (): ReactElement => {
               formikValues={values}
               setFieldValue={setFieldValue}
             />
-
+            {dirty && (
+              <S.SaveButtonContainer>
+                <Button title="Save" onPress={() => { submitForm() }} loading={false} />
+              </S.SaveButtonContainer>
+            )}
           </View>
         )
       }}

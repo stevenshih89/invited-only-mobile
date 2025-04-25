@@ -1,15 +1,14 @@
-import {FC} from 'react';
+import { FC } from 'react';
 import * as S from './NotificationSetting.style';
-import {blackColor, whiteColor} from 'constants/colors';
-import {useNotificationSetting} from 'hooks/useNotificationSetting';
-import {useUser} from 'src/store/userStore';
+import { blackColor, whiteColor } from 'constants/colors';
+import { useNotificationSetting } from 'hooks/useNotificationSetting';
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
 
 interface NotificationSettingProps {
   route: any;
 }
 
-const NotificationSetting: FC<NotificationSettingProps> = ({route}) => {
+const NotificationSetting: FC<NotificationSettingProps> = ({ route }) => {
   const {
     allNotification,
     handleChangeAllNotification,
@@ -27,7 +26,7 @@ const NotificationSetting: FC<NotificationSettingProps> = ({route}) => {
     handleConfirmTurnOffNotifications,
     setIsVisibleTurnOffNotificationsModal,
   } = useNotificationSetting(route);
-  const {user: userData} = useUser();
+  const { user: userData } = useUser();
 
   return (
     <>
@@ -38,7 +37,7 @@ const NotificationSetting: FC<NotificationSettingProps> = ({route}) => {
               <S.SectionTitle>All notifications</S.SectionTitle>
               <S.StyledSwitch
                 testID="all-notifications-switch"
-                trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
+                trackColor={{ false: 'rgba(29, 29, 29, 1)', true: whiteColor }}
                 thumbColor={allNotification ? blackColor : whiteColor}
                 value={allNotification}
                 onValueChange={handleChangeAllNotification}
@@ -51,7 +50,7 @@ const NotificationSetting: FC<NotificationSettingProps> = ({route}) => {
               <S.SectionTitle>My events</S.SectionTitle>
               <S.StyledSwitch
                 testID="my-events-switch"
-                trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
+                trackColor={{ false: 'rgba(29, 29, 29, 1)', true: whiteColor }}
                 thumbColor={myEvents ? blackColor : whiteColor}
                 value={myEvents}
                 onValueChange={setMyEvents}
@@ -64,7 +63,7 @@ const NotificationSetting: FC<NotificationSettingProps> = ({route}) => {
               <S.SectionTitle>Requests</S.SectionTitle>
               <S.StyledSwitch
                 testID="requests-switch"
-                trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
+                trackColor={{ false: 'rgba(29, 29, 29, 1)', true: whiteColor }}
                 thumbColor={requests ? blackColor : whiteColor}
                 value={requests}
                 onValueChange={setRequests}
@@ -77,7 +76,7 @@ const NotificationSetting: FC<NotificationSettingProps> = ({route}) => {
               <S.SectionTitle>Chat</S.SectionTitle>
               <S.StyledSwitch
                 testID="chat-switch"
-                trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
+                trackColor={{ false: 'rgba(29, 29, 29, 1)', true: whiteColor }}
                 thumbColor={chat ? blackColor : whiteColor}
                 value={chat}
                 onValueChange={setChat}
@@ -90,7 +89,7 @@ const NotificationSetting: FC<NotificationSettingProps> = ({route}) => {
               <S.SectionTitle>Super {userData?.accountType === 'host' ? 'invite' : 'join'}</S.SectionTitle>
               <S.StyledSwitch
                 testID="super-invite-switch"
-                trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
+                trackColor={{ false: 'rgba(29, 29, 29, 1)', true: whiteColor }}
                 thumbColor={superInvite ? blackColor : whiteColor}
                 value={superInvite}
                 onValueChange={setSuperInvite}
@@ -103,7 +102,7 @@ const NotificationSetting: FC<NotificationSettingProps> = ({route}) => {
               <S.SectionTitle>New Connection</S.SectionTitle>
               <S.StyledSwitch
                 testID="new-connection-switch"
-                trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
+                trackColor={{ false: 'rgba(29, 29, 29, 1)', true: whiteColor }}
                 thumbColor={match ? blackColor : whiteColor}
                 value={match}
                 onValueChange={setMatch}

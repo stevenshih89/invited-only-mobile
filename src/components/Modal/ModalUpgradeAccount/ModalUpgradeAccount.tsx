@@ -1,11 +1,10 @@
-import React, {FC} from 'react';
-import LockIcon from 'assets/images/icons/key-rounded.svg';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {invitationCodePath} from 'constants/pathLocations';
-import {Text} from 'react-native';
-import Button from 'components/Button/Button';
-import {useUser} from 'src/store/userStore';
+import React, { FC } from 'react';
 import * as S from './ModalUpgradeAccount.style';
+import LockIcon from 'assets/images/icons/key-rounded.svg';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { invitationCodePath } from 'constants/pathLocations';
+import Button from 'components/Button/Button';
+import useUser from 'hooks/user/useUser';
 
 const ModalUpgradeAccount: FC = () => {
   const navigation = useAppNavigation();
@@ -14,7 +13,7 @@ const ModalUpgradeAccount: FC = () => {
     navigation.navigate(invitationCodePath as never);
   };
 
-  const {user} = useUser();
+  const { user } = useUser();
 
   if (user?.uid && user?.accountReviewed && user?.accountConfirmed && user?.accountType === 'host' && !user?.accountPremium) {
     return (

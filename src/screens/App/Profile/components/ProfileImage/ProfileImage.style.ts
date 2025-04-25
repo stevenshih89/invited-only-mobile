@@ -1,9 +1,9 @@
-import {BlurView} from '@react-native-community/blur';
+import { BlurView } from '@react-native-community/blur';
 import RadialGradient from 'react-native-radial-gradient';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
-import {Satoshi500} from 'constants/fonts';
-import {whiteColor} from 'constants/colors';
+import { Satoshi500 } from 'constants/fonts';
+import { whiteColor } from 'constants/colors';
 
 export const StyledRadialGradient = styled(RadialGradient)`
   padding: 16px;
@@ -12,7 +12,7 @@ export const StyledRadialGradient = styled(RadialGradient)`
   margin-top: 8px;
 `;
 
-export const ProfileImageContainer = styled.View`
+export const ProfileImageContainer = styled.TouchableOpacity`
   position: relative;
   padding-top: 12px;
   align-items: center;

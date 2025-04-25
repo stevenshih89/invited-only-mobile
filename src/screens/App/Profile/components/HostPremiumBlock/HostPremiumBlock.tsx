@@ -1,10 +1,10 @@
 import * as S from './HostPremiumBlock.style';
-import {useUser} from 'src/store/userStore';
+import useUser from 'hooks/user/useUser';
 import RocketIcon from 'assets/images/icons/rocket-white.svg';
 import IOGradient from 'assets/images/icons/io-gradient.svg';
 
 const HostPremiumBlock = () => {
-  const {user: userData} = useUser();
+  const { user: userData } = useUser();
 
   return (
     <>

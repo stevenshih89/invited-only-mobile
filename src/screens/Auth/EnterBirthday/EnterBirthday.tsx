@@ -1,15 +1,11 @@
 import { FC, JSX, useState } from 'react';
-import { Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Switch } from '@ant-design/react-native';
-import MaskInput from 'react-native-mask-input';
-import LinearGradient from 'react-native-linear-gradient';
-
-import { isIos, screenHeight } from 'constants/common';
+import * as S from './EnterBirthday.style';
+import { isIos } from 'constants/common';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import { backgroundGradientColors, grayColor, lightGray2Color, toggleColor, transparentWhite30Color, whiteColor } from 'constants/colors';
-import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
+import { backgroundGradientColors, grayColor, toggleColor, whiteColor } from 'constants/colors';
 import Button from 'components/Button/Button';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 
@@ -23,8 +19,6 @@ const EnterBirthday: FC = (): JSX.Element => {
   const [year, setYear] = useState<string>('');
   const [showAge, setShowAge] = useState<boolean>(false);
   const { onBoarding, setOnBoarding } = useAuthStore();
-
-
 
   const handleShowAge = (value: boolean): void => {
     setShowAge(value);
@@ -88,7 +82,7 @@ const EnterBirthday: FC = (): JSX.Element => {
       registrationDetails: {
         ...onBoarding.registrationDetails,
         showAge: showAge,
-        date: `${month}.${day}.${year}`,
+        birthday: `${month}.${day}.${year}`,
       },
     });
     navigation.navigate('/my-email');
@@ -101,161 +95,100 @@ const EnterBirthday: FC = (): JSX.Element => {
       registrationDetails: {
         ...onBoarding.registrationDetails,
         showAge: false,
-        date: '',
+        birthday: '',
       },
     });
+    navigation.navigate('/my-email');
   };
 
   const navigation = useAppNavigation();
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1, paddingBottom: 0 }}>
+    <S.GradientBackground colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }}>
+      <S.KeyboardAvoidingWrapper behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{ flex: 1, paddingBottom: 0 }}>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'space-between',
-                paddingBottom: 0,
-                paddingHorizontal: 24,
-                paddingTop: screenHeight / 29,
-              }}>
-              <View style={{ alignItems: 'center' }}>
-                <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <TouchableOpacity
+          <S.InnerWrapper>
+            <S.ContentContainer>
+              <S.TopContent>
+                <S.HeaderContainer>
+                  <S.BackButton
                     onPress={() => navigation.goBack()}
                     activeOpacity={0.7}
-                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                    style={{
-                      borderRadius: 50,
-                      width: 40,
-                      height: 40,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: transparentWhite30Color,
-                    }}>
+                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
                     <ArrowLeft />
-                  </TouchableOpacity>
+                  </S.BackButton>
                   <LogoPrimary2 />
                   <AuthProgress startPercentage={40} endPercentage={50} animationDuration={1000} />
-                </View>
-                <View
-                  style={{
-                    width: '100%',
-                    marginBottom: screenHeight / 26,
-                    marginTop: screenHeight / 11.5,
-                  }}>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi500,
-                      fontSize: RFValue(48, 932),
-                      marginBottom: 18,
-                    }}>
-                    Your birthday
-                  </Text>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi400,
-                      fontSize: RFValue(18, 932),
-                    }}>
-                    {'Add your birthday. You can change it later (optional)'}
-                  </Text>
-                </View>
-                <View style={{ width: '100%', flexDirection: 'row' }}>
-                  <View style={{ flex: 1, marginRight: 6 }}>
-                    <Text style={{ color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 932) }}>Month</Text>
-                    <MaskInput
-                      style={{
-                        color: whiteColor,
-                        borderRadius: 10,
-                        backgroundColor: lightGray2Color,
-                        height: 51,
-                        paddingHorizontal: 20,
-                        marginTop: 12,
-                      }}
+                </S.HeaderContainer>
+                <S.TitleContainer>
+                  <S.TitleText>Your birthday</S.TitleText>
+                  <S.SubtitleText>Add your birthday. You can change it later (optional)</S.SubtitleText>
+                </S.TitleContainer>
+                <S.DateInputRow>
+                  <S.DateInputContainer marginRight={6}>
+                    <S.InputLabel>Month</S.InputLabel>
+                    <S.StyledMaskInput
                       keyboardAppearance="dark"
                       value={month}
                       keyboardType="number-pad"
                       onBlur={checkMonth}
-                      onChangeText={(masked: any) => handleMonthChange(masked)}
+                      onChangeText={handleMonthChange}
                       placeholder="MM"
                       placeholderTextColor={whiteColor}
                       mask={[/\d/, /\d/]}
                     />
-                  </View>
-                  <View style={{ flex: 1, marginHorizontal: 6 }}>
-                    <Text style={{ color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 932) }}>Day</Text>
-                    <MaskInput
-                      style={{
-                        color: whiteColor,
-                        borderRadius: 10,
-                        backgroundColor: lightGray2Color,
-                        height: 64,
-                        paddingHorizontal: 20,
-                        marginTop: 12,
-                        flex: 1,
-                      }}
+                  </S.DateInputContainer>
+                  <S.DateInputContainer marginHorizontal={6}>
+                    <S.InputLabel>Day</S.InputLabel>
+                    <S.StyledMaskInput
                       keyboardAppearance="dark"
                       value={day}
                       keyboardType="number-pad"
                       onBlur={checkDay}
-                      onChangeText={(masked: any) => handleDayChange(masked)}
+                      onChangeText={handleDayChange}
                       placeholder="DD"
                       placeholderTextColor={whiteColor}
                       mask={[/\d/, /\d/]}
                     />
-                  </View>
-                  <View style={{ flex: 1, marginLeft: 6 }}>
-                    <Text style={{ color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(13, 932) }}>Year</Text>
-                    <MaskInput
-                      style={{
-                        color: whiteColor,
-                        borderRadius: 10,
-                        backgroundColor: lightGray2Color,
-                        height: 64,
-                        paddingHorizontal: 20,
-                        marginTop: 12,
-                        flex: 1,
-                      }}
+                  </S.DateInputContainer>
+                  <S.DateInputContainer marginLeft={6}>
+                    <S.InputLabel>Year</S.InputLabel>
+                    <S.StyledMaskInput
                       keyboardAppearance="dark"
                       value={year}
                       keyboardType="number-pad"
-                      onChangeText={(masked: any) => handleYearChange(masked)}
+                      onChangeText={handleYearChange}
                       placeholder="YYYY"
                       placeholderTextColor={whiteColor}
                       mask={[/\d/, /\d/, /\d/, /\d/]}
                     />
-                  </View>
-                </View>
-                <View
-                  style={{
-                    width: '100%',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginTop: screenHeight / 26,
-                  }}>
-                  <Text style={{ color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(16, 932) }}>Show my age on my profile</Text>
+                  </S.DateInputContainer>
+                </S.DateInputRow>
+                <S.ShowAgeContainer>
+                  <S.ShowAgeText>Show my age on my profile</S.ShowAgeText>
                   <Switch
                     trackColor={{ false: grayColor, true: toggleColor }}
                     thumbTintColor={whiteColor}
                     checked={showAge}
                     onChange={handleShowAge}
                   />
-                </View>
-              </View>
-              <View style={{}}>
-                <Button disabled={month.length < 2 || day.length < 2 || year.length < 4} onPress={() => handleNext()} title="Continue" />
-                <Button title="Skip" onPress={handleSkip} variant="transparent" />
-              </View>
-            </View>
-          </SafeAreaView>
+                </S.ShowAgeContainer>
+              </S.TopContent>
+              <S.BottomContent>
+                <Button
+                  title="Next"
+                  disabled={!day || !month || !year || year.length < 4 || month.length < 2 || day.length < 2}
+                  onPress={handleNext}
+                />
+                <S.SkipButton onPress={handleSkip}>
+                  <S.SkipButtonText>Skip</S.SkipButtonText>
+                </S.SkipButton>
+              </S.BottomContent>
+            </S.ContentContainer>
+          </S.InnerWrapper>
         </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+      </S.KeyboardAvoidingWrapper>
+    </S.GradientBackground>
   );
 };
 

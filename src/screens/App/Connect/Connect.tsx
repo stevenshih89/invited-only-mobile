@@ -5,8 +5,8 @@ import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 const Connect = () => {
   return (
     <DefaultBackground>
-      <ConnectTabs />
       <ModalComingSoon />
+      <ConnectTabs />
     </DefaultBackground>
   );
 };

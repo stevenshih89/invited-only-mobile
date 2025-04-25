@@ -3,7 +3,7 @@ import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 import { useContext } from 'react';
 import { UserMutationsKeys } from '../keys/userMutationkeys.ts';
-import { useUser } from '../../store/userStore';
+import useUser from 'hooks/user/useUser';
 import { isEmailValid } from 'helpers/regExpValidators.ts';
 import { showToast } from 'helpers/showToast.ts';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry.ts';
@@ -63,7 +63,7 @@ const useUserChangeLocation = () => {
 
 const useUserDeleteAccount = () => {
   const { userMetadata } = useAuthStore();
-  const userHost = useUser((i: any) => i?.user);
+  const { user: userHost } = useUser();
   const {
     userInfo: apiUserInfoCollection,
     events: apiEventsCollection,
@@ -77,26 +77,32 @@ const useUserDeleteAccount = () => {
     }
     try {
       await deleteUser();
-    } catch (e) { }
+    } catch (e) {
+      console.log('error delete', e);
+      logErrorToSentry(e);
+    }
   };
 
   const deleteUser = async () => {
     try {
-      if (userHost.accountType === 'host') {
+      if (userHost?.accountType === 'host') {
         const docSnapshot = await firestore().collection(apiUserInfoCollection).doc(userHost.uid).get();
         const docData = docSnapshot.data();
 
         if (docData?.eventsList && docData?.eventsList.length > 0) {
-          for (const item of docData?.eventsList) {
-            await firestore().collection(apiEventsCollection).doc(item).delete();
-            await firestore().collection(apiMessagesCollection).doc(item).delete();
-          }
+          const deletePromises = docData?.eventsList.map(async (id: string) => {
+            const docEvent = firestore().collection(apiEventsCollection).doc(id);
+            const docData = await docEvent.get();
+            if (docData.exists) {
+              await docEvent.delete();
+            }
+          });
         }
       } else {
-        const eventsListGuest = userHost?.eventsListVisit;
+        const docData = await firestore().collection(apiUserInfoCollection).doc(userHost?.uid).get();
         try {
-          if (eventsListGuest && eventsListGuest.length > 0) {
-            const deletePromises = eventsListGuest.map(async (id: string) => {
+          if (docData?.eventsListGuest && docData?.eventsListGuest.length > 0) {
+            const deletePromises = docData?.eventsListGuest.map(async (id: string) => {
               const docMessages = firestore().collection(apiMessagesCollection).doc(id);
               const docData = await docMessages.get();
               if (docData.exists) {
@@ -118,7 +124,7 @@ const useUserDeleteAccount = () => {
         }
       }
       await messaging().deleteToken();
-      await firestore().collection(apiUserInfoCollection).doc(userHost.uid).delete();
+      await firestore().collection(apiUserInfoCollection).doc(userHost?.uid).delete();
       showToast('inviteMatch', '', 'Your account has been deleted', {
         ownerPhoto: userHost?.photos[0].image,
         status: 'SUCCESSED',
@@ -137,7 +143,7 @@ const useUserDeleteAccount = () => {
 
 const useUserUpdateGender = () => {
   const { userMetadata } = useAuthStore();
-  const userHost = useUser((i: any) => i?.user);
+  const { user: userHost } = useUser();
   const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const updateUserGenderFn = async (variables: { gender: string; changeActiveGenderItem: () => void }) => {
     try {
@@ -161,7 +167,7 @@ const useUserUpdateGender = () => {
 
 const useUserUpdateShowGenderInProfile = () => {
   const { userMetadata } = useAuthStore();
-  const userHost = useUser((i: any) => i?.user);
+  const { user: userHost } = useUser();
   const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const updateShowGenderInProfileFn = async (variables: { state: string; changeShowGenderState: () => void }) => {
     try {
@@ -223,6 +229,9 @@ const useUpdateUserEventList = () => {
   const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const updateUserEventListFn = async (uid: string) => {
     try {
+      const docData = await firestore().collection(apiUserInfoCollection).doc(userUid).get();
+      const data = docData.data();
+      if (!data) return;
       await firestore()
         .collection(apiUserInfoCollection)
         .doc(userUid)

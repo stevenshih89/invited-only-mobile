@@ -1,17 +1,17 @@
-import React, {Dispatch, FC, SetStateAction, useCallback, useContext, useState} from 'react';
-import {View, Text, Image, TouchableOpacity} from 'react-native';
+import React, { Dispatch, FC, SetStateAction, useCallback, useContext, useState } from 'react';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 //import components
-import {RFValue} from 'react-native-responsive-fontsize';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import ModalReport from '../ModalReport/ModalReport';
 import useStyles from 'components/Modal/ModalUserMenu/styles.ts';
 import Button from 'components/Button/Button.tsx';
-import {black1Color, blackColor, errorColor, gray1Color, grayScale700, whiteColor} from 'constants/colors.ts';
-import {showToast} from 'helpers/showToast.ts';
+import { black1Color, blackColor, errorColor, gray1Color, grayScale700, whiteColor } from 'constants/colors.ts';
+import { showToast } from 'helpers/showToast.ts';
 
 //import icons
 import CloseIcon from 'assets/images/icons/close-circle-red.svg';
@@ -20,14 +20,14 @@ import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import User from 'assets/images/icons/user.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import FlashIcon from 'assets/images/icons/flash.svg';
-import {Satoshi500, Satoshi700} from 'constants/fonts';
-import {commonStackPath, myProfileViewPath} from 'constants/pathLocations';
-import {useUser} from 'src/store/userStore';
-import {sendNotification} from 'helpers/fcmHelper';
-import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {User as UserType} from 'src/types/userInfo';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
+import { Satoshi500, Satoshi700 } from 'constants/fonts';
+import { commonStackPath, myProfileViewPath } from 'constants/pathLocations';
+import useUser from 'hooks/user/useUser';
+import { sendNotification } from 'helpers/fcmHelper';
+import { ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS } from 'constants/common';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { User as UserType } from 'src/types/userInfo';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
 
 interface ModalUserMenuProps {
   isModalVisible: boolean;
@@ -57,7 +57,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   const [blockAndReportState, setBlockAndReportState] = useState<boolean>(false);
   const [cancelInvitationState, setCancelInvitationState] = useState<boolean>(false);
   const [deleteChatState, setDeleteChatState] = useState<boolean>(false);
-  const [eventData, setEventData] = useState({usersList: []});
+  const [eventData, setEventData] = useState({ usersList: [] });
   const {
     events: apiEventsCollection,
     userInfo: apiUserInfoCollection,
@@ -65,7 +65,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   } = useContext(FirebaseCollectionsContext);
   const styles = useStyles();
 
-  const user = useUser((state: any) => state.user);
+  const { user } = useUser();
 
   const userGuest =
     uid === hostUid
@@ -111,7 +111,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
     if (!eventData?.usersList.length) {
       return;
     }
-    const {allGuests, findAcceptedGuest} = await checkIsFullGuestsFun();
+    const { allGuests, findAcceptedGuest } = await checkIsFullGuestsFun();
 
     if (findAcceptedGuest >= allGuests) {
       setModalVisible(false);
@@ -250,7 +250,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
       return;
     }
 
-    const {allGuests, findAcceptedGuest} = await checkIsFullGuestsFun();
+    const { allGuests, findAcceptedGuest } = await checkIsFullGuestsFun();
 
     if (findAcceptedGuest >= allGuests) {
       showToast('inviteMatch', 'Event is full', `${eventData?.placeName}`);
@@ -423,11 +423,11 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
         <View style={styles.wrapper}>
           <View style={styles.whiteLine} />
           <View>
-            <Image source={{uri: image}} style={styles.userPhoto} />
+            <Image source={{ uri: image }} style={styles.userPhoto} />
             {/*{online && <View style={styles.greenCircle} />}*/}
             <View style={styles.greenCircle} />
           </View>
-          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
             <Text style={styles.title}>{title}</Text>
             <FlashIcon width={19} height={19} />
           </View>
@@ -439,7 +439,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
               setModalVisible(false);
             }}
             title="Remove"
-            buttonStyle={{width: '100%', marginTop: 37, marginBottom: 6}}
+            buttonStyle={{ width: '100%', marginTop: 37, marginBottom: 6 }}
           />
           <Button
             variant="transparent"
@@ -447,7 +447,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
               setRemovingState(false);
             }}
             title="Cancel"
-            buttonStyle={{width: '100%'}}
+            buttonStyle={{ width: '100%' }}
           />
         </View>
       </Modal>
@@ -474,11 +474,11 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
           <View style={styles.whiteLine} />
 
           <View>
-            <Image source={{uri: image}} style={styles.userPhoto} />
+            <Image source={{ uri: image }} style={styles.userPhoto} />
             {/*{online && <View style={styles.greenCircle} />}*/}
             <View style={styles.greenCircle} />
           </View>
-          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
             <Text style={styles.title}>{title}</Text>
             <FlashIcon width={19} height={19} />
           </View>
@@ -495,7 +495,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
               });
             }}
             title="Yes, cancel invitation"
-            buttonStyle={{width: '100%', marginTop: 37, marginBottom: 6}}
+            buttonStyle={{ width: '100%', marginTop: 37, marginBottom: 6 }}
           />
           <Button
             variant="transparent"
@@ -503,7 +503,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
               setCancelInvitationState(false);
             }}
             title="Cancel"
-            buttonStyle={{width: '100%'}}
+            buttonStyle={{ width: '100%' }}
           />
         </View>
       </Modal>
@@ -530,11 +530,11 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
           <View style={styles.whiteLine} />
 
           <View>
-            <Image source={{uri: image}} style={styles.userPhoto} />
+            <Image source={{ uri: image }} style={styles.userPhoto} />
             {/*{online && <View style={styles.greenCircle} />}*/}
             <View style={styles.greenCircle} />
           </View>
-          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
             <Text style={styles.title}>{title}</Text>
             <FlashIcon width={19} height={19} />
           </View>
@@ -546,7 +546,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
               showToast('inviteMatch', `${title} was removed!`);
             }}
             title="Yes, delete chat"
-            buttonStyle={{width: '100%', marginTop: 37, marginBottom: 6}}
+            buttonStyle={{ width: '100%', marginTop: 37, marginBottom: 6 }}
           />
           <Button
             variant="transparent"
@@ -554,7 +554,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
               setDeleteChatState(false);
             }}
             title="Cancel"
-            buttonStyle={{width: '100%'}}
+            buttonStyle={{ width: '100%' }}
           />
         </View>
       </Modal>
@@ -562,14 +562,14 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
   };
 
   const userProfileItemCard = (
-    <View style={{flexDirection: 'row', alignItems: 'center', width: '100%'}}>
-      {image && <Image style={{borderRadius: 100, width: 62, height: 62}} source={{uri: image}} />}
-      <View style={{marginLeft: 16, gap: 8, marginBottom: 8}}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(24, 812), color: whiteColor}}>{title}</Text>
-          {<CheckStarIcon width={18} height={18} style={{marginLeft: 4}} />}
+    <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
+      {image && <Image style={{ borderRadius: 100, width: 62, height: 62 }} source={{ uri: image }} />}
+      <View style={{ marginLeft: 16, gap: 8, marginBottom: 8 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ fontFamily: Satoshi700, fontSize: RFValue(24, 812), color: whiteColor }}>{title}</Text>
+          {<CheckStarIcon width={18} height={18} style={{ marginLeft: 4 }} />}
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View
             style={{
               backgroundColor: whiteColor,
@@ -577,7 +577,7 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
               paddingHorizontal: 6,
               paddingVertical: 2,
             }}>
-            <Text style={{textTransform: 'capitalize', color: blackColor, fontFamily: Satoshi700, fontSize: RFValue(9, 812)}}>Guest</Text>
+            <Text style={{ textTransform: 'capitalize', color: blackColor, fontFamily: Satoshi700, fontSize: RFValue(9, 812) }}>Guest</Text>
           </View>
         </View>
       </View>
@@ -605,48 +605,48 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
             {/* UserProfileItem */}
             {userProfileItemCard}
             {/* gap */}
-            <View style={{height: 24}} />
+            <View style={{ height: 24 }} />
             {(userGuest?.status === ACCEPTED_STATUS || userGuest?.status === NOT_ACCEPTED_STATUS) && uid === hostUid ? null : (
-              <View style={{width: '100%'}}>
+              <View style={{ width: '100%' }}>
                 <TouchableOpacity
                   disabled={getIsDisabledButton()}
                   activeOpacity={0.7}
                   style={[
-                    {height: 56, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderRadius: 10},
+                    { height: 56, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderRadius: 10 },
                     getButtonStyle(),
                   ]}
                   onPress={handleActionPress}>
-                  <Text style={[{fontFamily: Satoshi500, fontSize: RFValue(18, 812)}, getButtonTitleStyle()]}>
+                  <Text style={[{ fontFamily: Satoshi500, fontSize: RFValue(18, 812) }, getButtonTitleStyle()]}>
                     {getUserStatusButtonText()}
                   </Text>
-                  {userGuest?.status === ACCEPTED_STATUS && <CheckIcon style={{marginLeft: 10}} />}
+                  {userGuest?.status === ACCEPTED_STATUS && <CheckIcon style={{ marginLeft: 10 }} />}
                 </TouchableOpacity>
               </View>
             )}
-            <View style={{height: 24}} />
-            <TouchableOpacity onPress={goToProfileView} style={[styles.buttonFooter, {borderTopWidth: 0}]}>
+            <View style={{ height: 24 }} />
+            <TouchableOpacity onPress={goToProfileView} style={[styles.buttonFooter, { borderTopWidth: 0 }]}>
               <User width={20} height={20} />
               <Text style={styles.textButton}>Profile</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setBlockAndReportState(true)}
-              style={[styles.buttonFooter, userGuest?.status === ACCEPTED_STATUS && {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
+              style={[styles.buttonFooter, userGuest?.status === ACCEPTED_STATUS && { borderBottomColor: gray1Color, borderBottomWidth: 1 }]}>
               <InfoIcon width={20} height={20} />
               <Text style={styles.textButton}>Block & Report</Text>
             </TouchableOpacity>
             {userGuest?.status !== NOT_ACCEPTED_STATUS && userGuest?.status !== CANCEL_STATUS && (
               <TouchableOpacity
                 onPress={() => setCancelInvitationState(true)}
-                style={[styles.buttonFooter, {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
+                style={[styles.buttonFooter, { borderBottomColor: gray1Color, borderBottomWidth: 1 }]}>
                 <CloseIcon width={20} height={20} />
-                <Text style={[styles.textButton, {color: errorColor}]}>Cancel invitation</Text>
+                <Text style={[styles.textButton, { color: errorColor }]}>Cancel invitation</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity
               onPress={() => setDeleteChatState(true)}
-              style={[styles.buttonFooter, {borderBottomColor: gray1Color, borderBottomWidth: 1}]}>
+              style={[styles.buttonFooter, { borderBottomColor: gray1Color, borderBottomWidth: 1 }]}>
               <CloseIcon width={20} height={20} />
-              <Text style={[styles.textButton, {color: errorColor}]}>Delete chat</Text>
+              <Text style={[styles.textButton, { color: errorColor }]}>Delete chat</Text>
             </TouchableOpacity>
             <View>
               <RemovingUserModal />
