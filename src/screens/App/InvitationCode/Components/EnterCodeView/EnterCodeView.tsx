@@ -1,9 +1,7 @@
-import {CodeField, Cursor} from 'react-native-confirmation-code-field';
-import Button from 'components/Button/Button';
+import { Cursor } from 'react-native-confirmation-code-field';
+import { FC, RefObject } from 'react';
+import { TextInput } from 'react-native';
 import * as S from './EnterCodeView.style';
-import {screenHeight} from 'constants/common';
-import {FC, RefObject} from 'react';
-import {TextInput} from 'react-native';
 
 interface EnterCodeViewProps {
   ref: RefObject<TextInput>;
@@ -26,16 +24,15 @@ const EnterCodeView: FC<EnterCodeViewProps> = ({
   cellCount,
   handleSubmit,
 }) => {
+  const errorColorsList = ['rgba(209, 111, 111, 0.6)', 'rgba(119, 19, 19, 0.7)', 'rgba(119, 19, 19, 1)'];
+  const focusedColorsList = ['rgba(26, 26, 26, 0.3)', 'rgba(255, 255, 255, 0.6)', 'rgba(255, 255, 255, 0)'];
+
   return (
-    <>
+    <S.Container>
       <S.Title>Access Limited</S.Title>
       <S.Subtitle>Enter your invitation code</S.Subtitle>
       <S.CodeContainer>
-        <CodeField
-          rootStyle={{
-            width: '80%',
-            marginTop: 40,
-          }}
+        <S.StyledCodeField
           testID="verification-code-input"
           ref={ref}
           {...props}
@@ -45,14 +42,14 @@ const EnterCodeView: FC<EnterCodeViewProps> = ({
           keyboardType="number-pad"
           keyboardAppearance="dark"
           textContentType="oneTimeCode"
-          renderCell={({index, symbol, isFocused}: {index: number; symbol: string; isFocused: boolean}) => {
+          renderCell={({ index, symbol, isFocused }: { index: number; symbol: string; isFocused: boolean }) => {
             if (isIncorrectCode) {
               return (
                 <S.GradientCell
                   gradientProps={{
-                    start: {x: 0, y: 0},
-                    end: {x: 1, y: 1},
-                    colors: ['rgba(209, 111, 111, 0.6)', 'rgba(119, 19, 19, 0.7)', 'rgba(119, 19, 19, 1)'],
+                    start: { x: 0, y: 0 },
+                    end: { x: 1, y: 1 },
+                    colors: errorColorsList,
                   }}
                   key={index}>
                   <S.CellText isError onLayout={getCellOnLayoutHandler(index)}>
@@ -66,9 +63,9 @@ const EnterCodeView: FC<EnterCodeViewProps> = ({
               return (
                 <S.GradientCell
                   gradientProps={{
-                    start: {x: 0, y: 0},
-                    end: {x: 1, y: 1},
-                    colors: ['rgba(26, 26, 26, 0.3)', 'rgba(255, 255, 255, 0.6)', 'rgba(255, 255, 255, 0)'],
+                    start: { x: 0, y: 0 },
+                    end: { x: 1, y: 1 },
+                    colors: focusedColorsList,
                   }}
                   key={index}>
                   <S.CellText onLayout={getCellOnLayoutHandler(index)}>{symbol || (isFocused ? <Cursor /> : '_')}</S.CellText>
@@ -88,17 +85,8 @@ const EnterCodeView: FC<EnterCodeViewProps> = ({
           </S.ErrorContainer>
         )}
       </S.CodeContainer>
-      <Button
-        buttonStyle={{
-          position: 'absolute',
-          bottom: screenHeight / 19,
-          width: '80%',
-          marginTop: screenHeight / 10,
-        }}
-        title="Get Access"
-        onPress={handleSubmit}
-      />
-    </>
+      <S.StyledButton title="Get Access" onPress={handleSubmit} />
+    </S.Container>
   );
 };
 

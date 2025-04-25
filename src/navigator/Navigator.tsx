@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
 import { useAuthStore } from '../store/authStore';
 import * as S from './Navigator.style';
-import AppStackScreens from 'src/Navigator/AppStackScreens/AppStackScreens';
-import AuthStackScreens from 'src/Navigator/AuthStackScreens/AuthStackScreens';
+import AppStackScreens from 'src/navigator/AppStackScreens/AppStackScreens';
+import AuthStackScreens from 'src/navigator/AuthStackScreens/AuthStackScreens';
 
 const Navigator = () => {
   const { onBoarding } = useAuthStore();

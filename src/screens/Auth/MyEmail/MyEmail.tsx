@@ -62,6 +62,7 @@ const MyEmail: FC = (): JSX.Element => {
       body: {
         ...onBoarding.registrationDetails,
         phoneNumber: userMetadata?.phoneNumber,
+        email: email,
         uid: userMetadata?.uid,
       },
     });

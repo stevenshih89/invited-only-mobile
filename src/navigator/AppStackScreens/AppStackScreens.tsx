@@ -5,7 +5,7 @@ import { createStackNavigator, StackNavigationOptions } from '@react-navigation/
 import { TouchableOpacity } from 'react-native';
 import EventRequestsStackScreen from './RequestStackScreen/RequestStackScreen';
 import { ProfileStackScreen } from './ProfileStackScreen/ProfileStackScreen';
-import BottomMenu from 'src/Navigator/BottomMenu/BottomMenu';
+import BottomMenu from 'navigator/BottomMenu/BottomMenu';
 import Header from 'components/Header/Header.tsx';
 import {
   bottomTabsStackPath,
@@ -23,13 +23,12 @@ import {
   notificationsStackPath,
   privacyPath,
   profileStackPath,
-
+  shareSocialLinkPath,
   userProfilePath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
-import InvitationCode from 'screens/Auth/InvitationCode/InvitationCode.tsx';
-import useStyles from 'src/Navigator/AppStackScreens/styles.ts';
+import useStyles from 'navigator/AppStackScreens/styles.ts';
 import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView.tsx';
 import ThreeDotsIcon from 'assets/images/icons/more-white.svg';
 import Privacy from 'screens/Auth/Privacy/Privacy.tsx';
@@ -40,6 +39,11 @@ import Events from 'screens/App/MyEvents/Events.tsx';
 import Connect from 'screens/App/Connect/Connect.tsx';
 import { blackColor } from 'constants/colors.ts';
 import Chat from 'screens/App/Chat/Chat';
+import ShareSocialLink from 'screens/App/InvitationCode/screens/ShareSocialLink/ShareSocialLink';
+import InvitationCode from 'screens/App/InvitationCode/InvitationCode';
+import useUser from 'hooks/user/useUser';
+import AppLoader from 'screens/App/AppLoader/AppLoader';
+import { useAuthStore } from 'src/store/authStore';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -110,8 +114,6 @@ export const MyEventsStackNavigation: FC = () => {
 
 const BottomTabsStackScreen = () => <BottomMenu />;
 
-
-
 const NotificationsStackScreen = () => {
   const styles = useStyles();
 
@@ -179,8 +181,6 @@ const EventCreatingStackScreen = () => {
   );
 };
 
-
-
 const UserProfileStackScreen = () => {
   const styles = useStyles();
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
@@ -213,10 +213,16 @@ const UserProfileStackScreen = () => {
 };
 
 const AppStackScreen = () => {
+  const { userMetadata } = useAuthStore();
+  const { user, isLoading } = useUser();
 
+  if (isLoading) {
+    return <AppLoader />;
+  }
+  const initialRouteName = userMetadata?.firstLogin && !user?.accountConfirmed ? invitationCodePath : bottomTabsStackPath;
   return (
     <AppStack.Navigator
-      initialRouteName={bottomTabsStackPath}
+      initialRouteName={initialRouteName}
       screenOptions={{ headerShown: false, cardOverlayEnabled: true, ...screenOptions, cardStyle: { backgroundColor: blackColor } }}>
       <AppStack.Screen key={bottomTabsStackPath} name={bottomTabsStackPath} component={BottomTabsStackScreen} />
       <AppStack.Screen
@@ -226,12 +232,18 @@ const AppStackScreen = () => {
         screenOptions={screenOptions}
       />
       <AppStack.Screen key={profileStackPath} name={profileStackPath} component={ProfileStackScreen} />
-      <AppStack.Screen key={invitationCodePath} name={invitationCodePath} component={InvitationCode} />
+      <AppStack.Screen key={shareSocialLinkPath} name={shareSocialLinkPath} component={ShareSocialLink} />
       <AppStack.Screen key={eventRequestStackPath} name={eventRequestStackPath} component={EventRequestsStackScreen} />
       <AppStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={EventCreatingStackScreen} />
-      <AppStack.Screen key={userProfilePath} name={userProfilePath} component={UserProfileStackScreen} screenOptions={{ cardStyle: { backgroundColor: blackColor } }} />
+      <AppStack.Screen
+        key={userProfilePath}
+        name={userProfilePath}
+        component={UserProfileStackScreen}
+        screenOptions={{ cardStyle: { backgroundColor: blackColor } }}
+      />
       <AppStack.Screen key={connectPath} name={connectPath} component={Connect} />
       <AppStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
+      <AppStack.Screen key={invitationCodePath} name={invitationCodePath} component={InvitationCode} />
     </AppStack.Navigator>
   );
 };

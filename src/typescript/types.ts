@@ -1,5 +1,4 @@
-import { components } from "src/api/v1";
-
+import {components} from 'src/api/v1';
 
 export type RootStackParamList = {
   '/bottom-tabs-stack': undefined;
@@ -63,7 +62,7 @@ export type RootStackParamList = {
   '/code-verified': undefined;
   '/verify-first-step': undefined;
   '/verify-second-step': undefined;
-  '/invitation-code': { cameFromSummary: boolean };
+  '/invitation-code': {cameFromSummary: boolean};
 
   '/tutorial-flow': undefined;
   '/io': undefined;
@@ -101,6 +100,7 @@ export type RootStackParamList = {
   '/admin-chat': {
     chatId?: string;
   };
+  '/share-social-link': undefined;
   '/profile/settings': undefined;
   '/profile/notification-setting': undefined;
   '/profile/invitations': undefined;

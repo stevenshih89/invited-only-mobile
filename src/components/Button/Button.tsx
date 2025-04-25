@@ -1,13 +1,13 @@
-import {FC, ReactElement} from 'react';
-import {ActivityIndicator, Button as ButtonAntd} from '@ant-design/react-native';
+import { FC, ReactElement } from 'react';
+import { ActivityIndicator, Button as ButtonAntd } from '@ant-design/react-native';
 
 //import components
-import {TextStyle, ViewStyle} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {ButtonProps} from 'typescript/interfaces';
-import {Satoshi500} from 'constants/fonts';
-import {screenHeight} from 'constants/common';
-import {blackColor, grayColor, whiteColor} from 'constants/colors';
+import { TextStyle, ViewStyle } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { ButtonProps } from 'typescript/interfaces';
+import { Satoshi500 } from 'constants/fonts';
+import { screenHeight } from 'constants/common';
+import { blackColor, grayColor, whiteColor } from 'constants/colors';
 
 const Button: FC<ButtonProps> = ({
   title,

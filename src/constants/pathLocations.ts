@@ -76,6 +76,7 @@ const updateAvailable: keyof RootStackParamList = '/update-available';
 const profileStackPath: keyof RootStackParamList = '/profile/profile-stack';
 const demoIntroPath: keyof RootStackParamList = '/demo-intro';
 const demoEventCreatingPath: keyof RootStackParamList = '/demo-event-creating';
+const shareSocialLinkPath: keyof RootStackParamList = '/share-social-link';
 
 const demoIOPath: keyof RootStackParamList = '/demo-io';
 
@@ -154,4 +155,5 @@ export {
   eventRequestStackPath,
   chatWindowPath,
   profileStackPath,
+  shareSocialLinkPath,
 };

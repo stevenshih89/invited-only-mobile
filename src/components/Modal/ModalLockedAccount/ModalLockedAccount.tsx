@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
+
 import * as S from './ModalLockedAccount.style';
 import LockIcon from 'assets/images/icons/key-rounded.svg';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { invitationCodePath } from 'constants/pathLocations';
-import useUser from 'hooks/user/useUser';
 import Button from 'components/Button/Button';
+import useUser from 'hooks/user/useUser';
 
 const ModalLockedAccount: FC = () => {
   const navigation = useAppNavigation();
@@ -31,7 +32,7 @@ const ModalLockedAccount: FC = () => {
             </S.LockBadge>
           </S.LockBadgeContainer>
           <S.Title>Profile is Under Review</S.Title>
-          <S.Description>You&apos;ll be able to invite soon</S.Description>
+          <S.Description>{`You'll be able to invite soon`}</S.Description>
           <Button
             buttonStyle={{
               width: '100%',

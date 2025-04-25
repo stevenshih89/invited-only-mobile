@@ -1,8 +1,13 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Switch} from '@rneui/themed';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {whiteColor} from 'constants/colors';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { Switch } from '@rneui/themed';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import { whiteColor } from 'constants/colors';
+
+export const SafeArea = styled.SafeAreaView`
+  flex: 1;
+  background-color: black;
+`;
 
 export const Container = styled.View`
   flex: 1;

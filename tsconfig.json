@@ -5,7 +5,7 @@
     "paths": {
       "screens/*": ["src/screens/*"],
       "assets/*": ["src/assets/*"],
-      "navigator/*": ["src/Navigator/*"],
+      "navigator/*": ["src/navigator/*"],
       "constants/*": ["src/constants/*"],
       "typescript/*": ["src/typescript/*"],
       "components/*": ["src/components/*"],

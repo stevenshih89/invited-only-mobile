@@ -3,6 +3,7 @@ import * as S from './NotificationSetting.style';
 import { blackColor, whiteColor } from 'constants/colors';
 import { useNotificationSetting } from 'hooks/useNotificationSetting';
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
+import useUser from 'hooks/user/useUser';
 
 interface NotificationSettingProps {
   route: any;
@@ -29,7 +30,7 @@ const NotificationSetting: FC<NotificationSettingProps> = ({ route }) => {
   const { user: userData } = useUser();
 
   return (
-    <>
+    <S.SafeArea>
       <S.Container>
         <S.ScrollContainer>
           <S.FirstSectionContainer>
@@ -121,7 +122,7 @@ const NotificationSetting: FC<NotificationSettingProps> = ({ route }) => {
         title="Are You Sure You Want Turn Off All Notifications"
         description="You will not receive any notifications"
       />
-    </>
+    </S.SafeArea>
   );
 };
 

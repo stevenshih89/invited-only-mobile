@@ -20,7 +20,6 @@ import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
 import { backgroundGradientColors, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor } from 'constants/colors';
 import Button from 'components/Button/Button';
-import { chooseAccountTypePath } from 'constants/pathLocations';
 import { showToast } from 'helpers/showToast.ts';
 import Loader from 'components/Modal/ModalLoader/Loader';
 
@@ -110,6 +109,7 @@ const ConfirmPhone = ({ route, navigation }: ConfirmPhoneProps) => {
               setUserMetadata({
                 uid: userData.uid,
                 phoneNumber: userData.phoneNumber,
+                firstLogin: false,
               });
             } else {
               console.error("User data from Firestore missing uid or phoneNumber:", userData);
@@ -136,6 +136,7 @@ const ConfirmPhone = ({ route, navigation }: ConfirmPhoneProps) => {
             setUserMetadata({
               uid: data.uid,
               phoneNumber: mobilePhone,
+              firstLogin: true,
             });
             navigation.navigate('/enter-name');
           },

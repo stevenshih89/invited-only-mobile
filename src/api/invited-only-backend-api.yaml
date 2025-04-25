@@ -1166,6 +1166,10 @@ components:
           type: boolean
         socialNickname:
           $ref: '#/components/schemas/SocialNickname'
+        socialLinks:
+          type: array
+          items:
+            $ref: '#/components/schemas/SocialLink'
         weeklySuperInvites:
           type: integer
         fcmToken:
@@ -1388,6 +1392,19 @@ components:
           type: string
         isActive:
           type: boolean
+    SocialLink:
+      type: object
+      properties:
+        instagram:
+          type: string
+        facebook:
+          type: string
+        linkedin:
+          type: string
+        twitter:
+          type: string
+        tiktok:
+          type: string
     NotificationSettings:
       type: object
       properties:

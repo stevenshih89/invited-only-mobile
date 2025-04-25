@@ -1,9 +1,16 @@
 import styled from 'styled-components/native';
-import {Satoshi500, Satoshi400} from 'constants/fonts';
-import {whiteColor} from 'constants/colors';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight} from 'constants/common';
-import {GradientBorderView} from '@good-react-native/gradient-border';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { GradientBorderView } from '@good-react-native/gradient-border';
+import { CodeField } from 'react-native-confirmation-code-field';
+import { Satoshi500, Satoshi400 } from 'constants/fonts';
+import { whiteColor } from 'constants/colors';
+import { screenHeight } from 'constants/common';
+import Button from 'components/Button/Button';
+
+export const Container = styled.View`
+  flex: 1;
+  align-items: center;
+`;
 
 export const Title = styled.Text`
   font-family: ${Satoshi500};
@@ -22,8 +29,8 @@ export const CodeContainer = styled.View`
   position: relative;
 `;
 
-export const CellText = styled.Text<{isError?: boolean}>`
-  color: ${(props: {isError?: boolean}) => (props.isError ? '#EF5555' : whiteColor)};
+export const CellText = styled.Text<{ isError?: boolean }>`
+  color: ${(props: { isError?: boolean }) => (props.isError ? '#EF5555' : whiteColor)};
   font-size: 24px;
 `;
 
@@ -64,3 +71,19 @@ export const ErrorText = styled.Text`
   color: #ef5555;
   font-size: ${RFValue(14, 932)}px;
 `;
+
+export const StyledButton = styled(Button).attrs({
+  buttonStyle: {
+    position: 'absolute',
+    bottom: screenHeight / 19,
+    width: '80%',
+    marginTop: screenHeight / 10,
+  },
+})``;
+
+export const StyledCodeField = styled(CodeField).attrs({
+  rootStyle: {
+    width: '80%',
+    marginTop: 40,
+  },
+})``;

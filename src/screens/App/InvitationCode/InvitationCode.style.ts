@@ -1,6 +1,9 @@
 import styled from 'styled-components/native';
-import {screenHeight} from 'constants/common';
 import {ImageBackground} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {screenHeight} from 'constants/common';
+import {whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 
 export const SafeArea = styled.SafeAreaView`
   flex: 1;
@@ -43,4 +46,35 @@ export const BackgroundImage = styled(ImageBackground)`
   padding-top: ${screenHeight / 10}px;
   align-items: center;
   position: relative;
+`;
+
+export const FooterContainer = styled.View`
+  align-items: center;
+  padding-horizontal: 28px;
+`;
+
+export const InviteButton = styled.TouchableOpacity`
+  align-items: center;
+  gap: 4px;
+`;
+
+export const InviteTitle = styled.Text`
+  font-family: ${Satoshi500};
+  font-size: ${RFValue(14, 932)}px;
+  color: ${whiteColor};
+`;
+
+export const InviteLink = styled.Text`
+  font-family: ${Satoshi500};
+  font-size: ${RFValue(14, 932)}px;
+  color: ${whiteColor};
+  text-decoration-line: underline;
+  margin-bottom: 16px;
+`;
+
+export const Description = styled.Text`
+  font-family: ${Satoshi400};
+  font-size: ${RFValue(14, 932)}px;
+  color: rgba(130, 130, 130, 1);
+  text-align: center;
 `;

@@ -12,6 +12,7 @@ export const InnerContainer = styled.View`
   background-color: ${blackColor};
   flex: 1;
   padding-horizontal: 20px;
+  padding-bottom: 40px;
 `;
 
 export const StyledScrollView = styled.ScrollView.attrs({

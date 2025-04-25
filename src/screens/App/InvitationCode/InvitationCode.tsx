@@ -1,19 +1,23 @@
+import * as S from './InvitationCode.style';
+import EnterCodeView from './Components/EnterCodeView/EnterCodeView';
+import SuccessfullySubmitted from './Components/SuccessfullySubmitted/SuccessfullySubmitted';
+import { useInvitationCode } from './hooks/useInvitationCode';
 import LogoIcon from 'assets/images/icons/logo.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import InvitationCodeBackground from 'assets/images/app/invitation-code-background.png';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import EnterCodeView from './Components/EnterCodeView/EnterCodeView';
-import SuccessfullySubmitted from './Components/SuccessfullySubmitted/SuccessfullySubmitted';
-import * as S from './InvitationCode.style';
-import {useInvitationCode} from 'hooks/useInvitationCode';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 
 const InvitationCode = () => {
   const navigation = useAppNavigation();
-  const {isSuccessfullySubmitted, code, setCode, ref, props, getCellOnLayoutHandler, isIncorrectCode, cellCount, handleSubmit} =
+  const { isSuccessfullySubmitted, code, setCode, ref, props, getCellOnLayoutHandler, isIncorrectCode, cellCount, handleSubmit } =
     useInvitationCode();
 
   const handleClose = () => {
-    navigation.goBack();
+    navigation.navigate('/bottom-tabs-stack');
+  };
+
+  const handleGoToShareSocialLink = () => {
+    navigation.navigate('/share-social-link');
   };
 
   return (
@@ -25,7 +29,7 @@ const InvitationCode = () => {
           {isSuccessfullySubmitted ? (
             <S.EmptySpace />
           ) : (
-            <S.CloseButton onPress={handleClose}>
+            <S.CloseButton testID="close-button" onPress={handleClose}>
               <CloseIcon />
             </S.CloseButton>
           )}
@@ -48,6 +52,15 @@ const InvitationCode = () => {
             )}
           </S.BackgroundImage>
         </S.ContentContainer>
+        <S.FooterContainer>
+          <S.InviteButton testID="share-social-button" onPress={handleGoToShareSocialLink}>
+            <S.InviteTitle>Do not have an invitation code?</S.InviteTitle>
+            <S.InviteLink>Share socials for invite</S.InviteLink>
+          </S.InviteButton>
+          <S.Description>
+            This app is invite-only. Share a link to one of your social profiles, and we&apos;ll check it out to let you in.
+          </S.Description>
+        </S.FooterContainer>
       </S.Container>
     </S.SafeArea>
   );

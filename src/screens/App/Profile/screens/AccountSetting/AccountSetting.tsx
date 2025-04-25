@@ -10,10 +10,14 @@ import { whiteColor } from 'constants/colors';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
+import useUser from 'hooks/user/useUser';
+import useUpdateUser from 'hooks/user/useUpdateUser';
 
 const AccountSetting: FC = () => {
   const { logout } = useAuthStore();
-  const { userMetadata: user } = useAuthStore();
+  const { user } = useUser();
+  const [showLocation, setShowLocation] = useState(user?.showLocation);
+  const { update } = useUpdateUser();
   const { mutate: deleteUser, isPending: isDeletingUser } = invitedOnlyBackendApi.useMutation('delete', '/users/{id}', {
     onSuccess: () => {
       logout();
@@ -23,18 +27,12 @@ const AccountSetting: FC = () => {
     }
   })
 
-  const { data: userData } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
-    params: {
-      path: {
-        id: user?.uid,
-      },
-    },
-  });
+
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
-
-  const userPhone = userData?.phoneNumber;
+  const userPhone = user?.phoneNumber;
+  const userEmail = user?.email;
 
   if (isDeletingUser) {
     return <AppLoader />
@@ -55,7 +53,7 @@ const AccountSetting: FC = () => {
               </S.PhoneNumberContainer>
             </S.PhoneContainer>
             <S.EmailLabel>Email</S.EmailLabel>
-            <S.EmailInput value={userData?.email} onChangeText={''} />
+            <S.EmailInput value={userEmail} onChangeText={() => { }} />
           </S.ContactSection>
           <S.LocationSection>
             <S.LocationHeader>
@@ -65,8 +63,10 @@ const AccountSetting: FC = () => {
                 style={{ transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }] }}
                 trackColor={{ false: 'rgba(29, 29, 29, 1)', true: whiteColor }}
                 thumbColor={''}
-                value={userData?.showLocation}
-                onValueChange={() => { }}
+                value={showLocation}
+                onValueChange={() => {
+                  setShowLocation(!showLocation);
+                }}
               />
             </S.LocationHeader>
             <S.LocationDescription>Share your city with other</S.LocationDescription>
@@ -83,10 +83,9 @@ const AccountSetting: FC = () => {
         </S.StyledScrollView>
         <Button
           title="Save Changes"
-          buttonStyle={{
-            marginBottom: 40,
+          onPress={() => {
+            update({ showLocation: showLocation });
           }}
-          onPress={() => { }}
         />
       </S.InnerContainer>
       <ModalDefault
@@ -96,7 +95,7 @@ const AccountSetting: FC = () => {
           deleteUser({
             params: {
               path: {
-                id: user?.uid,
+                id: user?.uid || '',
               },
             },
           })

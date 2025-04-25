@@ -1,10 +1,17 @@
 import styled from 'styled-components/native';
-import {Satoshi500, Satoshi400} from 'constants/fonts';
-import {whiteColor} from 'constants/colors';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight} from 'constants/common';
-import {BlurView} from '@react-native-community/blur';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { BlurView } from '@react-native-community/blur';
 import FastImage from 'react-native-fast-image';
+import { Satoshi500, Satoshi400 } from 'constants/fonts';
+import { whiteColor } from 'constants/colors';
+import { screenHeight } from 'constants/common';
+import Button from 'components/Button/Button';
+
+export const Container = styled.View`
+  flex: 1;
+
+  align-items: center;
+`;
 
 export const Title = styled.Text`
   font-family: ${Satoshi500};
@@ -24,9 +31,9 @@ export const ImageContainer = styled.View`
 `;
 
 export const UserImage = styled(FastImage)`
-  width: ${screenHeight / 10}px;
-  height: ${screenHeight / 10}px;
-  border-radius: 100px;
+  width: ${screenHeight / 7}px;
+  height: ${screenHeight / 7}px;
+  border-radius: 10px;
   margin-top: 16px;
 `;
 
@@ -63,3 +70,12 @@ export const BadgeText = styled.Text`
   font-size: ${RFValue(18, 932)}px;
   font-family: ${Satoshi500};
 `;
+
+export const StyledButton = styled(Button).attrs({
+  buttonStyle: {
+    position: 'absolute',
+    bottom: screenHeight / 19,
+    width: '80%',
+    marginTop: screenHeight / 10,
+  },
+})``;

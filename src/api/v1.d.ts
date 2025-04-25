@@ -520,6 +520,7 @@ export interface components {
             lastUpdateSuperInvite?: number;
             accountReviewed?: boolean;
             socialNickname?: components["schemas"]["SocialNickname"];
+            socialLinks?: components["schemas"]["SocialLink"][];
             weeklySuperInvites?: number;
             fcmToken?: string;
             /** Format: date-time */
@@ -623,6 +624,13 @@ export interface components {
         InviteCode: {
             inviteCode?: string;
             isActive?: boolean;
+        };
+        SocialLink: {
+            instagram?: string;
+            facebook?: string;
+            linkedin?: string;
+            twitter?: string;
+            tiktok?: string;
         };
         NotificationSettings: {
             chat?: boolean;

@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 //import components
 import Header from 'components/Header/Header.tsx';
 import { chatPath, chatWindowPath } from 'constants/pathLocations.ts';
-import useStyles from 'src/Navigator/AppStackScreens/styles'; // Assuming styles are shared for now
+import useStyles from 'src/navigator/AppStackScreens/styles'; // Assuming styles are shared for now
 import Chat from 'screens/App/Chat/Chat.tsx';
 import { ChatWindow } from 'screens/App/Chat/ChatWindow/ChatWindow.tsx';
 import { blackColor } from 'constants/colors';
@@ -16,7 +16,6 @@ export const ChatStackScreen: FC = () => {
   const styles = useStyles();
 
   return (
-
     <Stack.Navigator
       initialRouteName={chatPath}
       screenOptions={{

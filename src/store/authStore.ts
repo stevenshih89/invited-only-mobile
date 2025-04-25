@@ -24,7 +24,7 @@ export type OnBoardingStep =
     | '/summary-info'
     | '/verify-social-profile';
 
-type User = Partial<components['schemas']['User']>;
+
 
 
 interface OnboardingState {
@@ -37,6 +37,7 @@ interface OnboardingState {
 interface UserMetadata {
     uid: string;
     phoneNumber: string;
+    firstLogin: boolean;
 }
 
 interface AuthState {
@@ -67,6 +68,7 @@ const getInitialState = (set: (partial: AuthState | Partial<AuthState> | ((state
     userMetadata: {
         uid: '',
         phoneNumber: '',
+        firstLogin: false,
     },
     onBoarding: initialOnboardingState,
     userPhoneNumber: '',
@@ -74,7 +76,7 @@ const getInitialState = (set: (partial: AuthState | Partial<AuthState> | ((state
     refreshToken: '',
     isStorageReady: false,
     setIsStorageReady: () => { },
-    setUserMetadata: (userMetadata) => set({ userMetadata: { ...userMetadata, uid: userMetadata.uid ?? '', phoneNumber: userMetadata.phoneNumber ?? '' } }),
+    setUserMetadata: (userMetadata) => set({ userMetadata: { ...userMetadata, uid: userMetadata.uid ?? '', phoneNumber: userMetadata.phoneNumber ?? '', firstLogin: userMetadata.firstLogin ?? false } }),
     setOnBoarding: (onBoardingUpdate) =>
         set((state) => ({ onBoarding: { ...state.onBoarding, ...onBoardingUpdate } })),
     setUserPhoneNumber: (userPhoneNumber) => set({ userPhoneNumber }),
@@ -118,3 +120,4 @@ export const useAuthStore = create<AuthState>()(
 
 export const selectIsAuthenticated = (state: AuthState): boolean => !!state.accessToken && !!state.refreshToken;
 export const selectIsStorageReady = (state: AuthState): boolean => state.isStorageReady;
+export const selectIsFirstLogin = (state: AuthState): boolean => state.userMetadata.firstLogin;

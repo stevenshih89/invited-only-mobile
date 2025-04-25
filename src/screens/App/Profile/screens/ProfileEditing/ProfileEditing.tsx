@@ -9,7 +9,7 @@ import MyWork from './MyWork/MyWork';
 import MyGeneral from './MyGeneral/MyGeneral';
 import MyLocation from './MyLocation/MyLocation';
 import * as S from './ProfileEditing.style';
-import useUpdateUser from './hooks/useUpdateUser';
+import useUpdateUser from 'hooks/user/useUpdateUser';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import ModalSelectInterests from 'components/Modal/ModalSelectInterests/ModalSelectInterests';
 import Button from 'components/Button/Button';
@@ -28,7 +28,7 @@ const ProfileEditing: FC = (): ReactElement => {
     <Formik
       initialValues={{
         name: user?.name || '',
-        gender: user?.gender || null,
+        gender: user?.gender || undefined,
         birthday: user?.birthday || '',
         showAge: user?.showAge || true,
         work: {
@@ -38,10 +38,14 @@ const ProfileEditing: FC = (): ReactElement => {
         location: user?.location || '',
         bio: user?.bio || '',
         interests: user?.interests || [],
-        photos: user?.photos || []
+        photos: user?.photos || [],
+        email: user?.email || '',
       }}
       onSubmit={async (values) => {
-        await update(values);
+        const updatePayload = {
+          ...values,
+        };
+        await update(updatePayload);
         showToast('success', 'Profile updated successfully');
       }}
     >

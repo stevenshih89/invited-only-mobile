@@ -26,7 +26,6 @@ import './mocks/appNavigation.mock';
 import './mocks/firebaseMessaging.mock';
 import './mocks/firebaseStorage.mock';
 import './mocks/useLogout.mock';
-import './mocks/useIO.mock';
 import './mocks/imagePicker.mock';
 import './mocks/fbsdkNext.mock';
 import './mocks/keyboardAwareScrollView.mock';

@@ -3,18 +3,17 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 //import components
 import { createStackNavigator } from '@react-navigation/stack';
-import useStyles from 'src/Navigator/BottomMenu/styles';
-import { IOStackNavigation, MyEventsStackNavigation } from 'src/Navigator/AppStackScreens/AppStackScreens';
-import ChatStackScreen from 'src/Navigator/AppStackScreens/ChatStackScreen/ChatStackScreen';
+import useStyles from 'src/navigator/BottomMenu/styles';
+import { IOStackNavigation, MyEventsStackNavigation } from 'src/navigator/AppStackScreens/AppStackScreens';
+import ChatStackScreen from 'src/navigator/AppStackScreens/ChatStackScreen/ChatStackScreen';
 import { whiteColor } from 'constants/colors.ts';
 import { IOPath, chatPath, connectPath, joinEventsPath, myEventsPath } from 'constants/pathLocations';
 
 import Header from 'components/Header/Header';
-import { TabBarName, TabIcon } from 'src/Navigator/TabBar/TabBar';
+import { TabBarName, TabIcon } from 'src/navigator/TabBar/TabBar';
 
-import useUser from 'hooks/user/useUser';
 import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper';
-import ConnectStackScreen from 'src/Navigator/AppStackScreens/ConnectStackScreen/ConnectStackScreen';
+import ConnectStackScreen from 'src/navigator/AppStackScreens/ConnectStackScreen/ConnectStackScreen';
 
 const JoinEventsStackScreen = () => {
   const JoinEventsStack = createStackNavigator();
@@ -37,7 +36,6 @@ const JoinEventsStackScreen = () => {
 const BottomMenu: FC = (): JSX.Element => {
   const styles = useStyles();
   const Tab = createBottomTabNavigator();
-
 
   return (
     <Tab.Navigator
