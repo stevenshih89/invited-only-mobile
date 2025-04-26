@@ -3,7 +3,7 @@ import { FC } from 'react';
 import * as S from './ModalLockAccount.style';
 import Lock from 'assets/images/icons/lock.svg';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import { commonStackPath, invitationCodePath, paymentPath } from 'constants/pathLocations';
+import { invitationCodePath, paymentPath } from 'constants/pathLocations';
 
 interface ModalLockAccountProps {
   isPremium?: boolean;
@@ -50,11 +50,11 @@ const ModalLockAccount: FC<ModalLockAccountProps> = ({ isVisibleButton, isPremiu
       </S.LockedWrapper>
       {isVisibleButton && !isPremium && accountType === 'host' && (
         <S.ButtonWrapper>
-          <TouchableOpacity activeOpacity={0.7} onPress={goToMyProfileView} style={{ width: '100%' }}>
+          <S.BottomButtonWrapper activeOpacity={0.7} onPress={goToMyProfileView}>
             <S.GradientButton colors={['#977B4A', '#E5D291', '#A28453']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
               <S.ButtonText>Get Access</S.ButtonText>
             </S.GradientButton>
-          </TouchableOpacity>
+          </S.BottomButtonWrapper>
         </S.ButtonWrapper>
       )}
     </S.Container>

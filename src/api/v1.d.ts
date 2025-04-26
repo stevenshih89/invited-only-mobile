@@ -1524,7 +1524,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"];
+                    "application/json": components["schemas"]["ConnectionRequest"][];
                 };
             };
             /** @description Bad request */
@@ -1561,7 +1561,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"];
+                    "application/json": components["schemas"]["EventUser"][];
                 };
             };
             /** @description Bad request */

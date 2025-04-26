@@ -2,16 +2,18 @@ import React from 'react';
 
 import EventListItem from '../EventListItem/EventListItem';
 import * as S from './EventList.style';
-import {components} from 'src/api/v1';
+import { components } from 'src/api/v1';
 
 interface EventListProps {
   events: components['schemas']['EventData'][];
 }
 
-const EventList: React.FC<EventListProps> = ({events}) => {
-  const renderItem = ({item}: {item: components['schemas']['EventData']}) => {
+const EventList: React.FC<EventListProps> = ({ events }) => {
+  const renderItem = ({ item }: { item: components['schemas']['EventData'] }) => {
     let statusString = 'Unknown';
-    if (item.isCancelled) {
+    if (!item.eventReviewed) {
+      statusString = 'Under Review';
+    } else if (item.isCancelled) {
       statusString = 'Cancelled';
     } else if (item.statusEvent) {
       statusString = 'Active';
@@ -21,15 +23,17 @@ const EventList: React.FC<EventListProps> = ({events}) => {
 
     const firstPhotoUrl = item.photos && item.photos.length > 0 ? item.photos[0] : undefined;
 
-    return <EventListItem event={item} imageUrl={firstPhotoUrl?.image} statusEvent={statusString} attendees={[]} requestCount={0} />;
+    return <EventListItem event={item} imageUrl={firstPhotoUrl?.image} statusEvent={statusString} attendees={[]} requestCount={0} isReview={item.eventReviewed} />;
   };
+
+
 
   return (
     <S.ListContainer
       data={events}
       renderItem={renderItem}
       keyExtractor={(item: components['schemas']['EventData']) => item.uid}
-      contentContainerStyle={{paddingBottom: 20}}
+      contentContainerStyle={{ paddingBottom: 20 }}
     />
   );
 };

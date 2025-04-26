@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
-import {blackColor, transparent60Color, whiteColor} from 'constants/colors.ts';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts.ts';
+import { blackColor, transparent60Color, whiteColor } from 'constants/colors.ts';
+import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts.ts';
 
 export const Container = styled.View`
   position: absolute;
@@ -102,4 +102,9 @@ export const ButtonText = styled.Text`
   font-size: ${RFValue(20, 812)}px;
   line-height: ${RFValue(24, 812)}px;
   font-family: ${Satoshi500};
+`;
+
+export const BottomButtonWrapper = styled.TouchableOpacity`
+  width: 100%;
+
 `;

@@ -34,7 +34,6 @@ const IOWrapper = () => {
   if (events.length === 0) {
     return (
       <DefaultBackground>
-        <Text style={{ color: 'white' }}>No events found</Text>
         <ModalLockedAccount />
         <ModalUpgradeAccount />
         <EmptyStateView />

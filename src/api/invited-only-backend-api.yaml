@@ -589,7 +589,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas'
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectionRequest'
         '400':
           description: Bad request
         '500':
@@ -614,7 +616,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas'
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventUser'
         '400':
           description: Bad request
         '500':

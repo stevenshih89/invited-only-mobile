@@ -1,18 +1,19 @@
 import React from 'react';
 import * as S from './EventListItem.style';
 import ManageEventIcon from 'src/assets/images/icons/manage-event-icon.svg';
-import {components} from 'src/api/v1';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { components } from 'src/api/v1';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 
 interface EventListItemProps {
   event: components['schemas']['EventData'];
   imageUrl?: string;
   statusEvent?: string;
-  attendees?: {avatarUrl?: string}[];
+  attendees?: { avatarUrl?: string }[];
   requestCount?: number;
   onPress?: (eventId: string) => void;
   onViewRequests?: (eventId: string) => void;
   onManage?: (eventId: string) => void;
+  isReview?: boolean;
 }
 
 const formatDate = (dateString: string | Date) => {
@@ -29,11 +30,11 @@ const formatDate = (dateString: string | Date) => {
   }
 };
 
-const EventListItem: React.FC<EventListItemProps> = ({event, imageUrl, statusEvent, attendees = [], requestCount, onPress, onManage}) => {
+const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEvent, attendees = [], requestCount, onPress, onManage, isReview }) => {
   const handlePress = () => onPress && onPress(event.uid);
 
   const handleManage = () => onManage && onManage(event.uid);
-  const {navigate} = useAppNavigation();
+  const { navigate } = useAppNavigation();
   const displayedAttendees = attendees.slice(0, 2);
   const remainingAttendees = attendees.length - displayedAttendees.length;
   console.log('statusEvent', statusEvent);
@@ -41,14 +42,14 @@ const EventListItem: React.FC<EventListItemProps> = ({event, imageUrl, statusEve
   return (
     <S.CardContainer onPress={handlePress} activeOpacity={0.8}>
       {imageUrl ? (
-        <S.EventImageBackground source={{uri: imageUrl}} resizeMode="cover">
+        <S.EventImageBackground source={{ uri: imageUrl }} resizeMode="cover">
           <S.ImageOverlay>
             <S.StatusButton>
               <S.StatusText>{statusEvent}</S.StatusText>
             </S.StatusButton>
             <S.UserAvatarContainer>
               {displayedAttendees.map((attendee, index) => (
-                <S.AvatarImage key={index} source={{uri: attendee.avatarUrl || 'https://via.placeholder.com/32'}} />
+                <S.AvatarImage key={index} source={{ uri: attendee.avatarUrl || 'https://via.placeholder.com/32' }} />
               ))}
               {remainingAttendees > 0 && (
                 <S.AvatarCountBadge>
@@ -73,12 +74,14 @@ const EventListItem: React.FC<EventListItemProps> = ({event, imageUrl, statusEve
           <S.EventNameText>{event.name}</S.EventNameText>
           {event.location && <S.LocationText>{event.location}</S.LocationText>}
         </S.InfoContainer>
-        <S.ActionsContainer>
+        <S.ActionsContainer disabled={true}>
           <S.ViewRequestsButton
+            disabled={!isReview}
             onPress={() => {
               navigate('/events/requests');
             }}
-            activeOpacity={0.7}>
+            activeOpacity={0.7}
+          >
             <S.ViewRequestsText>View Requests</S.ViewRequestsText>
             {requestCount ? (
               <S.RequestCountBadge>
@@ -86,7 +89,7 @@ const EventListItem: React.FC<EventListItemProps> = ({event, imageUrl, statusEve
               </S.RequestCountBadge>
             ) : null}
           </S.ViewRequestsButton>
-          <S.ManageButton onPress={handleManage} activeOpacity={0.7}>
+          <S.ManageButton onPress={handleManage} activeOpacity={0.7} disabled={!isReview}  >
             <ManageEventIcon />
           </S.ManageButton>
         </S.ActionsContainer>

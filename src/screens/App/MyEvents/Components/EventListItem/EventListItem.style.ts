@@ -1,9 +1,9 @@
 import styled from 'styled-components/native';
-import {View, Text, Image, TouchableOpacity, ImageBackground} from 'react-native';
-import {Satoshi400, Satoshi500} from 'src/constants/fonts'; // Adjust path if needed
+import { View, Text, Image, TouchableOpacity, ImageBackground } from 'react-native';
+import { Satoshi400, Satoshi500 } from 'src/constants/fonts'; // Adjust path if needed
 
 // Main card container - Adapted from 'AppClip'
-export const CardContainer = styled(TouchableOpacity)`
+export const CardContainer = styled.View`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -145,7 +145,7 @@ export const ActionsContainer = styled(View)`
 `;
 
 // Base action button style
-const ActionButtonBase = styled(TouchableOpacity)`
+const ActionButtonBase = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -155,8 +155,14 @@ const ActionButtonBase = styled(TouchableOpacity)`
   height: 48px;
 `;
 
-// View Requests Button - Adapted from 'button' under Buttons
-export const ViewRequestsButton = styled(ActionButtonBase)`
+export const ViewRequestsButton = styled.TouchableOpacity`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 100px;
+  height: 48px;
   flex: 1;
   gap: 8px;
   padding: 4px 8px 4px 4px;

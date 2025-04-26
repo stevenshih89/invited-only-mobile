@@ -14,7 +14,8 @@ export const Container = styled.View`
     flex-direction: column;
     background-color: ${blackColor};
     padding-top: 16px;
-    /* border: 3px solid blue; // Removed border */
+    padding-bottom: 16px;
+
 `;
 
 export const ContentContainer = styled.View`
