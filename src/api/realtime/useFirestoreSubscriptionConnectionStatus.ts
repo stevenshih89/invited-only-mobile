@@ -17,17 +17,17 @@ const useFirestoreSubscriptionConnectionStatus = ({ collectionName, queryKey, do
         const unsubscribe = db.collection(collectionName).doc(docId).onSnapshot((snapshot) => {
             const connectionStatus: components['schemas']['ConnectionRequest'] = snapshot.data() as components['schemas']['ConnectionRequest'];
             try {
-                console.log('connectionStatus', connectionStatus);
+
                 queryClient.setQueryData(queryKey, (oldData: components['schemas']['ConnectionRequest'][]) => {
                     if (oldData) {
-                        const existingIndex = oldData.findIndex(item => item.id === connectionStatus.id);
+                        const existingIndex = oldData.findIndex(item => {
+                            return item.guestId === connectionStatus.guestId && item.hostId === connectionStatus.hostId && item.eventId === connectionStatus.eventId;
+                        });
                         if (existingIndex > -1) {
                             const newData = [...oldData];
                             newData[existingIndex] = connectionStatus;
-                            console.log('Updating existing connection status:', connectionStatus.id);
                             return newData;
                         } else {
-                            console.log('Adding new connection status:', connectionStatus.id);
                             return [...oldData, connectionStatus];
                         }
                     } else {

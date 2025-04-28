@@ -29,6 +29,7 @@ const Chat = () => {
     );
   } else if (events) {
     return <EventChats events={events} />;
+
   }
 };
 

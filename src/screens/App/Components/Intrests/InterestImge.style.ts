@@ -1,7 +1,6 @@
 import styled from 'styled-components/native';
 import { whiteColor } from 'constants/colors';
-import { Satoshi500 } from 'constants/fonts';
-import { Satoshi700 } from 'constants/fonts';
+import { Satoshi500 , Satoshi700 } from 'constants/fonts';
 import CheckedIcon from 'src/assets/images/icons/checked-interest-icon.svg';
 import UncheckedIcon from 'src/assets/images/icons/unchecked-interest-icon.svg';
 

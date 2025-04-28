@@ -13,17 +13,19 @@ interface StaticCardProps {
   showDots?: boolean;
   isTopCard?: boolean;
   distanceFromTop: number;
+  withDarkOverlay?: boolean;
+  disabled?: boolean;
 }
 
-const StaticCard: React.FC<StaticCardProps> = ({ uid, backgroundUrls, index, children, showDots = true, isTopCard, distanceFromTop }) => {
+const StaticCard: React.FC<StaticCardProps> = ({ uid, backgroundUrls, index, children, showDots = true, isTopCard, distanceFromTop, withDarkOverlay = true, disabled = false }) => {
   const [imageIndex, setImageIndex] = useState<number>(0);
   const showImageIndexIndicator = isTopCard && showDots && backgroundUrls.length > 1;
 
   return (
-    <PhysicCard distanceFromTheTop={distanceFromTop} index={index} uid={uid} backgroundUrls={backgroundUrls} setImageIndex={setImageIndex}>
+    <PhysicCard distanceFromTheTop={distanceFromTop} index={index} uid={uid} backgroundUrls={backgroundUrls} setImageIndex={setImageIndex} disabled={disabled}>
       <S.StyledNotAnimatedView>
         <CardImage imageSource={backgroundUrls[imageIndex]?.image || null} isTopCard={isTopCard} imageIndex={imageIndex} />
-        <S.CardGradient colors={['rgba(0, 0, 0, 0.1)', 'rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.9)']} locations={[0, 0.4, 1]} />
+        {withDarkOverlay && <S.CardGradient colors={['rgba(0, 0, 0, 0.1)', 'rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.9)']} locations={[0, 0.4, 1]} />}
         {showImageIndexIndicator && <ImageIndicator currentIndex={imageIndex} totalImages={backgroundUrls.length} />}
         {children}
       </S.StyledNotAnimatedView>

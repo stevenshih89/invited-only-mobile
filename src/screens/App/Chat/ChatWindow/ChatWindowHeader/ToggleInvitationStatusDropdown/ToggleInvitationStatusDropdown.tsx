@@ -45,7 +45,6 @@ export const ToggleInvitationStatusDropdown: React.FC<ToggleInvitationStatusDrop
                         <S.DropdownItem>
                             {index < statuses.length - 1 && (
                                 <S.ConnectingLine
-                                    // Check if current step (index+1) AND next step (index+2) are completed
                                     isCompleted={currentStatus !== undefined && currentStatus >= index + 2}
                                 />
                             )}

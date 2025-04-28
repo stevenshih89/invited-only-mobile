@@ -1,13 +1,15 @@
 import React from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native';
 import * as S from './InviteGuestsEvent.styled';
 import GuestBasicInfoCard from './Components/GuestBasicInfoCard/GuestBasicInfoCard';
 import GuestBioCard from './Components/GuestBioCard/GuestBioCard';
 import { GuestCard } from './Components/GuestCard/GuestCard';
 import GuestLanguagesCard from './Components/GuestLanguagesCard/GuestLanguagesCard';
+import { NewConnectionModal } from './Components/NewConnectionModal/NewConnectionModal';
+import useSwipeCardAction from './hooks/useSwipeCardAction';
+import { useNewConnectionModal } from './hooks/useNewConnectionModal';
 import { components } from 'src/api/v1';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 
 type GuestUser = components['schemas']['User'];
 
@@ -18,19 +20,19 @@ interface InviteGuestsEventProps {
   onSwipeLeft: () => void;
   onSwipeRight: () => void;
   onSuperInvite: () => void;
+  allCards: GuestUser[];
 }
 
-const InviteGuestsEvent = ({ selectedEvent, cardsToShow, isLoading, onSwipeLeft, onSwipeRight, onSuperInvite }: InviteGuestsEventProps) => {
+const InviteGuestsEvent = ({ selectedEvent, cardsToShow, isLoading, onSwipeLeft, onSwipeRight, onSuperInvite, allCards }: InviteGuestsEventProps) => {
   const hasCards = cardsToShow.length > 0;
-  const currentCard = hasCards ? cardsToShow[cardsToShow.length - 1] : null;
-  const { mutate: createEventAttendee } = invitedOnlyBackendApi.useMutation('post', '/eventAttendees/create', {
-    onSuccess: req => {
-      console.log('req', req);
-    },
-    onError: err => {
-      console.log('err', err);
-    },
-  });
+  const currentCard: GuestUser | undefined = hasCards ? cardsToShow[cardsToShow.length - 1] : undefined;
+
+  console.log(currentCard?.uid);
+
+
+  const { createEventAttendee, swipeDataRes } = useSwipeCardAction();
+  const { isModalVisible, closeModal, matchedCard } = useNewConnectionModal({ swipeDataRes, allCards });
+
   const renderCards = () => {
     if (isLoading) {
       return <AppLoader />;
@@ -52,7 +54,7 @@ const InviteGuestsEvent = ({ selectedEvent, cardsToShow, isLoading, onSwipeLeft,
               guestId: currentCard?.uid || '',
               hostId: selectedEvent.hostId || '',
               eventId: selectedEvent.uid,
-              host_swipe: 'left',
+              hostSwipe: 'left',
             },
           });
         }}
@@ -64,7 +66,7 @@ const InviteGuestsEvent = ({ selectedEvent, cardsToShow, isLoading, onSwipeLeft,
               guestId: currentCard?.uid || '',
               hostId: selectedEvent.hostId || '',
               eventId: selectedEvent.uid,
-              host_swipe: 'right',
+              hostSwipe: 'right',
             },
           });
         }}
@@ -91,6 +93,13 @@ const InviteGuestsEvent = ({ selectedEvent, cardsToShow, isLoading, onSwipeLeft,
           </>
         )}
       </S.Container>
+      {matchedCard && (
+        <NewConnectionModal
+          guest={matchedCard}
+          visible={isModalVisible}
+          onClose={closeModal}
+        />
+      )}
     </ScrollView>
   );
 };

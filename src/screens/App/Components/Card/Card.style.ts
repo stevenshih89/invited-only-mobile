@@ -1,4 +1,3 @@
-
 import LinearGradient from 'react-native-linear-gradient';
 import Animated from 'react-native-reanimated';
 import { RFValue } from 'react-native-responsive-fontsize';

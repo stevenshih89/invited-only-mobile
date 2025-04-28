@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { blackColor } from 'constants/colors';
+
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
 
 

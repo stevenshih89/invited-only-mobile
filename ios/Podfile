@@ -1,6 +1,6 @@
 # Resolve react_native_pods.rb with node to allow for hoisting
 def node_require(script)
-  # Resolve script with node to allow for hoisting
+
   require Pod::Executable.execute_command('node', ['-p',
     "require.resolve(
       '#{script}',
@@ -8,8 +8,7 @@ def node_require(script)
     )", __dir__]).strip
 end
 
-# Only use one of these - using both causes conflicts
-# use_modular_headers!
+
 use_frameworks! :linkage => :static
 $RNFirebaseAsStaticFramework = true
 
@@ -23,14 +22,6 @@ setup_permissions([
   'Camera',
   'PhotoLibrary',
 ])
-
-ENV['USE_FRAMEWORKS'] ||= 'static'
-
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
 
 target 'InvitedOnly' do
   config = use_native_modules!
@@ -49,17 +40,12 @@ target 'InvitedOnly' do
 
 
   post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false
     )
     
-    # This is necessary for Xcode 14+
-    installer.pods_project.build_configurations.each do |config|
-      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-    end
     installer.pods_project.targets.each do |target|
       if target.name == 'BoringSSL-GRPC'
         target.source_build_phase.files.each do |file|
@@ -70,13 +56,6 @@ target 'InvitedOnly' do
           end
         end
       end 
-      # Set C++ language standard to C++17 for gRPC-Core and gRPC-C++
-      # if ['gRPC-Core', 'gRPC-C++'].include?(target.name)
-      #   target.build_configurations.each do |config|
-      #     config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
-      #     config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
-      #   end
-      # end
     end
   end
 end

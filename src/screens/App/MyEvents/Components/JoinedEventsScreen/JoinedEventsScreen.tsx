@@ -1,6 +1,6 @@
 import React from 'react';
-import * as S from './JoinedEventsScreen.style';
 import JoinedEventsEmptyFallback from '../JoinedEventsEmptyFallback/JoinedEventsEmptyFallback';
+import * as S from './JoinedEventsScreen.style';
 
 const JoinedEventsScreen = () => {
   const isComingSoon = true;

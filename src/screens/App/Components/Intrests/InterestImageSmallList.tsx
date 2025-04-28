@@ -1,4 +1,3 @@
-import { View } from 'react-native';
 import * as S from './InterestImge.style';
 import BirthdayParty from 'src/assets/images/auth/interests/birthday-party.png';
 import Exclusive from 'src/assets/images/auth/interests/exclusive.png';

@@ -1,10 +1,7 @@
-import React, { FC, JSX, useContext, useEffect, useState } from 'react';
-import { AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import React, { FC, JSX, useState } from 'react';
+import { Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
-import moment from 'moment';
-import firestore from '@react-native-firebase/firestore';
-import analytics from '@react-native-firebase/analytics';
 import { isIos, screenHeight } from 'constants/common';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
@@ -12,9 +9,7 @@ import { backgroundGradientColors, transparentWhite30Color, whiteColor } from 'c
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
 import Button from 'components/Button/Button';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import { turnNotificationsPath } from 'constants/pathLocations';
 import Input from 'components/Inputs/Input';
-import { AuthContext } from 'contexts/AuthContext.tsx';
 import { isName } from 'helpers/regExpValidators';
 import AuthProgress from 'components/AuthProgress';
 import { useAuthStore } from 'src/store/authStore';

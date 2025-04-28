@@ -14,7 +14,6 @@ import CircleGray from 'assets/images/icons/circle-gray.svg';
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
 import Button from 'components/Button/Button';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import { myInterestsPath } from 'constants/pathLocations';
 import { AuthContext } from 'contexts/AuthContext.tsx';
 import AuthProgress from 'components/AuthProgress';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';

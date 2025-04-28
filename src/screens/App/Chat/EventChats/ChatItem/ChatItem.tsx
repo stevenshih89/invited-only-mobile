@@ -14,7 +14,7 @@ export const ChatItem = ({ chat }: ChatItemProps) => {
     const navigation = useAppNavigation();
     const { userMetadata } = useAuthStore.getState();
     const userLastSeen = chat.userLastSeen?.some((user) => user.userId === userMetadata.uid);
-
+    console.log('chat', chat);
     return (
         <StrictMode>
             <TouchableOpacity onPress={() => {

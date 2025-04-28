@@ -1,4 +1,3 @@
-import { Text } from 'react-native';
 import AppLoader from '../AppLoader/AppLoader';
 import IO from './IO';
 import EmptyStateView from './components/EmptyStateView/EmptyStateView';

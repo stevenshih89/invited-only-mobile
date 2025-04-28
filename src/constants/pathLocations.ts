@@ -4,6 +4,7 @@ const bottomTabsStackPath = '/bottom-tabs-stack';
 const notificationsStackPath = '/notifications-stack';
 const eventCreatingStackPath = '/event-creating-stack';
 const eventRequestStackPath = '/events/requests';
+const eventManageStackPath = '/events/manage-event';
 const commonStackPath = '/common-stack';
 
 const demoFlowStackPath = '/demo-flow-stack';
@@ -45,6 +46,7 @@ const requestsPath: keyof RootStackParamList = '/requests';
 const myProfileViewPath: keyof RootStackParamList = '/my-profile-view';
 const profileEditingPath: keyof RootStackParamList = '/profile/profile-editing';
 const myEventsPath: keyof RootStackParamList = '/my-events';
+const manageEventPath: keyof RootStackParamList = '/events/manage-event';
 const profilePath: keyof RootStackParamList = '/profile';
 const invitationsPath: keyof RootStackParamList = '/profile/invitations';
 const myPlanPath: keyof RootStackParamList = '/profile/my-plan';
@@ -120,6 +122,7 @@ export {
   profileEditingPath,
   requestsPath,
   myEventsPath,
+  manageEventPath,
   chatPath,
   chatCorrespondencePath,
   eventInfoPath,

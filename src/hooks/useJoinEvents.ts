@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import firestore from '@react-native-firebase/firestore';
 import Config from "react-native-config";
 import useUser from "src/hooks/user/useUser";
-import { onMatchNotificationSubscription } from "helpers/fcmHelper";
 import { showToast } from "helpers/showToast";
 import { logErrorToSentry } from "helpers/logErrorsToSentry";
 import { LIKED } from "constants/common";

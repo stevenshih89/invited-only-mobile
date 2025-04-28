@@ -113,7 +113,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Get an event by ID */
+        get: operations["getEventById"];
         put?: never;
         post?: never;
         /** Delete an event */
@@ -231,6 +232,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/eventAttendees/{eventId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get event attendees */
+        get: operations["getEventAttendees"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/eventAttendees/host-request": {
         parameters: {
             query?: never;
@@ -299,7 +317,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/eventAttendees/{id}": {
+    "/eventAttendees": {
         parameters: {
             query?: never;
             header?: never;
@@ -1101,6 +1119,36 @@ export interface operations {
             };
         };
     };
+    getEventById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the event to get. */
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event found successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventData"];
+                };
+            };
+            /** @description Bad request. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     deleteEvent: {
         parameters: {
             query?: never;
@@ -1468,13 +1516,13 @@ export interface operations {
                     hostId: string;
                     eventId: string;
                     /** @enum {string|null} */
-                    guest_swipe?: "left" | "right" | "none" | null;
+                    guestSwipe?: "left" | "right" | "none" | null;
                     /** @enum {string|null} */
-                    host_swipe?: "left" | "right" | "none" | null;
+                    hostSwipe?: "left" | "right" | "none" | null;
                     /** Format: date-time */
-                    guest_swipe_at?: string | null;
+                    guestSwipeAt?: string | null;
                     /** Format: date-time */
-                    host_swipe_at?: string;
+                    hostSwipeAt?: string | null;
                 };
             };
         };
@@ -1486,6 +1534,42 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ConnectionRequest"];
+                };
+            };
+            /** @description Bad request. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getEventAttendees: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event attendees found successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionRequest"][];
                 };
             };
             /** @description Bad request. */
@@ -1694,10 +1778,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                /** @description The ID of the event attendance record. */
-                id: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody: {
@@ -2266,6 +2347,7 @@ export enum ApiPaths {
     createEvent = "/events",
     updateEvent = "/events/:eventId",
     deleteEvent = "/events/:eventId",
+    getEventById = "/events/:eventId",
     getUsersForEvent_alt = "/users/event/:eventId",
     createUser = "/users",
     deleteUserAccount = "/users/:id",
@@ -2274,12 +2356,13 @@ export enum ApiPaths {
     getUserByPhone = "/users/phone/:phone",
     addFcmTokenToUser = "/users/:id/fcmToken",
     createEventAttend = "/eventAttendees/create",
+    getEventAttendees = "/eventAttendees/:eventId",
     getPendingGuests = "/eventAttendees/host-request",
     getEventInvitation = "/eventAttendees/guest-invitation",
     getGuestEventAttend = "/eventAttendees/guest/:guestId",
     getHostEventAttend = "/eventAttendees/host/:hostId",
-    updateEventAttend = "/eventAttendees/:id",
-    deleteEventAttend = "/eventAttendees/:id",
+    updateEventAttend = "/eventAttendees",
+    deleteEventAttend = "/eventAttendees",
     getRemoteConfigFlags = "/config/flags",
     getFirebaseCollectionNames = "/config/firebase/collections",
     createChat = "/chat",

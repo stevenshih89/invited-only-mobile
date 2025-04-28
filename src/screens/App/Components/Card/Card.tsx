@@ -23,6 +23,8 @@ interface CardProps {
   nopeOpacityStyle?: AnimatedStyle;
   isStatic?: boolean;
   showDots?: boolean;
+  withDarkOverlay?: boolean;
+  disabled?: boolean;
 }
 
 export const PhysicCard = ({
@@ -32,6 +34,7 @@ export const PhysicCard = ({
   setImageIndex,
   backgroundUrls,
   distanceFromTheTop,
+  disabled = false,
 }: {
   children: ReactNode;
   uid: string;
@@ -39,17 +42,18 @@ export const PhysicCard = ({
   setImageIndex: Dispatch<SetStateAction<number>>;
   backgroundUrls: components['schemas']['UserPhoto'][];
   distanceFromTheTop: number;
+  disabled: boolean;
 }) => {
   return (
     <S.Card key={uid} distanceFromTheTop={distanceFromTheTop} index={index}>
-      <InvisibleTouchZone setImageIndex={setImageIndex} imageCount={backgroundUrls?.length} />
+      <InvisibleTouchZone disabled={disabled} setImageIndex={setImageIndex} imageCount={backgroundUrls?.length} />
       {children}
     </S.Card>
   );
 };
 
 const Card: React.FC<CardProps> = props => {
-  const { isStatic = false, gestureHandler, animatedStyle } = props;
+  const { isStatic = false, gestureHandler, animatedStyle, disabled = false } = props;
 
   if (isStatic) {
     return (
@@ -59,7 +63,9 @@ const Card: React.FC<CardProps> = props => {
         index={props.index}
         distanceFromTop={props.distanceFromTop}
         isTopCard={props.isTopCard}
-        showDots={props.showDots}>
+        showDots={props.showDots}
+        withDarkOverlay={props.withDarkOverlay}
+        disabled={disabled}>
         {props.children}
       </StaticCard>
     );

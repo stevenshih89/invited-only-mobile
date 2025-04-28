@@ -53,6 +53,7 @@ export default tseslint.config(
     },
     rules: {
         ...tseslint.configs.recommendedTypeChecked.rules,
+        'no-console': 1,
         'unused-imports/no-unused-imports': 'warn',
     }
   },

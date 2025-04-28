@@ -21,6 +21,7 @@ const JoinEvents: FC<Props> = ({ events }): ReactElement => {
     eventId: events[0]?.uid,
   });
 
+
   return (
     <DefaultBackground>
       <JoinEventsHeader onMyEventsPress={() => { }} />

@@ -17,6 +17,7 @@ import {
   invitationCodePath,
   IOPath,
   joinEventsPath,
+  manageEventPath,
   myEventsPath,
   myProfileViewPath,
   notificationsPath,
@@ -44,6 +45,7 @@ import InvitationCode from 'screens/App/InvitationCode/InvitationCode';
 import useUser from 'hooks/user/useUser';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import { useAuthStore } from 'src/store/authStore';
+import { ManageEvent } from 'screens/App/MyEvents/Components/ManageEvent/ManageEvent';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -107,6 +109,17 @@ export const MyEventsStackNavigation: FC = () => {
         name={myEventsPath}
         key={myEventsPath}
         component={Events}
+      />
+      {/*  TODO make is stack path */}
+      <Stack.Screen
+        options={{
+
+          headerShown: true,
+          header: () => <Header logoType="logo" headerType="myEvents" badge />,
+        }}
+        name={manageEventPath}
+        key={manageEventPath}
+        component={ManageEvent}
       />
     </Stack.Navigator>
   );

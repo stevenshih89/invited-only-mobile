@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import {
   chatCorrespondencePath,
@@ -13,7 +13,6 @@ import Config from 'react-native-config';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
 import { showToast } from 'helpers/showToast';
-import { useFocusEffect } from '@react-navigation/native';
 import useUser from 'hooks/user/useUser';
 
 export interface Notifications {

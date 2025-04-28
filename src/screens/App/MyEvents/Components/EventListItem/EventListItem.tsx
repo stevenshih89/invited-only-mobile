@@ -12,7 +12,6 @@ interface EventListItemProps {
   requestCount?: number;
   onPress?: (eventId: string) => void;
   onViewRequests?: (eventId: string) => void;
-  onManage?: (eventId: string) => void;
   isReview?: boolean;
 }
 
@@ -30,10 +29,8 @@ const formatDate = (dateString: string | Date) => {
   }
 };
 
-const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEvent, attendees = [], requestCount, onPress, onManage, isReview }) => {
+const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEvent, attendees = [], requestCount, onPress, isReview }) => {
   const handlePress = () => onPress && onPress(event.uid);
-
-  const handleManage = () => onManage && onManage(event.uid);
   const { navigate } = useAppNavigation();
   const displayedAttendees = attendees.slice(0, 2);
   const remainingAttendees = attendees.length - displayedAttendees.length;
@@ -89,7 +86,7 @@ const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEv
               </S.RequestCountBadge>
             ) : null}
           </S.ViewRequestsButton>
-          <S.ManageButton onPress={handleManage} activeOpacity={0.7} disabled={!isReview}  >
+          <S.ManageButton onPress={() => navigate('/events/manage-event', { eventId: event.uid })} activeOpacity={0.7} disabled={!isReview}  >
             <ManageEventIcon />
           </S.ManageButton>
         </S.ActionsContainer>

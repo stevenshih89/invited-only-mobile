@@ -1,4 +1,4 @@
-import {Dimensions, Platform} from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 
 const isIos: boolean = Platform.OS === 'ios';
 const isAndroid: boolean = Platform.OS === 'android';

@@ -48,6 +48,13 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
     }
   };
 
+  const calculateAge = (birthday: string | undefined) => {
+    if (!birthday) return '';
+    const birthDate = new Date(birthday);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    return age;
+  };
   return (
     <Card
       distanceFromTop={topIndex - index}
@@ -66,8 +73,8 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
         <S.CardContent>
           <S.CardNameAndAge>
             <S.StyledCheckStar />
-            <S.CardName>{guest.name},</S.CardName>
-            <S.CardGuestAge>{guest.age}</S.CardGuestAge>
+            <S.CardName>{guest.name}{guest.showAge && ','}</S.CardName>
+            {guest.showAge && <S.CardGuestAge>{calculateAge(guest.birthday)}</S.CardGuestAge>}
           </S.CardNameAndAge>
           <CardActionsButtons disabled={true} onReject={onClickReject} onSuperInvite={onClickSuperLike} onInvite={onClickInvite} />
         </S.CardContent>

@@ -25,9 +25,9 @@ const useConnectionRealtimeStatus = ({ chatId }: ConnectionStatus) => {
         queryKey: ['get', '/eventAttendees/host/{hostId}', { params: { path: { hostId: userMetadata?.uid || '' } } }],
         docId: chatId
     })
-    console.log('connectionStatuses', connectionStatuses);
+
     return {
-        connectionStatus: connectionStatuses?.filter((connectionStatus) => connectionStatus.id === chatId)[0],
+        connectionStatus: connectionStatuses?.filter((connectionStatus) => `${connectionStatus.eventId}_${connectionStatus.hostId}_${connectionStatus.guestId}` === chatId)[0],
         isLoading
     };
 }

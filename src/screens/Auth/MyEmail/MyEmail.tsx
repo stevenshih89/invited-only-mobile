@@ -1,5 +1,5 @@
-import { FC, JSX, useContext, useEffect, useState } from 'react';
-import { AppState, Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { FC, JSX, useContext, useState } from 'react';
+import { Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
 

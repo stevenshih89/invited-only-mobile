@@ -1,7 +1,5 @@
 import { ReactElement } from 'react';
 
-
-
 import AppLoader from '../AppLoader/AppLoader';
 import JoinEvents from './JoinEvents';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
@@ -23,9 +21,6 @@ const JoinEventsWrapper = (): ReactElement => {
     },
   });
 
-  console.log('on the wrapper ', eventsResponse);
-  console.log('isLoading', isLoading);
-  console.log('isError', isError);
   if (isLoading) {
     return (
       <DefaultBackground>

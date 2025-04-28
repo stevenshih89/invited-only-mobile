@@ -1,10 +1,9 @@
 import styled from 'styled-components/native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {BlurView} from '@react-native-community/blur';
 import {Satoshi500, Satoshi400} from 'constants/fonts';
 import {whiteColor} from 'constants/colors';
-import {RFValue} from 'react-native-responsive-fontsize';
 import {screenHeight} from 'constants/common';
-import Button from 'components/Button/Button';
-import {BlurView} from '@react-native-community/blur';
 
 export const Container = styled.View`
   position: absolute;

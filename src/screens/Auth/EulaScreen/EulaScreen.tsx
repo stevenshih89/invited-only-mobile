@@ -8,7 +8,6 @@ import ArrowLeftArrow from 'assets/images/icons/arrow-left.svg';
 import { backgroundGradientColors, black1Color, lightGray16Color, transparentWhite16Color, whiteColor } from 'constants/colors';
 import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import { enterTypePath } from 'constants/pathLocations';
 import { getSubscriptions } from 'src/api.deprecated/purchase';
 import { screenHeight } from 'constants/common';
 
@@ -212,8 +211,6 @@ const Eula: FC = (): JSX.Element => {
         };
       });
 
-      products.forEach(item => console.warn(item));
-
       setDataEula(prev => {
         const newData = [...prev];
         newData[4].description =
@@ -232,7 +229,6 @@ const Eula: FC = (): JSX.Element => {
       });
       setLoading(false);
     } catch (error) {
-      console.warn(error);
       setLoading(false);
     }
   };

@@ -1,10 +1,10 @@
+import FastImage from 'react-native-fast-image';
+import {RFValue} from 'react-native-responsive-fontsize';
+import styled from 'styled-components/native';
 import {whiteColor} from 'constants/colors';
 import {screenHeight} from 'constants/common';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
-import FastImage from 'react-native-fast-image';
 
-import {RFValue} from 'react-native-responsive-fontsize';
-import styled from 'styled-components/native';
 
 export const Container = styled.View`
   display: flex;

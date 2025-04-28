@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 
-// Define Guest type or import if shared
-type GuestUser = { uid: string;[key: string]: any }; // Basic structure, adjust if needed
+
+type GuestUser = { uid?: string;[key: string]: any };
 
 interface UsePersistentCardSwipeProps<T extends GuestUser> {
   cardsData: T[] | undefined;
@@ -12,10 +12,9 @@ interface UsePersistentCardSwipeReturn<T extends GuestUser> {
   handleSwipeLeft: () => void;
   handleSwipeRight: () => void;
   handleSuperInvite: () => void;
-  cards: T[]; // Derived list of remaining cards
+  cards: T[];
   hasCards: boolean;
   resetDeck: (eventId: string) => void;
-  // isLoading could potentially be added here too if needed
 }
 
 const usePersistentCardSwipe = <T extends GuestUser>({
@@ -29,7 +28,7 @@ const usePersistentCardSwipe = <T extends GuestUser>({
       return [];
     }
     const dismissedIds = dismissedCardsPerEvent[eventId] || new Set<string>();
-    return cardsData.filter((guest: T) => !dismissedIds.has(guest.uid));
+    return cardsData.filter((guest: T) => !dismissedIds.has(guest.uid || ''));
   }, [eventId, cardsData, dismissedCardsPerEvent]);
 
   const handleSwipe = useCallback(

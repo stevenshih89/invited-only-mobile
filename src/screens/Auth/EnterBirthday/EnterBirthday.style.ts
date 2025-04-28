@@ -4,7 +4,7 @@ import MaskInput from 'react-native-mask-input';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { screenHeight } from 'constants/common';
-import { grayColor, lightGray2Color, toggleColor, transparentWhite30Color, whiteColor } from 'constants/colors';
+import { lightGray2Color, transparentWhite30Color, whiteColor } from 'constants/colors';
 import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
 
 export const GradientBackground = styled(LinearGradient).attrs({

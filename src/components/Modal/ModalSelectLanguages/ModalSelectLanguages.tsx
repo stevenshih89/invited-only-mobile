@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { FlatList } from 'react-native';
 
 import Config from 'react-native-config';
@@ -21,8 +21,6 @@ import DE from 'src/assets/images/flags/de.svg';
 import IT from 'src/assets/images/flags/it.svg';
 import KR from 'src/assets/images/flags/kr.svg';
 import Button from 'components/Button/Button.tsx';
-import { showToast } from 'helpers/showToast.ts';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry.ts';
 
 interface ModalSelectLanguagesProps {
   modalLanguages: boolean;

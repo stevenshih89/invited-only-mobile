@@ -288,6 +288,27 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
+    get:
+      summary: Get an event by ID
+      operationId: getEventById
+      tags:
+        - Events
+      parameters:
+        - name: eventId 
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the event to get.
+      responses:
+        '200':
+          description: Event found successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventData'
+        '400':
+          description: Bad request.
   /users/event/{eventId}:
     get:
       summary: Get users for an event (alternative endpoint)
@@ -527,27 +548,28 @@ paths:
                   type: string
                 eventId:
                   type: string
-                guest_swipe:
+                guestSwipe:
                   type: string
                   enum:
                     - left
                     - right
                     - none
                   nullable: true
-                host_swipe:
+                hostSwipe:
                   type: string
                   enum:
                     - left
                     - right
                     - none
                   nullable: true
-                guest_swipe_at:
+                guestSwipeAt:
                   type: string
                   format: date-time
                   nullable: true
-                host_swipe_at:
+                hostSwipeAt:
                   type: string
                   format: date-time
+                  nullable: true
               required:
                 - guestId
                 - hostId
@@ -564,6 +586,32 @@ paths:
         '500':
           description: Internal server error.
 
+  /eventAttendees/{eventId}:
+    get:
+      summary: Get event attendees
+      operationId: getEventAttendees
+      tags:
+        - Event Attendees
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Event attendees found successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectionRequest'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+          
   /eventAttendees/host-request:
     get:
       summary: Get pending join requests for host
@@ -674,19 +722,12 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
-  /eventAttendees/{id}:
+  /eventAttendees:
     patch:
       summary: Update an event attendance record
       operationId: updateEventAttend
       tags:
         - Event Attendees
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: The ID of the event attendance record.
       requestBody:
         required: true
         content:

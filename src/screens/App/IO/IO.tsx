@@ -12,9 +12,6 @@ import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import ModalUpgradeAccount from 'components/Modal/ModalUpgradeAccount/ModalUpgradeAccount';
 import { components } from 'src/api/v1';
-import ModalAcceptInvitation from '../MyEvents/ModalAcceptInvitation';
-import InvitationCode from '../InvitationCode/InvitationCode';
-import EnterCodeView from '../InvitationCode/Components/EnterCodeView/EnterCodeView';
 
 
 type GuestUser = components['schemas']['User'];
@@ -76,6 +73,7 @@ const IO = ({ events }: Props) => {
             <InviteGuestsEvent
               selectedEvent={selectedEvent}
               cardsToShow={currentEventCards}
+              allCards={guests}
               isLoading={isGuestsLoading || isFetchingNextPage}
               onSwipeLeft={handleSwipeLeft}
               onSwipeRight={handleSwipeRight}

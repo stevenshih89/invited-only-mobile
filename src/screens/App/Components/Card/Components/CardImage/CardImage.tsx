@@ -29,6 +29,9 @@ const CardImage = ({ imageSource, isTopCard, imageIndex }: Props) => {
       )}
       <S.CardImage
         onLoad={handleLoad}
+        onError={() => {
+          console.log('Error loading image', imageSource);
+        }}
         isTop={isTopCard}
         resizeMode={FastImage.resizeMode.cover}
         source={{
