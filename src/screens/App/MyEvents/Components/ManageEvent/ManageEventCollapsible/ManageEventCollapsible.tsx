@@ -1,5 +1,6 @@
 import React from 'react';
 import Collapsible from 'react-native-collapsible';
+import { ScrollView } from 'react-native';
 import * as S from './ManageEventCollapsible.styled';
 import { ManageEventGuestInfo } from './ManageEventGuestInfo/ManageEventGuestInfo';
 import { components } from 'src/api/v1';
@@ -16,11 +17,12 @@ export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle }:
 
     return (
         <S.CardContainer>
+
             <S.ContentWrapper>
-                <S.TitleRow onPress={toggle}>
+                <S.TitleRow disabled={eventRequests?.length === 0} onPress={toggle}>
                     <S.StyledArrow isOpen={isOpen} />
                     <S.LabelContainer>
-                        <S.LabelText>{title}</S.LabelText>
+                        <S.LabelText disabled={eventRequests?.length === 0}>{title}</S.LabelText>
                     </S.LabelContainer>
                     <S.InfoIconContainer />
                 </S.TitleRow>
@@ -30,13 +32,15 @@ export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle }:
             </S.ContentWrapper>
             <Collapsible collapsed={!isOpen} >
                 <S.CardContainer>
-                    {
-                        eventRequests?.map((request, index) => {
-                            return (
-                                <ManageEventGuestInfo key={index} request={request} title={title} />
-                            );
-                        })
-                    }
+                    <ScrollView style={{ maxHeight: 250 }}>
+                        {
+                            eventRequests?.map((request, index) => {
+                                return (
+                                    <ManageEventGuestInfo key={index} request={request} title={title} />
+                                );
+                            })
+                        }
+                    </ScrollView>
                 </S.CardContainer>
             </Collapsible>
         </S.CardContainer>

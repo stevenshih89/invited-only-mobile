@@ -3,16 +3,19 @@ import { blackColor } from "constants/colors";
 import Arrow from 'assets/images/icons/arrow-down.svg';
 
 
-export const CardContainer = styled.ScrollView`
+export const CardContainer = styled.View`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-end;
-    padding: 16px;
-    gap: 16px;
+    align-items: center;
+    padding: 12px;
+    gap: 8px;
     background-color: rgba(255, 255, 255, 0.04);
     border-radius: 20px;
+    border-width: 1px;
     align-self: stretch;
+    padding-bottom: 6px;
+    
 `;
 
 // This wraps the main content row (Label + Number Badge)
@@ -29,13 +32,12 @@ export const ContentWrapper = styled.View`
 export const TitleRow = styled.TouchableOpacity`
     display: flex;
     flex-direction: row;
-
     align-items: center;
-    padding: 0px;
+
     gap: 16px;
     width: 100%;
     align-self: stretch;
-    flex-grow: 0;
+
 `;
 
 export const LabelContainer = styled.View`
@@ -44,8 +46,8 @@ export const LabelContainer = styled.View`
     align-items: center;
     padding: 0px;
     gap: 8px;
-    flex-grow: 0;
-    flex-shrink: 1;
+
+
 `;
 
 
@@ -57,14 +59,14 @@ export const ArrowIconContainer = styled.View`
     align-items: center;
 `;
 
-export const LabelText = styled.Text`
+export const LabelText = styled.Text<{ disabled: boolean }>`
     font-family: 'Satoshi';
     font-style: normal;
     font-weight: 500;
     font-size: 16px;
     line-height: 22px;
     text-align: center;
-    color: #FFFFFF;
+    color: ${({ disabled }: { disabled: boolean }) => disabled ? '#808080' : '#FFFFFF'};
     flex-grow: 0;
 `;
 
