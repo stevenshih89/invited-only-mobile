@@ -29,7 +29,7 @@ exports[`ModalLockedAccount matches snapshot when rendered 1`] = `
         "marginTop": "auto",
         "paddingHorizontal": 24,
         "position": "relative",
-        "width": "105%",
+        "width": "106%",
       }
     }
   >
