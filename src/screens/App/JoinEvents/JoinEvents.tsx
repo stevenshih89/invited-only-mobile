@@ -16,11 +16,24 @@ interface Props {
 }
 
 const JoinEvents: FC<Props> = ({ events }): ReactElement => {
-  const { handleSuperInvite, handleSwipeLeft, handleSwipeRight, cards } = usePersistentCardSwipe({
+  const {
+    cards: currentEventCards,
+    handleSwipeLeft,
+    handleSwipeRight,
+    handleSuperInvite,
+
+  } = usePersistentCardSwipe<components['schemas']['EventData']>({
     cardsData: events,
-    eventId: events[0]?.uid,
+    eventId: "1"
   });
 
+  // Filter out duplicates based on uid before mapping
+  const uniqueEventCards = currentEventCards?.reduce((acc: components['schemas']['EventData'][], current) => {
+    if (!acc.find(item => item.uid === current.uid)) {
+      acc.push(current);
+    }
+    return acc;
+  }, []) || [];
 
   return (
     <DefaultBackground>
@@ -29,15 +42,17 @@ const JoinEvents: FC<Props> = ({ events }): ReactElement => {
         <ScrollView>
           <S.Container>
             <S.EventCardContainer>
-              {cards?.map((event, index) => (
+
+              {uniqueEventCards.map((event, index) => (
                 <EventCard
                   key={event.uid}
                   event={event}
                   index={index}
-                  isTopCard={index === cards.length - 1}
+                  isTopCard={index === uniqueEventCards.length - 1}
                   onReject={handleSwipeLeft}
                   onSuperInvite={handleSuperInvite}
                   onInvite={handleSwipeRight}
+                  topIndex={uniqueEventCards.length - 1}
                 />
               ))}
             </S.EventCardContainer>

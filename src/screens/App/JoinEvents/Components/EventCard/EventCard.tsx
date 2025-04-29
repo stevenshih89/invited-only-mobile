@@ -8,6 +8,7 @@ import { useAuthStore } from 'src/store/authStore';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
 import CardsNameAndDate from 'screens/App/Components/Card/Components/CardsNameAndDate/CardsNameAndDate';
+import useSwipeCardAction from 'screens/App/Components/Card/hooks/useSwipeCardAction';
 
 interface Props {
   onReject: () => void;
@@ -16,54 +17,50 @@ interface Props {
   isTopCard: boolean;
   event: components['schemas']['EventData'];
   index: number;
+  topIndex: number;
 }
 
-const EventCard = ({ onInvite, onReject, isTopCard, event, index }: Props) => {
+const EventCard = ({ onInvite, onReject, isTopCard, event, index, topIndex }: Props) => {
   const { userMetadata: user } = useAuthStore();
+  const { createEventAttendee, isPending, swipeDataRes } = useSwipeCardAction();
   const { gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite } =
     useCardGesture({
-      onSwipeLeft: onReject,
-      onSwipeRight: onInvite,
+      onSwipeLeft: () => {
+        onReject();
+        createEventAttendee({
+          body: {
+            guestId: user?.uid,
+            hostId: event.hostId ?? '',
+            eventId: event.uid,
+            guestSwipe: 'left',
+          }
+        });
+      },
+      onSwipeRight: () => {
+        onInvite();
+        createEventAttendee({
+          body: {
+            guestId: user?.uid,
+            hostId: event.hostId ?? '',
+            eventId: event.uid,
+            guestSwipe: 'right',
+          }
+        });
+      },
       enabled: isTopCard,
       index: index,
       isTopCard: isTopCard,
-      topIndex: 0,
+      topIndex: topIndex,
     });
 
-  const { mutate: createEventAttendee } = invitedOnlyBackendApi.useMutation('post', '/eventAttendees/create', {
-    onSuccess: () => {
-      console.log('Event attendee created');
-    },
-    onError: () => {
-      console.log('Error creating event attendee');
-    },
-  });
   const onClickReject = () => {
     if (isTopCard) {
-      createEventAttendee({
-        body: {
-          guestId: user?.uid || '',
-          hostId: event.hostId || '',
-          eventId: event.uid || '',
-          guestSwipe: 'left',
-          guestSwipeAt: new Date().toISOString(),
-        },
-      });
       animateReject();
     }
   };
 
   const onClickInvite = () => {
     if (isTopCard) {
-      createEventAttendee({
-        body: {
-          guestId: user?.uid || '',
-          hostId: event.hostId || '',
-          eventId: event.uid || '',
-          guestSwipe: 'right',
-          guestSwipeAt: new Date().toISOString(),
-        },
-      });
       animateInvite();
     }
   };

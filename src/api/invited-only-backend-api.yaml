@@ -106,7 +106,9 @@ paths:
               properties:
                 phone:
                   type: string
-                  description: The phone number (E.164 format) associated with the refresh token.
+                  description: >-
+                    The phone number (E.164 format) associated with the refresh
+                    token.
                   example: '+14155550123'
                 refreshToken:
                   type: string
@@ -139,7 +141,6 @@ paths:
           description: User not found for the given phone number.
         '500':
           description: Internal server error.
-
   /events/user/{userId}:
     get:
       summary: Get events visible to a specific user
@@ -294,7 +295,7 @@ paths:
       tags:
         - Events
       parameters:
-        - name: eventId 
+        - name: eventId
           in: path
           required: true
           schema:
@@ -376,7 +377,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
-
       responses:
         '201':
           description: User created successfully.
@@ -479,10 +479,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-        '404':
-          description: User not found.
         '400':
           description: Bad request.
+        '404':
+          description: User not found.
         '500':
           description: Internal server error.
   /users/{id}/fcmToken:
@@ -528,7 +528,6 @@ paths:
           description: Invalid FCM token
         '500':
           description: Internal server error
-
   /eventAttendees/create:
     post:
       summary: Create an event attendance record
@@ -585,7 +584,6 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
-
   /eventAttendees/{eventId}:
     get:
       summary: Get event attendees
@@ -611,7 +609,6 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
-          
   /eventAttendees/host-request:
     get:
       summary: Get pending join requests for host
@@ -657,7 +654,6 @@ paths:
           description: The UID of the host
           schema:
             type: string
-
       responses:
         '200':
           description: Event invitations for guest
@@ -798,7 +794,6 @@ paths:
                 $ref: '#/components/schemas/CollectionNamesResponse'
         '500':
           description: Internal server error.
-
   /chat:
     summary: chats related api
     post:
@@ -956,14 +951,13 @@ paths:
         '204':
           description: Successfully marked as seen (No Content).
         '400':
-          description: Bad request (e.g., missing userId in body or invalid chatId/userId format).
+          description: >-
+            Bad request (e.g., missing userId in body or invalid chatId/userId
+            format).
         '404':
           description: Chat not found.
         '500':
           description: Internal server error.
-
-
-
   /report/user/{userId}:
     get:
       summary: Get reports by user ID
@@ -1041,7 +1035,6 @@ paths:
                   type: string
                 uidSender:
                   type: string
-
       responses:
         '200':
           description: Report created successfully
@@ -1049,7 +1042,6 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
-
   /report/{id}:
     get:
       summary: Get a report by ID (via query parameter)
@@ -1138,7 +1130,6 @@ paths:
           description: Invalid record ID
         '500':
           description: Internal server error
-
     delete:
       summary: Delete a report by ID
       operationId: deleteReport
@@ -1271,6 +1262,9 @@ components:
           nullable: true
         work:
           $ref: '#/components/schemas/Work'
+        priority:
+          type: number
+          default: '0'
     UserNotificationSettings:
       type: object
       properties:
@@ -1428,6 +1422,9 @@ components:
         statusEvent:
           type: boolean
           nullable: true
+        priority:
+          type: number
+          default: '0'
       required:
         - uid
     InviteCode:
@@ -1566,20 +1563,24 @@ components:
           type: string
         hostId:
           type: string
-
         guestSwipe:
           type: string
-          enum: [left, right, none]
+          enum:
+            - left
+            - right
+            - none
         guestSwipeAt:
           type: string
           format: date-time
         hostSwipe:
           type: string
-          enum: [left, right, none]
+          enum:
+            - left
+            - right
+            - none
         hostSwipeAt:
           type: string
           format: date-time
-
         guestConfirm:
           type: boolean
           nullable: true
@@ -1592,7 +1593,6 @@ components:
         hostConfirmAt:
           type: string
           format: date-time
-
         guestAttending:
           type: boolean
           nullable: true
@@ -1605,7 +1605,6 @@ components:
         hostAttendingAt:
           type: string
           format: date-time
-
         status:
           type: string
           enum:
@@ -1616,7 +1615,6 @@ components:
             - pending-attendance
             - completed
             - rejected
-
         matchedAt:
           type: string
           format: date-time
@@ -1631,32 +1629,44 @@ components:
           format: date-time
         rejectedBy:
           type: string
-          enum: [guest, host, none]
+          enum:
+            - guest
+            - host
+            - none
         rejectedAt:
           type: string
           format: date-time
         rejectionReason:
           type: string
-
         history:
           type: array
           items:
             type: object
-            required: [phase, at, by]
+            required:
+              - phase
+              - at
+              - by
             properties:
               phase:
                 type: string
-                enum: [swipe, confirmed, rejected, attending, completed]
+                enum:
+                  - swipe
+                  - confirmed
+                  - rejected
+                  - attending
+                  - completed
               at:
                 type: string
                 format: date-time
               by:
                 type: string
-                enum: [guest, host, system]
+                enum:
+                  - guest
+                  - host
+                  - system
         createdAt:
           type: string
           format: date-time
-
     RemoteConfigFlagsResponse:
       type: object
       description: >-

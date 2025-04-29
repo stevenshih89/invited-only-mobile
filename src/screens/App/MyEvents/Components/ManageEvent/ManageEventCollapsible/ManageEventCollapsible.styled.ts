@@ -3,7 +3,7 @@ import { blackColor } from "constants/colors";
 import Arrow from 'assets/images/icons/arrow-down.svg';
 
 
-export const CardContainer = styled.View`
+export const CardContainer = styled.ScrollView`
     display: flex;
     flex-direction: column;
     justify-content: center;

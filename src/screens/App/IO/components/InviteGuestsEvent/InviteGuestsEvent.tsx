@@ -6,10 +6,11 @@ import GuestBioCard from './Components/GuestBioCard/GuestBioCard';
 import { GuestCard } from './Components/GuestCard/GuestCard';
 import GuestLanguagesCard from './Components/GuestLanguagesCard/GuestLanguagesCard';
 import { NewConnectionModal } from './Components/NewConnectionModal/NewConnectionModal';
-import useSwipeCardAction from './hooks/useSwipeCardAction';
 import { useNewConnectionModal } from './hooks/useNewConnectionModal';
+
 import { components } from 'src/api/v1';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
+import useSwipeCardAction from 'screens/App/Components/Card/hooks/useSwipeCardAction';
 
 type GuestUser = components['schemas']['User'];
 
@@ -26,8 +27,6 @@ interface InviteGuestsEventProps {
 const InviteGuestsEvent = ({ selectedEvent, cardsToShow, isLoading, onSwipeLeft, onSwipeRight, onSuperInvite, allCards }: InviteGuestsEventProps) => {
   const hasCards = cardsToShow.length > 0;
   const currentCard: GuestUser | undefined = hasCards ? cardsToShow[cardsToShow.length - 1] : undefined;
-
-  console.log(currentCard?.uid);
 
 
   const { createEventAttendee, swipeDataRes } = useSwipeCardAction();

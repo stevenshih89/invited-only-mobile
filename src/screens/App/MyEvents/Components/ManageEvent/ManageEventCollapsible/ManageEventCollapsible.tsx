@@ -11,13 +11,6 @@ interface ManageEventCollapsibleProps {
     toggle: () => void;
 }
 
-interface UserDetails {
-    id: string;
-    name: string;
-    age: number;
-    profileImageUrl?: string;
-    title: string;
-}
 
 export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle }: ManageEventCollapsibleProps) => {
 

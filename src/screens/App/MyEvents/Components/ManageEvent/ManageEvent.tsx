@@ -22,7 +22,7 @@ export const ManageEvent = () => {
         </S.Container>
     }
 
-    console.log("eventRequests", eventRequests);
+
     return (
         <S.Container>
             <ManageEventCollapsible toggle={() => setIsOpen({ ...isOpen, "NewConnections": !isOpen["NewConnections"] })} title="New Connections" eventRequests={eventRequests?.filter(request => request.status === 'connection-complete')} isOpen={isOpen["NewConnections"]} />

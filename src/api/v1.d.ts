@@ -565,6 +565,8 @@ export interface components {
             accountConfirmed?: boolean;
             homeAddress?: string | null;
             work?: components["schemas"]["Work"];
+            /** @default 0 */
+            priority: number;
         };
         UserNotificationSettings: {
             chat?: boolean;
@@ -638,6 +640,8 @@ export interface components {
             rejectsByGuestsList?: components["schemas"]["EventUser"][];
             isCancelled?: boolean | null;
             statusEvent?: boolean | null;
+            /** @default 0 */
+            priority: number;
         };
         InviteCode: {
             inviteCode?: string;
