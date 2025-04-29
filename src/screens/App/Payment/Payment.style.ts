@@ -1,10 +1,10 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
 import LottieView from 'lottie-react-native';
-import {whiteColor} from 'constants/colors';
-import {Satoshi500} from 'constants/fonts';
-import {screenHeight, screenWidth} from 'constants/common';
+import { whiteColor } from 'constants/colors';
+import { Satoshi500 } from 'constants/fonts';
+import { screenHeight, screenWidth } from 'constants/common';
 
 export const GradientContainer = styled(LinearGradient)`
   flex: 1;
@@ -33,18 +33,21 @@ export const HeaderTitle = styled.Text`
   margin-left: 25px;
 `;
 
-export const CloseButton = styled.TouchableOpacity<{activeOpacity: number}>`
-  opacity: ${({activeOpacity}: {activeOpacity: number}) => activeOpacity};
+export const CloseButton = styled.TouchableOpacity<{ activeOpacity: number }>`
+  opacity: ${({ activeOpacity }: { activeOpacity: number }) => activeOpacity};
 `;
 
 export const AnimationContainer = styled.View`
   margin-top: 40px;
+  height: ${screenHeight / 3.58}px;
+  width: 100%;
+  align-items: center;
 `;
 
 export const StyledLottieView = styled(LottieView)`
-  height: ${screenHeight / 3.58}px;
-  width: ${screenWidth / 2.62}px;
-  align-self: center;
+  height: 200px;
+  width: 300px;
+  background-color: red;
 `;
 
 export const ButtonContainer = styled.View`

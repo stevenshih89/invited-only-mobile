@@ -67,17 +67,17 @@ const MyPlan: FC = () => {
 
   return (
     <S.Container>
-      {userData?.accountType === 'host' && <HostPremiumCard />}
-      {userData?.accountType === 'host' && (
-        <S.FeaturesCard>
-          <S.ListColumnWrapper>
-            <S.WhatYouGetText>What you {userData?.accountType === 'host' ? 'get' : 'have'}:</S.WhatYouGetText>
-          </S.ListColumnWrapper>
-          {whatGet.map(item => {
-            return <WhatGetItem key={item.title} {...item} />;
-          })}
-        </S.FeaturesCard>
-      )}
+      <HostPremiumCard />
+
+      <S.FeaturesCard>
+        <S.ListColumnWrapper>
+          <S.WhatYouGetText>What you {userData?.accountType === 'host' ? 'get' : 'have'}:</S.WhatYouGetText>
+        </S.ListColumnWrapper>
+        {whatGet.map(item => {
+          return <WhatGetItem key={item.title} {...item} />;
+        })}
+      </S.FeaturesCard>
+
     </S.Container>
   );
 };

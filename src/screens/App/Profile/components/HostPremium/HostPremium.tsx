@@ -42,25 +42,23 @@ const HostPremiumCard = () => {
   };
 
   return (
-    <>
-      {userData?.accountType === 'host' && (
-        <S.PremiumContainer>
-          <S.PremiumContent>
-            <S.PremiumTitle>{getPremiumTitle()}</S.PremiumTitle>
-            <S.PremiumText>{getPremiumDescription()}</S.PremiumText>
-            <S.UpgradeButton onPress={goToMyPaymentPath}>
-              <S.UpgradeIconContainer>
-                <RocketIcon width={16} height={16} />
-              </S.UpgradeIconContainer>
-              <S.UpgradeText>Updgrade to Premium</S.UpgradeText>
-            </S.UpgradeButton>
-          </S.PremiumContent>
-          <S.IOGradientContainer>
-            <IOGradient />
-          </S.IOGradientContainer>
-        </S.PremiumContainer>
-      )}
-    </>
+    <S.Container>
+      <S.PremiumContainer>
+        <S.PremiumContent>
+          <S.PremiumTitle>{getPremiumTitle()}</S.PremiumTitle>
+          <S.PremiumText>{getPremiumDescription()}</S.PremiumText>
+          <S.UpgradeButton onPress={goToMyPaymentPath}>
+            <S.UpgradeIconContainer>
+              <RocketIcon width={16} height={16} />
+            </S.UpgradeIconContainer>
+            <S.UpgradeText>Updgrade to Premium</S.UpgradeText>
+          </S.UpgradeButton>
+        </S.PremiumContent>
+        <S.IOGradientContainer>
+          <IOGradient />
+        </S.IOGradientContainer>
+      </S.PremiumContainer>
+    </S.Container>
   );
 };
 

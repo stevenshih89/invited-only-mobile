@@ -1,12 +1,12 @@
-import {FlatList} from 'react-native';
-import {SvgProps} from 'react-native-svg';
-import {FC} from 'react';
+import { View } from 'react-native';
+import { SvgProps } from 'react-native-svg';
+import { FC } from 'react';
 import * as S from './WhatGet.style';
-import {ControlledTooltip} from 'components/ControlledTooltip/ControlledTooltip';
+import { ControlledTooltip } from 'components/ControlledTooltip/ControlledTooltip';
 import InfoCircleIcon from 'assets/images/icons/info-circle.svg';
 import CloseCircleIcon from 'assets/images/icons/close-circle.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
-import {lightGray5Color} from 'constants/colors';
+import { lightGray5Color } from 'constants/colors';
 import CalendarIcon from 'assets/images/icons/calendar-event.svg';
 import IOIcon from 'assets/images/icons/io.svg';
 import ExportIcon from 'assets/images/icons/export.svg';
@@ -25,7 +25,7 @@ interface WhatGetProps {
   fullPrice?: string;
 }
 
-const WhatGet: FC<WhatGetProps> = ({duration, durationName, fullPrice}) => {
+const WhatGet: FC<WhatGetProps> = ({ duration, durationName, fullPrice }) => {
   const data: WhatGetItem[] = [
     {
       title: 'Unlimited Tables/Events Sharing',
@@ -64,11 +64,10 @@ const WhatGet: FC<WhatGetProps> = ({duration, durationName, fullPrice}) => {
         <S.HeaderText>What you get:</S.HeaderText>
         <S.HeaderText>Premium</S.HeaderText>
       </S.SubHeader>
-      <FlatList
-        data={data}
-        renderItem={({item, index}) => {
+      <View>
+        {data.map((item, index) => {
           return (
-            <S.ListItemContainer isLast={index + 1 === data.length}>
+            <S.ListItemContainer key={item.title} isLast={index + 1 === data.length}>
               <S.ItemLeftSection>
                 <S.IconContainer>
                   <item.icon />
@@ -94,8 +93,8 @@ const WhatGet: FC<WhatGetProps> = ({duration, durationName, fullPrice}) => {
               <CheckIcon />
             </S.ListItemContainer>
           );
-        }}
-      />
+        })}
+      </View>
     </S.Container>
   );
 };

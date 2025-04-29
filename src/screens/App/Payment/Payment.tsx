@@ -1,22 +1,24 @@
-import React, {FC, JSX} from 'react';
-import {ScrollView} from 'react-native';
+import React, { FC, JSX, useEffect, useRef } from 'react';
+import { ScrollView } from 'react-native';
 
-//import components
+import LottieView from 'lottie-react-native';
 import PrivacyAndTerms from './Components/PrivacyAndTerms/PrrivacyAndTerms';
 import WhatGet from './Components/WhatGet/WhatGet';
 import Buttons from './Components/Buttons/Buttons';
 import PlansList from './Components/PlansList/PlansList';
 import usePayments from './hooks/usePayments';
 import * as S from './Payment.style';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {profilePath, tutorialFlowPath} from 'constants/pathLocations';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 import Loader from 'components/Modal/ModalLoader/Loader';
-import {backgroundGradientColors} from 'constants/colors';
+import { backgroundGradientColors } from 'constants/colors';
 import CloseIcon from 'assets/images/icons/close.svg';
 import ModalStartInviting from 'components/Modal/ModalStartInviting/ModalStartInviting';
 
 const Payment: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
+  const lottieRef = useRef<LottieView>(null);
+
+
 
   const {
     loaderVisible,
@@ -31,10 +33,15 @@ const Payment: FC = (): JSX.Element => {
     restorePurchases,
   } = usePayments();
 
+  useEffect(() => {
+    lottieRef.current?.reset()
+    lottieRef.current?.play();
+  }, [activePayment.id]);
+
   const handleNext = () => {
     try {
-      navigation.navigate(tutorialFlowPath as never);
-      navigation.navigate(profilePath as never);
+
+      navigation.navigate('/profile/profile-stack');
     } catch (error) {
       console.log('error handle next', error);
     }
@@ -47,7 +54,7 @@ const Payment: FC = (): JSX.Element => {
   };
 
   return (
-    <S.GradientContainer colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}}>
+    <S.GradientContainer colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }}>
       <S.SafeContainer>
         <Loader isVisible={loaderVisible} successfulPay={successfulPay} />
         <ScrollView>
@@ -60,7 +67,7 @@ const Payment: FC = (): JSX.Element => {
               </S.CloseButton>
             </S.HeaderContainer>
             <S.AnimationContainer>
-              <S.StyledLottieView source={animations[activePayment.id]} autoPlay loop />
+              <LottieView source={animations[activePayment.id]} cacheStrategy='strong' enableMergePathsAndroidForKitKatAndAbove duration={1000} autoPlay loop hardwareAccelerationAndroid ref={lottieRef} />
             </S.AnimationContainer>
             <PlansList
               plansList={plansList}

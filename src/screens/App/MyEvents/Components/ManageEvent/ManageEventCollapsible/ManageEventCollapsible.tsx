@@ -17,7 +17,6 @@ export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle }:
 
     return (
         <S.CardContainer>
-
             <S.ContentWrapper>
                 <S.TitleRow disabled={eventRequests?.length === 0} onPress={toggle}>
                     <S.StyledArrow isOpen={isOpen} />
