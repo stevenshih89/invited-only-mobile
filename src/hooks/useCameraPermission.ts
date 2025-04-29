@@ -12,6 +12,7 @@ export const useCameraPermission = () => {
       const currentStatus = await check(PERMISSIONS.IOS.CAMERA);
 
       if (currentStatus === 'denied' || currentStatus === 'blocked') {
+        await request(PERMISSIONS.IOS.CAMERA);
         return new Promise(resolve => {
           Alert.alert(
             'Camera Access Required',

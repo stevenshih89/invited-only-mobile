@@ -26,10 +26,10 @@ import './mocks/appNavigation.mock';
 import './mocks/firebaseMessaging.mock';
 import './mocks/firebaseStorage.mock';
 import './mocks/useLogout.mock';
-import './mocks/imagePicker.mock';
 import './mocks/fbsdkNext.mock';
 import './mocks/keyboardAwareScrollView.mock';
 import './mocks/backhandle.mock';
 import './mocks/backendApi.mock';
+import './mocks/imageCropPicker.mock';
 
 jest.useFakeTimers();

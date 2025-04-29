@@ -1,7 +1,6 @@
-import { FC, useState, JSX } from 'react';
+import {FC, useState, JSX} from 'react';
 import {
   Alert,
-
   ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
@@ -12,12 +11,12 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { ImagePickerResponse, launchImageLibrary } from 'react-native-image-picker';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request } from 'react-native-permissions';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request} from 'react-native-permissions';
 import LinearGradient from 'react-native-linear-gradient';
 import storage from '@react-native-firebase/storage';
-import { isIos, screenHeight } from 'constants/common';
+import ImagePicker from 'react-native-image-crop-picker';
+import {isIos, screenHeight} from 'constants/common';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Close from 'assets/images/icons/close.svg';
@@ -31,18 +30,18 @@ import {
   transparentWhite30Color,
   whiteColor,
 } from 'constants/colors';
-import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import Button from 'components/Button/Button';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import { enterBirthdayPath } from 'constants/pathLocations';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {enterBirthdayPath} from 'constants/pathLocations';
 import AuthProgress from 'components/AuthProgress';
-import { showToast } from 'helpers/showToast';
-import { useAuthStore } from 'src/store/authStore';
-import { components } from 'src/api/v1';
+import {showToast} from 'helpers/showToast';
+import {useAuthStore} from 'src/store/authStore';
+import {components} from 'src/api/v1';
 
 const AddPhotos: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
-  const [photos, setImages] = useState<{ image: null | string; id: number }[]>([
+  const [photos, setImages] = useState<{image: null | string; id: number}[]>([
     {
       id: 0,
       image: null,
@@ -69,7 +68,7 @@ const AddPhotos: FC = (): JSX.Element => {
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  const { onBoarding, setOnBoarding } = useAuthStore();
+  const {onBoarding, setOnBoarding} = useAuthStore();
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
     const result = await check(permission);
     switch (result) {
@@ -117,45 +116,38 @@ const AddPhotos: FC = (): JSX.Element => {
       return;
     }
 
-    launchImageLibrary(
-      {
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 300,
+        height: 400,
+        cropping: true,
+        multiple: false,
         mediaType: 'photo',
-        includeBase64: false,
-        quality: 0.9,
-      },
-      (response: ImagePickerResponse) => {
-        if (!response.assets) {
-          return;
+      });
+
+      const newImages = photos.map(img => {
+        if (img.id === imageId) {
+          return {...img, image: image.path};
         }
-        if (response.assets[0].uri) {
-          const image = {
-            uri: response.assets[0].uri,
-            type: response.assets[0].type,
-            name: response.assets[0].fileName,
-          };
-          const newImages = photos.map(img => {
-            if (img.id === imageId) {
-              return { ...img, image: image.uri };
-            }
-            return img;
-          });
-          setImages(newImages);
-        }
-      },
-    );
+        return img;
+      });
+      setImages(newImages);
+    } catch (error) {
+      console.error('Error picking image:', error);
+    }
   };
 
   const deleteImage = (imageId: number): void => {
     const newImages = photos.map(img => {
       if (img.id === imageId) {
-        return { ...img, image: null };
+        return {...img, image: null};
       }
       return img;
     });
     setImages(newImages);
   };
 
-  function hasPhoto(array: { image: null | string; id: number }[]) {
+  function hasPhoto(array: {image: null | string; id: number}[]) {
     for (let i = 0; i < array.length; i++) {
       if (array[i].image !== null) {
         return true;
@@ -165,8 +157,6 @@ const AddPhotos: FC = (): JSX.Element => {
   }
 
   const handleNext = async () => {
-
-
     if (!hasPhoto(photos)) {
       return;
     }
@@ -177,7 +167,7 @@ const AddPhotos: FC = (): JSX.Element => {
         if (i?.image) {
           const img = await uploadImage(i.image, onBoarding?.registrationDetails?.uid || '');
           console.log('img', img);
-          photosList.push({ id: i?.id + 1, image: img });
+          photosList.push({id: i?.id + 1, image: img});
         }
       }
       setOnBoarding({
@@ -202,13 +192,13 @@ const AddPhotos: FC = (): JSX.Element => {
   };
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
       <KeyboardAvoidingView
         behavior={isIos ? 'padding' : 'height'}
         keyboardVerticalOffset={15}
-        style={{ flex: 1, paddingBottom: 0, backgroundColor: black1Color }}>
+        style={{flex: 1, paddingBottom: 0, backgroundColor: black1Color}}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{ flex: 1, paddingBottom: 0 }}>
+          <SafeAreaView style={{flex: 1, paddingBottom: 0}}>
             <View
               style={{
                 flex: 1,
@@ -217,12 +207,12 @@ const AddPhotos: FC = (): JSX.Element => {
                 paddingHorizontal: 24,
                 paddingTop: screenHeight / 29,
               }}>
-              <View style={{ alignItems: 'center' }}>
-                <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
                   <TouchableOpacity
                     onPress={() => navigation.goBack()}
                     activeOpacity={0.7}
-                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
                     style={{
                       borderRadius: 50,
                       width: 40,
@@ -261,17 +251,17 @@ const AddPhotos: FC = (): JSX.Element => {
                     Add your first photos. You can change these and add more later.
                   </Text>
                 </View>
-                <View style={{ width: '100%', flexDirection: 'row' }}>
-                  <View style={{ width: '60%', height: RFValue(350, 932), marginRight: 6 }}>
+                <View style={{width: '100%', flexDirection: 'row'}}>
+                  <View style={{width: '60%', height: RFValue(350, 932), marginRight: 6}}>
                     {photos[0].image ? (
-                      <View style={{ position: 'relative', flex: 1, borderRadius: 10, overflow: 'hidden' }}>
+                      <View style={{position: 'relative', flex: 1, borderRadius: 10, overflow: 'hidden'}}>
                         <ImageBackground
                           resizeMode="cover"
-                          source={{ uri: photos[0].image }}
-                          style={{ width: '100%', height: '100%', justifyContent: 'space-between' }}>
+                          source={{uri: photos[0].image}}
+                          style={{width: '100%', height: '100%', justifyContent: 'space-between'}}>
                           <TouchableOpacity
                             activeOpacity={0.7}
-                            hitSlop={{ left: 15, bottom: 10 }}
+                            hitSlop={{left: 15, bottom: 10}}
                             onPress={() => deleteImage(photos[0].id)}
                             style={{
                               width: 26,
@@ -297,7 +287,7 @@ const AddPhotos: FC = (): JSX.Element => {
                               paddingVertical: 5,
                               marginBottom: 10,
                             }}>
-                            <Text style={{ fontFamily: Satoshi700, fontSize: RFValue(12, 932), color: whiteColor }}>Main</Text>
+                            <Text style={{fontFamily: Satoshi700, fontSize: RFValue(12, 932), color: whiteColor}}>Main</Text>
                           </View>
                         </ImageBackground>
                       </View>
@@ -327,22 +317,22 @@ const AddPhotos: FC = (): JSX.Element => {
                             paddingVertical: 5,
                             marginBottom: 10,
                           }}>
-                          <Text style={{ fontFamily: Satoshi700, fontSize: RFValue(12, 932), color: whiteColor }}>Main</Text>
+                          <Text style={{fontFamily: Satoshi700, fontSize: RFValue(12, 932), color: whiteColor}}>Main</Text>
                         </View>
                       </TouchableOpacity>
                     )}
                   </View>
-                  <View style={{ flex: 1, marginLeft: 6 }}>
-                    <View style={{ flex: 1, marginBottom: 6 }}>
+                  <View style={{flex: 1, marginLeft: 6}}>
+                    <View style={{flex: 1, marginBottom: 6}}>
                       {photos[1].image ? (
-                        <View style={{ position: 'relative', flex: 1, borderRadius: 10, overflow: 'hidden' }}>
+                        <View style={{position: 'relative', flex: 1, borderRadius: 10, overflow: 'hidden'}}>
                           <ImageBackground
                             resizeMode="cover"
-                            source={{ uri: photos[1].image }}
-                            style={{ width: '100%', height: '100%', justifyContent: 'space-between' }}>
+                            source={{uri: photos[1].image}}
+                            style={{width: '100%', height: '100%', justifyContent: 'space-between'}}>
                             <TouchableOpacity
                               activeOpacity={0.7}
-                              hitSlop={{ left: 15, bottom: 10 }}
+                              hitSlop={{left: 15, bottom: 10}}
                               onPress={() => deleteImage(photos[1].id)}
                               style={{
                                 width: 26,
@@ -376,16 +366,16 @@ const AddPhotos: FC = (): JSX.Element => {
                         </TouchableOpacity>
                       )}
                     </View>
-                    <View style={{ flex: 1, marginTop: 6 }}>
+                    <View style={{flex: 1, marginTop: 6}}>
                       {photos[2].image ? (
-                        <View style={{ position: 'relative', flex: 1, borderRadius: 10, overflow: 'hidden' }}>
+                        <View style={{position: 'relative', flex: 1, borderRadius: 10, overflow: 'hidden'}}>
                           <ImageBackground
                             resizeMode="cover"
-                            source={{ uri: photos[2].image }}
-                            style={{ width: '100%', height: '100%', justifyContent: 'space-between' }}>
+                            source={{uri: photos[2].image}}
+                            style={{width: '100%', height: '100%', justifyContent: 'space-between'}}>
                             <TouchableOpacity
                               activeOpacity={0.7}
-                              hitSlop={{ left: 15, bottom: 10 }}
+                              hitSlop={{left: 15, bottom: 10}}
                               onPress={() => deleteImage(photos[2].id)}
                               style={{
                                 width: 26,
@@ -422,7 +412,7 @@ const AddPhotos: FC = (): JSX.Element => {
                   </View>
                 </View>
               </View>
-              <View style={{ marginBottom: 4 }}>
+              <View style={{marginBottom: 4}}>
                 <Button onPress={handleNext} loading={isLoading} title="Continue" disabled={!photos[0].image} />
               </View>
             </View>

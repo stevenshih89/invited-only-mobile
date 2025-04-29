@@ -1,4 +1,4 @@
-import React, { FC, JSX, useContext, useEffect, useState } from 'react';
+import React, {FC, JSX, useContext, useEffect, useState} from 'react';
 import {
   Alert,
   AppState,
@@ -12,50 +12,50 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { launchCamera } from 'react-native-image-picker';
+import {RFValue} from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import analytics from '@react-native-firebase/analytics';
 import storage from '@react-native-firebase/storage';
-import { isIos, screenHeight, screenWidth } from 'constants/common';
+import ImagePicker from 'react-native-image-crop-picker';
+import {isIos, screenHeight, screenWidth} from 'constants/common';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckStar from 'assets/images/icons/check-star-white.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import MaleExampleSelfie from 'assets/images/auth/example-selfie.png';
 import FemaleExampleSelfie from 'assets/images/auth/female-selfie-example.png';
-import { backgroundGradientColors, blackColor, transparentWhite30Color, whiteColor } from 'constants/colors';
-import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import {backgroundGradientColors, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 import Button from 'components/Button/Button';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import { invitationCodePath, photoVerifiedPath } from 'constants/pathLocations';
-import { AuthContext } from 'contexts/AuthContext.tsx';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { useCameraPermission } from 'hooks/useCameraPermission';
-import { useAuthStore } from 'src/store/authStore';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {invitationCodePath, photoVerifiedPath} from 'constants/pathLocations';
+import {AuthContext} from 'contexts/AuthContext.tsx';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {useCameraPermission} from 'hooks/useCameraPermission';
+import {useAuthStore} from 'src/store/authStore';
 
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const [imageUri, setImageUri] = useState<string | undefined>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { requestCameraPermission } = useCameraPermission();
+  const {requestCameraPermission} = useCameraPermission();
 
-  const { onBoarding, setOnBoarding } = useContext(AuthContext);
+  const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
-  const name = onBoarding.find((item: { name: string }) => item?.name)?.name;
-  const gender = onBoarding.find((item: { gender: string }) => item?.gender)?.gender;
+  const name = onBoarding.find((item: {name: string}) => item?.name)?.name;
+  const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
   const email = onBoarding.find((item: any) => item.email)?.email;
   const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
   const date = onBoarding.find((item: any) => item.date)?.date;
   const photos = onBoarding.find((item: any) => item.photos)?.photos;
   const selfieSource = gender === 'man' ? MaleExampleSelfie : FemaleExampleSelfie;
-  const { userMetadata: user } = useAuthStore();
+
   useEffect(() => {
     let subscription: any;
 
     const handleAppClose = async () => {
-      const { userMetadata: user } = useAuthStore();
+      const {userMetadata: user} = useAuthStore();
       if (!user?.uid) {
         return;
       }
@@ -123,7 +123,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
     }
   };
 
-  const openCamera = async (userPhoneNumber: string | null) => {
+  const openCamera = async () => {
     if (isIos) {
       try {
         const hasPermission = await requestCameraPermission();
@@ -131,55 +131,26 @@ const VerifySecondStep: FC = (): JSX.Element => {
           return;
         }
 
-        await launchCamera(
-          {
-            mediaType: 'photo',
-            includeBase64: false,
-            quality: 0.9,
-            cameraType: 'front',
-            presentationStyle: 'fullScreen',
-          },
-          response => {
-            if (response.didCancel) {
-              try {
-                analytics().logEvent('verify_selfie_camera_cancelled', {
-                  name,
-                  email,
-                  accountType,
-                  date,
-                  gender,
-                  phoneNumber: userPhoneNumber,
-                  createdAt: moment().format('YYYY-MM-DD HH:ss'),
-                });
-              } catch (e) {
-                console.error(e);
-              }
+        const image = await ImagePicker.openCamera({
+          width: 300,
+          height: 400,
+          cropping: true,
+          mediaType: 'photo',
+          includeBase64: false,
+          multiple: false,
+          useFrontCamera: true,
+        });
 
-              return console.error('User cancelled the camera');
-            }
-
-            if (response.errorCode === 'camera_unavailable') {
-              return Alert.alert('Camera is not available');
-            }
-
-            if (response.errorCode === 'permission') {
-              return Alert.alert('Permission not granted');
-            }
-
-            if (response.assets) {
-              setImageUri(response.assets[0].uri);
-            }
-          },
-        );
+        setImageUri(image.path);
       } catch (error) {
-        console.error('Error requesting camera permission:', error);
+        console.error('Error accessing camera:', error);
         Alert.alert('Error', 'Failed to access camera. Please try again.');
       }
     }
   };
 
   const handleSkip = () => {
-    const { userMetadata: user } = useAuthStore();
+    const {userMetadata: user} = useAuthStore();
     try {
       if (!user?.uid) {
         return;
@@ -193,7 +164,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
         action: 'selfie-submited',
       });
       // @ts-ignore
-      navigation.navigate(invitationCodePath, { cameFromSummary: true } as never);
+      navigation.navigate(invitationCodePath, {cameFromSummary: true} as never);
     } catch (error) {
       console.error('Error skipped verify photo screen:', error);
     } finally {
@@ -202,7 +173,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
   };
 
   const handleNext = async () => {
-    const { userMetadata: user } = useAuthStore();
+    const {userMetadata: user} = useAuthStore();
     try {
       if (!imageUri || !user?.uid) {
         return;
@@ -233,10 +204,10 @@ const VerifySecondStep: FC = (): JSX.Element => {
   };
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1, paddingBottom: 0 }}>
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{ flex: 1 }}>
+          <SafeAreaView style={{flex: 1}}>
             <View
               style={{
                 flex: 1,
@@ -245,12 +216,12 @@ const VerifySecondStep: FC = (): JSX.Element => {
                 paddingHorizontal: 24,
                 paddingTop: screenHeight / 29,
               }}>
-              <View style={{ alignItems: 'center' }}>
-                <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
                   <TouchableOpacity
                     onPress={() => navigation.goBack()}
                     activeOpacity={0.7}
-                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
                     style={{
                       borderRadius: 50,
                       width: 40,
@@ -262,9 +233,9 @@ const VerifySecondStep: FC = (): JSX.Element => {
                     <ArrowLeft />
                   </TouchableOpacity>
                   <LogoPrimary2 />
-                  <View style={{ width: 40 }} />
+                  <View style={{width: 40}} />
                 </View>
-                <View style={{ alignItems: 'center', width: '100%', marginTop: screenHeight / 16, marginBottom: screenHeight / 20 }}>
+                <View style={{alignItems: 'center', width: '100%', marginTop: screenHeight / 16, marginBottom: screenHeight / 20}}>
                   {imageUri ? (
                     <>
                       <View
@@ -289,7 +260,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                           Make sure your face is clearly visible.
                         </Text>
                       </View>
-                      <View style={{ flexDirection: 'column', width: '100%', marginTop: 20 }}>
+                      <View style={{flexDirection: 'column', width: '100%', marginTop: 20}}>
                         <View
                           style={{
                             position: 'relative',
@@ -298,9 +269,9 @@ const VerifySecondStep: FC = (): JSX.Element => {
                             alignSelf: 'center',
                           }}>
                           <ImageBackground
-                            source={{ uri: imageUri }}
-                            style={{ borderRadius: 15, width: '100%', height: '100%', justifyContent: 'flex-end', overflow: 'hidden' }}>
-                            <View style={{ height: 36, width: '100%', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+                            source={{uri: imageUri}}
+                            style={{borderRadius: 15, width: '100%', height: '100%', justifyContent: 'flex-end', overflow: 'hidden'}}>
+                            <View style={{height: 36, width: '100%', justifyContent: 'center', position: 'relative', overflow: 'hidden'}}>
                               <View
                                 style={{
                                   position: 'absolute',
@@ -312,7 +283,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                                   opacity: 0.87,
                                 }}
                               />
-                              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                              <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                                 <Text
                                   style={{
                                     color: whiteColor,
@@ -355,7 +326,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                           Copy this position. Your face must be clearly visible.
                         </Text>
                       </View>
-                      <View style={{ flexDirection: 'column', width: '100%', marginTop: 20 }}>
+                      <View style={{flexDirection: 'column', width: '100%', marginTop: 20}}>
                         <View
                           style={{
                             position: 'relative',
@@ -365,7 +336,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                           }}>
                           <ImageBackground
                             source={selfieSource}
-                            style={{ borderRadius: 100, width: '100%', height: '100%', justifyContent: 'flex-end' }}>
+                            style={{borderRadius: 100, width: '100%', height: '100%', justifyContent: 'flex-end'}}>
                             <View
                               style={{
                                 height: screenHeight / 20,
@@ -385,7 +356,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                                   opacity: 0.87,
                                 }}
                               />
-                              <Text style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 932), alignSelf: 'center' }}>
+                              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 932), alignSelf: 'center'}}>
                                 {name}
                               </Text>
                             </View>
@@ -397,7 +368,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                 </View>
               </View>
               {imageUri ? (
-                <View style={{ marginBottom: 4 }}>
+                <View style={{marginBottom: 4}}>
                   <Button title="Submit" onPress={handleNext} loading={isLoading} />
                   <Button
                     onPress={async () => {
@@ -405,7 +376,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                         return;
                       }
                       setImageUri('');
-                      await openCamera(user?.phoneNumber);
+                      await openCamera();
                     }}
                     title="Retake photo"
                     variant="transparent"
@@ -414,12 +385,12 @@ const VerifySecondStep: FC = (): JSX.Element => {
               ) : (
                 <View>
                   <View>
-                    <Button testID="take-photo-button" onPress={() => openCamera(user?.phoneNumber)} title="Take a photo" />
+                    <Button testID="take-photo-button" onPress={() => openCamera()} title="Take a photo" />
                   </View>
                   {accountType === 'host' && (
                     <TouchableOpacity testID="skip-button" onPress={handleSkip}>
                       <Text
-                        style={{ fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginTop: 20, textAlign: 'center' }}>
+                        style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginTop: 20, textAlign: 'center'}}>
                         Skip
                       </Text>
                     </TouchableOpacity>

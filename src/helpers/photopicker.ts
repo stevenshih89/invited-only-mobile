@@ -1,58 +1,32 @@
-import {PERMISSIONS, request} from "react-native-permissions";
-import {Asset, CameraType, launchCamera} from "react-native-image-picker";
-import {Alert} from "react-native";
-import {isIos} from "constants/common.ts";
+import {PERMISSIONS, request} from 'react-native-permissions';
+import {Alert} from 'react-native';
+import ImagePicker, {Image} from 'react-native-image-crop-picker';
+import {isIos} from 'constants/common.ts';
 
-export const openCamera = async (cameraType?: CameraType, onDidCancel?: () => void) : Promise<Asset | undefined | null> => {
-	if (isIos) {
-		const cameraPermission = await request(PERMISSIONS.IOS.CAMERA);
+export const openCamera = async (cameraType?: 'front' | 'back', onDidCancel?: () => void): Promise<Image | undefined | null> => {
+  if (isIos) {
+    const cameraPermission = await request(PERMISSIONS.IOS.CAMERA);
 
-		if (cameraPermission === 'granted') {
-			await launchCamera(
-				{
-					mediaType: 'photo',
-					includeBase64: false,
-					quality: 0.9,
-					cameraType: cameraType,
-					presentationStyle: 'fullScreen',
-				},
-				response => {
-					console.log(response)
-					if (response.didCancel) {
-						onDidCancel?.()
-						// try {
-						// 	analytics().logEvent('verify_selfie_camera_cancelled', {
-						// 		name,
-						// 		email,
-						// 		accountType,
-						// 		date,
-						// 		gender,
-						// 		phoneNumber: auth()?.currentUser?.phoneNumber,
-						// 		createdAt: moment().format('YYYY-MM-DD HH:ss'),
-						// 	});
-						// } catch (e) {
-						// 	console.error(e);
-						// }
+    if (cameraPermission === 'granted') {
+      try {
+        const image = await ImagePicker.openCamera({
+          width: 300,
+          height: 400,
+          cropping: true,
+          includeBase64: false,
+          mediaType: 'photo',
+          useFrontCamera: cameraType === 'front',
+        });
 
-						console.error('User cancelled the camera');
-					}
-
-					if (response.errorCode === 'camera_unavailable') {
-						Alert.alert('Camera is not available');
-					}
-
-					if (response.errorCode === 'permission') {
-						Alert.alert('Permission not granted');
-					}
-					if (response.assets) {
-						return response.assets[0];
-					}
-					return null;
-				},
-			);
-		} else {
-			Alert.alert('Camera permission not granted');
-			return null;
-		}
-	}
+        return image;
+      } catch (error) {
+        if (onDidCancel) onDidCancel();
+        console.error('User cancelled the camera or an error occurred:', error);
+        return null;
+      }
+    } else {
+      Alert.alert('Camera permission not granted');
+      return null;
+    }
+  }
 };

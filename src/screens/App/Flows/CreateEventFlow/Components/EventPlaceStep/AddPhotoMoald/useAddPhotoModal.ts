@@ -1,13 +1,13 @@
-import { useFormikContext } from 'formik';
-import { useState } from 'react';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { CreateEventFormValues } from '../../../CreateEventFlow';
+import {useFormikContext} from 'formik';
+import {useState} from 'react';
+import ImagePicker from 'react-native-image-crop-picker';
+import {CreateEventFormValues} from '../../../CreateEventFlow';
 
 const useAddModalPhotos = () => {
   const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number | null>(null);
 
-  const { setFieldValue, setFieldTouched } = useFormikContext<CreateEventFormValues>();
+  const {setFieldValue, setFieldTouched} = useFormikContext<CreateEventFormValues>();
 
   const handlePhotoAdded = (index: number, photo: string) => {
     if (index === 1) {
@@ -30,35 +30,45 @@ const useAddModalPhotos = () => {
   };
 
   const handleOpenCamera = async () => {
-    const result = await launchCamera({
-      mediaType: 'photo',
-      quality: 0.8,
-    });
+    try {
+      const image = await ImagePicker.openCamera({
+        width: 300,
+        height: 400,
+        cropping: true,
+        mediaType: 'photo',
+      });
 
-    if (result.assets && result.assets.length > 0 && currentPhotoIndex !== null) {
-      const photoUri = result.assets[0].uri;
-      if (photoUri) {
-        handlePhotoAdded(currentPhotoIndex, photoUri);
-
-        setIsPhotoModalVisible(false);
+      if (image?.path && currentPhotoIndex !== null) {
+        const photoUri = image.path;
+        if (photoUri) {
+          handlePhotoAdded(currentPhotoIndex, photoUri);
+          setIsPhotoModalVisible(false);
+        }
       }
+    } catch (error) {
+      console.error('Error opening camera:', error);
     }
   };
+
   const handleOpenLibrary = async () => {
-    const result = await launchImageLibrary({
-      mediaType: 'photo',
-      quality: 0.8,
-    });
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 300,
+        height: 400,
+        cropping: true,
+        mediaType: 'photo',
+        multiple: false,
+      });
 
-    if (result.assets && result.assets.length > 0 && currentPhotoIndex !== null) {
-      const photoUri = result.assets[0].uri;
-      console.log(photoUri, currentPhotoIndex);
-
-      if (photoUri) {
-        handlePhotoAdded(currentPhotoIndex, photoUri);
-
-        setIsPhotoModalVisible(false);
+      if (image?.path && currentPhotoIndex !== null) {
+        const photoUri = image.path;
+        if (photoUri) {
+          handlePhotoAdded(currentPhotoIndex, photoUri);
+          setIsPhotoModalVisible(false);
+        }
       }
+    } catch (error) {
+      console.error('Error opening library:', error);
     }
   };
 

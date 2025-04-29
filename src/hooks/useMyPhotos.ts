@@ -1,16 +1,16 @@
-import { useRef, useState } from 'react';
-import { Alert, Animated } from 'react-native';
+import {useRef, useState} from 'react';
+import {Alert, Animated} from 'react-native';
 import Config from 'react-native-config';
-import { ImagePickerResponse, launchImageLibrary } from 'react-native-image-picker';
-import { check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS } from 'react-native-permissions';
+import {check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS} from 'react-native-permissions';
 import firestore from '@react-native-firebase/firestore';
-import { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { Gesture } from 'react-native-gesture-handler';
+import {runOnJS, useAnimatedStyle, useSharedValue, withSpring} from 'react-native-reanimated';
+import {Gesture} from 'react-native-gesture-handler';
+import ImagePicker from 'react-native-image-crop-picker';
 import useUser from 'src/hooks/user/useUser';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { showToast } from 'helpers/showToast';
-import { isIos } from 'constants/common';
-import { components } from 'src/api/v1';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {showToast} from 'helpers/showToast';
+import {isIos} from 'constants/common';
+import {components} from 'src/api/v1';
 
 // Define a type for the layout objects
 interface ImageLayout {
@@ -19,21 +19,22 @@ interface ImageLayout {
   y: number;
 }
 
-export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any }) => {
+export const useMyPhotos = ({images, setImages}: {images: any; setImages: any}) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const { user: userHost } = useUser();
+  const {user: userHost} = useUser();
   const isConfirmed = userHost?.accountConfirmed;
   const [visibleModalReplace, setVisibleModalReplace] = useState(false);
   console.log('images', images);
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
     const result = await check(permission);
     switch (result) {
-      case RESULTS.DENIED:
+      case RESULTS.DENIED: {
         const requestResult = await request(permission);
         if (requestResult === RESULTS.BLOCKED) {
           Alert.alert('Permission not granted');
         }
         return requestResult;
+      }
       case RESULTS.BLOCKED:
         Alert.alert('Permission not granted');
         break;
@@ -51,27 +52,19 @@ export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any
       return;
     }
 
-    launchImageLibrary(
-      {
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 300,
+        height: 400,
+        cropping: true,
         mediaType: 'photo',
-        includeBase64: false,
-        quality: 0.9,
-      },
-      (response: ImagePickerResponse) => {
-        if (!response.assets) {
-          return;
-        }
-        if (response.assets[0].uri) {
-          const image: components['schemas']['UserPhoto'] = {
-            id: imageId,
-            image: response.assets[0].uri,
-          };
+      });
 
-          const newImages = [...images, image];
-          setImages(newImages);
-        }
-      },
-    );
+      const newImages = [...images, {id: imageId, image: image.path}];
+      setImages(newImages);
+    } catch (error) {
+      console.error('Error picking image:', error);
+    }
   };
 
   const deleteImage = (imageId: number): void => {
@@ -215,13 +208,13 @@ export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any
       });
   };
 
-  const createAnimatedStyle = (offsetX, offsetY, id) =>
+  const createAnimatedStyle = (offsetX: Animated.SharedValue<number>, offsetY: Animated.SharedValue<number>, id: number) =>
     useAnimatedStyle(() => ({
       transform: [
-        { translateX: offsetX.value },
-        { translateY: offsetY.value },
+        {translateX: offsetX.value},
+        {translateY: offsetY.value},
         {
-          scale: withSpring(activeImage === 0 || activeImage === id ? 1 : selectImage === id ? 1 : 0.8, { damping: 15, stiffness: 100 }),
+          scale: withSpring(activeImage === 0 || activeImage === id ? 1 : selectImage === id ? 1 : 0.8, {damping: 15, stiffness: 100}),
         },
       ],
     }));
@@ -236,11 +229,11 @@ export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any
   const handleLayout = (imageId: number) => {
     const viewRefs = [viewRef1, viewRef2, viewRef3, viewRef4, viewRef5, viewRef6];
 
-    const ref = viewRefs[imageId - 1];
+    const ref = viewRefs[imageId - 1] as any;
 
     if (ref && ref.current) {
-      ref.current.measure((x, y, width, height, pageX, pageY) => {
-        setLayout(prev => [...prev, { imageId, x: pageX, y: pageY, width, height }]);
+      ref.current.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
+        setLayout(prev => [...prev, {imageId, x: pageX, y: pageY, width, height}]);
       });
     }
   };
