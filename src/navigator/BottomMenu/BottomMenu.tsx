@@ -1,19 +1,19 @@
-import React, { FC, JSX } from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React, {FC, JSX} from 'react';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 //import components
-import { createStackNavigator } from '@react-navigation/stack';
-import useStyles from 'src/navigator/BottomMenu/styles';
-import { IOStackNavigation, MyEventsStackNavigation } from 'src/navigator/AppStackScreens/AppStackScreens';
-import ChatStackScreen from 'src/navigator/AppStackScreens/ChatStackScreen/ChatStackScreen';
-import { whiteColor } from 'constants/colors.ts';
-import { IOPath, chatPath, connectPath, joinEventsPath, myEventsPath } from 'constants/pathLocations';
+import {createStackNavigator} from '@react-navigation/stack';
+import useStyles from 'navigator/BottomMenu/styles';
+import {IOStackNavigation, MyEventsStackNavigation} from 'navigator/AppStackScreens/AppStackScreens';
+import ChatStackScreen from 'navigator/AppStackScreens/ChatStackScreen/ChatStackScreen';
+import {whiteColor} from 'constants/colors.ts';
+import {IOPath, chatPath, connectPath, joinEventsPath, myEventsPath} from 'constants/pathLocations';
 
 import Header from 'components/Header/Header';
-import { TabBarName, TabIcon } from 'src/navigator/TabBar/TabBar';
+import {TabBarName, TabIcon} from 'navigator/TabBar/TabBar';
 
 import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper';
-import ConnectStackScreen from 'src/navigator/AppStackScreens/ConnectStackScreen/ConnectStackScreen';
+import ConnectStackScreen from 'navigator/AppStackScreens/ConnectStackScreen/ConnectStackScreen';
 
 const JoinEventsStackScreen = () => {
   const JoinEventsStack = createStackNavigator();
@@ -39,13 +39,13 @@ const BottomMenu: FC = (): JSX.Element => {
 
   return (
     <Tab.Navigator
-      screenOptions={({ route }: { route: { name: string } }) => ({
+      screenOptions={({route}: {route: {name: string}}) => ({
         headerShown: false,
         headerTransparent: false,
         tabBarActiveTintColor: whiteColor,
         tabBarStyle: styles.tabNavigator,
-        tabBarIcon: ({ focused }: { focused: boolean }) => TabIcon(focused, route.name),
-        tabBarLabel: ({ focused }: { focused: boolean }) => TabBarName(focused, route.name),
+        tabBarIcon: ({focused}: {focused: boolean}) => TabIcon(focused, route.name),
+        tabBarLabel: ({focused}: {focused: boolean}) => TabBarName(focused, route.name),
       })}
       initialRouteName={IOPath}>
       <Tab.Screen name={myEventsPath} component={MyEventsStackNavigation} />

@@ -1,4 +1,4 @@
-import { RootStackParamList } from 'typescript/types';
+import {RootStackParamList} from 'typescript/types';
 // Stacks paths
 const bottomTabsStackPath = '/bottom-tabs-stack';
 const notificationsStackPath = '/notifications-stack';
@@ -53,6 +53,8 @@ const myPlanPath: keyof RootStackParamList = '/profile/my-plan';
 const faqPath: keyof RootStackParamList = '/profile/faq';
 const helpAndSecurityPath: keyof RootStackParamList = '/profile/help-and-security';
 const notificationSettingPath: keyof RootStackParamList = '/profile/notification-setting';
+const loadingPaymentPath: keyof RootStackParamList = '/profile/loading-payment';
+const welcomeToPremiumPath: keyof RootStackParamList = '/profile/welcome-to-premium';
 const chatPath: keyof RootStackParamList = '/chat';
 const chatWindowPath: keyof RootStackParamList = '/chat/chat-window';
 const chatCorrespondencePath: keyof RootStackParamList = '/chat-correspondence';
@@ -159,4 +161,6 @@ export {
   chatWindowPath,
   profileStackPath,
   shareSocialLinkPath,
+  loadingPaymentPath,
+  welcomeToPremiumPath,
 };

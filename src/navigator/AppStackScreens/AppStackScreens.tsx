@@ -1,10 +1,10 @@
-import React, { FC, useState } from 'react';
-import { createStackNavigator, StackNavigationOptions } from '@react-navigation/stack';
+import React, {FC, useState} from 'react';
+import {createStackNavigator, StackNavigationOptions} from '@react-navigation/stack';
 
 //import components
-import { TouchableOpacity } from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import EventRequestsStackScreen from './RequestStackScreen/RequestStackScreen';
-import { ProfileStackScreen } from './ProfileStackScreen/ProfileStackScreen';
+import {ProfileStackScreen} from './ProfileStackScreen/ProfileStackScreen';
 import BottomMenu from 'navigator/BottomMenu/BottomMenu';
 import Header from 'components/Header/Header.tsx';
 import {
@@ -38,14 +38,14 @@ import IOWrapper from 'screens/App/IO/IOWrapper.tsx';
 import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper.tsx';
 import Events from 'screens/App/MyEvents/Events.tsx';
 import Connect from 'screens/App/Connect/Connect.tsx';
-import { blackColor } from 'constants/colors.ts';
+import {blackColor} from 'constants/colors.ts';
 import Chat from 'screens/App/Chat/Chat';
 import ShareSocialLink from 'screens/App/InvitationCode/screens/ShareSocialLink/ShareSocialLink';
 import InvitationCode from 'screens/App/InvitationCode/InvitationCode';
 import useUser from 'hooks/user/useUser';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
-import { useAuthStore } from 'src/store/authStore';
-import { ManageEvent } from 'screens/App/MyEvents/Components/ManageEvent/ManageEvent';
+import {useAuthStore} from 'src/store/authStore';
+import {ManageEvent} from 'screens/App/MyEvents/Components/ManageEvent/ManageEvent';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -54,7 +54,7 @@ const EventCreatingStack = createStackNavigator();
 
 const screenOptions = {
   cardOverlayEnabled: true,
-  cardStyle: { backgroundColor: blackColor },
+  cardStyle: {backgroundColor: blackColor},
 } as StackNavigationOptions;
 
 export const IOStackNavigation: FC = () => {
@@ -113,7 +113,6 @@ export const MyEventsStackNavigation: FC = () => {
       {/*  TODO make is stack path */}
       <Stack.Screen
         options={{
-
           headerShown: true,
           header: () => <Header logoType="logo" headerType="myEvents" badge />,
         }}
@@ -137,7 +136,7 @@ const NotificationsStackScreen = () => {
         backgroundColor: blackColor,
         headerStyle: styles.headerStyle,
         headerTitleStyle: styles.headerTitleStyle,
-        headerBackImage: () => <ArrowLeft style={{ marginHorizontal: 12, marginVertical: 10 }} />,
+        headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
         headerBackTitleVisible: false,
         headerTitle: 'Notifications',
         headerShown: true,
@@ -183,7 +182,7 @@ const EventCreatingStackScreen = () => {
       screenOptions={{
         headerStyle: styles.headerStyle,
         headerTitleStyle: styles.headerTitleStyle,
-        headerBackImage: () => <ArrowLeft style={{ marginHorizontal: 12, marginVertical: 10 }} />,
+        headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
         headerBackTitleVisible: false,
         headerTitle: 'Create new event',
         headerShown: true,
@@ -210,11 +209,11 @@ const UserProfileStackScreen = () => {
         options={{
           headerStyle: styles.headerStyle,
           headerTitleStyle: styles.headerTitleStyle,
-          headerBackImage: () => <ArrowLeft style={{ marginHorizontal: 12, marginVertical: 10 }} />,
+          headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
           headerBackTitleVisible: false,
           headerRight: () => (
             <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.7}>
-              <ThreeDotsIcon style={{ marginHorizontal: 20, marginVertical: 10 }} />
+              <ThreeDotsIcon style={{marginHorizontal: 20, marginVertical: 10}} />
             </TouchableOpacity>
           ),
           headerTitle: 'User profile',
@@ -226,8 +225,8 @@ const UserProfileStackScreen = () => {
 };
 
 const AppStackScreen = () => {
-  const { userMetadata } = useAuthStore();
-  const { user, isLoading } = useUser();
+  const {userMetadata} = useAuthStore();
+  const {user, isLoading} = useUser();
 
   if (isLoading) {
     return <AppLoader />;
@@ -236,7 +235,7 @@ const AppStackScreen = () => {
   return (
     <AppStack.Navigator
       initialRouteName={initialRouteName}
-      screenOptions={{ headerShown: false, cardOverlayEnabled: true, ...screenOptions, cardStyle: { backgroundColor: blackColor } }}>
+      screenOptions={{headerShown: false, cardOverlayEnabled: true, ...screenOptions, cardStyle: {backgroundColor: blackColor}}}>
       <AppStack.Screen key={bottomTabsStackPath} name={bottomTabsStackPath} component={BottomTabsStackScreen} />
       <AppStack.Screen
         key={notificationsStackPath}
@@ -252,7 +251,7 @@ const AppStackScreen = () => {
         key={userProfilePath}
         name={userProfilePath}
         component={UserProfileStackScreen}
-        screenOptions={{ cardStyle: { backgroundColor: blackColor } }}
+        screenOptions={{cardStyle: {backgroundColor: blackColor}}}
       />
       <AppStack.Screen key={connectPath} name={connectPath} component={Connect} />
       <AppStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />

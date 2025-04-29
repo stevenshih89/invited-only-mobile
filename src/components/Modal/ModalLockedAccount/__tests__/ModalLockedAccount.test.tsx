@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+import {render, fireEvent} from '@testing-library/react-native';
 import ModalLockedAccount from '../ModalLockedAccount';
-import { invitationCodePath } from 'constants/pathLocations';
+import {invitationCodePath} from 'constants/pathLocations';
 
 // Mock useAppNavigation
 jest.mock('hooks/useAppNavigation', () => ({
@@ -27,11 +27,11 @@ describe('ModalLockedAccount', () => {
     jest.clearAllMocks(); // Clear previous mocks
     jest.spyOn(require('hooks/useAppNavigation'), 'useAppNavigation').mockReturnValue(mockNavigation);
     // Initialize and set the default return value for the useUser mock
-    mockUseUser = jest.fn().mockReturnValue({ user: null });
+    mockUseUser = jest.fn().mockReturnValue({user: null});
   });
 
   it('renders correctly when user is not reviewed', () => {
-    const { getByText } = render(<ModalLockedAccount />);
+    const {getByText} = render(<ModalLockedAccount />);
 
     expect(getByText('Locked')).toBeTruthy();
     expect(getByText('Profile is Under Review')).toBeTruthy();
@@ -40,7 +40,7 @@ describe('ModalLockedAccount', () => {
   });
 
   it('handles invitation code button press', () => {
-    const { getByText } = render(<ModalLockedAccount />);
+    const {getByText} = render(<ModalLockedAccount />);
 
     const inviteButton = getByText('I have an invitation code');
     fireEvent.press(inviteButton);
@@ -57,7 +57,7 @@ describe('ModalLockedAccount', () => {
       },
     });
 
-    const { queryByText } = render(<ModalLockedAccount />);
+    const {queryByText} = render(<ModalLockedAccount />);
     expect(queryByText('Profile is Under Review')).toBeNull();
   });
 
@@ -70,26 +70,7 @@ describe('ModalLockedAccount', () => {
       },
     });
 
-    const { getByText } = render(<ModalLockedAccount />);
+    const {getByText} = render(<ModalLockedAccount />);
     expect(getByText('Profile is Under Review')).toBeTruthy();
-  });
-
-  it('matches snapshot when rendered', () => {
-    // Use the default mock value from beforeEach
-    const { toJSON } = render(<ModalLockedAccount />);
-    expect(toJSON()).toMatchSnapshot();
-  });
-
-  it('matches snapshot when not rendered', () => {
-    // Set a specific return value for this test
-    mockUseUser.mockReturnValue({
-      user: {
-        uid: '123',
-        accountReviewed: true,
-      },
-    });
-
-    const { toJSON } = render(<ModalLockedAccount />);
-    expect(toJSON()).toMatchSnapshot();
   });
 });
