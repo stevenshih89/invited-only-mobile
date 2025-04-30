@@ -18,8 +18,7 @@ const useChatWindowMutations = ({ chatId, userId }: UseChatWindowMutationsProps)
     const { mutate: markChatAsSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen')
 
     const { mutate: createMessage } = invitedOnlyBackendApi.useMutation('post', '/chat/message/{chatId}', {
-        onSuccess: (response, request) => {
-            console.log('send message', response, request);
+        onSuccess: () => {
             scrollViewRef.current?.scrollToEnd({ animated: true });
         }
     })

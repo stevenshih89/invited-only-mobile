@@ -34,7 +34,7 @@ const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEv
   const { navigate } = useAppNavigation();
   const displayedAttendees = attendees.slice(0, 2);
   const remainingAttendees = attendees.length - displayedAttendees.length;
-  console.log('statusEvent', statusEvent);
+
 
   return (
     <S.CardContainer onPress={handlePress} activeOpacity={0.8}>
@@ -79,7 +79,7 @@ const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEv
             }}
             activeOpacity={0.7}
           >
-            <S.ViewRequestsText>View Requests</S.ViewRequestsText>
+            <S.ViewRequestsText disabled={!isReview}>View Requests</S.ViewRequestsText>
             {requestCount ? (
               <S.RequestCountBadge>
                 <S.RequestCountText>{requestCount}</S.RequestCountText>

@@ -26,8 +26,6 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
     return <EventListItem event={item} imageUrl={firstPhotoUrl?.image} statusEvent={statusString} attendees={[]} requestCount={0} isReview={item.eventReviewed} />;
   };
 
-
-
   return (
     <S.ListContainer
       data={events}

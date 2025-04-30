@@ -92,7 +92,8 @@ export const ChatWindow = () => {
                         value={newMessage}
                         onChangeText={setNewMessage}
                     />
-                    <S.SendButton onPress={handleSendMessage}>
+                    <S.SendButton disabled={!newMessage || newMessage.trim() === ''} onPress={handleSendMessage}>
+                        {newMessage.trim() === '' && <S.DisabledOverlay />}
                         <SendIcon />
                     </S.SendButton>
                 </S.InputContainer>

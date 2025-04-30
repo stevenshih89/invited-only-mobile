@@ -145,22 +145,22 @@ export const ActionsContainer = styled(View)`
 `;
 
 // Base action button style
-const ActionButtonBase = styled.TouchableOpacity`
+const ActionButtonBase = styled.TouchableOpacity<{ disabled: boolean }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
   padding: 12px;
   background-color: rgba(255, 255, 255, 0.08);
+  opacity: ${({ disabled }: { disabled: boolean }) => (disabled ? 0.2 : 1)};
   border-radius: 100px;
   height: 48px;
 `;
 
-export const ViewRequestsButton = styled.TouchableOpacity`
+export const ViewRequestsButton = styled.TouchableOpacity<{ disabled: boolean }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 12px;
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: ${({ disabled }: { disabled: boolean }) => (disabled ? 'rgba(222, 203, 203, 0.29)' : 'rgba(255, 255, 255, 0.1)')};
   border-radius: 100px;
   height: 48px;
   flex: 1;
@@ -168,11 +168,11 @@ export const ViewRequestsButton = styled.TouchableOpacity`
   padding: 4px 8px 4px 4px;
 `;
 
-export const ViewRequestsText = styled(Text)`
+export const ViewRequestsText = styled(Text) <{ disabled: boolean }>`
   font-family: ${Satoshi500};
   font-size: 14px;
   line-height: 17px;
-  color: #ffffff;
+  color: ${({ disabled }: { disabled: boolean }) => (disabled ? 'rgba(255, 255, 255, 0.2)' : '#ffffff')};
 `;
 
 export const RequestCountBadge = styled(View)`
@@ -192,7 +192,7 @@ export const RequestCountText = styled(Text)`
   color: #ffffff;
 `;
 
-// Manage Button - Adapted from 'Frame 2085661847'
+
 export const ManageButton = styled(ActionButtonBase)`
   width: 48px;
 `;

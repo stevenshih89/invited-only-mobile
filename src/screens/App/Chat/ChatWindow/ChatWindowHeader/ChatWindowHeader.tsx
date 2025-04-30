@@ -46,13 +46,13 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent }: ChatWindowHeaderProps)
     const { goBack } = useAppNavigation();
     const insets = useSafeAreaInsets();
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-    const { connectionStatus } = useConnectionRealtimeStatus({ chatId: chat.id || '' });
+    const { connectionStatus, isLoading } = useConnectionRealtimeStatus({ chat });
     const invitationStatus = getInvitationStatus(connectionStatus);
     const toggleDropdown = () => {
         setIsDropdownVisible(!isDropdownVisible);
     };
 
-    const renderActionButton = () => {
+    const renderActionButtonForHost = () => {
         if (invitationStatus === 'attendingComplete') {
             return <ConfirmedBadge />
         }
@@ -62,11 +62,28 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent }: ChatWindowHeaderProps)
                 <S.WaitingText>Waiting</S.WaitingText>
             </S.WaitingContainer>
         }
-        if (invitationStatus === 'connectionInitiated') {
-            return <ApproveActionButton chat={chat} />
+        if (invitationStatus === 'connectionInitiated' || invitationStatus === 'guestApprovePendingForHost') {
+            return <ApproveActionButton chat={chat} isJoinedEvent={isJoinedEvent || false} />
         }
-
     }
+
+
+    const renderActionButtonForGuest = () => {
+        if (invitationStatus === 'attendingComplete') {
+            return <ConfirmedBadge />
+        }
+        if (invitationStatus === 'guestApprovePendingForHost') {
+            return <S.WaitingContainer>
+                <ActivityIndicator size="small" color={whiteColor} />
+                <S.WaitingText>Waiting</S.WaitingText>
+            </S.WaitingContainer>
+        }
+        if (invitationStatus === 'connectionInitiated' || invitationStatus === 'hostApprovePendingForGuest') {
+            return <ApproveActionButton chat={chat} isJoinedEvent={isJoinedEvent || false} />
+        }
+    }
+
+
 
     return (
         <S.HeaderContainer style={{ paddingTop: insets.top }}>
@@ -98,7 +115,7 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent }: ChatWindowHeaderProps)
                                 </S.InvitationStatusTextContainer>
                             </S.InvitationLeftContainer>
                             <S.InvitationRightContainer>
-                                {renderActionButton()}
+                                {isLoading ? <ActivityIndicator size="small" color={whiteColor} /> : isJoinedEvent ? renderActionButtonForGuest() : renderActionButtonForHost()}
                             </S.InvitationRightContainer>
                         </S.InvitationStatusContainer>
                     </TouchableOpacity>
@@ -107,6 +124,7 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent }: ChatWindowHeaderProps)
                             isVisible={isDropdownVisible}
                             onClose={() => setIsDropdownVisible(false)}
                             invitationStatus={invitationStatus || ''}
+                            isJoinedEvent={isJoinedEvent || false}
                         />
                     </S.DropdownWrapper>
                 </S.HeaderCollapsedContainer>

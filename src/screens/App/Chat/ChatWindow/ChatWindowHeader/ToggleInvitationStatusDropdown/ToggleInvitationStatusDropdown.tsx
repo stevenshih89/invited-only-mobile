@@ -8,33 +8,51 @@ interface ToggleInvitationStatusDropdownProps {
     isVisible: boolean;
 
     onClose: () => void;
-    invitationStatus: string; // Or maybe just pass all possible statuses
+    invitationStatus: string;
+    isJoinedEvent: boolean;
 }
 
 // Example statuses - replace with actual data from props or context
-const statuses: { status: string, description: string }[] = [{ status: 'Invited, Connection Made', description: 'Invitation received and connection is established' }, { status: 'Host Approve', description: 'You need to approve the guest' }, { status: 'Pending Guest Confirmation', description: 'The guest needs to accept the invitation' }, { status: 'Attending Confirmed', description: 'The guest has accepted the invitation' }];
-export const getCurrentStatus = (invitationStatus: string) => {
-    switch (invitationStatus) {
-        case 'connectionInitiated':
-            return 1;
-        case 'hostApprovePendingForGuest':
-            return 2;
-        case 'guestApprovePendingForHost':
-            return 3;
-        case 'attendingComplete':
-            return 4;
-        case 'completed':
-            return 5;
-        case 'rejected':
+const hostStatuses: { status: string, description: string }[] = [{ status: 'Invited, Connection Made', description: 'Invitation received and connection is established' }, { status: 'Host Approve', description: 'You need to approve the guest' }, { status: 'Pending Guest Confirmation', description: 'The guest needs to accept the invitation' }, { status: 'Attending Confirmed', description: 'The guest has accepted the invitation' }];
+const guestStatuses: { status: string, description: string }[] = [{ status: 'Invited, Connection Made', description: 'Invitation received and connection is established' }, { status: 'Guest Approve', description: 'You need to approve the host' }, { status: 'Pending Host Confirmation', description: 'The host needs to accept the invitation' }, { status: 'Attending Confirmed', description: 'The host has accepted the invitation' }];
+export const getCurrentStatus = (invitationStatus: string, isJoinedEvent: boolean) => {
+
+    if (!isJoinedEvent) {
+        switch (invitationStatus) {
+            case 'connectionInitiated':
+                return 1;
+            case 'hostApprovePendingForGuest':
+                return 2;
+            case 'guestApprovePendingForHost':
+                return 2;
+            case 'attendingComplete':
+                return 4;
+            case 'completed':
+                return 5;
+            case 'rejected':
+                return 6;
+        }
+    } else {
+        switch (invitationStatus) {
+            case 'connectionInitiated':
+                return 1;
+            case 'guestApprovePendingForHost':
+                return 2;
+            case 'hostApprovePendingForGuest':
+                return 2;
+            case 'attendingComplete':
+                return 4;
+        }
     }
 }
 
 export const ToggleInvitationStatusDropdown: React.FC<ToggleInvitationStatusDropdownProps> = ({
     isVisible,
     invitationStatus,
+    isJoinedEvent
 }) => {
-    const currentStatus = getCurrentStatus(invitationStatus);
-
+    const currentStatus = getCurrentStatus(invitationStatus, isJoinedEvent);
+    const statuses = isJoinedEvent ? guestStatuses : hostStatuses;
     return (
         <Collapsible collapsed={!isVisible} align="center">
             <S.DropdownContainer
