@@ -1,5 +1,5 @@
 import React from 'react';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
 import useCreateEventFlowStep from './hooks/useCreateEventFlowStep';
 import * as S from './CreateEvent.style';
 import CreateEventFlowStepper from './Components/CreateEventFlowStepper/CreateEventFlowStepper';
@@ -7,11 +7,10 @@ import GuestInvitationStep from './Components/GuestInvitationStep/GuestInvitatio
 import EventPlaceStep from './Components/EventPlaceStep/EventPlaceStep';
 import PreviewEventStep from './Components/PreviewEventStep/PreviewEventStep';
 
-import {handleNextStep, initialValues, validationSchema} from './CreateEvent.form';
+import { handleNextStep, initialValues, validationSchema } from './CreateEvent.form';
 import useCreateEvent from './hooks/useCreateEvent';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
-import {useAppNavigation, useNavigationState} from 'hooks/useAppNavigation';
 
 export interface CreateEventFormValues {
   male: number;
@@ -31,11 +30,9 @@ export interface CreateEventFormValues {
 }
 
 const CreateEventFlow = () => {
-  const {currentStep, nextStep, backStep} = useCreateEventFlowStep();
-  const {createEvent, isLoading} = useCreateEvent();
-  const {navigate} = useAppNavigation();
-  const screens = useNavigationState(state => state.routes);
-  console.log('screens', screens);
+  const { currentStep, nextStep, backStep } = useCreateEventFlowStep();
+  const { createEvent, isLoading } = useCreateEvent();
+
   return (
     <Formik<CreateEventFormValues>
       validationSchema={validationSchema}
@@ -43,7 +40,7 @@ const CreateEventFlow = () => {
         createEvent(values);
       }}
       initialValues={initialValues}>
-      {({submitForm, isSubmitting, values, validateForm}) => (
+      {({ submitForm, isSubmitting, values, validateForm }) => (
         <DefaultBackground>
           {isLoading || isSubmitting ? (
             <DefaultBackground>

@@ -16,6 +16,7 @@ export const ChatWindow = () => {
     const params = route.params as ChatWindowRouteParams;
     const chat = params?.chat;
     const chatId = `${chat?.eventId}_${chat?.hostId}_${chat?.guestId}`;
+    const isJoinedEvent = params?.isJoinedEvent;
     const { chatMessages } = useRealtimeChatMessages(chatId);
     const { user } = useUser();
     const { newMessage, setNewMessage, scrollViewRef, handleSendMessage } = useChatWindowMutations({
@@ -40,6 +41,7 @@ export const ChatWindow = () => {
             {chat && (
                 <ChatWindowHeader
                     chat={chat}
+                    isJoinedEvent={isJoinedEvent}
                 />
             )}
 
@@ -57,8 +59,8 @@ export const ChatWindow = () => {
                     )}
                     {sortedChatMessages?.map((item) => {
                         const isOwn = item.senderId === user?.uid;
-                        const avatarUrl = isOwn ? user?.facePhoto : chat?.guestImageUrl;
-                        const senderName = isOwn ? user?.name : chat?.guestName;
+                        const avatarUrl = isOwn ? user?.facePhoto : isJoinedEvent ? chat?.hostImageUrl : chat?.guestImageUrl;
+                        const senderName = isOwn ? user?.name : isJoinedEvent ? chat?.hostName : chat?.guestName;
 
                         return (
                             <S.MessageContainer key={item.timestamp} isOwn={isOwn}>

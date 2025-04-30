@@ -6,13 +6,15 @@ import type { paths } from './v1';
 
 const myMiddleware: Middleware = {
   onError: error => {
+    if (error.message.includes('Aborted')) {
+      return;
+    }
     console.error('error while fetching', error);
   },
   async onRequest({ request }) {
     const headers = new Headers();
     headers.append('Authorization', `Basic ${BACKEND_BASE_64_AUTH}`);
     request.headers.set('Authorization', `Basic ${BACKEND_BASE_64_AUTH}`);
-    console.log('request', request);
     return request;
   },
 };

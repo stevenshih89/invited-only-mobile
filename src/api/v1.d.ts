@@ -403,6 +403,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/chat/user/guest/{guestId}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get chats for a guest */
+        get: operations["getChatsForGuest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/chat/event/{eventId}": {
         parameters: {
             query?: never;
@@ -1944,6 +1961,42 @@ export interface operations {
             };
         };
     };
+    getChatsForGuest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                guestId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of chats for the guest. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Chat"][];
+                };
+            };
+            /** @description Bad request. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getChatsForEvent: {
         parameters: {
             query?: never;
@@ -2371,6 +2424,7 @@ export enum ApiPaths {
     getFirebaseCollectionNames = "/config/firebase/collections",
     createChat = "/chat",
     getChatsForUser = "/chat/user/:userId",
+    getChatsForGuest = "/chat/user/guest/:guestId/",
     getChatsForEvent = "/chat/event/:eventId",
     createMessage = "/chat/message/:chatId",
     getMessages = "/chat/message/:chatId",

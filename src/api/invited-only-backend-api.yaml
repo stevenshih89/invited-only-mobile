@@ -843,6 +843,32 @@ paths:
           description: Bad request.
         '500':
           description: Internal server error.
+  /chat/user/guest/{guestId}/:
+    get:
+      summary: Get chats for a guest
+      operationId: getChatsForGuest
+      tags:
+        - Chat
+      parameters:
+        - name: guestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of chats for the guest.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Chat'
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+
   /chat/event/{eventId}:
     get:
       summary: Get chats for an event

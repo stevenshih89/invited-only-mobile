@@ -12,13 +12,14 @@ import { useAuthStore } from 'src/store/authStore';
 
 const IOWrapper = () => {
   const { userMetadata: user } = useAuthStore();
-  console.log('user', user);
   const { data: events, isLoading } = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
     params: {
       path: {
         hostId: user?.uid || '',
       },
     },
+  }, {
+    refetchInterval: 5000
   });
 
   if (isLoading || !events) {

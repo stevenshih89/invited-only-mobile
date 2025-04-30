@@ -8,22 +8,22 @@ import { useAuthStore } from 'src/store/authStore';
 
 interface ChatItemProps {
     chat: components['schemas']['Chat'];
+    isJoinedEvent: boolean;
 }
 
-export const ChatItem = ({ chat }: ChatItemProps) => {
+export const ChatItem = ({ chat, isJoinedEvent }: ChatItemProps) => {
     const navigation = useAppNavigation();
     const { userMetadata } = useAuthStore.getState();
     const userLastSeen = chat.userLastSeen?.some((user) => user.userId === userMetadata.uid);
-    console.log('chat', chat);
     return (
         <StrictMode>
             <TouchableOpacity onPress={() => {
-                navigation.navigate('/chat/chat-window', { chat });
+                navigation.navigate('/chat/chat-window', { chat, isJoinedEvent });
             }}>
                 <S.Container>
                     <S.NarrowLeftContainer>
                         <S.AvatarContainer>
-                            <S.AvatarImage source={{ uri: chat.guestImageUrl }} />
+                            <S.AvatarImage source={{ uri: isJoinedEvent ? chat.hostImageUrl : chat.guestImageUrl }} />
                         </S.AvatarContainer>
                     </S.NarrowLeftContainer>
                     <S.WideRightContainer>

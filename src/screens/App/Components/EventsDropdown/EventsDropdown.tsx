@@ -1,15 +1,16 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import * as S from './EventsDropdown.style';
 import ArrowDown from 'src/assets/images/icons/arrow-down.svg';
 import ArrowUp from 'src/assets/images/icons/arrow-up-thin.svg';
-import {components} from 'src/api/v1';
+import { components } from 'src/api/v1';
 
 interface EventsDropDownProps {
   events: components['schemas']['EventData'][];
   selectedEvent: components['schemas']['EventData'];
   onEventSelect: (event: components['schemas']['EventData']) => void;
+  isChatDropdown?: boolean;
 }
-export const EventsDropdown = ({events, onEventSelect, selectedEvent}: EventsDropDownProps) => {
+export const EventsDropdown = ({ events, onEventSelect, selectedEvent, isChatDropdown = false }: EventsDropDownProps) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const sortedEvents = [...events].sort((a, b) => {
@@ -35,13 +36,23 @@ export const EventsDropdown = ({events, onEventSelect, selectedEvent}: EventsDro
     setDropdownVisible(false);
   };
 
+  if (isChatDropdown) {
+    sortedEvents.push({
+      uid: 'joined-events',
+      name: 'Joined Events',
+      priority: 0,
+      createdAt: new Date().toISOString(),
+    })
+  }
+
   const selectedIndex = sortedEvents.findIndex(event => event.uid === selectedEvent?.uid);
+
   return (
     <S.DropdownContainer>
       <S.DropdownButton onPress={toggleDropdown}>
         <S.DropdownIcon>{dropdownVisible ? <ArrowUp /> : <ArrowDown />}</S.DropdownIcon>
         <S.DropdownText numberOfLines={1}>{selectedEvent ? selectedEvent.name : 'Select Event'}</S.DropdownText>
-        {selectedEvent && (
+        {selectedEvent && selectedEvent.uid !== 'joined-events' && (
           <S.EventCounter>
             {selectedIndex + 1}/{events.length}
           </S.EventCounter>
@@ -51,7 +62,7 @@ export const EventsDropdown = ({events, onEventSelect, selectedEvent}: EventsDro
       {dropdownVisible && (
         <S.DropdownMenu>
           {sortedEvents.map((event, index) => (
-            <S.DropdownItem key={event.uid} onPress={() => handleEventSelect(event)}>
+            <S.DropdownItem key={index} onPress={() => handleEventSelect(event)}>
               <S.DropdownItemText>{event.name}</S.DropdownItemText>
             </S.DropdownItem>
           ))}

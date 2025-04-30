@@ -14,6 +14,7 @@ import { whiteColor } from "constants/colors";
 
 interface ChatWindowHeaderProps {
     chat: components['schemas']['Chat'];
+    isJoinedEvent?: boolean;
 }
 
 type connecitonStatus = 'connectionInitiated' | 'hostApprovePendingForGuest' | 'guestApprovePendingForHost' | 'attendingComplete' | 'completed' | 'rejected' | undefined;
@@ -39,17 +40,14 @@ const getInvitationStatus = (connectionStatus: components['schemas']['Connection
     if (connectionStatus?.hostConfirm && connectionStatus?.guestConfirm) {
         return 'rejected';
     }
-
-
 }
 
-export const ChatWindowHeader = ({ chat }: ChatWindowHeaderProps) => {
+export const ChatWindowHeader = ({ chat, isJoinedEvent }: ChatWindowHeaderProps) => {
     const { goBack } = useAppNavigation();
     const insets = useSafeAreaInsets();
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
     const { connectionStatus } = useConnectionRealtimeStatus({ chatId: chat.id || '' });
     const invitationStatus = getInvitationStatus(connectionStatus);
-    console.log('invitationStatus', invitationStatus);
     const toggleDropdown = () => {
         setIsDropdownVisible(!isDropdownVisible);
     };
@@ -78,9 +76,9 @@ export const ChatWindowHeader = ({ chat }: ChatWindowHeaderProps) => {
                 </S.BackButton>
 
                 <S.ProfileContainer>
-                    <S.Avatar source={{ uri: chat.guestImageUrl }} />
+                    <S.Avatar source={{ uri: isJoinedEvent ? chat.hostImageUrl : chat.guestImageUrl }} />
                     <S.NameContainer>
-                        <S.NameText>{chat.guestName}</S.NameText>
+                        <S.NameText>{isJoinedEvent ? chat.hostName : chat.guestName}</S.NameText>
                     </S.NameContainer>
                 </S.ProfileContainer>
                 <S.MoreButton>
