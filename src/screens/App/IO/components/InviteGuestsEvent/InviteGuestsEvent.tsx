@@ -94,7 +94,7 @@ const InviteGuestsEvent = ({ selectedEvent, cardsToShow, isLoading, onSwipeLeft,
       </S.Container>
       {matchedCard && (
         <NewConnectionModal
-          guest={matchedCard}
+          cardData={matchedCard}
           visible={isModalVisible}
           onClose={closeModal}
         />

@@ -2,6 +2,9 @@ import { FC, ReactElement } from 'react';
 
 import { ScrollView } from 'react-native-gesture-handler';
 import usePersistentCardSwipe from '../IO/hooks/usePersistentCardSwipe';
+import NewConnectionModal from '../IO/components/InviteGuestsEvent/Components/NewConnectionModal/NewConnectionModal';
+import { useNewConnectionModal } from '../IO/components/InviteGuestsEvent/hooks/useNewConnectionModal';
+import useSwipeCardAction from '../Components/Card/hooks/useSwipeCardAction';
 import JoinEventsHeader from './Components/JoinEventsHeader/JoinEventsHeader';
 import ExploreEventsEmptyFallback from './Components/ExploreEventsEmptyFallback/ExploreEventsEmptyFallback';
 import * as S from './JoinEvents.style';
@@ -27,7 +30,6 @@ const JoinEvents: FC<Props> = ({ events }): ReactElement => {
     eventId: "1"
   });
 
-  // Filter out duplicates based on uid before mapping
   const uniqueEventCards = currentEventCards?.reduce((acc: components['schemas']['EventData'][], current) => {
     if (!acc.find(item => item.uid === current.uid)) {
       acc.push(current);
@@ -45,6 +47,7 @@ const JoinEvents: FC<Props> = ({ events }): ReactElement => {
 
               {uniqueEventCards.map((event, index) => (
                 <EventCard
+                  uniqueEventCards={uniqueEventCards}
                   key={event.uid}
                   event={event}
                   index={index}

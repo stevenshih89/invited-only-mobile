@@ -5,11 +5,10 @@ import { components } from 'src/api/v1';
 
 interface ManageEventGuestInfoProps {
     request: components['schemas']['ConnectionRequest'];
-    key: number;
     title: string;
 }
 
-export const ManageEventGuestInfo = ({ request, key, title }: ManageEventGuestInfoProps) => {
+export const ManageEventGuestInfo = ({ request, title }: ManageEventGuestInfoProps) => {
     const { data: userDetails, isLoading } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
         params: {
             path: { id: request.guestId }
@@ -17,14 +16,14 @@ export const ManageEventGuestInfo = ({ request, key, title }: ManageEventGuestIn
     })
 
     if (isLoading) {
-        return <S.PersonContainer key={key}>
+        return <S.PersonContainer>
             <ActivityIndicator />
         </S.PersonContainer>
     }
 
 
     return (
-        <S.PersonContainer key={key}>
+        <S.PersonContainer>
             <S.ProfileImageContainer>
                 <S.ProfileImage source={{ uri: userDetails?.photos?.[0]?.image }} />
             </S.ProfileImageContainer>

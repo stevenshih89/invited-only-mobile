@@ -1,4 +1,5 @@
 import styled from "styled-components/native";
+import FastImage from "react-native-fast-image";
 import { whiteColor } from "constants/colors";
 import { Satoshi400, Satoshi500, Satoshi700 } from "constants/fonts";
 
@@ -42,10 +43,9 @@ export const AvatarContainer = styled.View`
   flex-grow: 0;
 `;
 
-export const AvatarImage = styled.Image`
+export const AvatarImage = styled(FastImage)`
   width: 66px;
   height: 66px;
-
   border-radius: 66px;
   background-color: ${whiteColor};
 `;

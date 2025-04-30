@@ -36,15 +36,6 @@ export const EventsDropdown = ({ events, onEventSelect, selectedEvent, isChatDro
     setDropdownVisible(false);
   };
 
-  if (isChatDropdown) {
-    sortedEvents.push({
-      uid: 'joined-events',
-      name: 'Joined Events',
-      priority: 0,
-      createdAt: new Date().toISOString(),
-    })
-  }
-
   const selectedIndex = sortedEvents.findIndex(event => event.uid === selectedEvent?.uid);
 
   return (

@@ -1,8 +1,9 @@
+import FastImage from 'react-native-fast-image';
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {whiteColor} from 'constants/colors';
-import {screenHeight, screenWidth} from 'constants/common';
-import {Satoshi400} from 'constants/fonts';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { whiteColor } from 'constants/colors';
+import { screenHeight, screenWidth } from 'constants/common';
+import { Satoshi400 } from 'constants/fonts';
 
 export const Container = styled.View`
   width: 100%;
@@ -29,7 +30,7 @@ export const ImageWrapper = styled.View`
   width: ${screenWidth / 3 - 28}px;
 `;
 
-export const Image = styled.Image`
+export const Image = styled(FastImage)`
   width: ${screenWidth / 3 - 42}px;
   height: ${screenWidth / 3 - 42}px;
   border-radius: 10px;

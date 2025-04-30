@@ -1,10 +1,9 @@
-import {RootStackParamList} from 'typescript/types';
+import { RootStackParamList } from 'typescript/types';
 // Stacks paths
 const bottomTabsStackPath = '/bottom-tabs-stack';
 const notificationsStackPath = '/notifications-stack';
 const eventCreatingStackPath = '/event-creating-stack';
 const eventRequestStackPath = '/events/requests';
-const eventManageStackPath = '/events/manage-event';
 const commonStackPath = '/common-stack';
 
 const demoFlowStackPath = '/demo-flow-stack';

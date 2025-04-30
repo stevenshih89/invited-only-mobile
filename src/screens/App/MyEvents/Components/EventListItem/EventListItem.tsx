@@ -67,9 +67,9 @@ const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEv
 
       <S.ContentContainer>
         <S.InfoContainer>
-          <S.DateText>{formatDate(event.createdAt || '')}</S.DateText>
-          <S.EventNameText>{event.name}</S.EventNameText>
-          {event.location && <S.LocationText>{event.location}</S.LocationText>}
+          <S.DateText>{formatDate(event?.createdAt || '')}</S.DateText>
+          <S.EventNameText>{event?.name}</S.EventNameText>
+          {event?.location && <S.LocationText>{event?.location}</S.LocationText>}
         </S.InfoContainer>
         <S.ActionsContainer disabled={true}>
           <S.ViewRequestsButton
@@ -86,7 +86,7 @@ const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEv
               </S.RequestCountBadge>
             ) : null}
           </S.ViewRequestsButton>
-          <S.ManageButton onPress={() => navigate('/events/manage-event', { eventId: event.uid })} activeOpacity={0.7} disabled={!isReview}  >
+          <S.ManageButton onPress={() => navigate('/events/manage-event', { eventId: event?.uid })} activeOpacity={0.7} disabled={!isReview}  >
             <ManageEventIcon />
           </S.ManageButton>
         </S.ActionsContainer>

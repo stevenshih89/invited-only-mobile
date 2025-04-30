@@ -19,16 +19,22 @@ const Chat = () => {
   if (isEventsLoading) {
     return <AppLoader />;
   }
-  console.log(events);
-  if (events?.length === 0) {
+  const chatEvents = [...(events ?? []), {
+    uid: 'joined-events',
+    name: 'Joined Events',
+    priority: 0,
+    createdAt: new Date().toISOString(),
+  }]
+
+  if (chatEvents?.length === 0) {
     return (
       <S.ChatContainer>
         <EmptyStateChatFallback emptyType="no-events" />
         <ModalLockedAccount />
       </S.ChatContainer>
     );
-  } else if (events) {
-    return <EventChats events={events} />;
+  } else if (chatEvents?.length > 0) {
+    return <EventChats events={chatEvents} />;
 
   }
 };

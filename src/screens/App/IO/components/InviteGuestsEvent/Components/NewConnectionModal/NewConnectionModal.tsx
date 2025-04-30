@@ -12,13 +12,13 @@ import { Stepper } from 'screens/App/Components/Stepper/Stepper';
 interface NewConnectionModalProps {
     visible: boolean;
     onClose: () => void;
-    guest: components['schemas']['User'];
+    cardData: components['schemas']['User'] | components['schemas']['EventData'] | undefined;
 }
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible, onClose, guest }) => {
+export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible, onClose, cardData }) => {
     const { user } = useUser();
 
     const { card1AnimatedStyle, card2AnimatedStyle, stepperAnimatedStyle, buttonAnimatedStyle } =
@@ -58,12 +58,16 @@ export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible,
                                 </Card>
                             </Animated.View>
                             <Animated.View style={card2AnimatedStyle}>
-                                <Card backgroundUrls={guest.photos || []} index={0} distanceFromTop={0} uid={guest.uid || ''} isTopCard={true} isStatic showDots={false} disabled={true}>
-                                    <S.GuestInfoContainer>
-                                        <S.GuestName>{guest.name}</S.GuestName>
-                                        {guest.showAge && <S.GuestAge>, {calculateAge(guest.birthday || '')}</S.GuestAge>}
-                                    </S.GuestInfoContainer>
-                                </Card>
+                                {cardData && 'photos' in cardData && (
+                                    <Card backgroundUrls={cardData.photos || []} index={0} distanceFromTop={0} uid={cardData.uid || ''} isTopCard={true} isStatic showDots={false} disabled={true}>
+                                        <S.GuestInfoContainer>
+                                            <S.GuestName>{cardData.name}</S.GuestName>
+                                            {'birthday' in cardData && cardData.showAge && (
+                                                <S.GuestAge>{calculateAge(cardData.birthday || '')}</S.GuestAge>
+                                            )}
+                                        </S.GuestInfoContainer>
+                                    </Card>
+                                )}
                             </Animated.View>
                         </S.CardContainer>
                     </S.CardsContainer>

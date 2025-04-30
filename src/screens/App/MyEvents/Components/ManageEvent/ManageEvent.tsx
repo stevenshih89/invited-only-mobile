@@ -1,34 +1,56 @@
-import { ActivityIndicator } from "react-native"
-import { useRoute, RouteProp } from "@react-navigation/native";
-import { useState } from "react";
+import React from 'react';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native'; // To get eventId from params
+
 import * as S from './ManageEvent.style';
-import { useManageEventDetails } from "./hooks/useManageEventDetails";
-import ManageEventCollapsible from "./ManageEventCollapsible/ManageEventCollapsible";
-import { RootStackParamList } from "typescript/types";
+import ManageEventConnections from './ManageEventConnections/ManageEventConnections';
+import ManageEventInfo from './ManageEventInfo/ManageEventInfo';
+import { Satoshi500 } from 'constants/fonts';
+import { useAppNavigation } from 'src/hooks/useAppNavigation';
+
+type ManageEventRouteParams = {
+    ManageEvent: {
+        eventId: string;
+    };
+};
+
+const Tab = createMaterialTopTabNavigator();
 
 export const ManageEvent = () => {
-    const { params } = useRoute<RouteProp<RootStackParamList, '/events/manage-event'>>();
-    const { eventRequests, isLoading } = useManageEventDetails({ eventId: params?.eventId ?? '' });
-    const [isOpen, setIsOpen] = useState({
-        "NewConnections": false,
-        "Approved": false,
-        "Attending": false,
-        "NotAttending": false
-    });
-
-    if (isLoading) {
-        return <S.Container>
-            <ActivityIndicator />
-        </S.Container>
-    }
-
+    const route = useRoute<RouteProp<ManageEventRouteParams, 'ManageEvent'>>();
+    const { eventId } = route.params;
+    const navigation = useAppNavigation();
 
     return (
         <S.Container>
-            <ManageEventCollapsible toggle={() => setIsOpen({ ...isOpen, "NewConnections": !isOpen["NewConnections"] })} title="New Connections" eventRequests={eventRequests?.filter(request => request.status === 'connection-complete')} isOpen={isOpen["NewConnections"]} />
-            <ManageEventCollapsible toggle={() => setIsOpen({ ...isOpen, "Approved": !isOpen["Approved"] })} title="Approved" eventRequests={eventRequests?.filter(request => request.status === 'pending-confirmation')} isOpen={isOpen["Approved"]} />
-            <ManageEventCollapsible toggle={() => setIsOpen({ ...isOpen, "Attending": !isOpen["Attending"] })} title="Attending" eventRequests={eventRequests?.filter(request => request.status === 'confirmation-complete')} isOpen={isOpen["Attending"]} />
-            <ManageEventCollapsible toggle={() => setIsOpen({ ...isOpen, "NotAttending": !isOpen["NotAttending"] })} title="Not Attending" eventRequests={eventRequests?.filter(request => request.status === 'pending-attendance')} isOpen={isOpen["NotAttending"]} />
+            <S.HeaderContainer>
+                <S.BackButton onPress={() => navigation.goBack()}>
+                    <S.StyledBackButtonIcon />
+                </S.BackButton>
+                <S.HeaderTitle>Manage Event</S.HeaderTitle>
+                <S.EditButton>
+                    <S.StyledEditButtonText>Edit</S.StyledEditButtonText>
+                </S.EditButton>
+            </S.HeaderContainer>
+            <Tab.Navigator
+                screenOptions={{
+                    tabBarLabelStyle: { fontSize: 16, textTransform: 'capitalize', fontFamily: Satoshi500 },
+                    tabBarStyle: { backgroundColor: 'black' },
+                    tabBarIndicatorStyle: { backgroundColor: 'white' },
+                    tabBarActiveTintColor: 'white',
+                    tabBarInactiveTintColor: 'gray',
+                    sceneStyle: { paddingTop: 20 },
+                }}
+            >
+                <Tab.Screen name="Guest List">
+                    {(props) => <ManageEventConnections {...props} eventId={eventId} />}
+                </Tab.Screen>
+                <Tab.Screen name="Event Info">
+                    {(props) => <ManageEventInfo {...props} eventId={eventId} />}
+                </Tab.Screen>
+            </Tab.Navigator>
         </S.Container>
-    )
-}   
+    );
+};
+
+export default ManageEvent;   

@@ -1,3 +1,4 @@
+import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import { Satoshi400, Satoshi500 } from "src/constants/fonts";
 import { screenHeight, screenWidth } from "constants/common";
@@ -52,7 +53,7 @@ export const ProfileContainer = styled.View`
     gap: 12px;
 `;
 
-export const Avatar = styled.Image`
+export const Avatar = styled(FastImage)`
     width: 40px;
     height: 40px;
     border-radius: 20px;

@@ -9,17 +9,18 @@ interface UseNewConnectionModalProps {
 interface UseNewConnectionModalResult {
     isModalVisible: boolean;
     closeModal: () => void;
-    matchedCard: components['schemas']['User'] | undefined;
+    matchedCard: components['schemas']['User'] | components['schemas']['EventData'] | undefined;
 }
 
 export const useNewConnectionModal = ({ swipeDataRes, allCards }: UseNewConnectionModalProps): UseNewConnectionModalResult => {
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [matchedCard, setMatchedCard] = useState<components['schemas']['User'] | undefined>();
+    const [matchedCard, setMatchedCard] = useState<components['schemas']['User'] | components['schemas']['EventData'] | undefined>();
 
     useEffect(() => {
         if (swipeDataRes?.status === 'connection-complete') {
             const matchedCard = allCards.find((card) => card.uid === swipeDataRes?.guestId);
-            setMatchedCard(matchedCard);
+            const matchedEvent = allCards.find((card) => card.uid === swipeDataRes?.eventId);
+            setMatchedCard(matchedCard || matchedEvent);
             setIsModalVisible(true);
         }
     }, [swipeDataRes]);

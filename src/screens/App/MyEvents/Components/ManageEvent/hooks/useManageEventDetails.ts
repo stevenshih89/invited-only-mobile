@@ -13,6 +13,8 @@ export const useManageEventDetails = ({ eventId }: UseManageEventDetailsProps) =
                 eventId: eventId,
             },
         },
+    }, {
+        refetchInterval: 5000,
     });
 
     return {

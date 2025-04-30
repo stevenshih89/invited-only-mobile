@@ -38,7 +38,7 @@ export const ChatItem = ({ chat, isJoinedEvent }: ChatItemProps) => {
                         <S.InnerRowContainer>
                             <S.UnreadBadgeAndNameContainer>
                                 <S.NameText>{isJoinedEvent ? chat.hostName : chat.guestName}</S.NameText>
-                                {chat.unreadMessages && chat.unreadMessages > 0 ? ( // Use ternary
+                                {chat.unreadMessages && chat.unreadMessages > 0 ? (
                                     <S.UnreadBadge>
                                         <S.UnreadCount>
                                             {chat.unreadMessages}
