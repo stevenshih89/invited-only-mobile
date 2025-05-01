@@ -45,9 +45,8 @@ export const getFcmToken = async ({ userPhoneUids }: { userPhoneUids: string }) 
   return token;
 };
 
-//method was called on  user register with firebase FCM for notification
+
 export async function registerAppWithFCM() {
-  // // console.log('registerAppWithFCM status', messaging().isDeviceRegisteredForRemoteMessages);
   if (!messaging().isDeviceRegisteredForRemoteMessages) {
     await messaging()
       .registerDeviceForRemoteMessages()
@@ -85,7 +84,6 @@ export const checkApplicationNotificationPermission = async ({
 }) => {
   const authStatus = await messaging().requestPermission();
 
-  // console.warn('Authorization status1:', authStatus);
 
   const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
@@ -101,11 +99,9 @@ export const checkApplicationNotificationPermission = async ({
     });
 };
 
-//method was called to listener events from firebase for notification triger
+
 export function registerListenerWithFCM() {
-  // console.warn('registerListenerWithFCM');
   const unsubscribe = messaging().onMessage(async remoteMessage => {
-    // console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
     if (remoteMessage?.notification?.title && remoteMessage?.notification?.body) {
       onDisplayNotification(
         remoteMessage.notification?.title,
@@ -154,7 +150,6 @@ export function registerListenerWithFCM() {
   return unsubscribe;
 }
 
-//method was called to display notification
 async function onDisplayNotification(
   title: string,
   body: string,
@@ -187,16 +182,12 @@ async function onDisplayNotification(
   }
 }
 
-// it would be called when the app in foreground state
 export function onMatchNotificationSubscription(
   handler: (message: FirebaseMessagingTypes.RemoteMessage) => void,
   setRejectVisible: () => void,
   setAcceptModalVisible: () => void,
 ) {
   return messaging().onMessage(async remoteMessage => {
-    // console.warn('onMessage Received : ', JSON.stringify(remoteMessage));
-
-    // await notifee.requestPermission();
     if (remoteMessage.data?.type === 'match') {
       handler(remoteMessage);
     }

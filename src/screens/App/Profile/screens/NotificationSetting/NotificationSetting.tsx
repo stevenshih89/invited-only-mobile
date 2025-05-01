@@ -28,7 +28,6 @@ const NotificationSetting: FC<NotificationSettingProps> = ({ route }) => {
     setIsVisibleTurnOffNotificationsModal,
   } = useNotificationSetting(route);
   const { user: userData } = useUser();
-
   return (
     <S.SafeArea>
       <S.Container>

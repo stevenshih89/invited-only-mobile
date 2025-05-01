@@ -141,6 +141,52 @@ paths:
           description: User not found for the given phone number.
         '500':
           description: Internal server error.
+  /auth/messaging/token:
+    post:
+      summary: Get messaging token
+      operationId: getMessagingToken
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  description: The UID of the user.
+                token:
+                  type: string
+                  description: The token to be used for messaging.
+              required:
+                - uid
+                - token
+      responses:
+        '200':
+          description: Messaging token issued.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: Short-lived JWT access token.
+                  refreshToken:
+                    type: string
+                    description: Long-lived refresh token (used to get new access tokens).
+                required:
+                  - accessToken
+                  - refreshToken
+        '400':
+          description: Bad request (e.g., missing parameters).
+        '401':
+          description: Unauthorized (e.g., invalid or expired refresh token).
+        '500':
+          description: Internal server error.
+
   /events/user/{userId}:
     get:
       summary: Get events visible to a specific user

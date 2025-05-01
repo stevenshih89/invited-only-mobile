@@ -1,6 +1,7 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
-import {UserMutations} from '../apiv2/mutations/userMutations.ts';
+import { UserMutations } from '../apiv2/mutations/userMutations.ts';
+import useMessaging from './useMessaging.ts';
 
 export const useNotificationSetting = (route: any) => {
   const notificationSettings = route?.params?.params?.notificationSettings;
@@ -14,9 +15,10 @@ export const useNotificationSetting = (route: any) => {
   const [superJoin, setSuperJoin] = useState(notificationSettings?.superJoin);
   const [match, setMatch] = useState(notificationSettings?.match);
   const [isVisibleTurnOffNotificationsModal, setIsVisibleTurnOffNotificationsModal] = useState(false);
-  const {mutate: updateNotificationsSettingsMutation} = UserMutations.useUserUpdateNotificationsSettings();
-
+  const { mutate: updateNotificationsSettingsMutation } = UserMutations.useUserUpdateNotificationsSettings();
+  const { setupNotifications } = useMessaging();
   const handleChangeAllNotification = async (val: boolean) => {
+    setupNotifications();
     if (val) {
       setJoinedEvent(val);
       setAllNotification(val);

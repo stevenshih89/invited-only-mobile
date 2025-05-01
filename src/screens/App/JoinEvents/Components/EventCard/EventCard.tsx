@@ -77,7 +77,6 @@ const EventCard = ({ onInvite, onReject, isTopCard, event, index, topIndex, uniq
 
   const totalGuests = (event.female || 0) + (event.male || 0) + (event.femaleFriend || 0);
 
-  console.log('event', event);
 
   const date = event.date ? new Date(event.date) : undefined;
   return (

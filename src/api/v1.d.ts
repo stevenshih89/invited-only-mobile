@@ -55,6 +55,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/messaging/token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Get messaging token */
+        post: operations["getMessagingToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/events/user/{userId}": {
         parameters: {
             query?: never;
@@ -1006,6 +1023,61 @@ export interface operations {
             };
             /** @description User not found for the given phone number. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getMessagingToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description The UID of the user. */
+                    uid: string;
+                    /** @description The token to be used for messaging. */
+                    token: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Messaging token issued. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description Short-lived JWT access token. */
+                        accessToken: string;
+                        /** @description Long-lived refresh token (used to get new access tokens). */
+                        refreshToken: string;
+                    };
+                };
+            };
+            /** @description Bad request (e.g., missing parameters). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized (e.g., invalid or expired refresh token). */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2399,6 +2471,7 @@ export enum ApiPaths {
     sendOtp = "/auth/send-otp",
     verifyOtp = "/auth/verify-otp",
     refreshAccessToken = "/auth/refresh",
+    getMessagingToken = "/auth/messaging/token",
     getEventsForUser = "/events/user/:userId",
     getHostEvents = "/events/host/:hostId",
     createEvent = "/events",

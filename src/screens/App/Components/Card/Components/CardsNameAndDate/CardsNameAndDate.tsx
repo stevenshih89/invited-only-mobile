@@ -20,7 +20,7 @@ const CardsNameAndDate = ({ eventName, date, hour }: Props) => {
 
     if (date) {
         const dateObj = new Date(date);
-        if (!isNaN(dateObj.getTime())) { // Check if the date is valid
+        if (!isNaN(dateObj.getTime())) {
             isValidDate = true;
             formattedDate = dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'long' });
         }

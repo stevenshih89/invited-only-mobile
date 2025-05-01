@@ -12,15 +12,13 @@ import { useAppNavigation } from 'hooks/useAppNavigation';
 import { addPhotosPath } from 'constants/pathLocations';
 import AuthProgress from 'components/AuthProgress';
 import { useAuthStore } from 'src/store/authStore';
-import { getFcmToken } from 'helpers/fcmHelper';
-import { useFirebaseCollectionsNameQuery } from 'src/apiv2/queries/appSettingsQueries';
+import useMessaging from 'hooks/useMessaging';
 
 const TurnNotifications: FC = (): JSX.Element => {
   const [notifications, setNotifications] = useState<boolean>(true);
-  const { data: collectionsNames } = useFirebaseCollectionsNameQuery();
   const { onBoarding, setOnBoarding } = useAuthStore();
   const navigation = useAppNavigation();
-
+  const { setupNotifications } = useMessaging();
 
   const handleNext = async () => {
     setOnBoarding({
@@ -35,7 +33,7 @@ const TurnNotifications: FC = (): JSX.Element => {
       },
     });
     if (notifications) {
-      await getFcmToken({ userPhoneUids: collectionsNames?.userPhoneUids || '' });
+      await setupNotifications();
     }
     navigation.navigate('/add-photos');
   };

@@ -54,10 +54,8 @@ const ConfirmPhone = ({ route, navigation }: ConfirmPhoneProps) => {
   const CELL_COUNT: number = 6;
   const ref: RefObject<TextInput> = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
 
-  console.log('resendTimer', resendTimer);
-
   const { setOnBoarding, setAccessToken, setRefreshToken, setUserMetadata } = useAuthStore();
-  console.log('setOnBoarding', setOnBoarding);
+
   const { mutate: verifyOtp, isPending: isLoadingVerifyOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/verify-otp');
   const { mutate: sendOtp, isPending: isLoadingSendOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
 
@@ -82,10 +80,9 @@ const ConfirmPhone = ({ route, navigation }: ConfirmPhoneProps) => {
         const userQuerySnapshot = await firestore()
           .collection(apiUserInfoCollection)
           .where('phoneNumber', '==', mobilePhone)
-          .limit(1) // Limit to 1 result for efficiency
+          .limit(1)
           .get();
 
-        // Correctly check if the query snapshot is empty
         if (userQuerySnapshot.empty) {
           showToast('inviteMatch', 'No account found with this phone number', 'Fail');
           return;
@@ -103,7 +100,6 @@ const ConfirmPhone = ({ route, navigation }: ConfirmPhoneProps) => {
 
             setAccessToken(data.accessToken);
             setRefreshToken(data.refreshToken);
-
 
             if (userData.uid && userData.phoneNumber) {
               setUserMetadata({
