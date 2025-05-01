@@ -1,14 +1,8 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import TurnNotifications from './TurnNotifications';
-import { getFcmToken } from 'helpers/fcmHelper';
+import TurnNotifications from '../TurnNotifications';
 import { mockedNavigateFunction } from 'jest/mocks/appNavigation.mock';
 import { AuthContext } from 'contexts/AuthContext';
-
-jest.mock('helpers/fcmHelper');
-const mockGetFcmToken = jest.fn(getFcmToken);
-
-mockGetFcmToken.mockResolvedValue('mock-token');
 
 const mockOnBoarding = [{ name: 'John Doe' }, { accountType: 'guest' }];
 

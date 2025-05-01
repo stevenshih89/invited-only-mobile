@@ -1,162 +1,29 @@
-import { FC, JSX, useContext, useEffect } from 'react';
-import { AppState, FlatList, SafeAreaView, Text, View, TouchableOpacity } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import LinearGradient from 'react-native-linear-gradient';
-import moment from 'moment';
-import firestore from '@react-native-firebase/firestore';
-import analytics from '@react-native-firebase/analytics';
-import { screenHeight } from 'constants/common';
+import React, {JSX} from 'react';
+import * as S from './Privacy.style';
+import {usePrivacy} from './hooks/usePrivacy';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckIcon from 'assets/images/icons/check.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import { backgroundGradientColors, lightGray3Color, lightGray4Color, transparentWhite30Color, whiteColor } from 'constants/colors';
-import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
 import Button from 'components/Button/Button';
-import { useAppNavigation, useRoute } from 'hooks/useAppNavigation';
-import { verifyFirstStepPath } from 'constants/pathLocations';
-import { AuthContext } from 'contexts/AuthContext';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { useAuthStore } from 'src/store/authStore';
+import {verifyFirstStepPath} from 'constants/pathLocations';
 
-const Privacy: FC = (): JSX.Element => {
-  const { userMetadata: user } = useAuthStore();
-  const navigation = useAppNavigation();
-  const { onBoarding } = useContext(AuthContext);
-  const objWithAccountType = onBoarding.find((obj: any) => obj.accountType);
-  const route = useRoute();
-  const { screen, accountType } = route.params as { screen: string; accountType: string };
-  const privaciesListHost = [
-    {
-      id: 0,
-      title: 'Be Respectful',
-      subtitle: 'Treat your guests with courtesy and professionalism at all times.',
-    },
-    {
-      id: 1,
-      title: 'Ensure Safety',
-      subtitle: 'Maintain a safe environment and report inappropriate behavior immediately.',
-    },
-    {
-      id: 2,
-      title: 'Honesty is Key',
-      subtitle: 'Be clear about your event and its purpose—no misleading details.',
-    },
-    {
-      id: 3,
-      title: 'Respect Privacy',
-      subtitle: 'Do not share personal information or media without consent.',
-    },
-  ];
-
-  const privaciesListGuest = [
-    {
-      id: 0,
-      title: 'Be Polite',
-      subtitle: 'Treat the host and other guests with respect and courtesy.',
-    },
-    {
-      id: 1,
-      title: 'Follow Guidelines',
-      subtitle: "Adhere to the host's event rules and maintain appropriate behavior.",
-    },
-    {
-      id: 2,
-      title: 'Be Honest',
-      subtitle: 'Represent yourself truthfully when joining events.',
-    },
-    {
-      id: 3,
-      title: 'Respect Privacy',
-      subtitle: 'Do not share personal details or event content without permission.',
-    },
-  ];
-
-  useEffect(() => {
-    let subscription: any;
-
-    const name = onBoarding.find((item: any) => item.name)?.name;
-    const email = onBoarding.find((item: any) => item.email)?.email;
-    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
-    const date = onBoarding.find((item: any) => item.date)?.date;
-    const gender = onBoarding.find((item: { gender: string }) => item?.gender)?.gender;
-    const photos = onBoarding.find((item: any) => item.photos)?.photos;
-
-    const handleAppClose = async () => {
-      try {
-        await firestore()
-          .collection('unfinishedRegistrationUsers')
-          .doc(user?.uid)
-          .set({
-            name,
-            email,
-            accountType,
-            date,
-            gender,
-            photos,
-            phoneNumber: user?.phoneNumber,
-            createdAt: moment().format('YYYY-MM-DD'),
-            screen: 'house-rules',
-          });
-        analytics().logEvent('house_rules_app_closed', {
-          name,
-          email,
-          accountType,
-          date,
-          gender,
-          photos,
-          phoneNumber: user?.phoneNumber,
-          createdAt: moment().format('YYYY-MM-DD'),
-          screen: 'house-rules',
-        });
-      } catch (e) {
-        console.error(e);
-        logErrorToSentry(e);
-      }
-    };
-
-    subscription = AppState.addEventListener('change', nextAppState => {
-      if (nextAppState === 'background') {
-        handleAppClose();
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
+const Privacy = (): JSX.Element => {
+  const {objWithAccountType, accountType, privaciesListHost, privaciesListGuest, navigation, screen} = usePrivacy();
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={{ flex: 1, paddingHorizontal: 24 }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingTop: screenHeight / 29,
-            }}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              activeOpacity={0.7}
-              hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-              style={{
-                borderRadius: 50,
-                width: 40,
-                height: 40,
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: transparentWhite30Color,
-              }}>
+    <S.GradientBackground>
+      <S.SafeArea>
+        <S.Container>
+          <S.HeaderRow>
+            <S.BackButton onPress={() => navigation.goBack()}>
               <ArrowLeft />
-            </TouchableOpacity>
+            </S.BackButton>
             <LogoPrimary2 />
-            <View style={{ width: 40 }} />
-          </View>
-          <View style={{ marginBottom: screenHeight / 30, marginTop: screenHeight / (screen ? 11.5 : 15) }}>
-            <Text style={{ color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(48, 932), marginBottom: 8 }}>Welcome</Text>
-            <Text style={{ color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932) }}>
+            <S.Spacer />
+          </S.HeaderRow>
+          <S.TitleSection hasScreen={!!screen}>
+            <S.TitleText>Welcome</S.TitleText>
+            <S.SubtitleText>
               Please follow these{' '}
               {objWithAccountType?.accountType
                 ? objWithAccountType?.accountType === 'host'
@@ -166,11 +33,9 @@ const Privacy: FC = (): JSX.Element => {
                   ? 'Host'
                   : 'Guest'}{' '}
               House Rules
-            </Text>
-          </View>
-          <FlatList
-            style={{ flex: 1 }}
-            showsVerticalScrollIndicator={false}
+            </S.SubtitleText>
+          </S.TitleSection>
+          <S.PrivacyList
             data={
               objWithAccountType?.accountType
                 ? objWithAccountType?.accountType === 'host'
@@ -180,26 +45,26 @@ const Privacy: FC = (): JSX.Element => {
                   ? privaciesListHost
                   : privaciesListGuest
             }
-            keyExtractor={({ id }) => id.toString()}
-            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-            renderItem={({ item: { title, subtitle } }) => (
-              <View style={{ width: '100%', padding: 20, backgroundColor: lightGray3Color, borderRadius: 10 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            keyExtractor={({id}: {id: number}) => id.toString()}
+            ItemSeparatorComponent={() => <S.ItemSeparator />}
+            renderItem={({item: {title, subtitle}}: {item: {title: string; subtitle: string}}) => (
+              <S.ListItem>
+                <S.ItemHeader>
                   <CheckIcon />
-                  <Text style={{ color: whiteColor, fontSize: RFValue(16, 932), fontFamily: Satoshi700, marginLeft: 8 }}>{title}</Text>
-                </View>
-                <Text style={{ color: lightGray4Color, fontSize: RFValue(14, 932), fontFamily: Satoshi400, marginTop: 10 }}>{subtitle}</Text>
-              </View>
+                  <S.ItemTitle>{title}</S.ItemTitle>
+                </S.ItemHeader>
+                <S.ItemSubtitle>{subtitle}</S.ItemSubtitle>
+              </S.ListItem>
             )}
           />
           {screen !== 'SafetyAndWellbeing' && (
-            <View style={{ marginTop: 16 }}>
+            <S.ButtonContainer>
               <Button testID="agree-button" onPress={() => navigation.navigate(verifyFirstStepPath as never)} title="I Agree, Continue" />
-            </View>
+            </S.ButtonContainer>
           )}
-        </View>
-      </SafeAreaView>
-    </LinearGradient>
+        </S.Container>
+      </S.SafeArea>
+    </S.GradientBackground>
   );
 };
 

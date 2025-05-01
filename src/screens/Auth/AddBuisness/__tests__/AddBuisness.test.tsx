@@ -1,6 +1,6 @@
 import React from 'react';
 import {render, fireEvent} from '@testing-library/react-native';
-import AddBiusness from './AddBuisness';
+import AddBiusness from '../AddBuisness';
 import {AuthContext} from 'contexts/AuthContext';
 import {mockedGoBackFunction} from 'jest/mocks/appNavigation.mock';
 

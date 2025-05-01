@@ -1,14 +1,12 @@
-import { FC, JSX } from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationIndependentTree } from '@react-navigation/native';
+import {FC, JSX} from 'react';
+import {createStackNavigator} from '@react-navigation/stack';
+import {NavigationIndependentTree} from '@react-navigation/native';
 
 import {
   addPhotosPath,
   confirmPhonePath,
-
   enterBirthdayPath,
   enterNamePath,
-
   pendingScreenPath,
   myEmailPath,
   myInterestsPath,
@@ -53,7 +51,7 @@ const AuthStackScreens: FC = (): JSX.Element => {
 
   return (
     <NavigationIndependentTree>
-      <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{ headerShown: false }}>
+      <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{headerShown: false}}>
         <AuthStack.Screen key={onboardPath} name={onboardPath} component={Onboard} />
         <AuthStack.Screen key={eulaPath} name={eulaPath} component={Eula} />
         <AuthStack.Screen key={enterTypePath} name={enterTypePath} component={EnterTypeScreen} />
@@ -77,7 +75,6 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={verifyFirstStepPath} name={verifyFirstStepPath} component={VerifyFirstStep} />
         <AuthStack.Screen key={photoVerifiedPath} name={photoVerifiedPath} component={PhotoVerified} />
         <AuthStack.Screen key={summaryInfoPath} name={summaryInfoPath} component={SummaryInfo} />
-
       </AuthStack.Navigator>
     </NavigationIndependentTree>
   );

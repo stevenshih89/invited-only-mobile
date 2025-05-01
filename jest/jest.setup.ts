@@ -1,8 +1,7 @@
+// --- Mock Implementations/Setup ---
 import './mocks/reanimated.mock';
 import './mocks/gestureHandler';
 import './mocks/dimensions.mock';
-
-// Import our individual mock files
 import './mocks/asyncStorage.mock';
 import './mocks/firebaseMessage.mock';
 import './mocks/notifee.mock';
@@ -23,7 +22,6 @@ import './mocks/responsiveFontsize.mock';
 import './mocks/analytics.mock';
 import './mocks/sentry.mock';
 import './mocks/appNavigation.mock';
-import './mocks/firebaseMessaging.mock';
 import './mocks/firebaseStorage.mock';
 import './mocks/useLogout.mock';
 import './mocks/fbsdkNext.mock';
@@ -31,5 +29,10 @@ import './mocks/keyboardAwareScrollView.mock';
 import './mocks/backhandle.mock';
 import './mocks/backendApi.mock';
 import './mocks/imageCropPicker.mock';
+import './mocks/useMessaging.mock';
 
+
+
+
+// --- Global Jest Settings ---
 jest.useFakeTimers();

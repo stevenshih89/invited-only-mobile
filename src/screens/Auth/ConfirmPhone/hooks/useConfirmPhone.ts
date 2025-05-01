@@ -1,0 +1,147 @@
+import {useContext, useState, RefObject} from 'react';
+
+import {TextInput} from 'react-native';
+import {useBlurOnFulfill, useClearByFocusCell} from 'react-native-confirmation-code-field';
+import firestore from '@react-native-firebase/firestore';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
+import {useAuthStore} from 'src/store/authStore';
+import invitedOnlyBackendApi from 'src/api/backend-api';
+import {showToast} from 'helpers/showToast';
+import {components} from 'src/api/v1';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+
+export const useConfirmPhone = (route: {
+  params: {
+    mobilePhone: string;
+    isLogin?: boolean;
+  };
+}) => {
+  const navigation = useAppNavigation();
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const mobilePhone = route?.params?.mobilePhone;
+  const isLogin = route?.params?.isLogin || false;
+  const [code, setCode] = useState<string>('');
+  const [props, getCellOnLayoutHandler] = useClearByFocusCell({
+    value: code,
+    setValue: setCode,
+  });
+
+  const [resendTimer, setResendTimer] = useState(0);
+
+  const CELL_COUNT: number = 6;
+  const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
+
+  console.log('resendTimer', resendTimer);
+
+  const {setOnBoarding, setAccessToken, setRefreshToken, setUserMetadata} = useAuthStore();
+  console.log('setOnBoarding', setOnBoarding);
+  const {mutate: verifyOtp, isPending: isLoadingVerifyOtp} = invitedOnlyBackendApi.useMutation('post', '/auth/verify-otp');
+  const {mutate: sendOtp, isPending: isLoadingSendOtp} = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
+
+  async function signInWithPhoneNumber() {
+    try {
+      if (!mobilePhone) {
+        return;
+      }
+      setResendTimer(59);
+      const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
+      await sendOtp({body: {phone}});
+    } catch (e: any) {
+      showToast('inviteMatch', `${e?.message.split(']')[1]}`);
+    }
+  }
+
+  const handleConfirmPhoneNumber = async () => {
+    try {
+      if (isLogin) {
+        const userQuerySnapshot = await firestore()
+          .collection(apiUserInfoCollection)
+          .where('phoneNumber', '==', mobilePhone)
+          .limit(1) // Limit to 1 result for efficiency
+          .get();
+
+        // Correctly check if the query snapshot is empty
+        if (userQuerySnapshot.empty) {
+          showToast('inviteMatch', 'No account found with this phone number', 'Fail');
+          return;
+        }
+
+        const userData = userQuerySnapshot.docs[0].data() as components['schemas']['User'];
+
+        verifyOtp(
+          {body: {phone: mobilePhone, code}},
+          {
+            onSuccess: data => {
+              setOnBoarding({
+                isOnboardingCompleted: true,
+                userType: userData.accountType as 'host' | 'guest',
+                onboardingStep: '/onboarding-demo-path',
+              });
+
+              setAccessToken(data.accessToken);
+              setRefreshToken(data.refreshToken);
+
+              if (userData.uid && userData.phoneNumber) {
+                setUserMetadata({
+                  uid: userData.uid,
+                  phoneNumber: userData.phoneNumber,
+                  firstLogin: false,
+                });
+              } else {
+                console.error('User data from Firestore missing uid or phoneNumber:', userData);
+                showToast('inviteMatch', 'Failed to retrieve user details.', 'Error');
+              }
+            },
+            onError: error => {
+              console.error('Verify OTP Error:', error);
+              showToast('inviteMatch', 'Verification failed. Please check the code.', 'Error');
+            },
+          },
+        );
+      } else {
+        verifyOtp(
+          {body: {phone: mobilePhone, code}},
+          {
+            onSuccess: data => {
+              console.log('sucess verify otp data', data);
+              setOnBoarding({
+                isOnboardingCompleted: false,
+                userType: 'guest',
+                onboardingStep: '/enter-name',
+              });
+              setAccessToken(data.accessToken);
+              setRefreshToken(data.refreshToken);
+              setUserMetadata({
+                uid: data.uid,
+                phoneNumber: mobilePhone,
+                firstLogin: true,
+              });
+              navigation.navigate('/enter-name');
+            },
+            onError: error => {
+              console.error('Verify OTP Error:', error);
+              showToast('inviteMatch', 'Verification failed. Please check the code.', 'Error');
+            },
+          },
+        );
+      }
+    } catch (e: any) {
+      console.error('handleConfirmPhoneNumber Error:', e);
+      showToast('inviteMatch', '', `An unexpected error occurred.`);
+    }
+  };
+  return {
+    mobilePhone,
+    code,
+    setCode,
+    ref,
+    props,
+    getCellOnLayoutHandler,
+    signInWithPhoneNumber,
+    handleConfirmPhoneNumber,
+    resendTimer,
+    isLoadingVerifyOtp,
+    isLoadingSendOtp,
+    CELL_COUNT,
+  };
+};

@@ -1,8 +1,8 @@
 import React from 'react';
-import {render, fireEvent, waitFor} from '@testing-library/react-native';
-import Gender from './Gender';
-import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
-import {AuthContext} from 'contexts/AuthContext';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import Gender from '../Gender';
+import { mockedNavigateFunction } from 'jest/mocks/appNavigation.mock';
+import { AuthContext } from 'contexts/AuthContext';
 
 describe('Gender Component', () => {
   beforeEach(() => {
@@ -12,10 +12,10 @@ describe('Gender Component', () => {
     jest.clearAllMocks();
   });
   it('renders correctly', () => {
-    const {getByText} = render(
+    const { getByText } = render(
       <AuthContext.Provider
         value={{
-          onBoarding: [{accountType: 'guest'}],
+          onBoarding: [{ accountType: 'guest' }],
           setOnBoarding: jest.fn(),
           setUser: jest.fn(),
           user: {},
@@ -28,10 +28,10 @@ describe('Gender Component', () => {
   });
 
   it('allows user to select a gender', () => {
-    const {getByTestId} = render(
+    const { getByTestId } = render(
       <AuthContext.Provider
         value={{
-          onBoarding: [{accountType: 'guest'}],
+          onBoarding: [{ accountType: 'guest' }],
           setOnBoarding: jest.fn(),
           setUser: jest.fn(),
           user: {},
@@ -55,10 +55,10 @@ describe('Gender Component', () => {
   });
 
   it('handles next button press correctly', async () => {
-    const {getByText} = render(
+    const { getByText } = render(
       <AuthContext.Provider
         value={{
-          onBoarding: [{accountType: 'guest'}],
+          onBoarding: [{ accountType: 'guest' }],
           setOnBoarding: jest.fn(),
           setUser: jest.fn(),
           user: {},

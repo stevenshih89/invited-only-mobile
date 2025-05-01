@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
-import MyEmail from './MyEmail';
-import { AuthContext } from 'contexts/AuthContext';
+import {render, fireEvent} from '@testing-library/react-native';
+import MyEmail from '../MyEmail';
+import {AuthContext} from 'contexts/AuthContext';
 
 describe.skip('MyEmail Component', () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe.skip('MyEmail Component', () => {
   });
 
   it('renders correctly', () => {
-    const { getByText } = render(
+    const {getByText} = render(
       <AuthContext.Provider
         value={{
           onBoarding: [],
@@ -27,7 +27,7 @@ describe.skip('MyEmail Component', () => {
   });
 
   it('allows user to enter an email', () => {
-    const { getByTestId } = render(
+    const {getByTestId} = render(
       <AuthContext.Provider
         value={{
           onBoarding: [],

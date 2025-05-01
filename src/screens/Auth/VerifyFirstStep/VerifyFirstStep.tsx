@@ -1,11 +1,8 @@
-import React, {FC, JSX, useContext, useEffect, useState} from 'react';
+import React, {FC, JSX} from 'react';
 import {
-  Alert,
-  AppState,
   ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
-  Platform,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -14,194 +11,21 @@ import {
 } from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
-import moment from 'moment';
-import firestore from '@react-native-firebase/firestore';
-import analytics from '@react-native-firebase/analytics';
-import storage from '@react-native-firebase/storage';
-import ImagePicker from 'react-native-image-crop-picker';
+import {useVerifyStep} from './hooks/useVerifyStep';
 import {isIos, screenHeight, screenWidth} from 'constants/common';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckStar from 'assets/images/icons/check-star-white.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import MaleExampleSelfie from 'assets/images/auth/example-selfie.png';
-import FemaleExampleSelfie from 'assets/images/auth/female-selfie-example.png';
+
 import {backgroundGradientColors, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {invitationCodePath, photoVerifiedPath} from 'constants/pathLocations';
-import {AuthContext} from 'contexts/AuthContext.tsx';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {useCameraPermission} from 'hooks/useCameraPermission';
-import {useAuthStore} from 'src/store/authStore';
 
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
-  const [imageUri, setImageUri] = useState<string | undefined>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const {requestCameraPermission} = useCameraPermission();
 
-  const {onBoarding, setOnBoarding} = useContext(AuthContext);
-
-  const name = onBoarding.find((item: {name: string}) => item?.name)?.name;
-  const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
-  const email = onBoarding.find((item: any) => item.email)?.email;
-  const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
-  const date = onBoarding.find((item: any) => item.date)?.date;
-  const photos = onBoarding.find((item: any) => item.photos)?.photos;
-  const selfieSource = gender === 'man' ? MaleExampleSelfie : FemaleExampleSelfie;
-
-  useEffect(() => {
-    let subscription: any;
-
-    const handleAppClose = async () => {
-      const {userMetadata: user} = useAuthStore();
-      if (!user?.uid) {
-        return;
-      }
-
-      try {
-        await firestore()
-          .collection('unfinishedRegistrationUsers')
-          .doc(user?.uid)
-          .set({
-            name,
-            email,
-            accountType,
-            date,
-            photos,
-            gender,
-            phoneNumber: user?.phoneNumber,
-            createdAt: moment().format('YYYY-MM-DD'),
-            screen: 'verify-first-step-selfie',
-          });
-        analytics().logEvent('verify_selfie_app_closed', {
-          name,
-          email,
-          accountType,
-          date,
-          photos,
-          gender,
-          phoneNumber: user?.phoneNumber,
-          createdAt: moment().format('YYYY-MM-DD'),
-          screen: 'verify-first-step-selfie',
-        });
-      } catch (e) {
-        console.error(e);
-        logErrorToSentry(e);
-      }
-    };
-
-    subscription = AppState.addEventListener('change', nextAppState => {
-      if (nextAppState === 'background') {
-        handleAppClose();
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
-
-  const uploadImage = async (imagePath: string, userId: string | null) => {
-    if (imagePath) {
-      if (imagePath.includes('https://')) {
-        return imagePath;
-      } else {
-        const uploadUri = Platform.OS === 'ios' ? imagePath : `file://${imagePath}`;
-        const filename = `${userId}_${new Date().getTime()}`;
-        const storageRef = storage().ref(`selfie_photos/${filename}`);
-        try {
-          await storageRef.putFile(uploadUri);
-          const url = await storageRef.getDownloadURL();
-          return url;
-        } catch (e) {
-          console.error('Error uploading image:', e);
-          return null;
-        }
-      }
-    }
-  };
-
-  const openCamera = async () => {
-    if (isIos) {
-      try {
-        const hasPermission = await requestCameraPermission();
-        if (!hasPermission) {
-          return;
-        }
-
-        const image = await ImagePicker.openCamera({
-          width: 300,
-          height: 400,
-          cropping: true,
-          mediaType: 'photo',
-          includeBase64: false,
-          multiple: false,
-          useFrontCamera: true,
-        });
-
-        setImageUri(image.path);
-      } catch (error) {
-        console.error('Error accessing camera:', error);
-        Alert.alert('Error', 'Failed to access camera. Please try again.');
-      }
-    }
-  };
-
-  const handleSkip = () => {
-    const {userMetadata: user} = useAuthStore();
-    try {
-      if (!user?.uid) {
-        return;
-      }
-      setIsLoading(true);
-
-      analytics().logEvent('verify_selfie_submited', {
-        userId: user?.uid,
-        name: onBoarding.find((item: any) => item.name)?.name,
-        screen: 'verify-first-step-selfie',
-        action: 'selfie-submited',
-      });
-      // @ts-ignore
-      navigation.navigate(invitationCodePath, {cameFromSummary: true} as never);
-    } catch (error) {
-      console.error('Error skipped verify photo screen:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleNext = async () => {
-    const {userMetadata: user} = useAuthStore();
-    try {
-      if (!imageUri || !user?.uid) {
-        return;
-      }
-      setIsLoading(true);
-      const imageUser = await uploadImage(imageUri, user?.uid);
-
-      const onBoardingWithFacePhoto = onBoarding
-        .filter((onboardItem: any) => !onboardItem.facePhoto)
-        .concat({
-          facePhoto: imageUser,
-        });
-
-      setOnBoarding(onBoardingWithFacePhoto);
-
-      analytics().logEvent('verify_selfie_submited', {
-        userId: user?.uid,
-        name: onBoarding.find((item: any) => item.name)?.name,
-        screen: 'verify-first-step-selfie',
-        action: 'selfie-submited',
-      });
-      navigation.navigate(photoVerifiedPath as never);
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {imageUri, handleNext, handleSkip, isLoading, openCamera, name, accountType, selfieSource, setImageUri} = useVerifyStep();
 
   return (
     <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>

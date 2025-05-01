@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`ItemRequestGuest Component correctly renders the component tree 1`] = `
-<View
-  testID="test-wrapper"
-/>
-`;

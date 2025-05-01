@@ -1,316 +1,88 @@
-import { FC, JSX, useContext, useEffect, useState } from 'react';
-import {
-  AppState,
-  FlatList,
-  Image,
-  ImageBackground,
-  Keyboard,
-  KeyboardAvoidingView,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import LinearGradient from 'react-native-linear-gradient';
-import moment from 'moment';
-import firestore from '@react-native-firebase/firestore';
-import analytics from '@react-native-firebase/analytics';
-import { isIos, screenHeight } from 'constants/common';
+import React, {FC, JSX} from 'react';
+import {Keyboard} from 'react-native';
+import {useMyInterests} from './hooks/useMyInterests';
+import * as S from './MyInterests.style';
+import AuthProgress from 'components/AuthProgress';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
-import BirthdayParty from 'assets/images/auth/interests/birthday-party.png';
-import Exclusive from 'assets/images/auth/interests/exclusive.png';
-import PoolParty from 'assets/images/auth/interests/pool-party.png';
-import Private from 'assets/images/auth/interests/private.png';
-import Restaurant from 'assets/images/auth/interests/restaurant.png';
-import VipTables from 'assets/images/auth/interests/vip-tables.png';
-import YachtParty from 'assets/images/auth/interests/yacht-party.png';
-import Concert from 'assets/images/auth/interests/concerts.png';
 import UserOne from 'assets/images/auth/interests/user-one.png';
 import UserTwo from 'assets/images/auth/interests/user-two.png';
-import { backgroundGradientColors, blackColor, transparentWhite30Color, whiteColor } from 'constants/colors';
-import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
-import Button from 'components/Button/Button';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import { myEmailPath } from 'constants/pathLocations';
-import { AuthContext } from 'contexts/AuthContext.tsx';
-import AuthProgress from 'components/AuthProgress';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { useAuthStore } from 'src/store/authStore';
 
 const MyInterests: FC = (): JSX.Element => {
-  const navigation = useAppNavigation();
-
-  const { userMetadata: user } = useAuthStore();
-  const { onBoarding, setOnBoarding } = useContext(AuthContext);
-
-  const [listOfInterests, setListOfInterests] = useState([
-    { id: 0, title: 'Vip Tables', isSelected: false, image: VipTables },
-    { id: 1, title: 'Concerts', isSelected: false, image: Concert },
-    { id: 2, title: 'Exclusive', isSelected: false, image: Exclusive },
-    { id: 3, title: 'Yacht Party', isSelected: false, image: YachtParty },
-    { id: 4, title: 'Pool Party', isSelected: false, image: PoolParty },
-    { id: 5, title: 'Private', isSelected: false, image: Private },
-    { id: 6, title: 'Birthday Party', isSelected: false, image: BirthdayParty },
-    { id: 7, title: 'Restaurant', isSelected: false, image: Restaurant },
-  ]);
-
-  useEffect(() => {
-    let subscription: any;
-
-    const name = onBoarding.find((item: any) => item.name)?.name;
-    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
-    const date = onBoarding.find((item: any) => item.date)?.date;
-    const gender = onBoarding.find((item: { gender: string }) => item?.gender)?.gender;
-    const photos = onBoarding.find((item: any) => item.photos)?.photos;
-    const handleAppClose = async () => {
-      try {
-        await firestore()
-          .collection('unfinishedRegistrationUsers')
-          .doc(user?.uid)
-          .set({
-            name,
-            accountType,
-            date,
-            gender,
-            photos,
-            phoneNumber: user?.phoneNumber,
-            createdAt: moment().format('YYYY-MM-DD'),
-            screen: 'my-interests',
-          });
-        analytics().logEvent('my_interests_app_closed', {
-          name,
-          accountType,
-          date,
-          gender,
-          photos,
-          phoneNumber: user?.phoneNumber,
-          createdAt: moment().format('YYYY-MM-DD'),
-          screen: 'my-interests',
-        });
-      } catch (e) {
-        console.error(e);
-        logErrorToSentry(e);
-      }
-    };
-
-    subscription = AppState.addEventListener('change', nextAppState => {
-      if (nextAppState === 'background') {
-        handleAppClose();
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, [onBoarding, user]);
-
-  const handleSelectInterest = (id: number) => {
-    const updatedInterests = listOfInterests.map(interest => {
-      const selectedInterestsCount = listOfInterests.filter(item => item.isSelected).length;
-      return interest.id === id ? { ...interest, isSelected: selectedInterestsCount === 3 ? false : !interest.isSelected } : interest;
-    });
-    setListOfInterests(updatedInterests);
-  };
-
-  const handleNext = () => {
-    const reqInterests = listOfInterests.reduce((acc: any[], curr) => {
-      if (curr.isSelected) {
-        acc.push({ id: curr.id, title: curr.title });
-      }
-      return acc;
-    }, []);
-    setOnBoarding([
-      ...onBoarding,
-      {
-        interests: reqInterests,
-      },
-    ]);
-    navigation.navigate(myEmailPath as never);
-  };
-
-  const accountType = onBoarding.find((item: { accountType: string }) => item.accountType)?.accountType;
+  const {listOfInterests, handleSelectInterest, handleNext, accountType, navigation} = useMyInterests();
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1, paddingBottom: 0 }}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{ flex: 1, paddingBottom: 0 }}>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'space-between',
-                paddingBottom: 0,
-                paddingHorizontal: 24,
-                paddingTop: screenHeight / 29,
-              }}>
-              <View style={{ alignItems: 'center' }}>
-                <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    activeOpacity={0.7}
-                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                    style={{
-                      borderRadius: 50,
-                      width: 40,
-                      height: 40,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: transparentWhite30Color,
-                    }}>
+    <S.GradientBackground>
+      <S.AvoidingContainer>
+        <S.TouchableDismiss onPress={Keyboard.dismiss}>
+          <S.SafeArea>
+            <S.Wrapper>
+              <S.Header>
+                <S.TopRow>
+                  <S.BackButton onPress={() => navigation.goBack()}>
                     <ArrowLeft />
-                  </TouchableOpacity>
+                  </S.BackButton>
                   <LogoPrimary2 />
                   <AuthProgress startPercentage={70} endPercentage={80} animationDuration={1000} />
-                </View>
-                <View
-                  style={{
-                    width: '100%',
-                    marginBottom: screenHeight / 40,
-                    marginTop: screenHeight / 50,
-                  }}>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi500,
-                      fontSize: RFValue(48, 932),
-                      marginBottom: 18,
-                    }}>
-                    Choose interests
-                  </Text>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi400,
-                      fontSize: RFValue(17, 932),
-                    }}>
-                    Choose up to <Text style={{ fontWeight: '700' }}>3 event types</Text> you love to help us find the right{' '}
+                </S.TopRow>
+                <S.TitleContainer>
+                  <S.Title>Choose interests</S.Title>
+                  <S.Subtitle>
+                    Choose up to <S.BoldText>3 event types</S.BoldText> you love to help us find the right{' '}
                     {accountType === 'host' ? 'guests for your events.' : 'events for you.'}
-                  </Text>
-                </View>
-                <View style={{ width: '100%', height: screenHeight / 2 }}>
-                  <FlatList
-                    data={listOfInterests}
+                  </S.Subtitle>
+                </S.TitleContainer>
+                <S.ListContainer>
+                  <S.InterestsList
                     numColumns={2}
-                    keyExtractor={({ id }) => id.toString()}
                     showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ width: '100%' }}
-                    ItemSeparatorComponent={() => <View style={{ height: screenHeight * 0.021 }} />}
-                    renderItem={({ item: { id, title, isSelected, image } }) => (
-                      <TouchableOpacity
-                        testID={`interest-${id}`}
-                        onPress={() => handleSelectInterest(id)}
-                        activeOpacity={0.7}
-                        style={{
-                          flex: 1,
-                          borderRadius: 12,
-                          width: '100%',
-                          alignItems: 'center',
-                          borderWidth: 1,
-                          borderStyle: 'solid',
-                          borderColor: isSelected ? whiteColor : blackColor,
-                          marginHorizontal: 2,
-                        }}>
-                        <View style={{ width: '100%', height: screenHeight * 0.268, borderRadius: 12, overflow: 'hidden' }}>
-                          <ImageBackground source={image} style={{ width: '100%', height: '100%', justifyContent: 'space-between' }}>
-                            <TouchableOpacity
-                              style={{
-                                backgroundColor: whiteColor,
-                                width: 20,
-                                height: 20,
-                                borderRadius: 20,
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                alignSelf: 'flex-end',
-                                marginRight: 11,
-                                marginTop: 16,
-                                opacity: isSelected ? 1 : 0.3,
-                              }}>
+                    data={listOfInterests}
+                    keyExtractor={({id}: {id: number}) => id.toString()}
+                    ItemSeparatorComponent={() => <S.InterestSeparator />}
+                    renderItem={({
+                      item: {id, title, isSelected, image},
+                    }: {
+                      item: {id: number; title: string; isSelected: boolean; image: string};
+                    }) => (
+                      <S.InterestItem selected={isSelected} testID={`interest-${id}`} onPress={() => handleSelectInterest(id)}>
+                        <S.ImageWrapper>
+                          <S.BackgroundImage source={image}>
+                            <S.CheckButton selected={isSelected}>
                               <CheckIcon />
-                            </TouchableOpacity>
-                            <View
-                              style={{
-                                backgroundColor: whiteColor,
-                                height: 40,
-                                width: '100%',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                              }}>
-                              <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
-                                <Text style={{ color: blackColor, fontSize: RFValue(14, 932), fontFamily: Satoshi700, marginLeft: 16 }}>
-                                  {title}
-                                </Text>
-                                <View style={{ flexDirection: 'row' }}>
-                                  <Image
-                                    source={UserOne}
-                                    style={{
-                                      width: 18,
-                                      height: 18,
-                                      borderRadius: 18,
-                                      borderWidth: 1,
-                                      borderColor: whiteColor,
-                                    }}
-                                  />
-                                  <Image
-                                    source={UserTwo}
-                                    style={{
-                                      width: 18,
-                                      height: 18,
-                                      borderRadius: 18,
-                                      borderWidth: 1,
-                                      borderColor: whiteColor,
-                                      transform: [{ translateX: -8 }],
-                                    }}
-                                  />
-                                  <View
-                                    style={{
-                                      width: 18,
-                                      height: 18,
-                                      backgroundColor: blackColor,
-                                      borderRadius: 18,
-                                      borderWidth: 1,
-                                      borderColor: whiteColor,
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      transform: [{ translateX: -16 }],
-                                    }}>
-                                    <Text
-                                      style={{
-                                        color: whiteColor,
-                                        fontSize: RFValue(6, 932),
-                                        fontFamily: Satoshi500,
-                                      }}>
-                                      40
-                                    </Text>
-                                  </View>
-                                </View>
-                              </View>
-                            </View>
-                          </ImageBackground>
-                        </View>
-                      </TouchableOpacity>
+                            </S.CheckButton>
+                            <S.LabelBar>
+                              <S.LabelBarRow>
+                                <S.InterestTitle>{title}</S.InterestTitle>
+                                <S.AvatarStack>
+                                  <S.Avatar source={UserOne} />
+                                  <S.AvatarSecond source={UserTwo} />
+                                  <S.AvatarCount>
+                                    <S.CountText>40</S.CountText>
+                                  </S.AvatarCount>
+                                </S.AvatarStack>
+                              </S.LabelBarRow>
+                            </S.LabelBar>
+                          </S.BackgroundImage>
+                        </S.ImageWrapper>
+                      </S.InterestItem>
                     )}
                   />
-                </View>
-              </View>
-              <View>
-                <Button
-                  testID="continue-button"
-                  buttonStyle={{ borderRadius: 18 }}
-                  disabled={listOfInterests.filter(interest => interest.isSelected).length < 3}
-                  title={`Continue (${listOfInterests.filter(interest => interest.isSelected).length}/3)`}
-                  onPress={() => handleNext()}
+                </S.ListContainer>
+              </S.Header>
+              <S.ButtonsContainer>
+                <S.ContinueButton
+                  disabled={listOfInterests.filter(i => i.isSelected).length < 3}
+                  onPress={handleNext}
+                  title={`Continue (${listOfInterests.filter(i => i.isSelected).length}/3)`}
                 />
-                <Button title="Skip" onPress={() => handleNext()} variant="transparent" />
-              </View>
-            </View>
-          </SafeAreaView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+                <S.SkipButton onPress={handleNext} title="Skip" />
+              </S.ButtonsContainer>
+            </S.Wrapper>
+          </S.SafeArea>
+        </S.TouchableDismiss>
+      </S.AvoidingContainer>
+    </S.GradientBackground>
   );
 };
 

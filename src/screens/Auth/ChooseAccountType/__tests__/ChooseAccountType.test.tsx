@@ -1,6 +1,6 @@
 import React from 'react';
 import {render, fireEvent, waitFor} from '@testing-library/react-native';
-import ChooseAccountType from './ChooseAccountType';
+import ChooseAccountType from '../ChooseAccountType';
 import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
 import {AuthContext} from 'contexts/AuthContext';
 

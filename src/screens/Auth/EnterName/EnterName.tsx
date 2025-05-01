@@ -1,21 +1,32 @@
-import React, { FC, JSX, useState } from 'react';
-import { Keyboard, KeyboardAvoidingView, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import LinearGradient from 'react-native-linear-gradient';
-import { isIos, screenHeight } from 'constants/common';
+import React, {FC, JSX, useState} from 'react';
+import {Keyboard} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {
+  GradientBackground,
+  AvoidingContainer,
+  TouchableDismiss,
+  SafeArea,
+  Wrapper,
+  Header,
+  TopRow,
+  BackButton,
+  TitleContainer,
+  Title,
+  Subtitle,
+  InputContainer,
+  ContinueButtonContainer,
+} from './EnterName.style';
+import {useAuthStore} from 'src/store/authStore';
+import {useAppNavigation} from 'hooks/useAppNavigation';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import { backgroundGradientColors, transparentWhite30Color, whiteColor } from 'constants/colors';
-import { Satoshi400, Satoshi500 } from 'constants/fonts';
-import Button from 'components/Button/Button';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import Input from 'components/Inputs/Input';
-import { isName } from 'helpers/regExpValidators';
 import AuthProgress from 'components/AuthProgress';
-import { useAuthStore } from 'src/store/authStore';
+import Button from 'components/Button/Button';
+import Input from 'components/Inputs/Input';
+import {isName} from 'helpers/regExpValidators';
 
 const EnterName: FC = (): JSX.Element => {
-  const { onBoarding, setOnBoarding, userMetadata } = useAuthStore();
+  const {onBoarding, setOnBoarding, userMetadata} = useAuthStore();
 
   const [errorInputName, setErrorInputName] = useState<boolean>(false);
   const [name, setName] = useState<string>(onBoarding.registrationDetails?.name || '');
@@ -33,100 +44,62 @@ const EnterName: FC = (): JSX.Element => {
 
   const navigation = useAppNavigation();
 
-
   const handleNext = async () => {
     if (!name) {
       return;
     }
-    setOnBoarding({ ...onBoarding, onboardingStep: '/turn-notifications', registrationDetails: { ...onBoarding.registrationDetails, name: name } });
+    setOnBoarding({
+      ...onBoarding,
+      onboardingStep: '/turn-notifications',
+      registrationDetails: {...onBoarding.registrationDetails, name: name},
+    });
     navigation.navigate('/turn-notifications');
   };
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1, paddingBottom: 0 }}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{ flex: 1, paddingBottom: 0 }}>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'space-between',
-                paddingBottom: 0,
-                paddingHorizontal: 24,
-                paddingTop: screenHeight / 29,
-              }}>
-              <View style={{ alignItems: 'center' }}>
-                <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    activeOpacity={0.7}
-                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                    style={{
-                      borderRadius: 50,
-                      width: 40,
-                      height: 40,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: transparentWhite30Color,
-                    }}>
+    <GradientBackground>
+      <AvoidingContainer>
+        <TouchableDismiss onPress={Keyboard.dismiss}>
+          <SafeArea>
+            <Wrapper>
+              <Header>
+                <TopRow>
+                  <BackButton onPress={() => navigation.goBack()}>
                     <ArrowLeft />
-                  </TouchableOpacity>
+                  </BackButton>
                   <LogoPrimary2 />
                   <AuthProgress startPercentage={10} endPercentage={20} animationDuration={1000} />
-                </View>
-                <View
-                  style={{
-                    width: '100%',
-                    marginBottom: screenHeight / 30,
-                    marginTop: screenHeight / 11.5,
-                  }}>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi500,
-                      fontSize: RFValue(48, 932),
-                      marginBottom: 18,
-                    }}>
-                    What’s your first name?
-                  </Text>
-                  <Text
-                    style={{
-                      color: whiteColor,
-                      fontFamily: Satoshi400,
-                      fontSize: RFValue(18, 932),
-                    }}>
-                    You won’t be able to change this later.
-                  </Text>
-                  <Text style={{ color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(18, 932) }}>
-                    It will be shown on your profile.
-                  </Text>
-                </View>
-                <View style={{ width: '100%' }}>
+                </TopRow>
+                <TitleContainer>
+                  <Title>{"What's your first name?"}</Title>
+                  <Subtitle>{"You won't be able to change this later."}</Subtitle>
+                  <Subtitle>It will be shown on your profile.</Subtitle>
+                </TitleContainer>
+                <InputContainer>
                   <Input
                     isError={errorInputName}
                     errorText="The name must be up to 14 characters long and contain no special characters."
                     value={name}
                     onChange={handleNameChange}
-                    containerStyle={{ width: '100%' }}
                     placeholder="Enter your name"
                   />
-                </View>
-              </View>
-              <View style={{ marginBottom: 16 }}>
+                </InputContainer>
+              </Header>
+              <ContinueButtonContainer>
                 <Button
                   testID="continue-button"
                   id="continue-button"
-                  buttonStyle={{ height: RFValue(64, 932) }}
+                  buttonStyle={{height: RFValue(64, 932)}}
                   disabled={name.length < 3 || errorInputName}
-                  onPress={() => handleNext()}
+                  onPress={handleNext}
                   title="Continue"
                 />
-              </View>
-            </View>
-          </SafeAreaView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+              </ContinueButtonContainer>
+            </Wrapper>
+          </SafeArea>
+        </TouchableDismiss>
+      </AvoidingContainer>
+    </GradientBackground>
   );
 };
 
