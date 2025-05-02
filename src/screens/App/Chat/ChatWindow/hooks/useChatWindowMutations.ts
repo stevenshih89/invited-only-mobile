@@ -1,27 +1,22 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { ScrollView } from "react-native";
+import { components } from "@invited-only/invited-only-api";
 import invitedOnlyBackendApi from "src/api/backend-api";
-import { components } from "src/api/v1";
 
 
 interface UseChatWindowMutationsProps {
     chatId: string;
     userId: string;
+    sendMessage: (text: string) => void;
 }
 
-const useChatWindowMutations = ({ chatId, userId }: UseChatWindowMutationsProps) => {
+const useChatWindowMutations = ({ chatId, userId, sendMessage }: UseChatWindowMutationsProps) => {
     const [newMessage, setNewMessage] = useState('');
     const scrollViewRef = useRef<ScrollView>(null);
     const queryClient = useQueryClient();
 
     const { mutate: markChatAsSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen')
-
-    const { mutate: createMessage } = invitedOnlyBackendApi.useMutation('post', '/chat/message/{chatId}', {
-        onSuccess: () => {
-            scrollViewRef.current?.scrollToEnd({ animated: true });
-        }
-    })
 
     useEffect(() => {
         markChatAsSeen({
@@ -58,23 +53,11 @@ const useChatWindowMutations = ({ chatId, userId }: UseChatWindowMutationsProps)
             }];
         });
         if (newMessage.trim()) {
-            createMessage({
-                body: {
-                    content: newMessage,
-                    senderId: userId,
-                },
-                params: {
-                    path: {
-                        chatId: chatId,
-                    },
-                },
-            });
-            setNewMessage('');
+            sendMessage(newMessage);
         }
     }
 
     return {
-        createMessage,
         newMessage,
         setNewMessage,
         scrollViewRef,

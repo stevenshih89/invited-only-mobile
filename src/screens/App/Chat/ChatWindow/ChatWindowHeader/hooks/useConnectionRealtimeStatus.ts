@@ -1,10 +1,10 @@
 
 import { useContext } from "react";
+import { components } from "@invited-only/invited-only-api";
 import { FirebaseCollectionsContext } from "contexts/FirebaseCollectionNamesContext";
 import invitedOnlyBackendApi from "src/api/backend-api";
 import useFirestoreSubscriptionConnectionStatus from "src/api/realtime/useFirestoreSubscriptionConnectionStatus";
 import { useAuthStore } from "src/store/authStore";
-import { components } from "src/api/v1";
 
 interface ConnectionStatus {
     chat: components['schemas']['Chat'];

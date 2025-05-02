@@ -1,12 +1,12 @@
-import {fireEvent, render} from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import NotificationSetting from '../NotificationSetting';
-import {useNotificationSetting} from 'hooks/useNotificationSetting';
+import { useNotificationSetting } from 'screens/App/Profile/screens/NotificationSetting/hooks/useNotificationSetting';
 
 // Mock BackHandler
 jest.mock('react-native/Libraries/Utilities/BackHandler', () => ({
-  addEventListener: jest.fn(() => ({remove: jest.fn()})),
+  addEventListener: jest.fn(() => ({ remove: jest.fn() })),
   removeEventListener: jest.fn(),
 }));
 
@@ -51,7 +51,7 @@ describe('NotificationSetting Components', () => {
       handleChangeAllNotification: mockHandleChangeAllNotification,
     });
 
-    const {getByText, getByTestId} = renderComponent();
+    const { getByText, getByTestId } = renderComponent();
 
     expect(getByText('All notifications')).toBeTruthy();
     const switchElement = getByTestId('all-notifications-switch');
@@ -68,7 +68,7 @@ describe('NotificationSetting Components', () => {
       setMyEvents: mockSetMyEvents,
     });
 
-    const {getByText, getByTestId} = renderComponent();
+    const { getByText, getByTestId } = renderComponent();
 
     expect(getByText('My events')).toBeTruthy();
     const switchElement = getByTestId('my-events-switch');
@@ -85,7 +85,7 @@ describe('NotificationSetting Components', () => {
       setRequests: mockSetRequests,
     });
 
-    const {getByText, getByTestId} = renderComponent();
+    const { getByText, getByTestId } = renderComponent();
 
     expect(getByText('Requests')).toBeTruthy();
     const switchElement = getByTestId('requests-switch');
@@ -102,7 +102,7 @@ describe('NotificationSetting Components', () => {
       setChat: mockSetChat,
     });
 
-    const {getByText, getByTestId} = renderComponent();
+    const { getByText, getByTestId } = renderComponent();
 
     expect(getByText('Chat')).toBeTruthy();
     const switchElement = getByTestId('chat-switch');
@@ -119,7 +119,7 @@ describe('NotificationSetting Components', () => {
       setSuperInvite: mockSetSuperInvite,
     });
 
-    const {getByText, getByTestId} = renderComponent();
+    const { getByText, getByTestId } = renderComponent();
 
     const switchElement = getByTestId('super-invite-switch');
     expect(switchElement).toBeTruthy();
@@ -135,7 +135,7 @@ describe('NotificationSetting Components', () => {
       setMatch: mockSetMatch,
     });
 
-    const {getByText, getByTestId} = renderComponent();
+    const { getByText, getByTestId } = renderComponent();
 
     expect(getByText('New Connection')).toBeTruthy();
     const switchElement = getByTestId('new-connection-switch');

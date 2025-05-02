@@ -1,7 +1,7 @@
 
+import { components } from "@invited-only/invited-only-api";
 import { useAuthStore } from "src/store/authStore";
 import invitedOnlyBackendApi from "src/api/backend-api";
-import { components } from "src/api/v1";
 
 interface UseUserResponse {
     user: components['schemas']['User'] | undefined;

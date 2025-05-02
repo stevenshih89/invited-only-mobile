@@ -1,23 +1,24 @@
+import { components } from "@invited-only/invited-only-api";
+import { useQueryClient } from "@tanstack/react-query";
 import invitedOnlyBackendApi from "src/api/backend-api";
-import useFirestoreSubscription from "src/api/realtime/useFirestoreSubscription";
-
-
 
 const useRealtimeChatMessages = (chatId: string) => {
-    const { data: chatMessages } = invitedOnlyBackendApi.useQuery('get', '/chat/message/{chatId}', {
+    const queryClient = useQueryClient();
+    const { data: chatMessages, } = invitedOnlyBackendApi.useQuery('get', '/chat/message/{chatId}', {
         params: {
             path: {
                 chatId
             }
         }
     })
-    useFirestoreSubscription({
-        path: `devChats/${chatId}/devMessages`,
-        queryKey: ['get', '/chat/message/{chatId}', { params: { path: { chatId } } }]
-    })
-
+    const updateChatMessages = (newMessages: components['schemas']['ChatMessage'][]) => {
+        queryClient.setQueryData(['get', '/chat/message/{chatId}', { params: { path: { chatId } } }], (oldData: components['schemas']['ChatMessage'][]) => {
+            return [...oldData, ...newMessages];
+        });
+    }
     return {
         chatMessages,
+        updateChatMessages
     }
 }
 

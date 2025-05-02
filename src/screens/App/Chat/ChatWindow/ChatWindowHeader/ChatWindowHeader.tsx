@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { components } from "@invited-only/invited-only-api";
 import * as S from "./ChatWindowHeader.style";
 import { ToggleInvitationStatusDropdown } from "./ToggleInvitationStatusDropdown/ToggleInvitationStatusDropdown";
 import { ApproveActionButton } from "./ApproveActionButton/ApproveActionButton";
 import useConnectionRealtimeStatus from "./hooks/useConnectionRealtimeStatus";
-import { components } from "src/api/v1";
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import ConfirmedBadge from 'src/assets/images/icons/event-confirm-badge.svg';
 
 import { useAppNavigation } from "hooks/useAppNavigation";
 import { whiteColor } from "constants/colors";
+import invitedOnlyBackendApi from "src/api/backend-api";
+import { useAuthStore } from "src/store/authStore";
 
 interface ChatWindowHeaderProps {
     chat: components['schemas']['Chat'];
@@ -44,9 +46,11 @@ const getInvitationStatus = (connectionStatus: components['schemas']['Connection
 
 export const ChatWindowHeader = ({ chat, isJoinedEvent }: ChatWindowHeaderProps) => {
     const { goBack } = useAppNavigation();
+    const { userMetadata } = useAuthStore();
     const insets = useSafeAreaInsets();
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
     const { connectionStatus, isLoading } = useConnectionRealtimeStatus({ chat });
+    const { mutate: updateChatSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen')
     const invitationStatus = getInvitationStatus(connectionStatus);
     const toggleDropdown = () => {
         setIsDropdownVisible(!isDropdownVisible);
@@ -67,7 +71,6 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent }: ChatWindowHeaderProps)
         }
     }
 
-
     const renderActionButtonForGuest = () => {
         if (invitationStatus === 'attendingComplete') {
             return <ConfirmedBadge />
@@ -83,12 +86,14 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent }: ChatWindowHeaderProps)
         }
     }
 
-
-
     return (
         <S.HeaderContainer style={{ paddingTop: insets.top }}>
             <S.HeaderRow>
-                <S.BackButton onPress={goBack}>
+                <S.BackButton onPress={() => {
+                    updateChatSeen({ params: { path: { chatId: chat.id || '' } }, body: { userId: userMetadata.uid || '' } })
+                    goBack();
+
+                }}>
                     <ArrowLeft />
                 </S.BackButton>
 

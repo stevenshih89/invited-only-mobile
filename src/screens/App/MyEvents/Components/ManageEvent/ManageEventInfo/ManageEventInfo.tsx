@@ -49,7 +49,7 @@ export const ManageEventInfo: React.FC<ManageEventInfoProps> = ({ eventId }) => 
             </S.EventNameContainerAndDateContainer>
             <S.EventDescriptionContainer>
                 <S.EventDescriptionLabel>Description</S.EventDescriptionLabel>
-                <S.EventDescriptionText>Description placeholder --- TODO implement event description placeholder</S.EventDescriptionText>
+                <S.EventDescriptionText>Description placeholder --- TODO implement event</S.EventDescriptionText>
             </S.EventDescriptionContainer>
         </S.Container>
     );

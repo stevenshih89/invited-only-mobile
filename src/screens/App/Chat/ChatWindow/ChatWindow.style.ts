@@ -10,11 +10,11 @@ interface IsOwnProps {
 
 export const Container = styled.View`
     display: flex;
-    height: ${screenHeight * 0.9}px;
+    height: ${screenHeight * 1}px;
     flex-direction: column;
     background-color: ${blackColor};
     padding-top: 16px;
-    padding-bottom: 16px;
+    padding-bottom: 30px;
 
 `;
 

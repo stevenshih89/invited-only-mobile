@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { UserMutations } from '../apiv2/mutations/userMutations.ts';
-import useMessaging from './useMessaging.ts';
+
+import useMessaging from '../../../../../../hooks/useMessaging.ts';
+import invitedOnlyBackendApi from 'src/api/backend-api.ts';
+import { useAuthStore } from 'src/store/authStore';
 
 export const useNotificationSetting = (route: any) => {
   const notificationSettings = route?.params?.params?.notificationSettings;
@@ -15,11 +17,11 @@ export const useNotificationSetting = (route: any) => {
   const [superJoin, setSuperJoin] = useState(notificationSettings?.superJoin);
   const [match, setMatch] = useState(notificationSettings?.match);
   const [isVisibleTurnOffNotificationsModal, setIsVisibleTurnOffNotificationsModal] = useState(false);
-  const { mutate: updateNotificationsSettingsMutation } = UserMutations.useUserUpdateNotificationsSettings();
+  const { mutate: updateNotificationsSettingsMutation } = invitedOnlyBackendApi.useMutation('post', '/notifications/configuration');
   const { setupNotifications } = useMessaging();
   const handleChangeAllNotification = async (val: boolean) => {
-    setupNotifications();
     if (val) {
+      setupNotifications();
       setJoinedEvent(val);
       setAllNotification(val);
       setMyEvents(val);
@@ -28,8 +30,20 @@ export const useNotificationSetting = (route: any) => {
       setSuperInvite(val);
       setSuperJoin(val);
       setMatch(val);
-
-      updateNotificationsSettingsMutation(true);
+      updateNotificationsSettingsMutation({
+        body: {
+          userId: useAuthStore.getState().userMetadata.uid,
+          notificationSettings: {
+            chat: val,
+            connection: val,
+            joinedEvent: val,
+            myEvents: val,
+            requests: val,
+            superInvite: val,
+            superJoin: val,
+          },
+        },
+      });
     } else {
       setIsVisibleTurnOffNotificationsModal(true);
     }
@@ -46,18 +60,36 @@ export const useNotificationSetting = (route: any) => {
     setMatch(false);
     setIsVisibleTurnOffNotificationsModal(false);
 
-    updateNotificationsSettingsMutation(false);
+    updateNotificationsSettingsMutation({
+      body: {
+        userId: useAuthStore.getState().userMetadata.uid,
+        notificationSettings: {
+          chat: false,
+          connection: false,
+          joinedEvent: false,
+          myEvents: false,
+          requests: false,
+          superInvite: false,
+          superJoin: false,
+        },
+      },
+    });
   };
 
   const handleChangeStatus = async () => {
     updateNotificationsSettingsMutation({
-      chat: chat,
-      joinedEvent: joinedEvent,
-      match: match,
-      myEvents: myEvents,
-      requests: requests,
-      superInvite: superInvite,
-      superJoin: superJoin,
+      body: {
+        userId: useAuthStore.getState().userMetadata.uid,
+        notificationSettings: {
+          chat: chat,
+          connection: match,
+          joinedEvent: joinedEvent,
+          myEvents: myEvents,
+          requests: requests,
+          superInvite: superInvite,
+          superJoin: superJoin,
+        },
+      },
     });
   };
 

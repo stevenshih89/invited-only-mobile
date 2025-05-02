@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './InviteGuestsEvent.styled';
 import GuestBasicInfoCard from './Components/GuestBasicInfoCard/GuestBasicInfoCard';
 import GuestBioCard from './Components/GuestBioCard/GuestBioCard';
@@ -8,7 +9,6 @@ import GuestLanguagesCard from './Components/GuestLanguagesCard/GuestLanguagesCa
 import { NewConnectionModal } from './Components/NewConnectionModal/NewConnectionModal';
 import { useNewConnectionModal } from './hooks/useNewConnectionModal';
 
-import { components } from 'src/api/v1';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import useSwipeCardAction from 'screens/App/Components/Card/hooks/useSwipeCardAction';
 

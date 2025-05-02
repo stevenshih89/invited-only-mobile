@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import * as S from './NotificationSetting.style';
 import { blackColor, whiteColor } from 'constants/colors';
-import { useNotificationSetting } from 'hooks/useNotificationSetting';
+import { useNotificationSetting } from 'screens/App/Profile/screens/NotificationSetting/hooks/useNotificationSetting';
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
 import useUser from 'hooks/user/useUser';
 

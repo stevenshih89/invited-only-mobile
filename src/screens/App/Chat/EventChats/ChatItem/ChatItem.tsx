@@ -1,10 +1,12 @@
 import { TouchableOpacity } from 'react-native';
 import { formatDistance } from 'date-fns';
 import { StrictMode } from 'react';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './ChatItem.style';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import { components } from 'src/api/v1';
+
 import { useAuthStore } from 'src/store/authStore';
+import invitedOnlyBackendApi from 'src/api/backend-api';
 
 interface ChatItemProps {
     chat: components['schemas']['Chat'];
@@ -14,10 +16,12 @@ interface ChatItemProps {
 export const ChatItem = ({ chat, isJoinedEvent }: ChatItemProps) => {
     const navigation = useAppNavigation();
     const { userMetadata } = useAuthStore.getState();
+    const { mutate: updateChatSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen')
     const userLastSeen = chat.userLastSeen?.some((user) => user.userId === userMetadata.uid);
     return (
         <StrictMode>
             <TouchableOpacity onPress={() => {
+                updateChatSeen({ params: { path: { chatId: chat.id || '' } }, body: { userId: userMetadata.uid || '' } })
                 navigation.navigate('/chat/chat-window', { chat, isJoinedEvent });
             }}>
                 <S.Container>
@@ -48,7 +52,11 @@ export const ChatItem = ({ chat, isJoinedEvent }: ChatItemProps) => {
                             </S.UnreadBadgeAndNameContainer>
                         </S.InnerRowContainer>
                         <S.InnerRowContainer>
-                            <S.LastMessageText>{chat.lastMessage}</S.LastMessageText>
+                            <S.LastMessageText>
+                                {typeof chat.lastMessage === 'object' && chat.lastMessage !== null
+                                    ? (chat.lastMessage as any).content
+                                    : chat.lastMessage}
+                            </S.LastMessageText>
                         </S.InnerRowContainer>
                     </S.WideRightContainer>
                 </S.Container>

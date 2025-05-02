@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import { Text } from 'react-native';
+import { components } from '@invited-only/invited-only-api';
 import AppLoader from '../AppLoader/AppLoader';
 import * as S from './IO.style';
 import usePersistentCardSwipe from './hooks/usePersistentCardSwipe';
@@ -11,7 +12,7 @@ import InviteGuestsEvent from './components/InviteGuestsEvent/InviteGuestsEvent'
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import ModalUpgradeAccount from 'components/Modal/ModalUpgradeAccount/ModalUpgradeAccount';
-import { components } from 'src/api/v1';
+
 
 
 type GuestUser = components['schemas']['User'];

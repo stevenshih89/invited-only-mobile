@@ -1,4 +1,4 @@
-jest.mock('hooks/useNotificationSetting', () => ({
+jest.mock('screens/App/Profile/screens/NotificationSetting/hooks/useNotificationSetting', () => ({
     useNotificationSetting: jest.fn(() => ({
         allNotification: true,
         handleChangeAllNotification: jest.fn(),

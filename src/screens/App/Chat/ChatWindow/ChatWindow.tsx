@@ -7,6 +7,7 @@ import useChatWindowMutations from "./hooks/useChatWindowMutations";
 import { RootStackParamList } from "typescript/types";
 import useUser from "hooks/user/useUser";
 import SendIcon from "src/assets/images/icons/send-message.svg";
+import useChatSocket from "src/api/realtime/useChatSocket";
 
 
 type ChatWindowRouteParams = RootStackParamList['/chat/chat-window'];
@@ -17,12 +18,15 @@ export const ChatWindow = () => {
     const chat = params?.chat;
     const chatId = `${chat?.eventId}_${chat?.hostId}_${chat?.guestId}`;
     const isJoinedEvent = params?.isJoinedEvent;
-    const { chatMessages } = useRealtimeChatMessages(chatId);
+    const { chatMessages, updateChatMessages } = useRealtimeChatMessages(chatId);
     const { user } = useUser();
+    const { sendMessage } = useChatSocket(chatId, updateChatMessages);
     const { newMessage, setNewMessage, scrollViewRef, handleSendMessage } = useChatWindowMutations({
         chatId: chatId,
         userId: user?.uid || '',
+        sendMessage: sendMessage
     });
+
 
     const formatTime = (timestamp?: string) => {
         if (!timestamp) return '';
@@ -67,7 +71,9 @@ export const ChatWindow = () => {
                                 <S.MessageRow isOwn={isOwn}>
                                     {!isOwn && avatarUrl && <S.Avatar source={{ uri: avatarUrl }} />}
                                     <S.MessageBubble isOwn={isOwn}>
-                                        <S.MessageText>{item.content}</S.MessageText>
+                                        <S.MessageText>
+                                            {typeof item?.content === 'object' ? JSON.stringify(item.content) : item?.content}
+                                        </S.MessageText>
                                     </S.MessageBubble>
                                 </S.MessageRow>
                                 <S.SenderInfo isOwn={isOwn}>
@@ -92,7 +98,12 @@ export const ChatWindow = () => {
                         value={newMessage}
                         onChangeText={setNewMessage}
                     />
-                    <S.SendButton disabled={!newMessage || newMessage.trim() === ''} onPress={handleSendMessage}>
+                    <S.SendButton disabled={!newMessage || newMessage.trim() === ''} onPress={
+                        () => {
+                            handleSendMessage();
+                            setNewMessage('');
+                        }
+                    }>
                         {newMessage.trim() === '' && <S.DisabledOverlay />}
                         <SendIcon />
                     </S.SendButton>

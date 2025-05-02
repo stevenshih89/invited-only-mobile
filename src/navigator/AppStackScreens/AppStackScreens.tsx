@@ -28,6 +28,7 @@ import {
   profileStackPath,
   shareSocialLinkPath,
   userProfilePath,
+  chatWindowPath
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
@@ -49,6 +50,7 @@ import AppLoader from 'screens/App/AppLoader/AppLoader';
 import { useAuthStore } from 'src/store/authStore';
 import { ManageEvent } from 'screens/App/MyEvents/Components/ManageEvent/ManageEvent';
 import Payment from 'screens/App/Payment/Payment';
+import { ChatWindow } from 'screens/App/Chat/ChatWindow/ChatWindow';
 
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -260,6 +262,7 @@ const AppStackScreen = () => {
       <AppStack.Screen key={connectPath} name={connectPath} component={Connect} />
       <AppStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
       <AppStack.Screen key={invitationCodePath} name={invitationCodePath} component={InvitationCode} />
+      <AppStack.Screen key={chatWindowPath} name={chatWindowPath} component={ChatWindow} />
     </AppStack.Navigator>
   );
 };
