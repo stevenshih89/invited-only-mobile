@@ -1,15 +1,18 @@
-import { FC, ReactElement } from 'react';
-
+import { FC, ReactElement, useState } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { components } from '@invited-only/invited-only-api';
 import usePersistentCardSwipe from '../IO/hooks/usePersistentCardSwipe';
+import EventInfo from '../Requests/EventInfo/EventInfo';
 import JoinEventsHeader from './Components/JoinEventsHeader/JoinEventsHeader';
 import ExploreEventsEmptyFallback from './Components/ExploreEventsEmptyFallback/ExploreEventsEmptyFallback';
 import * as S from './JoinEvents.style';
 import EventCard from './Components/EventCard/EventCard';
+import PhotosList from './Components/EventCard/Components/PhotosList/PhotosList';
+import ActionButtons from './Components/EventCard/Components/ActionButtons/ActionButtons';
+import HostButton from './Components/EventCard/Components/HostButton/HostButton';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
-
+import ModalReport from 'components/Modal/ModalReport/ModalReport';
 
 interface Props {
   events: components['schemas']['EventData'][];
@@ -21,18 +24,23 @@ const JoinEvents: FC<Props> = ({ events }): ReactElement => {
     handleSwipeLeft,
     handleSwipeRight,
     handleSuperInvite,
-
   } = usePersistentCardSwipe<components['schemas']['EventData']>({
     cardsData: events,
-    eventId: "1"
+    eventId: '1',
   });
 
-  const uniqueEventCards = currentEventCards?.reduce((acc: components['schemas']['EventData'][], current) => {
-    if (!acc.find(item => item.uid === current.uid)) {
-      acc.push(current);
-    }
-    return acc;
-  }, []) || [];
+  const [isOpenReportModal, setIsOpenReportModal] = useState(false);
+
+  const uniqueEventCards =
+    currentEventCards?.reduce((acc: components['schemas']['EventData'][], current) => {
+      if (!acc.find(item => item.uid === current.uid)) {
+        acc.push({ ...current });
+      }
+      return acc;
+    }, []) || [];
+
+  const hasCards = uniqueEventCards.length > 0;
+  const currentCard = hasCards ? uniqueEventCards[uniqueEventCards.length - 1] : undefined;
 
   return (
     <DefaultBackground>
@@ -41,7 +49,6 @@ const JoinEvents: FC<Props> = ({ events }): ReactElement => {
         <ScrollView>
           <S.Container>
             <S.EventCardContainer>
-
               {uniqueEventCards.map((event, index) => (
                 <EventCard
                   uniqueEventCards={uniqueEventCards}
@@ -57,11 +64,31 @@ const JoinEvents: FC<Props> = ({ events }): ReactElement => {
               ))}
             </S.EventCardContainer>
           </S.Container>
+          <S.BottomWrapper>
+            <HostButton hostName={currentCard?.hostName || ''} hostImage={currentCard?.hostImage || ''} />
+            <EventInfo
+              name={currentCard?.name || ''}
+              date={currentCard?.date || ''}
+              time={currentCard?.hour || ''}
+              female={currentCard?.female || 0}
+              male={currentCard?.male || 0}
+              placeName={currentCard?.placeName || ''}
+              location={currentCard?.location || ''}
+            />
+            <PhotosList photosList={currentCard?.photos || []} />
+            <ActionButtons onReject={handleSwipeLeft} onSuperInvite={handleSuperInvite} onInvite={handleSwipeRight} />
+            <S.BlockAndReportContainer>
+              <S.BlockAndReportButton onPress={() => setIsOpenReportModal(true)}>
+                <S.BlockText>Block and Report</S.BlockText>
+              </S.BlockAndReportButton>
+            </S.BlockAndReportContainer>
+          </S.BottomWrapper>
         </ScrollView>
       ) : (
         <ExploreEventsEmptyFallback />
       )}
       <ModalLockedAccount />
+      <ModalReport modalReport={isOpenReportModal} setModalReport={setIsOpenReportModal} />
     </DefaultBackground>
   );
 };

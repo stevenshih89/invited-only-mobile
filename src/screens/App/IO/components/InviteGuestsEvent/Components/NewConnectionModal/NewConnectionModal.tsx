@@ -1,9 +1,9 @@
 import React from 'react';
 import { Modal, Dimensions } from 'react-native';
 import Animated from 'react-native-reanimated';
+import { components } from '@invited-only/invited-only-api';
 import { useNewConnectionAnimations } from './hooks/useNewConnectionAnimations';
 import * as S from './NewConnectionModal.style';
-import { components } from 'src/api/v1';
 import Card from 'screens/App/Components/Card/Card';
 import { calculateAge } from 'helpers/calculateAge';
 import useUser from 'hooks/user/useUser';

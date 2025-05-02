@@ -37,7 +37,7 @@ const EventCard = ({ onInvite, onReject, isTopCard, event, index, topIndex, uniq
             hostId: event.hostId ?? '',
             eventId: event.uid,
             guestSwipe: 'left',
-          }
+          },
         });
       },
       onSwipeRight: () => {
@@ -48,7 +48,7 @@ const EventCard = ({ onInvite, onReject, isTopCard, event, index, topIndex, uniq
             hostId: event.hostId ?? '',
             eventId: event.uid,
             guestSwipe: 'right',
-          }
+          },
         });
       },
       enabled: isTopCard,
@@ -76,7 +76,6 @@ const EventCard = ({ onInvite, onReject, isTopCard, event, index, topIndex, uniq
   };
 
   const totalGuests = (event.female || 0) + (event.male || 0) + (event.femaleFriend || 0);
-
 
   const date = event.date ? new Date(event.date) : undefined;
   return (

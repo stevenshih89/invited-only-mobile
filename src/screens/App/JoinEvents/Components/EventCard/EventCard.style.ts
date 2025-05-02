@@ -1,7 +1,13 @@
 import { RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
-import { whiteColor  } from "constants/colors";
+import { whiteColor } from "constants/colors";
 import { Satoshi500 } from "constants/fonts";
+
+
+export const Container = styled.View`
+  height: 100%;
+`;
+
 
 export const CardContent = styled.View`
   display: flex;

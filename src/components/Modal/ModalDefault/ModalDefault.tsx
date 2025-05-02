@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import {FC} from 'react';
 import Modal from 'react-native-modal';
 import * as S from './ModalDefault.style';
 import CloseIcon from 'assets/images/icons/close.svg';
@@ -14,7 +14,7 @@ interface ModalDefaultProps {
   description: string;
 }
 
-const ModalDefault: FC<ModalDefaultProps> = ({ isVisible, onConfirm, onClose, confirmText, cancelText, title, description }) => {
+const ModalDefault: FC<ModalDefaultProps> = ({isVisible, onConfirm, onClose, confirmText, cancelText, title, description}) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -22,8 +22,7 @@ const ModalDefault: FC<ModalDefaultProps> = ({ isVisible, onConfirm, onClose, co
       onSwipeComplete={onClose}
       hideModalContentWhileAnimating={true}
       useNativeDriverForBackdrop={true}
-      useNativeDriver={true}
-    >
+      useNativeDriver={true}>
       <S.ModalContent>
         <S.CloseButton onPress={onClose}>
           <CloseIcon width={14} height={14} />

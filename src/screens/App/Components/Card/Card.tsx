@@ -1,11 +1,11 @@
 import React, { ReactNode, Dispatch, SetStateAction } from 'react';
 import { PanGesture } from 'react-native-gesture-handler';
 import { AnimatedStyle } from 'react-native-reanimated';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './Card.style';
 import InvisibleTouchZone from './Components/InvisibleTouchZone/InvisibleTouchZone';
 import AnimatedCard from './AnimatedCard';
 import StaticCard from './StaticCard';
-import { components } from 'src/api/v1';
 
 interface CardProps {
   uid: string;

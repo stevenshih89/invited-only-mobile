@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { components } from "src/api/v1";
+import { components } from "@invited-only/invited-only-api";
 
 interface UseNewConnectionModalProps {
     swipeDataRes: components['schemas']['ConnectionRequest'] | undefined;

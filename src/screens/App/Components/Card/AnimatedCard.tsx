@@ -1,13 +1,12 @@
-import React, { useState, ReactNode } from 'react';
-import { GestureDetector, PanGesture } from 'react-native-gesture-handler';
-import { AnimatedStyle } from 'react-native-reanimated';
+import React, {useState, ReactNode} from 'react';
+import {GestureDetector, PanGesture} from 'react-native-gesture-handler';
+import {AnimatedStyle} from 'react-native-reanimated';
 import * as S from './Card.style';
 import ImageIndicator from './Components/ImageIndicator/ImageIndicator';
 import CardImage from './Components/CardImage/CardImage';
-import { PhysicCard } from './Card'; // Assuming PhysicCard remains in Card.tsx or is exported
-import { NopeRejectBadge } from './Components/NopeRejectBadge/NopeRejectBadge';
-import { components } from 'src/api/v1';
-
+import {PhysicCard} from './Card'; // Assuming PhysicCard remains in Card.tsx or is exported
+import {NopeRejectBadge} from './Components/NopeRejectBadge/NopeRejectBadge';
+import {components} from 'src/api/v1';
 
 interface AnimatedCardProps {
   uid: string;
@@ -41,12 +40,12 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
   return (
     <GestureDetector gesture={gestureHandler}>
       <PhysicCard
+        disabled={false}
         distanceFromTheTop={distanceFromTop}
         index={index}
         uid={uid}
         backgroundUrls={backgroundUrls}
         setImageIndex={setImageIndex}>
-
         <S.StyledAnimatedView style={animatedStyle}>
           {showImageIndexIndicator && <ImageIndicator currentIndex={imageIndex} totalImages={backgroundUrls.length} />}
           <CardImage imageSource={backgroundUrls[imageIndex]?.image || null} isTopCard={isTopCard} imageIndex={imageIndex} />
@@ -59,7 +58,6 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
           </S.NopeAnimatedOpacity>
           {children}
         </S.StyledAnimatedView>
-
       </PhysicCard>
     </GestureDetector>
   );
