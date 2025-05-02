@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {whiteColor} from 'constants/colors';
-import {screenHeight} from 'constants/common';
-import {Satoshi500} from 'constants/fonts';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { whiteColor } from 'constants/colors';
+import { screenHeight } from 'constants/common';
+import { Satoshi500 } from 'constants/fonts';
 
 export const Container = styled.View`
   flex: 1;
@@ -12,7 +12,7 @@ export const Container = styled.View`
 `;
 export const CardContainer = styled.View`
   height: ${screenHeight * 0.7};
-  width: 90%;
+  width: 95%;
   position: relative;
   align-items: center;
   justify-content: bottom;

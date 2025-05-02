@@ -15,6 +15,7 @@ export const CardActionsButtons = ({ disabled, onReject, onSuperInvite, onInvite
     onInvite: () => { },
     thisVersion: false,
 }) => {
+
     return (
         <S.ButtonsContainer>
             <S.RejectButton disabled={disabled} onPress={onReject}>

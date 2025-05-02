@@ -1,10 +1,8 @@
 import { FC, ReactElement } from 'react';
 
 import { ScrollView } from 'react-native-gesture-handler';
+import { components } from '@invited-only/invited-only-api';
 import usePersistentCardSwipe from '../IO/hooks/usePersistentCardSwipe';
-import NewConnectionModal from '../IO/components/InviteGuestsEvent/Components/NewConnectionModal/NewConnectionModal';
-import { useNewConnectionModal } from '../IO/components/InviteGuestsEvent/hooks/useNewConnectionModal';
-import useSwipeCardAction from '../Components/Card/hooks/useSwipeCardAction';
 import JoinEventsHeader from './Components/JoinEventsHeader/JoinEventsHeader';
 import ExploreEventsEmptyFallback from './Components/ExploreEventsEmptyFallback/ExploreEventsEmptyFallback';
 import * as S from './JoinEvents.style';
@@ -12,7 +10,6 @@ import EventCard from './Components/EventCard/EventCard';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 
-import { components } from 'src/api/v1';
 
 interface Props {
   events: components['schemas']['EventData'][];

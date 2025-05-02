@@ -32,7 +32,7 @@ const usePersistentCardSwipe = <T extends GuestUser>({
   }, [eventId, cardsData, dismissedCardsPerEvent]);
 
   const handleSwipe = useCallback(
-    (direction: 'left' | 'right' | 'super') => {
+    () => {
       if (!eventId || currentEventCards.length === 0) return;
       const swipedCardUid = currentEventCards[currentEventCards.length - 1]?.uid;
       if (!swipedCardUid) return;
@@ -49,9 +49,9 @@ const usePersistentCardSwipe = <T extends GuestUser>({
     [eventId, currentEventCards],
   );
 
-  const handleSwipeLeft = useCallback(() => handleSwipe('left'), [handleSwipe]);
-  const handleSwipeRight = useCallback(() => handleSwipe('right'), [handleSwipe]);
-  const handleSuperInvite = useCallback(() => handleSwipe('super'), [handleSwipe]);
+  const handleSwipeLeft = useCallback(() => handleSwipe(), [handleSwipe]);
+  const handleSwipeRight = useCallback(() => handleSwipe(), [handleSwipe]);
+  const handleSuperInvite = useCallback(() => handleSwipe(), [handleSwipe]);
 
   const resetDeck = useCallback((eventIdToReset: string) => {
     setDismissedCardsPerEvent(prev => {

@@ -1,7 +1,7 @@
+import { components } from '@invited-only/invited-only-api';
 import { useCardGesture } from '../../hooks/useCardGesture';
 import * as S from './GuestCard.style';
 import Card from 'screens/App/Components/Card/Card';
-import { components } from 'src/api/v1';
 import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
 
 interface Props {
@@ -76,7 +76,7 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
             <S.CardName>{guest.name}{guest.showAge && ','}</S.CardName>
             {guest.showAge && <S.CardGuestAge>{calculateAge(guest.birthday)}</S.CardGuestAge>}
           </S.CardNameAndAge>
-          <CardActionsButtons disabled={true} onReject={onClickReject} onSuperInvite={onClickSuperLike} onInvite={onClickInvite} />
+          <CardActionsButtons disabled={false} onReject={onClickReject} onSuperInvite={onClickSuperLike} onInvite={onClickInvite} />
         </S.CardContent>
       )}
     </Card>

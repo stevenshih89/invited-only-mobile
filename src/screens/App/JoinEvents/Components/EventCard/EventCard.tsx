@@ -1,9 +1,9 @@
+import { components } from '@invited-only/invited-only-api';
 import * as S from './EventCard.style';
 import HostBadge from './Components/HostBadge';
 import Card from 'screens/App/Components/Card/Card';
 
 import { useCardGesture } from 'screens/App/IO/components/InviteGuestsEvent/hooks/useCardGesture';
-import { components } from 'src/api/v1';
 import { useAuthStore } from 'src/store/authStore';
 import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
 import CardsNameAndDate from 'screens/App/Components/Card/Components/CardsNameAndDate/CardsNameAndDate';
@@ -99,7 +99,7 @@ const EventCard = ({ onInvite, onReject, isTopCard, event, index, topIndex, uniq
         </S.BadgeContainer>
         <S.CardBottomContainer>
           <CardsNameAndDate eventName={event.name || ''} date={date} hour={event.hour || ''} />
-          <CardActionsButtons disabled={true} thisVersion={false} onReject={onClickReject} onSuperInvite={onClickSuperLike} onInvite={onClickInvite} />
+          <CardActionsButtons disabled={false} thisVersion={false} onReject={onClickReject} onSuperInvite={onClickSuperLike} onInvite={onClickInvite} />
         </S.CardBottomContainer>
       </S.CardContent>
       <NewConnectionModal cardData={matchedCard} visible={isModalVisible} onClose={closeModal} />
