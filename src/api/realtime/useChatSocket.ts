@@ -11,9 +11,12 @@ interface UseChatSocketReturn {
     sendMessage: (text: string) => void;
 }
 
+interface UpdateChatMessageProps {
+    newMessage: components['schemas']['ChatMessage'];
+}
 
 
-export const useChatSocket = (chatId: string, updateChatMessages: (messages: components['schemas']['ChatMessage'][]) => void): UseChatSocketReturn => {
+export const useChatSocket = (chatId: string, updateChatMessages: (props: UpdateChatMessageProps) => void): UseChatSocketReturn => {
     const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
     const { accessToken } = useAuthStore();
     const { user } = useUser();
@@ -44,8 +47,15 @@ export const useChatSocket = (chatId: string, updateChatMessages: (messages: com
             console.error('Socket connection error:', error.message);
         };
 
-        const handleReceiveMessage = (payload: { senderId: string; message: components['schemas']['ChatMessage']; timestamp: Date }) => {
-            updateChatMessages([payload.message]);
+        const handleReceiveMessage = (payload: { senderId: string; message: any; timestamp: Date }) => {
+            updateChatMessages({
+                newMessage: {
+                    chatId: chatId,
+                    content: payload.message,
+                    senderId: payload.senderId,
+                    timestamp: new Date(payload.timestamp).toISOString(),
+                }
+            });
         };
 
 

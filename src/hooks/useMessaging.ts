@@ -61,7 +61,7 @@ const useMessaging = () => {
 
     useEffect(() => {
         const unsubscribeOnMessage = messaging().onMessage(async (message) => {
-            showToast('success', message.notification?.body ?? '', message.notification?.title ?? '');
+
         });
 
         const unsubscribeOnTokenRefresh = messaging().onTokenRefresh(async (newToken) => {
