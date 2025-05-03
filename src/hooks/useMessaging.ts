@@ -61,7 +61,21 @@ const useMessaging = () => {
 
     useEffect(() => {
         const unsubscribeOnMessage = messaging().onMessage(async (message) => {
+            console.log('Foreground message received:', message);
+            const title = message.notification?.title ?? 'New Message';
+            const body = message.notification?.body ?? '';
 
+            let toastBody = body;
+            if (message.data) {
+                const messageType = message.data.type;
+                const chatId = message.data.chatId;
+
+                if (messageType === 'newMessage' && chatId) {
+                    toastBody = `New message in chat ${chatId}`;
+                }
+            }
+
+            showToast('success', toastBody, title);
         });
 
         const unsubscribeOnTokenRefresh = messaging().onTokenRefresh(async (newToken) => {
