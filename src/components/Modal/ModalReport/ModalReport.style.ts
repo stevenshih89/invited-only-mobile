@@ -18,15 +18,14 @@ export const StyledModal = styled(Modal)`
 export const ModalBackground = styled.View`
   align-items: center;
   background-color: ${black2Color};
-  padding-bottom: 40px;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
+
 `;
 
 export const Wrapper = styled(BottomSheetView)`
   align-items: center;
   background-color: ${black2Color};
-  padding-bottom: 40px;
 `;
 
 export const TextReport = styled.Text`

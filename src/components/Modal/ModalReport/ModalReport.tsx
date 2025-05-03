@@ -29,7 +29,7 @@ interface ReportItem {
 
 const ModalReport = React.forwardRef<BottomSheetModal, ModalReportProps>(
   ({ setModalReport, uidSender, uid, handleAutoSwipeLeft }, ref) => {
-    const snapPoints = useMemo(() => ['50%', '100%'], []);
+    const snapPoints = useMemo(() => ['50%', '90%'], []);
 
     const { activeReport, handleChangeReport, handleSendReport } = useReport({
       uidSender,

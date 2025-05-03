@@ -9,6 +9,7 @@ import useUser from "hooks/user/useUser";
 import SendIcon from "src/assets/images/icons/send-message.svg";
 import useChatSocket from "src/api/realtime/useChatSocket";
 import { whiteColor } from "constants/colors";
+import DefaultBackground from "components/DefaultBackground/DefaultBackground";
 
 
 type ChatWindowRouteParams = RootStackParamList['/chat/chat-window'];
@@ -51,7 +52,9 @@ export const ChatWindow = () => {
             )}
 
             {isLoading ? (
-                <ActivityIndicator size="large" color={whiteColor} />
+                <DefaultBackground>
+                    <ActivityIndicator size="large" color={whiteColor} />
+                </DefaultBackground>
             ) : (
                 <S.ContentContainer>
                     <ScrollView

@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, { FC, useState } from 'react';
 import * as S from './JoinEventsHeader.style';
 
 interface JoinEventsHeaderProps {
@@ -6,7 +6,7 @@ interface JoinEventsHeaderProps {
   onJoinEventsPress?: () => void;
 }
 
-const JoinEventsHeader: FC<JoinEventsHeaderProps> = ({onMyEventsPress, onJoinEventsPress}) => {
+const JoinEventsHeader: FC<JoinEventsHeaderProps> = ({ onMyEventsPress, onJoinEventsPress }) => {
   const [activeTab, setActiveTab] = useState<'explore' | 'invites'>('explore');
 
   const exploreEvents = () => {
