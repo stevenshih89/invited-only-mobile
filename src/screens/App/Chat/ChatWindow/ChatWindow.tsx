@@ -1,4 +1,4 @@
-import { View, Platform, ScrollView, KeyboardAvoidingView } from "react-native";
+import { View, Platform, ScrollView, KeyboardAvoidingView, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import * as S from "./ChatWindow.style";
 import { ChatWindowHeader } from "./ChatWindowHeader/ChatWindowHeader";
@@ -8,6 +8,7 @@ import { RootStackParamList } from "typescript/types";
 import useUser from "hooks/user/useUser";
 import SendIcon from "src/assets/images/icons/send-message.svg";
 import useChatSocket from "src/api/realtime/useChatSocket";
+import { whiteColor } from "constants/colors";
 
 
 type ChatWindowRouteParams = RootStackParamList['/chat/chat-window'];
@@ -18,7 +19,7 @@ export const ChatWindow = () => {
     const chat = params?.chat;
     const chatId = `${chat?.eventId}_${chat?.hostId}_${chat?.guestId}`;
     const isJoinedEvent = params?.isJoinedEvent;
-    const { chatMessages, updateChatMessages } = useRealtimeChatMessages(chatId);
+    const { chatMessages, updateChatMessages, isLoading } = useRealtimeChatMessages(chatId);
     const { user } = useUser();
     const { sendMessage } = useChatSocket(chatId, updateChatMessages);
     const { newMessage, setNewMessage, scrollViewRef, handleSendMessage } = useChatWindowMutations({
@@ -49,44 +50,48 @@ export const ChatWindow = () => {
                 />
             )}
 
-            <S.ContentContainer>
-                <ScrollView
-                    ref={scrollViewRef}
-                    onContentSizeChange={() => {
-                        scrollViewRef.current?.scrollToEnd({ animated: true });
-                    }}
-                >
-                    {chatMessages?.[0]?.timestamp && (
-                        <S.TimeBadge>
-                            <S.TimeText>Today at {formatTime(chatMessages?.[0]?.timestamp)}</S.TimeText>
-                        </S.TimeBadge>
-                    )}
-                    {sortedChatMessages?.map((item) => {
-                        const isOwn = item.senderId === user?.uid;
-                        const avatarUrl = isOwn ? user?.facePhoto : isJoinedEvent ? chat?.hostImageUrl : chat?.guestImageUrl;
-                        const senderName = isOwn ? user?.name : isJoinedEvent ? chat?.hostName : chat?.guestName;
+            {isLoading ? (
+                <ActivityIndicator size="large" color={whiteColor} />
+            ) : (
+                <S.ContentContainer>
+                    <ScrollView
+                        ref={scrollViewRef}
+                        onContentSizeChange={() => {
+                            scrollViewRef.current?.scrollToEnd({ animated: true });
+                        }}
+                    >
+                        {chatMessages?.[0]?.timestamp && (
+                            <S.TimeBadge>
+                                <S.TimeText>Today at {formatTime(chatMessages?.[0]?.timestamp)}</S.TimeText>
+                            </S.TimeBadge>
+                        )}
+                        {sortedChatMessages?.map((item) => {
+                            const isOwn = item.senderId === user?.uid;
+                            const avatarUrl = isOwn ? user?.facePhoto : isJoinedEvent ? chat?.hostImageUrl : chat?.guestImageUrl;
+                            const senderName = isOwn ? user?.name : isJoinedEvent ? chat?.hostName : chat?.guestName;
 
-                        return (
-                            <S.MessageContainer key={item.timestamp} isOwn={isOwn}>
-                                <S.MessageRow isOwn={isOwn}>
-                                    {!isOwn && avatarUrl && <S.Avatar source={{ uri: avatarUrl }} />}
-                                    <S.MessageBubble isOwn={isOwn}>
-                                        <S.MessageText>
-                                            {typeof item?.content === 'object' ? JSON.stringify(item.content) : item?.content}
-                                        </S.MessageText>
-                                    </S.MessageBubble>
-                                </S.MessageRow>
-                                <S.SenderInfo isOwn={isOwn}>
-                                    <S.SenderText>
-                                        {senderName} - {formatTime(item.timestamp)}
-                                    </S.SenderText>
-                                </S.SenderInfo>
-                            </S.MessageContainer>
-                        );
-                    })}
-                    <View style={{ height: 10 }} />
-                </ScrollView>
-            </S.ContentContainer>
+                            return (
+                                <S.MessageContainer key={item.timestamp} isOwn={isOwn}>
+                                    <S.MessageRow isOwn={isOwn}>
+                                        {!isOwn && avatarUrl && <S.Avatar source={{ uri: avatarUrl }} />}
+                                        <S.MessageBubble isOwn={isOwn}>
+                                            <S.MessageText>
+                                                {typeof item?.content === 'object' ? JSON.stringify(item.content) : item?.content}
+                                            </S.MessageText>
+                                        </S.MessageBubble>
+                                    </S.MessageRow>
+                                    <S.SenderInfo isOwn={isOwn}>
+                                        <S.SenderText>
+                                            {senderName} - {formatTime(item.timestamp)}
+                                        </S.SenderText>
+                                    </S.SenderInfo>
+                                </S.MessageContainer>
+                            );
+                        })}
+                        <View style={{ height: 10 }} />
+                    </ScrollView>
+                </S.ContentContainer>
+            )}
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}

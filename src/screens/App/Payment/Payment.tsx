@@ -18,8 +18,6 @@ const Payment: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
   const lottieRef = useRef<LottieView>(null);
 
-
-
   const {
     loaderVisible,
     successfulPay,

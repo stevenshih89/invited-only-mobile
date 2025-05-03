@@ -9,6 +9,7 @@ import { requestTrackingPermission } from 'react-native-tracking-transparency';
 import { Settings } from 'react-native-fbsdk-next';
 import Config from 'react-native-config';
 import Bugsnag from '@bugsnag/react-native';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { blackColor } from 'constants/colors';
 import Main from 'src';
 
@@ -49,21 +50,23 @@ const App: FC = (): JSX.Element => {
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer theme={{
-        dark: true, colors: {
-          background: blackColor,
-          primary: 'black',
-          card: 'black',
-          text: 'white',
-          border: 'black',
-          notification: 'black'
-        }, fonts: { regular: { fontFamily: 'Inter-Regular', fontWeight: '400' }, medium: { fontFamily: 'Inter-Medium', fontWeight: '500' }, bold: { fontFamily: 'Inter-Bold', fontWeight: '700' }, heavy: { fontFamily: 'Inter-Heavy', fontWeight: '900' } }
-      }}>
-        <StatusBar />
-        <View style={{ flex: 1, backgroundColor: blackColor }}>
-          <Main />
-        </View>
-      </NavigationContainer>
+      <BottomSheetModalProvider>
+        <NavigationContainer theme={{
+          dark: true, colors: {
+            background: blackColor,
+            primary: 'black',
+            card: 'black',
+            text: 'white',
+            border: 'black',
+            notification: 'black'
+          }, fonts: { regular: { fontFamily: 'Inter-Regular', fontWeight: '400' }, medium: { fontFamily: 'Inter-Medium', fontWeight: '500' }, bold: { fontFamily: 'Inter-Bold', fontWeight: '700' }, heavy: { fontFamily: 'Inter-Heavy', fontWeight: '900' } }
+        }}>
+          <StatusBar />
+          <View style={{ flex: 1, backgroundColor: blackColor }}>
+            <Main />
+          </View>
+        </NavigationContainer>
+      </BottomSheetModalProvider>
     </SafeAreaProvider>
   );
 };

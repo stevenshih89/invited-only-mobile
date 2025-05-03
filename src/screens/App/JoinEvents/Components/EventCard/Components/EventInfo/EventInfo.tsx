@@ -1,17 +1,13 @@
-import {FC} from 'react';
+import { FC } from 'react';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './EventInfo.style';
 
 interface EventInfoProps {
-  name: string;
-  date: string;
-  time: string;
-  female: number;
-  male: number;
-  placeName: string;
-  location: string;
+  event: components['schemas']['EventData'];
 }
 
-const EventInfo: FC<EventInfoProps> = ({name, date, time, female, male, placeName, location}) => {
+const EventInfo: FC<EventInfoProps> = ({ event }) => {
+  const { name, date, hour, female, male, placeName, location } = event;
   return (
     <S.Container>
       <S.StyledRadialGradient
@@ -28,7 +24,7 @@ const EventInfo: FC<EventInfoProps> = ({name, date, time, female, male, placeNam
           </S.Column>
           <S.Column>
             <S.SectionTitle>Time</S.SectionTitle>
-            <S.SubText>{time}</S.SubText>
+            <S.SubText>{hour}</S.SubText>
           </S.Column>
         </S.RowGap>
       </S.StyledRadialGradient>
@@ -41,7 +37,7 @@ const EventInfo: FC<EventInfoProps> = ({name, date, time, female, male, placeNam
           <S.ColumnStart>
             <S.SectionTitle>Invitations</S.SectionTitle>
             <S.CountBadge>
-              <S.SubText>{female + male}</S.SubText>
+              <S.SubText>{`${female || 0 + (male || 0)}`}</S.SubText>
             </S.CountBadge>
           </S.ColumnStart>
         </S.Row>

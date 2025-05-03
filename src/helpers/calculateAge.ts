@@ -2,7 +2,6 @@ export const calculateAge = (birthdate: string) => {
   if (!birthdate || !/^\d{2}\.\d{2}\.\d{4}$/.test(birthdate)) {
     return '';
   }
-  console.log('birthdate', birthdate);
   const parts = birthdate.split('.');
   const formattedBirthdate = `${parts[2]}-${parts[0]}-${parts[1]}`;
 

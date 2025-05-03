@@ -4,7 +4,7 @@ import invitedOnlyBackendApi from "src/api/backend-api";
 
 const useRealtimeChatMessages = (chatId: string) => {
     const queryClient = useQueryClient();
-    const { data: chatMessages, } = invitedOnlyBackendApi.useQuery('get', '/chat/message/{chatId}', {
+    const { data: chatMessages, isLoading } = invitedOnlyBackendApi.useQuery('get', '/chat/message/{chatId}', {
         params: {
             path: {
                 chatId
@@ -18,7 +18,8 @@ const useRealtimeChatMessages = (chatId: string) => {
     }
     return {
         chatMessages,
-        updateChatMessages
+        updateChatMessages,
+        isLoading
     }
 }
 
