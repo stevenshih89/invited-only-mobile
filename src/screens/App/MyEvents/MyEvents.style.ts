@@ -1,12 +1,13 @@
 import styled from 'styled-components/native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
-import { 
-  blackColor, 
-  whiteColor, 
-  lightGray2Color, 
-  lightGray5Color, 
-  lightRedColor, 
+import { FlatList } from 'react-native';
+import {
+  blackColor,
+  whiteColor,
+  lightGray2Color,
+  lightGray5Color,
+  lightRedColor,
   lightGray20Color,
   lightGreenColor,
   lightGray13Color
@@ -221,3 +222,7 @@ export const StyledTextSecondary = styled.Text`
   opacity: 0.8;
   margin-bottom: 34px;
 `;
+export const ListContainer = styled(FlatList)`
+  flex: 1;
+
+`; 

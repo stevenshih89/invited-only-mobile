@@ -182,3 +182,31 @@ display: flex;
 align-items: center;
 color: #010101;
 `;
+
+export const SmallEventAvatarContainer = styled.View`
+  height: 15px;
+  border-radius: 10px;
+  background-color: ${whiteColor};
+`;
+
+export const SmallEventAvatarImage = styled(FastImage)`
+  width: 15px;
+  height: 15px;
+  border-radius: 10px;
+`;
+
+export const SmallEventNameText = styled.Text`
+  font-family: ${Satoshi700};
+  font-size: 16px;
+  line-height: 140%;
+  color: #FFFFFF;
+`;
+export const EventBadgeContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+`;
+

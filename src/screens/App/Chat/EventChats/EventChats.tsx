@@ -1,10 +1,9 @@
-import { useCallback, useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useState } from "react";
+import { components } from "@invited-only/invited-only-api";
 import { EmptyStateChatFallback } from "../Components/EmtryStateChatFallback";
 import * as S from './EventChats.style';
 import { ChatItem } from "./ChatItem/ChatItem";
 import useGetChats from "./hooks/useGetAllChats";
-import { components } from "src/api/v1";
 import EventsDropdown from "src/screens/App/Components/EventsDropdown/EventsDropdown";
 import AppLoader from "screens/App/AppLoader/AppLoader";
 
@@ -18,7 +17,7 @@ const EventChats = ({ events }: EventChatsProps) => {
 
     return (
         <S.Container>
-            <EventsDropdown events={events} onEventSelect={setSelectedEvent} selectedEvent={selectedEvent} isChatDropdown={true} />
+            <EventsDropdown events={events} onEventSelect={setSelectedEvent} selectedEvent={selectedEvent} />
             {isChatLoading ? (
                 <AppLoader />
             ) : chats?.length && chats?.length > 0 ? (

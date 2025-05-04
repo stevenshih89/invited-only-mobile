@@ -1,3 +1,4 @@
+import { components } from '@invited-only/invited-only-api';
 import * as S from './InterestImge.style';
 import BirthdayParty from 'src/assets/images/auth/interests/birthday-party.png';
 import Exclusive from 'src/assets/images/auth/interests/exclusive.png';
@@ -6,7 +7,7 @@ import Private from 'src/assets/images/auth/interests/private.png';
 import Restaurant from 'src/assets/images/auth/interests/restaurant.png';
 import VipTables from 'src/assets/images/auth/interests/vip-tables.png';
 import YachtParty from 'src/assets/images/auth/interests/yacht-party.png';
-import { components } from 'src/api/v1';
+
 
 interface InterestImageProps {
   interests: components['schemas']['Interest'][];
@@ -34,7 +35,6 @@ const getInterestImageUrl = (interestId: number) => {
 };
 
 const InterestImageSmallList = ({ interests }: InterestImageProps) => {
-  console.log('interests', interests);
   return (
     <S.InterestsContainer>
       {interests?.map((interest, index) => (

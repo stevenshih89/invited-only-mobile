@@ -24,7 +24,7 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
 
     const firstPhotoUrl = item.photos && item.photos.length > 0 ? item.photos[0] : undefined;
 
-    return <EventListItem event={item} imageUrl={firstPhotoUrl?.image} statusEvent={statusString} attendees={[]} requestCount={0} isReview={item.eventReviewed} />;
+    return <EventListItem event={item} imageUrl={firstPhotoUrl?.image} statusEvent={statusString} attendees={[]} requestCount={0} isReview={item.eventReviewed} isHost={true} />;
   };
 
   return (

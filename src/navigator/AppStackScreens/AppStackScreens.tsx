@@ -50,7 +50,6 @@ import { useAuthStore } from 'src/store/authStore';
 import { ManageEvent } from 'screens/App/MyEvents/Components/ManageEvent/ManageEvent';
 import Payment from 'screens/App/Payment/Payment';
 import { ChatWindow } from 'screens/App/Chat/ChatWindow/ChatWindow';
-import useMessaging from 'hooks/useMessaging';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { EventRequestsWrapper } from 'screens/App/MyEvents/Components/EventRequests/EventRequestsWrapper';
 import { RootStackParamList } from 'src/typescript/types';
@@ -118,7 +117,6 @@ export const MyEventsStackNavigation: FC = () => {
         key={myEventsPath}
         component={Events}
       />
-      {/*  TODO make is stack path */}
       <Stack.Screen
         options={{
           headerShown: true,
@@ -132,7 +130,6 @@ export const MyEventsStackNavigation: FC = () => {
   );
 };
 
-const BottomTabsStackScreen = () => <BottomMenu />;
 
 export const ChatStackScreen = () => {
   const [typeEvents, setTypeEvents] = useState<boolean>(false);

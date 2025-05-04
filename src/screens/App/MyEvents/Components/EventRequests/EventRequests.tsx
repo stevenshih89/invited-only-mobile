@@ -25,7 +25,6 @@ const EventRequests = ({ eventId }: EventRequestsProps) => {
     return <EventRequestEmptyFallback />;
   }
 
-
   return <S.Container >
     <FlatList
       numColumns={2}

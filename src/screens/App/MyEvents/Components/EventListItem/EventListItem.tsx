@@ -1,9 +1,10 @@
 import React from 'react';
 import { components } from '@invited-only/invited-only-api';
 import * as S from './EventListItem.style';
-import ManageEventIcon from 'src/assets/images/icons/manage-event-icon.svg';
+import EventListItemHostContent from './EventListItemHostContent/EventListItemHostContent';
+import EventListItemGuestConetnt from './EventListItemGuestConetnt/EventListItemGuestConetnt';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import { eventRequestStackPath } from 'constants/pathLocations';
+
 
 interface EventListItemProps {
   event: components['schemas']['EventData'];
@@ -14,23 +15,11 @@ interface EventListItemProps {
   onPress?: (eventId: string) => void;
   onViewRequests?: (eventId: string) => void;
   isReview?: boolean;
+  isHost?: boolean;
 }
 
-const formatDate = (dateString: string | Date) => {
-  try {
-    return new Intl.DateTimeFormat('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    }).format(new Date(dateString));
-  } catch (e) {
-    return 'Invalid Date';
-  }
-};
 
-const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEvent, attendees = [], requestCount, onPress, isReview }) => {
+const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEvent, attendees = [], requestCount, onPress, isReview, isHost }) => {
   const handlePress = () => onPress && onPress(event.uid);
   const { navigate } = useAppNavigation();
   const displayedAttendees = attendees.slice(0, 2);
@@ -64,34 +53,8 @@ const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEv
           <S.FallbackText>No Image Available</S.FallbackText>
         </S.ImageFallbackContainer>
       )}
+      {isHost ? <EventListItemHostContent event={event} isReview={isReview || false} requestCount={requestCount || 0} /> : <EventListItemGuestConetnt event={event} />}
 
-      <S.ContentContainer>
-        <S.InfoContainer>
-          <S.DateText>{formatDate(event?.createdAt || '')}</S.DateText>
-          <S.EventNameText>{event?.name}</S.EventNameText>
-          {event?.location && <S.LocationText>{event?.location}</S.LocationText>}
-        </S.InfoContainer>
-        <S.ActionsContainer disabled={true}>
-          <S.ViewRequestsButton
-            disabled={!isReview}
-            onPress={() => {
-              const currentEventId = event?.uid;
-              navigate(eventRequestStackPath, { eventId: currentEventId });
-            }}
-            activeOpacity={0.7}
-          >
-            <S.ViewRequestsText disabled={!isReview}>View Requests</S.ViewRequestsText>
-            {requestCount ? (
-              <S.RequestCountBadge>
-                <S.RequestCountText>{requestCount}</S.RequestCountText>
-              </S.RequestCountBadge>
-            ) : null}
-          </S.ViewRequestsButton>
-          <S.ManageButton onPress={() => navigate('/events/manage-event', { eventId: event?.uid })} activeOpacity={0.7} disabled={!isReview}  >
-            <ManageEventIcon />
-          </S.ManageButton>
-        </S.ActionsContainer>
-      </S.ContentContainer>
     </S.CardContainer>
   );
 };

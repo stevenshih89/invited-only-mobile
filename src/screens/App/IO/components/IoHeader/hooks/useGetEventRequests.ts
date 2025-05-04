@@ -13,13 +13,6 @@ const useGetEventRequests = ({ eventId }: UseGetEventRequestsProps) => {
         }
     })
 
-    data?.filter((request) => request.guestSwipe === 'right').forEach((request) => {
-        console.log('guest: ', request.guestId);
-        console.log('host: ', request.hostId);
-        console.log('guestSwipe', request.guestSwipe);
-        console.log('hostSwipe', request.hostSwipe);
-        console.log('____________');
-    })
 
     const requests = data?.filter((request) => request.guestSwipe === 'right' && request.hostSwipe !== 'right');
 

@@ -1,12 +1,14 @@
-import { TouchableOpacity } from 'react-native';
+import { ActivityIndicator, TouchableOpacity } from 'react-native';
 import { formatDistance } from 'date-fns';
 import { StrictMode } from 'react';
 import { components } from '@invited-only/invited-only-api';
+import useGetEvent from '../hooks/useGetEvent';
 import * as S from './ChatItem.style';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 
 import { useAuthStore } from 'src/store/authStore';
 import invitedOnlyBackendApi from 'src/api/backend-api';
+import AppLoader from 'screens/App/AppLoader/AppLoader';
 
 interface ChatItemProps {
     chat: components['schemas']['Chat'];
@@ -15,6 +17,7 @@ interface ChatItemProps {
 
 export const ChatItem = ({ chat, isJoinedEvent }: ChatItemProps) => {
     const navigation = useAppNavigation();
+    const { data: event, isLoading: isEventLoading } = useGetEvent(chat.eventId || '');
     const { userMetadata } = useAuthStore.getState();
     const { mutate: updateChatSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen')
     const userLastSeen = chat.userLastSeen?.some((user) => user.userId === userMetadata.uid);
@@ -33,9 +36,20 @@ export const ChatItem = ({ chat, isJoinedEvent }: ChatItemProps) => {
                     <S.WideRightContainer>
                         <S.InnerRowContainer>
                             <S.StatusBadge>
-                                <S.StatusText>
-                                    {!userLastSeen ? 'New Connection' : 'Invite Match'}
-                                </S.StatusText>
+                                {isJoinedEvent ? (
+                                    <S.EventBadgeContainer>
+                                        <S.SmallEventAvatarContainer>
+                                            {isEventLoading ? <ActivityIndicator /> : <S.SmallEventAvatarImage source={{ uri: event?.photos?.[0]?.image || '' }} />}
+                                        </S.SmallEventAvatarContainer>
+                                        <S.StatusText>
+                                            {event?.name}
+                                        </S.StatusText>
+                                    </S.EventBadgeContainer>
+                                ) : (
+                                    <S.StatusText>
+                                        {!userLastSeen ? 'New Connection' : 'Invite Match'}
+                                    </S.StatusText>
+                                )}
                             </S.StatusBadge>
                             <S.LastMessageTimestamp>{chat.lastMessageTimestamp && formatDistance(new Date(chat.lastMessageTimestamp), new Date(), { addSuffix: true })}</S.LastMessageTimestamp>
                         </S.InnerRowContainer>
@@ -61,6 +75,6 @@ export const ChatItem = ({ chat, isJoinedEvent }: ChatItemProps) => {
                     </S.WideRightContainer>
                 </S.Container>
             </TouchableOpacity>
-        </StrictMode>
+        </StrictMode >
     );
 };
