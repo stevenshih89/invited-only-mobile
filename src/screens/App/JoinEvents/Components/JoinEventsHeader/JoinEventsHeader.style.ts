@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
-import {blackColor, grayColor} from 'constants/colors';
-import {Satoshi500} from 'constants/fonts';
+import { blackColor, grayColor } from 'constants/colors';
+import { Satoshi500 } from 'constants/fonts';
 
 export const HeaderContainer = styled.View`
   display: flex;
@@ -8,6 +8,7 @@ export const HeaderContainer = styled.View`
   border-bottom-width: 1px;
   border-bottom-color: ${grayColor}20;
   padding-top: 12px;
+  width: 100%;
 `;
 
 export const TabContainer = styled.View`

@@ -1,4 +1,4 @@
-import { components } from 'src/api/v1';
+import { components } from '@invited-only/invited-only-api';
 
 export type RootStackParamList = {
   '/bottom-tabs-stack': undefined;
@@ -12,7 +12,7 @@ export type RootStackParamList = {
     screen?: string;
   };
   '/events/requests'?: {
-    screen?: string;
+    eventId: string;
   };
   '/events/manage-event'?: {
     eventId: string;

@@ -1,16 +1,18 @@
 
 import { TouchableOpacity } from 'react-native';
+
+import { components } from '@invited-only/invited-only-api';
 import * as S from './RequestCard.style';
 import useGetGuestDetails from './hooks/useGetGuestDetails';
 import useReqeustActions from './hooks/useInviteGuest';
 import Card from 'screens/App/Components/Card/Card';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
-import { components } from 'src/api/v1';
 
 interface RequestCardProps {
     guestReuestUid: string;
     isSuperJoinRequest: boolean;
     connectionDetails: components['schemas']['ConnectionRequest'];
+    updateEventAttendee: (guestId: string, hostId: string, hostSwipe: string) => void;
 }
 
 const getAge = (birthday: string) => {
@@ -19,9 +21,9 @@ const getAge = (birthday: string) => {
     const age = today.getFullYear() - birthDate.getFullYear();
     return age;
 }
-export const RequestCard = ({ guestReuestUid, connectionDetails }: RequestCardProps) => {
+export const RequestCard = ({ guestReuestUid, connectionDetails, updateEventAttendee }: RequestCardProps) => {
     const { data, isLoading } = useGetGuestDetails(guestReuestUid);
-    const { handleInviteGuest, handleRejectGuest, isPending } = useReqeustActions();
+    const { handleInviteGuest, handleRejectGuest, isPending } = useReqeustActions(updateEventAttendee);
 
     if (isLoading || isPending) {
         return (
@@ -41,7 +43,6 @@ export const RequestCard = ({ guestReuestUid, connectionDetails }: RequestCardPr
                     </S.NameAndAgeContainer>
                     <S.ButtonContainer>
                         <TouchableOpacity onPress={() => {
-                            console.log('rejecting guest');
                             handleRejectGuest({ guestId: guestReuestUid, eventId: connectionDetails.eventId || '', hostId: connectionDetails?.hostId || '' })
                         }}>
 

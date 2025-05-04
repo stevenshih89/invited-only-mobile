@@ -1,3 +1,4 @@
+
 import invitedOnlyBackendApi from "src/api/backend-api";
 
 interface UseUpdateEventAttendeeProps {
@@ -6,22 +7,20 @@ interface UseUpdateEventAttendeeProps {
     hostId: string;
 }
 
-const useReqeustActions = () => {
-    const { mutate: updateAttendens, isPending: isInvitePending } = invitedOnlyBackendApi.useMutation('patch', '/eventAttendees', {
-        onSuccess: () => {
-            console.log('Event attendee updated');
-        },
-        onError: () => {
-            console.log('Error updating event attendee');
-        },
-    })
+const useReqeustActions = (updateEventAttendee: (guestId: string, hostId: string, hostSwipe: string) => void) => {
+
+    const { mutate: updateAttendens, isPending: isInvitePending } = invitedOnlyBackendApi.useMutation('post', '/eventAttendees/create')
     const handleInviteGuest = ({ guestId, eventId, hostId }: UseUpdateEventAttendeeProps) => {
         updateAttendens({
             body: {
                 eventId: eventId,
                 guestId: guestId,
                 hostId: hostId,
-                hostConfirm: true,
+                hostSwipe: 'right'
+            }
+        }, {
+            onSuccess: () => {
+                updateEventAttendee(guestId, hostId, 'right')
             }
         })
     }
@@ -31,7 +30,11 @@ const useReqeustActions = () => {
                 eventId: eventId,
                 guestId: guestId,
                 hostId: hostId,
-                hostConfirm: false,
+                hostSwipe: 'left'
+            }
+        }, {
+            onSuccess: () => {
+                updateEventAttendee(guestId, hostId, 'left')
             }
         })
     }

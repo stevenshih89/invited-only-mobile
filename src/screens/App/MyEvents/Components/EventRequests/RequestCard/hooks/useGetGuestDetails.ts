@@ -8,6 +8,7 @@ const useGetGuestDetails = (guestId: string) => {
             },
         },
     });
+
     return { data, isLoading, error };
 };
 

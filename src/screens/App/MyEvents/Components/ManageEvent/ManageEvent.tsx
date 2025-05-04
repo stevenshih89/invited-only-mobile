@@ -1,6 +1,6 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { useRoute, RouteProp, useNavigation } from '@react-navigation/native'; // To get eventId from params
+import { useRoute, RouteProp } from '@react-navigation/native'; // To get eventId from params
 
 import * as S from './ManageEvent.style';
 import ManageEventConnections from './ManageEventConnections/ManageEventConnections';

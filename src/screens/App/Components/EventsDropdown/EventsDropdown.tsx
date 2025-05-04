@@ -1,16 +1,16 @@
 import { useState } from 'react';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './EventsDropdown.style';
 import ArrowDown from 'src/assets/images/icons/arrow-down.svg';
 import ArrowUp from 'src/assets/images/icons/arrow-up-thin.svg';
-import { components } from 'src/api/v1';
 
 interface EventsDropDownProps {
   events: components['schemas']['EventData'][];
   selectedEvent: components['schemas']['EventData'];
   onEventSelect: (event: components['schemas']['EventData']) => void;
-  isChatDropdown?: boolean;
+  onDropdownChange?: () => void;
 }
-export const EventsDropdown = ({ events, onEventSelect, selectedEvent, isChatDropdown = false }: EventsDropDownProps) => {
+export const EventsDropdown = ({ events, onEventSelect, selectedEvent, onDropdownChange }: EventsDropDownProps) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const sortedEvents = [...events].sort((a, b) => {
@@ -34,6 +34,9 @@ export const EventsDropdown = ({ events, onEventSelect, selectedEvent, isChatDro
   const handleEventSelect = (event: components['schemas']['EventData']) => {
     onEventSelect(event);
     setDropdownVisible(false);
+    if (onDropdownChange) {
+      onDropdownChange();
+    };
   };
 
   const selectedIndex = sortedEvents.findIndex(event => event.uid === selectedEvent?.uid);

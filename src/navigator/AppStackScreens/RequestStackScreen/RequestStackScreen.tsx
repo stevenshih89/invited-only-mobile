@@ -3,7 +3,8 @@ import { createStackNavigator, StackNavigationOptions } from '@react-navigation/
 import EventRequearHeader from './EventRequearHeader/EventRequearHeader';
 import { blackColor, whiteColor } from 'constants/colors';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import EventRequests from 'screens/App/MyEvents/Components/EventRequests/EventRequests';
+import { EventRequestsWrapper } from 'screens/App/MyEvents/Components/EventRequests/EventRequestsWrapper';
+import { eventRequestStackPath } from 'constants/pathLocations';
 
 const EventRequestStack = createStackNavigator();
 
@@ -29,7 +30,7 @@ const RequestStackScreen = () => {
 
   return (
     <EventRequestStack.Navigator screenOptions={stackNavigationOptions}>
-      <EventRequestStack.Screen name="Requests" key="/event/requests" component={EventRequests} />
+      <EventRequestStack.Screen key={eventRequestStackPath} name={eventRequestStackPath} component={EventRequestsWrapper} />
     </EventRequestStack.Navigator>
   );
 };

@@ -1,8 +1,9 @@
 import React from 'react';
 
+import { components } from '@invited-only/invited-only-api';
 import EventListItem from '../EventListItem/EventListItem';
 import * as S from './EventList.style';
-import { components } from 'src/api/v1';
+
 
 interface EventListProps {
   events: components['schemas']['EventData'][];

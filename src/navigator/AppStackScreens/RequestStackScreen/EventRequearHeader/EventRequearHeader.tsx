@@ -1,7 +1,8 @@
 import React from 'react';
-import {GestureResponderEvent} from 'react-native';
+import { GestureResponderEvent } from 'react-native';
 // Example icon set
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as S from './EventRequearHeader.style';
 
 interface EventRequearHeaderProps {
@@ -10,9 +11,10 @@ interface EventRequearHeaderProps {
   onRightActionPress?: (event: GestureResponderEvent) => void;
 }
 
-const EventRequearHeader: React.FC<EventRequearHeaderProps> = ({title, onBackPress, onRightActionPress}) => {
+const EventRequearHeader: React.FC<EventRequearHeaderProps> = ({ title, onBackPress, onRightActionPress }) => {
+  const insets = useSafeAreaInsets();
   return (
-    <S.HeaderContainer>
+    <S.HeaderContainer style={{ paddingTop: insets.top }}>
       <S.LeftActionContainer onPress={onBackPress}>
         <S.ArrowLeftIcon />
       </S.LeftActionContainer>

@@ -1,9 +1,9 @@
 import React, { useState, ReactNode } from 'react';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './Card.style';
 import ImageIndicator from './Components/ImageIndicator/ImageIndicator';
 import CardImage from './Components/CardImage/CardImage';
 import { PhysicCard } from './Card'; // Assuming PhysicCard remains in Card.tsx or is exported
-import { components } from 'src/api/v1';
 
 interface StaticCardProps {
   uid: string;

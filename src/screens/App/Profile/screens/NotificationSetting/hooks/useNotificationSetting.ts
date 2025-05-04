@@ -4,21 +4,27 @@ import { useEffect, useState } from 'react';
 import useMessaging from '../../../../../../hooks/useMessaging.ts';
 import invitedOnlyBackendApi from 'src/api/backend-api.ts';
 import { useAuthStore } from 'src/store/authStore';
+import useUser from 'hooks/user/useUser.ts';
 
-export const useNotificationSetting = (route: any) => {
-  const notificationSettings = route?.params?.params?.notificationSettings;
+export const useNotificationSetting = () => {
+  const { user } = useUser();
 
-  const [allNotification, setAllNotification] = useState(false);
-  const [joinedEvent, setJoinedEvent] = useState(notificationSettings?.joinedEvent);
-  const [myEvents, setMyEvents] = useState(notificationSettings?.myEvents);
-  const [requests, setRequests] = useState(notificationSettings?.requests);
-  const [chat, setChat] = useState(notificationSettings?.chat);
-  const [superInvite, setSuperInvite] = useState(notificationSettings?.superInvite);
-  const [superJoin, setSuperJoin] = useState(notificationSettings?.superJoin);
-  const [match, setMatch] = useState(notificationSettings?.match);
+  const intialAllNotification: boolean = Object.values(user?.notificationSettings || {}).every(value => value === true);
+
+
+  const [allNotification, setAllNotification] = useState(intialAllNotification);
+  const [joinedEvent, setJoinedEvent] = useState(user?.notificationSettings?.joinedEvent);
+  const [myEvents, setMyEvents] = useState(user?.notificationSettings?.myEvents);
+  const [requests, setRequests] = useState(user?.notificationSettings?.requests);
+  const [chat, setChat] = useState(user?.notificationSettings?.chat);
+  const [superInvite, setSuperInvite] = useState(user?.notificationSettings?.superInvite);
+  const [superJoin, setSuperJoin] = useState(user?.notificationSettings?.superJoin);
+  const [match, setMatch] = useState(user?.notificationSettings?.connection);
   const [isVisibleTurnOffNotificationsModal, setIsVisibleTurnOffNotificationsModal] = useState(false);
   const { mutate: updateNotificationsSettingsMutation } = invitedOnlyBackendApi.useMutation('post', '/notifications/configuration');
   const { setupNotifications } = useMessaging();
+
+
   const handleChangeAllNotification = async (val: boolean) => {
     if (val) {
       setupNotifications();

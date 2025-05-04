@@ -1,36 +1,50 @@
 
+import { components } from "@invited-only/invited-only-api";
+import { useQueryClient } from "@tanstack/react-query";
 import invitedOnlyBackendApi from "src/api/backend-api";
-import { useAuthStore } from "src/store/authStore";
-import { components } from "src/api/v1";
 
-export const useGetEventRequests = () => {
-    const { userMetadata } = useAuthStore();
-    const { data: rawData, isLoading, error } = invitedOnlyBackendApi.useQuery('get', '/eventAttendees/host/{hostId}', {
+export const useGetEventRequests = (eventId: string) => {
+    const queryClient = useQueryClient();
+    const { data: rawData, isLoading, error } = invitedOnlyBackendApi.useQuery('get', '/eventAttendees/{eventId}', {
         params: {
             path: {
-                hostId: userMetadata.uid || '',
+                eventId: eventId || '',
             },
 
         },
-
-
     }, {
         refetchInterval: 1000,
     });
 
     const data = rawData as components['schemas']['ConnectionRequest'][] | undefined;
 
-
     const pendingSwipeRequests: components['schemas']['ConnectionRequest'][] = [];
-    console.log('data after query (potentially updated by listener):', data);
+
     if (data && data.length > 0 && !isLoading) {
         data?.forEach((item) => {
-            if (item.status !== 'rejected' && item.guestSwipe === 'right' && item.guestConfirm && item.status !== 'confirmation-complete') {
+            if (item.guestSwipe === 'right' && item.hostSwipe === 'none') {
                 pendingSwipeRequests.push(item);
             }
         });
     }
 
+    const updateEventAttendee = (guestId: string, hostId: string, hostSwipe: string) => {
+        queryClient.setQueryData(['get', '/eventAttendees/{eventId}', {
+            params: {
+                path: {
+                    eventId: eventId || '',
+                },
+            },
+        }], (oldData: components['schemas']['ConnectionRequest'][]) => {
+            return oldData.map((item) => {
+                if (item.guestId === guestId && item.hostId === hostId) {
+                    return { ...item, hostSwipe: hostSwipe }
+                }
+                return item;
+            })
+        })
+    }
 
-    return { pendingSwipeRequests: pendingSwipeRequests || [], isLoading, error };
+
+    return { pendingSwipeRequests: pendingSwipeRequests || [], isLoading, error, updateEventAttendee };
 };

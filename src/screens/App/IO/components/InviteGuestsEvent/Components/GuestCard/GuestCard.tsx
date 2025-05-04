@@ -59,7 +59,7 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
     <Card
       distanceFromTop={topIndex - index}
       uid={guest.uid || ''}
-      backgroundUrls={guest.photos || []}
+      backgroundUrls={guest.photos?.filter(photo => photo.image !== '' && photo.image !== null && photo.image !== undefined) || []}
       index={index}
       isTopCard={isTopCard}
       onInvite={onInvite}

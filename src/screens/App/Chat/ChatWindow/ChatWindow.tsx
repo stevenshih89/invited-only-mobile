@@ -101,13 +101,19 @@ export const ChatWindow = () => {
             >
                 <S.InputContainer>
                     <S.InputField
+                        onFocus={() => {
+                            scrollViewRef.current?.scrollToEnd({ animated: true });
+                        }}
                         placeholder="Write your message..."
                         placeholderTextColor="rgba(255, 255, 255, 0.5)"
                         value={newMessage}
                         onChangeText={setNewMessage}
+                        autoComplete="off"
+                        autoCorrect={false}
                     />
                     <S.SendButton disabled={!newMessage || newMessage.trim() === ''} onPress={
                         () => {
+                            ;
                             handleSendMessage();
                             setNewMessage('');
                         }

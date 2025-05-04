@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import * as S from './CardImage.style';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 
+
 interface Props {
   isTopCard: boolean | undefined;
   imageSource: string | null;
@@ -11,6 +12,8 @@ interface Props {
 
 const CardImage = ({ imageSource, isTopCard, imageIndex }: Props) => {
   const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
+  const [imageErrorUris, setImageErrorUris] = useState<string[]>([]);
+
 
   const handleLoad = () => {
     setLoadedImages(prev => ({
@@ -18,6 +21,15 @@ const CardImage = ({ imageSource, isTopCard, imageIndex }: Props) => {
       [imageIndex]: true,
     }));
   };
+
+  const handleError = () => {
+    if (imageSource) {
+      console.error('Image not available', imageSource);
+      setImageErrorUris(prev => [...prev, imageSource]);
+    }
+  };
+
+  const isCurrentImageError = imageSource ? imageErrorUris.includes(imageSource) : false;
 
   const isLoaded = loadedImages[imageIndex];
   return (
@@ -27,17 +39,20 @@ const CardImage = ({ imageSource, isTopCard, imageIndex }: Props) => {
           <AppLoader />
         </S.ImageLoadingView>
       )}
-      <S.CardImage
+      {isCurrentImageError ? (
+        <S.NoImage>
+          <S.NoImageText>No image available</S.NoImageText>
+        </S.NoImage>
+      ) : <S.CardImage
         onLoad={handleLoad}
-        onError={() => {
-          console.log('Error loading image', imageSource);
-        }}
+        onError={handleError}
         isTop={isTopCard}
         resizeMode={FastImage.resizeMode.cover}
         source={{
-          uri: imageSource,
+          uri: isCurrentImageError ? 'https://demofree.sirv.com/nope-not-here.jpg' : imageSource
         }}
-      />
+      />}
+
     </>
   );
 };

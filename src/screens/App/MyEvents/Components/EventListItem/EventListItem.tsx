@@ -1,8 +1,9 @@
 import React from 'react';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './EventListItem.style';
 import ManageEventIcon from 'src/assets/images/icons/manage-event-icon.svg';
-import { components } from 'src/api/v1';
 import { useAppNavigation } from 'hooks/useAppNavigation';
+import { eventRequestStackPath } from 'constants/pathLocations';
 
 interface EventListItemProps {
   event: components['schemas']['EventData'];
@@ -34,7 +35,6 @@ const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEv
   const { navigate } = useAppNavigation();
   const displayedAttendees = attendees.slice(0, 2);
   const remainingAttendees = attendees.length - displayedAttendees.length;
-
 
   return (
     <S.CardContainer onPress={handlePress} activeOpacity={0.8}>
@@ -75,7 +75,8 @@ const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEv
           <S.ViewRequestsButton
             disabled={!isReview}
             onPress={() => {
-              navigate('/events/requests');
+              const currentEventId = event?.uid;
+              navigate(eventRequestStackPath, { eventId: currentEventId });
             }}
             activeOpacity={0.7}
           >

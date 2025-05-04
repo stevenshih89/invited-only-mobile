@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
+import { screenHeight } from 'constants/common';
 
 export const HeaderContainer = styled.View`
   display: flex;
@@ -7,11 +8,8 @@ export const HeaderContainer = styled.View`
   align-items: center;
   justify-content: space-between;
   padding: 0px 24px;
-  position: absolute;
   width: 100%;
-  height: 48px;
-  left: 0px;
-  top: 60px;
+  height: ${screenHeight * 0.13}px;
 `;
 
 export const LeftActionContainer = styled.TouchableOpacity`

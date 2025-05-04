@@ -31,7 +31,7 @@ const InviteGuestsEvent = ({ selectedEvent, cardsToShow, isLoading, onSwipeLeft,
 
   const { createEventAttendee, swipeDataRes } = useSwipeCardAction();
   const { isModalVisible, closeModal, matchedCard } = useNewConnectionModal({ swipeDataRes, allCards });
-
+  console.log('currentCard', currentCard?.uid);
   const renderCards = () => {
     if (isLoading) {
       return <AppLoader />;

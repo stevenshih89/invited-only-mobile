@@ -1,11 +1,14 @@
 import React, { FC, useState } from 'react';
 import { createStackNavigator, StackNavigationOptions } from '@react-navigation/stack';
-
-//import components
 import { TouchableOpacity } from 'react-native';
-import EventRequestsStackScreen from './RequestStackScreen/RequestStackScreen';
+import { ParamListBase, RouteProp } from '@react-navigation/native';
+
+// Fix import order again
+import EventRequearHeader from './RequestStackScreen/EventRequearHeader/EventRequearHeader';
 import { ProfileStackScreen } from './ProfileStackScreen/ProfileStackScreen';
 import BottomMenu from 'navigator/BottomMenu/BottomMenu';
+
+//import components
 import Header from 'components/Header/Header.tsx';
 import {
   bottomTabsStackPath,
@@ -19,10 +22,7 @@ import {
   joinEventsPath,
   manageEventPath,
   myEventsPath,
-  myPlanPath,
   myProfileViewPath,
-  notificationsPath,
-  notificationsStackPath,
   paymentPath,
   privacyPath,
   profileStackPath,
@@ -31,7 +31,6 @@ import {
   chatWindowPath
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import Notifications from 'screens/App/IO/screens/Notifications/Notifications.tsx';
 import useStyles from 'navigator/AppStackScreens/styles.ts';
 import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView.tsx';
 import ThreeDotsIcon from 'assets/images/icons/more-white.svg';
@@ -41,7 +40,7 @@ import IOWrapper from 'screens/App/IO/IOWrapper.tsx';
 import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper.tsx';
 import Events from 'screens/App/MyEvents/Events.tsx';
 import Connect from 'screens/App/Connect/Connect.tsx';
-import { blackColor } from 'constants/colors.ts';
+import { blackColor, whiteColor } from 'constants/colors.ts';
 import Chat from 'screens/App/Chat/Chat';
 import ShareSocialLink from 'screens/App/InvitationCode/screens/ShareSocialLink/ShareSocialLink';
 import InvitationCode from 'screens/App/InvitationCode/InvitationCode';
@@ -51,10 +50,14 @@ import { useAuthStore } from 'src/store/authStore';
 import { ManageEvent } from 'screens/App/MyEvents/Components/ManageEvent/ManageEvent';
 import Payment from 'screens/App/Payment/Payment';
 import { ChatWindow } from 'screens/App/Chat/ChatWindow/ChatWindow';
+import useMessaging from 'hooks/useMessaging';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { EventRequestsWrapper } from 'screens/App/MyEvents/Components/EventRequests/EventRequestsWrapper';
+import { RootStackParamList } from 'src/typescript/types';
 
 const Stack = createStackNavigator();
-const AppStack = createStackNavigator();
-const NotificationsStack = createStackNavigator();
+const AppStack = createStackNavigator<RootStackParamList>();
+
 const EventCreatingStack = createStackNavigator();
 
 const screenOptions = {
@@ -130,26 +133,6 @@ export const MyEventsStackNavigation: FC = () => {
 };
 
 const BottomTabsStackScreen = () => <BottomMenu />;
-
-const NotificationsStackScreen = () => {
-  const styles = useStyles();
-
-  return (
-    <NotificationsStack.Navigator
-      initialRouteName={notificationsPath}
-      screenOptions={{
-        backgroundColor: blackColor,
-        headerStyle: styles.headerStyle,
-        headerTitleStyle: styles.headerTitleStyle,
-        headerBackImage: () => <ArrowLeft style={{ marginHorizontal: 12, marginVertical: 10 }} />,
-        headerBackTitleVisible: false,
-        headerTitle: 'Notifications',
-        headerShown: true,
-      }}>
-      <NotificationsStack.Screen key={notificationsPath} name={notificationsPath} component={Notifications} />
-    </NotificationsStack.Navigator>
-  );
-};
 
 export const ChatStackScreen = () => {
   const [typeEvents, setTypeEvents] = useState<boolean>(false);
@@ -232,32 +215,43 @@ const UserProfileStackScreen = () => {
 const AppStackScreen = () => {
   const { userMetadata } = useAuthStore();
   const { user, isLoading } = useUser();
+  const navigation = useAppNavigation();
 
   if (isLoading) {
     return <AppLoader />;
   }
   const initialRouteName = userMetadata?.firstLogin && !user?.accountConfirmed ? invitationCodePath : bottomTabsStackPath;
+
+  const eventRequestsScreenOptions: StackNavigationOptions = {
+    headerShown: true,
+    cardStyle: { backgroundColor: blackColor },
+    headerStyle: { backgroundColor: blackColor },
+    headerTitle: 'Requests',
+    headerTitleStyle: { color: whiteColor },
+    headerBackTitleStyle: { color: whiteColor },
+    headerTintColor: whiteColor,
+    header: () => <EventRequearHeader title="Requests" onBackPress={() => navigation.goBack()} />,
+  };
+
   return (
     <AppStack.Navigator
       initialRouteName={initialRouteName}
       screenOptions={{ headerShown: false, cardOverlayEnabled: true, ...screenOptions, cardStyle: { backgroundColor: blackColor } }}>
-      <AppStack.Screen key={bottomTabsStackPath} name={bottomTabsStackPath} component={BottomTabsStackScreen} />
-      <AppStack.Screen
-        key={notificationsStackPath}
-        name={notificationsStackPath}
-        component={NotificationsStackScreen}
-        screenOptions={screenOptions}
-      />
+      <AppStack.Screen key={bottomTabsStackPath} name={bottomTabsStackPath} component={BottomMenu} />
       <AppStack.Screen key={profileStackPath} name={profileStackPath} component={ProfileStackScreen} />
       <AppStack.Screen key={shareSocialLinkPath} name={shareSocialLinkPath} component={ShareSocialLink} />
-      <AppStack.Screen key={eventRequestStackPath} name={eventRequestStackPath} component={EventRequestsStackScreen} />
+      <AppStack.Screen
+        key={eventRequestStackPath}
+        name={eventRequestStackPath}
+        component={EventRequestsWrapper}
+        options={eventRequestsScreenOptions}
+      />
       <AppStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={EventCreatingStackScreen} />
       <AppStack.Screen key={paymentPath} name={paymentPath} component={Payment} />
       <AppStack.Screen
         key={userProfilePath}
         name={userProfilePath}
         component={UserProfileStackScreen}
-        screenOptions={{ cardStyle: { backgroundColor: blackColor } }}
       />
       <AppStack.Screen key={connectPath} name={connectPath} component={Connect} />
       <AppStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
