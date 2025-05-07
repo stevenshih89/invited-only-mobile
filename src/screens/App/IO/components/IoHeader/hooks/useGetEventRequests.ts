@@ -13,10 +13,7 @@ const useGetEventRequests = ({ eventId }: UseGetEventRequestsProps) => {
         }
     })
 
-
     const requests = data?.filter((request) => request.guestSwipe === 'right' && request.hostSwipe !== 'right');
-
-
     return {
         requests,
         isLoading,

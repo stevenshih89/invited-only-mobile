@@ -1,13 +1,13 @@
-import { FC } from 'react';
-import { components } from '@invited-only/invited-only-api';
+import {FC} from 'react';
+import {components} from '@invited-only/invited-only-api';
 import * as S from './EventInfo.style';
 
 interface EventInfoProps {
   event: components['schemas']['EventData'];
 }
 
-const EventInfo: FC<EventInfoProps> = ({ event }) => {
-  const { name, date, hour, female, male, placeName, location } = event;
+const EventInfo: FC<EventInfoProps> = ({event}) => {
+  const {name, date, hour, female, male, placeName, location} = event;
   return (
     <S.Container>
       <S.StyledRadialGradient

@@ -1,14 +1,14 @@
-import { components } from '@invited-only/invited-only-api';
+import {components} from '@invited-only/invited-only-api';
 import * as S from './EventCard.style';
 import HostBadge from './Components/HostBadge';
 import Card from 'screens/App/Components/Card/Card';
 
-import { useCardGesture } from 'screens/App/IO/components/InviteGuestsEvent/hooks/useCardGesture';
-import { useAuthStore } from 'src/store/authStore';
-import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
+import {useCardGesture} from 'screens/App/IO/components/InviteGuestsEvent/hooks/useCardGesture';
+import {useAuthStore} from 'src/store/authStore';
+import {CardActionsButtons} from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
 import CardsNameAndDate from 'screens/App/Components/Card/Components/CardsNameAndDate/CardsNameAndDate';
 import useSwipeCardAction from 'screens/App/Components/Card/hooks/useSwipeCardAction';
-import { useNewConnectionModal } from 'screens/App/IO/components/InviteGuestsEvent/hooks/useNewConnectionModal';
+import {useNewConnectionModal} from 'screens/App/IO/components/InviteGuestsEvent/hooks/useNewConnectionModal';
 import NewConnectionModal from 'screens/App/IO/components/InviteGuestsEvent/Components/NewConnectionModal/NewConnectionModal';
 
 interface Props {
@@ -22,12 +22,12 @@ interface Props {
   uniqueEventCards: components['schemas']['EventData'][];
 }
 
-const EventCard = ({ onInvite, onReject, isTopCard, event, index, topIndex, uniqueEventCards }: Props) => {
-  const { userMetadata: user } = useAuthStore();
-  const { createEventAttendee, swipeDataRes } = useSwipeCardAction();
-  const { isModalVisible, closeModal, matchedCard } = useNewConnectionModal({ swipeDataRes, allCards: uniqueEventCards });
+const EventCard = ({onInvite, onReject, isTopCard, event, index, topIndex, uniqueEventCards}: Props) => {
+  const {userMetadata: user} = useAuthStore();
+  const {createEventAttendee, swipeDataRes} = useSwipeCardAction();
+  const {isModalVisible, closeModal, matchedCard} = useNewConnectionModal({swipeDataRes, allCards: uniqueEventCards});
 
-  const { gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite } =
+  const {gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite} =
     useCardGesture({
       onSwipeLeft: () => {
         onReject();
@@ -98,7 +98,13 @@ const EventCard = ({ onInvite, onReject, isTopCard, event, index, topIndex, uniq
         </S.BadgeContainer>
         <S.CardBottomContainer>
           <CardsNameAndDate eventName={event.name || ''} date={date} hour={event.hour || ''} />
-          <CardActionsButtons disabled={false} thisVersion={false} onReject={onClickReject} onSuperInvite={onClickSuperLike} onInvite={onClickInvite} />
+          <CardActionsButtons
+            disabled={true}
+            thisVersion={false}
+            onReject={onClickReject}
+            onSuperInvite={onClickSuperLike}
+            onInvite={onClickInvite}
+          />
         </S.CardBottomContainer>
       </S.CardContent>
       <NewConnectionModal cardData={matchedCard} visible={isModalVisible} onClose={closeModal} />
