@@ -1,17 +1,17 @@
 import React from 'react';
-import {render, fireEvent, waitFor} from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import Privacy from '../Privacy';
-import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
-import {AuthContext} from 'contexts/AuthContext';
+import { mockedNavigateFunction } from 'jest/mocks/appNavigation.mock';
+import { AuthContext } from 'contexts/AuthContext';
 
 const mockOnBoarding = [
-  {name: 'John Doe'},
-  {gender: 'male'},
-  {email: 'john.doe@example.com'},
-  {accountType: 'guest'},
-  {date: '1990-01-01'},
-  {photos: [{id: 0, image: 'https://example.com/photo.jpg'}]},
-  {facePhoto: 'https://example.com/face.jpg'},
+  { name: 'John Doe' },
+  { gender: 'male' },
+  { email: 'john.doe@example.com' },
+  { accountType: 'guest' },
+  { date: '1990-01-01' },
+  { photos: [{ id: 0, image: 'https://example.com/photo.jpg' }] },
+  { facePhoto: 'https://example.com/face.jpg' },
 ];
 
 const mockRoute = {
@@ -34,7 +34,7 @@ describe('Privacy Component', () => {
     jest.clearAllMocks();
   });
   it('renders correctly for guest account type', () => {
-    const {getByText} = render(
+    const { getByText } = render(
       <AuthContext.Provider
         value={{
           onBoarding: mockOnBoarding,
@@ -46,15 +46,15 @@ describe('Privacy Component', () => {
       </AuthContext.Provider>,
     );
     expect(getByText('Welcome')).toBeTruthy();
-    expect(getByText('Please follow these Guest House Rules')).toBeTruthy();
-    expect(getByText('Be Polite')).toBeTruthy();
-    expect(getByText('Follow Guidelines')).toBeTruthy();
-    expect(getByText('Be Honest')).toBeTruthy();
-    expect(getByText('Respect Privacy')).toBeTruthy();
+    expect(getByText('Please follow these House Rules')).toBeTruthy();
+    expect(getByText('Be Respectful')).toBeTruthy();
+    expect(getByText('Ensure Safety')).toBeTruthy();
+    expect(getByText('Maintain a safe environment and report inappropriate behavior immediately.')).toBeTruthy();
+    expect(getByText('Honesty is Key')).toBeTruthy();
   });
 
   it('navigates to verifyFirstStepPath on button press', async () => {
-    const {getByTestId} = render(
+    const { getByTestId } = render(
       <AuthContext.Provider
         value={{
           onBoarding: mockOnBoarding,

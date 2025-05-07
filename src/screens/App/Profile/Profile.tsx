@@ -1,49 +1,43 @@
-import { FC } from 'react';
-import { ActivityIndicator } from 'react-native';
+import {FC} from 'react';
+import {ActivityIndicator} from 'react-native';
 import * as S from './Profile.style';
 import TabsList from './components/TabsList/TabsList';
 import HostPremium from './components/HostPremium/HostPremium';
-import SuperInviteBlock from './components/SuperInviteBlock/SuperInviteBlock';
+import SuperInviteBlock from './components/SuperInviteAndJoinBlock/SuperInviteAndJoinBlock';
 import ProfileImage from './components/ProfileImage/ProfileImage';
 
 import ModalAcceptedAccount from 'components/Modal/ModalAcceptedAccount';
 import ModalChangeAccountType from 'components/Modal/ModalChangeAccountType';
-import { useProfile } from 'hooks/useProfile';
-import { useSettings } from 'hooks/useSettings';
+import {useProfile} from 'hooks/useProfile';
+import {useSettings} from 'hooks/useSettings';
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
-import { useLogout } from 'hooks/useLogout';
-import { openLink } from 'helpers/links';
+import {useLogout} from 'hooks/useLogout';
+import {openLink} from 'helpers/links';
 import useUser from 'hooks/user/useUser';
 
 const Profile: FC = () => {
-  const {
-    userAge,
-    acceptModalVisible,
-    setAcceptModalVisible,
-    changeAccountTypeModalVisible,
-    setChangeAccountModalVisible,
-  } = useProfile();
+  const {userAge, acceptModalVisible, setAcceptModalVisible, changeAccountTypeModalVisible, setChangeAccountModalVisible} = useProfile();
 
-  const { user, isLoading } = useUser();
+  const {user, isLoading} = useUser();
 
-  const { openLogoutModal, isVisibleLogoutModal, setIsVisibleLogoutModal } = useSettings();
-  const { handleLogout } = useLogout(() => setIsVisibleLogoutModal(false));
+  const {openLogoutModal, isVisibleLogoutModal, setIsVisibleLogoutModal} = useSettings();
+  const {handleLogout} = useLogout(() => setIsVisibleLogoutModal(false));
 
   if (!user || isLoading) {
-    return <S.Container>
-      <ActivityIndicator />
-    </S.Container>
+    return (
+      <S.Container>
+        <ActivityIndicator />
+      </S.Container>
+    );
   }
 
   return (
     <S.Container>
-      {acceptModalVisible && (
-        <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={user} setIsVisible={setAcceptModalVisible} />
-      )}
+      {acceptModalVisible && <ModalAcceptedAccount isVisible={acceptModalVisible} userInfo={user} setIsVisible={setAcceptModalVisible} />}
       {changeAccountTypeModalVisible && !acceptModalVisible && (
         <ModalChangeAccountType isVisible={changeAccountTypeModalVisible} userInfo={user} setIsVisible={setChangeAccountModalVisible} />
       )}
-      <S.ScrollView contentContainerStyle={{ paddingHorizontal: 24 }}>
+      <S.ScrollView contentContainerStyle={{paddingHorizontal: 24}}>
         <S.ContentContainer>
           <ProfileImage userData={user} />
           <S.NameContainer>

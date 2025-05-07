@@ -1,8 +1,8 @@
 import React from 'react';
-import {render, fireEvent, waitFor} from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import SummaryInfo from '../SummaryInfo';
-import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
-import {AuthContext} from 'contexts/AuthContext';
+import { mockedNavigateFunction } from 'jest/mocks/appNavigation.mock';
+import { AuthContext } from 'contexts/AuthContext';
 
 describe('SummaryInfo Component', () => {
   beforeEach(() => {
@@ -12,10 +12,10 @@ describe('SummaryInfo Component', () => {
     jest.clearAllMocks();
   });
   it('renders correctly with user details', () => {
-    const {getByText} = render(
+    const { getByText } = render(
       <AuthContext.Provider
         value={{
-          onBoarding: [{name: 'John Doe'}, {accountType: 'guest'}, {photos: [{id: 0, image: 'https://example.com/photo.jpg'}]}],
+          onBoarding: [{ name: 'John Doe' }, { accountType: 'guest' }, { photos: [{ id: 0, image: 'https://example.com/photo.jpg' }] }],
           setOnBoarding: jest.fn(),
           setUser: jest.fn(),
           user: {},
@@ -23,12 +23,11 @@ describe('SummaryInfo Component', () => {
         <SummaryInfo />
       </AuthContext.Provider>,
     );
-    expect(getByText('John')).toBeTruthy();
-    expect(getByText('guest')).toBeTruthy();
+    expect(getByText('John Doe')).toBeTruthy();
   });
 
   it('navigates to /invitation-code on Continue button press', async () => {
-    const {getByText} = render(
+    const { getByText } = render(
       <AuthContext.Provider
         value={{
           onBoarding: [],

@@ -1,10 +1,10 @@
-import { createStackNavigator } from '@react-navigation/stack';
-import { StyleSheet } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
+import {createStackNavigator} from '@react-navigation/stack';
+import {StyleSheet} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
 import HeaderBackButton from '../../Components/HeaderBackButton/HeaderBackButton';
 import HeaderRightProfileEditing from './Components/HeaderRightProfileEditing/HeaderRightProfileEditing';
-import { blackColor, whiteColor } from 'constants/colors';
-import { Satoshi400 } from 'constants/fonts';
+import {blackColor, whiteColor} from 'constants/colors';
+import {Satoshi400} from 'constants/fonts';
 import {
   accountSettingPath,
   faqPath,
@@ -16,6 +16,8 @@ import {
   notificationSettingPath,
   profileEditingPath,
   profilePath,
+  superInvitePath,
+  superJoinPath,
 } from 'constants/pathLocations';
 import Profile from 'screens/App/Profile/Profile';
 import AccountSetting from 'screens/App/Profile/screens/AccountSetting/AccountSetting';
@@ -27,6 +29,8 @@ import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileVi
 import ProfileEditing from 'screens/App/Profile/screens/ProfileEditing/ProfileEditing';
 import NotificationSetting from 'screens/App/Profile/screens/NotificationSetting/NotificationSetting';
 import ManageSubscription from 'screens/App/Profile/screens/ManageSubscription';
+import SuperJoin from 'screens/App/Profile/screens/SuperJoin/SuperJoin';
+import SuperInvite from 'screens/App/Profile/screens/SuperInvite/SuperInvite';
 
 export const ProfileStackScreen = () => {
   const ProfileStack = createStackNavigator();
@@ -131,6 +135,24 @@ export const ProfileStackScreen = () => {
           headerTitle: 'Manage Subscription',
         }}
         component={ManageSubscription}
+      />
+      <ProfileStack.Screen
+        key={superInvitePath}
+        name={superInvitePath}
+        options={{
+          ...defaultOptions,
+          headerShown: false,
+        }}
+        component={SuperInvite}
+      />
+      <ProfileStack.Screen
+        key={superJoinPath}
+        name={superJoinPath}
+        options={{
+          ...defaultOptions,
+          headerShown: false,
+        }}
+        component={SuperJoin}
       />
     </ProfileStack.Navigator>
   );

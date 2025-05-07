@@ -54,6 +54,8 @@ const helpAndSecurityPath: keyof RootStackParamList = '/profile/help-and-securit
 const notificationSettingPath: keyof RootStackParamList = '/profile/notification-setting';
 const loadingPaymentPath: keyof RootStackParamList = '/profile/loading-payment';
 const welcomeToPremiumPath: keyof RootStackParamList = '/profile/welcome-to-premium';
+const superInvitePath: keyof RootStackParamList = '/profile/super-invite';
+const superJoinPath: keyof RootStackParamList = '/profile/super-join';
 const chatPath: keyof RootStackParamList = '/chat';
 const chatWindowPath: keyof RootStackParamList = '/chat/chat-window';
 const chatCorrespondencePath: keyof RootStackParamList = '/chat-correspondence';
@@ -162,4 +164,6 @@ export {
   shareSocialLinkPath,
   loadingPaymentPath,
   welcomeToPremiumPath,
+  superInvitePath,
+  superJoinPath,
 };
