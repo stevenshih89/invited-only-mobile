@@ -1,36 +1,38 @@
 import React from 'react';
+import Svg, {Circle} from 'react-native-svg';
+import Animated from 'react-native-reanimated';
+import {useVerifyingAnimation} from './hooks/useVerifyingAnimation';
 import * as S from './PhotoVerified.style';
 import {usePhotoVerified} from './hooks/usePhotoVerified';
-import {useRotationAnimation} from './hooks/useRotationAnimation';
-import Loader from 'assets/images/auth/loader.svg';
-import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
-import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
+import {whiteColor} from 'constants/colors';
 
-const PhotoVerified = () => {
+const LoadingPayment = () => {
+  const AnimatedSvg = Animated.createAnimatedComponent(Svg);
   const {imageUri} = usePhotoVerified();
-  const {animatedStyle} = useRotationAnimation();
+  const {animatedStyle, SIZE, STROKE_WIDTH, RADIUS, CIRCUMFERENCE, ARC_LENGTH} = useVerifyingAnimation();
 
   return (
-    <S.RootGradient>
-      <S.SafeArea>
-        <S.Container>
-          <S.LogoWrapper>
-            <LogoPrimary2 />
-          </S.LogoWrapper>
-          <S.PhotoWrapper>
-            <S.VerifiedIcon>
-              <CheckStarIcon width={36} height={36} />
-            </S.VerifiedIcon>
-            <S.VerifiedImage testID="photo-verified-image" source={{uri: imageUri}} />
-          </S.PhotoWrapper>
-          <S.Description>Congratulations! Your photo has been successfully verified. Welcome aboard!</S.Description>
-          <S.LoaderWrapper testID="photo-verified-loader" style={animatedStyle}>
-            <Loader width={90} height={90} />
-          </S.LoaderWrapper>
-        </S.Container>
-      </S.SafeArea>
-    </S.RootGradient>
+    <S.Root>
+      <S.CenterContainer>
+        <AnimatedSvg width={SIZE} height={SIZE} style={animatedStyle}>
+          <Circle cx={SIZE / 2} cy={SIZE / 2} r={RADIUS} stroke={'#232323'} strokeWidth={STROKE_WIDTH} fill="none" />
+          <Circle
+            cx={SIZE / 2}
+            cy={SIZE / 2}
+            r={RADIUS}
+            stroke={whiteColor}
+            strokeWidth={STROKE_WIDTH}
+            fill="none"
+            strokeDasharray={`${ARC_LENGTH},${CIRCUMFERENCE - ARC_LENGTH}`}
+            strokeLinecap="round"
+          />
+        </AnimatedSvg>
+        <S.StyledImage size={SIZE} source={{uri: imageUri}} />
+      </S.CenterContainer>
+      <S.Title>Verifying your photo</S.Title>
+      <S.Subtitle>Wait just a moment we are verifying your photo.</S.Subtitle>
+    </S.Root>
   );
 };
 
-export default PhotoVerified;
+export default LoadingPayment;

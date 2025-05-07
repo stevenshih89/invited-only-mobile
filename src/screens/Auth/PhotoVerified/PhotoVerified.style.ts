@@ -1,75 +1,45 @@
 import styled from 'styled-components/native';
-import LinearGradient from 'react-native-linear-gradient';
-import {SafeAreaView, View, Image, Text} from 'react-native';
-import Animated from 'react-native-reanimated';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {backgroundGradientColors, whiteColor} from 'constants/colors';
-import {Satoshi400} from 'constants/fonts';
+import {blackColor, whiteColor} from 'constants/colors';
+import {Satoshi500} from 'constants/fonts';
+import {screenWidth} from 'constants/common';
 
-// Root gradient background
-export const RootGradient = styled(LinearGradient).attrs({
-  colors: backgroundGradientColors,
-  start: {x: 0, y: 1},
-  end: {x: 0, y: 0},
-})`
+export const Root = styled.View`
   flex: 1;
-`;
-
-// Safe area
-export const SafeArea = styled(SafeAreaView)`
-  flex: 1;
-  padding-bottom: 0px;
-`;
-
-// Main content container
-export const Container = styled(View)`
-  flex: 1;
-  padding-horizontal: 24px;
-  justify-content: space-around;
-`;
-
-// Logo wrapper
-export const LogoWrapper = styled(View)`
+  justify-content: center;
   align-items: center;
-  margin-top: -20px;
+  background-color: ${blackColor};
+  padding-horizontal: 24px;
 `;
 
-// Photo wrapper
-export const PhotoWrapper = styled(View)`
-  align-self: center;
-  width: 180px;
-  height: 180px;
-  position: relative;
+export const CenterContainer = styled.View`
+  justify-content: center;
+  align-items: center;
 `;
 
-// Icon overlay
-export const VerifiedIcon = styled(View)`
+export const StyledImage = styled.Image`
+  width: ${({size}: {size: number}) => size / 2}px;
+  height: ${({size}: {size: number}) => size / 2}px;
+  border-radius: ${({size}: {size: number}) => size / 4}px;
   position: absolute;
-  top: 0px;
-  right: 0px;
-  z-index: 10;
+  top: ${({size}: {size: number}) => size / 4}px;
+  left: ${({size}: {size: number}) => size / 4}px;
 `;
 
-// Verified image
-export const VerifiedImage = styled(Image)`
-  width: 180px;
-  height: 180px;
-  border-radius: 90px;
-`;
-
-// Description text
-export const Description = styled(Text)`
-  text-align: center;
-  font-family: ${Satoshi400};
-  font-size: ${RFValue(18, 812)}px;
+export const Title = styled.Text`
+  font-family: ${Satoshi500};
+  font-size: ${RFValue(24, 932)}px;
   color: ${whiteColor};
-  margin-top: 20px;
+  margin-top: 32px;
 `;
 
-// Loader animation wrapper
-export const LoaderWrapper = styled(Animated.View)`
-  width: 90px;
-  height: 90px;
-  align-self: center;
-  margin-top: 40px;
+export const Subtitle = styled.Text`
+  margin-horizontal: ${screenWidth / 6}px;
+  font-family: ${Satoshi500};
+  font-size: ${RFValue(16, 932)}px;
+  color: ${whiteColor};
+  opacity: 0.8;
+  text-align: center;
+  margin-top: 8px;
+  line-height: ${RFValue(26, 932)}px;
 `;

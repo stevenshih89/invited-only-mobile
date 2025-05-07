@@ -1,231 +1,80 @@
 import React, {FC, JSX} from 'react';
-import {
-  ImageBackground,
-  Keyboard,
-  KeyboardAvoidingView,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import LinearGradient from 'react-native-linear-gradient';
+import {Keyboard} from 'react-native';
 import {useVerifyStep} from './hooks/useVerifyStep';
-import {isIos, screenHeight, screenWidth} from 'constants/common';
-import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import CheckStar from 'assets/images/icons/check-star-white.svg';
-import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-
-import {backgroundGradientColors, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
-import Button from 'components/Button/Button';
+import * as S from './VerifyFirstStep.style';
 import {useAppNavigation} from 'hooks/useAppNavigation';
+import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
+import ArrowLeft from 'assets/images/icons/arrow-left.svg';
+import Button from 'components/Button/Button';
+import {screenHeight, screenWidth} from 'constants/common';
 
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
-  const {imageUri, handleNext, handleSkip, isLoading, openCamera, name, accountType, selfieSource, setImageUri} = useVerifyStep();
+  const {imageUri, handleNext, handleSkip, isLoading, openCamera, accountType, selfieSource, setImageUri} = useVerifyStep();
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{flex: 1}}>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'space-between',
-                paddingBottom: 0,
-                paddingHorizontal: 24,
-                paddingTop: screenHeight / 29,
-              }}>
-              <View style={{alignItems: 'center'}}>
-                <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
-                  <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    activeOpacity={0.7}
-                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
-                    style={{
-                      borderRadius: 50,
-                      width: 40,
-                      height: 40,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: transparentWhite30Color,
-                    }}>
+    <S.Background>
+      <S.AvoidingView>
+        <S.DismissTouchable onPress={Keyboard.dismiss}>
+          <S.SafeArea>
+            <S.Container>
+              <S.Centered>
+                <S.HeaderRow>
+                  <S.BackButton onPress={() => navigation.goBack()}>
                     <ArrowLeft />
-                  </TouchableOpacity>
+                  </S.BackButton>
                   <LogoPrimary2 />
-                  <View style={{width: 40}} />
-                </View>
-                <View style={{alignItems: 'center', width: '100%', marginTop: screenHeight / 16, marginBottom: screenHeight / 20}}>
+                  <S.Spacer />
+                </S.HeaderRow>
+                <S.TitleWrapper>
                   {imageUri ? (
                     <>
-                      <View
-                        style={{
-                          width: '100%',
-                          marginTop: screenHeight / 40,
-                        }}>
-                        <Text
-                          style={{
-                            color: whiteColor,
-                            fontFamily: Satoshi500,
-                            fontSize: RFValue(34, 932),
-                          }}>
-                          Your photo
-                        </Text>
-                        <Text
-                          style={{
-                            color: whiteColor,
-                            fontFamily: Satoshi400,
-                            fontSize: RFValue(16, 932),
-                          }}>
-                          Make sure your face is clearly visible.
-                        </Text>
-                      </View>
-                      <View style={{flexDirection: 'column', width: '100%', marginTop: 20}}>
-                        <View
-                          style={{
-                            position: 'relative',
-                            width: '100%',
-                            height: screenHeight / 2.5,
-                            alignSelf: 'center',
-                          }}>
-                          <ImageBackground
-                            source={{uri: imageUri}}
-                            style={{borderRadius: 15, width: '100%', height: '100%', justifyContent: 'flex-end', overflow: 'hidden'}}>
-                            <View style={{height: 36, width: '100%', justifyContent: 'center', position: 'relative', overflow: 'hidden'}}>
-                              <View
-                                style={{
-                                  position: 'absolute',
-                                  top: 0,
-                                  left: 0,
-                                  bottom: -2,
-                                  right: 0,
-                                  backgroundColor: blackColor,
-                                  opacity: 0.87,
-                                }}
-                              />
-                              <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                                <Text
-                                  style={{
-                                    color: whiteColor,
-                                    marginRight: 8,
-                                    fontFamily: Satoshi500,
-                                    fontSize: RFValue(20, 932),
-                                    alignSelf: 'center',
-                                  }}>
-                                  {name}
-                                </Text>
-                                <CheckStar width={18} height={18} />
-                              </View>
-                            </View>
-                          </ImageBackground>
-                        </View>
-                      </View>
+                      <S.SectionHeader>
+                        <S.SectionTitle>Your photo</S.SectionTitle>
+                        <S.SectionSubtitle>Make sure your face is clearly visible.</S.SectionSubtitle>
+                      </S.SectionHeader>
+                      <S.ImageContainer height={screenHeight / 2.5}>
+                        <S.PhotoBackground source={{uri: imageUri}}></S.PhotoBackground>
+                      </S.ImageContainer>
                     </>
                   ) : (
                     <>
-                      <View
-                        style={{
-                          width: '100%',
-                          marginTop: screenHeight / 40,
-                        }}>
-                        <Text
-                          style={{
-                            color: whiteColor,
-                            fontFamily: Satoshi500,
-                            fontSize: RFValue(48, 932),
-                            marginBottom: 8,
-                          }}>
-                          Verify yourself
-                        </Text>
-                        <Text
-                          style={{
-                            color: whiteColor,
-                            fontFamily: Satoshi400,
-                            fontSize: RFValue(18, 932),
-                          }}>
-                          Copy this position. Your face must be clearly visible.
-                        </Text>
-                      </View>
-                      <View style={{flexDirection: 'column', width: '100%', marginTop: 20}}>
-                        <View
-                          style={{
-                            position: 'relative',
-                            width: '100%',
-                            height: screenWidth / 1.1,
-                            alignSelf: 'center',
-                          }}>
-                          <ImageBackground
-                            source={selfieSource}
-                            style={{borderRadius: 100, width: '100%', height: '100%', justifyContent: 'flex-end'}}>
-                            <View
-                              style={{
-                                height: screenHeight / 20,
-                                width: '100%',
-                                justifyContent: 'center',
-                                position: 'relative',
-                                overflow: 'hidden',
-                              }}>
-                              <View
-                                style={{
-                                  position: 'absolute',
-                                  top: 0,
-                                  left: 0,
-                                  bottom: -2,
-                                  right: 0,
-                                  backgroundColor: blackColor,
-                                  opacity: 0.87,
-                                }}
-                              />
-                              <Text style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(20, 932), alignSelf: 'center'}}>
-                                {name}
-                              </Text>
-                            </View>
-                          </ImageBackground>
-                        </View>
-                      </View>
+                      <S.SectionHeader>
+                        <S.SectionTitle>Verify yourself</S.SectionTitle>
+                        <S.SectionSubtitle>Copy this position. Your face must be clearly visible.</S.SectionSubtitle>
+                      </S.SectionHeader>
+                      <S.ImageContainer height={screenWidth / 1.15}>
+                        <S.SelfieBackground source={selfieSource}></S.SelfieBackground>
+                      </S.ImageContainer>
                     </>
                   )}
-                </View>
-              </View>
+                </S.TitleWrapper>
+              </S.Centered>
               {imageUri ? (
-                <View style={{marginBottom: 4}}>
+                <S.Footer>
                   <Button title="Submit" onPress={handleNext} loading={isLoading} />
                   <Button
+                    variant="gray"
                     onPress={async () => {
-                      if (isLoading) {
-                        return;
-                      }
+                      if (isLoading) return;
                       setImageUri('');
                       await openCamera();
                     }}
                     title="Retake photo"
-                    variant="transparent"
                   />
-                </View>
+                </S.Footer>
               ) : (
-                <View>
-                  <View>
-                    <Button testID="take-photo-button" onPress={() => openCamera()} title="Take a photo" />
-                  </View>
-                  {accountType === 'host' && (
-                    <TouchableOpacity testID="skip-button" onPress={handleSkip}>
-                      <Text
-                        style={{fontSize: RFValue(18, 812), fontFamily: Satoshi500, color: whiteColor, marginTop: 20, textAlign: 'center'}}>
-                        Skip
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
+                <S.Footer>
+                  <Button testID="take-photo-button" onPress={openCamera} title="Take a photo" />
+                  {accountType === 'host' && <Button title="Skip" onPress={handleSkip} variant="gray" />}
+                </S.Footer>
               )}
-            </View>
-          </SafeAreaView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+            </S.Container>
+          </S.SafeArea>
+        </S.DismissTouchable>
+      </S.AvoidingView>
+    </S.Background>
   );
 };
 

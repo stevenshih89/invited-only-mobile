@@ -119,6 +119,12 @@ export const useVerifyStep = () => {
           includeBase64: false,
           multiple: false,
           useFrontCamera: true,
+          cropperCircleOverlay: true,
+          showCropFrame: true,
+          cropperTintColor: 'white',
+          cropperStrokeColor: 'white',
+          cropperStrokeWidth: 2,
+          cropperActiveOpacity: 0.7,
         });
 
         setImageUri(image.path);
@@ -189,7 +195,6 @@ export const useVerifyStep = () => {
     handleNext,
     handleSkip,
     openCamera,
-    name,
     gender,
     email,
     accountType,

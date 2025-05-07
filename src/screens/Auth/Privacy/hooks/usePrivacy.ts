@@ -8,6 +8,10 @@ import {AuthContext} from 'contexts/AuthContext';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {useAuthStore} from 'src/store/authStore';
+import SheildRulesIcon from 'assets/images/icons/shield-rules.svg';
+import HandRulesIcon from 'assets/images/icons/hand-rules.svg';
+import MessageRulesIcon from 'assets/images/icons/message-rules.svg';
+import LockRulesIcon from 'assets/images/icons/lock-rules.svg';
 
 export const usePrivacy = () => {
   const {userMetadata: user} = useAuthStore();
@@ -16,49 +20,30 @@ export const usePrivacy = () => {
   const objWithAccountType = onBoarding.find((obj: any) => obj.accountType);
   const route = useRoute();
   const routeParams = route.params as Readonly<{screen: string; accountType: string}>;
-  const privaciesListHost = [
+  const privaciesList = [
     {
       id: 0,
       title: 'Be Respectful',
-      subtitle: 'Treat your guests with courtesy and professionalism at all times.',
+      subtitle: 'Treat your guests or hosts with courtesy and professionalism at all times.',
+      icon: HandRulesIcon,
     },
     {
       id: 1,
       title: 'Ensure Safety',
       subtitle: 'Maintain a safe environment and report inappropriate behavior immediately.',
+      icon: SheildRulesIcon,
     },
     {
       id: 2,
       title: 'Honesty is Key',
-      subtitle: 'Be clear about your event and its purpose—no misleading details.',
+      subtitle: 'Be clear about your table or event and its purpose—no misleading details.',
+      icon: MessageRulesIcon,
     },
     {
       id: 3,
       title: 'Respect Privacy',
       subtitle: 'Do not share personal information or media without consent.',
-    },
-  ];
-
-  const privaciesListGuest = [
-    {
-      id: 0,
-      title: 'Be Polite',
-      subtitle: 'Treat the host and other guests with respect and courtesy.',
-    },
-    {
-      id: 1,
-      title: 'Follow Guidelines',
-      subtitle: "Adhere to the host's event rules and maintain appropriate behavior.",
-    },
-    {
-      id: 2,
-      title: 'Be Honest',
-      subtitle: 'Represent yourself truthfully when joining events.',
-    },
-    {
-      id: 3,
-      title: 'Respect Privacy',
-      subtitle: 'Do not share personal details or event content without permission.',
+      icon: LockRulesIcon,
     },
   ];
 
@@ -119,8 +104,7 @@ export const usePrivacy = () => {
   return {
     objWithAccountType,
     accountType: routeParams?.accountType,
-    privaciesListHost,
-    privaciesListGuest,
+    privaciesList,
     navigation,
     screen: routeParams?.screen,
   };

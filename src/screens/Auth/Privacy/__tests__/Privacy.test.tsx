@@ -1,6 +1,6 @@
 import React from 'react';
 import {render, fireEvent, waitFor} from '@testing-library/react-native';
-import Privacy from './Privacy';
+import Privacy from '../Privacy';
 import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
 import {AuthContext} from 'contexts/AuthContext';
 

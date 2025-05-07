@@ -1,12 +1,11 @@
 import styled from 'styled-components/native';
-import {FlatList, TouchableOpacity, View, Text, SafeAreaView} from 'react-native';
+import {FlatList, TouchableOpacity, View, Text, SafeAreaView, ImageBackground} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {backgroundGradientColors, transparentWhite30Color, whiteColor, lightGray3Color, lightGray4Color} from 'constants/colors';
+import {backgroundGradientColors, whiteColor, lightGray4Color} from 'constants/colors';
 import {screenHeight} from 'constants/common';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 
-// Root gradient background
 export const GradientBackground = styled(LinearGradient).attrs({
   colors: backgroundGradientColors,
   start: {x: 0, y: 1},
@@ -15,27 +14,22 @@ export const GradientBackground = styled(LinearGradient).attrs({
   flex: 1;
 `;
 
-// Safe area
 export const SafeArea = styled(SafeAreaView)`
   flex: 1;
 `;
 
-// Main container
 export const Container = styled(View)`
   flex: 1;
-  padding-horizontal: 24px;
 `;
 
-// Header row
 export const HeaderRow = styled(View)`
   flex-direction: row;
   width: 100%;
   align-items: center;
   justify-content: space-between;
-  padding-top: ${screenHeight / 29}px;
+  padding-horizontal: 24px;
 `;
 
-// Back button
 export const BackButton = styled(TouchableOpacity).attrs({
   activeOpacity: 0.7,
   hitSlop: {top: 20, bottom: 20, left: 20, right: 20},
@@ -45,51 +39,49 @@ export const BackButton = styled(TouchableOpacity).attrs({
   height: 40px;
   justify-content: center;
   align-items: center;
-  background-color: ${transparentWhite30Color};
+  background-color: #181818;
 `;
 
-// Spacer to align logo
 export const Spacer = styled(View)`
   width: 40px;
 `;
 
-// Title section
 export const TitleSection = styled(View)<{hasScreen: boolean}>`
+  margin-top: 24px;
   margin-bottom: ${screenHeight / 30}px;
-  margin-top: ${(props: {hasScreen: boolean}) => (props.hasScreen ? screenHeight / 11.5 : screenHeight / 15)}px;
+  padding-horizontal: 24px;
 `;
 
-// Title and subtitle
 export const TitleText = styled(Text)`
   color: ${whiteColor};
   font-family: ${Satoshi500};
-  font-size: ${RFValue(48, 932)}px;
-  margin-bottom: 8px;
+  font-size: ${RFValue(32, 932)}px;
+  margin-bottom: 12px;
 `;
 
 export const SubtitleText = styled(Text)`
   color: ${whiteColor};
   font-family: ${Satoshi400};
-  font-size: ${RFValue(18, 932)}px;
+  font-size: ${RFValue(16, 932)}px;
+  opacity: 0.64;
 `;
 
-// Privacy list
 export const PrivacyList = styled(FlatList).attrs({
   showsVerticalScrollIndicator: false,
-  style: {flex: 1},
-})``;
-
-// Item separator
-export const ItemSeparator = styled(View)`
-  height: 8px;
+})`
+  flex: 1;
+  padding-horizontal: 24px;
 `;
 
-// List item container
+export const ItemSeparator = styled(View)`
+  height: 16px;
+`;
+
 export const ListItem = styled(View)`
-  width: 100%;
-  padding: 20px;
-  background-color: ${lightGray3Color};
-  border-radius: 10px;
+  flex: 1;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
 `;
 
 export const ItemHeader = styled(View)`
@@ -100,18 +92,50 @@ export const ItemHeader = styled(View)`
 export const ItemTitle = styled(Text)`
   color: ${whiteColor};
   font-size: ${RFValue(16, 932)}px;
-  font-family: ${Satoshi700};
-  margin-left: 8px;
+  font-family: ${Satoshi500};
 `;
 
 export const ItemSubtitle = styled(Text)`
   color: ${lightGray4Color};
   font-size: ${RFValue(14, 932)}px;
   font-family: ${Satoshi400};
-  margin-top: 10px;
+  opacity: 0.64;
 `;
 
-// Button container
 export const ButtonContainer = styled(View)`
-  margin-top: 16px;
+  margin-top: 8px;
+  padding-horizontal: 24px;
+`;
+
+export const BackgroundImage = styled(ImageBackground)`
+  width: 100%;
+  height: ${screenHeight / 3.4}px;
+`;
+
+export const TextWrapper = styled(View)`
+  flex: 1;
+  gap: 4px;
+`;
+
+export const ImageOverlay = styled(LinearGradient).attrs({
+  colors: ['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)'],
+})`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 60%;
+  border-bottom-right-radius: 16px;
+  border-bottom-left-radius: 16px;
+`;
+
+export const IconWrapper = styled(View)`
+  padding: 8px;
+  background-color: #121212;
+  border-radius: 10px;
+`;
+
+export const ContentWrapper = styled(View)`
+  flex: 1;
+  gap: 4px;
 `;
