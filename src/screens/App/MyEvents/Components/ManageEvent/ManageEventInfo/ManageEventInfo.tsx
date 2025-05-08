@@ -5,8 +5,6 @@ import * as S from './ManageEventInfo.style'; // Create style file later if need
 import invitedOnlyBackendApi from 'src/api/backend-api';
 
 import { whiteColor } from 'constants/colors';
-import { formatDate } from 'helpers/formatDate';
-import { formateDateAbbreviated } from 'helpers/formateDateAbbreviated';
 // Define props if needed, e.g., to receive eventId or event details
 interface ManageEventInfoProps {
     eventId: string;

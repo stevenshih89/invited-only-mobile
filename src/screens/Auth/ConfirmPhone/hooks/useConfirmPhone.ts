@@ -1,14 +1,14 @@
-import {useContext, useState, RefObject} from 'react';
+import { useContext, useState, RefObject } from 'react';
 
-import {TextInput} from 'react-native';
-import {useBlurOnFulfill, useClearByFocusCell} from 'react-native-confirmation-code-field';
+import { TextInput } from 'react-native';
+import { useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import firestore from '@react-native-firebase/firestore';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
-import {useAuthStore} from 'src/store/authStore';
+import { components } from '@invited-only/invited-only-api';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
+import { useAuthStore } from 'src/store/authStore';
 import invitedOnlyBackendApi from 'src/api/backend-api';
-import {showToast} from 'helpers/showToast';
-import {components} from 'src/api/v1';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { showToast } from 'helpers/showToast';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 
 export const useConfirmPhone = (route: {
   params: {
@@ -17,7 +17,7 @@ export const useConfirmPhone = (route: {
   };
 }) => {
   const navigation = useAppNavigation();
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const mobilePhone = route?.params?.mobilePhone;
   const isLogin = route?.params?.isLogin || false;
   const [code, setCode] = useState<string>('');
@@ -29,14 +29,14 @@ export const useConfirmPhone = (route: {
   const [resendTimer, setResendTimer] = useState(0);
 
   const CELL_COUNT: number = 6;
-  const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
+  const ref: RefObject<TextInput> = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
 
   console.log('resendTimer', resendTimer);
 
-  const {setOnBoarding, setAccessToken, setRefreshToken, setUserMetadata} = useAuthStore();
+  const { setOnBoarding, setAccessToken, setRefreshToken, setUserMetadata } = useAuthStore();
   console.log('setOnBoarding', setOnBoarding);
-  const {mutate: verifyOtp, isPending: isLoadingVerifyOtp} = invitedOnlyBackendApi.useMutation('post', '/auth/verify-otp');
-  const {mutate: sendOtp, isPending: isLoadingSendOtp} = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
+  const { mutate: verifyOtp, isPending: isLoadingVerifyOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/verify-otp');
+  const { mutate: sendOtp, isPending: isLoadingSendOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
 
   async function signInWithPhoneNumber() {
     try {
@@ -45,7 +45,7 @@ export const useConfirmPhone = (route: {
       }
       setResendTimer(59);
       const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
-      await sendOtp({body: {phone}});
+      await sendOtp({ body: { phone } });
     } catch (e: any) {
       showToast('inviteMatch', `${e?.message.split(']')[1]}`);
     }
@@ -69,7 +69,7 @@ export const useConfirmPhone = (route: {
         const userData = userQuerySnapshot.docs[0].data() as components['schemas']['User'];
 
         verifyOtp(
-          {body: {phone: mobilePhone, code}},
+          { body: { phone: mobilePhone, code } },
           {
             onSuccess: data => {
               setOnBoarding({
@@ -100,7 +100,7 @@ export const useConfirmPhone = (route: {
         );
       } else {
         verifyOtp(
-          {body: {phone: mobilePhone, code}},
+          { body: { phone: mobilePhone, code } },
           {
             onSuccess: data => {
               console.log('sucess verify otp data', data);

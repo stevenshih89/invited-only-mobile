@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
-import {blackColor} from 'constants/colors';
-import {screenWidth} from 'constants/common';
+import { blackColor } from 'constants/colors';
+import { screenWidth } from 'constants/common';
 
 export const Container = styled.View`
   background-color: ${blackColor};
@@ -39,3 +39,11 @@ export const ProfileButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
 `;
+
+export const BadgeStyle = {
+  position: 'absolute' as 'absolute',
+  borderColor: '#590000',
+  top: -30,
+  right: -18,
+  backgroundColor: '#590000',
+}

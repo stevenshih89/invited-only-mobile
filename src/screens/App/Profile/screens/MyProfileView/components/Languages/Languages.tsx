@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { View } from 'react-native';
-import * as S from './Languages.style';
 import { components } from 'src/api/v1';
+import * as S from './Languages.style';
 
 interface LanguagesProps {
   languages: components['schemas']['Language'][];

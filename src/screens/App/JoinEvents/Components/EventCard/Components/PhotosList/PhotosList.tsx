@@ -1,6 +1,6 @@
 import {FC} from 'react';
-import * as S from './PhotosList.style';
 import {components} from 'src/api/v1';
+import * as S from './PhotosList.style';
 
 interface PhotosListProps {
   photosList: components['schemas']['EventData']['photos'];

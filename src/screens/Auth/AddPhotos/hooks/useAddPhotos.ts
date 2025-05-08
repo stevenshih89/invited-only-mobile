@@ -3,12 +3,12 @@ import {Alert, Platform} from 'react-native';
 import {check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS} from 'react-native-permissions';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
+import {components} from 'src/api/v1';
 import {useAuthStore} from 'src/store/authStore';
 import {showToast} from 'helpers/showToast';
 import {isIos} from 'constants/common';
 import {enterBirthdayPath} from 'constants/pathLocations';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import {components} from 'src/api/v1';
 
 export const useAddPhotos = () => {
   const navigation = useAppNavigation();

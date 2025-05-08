@@ -1,7 +1,7 @@
 import { ActivityIndicator } from 'react-native';
+import { components } from 'src/api/v1';
 import * as S from './ManageEventGuestInfo.style';
 import invitedOnlyBackendApi from 'src/api/backend-api';
-import { components } from 'src/api/v1';
 
 interface ManageEventGuestInfoProps {
     request: components['schemas']['ConnectionRequest'];

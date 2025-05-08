@@ -8,7 +8,6 @@ import { useAppNavigation } from 'hooks/useAppNavigation';
 
 import { useAuthStore } from 'src/store/authStore';
 import invitedOnlyBackendApi from 'src/api/backend-api';
-import AppLoader from 'screens/App/AppLoader/AppLoader';
 
 interface ChatItemProps {
     chat: components['schemas']['Chat'];

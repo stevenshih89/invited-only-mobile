@@ -5,12 +5,12 @@ import * as Sentry from '@sentry/react-native';
 import { useState } from 'react';
 import { Alert, Platform } from 'react-native';
 import moment from 'moment';
+import { components } from 'src/api/v1';
 import { CreateEventFormValues } from '../CreateEventFlow';
 
 import { showToast, UseToastType } from 'helpers/showToast';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { components } from 'src/api/v1';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
 

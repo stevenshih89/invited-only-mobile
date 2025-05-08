@@ -1,6 +1,6 @@
+import { components } from 'src/api/v1';
 import * as S from './GuestBasicInfoCard.style';
 import TablerGenderIcon from 'src/assets/images/icons/gender-girl.svg';
-import { components } from 'src/api/v1';
 import InterestImageSmallList from 'screens/App/Components/Intrests/InterestImageSmallList';
 
 interface Props {

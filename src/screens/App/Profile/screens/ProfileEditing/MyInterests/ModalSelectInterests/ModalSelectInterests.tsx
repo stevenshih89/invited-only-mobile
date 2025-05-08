@@ -1,10 +1,10 @@
 import React, { FC, useState, useCallback } from 'react';
 import { View } from 'react-native';
+import { components } from 'src/api/v1';
 import * as S from './ModalSelectInterests.style';
 import SearchIcon from 'assets/images/icons/search.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
 import Button from 'components/Button/Button';
-import { components } from 'src/api/v1';
 
 import BirthdayParty from 'src/assets/images/auth/interests/birthday-party.png';
 import Exclusive from 'src/assets/images/auth/interests/exclusive.png';

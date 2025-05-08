@@ -8,7 +8,6 @@ import { createMaterialTopTabNavigator, MaterialTopTabBarProps } from '@react-na
 
 // Hooks
 import EventRequests from '../MyEvents/Components/EventRequests/EventRequests';
-import AppLoader from '../AppLoader/AppLoader';
 import usePersistentCardSwipe from './hooks/usePersistentCardSwipe';
 import { useEventGuests } from './hooks/useEventGuests';
 

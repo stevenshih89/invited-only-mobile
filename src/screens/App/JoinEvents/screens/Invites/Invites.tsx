@@ -1,9 +1,9 @@
 import {FC} from 'react';
 import {FlatList} from 'react-native';
+import {components} from 'src/api/v1';
 import InviteCard from './Components/InviteCard/InviteCard';
 import * as S from './Invites.style';
 import usePersistentCardSwipe from 'screens/App/IO/hooks/usePersistentCardSwipe';
-import {components} from 'src/api/v1';
 
 interface Props {
   events: components['schemas']['EventData'][];

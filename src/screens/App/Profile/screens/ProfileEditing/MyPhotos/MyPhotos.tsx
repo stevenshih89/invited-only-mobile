@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import { GestureDetector } from 'react-native-gesture-handler';
+import { components } from 'src/api/v1';
 import ModalReplacePhoto from '../ModalReplacePhoto';
 import * as S from './MyPhotos.style';
 import Close from 'assets/images/icons/close.svg';
 import Plus from 'assets/images/icons/plus.svg';
 import PencilWhiteIcon from 'assets/images/icons/pencil-white.svg';
 import { useMyPhotos } from 'hooks/useMyPhotos';
-import { components } from 'src/api/v1';
 
 interface MyPhotosProps {
   images: components['schemas']['UserPhoto'][];

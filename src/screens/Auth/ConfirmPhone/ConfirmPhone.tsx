@@ -8,15 +8,15 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {CodeField, Cursor} from 'react-native-confirmation-code-field';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { CodeField, Cursor } from 'react-native-confirmation-code-field';
+import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
-import {useConfirmPhone} from './hooks/useConfirmPhone';
-import {isIos, screenHeight} from 'constants/common';
+import { useConfirmPhone } from './hooks/useConfirmPhone';
+import { isIos, screenHeight } from 'constants/common';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {backgroundGradientColors, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
+import { backgroundGradientColors, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor } from 'constants/colors';
 import Button from 'components/Button/Button';
 import Loader from 'components/Modal/ModalLoader/Loader';
 
@@ -30,7 +30,7 @@ interface ConfirmPhoneProps {
   };
 }
 
-const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
+const ConfirmPhone = ({ route, navigation }: ConfirmPhoneProps) => {
   const {
     mobilePhone,
     code,
@@ -46,12 +46,12 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
     CELL_COUNT,
   } = useConfirmPhone(route);
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1}}>
+    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{flex: 1}}>
-            <View style={{flex: 1, justifyContent: 'space-between'}}>
-              <View style={{alignItems: 'center', paddingHorizontal: 24}}>
+          <SafeAreaView style={{ flex: 1 }}>
+            <View style={{ flex: 1, justifyContent: 'space-between' }}>
+              <View style={{ alignItems: 'center', paddingHorizontal: 24 }}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -64,7 +64,7 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
                     testID="back-button"
                     onPress={() => navigation.goBack()}
                     activeOpacity={0.7}
-                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                     style={{
                       borderRadius: 50,
                       width: 40,
@@ -128,7 +128,7 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
                     keyboardType="number-pad"
                     keyboardAppearance="dark"
                     textContentType="oneTimeCode"
-                    renderCell={({index, symbol, isFocused}) => (
+                    renderCell={({ index, symbol, isFocused }) => (
                       <View
                         key={index}
                         style={{
@@ -161,7 +161,7 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
                     Didn&apos;t receive the code?{' '}
                   </Text>
                   {!resendTimer ? (
-                    <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{bottom: 10, right: 20}}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{ bottom: 10, right: 20 }}>
                       <Text
                         style={{
                           color: whiteColor,
@@ -184,7 +184,7 @@ const ConfirmPhone = ({route, navigation}: ConfirmPhoneProps) => {
                   )}
                 </View>
               </View>
-              <View style={{paddingHorizontal: 38, marginBottom: 4}}>
+              <View style={{ paddingHorizontal: 38, marginBottom: 4 }}>
                 <Button
                   title="Verify"
                   disabled={code.length < 6}

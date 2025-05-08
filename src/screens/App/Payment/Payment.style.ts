@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import LottieView from 'lottie-react-native';
 import { whiteColor } from 'constants/colors';
 import { Satoshi500 } from 'constants/fonts';
-import { screenHeight, screenWidth } from 'constants/common';
+import { screenHeight } from 'constants/common';
 
 export const GradientContainer = styled(LinearGradient)`
   flex: 1;

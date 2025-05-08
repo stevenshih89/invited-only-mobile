@@ -1,7 +1,9 @@
-import {components} from '@invited-only/invited-only-api';
+import { components } from '@invited-only/invited-only-api';
 
 export type RootStackParamList = {
-  '/bottom-tabs-stack': undefined;
+  '/bottom-tabs-stack': {
+    screen?: string;
+  };
   '/my-events'?: {
     screen?: string;
   };
@@ -66,7 +68,7 @@ export type RootStackParamList = {
   '/code-verified': undefined;
   '/verify-first-step': undefined;
   '/verify-second-step': undefined;
-  '/invitation-code': {cameFromSummary: boolean};
+  '/invitation-code': { cameFromSummary: boolean };
 
   '/tutorial-flow': undefined;
   '/io': undefined;

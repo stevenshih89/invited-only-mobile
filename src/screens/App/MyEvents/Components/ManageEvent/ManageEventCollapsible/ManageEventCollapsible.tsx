@@ -1,9 +1,9 @@
 import React from 'react';
 import Collapsible from 'react-native-collapsible';
 import {ScrollView, TouchableOpacity} from 'react-native';
+import {components} from 'src/api/v1';
 import * as S from './ManageEventCollapsible.styled';
 import {ManageEventGuestInfo} from './ManageEventGuestInfo/ManageEventGuestInfo';
-import {components} from 'src/api/v1';
 import InfoIcon from 'assets/images/icons/info-circle.svg';
 
 interface ManageEventCollapsibleProps {

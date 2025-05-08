@@ -5,6 +5,15 @@ import importPlugin from "eslint-plugin-import";
 import reactNativePlugin from "eslint-plugin-react-native";
 import globals from "globals";
 import unusedImports from "eslint-plugin-unused-imports";
+import noDirectFirestore from "./.eslintrules/no-direct-firestore-import.js";
+
+
+const localRulesPlugin = {
+  rules: {
+    'no-direct-firestore-import': noDirectFirestore,
+  },
+};
+
 export default tseslint.config(
   {
     ignores: [
@@ -50,11 +59,13 @@ export default tseslint.config(
     plugins: {
         '@typescript-eslint': tseslint.plugin,
         'unused-imports': unusedImports,
+        'local-rules': localRulesPlugin,
     },
     rules: {
         ...tseslint.configs.recommendedTypeChecked.rules,
         'no-console': ['warn', { allow: ['warn', 'error'] }],
         'unused-imports/no-unused-imports': 'warn',
+        'local-rules/no-direct-firestore-import': 'warn',
     }
   },
 

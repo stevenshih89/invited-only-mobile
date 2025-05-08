@@ -1,9 +1,8 @@
 import React, { FC, useState } from 'react';
 import { createStackNavigator, StackNavigationOptions } from '@react-navigation/stack';
 import { TouchableOpacity } from 'react-native';
-import { ParamListBase, RouteProp } from '@react-navigation/native';
 
-// Fix import order again
+import NotificationsStackScreen from './NotificationsStackScreen/NotificationsStackScreen';
 import EventRequearHeader from './RequestStackScreen/EventRequearHeader/EventRequearHeader';
 import { ProfileStackScreen } from './ProfileStackScreen/ProfileStackScreen';
 import BottomMenu from 'navigator/BottomMenu/BottomMenu';
@@ -28,7 +27,8 @@ import {
   profileStackPath,
   shareSocialLinkPath,
   userProfilePath,
-  chatWindowPath
+  chatWindowPath,
+  notificationsStackPath
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import useStyles from 'navigator/AppStackScreens/styles.ts';
@@ -253,6 +253,7 @@ const AppStackScreen = () => {
       <AppStack.Screen key={connectPath} name={connectPath} component={Connect} />
       <AppStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
       <AppStack.Screen key={invitationCodePath} name={invitationCodePath} component={InvitationCode} />
+      <AppStack.Screen key={notificationsStackPath} name={notificationsStackPath} component={NotificationsStackScreen} />
       <AppStack.Screen key={chatWindowPath} name={chatWindowPath} component={ChatWindow} />
     </AppStack.Navigator>
   );

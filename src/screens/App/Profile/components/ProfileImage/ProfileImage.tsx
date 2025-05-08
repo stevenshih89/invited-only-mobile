@@ -1,9 +1,9 @@
 import FastImage from 'react-native-fast-image';
+import { components } from 'src/api/v1';
 import * as S from './ProfileImage.style';
 import { ProgressCircle } from 'components/ProgressCircle/ProgressCircle';
 import { transparentGray60Color } from 'constants/colors';
 import { useProfile } from 'hooks/useProfile';
-import { components } from 'src/api/v1';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 
 interface ProfileImageProps {

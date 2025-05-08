@@ -6,11 +6,11 @@ import firestore from '@react-native-firebase/firestore';
 import {runOnJS, useAnimatedStyle, useSharedValue, withSpring} from 'react-native-reanimated';
 import {Gesture} from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-crop-picker';
+import {components} from 'src/api/v1';
 import useUser from 'src/hooks/user/useUser';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {showToast} from 'helpers/showToast';
 import {isIos} from 'constants/common';
-import {components} from 'src/api/v1';
 
 // Define a type for the layout objects
 interface ImageLayout {

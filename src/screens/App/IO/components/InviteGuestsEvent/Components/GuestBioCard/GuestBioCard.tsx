@@ -1,5 +1,5 @@
-import * as S from './GuestBioCard.style';
 import {components} from 'src/api/v1';
+import * as S from './GuestBioCard.style';
 
 interface Props {
   guestInfo: components['schemas']['User'];

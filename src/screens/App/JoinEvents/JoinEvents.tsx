@@ -1,10 +1,8 @@
-import { FC, ReactElement, useCallback, useRef, useState } from 'react';
+import { FC, ReactElement, useState } from 'react';
 
 import { components } from '@invited-only/invited-only-api';
-import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import usePersistentCardSwipe from '../IO/hooks/usePersistentCardSwipe';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import JoinEventsHeader from './Components/JoinEventsHeader/JoinEventsHeader';
-import ExploreEventsEmptyFallback from './Components/ExploreEventsEmptyFallback/ExploreEventsEmptyFallback';
 import ExploreEvents from './screens/ExploreEvents/ExploreEvents';
 import Invites from './screens/Invites/Invites';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';

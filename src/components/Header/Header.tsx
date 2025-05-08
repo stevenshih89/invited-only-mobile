@@ -17,9 +17,8 @@ import Logo from 'assets/images/icons/logo.svg';
 import ProfilePersonIcon from 'assets/images/icons/profile-person.svg';
 import NotificationBellIcon from 'assets/images/icons/notification-bell.svg';
 
-//import images
-import { useNotifications } from 'src/store/notificationsStore';
 import { Satoshi700 } from 'constants/fonts';
+import useGetNotifications from 'screens/App/Notifications/hooks/useGetNotifications';
 
 interface HeaderTypeProps {
   headerType?: 'IO' | 'IO-JE' | 'myEvents' | 'profile' | 'request' | 'chat';
@@ -34,7 +33,7 @@ const Header: FC<HeaderTypeProps> = ({ badge, logoType, showHeaderTop = true }) 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
 
-  const { notificationsCount } = useNotifications();
+  const { data: notifications } = useGetNotifications();
 
   const { user: userInfo } = useUser();
 
@@ -54,16 +53,10 @@ const Header: FC<HeaderTypeProps> = ({ badge, logoType, showHeaderTop = true }) 
             {badge && (
               <S.NotificationButton onPress={() => navigation.navigate('/notifications-stack')} activeOpacity={0.7}>
                 <NotificationBellIcon width={32} height={32} />
-                {notificationsCount > 0 && (
+                {notifications && notifications?.length > 0 && (
                   <Badge
-                    value={notificationsCount}
-                    badgeStyle={{
-                      position: 'absolute',
-                      borderColor: '#590000',
-                      top: -30,
-                      right: -18,
-                      backgroundColor: '#590000',
-                    }}
+                    value={notifications?.length || 0}
+                    badgeStyle={S.BadgeStyle}
                     textStyle={{
                       color: whiteColor,
                       fontSize: RFValue(10, 932),

@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { View, Text, Image, ImageBackground } from 'react-native';
-import { Satoshi400, Satoshi500 } from 'src/constants/fonts'; // Adjust path if needed
+import { Satoshi500 } from 'src/constants/fonts'; // Adjust path if needed
 
 // Main card container - Adapted from 'AppClip'
 export const CardContainer = styled.View`

@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 
+import {components} from 'src/api/v1'; // Moved down
 import * as S from '../ManageEvent.style'; // Reuse existing container style for now
 import {ManageEventCollapsible} from '../ManageEventCollapsible/ManageEventCollapsible';
 import {useManageEventDetails} from '../hooks/useManageEventDetails';
-import {components} from 'src/api/v1'; // Moved down
 import ModalEventInfo from 'components/Modal/ModalEventInfo/ModalEventInfo';
 
 type ConnectionRequest = components['schemas']['ConnectionRequest']; // Alias for type

@@ -1,10 +1,10 @@
 import { FC, useState, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { useFormikContext } from 'formik';
+import { components } from 'src/api/v1';
 import * as S from './MyInterests.style';
 import ModalSelectInterests from './ModalSelectInterests/ModalSelectInterests';
 import ArrowRight from 'assets/images/icons/arrow-right-s-line.svg';
-import { components } from 'src/api/v1';
 import InterestImageSmallList from 'screens/App/Components/Intrests/InterestImageSmallList';
 
 type Interest = components['schemas']['Interest'];

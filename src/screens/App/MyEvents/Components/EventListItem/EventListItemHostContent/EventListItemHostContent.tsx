@@ -1,5 +1,4 @@
 import { components } from '@invited-only/invited-only-api';
-import useGuestJoinedEventActions from '../EventListItemGuestConetnt/hooks/useGuestJoinedEventActions';
 import * as S from './EventListItemHostContent.style';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import ManageEventIcon from 'src/assets/images/icons/manage-event-icon.svg';

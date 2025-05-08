@@ -1,6 +1,6 @@
 import React from 'react';
-import * as S from './GuestLanguagesCard.style';
 import {components} from 'src/api/v1';
+import * as S from './GuestLanguagesCard.style';
 
 interface GuestLanguagesCardProps {
   guestInfo: components['schemas']['User'];

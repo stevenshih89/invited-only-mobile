@@ -3,10 +3,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 //import components
 import Header from 'components/Header/Header.tsx';
-import { chatPath, chatWindowPath } from 'constants/pathLocations.ts';
+import { chatPath } from 'constants/pathLocations.ts';
 import useStyles from 'navigator/AppStackScreens/styles'; // Assuming styles are shared for now
 import Chat from 'screens/App/Chat/Chat.tsx';
-import { ChatWindow } from 'screens/App/Chat/ChatWindow/ChatWindow.tsx';
 import { blackColor } from 'constants/colors';
 
 const Stack = createStackNavigator();

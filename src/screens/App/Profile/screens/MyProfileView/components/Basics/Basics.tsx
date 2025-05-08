@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import { View } from 'react-native';
+import { components } from 'src/api/v1';
 import * as S from './Basics.style';
 import { useGenderSpecs } from 'hooks/useGenderSpecs';
 import InterestImageSmallList from 'screens/App/Components/Intrests/InterestImageSmallList';
-import { components } from 'src/api/v1';
 
 interface BasicsProps {
   location: string;
