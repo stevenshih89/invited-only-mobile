@@ -16,9 +16,11 @@ const useGetNotifications = () => {
         refetchOnMount: true,
         refetchOnReconnect: true,
     });
-    const isUnread = data?.filter((notification) => notification.readAt === 'unread').length;
+    const unreadCount = data?.filter((notification) => notification.readAt === 'unread' && notification.type !== 'chat').length;
+    const MyEventNotificationCount = data?.filter((notification) => notification.hostId === userMetadata?.uid).length || 0;
+    const JoinedEventNotificationCount = data?.filter((notification) => notification.guestId === userMetadata?.uid).length || 0;
 
-    return { data, isLoading, isError, isUnread, refetch };
+    return { data, isLoading, isError, isUnread: unreadCount, MyEventNotificationCount, JoinedEventNotificationCount, refetch };
 };
 
 export default useGetNotifications;

@@ -1,10 +1,10 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {BlurView} from '@react-native-community/blur';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
-import {whiteColor} from 'constants/colors';
-import {Satoshi500} from 'constants/fonts';
+import { whiteColor } from 'constants/colors';
+import { Satoshi500 } from 'constants/fonts';
 
 export const Wrapper = styled.View`
   position: relative;
@@ -15,9 +15,7 @@ export const Wrapper = styled.View`
   overflow: hidden;
 `;
 
-export const BackgroundImage = styled.ImageBackground.attrs({
-  imageStyle: {borderRadius: 20},
-})`
+export const BackgroundImage = styled(FastImage)`
   width: 100%;
   height: 100%;
   border-radius: 20px;
@@ -40,7 +38,7 @@ export const BadgeRow = styled.View`
   flex-direction: row;
   align-items: center;
   gap: 6px;
-  margin-top: ${({isSuperInvite}: {isSuperInvite: boolean}) => (isSuperInvite ? 4 : 0)}px;
+  margin-top: ${({ isSuperInvite }: { isSuperInvite: boolean }) => (isSuperInvite ? 4 : 0)}px;
 `;
 
 export const BlurOverlay = styled(BlurView)`
@@ -98,7 +96,7 @@ export const ActionsRow = styled.View`
   margin-top: 10px;
 `;
 
-export const IconButton = styled.TouchableOpacity.attrs({activeOpacity: 0.8})`
+export const IconButton = styled.TouchableOpacity.attrs({ activeOpacity: 0.8 })`
   background-color: rgba(255, 255, 255, 0.08);
   padding: 8px;
   border-radius: 100px;

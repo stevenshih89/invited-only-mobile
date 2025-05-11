@@ -14,7 +14,7 @@ export const EventListItemGuestConetnt = ({ event }: EventListItemGuestConetntPr
 
     return <S.ContentContainer>
         <S.InfoContainer>
-            <S.DateText>{formatDate(event?.createdAt || '')}</S.DateText>
+            <S.DateText>{formatDate(event?.createdAt)}</S.DateText>
             <S.EventNameText>{event?.name}</S.EventNameText>
             {event?.location && <S.LocationText>{event?.location}</S.LocationText>}
         </S.InfoContainer>
@@ -22,7 +22,6 @@ export const EventListItemGuestConetnt = ({ event }: EventListItemGuestConetntPr
             <S.ActionButtonText>Cancel Invitation</S.ActionButtonText>
         </S.ActionButtonBase>
     </S.ContentContainer>
-
 };
 
 export default EventListItemGuestConetnt;

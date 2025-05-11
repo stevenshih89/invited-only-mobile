@@ -31,6 +31,7 @@ const IO = ({ events }: Props) => {
 
   const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
 
+
   type IoTabs = {
     '/io/invite': RouteProp<ParamListBase, '/io/invite'>;
     '/io/requests': RouteProp<ParamListBase, '/io/requests'>;

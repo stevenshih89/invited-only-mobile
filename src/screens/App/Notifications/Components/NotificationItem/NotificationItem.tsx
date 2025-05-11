@@ -31,16 +31,23 @@ interface NotificationItemProps {
 const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteNotification }: NotificationItemProps) => {
     const navigation = useAppNavigation();
     const { data: user } = useGetUserById(notification.guestId || '');
+
     const notificationType = notification.type;
     const { handleHostConfirmEvent, handleHostRejectEvent, isUpdatingEventAttendee } = useHostConnectionActions({
         hostId: notification.hostId || '',
         guestId: notification.guestId || '',
         eventId: notification.eventId || '',
+        onSuccess: () => {
+            handleDeleteNotification(notification.id || '', false);
+        }
     });
     const { handleGuestConfirmEvent, isUpdatingEventAttendee: isUpdatingEventAttendeeGuest } = useGuestConnectionActions({
         hostId: notification.hostId || '',
         guestId: notification.guestId || '',
         eventId: notification.eventId || '',
+        onSuccess: () => {
+            handleDeleteNotification(notification.id || '', false);
+        }
     });
 
 
@@ -58,9 +65,8 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
 
     const handleAction = (action: string, isJoinedEvents: boolean) => {
         if (isJoinedEvents) {
-            if (action === 'approve') {
+            if (action === 'invite') {
                 handleGuestConfirmEvent();
-                handleDeleteNotification(notification.id || '', false);
             } else if (action === 'chat') {
                 navigation.navigate('/bottom-tabs-stack', {
                     screen: '/chat',
@@ -68,12 +74,10 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
                 })
             }
         } else {
-            if (action === 'invite') {
+            if (action === 'approve') {
                 handleHostConfirmEvent();
-                handleDeleteNotification(notification.id || '', false);
             } else if (action === 'reject') {
                 handleHostRejectEvent();
-                handleDeleteNotification(notification.id || '', false);
             }
         }
     };
@@ -84,42 +88,48 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
 
     return (
         <GestureDetector gesture={panGesture}>
+
             <S.SwipeContainer>
                 <S.SwipeDeleteView>
                     <S.SwipeDeleteText>Delete</S.SwipeDeleteText>
                 </S.SwipeDeleteView>
                 <Animated.View style={animatedStyle}>
                     <TouchableOpacity activeOpacity={0.7} onPress={handlePress}>
-                        <S.Container>
-                            {user?.photos?.[0] && (
-                                <S.NarrowLeftContainer>
-                                    <S.AvatarContainer>
-                                        <S.AvatarImage source={{ uri: user.photos?.[0].image }} />
-                                    </S.AvatarContainer>
-                                </S.NarrowLeftContainer>
-                            )}
-                            <S.WideRightContainer>
-                                <S.TitleAndTimestampContainer>
-                                    <S.TitleText numberOfLines={1}>{notification.title}</S.TitleText>
-                                    {timeAgo && <S.TimestampText>{timeAgo}</S.TimestampText>}
-                                </S.TitleAndTimestampContainer>
-                                <S.BodyText numberOfLines={2}>{notification.message}</S.BodyText>
-                                {notification.readAt === 'unread' && <S.UnreadIndicator />}
-                                {notificationType === 'connection' && (
-                                    <S.ActionButtonContainer>
-                                        <S.ActionButtonPrimary onPress={() => handleAction('approve', isJoinedEvents)}>
-                                            {isUpdatingEventAttendee || isUpdatingEventAttendeeGuest ? <ActivityIndicator size="small" color={whiteColor} /> : <S.ActionButtonTextPrimary>{!isJoinedEvents ? 'Invite' : 'Approve'}</S.ActionButtonTextPrimary>}
-                                        </S.ActionButtonPrimary>
-                                        <S.ActionButtonSecondary onPress={() => handleAction('chat', isJoinedEvents)}>
-                                            <S.ActionButtonTextSecondary>{!isJoinedEvents ? 'Reject' : 'Chat'}</S.ActionButtonTextSecondary>
-                                        </S.ActionButtonSecondary>
-                                    </S.ActionButtonContainer>
+                        {isUpdatingEventAttendee || isUpdatingEventAttendeeGuest ? (
+                            <ActivityIndicator size="small" color={whiteColor} />
+                        ) : (
+                            <S.Container>
+                                {user?.photos?.[0] && (
+                                    <S.NarrowLeftContainer>
+                                        <S.AvatarContainer>
+                                            <S.AvatarImage source={{ uri: user.photos?.[0].image }} />
+                                        </S.AvatarContainer>
+                                    </S.NarrowLeftContainer>
                                 )}
-                            </S.WideRightContainer>
-                        </S.Container>
+                                <S.WideRightContainer>
+                                    <S.TitleAndTimestampContainer>
+                                        <S.TitleText numberOfLines={1}>{notification.title}</S.TitleText>
+                                        {timeAgo && <S.TimestampText>{timeAgo}</S.TimestampText>}
+                                    </S.TitleAndTimestampContainer>
+                                    <S.BodyText numberOfLines={2}>{notification.message}</S.BodyText>
+                                    {notification.readAt === 'unread' && <S.UnreadIndicator />}
+                                    {notificationType === 'connection' && (
+                                        <S.ActionButtonContainer>
+                                            <S.ActionButtonPrimary onPress={() => handleAction('approve', isJoinedEvents)}>
+                                                <S.ActionButtonTextPrimary>{!isJoinedEvents ? 'Invite' : 'Approve'}</S.ActionButtonTextPrimary>
+                                            </S.ActionButtonPrimary>
+                                            <S.ActionButtonSecondary onPress={() => handleAction(!isJoinedEvents ? 'reject' : 'chat', isJoinedEvents)}>
+                                                <S.ActionButtonTextSecondary>{!isJoinedEvents ? 'Reject' : 'Chat'}</S.ActionButtonTextSecondary>
+                                            </S.ActionButtonSecondary>
+                                        </S.ActionButtonContainer>
+                                    )}
+                                </S.WideRightContainer>
+                            </S.Container>
+                        )}
                     </TouchableOpacity>
                 </Animated.View>
             </S.SwipeContainer>
+
         </GestureDetector>
     );
 };

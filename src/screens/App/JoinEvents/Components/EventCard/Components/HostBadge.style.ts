@@ -45,7 +45,7 @@ export const HostName = styled.Text`
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
-  line-height: 121%;
+  line-height: 16.94px;
   color: #ffffff;
 `;
 
@@ -66,7 +66,7 @@ export const GuestCountText = styled.Text`
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
-  line-height: 121%;
+  line-height: 16.94px;
   display: flex;
   align-items: center;
   color: #ffffff;

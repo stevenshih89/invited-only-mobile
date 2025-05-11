@@ -1,6 +1,6 @@
-import React, {FC, JSX, useState} from 'react';
-import {Keyboard} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
+import React, { FC, JSX, useState } from 'react';
+import { Keyboard } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
 import {
   GradientBackground,
   AvoidingContainer,
@@ -16,17 +16,17 @@ import {
   InputContainer,
   ContinueButtonContainer,
 } from './EnterName.style';
-import {useAuthStore} from 'src/store/authStore';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { useAuthStore } from 'src/store/authStore';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import AuthProgress from 'components/AuthProgress';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
-import {isName} from 'helpers/regExpValidators';
+import { isName } from 'helpers/regExpValidators';
 
 const EnterName: FC = (): JSX.Element => {
-  const {onBoarding, setOnBoarding, userMetadata} = useAuthStore();
+  const { onBoarding, setOnBoarding, userMetadata } = useAuthStore();
 
   const [errorInputName, setErrorInputName] = useState<boolean>(false);
   const [name, setName] = useState<string>(onBoarding.registrationDetails?.name || '');
@@ -48,10 +48,11 @@ const EnterName: FC = (): JSX.Element => {
     if (!name) {
       return;
     }
+    console.log('name', name, onBoarding);
     setOnBoarding({
       ...onBoarding,
       onboardingStep: '/turn-notifications',
-      registrationDetails: {...onBoarding.registrationDetails, name: name},
+      registrationDetails: { ...onBoarding.registrationDetails, name: name },
     });
     navigation.navigate('/turn-notifications');
   };
@@ -89,7 +90,7 @@ const EnterName: FC = (): JSX.Element => {
                 <Button
                   testID="continue-button"
                   id="continue-button"
-                  buttonStyle={{height: RFValue(64, 932)}}
+                  buttonStyle={{ height: RFValue(64, 932) }}
                   disabled={name.length < 3 || errorInputName}
                   onPress={handleNext}
                   title="Continue"

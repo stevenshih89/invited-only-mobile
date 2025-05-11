@@ -1,10 +1,10 @@
-import {View} from '@ant-design/react-native';
+import { View } from '@ant-design/react-native';
 import * as S from './CreateEventButton.style';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 import CreateEventIcon from 'src/assets/images/icons/plus-black.svg';
 
 const CreateEventButton = () => {
-  const {navigate} = useAppNavigation();
+  const { navigate } = useAppNavigation();
 
   return (
     <View>

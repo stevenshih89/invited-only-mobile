@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware'; // Import middleware
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import { components } from 'src/api/v1'; // Make sure this import path is correct
+import { components } from '@invited-only/invited-only-api';
 
 export type OnBoardingStep =
     | '/onboard'
@@ -47,13 +47,14 @@ interface AuthState {
     accessToken: string;
     refreshToken: string;
     isStorageReady: boolean;
-
+    isDemoVideoWatched: boolean;
     setIsStorageReady: (isStorageReady: boolean) => void;
     setUserMetadata: (userMetadata: UserMetadata) => void;
     setOnBoarding: (onBoarding: Partial<OnboardingState>) => void; // Allow partial updates
     setUserPhoneNumber: (phoneNumber: string) => void;
     setAccessToken: (token: string) => void;
     setRefreshToken: (token: string) => void;
+    setIsDemoVideoWatched: (isDemoVideoWatched: boolean) => void;
     logout: () => void;
 }
 
@@ -75,6 +76,7 @@ const getInitialState = (set: (partial: AuthState | Partial<AuthState> | ((state
     accessToken: '',
     refreshToken: '',
     isStorageReady: false,
+    isDemoVideoWatched: false,
     setIsStorageReady: () => { },
     setUserMetadata: (userMetadata) => set({ userMetadata: { ...userMetadata, uid: userMetadata.uid ?? '', phoneNumber: userMetadata.phoneNumber ?? '', firstLogin: userMetadata.firstLogin ?? false } }),
     setOnBoarding: (onBoardingUpdate) =>
@@ -82,6 +84,7 @@ const getInitialState = (set: (partial: AuthState | Partial<AuthState> | ((state
     setUserPhoneNumber: (userPhoneNumber) => set({ userPhoneNumber }),
     setAccessToken: (accessToken) => set({ accessToken: accessToken ?? '' }),
     setRefreshToken: (refreshToken) => set({ refreshToken: refreshToken ?? '' }),
+    setIsDemoVideoWatched: (isDemoVideoWatched) => set({ isDemoVideoWatched: isDemoVideoWatched ?? false }),
     logout: () => set((state) => ({
         userMetadata: { ...getInitialState(set).userMetadata },
         onBoarding: { ...initialOnboardingState },
@@ -105,6 +108,7 @@ export const useAuthStore = create<AuthState>()(
                 userMetadata: state.userMetadata,
                 userPhoneNumber: state.userPhoneNumber,
                 onBoarding: state.onBoarding,
+                isDemoVideoWatched: state.isDemoVideoWatched,
             }),
             onRehydrateStorage: () => (state, error) => {
                 if (error) {
@@ -121,3 +125,4 @@ export const useAuthStore = create<AuthState>()(
 export const selectIsAuthenticated = (state: AuthState): boolean => !!state.accessToken && !!state.refreshToken;
 export const selectIsStorageReady = (state: AuthState): boolean => state.isStorageReady;
 export const selectIsFirstLogin = (state: AuthState): boolean => state.userMetadata.firstLogin;
+export const selectIsDemoVideoWatched = (state: AuthState): boolean => state.isDemoVideoWatched;

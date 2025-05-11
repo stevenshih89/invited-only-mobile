@@ -80,13 +80,17 @@ export const useCardGesture = ({ onSwipeLeft, onSwipeRight, topIndex, enabled, i
   const gestureHandler = Gesture.Pan()
     .activeOffsetX([-HORIZONTAL_THRESHOLD, HORIZONTAL_THRESHOLD])
     .failOffsetY([-VERTICAL_THRESHOLD, VERTICAL_THRESHOLD])
-    .onBegin(() => { })
+    .onBegin(() => {
+      'worklet;'
+    })
     .onUpdate(event => {
+      'worklet;'
       if (!enabled) return;
       translateX.value = event.translationX;
       rotation.value = (event.translationX / SCREEN_WIDTH) * 15;
     })
     .onEnd(event => {
+      'worklet;'
       if (!enabled) return;
       if (event.translationX > SWIPE_THRESHOLD) {
         translateX.value = withTiming(SCREEN_WIDTH * 1.5, { duration: 300 }, () => {
@@ -107,17 +111,20 @@ export const useCardGesture = ({ onSwipeLeft, onSwipeRight, topIndex, enabled, i
     });
 
   const animatedStyle = useAnimatedStyle(() => {
+    'worklet;'
     return {
       transform: [{ translateX: translateX.value }, { translateY: translateY.value }, { rotate: `${rotation.value}deg` }, { scale: scale.value }],
     };
   });
 
   const likeOpacityStyle = useAnimatedStyle(() => {
+    'worklet;'
     const opacity = translateX.value > 0 ? Math.min(1, translateX.value / (SWIPE_THRESHOLD * 0.8)) : 0;
     return { opacity };
   });
 
   const nopeOpacityStyle = useAnimatedStyle(() => {
+    'worklet;'
     const opacity = translateX.value < 0 ? Math.min(1, -translateX.value / (SWIPE_THRESHOLD * 0.8)) : 0;
     return { opacity };
   });

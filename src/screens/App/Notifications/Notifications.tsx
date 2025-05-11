@@ -1,8 +1,6 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { components } from '@invited-only/invited-only-api';
-import CreateEventButton from '../IO/components/IoHeader/Components/CreateEventButton/CreateEventButton';
-import AppLoader from '../AppLoader/AppLoader';
 import * as S from './Notifications.style';
 
 import JoinedEventsNotifications from './Components/JoinedEventsNotifications/JoinedEventsNotifications';
@@ -16,11 +14,12 @@ export type NotificationsTabParamList = {
 
 const Tab = createMaterialTopTabNavigator<NotificationsTabParamList>();
 
-const Notifications = () => {
-
+const Notifications = ({ route }: { route: any }) => {
+    const { initialTab } = route.params;
     return (
         <S.Container>
             <Tab.Navigator
+                initialRouteName={initialTab}
                 screenOptions={{
                     tabBarIndicatorStyle: { backgroundColor: whiteColor, height: 2 },
                 }}

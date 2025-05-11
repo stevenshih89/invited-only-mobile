@@ -2,13 +2,17 @@ import * as S from './EnterTypeScreen.style';
 import EnterTypeWordsAnimation from './EnterTypeWordsAnimation';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import EnterTypeScreenBg from 'assets/images/auth/enter-type-screen-bg.png';
-import { useAuthStore } from 'src/store/authStore';
+import { selectIsAuthenticated, selectIsDemoVideoWatched, useAuthStore } from 'src/store/authStore';
 
 import { useAppNavigation } from 'hooks/useAppNavigation';
 
 const EnterTypeScreen = () => {
+  const isDemoVideoWatched = useAuthStore(selectIsDemoVideoWatched);
   const navigation = useAppNavigation();
   const { onBoarding, setOnBoarding } = useAuthStore();
+
+  const isAuthenticated = useAuthStore(selectIsAuthenticated);
+
   return (
     <DefaultBackground>
       <S.MainContainer>
@@ -29,7 +33,15 @@ const EnterTypeScreen = () => {
                   gender: 'man',
                 },
               });
-              navigation.navigate('/onboarding-demo-path');
+              if (!isDemoVideoWatched) {
+                navigation.navigate('/onboarding-demo-path', { isHost: true });
+              } else {
+                if (isAuthenticated) {
+                  navigation.navigate('/enter-name');
+                } else {
+                  navigation.navigate('/sign-up', { isLogin: false });
+                }
+              }
             }}>
             <S.ButtonText>ENTER AS A MAN</S.ButtonText>
           </S.EnterButton>
@@ -43,7 +55,15 @@ const EnterTypeScreen = () => {
                   gender: 'woman',
                 },
               });
-              navigation.navigate('/onboarding-demo-path');
+              if (!isDemoVideoWatched) {
+                navigation.navigate('/onboarding-demo-path', { isHost: false });
+              } else {
+                if (isAuthenticated) {
+                  navigation.navigate('/enter-name');
+                } else {
+                  navigation.navigate('/sign-up', { isLogin: false });
+                }
+              }
             }}
             testID="sign-in-btn"
             activeOpacity={0.7}

@@ -70,7 +70,7 @@ export const NameContainer = styled.View`
 export const NameText = styled.Text`
     font-family: ${Satoshi500};
     font-size: 24px;
-    line-height: 120%;
+    line-height: 16.94px;
     color:rgb(251, 251, 251);
 
 `;
@@ -98,7 +98,7 @@ export const WaitingContainer = styled.View`
 export const WaitingText = styled.Text`
     font-family: ${Satoshi500};
     font-size: 12px;
-    line-height: 120%;
+    line-height: 16.94px;
     color:${whiteColor};
 `;
 export const InvitationStatusContainer = styled.View`
@@ -140,14 +140,14 @@ export const InvitationStatusTextContainer = styled.View`
 export const InvitationStatusText = styled.Text`
     font-family: ${Satoshi500};
     font-size: 16px;
-    line-height: 120%;
+    line-height: 16.94px;
     color:rgb(251, 251, 251);
 `;
 
 export const InvitationStatusDescription = styled.Text`
     font-family: ${Satoshi400};
     font-size: 12px;
-    line-height: 120%;
+    line-height: 16.94px;
     color:rgba(255, 255, 255, 0.5);
 `;
 

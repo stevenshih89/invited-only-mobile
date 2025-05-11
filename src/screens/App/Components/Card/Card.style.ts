@@ -1,19 +1,19 @@
 import LinearGradient from 'react-native-linear-gradient';
 import Animated from 'react-native-reanimated';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
-import {Satoshi500} from 'constants/fonts';
-import {blackColor, lightGreenColor, lightRedColor} from 'constants/colors';
+import { Satoshi500 } from 'constants/fonts';
+import { blackColor, lightGreenColor, lightRedColor } from 'constants/colors';
 
-export const Card = styled.View<{index: number; distanceFromTheTop: number}>`
+export const Card = styled.View<{ index: number; distanceFromTheTop: number }>`
   position: absolute;
   display: flex;
 
-  rotate: ${(props: {distanceFromTheTop: number}) => `rotate(${props.distanceFromTheTop * 0.2}deg)`};
-  width: ${({distanceFromTheTop}: {distanceFromTheTop: number}) => `${105 - distanceFromTheTop * 5}%`};
-  height: ${({distanceFromTheTop}: {distanceFromTheTop: number}) => `${100 - distanceFromTheTop * 5}%`};
+  rotate: ${(props: { distanceFromTheTop: number }) => `rotate(${props.distanceFromTheTop * 0.2}deg)`};
+  width: ${({ distanceFromTheTop }: { distanceFromTheTop: number }) => `${105 - distanceFromTheTop * 5}%`};
+  height: ${({ distanceFromTheTop }: { distanceFromTheTop: number }) => `${100 - distanceFromTheTop * 5}%`};
   height: 100%;
-  z-index: ${({index}: {index: number}) => index};
+  z-index: ${({ index }: { index: number }) => index};
   border-radius: 20px;
   shadow-color: #000;
   box-shadow: 10px 5px 5px ${blackColor};
@@ -21,7 +21,7 @@ export const Card = styled.View<{index: number; distanceFromTheTop: number}>`
   shadow-opacity: 0.9;
   shadow-radius: 15px;
   /* Android Elevation: higher index => bigger shadow */
-  elevation: ${({distanceFromTheTop}: {distanceFromTheTop: number}) => distanceFromTheTop * 2};
+  elevation: ${({ distanceFromTheTop }: { distanceFromTheTop: number }) => distanceFromTheTop * 2};
 `;
 
 export const CardOverlay = styled.View`

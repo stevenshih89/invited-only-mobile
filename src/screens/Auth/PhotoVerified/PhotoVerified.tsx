@@ -1,15 +1,15 @@
 import React from 'react';
-import Svg, {Circle} from 'react-native-svg';
+import Svg, { Circle } from 'react-native-svg';
 import Animated from 'react-native-reanimated';
-import {useVerifyingAnimation} from './hooks/useVerifyingAnimation';
+import { useVerifyingAnimation } from './hooks/useVerifyingAnimation';
 import * as S from './PhotoVerified.style';
-import {usePhotoVerified} from './hooks/usePhotoVerified';
-import {whiteColor} from 'constants/colors';
+import { usePhotoVerified } from './hooks/usePhotoVerified';
+import { whiteColor } from 'constants/colors';
 
 const LoadingPayment = () => {
   const AnimatedSvg = Animated.createAnimatedComponent(Svg);
-  const {imageUri} = usePhotoVerified();
-  const {animatedStyle, SIZE, STROKE_WIDTH, RADIUS, CIRCUMFERENCE, ARC_LENGTH} = useVerifyingAnimation();
+  const { imageUri } = usePhotoVerified();
+  const { animatedStyle, SIZE, STROKE_WIDTH, RADIUS, CIRCUMFERENCE, ARC_LENGTH } = useVerifyingAnimation();
 
   return (
     <S.Root>
@@ -27,7 +27,7 @@ const LoadingPayment = () => {
             strokeLinecap="round"
           />
         </AnimatedSvg>
-        <S.StyledImage size={SIZE} source={{uri: imageUri}} />
+        <S.StyledImage size={SIZE} source={{ uri: imageUri }} />
       </S.CenterContainer>
       <S.Title>Verifying your photo</S.Title>
       <S.Subtitle>Wait just a moment we are verifying your photo.</S.Subtitle>

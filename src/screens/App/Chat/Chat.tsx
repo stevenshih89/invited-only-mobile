@@ -34,7 +34,12 @@ const Chat = () => {
       </S.ChatContainer>
     );
   } else if (chatEvents?.length > 0) {
-    return <EventChats events={chatEvents} />;
+    return (
+      <S.ChatContainer>
+        <EventChats events={chatEvents} />
+        <ModalLockedAccount />
+      </S.ChatContainer>
+    );
 
   }
 };

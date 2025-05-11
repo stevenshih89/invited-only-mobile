@@ -19,9 +19,9 @@ import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
 import { backgroundGradientColors, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor } from 'constants/colors';
 import Button from 'components/Button/Button';
 import Loader from 'components/Modal/ModalLoader/Loader';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 
 interface ConfirmPhoneProps {
-  navigation: any;
   route: {
     params: {
       mobilePhone: string;
@@ -30,7 +30,7 @@ interface ConfirmPhoneProps {
   };
 }
 
-const ConfirmPhone = ({ route, navigation }: ConfirmPhoneProps) => {
+const ConfirmPhone = ({ route }: ConfirmPhoneProps) => {
   const {
     mobilePhone,
     code,
@@ -45,6 +45,7 @@ const ConfirmPhone = ({ route, navigation }: ConfirmPhoneProps) => {
     isLoadingSendOtp,
     CELL_COUNT,
   } = useConfirmPhone(route);
+  const navigation = useAppNavigation();
   return (
     <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
       <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1 }}>

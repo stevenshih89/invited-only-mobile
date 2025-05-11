@@ -96,7 +96,7 @@ export const StatusText = styled.Text`
   height: 17px;
   font-family: ${Satoshi500};
   font-size: 12px;
-  line-height: 140%;
+  line-height: 19px;;
   color: #FFFFFF;
 `;
 
@@ -105,7 +105,7 @@ export const TimeText = styled.Text`
   height: 20px;
   font-family: ${Satoshi500};
   font-size: 14px;
-  line-height: 140%;
+  line-height: 19px;;
   color: rgba(255, 255, 255, 0.5);
 `;
 
@@ -137,7 +137,7 @@ export const NameText = styled.Text`
   height: 22px;
   font-family: ${Satoshi700};
   font-size: 16px;
-  line-height: 140%;
+  line-height: 19px;;
   color: #FFFFFF;
 `;
 
@@ -198,7 +198,7 @@ export const SmallEventAvatarImage = styled(FastImage)`
 export const SmallEventNameText = styled.Text`
   font-family: ${Satoshi700};
   font-size: 16px;
-  line-height: 140%;
+  line-height: 19px;;
   color: #FFFFFF;
 `;
 export const EventBadgeContainer = styled.View`

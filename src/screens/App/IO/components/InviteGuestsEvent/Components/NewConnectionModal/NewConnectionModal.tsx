@@ -8,26 +8,29 @@ import Card from 'screens/App/Components/Card/Card';
 import { calculateAge } from 'helpers/calculateAge';
 import useUser from 'hooks/user/useUser';
 import { Stepper } from 'screens/App/Components/Stepper/Stepper';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 
 interface NewConnectionModalProps {
     visible: boolean;
     onClose: () => void;
     cardData: components['schemas']['User'] | components['schemas']['EventData'] | undefined;
+    isEvent: boolean;
+
 }
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible, onClose, cardData }) => {
+export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible, onClose, cardData, isEvent }) => {
     const { user } = useUser();
-
+    const navigation = useAppNavigation();
     const { card1AnimatedStyle, card2AnimatedStyle, stepperAnimatedStyle, buttonAnimatedStyle } =
         useNewConnectionAnimations({ visible });
 
     const steps = [
-        { id: 1, title: 'Invited', description: 'Connection Made' },
-        { id: 2, title: 'Host approved', description: 'You need to approve the guest' },
-        { id: 3, title: 'Guest confirmed', description: 'The guest needs to accept the attending' },
+        { id: 1, title: isEvent ? 'Invited, Connection Made' : 'Invited', description: isEvent ? 'Invitation received and connection made' : 'Connection Made' },
+        { id: 2, title: 'Host approved', description: isEvent ? 'The host approved your invitation' : 'You need to approve the guest' },
+        { id: 3, title: 'Guest confirmed', description: isEvent ? 'The guest needs to accept the attending' : 'The guest needs to accept the invitation' },
     ];
     const currentStepIndex = 0;
 
@@ -44,18 +47,20 @@ export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible,
                 </S.CloseButton>
                 <S.ModalContent width={screenWidth} height={screenHeight}>
                     <S.MatchTextContainer>
-                        <S.MatchTextTitle>Invited!</S.MatchTextTitle>
-                        <S.MatchTextDescription>Invitation received</S.MatchTextDescription>
+                        <S.MatchTextTitle>{isEvent ? 'Joined!' : 'Invited!'}</S.MatchTextTitle>
+                        <S.MatchTextDescription>{isEvent ? 'Invitation received' : 'Connection Made'}</S.MatchTextDescription>
                     </S.MatchTextContainer>
                     <S.CardsContainer>
                         <S.CardContainer>
                             <Animated.View style={card1AnimatedStyle}>
-                                <Card backgroundUrls={user?.photos || []} index={0} distanceFromTop={0} uid={user?.uid || ''} isTopCard={true} isStatic showDots={false} disabled={true}>
-                                    <S.GuestInfoContainer>
-                                        <S.GuestName>{user?.name}</S.GuestName>
-                                        {user?.showAge && <S.GuestAge>, {calculateAge(user?.birthday || '')}</S.GuestAge>}
-                                    </S.GuestInfoContainer>
-                                </Card>
+                                {isEvent && (
+                                    <Card backgroundUrls={user?.photos || []} index={0} distanceFromTop={0} uid={user?.uid || ''} isTopCard={true} isStatic showDots={false} disabled={true}>
+                                        <S.GuestInfoContainer>
+                                            <S.GuestName>{user?.name}</S.GuestName>
+                                            {user?.showAge && <S.GuestAge>, {calculateAge(user?.birthday || '')}</S.GuestAge>}
+                                        </S.GuestInfoContainer>
+                                    </Card>
+                                )}
                             </Animated.View>
                             <Animated.View style={card2AnimatedStyle}>
                                 {cardData && 'photos' in cardData && (
@@ -76,7 +81,9 @@ export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible,
                     </Animated.View>
                     <Animated.View style={buttonAnimatedStyle}>
                         <S.ButtonContainer>
-                            <S.SendMessageButton>
+                            <S.SendMessageButton onPress={() => {
+                                navigation.navigate('/chat');
+                            }}>
                                 <S.StyledSendMessageIconContainer>
                                     <S.StyledSendMessageIcon width={20} height={20} />
                                 </S.StyledSendMessageIconContainer>

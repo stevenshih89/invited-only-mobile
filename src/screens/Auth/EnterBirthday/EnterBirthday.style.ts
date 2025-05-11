@@ -8,7 +8,7 @@ import { lightGray2Color, transparentWhite30Color, whiteColor } from 'constants/
 import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
 
 export const GradientBackground = styled(LinearGradient).attrs({
-    // Set default gradient props if needed, or pass them in the component
+  // Set default gradient props if needed, or pass them in the component
 })`
   flex: 1;
 `;
@@ -73,12 +73,13 @@ export const SubtitleText = styled.Text`
 export const DateInputRow = styled.View`
   width: 100%;
   flex-direction: row;
+  height: 64px;
 `;
 
 interface DateInputContainerProps {
-    marginRight?: number;
-    marginHorizontal?: number;
-    marginLeft?: number;
+  marginRight?: number;
+  marginHorizontal?: number;
+  marginLeft?: number;
 }
 
 export const DateInputContainer = styled.View<DateInputContainerProps>`

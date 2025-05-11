@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { GestureDetector } from 'react-native-gesture-handler';
-import { components } from 'src/api/v1';
+
+import { components } from '@invited-only/invited-only-api';
 import ModalReplacePhoto from '../ModalReplacePhoto';
 import * as S from './MyPhotos.style';
 import Close from 'assets/images/icons/close.svg';

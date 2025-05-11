@@ -17,6 +17,7 @@ const MyEvents = () => {
     },
   });
 
+
   if (isLoading) {
     return (
       <DefaultBackground>

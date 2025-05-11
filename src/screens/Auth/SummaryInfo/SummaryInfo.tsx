@@ -1,24 +1,32 @@
-import React, {useContext} from 'react';
+
 import * as S from './SummaryInfo.style';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {AuthContext} from 'contexts/AuthContext';
+
+import useCreateUser from './hooks/useCreateUser';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Button from 'components/Button/Button';
-import {calculateAge} from 'helpers/calculateAge';
+import { calculateAge } from 'helpers/calculateAge';
 import CheckIcon from 'assets/images/icons/check-star-white.svg';
+import { useAuthStore } from 'src/store/authStore';
+import AppLoader from 'screens/App/AppLoader/AppLoader';
 
 const SummaryInfo = () => {
-  const navigation = useAppNavigation();
+  const { onBoarding } = useAuthStore();
 
-  const {onBoarding} = useContext(AuthContext);
+  const imageUser = onBoarding.registrationDetails?.verificationPhoto;
+  const name: string = onBoarding.registrationDetails?.name || '';
+  const birthday = onBoarding.registrationDetails?.birthday || '';
 
-  const flattenedPhotos = onBoarding.filter((item: {photos: []}) => item.photos)[0]?.photos;
-  const imageUser = flattenedPhotos?.find((photo: {id: number}) => photo.id === 0)?.image;
-  const name: string = onBoarding.find((item: {name: string}) => item.name)?.name;
-  const birthday = onBoarding.find((item: {birthday: number}) => item.birthday)?.birthday;
+  const { handleCreateUser, isPending } = useCreateUser();
+
+  if (isPending) {
+    return <S.Container><AppLoader /></S.Container>
+  }
+
+
   const handleNext = () => {
-    navigation.navigate('/invitation-code', {cameFromSummary: true});
+    handleCreateUser();
   };
+
 
   return (
     <S.Background>
@@ -28,7 +36,7 @@ const SummaryInfo = () => {
             <LogoPrimary2 />
           </S.LogoWrapper>
 
-          <S.PhotoWrapper source={{uri: 'https://picsum.photos/200/300'}}>
+          <S.PhotoWrapper source={{ uri: imageUser }}>
             <S.BadgeContainer>
               <S.BadgeContent>
                 <S.BadgeBlur blurType="dark" />

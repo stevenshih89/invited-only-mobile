@@ -11,7 +11,7 @@ import { screenHeight, screenWidth } from 'constants/common';
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
-  const { imageUri, handleNext, handleSkip, isLoading, openCamera, accountType, selfieSource, setImageUri } = useVerifyStep();
+  const { imageUri, handleNext, handleSkip, isLoading, openCamera, selfieSource, setImageUri, gender } = useVerifyStep();
 
   return (
     <S.Background>
@@ -67,7 +67,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
               ) : (
                 <S.Footer>
                   <Button testID="take-photo-button" onPress={openCamera} title="Take a photo" />
-                  {accountType === 'host' && <Button title="Skip" onPress={handleSkip} variant="gray" />}
+                  {gender === 'man' && <Button title="Skip" onPress={handleSkip} variant="gray" />}
                 </S.Footer>
               )}
             </S.Container>

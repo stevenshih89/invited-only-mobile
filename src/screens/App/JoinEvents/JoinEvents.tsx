@@ -6,7 +6,6 @@ import JoinEventsHeader from './Components/JoinEventsHeader/JoinEventsHeader';
 import ExploreEvents from './screens/ExploreEvents/ExploreEvents';
 import Invites from './screens/Invites/Invites';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
-import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 
 interface Props {
   events: components['schemas']['EventData'][];
@@ -20,12 +19,10 @@ const JoinEvents: FC<Props> = ({ events }): ReactElement => {
 
   return (
     <BottomSheetModalProvider>
-      <DefaultBackground>
-        <JoinEventsHeader activeTab={activeTab} handleTabChange={setActiveTab} />
-        {activeTab === 'explore' && <ExploreEvents events={events} />}
-        {activeTab === 'invites' && <Invites events={events} />}
-        <ModalLockedAccount />
-      </DefaultBackground>
+      <JoinEventsHeader activeTab={activeTab} handleTabChange={setActiveTab} />
+      {activeTab === 'explore' && <ExploreEvents events={events} />}
+      {activeTab === 'invites' && <Invites events={events} />}
+      <ModalLockedAccount />
     </BottomSheetModalProvider>
   );
 };

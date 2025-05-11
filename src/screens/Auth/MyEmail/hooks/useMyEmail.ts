@@ -1,21 +1,21 @@
-import {useContext, useState} from 'react';
+import { useContext, useState } from 'react';
 
 import firestore from '@react-native-firebase/firestore';
-import invitedOnlyBackendApi from 'src/api/backend-api';
-import {useAuthStore} from 'src/store/authStore';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
-import {isEmailValid} from 'helpers/regExpValidators';
-import {showToast} from 'helpers/showToast';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+
+import { useAuthStore } from 'src/store/authStore';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
+import { isEmailValid } from 'helpers/regExpValidators';
+import { showToast } from 'helpers/showToast';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 
 export const useMyEmail = () => {
-  const {mutate: createUser, isPending} = invitedOnlyBackendApi.useMutation('post', '/users');
+
+  const { onBoarding, setOnBoarding } = useAuthStore();
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
-  const [email, setEmail] = useState<string>('');
+  const [email, setEmail] = useState<string>(onBoarding.registrationDetails?.email || '');
   const navigation = useAppNavigation();
 
-  const {onBoarding, setOnBoarding, userMetadata} = useAuthStore();
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
 
   const handleEmailChange = (value: string) => {
     const truncatedText = value.slice(0, 40);
@@ -43,17 +43,10 @@ export const useMyEmail = () => {
         ...onBoarding.registrationDetails,
         email: email,
       },
-      isOnboardingCompleted: true,
+      isOnboardingCompleted: false,
     });
-    createUser({
-      body: {
-        ...onBoarding.registrationDetails,
-        phoneNumber: userMetadata?.phoneNumber,
-        email: email,
-        uid: userMetadata?.uid,
-      } as any,
-    });
+    navigation.navigate('/verify-first-step');
   };
 
-  return {email, isValidEmail, handleEmailChange, handleNext, isPending, navigation};
+  return { email, isValidEmail, handleEmailChange, handleNext, navigation };
 };

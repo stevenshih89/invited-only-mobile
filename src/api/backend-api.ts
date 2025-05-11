@@ -4,6 +4,7 @@ import createClient from 'openapi-react-query';
 import { BACKEND_BASE_64_AUTH, BACKEND_BASE_URL } from '@env';
 import { paths } from '@invited-only/invited-only-api';
 
+
 const myMiddleware: Middleware = {
   onError: (error: any) => {
     if (error.message.includes('Aborted')) {

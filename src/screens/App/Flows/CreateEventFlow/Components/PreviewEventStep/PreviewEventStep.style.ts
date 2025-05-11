@@ -30,5 +30,6 @@ export const BadgeContainer = styled.View`
   display: flex;
   width: 100%;
   justify-content: center;
+  align-items: center;
   height: 20%;
 `;

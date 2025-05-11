@@ -78,3 +78,16 @@ yarn-error.log
 .env.test
 .qodo
 .aider*
+android/.tmp/**
+android/caches/**   
+android/build/**
+android/gradle/wrapper/dists/**
+android/gradle/wrapper/src/**
+android/gradle/wrapper/dists/**
+android/gradle/wrapper/src/**
+android/gradle/wrapper/dists/**
+android/gradle/wrapper/src/**
+android/wrapper/**
+android/daemon/**
+android/kotlin-profile/**
+android/native/**

@@ -65,7 +65,7 @@ const Payment: FC = (): JSX.Element => {
               </S.CloseButton>
             </S.HeaderContainer>
             <S.AnimationContainer>
-              <LottieView source={animations[activePayment.id]} cacheStrategy='strong' enableMergePathsAndroidForKitKatAndAbove duration={1000} autoPlay loop hardwareAccelerationAndroid ref={lottieRef} />
+              <LottieView source={animations[activePayment.id]} enableMergePathsAndroidForKitKatAndAbove duration={1000} autoPlay loop hardwareAccelerationAndroid ref={lottieRef} />
             </S.AnimationContainer>
             <PlansList
               plansList={plansList}

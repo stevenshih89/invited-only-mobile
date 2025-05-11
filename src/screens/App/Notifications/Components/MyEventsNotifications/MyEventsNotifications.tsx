@@ -30,7 +30,7 @@ const MyEventsNotifications: React.FC = () => {
     );
 
     if (!filteredNotifications || filteredNotifications.length === 0) {
-        return <NotificationEmptyFallback />;
+        return <NotificationEmptyFallback isJoinedEvents={false} />;
     }
 
     return (

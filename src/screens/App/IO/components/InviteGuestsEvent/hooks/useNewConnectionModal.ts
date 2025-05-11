@@ -4,6 +4,7 @@ import { components } from "@invited-only/invited-only-api";
 interface UseNewConnectionModalProps {
     swipeDataRes: components['schemas']['ConnectionRequest'] | undefined;
     allCards: components['schemas']['User'][];
+    isEvent: boolean;
 }
 
 interface UseNewConnectionModalResult {
@@ -12,15 +13,25 @@ interface UseNewConnectionModalResult {
     matchedCard: components['schemas']['User'] | components['schemas']['EventData'] | undefined;
 }
 
-export const useNewConnectionModal = ({ swipeDataRes, allCards }: UseNewConnectionModalProps): UseNewConnectionModalResult => {
+
+
+
+const useNewConnectionModal = ({ swipeDataRes, allCards, isEvent }: UseNewConnectionModalProps): UseNewConnectionModalResult => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [matchedCard, setMatchedCard] = useState<components['schemas']['User'] | components['schemas']['EventData'] | undefined>();
+
+    console.log('matachCard', matchedCard);
+
 
     useEffect(() => {
         if (swipeDataRes?.status === 'connection-complete') {
             const matchedCard = allCards.find((card) => card.uid === swipeDataRes?.guestId);
             const matchedEvent = allCards.find((card) => card.uid === swipeDataRes?.eventId);
-            setMatchedCard(matchedCard || matchedEvent);
+            if (isEvent) {
+                setMatchedCard(matchedEvent);
+            } else {
+                setMatchedCard(matchedCard);
+            }
             setIsModalVisible(true);
         }
     }, [swipeDataRes]);
@@ -34,4 +45,6 @@ export const useNewConnectionModal = ({ swipeDataRes, allCards }: UseNewConnecti
         closeModal,
         matchedCard,
     };
-}; 
+};
+
+export default useNewConnectionModal;

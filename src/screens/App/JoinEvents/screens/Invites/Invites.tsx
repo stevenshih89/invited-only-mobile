@@ -1,6 +1,6 @@
-import {FC} from 'react';
-import {FlatList} from 'react-native';
-import {components} from 'src/api/v1';
+import { FC } from 'react';
+import { FlatList } from 'react-native';
+import { components } from '@invited-only/invited-only-api';
 import InviteCard from './Components/InviteCard/InviteCard';
 import * as S from './Invites.style';
 import usePersistentCardSwipe from 'screens/App/IO/hooks/usePersistentCardSwipe';
@@ -9,8 +9,8 @@ interface Props {
   events: components['schemas']['EventData'][];
 }
 
-const Invites: FC<Props> = ({events}) => {
-  const {cards: currentEventCards} = usePersistentCardSwipe<components['schemas']['EventData']>({
+const Invites: FC<Props> = ({ events }) => {
+  const { cards: currentEventCards } = usePersistentCardSwipe<components['schemas']['EventData']>({
     cardsData: events,
     eventId: '1',
   });
@@ -30,7 +30,11 @@ const Invites: FC<Props> = ({events}) => {
         keyExtractor={item => item.uid}
         numColumns={2}
         showsVerticalScrollIndicator={false}
-        renderItem={({item, index}) => (
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={4}
+        windowSize={5}
+        initialNumToRender={4}
+        renderItem={({ item, index }) => (
           <S.InviteCardWrapper key={item.uid}>
             <InviteCard event={item} />
           </S.InviteCardWrapper>

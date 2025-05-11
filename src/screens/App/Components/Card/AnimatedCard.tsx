@@ -1,20 +1,20 @@
-import React, {useState, ReactNode} from 'react';
-import {GestureDetector, PanGesture} from 'react-native-gesture-handler';
-import {AnimatedStyle} from 'react-native-reanimated';
-import {components} from 'src/api/v1';
+import React, { useState, ReactNode } from 'react';
+import { GestureDetector, PanGesture } from 'react-native-gesture-handler';
+import { AnimatedStyle } from 'react-native-reanimated';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './Card.style';
 import ImageIndicator from './Components/ImageIndicator/ImageIndicator';
 import CardImage from './Components/CardImage/CardImage';
-import {PhysicCard} from './Card'; // Assuming PhysicCard remains in Card.tsx or is exported
-import {NopeRejectBadge} from './Components/NopeRejectBadge/NopeRejectBadge';
+import { PhysicCard } from './Card';
+import { NopeRejectBadge } from './Components/NopeRejectBadge/NopeRejectBadge';
 
 interface AnimatedCardProps {
   uid: string;
   backgroundUrls: components['schemas']['UserPhoto'][];
   index: number;
   children: ReactNode;
-  gestureHandler: PanGesture; // Required for animated card
-  animatedStyle: AnimatedStyle; // Required for animated card
+  gestureHandler: PanGesture;
+  animatedStyle: AnimatedStyle;
   likeOpacityStyle?: AnimatedStyle;
   nopeOpacityStyle?: AnimatedStyle;
   showDots?: boolean;

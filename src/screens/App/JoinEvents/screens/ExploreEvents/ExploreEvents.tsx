@@ -11,12 +11,18 @@ import ExploreEventsEmptyFallback from '../../Components/ExploreEventsEmptyFallb
 import * as S from './ExploreEvents.style';
 import usePersistentCardSwipe from 'screens/App/IO/hooks/usePersistentCardSwipe';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
+import useSwipeCardAction from 'screens/App/Components/Card/hooks/useSwipeCardAction';
+
+import NewConnectionModal from 'screens/App/IO/components/InviteGuestsEvent/Components/NewConnectionModal/NewConnectionModal';
+import { useAuthStore } from 'src/store/authStore';
+import useNewConnectionModal from 'screens/App/IO/components/InviteGuestsEvent/hooks/useNewConnectionModal';
 
 interface ExploreEventsProps {
   events: components['schemas']['EventData'][];
 }
 
 const ExploreEvents: FC<ExploreEventsProps> = ({ events }) => {
+  const { userMetadata } = useAuthStore();
   const {
     cards: currentEventCards,
     handleSwipeLeft,
@@ -27,40 +33,73 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events }) => {
     eventId: '1',
   });
 
-  const uniqueEventCards =
-    currentEventCards?.reduce((acc: components['schemas']['EventData'][], current) => {
-      if (!acc.find(item => item.uid === current.uid)) {
-        acc.push(current);
-      }
-      return acc;
-    }, []) || [];
 
-  const hasCards = uniqueEventCards.length > 0;
-  const currentCard = hasCards ? uniqueEventCards[uniqueEventCards.length - 1] : undefined;
 
-  if (!currentCard || !events.length) {
-    return <ExploreEventsEmptyFallback />;
-  }
+  const hasCards = currentEventCards.length > 0;
+  const currentCard = hasCards ? currentEventCards[currentEventCards.length - 1] : undefined;
+
+  const { createEventAttendee, swipeDataRes } = useSwipeCardAction();
+
+  const { isModalVisible, closeModal, matchedCard } = useNewConnectionModal({ swipeDataRes, allCards: events, isEvent: true });
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const handleBlockAndReport = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
+  if (!currentCard || !events.length) {
+    return (
+      <S.Container>
+
+        <ExploreEventsEmptyFallback />
+        <NewConnectionModal cardData={matchedCard} visible={isModalVisible} onClose={closeModal} isEvent={true} />
+      </S.Container>
+    );
+  }
 
   return (
     <ScrollView>
       <S.Container>
         <S.EventCardContainer>
-          {uniqueEventCards.map((event, index) => (
+          {currentEventCards.map((event, index) => (
             <EventCard
-              uniqueEventCards={uniqueEventCards}
               key={event.uid}
               event={event}
               index={index}
-              isTopCard={index === uniqueEventCards.length - 1}
-              onReject={handleSwipeLeft}
-              onSuperInvite={handleSuperInvite}
-              onInvite={handleSwipeRight}
-              topIndex={uniqueEventCards.length - 1}
+              isTopCard={index === currentEventCards.length - 1}
+              onReject={() => {
+                handleSwipeLeft()
+                createEventAttendee({
+                  body: {
+                    guestId: userMetadata?.uid || '',
+                    hostId: currentCard?.hostId || '',
+                    eventId: currentCard?.uid || '',
+                    guestSwipe: 'left',
+                  },
+                });
+              }}
+              onSuperInvite={() => {
+                handleSuperInvite()
+                createEventAttendee({
+                  body: {
+                    guestId: userMetadata?.uid || '',
+                    hostId: currentCard?.hostId || '',
+                    eventId: currentCard?.uid || '',
+                    guestSwipe: 'right',
+                  },
+                });
+              }}
+              onInvite={() => {
+                handleSwipeRight()
+                createEventAttendee({
+                  body: {
+                    guestId: userMetadata?.uid || '',
+                    hostId: currentCard?.hostId || '',
+                    eventId: currentCard?.uid || '',
+                    guestSwipe: 'right',
+                  },
+                });
+              }}
+              topIndex={currentEventCards.length - 1}
             />
           ))}
         </S.EventCardContainer>
@@ -76,6 +115,7 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events }) => {
           </S.BlockAndReportButton>
         </S.BlockAndReportContainer>
         <ModalReport ref={bottomSheetModalRef} />
+        <NewConnectionModal cardData={matchedCard} visible={isModalVisible} onClose={closeModal} isEvent={true} />
       </S.BottomWrapper>
     </ScrollView>
   );

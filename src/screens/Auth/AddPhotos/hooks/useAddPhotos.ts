@@ -1,19 +1,18 @@
-import {useState} from 'react';
-import {Alert, Platform} from 'react-native';
-import {check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS} from 'react-native-permissions';
+import { useState } from 'react';
+import { Alert, Platform } from 'react-native';
+import { check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS } from 'react-native-permissions';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
-import {components} from 'src/api/v1';
-import {useAuthStore} from 'src/store/authStore';
-import {showToast} from 'helpers/showToast';
-import {isIos} from 'constants/common';
-import {enterBirthdayPath} from 'constants/pathLocations';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { components } from '@invited-only/invited-only-api';
+import { useAuthStore } from 'src/store/authStore';
+import { showToast } from 'helpers/showToast';
+import { isIos } from 'constants/common';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 
 export const useAddPhotos = () => {
   const navigation = useAppNavigation();
 
-  const [photos, setImages] = useState<{image: null | string; id: number}[]>([
+  const [photos, setImages] = useState<{ image: null | string; id: number }[]>([
     {
       id: 0,
       image: null,
@@ -40,7 +39,7 @@ export const useAddPhotos = () => {
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  const {onBoarding, setOnBoarding} = useAuthStore();
+  const { onBoarding, setOnBoarding } = useAuthStore();
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
     const result = await check(permission);
     switch (result) {
@@ -99,7 +98,7 @@ export const useAddPhotos = () => {
 
       const newImages = photos.map(img => {
         if (img.id === imageId) {
-          return {...img, image: image.path};
+          return { ...img, image: image.path };
         }
         return img;
       });
@@ -112,14 +111,14 @@ export const useAddPhotos = () => {
   const deleteImage = (imageId: number): void => {
     const newImages = photos.map(img => {
       if (img.id === imageId) {
-        return {...img, image: null};
+        return { ...img, image: null };
       }
       return img;
     });
     setImages(newImages);
   };
 
-  function hasPhoto(array: {image: null | string; id: number}[]) {
+  function hasPhoto(array: { image: null | string; id: number }[]) {
     for (let i = 0; i < array.length; i++) {
       if (array[i].image !== null) {
         return true;
@@ -137,9 +136,10 @@ export const useAddPhotos = () => {
     try {
       for (const i of photos) {
         if (i?.image) {
+          console.log('uploading image', i.image);
           const img = await uploadImage(i.image, onBoarding?.registrationDetails?.uid || '');
           console.log('img', img);
-          photosList.push({id: i?.id + 1, image: img});
+          photosList.push({ id: i?.id + 1, image: img });
         }
       }
       setOnBoarding({
@@ -155,9 +155,9 @@ export const useAddPhotos = () => {
     } finally {
       setIsLoading(false);
     }
-
+    console.log('photosList', photosList);
     if (photosList.length) {
-      navigation.navigate(enterBirthdayPath as never);
+      navigation.navigate('/enter-birthday');
     } else {
       showToast('inviteMatch', '', 'Failed to upload photos');
     }

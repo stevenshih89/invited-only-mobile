@@ -3,7 +3,6 @@ import { components } from '@invited-only/invited-only-api';
 import * as S from './EventListItem.style';
 import EventListItemHostContent from './EventListItemHostContent/EventListItemHostContent';
 import EventListItemGuestConetnt from './EventListItemGuestConetnt/EventListItemGuestConetnt';
-import { useAppNavigation } from 'hooks/useAppNavigation';
 
 
 interface EventListItemProps {
@@ -21,7 +20,6 @@ interface EventListItemProps {
 
 const EventListItem: React.FC<EventListItemProps> = ({ event, imageUrl, statusEvent, attendees = [], requestCount, onPress, isReview, isHost }) => {
   const handlePress = () => onPress && onPress(event.uid);
-  const { navigate } = useAppNavigation();
   const displayedAttendees = attendees.slice(0, 2);
   const remainingAttendees = attendees.length - displayedAttendees.length;
 

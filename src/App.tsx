@@ -1,5 +1,5 @@
 import React, { FC, JSX, useEffect } from 'react';
-import { Platform, StatusBar, View } from 'react-native';
+import { I18nManager, Platform, StatusBar, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import 'react-native-gesture-handler';
 import Purchases from 'react-native-purchases';
@@ -11,7 +11,12 @@ import Config from 'react-native-config';
 import Bugsnag from '@bugsnag/react-native';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { blackColor } from 'constants/colors';
+
 import Main from 'src';
+
+I18nManager.allowRTL(false);
+I18nManager.forceRTL(false);
+
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
@@ -48,19 +53,22 @@ const App: FC = (): JSX.Element => {
     }
   }, []);
 
+
   return (
+
     <SafeAreaProvider>
       <BottomSheetModalProvider>
-        <NavigationContainer theme={{
-          dark: true, colors: {
-            background: blackColor,
-            primary: 'black',
-            card: 'black',
-            text: 'white',
-            border: 'black',
-            notification: 'black'
-          }, fonts: { regular: { fontFamily: 'Inter-Regular', fontWeight: '400' }, medium: { fontFamily: 'Inter-Medium', fontWeight: '500' }, bold: { fontFamily: 'Inter-Bold', fontWeight: '700' }, heavy: { fontFamily: 'Inter-Heavy', fontWeight: '900' } }
-        }}>
+        <NavigationContainer
+          theme={{
+            dark: true, colors: {
+              background: blackColor,
+              primary: 'black',
+              card: 'black',
+              text: 'white',
+              border: 'black',
+              notification: 'black'
+            }, fonts: { regular: { fontFamily: 'Inter-Regular', fontWeight: '400' }, medium: { fontFamily: 'Inter-Medium', fontWeight: '500' }, bold: { fontFamily: 'Inter-Bold', fontWeight: '700' }, heavy: { fontFamily: 'Inter-Heavy', fontWeight: '900' } }
+          }}>
           <StatusBar />
           <View style={{ flex: 1, backgroundColor: blackColor }}>
             <Main />
@@ -68,6 +76,7 @@ const App: FC = (): JSX.Element => {
         </NavigationContainer>
       </BottomSheetModalProvider>
     </SafeAreaProvider>
+
   );
 };
 

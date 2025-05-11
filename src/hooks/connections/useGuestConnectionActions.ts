@@ -5,9 +5,10 @@ interface UseGuestConnectionActionsProps {
     hostId: string;
     guestId: string;
     eventId: string;
+    onSuccess?: () => void;
 }
 
-const useGuestConnectionActions = ({ hostId, guestId, eventId }: UseGuestConnectionActionsProps) => {
+const useGuestConnectionActions = ({ hostId, guestId, eventId, onSuccess }: UseGuestConnectionActionsProps) => {
 
     const { mutate: updateEventAttendee, isPending: isUpdatingEventAttendee } = invitedOnlyBackendApi.useMutation('patch', '/eventAttendees')
 
@@ -22,6 +23,7 @@ const useGuestConnectionActions = ({ hostId, guestId, eventId }: UseGuestConnect
         }, {
             onSuccess: () => {
                 showToast('success', 'Event approved successfully', 'Event approved');
+                onSuccess?.();
             },
             onError: () => {
                 showToast('warning', 'Event approval failed', 'Event approval failed');
@@ -43,6 +45,7 @@ const useGuestConnectionActions = ({ hostId, guestId, eventId }: UseGuestConnect
         }, {
             onSuccess: () => {
                 showToast('success', 'Event rejected successfully', 'Event rejected');
+                onSuccess?.();
             },
             onError: () => {
                 showToast('warning', 'Event rejection failed', 'Event rejection failed');

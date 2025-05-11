@@ -26,7 +26,7 @@ export const TitleText = styled.Text`
   font-style: normal;
   font-weight: 500;
   font-size: 24px;
-  line-height: 29px; /* Corresponds to 120% of 24px */
+  line-height: 29px;
   color: #ffffff;
   text-align: center;
   /* Removed absolute positioning for flexbox centering */

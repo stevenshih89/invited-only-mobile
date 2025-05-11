@@ -1,10 +1,10 @@
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
-import {SafeAreaView, View, FlatList, TouchableOpacity, Text} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {backgroundGradientColors, transparentWhite16Color, whiteColor, black1Color, lightGray16Color} from 'constants/colors';
-import {screenHeight} from 'constants/common';
-import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import { SafeAreaView, View, FlatList, TouchableOpacity, Text } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { backgroundGradientColors, transparentWhite16Color, whiteColor, black1Color, lightGray16Color } from 'constants/colors';
+import { screenHeight } from 'constants/common';
+import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
 
 // Title
 export const EulaTitle = styled.Text`
@@ -24,8 +24,8 @@ export const EulaTitleContainer = styled.View`
 // Gradient background
 export const RootGradient = styled(LinearGradient).attrs({
   colors: backgroundGradientColors,
-  start: {x: 0, y: 1},
-  end: {x: 0, y: 0},
+  start: { x: 0, y: 1 },
+  end: { x: 0, y: 0 },
 })`
   flex: 1;
 `;
@@ -111,9 +111,9 @@ export const DenyText = styled(Text)`
   font-size: ${RFValue(20, 932)}px;
 `;
 
-export const AcceptButton = styled(TouchableOpacity)<{enabled: boolean}>`
+export const AcceptButton = styled(TouchableOpacity) <{ enabled: boolean }>`
   flex: 1.7;
-  background-color: ${(props: {enabled: boolean}) => (props.enabled ? whiteColor : lightGray16Color)};
+  background-color: ${(props: { enabled: boolean }) => (props.enabled ? whiteColor : lightGray16Color)};
   border-radius: 18px;
   height: ${screenHeight / 14}px;
   flex-direction: row;

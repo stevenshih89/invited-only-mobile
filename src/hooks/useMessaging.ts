@@ -8,7 +8,7 @@ import { useNavigationState } from "@react-navigation/native";
 import useUser from "./user/useUser";
 import invitedOnlyBackendApi from "src/api/backend-api";
 import { showToast } from "helpers/showToast";
-import useGetNotifications from "screens/App/Notifications/hooks/useGetNotifications";
+
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
     console.log('Message handled in the background!', remoteMessage);
@@ -17,7 +17,7 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
 const useMessaging = () => {
     const { mutate: sendToken } = invitedOnlyBackendApi.useMutation('post', '/auth/messaging/token')
     const { user } = useUser()
-    const { refetch } = useGetNotifications();
+
 
     const getCurrentRouteName = (state: any): string | undefined => {
         if (!state) return undefined;
@@ -77,7 +77,6 @@ const useMessaging = () => {
 
     useEffect(() => {
         const unsubscribeOnMessage = messaging().onMessage(async (message) => {
-            refetch();
             console.log('Message received:', message);
 
             const currentRouteName = getCurrentRouteName(navigationState);
@@ -121,7 +120,7 @@ const useMessaging = () => {
             unsubscribeOnMessage();
             unsubscribeOnTokenRefresh();
         };
-    }, [navigationState]);
+    }, []);
 
     return {
         setupNotifications

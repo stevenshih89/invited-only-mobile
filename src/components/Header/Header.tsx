@@ -33,8 +33,9 @@ const Header: FC<HeaderTypeProps> = ({ badge, logoType, showHeaderTop = true }) 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
 
-  const { data: notifications } = useGetNotifications();
-
+  const { data: notifications, MyEventNotificationCount, JoinedEventNotificationCount } = useGetNotifications();
+  const initialTab = JoinedEventNotificationCount && MyEventNotificationCount > 0 ? 'JoinedEvents' : 'MyEvents';
+  console.log('initialTab', initialTab);
   const { user: userInfo } = useUser();
 
   const headerInsets = {
@@ -51,7 +52,7 @@ const Header: FC<HeaderTypeProps> = ({ badge, logoType, showHeaderTop = true }) 
               <ProfilePersonIcon width={24} height={24} />
             </S.ProfileButton>
             {badge && (
-              <S.NotificationButton onPress={() => navigation.navigate('/notifications-stack')} activeOpacity={0.7}>
+              <S.NotificationButton onPress={() => navigation.navigate('/notifications-stack', { initialTab: 'MyEvents' })} activeOpacity={0.7}>
                 <NotificationBellIcon width={32} height={32} />
                 {notifications && notifications?.length > 0 && (
                   <Badge

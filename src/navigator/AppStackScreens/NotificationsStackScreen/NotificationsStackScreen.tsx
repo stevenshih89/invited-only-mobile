@@ -5,7 +5,7 @@ import Notifications from 'screens/App/Notifications/Notifications';
 
 const NotificationStack = createStackNavigator();
 
-const NotificationsStackScreen = () => {
+const NotificationsStackScreen = ({ route }: { route: any }) => {
     const stackNavigationOptions: StackNavigationOptions = {
         cardStyle: {
             backgroundColor: blackColor,
@@ -30,6 +30,7 @@ const NotificationsStackScreen = () => {
                 key="tempNotificationsScreen"
                 name="tempNotificationsScreen"
                 component={Notifications}
+                initialParams={{ initialTab: route.params.initialTab }}
             />
         </NotificationStack.Navigator>
     );

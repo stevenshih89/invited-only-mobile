@@ -1,16 +1,17 @@
-import {Dimensions} from 'react-native';
+import { Dimensions } from 'react-native';
 import Animated from 'react-native-reanimated';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {screenHeight, screenWidth} from 'constants/common';
-import {black1Color, whiteColor} from 'constants/colors';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import { screenHeight, screenWidth } from 'constants/common';
+import { black1Color, whiteColor } from 'constants/colors';
 
-const {height} = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 export const MainContainer = styled.View`
   display: flex;
   gap: 12px;
+
 `;
 
 export const BackgroundImage = styled.ImageBackground`
@@ -18,7 +19,7 @@ export const BackgroundImage = styled.ImageBackground`
   position: fixed;
   justify-content: center;
   align-items: center;
-  height: ${height * 0.6}px;
+  height: ${height * 0.65}px;
   width: 100%;
 `;
 
@@ -53,3 +54,4 @@ export const AnimatedWordsStyle = styled(Animated.Text)`
   font-size: 86px;
   font-family: ${Satoshi400};
 `;
+

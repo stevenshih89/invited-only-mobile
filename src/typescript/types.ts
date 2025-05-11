@@ -9,6 +9,7 @@ export type RootStackParamList = {
   };
   '/notifications-stack'?: {
     screen?: string;
+    initialTab: 'JoinedEvents' | 'MyEvents';
   };
   '/event-creating-stack'?: {
     screen?: string;

@@ -1,11 +1,11 @@
-import {useCallback, useContext} from 'react';
+import { useCallback, useContext } from 'react';
 
-import {AuthContext} from 'contexts/AuthContext';
-import {useAppNavigation, useFocusEffect} from 'hooks/useAppNavigation';
-import {summaryInfoPath} from 'constants/pathLocations';
+import { useAppNavigation, useFocusEffect } from 'hooks/useAppNavigation';
+import { summaryInfoPath } from 'constants/pathLocations';
+import { useAuthStore } from 'src/store/authStore';
 
 export const usePhotoVerified = () => {
-  const {onBoarding} = useContext(AuthContext);
+  const { onBoarding } = useAuthStore();
   const navigation = useAppNavigation();
 
   useFocusEffect(
@@ -18,8 +18,7 @@ export const usePhotoVerified = () => {
     }, []),
   );
 
-  const flattenedPhotos = onBoarding.filter((item: {photos: []}) => item.photos)[0]?.photos;
-  const imageUri = flattenedPhotos?.find((photo: {id: number}) => photo.id === 0)?.image;
+  const imageUri = onBoarding.registrationDetails?.verificationPhoto;
 
   return {
     imageUri,

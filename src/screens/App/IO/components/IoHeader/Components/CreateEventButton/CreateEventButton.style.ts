@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import {Satoshi500} from 'constants/fonts';
+import { Satoshi500 } from 'constants/fonts';
 
 export const CreateEventButtonContainer = styled.TouchableOpacity`
   display: flex;
@@ -26,5 +26,5 @@ export const CreateEventButtonText = styled.Text`
   color: #fff;
   font-family: ${Satoshi500};
   font-size: 14px;
-  line-height: 121%; /* 16.94px */
+  line-height: 16.94px;
 `;

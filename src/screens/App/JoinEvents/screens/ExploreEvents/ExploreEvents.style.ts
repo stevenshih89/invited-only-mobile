@@ -1,14 +1,14 @@
 import styled from 'styled-components/native';
-import {ScrollView} from 'react-native-gesture-handler';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight} from 'constants/common';
-import {whiteColor} from 'constants/colors';
-import {Satoshi500} from 'constants/fonts';
+import { ScrollView } from 'react-native-gesture-handler';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { screenHeight } from 'constants/common';
+import { whiteColor } from 'constants/colors';
+import { Satoshi500 } from 'constants/fonts';
 
 export const EventCardContainer = styled.View`
   align-items: center;
   justify-content: center;
-  width: 89%;
+  width: 90%;
   height: 100%;
 `;
 
@@ -42,7 +42,7 @@ export const BlockText = styled.Text`
   font-size: ${RFValue(18, 932)}px;
   color: ${whiteColor};
   font-family: ${Satoshi500};
-  line-height: 121%;
+  line-height: 16.94px;
 `;
 
 export const BottomWrapper = styled.View`

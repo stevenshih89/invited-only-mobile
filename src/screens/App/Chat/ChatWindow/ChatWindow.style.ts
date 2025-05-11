@@ -10,7 +10,7 @@ interface IsOwnProps {
 
 export const Container = styled.View`
     display: flex;
-    height: ${screenHeight * 1}px;
+    height: ${screenHeight * 0.98}px;
     flex-direction: column;
     background-color: ${blackColor};
     padding-top: 16px;
@@ -103,7 +103,7 @@ export const InputContainer = styled.View`
 
 export const InputField = styled.TextInput<{ disabled: boolean }>`
     flex: 1;
-    height: 22px;
+    height: ${screenHeight * 0.05}px;
     font-family: ${Satoshi400};
     font-size: 16px;
     line-height: 22px;

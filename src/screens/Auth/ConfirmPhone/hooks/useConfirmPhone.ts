@@ -31,10 +31,9 @@ export const useConfirmPhone = (route: {
   const CELL_COUNT: number = 6;
   const ref: RefObject<TextInput> = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
 
-  console.log('resendTimer', resendTimer);
 
-  const { setOnBoarding, setAccessToken, setRefreshToken, setUserMetadata } = useAuthStore();
-  console.log('setOnBoarding', setOnBoarding);
+
+  const { setOnBoarding, setAccessToken, setRefreshToken, setUserMetadata, setIsDemoVideoWatched } = useAuthStore();
   const { mutate: verifyOtp, isPending: isLoadingVerifyOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/verify-otp');
   const { mutate: sendOtp, isPending: isLoadingSendOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
 
@@ -103,7 +102,6 @@ export const useConfirmPhone = (route: {
           { body: { phone: mobilePhone, code } },
           {
             onSuccess: data => {
-              console.log('sucess verify otp data', data);
               setOnBoarding({
                 isOnboardingCompleted: false,
                 userType: 'guest',

@@ -85,7 +85,7 @@ const EnterCodeView: FC<EnterCodeViewProps> = ({
           </S.ErrorContainer>
         )}
       </S.CodeContainer>
-      <S.StyledButton title="Get Access" onPress={handleSubmit} />
+      <S.StyledButton title="Get Access" onPress={handleSubmit} disabled={code.length !== 4} />
     </S.Container>
   );
 };

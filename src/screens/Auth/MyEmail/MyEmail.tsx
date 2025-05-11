@@ -1,5 +1,5 @@
-import React, {FC, JSX} from 'react';
-import {Keyboard} from 'react-native';
+import React, { FC, JSX } from 'react';
+import { Keyboard } from 'react-native';
 
 import {
   GradientBackground,
@@ -16,20 +16,16 @@ import {
   InputContainer,
   ContinueButtonContainer,
 } from './MyEmail.style';
-import {useMyEmail} from './hooks/useMyEmail';
+import { useMyEmail } from './hooks/useMyEmail';
 import Input from 'components/Inputs/Input';
 import AuthProgress from 'components/AuthProgress';
-import AppLoader from 'screens/App/AppLoader/AppLoader';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Button from 'components/Button/Button';
 
 const MyEmail: FC = (): JSX.Element => {
-  const {email, isValidEmail, handleEmailChange, handleNext, isPending, navigation} = useMyEmail();
+  const { email, isValidEmail, handleEmailChange, handleNext, navigation } = useMyEmail();
 
-  if (isPending) {
-    return <AppLoader />;
-  }
 
   return (
     <GradientBackground>

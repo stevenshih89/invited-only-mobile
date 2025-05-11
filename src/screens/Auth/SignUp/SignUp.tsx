@@ -29,7 +29,6 @@ const SignUp: FC = (): JSX.Element => {
         return;
       }
       const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
-      console.log(`looking in ${apiUserInfoCollection} for the phone number`);
 
       const userNumber = await firestore().collection(apiUserInfoCollection).where('phoneNumber', '==', mobilePhone).get();
       if (!userNumber.empty) {

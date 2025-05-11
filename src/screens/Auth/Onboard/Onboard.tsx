@@ -1,15 +1,15 @@
-import React, {JSX, useEffect} from 'react';
+import React, { JSX, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {TouchableOpacity} from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import * as S from './Onboard.style';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
 import WelcomeBcgCards from 'assets/images/auth/welcom-screen-cards.png';
 import BgDottedLineLeft from 'assets/images/auth/background-dotted-line-left.png';
 import BgDottedLineRight from 'assets/images/auth/background-dotted-right.png';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {eulaPath} from 'constants/pathLocations';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { eulaPath } from 'constants/pathLocations';
 import Button from 'components/Button/Button';
-import {openLink} from 'helpers/links';
+import { openLink } from 'helpers/links';
 
 const Onboard = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -42,7 +42,7 @@ const Onboard = (): JSX.Element => {
         </S.LogoContainer>
         <S.BottomContainer>
           <S.ButtonWrapper>
-            <Button onPress={() => navigation.navigate(eulaPath as never)} title="Get Access" />
+            <Button onPress={() => navigation.navigate('/eula')} title="Get Access" />
             <S.GetAccessContainer>
               <S.AccountQuestionText>Have an account? </S.AccountQuestionText>
               <TouchableOpacity onPress={() => navigation.navigate('/sign-in' as never)}>

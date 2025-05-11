@@ -26,12 +26,17 @@ const TurnNotifications = () => {
         ...onBoarding.registrationDetails,
         notificationSettings: {
           ...onBoarding.registrationDetails?.notificationSettings,
-          match: notifications,
+          connection: notifications,
+          chat: notifications,
+          superInvite: notifications,
+          superJoin: notifications,
+          joinedEvent: notifications,
+          requests: notifications,
+          myEvents: notifications,
         },
       },
     });
     if (notifications) {
-
       await setupNotifications();
     }
     navigation.navigate('/add-photos');

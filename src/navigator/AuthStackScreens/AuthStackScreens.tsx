@@ -51,7 +51,7 @@ const AuthStackScreens: FC = (): JSX.Element => {
 
   return (
     <NavigationIndependentTree>
-      <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{ headerShown: false }}>
+      <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{ headerShown: false, freezeOnBlur: true, unmountOnBlur: false }}>
         <AuthStack.Screen key={onboardPath} name={onboardPath} component={Onboard} />
         <AuthStack.Screen key={eulaPath} name={eulaPath} component={Eula} />
         <AuthStack.Screen key={enterTypePath} name={enterTypePath} component={EnterTypeScreen} />

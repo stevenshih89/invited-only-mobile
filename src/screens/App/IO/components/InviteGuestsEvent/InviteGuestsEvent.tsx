@@ -7,8 +7,9 @@ import GuestBioCard from './Components/GuestBioCard/GuestBioCard';
 import { GuestCard } from './Components/GuestCard/GuestCard';
 import GuestLanguagesCard from './Components/GuestLanguagesCard/GuestLanguagesCard';
 import { NewConnectionModal } from './Components/NewConnectionModal/NewConnectionModal';
-import { useNewConnectionModal } from './hooks/useNewConnectionModal';
 
+
+import useNewConnectionModal from './hooks/useNewConnectionModal';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import useSwipeCardAction from 'screens/App/Components/Card/hooks/useSwipeCardAction';
 
@@ -30,7 +31,7 @@ const InviteGuestsEvent = ({ selectedEvent, cardsToShow, isLoading, onSwipeLeft,
 
 
   const { createEventAttendee, swipeDataRes } = useSwipeCardAction();
-  const { isModalVisible, closeModal, matchedCard } = useNewConnectionModal({ swipeDataRes, allCards });
+  const { isModalVisible, closeModal, matchedCard } = useNewConnectionModal({ swipeDataRes, allCards, isEvent: false });
 
   const renderCards = () => {
     if (isLoading) {
@@ -97,6 +98,7 @@ const InviteGuestsEvent = ({ selectedEvent, cardsToShow, isLoading, onSwipeLeft,
           cardData={matchedCard}
           visible={isModalVisible}
           onClose={closeModal}
+          isEvent={false}
         />
       )}
     </ScrollView>
