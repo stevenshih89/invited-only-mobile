@@ -1,11 +1,11 @@
 import styled from 'styled-components/native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { FlatList } from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {FlatList} from 'react-native';
 import Modal from 'react-native-modal';
-import { BottomSheetView } from '@gorhom/bottom-sheet';
-import { black2Color, whiteColor } from 'constants/colors';
-import { screenHeight } from 'constants/common';
-import { Satoshi500 } from 'constants/fonts';
+import {BottomSheetView} from '@gorhom/bottom-sheet';
+import {black2Color, whiteColor} from 'constants/colors';
+import {screenHeight} from 'constants/common';
+import {Satoshi500} from 'constants/fonts';
 import Button from 'components/Button/Button';
 
 export const StyledModal = styled(Modal)`
@@ -52,19 +52,19 @@ export const ModalBackground = styled.View`
   background-color: ${black2Color};
   flex: 1;
 `;
-export const ReportButton = styled.TouchableOpacity<{ active?: boolean }>`
+export const ReportButton = styled.TouchableOpacity<{active?: boolean}>`
   align-items: center;
   flex-direction: row;
   padding-vertical: 12px;
   padding-horizontal: 24px;
   width: 100%;
-  background-color: ${({ active }: { active: boolean }) => (active ? '#181818' : 'transparent')};
+  background-color: ${({active}: {active: boolean}) => (active ? '#181818' : 'transparent')};
 `;
 
-export const IconWrapper = styled.View<{ active?: boolean }>`
+export const IconWrapper = styled.View<{active?: boolean}>`
   width: 32px;
   height: 32px;
-  opacity: ${({ active }: { active: boolean }) => (active ? 1 : 0.4)};
+  opacity: ${({active}: {active: boolean}) => (active ? 1 : 0.4)};
 `;
 
 export const ReportText = styled.Text`

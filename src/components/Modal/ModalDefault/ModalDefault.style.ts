@@ -1,8 +1,7 @@
 import styled from 'styled-components/native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { Satoshi400, Satoshi500 } from 'constants/fonts';
-import { whiteColor } from 'constants/colors';
-
+import {RFValue} from 'react-native-responsive-fontsize';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {whiteColor} from 'constants/colors';
 
 export const ModalContent = styled.View`
   margin-horizontal: 24px;

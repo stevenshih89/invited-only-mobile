@@ -4,7 +4,11 @@ import {ScrollView, TouchableOpacity} from 'react-native';
 import {components} from 'src/api/v1';
 import * as S from './ManageEventCollapsible.styled';
 import {ManageEventGuestInfo} from './ManageEventGuestInfo/ManageEventGuestInfo';
+import {useManageEventCollapse} from './hooks/useManageEventCollapse';
 import InfoIcon from 'assets/images/icons/info-circle.svg';
+import ModalManageUserOnEvent from 'components/Modal/ModalManageUserOnEvent/ModalManageUserOnEvent';
+import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
+import ModalReport from 'components/Modal/ModalReport/ModalReport';
 
 interface ManageEventCollapsibleProps {
   eventRequests?: components['schemas']['ConnectionRequest'][];
@@ -15,6 +19,21 @@ interface ManageEventCollapsibleProps {
 }
 
 export const ManageEventCollapsible = ({title, eventRequests, isOpen, toggle, onPressTooltip}: ManageEventCollapsibleProps) => {
+  const {
+    activeRequest,
+    modalManageUserOnEventRef,
+    modalBlockReportRef,
+    openCancelInvitationModal,
+    openUnconnectedModal,
+    handleOpenModalManageUserOnEvent,
+    handleCloseModalManageUserOnEvent,
+    handleOpenBlockReportModal,
+    handleOpenCancelInvitationModal,
+    handleOpenUnconnectedModal,
+    handleCloseCancelInvitationModal,
+    handleCloseUnconnectedModal,
+  } = useManageEventCollapse();
+
   return (
     <S.CardContainer>
       <S.ContentWrapper>
@@ -34,7 +53,6 @@ export const ManageEventCollapsible = ({title, eventRequests, isOpen, toggle, on
             <InfoIcon />
           </TouchableOpacity>
         </S.TitleRow>
-
         <S.NumberBadge>
           <S.NumberText>{eventRequests?.length ?? 0}</S.NumberText>
         </S.NumberBadge>
@@ -43,13 +61,46 @@ export const ManageEventCollapsible = ({title, eventRequests, isOpen, toggle, on
         <S.CardContainer>
           <ScrollView style={{maxHeight: 250}}>
             {eventRequests?.map((request, index) => {
-              return <ManageEventGuestInfo key={index} request={request} title={title} />;
+              return (
+                <ManageEventGuestInfo
+                  key={index}
+                  request={request}
+                  title={title}
+                  handleOpenModalManageUserOnEvent={handleOpenModalManageUserOnEvent}
+                />
+              );
             })}
           </ScrollView>
         </S.CardContainer>
       </Collapsible>
+      <ModalManageUserOnEvent
+        ref={modalManageUserOnEventRef}
+        onClose={handleCloseModalManageUserOnEvent}
+        request={activeRequest}
+        openBlockReportModal={handleOpenBlockReportModal}
+        openCancelInvitationModal={handleOpenCancelInvitationModal}
+        openUnconnectedModal={handleOpenUnconnectedModal}
+      />
+      <ModalReport ref={modalBlockReportRef} />
+      <ModalDefault
+        isVisible={openCancelInvitationModal}
+        onClose={handleCloseCancelInvitationModal}
+        title="Cancel Invitation?"
+        description="Are you sure you want to cancel invitation? The user will no longer be able to accept it"
+        onConfirm={() => {}}
+        confirmText="Cancel Invitation"
+        cancelText="Exit"
+      />
+      <ModalDefault
+        isVisible={openUnconnectedModal}
+        onClose={handleCloseUnconnectedModal}
+        title="Unconnected?"
+        description="You are no longer connected. Do you want to remove this connection?"
+        onConfirm={() => {}}
+        confirmText="Remove Connection"
+        cancelText="Cancel"
+      />
     </S.CardContainer>
   );
 };
-
 export default ManageEventCollapsible;

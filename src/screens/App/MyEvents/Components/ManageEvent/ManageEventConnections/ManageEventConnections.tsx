@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 
 import {components} from 'src/api/v1'; // Moved down
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import * as S from '../ManageEvent.style'; // Reuse existing container style for now
 import {ManageEventCollapsible} from '../ManageEventCollapsible/ManageEventCollapsible';
 import {useManageEventDetails} from '../hooks/useManageEventDetails';
@@ -58,43 +59,45 @@ export const ManageEventConnections: React.FC<ManageEventConnectionsProps> = ({e
   };
 
   return (
-    <S.Container>
-      <ManageEventCollapsible
-        toggle={() => setIsOpen({...isOpen, NewConnections: !isOpen['NewConnections']})}
-        title="New Connections"
-        eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'connection-complete')}
-        isOpen={isOpen['NewConnections']}
-        onPressTooltip={() => handlePressTooltip('newConnection')}
-      />
-      <ManageEventCollapsible
-        toggle={() => setIsOpen({...isOpen, Approved: !isOpen['Approved']})}
-        title="Approved"
-        eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'pending-confirmation')}
-        isOpen={isOpen['Approved']}
-        onPressTooltip={() => handlePressTooltip('approved')}
-      />
-      <ManageEventCollapsible
-        toggle={() => setIsOpen({...isOpen, Attending: !isOpen['Attending']})}
-        title="Attending"
-        eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'confirmation-complete')}
-        isOpen={isOpen['Attending']}
-        onPressTooltip={() => handlePressTooltip('attending')}
-      />
-      <ManageEventCollapsible
-        toggle={() => setIsOpen({...isOpen, NotAttending: !isOpen['NotAttending']})}
-        title="Not Attending"
-        eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'pending-attendance')}
-        isOpen={isOpen['NotAttending']}
-        onPressTooltip={() => handlePressTooltip('notAccepted')}
-      />
-      <ModalEventInfo
-        isVisible={isVisibleModalEventInfo}
-        onClose={() => setIsVisibleModalEventInfo(false)}
-        closeText="Close"
-        title={eventInfoData[selectedEventInfoName ?? 'newConnection'].title}
-        description={eventInfoData[selectedEventInfoName ?? 'newConnection'].description}
-      />
-    </S.Container>
+    <BottomSheetModalProvider>
+      <S.Container>
+        <ManageEventCollapsible
+          toggle={() => setIsOpen({...isOpen, NewConnections: !isOpen['NewConnections']})}
+          title="New Connections"
+          eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'connection-complete')}
+          isOpen={isOpen['NewConnections']}
+          onPressTooltip={() => handlePressTooltip('newConnection')}
+        />
+        <ManageEventCollapsible
+          toggle={() => setIsOpen({...isOpen, Approved: !isOpen['Approved']})}
+          title="Approved"
+          eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'pending-confirmation')}
+          isOpen={isOpen['Approved']}
+          onPressTooltip={() => handlePressTooltip('approved')}
+        />
+        <ManageEventCollapsible
+          toggle={() => setIsOpen({...isOpen, Attending: !isOpen['Attending']})}
+          title="Attending"
+          eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'confirmation-complete')}
+          isOpen={isOpen['Attending']}
+          onPressTooltip={() => handlePressTooltip('attending')}
+        />
+        <ManageEventCollapsible
+          toggle={() => setIsOpen({...isOpen, NotAttending: !isOpen['NotAttending']})}
+          title="Not Attending"
+          eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'pending-attendance')}
+          isOpen={isOpen['NotAttending']}
+          onPressTooltip={() => handlePressTooltip('notAccepted')}
+        />
+        <ModalEventInfo
+          isVisible={isVisibleModalEventInfo}
+          onClose={() => setIsVisibleModalEventInfo(false)}
+          closeText="Close"
+          title={eventInfoData[selectedEventInfoName ?? 'newConnection'].title}
+          description={eventInfoData[selectedEventInfoName ?? 'newConnection'].description}
+        />
+      </S.Container>
+    </BottomSheetModalProvider>
   );
 };
 

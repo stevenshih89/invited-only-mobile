@@ -1,13 +1,13 @@
-import { FC, ReactElement } from 'react';
-import { ActivityIndicator, Button as ButtonAntd } from '@ant-design/react-native';
+import {FC, ReactElement} from 'react';
+import {ActivityIndicator, Button as ButtonAntd} from '@ant-design/react-native';
 
 //import components
-import { TextStyle, ViewStyle } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { ButtonProps } from 'typescript/interfaces';
-import { Satoshi500 } from 'constants/fonts';
-import { screenHeight } from 'constants/common';
-import { blackColor, grayColor, whiteColor } from 'constants/colors';
+import {TextStyle, ViewStyle} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {ButtonProps} from 'typescript/interfaces';
+import {Satoshi500} from 'constants/fonts';
+import {screenHeight} from 'constants/common';
+import {blackColor, grayColor, whiteColor} from 'constants/colors';
 
 const Button: FC<ButtonProps> = ({
   title,
@@ -74,6 +74,37 @@ const Button: FC<ButtonProps> = ({
       },
       defaultHighlightText: {
         color: blackColor,
+      } as TextStyle,
+    },
+    ['outline']: {
+      container: buttonContatinerStyle,
+      defaultRaw: {
+        borderRadius: 100,
+        backgroundColor: 'transparent',
+        height: screenHeight / 18,
+        maxHeight: 64,
+        borderColor: 'rgba(32, 32, 32, 1)',
+        borderWidth: 1,
+      } as ViewStyle,
+      defaultRawText: {
+        color: whiteColor,
+        fontFamily: Satoshi500,
+        textAlign: 'center',
+        fontSize: RFValue(14, 932),
+        ...buttonTitleStyle,
+      } as TextStyle,
+      defaultDisabledRaw: {
+        backgroundColor: 'transparent',
+        borderColor: 'rgba(32, 32, 32, 1)',
+      },
+      defaultDisabledRawText: {
+        color: whiteColor,
+      },
+      defaultHighlight: {
+        backgroundColor: 'rgba(255, 255,255, 0.05)',
+      },
+      defaultHighlightText: {
+        color: whiteColor,
       } as TextStyle,
     },
     ['transparent']: {

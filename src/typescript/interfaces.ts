@@ -1,15 +1,14 @@
-import { KeyboardType, StyleProp, TextStyle, ViewStyle } from "react-native";
-
+import {KeyboardType, StyleProp, TextStyle, ViewStyle} from 'react-native';
 
 export interface ButtonProps {
-  title: string;
+  title: string | React.ReactNode;
   onPress?: () => any;
   buttonContatinerStyle?: ViewStyle;
   buttonTitleStyle?: ViewStyle | TextStyle;
   buttonStyle?: ViewStyle;
   disabled?: boolean;
   loading?: boolean;
-  variant?: 'default' | 'transparent' | 'gray';
+  variant?: 'default' | 'transparent' | 'gray' | 'outline';
   id?: string;
   testID?: string;
 }

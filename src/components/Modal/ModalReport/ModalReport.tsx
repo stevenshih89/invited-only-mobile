@@ -1,7 +1,7 @@
-import React, { useMemo, useCallback } from 'react';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import React, {useMemo, useCallback, forwardRef} from 'react';
+import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import * as S from './ModalReport.style';
-import { useReport } from './hooks/useReport';
+import {useReport} from './hooks/useReport';
 import FakeOrScamIcon from 'assets/images/icons/fake-or-scam.svg';
 import SmileyBadIcon from 'assets/images/icons/smiley-bad.svg';
 import EditPdfIcon from 'assets/images/icons/edit-pdf.svg';
@@ -9,7 +9,7 @@ import CheckupInfectionIcon from 'assets/images/icons/checkup-infection.svg';
 import UnderageIcon from 'assets/images/icons/underage.svg';
 import DownDislikeIcon from 'assets/images/icons/thumb-down-dislike.svg';
 import ReportRoundedIcon from 'assets/images/icons/report-rounded.svg';
-import { whiteColor } from 'constants/colors';
+import {whiteColor} from 'constants/colors';
 
 interface ModalReportProps {
   setModalReport?: (visible: boolean) => void;
@@ -24,11 +24,10 @@ interface ReportItem {
   icon: React.ElementType;
 }
 
-const ModalReport = React.forwardRef<BottomSheetModal, ModalReportProps>(({ setModalReport, uidSender, uid, handleAutoSwipeLeft }, ref) => {
+const ModalReport = forwardRef<BottomSheetModal, ModalReportProps>(({setModalReport, uidSender, uid, handleAutoSwipeLeft}, ref) => {
   const snapPoints = useMemo(() => ['50%', '90%'], []);
 
-  console.log('modal report', ref);
-  const { activeReport, handleChangeReport, handleSendReport } = useReport({
+  const {activeReport, handleChangeReport, handleSendReport} = useReport({
     uidSender,
     uid,
     handleAutoSwipeLeft,
@@ -102,7 +101,7 @@ const ModalReport = React.forwardRef<BottomSheetModal, ModalReportProps>(({ setM
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <S.Separator />}
-          renderItem={({ item }: { item: ReportItem }) => {
+          renderItem={({item}: {item: ReportItem}) => {
             const isActive = activeReport === item.title;
             const Icon = item.icon;
             return (
