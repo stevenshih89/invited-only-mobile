@@ -284,7 +284,7 @@ exports[`EnterCodeView matches snapshot 1`] = `
     accessibilityRole="button"
     accessibilityState={
       {
-        "disabled": false,
+        "disabled": true,
       }
     }
     accessibilityValue={
@@ -296,7 +296,7 @@ exports[`EnterCodeView matches snapshot 1`] = `
       }
     }
     accessible={true}
-    focusable={true}
+    focusable={false}
     onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
@@ -329,7 +329,16 @@ exports[`EnterCodeView matches snapshot 1`] = `
             "maxHeight": 64,
           },
         ],
-        false,
+        [
+          {
+            "backgroundColor": "#dddddd",
+            "borderColor": "#dddddd",
+          },
+          {
+            "backgroundColor": "#5B5B5B",
+            "borderColor": "transparent",
+          },
+        ],
         false,
         undefined,
         {
@@ -368,7 +377,9 @@ exports[`EnterCodeView matches snapshot 1`] = `
                 "textAlign": "center",
               },
             ],
-            false,
+            {
+              "color": "#0000004D",
+            },
             false,
           ]
         }

@@ -1,7 +1,7 @@
-import {Text, TextInput, View} from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 import styled from 'styled-components/native';
-import {lightRedColor} from 'constants/colors';
-import {Satoshi500} from 'constants/fonts';
+import { lightRedColor } from 'constants/colors';
+import { Satoshi500 } from 'constants/fonts';
 
 export const RowContainer = styled(View)`
   display: flex;
@@ -25,7 +25,7 @@ export const FieldLabel = styled(Text)`
   font-family: ${Satoshi500};
   font-style: normal;
   font-size: 14px;
-  line-height: 96.9%;
+  line-height: 96.9px;
   text-align: center;
   color: #ffffff;
 `;
@@ -47,6 +47,7 @@ export const StyledTextInput = styled(TextInput)`
   width: 100%;
   font-family: 'Satoshi';
   font-size: 18px;
+  line-height: 2px;
 `;
 export const ErrorText = styled.Text`
   font-family: 'Satoshi';
