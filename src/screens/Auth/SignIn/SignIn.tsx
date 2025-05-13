@@ -24,7 +24,7 @@ const SignIn: FC = (): JSX.Element => {
                   <S.LogoImage />
                 </S.LogoContainer>
                 <S.HeaderContainer>
-                  <S.Title>Sign In</S.Title>
+                  <S.Title testID="sign-in-title">Sign In</S.Title>
                   <S.Subtitle>Enter your phone number to sign in to your account.</S.Subtitle>
                 </S.HeaderContainer>
                 <S.InputContainer>

@@ -34,7 +34,7 @@ const Onboard = (): JSX.Element => {
           <S.BackgroundDottedLineRight source={BgDottedLineRight} />
           <S.OnBoardingTopViewContainer>
             <S.OnBoardingTextTitle>HOST OR JOIN VIP TABLES AND EXCLUSIVE EVENTS</S.OnBoardingTextTitle>
-            <S.BgCardImage source={WelcomeBcgCards} />
+            <S.BgCardImage testID="bg-card-image" source={WelcomeBcgCards} />
           </S.OnBoardingTopViewContainer>
         </S.Overlay>
         <S.LogoContainer>

@@ -1,16 +1,33 @@
-import React, {FC, JSX} from 'react';
+import React, {FC, JSX, useCallback} from 'react';
 import {Keyboard} from 'react-native';
-import {useMyInterests} from './hooks/useMyInterests';
+import {InterestState, useMyInterests} from './hooks/useMyInterests';
 import * as S from './MyInterests.style';
 import AuthProgress from 'components/AuthProgress';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
-import UserOne from 'assets/images/auth/interests/user-one.png';
-import UserTwo from 'assets/images/auth/interests/user-two.png';
 
 const MyInterests: FC = (): JSX.Element => {
-  const {listOfInterests, handleSelectInterest, handleNext, accountType, navigation} = useMyInterests();
+  const {listOfInterests, handleSelectInterest, handleNext, navigation} = useMyInterests();
+
+  const renderItem = useCallback(
+    ({item}: {item: InterestState}) => {
+      return (
+        <S.InterestItem onPress={() => handleSelectInterest(item.id)} isSelected={item.isSelected} testID={`interest-item-${item.id}`}>
+          <S.InterestImage testID={`image-of-interest`} source={item.image} resizeMode="cover">
+            <S.InterestTitleWrapper>
+              <S.InterestTitle>{item.title}</S.InterestTitle>
+            </S.InterestTitleWrapper>
+            <S.SelectionIndicator isSelected={item.isSelected}>
+              {item.isSelected && <CheckIcon width={14} height={14} />}
+            </S.SelectionIndicator>
+            <S.ItemGradient colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']} />
+          </S.InterestImage>
+        </S.InterestItem>
+      );
+    },
+    [listOfInterests],
+  );
 
   return (
     <S.GradientBackground>
@@ -27,11 +44,8 @@ const MyInterests: FC = (): JSX.Element => {
                   <AuthProgress startPercentage={70} endPercentage={80} animationDuration={1000} />
                 </S.TopRow>
                 <S.TitleContainer>
-                  <S.Title>Choose interests</S.Title>
-                  <S.Subtitle>
-                    Choose up to <S.BoldText>3 event types</S.BoldText> you love to help us find the right{' '}
-                    {accountType === 'host' ? 'guests for your events.' : 'events for you.'}
-                  </S.Subtitle>
+                  <S.Title testID="interests-title">Your event types</S.Title>
+                  <S.Subtitle>Select at least 3 event types you love.</S.Subtitle>
                 </S.TitleContainer>
                 <S.ListContainer>
                   <S.InterestsList
@@ -39,43 +53,13 @@ const MyInterests: FC = (): JSX.Element => {
                     showsVerticalScrollIndicator={false}
                     data={listOfInterests}
                     keyExtractor={({id}: {id: number}) => id.toString()}
-                    ItemSeparatorComponent={() => <S.InterestSeparator />}
-                    renderItem={({
-                      item: {id, title, isSelected, image},
-                    }: {
-                      item: {id: number; title: string; isSelected: boolean; image: string};
-                    }) => (
-                      <S.InterestItem selected={isSelected} testID={`interest-${id}`} onPress={() => handleSelectInterest(id)}>
-                        <S.ImageWrapper>
-                          <S.BackgroundImage source={image}>
-                            <S.CheckButton selected={isSelected}>
-                              <CheckIcon />
-                            </S.CheckButton>
-                            <S.LabelBar>
-                              <S.LabelBarRow>
-                                <S.InterestTitle>{title}</S.InterestTitle>
-                                <S.AvatarStack>
-                                  <S.Avatar source={UserOne} />
-                                  <S.AvatarSecond source={UserTwo} />
-                                  <S.AvatarCount>
-                                    <S.CountText>40</S.CountText>
-                                  </S.AvatarCount>
-                                </S.AvatarStack>
-                              </S.LabelBarRow>
-                            </S.LabelBar>
-                          </S.BackgroundImage>
-                        </S.ImageWrapper>
-                      </S.InterestItem>
-                    )}
+                    renderItem={renderItem}
                   />
+                  <S.ListGradient colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']} />
                 </S.ListContainer>
               </S.Header>
               <S.ButtonsContainer>
-                <S.ContinueButton
-                  disabled={listOfInterests.filter(i => i.isSelected).length < 3}
-                  onPress={handleNext}
-                  title={`Continue (${listOfInterests.filter(i => i.isSelected).length}/3)`}
-                />
+                <S.ContinueButton disabled={listOfInterests.filter(i => i.isSelected).length < 3} onPress={handleNext} title={`Continue`} />
                 <S.SkipButton onPress={handleNext} title="Skip" />
               </S.ButtonsContainer>
             </S.Wrapper>

@@ -13,7 +13,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {isIos, screenHeight} from 'constants/common';
-import {backgroundGradientColors, blackColor, transparentWhite30Color, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, blackColor, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 import Button from 'components/Button/Button';
 
@@ -68,7 +68,7 @@ export const BackButton = styled(TouchableOpacity).attrs({
   height: 40px;
   justify-content: center;
   align-items: center;
-  background-color: ${transparentWhite30Color};
+  background-color: #0f0f0f;
 `;
 
 export const TitleContainer = styled(View)`
@@ -80,14 +80,15 @@ export const TitleContainer = styled(View)`
 export const Title = styled(Text)`
   color: ${whiteColor};
   font-family: ${Satoshi500};
-  font-size: ${RFValue(48, 932)}px;
+  font-size: ${RFValue(32, 932)}px;
   margin-bottom: 18px;
 `;
 
 export const Subtitle = styled(Text)`
   color: ${whiteColor};
   font-family: ${Satoshi400};
-  font-size: ${RFValue(17, 932)}px;
+  font-size: ${RFValue(18, 932)}px;
+  opacity: 0.8;
 `;
 
 export const BoldText = styled(Text)`
@@ -98,7 +99,7 @@ export const BoldText = styled(Text)`
 
 export const ListContainer = styled(View)`
   width: 100%;
-  height: ${screenHeight / 2}px;
+  height: ${screenHeight / 1.8}px;
 `;
 
 export const InterestsList = styled(FlatList).attrs({
@@ -108,19 +109,6 @@ export const InterestsList = styled(FlatList).attrs({
 
 export const InterestSeparator = styled(View)`
   height: ${screenHeight * 0.021}px;
-`;
-
-export const InterestItem = styled(TouchableOpacity).attrs({
-  activeOpacity: 0.7,
-})<{selected: boolean}>`
-  flex: 1;
-  width: 100%;
-  align-items: center;
-  border-width: 1px;
-  border-style: solid;
-  border-color: ${(props: {selected: boolean}) => (props.selected ? whiteColor : blackColor)};
-  border-radius: 12px;
-  margin-horizontal: 2px;
 `;
 
 export const ImageWrapper = styled(View)`
@@ -165,13 +153,6 @@ export const LabelBarRow = styled(View)`
   width: 100%;
 `;
 
-export const InterestTitle = styled(Text)`
-  color: ${blackColor};
-  font-family: ${Satoshi700};
-  font-size: ${RFValue(14, 932)}px;
-  margin-left: 16px;
-`;
-
 export const AvatarStack = styled(View)`
   flex-direction: row;
 `;
@@ -210,11 +191,85 @@ export const ButtonsContainer = styled(View)`
   margin-bottom: 0px;
 `;
 
-export const ContinueButton = styled(Button).attrs(({disabled}: {disabled?: boolean}) => ({
+export const ContinueButton = styled(Button).attrs({
   testID: 'continue-button',
-  buttonStyle: {borderRadius: 18},
-}))``;
+  buttonStyle: {
+    marginBottom: 8,
+  },
+})``;
 
 export const SkipButton = styled(Button).attrs({
-  variant: 'transparent',
+  testID: 'skip-button',
+  variant: 'gray',
 })``;
+
+export const SelectionIndicator = styled.View<{isSelected: boolean}>`
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  border-width: 2px;
+  border-color: 'rgba(255,255,255, 0.6)';
+  background-color: ${(props: {isSelected: boolean}) => (props.isSelected ? whiteColor : 'rgba(0,0,0, 0.5)')};
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const InterestItem = styled.TouchableOpacity.attrs({
+  activeOpacity: 0.7,
+})`
+  width: 48%;
+  margin-horizontal: 1%;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border-width: 1px;
+  border-color: ${(props: {isSelected: boolean}) => (props.isSelected ? whiteColor : 'transparent')};
+`;
+
+export const InterestImage = styled.ImageBackground`
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+`;
+
+export const InterestOverlay = styled.View`
+  background-color: rgba(0, 0, 0, 0.3);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+`;
+
+export const InterestTitle = styled.Text`
+  font-family: ${Satoshi700};
+  font-size: ${RFValue(20, 932)}px;
+  color: ${whiteColor};
+  padding-bottom: 10px;
+  padding-horizontal: 10px;
+`;
+
+export const InterestTitleWrapper = styled.View`
+  flex: 1;
+  justify-content: flex-end;
+  padding: 8px;
+  z-index: 1;
+`;
+
+export const ItemGradient = styled(LinearGradient)`
+  position: 'absolute';
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: '75%';
+`;
+
+export const ListGradient = styled(LinearGradient)`
+  position: 'absolute';
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: '95%';
+`;

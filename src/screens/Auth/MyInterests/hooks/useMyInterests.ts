@@ -8,14 +8,29 @@ import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {useAuthStore} from 'src/store/authStore';
 import {AuthContext} from 'contexts/AuthContext';
-import BirthdayParty from 'assets/images/auth/interests/birthday-party.png';
-import Exclusive from 'assets/images/auth/interests/exclusive.png';
-import PoolParty from 'assets/images/auth/interests/pool-party.png';
-import Private from 'assets/images/auth/interests/private.png';
-import Restaurant from 'assets/images/auth/interests/restaurant.png';
-import VipTables from 'assets/images/auth/interests/vip-tables.png';
-import YachtParty from 'assets/images/auth/interests/yacht-party.png';
-import Concert from 'assets/images/auth/interests/concerts.png';
+import Sports from 'assets/images/interests/sports.png';
+import Festivals from 'assets/images/interests/festivals.png';
+import Yachts from 'assets/images/interests/yachts.png';
+import VipTables from 'assets/images/interests/vip-tables.png';
+import Concerts from 'assets/images/interests/concerts.png';
+import Fashion from 'assets/images/interests/fashion.png';
+import Bars from 'assets/images/interests/bars.png';
+import Business from 'assets/images/interests/business.png';
+import Restaurants from 'assets/images/interests/restaurants.png';
+import PoolParties from 'assets/images/interests/pool-parties.png';
+import Private from 'assets/images/interests/private.png';
+import Exclusive from 'assets/images/interests/exclusive.png';
+import BeachParties from 'assets/images/interests/beach-parties.png';
+import Nightclubs from 'assets/images/interests/nightclubs.png';
+import LiveShows from 'assets/images/interests/live-shows.png';
+import Brunches from 'assets/images/interests/brunches.png';
+
+export interface InterestState {
+  id: number;
+  title: string;
+  isSelected: boolean;
+  image: any;
+}
 
 export const useMyInterests = () => {
   const navigation = useAppNavigation();
@@ -23,15 +38,23 @@ export const useMyInterests = () => {
   const {userMetadata: user} = useAuthStore();
   const {onBoarding, setOnBoarding} = useContext(AuthContext);
 
-  const [listOfInterests, setListOfInterests] = useState([
-    {id: 0, title: 'Vip Tables', isSelected: false, image: VipTables},
-    {id: 1, title: 'Concerts', isSelected: false, image: Concert},
-    {id: 2, title: 'Exclusive', isSelected: false, image: Exclusive},
-    {id: 3, title: 'Yacht Party', isSelected: false, image: YachtParty},
-    {id: 4, title: 'Pool Party', isSelected: false, image: PoolParty},
-    {id: 5, title: 'Private', isSelected: false, image: Private},
-    {id: 6, title: 'Birthday Party', isSelected: false, image: BirthdayParty},
-    {id: 7, title: 'Restaurant', isSelected: false, image: Restaurant},
+  const [listOfInterests, setListOfInterests] = useState<InterestState[]>([
+    {id: 0, title: 'Sports', isSelected: false, image: Sports},
+    {id: 1, title: 'Festivals', isSelected: false, image: Festivals},
+    {id: 2, title: 'Yachts', isSelected: false, image: Yachts},
+    {id: 3, title: 'VIP Tables', isSelected: false, image: VipTables},
+    {id: 4, title: 'Concerts', isSelected: false, image: Concerts},
+    {id: 5, title: 'Fashion', isSelected: false, image: Fashion},
+    {id: 6, title: 'Bars', isSelected: false, image: Bars},
+    {id: 7, title: 'Business', isSelected: false, image: Business},
+    {id: 8, title: 'Restaurants', isSelected: false, image: Restaurants},
+    {id: 9, title: 'Pool Parties', isSelected: false, image: PoolParties},
+    {id: 10, title: 'Private', isSelected: false, image: Private},
+    {id: 11, title: 'Exclusive', isSelected: false, image: Exclusive},
+    {id: 12, title: 'Beach Parties', isSelected: false, image: BeachParties},
+    {id: 13, title: 'Nightclubs', isSelected: false, image: Nightclubs},
+    {id: 14, title: 'Live Shows', isSelected: false, image: LiveShows},
+    {id: 15, title: 'Brunches', isSelected: false, image: Brunches},
   ]);
 
   useEffect(() => {
@@ -85,10 +108,9 @@ export const useMyInterests = () => {
   }, [onBoarding, user]);
 
   const handleSelectInterest = (id: number) => {
-    const updatedInterests = listOfInterests.map(interest => {
-      const selectedInterestsCount = listOfInterests.filter(item => item.isSelected).length;
-      return interest.id === id ? {...interest, isSelected: selectedInterestsCount === 3 ? false : !interest.isSelected} : interest;
-    });
+    const updatedInterests = listOfInterests.map(interest =>
+      interest.id === id ? {...interest, isSelected: !interest.isSelected} : interest,
+    );
     setListOfInterests(updatedInterests);
   };
 

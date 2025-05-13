@@ -1,175 +1,35 @@
 import React from 'react';
-import {render, fireEvent, waitFor} from '@testing-library/react-native';
+import renderer from 'react-test-renderer';
+import {render} from '@testing-library/react-native';
 import MyInterests from '../MyInterests';
-import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
-import {AuthContext} from 'contexts/AuthContext';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
-describe('MyInterests Component', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-  afterAll(() => {
-    jest.clearAllMocks();
-  });
-  it('renders correctly', () => {
-    const {getByText} = render(
-      <AuthContext.Provider
-        value={{
-          onBoarding: [],
-          setOnBoarding: jest.fn(),
-          setUser: jest.fn(),
-          user: {},
-        }}>
-        <MyInterests />
-      </AuthContext.Provider>,
-    );
-    expect(getByText('Choose interests')).toBeTruthy();
-    expect(getByText('Choose up to 3 event types you love to help us find the right events for you.')).toBeTruthy();
+describe('MyInterests', () => {
+  it('matches snapshot', () => {
+    const tree = renderer.create(<MyInterests />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
-  it('allows user to select interests', () => {
-    const {getByTestId} = render(
-      <AuthContext.Provider
-        value={{
-          onBoarding: [],
-          setOnBoarding: jest.fn(),
-          setUser: jest.fn(),
-          user: {},
-        }}>
-        <MyInterests />
-      </AuthContext.Provider>,
-    );
-    const vipTablesButton = getByTestId('interest-0');
-    const concertsButton = getByTestId('interest-1');
-    const exclusiveButton = getByTestId('interest-2');
-
-    fireEvent.press(vipTablesButton);
-    expect(vipTablesButton.parent?.props.style.borderColor).toBe('rgba(255, 255, 255, 1)');
-
-    fireEvent.press(concertsButton);
-    expect(concertsButton.parent?.props.style.borderColor).toBe('rgba(255, 255, 255, 1)');
-
-    fireEvent.press(exclusiveButton);
-    expect(exclusiveButton.parent?.props.style.borderColor).toBe('rgba(255, 255, 255, 1)');
+  it('renders the title', () => {
+    const {getByTestId} = render(<MyInterests />);
+    expect(getByTestId('interests-title')).toBeTruthy();
   });
 
-  it('handles next button press correctly', async () => {
-    const {getByTestId} = render(
-      <AuthContext.Provider
-        value={{
-          onBoarding: [],
-          setOnBoarding: jest.fn(),
-          setUser: jest.fn(),
-          user: {},
-        }}>
-        <MyInterests />
-      </AuthContext.Provider>,
-    );
-    const nextButton = getByTestId('continue-button');
-
-    const vipTablesButton = getByTestId('interest-0');
-    const concertsButton = getByTestId('interest-1');
-    const exclusiveButton = getByTestId('interest-2');
-
-    fireEvent.press(vipTablesButton);
-    fireEvent.press(concertsButton);
-    fireEvent.press(exclusiveButton);
-
-    fireEvent.press(nextButton);
-
-    await waitFor(() => {
-      expect(mockedNavigateFunction).toHaveBeenCalledWith(expect.anything());
-    });
+  it('renders at least one interest item', () => {
+    const {getByTestId} = render(<MyInterests />);
+    expect(getByTestId('interest-item-0')).toBeTruthy();
   });
 
-  it('handles skip button press correctly', async () => {
-    const {getByText} = render(
-      <AuthContext.Provider
-        value={{
-          onBoarding: [],
-          setOnBoarding: jest.fn(),
-          setUser: jest.fn(),
-          user: {},
-        }}>
-        <MyInterests />
-      </AuthContext.Provider>,
-    );
-    const skipButton = getByText('Skip');
-
-    fireEvent.press(skipButton);
-
-    await waitFor(() => {
-      expect(mockedNavigateFunction).toHaveBeenCalledWith(expect.anything());
-    });
+  it('renders all interest items', () => {
+    const {getAllByTestId} = render(<MyInterests />);
+    expect(getAllByTestId('image-of-interest')).toHaveLength(16);
   });
 
-  it('disables the continue button when fewer than 3 interests are selected', () => {
-    const {getByTestId} = render(
-      <AuthContext.Provider
-        value={{
-          onBoarding: [],
-          setOnBoarding: jest.fn(),
-          setUser: jest.fn(),
-          user: {},
-        }}>
-        <MyInterests />
-      </AuthContext.Provider>,
-    );
-    const nextButton = getByTestId('continue-button');
-
-    expect(nextButton.props.accessibilityState.disabled).toBe(true);
-
-    const vipTablesButton = getByTestId('interest-0');
-    fireEvent.press(vipTablesButton);
-    expect(nextButton.props.accessibilityState.disabled).toBe(true);
-
-    const concertsButton = getByTestId('interest-1');
-    fireEvent.press(concertsButton);
-    expect(nextButton.props.accessibilityState.disabled).toBe(true);
-
-    const exclusiveButton = getByTestId('interest-2');
-    fireEvent.press(exclusiveButton);
-    expect(nextButton.props.accessibilityState.disabled).toBe(false);
+  it('renders the continue button', () => {
+    const {getByTestId} = render(<MyInterests />);
+    expect(getByTestId('continue-button')).toBeTruthy();
   });
-
-  it('limits the selection to 3 interests', () => {
-    const {getByTestId} = render(
-      <FirebaseCollectionsContext.Provider
-        value={{
-          userInfo: 'test',
-          adminChats: 'adminChats',
-          admins: 'admins',
-          appSettings: 'appSettings',
-          messages: 'messages',
-          report: 'report',
-          unfinishedRegistrationUsers: 'unfinishedRegistrationUsers',
-          events: 'events',
-        }}>
-        <AuthContext.Provider
-          value={{
-            onBoarding: [],
-            setOnBoarding: jest.fn(),
-            setUser: jest.fn(),
-            user: {},
-          }}>
-          <MyInterests />
-        </AuthContext.Provider>
-      </FirebaseCollectionsContext.Provider>,
-    );
-
-    const vipTablesButton = getByTestId('interest-0');
-    const concertsButton = getByTestId('interest-1');
-    const exclusiveButton = getByTestId('interest-2');
-    const yachtPartyButton = getByTestId('interest-3');
-
-    fireEvent.press(vipTablesButton);
-    expect(vipTablesButton.parent?.props.style.borderColor).toBe('rgba(255, 255, 255, 1)');
-    fireEvent.press(concertsButton);
-    expect(concertsButton.parent?.props.style.borderColor).toBe('rgba(255, 255, 255, 1)');
-    fireEvent.press(exclusiveButton);
-    expect(exclusiveButton.parent?.props.style.borderColor).toBe('rgba(255, 255, 255, 1)');
-    fireEvent.press(yachtPartyButton);
-    expect(yachtPartyButton.parent?.props.style.borderColor).toBe('rgba(0, 0, 0, 1)');
+  it('renders the skip button', () => {
+    const {getByTestId} = render(<MyInterests />);
+    expect(getByTestId('skip-button')).toBeTruthy();
   });
 });

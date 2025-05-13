@@ -21,7 +21,7 @@ const Eula = () => {
 
   if (loading) {
     return (
-      <S.RootGradient>
+      <S.RootGradient testID="eula-loading">
         <S.LoaderContainer>
           <ActivityIndicator color={whiteColor} />
         </S.LoaderContainer>
@@ -38,7 +38,7 @@ const Eula = () => {
               <ArrowLeftArrow width={24} height={24} />
             </S.BackButton>
             <S.EulaTitleContainer>
-              <S.EulaTitle>End-User License Agreement (EULA)</S.EulaTitle>
+              <S.EulaTitle testID="eula-title">End-User License Agreement (EULA)</S.EulaTitle>
             </S.EulaTitleContainer>
             <S.Spacer />
           </S.HeaderRow>
