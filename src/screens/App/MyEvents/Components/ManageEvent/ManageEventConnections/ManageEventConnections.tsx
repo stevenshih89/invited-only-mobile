@@ -17,13 +17,12 @@ type EventInfoName = 'newConnection' | 'approved' | 'attending' | 'notAccepted' 
 
 export const ManageEventConnections: React.FC<ManageEventConnectionsProps> = ({ eventId }) => {
   const [isOpen, setIsOpen] = useState<Record<string, boolean>>({
-    NewConnections: true,
+    NewConnections: false,
     Approved: false,
     Attending: false,
     NotAttending: false,
   });
 
-  // Fetch event requests (assuming hook needs eventId)
   const { eventRequests } = useManageEventDetails({ eventId: eventId });
 
   const [isVisibleModalEventInfo, setIsVisibleModalEventInfo] = useState(false);
@@ -56,7 +55,6 @@ export const ManageEventConnections: React.FC<ManageEventConnectionsProps> = ({ 
     setIsVisibleModalEventInfo(true);
   };
 
-  console.log("new connections", eventRequests?.filter((request: ConnectionRequest) => request.status === 'connection-complete'));
   return (
     <BottomSheetModalProvider>
       <S.Container>

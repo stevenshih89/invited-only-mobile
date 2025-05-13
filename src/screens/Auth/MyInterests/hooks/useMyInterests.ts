@@ -1,13 +1,7 @@
-import {useContext, useEffect, useState} from 'react';
-import {AppState} from 'react-native';
-import moment from 'moment';
-import firestore from '@react-native-firebase/firestore';
-import analytics from '@react-native-firebase/analytics';
-import {myEmailPath} from 'constants/pathLocations';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {useAuthStore} from 'src/store/authStore';
-import {AuthContext} from 'contexts/AuthContext';
+import { useState } from 'react';
+import { myEmailPath } from 'constants/pathLocations';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { useAuthStore } from 'src/store/authStore';
 import Sports from 'assets/images/interests/sports.png';
 import Festivals from 'assets/images/interests/festivals.png';
 import Yachts from 'assets/images/interests/yachts.png';
@@ -35,81 +29,33 @@ export interface InterestState {
 export const useMyInterests = () => {
   const navigation = useAppNavigation();
 
-  const {userMetadata: user} = useAuthStore();
-  const {onBoarding, setOnBoarding} = useContext(AuthContext);
+  const { userMetadata: user } = useAuthStore();
+  const { onBoarding, setOnBoarding } = useAuthStore();
 
   const [listOfInterests, setListOfInterests] = useState<InterestState[]>([
-    {id: 0, title: 'Sports', isSelected: false, image: Sports},
-    {id: 1, title: 'Festivals', isSelected: false, image: Festivals},
-    {id: 2, title: 'Yachts', isSelected: false, image: Yachts},
-    {id: 3, title: 'VIP Tables', isSelected: false, image: VipTables},
-    {id: 4, title: 'Concerts', isSelected: false, image: Concerts},
-    {id: 5, title: 'Fashion', isSelected: false, image: Fashion},
-    {id: 6, title: 'Bars', isSelected: false, image: Bars},
-    {id: 7, title: 'Business', isSelected: false, image: Business},
-    {id: 8, title: 'Restaurants', isSelected: false, image: Restaurants},
-    {id: 9, title: 'Pool Parties', isSelected: false, image: PoolParties},
-    {id: 10, title: 'Private', isSelected: false, image: Private},
-    {id: 11, title: 'Exclusive', isSelected: false, image: Exclusive},
-    {id: 12, title: 'Beach Parties', isSelected: false, image: BeachParties},
-    {id: 13, title: 'Nightclubs', isSelected: false, image: Nightclubs},
-    {id: 14, title: 'Live Shows', isSelected: false, image: LiveShows},
-    {id: 15, title: 'Brunches', isSelected: false, image: Brunches},
+    { id: 0, title: 'Sports', isSelected: false, image: Sports },
+    { id: 1, title: 'Festivals', isSelected: false, image: Festivals },
+    { id: 2, title: 'Yachts', isSelected: false, image: Yachts },
+    { id: 3, title: 'VIP Tables', isSelected: false, image: VipTables },
+    { id: 4, title: 'Concerts', isSelected: false, image: Concerts },
+    { id: 5, title: 'Fashion', isSelected: false, image: Fashion },
+    { id: 6, title: 'Bars', isSelected: false, image: Bars },
+    { id: 7, title: 'Business', isSelected: false, image: Business },
+    { id: 8, title: 'Restaurants', isSelected: false, image: Restaurants },
+    { id: 9, title: 'Pool Parties', isSelected: false, image: PoolParties },
+    { id: 10, title: 'Private', isSelected: false, image: Private },
+    { id: 11, title: 'Exclusive', isSelected: false, image: Exclusive },
+    { id: 12, title: 'Beach Parties', isSelected: false, image: BeachParties },
+    { id: 13, title: 'Nightclubs', isSelected: false, image: Nightclubs },
+    { id: 14, title: 'Live Shows', isSelected: false, image: LiveShows },
+    { id: 15, title: 'Brunches', isSelected: false, image: Brunches },
   ]);
 
-  useEffect(() => {
-    let subscription: any;
 
-    const name = onBoarding.find((item: any) => item.name)?.name;
-    const accountType = onBoarding.find((item: any) => item.accountType)?.accountType;
-    const date = onBoarding.find((item: any) => item.date)?.date;
-    const gender = onBoarding.find((item: {gender: string}) => item?.gender)?.gender;
-    const photos = onBoarding.find((item: any) => item.photos)?.photos;
-    const handleAppClose = async () => {
-      try {
-        await firestore()
-          .collection('unfinishedRegistrationUsers')
-          .doc(user?.uid)
-          .set({
-            name,
-            accountType,
-            date,
-            gender,
-            photos,
-            phoneNumber: user?.phoneNumber,
-            createdAt: moment().format('YYYY-MM-DD'),
-            screen: 'my-interests',
-          });
-        analytics().logEvent('my_interests_app_closed', {
-          name,
-          accountType,
-          date,
-          gender,
-          photos,
-          phoneNumber: user?.phoneNumber,
-          createdAt: moment().format('YYYY-MM-DD'),
-          screen: 'my-interests',
-        });
-      } catch (e) {
-        console.error(e);
-        logErrorToSentry(e);
-      }
-    };
-
-    subscription = AppState.addEventListener('change', nextAppState => {
-      if (nextAppState === 'background') {
-        handleAppClose();
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, [onBoarding, user]);
 
   const handleSelectInterest = (id: number) => {
     const updatedInterests = listOfInterests.map(interest =>
-      interest.id === id ? {...interest, isSelected: !interest.isSelected} : interest,
+      interest.id === id ? { ...interest, isSelected: !interest.isSelected } : interest,
     );
     setListOfInterests(updatedInterests);
   };
@@ -117,20 +63,21 @@ export const useMyInterests = () => {
   const handleNext = () => {
     const reqInterests = listOfInterests.reduce((acc: any[], curr) => {
       if (curr.isSelected) {
-        acc.push({id: curr.id, title: curr.title});
+        acc.push({ id: curr.id, title: curr.title });
       }
       return acc;
     }, []);
-    setOnBoarding([
+    setOnBoarding({
       ...onBoarding,
-      {
+      registrationDetails: {
+        ...onBoarding.registrationDetails,
         interests: reqInterests,
       },
-    ]);
+    });
     navigation.navigate(myEmailPath as never);
   };
 
-  const accountType = onBoarding.find((item: {accountType: string}) => item.accountType)?.accountType;
+  const accountType = onBoarding.registrationDetails?.accountType;
 
-  return {listOfInterests, handleSelectInterest, handleNext, accountType, navigation};
+  return { listOfInterests, handleSelectInterest, handleNext, accountType, navigation };
 };

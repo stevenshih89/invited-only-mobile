@@ -78,27 +78,27 @@ const EnterBirthday: FC = (): JSX.Element => {
 
     setOnBoarding({
       ...onBoarding,
-      onboardingStep: '/my-email',
+      onboardingStep: '/my-interests',
       registrationDetails: {
         ...onBoarding.registrationDetails,
         showAge: showAge,
         birthday: `${month}.${day}.${year}`,
       },
     });
-    navigation.navigate('/my-email');
+    navigation.navigate('/my-interests');
   };
 
   const handleSkip = () => {
     setOnBoarding({
       ...onBoarding,
-      onboardingStep: '/my-email',
+      onboardingStep: '/my-interests',
       registrationDetails: {
         ...onBoarding.registrationDetails,
         showAge: false,
         birthday: '',
       },
     });
-    navigation.navigate('/my-email');
+    navigation.navigate('/my-interests');
   };
 
   const navigation = useAppNavigation();
