@@ -3,10 +3,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge } from '@rneui/themed';
 
 //import components
-import { Text } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import * as S from './Header.style';
-import useUser from 'hooks/user/useUser';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { profileStackPath } from 'constants/pathLocations';
 import { whiteColor } from 'constants/colors.ts';
@@ -33,10 +31,8 @@ const Header: FC<HeaderTypeProps> = ({ badge, logoType, showHeaderTop = true }) 
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
 
-  const { data: notifications, MyEventNotificationCount, JoinedEventNotificationCount } = useGetNotifications();
-  const initialTab = JoinedEventNotificationCount && MyEventNotificationCount > 0 ? 'JoinedEvents' : 'MyEvents';
-  console.log('initialTab', initialTab);
-  const { user: userInfo } = useUser();
+  const { MyEventNotificationCount, JoinedEventNotificationCount, count, isUnread } = useGetNotifications();
+  const initialTab = JoinedEventNotificationCount > MyEventNotificationCount ? 'JoinedEvents' : 'MyEvents';
 
   const headerInsets = {
     paddingTop: insets.top,
@@ -52,25 +48,24 @@ const Header: FC<HeaderTypeProps> = ({ badge, logoType, showHeaderTop = true }) 
               <ProfilePersonIcon width={24} height={24} />
             </S.ProfileButton>
             {badge && (
-              <S.NotificationButton onPress={() => navigation.navigate('/notifications-stack', { initialTab: 'MyEvents' })} activeOpacity={0.7}>
+              <S.NotificationButton onPress={() => navigation.navigate('/notifications-stack', { initialTab: initialTab })} activeOpacity={0.7}>
                 <NotificationBellIcon width={32} height={32} />
-                {notifications && notifications?.length > 0 && (
+                {count && count > 0 ? (
                   <Badge
-                    value={notifications?.length || 0}
-                    badgeStyle={S.BadgeStyle}
+                    value={count ? count : 0}
+                    badgeStyle={isUnread && isUnread > 0 ? S.UnreadBadgeStyle : S.BadgeStyle}
                     textStyle={{
                       color: whiteColor,
                       fontSize: RFValue(10, 932),
                       fontFamily: Satoshi700,
                     }}
                   />
-                )}
+                ) : null}
               </S.NotificationButton>
             )}
           </S.HeaderRight>
         </S.WrapperHeader>
       )}
-      <Text>{userInfo?.uid}</Text>
     </S.Container>
   );
 };

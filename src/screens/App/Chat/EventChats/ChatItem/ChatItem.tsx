@@ -1,4 +1,4 @@
-import { ActivityIndicator, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, TouchableOpacity, Text } from 'react-native';
 import { formatDistance } from 'date-fns';
 import { StrictMode } from 'react';
 import { components } from '@invited-only/invited-only-api';
@@ -20,6 +20,7 @@ export const ChatItem = ({ chat, isJoinedEvent }: ChatItemProps) => {
     const { userMetadata } = useAuthStore.getState();
     const { mutate: updateChatSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen')
     const userLastSeen = chat.userLastSeen?.some((user) => user.userId === userMetadata.uid);
+
     return (
         <StrictMode>
             <TouchableOpacity onPress={() => {
@@ -38,11 +39,11 @@ export const ChatItem = ({ chat, isJoinedEvent }: ChatItemProps) => {
                                 {isJoinedEvent ? (
                                     <S.EventBadgeContainer>
                                         <S.SmallEventAvatarContainer>
-                                            {isEventLoading ? <ActivityIndicator /> : <S.SmallEventAvatarImage source={{ uri: event?.photos?.[0]?.image || '' }} />}
+                                            {isEventLoading ? <ActivityIndicator size="small" color="#fff" /> : <S.SmallEventAvatarImage source={{ uri: event?.photos?.[0]?.image || '' }} />}
                                         </S.SmallEventAvatarContainer>
-                                        <S.StatusText>
-                                            {event?.name}
-                                        </S.StatusText>
+                                        <Text numberOfLines={1} ellipsizeMode="tail" style={S.SmallEventNameText}>
+                                            {event?.name || 'Event Name That Is Long And Will Truncate'}
+                                        </Text>
                                     </S.EventBadgeContainer>
                                 ) : (
                                     <S.StatusText>
@@ -74,6 +75,6 @@ export const ChatItem = ({ chat, isJoinedEvent }: ChatItemProps) => {
                     </S.WideRightContainer>
                 </S.Container>
             </TouchableOpacity>
-        </StrictMode >
+        </StrictMode>
     );
 };

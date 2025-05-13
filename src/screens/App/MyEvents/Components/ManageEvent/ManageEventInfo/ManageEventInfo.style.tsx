@@ -102,6 +102,7 @@ export const EventDateText = styled.Text`
 export const EventDescriptionContainer = styled.View`
     background-color: rgba(26, 26, 26, 0.8);
     padding: 15px;
+    width: 100%;
     border-radius: 10px;
     display: flex;
     flex-direction: column;

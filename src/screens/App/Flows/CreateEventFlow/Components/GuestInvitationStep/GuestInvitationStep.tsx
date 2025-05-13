@@ -1,22 +1,22 @@
-import {View} from 'react-native';
-import {useFormikContext} from 'formik';
-import {CreateEventFormValues} from '../../CreateEventFlow';
+import { View } from 'react-native';
+import { useFormikContext } from 'formik';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './GuestInvitationStep.style';
 
 const GuestInvitationStep = () => {
-  const {values, setFieldValue, errors, touched} = useFormikContext<CreateEventFormValues>();
-  const {female, male} = values;
+  const { values, setFieldValue, errors, touched } = useFormikContext<Partial<components['schemas']['EventData']>>();
+  const { maleFriend, femaleFriend } = values;
 
-  const incrementFemale = () => setFieldValue('female', female + 1);
-  const decrementFemale = () => female > 0 && setFieldValue('female', female - 1);
+  const incrementFemale = () => setFieldValue('femaleFriend', (femaleFriend ?? 0) + 1);
+  const decrementFemale = () => (femaleFriend ?? 0) > 0 && setFieldValue('femaleFriend', (femaleFriend ?? 0) - 1);
 
-  const incrementMale = () => setFieldValue('male', male + 1);
-  const decrementMale = () => male > 0 && setFieldValue('male', male - 1);
+  const incrementMale = () => setFieldValue('maleFriend', (maleFriend ?? 0) + 1);
+  const decrementMale = () => (maleFriend ?? 0) > 0 && setFieldValue('maleFriend', (maleFriend ?? 0) - 1);
 
   return (
     <S.WrapperSelectYourDesiredCompany>
       <S.TextSelectYourDesiredCompany>How many Guests would you like to invite?</S.TextSelectYourDesiredCompany>
-      {touched.male && touched.female && male === 0 && female === 0 && <S.ErrorText>At least one guest is required</S.ErrorText>}
+      {touched.maleFriend && touched.femaleFriend && (maleFriend === 0 && femaleFriend === 0) && <S.ErrorText>At least one guest is required</S.ErrorText>}
       <View>
         <View>
           <S.TextPersonGender>Woman</S.TextPersonGender>
@@ -25,7 +25,7 @@ const GuestInvitationStep = () => {
               <S.TextButton>-</S.TextButton>
             </S.ButtonPress>
             <S.WrapperTextCount>
-              <S.TextCount>{female}</S.TextCount>
+              <S.TextCount>{femaleFriend}</S.TextCount>
             </S.WrapperTextCount>
             <S.ButtonPress onPress={incrementFemale}>
               <S.TextButton>+</S.TextButton>
@@ -40,7 +40,7 @@ const GuestInvitationStep = () => {
               <S.TextButton>-</S.TextButton>
             </S.ButtonPress>
             <S.WrapperTextCount>
-              <S.TextCount>{male}</S.TextCount>
+              <S.TextCount>{maleFriend}</S.TextCount>
             </S.WrapperTextCount>
 
             <S.ButtonPress onPress={incrementMale}>

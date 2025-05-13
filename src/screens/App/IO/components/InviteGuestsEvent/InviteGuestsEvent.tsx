@@ -40,6 +40,9 @@ const InviteGuestsEvent = ({ selectedEvent, cardsToShow, isLoading, onSwipeLeft,
     if (!hasCards) {
       return <S.NoCardsText>No more guests to show.</S.NoCardsText>;
     }
+    console.log("invite guests event guest id", currentCard?.uid);
+    console.log("invite guests event host id", selectedEvent.hostId);
+    console.log("invite guests event event id", selectedEvent.uid);
 
     return cardsToShow.map((guest, index) => (
       <GuestCard

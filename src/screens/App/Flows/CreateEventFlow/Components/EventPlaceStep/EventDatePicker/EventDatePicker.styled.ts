@@ -25,7 +25,7 @@ export const FieldLabel = styled(Text)`
   font-family: ${Satoshi500};
   font-style: normal;
   font-size: 14px;
-  line-height: 96.9px;
+  line-height: 20px;
   text-align: center;
   color: #ffffff;
 `;
@@ -45,12 +45,12 @@ export const Input = styled.TouchableOpacity`
 export const StyledTextInput = styled(TextInput)`
   color: #ffffff;
   width: 100%;
-  font-family: 'Satoshi';
+  font-family: ${Satoshi500};
   font-size: 18px;
-  line-height: 2px;
+  line-height: 20px;
 `;
 export const ErrorText = styled.Text`
-  font-family: 'Satoshi';
+  font-family: ${Satoshi500};
   font-style: normal;
   font-weight: 400;
   font-size: 12px;

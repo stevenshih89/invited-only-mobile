@@ -55,7 +55,6 @@ const App: FC = (): JSX.Element => {
 
 
   return (
-
     <SafeAreaProvider>
       <BottomSheetModalProvider>
         <NavigationContainer

@@ -1,8 +1,10 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import DatePicker from 'react-native-date-picker';
-import {useFormikContext} from 'formik';
-import {CreateEventFormValues} from '../../../CreateEventFlow';
+import { useFormikContext } from 'formik';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './EventDatePicker.styled';
+import { formatDate, parseStringToDate } from 'helpers/genericDateFormater';
+
 
 export const getDateString = (date: Date) => {
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -14,7 +16,7 @@ export const getDateString = (date: Date) => {
 const EventDatePicker = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const {errors, values, touched, setFieldValue} = useFormikContext<CreateEventFormValues>();
+  const { errors, values, touched, setFieldValue } = useFormikContext<Partial<components['schemas']['EventData']>>();
   return (
     <S.RowContainer>
       <S.HalfFieldContainer>
@@ -23,7 +25,7 @@ const EventDatePicker = () => {
           <S.StyledTextInput
             placeholder="MM/DD/YY"
             placeholderTextColor="#767676"
-            value={getDateString(values.date)}
+            value={getDateString(values.date ? new Date(values.date) : new Date())}
             editable={false}
             pointerEvents="none"
           />
@@ -36,10 +38,10 @@ const EventDatePicker = () => {
             setShowDatePicker(false);
           }}
           modal
-          date={values.date ? new Date(values.date) : new Date()}
+          date={parseStringToDate(values.date) || new Date()}
           mode="date"
+
           onConfirm={date => {
-            console.log(`${date.getMonth()}/${date.getDay()}/${date.getFullYear()}`);
             setFieldValue('date', date);
             setShowDatePicker(false);
           }}
@@ -56,7 +58,7 @@ const EventDatePicker = () => {
         <DatePicker
           open={showTimePicker}
           modal
-          date={values.date ? new Date(values.date) : new Date()}
+          date={parseStringToDate(values.date) || new Date()}
           mode="time"
           onConfirm={hour => {
             setFieldValue('hour', `${hour.getHours()}:${hour.getMinutes()}`);

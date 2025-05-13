@@ -13,7 +13,7 @@ interface ModalAddProps {
   addPlaceholderPhoto: () => void;
 }
 
-const ModalAddPhoto: FC<ModalAddProps> = ({isVisible, onClose, openLibrary, openCamera, addPlaceholderPhoto}) => {
+const ModalAddPhoto: FC<ModalAddProps> = ({ isVisible, onClose, openLibrary, openCamera, addPlaceholderPhoto }) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -30,17 +30,17 @@ const ModalAddPhoto: FC<ModalAddProps> = ({isVisible, onClose, openLibrary, open
       <S.ModalContainer>
         <S.ModalDivider />
         <S.ModalTitle>Event photos</S.ModalTitle>
-        
+
         <S.OptionButton onPress={openCamera}>
           <CameraIcon />
           <S.OptionText>Use a camera</S.OptionText>
         </S.OptionButton>
-        
+
         <S.OptionButton onPress={openLibrary}>
           <ImageIcon />
           <S.OptionText>Upload from galery</S.OptionText>
         </S.OptionButton>
-        
+
         <S.PlaceholderButton onPress={addPlaceholderPhoto}>
           <PlusIcon />
           <S.OptionText>Use a placeholder</S.OptionText>

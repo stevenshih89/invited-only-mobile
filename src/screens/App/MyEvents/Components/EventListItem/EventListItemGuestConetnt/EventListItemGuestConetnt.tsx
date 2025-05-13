@@ -1,8 +1,9 @@
 import { components } from "@invited-only/invited-only-api";
-import { formatDate } from "../EventListItemHostContent/EventListItemHostContent";
+
 import * as S from './EventListItemGuestConetnt.style';
 import useGuestJoinedEventActions from "./hooks/useGuestJoinedEventActions";
 import { useAuthStore } from "src/store/authStore";
+import { formatDate } from "helpers/genericDateFormater";
 
 interface EventListItemGuestConetntProps {
     event: components['schemas']['EventData'];

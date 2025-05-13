@@ -16,7 +16,7 @@ export const HostBadge = styled.View`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 143px;
+  padding-horizontal: 10px;
   height: 40px;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 100px;
@@ -29,7 +29,7 @@ export const HostInfoRow = styled.View`
   align-items: center;
   padding: 0px;
   gap: 8px;
-  width: 111px;
+
   height: 24px;
 `;
 

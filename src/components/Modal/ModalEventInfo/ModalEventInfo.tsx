@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import { FC } from 'react';
 import Modal from 'react-native-modal';
 import * as S from './ModalEventInfo.style';
 import CloseIcon from 'assets/images/icons/close.svg';
@@ -12,7 +12,7 @@ interface ModalEventInfoProps {
   description: string;
 }
 
-const ModalEventInfo: FC<ModalEventInfoProps> = ({isVisible, onClose, title, description, closeText}) => {
+const ModalEventInfo: FC<ModalEventInfoProps> = ({ isVisible, onClose, title, description, closeText }) => {
   return (
     <Modal
       isVisible={isVisible}

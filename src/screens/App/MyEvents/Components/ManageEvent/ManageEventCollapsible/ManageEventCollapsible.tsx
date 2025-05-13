@@ -1,10 +1,10 @@
 import React from 'react';
 import Collapsible from 'react-native-collapsible';
-import {ScrollView, TouchableOpacity} from 'react-native';
-import {components} from 'src/api/v1';
+import { ScrollView, TouchableOpacity } from 'react-native';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './ManageEventCollapsible.styled';
-import {ManageEventGuestInfo} from './ManageEventGuestInfo/ManageEventGuestInfo';
-import {useManageEventCollapse} from './hooks/useManageEventCollapse';
+import { ManageEventGuestInfo } from './ManageEventGuestInfo/ManageEventGuestInfo';
+import { useManageEventCollapse } from './hooks/useManageEventCollapse';
 import InfoIcon from 'assets/images/icons/info-circle.svg';
 import ModalManageUserOnEvent from 'components/Modal/ModalManageUserOnEvent/ModalManageUserOnEvent';
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
@@ -18,7 +18,7 @@ interface ManageEventCollapsibleProps {
   onPressTooltip: () => void;
 }
 
-export const ManageEventCollapsible = ({title, eventRequests, isOpen, toggle, onPressTooltip}: ManageEventCollapsibleProps) => {
+export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle, onPressTooltip }: ManageEventCollapsibleProps) => {
   const {
     activeRequest,
     modalManageUserOnEventRef,
@@ -33,6 +33,12 @@ export const ManageEventCollapsible = ({title, eventRequests, isOpen, toggle, on
     handleCloseCancelInvitationModal,
     handleCloseUnconnectedModal,
   } = useManageEventCollapse();
+
+  if (title === 'New Connections') {
+    console.log("eventRequests", eventRequests);
+    console.log('isOpen', isOpen);
+  }
+
 
   return (
     <S.CardContainer>
@@ -59,7 +65,7 @@ export const ManageEventCollapsible = ({title, eventRequests, isOpen, toggle, on
       </S.ContentWrapper>
       <Collapsible collapsed={!isOpen}>
         <S.CardContainer>
-          <ScrollView style={{maxHeight: 250}}>
+          <ScrollView>
             {eventRequests?.map((request, index) => {
               return (
                 <ManageEventGuestInfo
@@ -87,7 +93,7 @@ export const ManageEventCollapsible = ({title, eventRequests, isOpen, toggle, on
         onClose={handleCloseCancelInvitationModal}
         title="Cancel Invitation?"
         description="Are you sure you want to cancel invitation? The user will no longer be able to accept it"
-        onConfirm={() => {}}
+        onConfirm={() => { }}
         confirmText="Cancel Invitation"
         cancelText="Exit"
       />
@@ -96,7 +102,7 @@ export const ManageEventCollapsible = ({title, eventRequests, isOpen, toggle, on
         onClose={handleCloseUnconnectedModal}
         title="Unconnected?"
         description="You are no longer connected. Do you want to remove this connection?"
-        onConfirm={() => {}}
+        onConfirm={() => { }}
         confirmText="Remove Connection"
         cancelText="Cancel"
       />

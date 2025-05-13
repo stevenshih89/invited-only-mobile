@@ -13,12 +13,14 @@ export type RootStackParamList = {
   };
   '/event-creating-stack'?: {
     screen?: string;
+    isEditing?: boolean;
+    event?: components['schemas']['EventData'];
   };
   '/events/requests'?: {
     eventId: string;
   };
   '/events/manage-event'?: {
-    eventId: string;
+    event: components['schemas']['EventData'];
   };
   '/chat/chat-window'?: {
     chat: components['schemas']['Chat'];

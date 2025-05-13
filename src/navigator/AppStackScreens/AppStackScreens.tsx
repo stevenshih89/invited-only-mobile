@@ -1,10 +1,11 @@
 import React, { FC, useState } from 'react';
 import { createStackNavigator, StackNavigationOptions } from '@react-navigation/stack';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
 
 import NotificationsStackScreen from './NotificationsStackScreen/NotificationsStackScreen';
 import EventRequearHeader from './RequestStackScreen/EventRequearHeader/EventRequearHeader';
 import { ProfileStackScreen } from './ProfileStackScreen/ProfileStackScreen';
+import DeleteButton from './components/DeleteButton';
 import BottomMenu from 'navigator/BottomMenu/BottomMenu';
 
 //import components
@@ -50,7 +51,7 @@ import { useAuthStore } from 'src/store/authStore';
 import { ManageEvent } from 'screens/App/MyEvents/Components/ManageEvent/ManageEvent';
 import Payment from 'screens/App/Payment/Payment';
 import { ChatWindow } from 'screens/App/Chat/ChatWindow/ChatWindow';
-import { useAppNavigation } from 'hooks/useAppNavigation';
+import { useAppNavigation, useRoute } from 'hooks/useAppNavigation';
 import { EventRequestsWrapper } from 'screens/App/MyEvents/Components/EventRequests/EventRequestsWrapper';
 import { RootStackParamList } from 'src/typescript/types';
 
@@ -158,23 +159,31 @@ export const ChatStackScreen = () => {
   );
 };
 
-const EventCreatingStackScreen = () => {
-  const styles = useStyles();
+export const DeleteModalContext = React.createContext<[boolean, React.Dispatch<React.SetStateAction<boolean>>] | undefined>(undefined);
 
+const EventCreatingStackScreen = ({ route }: { route: any }) => {
+  const styles = useStyles();
+  const isEditing = route.params?.isEditing;
+  const modalState = useState<boolean>(false);
   return (
-    <EventCreatingStack.Navigator
-      initialRouteName={eventCreatingStackPath}
-      screenOptions={{
-        headerStyle: styles.headerStyle,
-        headerTitleStyle: styles.headerTitleStyle,
-        headerBackImage: () => <ArrowLeft style={{ marginHorizontal: 12, marginVertical: 10 }} />,
-        headerBackTitleVisible: false,
-        headerTitle: 'Create new event',
-        headerShown: true,
-        ...screenOptions,
-      }}>
-      <EventCreatingStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={CreateEventFlow} />
-    </EventCreatingStack.Navigator>
+    <DeleteModalContext.Provider value={modalState}>
+      <EventCreatingStack.Navigator
+        initialRouteName={eventCreatingStackPath}
+        screenOptions={{
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerBackImage: () => <ArrowLeft style={{ marginHorizontal: 12, marginVertical: 10 }} />,
+          headerBackTitleVisible: false,
+          headerTitle: isEditing ? 'Edit Event' : 'Create new event',
+          headerShown: true,
+          ...(isEditing && {
+            headerRight: () => <DeleteButton />
+          }),
+          ...screenOptions,
+        }}>
+        <EventCreatingStack.Screen key={eventCreatingStackPath} name={eventCreatingStackPath} component={CreateEventFlow} initialParams={{ isEditing: route.params?.isEditing, event: route.params?.event }} />
+      </EventCreatingStack.Navigator>
+    </DeleteModalContext.Provider>
   );
 };
 

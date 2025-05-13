@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import { useFormikContext } from 'formik';
-import { CreateEventFormValues } from '../../CreateEventFlow';
+
+import { components } from '@invited-only/invited-only-api';
 import * as S from './PreviewEventStep.style';
 import Card from 'screens/App/Components/Card/Card';
 import HostBadge from 'screens/App/JoinEvents/Components/EventCard/Components/HostBadge';
@@ -10,7 +11,8 @@ import { useAuthStore } from 'src/store/authStore';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 
 const PreviewEventStep = () => {
-  const { values } = useFormikContext<CreateEventFormValues>();
+  const { values } = useFormikContext<Partial<components['schemas']['EventData']>>();
+
 
   const { userMetadata } = useAuthStore();
   const { data: user } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
@@ -23,17 +25,17 @@ const PreviewEventStep = () => {
   });
 
   const photoUrls = [
-    values.photos.main,
-    ...(values.photos.photo2 ? [values.photos.photo2] : []),
-    ...(values.photos.photo3 ? [values.photos.photo3] : []),
+    values.photos?.[0]?.image,
+    ...(values.photos?.[1] ? [values.photos?.[1].image] : []),
+    ...(values.photos?.[2] ? [values.photos?.[2].image] : []),
   ];
 
-  const totalGuests = values.male + values.female;
+  const totalGuests = (values.maleFriend ?? 0) + (values.femaleFriend ?? 0);
 
   return (
     <S.Container>
       <S.BadgeContainer>
-        <HostBadge imageUrl={user?.photos?.[0]?.image ?? null} totalGuests={totalGuests} />
+        <HostBadge imageUrl={user?.photos?.[0]?.image ?? null} totalGuests={totalGuests} withGuestCount={false} />
       </S.BadgeContainer>
       <Card
         isTopCard
@@ -49,7 +51,7 @@ const PreviewEventStep = () => {
         distanceFromTop={0}>
         <View>
           <S.CardContent>
-            <CardsNameAndDate eventName={values.eventName} date={values.date} hour={values.hour} />
+            <CardsNameAndDate eventName={values.name ?? ''} date={values.date ?? ''} hour={values.hour ?? ''} />
             <CardActionsButtons disabled={true} />
           </S.CardContent>
         </View>

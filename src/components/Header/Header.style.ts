@@ -5,6 +5,7 @@ import { screenWidth } from 'constants/common';
 export const Container = styled.View`
   background-color: ${blackColor};
   padding-horizontal: ${screenWidth / 15.5}px;
+  padding-vertical: 10px;
 `;
 
 export const WrapperHeader = styled.View`
@@ -46,4 +47,13 @@ export const BadgeStyle = {
   top: -30,
   right: -18,
   backgroundColor: '#590000',
+}
+
+export const UnreadBadgeStyle = {
+  position: 'absolute' as 'absolute',
+  borderColor: '#ff0000',
+  borderWidth: 2,
+  top: -30,
+  right: -18,
+  backgroundColor: '#ff0000',
 }

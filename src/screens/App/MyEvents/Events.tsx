@@ -9,7 +9,7 @@ const TabNavigator = createMaterialTopTabNavigator();
 
 
 const Events = () => {
-  // const [activeTab, setActiveTab] = useState<TabType>('MyEvents'); // No longer needed for TabNavigator state
+
 
   return (
     <S.ScreenContainer>

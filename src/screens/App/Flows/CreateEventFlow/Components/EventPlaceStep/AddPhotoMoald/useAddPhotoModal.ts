@@ -1,26 +1,27 @@
-import {useFormikContext} from 'formik';
-import {useState} from 'react';
+import { useFormikContext } from 'formik';
+import { useState } from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
-import {CreateEventFormValues} from '../../../CreateEventFlow';
+import { components } from '@invited-only/invited-only-api';
+
 
 const useAddModalPhotos = () => {
   const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number | null>(null);
 
-  const {setFieldValue, setFieldTouched} = useFormikContext<CreateEventFormValues>();
+  const { setFieldValue, setFieldTouched } = useFormikContext<Partial<components['schemas']['EventData']>>();
 
   const handlePhotoAdded = (index: number, photo: string) => {
     if (index === 1) {
-      setFieldValue('photos.main', photo);
-      setFieldTouched('photos.main', true);
+      setFieldValue('photos[0].image', photo);
+      setFieldTouched('photos[0].image', true);
     }
     if (index === 2) {
-      setFieldValue('photos.photo2', photo);
-      setFieldTouched('photos.photo2', true);
+      setFieldValue('photos[1].image', photo);
+      setFieldTouched('photos[1].image', true);
     }
     if (index === 3) {
-      setFieldValue('photos.photo3', photo);
-      setFieldTouched('photos.photo3', true);
+      setFieldValue('photos[2].image', photo);
+      setFieldTouched('photos[2].image', true);
     }
   };
 

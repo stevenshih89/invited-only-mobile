@@ -53,14 +53,13 @@ export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible,
                     <S.CardsContainer>
                         <S.CardContainer>
                             <Animated.View style={card1AnimatedStyle}>
-                                {isEvent && (
-                                    <Card backgroundUrls={user?.photos || []} index={0} distanceFromTop={0} uid={user?.uid || ''} isTopCard={true} isStatic showDots={false} disabled={true}>
-                                        <S.GuestInfoContainer>
-                                            <S.GuestName>{user?.name}</S.GuestName>
-                                            {user?.showAge && <S.GuestAge>, {calculateAge(user?.birthday || '')}</S.GuestAge>}
-                                        </S.GuestInfoContainer>
-                                    </Card>
-                                )}
+
+                                <Card backgroundUrls={user?.photos || []} index={0} distanceFromTop={0} uid={user?.uid || ''} isTopCard={true} isStatic showDots={false} disabled={true}>
+                                    <S.GuestInfoContainer>
+                                        <S.GuestName>{user?.name}</S.GuestName>
+                                        {user?.showAge && <S.GuestAge>, {calculateAge(user?.birthday || '')}</S.GuestAge>}
+                                    </S.GuestInfoContainer>
+                                </Card>
                             </Animated.View>
                             <Animated.View style={card2AnimatedStyle}>
                                 {cardData && 'photos' in cardData && (
@@ -83,6 +82,7 @@ export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible,
                         <S.ButtonContainer>
                             <S.SendMessageButton onPress={() => {
                                 navigation.navigate('/chat');
+                                onClose();
                             }}>
                                 <S.StyledSendMessageIconContainer>
                                     <S.StyledSendMessageIcon width={20} height={20} />

@@ -2,6 +2,7 @@ import styled from "styled-components/native";
 import FastImage from "react-native-fast-image";
 import { whiteColor } from "constants/colors";
 import { Satoshi400, Satoshi500, Satoshi700 } from "constants/fonts";
+import { screenWidth } from "constants/common";
 
 
 export const Container = styled.View`
@@ -83,29 +84,28 @@ export const InnerRowContainer
 `;
 
 export const StatusBadge = styled.View`
-  height: 24px;
+
   background: rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px;
+  padding: 7px;
+
 `;
 
 export const StatusText = styled.Text`
-  height: 17px;
   font-family: ${Satoshi500};
   font-size: 12px;
-  line-height: 19px;;
+  line-height: 19px;
   color: #FFFFFF;
 `;
 
 export const TimeText = styled.Text`
-
   height: 20px;
   font-family: ${Satoshi500};
   font-size: 14px;
-  line-height: 19px;;
+  line-height: 19px;
   color: rgba(255, 255, 255, 0.5);
 `;
 
@@ -133,11 +133,10 @@ export const NameContainer = styled.View`
 `;
 
 export const NameText = styled.Text`
-
   height: 22px;
   font-family: ${Satoshi700};
   font-size: 16px;
-  line-height: 19px;;
+  line-height: 19px;
   color: #FFFFFF;
 `;
 
@@ -177,7 +176,7 @@ align-items: center;
 export const UnreadCount = styled.Text`
 font-family: ${Satoshi500};
 font-size: 14px;
-line-height: 121 %;
+line-height: 121%;
 display: flex;
 align-items: center;
 color: #010101;
@@ -185,6 +184,7 @@ color: #010101;
 
 export const SmallEventAvatarContainer = styled.View`
   height: 15px;
+  width: 15px;
   border-radius: 10px;
   background-color: ${whiteColor};
 `;
@@ -195,18 +195,17 @@ export const SmallEventAvatarImage = styled(FastImage)`
   border-radius: 10px;
 `;
 
-export const SmallEventNameText = styled.Text`
-  font-family: ${Satoshi700};
-  font-size: 16px;
-  line-height: 19px;;
-  color: #FFFFFF;
-`;
 export const EventBadgeContainer = styled.View`
-  display: flex;
   flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 5px;
-  margin-top: 5px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 5px;
 `;
 
+export const SmallEventNameText = {
+  fontFamily: 'Satoshi-Bold',
+  fontSize: 12,
+  lineHeight: 16,
+  color: '#FFFFFF',
+  maxWidth: 100,
+}

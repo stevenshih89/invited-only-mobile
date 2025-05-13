@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Formik } from 'formik';
+import { components } from '@invited-only/invited-only-api';
 import useCreateEventFlowStep from './hooks/useCreateEventFlowStep';
 import * as S from './CreateEvent.style';
 import CreateEventFlowStepper from './Components/CreateEventFlowStepper/CreateEventFlowStepper';
@@ -9,44 +10,36 @@ import PreviewEventStep from './Components/PreviewEventStep/PreviewEventStep';
 
 import { handleNextStep, initialValues, validationSchema } from './CreateEvent.form';
 import useCreateEvent from './hooks/useCreateEvent';
+import DeleteEventModal from './Components/DeleteEventModal/DeleteEventModal';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
+import { DeleteModalContext } from 'navigator/AppStackScreens/AppStackScreens';
 
-export interface CreateEventFormValues {
-  male: number;
-  female: number;
-  eventName: string;
-  date: Date;
-  hour: string;
-  description: string;
-  placeName: string;
-  address: string;
-  meetingSpot: string;
-  photos: {
-    main: string;
-    photo2: string;
-    photo3: string;
-  };
-}
 
-const CreateEventFlow = () => {
+const CreateEventFlow = ({ route }: { route: any }) => {
   const { currentStep, nextStep, backStep } = useCreateEventFlowStep();
-  const { createEvent, isLoading } = useCreateEvent();
+  const { createEvent, isLoading, updateEvent } = useCreateEvent();
+  const isEditing = route.params?.isEditing;
+  const event = route.params?.event;
+  const [isDeleteEventModalVisible, setDeleteEventModalVisible] = useContext(DeleteModalContext) || [false, () => { }];
 
   return (
-    <Formik<CreateEventFormValues>
+    <Formik<Partial<components['schemas']['EventData']>>
       validationSchema={validationSchema}
       onSubmit={values => {
-        createEvent(values);
+        if (isEditing) {
+          updateEvent(values);
+        } else {
+          createEvent(values);
+        }
       }}
-      initialValues={initialValues}>
+      initialValues={isEditing ? route.params.event : initialValues}>
       {({ submitForm, isSubmitting, values, validateForm }) => (
         <DefaultBackground>
           {isLoading || isSubmitting ? (
-            <DefaultBackground>
-              <S.CreatingEventText>Creating event...</S.CreatingEventText>
+            <S.Container>
               <AppLoader />
-            </DefaultBackground>
+            </S.Container>
           ) : (
             <S.Container>
               <S.StepsContainer>
@@ -62,6 +55,7 @@ const CreateEventFlow = () => {
                   </S.CancelButton>
                 )}
                 <S.ContinueButton
+                  disabled={isSubmitting}
                   onPress={async () => {
                     handleNextStep({
                       currentStep,
@@ -71,11 +65,12 @@ const CreateEventFlow = () => {
                       values,
                     });
                   }}>
-                  <S.ContinueButtonText>{currentStep === 3 ? 'Create Event' : 'Continue'}</S.ContinueButtonText>
+                  <S.ContinueButtonText>{currentStep === 3 ? isEditing ? 'Update Event' : 'Create Event' : 'Continue'}</S.ContinueButtonText>
                 </S.ContinueButton>
               </S.ButtonsContainer>
             </S.Container>
           )}
+          {isDeleteEventModalVisible && <DeleteEventModal isVisible={isDeleteEventModalVisible} onClose={() => setDeleteEventModalVisible(false)} eventId={event?.uid} />}
         </DefaultBackground>
       )}
     </Formik>

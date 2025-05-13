@@ -6,9 +6,10 @@ interface CardActionsButtonsProps {
     onReject?: () => void;
     onSuperInvite?: () => void;
     onInvite?: () => void;
+    isEvent?: boolean;
 }
 
-export const CardActionsButtons = ({ disabled, onReject, onSuperInvite, onInvite, thisVersion = false }: CardActionsButtonsProps = {
+export const CardActionsButtons = ({ disabled, onReject, onSuperInvite, onInvite, thisVersion = false, isEvent = false }: CardActionsButtonsProps = {
     disabled: false,
     onReject: () => { },
     onSuperInvite: () => { },
@@ -24,11 +25,11 @@ export const CardActionsButtons = ({ disabled, onReject, onSuperInvite, onInvite
             </S.RejectButton>
             {!thisVersion && <S.SuperInviteButton disabled={disabled} onPress={onSuperInvite}>
                 <S.SuperInviteIcon style={{ opacity: 1 }} />
-                <S.SuperInviteButtonText>Super Invite</S.SuperInviteButtonText>
+                <S.SuperInviteButtonText>{isEvent ? 'Super Join' : 'Super Invite'}</S.SuperInviteButtonText>
             </S.SuperInviteButton>}
             <S.InviteButton disabled={disabled} onPress={onInvite}>
                 <S.InviteIcon style={{ opacity: 1 }} />
-                <S.InviteButtonText>Invite</S.InviteButtonText>
+                <S.InviteButtonText>{isEvent ? 'Join' : 'Invite'}</S.InviteButtonText>
             </S.InviteButton>
         </S.ButtonsContainer>
     );

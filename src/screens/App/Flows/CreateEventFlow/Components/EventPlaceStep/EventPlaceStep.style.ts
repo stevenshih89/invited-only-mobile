@@ -82,7 +82,7 @@ export const StyledTextInput = styled(TextInput)`
   width: 100%;
   font-family: 'Satoshi';
   font-size: 18px;
-  line-height: 2px;
+  line-height: 24px;
 `;
 
 export const InputText = styled(Text)`
@@ -90,7 +90,7 @@ export const InputText = styled(Text)`
   font-style: normal;
   font-weight: 400;
   font-size: 18px;
-  line-height: 2px;
+  line-height: 24px;
   color: #767676;
 `;
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useRoute, RouteProp } from '@react-navigation/native'; // To get eventId from params
 
+import { components } from '@invited-only/invited-only-api';
 import * as S from './ManageEvent.style';
 import ManageEventConnections from './ManageEventConnections/ManageEventConnections';
 import ManageEventInfo from './ManageEventInfo/ManageEventInfo';
@@ -10,7 +11,7 @@ import { useAppNavigation } from 'src/hooks/useAppNavigation';
 
 type ManageEventRouteParams = {
     ManageEvent: {
-        eventId: string;
+        event: components['schemas']['EventData'];
     };
 };
 
@@ -18,7 +19,7 @@ const Tab = createMaterialTopTabNavigator();
 
 export const ManageEvent = () => {
     const route = useRoute<RouteProp<ManageEventRouteParams, 'ManageEvent'>>();
-    const { eventId } = route.params;
+    const { event } = route.params;
     const navigation = useAppNavigation();
 
     return (
@@ -28,7 +29,7 @@ export const ManageEvent = () => {
                     <S.StyledBackButtonIcon />
                 </S.BackButton>
                 <S.HeaderTitle>Manage Event</S.HeaderTitle>
-                <S.EditButton>
+                <S.EditButton onPress={() => navigation.navigate('/event-creating-stack', { isEditing: true, event: event })}>
                     <S.StyledEditButtonText>Edit</S.StyledEditButtonText>
                 </S.EditButton>
             </S.HeaderContainer>
@@ -43,10 +44,10 @@ export const ManageEvent = () => {
                 }}
             >
                 <Tab.Screen name="Guest List">
-                    {(props) => <ManageEventConnections {...props} eventId={eventId} />}
+                    {(props) => <ManageEventConnections {...props} eventId={event.uid} />}
                 </Tab.Screen>
                 <Tab.Screen name="Event Info">
-                    {(props) => <ManageEventInfo {...props} eventId={eventId} />}
+                    {(props) => <ManageEventInfo {...props} eventId={event.uid} />}
                 </Tab.Screen>
             </Tab.Navigator>
         </S.Container>

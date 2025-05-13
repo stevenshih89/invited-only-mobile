@@ -16,7 +16,6 @@ export const ManageEventInfo: React.FC<ManageEventInfoProps> = ({ eventId }) => 
             path: { eventId: eventId },
         },
     });
-    console.log(event);
 
     if (isLoading) {
         return <S.Container>
@@ -45,10 +44,10 @@ export const ManageEventInfo: React.FC<ManageEventInfoProps> = ({ eventId }) => 
                     <S.EventDateText>{new Date(event?.date || '').toLocaleDateString('en-US', { day: 'numeric', month: 'long' })}</S.EventDateText>
                 </S.EventDateContainer>
             </S.EventNameContainerAndDateContainer>
-            <S.EventDescriptionContainer>
+            {event?.description && <S.EventDescriptionContainer>
                 <S.EventDescriptionLabel>Description</S.EventDescriptionLabel>
-                <S.EventDescriptionText>Description placeholder --- TODO implement event</S.EventDescriptionText>
-            </S.EventDescriptionContainer>
+                <S.EventDescriptionText>{event?.description}</S.EventDescriptionText>
+            </S.EventDescriptionContainer>}
         </S.Container>
     );
 };

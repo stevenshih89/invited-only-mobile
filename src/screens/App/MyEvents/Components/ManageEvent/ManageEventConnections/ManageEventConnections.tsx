@@ -1,23 +1,21 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
-import {components} from 'src/api/v1'; // Moved down
-import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-import * as S from '../ManageEvent.style'; // Reuse existing container style for now
-import {ManageEventCollapsible} from '../ManageEventCollapsible/ManageEventCollapsible';
-import {useManageEventDetails} from '../hooks/useManageEventDetails';
+import { components } from '@invited-only/invited-only-api';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import * as S from '../ManageEvent.style';
+import { ManageEventCollapsible } from '../ManageEventCollapsible/ManageEventCollapsible';
+import { useManageEventDetails } from '../hooks/useManageEventDetails';
 import ModalEventInfo from 'components/Modal/ModalEventInfo/ModalEventInfo';
 
 type ConnectionRequest = components['schemas']['ConnectionRequest']; // Alias for type
 
-// Define props if needed, e.g., to receive eventId
 interface ManageEventConnectionsProps {
   eventId: string;
 }
 
 type EventInfoName = 'newConnection' | 'approved' | 'attending' | 'notAccepted' | 'canceled';
 
-export const ManageEventConnections: React.FC<ManageEventConnectionsProps> = ({eventId}) => {
-  // State for collapsible sections
+export const ManageEventConnections: React.FC<ManageEventConnectionsProps> = ({ eventId }) => {
   const [isOpen, setIsOpen] = useState<Record<string, boolean>>({
     NewConnections: true,
     Approved: false,
@@ -26,11 +24,11 @@ export const ManageEventConnections: React.FC<ManageEventConnectionsProps> = ({e
   });
 
   // Fetch event requests (assuming hook needs eventId)
-  const {eventRequests} = useManageEventDetails({eventId: eventId});
+  const { eventRequests } = useManageEventDetails({ eventId: eventId });
 
   const [isVisibleModalEventInfo, setIsVisibleModalEventInfo] = useState(false);
   const [selectedEventInfoName, setSelectedEventInfoName] = useState<EventInfoName | null>(null);
-  const eventInfoData: Record<EventInfoName, {title: string; description: string}> = {
+  const eventInfoData: Record<EventInfoName, { title: string; description: string }> = {
     newConnection: {
       title: 'New Connection',
       description: `A connection has been made, but no action has been taken yet by either side. Now it's your turn to approve the user`,
@@ -58,32 +56,33 @@ export const ManageEventConnections: React.FC<ManageEventConnectionsProps> = ({e
     setIsVisibleModalEventInfo(true);
   };
 
+  console.log("new connections", eventRequests?.filter((request: ConnectionRequest) => request.status === 'connection-complete'));
   return (
     <BottomSheetModalProvider>
       <S.Container>
         <ManageEventCollapsible
-          toggle={() => setIsOpen({...isOpen, NewConnections: !isOpen['NewConnections']})}
+          toggle={() => setIsOpen({ ...isOpen, NewConnections: !isOpen['NewConnections'] })}
           title="New Connections"
           eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'connection-complete')}
           isOpen={isOpen['NewConnections']}
           onPressTooltip={() => handlePressTooltip('newConnection')}
         />
         <ManageEventCollapsible
-          toggle={() => setIsOpen({...isOpen, Approved: !isOpen['Approved']})}
+          toggle={() => setIsOpen({ ...isOpen, Approved: !isOpen['Approved'] })}
           title="Approved"
           eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'pending-confirmation')}
           isOpen={isOpen['Approved']}
           onPressTooltip={() => handlePressTooltip('approved')}
         />
         <ManageEventCollapsible
-          toggle={() => setIsOpen({...isOpen, Attending: !isOpen['Attending']})}
+          toggle={() => setIsOpen({ ...isOpen, Attending: !isOpen['Attending'] })}
           title="Attending"
           eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'confirmation-complete')}
           isOpen={isOpen['Attending']}
           onPressTooltip={() => handlePressTooltip('attending')}
         />
         <ManageEventCollapsible
-          toggle={() => setIsOpen({...isOpen, NotAttending: !isOpen['NotAttending']})}
+          toggle={() => setIsOpen({ ...isOpen, NotAttending: !isOpen['NotAttending'] })}
           title="Not Attending"
           eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'pending-attendance')}
           isOpen={isOpen['NotAttending']}

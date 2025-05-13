@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import {
   chatCorrespondencePath,
@@ -14,6 +14,7 @@ import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
 import { showToast } from 'helpers/showToast';
 import useUser from 'hooks/user/useUser';
+import { useAuthStore } from 'src/store/authStore';
 
 export interface Notifications {
   id: string;
@@ -34,13 +35,47 @@ export const useNotifications = () => {
   const navigation = useAppNavigation();
   const [limitNotifications, setLimitNotifications] = useState<number>(DEFAULT_NOTIFICATIONS_LIMIT);
   const [loading, setLoading] = useState<boolean>(true);
-
-  const { user } = useUser();
+  const { isStorageReady } = useAuthStore();
+  const { user, isLoading: isUserLoading } = useUser();
 
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
 
+  // Only fetch notifications when store is ready and user data is loaded
+  useEffect(() => {
+    if (!isStorageReady || isUserLoading || !user?.uid) {
+      setLoading(true);
+      return;
+    }
+
+    const fetchNotifications = async () => {
+      try {
+        const querySnapshot = await firestore()
+          .collection(apiUserInfoCollection)
+          .doc(user.uid)
+          .collection('notifications')
+          .orderBy('createdAt', 'desc')
+          .limit(limitNotifications)
+          .get();
+
+        const fetchedNotifications = querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          docId: doc.id,
+        })) as Notifications[];
+
+        setNotifications(fetchedNotifications);
+      } catch (error) {
+        logErrorToSentry(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, [isStorageReady, isUserLoading, user?.uid, limitNotifications]);
 
   const clearNotifications = async (uid: string): Promise<void> => {
+    if (!isStorageReady || !uid) return;
+
     try {
       await firestore()
         .collection(apiUserInfoCollection)
@@ -57,14 +92,17 @@ export const useNotifications = () => {
     }
   };
 
-
   const handleClearNotifications = async () => {
+    if (!isStorageReady || !user?.uid) return;
+
     setNotifications([]);
-    await clearNotifications(user?.uid ?? '');
+    await clearNotifications(user.uid);
     showToast('inviteMatch', 'Notifications have been read', 'Notifications', { status: 'success', ownerPhoto: user?.photos?.[0]?.image });
   };
 
   const handleNavigate = async (path: string, data: any) => {
+    if (!isStorageReady) return;
+
     console.log('data', data);
 
     switch (path) {
@@ -103,8 +141,10 @@ export const useNotifications = () => {
   };
 
   const handleDelete = async (id: string) => {
+    if (!isStorageReady || !user?.uid) return;
+
     try {
-      await firestore().collection(apiUserInfoCollection).doc(user?.uid).collection('notifications').doc(id).delete();
+      await firestore().collection(apiUserInfoCollection).doc(user.uid).collection('notifications').doc(id).delete();
       setNotifications(notifications.filter(notification => notification.docId !== id));
     } catch (error) {
       logErrorToSentry(error);
@@ -112,7 +152,7 @@ export const useNotifications = () => {
   };
 
   return {
-    loading,
+    loading: loading || !isStorageReady || isUserLoading,
     notifications,
     handleClearNotifications,
     setLimitNotifications,

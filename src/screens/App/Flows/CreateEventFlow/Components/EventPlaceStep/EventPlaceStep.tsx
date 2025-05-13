@@ -1,32 +1,32 @@
 import React from 'react';
-import {useFormikContext} from 'formik';
+import { useFormikContext } from 'formik';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
-import {CreateEventFormValues} from '../../CreateEventFlow';
+
+import { components } from '@invited-only/invited-only-api';
 import * as S from './EventPlaceStep.style';
 import ModalAddPhoto from './AddPhotoMoald/ModalAddPhoto';
-
 import useAddModalPhotos from './AddPhotoMoald/useAddPhotoModal';
 import EventDatePicker from './EventDatePicker/EventDatePicker';
 
 const EventPlaceStep = () => {
-  const {values, setFieldValue, errors, touched, setFieldTouched} = useFormikContext<CreateEventFormValues>();
+  const { values, setFieldValue, errors, touched, setFieldTouched } = useFormikContext<Partial<components['schemas']['EventData']>>();
 
-  const {handleAddPlaceholderPhoto, handleOpenCamera, handleOpenLibrary, handleOpenPhotoModal, isPhotoModalVisible, closeModal} =
+  const { handleAddPlaceholderPhoto, handleOpenCamera, handleOpenLibrary, handleOpenPhotoModal, isPhotoModalVisible, closeModal } =
     useAddModalPhotos();
 
   return (
     <S.Container>
       <LinearGradient
         colors={['black', 'transparent']}
-        style={{position: 'absolute', top: 0, left: 0, right: 0, height: 20, zIndex: 1}}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 20, zIndex: 1 }}
         pointerEvents="none"
       />
 
       {/* Bottom Fade (black) */}
       <LinearGradient
         colors={['transparent', 'black']}
-        style={{position: 'absolute', bottom: 0, left: 0, right: 0, height: 20, zIndex: 1}}
+        style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 20, zIndex: 1 }}
         pointerEvents="none"
       />
       <S.ScrollContainer>
@@ -36,15 +36,15 @@ const EventPlaceStep = () => {
             <S.FieldLabel>Event name</S.FieldLabel>
             <S.Input>
               <S.StyledTextInput
-                name={'eventName'}
+                name={'name'}
                 placeholder="Enter event name"
                 placeholderTextColor="#767676"
-                value={values.eventName}
-                onChangeText={(value: string) => setFieldValue('eventName', value)}
-                onBlur={() => setFieldTouched('eventName', true)}
+                value={values.name}
+                onChangeText={(value: string) => setFieldValue('name', value)}
+                onBlur={() => setFieldTouched('name', true)}
               />
             </S.Input>
-            {touched.eventName && errors.eventName && <S.ErrorText>{errors.eventName}</S.ErrorText>}
+            {touched.name && errors.name && <S.ErrorText>{errors.name}</S.ErrorText>}
           </S.FieldContainer>
           <EventDatePicker />
 
@@ -113,11 +113,10 @@ const EventPlaceStep = () => {
         <S.Card>
           <S.CardTitle>Event Photos</S.CardTitle>
           <S.PhotosContainer>
-            {/* Main Photo */}
             <S.MainPhotoContainer>
-              {values?.photos?.main ? (
+              {values?.photos?.[0]?.image ? (
                 <S.AddPhotoButton onPress={() => handleOpenPhotoModal(1)}>
-                  <S.EventImage source={{uri: values.photos.main}} />
+                  <S.EventImage source={{ uri: values.photos[0].image }} />
                 </S.AddPhotoButton>
               ) : (
                 <S.AddPhotoButton onPress={() => handleOpenPhotoModal(1)}>
@@ -125,13 +124,15 @@ const EventPlaceStep = () => {
                 </S.AddPhotoButton>
               )}
             </S.MainPhotoContainer>
-            {touched.photos?.main && errors.photos?.main && !values.photos.main && <S.ErrorText>Main photo is required</S.ErrorText>}
+            {touched.photos && errors.photos?.[0] && !values.photos?.[0]?.image && (
+              <S.ErrorText>Main photo is required</S.ErrorText>
+            )}
 
             <S.PhotosRow>
               <S.SmallPhotoContainer>
-                {values?.photos?.photo2 ? (
+                {values?.photos?.[1]?.image ? (
                   <S.AddPhotoButton onPress={() => handleOpenPhotoModal(2)}>
-                    <FastImage source={{uri: values.photos.photo2}} style={{width: '100%', height: '100%', borderRadius: 10}} />
+                    <FastImage source={{ uri: values.photos[1].image }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
                   </S.AddPhotoButton>
                 ) : (
                   <S.AddPhotoButton onPress={() => handleOpenPhotoModal(2)}>
@@ -140,9 +141,9 @@ const EventPlaceStep = () => {
                 )}
               </S.SmallPhotoContainer>
               <S.SmallPhotoContainer>
-                {values?.photos?.photo3 ? (
+                {values?.photos?.[2]?.image ? (
                   <S.AddPhotoButton onPress={() => handleOpenPhotoModal(3)}>
-                    <FastImage source={{uri: values.photos.photo3}} style={{width: '100%', height: '100%', borderRadius: 10}} />
+                    <FastImage source={{ uri: values.photos[2].image }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
                   </S.AddPhotoButton>
                 ) : (
                   <S.AddPhotoButton onPress={() => handleOpenPhotoModal(3)}>

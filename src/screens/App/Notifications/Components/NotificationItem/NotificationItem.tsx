@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { formatDistance } from 'date-fns';
 import { components } from '@invited-only/invited-only-api';
 import { GestureDetector } from 'react-native-gesture-handler';
@@ -10,7 +10,6 @@ import useGetUserById from 'hooks/useGetUserById';
 import useHostConnectionActions from 'hooks/connections/useHostConnectionActions';
 import useGuestConnectionActions from 'hooks/connections/useGuestConnectionActions';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import { whiteColor } from 'constants/colors';
 
 export interface Notification {
     id: string;
@@ -50,8 +49,6 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
         }
     });
 
-
-
     const { panGesture, animatedStyle } = useSwipeToDelete({
         onDelete: handleDeleteNotification,
         itemId: notification.id || '',
@@ -62,30 +59,10 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
             onPress(notification);
         }
     };
-
-    const handleAction = (action: string, isJoinedEvents: boolean) => {
-        if (isJoinedEvents) {
-            if (action === 'invite') {
-                handleGuestConfirmEvent();
-            } else if (action === 'chat') {
-                navigation.navigate('/bottom-tabs-stack', {
-                    screen: '/chat',
-
-                })
-            }
-        } else {
-            if (action === 'approve') {
-                handleHostConfirmEvent();
-            } else if (action === 'reject') {
-                handleHostRejectEvent();
-            }
-        }
-    };
-
     const timeAgo = notification.createdAt
         ? formatDistance(new Date(notification.createdAt), new Date(), { addSuffix: true })
         : '';
-
+    const isLoading = isUpdatingEventAttendee || isUpdatingEventAttendeeGuest;
     return (
         <GestureDetector gesture={panGesture}>
 
@@ -95,37 +72,34 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
                 </S.SwipeDeleteView>
                 <Animated.View style={animatedStyle}>
                     <TouchableOpacity activeOpacity={0.7} onPress={handlePress}>
-                        {isUpdatingEventAttendee || isUpdatingEventAttendeeGuest ? (
-                            <ActivityIndicator size="small" color={whiteColor} />
-                        ) : (
-                            <S.Container>
-                                {user?.photos?.[0] && (
-                                    <S.NarrowLeftContainer>
-                                        <S.AvatarContainer>
-                                            <S.AvatarImage source={{ uri: user.photos?.[0].image }} />
-                                        </S.AvatarContainer>
-                                    </S.NarrowLeftContainer>
+
+                        <S.Container>
+                            {user?.photos?.[0] && (
+                                <S.NarrowLeftContainer>
+                                    <S.AvatarContainer>
+                                        <S.AvatarImage source={{ uri: user.photos?.[0].image }} />
+                                    </S.AvatarContainer>
+                                </S.NarrowLeftContainer>
+                            )}
+                            <S.WideRightContainer>
+                                <S.TitleAndTimestampContainer>
+                                    <S.TitleText numberOfLines={1}>{notification.title}</S.TitleText>
+                                    {timeAgo && <S.TimestampText>{timeAgo}</S.TimestampText>}
+                                </S.TitleAndTimestampContainer>
+                                <S.BodyText numberOfLines={2}>{notification.message}</S.BodyText>
+                                {notification.readAt === 'unread' && <S.UnreadIndicator />}
+                                {notificationType === 'connection' && (
+                                    <S.ActionButtonContainer>
+                                        <S.ActionButtonPrimary disabled={isLoading} onPress={!isJoinedEvents ? handleHostConfirmEvent : handleGuestConfirmEvent}>
+                                            <S.ActionButtonTextPrimary>{isLoading ? 'Processing...' : !isJoinedEvents ? 'Invite' : 'Approve'}</S.ActionButtonTextPrimary>
+                                        </S.ActionButtonPrimary>
+                                        <S.ActionButtonSecondary disabled={isLoading} onPress={!isJoinedEvents ? handleHostRejectEvent : () => { navigation.navigate('/chat') }}>
+                                            <S.ActionButtonTextSecondary>{isLoading ? 'Processing...' : !isJoinedEvents ? 'Reject' : 'Chat'}</S.ActionButtonTextSecondary>
+                                        </S.ActionButtonSecondary>
+                                    </S.ActionButtonContainer>
                                 )}
-                                <S.WideRightContainer>
-                                    <S.TitleAndTimestampContainer>
-                                        <S.TitleText numberOfLines={1}>{notification.title}</S.TitleText>
-                                        {timeAgo && <S.TimestampText>{timeAgo}</S.TimestampText>}
-                                    </S.TitleAndTimestampContainer>
-                                    <S.BodyText numberOfLines={2}>{notification.message}</S.BodyText>
-                                    {notification.readAt === 'unread' && <S.UnreadIndicator />}
-                                    {notificationType === 'connection' && (
-                                        <S.ActionButtonContainer>
-                                            <S.ActionButtonPrimary onPress={() => handleAction('approve', isJoinedEvents)}>
-                                                <S.ActionButtonTextPrimary>{!isJoinedEvents ? 'Invite' : 'Approve'}</S.ActionButtonTextPrimary>
-                                            </S.ActionButtonPrimary>
-                                            <S.ActionButtonSecondary onPress={() => handleAction(!isJoinedEvents ? 'reject' : 'chat', isJoinedEvents)}>
-                                                <S.ActionButtonTextSecondary>{!isJoinedEvents ? 'Reject' : 'Chat'}</S.ActionButtonTextSecondary>
-                                            </S.ActionButtonSecondary>
-                                        </S.ActionButtonContainer>
-                                    )}
-                                </S.WideRightContainer>
-                            </S.Container>
-                        )}
+                            </S.WideRightContainer>
+                        </S.Container>
                     </TouchableOpacity>
                 </Animated.View>
             </S.SwipeContainer>

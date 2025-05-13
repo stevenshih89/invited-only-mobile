@@ -83,6 +83,7 @@ const EventCard = ({ onInvite, onReject, isTopCard, event, index, topIndex }: Pr
             onReject={onClickReject}
             onSuperInvite={onClickSuperLike}
             onInvite={onClickInvite}
+            isEvent={true}
           />
         </S.CardBottomContainer>
       </S.CardContent>

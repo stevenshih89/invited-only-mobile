@@ -41,7 +41,7 @@ const ConnectTabs = () => {
           }}
         />
       </Tab.Navigator>
-      <ModalComingSoon />
+
     </DefaultBackground>
   );
 };
