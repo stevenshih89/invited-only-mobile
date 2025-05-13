@@ -1,66 +1,56 @@
-import styled from 'styled-components/native';
+import RadialGradient from 'react-native-radial-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi700, Satoshi500} from 'constants/fonts';
-import { grayColor, lightGrayColor, whiteColor} from 'constants/colors';
-import Flags from 'screens/App/Components/Flags/Flgas';
+import styled from 'styled-components/native';
+import {Satoshi500} from 'constants/fonts';
+import {whiteColor} from 'constants/colors';
 
-export const Container = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: flex-start;
-  width: 382px;
+export const StyledRadialGradient = styled(RadialGradient)`
+  padding: 16px;
   border-radius: 20px;
-  background-color: rgba(255, 255, 255, 0.04);
-  padding: 20px;
-  gap: 15px;
+  overflow: hidden;
 `;
 
-export const CardLabel = styled.Text`
-  font-family: ${Satoshi500};
+export const SectionTitle = styled.Text`
   color: ${whiteColor};
+  font-family: ${Satoshi500};
+  font-size: ${RFValue(14, 932)}px;
+  margin-bottom: 8px;
   opacity: 0.5;
-`;
-export const Title = styled.Text`
-  font-family: ${Satoshi700};
-  font-size: ${RFValue(16)}px;
-  color: ${grayColor};
-  margin-bottom: 10px;
 `;
 
 export const LanguagesContainer = styled.View`
   flex-direction: row;
-  flex-wrap: wrap; /* Allows pills to wrap to the next line */
-  align-items: flex-start;
-`;
-
-export const LanguagePill = styled.View`
-  flex-direction: row;
-  align-items: center;
-  background-color: ${lightGrayColor};
-  border-radius: 15px; /* Make it pill-shaped */
-  padding: 8px 12px;
-  margin-right: 8px;
-  margin-bottom: 8px;
+  flex-wrap: wrap;
   gap: 8px;
 `;
 
-export const LanguageText = styled.Text`
-  font-family: ${Satoshi500};
-  font-size: ${RFValue(12)}px;
-  color: ${grayColor};
+export const LanguageTag = styled.View`
+  background-color: #1a1a1a;
+  padding-right: 8px;
+  padding-left: 4px;
+  padding-vertical: 4px;
+  border-radius: 100px;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 14px;
+  gap: 8px;
 `;
 
-export const LanguageFlag = styled(Flags)`
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
-`;
-
-export const FlagContainer = styled.View`
+export const LanguageIconContainer = styled.View`
+  background-color: #262626;
+  border-radius: 100px;
   justify-content: center;
   align-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 100px;
-  background-color: rgba(0, 0, 0, 0.08);
+  width: 32px;
+  height: 32px;
+`;
+
+export const LanguageIcon = styled.Text`
+  font-size: ${RFValue(18, 932)}px;
+`;
+
+export const LanguageText = styled.Text`
+  font-size: ${RFValue(16, 932)}px;
+  color: ${whiteColor};
+  font-family: ${Satoshi500};
 `;

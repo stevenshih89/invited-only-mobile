@@ -1,15 +1,20 @@
-import {components} from 'src/api/v1';
+import {FC} from 'react';
 import * as S from './GuestBioCard.style';
 
-interface Props {
-  guestInfo: components['schemas']['User'];
-}
-const GuestBioCard = ({guestInfo}: Props) => {
+const GuestBioCard: FC<{bio: string}> = ({bio}) => {
+  if (!bio) {
+    return null;
+  }
+
   return (
-    <S.Container>
-      <S.CardLabel>Bio</S.CardLabel>
-      <S.WhiteTextInfo>{guestInfo.bio}</S.WhiteTextInfo>
-    </S.Container>
+    <S.StyledRadialGradient
+      colors={['rgba(26, 26, 26, 0.40)', 'rgba(0, 0, 0, 0.00)', 'rgba(255, 255, 255, 0.07)']}
+      stops={[0, 0.695, 1]}
+      center={[220, -386]}
+      radius={400}>
+      <S.SectionTitle>Bio</S.SectionTitle>
+      <S.BioText>{bio}</S.BioText>
+    </S.StyledRadialGradient>
   );
 };
 

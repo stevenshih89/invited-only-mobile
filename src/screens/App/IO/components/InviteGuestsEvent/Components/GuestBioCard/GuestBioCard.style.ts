@@ -1,33 +1,26 @@
+import RadialGradient from 'react-native-radial-gradient';
+import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
-import {whiteColor} from 'constants/colors';
 import {Satoshi500} from 'constants/fonts';
+import {whiteColor} from 'constants/colors';
 
-export const Container = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: flex-start;
-  width: 382px;
+export const StyledRadialGradient = styled(RadialGradient)`
+  padding: 16px;
   border-radius: 20px;
-  background-color: rgba(255, 255, 255, 0.04);
-  padding: 20px;
-  gap: 15px;
+  overflow: hidden;
+  margin-top: 8px;
 `;
-export const CardLabel = styled.Text`
-  font-family: ${Satoshi500};
+
+export const BioText = styled.Text`
   color: ${whiteColor};
+  font-family: ${Satoshi500};
+  font-size: ${RFValue(16, 932)}px;
+`;
+
+export const SectionTitle = styled.Text`
+  color: ${whiteColor};
+  font-family: ${Satoshi500};
+  font-size: ${RFValue(14, 932)}px;
+  margin-bottom: 8px;
   opacity: 0.5;
-`;
-
-export const DescriptionTextContainer = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-`;
-
-export const WhiteTextInfo = styled.Text`
-  font-family: ${Satoshi500};
-  color: ${whiteColor};
 `;

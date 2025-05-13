@@ -30,7 +30,7 @@ export const DropdownWrapper = styled.View`
 
 export const HeaderRow = styled.View`
     display: flex;
-
+    
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -63,14 +63,14 @@ export const NameContainer = styled.View`
     display: flex;
     flex-direction: column;
     justify-content: center;
-
+    height: 40px;
     
 `;
 
 export const NameText = styled.Text`
     font-family: ${Satoshi500};
     font-size: 24px;
-    line-height: 16.94px;
+    line-height: 28px;
     color:rgb(251, 251, 251);
 
 `;

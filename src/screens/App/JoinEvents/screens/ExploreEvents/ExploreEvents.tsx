@@ -37,7 +37,7 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events }) => {
 
   const hasCards = currentEventCards.length > 0;
   const currentCard = hasCards ? currentEventCards[currentEventCards.length - 1] : undefined;
-
+  console.log('currentCard', currentCard);
   const { createEventAttendee, swipeDataRes } = useSwipeCardAction();
 
   const { isModalVisible, closeModal, matchedCard } = useNewConnectionModal({ swipeDataRes, allCards: events, isEvent: true });
@@ -51,7 +51,7 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events }) => {
       <S.Container>
 
         <ExploreEventsEmptyFallback />
-        <NewConnectionModal cardData={matchedCard} visible={isModalVisible} onClose={closeModal} isEvent={true} />
+        <NewConnectionModal cardData={matchedCard} visible={isModalVisible} onClose={closeModal} isEvent={true} eventId={currentCard?.uid || ''} />
       </S.Container>
     );
   }
@@ -115,7 +115,7 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events }) => {
           </S.BlockAndReportButton>
         </S.BlockAndReportContainer>
         <ModalReport ref={bottomSheetModalRef} />
-        <NewConnectionModal cardData={matchedCard} visible={isModalVisible} onClose={closeModal} isEvent={true} />
+        <NewConnectionModal cardData={matchedCard} visible={isModalVisible} onClose={closeModal} isEvent={true} eventId={currentCard?.uid || ''} />
       </S.BottomWrapper>
     </ScrollView>
   );

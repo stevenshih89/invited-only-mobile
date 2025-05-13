@@ -8,22 +8,28 @@ import Card from 'screens/App/Components/Card/Card';
 import { calculateAge } from 'helpers/calculateAge';
 import useUser from 'hooks/user/useUser';
 import { Stepper } from 'screens/App/Components/Stepper/Stepper';
-import { useAppNavigation } from 'hooks/useAppNavigation';
+import useNavigateToChat from 'screens/App/Chat/hooks/useNavigateToChat';
 
 interface NewConnectionModalProps {
     visible: boolean;
     onClose: () => void;
     cardData: components['schemas']['User'] | components['schemas']['EventData'] | undefined;
     isEvent: boolean;
-
+    eventId: string;
 }
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible, onClose, cardData, isEvent }) => {
+export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible, onClose, cardData, isEvent, eventId }) => {
     const { user } = useUser();
-    const navigation = useAppNavigation();
+    const { navigateToChat, isChatLoading, isChatFound } = useNavigateToChat({
+        eventId: eventId,
+        hostId: isEvent ? (cardData as components['schemas']['EventData'])?.hostId || '' : user?.uid || '',
+        guestId: !isEvent ? (cardData as components['schemas']['User'])?.uid || '' : user?.uid || '',
+        asGuest: isEvent ? true : false,
+        isEnabled: cardData && 'uid' in cardData && 'hostId' in cardData,
+    });
     const { card1AnimatedStyle, card2AnimatedStyle, stepperAnimatedStyle, buttonAnimatedStyle } =
         useNewConnectionAnimations({ visible });
 
@@ -80,8 +86,8 @@ export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible,
                     </Animated.View>
                     <Animated.View style={buttonAnimatedStyle}>
                         <S.ButtonContainer>
-                            <S.SendMessageButton onPress={() => {
-                                navigation.navigate('/chat');
+                            <S.SendMessageButton disabled={isChatLoading || !isChatFound} onPress={() => {
+                                navigateToChat();
                                 onClose();
                             }}>
                                 <S.StyledSendMessageIconContainer>

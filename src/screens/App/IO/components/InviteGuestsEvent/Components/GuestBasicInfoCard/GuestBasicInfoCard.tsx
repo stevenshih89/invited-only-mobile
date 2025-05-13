@@ -1,33 +1,62 @@
-import { components } from 'src/api/v1';
+import { FC } from 'react';
+import { View } from 'react-native';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './GuestBasicInfoCard.style';
-import TablerGenderIcon from 'src/assets/images/icons/gender-girl.svg';
+import { useGenderSpecs } from 'hooks/useGenderSpecs';
 import InterestImageSmallList from 'screens/App/Components/Intrests/InterestImageSmallList';
 
-interface Props {
-  guestInfo: components['schemas']['User'];
+interface GuestBasicInfoCardProps {
+  homeAddress: string;
+  work: components['schemas']['Work'];
+  gender: 'man' | 'woman' | 'other';
+  listOfInterestsImages: components['schemas']['Interest'][];
 }
-const GuestBasicInfoCard = ({ guestInfo }: Props) => {
+
+const GuestBasicInfoCard: FC<GuestBasicInfoCardProps> = ({ homeAddress, work, gender, listOfInterestsImages }) => {
+  const { genderIcon: GenderIcon, genderText } = useGenderSpecs(gender);
+
   return (
-    <S.Container>
-      <S.BasicsContainer>
-        <S.CardLabel>Basics</S.CardLabel>
-        <S.DescriptionTextContainer>
-          <S.RoundedTextViewContainer>
-            <TablerGenderIcon />
-            <S.WhiteTextInfo>{guestInfo.gender === 'woman' ? 'She (her)' : 'He'}</S.WhiteTextInfo>
-          </S.RoundedTextViewContainer>
-          <S.WhiteGrayInfo>Lives in</S.WhiteGrayInfo>
-          <S.RoundedTextViewContainer>
-            <S.WhiteTextInfo>{guestInfo.homeAddress}</S.WhiteTextInfo>
-          </S.RoundedTextViewContainer>
-          <S.WhiteGrayInfo>And work as</S.WhiteGrayInfo>
-          <S.RoundedTextViewContainer>
-            <S.WhiteTextInfo>{guestInfo.work?.title}</S.WhiteTextInfo>
-          </S.RoundedTextViewContainer>
-        </S.DescriptionTextContainer>
-        <InterestImageSmallList interests={guestInfo.interests || []} />
-      </S.BasicsContainer>
-    </S.Container>
+    <S.StyledRadialGradient
+      colors={['rgba(26, 26, 26, 0.40)', 'rgba(0, 0, 0, 0.00)', 'rgba(255, 255, 255, 0.07)']}
+      stops={[0, 0.695, 1]}
+      center={[220, -386]}
+      radius={400}>
+      <S.SectionTitle>Basics</S.SectionTitle>
+      <S.TagsContainer>
+        <S.TagContainer>
+          <S.TagIconContainer>
+            <GenderIcon />
+          </S.TagIconContainer>
+          <S.TagText>{genderText}</S.TagText>
+        </S.TagContainer>
+        {homeAddress && (
+          <S.Container>
+            <S.LocationText>lives in</S.LocationText>
+            <S.TagContainer>
+              <S.TagText>{homeAddress}</S.TagText>
+            </S.TagContainer>
+          </S.Container>
+        )}
+        {work?.title && (
+          <S.Container>
+            <S.LocationText>, and works as a</S.LocationText>
+            <S.TagContainer>
+              <S.TagText>{work?.title}</S.TagText>
+            </S.TagContainer>
+          </S.Container>
+        )}
+      </S.TagsContainer>
+      {!!listOfInterestsImages?.length && (
+        <View style={{ marginTop: 24 }}>
+          <S.SectionTitle>Interests</S.SectionTitle>
+          <S.InterestsContainer>
+            <S.InterestTagsContainer>
+              <InterestImageSmallList interests={listOfInterestsImages} />
+            </S.InterestTagsContainer>
+          </S.InterestsContainer>
+        </View>
+      )}
+    </S.StyledRadialGradient>
   );
 };
 

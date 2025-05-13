@@ -10,6 +10,7 @@ import useGetUserById from 'hooks/useGetUserById';
 import useHostConnectionActions from 'hooks/connections/useHostConnectionActions';
 import useGuestConnectionActions from 'hooks/connections/useGuestConnectionActions';
 import { useAppNavigation } from 'hooks/useAppNavigation';
+import useNavigateToChat from 'screens/App/Chat/hooks/useNavigateToChat';
 
 export interface Notification {
     id: string;
@@ -29,6 +30,12 @@ interface NotificationItemProps {
 
 const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteNotification }: NotificationItemProps) => {
     const navigation = useAppNavigation();
+    const { navigateToChat } = useNavigateToChat({
+        eventId: notification.eventId || '',
+        hostId: notification.hostId || '',
+        guestId: notification.guestId || '',
+        asGuest: true,
+    });
     const { data: user } = useGetUserById(notification.guestId || '');
 
     const notificationType = notification.type;
@@ -93,7 +100,7 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
                                         <S.ActionButtonPrimary disabled={isLoading} onPress={!isJoinedEvents ? handleHostConfirmEvent : handleGuestConfirmEvent}>
                                             <S.ActionButtonTextPrimary>{isLoading ? 'Processing...' : !isJoinedEvents ? 'Invite' : 'Approve'}</S.ActionButtonTextPrimary>
                                         </S.ActionButtonPrimary>
-                                        <S.ActionButtonSecondary disabled={isLoading} onPress={!isJoinedEvents ? handleHostRejectEvent : () => { navigation.navigate('/chat') }}>
+                                        <S.ActionButtonSecondary disabled={isLoading} onPress={!isJoinedEvents ? handleHostRejectEvent : () => { navigateToChat() }}>
                                             <S.ActionButtonTextSecondary>{isLoading ? 'Processing...' : !isJoinedEvents ? 'Reject' : 'Chat'}</S.ActionButtonTextSecondary>
                                         </S.ActionButtonSecondary>
                                     </S.ActionButtonContainer>

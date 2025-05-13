@@ -16,7 +16,7 @@ interface ChatItemProps {
 
 export const ChatItem = ({ chat, isJoinedEvent }: ChatItemProps) => {
     const navigation = useAppNavigation();
-    const { data: event, isLoading: isEventLoading } = useGetEvent(chat.eventId || '');
+    const { data: event, isLoading: isEventLoading } = useGetEvent(chat?.eventId || '');
     const { userMetadata } = useAuthStore.getState();
     const { mutate: updateChatSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen')
     const userLastSeen = chat.userLastSeen?.some((user) => user.userId === userMetadata.uid);

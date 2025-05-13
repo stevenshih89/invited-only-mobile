@@ -1,16 +1,16 @@
-import {View, Platform, ScrollView, KeyboardAvoidingView, ActivityIndicator} from 'react-native';
-import {useRoute} from '@react-navigation/native';
-import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-import {useCallback, useRef, useState} from 'react';
+import { View, Platform, ScrollView, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { useCallback, useRef, useState } from 'react';
 import * as S from './ChatWindow.style';
-import {ChatWindowHeader} from './ChatWindowHeader/ChatWindowHeader';
+import { ChatWindowHeader } from './ChatWindowHeader/ChatWindowHeader';
 import useRealtimeChatMessages from './hooks/useRealtimeChatMessages';
 import useChatWindowMutations from './hooks/useChatWindowMutations';
-import {RootStackParamList} from 'typescript/types';
+import { RootStackParamList } from 'typescript/types';
 import useUser from 'hooks/user/useUser';
 import SendIcon from 'src/assets/images/icons/send-message.svg';
 import useChatSocket from 'src/api/realtime/useChatSocket';
-import {whiteColor} from 'constants/colors';
+import { whiteColor } from 'constants/colors';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalChatHost from 'components/Modal/ModalChatHost/ModalChatHost';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
@@ -25,19 +25,20 @@ export const ChatWindow = () => {
   const chatId = `${chat?.eventId}_${chat?.hostId}_${chat?.guestId}`;
   const isJoinedEvent = params?.isJoinedEvent;
   const [isOpenModalDeleteChat, setIsOpenModalDeleteChat] = useState(false);
-  const {chatMessages, updateChatMessages, isLoading} = useRealtimeChatMessages(chatId);
-  const {user} = useUser();
-  const {sendMessage} = useChatSocket(chatId, updateChatMessages);
-  const {newMessage, setNewMessage, scrollViewRef, handleSendMessage} = useChatWindowMutations({
+  const { chatMessages, updateChatMessages, isLoading } = useRealtimeChatMessages(chatId);
+  const { user } = useUser();
+  const { sendMessage } = useChatSocket(chatId, updateChatMessages);
+  const { newMessage, setNewMessage, scrollViewRef, handleSendMessage } = useChatWindowMutations({
     chatId: chatId,
     userId: user?.uid || '',
     sendMessage: sendMessage,
   });
 
+
   const formatTime = (timestamp?: string) => {
     if (!timestamp) return '';
     const date = new Date(timestamp);
-    return date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   const modalChatHostRef = useRef<BottomSheetModal>(null);
@@ -74,7 +75,7 @@ export const ChatWindow = () => {
             <ScrollView
               ref={scrollViewRef}
               onContentSizeChange={() => {
-                scrollViewRef.current?.scrollToEnd({animated: true});
+                scrollViewRef.current?.scrollToEnd({ animated: true });
               }}>
               {chatMessages?.[0]?.timestamp && (
                 <S.TimeBadge>
@@ -89,7 +90,7 @@ export const ChatWindow = () => {
                 return (
                   <S.MessageContainer key={item.timestamp} isOwn={isOwn}>
                     <S.MessageRow isOwn={isOwn}>
-                      {!isOwn && avatarUrl && <S.Avatar source={{uri: avatarUrl}} />}
+                      {!isOwn && avatarUrl && <S.Avatar source={{ uri: avatarUrl }} />}
                       <S.MessageBubble isOwn={isOwn}>
                         <S.MessageText>{typeof item?.content === 'object' ? JSON.stringify(item.content) : item?.content}</S.MessageText>
                       </S.MessageBubble>
@@ -102,7 +103,7 @@ export const ChatWindow = () => {
                   </S.MessageContainer>
                 );
               })}
-              <View style={{height: 10}} />
+              <View style={{ height: 10 }} />
             </ScrollView>
           </S.ContentContainer>
         )}
@@ -111,7 +112,7 @@ export const ChatWindow = () => {
           <S.InputContainer>
             <S.InputField
               onFocus={() => {
-                scrollViewRef.current?.scrollToEnd({animated: true});
+                scrollViewRef.current?.scrollToEnd({ animated: true });
               }}
               placeholder="Write your message..."
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
@@ -133,7 +134,7 @@ export const ChatWindow = () => {
         </KeyboardAvoidingView>
       </S.Container>
       {chat && (
-        <>
+        <S.OutterContainer>
           <ModalChatHost
             ref={modalChatHostRef}
             chat={chat}
@@ -145,14 +146,16 @@ export const ChatWindow = () => {
           <ModalDefault
             isVisible={isOpenModalDeleteChat}
             onClose={() => setIsOpenModalDeleteChat(false)}
-            onConfirm={() => {}}
+            onConfirm={() => { }}
             cancelText="Cancel"
             confirmText="Delete"
             title="Delete Chat"
             description="This will permanently remove the conversation from your chat list"
           />
-        </>
+        </S.OutterContainer>
       )}
     </BottomSheetModalProvider>
   );
 };
+
+export default ChatWindow;

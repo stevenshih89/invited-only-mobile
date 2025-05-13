@@ -8,6 +8,12 @@ interface IsOwnProps {
     isOwn: boolean;
 }
 
+
+export const OutterContainer = styled.View`
+    display: flex;
+    flex: 1;
+`;
+
 export const Container = styled.View`
     display: flex;
     height: ${screenHeight * 0.98}px;

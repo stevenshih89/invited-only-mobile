@@ -25,11 +25,11 @@ const useConnectionRealtimeStatus = ({ chat }: ConnectionStatus) => {
     useFirestoreSubscriptionConnectionStatus({
         collectionName: attendees || '',
         queryKey: ['get', '/eventAttendees/host/{hostId}', { params: { path: { hostId: userMetadata?.uid || '' } } }],
-        docId: chat.id || ''
+        docId: chat?.id || ''
     })
 
     return {
-        connectionStatus: connectionStatuses?.filter((connectionStatus) => `${connectionStatus.eventId}_${connectionStatus.hostId}_${connectionStatus.guestId}` === `${chat.eventId}_${chat.hostId}_${chat.guestId}`)[0],
+        connectionStatus: connectionStatuses?.filter((connectionStatus) => `${connectionStatus?.eventId}_${connectionStatus?.hostId}_${connectionStatus?.guestId}` === `${chat?.eventId}_${chat?.hostId}_${chat?.guestId}`)[0],
         isLoading
     };
 }

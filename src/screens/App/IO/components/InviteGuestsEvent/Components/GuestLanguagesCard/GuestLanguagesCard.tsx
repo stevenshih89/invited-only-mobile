@@ -1,32 +1,40 @@
-import React from 'react';
-import {components} from 'src/api/v1';
+import { components } from "@invited-only/invited-only-api";
+import { FC } from "react";
+import { View } from "react-native";
+import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import * as S from './GuestLanguagesCard.style';
 
+type Language = components['schemas']['Language'];
+
 interface GuestLanguagesCardProps {
-  guestInfo: components['schemas']['User'];
+  languages: Language[];
 }
 
-const GuestLanguagesCard: React.FC<GuestLanguagesCardProps> = ({guestInfo}) => {
-  // Assuming languages is an array of strings or objects with a name/title property
-  const languages = guestInfo.languages || [];
-
-  if (!languages || languages.length === 0) {
-    return null; // Don't render anything if there are no languages
+const GuestLanguagesCard: FC<GuestLanguagesCardProps> = ({ languages }) => {
+  if (!languages?.length) {
+    return null;
   }
+
   return (
-    <S.Container>
-      <S.CardLabel>Languages</S.CardLabel>
-      <S.LanguagesContainer>
-        {languages.map((language, index) => (
-          <S.LanguagePill key={index}>
-            <S.FlagContainer>
-              <S.LanguageFlag countryCode={'UK'} />
-            </S.FlagContainer>
-            <S.LanguageText>{typeof language === 'string' ? language : language.title /* or language.title */}</S.LanguageText>
-          </S.LanguagePill>
-        ))}
-      </S.LanguagesContainer>
-    </S.Container>
+    <View style={{ marginTop: 8, width: '100%' }}>
+      <S.StyledRadialGradient
+        colors={['rgba(26, 26, 26, 0.40)', 'rgba(0, 0, 0, 0.00)', 'rgba(255, 255, 255, 0.07)']}
+        stops={[0, 0.695, 1]}
+        center={[220, -386]}
+        radius={400}>
+        <S.SectionTitle>Languages</S.SectionTitle>
+        <S.LanguagesContainer>
+          {languages?.map((item: Language) => (
+            <S.LanguageTag key={item.id}>
+              <S.LanguageIconContainer>
+                <S.LanguageIcon>{getUnicodeFlagIcon(item.flag?.toUpperCase() || '')}</S.LanguageIcon>
+              </S.LanguageIconContainer>
+              <S.LanguageText>{item.title || ''}</S.LanguageText>
+            </S.LanguageTag>
+          ))}
+        </S.LanguagesContainer>
+      </S.StyledRadialGradient>
+    </View>
   );
 };
 

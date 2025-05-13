@@ -4,19 +4,19 @@ import invitedOnlyBackendApi from "src/api/backend-api";
 
 interface UseGetAllChatsProps {
     eventId: string;
+    isEnabled?: boolean;
 }
 
-const useGetChats = ({ eventId }: UseGetAllChatsProps) => {
+const useGetChats = ({ eventId, isEnabled = true }: UseGetAllChatsProps) => {
     const { user } = useUser();
     const { data: chats, isLoading: isChatLoading } = invitedOnlyBackendApi.useQuery('get', '/chat/event/{eventId}', {
         params: {
             path: {
                 eventId: eventId
             }
-        }
-
+        },
     }, {
-        enabled: !!eventId && eventId !== 'joined-events',
+        enabled: !!eventId && eventId !== 'joined-events' && isEnabled,
         refetchInterval: 1000
     });
 

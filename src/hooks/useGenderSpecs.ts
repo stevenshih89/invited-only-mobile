@@ -1,7 +1,14 @@
 import MaleGenderIcon from 'assets/images/icons/gender.svg';
 import FemaleGenderIcon from 'assets/images/icons/female-gender.svg';
 
-export const useGenderSpecs = (gender: 'man' | 'woman' | 'other') => {
+export const useGenderSpecs = (gender: 'man' | 'woman' | 'other' | undefined) => {
+  if (!gender) {
+    return {
+      genderIcon: null,
+      genderText: null,
+    };
+  }
+
   const getGenderIcon = () =>
     (
       ({

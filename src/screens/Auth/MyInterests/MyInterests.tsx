@@ -1,6 +1,6 @@
-import React, {FC, JSX, useCallback} from 'react';
-import {Keyboard} from 'react-native';
-import {InterestState, useMyInterests} from './hooks/useMyInterests';
+import React, { FC, JSX, useCallback } from 'react';
+import { Keyboard } from 'react-native';
+import { InterestState, useMyInterests } from './hooks/useMyInterests';
 import * as S from './MyInterests.style';
 import AuthProgress from 'components/AuthProgress';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
@@ -8,10 +8,10 @@ import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
 
 const MyInterests: FC = (): JSX.Element => {
-  const {listOfInterests, handleSelectInterest, handleNext, navigation} = useMyInterests();
+  const { listOfInterests, handleSelectInterest, handleNext, navigation } = useMyInterests();
 
   const renderItem = useCallback(
-    ({item}: {item: InterestState}) => {
+    ({ item }: { item: InterestState }) => {
       return (
         <S.InterestItem onPress={() => handleSelectInterest(item.id)} isSelected={item.isSelected} testID={`interest-item-${item.id}`}>
           <S.InterestImage testID={`image-of-interest`} source={item.image} resizeMode="cover">
@@ -52,7 +52,7 @@ const MyInterests: FC = (): JSX.Element => {
                     numColumns={2}
                     showsVerticalScrollIndicator={false}
                     data={listOfInterests}
-                    keyExtractor={({id}: {id: number}) => id.toString()}
+                    keyExtractor={({ id }: { id: number }) => id.toString()}
                     renderItem={renderItem}
                   />
                   <S.ListGradient colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']} />
