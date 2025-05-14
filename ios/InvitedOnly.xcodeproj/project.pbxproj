@@ -227,7 +227,6 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"$(SRCROOT)/newInputFile.xcfilelist",
 			);
 			inputPaths = (
 				"$(SRCROOT)/.xcode.env.local",
@@ -238,7 +237,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\n# Set all environment variables first\nexport SOURCEMAP_FILE=\"$(pwd)/../main.jsbundle.map\"\nexport EXTRA_PACKAGER_ARGS=\"--sourcemap-output $SOURCEMAP_FILE\"\n\n# Use React Native path variables (don't export these)\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n# Execute the build script\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+			shellScript = "set -e\n\n# Set all environment variables first\nexport SOURCEMAP_FILE=\"$(pwd)/../main.jsbundle.map\";\n\n# Set the entry file extension for TypeScript\nexport RN_SRC_EXT=\"tsx\"\n\n# Use React Native path variables (don't export these)\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n# Execute the build script\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
 		16ED2FE4F7D92E5B2D940DFC /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -558,7 +557,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;

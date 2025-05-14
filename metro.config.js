@@ -9,6 +9,12 @@ const {
   resolver: {sourceExts, assetExts},
 } = getDefaultConfig(__dirname);
 
+/**
+ * Metro configuration
+ * https://facebook.github.io/metro/docs/configuration
+ *
+ * @type {import('metro-config').MetroConfig}
+ */
 const config = {
   transformer: {
     getTransformOptions: async () => ({
