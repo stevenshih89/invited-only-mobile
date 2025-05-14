@@ -11,6 +11,8 @@ import TrashSolidIcon from 'assets/images/icons/trash-solid-gray.svg';
 
 import Button from 'components/Button/Button';
 import {useInvitationStatus} from 'hooks/useInvitationStatus';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {userProfilePreviewPath} from 'constants/pathLocations';
 
 interface ModalChatGuestProps {
   onClose: () => void;
@@ -28,6 +30,15 @@ interface Option {
 const ModalChatGuest = forwardRef<BottomSheetModal, ModalChatGuestProps>(({onClose, openBlockReportModal, chat}, ref) => {
   const snapPoints = useMemo(() => ['45%', '60%'], []);
 
+  const navigation = useAppNavigation();
+
+  const handleGoToProfile = () => {
+    // @ts-ignore
+    navigation.navigate(userProfilePreviewPath, {
+      userUid: chat.hostId,
+    });
+  };
+
   const optionsList: Option[] = [
     {
       icon: CalendarEventDarkGrayIcon,
@@ -39,7 +50,7 @@ const ModalChatGuest = forwardRef<BottomSheetModal, ModalChatGuestProps>(({onClo
       icon: ProfileFillIcon,
       title: 'Event Owner Profile',
       description: 'See profile for more information',
-      onPress: () => {},
+      onPress: () => handleGoToProfile(),
     },
     {
       icon: ReportRoundedIcon,

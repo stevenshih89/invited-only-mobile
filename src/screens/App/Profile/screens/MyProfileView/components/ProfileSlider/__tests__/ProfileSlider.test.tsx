@@ -1,5 +1,5 @@
 import React from 'react';
-import { render} from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 import ProfileSlider from '../ProfileSlider';
 
 jest.mock('react-native-fast-image', () => 'FastImage');
@@ -15,21 +15,21 @@ describe('ProfileSlider', () => {
   };
 
   it('renders correctly', () => {
-    const {getByText} = render(<ProfileSlider {...mockProps} />);
+    const { getByText } = render(<ProfileSlider {...mockProps} />);
 
     expect(getByText('John,')).toBeTruthy();
     expect(getByText('25')).toBeTruthy();
   });
 
   it('renders correct number of dots', () => {
-    const {getAllByTestId} = render(<ProfileSlider {...mockProps} />);
+    const { getAllByTestId } = render(<ProfileSlider {...mockProps} />);
     const dots = getAllByTestId('slider-dot');
 
     expect(dots).toHaveLength(mockProps.photos.length);
   });
 
   it('shows first photo as active initially', () => {
-    const {getAllByTestId} = render(<ProfileSlider {...mockProps} />);
+    const { getAllByTestId } = render(<ProfileSlider {...mockProps} />);
     const dots = getAllByTestId('slider-dot');
 
     expect(dots[0].props.style).toEqual({

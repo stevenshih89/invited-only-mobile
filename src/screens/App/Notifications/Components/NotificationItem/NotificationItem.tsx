@@ -9,7 +9,6 @@ import useSwipeToDelete from './hooks/useSwipeToDelete';
 import useGetUserById from 'hooks/useGetUserById';
 import useHostConnectionActions from 'hooks/connections/useHostConnectionActions';
 import useGuestConnectionActions from 'hooks/connections/useGuestConnectionActions';
-import { useAppNavigation } from 'hooks/useAppNavigation';
 import useNavigateToChat from 'screens/App/Chat/hooks/useNavigateToChat';
 
 export interface Notification {
@@ -29,7 +28,6 @@ interface NotificationItemProps {
 }
 
 const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteNotification }: NotificationItemProps) => {
-    const navigation = useAppNavigation();
     const { navigateToChat } = useNavigateToChat({
         eventId: notification.eventId || '',
         hostId: notification.hostId || '',

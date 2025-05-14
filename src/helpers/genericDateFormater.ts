@@ -129,3 +129,67 @@ export const parseStringToDate = (dateString: string | null | undefined): Date |
         return null;
     }
 };
+
+/**
+ * Calculates a person's age based on their birthdate
+ * @param birthDate - Birthdate in various formats (string, Timestamp, Date object)
+ * @param asOfDate - Optional date to calculate age as of (defaults to current date)
+ * @returns Age in years or -1 if calculation fails
+ */
+export const calculateAge = (
+    birthDate: string | Timestamp | Date | null | undefined,
+    asOfDate: string | Timestamp | Date | null | undefined = new Date()
+): number => {
+    try {
+        let birthDateObj: Date | null = null;
+        let calculationDate: Date | null = null;
+
+        // Parse birth date
+        if (!birthDate) return -1;
+
+        if (typeof birthDate === 'string') {
+            birthDateObj = parseStringToDate(birthDate);
+        } else if (birthDate instanceof Date) {
+            birthDateObj = birthDate;
+        } else if (typeof birthDate === 'object' && birthDate !== null && '_seconds' in birthDate) {
+            const timestamp = birthDate as unknown as FirebaseTimestamp;
+            birthDateObj = new Date(timestamp._seconds * 1000);
+        }
+
+        // Parse "as of" date
+        if (!asOfDate) {
+            calculationDate = new Date();
+        } else if (typeof asOfDate === 'string') {
+            calculationDate = parseStringToDate(asOfDate);
+        } else if (asOfDate instanceof Date) {
+            calculationDate = asOfDate;
+        } else if (typeof asOfDate === 'object' && asOfDate !== null && '_seconds' in asOfDate) {
+            const timestamp = asOfDate as unknown as FirebaseTimestamp;
+            calculationDate = new Date(timestamp._seconds * 1000);
+        }
+
+        // Validate dates
+        if (!birthDateObj || !calculationDate || isNaN(birthDateObj.getTime()) || isNaN(calculationDate.getTime())) {
+            return -1;
+        }
+
+        // Calculate age
+        let age = calculationDate.getFullYear() - birthDateObj.getFullYear();
+
+        // Adjust age if birthday hasn't occurred yet this year
+        const birthdayThisYear = new Date(
+            calculationDate.getFullYear(),
+            birthDateObj.getMonth(),
+            birthDateObj.getDate()
+        );
+
+        if (calculationDate < birthdayThisYear) {
+            age--;
+        }
+
+        return age;
+    } catch (error) {
+        console.error('Age calculation error:', error);
+        return -1;
+    }
+};

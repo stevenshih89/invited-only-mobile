@@ -13,7 +13,7 @@ const NotificationsStackScreen = ({ route }: { route: any }) => {
         headerStyle: {
             backgroundColor: blackColor,
         },
-        headerTitle: 'Notifications', // Changed title
+        headerTitle: 'Notifications',
         headerTitleStyle: {
             color: whiteColor,
         },
@@ -21,7 +21,6 @@ const NotificationsStackScreen = ({ route }: { route: any }) => {
             color: whiteColor,
         },
         headerTintColor: whiteColor,
-        // header: () => <NotificationHeader title="Notifications" onBackPress={() => navigation.goBack()} />, // Using the new header
     };
 
     return (

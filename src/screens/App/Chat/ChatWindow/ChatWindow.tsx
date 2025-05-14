@@ -2,6 +2,7 @@ import { View, Platform, ScrollView, KeyboardAvoidingView, ActivityIndicator } f
 import { useRoute } from '@react-navigation/native';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useCallback, useRef, useState } from 'react';
+import EmptyStateChatWindow from '../Components/EmptyStateChatWindow/EmptyStateChatWindow';
 import * as S from './ChatWindow.style';
 import { ChatWindowHeader } from './ChatWindowHeader/ChatWindowHeader';
 import useRealtimeChatMessages from './hooks/useRealtimeChatMessages';
@@ -61,6 +62,7 @@ export const ChatWindow = () => {
     return timestampA - timestampB;
   });
 
+
   return (
     <BottomSheetModalProvider>
       <S.Container>
@@ -70,43 +72,46 @@ export const ChatWindow = () => {
           <DefaultBackground>
             <ActivityIndicator size="large" color={whiteColor} />
           </DefaultBackground>
-        ) : (
-          <S.ContentContainer>
-            <ScrollView
-              ref={scrollViewRef}
-              onContentSizeChange={() => {
-                scrollViewRef.current?.scrollToEnd({ animated: true });
-              }}>
-              {chatMessages?.[0]?.timestamp && (
-                <S.TimeBadge>
-                  <S.TimeText>Today at {formatTime(chatMessages?.[0]?.timestamp)}</S.TimeText>
-                </S.TimeBadge>
-              )}
-              {sortedChatMessages?.map(item => {
-                const isOwn = item.senderId === user?.uid;
-                const avatarUrl = isOwn ? user?.facePhoto : isJoinedEvent ? chat?.hostImageUrl : chat?.guestImageUrl;
-                const senderName = isOwn ? user?.name : isJoinedEvent ? chat?.hostName : chat?.guestName;
+        ) :
+          sortedChatMessages?.length === 0 ? (
+            <EmptyStateChatWindow guestImage={chat?.guestImageUrl || ''} hostImage={chat?.hostImageUrl || ''} />
+          ) : (
+            <S.ContentContainer>
+              <ScrollView
+                ref={scrollViewRef}
+                onContentSizeChange={() => {
+                  scrollViewRef.current?.scrollToEnd({ animated: true });
+                }}>
+                {chatMessages?.[0]?.timestamp && (
+                  <S.TimeBadge>
+                    <S.TimeText>Today at {formatTime(chatMessages?.[0]?.timestamp)}</S.TimeText>
+                  </S.TimeBadge>
+                )}
+                {sortedChatMessages?.map(item => {
+                  const isOwn = item.senderId === user?.uid;
+                  const avatarUrl = isOwn ? user?.facePhoto : isJoinedEvent ? chat?.hostImageUrl : chat?.guestImageUrl;
+                  const senderName = isOwn ? user?.name : isJoinedEvent ? chat?.hostName : chat?.guestName;
 
-                return (
-                  <S.MessageContainer key={item.timestamp} isOwn={isOwn}>
-                    <S.MessageRow isOwn={isOwn}>
-                      {!isOwn && avatarUrl && <S.Avatar source={{ uri: avatarUrl }} />}
-                      <S.MessageBubble isOwn={isOwn}>
-                        <S.MessageText>{typeof item?.content === 'object' ? JSON.stringify(item.content) : item?.content}</S.MessageText>
-                      </S.MessageBubble>
-                    </S.MessageRow>
-                    <S.SenderInfo isOwn={isOwn}>
-                      <S.SenderText>
-                        {senderName} - {formatTime(item.timestamp)}
-                      </S.SenderText>
-                    </S.SenderInfo>
-                  </S.MessageContainer>
-                );
-              })}
-              <View style={{ height: 10 }} />
-            </ScrollView>
-          </S.ContentContainer>
-        )}
+                  return (
+                    <S.MessageContainer key={item.timestamp} isOwn={isOwn}>
+                      <S.MessageRow isOwn={isOwn}>
+                        {!isOwn && avatarUrl && <S.Avatar source={{ uri: avatarUrl }} />}
+                        <S.MessageBubble isOwn={isOwn}>
+                          <S.MessageText>{typeof item?.content === 'object' ? JSON.stringify(item.content) : item?.content}</S.MessageText>
+                        </S.MessageBubble>
+                      </S.MessageRow>
+                      <S.SenderInfo isOwn={isOwn}>
+                        <S.SenderText>
+                          {senderName} - {formatTime(item.timestamp)}
+                        </S.SenderText>
+                      </S.SenderInfo>
+                    </S.MessageContainer>
+                  );
+                })}
+                <View style={{ height: 10 }} />
+              </ScrollView>
+            </S.ContentContainer>
+          )}
 
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <S.InputContainer>
@@ -141,6 +146,7 @@ export const ChatWindow = () => {
             onClose={handleCloseModalChatHost}
             openBlockReportModal={handleOpenModalBlockReport}
             openDeleteChatModal={() => setIsOpenModalDeleteChat(true)}
+            isJoinEvent={isJoinedEvent}
           />
           <ModalReport ref={modalBlockReportRef} />
           <ModalDefault

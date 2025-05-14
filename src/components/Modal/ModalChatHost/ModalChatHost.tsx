@@ -1,21 +1,24 @@
-import {BottomSheetModal} from '@gorhom/bottom-sheet';
-import React, {forwardRef, useMemo} from 'react';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import React, { forwardRef, useMemo } from 'react';
 import * as S from './ModalChatHost.style';
-import {useButtonPropsByStatus} from './hooks/useButtonPropsByStatus';
-import {whiteColor} from 'constants/colors';
+import { useButtonPropsByStatus } from './hooks/useButtonPropsByStatus';
+import { whiteColor } from 'constants/colors';
 import ProfileFillIcon from 'assets/images/icons/profile-fill.svg';
 import ReportRoundedIcon from 'assets/images/icons/report-rounded-gray.svg';
 import CancelOutlineRoundedIcon from 'assets/images/icons/cancel-outline-rounded.svg';
 import TrashSolidIcon from 'assets/images/icons/trash-solid-gray.svg';
 
 import Button from 'components/Button/Button';
-import {useInvitationStatus} from 'hooks/useInvitationStatus';
+import { useInvitationStatus } from 'hooks/useInvitationStatus';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { userProfilePreviewPath } from 'constants/pathLocations';
 
 interface ModalChatHostProps {
   onClose: () => void;
   chat: any;
   openBlockReportModal: () => void;
   openDeleteChatModal: () => void;
+  isJoinEvent?: boolean;
 }
 
 interface Option {
@@ -26,15 +29,24 @@ interface Option {
 }
 
 const ModalChatHost = forwardRef<BottomSheetModal, ModalChatHostProps>(
-  ({onClose, openBlockReportModal, chat, openDeleteChatModal}, ref) => {
+  ({ onClose, openBlockReportModal, chat, openDeleteChatModal, isJoinEvent = false }, ref) => {
     const snapPoints = useMemo(() => ['45%', '60%'], []);
+
+    const navigation = useAppNavigation();
+
+    const handleGoToProfile = () => {
+      // @ts-ignore
+      navigation.navigate(userProfilePreviewPath, {
+        userUid: isJoinEvent ? chat.hostId : chat.guestId,
+      });
+    };
 
     const optionsList: Option[] = [
       {
         icon: ProfileFillIcon,
         title: 'View Profile',
         description: 'View detailed information',
-        onPress: () => {},
+        onPress: () => handleGoToProfile(),
       },
       {
         icon: ReportRoundedIcon,
@@ -46,7 +58,7 @@ const ModalChatHost = forwardRef<BottomSheetModal, ModalChatHostProps>(
         icon: CancelOutlineRoundedIcon,
         title: 'Cancel Invitation',
         description: 'Withdraw your invite',
-        onPress: () => {},
+        onPress: () => { },
       },
       {
         icon: TrashSolidIcon,
@@ -56,9 +68,9 @@ const ModalChatHost = forwardRef<BottomSheetModal, ModalChatHostProps>(
       },
     ];
 
-    const {invitationStatus} = useInvitationStatus(chat.connectionStatus);
+    const { invitationStatus } = useInvitationStatus(chat.connectionStatus);
 
-    const {buttonProps} = useButtonPropsByStatus(invitationStatus);
+    const { buttonProps } = useButtonPropsByStatus(invitationStatus);
 
     const handleDismiss = () => {
       if (ref && 'current' in ref && ref.current) {
@@ -80,7 +92,7 @@ const ModalChatHost = forwardRef<BottomSheetModal, ModalChatHostProps>(
         <S.Wrapper>
           <S.Container>
             <S.MenuListItem activeOpacity={1}>
-              <S.StyledImage source={{uri: chat.hostImageUrl}} />
+              <S.StyledImage source={{ uri: chat.hostImageUrl }} />
               <S.MenuListTextBlock>
                 <S.MenuListTitle>{chat.guestName}</S.MenuListTitle>
                 <S.MenuListDescription>24 Years Old</S.MenuListDescription>
@@ -93,7 +105,7 @@ const ModalChatHost = forwardRef<BottomSheetModal, ModalChatHostProps>(
               data={optionsList}
               keyExtractor={(item: Option) => item.title}
               ItemSeparatorComponent={S.MenuListSeparator}
-              renderItem={({item}: {item: Option}) => {
+              renderItem={({ item }: { item: Option }) => {
                 const Icon = item.icon;
                 return (
                   <S.MenuListItem onPress={item.onPress}>

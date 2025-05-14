@@ -1,4 +1,4 @@
-import { components } from '@invited-only/invited-only-api';
+import {components} from '@invited-only/invited-only-api';
 
 export type RootStackParamList = {
   '/bottom-tabs-stack': {
@@ -71,7 +71,7 @@ export type RootStackParamList = {
   '/code-verified': undefined;
   '/verify-first-step': undefined;
   '/verify-second-step': undefined;
-  '/invitation-code': { cameFromSummary: boolean };
+  '/invitation-code': {cameFromSummary: boolean};
 
   '/tutorial-flow': undefined;
   '/io': undefined;
@@ -125,4 +125,7 @@ export type RootStackParamList = {
   '/profile/welcome-to-premium': undefined;
   '/profile/super-invite': undefined;
   '/profile/super-join': undefined;
+  '/user-profile-preview': {
+    userUid: string;
+  };
 };
