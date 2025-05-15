@@ -5,4 +5,5 @@ declare module '@env' {
   export const IS_FIREBASE_TEST_MODE: string;
   export const SENTRY_DNS: string;
   export const SOCKET_URL: string;
+  export const BUGSNAG_API_KEY: string;
 }

@@ -8,8 +8,8 @@ import RNUxcam from 'react-native-ux-cam';
 import { requestTrackingPermission } from 'react-native-tracking-transparency';
 import { Settings } from 'react-native-fbsdk-next';
 import Config from 'react-native-config';
-import Bugsnag from '@bugsnag/react-native';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import Bugsnag from '@bugsnag/react-native';
 import { blackColor } from 'constants/colors';
 
 import Main from 'src';
@@ -28,7 +28,6 @@ const configuration = {
 };
 RNUxcam.startWithConfiguration(configuration);
 
-Bugsnag.start();
 
 const App: FC = (): JSX.Element => {
   const IO_PUBLICK_RC_IOS = Config.IO_PUBLICK_RC_IOS || '';
@@ -47,6 +46,7 @@ const App: FC = (): JSX.Element => {
   };
 
   useEffect(() => {
+    Bugsnag.notify(new Error('Test error'));
     initializeTracking();
     if (Platform.OS === 'ios' && IO_PUBLICK_RC_IOS) {
       Purchases.configure({ apiKey: IO_PUBLICK_RC_IOS, });

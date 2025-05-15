@@ -12,7 +12,7 @@ interface GuestBasicInfoCardProps {
   listOfInterestsImages: components['schemas']['Interest'][];
 }
 
-const GuestBasicInfoCard: FC<GuestBasicInfoCardProps> = ({ homeAddress, work, gender, listOfInterestsImages }) => {
+const GuestBasicInfoCard: FC<GuestBasicInfoCardProps> = ({ homeAddress, work, gender, listOfInterestsImages = [] }) => {
   const { genderIcon: GenderIcon, genderText } = useGenderSpecs(gender);
 
   return (
@@ -25,9 +25,9 @@ const GuestBasicInfoCard: FC<GuestBasicInfoCardProps> = ({ homeAddress, work, ge
       <S.TagsContainer>
         <S.TagContainer>
           <S.TagIconContainer>
-            <GenderIcon />
+            {GenderIcon && <GenderIcon />}
           </S.TagIconContainer>
-          <S.TagText>{genderText}</S.TagText>
+          {genderText && <S.TagText>{genderText}</S.TagText>}
         </S.TagContainer>
         {homeAddress && (
           <S.Container>
@@ -46,7 +46,7 @@ const GuestBasicInfoCard: FC<GuestBasicInfoCardProps> = ({ homeAddress, work, ge
           </S.Container>
         )}
       </S.TagsContainer>
-      {!!listOfInterestsImages?.length && (
+      {Array.isArray(listOfInterestsImages) && listOfInterestsImages.length > 0 && (
         <View style={{ marginTop: 24 }}>
           <S.SectionTitle>Interests</S.SectionTitle>
           <S.InterestsContainer>

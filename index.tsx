@@ -1,17 +1,27 @@
+import Bugsnag from "@bugsnag/react-native";
+import BugsnagPerformance from '@bugsnag/react-native-performance'
 import { AppRegistry, LogBox } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import React from 'react';
 import App from './src/App';
 import { name as appName } from './app.json';
+import { BUGSNAG_API_KEY } from '@env'
 
-// Ignore specific warnings if needed
 LogBox.ignoreLogs([
     'ViewPropTypes will be removed',
     'ColorPropType will be removed',
 ]);
 
-// Create a stable instance of QueryClient
+
+
+Bugsnag.start();
+BugsnagPerformance.start({
+    apiKey: BUGSNAG_API_KEY,
+});
+const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React)
+
+
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
@@ -24,13 +34,13 @@ const queryClient = new QueryClient({
 // Wrap the app with necessary providers
 const AppWithProviders: React.FC = () => {
     return (
-        <React.StrictMode>
+        <ErrorBoundary>
             <QueryClientProvider client={queryClient}>
                 <KeyboardProvider>
                     <App />
                 </KeyboardProvider>
             </QueryClientProvider>
-        </React.StrictMode>
+        </ErrorBoundary>
     );
 };
 

@@ -12,7 +12,8 @@
       "hooks/*": ["src/hooks/*"],
       "helpers/*": ["src/helpers/*"],
       "contexts/*": ["src/contexts/*"],
-      "redux/*": ["src/redux/*"]
+      "redux/*": ["src/redux/*"],
+      "@env": [".env"]
     }
   }
 }
