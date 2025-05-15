@@ -1,16 +1,16 @@
-import {createStackNavigator} from '@react-navigation/stack';
-import {StyleSheet} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { createStackNavigator } from '@react-navigation/stack';
+import { StyleSheet } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
 import HeaderBackButton from '../../Components/HeaderBackButton/HeaderBackButton';
 import HeaderRightProfileEditing from './Components/HeaderRightProfileEditing/HeaderRightProfileEditing';
-import {blackColor, whiteColor} from 'constants/colors';
-import {Satoshi400} from 'constants/fonts';
+import { blackColor, whiteColor } from 'constants/colors';
+import { Satoshi400 } from 'constants/fonts';
 import {
   accountSettingPath,
   faqPath,
   helpAndSecurityPath,
   invitationsPath,
-  manageSubscriptionPath,
+
   myPlanPath,
   myProfileViewPath,
   notificationSettingPath,
@@ -28,7 +28,6 @@ import MyPlan from 'screens/App/Profile/screens/MyPlan/MyPlan';
 import MyProfileView from 'screens/App/Profile/screens/MyProfileView/MyProfileView';
 import ProfileEditing from 'screens/App/Profile/screens/ProfileEditing/ProfileEditing';
 import NotificationSetting from 'screens/App/Profile/screens/NotificationSetting/NotificationSetting';
-import ManageSubscription from 'screens/App/Profile/screens/ManageSubscription';
 import SuperJoin from 'screens/App/Profile/screens/SuperJoin/SuperJoin';
 import SuperInvite from 'screens/App/Profile/screens/SuperInvite/SuperInvite';
 
@@ -127,15 +126,7 @@ export const ProfileStackScreen = () => {
         }}
         component={AccountSetting}
       />
-      <ProfileStack.Screen
-        key={manageSubscriptionPath}
-        name={manageSubscriptionPath}
-        options={{
-          ...defaultOptions,
-          headerTitle: 'Manage Subscription',
-        }}
-        component={ManageSubscription}
-      />
+
       <ProfileStack.Screen
         key={superInvitePath}
         name={superInvitePath}

@@ -38,10 +38,13 @@ const Payment: FC = (): JSX.Element => {
 
   const handleNext = () => {
     try {
-
-      navigation.navigate('/profile/profile-stack');
+      if (navigation.getState().routes.length > 1) {
+        navigation.goBack();
+      } else {
+        navigation.navigate('/profile/profile-stack');
+      }
     } catch (error) {
-      console.log('error handle next', error);
+      console.error('error handle next', error);
     }
   };
 

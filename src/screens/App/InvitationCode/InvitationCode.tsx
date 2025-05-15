@@ -13,7 +13,11 @@ const InvitationCode = () => {
     useInvitationCode();
 
   const handleClose = () => {
-    navigation.navigate('/bottom-tabs-stack');
+    if (navigation.getState().routes.length > 1) {
+      navigation.goBack();
+    } else {
+      navigation.navigate('/bottom-tabs-stack');
+    }
   };
 
   const handleGoToShareSocialLink = () => {

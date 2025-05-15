@@ -46,7 +46,6 @@ const App: FC = (): JSX.Element => {
   };
 
   useEffect(() => {
-    Bugsnag.notify(new Error('Test error'));
     initializeTracking();
     if (Platform.OS === 'ios' && IO_PUBLICK_RC_IOS) {
       Purchases.configure({ apiKey: IO_PUBLICK_RC_IOS, });

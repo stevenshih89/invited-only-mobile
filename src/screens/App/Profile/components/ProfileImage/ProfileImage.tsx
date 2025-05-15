@@ -1,5 +1,5 @@
 import FastImage from 'react-native-fast-image';
-import { components } from 'src/api/v1';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './ProfileImage.style';
 import { ProgressCircle } from 'components/ProgressCircle/ProgressCircle';
 import { transparentGray60Color } from 'constants/colors';

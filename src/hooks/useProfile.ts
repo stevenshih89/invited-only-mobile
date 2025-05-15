@@ -30,11 +30,13 @@ export const useProfile = () => {
     { id: 2, title: 'App Invitations' },
   ];
 
+
   const calculateCompleteness = (profile: any) => {
+
     if (!profile) {
       return 0;
     }
-    const requiredFields = ['chooseGuest', 'date', 'email', 'gender', 'homeAddress', 'interests', 'work', 'imageUser', 'bio', 'photos'];
+    const requiredFields = ['date', 'email', 'gender', 'location', 'interests', 'work', 'bio', 'photos'];
     let presentFields = 0;
 
     for (const field of requiredFields) {
@@ -42,7 +44,6 @@ export const useProfile = () => {
         presentFields++;
       }
     }
-
     const completenessPercentage = (presentFields / requiredFields.length) * 100;
 
     if (completenessPercentage === 100) {
@@ -66,34 +67,7 @@ export const useProfile = () => {
     });
   };
 
-  const getGuestList = async () => {
-    let totalParticipants = 0;
-    try {
-      for (const eventId of userInfo?.eventsList) {
-        console.log('fetching guest list for', eventId);
-
-        const eventDoc = await firestore().collection(apiEventsCollection).doc(eventId).get();
-        console.log(eventDoc);
-        if (eventDoc.exists) {
-          const data = eventDoc.data();
-          totalParticipants += data?.male || 0 + data?.female || 0;
-        }
-      }
-      console.log('totalParticipants before set:', totalParticipants);
-      setTotalGuests(totalParticipants);
-    } catch (error) {
-      logErrorToSentry(error);
-      console.error('error fetching guest list: ', error);
-    }
-  };
-
-  useEffect(() => {
-    if (userInfo?.uid && isHost) {
-      getGuestList();
-    }
-  }, [userInfo?.uid]);
-
-  const userAge = userInfo?.date ? calculateAge(userInfo?.date) : 0;
+  const userAge = userInfo?.birthday ? calculateAge(userInfo?.birthday) : 0;
 
   return {
     activeTabId,

@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {blackColor, transparentWhite16Color, whiteColor} from 'constants/colors';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import { blackColor, transparentWhite16Color, whiteColor } from 'constants/colors';
 
 export const Container = styled.View`
   flex: 1;
