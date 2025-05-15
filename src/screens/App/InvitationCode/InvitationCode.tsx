@@ -1,3 +1,4 @@
+import { ActivityIndicator } from 'react-native';
 import * as S from './InvitationCode.style';
 import EnterCodeView from './Components/EnterCodeView/EnterCodeView';
 import SuccessfullySubmitted from './Components/SuccessfullySubmitted/SuccessfullySubmitted';
@@ -6,10 +7,11 @@ import LogoIcon from 'assets/images/icons/logo.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
 import InvitationCodeBackground from 'assets/images/app/invitation-code-background.png';
 import { useAppNavigation } from 'hooks/useAppNavigation';
+import { whiteColor } from 'constants/colors';
 
 const InvitationCode = () => {
   const navigation = useAppNavigation();
-  const { isSuccessfullySubmitted, code, setCode, ref, props, getCellOnLayoutHandler, isIncorrectCode, cellCount, handleSubmit } =
+  const { isSuccessfullySubmitted, code, setCode, ref, props, getCellOnLayoutHandler, isIncorrectCode, cellCount, handleSubmit, isGettingAccess } =
     useInvitationCode();
 
   const handleClose = () => {
@@ -40,7 +42,11 @@ const InvitationCode = () => {
         </S.Header>
         <S.ContentContainer>
           <S.BackgroundImage source={InvitationCodeBackground} resizeMode="contain">
-            {isSuccessfullySubmitted ? (
+            {isGettingAccess ? (
+              <S.Container>
+                <ActivityIndicator size="large" color={whiteColor} />
+              </S.Container>
+            ) : isSuccessfullySubmitted ? (
               <SuccessfullySubmitted />
             ) : (
               <EnterCodeView

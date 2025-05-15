@@ -39,7 +39,6 @@ const EnterCodeView: FC<EnterCodeViewProps> = ({
           value={code}
           onChangeText={setCode}
           cellCount={cellCount}
-          keyboardType="number-pad"
           keyboardAppearance="dark"
           textContentType="oneTimeCode"
           renderCell={({ index, symbol, isFocused }: { index: number; symbol: string; isFocused: boolean }) => {
