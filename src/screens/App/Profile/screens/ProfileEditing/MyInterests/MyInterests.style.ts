@@ -1,10 +1,10 @@
 import styled from 'styled-components/native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { ActivityIndicator } from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {ActivityIndicator} from 'react-native';
 import RadialGradient from 'react-native-radial-gradient';
-import { lightGray2Color, whiteColor } from 'constants/colors';
-import { Satoshi500, Satoshi700 } from 'constants/fonts';
-import { screenWidth } from 'constants/common';
+import {lightGray2Color, whiteColor} from 'constants/colors';
+import {Satoshi500, Satoshi700} from 'constants/fonts';
+import {screenWidth} from 'constants/common';
 
 export const Container = styled.View`
   padding: 16px;
@@ -61,6 +61,7 @@ export const CounterContainer = styled.View`
   height: 40px;
   justify-content: center;
   align-items: center;
+  margin-left: 8px;
 `;
 
 export const CounterText = styled.Text`
@@ -79,13 +80,13 @@ export const ItemWrapper = styled.View`
   flex: 1;
 `;
 
-export const InterestButton = styled.TouchableOpacity<{ isSelected?: boolean }>`
+export const InterestButton = styled.TouchableOpacity<{isSelected?: boolean}>`
   flex: 1;
   border-radius: 30px;
   padding-vertical: 8px;
   justify-content: center;
   align-items: center;
-  background-color: ${({ isSelected }: { isSelected: boolean }) => (isSelected ? whiteColor : lightGray2Color)};
+  background-color: ${({isSelected}: {isSelected: boolean}) => (isSelected ? whiteColor : lightGray2Color)};
 `;
 
 export const AddMoreButton = styled.TouchableOpacity`
