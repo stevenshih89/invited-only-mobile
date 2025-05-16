@@ -16,7 +16,7 @@ interface IoHeaderProps {
 const IoHeader: React.FC<IoHeaderProps> = ({ events, selectedEvent, onEventSelect, onRequestPress, onDropdownChange }) => {
 
 
-  const { requests, isLoading, error } = useGetEventRequests({ eventId: selectedEvent.uid });
+  const { requests } = useGetEventRequests({ eventId: selectedEvent.uid });
 
 
 

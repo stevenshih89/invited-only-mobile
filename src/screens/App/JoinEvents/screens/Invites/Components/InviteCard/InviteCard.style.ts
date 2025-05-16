@@ -5,11 +5,13 @@ import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import { whiteColor } from 'constants/colors';
 import { Satoshi500 } from 'constants/fonts';
+import { screenWidth } from 'constants/common';
 
 export const Wrapper = styled.View`
   position: relative;
   width: 100%;
   height: 100%;
+  width: ${screenWidth * 0.45}px;
   padding: 8px;
   border-radius: 20px;
   overflow: hidden;

@@ -9,6 +9,7 @@ import { useAuthStore } from 'src/store/authStore';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 import { showToast } from 'helpers/showToast';
 import { useAppNavigation } from 'hooks/useAppNavigation';
+import useMessaging from 'hooks/useMessaging';
 
 export const useConfirmPhone = (route: {
   params: {
@@ -30,10 +31,8 @@ export const useConfirmPhone = (route: {
 
   const CELL_COUNT: number = 6;
   const ref: RefObject<TextInput> = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
-
-
-
-  const { setOnBoarding, setAccessToken, setRefreshToken, setUserMetadata, setIsDemoVideoWatched } = useAuthStore();
+  const { setupNotifications } = useMessaging();
+  const { setOnBoarding, setAccessToken, setRefreshToken, setUserMetadata } = useAuthStore();
   const { mutate: verifyOtp, isPending: isLoadingVerifyOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/verify-otp');
   const { mutate: sendOtp, isPending: isLoadingSendOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
 
@@ -79,7 +78,7 @@ export const useConfirmPhone = (route: {
 
               setAccessToken(data.accessToken);
               setRefreshToken(data.refreshToken);
-
+              setupNotifications();
               if (userData.uid && userData.phoneNumber) {
                 setUserMetadata({
                   uid: userData.uid,

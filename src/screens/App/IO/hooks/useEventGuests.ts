@@ -1,4 +1,4 @@
-import { components } from 'src/api/v1';
+import { components } from '@invited-only/invited-only-api';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 
 type GuestUser = components['schemas']['User'];

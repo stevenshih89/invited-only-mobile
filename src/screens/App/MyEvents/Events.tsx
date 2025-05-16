@@ -7,9 +7,7 @@ import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedA
 
 const TabNavigator = createMaterialTopTabNavigator();
 
-
 const Events = () => {
-
 
   return (
     <S.ScreenContainer>

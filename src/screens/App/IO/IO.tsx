@@ -1,22 +1,14 @@
 import React, { useState } from 'react';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import { components } from '@invited-only/invited-only-api';
-
-// React Navigation
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { createMaterialTopTabNavigator, MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
-
-// Hooks
 import EventRequests from '../MyEvents/Components/EventRequests/EventRequests';
 import usePersistentCardSwipe from './hooks/usePersistentCardSwipe';
 import { useEventGuests } from './hooks/useEventGuests';
-
-// Local Components & Style
 import IoHeader from './components/IoHeader/IoHeader';
 import InviteGuestsEvent from './components/InviteGuestsEvent/InviteGuestsEvent';
 import * as S from './IO.style';
-
-// Other Screen/App Components
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import ModalUpgradeAccount from 'components/Modal/ModalUpgradeAccount/ModalUpgradeAccount';
@@ -30,7 +22,6 @@ interface Props {
 const IO = ({ events }: Props) => {
 
   const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
-
 
   type IoTabs = {
     '/io/invite': RouteProp<ParamListBase, '/io/invite'>;

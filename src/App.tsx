@@ -9,7 +9,6 @@ import { requestTrackingPermission } from 'react-native-tracking-transparency';
 import { Settings } from 'react-native-fbsdk-next';
 import Config from 'react-native-config';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import Bugsnag from '@bugsnag/react-native';
 import { blackColor } from 'constants/colors';
 
 import Main from 'src';

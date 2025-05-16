@@ -1,4 +1,4 @@
-import React, { FC, JSX } from 'react';
+import React, { FC, JSX, useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 //import components
@@ -37,7 +37,10 @@ const JoinEventsStackScreen = () => {
 const BottomMenu: FC = (): JSX.Element => {
   const styles = useStyles();
   const Tab = createBottomTabNavigator();
-  useMessaging();
+  const { setupNotifications } = useMessaging();
+  useEffect(() => {
+    setupNotifications();
+  }, []);
 
   return (
     <Tab.Navigator

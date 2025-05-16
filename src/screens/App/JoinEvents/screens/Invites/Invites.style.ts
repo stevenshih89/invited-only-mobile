@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import {screenHeight} from 'constants/common';
+import { screenHeight } from 'constants/common';
 
 export const Container = styled.View`
   flex: 1;
@@ -15,6 +15,6 @@ export const InviteCardContainer = styled.View`
 `;
 
 export const InviteCardWrapper = styled.View`
-  width: 50%;
+
   height: 280px;
 `;

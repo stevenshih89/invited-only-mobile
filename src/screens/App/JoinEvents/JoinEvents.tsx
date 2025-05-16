@@ -9,9 +9,12 @@ import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedA
 
 interface Props {
   events: components['schemas']['EventData'][];
+  hasNextPage: boolean;
+  fetchNextPage: () => void;
+  isLoading: boolean;
 }
 
-const JoinEvents: FC<Props> = ({ events }): ReactElement => {
+const JoinEvents: FC<Props> = ({ events, hasNextPage, fetchNextPage, isLoading }): ReactElement => {
 
 
   const [activeTab, setActiveTab] = useState<'explore' | 'invites'>('explore');
@@ -20,7 +23,7 @@ const JoinEvents: FC<Props> = ({ events }): ReactElement => {
   return (
     <BottomSheetModalProvider>
       <JoinEventsHeader activeTab={activeTab} handleTabChange={setActiveTab} />
-      {activeTab === 'explore' && <ExploreEvents events={events} />}
+      {activeTab === 'explore' && <ExploreEvents events={events} hasNextPage={hasNextPage} fetchNextPage={fetchNextPage} isLoading={isLoading} />}
       {activeTab === 'invites' && <Invites events={events} />}
       <ModalLockedAccount />
     </BottomSheetModalProvider>

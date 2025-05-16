@@ -1,45 +1,41 @@
 import { FC } from 'react';
 import { FlatList } from 'react-native';
 import { components } from '@invited-only/invited-only-api';
+import { ActivityIndicator } from '@ant-design/react-native';
 import InviteCard from './Components/InviteCard/InviteCard';
 import * as S from './Invites.style';
-import usePersistentCardSwipe from 'screens/App/IO/hooks/usePersistentCardSwipe';
+import useGetInvites from './hooks/useGetInvites';
+import { whiteColor } from 'constants/colors';
 
 interface Props {
   events: components['schemas']['EventData'][];
 }
 
 const Invites: FC<Props> = ({ events }) => {
-  const { cards: currentEventCards } = usePersistentCardSwipe<components['schemas']['EventData']>({
-    cardsData: events,
-    eventId: '1',
-  });
 
-  const uniqueEventCards =
-    currentEventCards?.reduce((acc: components['schemas']['EventData'][], current) => {
-      if (!acc.find(item => item.uid === current.uid)) {
-        acc.push(current);
-      }
-      return acc;
-    }, []) || [];
+
+  const { data: pendingInvitesEvents, isLoading } = useGetInvites({ events });
+
 
   return (
     <S.Container>
-      <FlatList
-        data={uniqueEventCards}
-        keyExtractor={item => item.uid}
-        numColumns={2}
-        showsVerticalScrollIndicator={false}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={4}
-        windowSize={5}
-        initialNumToRender={4}
-        renderItem={({ item, index }) => (
-          <S.InviteCardWrapper key={item.uid}>
-            <InviteCard event={item} />
-          </S.InviteCardWrapper>
-        )}
-      />
+      {isLoading ? <ActivityIndicator size={'large'} color={whiteColor} /> :
+        <FlatList
+          data={pendingInvitesEvents}
+          keyExtractor={item => item.uid}
+          numColumns={2}
+          showsVerticalScrollIndicator={false}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={4}
+          windowSize={5}
+          initialNumToRender={4}
+          renderItem={({ item }) => (
+            <S.InviteCardWrapper key={item.uid}>
+              <InviteCard event={item} />
+            </S.InviteCardWrapper>
+          )}
+        />
+      }
     </S.Container>
   );
 };
