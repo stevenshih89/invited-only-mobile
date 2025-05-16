@@ -35,6 +35,7 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
         asGuest: true,
     });
     const { data: user } = useGetUserById(notification.guestId || '');
+    const { data: hostUser } = useGetUserById(notification.hostId || '');
 
     const notificationType = notification.type;
     const { handleHostConfirmEvent, handleHostRejectEvent, isUpdatingEventAttendee } = useHostConnectionActions({
@@ -82,7 +83,7 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
                             {user?.photos?.[0] && (
                                 <S.NarrowLeftContainer>
                                     <S.AvatarContainer>
-                                        <S.AvatarImage source={{ uri: user.photos?.[0].image }} />
+                                        <S.AvatarImage source={{ uri: isJoinedEvents ? hostUser?.photos?.[0].image : user.photos?.[0].image }} />
                                     </S.AvatarContainer>
                                 </S.NarrowLeftContainer>
                             )}

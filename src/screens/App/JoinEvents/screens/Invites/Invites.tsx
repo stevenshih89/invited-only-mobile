@@ -1,21 +1,20 @@
 import { FC } from 'react';
 import { FlatList } from 'react-native';
-import { components } from '@invited-only/invited-only-api';
 import { ActivityIndicator } from '@ant-design/react-native';
 import InviteCard from './Components/InviteCard/InviteCard';
 import * as S from './Invites.style';
 import useGetInvites from './hooks/useGetInvites';
 import { whiteColor } from 'constants/colors';
-
-interface Props {
-  events: components['schemas']['EventData'][];
-}
-
-const Invites: FC<Props> = ({ events }) => {
+import JoinedEventsEmptyFallback from 'screens/App/MyEvents/Components/JoinedEventsEmptyFallback/JoinedEventsEmptyFallback';
 
 
-  const { data: pendingInvitesEvents, isLoading } = useGetInvites({ events });
+const Invites: FC = () => {
 
+  const { data: pendingInvitesEvents, isLoading, invalidateInvitedEvents } = useGetInvites();
+
+  if (pendingInvitesEvents.length === 0) {
+    return <JoinedEventsEmptyFallback />
+  }
 
   return (
     <S.Container>
@@ -31,7 +30,7 @@ const Invites: FC<Props> = ({ events }) => {
           initialNumToRender={4}
           renderItem={({ item }) => (
             <S.InviteCardWrapper key={item.uid}>
-              <InviteCard event={item} />
+              <InviteCard event={item} invalidateInvitedEvents={invalidateInvitedEvents} />
             </S.InviteCardWrapper>
           )}
         />

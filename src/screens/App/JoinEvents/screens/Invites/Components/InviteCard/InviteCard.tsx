@@ -14,9 +14,10 @@ import { whiteColor } from 'constants/colors';
 
 interface Props {
   event: components['schemas']['EventData'];
+  invalidateInvitedEvents: () => void;
 }
 
-const InviteCard: FC<Props> = ({ event }) => {
+const InviteCard: FC<Props> = ({ event, invalidateInvitedEvents }) => {
   const totalGuests = (event.female || 0) + (event.male || 0) + (event.femaleFriend || 0);
   const { createEventAttendee, isPending } = useSwipeCardAction();
 
@@ -54,7 +55,7 @@ const InviteCard: FC<Props> = ({ event }) => {
                   eventId: event.uid,
                   guestSwipe: 'left',
                 }
-              })}>
+              }, { onSuccess: () => invalidateInvitedEvents() })}>
                 <S.BlurOverlay />
                 <RejectIcon width={12} height={12} />
               </S.IconButton>
@@ -69,7 +70,7 @@ const InviteCard: FC<Props> = ({ event }) => {
                   eventId: event.uid,
                   guestSwipe: 'right',
                 }
-              })}>
+              }, { onSuccess: () => invalidateInvitedEvents() })}>
                 <S.BlurOverlay />
                 <InviteIcon width={22} height={22} />
                 <S.InviteText>Join</S.InviteText>

@@ -51,6 +51,8 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events, hasNextPage, isLoading,
     bottomSheetModalRef.current?.present();
   }, []);
 
+
+
   if (isLoading || (hasNextPage && !currentEventCards.length)) {
     fetchNextPage();
     return (
