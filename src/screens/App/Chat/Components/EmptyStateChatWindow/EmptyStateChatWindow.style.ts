@@ -29,12 +29,12 @@ export const Image = styled(FastImage)`
 
 export const TopImage = styled(Image)`
     right: 0;
-    z-index: 2;
+
 `;
 
 export const BottomImage = styled(Image)`
     left: 0;
-    z-index: 1;
+
 `;
 
 export const TextContainer = styled.View`

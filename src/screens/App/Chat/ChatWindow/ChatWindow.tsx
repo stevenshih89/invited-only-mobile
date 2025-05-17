@@ -3,6 +3,7 @@ import { useRoute } from '@react-navigation/native';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useCallback, useRef, useState } from 'react';
 import EmptyStateChatWindow from '../Components/EmptyStateChatWindow/EmptyStateChatWindow';
+import { useUpdateActiveChatScreen } from '../hooks/useUpdateActiveChatScreen';
 import * as S from './ChatWindow.style';
 import { ChatWindowHeader } from './ChatWindowHeader/ChatWindowHeader';
 import useRealtimeChatMessages from './hooks/useRealtimeChatMessages';
@@ -20,6 +21,7 @@ import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
 type ChatWindowRouteParams = RootStackParamList['/chat/chat-window'];
 
 export const ChatWindow = () => {
+  useUpdateActiveChatScreen();
   const route = useRoute();
   const params = route.params as ChatWindowRouteParams;
   const chat = params?.chat;
@@ -148,7 +150,7 @@ export const ChatWindow = () => {
             openDeleteChatModal={() => setIsOpenModalDeleteChat(true)}
             isJoinEvent={isJoinedEvent}
           />
-          <ModalReport ref={modalBlockReportRef} />
+          <ModalReport ref={modalBlockReportRef} uidSender={isJoinedEvent ? chat?.hostId : chat?.guestId} uid={isJoinedEvent ? chat?.guestId : chat?.hostId} />
           <ModalDefault
             isVisible={isOpenModalDeleteChat}
             onClose={() => setIsOpenModalDeleteChat(false)}

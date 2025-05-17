@@ -7,11 +7,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import RNUxcam from 'react-native-ux-cam';
 import { requestTrackingPermission } from 'react-native-tracking-transparency';
 import { Settings } from 'react-native-fbsdk-next';
-import Config from 'react-native-config';
+
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { blackColor } from 'constants/colors';
 
 import Main from 'src';
+import { RN_UXCAM_API_KEY, IO_PUBLICK_RC_IOS } from '@env';
 
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
@@ -19,7 +20,7 @@ I18nManager.forceRTL(false);
 
 RNUxcam.optIntoSchematicRecordings();
 const configuration = {
-  userAppKey: Config.RN_UXCAM_API_KEY || '',
+  userAppKey: RN_UXCAM_API_KEY || '',
   enableAutomaticScreenNameTagging: false,
   enableAdvancedGestureRecognition: true,
   enableImprovedScreenCapture: true,
@@ -29,7 +30,7 @@ RNUxcam.startWithConfiguration(configuration);
 
 
 const App: FC = (): JSX.Element => {
-  const IO_PUBLICK_RC_IOS = Config.IO_PUBLICK_RC_IOS || '';
+  const iosPurchaseKey = IO_PUBLICK_RC_IOS || '';
 
 
   const initializeTracking = async () => {
@@ -46,8 +47,9 @@ const App: FC = (): JSX.Element => {
 
   useEffect(() => {
     initializeTracking();
-    if (Platform.OS === 'ios' && IO_PUBLICK_RC_IOS) {
-      Purchases.configure({ apiKey: IO_PUBLICK_RC_IOS, });
+    if (Platform.OS === 'ios' && iosPurchaseKey) {
+      console.log('initialize iosPurchaseKey', iosPurchaseKey);
+      Purchases.configure({ apiKey: iosPurchaseKey, });
     }
   }, []);
 

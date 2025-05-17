@@ -8,6 +8,7 @@ import { useNavigationState } from "@react-navigation/native";
 import useUser from "./user/useUser";
 import invitedOnlyBackendApi from "src/api/backend-api";
 import { showToast } from "helpers/showToast";
+import { useNavigationStore } from "src/store/navigationStore";
 
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
@@ -17,16 +18,7 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
 const useMessaging = () => {
     const { mutate: sendToken } = invitedOnlyBackendApi.useMutation('post', '/auth/messaging/token')
     const { user } = useUser()
-
-
-    const getCurrentRouteName = (state: any): string | undefined => {
-        if (!state) return undefined;
-        const route = state.routes[state.index];
-        if (route.state) {
-            return getCurrentRouteName(route.state);
-        }
-        return route.name;
-    };
+    const { isChatScreen } = useNavigationStore()
 
     const sendTokenToServer = async (token: string) => {
         console.log("Sending FCM token to server:", token);
@@ -37,8 +29,6 @@ const useMessaging = () => {
             }
         })
     };
-
-    const navigationState = useNavigationState(state => state);
 
     async function setupNotifications() {
         let enabled = false;
@@ -79,8 +69,6 @@ const useMessaging = () => {
         const unsubscribeOnMessage = messaging().onMessage(async (message) => {
             console.log('Message received:', message);
 
-            const currentRouteName = getCurrentRouteName(navigationState);
-            console.log('[useMessaging onMessage] Current Route Name:', currentRouteName);
 
             const title = message.notification?.title ?? 'New Message';
             const body = message.notification?.body ?? '';
@@ -92,11 +80,13 @@ const useMessaging = () => {
                 const messageType = message.data.type as string | undefined;
                 const chatId = message.data.chatId as string | undefined;
 
+                console.log('messageType', messageType);
+                console.log('chatId', chatId);
                 if (messageType === 'newMessage' && chatId) {
                     toastBody = `New message received`;
-                    const isChatScreenActive = currentRouteName?.toLowerCase().includes('chat');
 
-                    if (isChatScreenActive) {
+
+                    if (isChatScreen) {
                         shouldShow = false;
                         console.log('[useMessaging] Chat screen active, hiding toast.');
                     } else {

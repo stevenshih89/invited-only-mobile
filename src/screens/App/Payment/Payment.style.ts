@@ -45,9 +45,8 @@ export const AnimationContainer = styled.View`
 `;
 
 export const StyledLottieView = styled(LottieView)`
-  height: 200px;
-  width: 300px;
-  background-color: red;
+    height: 100%;
+  width: 100%;
 `;
 
 export const ButtonContainer = styled.View`

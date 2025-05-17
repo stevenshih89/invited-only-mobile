@@ -10,6 +10,7 @@ import useGetUserById from 'hooks/useGetUserById';
 import useHostConnectionActions from 'hooks/connections/useHostConnectionActions';
 import useGuestConnectionActions from 'hooks/connections/useGuestConnectionActions';
 import useNavigateToChat from 'screens/App/Chat/hooks/useNavigateToChat';
+import useGetEvent from 'screens/App/Chat/EventChats/hooks/useGetEvent';
 
 export interface Notification {
     id: string;
@@ -35,7 +36,7 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
         asGuest: true,
     });
     const { data: user } = useGetUserById(notification.guestId || '');
-    const { data: hostUser } = useGetUserById(notification.hostId || '');
+    const { data: event } = useGetEvent(notification.eventId || '');
 
     const notificationType = notification.type;
     const { handleHostConfirmEvent, handleHostRejectEvent, isUpdatingEventAttendee } = useHostConnectionActions({
@@ -83,7 +84,7 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
                             {user?.photos?.[0] && (
                                 <S.NarrowLeftContainer>
                                     <S.AvatarContainer>
-                                        <S.AvatarImage source={{ uri: isJoinedEvents ? hostUser?.photos?.[0].image : user.photos?.[0].image }} />
+                                        <S.AvatarImage source={{ uri: isJoinedEvents ? event?.photos?.[0].image : user.photos?.[0].image }} />
                                     </S.AvatarContainer>
                                 </S.NarrowLeftContainer>
                             )}

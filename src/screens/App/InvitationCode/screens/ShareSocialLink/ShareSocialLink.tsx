@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import React, {useState} from 'react';
+import {TouchableOpacity} from 'react-native';
 import * as S from './ShareSocialLink.style';
 import InstagramIcon from 'assets/images/icons/instagram.svg';
 import TikTokIcon from 'assets/images/icons/tiktok.svg';
@@ -9,8 +9,8 @@ import TwitterIcon from 'assets/images/icons/twitter.svg';
 import InfoIcon from 'assets/images/icons/info-circle.svg';
 import ModalShareSocialLink from 'components/Modal/ModalShareSocialLink/ModalShareSocialLink';
 import Button from 'components/Button/Button';
-import { bottomTabsStackPath } from 'constants/pathLocations';
-import { useAppNavigation } from 'hooks/useAppNavigation';
+import {bottomTabsStackPath} from 'constants/pathLocations';
+import {useAppNavigation} from 'hooks/useAppNavigation';
 import useUpdateUser from 'hooks/user/useUpdateUser';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 
@@ -21,15 +21,18 @@ const ShareSocialLink = () => {
   const [profileLink, setProfileLink] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigation = useAppNavigation();
-  const { update, isPending } = useUpdateUser();
+  const {update, isPending} = useUpdateUser();
   const socialNetworks = [
-    { id: 'instagram', icon: InstagramIcon },
-    { id: 'tiktok', icon: TikTokIcon },
-    { id: 'facebook', icon: FacebookIcon },
-    { id: 'linkedin', icon: LinkedInIcon },
-    { id: 'other', icon: TwitterIcon },
+    {id: 'instagram', icon: InstagramIcon},
+    {id: 'tiktok', icon: TikTokIcon},
+    {id: 'facebook', icon: FacebookIcon},
+    {id: 'linkedin', icon: LinkedInIcon},
+    {id: 'other', icon: TwitterIcon},
   ];
 
+  const handleSkip = () => {
+    navigation.navigate(bottomTabsStackPath);
+  };
   if (isPending) {
     return <AppLoader />;
   }
@@ -51,8 +54,8 @@ const ShareSocialLink = () => {
                   backgroundColor={isSelected ? '#202020' : ' #0f0f0f'}
                   key={network.id}
                   gradientProps={{
-                    start: { x: 0, y: 0 },
-                    end: { x: 1, y: 1 },
+                    start: {x: 0, y: 0},
+                    end: {x: 1, y: 1},
                     colors: isSelected ? ['rgba(26, 26, 26, 0.3)', 'rgba(255, 255, 255, 0.6)', 'rgba(255, 255, 255, 0)'] : ['transparent'],
                   }}>
                   <TouchableOpacity
@@ -80,12 +83,17 @@ const ShareSocialLink = () => {
           </S.HelpButton>
         </S.UpperContent>
         <S.ButtonsContainer>
-          <Button title="Submit Request" disabled={!profileLink} variant="default" onPress={() => {
-            update({ socialLinks: [{ instagram: profileLink }] }).finally(() => {
-              navigation.navigate(bottomTabsStackPath);
-            });
-          }} />
-          <Button title="Skip" variant="gray" />
+          <Button
+            title="Submit Request"
+            disabled={!profileLink}
+            variant="default"
+            onPress={() => {
+              update({socialLinks: [{instagram: profileLink}]}).finally(() => {
+                navigation.navigate(bottomTabsStackPath);
+              });
+            }}
+          />
+          <Button onPress={handleSkip} title="Skip" variant="gray" />
         </S.ButtonsContainer>
       </S.Container>
       <ModalShareSocialLink isVisible={isModalVisible} onClose={() => setIsModalVisible(false)} />

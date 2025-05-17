@@ -1,19 +1,19 @@
-import React, {useState} from 'react';
-import {ActivityIndicator, TouchableOpacity} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {components} from '@invited-only/invited-only-api';
+import React, { useState } from 'react';
+import { ActivityIndicator, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './ChatWindowHeader.style';
-import {ToggleInvitationStatusDropdown} from './ToggleInvitationStatusDropdown/ToggleInvitationStatusDropdown';
-import {ApproveActionButton} from './ApproveActionButton/ApproveActionButton';
+import { ToggleInvitationStatusDropdown } from './ToggleInvitationStatusDropdown/ToggleInvitationStatusDropdown';
+import { ApproveActionButton } from './ApproveActionButton/ApproveActionButton';
 import useConnectionRealtimeStatus from './hooks/useConnectionRealtimeStatus';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import ConfirmedBadge from 'src/assets/images/icons/event-confirm-badge.svg';
 import DotsHorizontalIcon from 'assets/images/icons/dots-horizontal.svg';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {whiteColor} from 'constants/colors';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { whiteColor } from 'constants/colors';
 import invitedOnlyBackendApi from 'src/api/backend-api';
-import {useAuthStore} from 'src/store/authStore';
-import {useInvitationStatus} from 'hooks/useInvitationStatus';
+import { useAuthStore } from 'src/store/authStore';
+import { useInvitationStatus } from 'hooks/useInvitationStatus';
 
 interface ChatWindowHeaderProps {
   chat: components['schemas']['Chat'];
@@ -21,14 +21,14 @@ interface ChatWindowHeaderProps {
   handleOpenModalChatHost: () => void;
 }
 
-export const ChatWindowHeader = ({chat, isJoinedEvent, handleOpenModalChatHost}: ChatWindowHeaderProps) => {
-  const {goBack} = useAppNavigation();
-  const {userMetadata} = useAuthStore();
+export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost }: ChatWindowHeaderProps) => {
+  const { goBack, navigate } = useAppNavigation();
+  const { userMetadata } = useAuthStore();
   const insets = useSafeAreaInsets();
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const {connectionStatus, isLoading} = useConnectionRealtimeStatus({chat});
-  const {mutate: updateChatSeen} = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen');
-  const {invitationStatus} = useInvitationStatus(connectionStatus);
+  const { connectionStatus, isLoading } = useConnectionRealtimeStatus({ chat });
+  const { mutate: updateChatSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen');
+  const { invitationStatus } = useInvitationStatus(connectionStatus);
   const toggleDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);
   };
@@ -68,18 +68,24 @@ export const ChatWindowHeader = ({chat, isJoinedEvent, handleOpenModalChatHost}:
   };
 
   return (
-    <S.HeaderContainer style={{paddingTop: insets.top}}>
+    <S.HeaderContainer style={{ paddingTop: insets.top }}>
       <S.HeaderRow>
         <S.BackButton
           onPress={() => {
-            updateChatSeen({params: {path: {chatId: chat.id || ''}}, body: {userId: userMetadata.uid || ''}});
+            updateChatSeen({ params: { path: { chatId: chat.id || '' } }, body: { userId: userMetadata.uid || '' } });
             goBack();
           }}>
           <ArrowLeft />
         </S.BackButton>
 
         <S.ProfileContainer>
-          <S.Avatar source={{uri: isJoinedEvent ? chat.hostImageUrl : chat.guestImageUrl}} />
+          <TouchableOpacity onPress={() => {
+            navigate('/user-profile-preview', {
+              userUid: isJoinedEvent ? chat.hostId || '' : chat.guestId || '',
+            });
+          }}>
+            <S.Avatar source={{ uri: isJoinedEvent ? chat.hostImageUrl : chat.guestImageUrl }} />
+          </TouchableOpacity>
           <S.NameContainer>
             <S.NameText>{isJoinedEvent ? chat.hostName : chat.guestName}</S.NameText>
           </S.NameContainer>

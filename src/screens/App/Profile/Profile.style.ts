@@ -103,6 +103,7 @@ export const CopyrightText = styled.Text`
 export const NameAgeContainer = styled.View`
   flex-direction: row;
   align-items: center;
+
 `;
 
 export const AccountTypeContainer = styled.View`
@@ -112,4 +113,5 @@ export const AccountTypeContainer = styled.View`
 
 export const CheckStarWhite = styled(CheckStar)`
   color: ${whiteColor};
+  margin-left: 8px;
 `;

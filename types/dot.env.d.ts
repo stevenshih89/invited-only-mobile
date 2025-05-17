@@ -6,4 +6,7 @@ declare module '@env' {
   export const SENTRY_DNS: string;
   export const SOCKET_URL: string;
   export const BUGSNAG_API_KEY: string;
+  export const IO_PUBLICK_RC_IOS: string;
+  export const RN_UXCAM_API_KEY: string;
+  export const IO_PUBLICK_RC_ANDROID: string;
 }

@@ -1,14 +1,14 @@
-import React, {Dispatch, FC, SetStateAction, useCallback, useEffect, useState} from 'react';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from 'react';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 //import components
 import Modal from 'react-native-modal';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import firestore from '@react-native-firebase/firestore';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {useFocusEffect} from '@react-navigation/native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { useFocusEffect } from '@react-navigation/native';
 import Config from 'react-native-config';
-import {useUser} from '../../../store/userStore';
+
 import useStyles from './styles.ts';
 import UserIcon from 'assets/images/icons/user.svg';
 import ChatIcon from 'assets/images/icons/messages.svg';
@@ -16,17 +16,17 @@ import ReportIcon from 'assets/images/icons/block_and_report.svg';
 import CloseIcon from 'assets/images/icons/close-circle-red.svg';
 import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import CheckWhite from 'assets/images/icons/check.svg';
-import {black1Color, grayScale700, whiteColor} from 'constants/colors.ts';
-import {chatCorrespondencePath, commonStackPath, myProfileViewPath} from 'constants/pathLocations.ts';
-import {useAppNavigation} from 'hooks/useAppNavigation.tsx';
+import { black1Color, grayScale700, whiteColor } from 'constants/colors.ts';
+import { chatCorrespondencePath, commonStackPath, myProfileViewPath } from 'constants/pathLocations.ts';
+import { useAppNavigation } from 'hooks/useAppNavigation.tsx';
 import ModalReport from 'components/Modal/ModalReport/ModalReport.tsx';
-import {showToast} from 'helpers/showToast.ts';
-import {Satoshi500, Satoshi700} from 'constants/fonts.ts';
-import {calculateAge} from 'helpers/calculateAge.ts';
-import {sendNotification} from 'helpers/fcmHelper.ts';
-import {ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS} from 'constants/common.ts';
-import {Event} from 'src/types/event.ts';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry.ts';
+import { showToast } from 'helpers/showToast.ts';
+import { Satoshi500, Satoshi700 } from 'constants/fonts.ts';
+import { calculateAge } from 'helpers/calculateAge.ts';
+import { sendNotification } from 'helpers/fcmHelper.ts';
+import { ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS } from 'constants/common.ts';
+import { Event } from 'src/types/event.ts';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry.ts';
 
 interface ModalUserProfileEventProps {
   isModalVisible?: boolean;
@@ -382,7 +382,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
             'Approve',
             'Approved'.toUpperCase(),
             userInfo,
-            JSON.stringify({path: 'myEvents'}),
+            JSON.stringify({ path: 'myEvents' }),
           );
         }
         showToast('inviteMatch', `Waiting for ${userGuest?.name} to accept your invitation`, 'Almost there!', {
@@ -427,10 +427,10 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
     }
     if (userGuest?.status === INVITE_MATCH_STATUS) {
       handleApproveGuestFromHost();
-      const newArray = usersList.map((i: any) => (i.uid === uid ? {...i, status: APPROVED_STATUS} : i));
+      const newArray = usersList.map((i: any) => (i.uid === uid ? { ...i, status: APPROVED_STATUS } : i));
 
       setUsersListsData && setUsersListsData(newArray);
-      setUserGuest({...userGuest, status: APPROVED_STATUS});
+      setUserGuest({ ...userGuest, status: APPROVED_STATUS });
       setModalVisible && setModalVisible(false);
     }
   };
@@ -496,17 +496,17 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
           swipeDirection={['down']}>
           <View style={styles.wrapper}>
             <View style={styles.whiteLine} />
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', width: '100%', marginBottom: 20}}>
-              {image && <Image style={{borderRadius: 100, width: 40, height: 40}} source={{uri: image}} />}
-              <View style={{marginLeft: 6}}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={{fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', width: '100%', marginBottom: 20 }}>
+              {image && <Image style={{ borderRadius: 100, width: 40, height: 40 }} source={{ uri: image }} />}
+              <View style={{ marginLeft: 6 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={{ fontFamily: Satoshi700, fontSize: RFValue(14, 812), color: whiteColor }}>
                     {title}
                     {userInfo?.date && `, ${calculateAge(userInfo.date)}`}
                   </Text>
-                  {userInfo?.accountConfirmed && <CheckStarIcon width={12} height={12} style={{marginLeft: 4}} />}
+                  {userInfo?.accountConfirmed && <CheckStarIcon width={12} height={12} style={{ marginLeft: 4 }} />}
                 </View>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   {userInfo?.accountType && (
                     <View
                       style={{
@@ -517,7 +517,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
                         paddingHorizontal: 6,
                         paddingVertical: 2,
                       }}>
-                      <Text style={{textTransform: 'capitalize', color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(9, 812)}}>
+                      <Text style={{ textTransform: 'capitalize', color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(9, 812) }}>
                         {userInfo.accountType}
                       </Text>
                     </View>
@@ -525,22 +525,22 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
                 </View>
               </View>
             </View>
-            <View style={{width: '100%', marginBottom: 20}}>
+            <View style={{ width: '100%', marginBottom: 20 }}>
               <TouchableOpacity
                 disabled={getIsDisabledButton()}
                 activeOpacity={0.7}
                 style={[
-                  {height: 56, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderRadius: 10},
+                  { height: 56, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderRadius: 10 },
                   getButtonStyle(),
                 ]}
                 onPress={handleActionPress}>
-                <Text style={[{fontFamily: Satoshi500, fontSize: RFValue(18, 812)}, getButtonTitleStyle()]}>
+                <Text style={[{ fontFamily: Satoshi500, fontSize: RFValue(18, 812) }, getButtonTitleStyle()]}>
                   {getUserStatusButtonText()}
                 </Text>
-                {userGuest?.status === ACCEPTED_STATUS && <CheckWhite style={{marginLeft: 10}} />}
+                {userGuest?.status === ACCEPTED_STATUS && <CheckWhite style={{ marginLeft: 10 }} />}
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => goToProfileView()} style={[styles.buttonFooter, {borderTopColor: 'transparent'}]}>
+            <TouchableOpacity onPress={() => goToProfileView()} style={[styles.buttonFooter, { borderTopColor: 'transparent' }]}>
               <UserIcon width={14} height={14} />
               <Text style={styles.textButton}>Profile</Text>
             </TouchableOpacity>
@@ -558,7 +558,7 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleCancelInvitation()} style={styles.buttonFooter}>
               <CloseIcon width={14} height={14} />
-              <Text style={[styles.textButton, {color: 'rgb(206, 38, 38)'}]}>Cancel invitation</Text>
+              <Text style={[styles.textButton, { color: 'rgb(206, 38, 38)' }]}>Cancel invitation</Text>
             </TouchableOpacity>
           </View>
           <ModalReport

@@ -15,7 +15,8 @@ const ModalUpgradeAccount: FC = () => {
 
   const { user } = useUser();
 
-  if (user?.uid && user?.accountReviewed && user?.accountConfirmed && user?.accountType === 'host' && !user?.accountPremium) {
+
+  if (user?.uid && user?.accountReviewed && user?.accountConfirmed && !user?.accountPremium) {
     return (
       <S.Container>
         <S.ModalWrapper>

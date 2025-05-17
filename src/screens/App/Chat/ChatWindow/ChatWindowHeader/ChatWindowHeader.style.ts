@@ -15,6 +15,7 @@ export const HeaderContainer = styled.View`
     margin-top: 12px;
 
 `;
+HeaderContainer.displayName = 'HeaderContainerTest';
 export const HeaderCollapsedContainer = styled.View`
     display: flex;
 `;

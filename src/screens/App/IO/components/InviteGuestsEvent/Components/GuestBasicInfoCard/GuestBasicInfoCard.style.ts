@@ -1,11 +1,12 @@
 import RadialGradient from 'react-native-radial-gradient';
-import { RFValue } from 'react-native-responsive-fontsize';
+import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
-import { Satoshi400, Satoshi500 } from 'constants/fonts';
-import { whiteColor } from 'constants/colors';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {whiteColor} from 'constants/colors';
 
 export const Container = styled.View`
-  flex: 1;
+  flex-direction: row;
+  align-items: center;
 `;
 
 export const StyledRadialGradient = styled(RadialGradient)`
@@ -13,6 +14,7 @@ export const StyledRadialGradient = styled(RadialGradient)`
   border-radius: 20px;
   overflow: hidden;
   margin-top: 8px;
+  flex: 1;
 `;
 
 export const SectionTitle = styled.Text`

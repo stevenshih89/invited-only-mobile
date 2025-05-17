@@ -1,12 +1,12 @@
 import styled from 'styled-components/native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { blackColor, whiteColor } from 'constants/colors';
-import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {Switch} from '@rneui/themed';
+import {blackColor, whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 
 export const Container = styled.View`
   flex: 1;
 `;
-
 
 export const InnerContainer = styled.View`
   background-color: ${blackColor};
@@ -66,7 +66,7 @@ export const PhoneNumberText = styled.Text`
 
 export const ChangePhoneButton = styled.TouchableOpacity.attrs({
   activeOpacity: 0.7,
-  hitSlop: { top: 20, left: 10, right: 10, bottom: 10 },
+  hitSlop: {top: 20, left: 10, right: 10, bottom: 10},
 })`
   flex-direction: row;
   align-items: center;
@@ -89,6 +89,7 @@ export const EmailLabel = styled.Text`
 export const EmailInput = styled.TextInput.attrs({
   placeholder: 'Enter your email',
   placeholderTextColor: 'rgba(255, 255, 255, 0.3)',
+  editable: false,
 })`
   background-color: rgba(255, 255, 255, 0.04);
   border-radius: 100px;
@@ -153,4 +154,8 @@ export const DeleteAccountText = styled.Text`
   margin-left: 10px;
   font-family: ${Satoshi500};
   font-size: ${RFValue(16, 932)}px;
+`;
+
+export const StyledSwitch = styled(Switch)`
+  transform: scale(0.7);
 `;

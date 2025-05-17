@@ -115,6 +115,10 @@ export const LanguageText = styled.Text`
   font-family: ${Satoshi500};
 `;
 
+export const LanguageIcon = styled.Text`
+  font-size: ${RFValue(18, 932)}px;
+`;
+
 export const CheckboxContainer = styled.View<StyledProps>`
   width: 20px;
   height: 20px;

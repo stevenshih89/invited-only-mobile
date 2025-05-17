@@ -2,12 +2,17 @@ import {FC, useState} from 'react';
 
 //import components
 import * as S from './MyLanguagesKnow.style';
-import ModalSelectLanguages from 'components/Modal/ModalSelectLanguages/ModalSelectLanguages.tsx';
+import ModalSelectLanguages, {Language} from 'components/Modal/ModalSelectLanguages/ModalSelectLanguages.tsx';
 
 //import icons
 import ArrowRight from 'assets/images/icons/arrow-right.svg';
 
-const MyLanguagesKnow: FC = () => {
+interface MyLanguagesKnowProps {
+  languages: Language[];
+  setLanguages: (languages: Language[]) => void;
+}
+
+const MyLanguagesKnow: FC<MyLanguagesKnowProps> = ({languages, setLanguages}) => {
   const [modalLanguages, setModalLanguages] = useState<boolean>(false);
   const [showLanguages, setShowLanguages] = useState<boolean>(false);
   return (
@@ -26,6 +31,8 @@ const MyLanguagesKnow: FC = () => {
         setShowLanguages={setShowLanguages}
         modalLanguages={modalLanguages}
         setModalLanguages={setModalLanguages}
+        languages={languages}
+        setLanguages={setLanguages}
       />
     </S.StyledRadialGradient>
   );

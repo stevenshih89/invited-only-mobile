@@ -1,13 +1,18 @@
+
 import AppLoader from '../AppLoader/AppLoader';
 import * as S from './Chat.style';
 import { EmptyStateChatFallback } from './Components/EmtryStateChatFallback';
 import EventChats from './EventChats/EventChats';
+import { useUpdateActiveChatScreen } from './hooks/useUpdateActiveChatScreen';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 
+
 const Chat = () => {
   const { userMetadata } = useAuthStore.getState();
+  useUpdateActiveChatScreen();
+
   const { data: events, isLoading: isEventsLoading } = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
     params: {
       path: {

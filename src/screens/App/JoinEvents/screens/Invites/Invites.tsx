@@ -10,7 +10,7 @@ import JoinedEventsEmptyFallback from 'screens/App/MyEvents/Components/JoinedEve
 
 const Invites: FC = () => {
 
-  const { data: pendingInvitesEvents, isLoading, invalidateInvitedEvents } = useGetInvites();
+  const { data: pendingInvitesEvents, isLoading, updateInvitesData } = useGetInvites();
 
   if (pendingInvitesEvents.length === 0) {
     return <JoinedEventsEmptyFallback />
@@ -30,7 +30,7 @@ const Invites: FC = () => {
           initialNumToRender={4}
           renderItem={({ item }) => (
             <S.InviteCardWrapper key={item.uid}>
-              <InviteCard event={item} invalidateInvitedEvents={invalidateInvitedEvents} />
+              <InviteCard event={item} updateInvitesData={updateInvitesData} />
             </S.InviteCardWrapper>
           )}
         />

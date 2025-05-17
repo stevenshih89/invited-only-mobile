@@ -24,7 +24,7 @@ const JoinEvents: FC<Props> = ({ events, hasNextPage, fetchNextPage, isLoading }
     <BottomSheetModalProvider>
       <JoinEventsHeader activeTab={activeTab} handleTabChange={setActiveTab} />
       {activeTab === 'explore' && <ExploreEvents events={events} hasNextPage={hasNextPage} fetchNextPage={fetchNextPage} isLoading={isLoading} />}
-      {activeTab === 'invites' && <Invites events={events} />}
+      {activeTab === 'invites' && <Invites />}
       <ModalLockedAccount />
     </BottomSheetModalProvider>
   );

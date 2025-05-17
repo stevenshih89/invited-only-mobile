@@ -1,26 +1,26 @@
 import styled from 'styled-components/native';
-import { whiteColor } from 'constants/colors';
-import { Satoshi500 , Satoshi700 } from 'constants/fonts';
+import {whiteColor} from 'constants/colors';
+import {Satoshi500, Satoshi700} from 'constants/fonts';
 import CheckedIcon from 'src/assets/images/icons/checked-interest-icon.svg';
 import UncheckedIcon from 'src/assets/images/icons/unchecked-interest-icon.svg';
-
 
 export const InterestImageContainer = styled.ImageBackground`
   width: 100%;
   height: 100%;
   display: flex;
 `;
-export const InterestImageOverlay = styled.View<{ isSelected: boolean }>`
+export const InterestImageOverlay = styled.View<{isSelected: boolean}>`
   flex-direction: row;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.1);
-  ${({ isSelected }: { isSelected: boolean }) => isSelected && `
+  ${({isSelected}: {isSelected: boolean}) =>
+    isSelected &&
+    `
     border-radius: 20px;
     border-color: ${whiteColor};
     border-width: 1px;
   `}
-
 `;
 
 export const LeftContainer = styled.View`
@@ -42,7 +42,6 @@ export const WhiteTextInfo = styled.Text`
   color: ${whiteColor};
 `;
 
-
 export const RightContainer = styled.View`
   flex: 1;
   width: 30%;
@@ -50,7 +49,6 @@ export const RightContainer = styled.View`
   align-items: flex-end;
   justify-content: flex-start;
   padding: 10px;
-
 `;
 
 export const CheckedIconStyled = styled(CheckedIcon)`
@@ -89,7 +87,7 @@ export const RoundedTextViewContainer = styled.View`
   padding-left: 10px;
   padding-right: 10px;
   flex-direction: row;
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: #1c1c1c;
   margin-top: 2px;
   margin-bottom: 2px;
 `;

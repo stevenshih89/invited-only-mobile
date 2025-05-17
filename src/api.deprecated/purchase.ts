@@ -1,4 +1,4 @@
-import Purchases, {PurchasesPackage} from 'react-native-purchases';
+import Purchases, { PurchasesPackage } from 'react-native-purchases';
 
 const enum Offering {
   SuperInvite = 'Super Invite',
@@ -59,7 +59,7 @@ export const getCustomerInfo = async () => {
   }
 };
 
-export const getActiveSubscription = async (): Promise<{activeSubscriptions: string[]}> => {
+export const getActiveSubscription = async (): Promise<{ activeSubscriptions: string[] }> => {
   try {
     const customerInfo = await Purchases.getCustomerInfo();
     console.warn('customerInfo', customerInfo);
@@ -70,10 +70,10 @@ export const getActiveSubscription = async (): Promise<{activeSubscriptions: str
     if (activeSubscriptions.length > 0) {
       return customerInfo;
     } else {
-      return {activeSubscriptions: []};
+      return { activeSubscriptions: [] };
     }
   } catch (error) {
-    console.log('error get subs', error);
-    return {activeSubscriptions: []};
+    console.error('error get subs', error);
+    return { activeSubscriptions: [] };
   }
 };

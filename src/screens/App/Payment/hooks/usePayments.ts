@@ -1,12 +1,11 @@
-import {useContext, useEffect, useState} from 'react';
-import firestore from '@react-native-firebase/firestore';
-import Purchases, {PurchasesPackage} from 'react-native-purchases';
+import { useEffect, useState } from 'react';
+import Purchases, { PurchasesPackage } from 'react-native-purchases';
 import getSymbolFromCurrency from 'currency-symbol-map';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {useSubscriptions} from 'src/store/subscriptionsStore';
-import {getActiveSubscription, getSubscriptions} from 'src/api.deprecated/purchase';
-import {showToast} from 'helpers/showToast';
+import { useSubscriptions } from 'src/store/subscriptionsStore';
+import { getActiveSubscription, getSubscriptions } from 'src/api.deprecated/purchase';
+import { showToast } from 'helpers/showToast';
+import invitedOnlyBackendApi from 'src/api/backend-api';
+import { useAuthStore } from 'src/store/authStore';
 
 export interface PlanListItem {
   id: number;
@@ -55,39 +54,59 @@ const usePayments = () => {
     },
   ]);
 
+  const { userMetadata } = useAuthStore();
+
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[0]);
   const [loaderVisible, setLoaderVisible] = useState(false);
   const [successfulPay, setSuccessfulPay] = useState(false);
-  const [visibleUpgradeSuccessful, setVsibleUpgradeSuccessful] = useState(false);
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const [visibleUpgradeSuccessful, setVisibleUpgradeSuccessful] = useState(false);
 
   const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions);
   const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
+  const { mutate: createSubscription } = invitedOnlyBackendApi.useMutation('post', '/subscription/create');
+  const { mutate: updateSubscription } = invitedOnlyBackendApi.useMutation('post', '/subscription/update');
+  const { data: subscription } = invitedOnlyBackendApi.useQuery('get', '/subscription/get/{userId}', {
+    params: {
+      path: {
+        userId: userMetadata?.uid,
+      },
+    },
+  });
+  const activeExistingSubscription = subscription && subscription.status === 'active';
 
-  const updateUser = async (subscriptionId: string, expirationDate: string | null) => {
-    const user = {uid: '123'};
-    if (user) {
-      try {
-        await firestore().collection(apiUserInfoCollection).doc(user.uid).update({
-          accountPremium: true,
-          accountConfirmed: true,
-          accountReviewed: true,
-          activeSubscription: {
-            subscriptionId,
-            expirationDate,
-          },
-        });
-      } catch (error: any) {
-        logErrorToSentry(error);
-        console.log('error user premium update', error);
-      }
+  const updateUser = async (subscriptionId: string, expirationDate: string | null, type: string) => {
+    if (!activeExistingSubscription) {
+      createSubscription({
+        body: {
+          subscriptionId,
+          userId: userMetadata?.uid,
+          type,
+          endDate: expirationDate ?? undefined,
+        },
+      }, {
+        onSuccess: () => {
+          setCurrentSubscriptions({ activeSubscriptions: [subscriptionId] });
+        },
+        onError: (error) => {
+          console.error('error update user', error);
+        },
+      });
+    } else {
+      updateSubscription({
+        body: {
+          subscriptionId: subscriptionId,
+          userId: userMetadata?.uid,
+          type,
+          endDate: expirationDate ?? undefined,
+        },
+      });
     }
   };
 
   const pay = async (pack: PurchasesPackage) => {
     setLoaderVisible(true);
     try {
-      const {customerInfo} = await Purchases.purchasePackage(pack);
+      const { customerInfo } = await Purchases.purchasePackage(pack);
 
       const activeSubscription = await getActiveSubscription();
       console.warn('activeSubscription', activeSubscription);
@@ -101,8 +120,8 @@ const usePayments = () => {
 
       const subscriptionId = customerInfo.activeSubscriptions[0];
       const expirationDate = customerInfo.allExpirationDates[subscriptionId];
-
-      updateUser(subscriptionId, expirationDate);
+      const type = mapIdentifierToType(customerInfo.activeSubscriptions[0]);
+      updateUser(subscriptionId, expirationDate, type);
     } catch (e) {
       console.error('error pay', e);
 
@@ -115,7 +134,6 @@ const usePayments = () => {
       const offerings = await Purchases.getOfferings();
       if (offerings.current !== null) {
         const offeringsHostSubscription = offerings.all['Host subscription'];
-        console.log('offeringsHostSubscription', offeringsHostSubscription);
 
         if (activePayment.durationName === 'week') {
           const product = offeringsHostSubscription.availablePackages[0];
@@ -133,7 +151,7 @@ const usePayments = () => {
         }
       }
     } catch (e) {
-      console.log('error', e);
+      console.error('error getOfferings', e);
     }
   };
 
@@ -146,19 +164,19 @@ const usePayments = () => {
       if (purchaserInfo?.activeSubscriptions?.length > 0) {
         switch (purchaserInfo?.activeSubscriptions?.[0]) {
           case 'io_59_1w':
-            showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', {status: 'success'});
+            showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', { status: 'success' });
 
-            setCurrentSubscriptions({activeSubscriptions: ['io_59_1w']});
+            setCurrentSubscriptions({ activeSubscriptions: ['io_59_1w'] });
             // navigation.navigate('/profile');
             break;
           case 'io_99_1m':
-            showToast('inviteMatch', 'Month subscription restored', 'Restore purchases', {status: 'success'});
-            setCurrentSubscriptions({activeSubscriptions: ['io_99_1m']});
+            showToast('inviteMatch', 'Month subscription restored', 'Restore purchases', { status: 'success' });
+            setCurrentSubscriptions({ activeSubscriptions: ['io_99_1m'] });
             // navigation.navigate('/profile');
             break;
           case 'io_29_3m':
-            showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', {status: 'success'});
-            setCurrentSubscriptions({activeSubscriptions: ['io_29_3m']});
+            showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', { status: 'success' });
+            setCurrentSubscriptions({ activeSubscriptions: ['io_29_3m'] });
             // navigation.navigate('/profile');
             break;
           default:
@@ -166,7 +184,7 @@ const usePayments = () => {
         }
         // console.log('purchases restore', purchaserInfo.activeSubscriptions[0]);
       } else {
-        showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', {status: 'fail'});
+        showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', { status: 'fail' });
       }
     } catch (e) {
       console.error('error restore purchases', e);
@@ -174,7 +192,7 @@ const usePayments = () => {
   };
 
   const getButtonTitle = () => {
-    const {duration, durationName, fullPrice, identifier} = activePayment;
+    const { duration, durationName, fullPrice, identifier } = activePayment;
     if (currentSubscriptions?.activeSubscriptions?.includes(identifier)) {
       return 'Current Plan';
     }
@@ -229,7 +247,6 @@ const usePayments = () => {
       package: offer,
       weeksInPeriod: plansList[idx].weeksInPeriod,
     }));
-    console.log('products', products);
 
     setPlansList(products);
     setActivePayment(products[0]);
@@ -248,6 +265,19 @@ const usePayments = () => {
     restorePurchases,
     getOfferings,
   };
+};
+
+const mapIdentifierToType = (identifier: string) => {
+  switch (identifier) {
+    case 'io_59_1w':
+      return 'oneWeek';
+    case 'io_99_1m':
+      return 'oneMonth';
+    case 'io_29_3m':
+      return 'threeMonths';
+    default:
+      return 'oneWeek';
+  }
 };
 
 export default usePayments;

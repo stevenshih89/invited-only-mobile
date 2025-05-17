@@ -1,3 +1,4 @@
+import React from 'react';
 import * as S from './HostPremiumBlock.style';
 import useUser from 'hooks/user/useUser';
 import RocketIcon from 'assets/images/icons/rocket-white.svg';

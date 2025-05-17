@@ -1,8 +1,8 @@
-import {FC, JSX} from 'react';
+import React, { FC, JSX } from 'react';
 import * as S from './Buttons.style';
 import Button from 'components/Button/Button';
 
-const Buttons: FC<{isButtonDisabled: boolean; buttonTitle: string; restorePurchases: () => void; getOfferings: () => void}> = ({
+const Buttons: FC<{ isButtonDisabled: boolean; buttonTitle: string; restorePurchases: () => void; getOfferings: () => void }> = ({
   isButtonDisabled,
   buttonTitle,
   restorePurchases,

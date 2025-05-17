@@ -78,7 +78,7 @@ const EventCard = ({ onInvite, onReject, isTopCard, event, index, topIndex }: Pr
         <S.CardBottomContainer>
           <CardsNameAndDate eventName={event.name || ''} date={date} hour={event.hour || ''} />
           <CardActionsButtons
-            disabled={true}
+            disabled={false}
             thisVersion={false}
             onReject={onClickReject}
             onSuperInvite={onClickSuperLike}

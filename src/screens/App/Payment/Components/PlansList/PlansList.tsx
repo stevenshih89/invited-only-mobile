@@ -1,3 +1,4 @@
+import { components } from '@invited-only/invited-only-api';
 import { PlanListItem } from '../../hooks/usePayments';
 import * as S from './PlansList.style';
 
@@ -5,18 +6,16 @@ interface PlansListProps {
   plansList: PlanListItem[];
   activePayment: PlanListItem;
   setActivePayment: (item: PlanListItem) => void;
-  currentSubscriptions: any;
+  currentSubscriptions: components['schemas']['Subscription'];
 }
 
-const PlansList = ({ plansList, activePayment, setActivePayment, currentSubscriptions }: PlansListProps) => {
+const PlansList = ({ plansList, activePayment, setActivePayment }: PlansListProps) => {
   const renderItem = ({ item }: { item: PlanListItem }) => {
     let isRender = true;
     if (isRender) {
+
       let isActive = activePayment.id === item.id;
 
-      if (currentSubscriptions?.activeSubscriptions?.length > 1) {
-        isActive = true;
-      }
 
       return (
         <S.ItemContainer key={item.id}>
