@@ -9,6 +9,7 @@ import { useAuthStore } from 'src/store/authStore';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 
 
+
 const Chat = () => {
   const { userMetadata } = useAuthStore.getState();
   useUpdateActiveChatScreen();

@@ -45,6 +45,7 @@ export const ChatWindow = () => {
     hostId: chat?.hostId ?? '',
   });
 
+  const isSupportChat = params?.isSupportChat;
   const formatTime = (timestamp?: string) => {
     if (!timestamp) return '';
     const date = new Date(timestamp);
@@ -75,14 +76,14 @@ export const ChatWindow = () => {
   return (
     <BottomSheetModalProvider>
       <S.Container>
-        {chat && <ChatWindowHeader chat={chat} isJoinedEvent={isJoinedEvent} handleOpenModalChatHost={handleOpenModalChatHost} />}
+        {chat && <ChatWindowHeader chat={chat} isJoinedEvent={isJoinedEvent} handleOpenModalChatHost={handleOpenModalChatHost} isSupportChat={isSupportChat} />}
 
         {isLoading ? (
           <DefaultBackground>
             <ActivityIndicator size="large" color={whiteColor} />
           </DefaultBackground>
         ) :
-          sortedChatMessages?.length === 0 ? (
+          sortedChatMessages?.length === 0 && !isSupportChat ? (
             <EmptyStateChatWindow guestImage={chat?.guestImageUrl || ''} hostImage={chat?.hostImageUrl || ''} />
           ) : (
             <S.ContentContainer>

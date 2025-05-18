@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { components } from '@invited-only/invited-only-api';
+
 import * as S from './ChatWindowHeader.style';
 import { ToggleInvitationStatusDropdown } from './ToggleInvitationStatusDropdown/ToggleInvitationStatusDropdown';
 import { ApproveActionButton } from './ApproveActionButton/ApproveActionButton';
@@ -14,14 +15,16 @@ import { whiteColor } from 'constants/colors';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
 import { useInvitationStatus } from 'hooks/useInvitationStatus';
+import IOImage from 'src/assets/images/app/IO.png'
 
 interface ChatWindowHeaderProps {
   chat: components['schemas']['Chat'];
   isJoinedEvent?: boolean;
   handleOpenModalChatHost: () => void;
+  isSupportChat?: boolean;
 }
 
-export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost }: ChatWindowHeaderProps) => {
+export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost, isSupportChat }: ChatWindowHeaderProps) => {
   const { goBack, navigate } = useAppNavigation();
   const { userMetadata } = useAuthStore();
   const insets = useSafeAreaInsets();
@@ -85,17 +88,17 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost 
               userUid: isJoinedEvent ? chat.hostId || '' : chat.guestId || '',
             });
           }}>
-            <S.Avatar source={{ uri: isJoinedEvent ? chat.hostImageUrl : chat.guestImageUrl }} />
+            {isSupportChat ? <S.Avatar source={IOImage} /> : <S.Avatar source={{ uri: isJoinedEvent ? chat.hostImageUrl : chat.guestImageUrl }} />}
           </TouchableOpacity>
           <S.NameContainer>
             <S.NameText>{isJoinedEvent ? chat.hostName : chat.guestName}</S.NameText>
           </S.NameContainer>
         </S.ProfileContainer>
-        <S.MoreButton onPress={isJoinedEvent ? handleOpenModalChatHost : handleOpenModalChatHost}>
+        {!isSupportChat ? <S.MoreButton onPress={isJoinedEvent ? handleOpenModalChatHost : handleOpenModalChatHost}>
           <DotsHorizontalIcon />
-        </S.MoreButton>
+        </S.MoreButton> : <View style={{ marginRight: 20 }} />}
       </S.HeaderRow>
-      <S.HeaderRow>
+      {!isSupportChat && <S.HeaderRow>
         <S.HeaderCollapsedContainer>
           <TouchableOpacity onPress={toggleDropdown} activeOpacity={0.7}>
             <S.InvitationStatusContainer>
@@ -127,6 +130,7 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost 
           </S.DropdownWrapper>
         </S.HeaderCollapsedContainer>
       </S.HeaderRow>
+      }
     </S.HeaderContainer>
   );
 };

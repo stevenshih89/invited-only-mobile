@@ -13,5 +13,6 @@ export const Container = styled.View`
 export const ChatsContainer = styled.FlatList`
   flex: 1;
   width: 100%;
-  margin-bottom: 100px;
+  margin-bottom: 20px;
+
 `;

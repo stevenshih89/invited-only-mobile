@@ -1,7 +1,7 @@
 import { getFirestore } from "@react-native-firebase/firestore";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { components } from "../v1";
+import { components } from "@invited-only/invited-only-api";
 import { logErrorToSentry } from "helpers/logErrorsToSentry";
 
 interface UseFirestoreSubscriptionEventRequestsProps {

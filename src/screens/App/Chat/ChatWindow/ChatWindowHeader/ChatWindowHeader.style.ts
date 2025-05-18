@@ -76,7 +76,7 @@ export const NameText = styled.Text`
 
 `;
 
-export const MoreButton = styled.TouchableOpacity`
+export const MoreButton = styled.TouchableOpacity<{ isSupportChat?: boolean }>`
 
     width: 20px;
     height: 20px;

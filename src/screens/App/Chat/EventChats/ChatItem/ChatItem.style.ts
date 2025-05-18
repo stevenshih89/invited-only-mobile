@@ -2,16 +2,16 @@ import styled from "styled-components/native";
 import FastImage from "react-native-fast-image";
 import { whiteColor } from "constants/colors";
 import { Satoshi400, Satoshi500, Satoshi700 } from "constants/fonts";
-import { screenWidth } from "constants/common";
 
 
-export const Container = styled.View`
+
+export const Container = styled.View<{ isSupportChat?: boolean }>`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  height: 131px;
+  ${({ isSupportChat }: { isSupportChat?: boolean }) => !isSupportChat ? 'height: 131px;' : 'height: 80px;'}
   background: rgba(12, 12, 12, 0.5);
 
 `;

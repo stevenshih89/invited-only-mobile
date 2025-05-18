@@ -25,6 +25,7 @@ export type RootStackParamList = {
   '/chat/chat-window'?: {
     chat: components['schemas']['Chat'];
     isJoinedEvent?: boolean;
+    isSupportChat?: boolean;
   };
   '/common-stack'?: {
     screen?: string;
