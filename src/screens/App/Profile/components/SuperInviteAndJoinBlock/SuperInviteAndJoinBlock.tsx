@@ -21,7 +21,7 @@ const SuperInviteBlock = () => {
         </S.SuperDivider>
         <S.SuperInfoContainer>
           <S.SuperCountContainer>
-            <S.SuperCount>{userData?.superInvites || 0 + (userData?.weeklySuperInvites || 0)}</S.SuperCount>
+            <S.SuperCount>{userData?.superInvites || 0}</S.SuperCount>
             <S.SuperLabel>Super Join</S.SuperLabel>
           </S.SuperCountContainer>
           <S.AddMoreButton onPress={() => {

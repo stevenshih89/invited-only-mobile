@@ -1,13 +1,20 @@
-import {FC} from 'react';
-import {components} from '@invited-only/invited-only-api';
+import { FC } from 'react';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './EventInfo.style';
 
 interface EventInfoProps {
   event: components['schemas']['EventData'];
 }
 
-const EventInfo: FC<EventInfoProps> = ({event}) => {
-  const {name, date, hour, female, male, placeName, location} = event;
+const formatDate = (date: string) => {
+  const dateObj = new Date(date);
+  if (!isNaN(dateObj.getTime())) {
+    return dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'long' });
+  }
+  return date;
+}
+const EventInfo: FC<EventInfoProps> = ({ event }) => {
+  const { name, date, hour, female, male, placeName, location } = event;
   return (
     <S.Container>
       <S.StyledRadialGradient
@@ -20,7 +27,7 @@ const EventInfo: FC<EventInfoProps> = ({event}) => {
         <S.RowGap>
           <S.Column>
             <S.SectionTitle>Date</S.SectionTitle>
-            <S.SubText>{date}</S.SubText>
+            <S.SubText>{formatDate(date || '')}</S.SubText>
           </S.Column>
           <S.Column>
             <S.SectionTitle>Time</S.SectionTitle>

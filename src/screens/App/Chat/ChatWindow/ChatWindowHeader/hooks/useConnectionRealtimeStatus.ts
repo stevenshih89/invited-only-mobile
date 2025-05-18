@@ -21,7 +21,7 @@ const useConnectionRealtimeStatus = ({ chat }: ConnectionStatus) => {
             }
 
         }
-    }, { refetchInterval: 1000 })
+    }, { refetchInterval: 1000, enabled: !!chat?.id && !!chat?.hostId && !!chat?.guestId && !!chat?.eventId })
     useFirestoreSubscriptionConnectionStatus({
         collectionName: attendees || '',
         queryKey: ['get', '/eventAttendees/host/{hostId}', { params: { path: { hostId: userMetadata?.uid || '' } } }],

@@ -9,7 +9,6 @@ const useGetUserById = (userId: string) => {
             }
         }
     })
-
     return {
         data,
         isLoading,

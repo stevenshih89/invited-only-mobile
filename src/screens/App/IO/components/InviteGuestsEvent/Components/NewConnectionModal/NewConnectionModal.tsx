@@ -23,13 +23,27 @@ const screenHeight = Dimensions.get('window').height;
 
 export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible, onClose, cardData, isEvent, eventId }) => {
     const { user } = useUser();
-    const { navigateToChat, isChatLoading, isChatFound } = useNavigateToChat({
+    let hostId;
+    if (isEvent) {
+        const eventData = cardData as components['schemas']['EventData'];
+        hostId = eventData?.hostId || '';
+    } else {
+        hostId = user?.uid || '';
+    }
+    let guestId;
+    if (isEvent) {
+        guestId = user?.uid || '';
+    } else {
+        guestId = cardData?.uid || '';
+    }
+
+    const { navigateToChat } = useNavigateToChat({
         eventId: eventId,
-        hostId: isEvent ? (cardData as components['schemas']['EventData'])?.hostId || '' : user?.uid || '',
-        guestId: !isEvent ? (cardData as components['schemas']['User'])?.uid || '' : user?.uid || '',
+        hostId: hostId,
+        guestId: guestId,
         asGuest: isEvent ? true : false,
-        isEnabled: cardData && 'uid' in cardData && 'hostId' in cardData,
     });
+
     const { card1AnimatedStyle, card2AnimatedStyle, stepperAnimatedStyle, buttonAnimatedStyle } =
         useNewConnectionAnimations({ visible });
 
@@ -86,7 +100,7 @@ export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible,
                     </Animated.View>
                     <Animated.View style={buttonAnimatedStyle}>
                         <S.ButtonContainer>
-                            <S.SendMessageButton disabled={isChatLoading || !isChatFound} onPress={() => {
+                            <S.SendMessageButton onPress={() => {
                                 navigateToChat();
                                 onClose();
                             }}>

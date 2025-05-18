@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { components } from "@invited-only/invited-only-api";
 import useGetChats from "../EventChats/hooks/useGetAllChats";
 import { useAppNavigation } from "hooks/useAppNavigation";
+import useGetUserById from "hooks/useGetUserById";
 
 interface UseNavigateToChatProps {
     eventId: string;
@@ -12,21 +13,17 @@ interface UseNavigateToChatProps {
     isEnabled?: boolean;
 }
 
-const useNavigateToChat = ({ eventId, hostId, guestId, asGuest, isEnabled = true }: UseNavigateToChatProps) => {
+const useNavigateToChat = ({ eventId, hostId, guestId, asGuest }: UseNavigateToChatProps) => {
+
+    const { data: host } = useGetUserById(hostId);
+    const { data: guest } = useGetUserById(guestId);
+
     const navigation = useAppNavigation();
-
-    const { chats, isChatLoading } = useGetChats({ eventId, isEnabled });
-
-    const [chat, setChat] = useState<components['schemas']['Chat'] | null>(null);
-    useEffect(() => {
-        const chat = chats?.find((chat) => chat.hostId === hostId && chat.guestId === guestId);
-        setChat(chat || null);
-    }, [chats]);
     const navigateToChat = () => {
-        navigation.navigate('/chat/chat-window', { chat: chat || {}, isJoinedEvent: asGuest ? true : false });
+        navigation.navigate('/chat/chat-window', { chat: { eventId, hostId, guestId, hostName: host?.name, guestName: guest?.name, hostImageUrl: host?.photos?.[0]?.image ?? '', guestImageUrl: guest?.photos?.[0]?.image ?? '' }, isJoinedEvent: asGuest ? true : false });
     }
 
-    return { navigateToChat, isChatLoading, isChatFound: !!chat };
+    return { navigateToChat };
 };
 
 export default useNavigateToChat;

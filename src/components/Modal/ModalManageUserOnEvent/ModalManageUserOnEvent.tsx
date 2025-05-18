@@ -16,10 +16,11 @@ import invitedOnlyBackendApi from 'src/api/backend-api';
 import useNavigateToChat from 'screens/App/Chat/hooks/useNavigateToChat';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { userProfilePreviewPath } from 'constants/pathLocations';
+import useHostConnectionActions from 'hooks/connections/useHostConnectionActions';
 
 interface ModalManageUserOnEventProps {
   onClose: () => void;
-  request: components['schemas']['ConnectionRequest'];
+  request: components['schemas']['ConnectionRequest'] | null;
   openBlockReportModal: () => void;
   openUnconnectedModal: () => void;
   openCancelInvitationModal: () => void;
@@ -36,9 +37,19 @@ const ModalManageUserOnEvent = forwardRef<BottomSheetModal, ModalManageUserOnEve
   ({ onClose, openBlockReportModal, request, openUnconnectedModal, openCancelInvitationModal }, ref) => {
     const { data: userDetails } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
       params: {
-        path: { id: request?.guestId },
+        path: { id: request?.guestId || '' },
       },
+    }, {
+      enabled: !!request?.guestId,
     });
+
+    const { handleHostConfirmEvent } = useHostConnectionActions({
+      hostId: request?.hostId || '',
+      guestId: request?.guestId || '',
+      eventId: request?.eventId || '',
+    });
+
+
 
     const navigation = useAppNavigation();
 
@@ -92,7 +103,10 @@ const ModalManageUserOnEvent = forwardRef<BottomSheetModal, ModalManageUserOnEve
       },
     ];
 
-    const { buttonProps } = useButtonPropsByStatus(request?.status);
+    const { buttonProps } = useButtonPropsByStatus({
+      request: request || null,
+      approveGuest: () => { handleHostConfirmEvent() },
+    });
 
     const handleDismiss = () => {
       if (ref && 'current' in ref && ref.current) {

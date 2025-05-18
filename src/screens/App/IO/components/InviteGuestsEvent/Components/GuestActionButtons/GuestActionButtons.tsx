@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import { FC } from 'react';
 import * as S from './GuestActionButtons.style';
 import RejectIcon from 'src/assets/images/icons/close.svg';
 import SuperInviteIcon from 'src/assets/images/icons/lightning-fill.svg';
@@ -10,7 +10,7 @@ interface GuestActionButtonsProps {
   onInvite: () => void;
 }
 
-const GuestActionButtons: FC<GuestActionButtonsProps> = ({onReject, onSuperInvite, onInvite}) => (
+const GuestActionButtons: FC<GuestActionButtonsProps> = ({ onReject, onSuperInvite, onInvite }) => (
   <S.Container>
     <S.Button testID="reject-button" hitSlop={3} onPress={onReject}>
       <RejectIcon height={24} />

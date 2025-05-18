@@ -37,7 +37,7 @@ const ModalChatGuest = forwardRef<BottomSheetModal, ModalChatGuestProps>(({ onCl
   const { connectionStatus } = useConnectionRealtimeStatus({ chat });
   const { data: event } = useGetEvent(chat.eventId ?? '');
   const snapPoints = useMemo(() => ['45%', '60%'], []);
-  const { handleCancelChat, handleApproveChat, handleDeleteChat } = useChatGuestConnectionActions({
+  const { handleApproveChat, handleDeleteChat } = useChatGuestConnectionActions({
     eventId: chat.eventId ?? '',
     guestId: chat.guestId ?? '',
     hostId: chat.hostId ?? '',
@@ -58,7 +58,11 @@ const ModalChatGuest = forwardRef<BottomSheetModal, ModalChatGuestProps>(({ onCl
       icon: CalendarEventDarkGrayIcon,
       title: 'View Event Details',
       description: 'Check the full details of event',
-      onPress: () => { },
+      onPress: () => {
+        navigation.navigate('/event-profile-preview', {
+          event: event,
+        });
+      },
     },
     {
       icon: ProfileFillIcon,

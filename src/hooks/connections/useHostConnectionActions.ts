@@ -52,10 +52,22 @@ const useHostConnectionActions = ({ hostId, guestId, eventId, onSuccess }: UseHo
             }
         });
     };
+
+    const handleHostCancelEvent = () => {
+        updateEventAttendee({
+            body: {
+                eventId: eventId,
+                guestId: guestId,
+                hostId: hostId,
+                hostConfirm: false,
+            },
+        });
+    };
     return {
         handleHostConfirmEvent,
         handleHostRejectEvent,
         isUpdatingEventAttendee,
+        handleHostCancelEvent
     };
 };
 

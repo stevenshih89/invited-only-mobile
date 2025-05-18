@@ -7,7 +7,6 @@ import { ActivityIndicator } from '@ant-design/react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Config from 'react-native-config';
 import { components } from '@invited-only/invited-only-api';
-import useStyles from './styles';
 import TouchingSlider from 'components/TouchingSlider/TouchingSlider.tsx';
 
 //import icons
@@ -31,7 +30,7 @@ interface EventInfoProps {
 
 const EventInfo = ({ event }: EventInfoProps) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const styles = useStyles();
+
   const [hostInfo, setHostInfo] = useState<components['schemas']['User']>();
   const [loading, setLoading] = useState(true);
 
@@ -58,12 +57,12 @@ const EventInfo = ({ event }: EventInfoProps) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 20, paddingBottom: 50 }}
         style={{ flex: 1, borderTopColor: transparentWhite16Color, borderTopWidth: 1, borderStyle: 'solid' }}>
-        <View style={styles.wrapperFakeCard}>
+        <View>
           <TouchingSlider
             date={date}
             placeName={placeName}
@@ -81,9 +80,9 @@ const EventInfo = ({ event }: EventInfoProps) => {
               throw new Error('Function not implemented.');
             }} />
 
-          <View style={styles.bioWrapper}>
-            <Text style={[styles.titleSection, { marginTop: 20 }]}>Event details</Text>
-            <Text style={{ marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812) }}>Place name</Text>
+          <View>
+            <Text>Event details</Text>
+            <Text>Place name</Text>
             <Text style={{ marginTop: 6, color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812) }}>{placeName}</Text>
             <View style={{ width: '100%', height: 1, backgroundColor: whiteColor, opacity: 0.3, marginTop: 14 }} />
             <Text style={[{ marginTop: 14, color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(14, 812) }, { marginTop: 20 }]}>
@@ -101,9 +100,9 @@ const EventInfo = ({ event }: EventInfoProps) => {
                 <CalendarIcon width={16} height={16} />
                 <Text style={{ color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6 }}>{date}</Text>
               </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
+              <View>
                 <ClockIcon width={16} height={16} />
-                <Text style={{ color: whiteColor, fontFamily: Satoshi400, fontSize: RFValue(14, 812), marginLeft: 6 }}>{hour}</Text>
+                <Text>{hour}</Text>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
                 <MapIcon width={16} height={16} />
@@ -119,20 +118,20 @@ const EventInfo = ({ event }: EventInfoProps) => {
             {photos?.map((i, index) => (
               <Image key={index} source={{ uri: i?.image }} style={[styles.imageBg, { marginTop: index === 0 ? 0 : 8 }]} />
             ))}
-            <Text style={styles.titleSection}>Already joined</Text>
+            <Text>Already joined</Text>
             <View>
-              <View style={styles.wrapperNumberPeople}>
-                <Text style={styles.textUnderSubTitle}>Female</Text>
-                <View style={styles.rowNumberPeople}>
-                  <Text style={styles.textNumberInvitedPeople}>{female}</Text>
+              <View>
+                <Text>Female</Text>
+                <View>
+                  <Text>{female}</Text>
                 </View>
               </View>
             </View>
             <View>
-              <View style={[styles.wrapperNumberPeople, { marginTop: 12 }]}>
-                <Text style={styles.textUnderSubTitle}>Male</Text>
-                <View style={styles.rowNumberPeople}>
-                  <Text style={styles.textNumberInvitedPeople}>{male}</Text>
+              <View>
+                <Text>Male</Text>
+                <View>
+                  <Text>{male}</Text>
                 </View>
               </View>
             </View>
@@ -140,39 +139,39 @@ const EventInfo = ({ event }: EventInfoProps) => {
               <ActivityIndicator color={whiteColor} size="small" />
             ) : (
               <>
-                <Text style={styles.titleSection}>Host profile</Text>
-                <View style={styles.wrapperHostProfile}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <View style={{ flexDirection: 'row' }}>
+                <Text>Host profile</Text>
+                <View>
+                  <View>
+                    <View>
                       <Image source={{ uri: hostInfo?.photos?.[0]?.image || '' }} style={{ width: 40, height: 40, borderRadius: 50 }} />
                       {/*<View style={styles.greenCircle} />*/}
                     </View>
-                    <View style={{ marginLeft: 13 }}>
-                      <Text style={styles.textSimon}>{hostInfo?.name}</Text>
+                    <View>
+                      <Text>{hostInfo?.name}</Text>
                       {/*<Text style={styles.textOnline}>Online</Text>*/}
                     </View>
                   </View>
                   <TouchableOpacity onPress={goToProfileView}>
-                    <Text style={styles.textSeeProfile}>
+                    <Text>
                       See profile <ArrowRightIcon width={14} height={14} />
                     </Text>
                   </TouchableOpacity>
                 </View>
               </>
             )}
-            <View style={styles.wrapperButtonsFooter}>
-              <TouchableOpacity style={styles.buttonCloseOrCheck}>
+            <View>
+              <TouchableOpacity>
                 <CloseIcon />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonFlash}>
+              <TouchableOpacity>
                 <FlashIcon />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonCloseOrCheck}>
+              <TouchableOpacity>
                 <CheckIcon />
               </TouchableOpacity>
             </View>
           </View>
-          <Text style={styles.textHideNadSendReport}>Reject and send report</Text>
+          <Text>Reject and send report</Text>
         </View>
       </ScrollView>
     </View>

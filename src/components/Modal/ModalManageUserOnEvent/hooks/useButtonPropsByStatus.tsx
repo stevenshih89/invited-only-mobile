@@ -1,14 +1,29 @@
-import {useMemo} from 'react';
-import {ActivityIndicator} from 'react-native';
+import { useMemo } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { components } from '@invited-only/invited-only-api';
 import * as S from '../ModalManageUserOnEvent.style';
-import {whiteColor} from 'constants/colors';
+import { whiteColor } from 'constants/colors';
 import CouponIcon from 'assets/images/icons/coupon-fill.svg';
 
-import {ButtonProps} from 'typescript/interfaces';
+import { ButtonProps } from 'typescript/interfaces';
 
-export const useButtonPropsByStatus = (invitationStatus?: string) => {
+interface UseButtonPropsByStatusProps {
+  request: components['schemas']['ConnectionRequest'] | null;
+  approveGuest: () => void;
+}
+
+export const useButtonPropsByStatus = ({ request, approveGuest }: UseButtonPropsByStatusProps) => {
   const getButtonPropsByStatus = (): ButtonProps => {
-    if (invitationStatus === 'pending-confirmation' || invitationStatus === 'pending-attendance') {
+
+    if (request?.status === 'connection-complete' || (request?.status === 'pending-confirmation' && !request?.hostConfirm && request?.guestConfirm)) {
+      return {
+        title: 'Approve Guest',
+        variant: 'default' as const,
+        onPress: () => { approveGuest() },
+      };
+    }
+
+    if (request?.status === 'pending-confirmation' || request?.status === 'pending-attendance') {
       return {
         title: (
           <S.ButtonContentWrapper>
@@ -18,15 +33,7 @@ export const useButtonPropsByStatus = (invitationStatus?: string) => {
         ),
         variant: 'outline' as const,
         disabled: true,
-        onPress: () => {},
-      };
-    }
-
-    if (invitationStatus === 'connection-complete') {
-      return {
-        title: 'Approve Guest',
-        variant: 'default' as const,
-        onPress: () => {},
+        onPress: () => { },
       };
     }
     return {
@@ -38,11 +45,11 @@ export const useButtonPropsByStatus = (invitationStatus?: string) => {
       ),
       variant: 'outline' as const,
       disabled: true,
-      onPress: () => {},
+      onPress: () => { },
     };
   };
 
-  const buttonProps = useMemo(() => getButtonPropsByStatus(), [invitationStatus]);
+  const buttonProps = useMemo(() => getButtonPropsByStatus(), [request]);
 
   return {
     buttonProps,

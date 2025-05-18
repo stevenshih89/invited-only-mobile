@@ -4,23 +4,28 @@ import { components } from '@invited-only/invited-only-api';
 import * as S from './ManageEventGuestInfo.style';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 import ThreeDotsIcon from 'assets/images/icons/dots-horizontal.svg';
+import useHostConnectionActions from 'hooks/connections/useHostConnectionActions';
+import { whiteColor } from 'constants/colors';
 
 interface ManageEventGuestInfoProps {
   request: components['schemas']['ConnectionRequest'];
   title: string;
   handleOpenModalManageUserOnEvent: (request: components['schemas']['ConnectionRequest']) => void;
+  handleActionDone: () => void;
 }
 
-export const ManageEventGuestInfo = ({ request, title, handleOpenModalManageUserOnEvent }: ManageEventGuestInfoProps) => {
-
-
+export const ManageEventGuestInfo = ({ request, title, handleOpenModalManageUserOnEvent, handleActionDone }: ManageEventGuestInfoProps) => {
 
   const { data: userDetails, isLoading } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
     params: {
       path: { id: request.guestId },
     },
   });
-  console.log("request", userDetails?.photos?.[0]?.image);
+  const { handleHostConfirmEvent } = useHostConnectionActions({
+    hostId: request.hostId,
+    guestId: request.guestId,
+    eventId: request.eventId,
+  });
 
   if (isLoading) {
     return (
@@ -29,7 +34,6 @@ export const ManageEventGuestInfo = ({ request, title, handleOpenModalManageUser
       </S.PersonContainer>
     );
   }
-
   return (
     <S.PersonContainer>
       <S.ProfileImageContainer>
@@ -40,12 +44,20 @@ export const ManageEventGuestInfo = ({ request, title, handleOpenModalManageUser
         <S.NameAgeContainer>
           <S.NameText>{userDetails?.name}</S.NameText>
         </S.NameAgeContainer>
-        {title === 'New Connections' && (
-          <S.ApproveButtonContainer>
+        {(title === 'Approved' || title === 'New Connections') && (
+          <S.ApproveButtonContainer onPress={() => { handleHostConfirmEvent(); handleActionDone() }}>
             <S.ApproveButtonText>Approve</S.ApproveButtonText>
           </S.ApproveButtonContainer>
         )}
-        <TouchableOpacity onPress={() => handleOpenModalManageUserOnEvent(request)}>
+        {title === 'Not Accepted' && (
+          <S.ApproveButtonContainer onPress={() => handleHostConfirmEvent()}>
+            <S.WaitingContainer>
+              <ActivityIndicator size="small" color={whiteColor} />
+              <S.WaitingText>Waiting</S.WaitingText>
+            </S.WaitingContainer>
+          </S.ApproveButtonContainer>
+        )}
+        <TouchableOpacity onPress={() => { handleOpenModalManageUserOnEvent(request); handleActionDone() }}>
           <ThreeDotsIcon />
         </TouchableOpacity>
       </S.TextInfoContainer>

@@ -21,7 +21,7 @@ const useFirestoreSubscriptionConnectionStatus = ({ collectionName, queryKey, do
                 queryClient.setQueryData(queryKey, (oldData: components['schemas']['ConnectionRequest'][]) => {
                     if (oldData) {
                         const existingIndex = oldData.findIndex(item => {
-                            return item.guestId === connectionStatus?.guestId && item?.hostId === connectionStatus?.hostId && item.eventId === connectionStatus?.eventId;
+                            return item?.guestId === connectionStatus?.guestId && item?.hostId === connectionStatus?.hostId && item?.eventId === connectionStatus?.eventId;
                         });
                         if (existingIndex > -1) {
                             const newData = [...oldData];

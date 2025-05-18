@@ -10,6 +10,7 @@ import ModalManageUserOnEvent from 'components/Modal/ModalManageUserOnEvent/Moda
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import { useAuthStore } from 'src/store/authStore';
+import useHostConnectionActions from 'hooks/connections/useHostConnectionActions';
 
 interface ManageEventCollapsibleProps {
   eventRequests?: components['schemas']['ConnectionRequest'][];
@@ -36,7 +37,11 @@ export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle, o
   } = useManageEventCollapse();
 
   const { userMetadata } = useAuthStore();
-
+  const { handleHostCancelEvent } = useHostConnectionActions({
+    hostId: activeRequest?.hostId || '',
+    guestId: activeRequest?.guestId || '',
+    eventId: activeRequest?.eventId || '',
+  });
   return (
     <S.CardContainer>
       <S.ContentWrapper>
@@ -70,6 +75,7 @@ export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle, o
                   request={request}
                   title={title}
                   handleOpenModalManageUserOnEvent={handleOpenModalManageUserOnEvent}
+                  handleActionDone={toggle}
                 />
               );
             })}
@@ -78,7 +84,7 @@ export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle, o
       </Collapsible>
       <ModalManageUserOnEvent
         ref={modalManageUserOnEventRef}
-        onClose={handleCloseModalManageUserOnEvent}
+        onClose={() => { handleCloseModalManageUserOnEvent(); }}
         request={activeRequest}
         openBlockReportModal={handleOpenBlockReportModal}
         openCancelInvitationModal={handleOpenCancelInvitationModal}
@@ -87,19 +93,26 @@ export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle, o
       <ModalReport ref={modalBlockReportRef} uidSender={userMetadata?.uid || ''} uid={activeRequest?.guestId || ''} />
       <ModalDefault
         isVisible={openCancelInvitationModal}
-        onClose={handleCloseCancelInvitationModal}
+        onClose={() => { handleCloseCancelInvitationModal(); toggle() }}
         title="Cancel Invitation?"
         description="Are you sure you want to cancel invitation? The user will no longer be able to accept it"
-        onConfirm={() => { }}
+        onConfirm={() => {
+          handleHostCancelEvent();
+          handleCloseCancelInvitationModal()
+        }}
         confirmText="Cancel Invitation"
         cancelText="Exit"
       />
       <ModalDefault
         isVisible={openUnconnectedModal}
-        onClose={handleCloseUnconnectedModal}
+        onClose={() => { handleCloseUnconnectedModal(); toggle() }}
         title="Unconnected?"
         description="You are no longer connected. Do you want to remove this connection?"
-        onConfirm={() => { }}
+        onConfirm={() => {
+          handleHostCancelEvent();
+          handleCloseUnconnectedModal();
+          toggle();
+        }}
         confirmText="Remove Connection"
         cancelText="Cancel"
       />

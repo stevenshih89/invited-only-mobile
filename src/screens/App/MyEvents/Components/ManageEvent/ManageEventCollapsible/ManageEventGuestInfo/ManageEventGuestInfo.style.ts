@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
-import { blackColor } from 'constants/colors';
+import { blackColor, whiteColor } from 'constants/colors';
+import { Satoshi500 } from 'constants/fonts';
 
 
 export const PersonContainer = styled.View`
@@ -40,11 +41,10 @@ export const TextInfoContainer = styled.View`
     flex-direction: row;
     align-items: center;
     padding: 0px;
-    gap: 12px;
-    /* width: 278px; */ /* Removed fixed width */
-    height: 46px; /* Fixed height from CSS */
-    flex-grow: 1; /* Allow growing to fill space */
-    flex-shrink: 1; /* Allow shrinking */
+    gap: 18px;
+    height: 46px; 
+    flex-grow: 1;
+    flex-shrink: 1;
 `;
 
 export const NameAgeContainer = styled.View`
@@ -119,4 +119,24 @@ export const ApproveButtonText = styled.Text`
     line-height: 17px; /* 14 * 1.21 */
     color: #010101;
     flex-grow: 0;
+`;
+export const WaitingContainer = styled.View`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 100px;
+    background-color: rgba(12, 12, 12, 1);
+    padding: 4px 10px;
+    gap: 8px;
+    width: 92px;
+    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+
+`;
+
+export const WaitingText = styled.Text`
+    font-family: ${Satoshi500};
+    font-size: 12px;
+    line-height: 16.94px;
+    color:${whiteColor};
 `;

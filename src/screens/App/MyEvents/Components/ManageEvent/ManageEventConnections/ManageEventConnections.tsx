@@ -19,6 +19,7 @@ export const ManageEventConnections: React.FC<ManageEventConnectionsProps> = ({ 
   const [isOpen, setIsOpen] = useState<Record<string, boolean>>({
     NewConnections: false,
     Approved: false,
+    NotAccepted: false,
     Attending: false,
     NotAttending: false,
   });
@@ -61,16 +62,23 @@ export const ManageEventConnections: React.FC<ManageEventConnectionsProps> = ({ 
         <ManageEventCollapsible
           toggle={() => setIsOpen({ ...isOpen, NewConnections: !isOpen['NewConnections'] })}
           title="New Connections"
-          eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'connection-complete')}
+          eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'connection-complete' && !request.guestConfirm && !request.hostConfirm)}
           isOpen={isOpen['NewConnections']}
           onPressTooltip={() => handlePressTooltip('newConnection')}
         />
         <ManageEventCollapsible
           toggle={() => setIsOpen({ ...isOpen, Approved: !isOpen['Approved'] })}
           title="Approved"
-          eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'pending-confirmation')}
+          eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'pending-confirmation' && request.guestConfirm && !request.hostConfirm)}
           isOpen={isOpen['Approved']}
           onPressTooltip={() => handlePressTooltip('approved')}
+        />
+        <ManageEventCollapsible
+          toggle={() => setIsOpen({ ...isOpen, NotAccepted: !isOpen['NotAccepted'] })}
+          title="Not Accepted"
+          eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'pending-confirmation' && !request.guestConfirm && request.hostConfirm)}
+          isOpen={isOpen['NotAccepted']}
+          onPressTooltip={() => handlePressTooltip('notAccepted')}
         />
         <ManageEventCollapsible
           toggle={() => setIsOpen({ ...isOpen, Attending: !isOpen['Attending'] })}
@@ -82,7 +90,7 @@ export const ManageEventConnections: React.FC<ManageEventConnectionsProps> = ({ 
         <ManageEventCollapsible
           toggle={() => setIsOpen({ ...isOpen, NotAttending: !isOpen['NotAttending'] })}
           title="Not Attending"
-          eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'pending-attendance')}
+          eventRequests={eventRequests?.filter((request: ConnectionRequest) => request.status === 'confirmation-complete' && !request.guestConfirm && request.hostConfirm)}
           isOpen={isOpen['NotAttending']}
           onPressTooltip={() => handlePressTooltip('notAccepted')}
         />

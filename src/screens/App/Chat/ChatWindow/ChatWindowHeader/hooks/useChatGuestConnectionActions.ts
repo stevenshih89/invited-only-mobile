@@ -24,8 +24,6 @@ const useChatGuestConnectionActions = ({ eventId, guestId, hostId }: UseChatGues
 
 
     const handleDeleteChat = () => {
-        console.log('handleDeleteChat', eventId, guestId, hostId);
-
         deleteChat({
             body: {
                 eventId: eventId ?? '',
@@ -38,8 +36,6 @@ const useChatGuestConnectionActions = ({ eventId, guestId, hostId }: UseChatGues
                 showToast('success', 'Chat deleted successfully', 'Chat Removed');
             },
             onError: (error) => {
-                console.log('error', error);
-
                 showToast('warning', 'Chat not deleted', 'Chat not deleted');
             },
         });

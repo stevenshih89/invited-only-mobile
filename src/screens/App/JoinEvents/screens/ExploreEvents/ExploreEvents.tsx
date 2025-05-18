@@ -107,6 +107,7 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events, hasNextPage, isLoading,
                     hostId: currentCard?.hostId || '',
                     eventId: currentCard?.uid || '',
                     guestSwipe: 'right',
+                    superInvite: true,
                   },
                 });
               }}

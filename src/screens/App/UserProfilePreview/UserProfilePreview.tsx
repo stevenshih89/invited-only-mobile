@@ -47,10 +47,6 @@ const UserProfilePreview: FC<UserProfilePreviewProps> = ({ isModalVisible, setMo
     );
   }
 
-  console.log('userInf date', userInfo.date);
-  console.log('userInfo', userInfo.createdAt);
-
-
   return (
     <BottomSheetModalProvider>
       <S.SafeAreaContainer>

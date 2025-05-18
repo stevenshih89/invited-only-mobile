@@ -128,4 +128,7 @@ export type RootStackParamList = {
   '/user-profile-preview': {
     userUid: string;
   };
+  '/event-profile-preview': {
+    event?: components['schemas']['EventData'];
+  };
 };

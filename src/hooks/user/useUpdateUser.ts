@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { Platform } from "react-native";
 import storage from '@react-native-firebase/storage';
-import { components } from "src/api/v1";
+import { components } from "@invited-only/invited-only-api";
 import { logErrorToSentry } from "helpers/logErrorsToSentry";
 import { showToast, UseToastType } from "helpers/showToast";
 import invitedOnlyBackendApi from "src/api/backend-api"
@@ -52,21 +52,17 @@ const useUpdateUser = () => {
 
 
     const update = async (user: Partial<User>) => {
-        console.log('updating user', user);
         try {
             if (user.photos) {
                 user.photos = await Promise.all(user.photos.map(async (photo: components['schemas']['UserPhoto']) => {
                     if (photo.image) {
-                        console.log('uploading image', photo.image);
                         const url = await uploadImage(photo.image, userMetadata.uid)
                         const newImage = { image: url, id: photo.id };
-                        console.log('newImage', newImage);
                         return newImage
                     }
                     return photo;
                 }));
             }
-            console.log('user', user.photos);
             await updateUser({
                 params: {
                     path: {

@@ -1,4 +1,4 @@
-import {RootStackParamList} from 'typescript/types';
+import { RootStackParamList } from 'typescript/types';
 // Stacks paths
 const bottomTabsStackPath = '/bottom-tabs-stack';
 const notificationsStackPath = '/notifications-stack';
@@ -83,6 +83,7 @@ const demoIntroPath: keyof RootStackParamList = '/demo-intro';
 const demoEventCreatingPath: keyof RootStackParamList = '/demo-event-creating';
 const shareSocialLinkPath: keyof RootStackParamList = '/share-social-link';
 const userProfilePreviewPath: keyof RootStackParamList = '/user-profile-preview';
+const eventProfilePreviewPath: keyof RootStackParamList = '/event-profile-preview';
 
 const demoIOPath: keyof RootStackParamList = '/demo-io';
 
@@ -168,4 +169,5 @@ export {
   superInvitePath,
   superJoinPath,
   userProfilePreviewPath,
+  eventProfilePreviewPath,
 };

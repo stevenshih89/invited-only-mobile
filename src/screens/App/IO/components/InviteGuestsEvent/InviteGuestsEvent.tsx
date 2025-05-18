@@ -53,6 +53,19 @@ const InviteGuestsEvent = ({
     });
   };
 
+  const onClickSuperInvite = () => {
+    onSuperInvite();
+    createEventAttendee({
+      body: {
+        guestId: currentCard?.uid || '',
+        hostId: selectedEvent.hostId || '',
+        eventId: selectedEvent.uid,
+        hostSwipe: 'right',
+        superInvite: true,
+      },
+    });
+  };
+
   const onInvite = () => {
     onSwipeRight();
     createEventAttendee({
@@ -61,6 +74,7 @@ const InviteGuestsEvent = ({
         hostId: selectedEvent.hostId || '',
         eventId: selectedEvent.uid,
         hostSwipe: 'right',
+        superInvite: false,
       },
     });
   };
@@ -72,9 +86,6 @@ const InviteGuestsEvent = ({
     if (!hasCards) {
       return <S.NoCardsText>No more guests to show.</S.NoCardsText>;
     }
-    console.log("invite guests event guest id", currentCard?.uid);
-    console.log("invite guests event host id", selectedEvent.hostId);
-    console.log("invite guests event event id", selectedEvent.uid);
 
     return cardsToShow.map((guest, index) => (
       <GuestCard
@@ -89,6 +100,10 @@ const InviteGuestsEvent = ({
       />
     ));
   };
+
+  console.log("invite guests event guest id", currentCard?.uid);
+  console.log("invite guests event host id", selectedEvent.hostId);
+  console.log("invite guests event event id", selectedEvent.uid);
 
   return (
     <ScrollView>
@@ -106,7 +121,7 @@ const InviteGuestsEvent = ({
             <GuestBioCard bio={currentCard?.bio || ''} />
             <GuestLanguagesCard languages={currentCard?.languages || []} />
             <GuestPhotosList photosList={currentCard?.photos || []} />
-            <GuestActionButtons onReject={onReject} onSuperInvite={onSuperInvite} onInvite={onInvite} />
+            <GuestActionButtons onReject={onReject} onSuperInvite={onClickSuperInvite} onInvite={onInvite} />
             <S.BlockAndReportContainer>
               <S.BlockAndReportButton>
                 <S.BlockText>Block and Report</S.BlockText>
