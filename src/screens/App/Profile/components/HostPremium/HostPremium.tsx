@@ -1,37 +1,58 @@
+import { components } from '@invited-only/invited-only-api';
 import * as S from './HostPremium.style';
-import useUser from 'hooks/user/useUser';
 import RocketIcon from 'assets/images/icons/rocket-white.svg';
 import IOGradient from 'assets/images/icons/io-gradient.svg';
-import { useSubscriptions } from 'src/store/subscriptionsStore';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { paymentPath } from 'constants/pathLocations';
 
-const HostPremiumCard = () => {
-  const { user: userData } = useUser();
+interface HostPremiumCardProps {
+  subscriptionData?: components['schemas']['Subscription'];
+}
 
-  const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions);
+const HostPremiumCard = ({ subscriptionData }: HostPremiumCardProps) => {
+  const isActiveSubscription = subscriptionData?.status === 'active';
+
   const navigation = useAppNavigation();
   const getPremiumTitle = () => {
-    if (currentSubscriptions?.activeSubscriptions?.includes('io_29_3m')) {
+    if (!isActiveSubscription) {
+      return 'Host Premium';
+    }
+    if (subscriptionData?.subscriptionId === 'io_29_3m') {
       return '3 Months Premium';
     }
-    if (currentSubscriptions?.activeSubscriptions?.includes('io_99_1m')) {
+    if (subscriptionData?.subscriptionId === 'io_99_1m') {
       return '1 Month Premium';
     }
-    if (currentSubscriptions?.activeSubscriptions?.includes('io_59_1w')) {
+    if (subscriptionData?.subscriptionId === 'io_59_1w') {
       return '1 Week Premium';
     }
     return 'Host Premium';
   };
 
+  const getSubscriptionReadableType = (subscriptionId: string) => {
+    if (subscriptionId === 'io_29_3m') {
+      return '3 Months';
+    }
+    if (subscriptionId === 'io_99_1m') {
+      return '1 Month';
+    }
+    if (subscriptionId === 'io_59_1w') {
+      return '1 Week';
+    }
+    return 'Host Premium';
+  };
+
   const getPremiumDescription = () => {
-    if (currentSubscriptions?.activeSubscriptions?.includes('io_29_3m')) {
+    if (!isActiveSubscription) {
+      return 'Get Access & Unlock all features.\nHost Access is limited';
+    }
+    if (subscriptionData?.subscriptionId === 'io_29_3m') {
       return 'Your 3 months of Premium access is now active!';
     }
-    if (currentSubscriptions?.activeSubscriptions?.includes('io_99_1m')) {
+    if (subscriptionData?.subscriptionId === 'io_99_1m') {
       return 'Your full month of Premium access is now active!';
     }
-    if (currentSubscriptions?.activeSubscriptions?.includes('io_59_1w')) {
+    if (subscriptionData?.subscriptionId === 'io_59_1w') {
       return 'Your full week of Premium access is now active!';
     }
     return 'Get Access & Unlock all features.\nHost Access is limited';
@@ -47,11 +68,16 @@ const HostPremiumCard = () => {
         <S.PremiumContent>
           <S.PremiumTitle>{getPremiumTitle()}</S.PremiumTitle>
           <S.PremiumText>{getPremiumDescription()}</S.PremiumText>
+          {subscriptionData?.renewalSubscriptionId && (
+            <S.PremiumText>
+              Your subscription renwal preference is set to {getSubscriptionReadableType(subscriptionData?.renewalSubscriptionId)}
+            </S.PremiumText>
+          )}
           <S.UpgradeButton onPress={goToMyPaymentPath}>
             <S.UpgradeIconContainer>
               <RocketIcon width={16} height={16} />
             </S.UpgradeIconContainer>
-            <S.UpgradeText>Updgrade to Premium</S.UpgradeText>
+            <S.UpgradeText>{isActiveSubscription ? 'Manage Subscription' : 'Updgrade to Premium'}</S.UpgradeText>
           </S.UpgradeButton>
         </S.PremiumContent>
         <S.IOGradientContainer>

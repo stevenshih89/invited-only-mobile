@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import * as S from './ModalUpgradeAccount.style';
 import LockIcon from 'assets/images/icons/key-rounded.svg';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import { invitationCodePath } from 'constants/pathLocations';
 import Button from 'components/Button/Button';
 import useUser from 'hooks/user/useUser';
 
@@ -10,7 +9,7 @@ const ModalUpgradeAccount: FC = () => {
   const navigation = useAppNavigation();
 
   const handleInviteCodePress = () => {
-    navigation.navigate(invitationCodePath as never);
+    navigation.navigate('/profile/payment');
   };
 
   const { user } = useUser();

@@ -62,7 +62,7 @@ export const useJoinEvents = () => {
 
   const handleCloseMatch = (): void => {
     setIsVisibleMatch(false);
-    showToast('inviteMatch', 'Say, Hi! 👋', 'New Connection!', { ownerPhoto: ownerEventUserPhoto, status: 'INVITE MATCH' });
+    showToast('inviteMatch', 'Say, Hi! 👋', 'New Connection!', { ownerPhoto: ownerEventUserPhoto, status: 'INVITE CONNECTION' });
   };
 
   return {

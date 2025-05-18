@@ -52,7 +52,7 @@ export const ChatItem = ({ chat, isJoinedEvent, isSupportChat }: ChatItemProps) 
                                             </S.EventBadgeContainer>
                                         ) : (
                                             <S.StatusText>
-                                                {!userLastSeen ? 'New Connection' : 'Invite Match'}
+                                                {!userLastSeen ? 'New Connection' : 'Invite Connection'}
                                             </S.StatusText>
                                         )}
                                     </>

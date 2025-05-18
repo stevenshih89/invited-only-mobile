@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {blackColor, whiteColor} from 'constants/colors';
-import {Satoshi500} from 'constants/fonts';
-import {screenHeight} from 'constants/common';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { blackColor, whiteColor } from 'constants/colors';
+import { Satoshi500 } from 'constants/fonts';
+import { screenHeight } from 'constants/common';
 
 export const Container = styled.View`
   flex: 1;
@@ -87,4 +87,10 @@ export const WhatYouGetText = styled.Text`
   color: ${whiteColor};
   font-family: ${Satoshi500};
   font-size: ${RFValue(18, 932)}px;
+`;
+
+export const LoadingContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 `;

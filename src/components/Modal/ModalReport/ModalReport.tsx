@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, forwardRef } from 'react';
+import React, { useMemo, useCallback, forwardRef, useState } from 'react';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { components } from '@invited-only/invited-only-api';
 import * as S from './ModalReport.style';
@@ -17,6 +17,7 @@ interface ModalReportProps {
   uidSender?: string;
   uid?: string;
   handleAutoSwipeLeft?: () => void;
+  onSubmit?: () => void;
 }
 
 interface ReportItem {
@@ -24,11 +25,12 @@ interface ReportItem {
   title: string;
   icon: React.ElementType;
   reason: components['schemas']['BlockUserPayload']['reason'];
+  onSubmit?: () => void;
 }
 
-const ModalReport = forwardRef<BottomSheetModal, ModalReportProps>(({ setModalReport, uidSender, uid, handleAutoSwipeLeft }, ref) => {
+const ModalReport = forwardRef<BottomSheetModal, ModalReportProps>(({ setModalReport, uidSender, uid, handleAutoSwipeLeft, onSubmit }, ref) => {
   const snapPoints = useMemo(() => ['50%', '90%'], []);
-
+  const [selectedReport, setSelectedReport] = useState<number>(1);
   const { handleSendReport } = useReport({
     uidSender,
     uid,
@@ -114,18 +116,22 @@ const ModalReport = forwardRef<BottomSheetModal, ModalReportProps>(({ setModalRe
           ItemSeparatorComponent={() => <S.Separator />}
           renderItem={({ item }: { item: ReportItem }) => {
             const Icon = item.icon;
+            const isSelected = selectedReport === item.id;
             return (
-              <S.ReportButton onPress={() => handleSendReport(item.reason)}>
-                <S.IconWrapper>
+              <S.ReportButton onPress={() => setSelectedReport(item.id)} active={isSelected}>
+                <S.IconWrapper active={isSelected}>
                   <Icon height={32} />
                 </S.IconWrapper>
-                <S.ReportText>{item.title}</S.ReportText>
+                <S.ReportText active={isSelected}>{item.title}</S.ReportText>
               </S.ReportButton>
             );
           }}
         />
         <S.ButtonWrapper>
-          <S.StyledButton onPress={() => handleSendReport('other')} title="Send" />
+          <S.StyledButton onPress={() => {
+            handleSendReport(listOfReports[selectedReport - 1].reason);
+            if (onSubmit) onSubmit();
+          }} title="Send" />
         </S.ButtonWrapper>
       </S.Wrapper>
     </BottomSheetModal>

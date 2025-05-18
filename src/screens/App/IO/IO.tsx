@@ -3,6 +3,7 @@ import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import { components } from '@invited-only/invited-only-api';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { createMaterialTopTabNavigator, MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import EventRequests from '../MyEvents/Components/EventRequests/EventRequests';
 import usePersistentCardSwipe from './hooks/usePersistentCardSwipe';
 import { useEventGuests } from './hooks/useEventGuests';
@@ -66,32 +67,34 @@ const IO = ({ events }: Props) => {
   );
 
   return (
-    <DefaultBackground>
-      <S.IoContainer>
-        <Tab.Navigator
-          style={S.tabNavigatorStyle}
-          initialRouteName="/io/invite"
-          tabBar={props => <CustomTabBar {...props} />}
-        >
-          <Tab.Screen name="/io/invite" >
-            {() => <InviteGuestsEvent
-              selectedEvent={selectedEvent}
-              cardsToShow={currentEventCards}
-              allCards={guests}
-              isLoading={isGuestsLoading || isFetchingNextPage}
-              onSwipeLeft={handleSwipeLeft}
-              onSwipeRight={handleSwipeRight}
-              onSuperInvite={handleSuperInvite}
-            />}
-          </Tab.Screen>
-          <Tab.Screen name="/io/requests" >
-            {() => <EventRequests eventId={selectedEvent?.uid || ''} />}
-          </Tab.Screen>
-        </Tab.Navigator>
-      </S.IoContainer>
-      {isGuestsLoading || isFetchingNextPage || !hasCards && guests.length > 0 ? null : <ModalLockedAccount />}
-      <ModalUpgradeAccount />
-    </DefaultBackground>
+    <BottomSheetModalProvider>
+      <DefaultBackground>
+        <S.IoContainer>
+          <Tab.Navigator
+            style={S.tabNavigatorStyle}
+            initialRouteName="/io/invite"
+            tabBar={props => <CustomTabBar {...props} />}
+          >
+            <Tab.Screen name="/io/invite" >
+              {() => <InviteGuestsEvent
+                selectedEvent={selectedEvent}
+                cardsToShow={currentEventCards}
+                allCards={guests}
+                isLoading={isGuestsLoading || isFetchingNextPage}
+                onSwipeLeft={handleSwipeLeft}
+                onSwipeRight={handleSwipeRight}
+                onSuperInvite={handleSuperInvite}
+              />}
+            </Tab.Screen>
+            <Tab.Screen name="/io/requests" >
+              {() => <EventRequests eventId={selectedEvent?.uid || ''} />}
+            </Tab.Screen>
+          </Tab.Navigator>
+        </S.IoContainer>
+        {isGuestsLoading || isFetchingNextPage || !hasCards && guests.length > 0 ? null : <ModalLockedAccount />}
+        <ModalUpgradeAccount />
+      </DefaultBackground>
+    </BottomSheetModalProvider>
   );
 };
 

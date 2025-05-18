@@ -3,18 +3,19 @@ import { SvgProps } from 'react-native-svg';
 import HostPremiumCard from '../../components/HostPremium/HostPremium';
 import * as S from './MyPlan.style';
 import WhatGetItem from './Components/WhatGetItem';
+import useGetSubscription from './hooks/useGetSubscription';
 import useUser from 'hooks/user/useUser';
 import CalendarIcon from 'assets/images/icons/calendar-event.svg';
 import ExportIcon from 'assets/images/icons/export.svg';
 import IOIcon from 'assets/images/icons/io.svg';
 import EyeIcon from 'assets/images/icons/eye-solid.svg';
 import FlashIcon from 'assets/images/icons/lightning-fill.svg';
-
-
+import { ActivityIndicator } from 'react-native';
+import { whiteColor } from 'constants/colors';
 
 const MyPlan: FC = () => {
   const { user: userData } = useUser();
-
+  const { data: subscriptionData, isLoading: isLoadingSubscription } = useGetSubscription();
   const whatGet: {
     title: string;
     description: string;
@@ -67,7 +68,13 @@ const MyPlan: FC = () => {
 
   return (
     <S.Container>
-      <HostPremiumCard />
+      {isLoadingSubscription ? (
+        <S.LoadingContainer>
+          <ActivityIndicator size="large" color={whiteColor} />
+        </S.LoadingContainer>
+      ) : (
+        <HostPremiumCard subscriptionData={subscriptionData} />
+      )}
 
       <S.FeaturesCard>
         <S.ListColumnWrapper>

@@ -14,22 +14,24 @@ interface EventChatsProps {
 }
 
 const EventChats = ({ events }: EventChatsProps) => {
+
     const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
     const { chats, isChatLoading } = useGetChats({ eventId: selectedEvent.uid });
     const { userMetadata } = useAuthStore.getState();
     const { data: user } = useGetUserById(userMetadata.uid);
 
+
     return (
         <S.Container>
             <EventsDropdown events={events} onEventSelect={setSelectedEvent} selectedEvent={selectedEvent} />
-            <ChatItem chat={{
+            {selectedEvent.uid !== 'joined-events' && <ChatItem chat={{
                 eventId: `support-${userMetadata.uid}`,
                 hostId: 'support-agent',
                 guestId: userMetadata.uid,
                 guestImageUrl: user?.photos?.[0]?.image ?? '',
                 hostName: 'Support Team',
                 guestName: user?.name,
-            }} isJoinedEvent={true} isSupportChat={true} />
+            }} isJoinedEvent={true} isSupportChat={true} />}
             {isChatLoading ? (
                 <AppLoader />
             ) : chats?.length && chats?.length > 0 ? (
@@ -37,7 +39,7 @@ const EventChats = ({ events }: EventChatsProps) => {
                     data={chats || []}
                     renderItem={({ item }: { item: components['schemas']['Chat'] }) => <ChatItem chat={item} isJoinedEvent={selectedEvent.uid === 'joined-events'} />}
                     keyExtractor={(item: components['schemas']['Chat']) => item.id}
-                    contentContainerStyle={{ flexGrow: 1, gap: 10 }}
+                    contentContainerStyle={{ flexGrow: 1, }}
                 />
             ) : (
                 <EmptyStateChatFallback emptyType="no-chats" />

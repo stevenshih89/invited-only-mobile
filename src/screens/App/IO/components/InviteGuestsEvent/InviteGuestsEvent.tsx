@@ -1,6 +1,7 @@
-import React from 'react';
-import { ScrollView } from 'react-native';
+import React, { useCallback, useRef } from 'react';
+import { ScrollView, View } from 'react-native';
 import { components } from '@invited-only/invited-only-api';
+import BottomSheetModal from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetModal/BottomSheetModal';
 import * as S from './InviteGuestsEvent.styled';
 import GuestBasicInfoCard from './Components/GuestBasicInfoCard/GuestBasicInfoCard';
 import GuestBioCard from './Components/GuestBioCard/GuestBioCard';
@@ -13,6 +14,8 @@ import GuestPhotosList from './Components/GuestPhotosList/GuestPhotosList';
 import GuestActionButtons from './Components/GuestActionButtons/GuestActionButtons';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import useSwipeCardAction from 'screens/App/Components/Card/hooks/useSwipeCardAction';
+import ModalReport from 'components/Modal/ModalReport/ModalReport';
+import { useAuthStore } from 'src/store/authStore';
 
 type GuestUser = components['schemas']['User'];
 
@@ -37,7 +40,11 @@ const InviteGuestsEvent = ({
 }: InviteGuestsEventProps) => {
   const hasCards = cardsToShow.length > 0;
   const currentCard: GuestUser | undefined = hasCards ? cardsToShow[cardsToShow.length - 1] : undefined;
-
+  const { userMetadata } = useAuthStore.getState();
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const handleBlockAndReport = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
   const { createEventAttendee, swipeDataRes } = useSwipeCardAction();
   const { isModalVisible, closeModal, matchedCard } = useNewConnectionModal({ swipeDataRes, allCards, isEvent: false });
 
@@ -101,37 +108,37 @@ const InviteGuestsEvent = ({
     ));
   };
 
-  console.log("invite guests event guest id", currentCard?.uid);
-  console.log("invite guests event host id", selectedEvent.hostId);
-  console.log("invite guests event event id", selectedEvent.uid);
-
   return (
-    <ScrollView>
-      <S.Container>
-        <S.CardContainer>{renderCards()}</S.CardContainer>
+    <View style={{ flex: 1 }}>
+      <ScrollView>
+        <S.Container>
+          <S.CardContainer>{renderCards()}</S.CardContainer>
 
-        {!isLoading && currentCard && (
-          <>
-            <GuestBasicInfoCard
-              homeAddress={currentCard?.homeAddress || ''}
-              work={currentCard?.work || { title: '', description: '' } as components['schemas']['Work']}
-              gender={currentCard?.gender || 'other'}
-              listOfInterestsImages={currentCard?.interests || []}
-            />
-            <GuestBioCard bio={currentCard?.bio || ''} />
-            <GuestLanguagesCard languages={currentCard?.languages || []} />
-            <GuestPhotosList photosList={currentCard?.photos || []} />
-            <GuestActionButtons onReject={onReject} onSuperInvite={onClickSuperInvite} onInvite={onInvite} />
-            <S.BlockAndReportContainer>
-              <S.BlockAndReportButton>
-                <S.BlockText>Block and Report</S.BlockText>
-              </S.BlockAndReportButton>
-            </S.BlockAndReportContainer>
-          </>
-        )}
-      </S.Container>
-      {matchedCard && <NewConnectionModal cardData={matchedCard} visible={isModalVisible} onClose={closeModal} isEvent={false} eventId={selectedEvent.uid} />}
-    </ScrollView>
+          {!isLoading && currentCard && (
+            <>
+              <GuestBasicInfoCard
+                homeAddress={currentCard?.homeAddress || ''}
+                work={currentCard?.work || { title: '', description: '' } as components['schemas']['Work']}
+                gender={currentCard?.gender || 'other'}
+                listOfInterestsImages={currentCard?.interests || []}
+              />
+              <GuestBioCard bio={currentCard?.bio || ''} />
+              <GuestLanguagesCard languages={currentCard?.languages || []} />
+              <GuestPhotosList photosList={currentCard?.photos || []} />
+              <GuestActionButtons onReject={onReject} onSuperInvite={onClickSuperInvite} onInvite={onInvite} />
+              <S.BlockAndReportContainer>
+                <S.BlockAndReportButton onPress={handleBlockAndReport}>
+                  <S.BlockText>Block and Report</S.BlockText>
+                </S.BlockAndReportButton>
+              </S.BlockAndReportContainer>
+            </>
+          )}
+        </S.Container>
+        {matchedCard && <NewConnectionModal cardData={matchedCard} visible={isModalVisible} onClose={closeModal} isEvent={false} eventId={selectedEvent.uid} />}
+      </ScrollView>
+      <ModalReport ref={bottomSheetModalRef} uidSender={userMetadata?.uid || ''} uid={currentCard?.uid || ''} onSubmit={onReject} />
+    </View>
+
   );
 };
 
