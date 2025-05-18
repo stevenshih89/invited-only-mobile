@@ -1,7 +1,7 @@
 import FastImage from 'react-native-fast-image';
 import styled from 'styled-components/native';
 import { screenHeight, screenWidth } from 'constants/common';
-import { white0Color, white10Color, white40Color, whiteColor } from 'constants/colors';
+import { white40Color, whiteColor } from 'constants/colors';
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
 
 export const Container = styled.View`

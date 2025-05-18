@@ -33,6 +33,7 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost 
     setIsDropdownVisible(!isDropdownVisible);
   };
 
+
   const renderActionButtonForHost = () => {
     if (invitationStatus === 'attendingComplete') {
       return <ConfirmedBadge />;

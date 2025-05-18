@@ -1,9 +1,9 @@
-import {BottomSheetModal} from '@gorhom/bottom-sheet';
-import React, {forwardRef, useMemo} from 'react';
-import {components} from '@invited-only/invited-only-api';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import React, { forwardRef, useMemo } from 'react';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './ModalManageUserOnEvent.style';
-import {useButtonPropsByStatus} from './hooks/useButtonPropsByStatus';
-import {whiteColor} from 'constants/colors';
+import { useButtonPropsByStatus } from './hooks/useButtonPropsByStatus';
+import { whiteColor } from 'constants/colors';
 import ProfileFillIcon from 'assets/images/icons/profile-fill.svg';
 import ReportRoundedIcon from 'assets/images/icons/report-rounded-gray.svg';
 import CancelOutlineRoundedIcon from 'assets/images/icons/cancel-outline-rounded.svg';
@@ -11,11 +11,11 @@ import TrashSolidIcon from 'assets/images/icons/trash-solid-gray.svg';
 import MessageIcon from 'assets/images/icons/message-minus-fill.svg';
 
 import Button from 'components/Button/Button';
-import {calculateAge} from 'helpers/calculateAge';
+import { calculateAge } from 'helpers/calculateAge';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 import useNavigateToChat from 'screens/App/Chat/hooks/useNavigateToChat';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {userProfilePreviewPath} from 'constants/pathLocations';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { userProfilePreviewPath } from 'constants/pathLocations';
 
 interface ModalManageUserOnEventProps {
   onClose: () => void;
@@ -33,10 +33,10 @@ interface Option {
 }
 
 const ModalManageUserOnEvent = forwardRef<BottomSheetModal, ModalManageUserOnEventProps>(
-  ({onClose, openBlockReportModal, request, openUnconnectedModal, openCancelInvitationModal}, ref) => {
-    const {data: userDetails, isLoading} = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
+  ({ onClose, openBlockReportModal, request, openUnconnectedModal, openCancelInvitationModal }, ref) => {
+    const { data: userDetails } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
       params: {
-        path: {id: request?.guestId},
+        path: { id: request?.guestId },
       },
     });
 
@@ -48,7 +48,7 @@ const ModalManageUserOnEvent = forwardRef<BottomSheetModal, ModalManageUserOnEve
       });
     };
 
-    const {navigateToChat} = useNavigateToChat({
+    const { navigateToChat } = useNavigateToChat({
       eventId: request?.eventId || '',
       hostId: request?.hostId || '',
       guestId: request?.guestId || '',
@@ -92,7 +92,7 @@ const ModalManageUserOnEvent = forwardRef<BottomSheetModal, ModalManageUserOnEve
       },
     ];
 
-    const {buttonProps} = useButtonPropsByStatus(request?.status);
+    const { buttonProps } = useButtonPropsByStatus(request?.status);
 
     const handleDismiss = () => {
       if (ref && 'current' in ref && ref.current) {
@@ -114,7 +114,7 @@ const ModalManageUserOnEvent = forwardRef<BottomSheetModal, ModalManageUserOnEve
         <S.Wrapper>
           <S.Container>
             <S.MenuListItem activeOpacity={1}>
-              <S.StyledImage source={{uri: userDetails?.photos?.[0]?.image}} />
+              <S.StyledImage source={{ uri: userDetails?.photos?.[0]?.image }} />
               <S.MenuListTextBlock>
                 <S.MenuListTitle>{userDetails?.name}</S.MenuListTitle>
                 <S.MenuListDescription>{calculateAge(userDetails?.date || '')}</S.MenuListDescription>
@@ -127,7 +127,7 @@ const ModalManageUserOnEvent = forwardRef<BottomSheetModal, ModalManageUserOnEve
               data={optionsList}
               keyExtractor={(item: Option) => item.title}
               ItemSeparatorComponent={S.MenuListSeparator}
-              renderItem={({item}: {item: Option}) => {
+              renderItem={({ item }: { item: Option }) => {
                 const Icon = item.icon;
                 return (
                   <S.MenuListItem onPress={item.onPress}>

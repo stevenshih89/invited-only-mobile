@@ -1,7 +1,7 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useMemo } from 'react';
 import * as S from './ModalChatHost.style';
-import { useButtonPropsByStatus } from './hooks/useButtonPropsByStatus';
+import { useButtonPropsByStatus } from './hooks/useButtonPropsByStatusHost';
 import { whiteColor } from 'constants/colors';
 import ProfileFillIcon from 'assets/images/icons/profile-fill.svg';
 import ReportRoundedIcon from 'assets/images/icons/report-rounded-gray.svg';
@@ -12,6 +12,10 @@ import Button from 'components/Button/Button';
 import { useInvitationStatus } from 'hooks/useInvitationStatus';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { userProfilePreviewPath } from 'constants/pathLocations';
+
+import useChatHostConnectionActions from 'screens/App/Chat/ChatWindow/ChatWindowHeader/hooks/useChatHostConnectionActions';
+import useConnectionRealtimeStatus from 'screens/App/Chat/ChatWindow/ChatWindowHeader/hooks/useConnectionRealtimeStatus';
+
 
 interface ModalChatHostProps {
   onClose: () => void;
@@ -31,6 +35,12 @@ interface Option {
 const ModalChatHost = forwardRef<BottomSheetModal, ModalChatHostProps>(
   ({ onClose, openBlockReportModal, chat, openDeleteChatModal, isJoinEvent = false }, ref) => {
     const snapPoints = useMemo(() => ['45%', '60%'], []);
+    const { connectionStatus } = useConnectionRealtimeStatus({ chat });
+    const { handleApproveChat, handleCancelChat } = useChatHostConnectionActions({
+      eventId: chat.eventId,
+      hostId: chat.hostId,
+      guestId: chat.guestId,
+    });
 
     const navigation = useAppNavigation();
 
@@ -58,7 +68,11 @@ const ModalChatHost = forwardRef<BottomSheetModal, ModalChatHostProps>(
         icon: CancelOutlineRoundedIcon,
         title: 'Cancel Invitation',
         description: 'Withdraw your invite',
-        onPress: () => { },
+        onPress: () => handleCancelChat({
+          eventId: chat.eventId,
+          guestId: chat.guestId,
+          hostId: chat.hostId,
+        }),
       },
       {
         icon: TrashSolidIcon,
@@ -68,9 +82,11 @@ const ModalChatHost = forwardRef<BottomSheetModal, ModalChatHostProps>(
       },
     ];
 
-    const { invitationStatus } = useInvitationStatus(chat.connectionStatus);
+    const { invitationStatus } = useInvitationStatus(connectionStatus);
 
-    const { buttonProps } = useButtonPropsByStatus(invitationStatus);
+    console.log('invitationStatus', invitationStatus);
+
+    const { buttonProps } = useButtonPropsByStatus({ invitationStatus, onPress: () => handleApproveChat() });
 
     const handleDismiss = () => {
       if (ref && 'current' in ref && ref.current) {

@@ -32,7 +32,6 @@ const useGetChats = ({ eventId, isEnabled = true }: UseGetAllChatsProps) => {
         refetchInterval: 1000
     });
 
-
     return {
         chats: eventId === 'joined-events' ? joinedEventsChats : chats,
         isChatLoading

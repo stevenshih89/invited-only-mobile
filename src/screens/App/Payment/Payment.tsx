@@ -73,7 +73,7 @@ const Payment: FC = (): JSX.Element => {
               plansList={plansList}
               activePayment={activePayment}
               setActivePayment={setActivePayment}
-              currentSubscriptions={subscriptions}
+              currentSubscriptions={subscriptions || {}}
             />
             <WhatGet duration={activePayment.duration} durationName={activePayment.durationName} fullPrice={activePayment.fullPrice} />
           </S.ContentContainer>

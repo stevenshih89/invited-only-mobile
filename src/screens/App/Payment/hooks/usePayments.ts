@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import Purchases, { PurchasesPackage } from 'react-native-purchases';
+import * as amplitude from '@amplitude/analytics-react-native';
 import getSymbolFromCurrency from 'currency-symbol-map';
-import { useSubscriptions } from 'src/store/subscriptionsStore';
+import useGetSubscriptions from './useGetSubscriptions';
 import { getActiveSubscription, getSubscriptions } from 'src/api.deprecated/purchase';
 import { showToast } from 'helpers/showToast';
 import invitedOnlyBackendApi from 'src/api/backend-api';
@@ -20,6 +21,11 @@ export interface PlanListItem {
 }
 
 const usePayments = () => {
+
+  useEffect(() => {
+    amplitude.track('Payment Screen Opened');
+  }, []);
+
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [plansList, setPlansList] = useState<PlanListItem[]>([
     {
@@ -61,20 +67,14 @@ const usePayments = () => {
   const [successfulPay, setSuccessfulPay] = useState(false);
   const [visibleUpgradeSuccessful, setVisibleUpgradeSuccessful] = useState(false);
 
-  const currentSubscriptions = useSubscriptions((i: any) => i?.currentSubscriptions);
-  const setCurrentSubscriptions = useSubscriptions((i: any) => i?.setCurrentSubscriptions);
+
   const { mutate: createSubscription } = invitedOnlyBackendApi.useMutation('post', '/subscription/create');
   const { mutate: updateSubscription } = invitedOnlyBackendApi.useMutation('post', '/subscription/update');
-  const { data: subscription } = invitedOnlyBackendApi.useQuery('get', '/subscription/get/{userId}', {
-    params: {
-      path: {
-        userId: userMetadata?.uid,
-      },
-    },
-  });
+  const { data: subscription, updateSubscription: updateSubscriptionData } = useGetSubscriptions();
   const activeExistingSubscription = subscription && subscription.status === 'active';
 
-  const updateUser = async (subscriptionId: string, expirationDate: string | null, type: string) => {
+
+  const updateUser = async (subscriptionId: string, expirationDate: string | null, type: string, targetSubscription: string | null = null) => {
     if (!activeExistingSubscription) {
       createSubscription({
         body: {
@@ -82,10 +82,11 @@ const usePayments = () => {
           userId: userMetadata?.uid,
           type,
           endDate: expirationDate ?? undefined,
+          renewalSubscriptionId: targetSubscription ?? undefined,
         },
       }, {
         onSuccess: () => {
-          setCurrentSubscriptions({ activeSubscriptions: [subscriptionId] });
+          updateSubscriptionData({ subscriptionId, endDate: expirationDate ?? undefined, type, status: 'active', renewalSubscriptionId: targetSubscription ?? undefined });
         },
         onError: (error) => {
           console.error('error update user', error);
@@ -98,6 +99,14 @@ const usePayments = () => {
           userId: userMetadata?.uid,
           type,
           endDate: expirationDate ?? undefined,
+          renewalSubscriptionId: targetSubscription ?? undefined,
+        },
+      }, {
+        onSuccess: () => {
+          updateSubscriptionData({ subscriptionId, endDate: expirationDate ?? undefined, type, status: 'active', renewalSubscriptionId: targetSubscription ?? undefined });
+        },
+        onError: (error) => {
+          console.error('error update user', error);
         },
       });
     }
@@ -106,13 +115,16 @@ const usePayments = () => {
   const pay = async (pack: PurchasesPackage) => {
     setLoaderVisible(true);
     try {
+      const targetSubscription = pack.product.identifier
       const { customerInfo } = await Purchases.purchasePackage(pack);
-
       const activeSubscription = await getActiveSubscription();
       console.warn('activeSubscription', activeSubscription);
 
-      setCurrentSubscriptions(activeSubscription);
-
+      amplitude.track('Payment Success', {
+        activeSubscription: activeSubscription,
+        renewalSubscription: targetSubscription,
+        userMetadata: userMetadata,
+      });
       setSuccessfulPay(true);
       setTimeout(() => {
         setLoaderVisible(false);
@@ -121,7 +133,7 @@ const usePayments = () => {
       const subscriptionId = customerInfo.activeSubscriptions[0];
       const expirationDate = customerInfo.allExpirationDates[subscriptionId];
       const type = mapIdentifierToType(customerInfo.activeSubscriptions[0]);
-      updateUser(subscriptionId, expirationDate, type);
+      updateUser(subscriptionId, expirationDate, type, targetSubscription);
     } catch (e) {
       console.error('error pay', e);
 
@@ -166,23 +178,16 @@ const usePayments = () => {
           case 'io_59_1w':
             showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', { status: 'success' });
 
-            setCurrentSubscriptions({ activeSubscriptions: ['io_59_1w'] });
-            // navigation.navigate('/profile');
             break;
           case 'io_99_1m':
             showToast('inviteMatch', 'Month subscription restored', 'Restore purchases', { status: 'success' });
-            setCurrentSubscriptions({ activeSubscriptions: ['io_99_1m'] });
-            // navigation.navigate('/profile');
             break;
           case 'io_29_3m':
             showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', { status: 'success' });
-            setCurrentSubscriptions({ activeSubscriptions: ['io_29_3m'] });
-            // navigation.navigate('/profile');
             break;
           default:
             break;
         }
-        // console.log('purchases restore', purchaserInfo.activeSubscriptions[0]);
       } else {
         showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', { status: 'fail' });
       }
@@ -193,15 +198,25 @@ const usePayments = () => {
 
   const getButtonTitle = () => {
     const { duration, durationName, fullPrice, identifier } = activePayment;
-    if (currentSubscriptions?.activeSubscriptions?.includes(identifier)) {
+
+    if (subscription?.subscriptionId === identifier && subscription?.renewalSubscriptionId === identifier || subscription?.subscriptionId === identifier && !subscription?.renewalSubscriptionId) {
       return 'Current Plan';
     }
+
+    if (subscription?.renewalSubscriptionId && subscription?.renewalSubscriptionId === identifier) {
+      return 'Current Renewal Preference';
+    }
+    if (subscription?.subscriptionId === identifier && subscription?.renewalSubscriptionId !== identifier) {
+      return 'Change Renewal Preference To Current Plan';
+    }
+
+
 
     const formattedPrice = fullPrice;
     return `Get ${duration} ${durationName} for ${formattedPrice}`;
   };
 
-  const isButtonDisabled = currentSubscriptions?.activeSubscriptions?.includes(activePayment.identifier);
+  const isButtonDisabled = subscription?.renewalSubscriptionId ? subscription?.renewalSubscriptionId === activePayment.identifier : subscription?.subscriptionId === activePayment.identifier;
   const buttonTitle = getButtonTitle();
 
   useEffect(() => {
@@ -256,7 +271,7 @@ const usePayments = () => {
     plansList,
     activePayment,
     setActivePayment,
-    currentSubscriptions,
+    subscription,
     loaderVisible,
     successfulPay,
     visibleUpgradeSuccessful,

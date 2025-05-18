@@ -1,9 +1,10 @@
 import React from 'react';
 import { TouchableOpacityProps } from 'react-native';
-import { components } from 'src/api/v1';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './ApproveActionButton.style';
 import CheckmarkIcon from 'src/assets/images/icons/check.svg';
 import invitedOnlyBackendApi from 'src/api/backend-api';
+
 
 interface ApproveActionButtonProps extends TouchableOpacityProps {
     chat: components['schemas']['Chat'];

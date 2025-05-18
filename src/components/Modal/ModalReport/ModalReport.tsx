@@ -29,10 +29,11 @@ interface ReportItem {
 const ModalReport = forwardRef<BottomSheetModal, ModalReportProps>(({ setModalReport, uidSender, uid, handleAutoSwipeLeft }, ref) => {
   const snapPoints = useMemo(() => ['50%', '90%'], []);
 
-  const { isBlockUserPending, handleSendReport } = useReport({
+  const { handleSendReport } = useReport({
     uidSender,
     uid,
     handleAutoSwipeLeft,
+
     setModalReport: () => {
       if (ref && 'current' in ref && ref.current) {
         ref.current.dismiss();

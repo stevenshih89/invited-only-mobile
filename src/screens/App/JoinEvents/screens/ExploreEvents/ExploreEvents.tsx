@@ -136,7 +136,7 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events, hasNextPage, isLoading,
             <S.BlockText>Block and Report</S.BlockText>
           </S.BlockAndReportButton>
         </S.BlockAndReportContainer>
-        <ModalReport ref={bottomSheetModalRef} />
+        <ModalReport ref={bottomSheetModalRef} uidSender={userMetadata?.uid || ''} uid={currentCard?.hostId || ''} />
         <NewConnectionModal
           cardData={matchedCard}
           visible={isModalVisible}

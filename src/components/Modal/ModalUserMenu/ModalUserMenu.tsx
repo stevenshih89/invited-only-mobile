@@ -651,12 +651,10 @@ const ModalUserMenu: FC<ModalUserMenuProps> = ({
             <View>
               <RemovingUserModal />
               <ModalReport
-                handleCloseReport={handleCloseReport}
-                modalReport={blockAndReportState}
                 setModalReport={setBlockAndReportState}
-                uidSender={user.uid}
+                uidSender={user?.uid}
                 uid={uid}
-                activeEvent={activeEvent}
+                handleAutoSwipeLeft={() => setModalVisible(false)}
               />
               <CancelInvitationModal />
               <DeleteChatModal />

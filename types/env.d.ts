@@ -5,4 +5,5 @@ declare module '@env' {
   export const BACKEND_BASE_64_AUTH: string;
   export const IS_FIREBASE_TEST_MODE: string;
   export const BUGSNAG_API_KEY: string;
+  export const AMPLITUDE_API_KEY: string;
 }

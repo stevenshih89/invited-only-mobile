@@ -10,7 +10,6 @@ import ProfileLanguages from './Components/ProfileLanguages/ProfileLanguages';
 import ProfilePhotosList from './Components/ProfilePhotosList/ProfilePhotoslist';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import ModalUserProfile from 'components/Modal/ModalUserProfile/ModalUserProfile.tsx';
-import Man from 'assets/images/app/man-rectangle.png';
 import { blackColor } from 'constants/colors';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
@@ -48,6 +47,9 @@ const UserProfilePreview: FC<UserProfilePreviewProps> = ({ isModalVisible, setMo
     );
   }
 
+  console.log('userInf date', userInfo.date);
+  console.log('userInfo', userInfo.createdAt);
+
 
   return (
     <BottomSheetModalProvider>
@@ -62,7 +64,7 @@ const UserProfilePreview: FC<UserProfilePreviewProps> = ({ isModalVisible, setMo
                   userName={userInfo?.name || ''}
                   isShowAge={userInfo?.showAge || false}
                   isConfirmed={userInfo?.accountConfirmed || false}
-                  userBirthday={userInfo?.birthday || ''}
+                  userBirthday={userInfo?.birthday || userInfo?.date || ''}
                 />
                 <ProfileBasics
                   location={userInfo?.location || ''}
@@ -80,7 +82,7 @@ const UserProfilePreview: FC<UserProfilePreviewProps> = ({ isModalVisible, setMo
                   </S.BlockAndReportButton>
                 </S.BlockAndReportContainer>
               </S.ProfileContainer>
-              <ModalUserProfile title={'Alex'} image={Man} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
+              <ModalUserProfile title={userInfo?.name || ''} image={userInfo?.photos?.[0]?.image || ''} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
             </S.ContentContainer>
           </S.ScrollContainer>
         </S.MainContainer>

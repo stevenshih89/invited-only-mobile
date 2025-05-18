@@ -1,8 +1,8 @@
-import {FC} from 'react';
-import {View} from 'react-native';
-import {components} from '@invited-only/invited-only-api';
+import React, { FC } from 'react';
+import { View } from 'react-native';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './GuestBasicInfoCard.style';
-import {useGenderSpecs} from 'hooks/useGenderSpecs';
+import { useGenderSpecs } from 'hooks/useGenderSpecs';
 import InterestImageSmallList from 'screens/App/Components/Intrests/InterestImageSmallList';
 
 interface GuestBasicInfoCardProps {
@@ -12,8 +12,8 @@ interface GuestBasicInfoCardProps {
   listOfInterestsImages: components['schemas']['Interest'][];
 }
 
-const GuestBasicInfoCard: FC<GuestBasicInfoCardProps> = ({homeAddress, work, gender, listOfInterestsImages = []}) => {
-  const {genderIcon: GenderIcon, genderText} = useGenderSpecs(gender);
+const GuestBasicInfoCard: FC<GuestBasicInfoCardProps> = ({ homeAddress, work, gender, listOfInterestsImages = [] }) => {
+  const { genderIcon: GenderIcon, genderText } = useGenderSpecs(gender);
 
   return (
     <View
@@ -50,7 +50,7 @@ const GuestBasicInfoCard: FC<GuestBasicInfoCardProps> = ({homeAddress, work, gen
           )}
         </S.TagsContainer>
         {Array.isArray(listOfInterestsImages) && listOfInterestsImages.length > 0 && (
-          <View style={{marginTop: 24}}>
+          <View style={{ marginTop: 24 }}>
             <S.SectionTitle>Interests</S.SectionTitle>
             <S.InterestsContainer>
               <S.InterestTagsContainer>

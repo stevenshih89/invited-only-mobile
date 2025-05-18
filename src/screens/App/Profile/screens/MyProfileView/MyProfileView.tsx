@@ -61,7 +61,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({ isModalVisible, setModalVisible
   };
   return (
     <S.SafeAreaContainer>
-      <ModalReport modalReport={false} setModalReport={() => { }} uidSender={userInfo?.uid} uid={userInfo?.uid} />
+      <ModalReport setModalReport={() => { }} uidSender={userInfo?.uid} uid={userInfo?.uid} />
       <S.MainContainer>
         <S.ScrollContainer
           scrollEventThrottle={20}

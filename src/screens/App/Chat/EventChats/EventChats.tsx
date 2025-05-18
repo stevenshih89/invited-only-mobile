@@ -14,7 +14,7 @@ interface EventChatsProps {
 const EventChats = ({ events }: EventChatsProps) => {
     const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
     const { chats, isChatLoading } = useGetChats({ eventId: selectedEvent.uid });
-    console.log('chats', selectedEvent.uid);
+
     return (
         <S.Container>
             <EventsDropdown events={events} onEventSelect={setSelectedEvent} selectedEvent={selectedEvent} />

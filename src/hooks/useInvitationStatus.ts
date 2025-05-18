@@ -1,4 +1,5 @@
-import {useMemo} from 'react';
+import { components } from '@invited-only/invited-only-api';
+import { useMemo } from 'react';
 
 export type connecitonStatus =
   | 'connectionInitiated'

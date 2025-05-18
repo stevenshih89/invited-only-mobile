@@ -1,14 +1,19 @@
-import {useMemo} from 'react';
-import {ActivityIndicator} from 'react-native';
-import * as S from '../ModalChatHost.style';
-import {whiteColor} from 'constants/colors';
+import { useMemo } from 'react';
+import { ActivityIndicator } from 'react-native';
+import * as S from '../ModalChatGuest.style';
 import CouponIcon from 'assets/images/icons/coupon-fill.svg';
-import {connecitonStatus} from 'hooks/useInvitationStatus';
-import {ButtonProps} from 'typescript/interfaces';
+import { connecitonStatus } from 'hooks/useInvitationStatus';
+import { ButtonProps } from 'typescript/interfaces';
+import { whiteColor } from 'constants/colors';
 
-export const useButtonPropsByStatus = (invitationStatus: connecitonStatus) => {
+interface UseButtonPropsByStatusProps {
+  invitationStatus: connecitonStatus;
+  onPress: () => void;
+}
+
+export const useButtonPropsByStatus = ({ invitationStatus, onPress }: UseButtonPropsByStatusProps) => {
   const getButtonPropsByStatus = (): ButtonProps => {
-    if (invitationStatus === 'hostApprovePendingForGuest') {
+    if (invitationStatus === 'guestApprovePendingForHost') {
       return {
         title: (
           <S.ButtonContentWrapper>
@@ -18,17 +23,18 @@ export const useButtonPropsByStatus = (invitationStatus: connecitonStatus) => {
         ),
         variant: 'outline' as const,
         disabled: true,
-        onPress: () => {},
+        onPress: () => { },
       };
     }
 
-    if (invitationStatus === 'connectionInitiated' || invitationStatus === 'guestApprovePendingForHost') {
+    if (invitationStatus === 'connectionInitiated' || invitationStatus === 'hostApprovePendingForGuest') {
       return {
         title: 'Approve Guest',
         variant: 'default' as const,
-        onPress: () => {},
+        onPress: onPress,
       };
     }
+
     return {
       title: (
         <S.ButtonContentWrapper>
@@ -38,7 +44,7 @@ export const useButtonPropsByStatus = (invitationStatus: connecitonStatus) => {
       ),
       variant: 'outline' as const,
       disabled: true,
-      onPress: () => {},
+      onPress: () => { },
     };
   };
 

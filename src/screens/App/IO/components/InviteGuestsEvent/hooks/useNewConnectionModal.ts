@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { components } from "@invited-only/invited-only-api";
+import * as amplitude from '@amplitude/analytics-react-native';
 
 interface UseNewConnectionModalProps {
     swipeDataRes: components['schemas']['ConnectionRequest'] | undefined;
@@ -20,11 +21,14 @@ const useNewConnectionModal = ({ swipeDataRes, allCards, isEvent }: UseNewConnec
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [matchedCard, setMatchedCard] = useState<components['schemas']['User'] | components['schemas']['EventData'] | undefined>();
 
-    console.log('matachCard', matchedCard);
-
 
     useEffect(() => {
         if (swipeDataRes?.status === 'connection-complete') {
+            amplitude.track('New Match Modal Opened', {
+                eventId: swipeDataRes?.eventId,
+                guestId: swipeDataRes?.guestId,
+                hostId: swipeDataRes?.hostId,
+            });
             const matchedCard = allCards.find((card) => card.uid === swipeDataRes?.guestId);
             const matchedEvent = allCards.find((card) => card.uid === swipeDataRes?.eventId);
             if (isEvent) {

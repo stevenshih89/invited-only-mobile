@@ -3,22 +3,27 @@ import FastImage from 'react-native-fast-image';
 import * as S from './ProfilePhotoSlider.style';
 import CheckIcon from 'assets/images/icons/check-star-white.svg';
 import Card from 'screens/App/Components/Card/Card';
+import { parseStringToDate } from 'helpers/genericDateFormater';
 
 interface ProfileSliderProps {
   photos: string[];
   userName: string;
   userBirthday: string;
-  isShowAge: boolean;
   isConfirmed: boolean;
+  isShowAge: boolean;
 }
 
-const ProfileSlider: FC<ProfileSliderProps> = ({ photos, userName, userBirthday, isConfirmed }) => {
+const ProfileSlider: FC<ProfileSliderProps> = ({ photos, userName, userBirthday, isConfirmed, isShowAge }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+
+
   const calculateBirthday = (birthday: string | undefined): number => {
-    if (!birthday) return 0;
+    const parsedBirthday = parseStringToDate(birthday);
+    if (!parsedBirthday) return 0;
     const today = new Date();
-    const birthDate = new Date(birthday);
+    console.log('parsedBirthday', parsedBirthday.getFullYear());
+    const birthDate = new Date(parsedBirthday);
     const age = today.getFullYear() - birthDate.getFullYear();
     return age;
   };
@@ -69,8 +74,8 @@ const ProfileSlider: FC<ProfileSliderProps> = ({ photos, userName, userBirthday,
                 }}
               />
             )}
-            <S.UserName>{userName},</S.UserName>
-            <S.UserAge>{userAge}</S.UserAge>
+            <S.UserName>{userName}{isShowAge ? ', ' : ''}</S.UserName>
+            {isShowAge && <S.UserAge>{userAge}</S.UserAge>}
           </S.UserInfoContainer>
         </S.ContentContainer>
       </Card>

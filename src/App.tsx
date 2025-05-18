@@ -7,12 +7,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import RNUxcam from 'react-native-ux-cam';
 import { requestTrackingPermission } from 'react-native-tracking-transparency';
 import { Settings } from 'react-native-fbsdk-next';
+import * as amplitude from '@amplitude/analytics-react-native';
+
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { blackColor } from 'constants/colors';
 
 import Main from 'src';
-import { RN_UXCAM_API_KEY, IO_PUBLICK_RC_IOS } from '@env';
+import { RN_UXCAM_API_KEY, IO_PUBLICK_RC_IOS, AMPLITUDE_API_KEY } from '@env';
 
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
@@ -28,6 +30,7 @@ const configuration = {
 };
 RNUxcam.startWithConfiguration(configuration);
 
+amplitude.init(AMPLITUDE_API_KEY);
 
 const App: FC = (): JSX.Element => {
   const iosPurchaseKey = IO_PUBLICK_RC_IOS || '';
@@ -48,7 +51,6 @@ const App: FC = (): JSX.Element => {
   useEffect(() => {
     initializeTracking();
     if (Platform.OS === 'ios' && iosPurchaseKey) {
-      console.log('initialize iosPurchaseKey', iosPurchaseKey);
       Purchases.configure({ apiKey: iosPurchaseKey, });
     }
   }, []);

@@ -6,10 +6,10 @@ interface UseReportProps {
   uidSender?: string;
   uid?: string;
   handleAutoSwipeLeft?: () => void;
-  setModalReport?: (value: boolean) => void;
+  setModalReport: (value: boolean) => void;
 }
 
-export const useReport = ({ uidSender, uid }: UseReportProps) => {
+export const useReport = ({ uidSender, uid, setModalReport }: UseReportProps) => {
   const { mutate: blockUser, isPending: isBlockUserPending } = invitedOnlyBackendApi.useMutation('post', '/report/block-user');
 
   const handleSendReport = async (typeReport: components['schemas']['BlockUserPayload']['reason']): Promise<void> => {
@@ -22,6 +22,7 @@ export const useReport = ({ uidSender, uid }: UseReportProps) => {
     }, {
       onSuccess: () => {
         showToast('inviteMatch', 'Report sent', 'Report sent', { status: 'success' });
+        setModalReport(false);
       },
       onError: (error) => {
         console.error(error);

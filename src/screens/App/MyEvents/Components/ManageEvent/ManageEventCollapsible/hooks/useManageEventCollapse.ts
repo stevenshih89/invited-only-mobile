@@ -1,6 +1,7 @@
-import {BottomSheetModal} from '@gorhom/bottom-sheet';
-import {useCallback, useRef, useState} from 'react';
-import {components} from 'src/api/v1';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { components } from '@invited-only/invited-only-api';
+import { useCallback, useRef, useState } from 'react';
+
 
 export const useManageEventCollapse = () => {
   const [openCancelInvitationModal, setOpenCancelInvitationModal] = useState(false);

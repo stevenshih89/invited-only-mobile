@@ -4,12 +4,14 @@ import { TextInput } from 'react-native';
 import { useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import firestore from '@react-native-firebase/firestore';
 import { components } from '@invited-only/invited-only-api';
+import * as amplitude from '@amplitude/analytics-react-native';
 import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
 import { useAuthStore } from 'src/store/authStore';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 import { showToast } from 'helpers/showToast';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import useMessaging from 'hooks/useMessaging';
+
 
 export const useConfirmPhone = (route: {
   params: {
@@ -85,6 +87,8 @@ export const useConfirmPhone = (route: {
                   phoneNumber: userData.phoneNumber,
                   firstLogin: false,
                 });
+                amplitude.setUserId(userData.uid);
+                amplitude.track('Sign IN');
               } else {
                 console.error('User data from Firestore missing uid or phoneNumber:', userData);
                 showToast('inviteMatch', 'Failed to retrieve user details.', 'Error');
@@ -113,6 +117,8 @@ export const useConfirmPhone = (route: {
                 phoneNumber: mobilePhone,
                 firstLogin: true,
               });
+              amplitude.setUserId(data.uid);
+              amplitude.track('Sign UP');
               navigation.navigate('/enter-name');
             },
             onError: error => {

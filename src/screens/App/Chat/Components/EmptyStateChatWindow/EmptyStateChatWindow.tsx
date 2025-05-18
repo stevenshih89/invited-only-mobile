@@ -1,4 +1,3 @@
-import { View } from "react-native"
 import * as S from './EmptyStateChatWindow.style';
 
 interface EmptyStateChatWindowProps {

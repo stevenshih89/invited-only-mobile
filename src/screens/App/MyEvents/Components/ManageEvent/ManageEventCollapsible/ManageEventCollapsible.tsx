@@ -9,6 +9,7 @@ import InfoIcon from 'assets/images/icons/info-circle.svg';
 import ModalManageUserOnEvent from 'components/Modal/ModalManageUserOnEvent/ModalManageUserOnEvent';
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
+import { useAuthStore } from 'src/store/authStore';
 
 interface ManageEventCollapsibleProps {
   eventRequests?: components['schemas']['ConnectionRequest'][];
@@ -34,11 +35,7 @@ export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle, o
     handleCloseUnconnectedModal,
   } = useManageEventCollapse();
 
-  if (title === 'New Connections') {
-    console.log("eventRequests", eventRequests);
-    console.log('isOpen', isOpen);
-  }
-
+  const { userMetadata } = useAuthStore();
 
   return (
     <S.CardContainer>
@@ -87,7 +84,7 @@ export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle, o
         openCancelInvitationModal={handleOpenCancelInvitationModal}
         openUnconnectedModal={handleOpenUnconnectedModal}
       />
-      <ModalReport ref={modalBlockReportRef} />
+      <ModalReport ref={modalBlockReportRef} uidSender={userMetadata?.uid || ''} uid={activeRequest?.guestId || ''} />
       <ModalDefault
         isVisible={openCancelInvitationModal}
         onClose={handleCloseCancelInvitationModal}

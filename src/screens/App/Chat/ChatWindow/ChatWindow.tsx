@@ -8,6 +8,7 @@ import * as S from './ChatWindow.style';
 import { ChatWindowHeader } from './ChatWindowHeader/ChatWindowHeader';
 import useRealtimeChatMessages from './hooks/useRealtimeChatMessages';
 import useChatWindowMutations from './hooks/useChatWindowMutations';
+import useChatGuestConnectionActions from './ChatWindowHeader/hooks/useChatGuestConnectionActions';
 import { RootStackParamList } from 'typescript/types';
 import useUser from 'hooks/user/useUser';
 import SendIcon from 'src/assets/images/icons/send-message.svg';
@@ -17,6 +18,7 @@ import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalChatHost from 'components/Modal/ModalChatHost/ModalChatHost';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
+import ModalChatGuest from 'components/Modal/ModalChatGuest/ModalChatGuest';
 
 type ChatWindowRouteParams = RootStackParamList['/chat/chat-window'];
 
@@ -37,6 +39,11 @@ export const ChatWindow = () => {
     sendMessage: sendMessage,
   });
 
+  const { handleDeleteChat } = useChatGuestConnectionActions({
+    eventId: chat?.eventId ?? '',
+    guestId: chat?.guestId ?? '',
+    hostId: chat?.hostId ?? '',
+  });
 
   const formatTime = (timestamp?: string) => {
     if (!timestamp) return '';
@@ -44,14 +51,14 @@ export const ChatWindow = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const modalChatHostRef = useRef<BottomSheetModal>(null);
+  const modalChatRef = useRef<BottomSheetModal>(null);
   const modalBlockReportRef = useRef<BottomSheetModal>(null);
   const handleOpenModalChatHost = useCallback(() => {
-    modalChatHostRef.current?.present();
+    modalChatRef.current?.present();
   }, []);
 
-  const handleCloseModalChatHost = useCallback(() => {
-    modalChatHostRef.current?.dismiss();
+  const handleCloseModalChat = useCallback(() => {
+    modalChatRef.current?.dismiss();
   }, []);
 
   const handleOpenModalBlockReport = useCallback(() => {
@@ -142,19 +149,26 @@ export const ChatWindow = () => {
       </S.Container>
       {chat && (
         <S.OutterContainer>
-          <ModalChatHost
-            ref={modalChatHostRef}
+          {!isJoinedEvent ? <ModalChatHost
+            ref={modalChatRef}
             chat={chat}
-            onClose={handleCloseModalChatHost}
+            onClose={handleCloseModalChat}
             openBlockReportModal={handleOpenModalBlockReport}
             openDeleteChatModal={() => setIsOpenModalDeleteChat(true)}
             isJoinEvent={isJoinedEvent}
-          />
-          <ModalReport ref={modalBlockReportRef} uidSender={isJoinedEvent ? chat?.hostId : chat?.guestId} uid={isJoinedEvent ? chat?.guestId : chat?.hostId} />
+          /> : <ModalChatGuest
+            ref={modalChatRef}
+            chat={chat}
+            onClose={handleCloseModalChat}
+            openBlockReportModal={handleOpenModalBlockReport}
+          />}
+          <ModalReport ref={modalBlockReportRef} uidSender={!isJoinedEvent ? chat?.hostId : chat?.guestId} uid={!isJoinedEvent ? chat?.guestId : chat?.hostId} />
           <ModalDefault
             isVisible={isOpenModalDeleteChat}
             onClose={() => setIsOpenModalDeleteChat(false)}
-            onConfirm={() => { }}
+            onConfirm={() => {
+              handleDeleteChat();
+            }}
             cancelText="Cancel"
             confirmText="Delete"
             title="Delete Chat"

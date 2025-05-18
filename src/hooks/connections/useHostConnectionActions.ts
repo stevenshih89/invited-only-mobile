@@ -13,7 +13,6 @@ const useHostConnectionActions = ({ hostId, guestId, eventId, onSuccess }: UseHo
     const { mutate: updateEventAttendee, isPending: isUpdatingEventAttendee } = invitedOnlyBackendApi.useMutation('patch', '/eventAttendees')
 
     const handleHostConfirmEvent = () => {
-        console.log("handleHostConfirmEvent", hostId, guestId, eventId);
         updateEventAttendee({
             body: {
                 eventId: eventId,

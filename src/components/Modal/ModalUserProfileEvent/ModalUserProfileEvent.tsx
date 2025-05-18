@@ -26,6 +26,7 @@ import { calculateAge } from 'helpers/calculateAge.ts';
 import { sendNotification } from 'helpers/fcmHelper.ts';
 import { ACCEPTED_STATUS, APPROVED_STATUS, CANCEL_STATUS, INVITE_MATCH_STATUS, NOT_ACCEPTED_STATUS } from 'constants/common.ts';
 import { Event } from 'src/types/event.ts';
+import useUser from 'hooks/user/useUser.ts';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry.ts';
 
 interface ModalUserProfileEventProps {
@@ -562,11 +563,10 @@ const ModalUserProfileEvent: FC<ModalUserProfileEventProps> = ({
             </TouchableOpacity>
           </View>
           <ModalReport
-            modalReport={modalReport}
             setModalReport={setModalReport}
-            activeEvent={list.id}
-            uidSender={userHost?.uid}
+            uidSender={userHost?.user?.uid || ''}
             uid={uid}
+            handleAutoSwipeLeft={() => setModalVisible && setModalVisible(false)}
           />
         </Modal>
       </SafeAreaProvider>
