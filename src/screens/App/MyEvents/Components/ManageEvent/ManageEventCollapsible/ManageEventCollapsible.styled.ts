@@ -15,7 +15,7 @@ export const CardContainer = styled.View`
     border-width: 1px;
     align-self: stretch;
     padding-bottom: 6px;
-    
+
 `;
 
 // This wraps the main content row (Label + Number Badge)

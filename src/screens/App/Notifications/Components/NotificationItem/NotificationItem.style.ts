@@ -13,6 +13,14 @@ export const Container = styled.View`
     background-color: ${blackColor};
 `;
 
+export const LoaderContainer = styled.View`
+    margin-top: 10px;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+`;
+
 export const NarrowLeftContainer = styled.View`
     margin-right: 10px;
     align-items: center;

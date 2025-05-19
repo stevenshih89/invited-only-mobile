@@ -6,7 +6,6 @@ import { components } from '@invited-only/invited-only-api';
 import useGetEvent from '../hooks/useGetEvent';
 import * as S from './ChatItem.style';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import IOImage from 'src/assets/images/app/IO.png'
 
 import { useAuthStore } from 'src/store/authStore';
 import invitedOnlyBackendApi from 'src/api/backend-api';
@@ -33,35 +32,33 @@ export const ChatItem = ({ chat, isJoinedEvent, isSupportChat }: ChatItemProps) 
                 <S.Container isSupportChat={isSupportChat}>
                     <S.NarrowLeftContainer>
                         <S.AvatarContainer>
-                            {isSupportChat ? <S.AvatarImage source={IOImage} /> : <S.AvatarImage source={{ uri: isJoinedEvent ? chat.hostImageUrl : chat.guestImageUrl }} />}
+                            {isSupportChat ? <S.IoContainer>
+                                <S.IoText>IO</S.IoText>
+                            </S.IoContainer> : <S.AvatarImage source={{ uri: isJoinedEvent ? chat.hostImageUrl : chat.guestImageUrl }} />}
                         </S.AvatarContainer>
                     </S.NarrowLeftContainer>
-                    <S.WideRightContainer>
-                        <S.InnerRowContainer>
-                            <S.StatusBadge>
-                                {!isSupportChat ? (
-                                    <>
-                                        {isJoinedEvent ? (
-                                            <S.EventBadgeContainer>
-                                                <S.SmallEventAvatarContainer>
-                                                    {isEventLoading ? <ActivityIndicator size="small" color="#fff" /> : <S.SmallEventAvatarImage source={{ uri: event?.photos?.[0]?.image || '' }} />}
-                                                </S.SmallEventAvatarContainer>
-                                                <Text numberOfLines={1} ellipsizeMode="tail" style={S.SmallEventNameText}>
-                                                    {event?.name || 'Event Name That Is Long And Will Truncate'}
-                                                </Text>
-                                            </S.EventBadgeContainer>
-                                        ) : (
-                                            <S.StatusText>
-                                                {!userLastSeen ? 'New Connection' : 'Invite Connection'}
-                                            </S.StatusText>
-                                        )}
-                                    </>
-                                ) : (
-                                    null
-                                )}
-                            </S.StatusBadge>
-                            <S.LastMessageTimestamp>{chat.lastMessageTimestamp && formatDistance(new Date(chat.lastMessageTimestamp), new Date(), { addSuffix: true })}</S.LastMessageTimestamp>
-                        </S.InnerRowContainer>
+                    <S.WideRightContainer isSupportChat={isSupportChat}>
+                        {!isSupportChat ? (
+                            <S.InnerRowContainer>
+                                <S.StatusBadge>
+                                    {isJoinedEvent ? (
+                                        <S.EventBadgeContainer>
+                                            <S.SmallEventAvatarContainer>
+                                                {isEventLoading ? <ActivityIndicator size="small" color="#fff" /> : <S.SmallEventAvatarImage source={{ uri: event?.photos?.[0]?.image || '' }} />}
+                                            </S.SmallEventAvatarContainer>
+                                            <Text numberOfLines={1} ellipsizeMode="tail" style={S.SmallEventNameText}>
+                                                {event?.name || 'Event Name That Is Long And Will Truncate'}
+                                            </Text>
+                                        </S.EventBadgeContainer>
+                                    ) : (
+                                        <S.StatusText>
+                                            {!userLastSeen ? 'New Connection' : 'Invite Connection'}
+                                        </S.StatusText>)
+                                    }
+                                </S.StatusBadge>
+                                <S.LastMessageTimestamp>{chat.lastMessageTimestamp && formatDistance(new Date(chat.lastMessageTimestamp), new Date(), { addSuffix: true })}</S.LastMessageTimestamp>
+                            </S.InnerRowContainer>
+                        ) : null}
                         <S.InnerRowContainer>
                             <S.UnreadBadgeAndNameContainer>
                                 <S.NameText>{isJoinedEvent ? chat.hostName : chat.guestName}</S.NameText>

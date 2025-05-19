@@ -31,7 +31,7 @@ const useHostConnectionActions = ({ hostId, guestId, eventId, onSuccess }: UseHo
         });
     };
 
-    const handleHostRejectEvent = () => {
+    const handleHostRejectEvent = (showToastMessage: boolean = true) => {
         updateEventAttendee({
             body: {
                 eventId: eventId,
@@ -44,11 +44,15 @@ const useHostConnectionActions = ({ hostId, guestId, eventId, onSuccess }: UseHo
             },
         }, {
             onSuccess: () => {
-                showToast('success', 'Event rejected successfully', 'Event rejected');
+                if (showToastMessage) {
+                    showToast('success', 'Guest rejected successfully', 'Guest rejected');
+                }
                 onSuccess?.();
             },
             onError: () => {
-                showToast('warning', 'Event rejection failed', 'Event rejection failed');
+                if (showToastMessage) {
+                    showToast('warning', 'Guest rejection failed', 'Guest rejection failed');
+                }
             }
         });
     };

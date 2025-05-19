@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
 import FastImage from "react-native-fast-image";
-import { whiteColor } from "constants/colors";
+import { blackColor, whiteColor } from "constants/colors";
 import { Satoshi400, Satoshi500, Satoshi700 } from "constants/fonts";
 
 
@@ -26,15 +26,13 @@ export const NarrowLeftContainer = styled.View`
   align-items: flex-start;
 `;
 
-export const WideRightContainer = styled.View`
-  padding: 10px;
+export const WideRightContainer = styled.View<{ isSupportChat?: boolean }>`
+  padding-left: 10px;
   display: flex;
   flex: 4;
-  height: 100%;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
   gap: 5px;
+  ${({ isSupportChat }: { isSupportChat?: boolean }) => isSupportChat && 'padding-top: 20px;'}
 `;
 
 
@@ -209,3 +207,24 @@ export const SmallEventNameText = {
   color: '#FFFFFF',
   maxWidth: 100,
 }
+
+
+export const IoContainer = styled.View`
+width: 66px;
+  height: 66px;  
+  border-radius: 66px;
+  background-color: ${blackColor};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+`;
+
+export const IoText = styled.Text`
+  font-family: ${Satoshi700};
+  font-size: 24px;
+
+  color: #FFFFFF;
+`;
+

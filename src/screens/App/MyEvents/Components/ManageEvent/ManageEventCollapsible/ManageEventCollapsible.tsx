@@ -11,6 +11,7 @@ import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import { useAuthStore } from 'src/store/authStore';
 import useHostConnectionActions from 'hooks/connections/useHostConnectionActions';
+import { screenHeight } from 'constants/common';
 
 interface ManageEventCollapsibleProps {
   eventRequests?: components['schemas']['ConnectionRequest'][];
@@ -37,7 +38,7 @@ export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle, o
   } = useManageEventCollapse();
 
   const { userMetadata } = useAuthStore();
-  const { handleHostCancelEvent } = useHostConnectionActions({
+  const { handleHostCancelEvent, handleHostRejectEvent } = useHostConnectionActions({
     hostId: activeRequest?.hostId || '',
     guestId: activeRequest?.guestId || '',
     eventId: activeRequest?.eventId || '',
@@ -67,7 +68,7 @@ export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle, o
       </S.ContentWrapper>
       <Collapsible collapsed={!isOpen}>
         <S.CardContainer>
-          <ScrollView>
+          <ScrollView style={{ maxHeight: screenHeight * 0.30 }}>
             {eventRequests?.map((request, index) => {
               return (
                 <ManageEventGuestInfo
@@ -90,7 +91,10 @@ export const ManageEventCollapsible = ({ title, eventRequests, isOpen, toggle, o
         openCancelInvitationModal={handleOpenCancelInvitationModal}
         openUnconnectedModal={handleOpenUnconnectedModal}
       />
-      <ModalReport ref={modalBlockReportRef} uidSender={userMetadata?.uid || ''} uid={activeRequest?.guestId || ''} />
+      <ModalReport ref={modalBlockReportRef} uidSender={userMetadata?.uid || ''} uid={activeRequest?.guestId || ''} onSubmit={() => {
+        handleHostRejectEvent(false);
+        handleCloseModalManageUserOnEvent();
+      }} />
       <ModalDefault
         isVisible={openCancelInvitationModal}
         onClose={() => { handleCloseCancelInvitationModal(); toggle() }}

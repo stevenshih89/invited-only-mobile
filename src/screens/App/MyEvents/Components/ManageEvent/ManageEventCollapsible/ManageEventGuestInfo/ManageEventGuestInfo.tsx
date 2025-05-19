@@ -16,6 +16,13 @@ interface ManageEventGuestInfoProps {
 
 export const ManageEventGuestInfo = ({ request, title, handleOpenModalManageUserOnEvent, handleActionDone }: ManageEventGuestInfoProps) => {
 
+
+  if (title === 'Not Accepted') {
+    console.log('request', request.guestId);
+
+  }
+
+
   const { data: userDetails, isLoading } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
     params: {
       path: { id: request.guestId },
