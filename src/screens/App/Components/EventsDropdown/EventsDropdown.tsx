@@ -9,8 +9,9 @@ interface EventsDropDownProps {
   selectedEvent: components['schemas']['EventData'];
   onEventSelect: (event: components['schemas']['EventData']) => void;
   onDropdownChange?: () => void;
+  attendingGuestsCount: number;
 }
-export const EventsDropdown = ({ events, onEventSelect, selectedEvent, onDropdownChange }: EventsDropDownProps) => {
+export const EventsDropdown = ({ events, onEventSelect, selectedEvent, onDropdownChange, attendingGuestsCount }: EventsDropDownProps) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const sortedEvents = [...events].sort((a, b) => {
@@ -45,10 +46,11 @@ export const EventsDropdown = ({ events, onEventSelect, selectedEvent, onDropdow
     <S.DropdownContainer>
       <S.DropdownButton onPress={toggleDropdown}>
         <S.DropdownIcon>{dropdownVisible ? <ArrowUp /> : <ArrowDown />}</S.DropdownIcon>
+        <S.DropDownAvatar source={{ uri: selectedEvent.photos?.[0]?.image }} />
         <S.DropdownText numberOfLines={1}>{selectedEvent ? selectedEvent.name : 'Select Event'}</S.DropdownText>
         {selectedEvent && selectedEvent.uid !== 'joined-events' && (
           <S.EventCounter>
-            {selectedIndex + 1}/{events.length}
+            {attendingGuestsCount ?? 0}/{selectedEvent.femaleFriend ?? 0 + (selectedEvent.maleFriend ?? 0)}
           </S.EventCounter>
         )}
       </S.DropdownButton>
@@ -57,6 +59,7 @@ export const EventsDropdown = ({ events, onEventSelect, selectedEvent, onDropdow
         <S.DropdownMenu>
           {sortedEvents.map((event, index) => (
             <S.DropdownItem key={index} onPress={() => handleEventSelect(event)}>
+              <S.DropDownAvatar source={{ uri: event.photos?.[0]?.image }} />
               <S.DropdownItemText>{event.name}</S.DropdownItemText>
             </S.DropdownItem>
           ))}

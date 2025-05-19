@@ -1,27 +1,15 @@
 import AppLoader from '../AppLoader/AppLoader';
 import IO from './IO';
 import EmptyStateView from './components/EmptyStateView/EmptyStateView';
+import useEventsDetails from './hooks/useEventsDetails';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import ModalUpgradeAccount from 'components/Modal/ModalUpgradeAccount/ModalUpgradeAccount';
 
 
-import { useAuthStore } from 'src/store/authStore';
-
 
 const IOWrapper = () => {
-  const { userMetadata: user } = useAuthStore();
-  const { data: events, isLoading, status } = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
-    params: {
-      path: {
-        hostId: user?.uid || '',
-      },
-    },
-  },
-    {
-      refetchInterval: 5000
-    });
+  const { events, isLoading } = useEventsDetails();
 
   if (isLoading || !events) {
     return (

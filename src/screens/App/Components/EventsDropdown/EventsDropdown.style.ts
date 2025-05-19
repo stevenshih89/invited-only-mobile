@@ -1,5 +1,6 @@
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
+import FastImage from 'react-native-fast-image';
 import { blackColor, whiteColor } from 'constants/colors';
 
 export const EventCounter = styled.Text`
@@ -33,10 +34,21 @@ export const DropdownIcon = styled.View`
   margin-right: 8px;
 `;
 
+export const DropDownAvatar = styled(FastImage)`
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: ${whiteColor};
+  margin-right: 6px;
+`;
+
 export const DropdownItem = styled.TouchableOpacity`
   padding: 12px 16px;
   border-bottom-width: 1px;
   border-bottom-color: rgba(255, 255, 255, 0.05);
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
 `;
 
 export const DropdownItemText = styled.Text`

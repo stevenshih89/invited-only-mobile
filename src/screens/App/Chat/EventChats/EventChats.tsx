@@ -8,6 +8,7 @@ import EventsDropdown from "src/screens/App/Components/EventsDropdown/EventsDrop
 import AppLoader from "screens/App/AppLoader/AppLoader";
 import useGetUserById from "hooks/useGetUserById";
 import { useAuthStore } from "src/store/authStore";
+import useEventAttendes from "screens/App/IO/hooks/useEventAttendes";
 
 interface EventChatsProps {
     events: components['schemas']['EventData'][];
@@ -19,11 +20,11 @@ const EventChats = ({ events }: EventChatsProps) => {
     const { chats, isChatLoading } = useGetChats({ eventId: selectedEvent.uid });
     const { userMetadata } = useAuthStore.getState();
     const { data: user } = useGetUserById(userMetadata.uid);
-
+    const { attendingGuests } = useEventAttendes(selectedEvent.uid);
 
     return (
         <S.Container>
-            <EventsDropdown events={events} onEventSelect={setSelectedEvent} selectedEvent={selectedEvent} />
+            <EventsDropdown events={events} onEventSelect={setSelectedEvent} selectedEvent={selectedEvent} attendingGuestsCount={attendingGuests?.length ?? 0} />
             {selectedEvent.uid !== 'joined-events' && <ChatItem chat={{
                 eventId: `support-${userMetadata.uid}`,
                 hostId: 'support-agent',

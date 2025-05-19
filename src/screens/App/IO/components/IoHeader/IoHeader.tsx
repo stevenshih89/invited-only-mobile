@@ -11,20 +11,17 @@ interface IoHeaderProps {
   selectedEvent: components['schemas']['EventData'];
   onEventSelect: (event: components['schemas']['EventData']) => void;
   onDropdownChange: () => void;
+  attendingGuests: components['schemas']['ConnectionRequest'][];
 }
 
-const IoHeader: React.FC<IoHeaderProps> = ({ events, selectedEvent, onEventSelect, onRequestPress, onDropdownChange }) => {
-
-
+const IoHeader: React.FC<IoHeaderProps> = ({ events, selectedEvent, onEventSelect, onRequestPress, onDropdownChange, attendingGuests }) => {
   const { requests } = useGetEventRequests({ eventId: selectedEvent.uid });
-
-
 
   return (
     <S.HeaderContainer>
       {events.length > 0 ? (
         <S.RequestAndEventsContainer>
-          <EventsDropdown events={events} onEventSelect={onEventSelect} selectedEvent={selectedEvent} onDropdownChange={onDropdownChange} />
+          <EventsDropdown events={events} onEventSelect={onEventSelect} selectedEvent={selectedEvent} onDropdownChange={onDropdownChange} attendingGuestsCount={attendingGuests?.length} />
           <S.RequestButton onPress={onRequestPress}>
             <S.RequestButtonText>Requests</S.RequestButtonText>
             <S.RequestBadge>

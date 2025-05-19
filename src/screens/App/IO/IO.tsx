@@ -10,6 +10,7 @@ import { useEventGuests } from './hooks/useEventGuests';
 import IoHeader from './components/IoHeader/IoHeader';
 import InviteGuestsEvent from './components/InviteGuestsEvent/InviteGuestsEvent';
 import * as S from './IO.style';
+import useEventAttendes from './hooks/useEventAttendes';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import ModalUpgradeAccount from 'components/Modal/ModalUpgradeAccount/ModalUpgradeAccount';
@@ -32,6 +33,7 @@ const IO = ({ events }: Props) => {
   const Tab = createMaterialTopTabNavigator<IoTabs>();
 
   const { guests, isLoading: isGuestsLoading, isFetchingNextPage, hasNextPage, fetchNextPage, status } = useEventGuests(selectedEvent?.uid);
+  const { attendingGuests } = useEventAttendes(selectedEvent?.uid);
   const {
     cards: currentEventCards,
     hasCards,
@@ -62,6 +64,7 @@ const IO = ({ events }: Props) => {
         onEventSelect={handleEventSelect}
         onRequestPress={() => props.navigation.navigate('/io/requests')}
         onDropdownChange={() => props.navigation.navigate('/io/invite')}
+        attendingGuests={attendingGuests || []}
       />
     </>
   );
