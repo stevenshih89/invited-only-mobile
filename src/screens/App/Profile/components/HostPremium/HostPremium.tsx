@@ -4,6 +4,7 @@ import RocketIcon from 'assets/images/icons/rocket-white.svg';
 import IOGradient from 'assets/images/icons/io-gradient.svg';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { paymentPath } from 'constants/pathLocations';
+import { useAuthStore } from 'src/store/authStore';
 
 interface HostPremiumCardProps {
   subscriptionData?: components['schemas']['Subscription'];
@@ -12,18 +13,21 @@ interface HostPremiumCardProps {
 const HostPremiumCard = ({ subscriptionData }: HostPremiumCardProps) => {
   const isActiveSubscription = subscriptionData?.status === 'active';
 
+
+
   const navigation = useAppNavigation();
+
   const getPremiumTitle = () => {
     if (!isActiveSubscription) {
       return 'Host Premium';
     }
-    if (subscriptionData?.subscriptionId === 'io_29_3m') {
+    if (subscriptionData?.uid === 'io_29_3m') {
       return '3 Months Premium';
     }
-    if (subscriptionData?.subscriptionId === 'io_99_1m') {
+    if (subscriptionData?.uid === 'io_99_1m') {
       return '1 Month Premium';
     }
-    if (subscriptionData?.subscriptionId === 'io_59_1w') {
+    if (subscriptionData?.uid === 'io_59_1w') {
       return '1 Week Premium';
     }
     return 'Host Premium';
@@ -46,13 +50,13 @@ const HostPremiumCard = ({ subscriptionData }: HostPremiumCardProps) => {
     if (!isActiveSubscription) {
       return 'Get Access & Unlock all features.\nHost Access is limited';
     }
-    if (subscriptionData?.subscriptionId === 'io_29_3m') {
+    if (subscriptionData?.uid === 'io_29_3m') {
       return 'Your 3 months of Premium access is now active!';
     }
-    if (subscriptionData?.subscriptionId === 'io_99_1m') {
+    if (subscriptionData?.uid === 'io_99_1m') {
       return 'Your full month of Premium access is now active!';
     }
-    if (subscriptionData?.subscriptionId === 'io_59_1w') {
+    if (subscriptionData?.uid === 'io_59_1w') {
       return 'Your full week of Premium access is now active!';
     }
     return 'Get Access & Unlock all features.\nHost Access is limited';

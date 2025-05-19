@@ -65,50 +65,33 @@ const usePayments = () => {
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[0]);
   const [loaderVisible, setLoaderVisible] = useState(false);
   const [successfulPay, setSuccessfulPay] = useState(false);
-  const [visibleUpgradeSuccessful, setVisibleUpgradeSuccessful] = useState(false);
-
 
   const { mutate: createSubscription } = invitedOnlyBackendApi.useMutation('post', '/subscription/create');
-  const { mutate: updateSubscription } = invitedOnlyBackendApi.useMutation('post', '/subscription/update');
   const { data: subscription, updateSubscription: updateSubscriptionData } = useGetSubscriptions();
   const activeExistingSubscription = subscription && subscription.status === 'active';
 
 
-  const updateUser = async (subscriptionId: string, expirationDate: string | null, type: string, targetSubscription: string | null = null) => {
+  const updateUser = async (subscriptionId: string, expirationDate: string | null, type: string, targetSubscription: string | null = null, reveneuCartUserId: string | null = null) => {
     if (!activeExistingSubscription) {
       createSubscription({
         body: {
           subscriptionId,
+          revenueCartUserId: reveneuCartUserId ?? undefined,
           userId: userMetadata?.uid,
+          expiresDate: expirationDate ?? undefined,
           type,
-          endDate: expirationDate ?? undefined,
           renewalSubscriptionId: targetSubscription ?? undefined,
         },
       }, {
         onSuccess: () => {
-          updateSubscriptionData({ subscriptionId, endDate: expirationDate ?? undefined, type, status: 'active', renewalSubscriptionId: targetSubscription ?? undefined });
+          updateSubscriptionData({ subscriptionId, type, renewalSubscriptionId: targetSubscription ?? undefined, revenueCartUserId: reveneuCartUserId ?? undefined });
         },
         onError: (error) => {
           console.error('error update user', error);
         },
       });
     } else {
-      updateSubscription({
-        body: {
-          subscriptionId: subscriptionId,
-          userId: userMetadata?.uid,
-          type,
-          endDate: expirationDate ?? undefined,
-          renewalSubscriptionId: targetSubscription ?? undefined,
-        },
-      }, {
-        onSuccess: () => {
-          updateSubscriptionData({ subscriptionId, endDate: expirationDate ?? undefined, type, status: 'active', renewalSubscriptionId: targetSubscription ?? undefined });
-        },
-        onError: (error) => {
-          console.error('error update user', error);
-        },
-      });
+      updateSubscriptionData({ subscriptionId, type, renewalSubscriptionId: targetSubscription ?? undefined, revenueCartUserId: reveneuCartUserId ?? undefined });
     }
   };
 
@@ -132,8 +115,9 @@ const usePayments = () => {
 
       const subscriptionId = customerInfo.activeSubscriptions[0];
       const expirationDate = customerInfo.allExpirationDates[subscriptionId];
+      const reveneuCartUserId = customerInfo.originalAppUserId;
       const type = mapIdentifierToType(customerInfo.activeSubscriptions[0]);
-      updateUser(subscriptionId, expirationDate, type, targetSubscription);
+      updateUser(subscriptionId, expirationDate, type, targetSubscription, reveneuCartUserId);
     } catch (e) {
       console.error('error pay', e);
 
@@ -274,7 +258,6 @@ const usePayments = () => {
     subscription,
     loaderVisible,
     successfulPay,
-    visibleUpgradeSuccessful,
     isButtonDisabled,
     buttonTitle,
     restorePurchases,

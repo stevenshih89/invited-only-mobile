@@ -39,6 +39,7 @@ export const ChatWindow = () => {
     sendMessage: sendMessage,
   });
 
+
   const { handleDeleteChat } = useChatGuestConnectionActions({
     eventId: chat?.eventId ?? '',
     guestId: chat?.guestId ?? '',

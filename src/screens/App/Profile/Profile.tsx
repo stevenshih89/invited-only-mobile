@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { ActivityIndicator } from 'react-native';
+import useGetSubscriptions from '../Payment/hooks/useGetSubscriptions';
 import * as S from './Profile.style';
 import TabsList from './components/TabsList/TabsList';
 import HostPremium from './components/HostPremium/HostPremium';
@@ -17,7 +18,7 @@ import useUser from 'hooks/user/useUser';
 
 const Profile: FC = () => {
   const { userAge, acceptModalVisible, setAcceptModalVisible, changeAccountTypeModalVisible, setChangeAccountModalVisible } = useProfile();
-
+  const { data: subscriptionData } = useGetSubscriptions();
   const { user, isLoading } = useUser();
 
   const { openLogoutModal, isVisibleLogoutModal, setIsVisibleLogoutModal } = useSettings();
@@ -52,7 +53,7 @@ const Profile: FC = () => {
               </S.AccountTypeWrapper>
             </S.AccountTypeContainer>
           </S.NameContainer>
-          <HostPremium />
+          <HostPremium subscriptionData={subscriptionData} />
           <SuperInviteBlock />
           <TabsList />
           <S.LogoutButton onPress={openLogoutModal}>

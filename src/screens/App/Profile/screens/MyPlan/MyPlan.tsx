@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
+import { ActivityIndicator } from 'react-native';
 import HostPremiumCard from '../../components/HostPremium/HostPremium';
 import * as S from './MyPlan.style';
 import WhatGetItem from './Components/WhatGetItem';
@@ -10,7 +11,6 @@ import ExportIcon from 'assets/images/icons/export.svg';
 import IOIcon from 'assets/images/icons/io.svg';
 import EyeIcon from 'assets/images/icons/eye-solid.svg';
 import FlashIcon from 'assets/images/icons/lightning-fill.svg';
-import { ActivityIndicator } from 'react-native';
 import { whiteColor } from 'constants/colors';
 
 const MyPlan: FC = () => {
