@@ -1,5 +1,5 @@
-import { Dispatch, FC, SetStateAction } from 'react';
-import { ActivityIndicator } from 'react-native';
+import {Dispatch, FC, SetStateAction} from 'react';
+import {ActivityIndicator} from 'react-native';
 import ProfileSlider from './components/ProfileSlider/ProfileSlider';
 import * as S from './MyProfileView.style';
 import Basics from './components/Basics/Basics';
@@ -9,30 +9,30 @@ import PhotosList from './components/PhotosList/Photoslist';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import ModalUserProfile from 'components/Modal/ModalUserProfile/ModalUserProfile.tsx';
 import Man from 'assets/images/app/man-rectangle.png';
-import { blackColor } from 'constants/colors';
+import {blackColor} from 'constants/colors';
 import FemaleGenderIcon from 'src/assets/images/icons/female-gender.svg';
 import invitedOnlyBackendApi from 'src/api/backend-api';
-import { useAuthStore } from 'src/store/authStore';
+import {useAuthStore} from 'src/store/authStore';
 
 interface MyProfileViewProps {
   isModalVisible?: boolean;
   setModalVisible?: Dispatch<SetStateAction<boolean>>;
 }
 
-const MyProfileView: FC<MyProfileViewProps> = ({ isModalVisible, setModalVisible }) => {
-  const { userMetadata } = useAuthStore();
-  const { data: userInfo, isLoading } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
+const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible}) => {
+  const {userMetadata} = useAuthStore();
+  const {data: userInfo, isLoading} = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
     params: {
       path: {
-        id: userMetadata.uid
-      }
-    }
-  })
+        id: userMetadata.uid,
+      },
+    },
+  });
 
   if (isLoading || !userInfo) {
     return (
       <S.ProfileContainer>
-        <ActivityIndicator style={{ flex: 1, backgroundColor: blackColor }} />
+        <ActivityIndicator style={{flex: 1, backgroundColor: blackColor}} />
       </S.ProfileContainer>
     );
   }
@@ -52,34 +52,42 @@ const MyProfileView: FC<MyProfileViewProps> = ({ isModalVisible, setModalVisible
       other: 'They (Their)',
     })[gender];
 
-  const calculateBirthday = (birthday: string | undefined): number => {
-    if (!birthday) return 0;
+  const calculateBirthday = (birthday: string | undefined): number | string => {
+    if (!birthday) return '';
     const today = new Date();
-    const birthDate = new Date(birthday);
+    const [month, day, year] = birthday.split('.');
+    const birthDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
     const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1;
+    }
     return age;
   };
+
   return (
     <S.SafeAreaContainer>
-      <ModalReport setModalReport={() => { }} uidSender={userInfo?.uid} uid={userInfo?.uid} />
+      <ModalReport setModalReport={() => {}} uidSender={userInfo?.uid} uid={userInfo?.uid} />
       <S.MainContainer>
-        <S.ScrollContainer
-          scrollEventThrottle={20}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}>
+        <S.ScrollContainer scrollEventThrottle={20} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
           <S.ContentContainer>
             <S.ProfileContainer>
-              <ProfileSlider photos={userInfo.photos?.map((photo) => photo.image || '') || []} userName={userInfo?.name || ''} isConfirmed={userInfo?.accountConfirmed || false} userAge={String(calculateBirthday(userInfo?.birthday))} />
+              <ProfileSlider
+                photos={userInfo.photos?.map(photo => photo.image || '') || []}
+                userName={userInfo?.name || ''}
+                isConfirmed={userInfo?.accountConfirmed || false}
+                userAge={String(calculateBirthday(userInfo?.birthday))}
+              />
               <Basics
                 location={userInfo?.location || ''}
                 homeAddress={userInfo?.homeAddress || ''}
-                work={{ title: userInfo?.work?.title || '' }}
+                work={{title: userInfo?.work?.title || ''}}
                 gender={userInfo?.gender || 'other'}
                 listOfInterestsImages={userInfo?.interests || []}
               />
               <Bio bio={userInfo?.bio || ''} />
               <Languages languages={userInfo?.languages || []} />
-              <PhotosList photosList={userInfo.photos?.map((photo) => photo.image || '') || []} />
+              <PhotosList photosList={userInfo.photos?.map(photo => photo.image || '') || []} />
             </S.ProfileContainer>
             <ModalUserProfile title={'Alex'} image={Man} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
           </S.ContentContainer>

@@ -21,40 +21,88 @@ interface InterestImageProps {
   interests: components['schemas']['Interest'][];
 }
 
-const getInterestImageUrl = (interestId: number) => {
+const getInterestInfo = (interestId: number) => {
   switch (interestId) {
     case 0:
-      return Sports;
+      return {
+        icon: Sports,
+        title: 'Sports',
+      };
     case 1:
-      return Festivals;
+      return {
+        icon: Festivals,
+        title: 'Festivals',
+      };
     case 2:
-      return Yachts;
+      return {
+        icon: Yachts,
+        title: 'Yachts',
+      };
     case 3:
-      return VipTables;
+      return {
+        icon: VipTables,
+        title: 'Vip Tables',
+      };
     case 4:
-      return Concerts;
+      return {
+        icon: Concerts,
+        title: 'Concerts',
+      };
     case 5:
-      return Fashion;
+      return {
+        icon: Fashion,
+        title: 'Fashion',
+      };
     case 6:
-      return Bars;
+      return {
+        icon: Bars,
+        title: 'Bars',
+      };
     case 7:
-      return Business;
+      return {
+        icon: Business,
+        title: 'Business',
+      };
     case 8:
-      return Restaurants;
+      return {
+        icon: Restaurants,
+        title: 'Restaurants',
+      };
     case 9:
-      return PoolParties;
+      return {
+        icon: PoolParties,
+        title: 'Pool Parties',
+      };
     case 10:
-      return Private;
+      return {
+        icon: Private,
+        title: 'Private',
+      };
     case 11:
-      return Exclusive;
+      return {
+        icon: Exclusive,
+        title: 'Exclusive',
+      };
     case 12:
-      return BeachParties;
+      return {
+        icon: BeachParties,
+        title: 'Beach Parties',
+      };
     case 13:
-      return Nightclubs;
+      return {
+        icon: Nightclubs,
+        title: 'Nightclubs',
+      };
     case 14:
-      return LiveShows;
+      return {
+        icon: LiveShows,
+        title: 'Live Shows',
+      };
     case 15:
-      return Brunches;
+      return {
+        icon: Brunches,
+        title: 'Brunches',
+      };
     default:
       return null;
   }
@@ -65,8 +113,8 @@ const InterestImageSmallList = ({interests}: InterestImageProps) => {
     <S.InterestsContainer>
       {interests?.map((interest, index) => (
         <S.RoundedTextViewContainer key={index}>
-          <S.InterestImageRoundSmall source={getInterestImageUrl(interest.id)} />
-          <S.WhiteTextInfo>{interest.title}</S.WhiteTextInfo>
+          <S.InterestImageRoundSmall source={getInterestInfo(interest.id)?.icon} />
+          <S.WhiteTextInfo>{getInterestInfo(interest.id)?.title}</S.WhiteTextInfo>
         </S.RoundedTextViewContainer>
       ))}
     </S.InterestsContainer>

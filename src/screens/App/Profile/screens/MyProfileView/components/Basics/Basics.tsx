@@ -1,20 +1,20 @@
-import { FC } from 'react';
-import { View } from 'react-native';
-import { components } from 'src/api/v1';
+import {FC} from 'react';
+import {View} from 'react-native';
+import {components} from '@invited-only/invited-only-api';
 import * as S from './Basics.style';
-import { useGenderSpecs } from 'hooks/useGenderSpecs';
+import {useGenderSpecs} from 'hooks/useGenderSpecs';
 import InterestImageSmallList from 'screens/App/Components/Intrests/InterestImageSmallList';
 
 interface BasicsProps {
   location: string;
   homeAddress: string;
-  work: { title: string };
+  work: {title: string};
   gender: 'man' | 'woman' | 'other';
   listOfInterestsImages: components['schemas']['Interest'][];
 }
 
-const Basics: FC<BasicsProps> = ({ location, homeAddress, work, gender, listOfInterestsImages }) => {
-  const { genderIcon: GenderIcon, genderText } = useGenderSpecs(gender);
+const Basics: FC<BasicsProps> = ({location, homeAddress, work, gender, listOfInterestsImages}) => {
+  const {genderIcon: GenderIcon, genderText} = useGenderSpecs(gender);
 
   return (
     <S.StyledRadialGradient
@@ -56,7 +56,7 @@ const Basics: FC<BasicsProps> = ({ location, homeAddress, work, gender, listOfIn
         )}
       </S.TagsContainer>
       {!!listOfInterestsImages?.length && (
-        <View style={{ marginTop: 24 }}>
+        <View style={{marginTop: 24}}>
           <S.SectionTitle>Interests</S.SectionTitle>
           <S.InterestsContainer>
             <S.InterestTagsContainer>

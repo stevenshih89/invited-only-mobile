@@ -70,7 +70,7 @@ yarn-error.log
 
 
 # Environment variables
-
+.env
 .env.local
 .env.development
 .env.production
@@ -79,7 +79,7 @@ yarn-error.log
 .qodo
 .aider*
 android/.tmp/**
-android/caches/**   
+android/caches/**
 android/build/**
 android/gradle/wrapper/dists/**
 android/gradle/wrapper/src/**
