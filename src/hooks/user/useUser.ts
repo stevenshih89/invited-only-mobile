@@ -11,6 +11,7 @@ interface UseUserResponse {
 
 const useUser = (): UseUserResponse => {
     const { userMetadata } = useAuthStore();
+
     const { data, isLoading, error } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
         params: {
             path: {
@@ -18,10 +19,8 @@ const useUser = (): UseUserResponse => {
             },
         }
 
-    }, {
-        refetchIntervalInBackground: false,
-        refetchInterval: 1000 * 5,
-    });
+    },);
+
 
     return {
         user: data,

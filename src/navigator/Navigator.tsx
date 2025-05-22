@@ -1,11 +1,10 @@
-
 import { useAuthStore } from '../store/authStore';
 import * as S from './Navigator.style';
 import AppStackScreens from 'src/navigator/AppStackScreens/AppStackScreens';
 import AuthStackScreens from 'src/navigator/AuthStackScreens/AuthStackScreens';
 
 const Navigator = () => {
-  const { onBoarding, userMetadata } = useAuthStore();
+  const { onBoarding } = useAuthStore();
 
   return <S.NavigatorContainer>
     {onBoarding.isOnboardingCompleted ? <AppStackScreens /> : <AuthStackScreens />}

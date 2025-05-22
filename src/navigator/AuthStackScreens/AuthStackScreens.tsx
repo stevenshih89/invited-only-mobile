@@ -48,7 +48,7 @@ import ConfirmPhone from 'screens/Auth/ConfirmPhone/ConfirmPhone';
 
 const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
-
+  console.log('AuthStackScreens');
   return (
     <NavigationIndependentTree>
       <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{ headerShown: false, freezeOnBlur: true, unmountOnBlur: false }}>

@@ -1,17 +1,30 @@
+
+import { Text } from 'react-native';
 import AppLoader from '../AppLoader/AppLoader';
+import Card from '../Components/Card/Card';
 import IO from './IO';
 import EmptyStateView from './components/EmptyStateView/EmptyStateView';
 import useEventsDetails from './hooks/useEventsDetails';
+import useGetHighRankUsers from './hooks/useGetHighRankUsers';
+import * as S from './IOWrapper.styled';
+import InviteGuestsEvent from './components/InviteGuestsEvent/InviteGuestsEvent';
+import useUser from 'hooks/user/useUser';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import ModalUpgradeAccount from 'components/Modal/ModalUpgradeAccount/ModalUpgradeAccount';
 
-
-
 const IOWrapper = () => {
+
   const { events, isLoading } = useEventsDetails();
 
-  if (isLoading || !events) {
+  const { user, isLoading: isLoadingUser } = useUser();
+  const isLocked = user?.uid && !user?.accountReviewed
+
+  const { data: highRankUsers, isLoading: isLoadingHighRankUsers } = useGetHighRankUsers({ isLocked });
+
+
+
+  if (isLoading || !events || isLoadingUser || isLoadingHighRankUsers) {
     return (
       <DefaultBackground>
         <AppLoader />
@@ -20,16 +33,30 @@ const IOWrapper = () => {
       </DefaultBackground>
     );
   }
+
+
   if (events.length === 0) {
     return (
-      <DefaultBackground>
+      <S.Container>
         <ModalLockedAccount />
         <ModalUpgradeAccount />
-        <EmptyStateView />
-      </DefaultBackground>
+        {!isLocked && <EmptyStateView />}
+        <S.CardContainer>
+          <InviteGuestsEvent
+            selectedEvent={events[0]}
+            cardsToShow={highRankUsers || []}
+            isLoading={false}
+            onSwipeLeft={() => { }}
+            onSwipeRight={() => { }}
+            onSuperInvite={() => { }}
+            allCards={highRankUsers || []}
+          />
+        </S.CardContainer>
+      </S.Container>
     );
   }
 
   return <IO events={events} />;
 };
 export default IOWrapper;
+

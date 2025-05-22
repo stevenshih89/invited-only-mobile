@@ -17,7 +17,7 @@ export const Container = styled.View`
 export const ModalWrapper = styled.View`
   margin-top: auto;
   margin-bottom: ${screenHeight / 10}px;
-  width: 106%;
+  width: 110%;
   border-radius: 20px;
   align-items: center;
   justify-content: center;
