@@ -41,7 +41,7 @@ const IOWrapper = () => {
         <ModalLockedAccount />
         <ModalUpgradeAccount />
         {!isLocked && <EmptyStateView />}
-        <S.CardContainer>
+        {isLocked && <S.CardContainer>
           <InviteGuestsEvent
             selectedEvent={events[0]}
             cardsToShow={highRankUsers || []}
@@ -51,7 +51,7 @@ const IOWrapper = () => {
             onSuperInvite={() => { }}
             allCards={highRankUsers || []}
           />
-        </S.CardContainer>
+        </S.CardContainer>}
       </S.Container>
     );
   }
