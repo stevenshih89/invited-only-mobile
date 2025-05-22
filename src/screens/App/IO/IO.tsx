@@ -13,7 +13,6 @@ import * as S from './IO.style';
 import useEventAttendes from './hooks/useEventAttendes';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
-import ModalUpgradeAccount from 'components/Modal/ModalUpgradeAccount/ModalUpgradeAccount';
 
 type GuestUser = components['schemas']['User'];
 
@@ -22,7 +21,6 @@ interface Props {
 }
 
 const IO = ({ events }: Props) => {
-
   const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
 
   type IoTabs = {
@@ -55,7 +53,6 @@ const IO = ({ events }: Props) => {
     fetchNextPage();
   }
 
-
   const CustomTabBar = (props: MaterialTopTabBarProps) => (
     <>
       <IoHeader
@@ -73,29 +70,24 @@ const IO = ({ events }: Props) => {
     <BottomSheetModalProvider>
       <DefaultBackground>
         <S.IoContainer>
-          <Tab.Navigator
-            style={S.tabNavigatorStyle}
-            initialRouteName="/io/invite"
-            tabBar={props => <CustomTabBar {...props} />}
-          >
-            <Tab.Screen name="/io/invite" >
-              {() => <InviteGuestsEvent
-                selectedEvent={selectedEvent}
-                cardsToShow={currentEventCards}
-                allCards={guests}
-                isLoading={isGuestsLoading || isFetchingNextPage}
-                onSwipeLeft={handleSwipeLeft}
-                onSwipeRight={handleSwipeRight}
-                onSuperInvite={handleSuperInvite}
-              />}
+          <Tab.Navigator style={S.tabNavigatorStyle} initialRouteName="/io/invite" tabBar={props => <CustomTabBar {...props} />}>
+            <Tab.Screen name="/io/invite">
+              {() => (
+                <InviteGuestsEvent
+                  selectedEvent={selectedEvent}
+                  cardsToShow={currentEventCards}
+                  allCards={guests}
+                  isLoading={isGuestsLoading || isFetchingNextPage}
+                  onSwipeLeft={handleSwipeLeft}
+                  onSwipeRight={handleSwipeRight}
+                  onSuperInvite={handleSuperInvite}
+                />
+              )}
             </Tab.Screen>
-            <Tab.Screen name="/io/requests" >
-              {() => <EventRequests eventId={selectedEvent?.uid || ''} />}
-            </Tab.Screen>
+            <Tab.Screen name="/io/requests">{() => <EventRequests eventId={selectedEvent?.uid || ''} />}</Tab.Screen>
           </Tab.Navigator>
         </S.IoContainer>
-        {isGuestsLoading || isFetchingNextPage || !hasCards && guests.length > 0 ? null : <ModalLockedAccount />}
-        <ModalUpgradeAccount />
+        {isGuestsLoading || isFetchingNextPage || (!hasCards && guests.length > 0) ? null : <ModalLockedAccount />}
       </DefaultBackground>
     </BottomSheetModalProvider>
   );

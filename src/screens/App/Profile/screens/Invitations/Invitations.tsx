@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { ActivityIndicator, ScrollView } from 'react-native';
 import * as S from './Invitations.style';
 import useGetInvitationCodes from './hooks/useGetInvitationCodes';
-import { grayColor, whiteColor } from 'constants/colors';
+import { whiteColor } from 'constants/colors';
 import CopyFillIcon from 'assets/images/icons/copy-fill.svg';
 import { useInvitations } from 'hooks/useInvitations';
 

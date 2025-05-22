@@ -1,5 +1,6 @@
-import {Dispatch, FC, SetStateAction} from 'react';
-import {ActivityIndicator} from 'react-native';
+import { Dispatch, FC, SetStateAction } from 'react';
+import { ActivityIndicator } from 'react-native';
+import moment from 'moment';
 import ProfileSlider from './components/ProfileSlider/ProfileSlider';
 import * as S from './MyProfileView.style';
 import Basics from './components/Basics/Basics';
@@ -9,19 +10,19 @@ import PhotosList from './components/PhotosList/Photoslist';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import ModalUserProfile from 'components/Modal/ModalUserProfile/ModalUserProfile.tsx';
 import Man from 'assets/images/app/man-rectangle.png';
-import {blackColor} from 'constants/colors';
+import { blackColor } from 'constants/colors';
 import FemaleGenderIcon from 'src/assets/images/icons/female-gender.svg';
 import invitedOnlyBackendApi from 'src/api/backend-api';
-import {useAuthStore} from 'src/store/authStore';
+import { useAuthStore } from 'src/store/authStore';
 
 interface MyProfileViewProps {
   isModalVisible?: boolean;
   setModalVisible?: Dispatch<SetStateAction<boolean>>;
 }
 
-const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible}) => {
-  const {userMetadata} = useAuthStore();
-  const {data: userInfo, isLoading} = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
+const MyProfileView: FC<MyProfileViewProps> = ({ isModalVisible, setModalVisible }) => {
+  const { userMetadata } = useAuthStore();
+  const { data: userInfo, isLoading } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
     params: {
       path: {
         id: userMetadata.uid,
@@ -32,25 +33,10 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible}
   if (isLoading || !userInfo) {
     return (
       <S.ProfileContainer>
-        <ActivityIndicator style={{flex: 1, backgroundColor: blackColor}} />
+        <ActivityIndicator style={{ flex: 1, backgroundColor: blackColor }} />
       </S.ProfileContainer>
     );
   }
-
-  const getGenderIcon = (gender: 'man' | 'woman' | 'other') =>
-    (
-      ({
-        man: <FemaleGenderIcon />,
-        woman: <FemaleGenderIcon />,
-      }) as any
-    )[gender];
-
-  const getGenderText = (gender: 'man' | 'woman' | 'other') =>
-    ({
-      man: 'He (His)',
-      woman: 'She (Her)',
-      other: 'They (Their)',
-    })[gender];
 
   const calculateBirthday = (birthday: string | undefined): number | string => {
     if (!birthday) return '';
@@ -67,7 +53,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible}
 
   return (
     <S.SafeAreaContainer>
-      <ModalReport setModalReport={() => {}} uidSender={userInfo?.uid} uid={userInfo?.uid} />
+      <ModalReport setModalReport={() => { }} uidSender={userInfo?.uid} uid={userInfo?.uid} />
       <S.MainContainer>
         <S.ScrollContainer scrollEventThrottle={20} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
           <S.ContentContainer>
@@ -81,7 +67,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible}
               <Basics
                 location={userInfo?.location || ''}
                 homeAddress={userInfo?.homeAddress || ''}
-                work={{title: userInfo?.work?.title || ''}}
+                work={{ title: userInfo?.work?.title || '' }}
                 gender={userInfo?.gender || 'other'}
                 listOfInterestsImages={userInfo?.interests || []}
               />

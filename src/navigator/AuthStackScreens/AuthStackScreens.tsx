@@ -60,14 +60,11 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={signInPath} name={signInPath} component={SignIn} />
         <AuthStack.Screen key={confirmPhonePath} name={confirmPhonePath} component={ConfirmPhone} />
         <AuthStack.Screen key={turnNotificationsPath} name={turnNotificationsPath} component={TurnNotifications} />
-
         <AuthStack.Screen key={enterNamePath} name={enterNamePath} component={EnterName} />
         <AuthStack.Screen key={addPhotosPath} name={addPhotosPath} component={AddPhotos} />
         <AuthStack.Screen key={enterBirthdayPath} name={enterBirthdayPath} component={EnterBirthday} />
-
         <AuthStack.Screen key={myInterestsPath} name={myInterestsPath} component={MyInterests} />
         <AuthStack.Screen key={myEmailPath} name={myEmailPath} component={MyEmail} />
-
         <AuthStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
         <AuthStack.Screen key={pendingScreenPath} name={pendingScreenPath} component={PendingScreen} />
         <AuthStack.Screen key={accountRejectedPath} name={accountRejectedPath} component={AccountRejected} />

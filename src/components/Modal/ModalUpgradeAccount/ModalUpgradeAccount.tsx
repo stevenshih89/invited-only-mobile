@@ -1,9 +1,10 @@
-import React, { FC } from 'react';
+import React, {FC} from 'react';
 import * as S from './ModalUpgradeAccount.style';
 import LockIcon from 'assets/images/icons/key-rounded.svg';
-import { useAppNavigation } from 'hooks/useAppNavigation';
+import {useAppNavigation} from 'hooks/useAppNavigation';
 import Button from 'components/Button/Button';
 import useUser from 'hooks/user/useUser';
+import useGetSubscriptions from 'screens/App/Payment/hooks/useGetSubscriptions';
 
 const ModalUpgradeAccount: FC = () => {
   const navigation = useAppNavigation();
@@ -12,10 +13,13 @@ const ModalUpgradeAccount: FC = () => {
     navigation.navigate('/profile/payment');
   };
 
-  const { user } = useUser();
+  const {data: subscriptionData} = useGetSubscriptions();
 
+  const {user} = useUser();
 
-  if (user?.uid && user?.accountReviewed && user?.accountConfirmed && !user?.accountPremium) {
+  const isActiveSubscription = subscriptionData?.status === 'active';
+
+  if (user?.uid && user?.accountReviewed && user?.accountConfirmed && !isActiveSubscription) {
     return (
       <S.Container>
         <S.ModalWrapper>

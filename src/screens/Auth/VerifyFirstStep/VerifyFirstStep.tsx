@@ -1,17 +1,17 @@
-import React, {FC, JSX} from 'react';
-import {Keyboard} from 'react-native';
-import {useVerifyStep} from './hooks/useVerifyStep';
+import React, { FC, JSX } from 'react';
+import { Keyboard } from 'react-native';
+import { useVerifyStep } from './hooks/useVerifyStep';
 import * as S from './VerifyFirstStep.style';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Button from 'components/Button/Button';
-import {screenHeight, screenWidth} from 'constants/common';
+import { screenHeight, screenWidth } from 'constants/common';
 
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
-  const {imageUri, handleNext, handleSkip, isLoading, openCamera, selfieSource, setImageUri, gender} = useVerifyStep();
+  const { imageUri, handleNext, handleSkip, isLoading, openCamera, selfieSource, setImageUri, gender } = useVerifyStep();
 
   return (
     <S.Background>
@@ -35,7 +35,7 @@ const VerifySecondStep: FC = (): JSX.Element => {
                         <S.SectionSubtitle>Make sure your face is clearly visible.</S.SectionSubtitle>
                       </S.SectionHeader>
                       <S.ImageContainer height={screenHeight / 2.5}>
-                        <S.PhotoBackground source={{uri: imageUri}}></S.PhotoBackground>
+                        <S.PhotoBackground source={{ uri: imageUri }}></S.PhotoBackground>
                       </S.ImageContainer>
                     </>
                   ) : (
@@ -67,7 +67,6 @@ const VerifySecondStep: FC = (): JSX.Element => {
               ) : (
                 <S.Footer>
                   <Button testID="take-photo-button" onPress={openCamera} title="Take a photo" />
-                  {gender === 'man' && <Button title="Skip" onPress={handleSkip} variant="gray" />}
                 </S.Footer>
               )}
             </S.Container>

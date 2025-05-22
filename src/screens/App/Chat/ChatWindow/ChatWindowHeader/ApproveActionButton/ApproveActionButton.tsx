@@ -9,14 +9,19 @@ import invitedOnlyBackendApi from 'src/api/backend-api';
 interface ApproveActionButtonProps extends TouchableOpacityProps {
     chat: components['schemas']['Chat'];
     isJoinedEvent: boolean;
+    updateConnectionStatusData: (data: { hostAction: 'confirm' | 'reject' | 'none', guestAction: 'confirm' | 'reject' | 'none' }) => void;
 }
 
-export const ApproveActionButton: React.FC<ApproveActionButtonProps> = ({ chat, isJoinedEvent, ...rest }) => {
+export const ApproveActionButton: React.FC<ApproveActionButtonProps> = ({ chat, isJoinedEvent, updateConnectionStatusData, ...rest }) => {
     const { mutate: approveChat } = invitedOnlyBackendApi.useMutation('patch', '/eventAttendees', {
         onSuccess: (response) => {
-            console.log('Chat approved', response);
+            updateConnectionStatusData({ hostAction: isJoinedEvent ? 'none' : 'confirm', guestAction: isJoinedEvent ? 'confirm' : 'none' });
         },
+        onError: (error) => {
+            console.error('Error approving chat', error);
+        }
     });
+
     return (
         <S.ButtonContainer onPress={() => approveChat({
             body: {
@@ -32,7 +37,7 @@ export const ApproveActionButton: React.FC<ApproveActionButtonProps> = ({ chat, 
             <S.IconContainer>
                 <CheckmarkIcon />
             </S.IconContainer>
-            <S.ButtonText>Approve</S.ButtonText>
+            <S.ButtonText>{!isJoinedEvent ? 'Approve' : 'Accept'}</S.ButtonText>
         </S.ButtonContainer>
     );
 };

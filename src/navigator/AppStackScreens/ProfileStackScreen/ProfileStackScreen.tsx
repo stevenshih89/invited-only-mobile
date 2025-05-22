@@ -1,16 +1,15 @@
-import { createStackNavigator } from '@react-navigation/stack';
-import { StyleSheet } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
+import {createStackNavigator} from '@react-navigation/stack';
+import {StyleSheet} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
 import HeaderBackButton from '../../Components/HeaderBackButton/HeaderBackButton';
 import HeaderRightProfileEditing from './Components/HeaderRightProfileEditing/HeaderRightProfileEditing';
-import { blackColor, whiteColor } from 'constants/colors';
-import { Satoshi400 } from 'constants/fonts';
+import {blackColor, whiteColor} from 'constants/colors';
+import {Satoshi400} from 'constants/fonts';
 import {
   accountSettingPath,
   faqPath,
   helpAndSecurityPath,
   invitationsPath,
-
   myPlanPath,
   myProfileViewPath,
   notificationSettingPath,

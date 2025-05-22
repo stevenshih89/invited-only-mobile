@@ -29,12 +29,13 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost,
   const { userMetadata } = useAuthStore();
   const insets = useSafeAreaInsets();
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const { connectionStatus, isLoading } = useConnectionRealtimeStatus({ chat });
+  const { connectionStatus, isLoading, updateConnectionStatusData } = useConnectionRealtimeStatus({ chat });
   const { mutate: updateChatSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen');
   const { invitationStatus } = useInvitationStatus(connectionStatus);
   const toggleDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);
   };
+  console.log('invitationStatus', connectionStatus);
 
 
   const renderActionButtonForHost = () => {
@@ -50,7 +51,7 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost,
       );
     }
     if (invitationStatus === 'connectionInitiated' || invitationStatus === 'guestApprovePendingForHost') {
-      return <ApproveActionButton chat={chat} isJoinedEvent={isJoinedEvent || false} />;
+      return <ApproveActionButton chat={chat} isJoinedEvent={isJoinedEvent || false} updateConnectionStatusData={updateConnectionStatusData} />;
     }
   };
 
@@ -67,7 +68,7 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost,
       );
     }
     if (invitationStatus === 'connectionInitiated' || invitationStatus === 'hostApprovePendingForGuest') {
-      return <ApproveActionButton chat={chat} isJoinedEvent={isJoinedEvent || false} />;
+      return <ApproveActionButton chat={chat} isJoinedEvent={isJoinedEvent || false} updateConnectionStatusData={updateConnectionStatusData} />;
     }
   };
 

@@ -1,5 +1,6 @@
 import * as S from './JoinedEventsEmptyFallback.style';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
+import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import MyEventsFallbackImage from 'src/assets/images/app/joined-events-empty-fallback.png';
 
 const JoinedEventsEmptyFallback = () => {
@@ -16,6 +17,7 @@ const JoinedEventsEmptyFallback = () => {
           </S.TextContainer>
         </S.FallbackTextContainer>
       </S.Container>
+      <ModalLockedAccount />
     </DefaultBackground>
   );
 };

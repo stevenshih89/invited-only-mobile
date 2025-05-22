@@ -7,7 +7,6 @@ import WelcomeBcgCards from 'assets/images/auth/welcom-screen-cards.png';
 import BgDottedLineLeft from 'assets/images/auth/background-dotted-line-left.png';
 import BgDottedLineRight from 'assets/images/auth/background-dotted-right.png';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import { eulaPath } from 'constants/pathLocations';
 import Button from 'components/Button/Button';
 import { openLink } from 'helpers/links';
 

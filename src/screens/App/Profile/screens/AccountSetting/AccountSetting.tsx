@@ -1,24 +1,24 @@
-import {FC, useState} from 'react';
-import {Switch} from '@rneui/themed';
+import { FC, useState } from 'react';
+import { Switch } from '@rneui/themed';
 import ModalConfirmPhone from '../Settings/ModalConfirmPhone';
 import * as S from './AccountSetting.style';
 import ArrowRight from 'assets/images/icons/arrow-right-s-line.svg';
 import TrashIcon from 'assets/images/icons/trash-solid.svg';
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
 import Button from 'components/Button/Button';
-import {blackColor, whiteColor} from 'constants/colors';
+import { blackColor, whiteColor } from 'constants/colors';
 import invitedOnlyBackendApi from 'src/api/backend-api';
-import {useAuthStore} from 'src/store/authStore';
+import { useAuthStore } from 'src/store/authStore';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import useUser from 'hooks/user/useUser';
 import useUpdateUser from 'hooks/user/useUpdateUser';
 
 const AccountSetting: FC = () => {
-  const {logout} = useAuthStore();
-  const {user} = useUser();
+  const { logout } = useAuthStore();
+  const { user } = useUser();
   const [showLocation, setShowLocation] = useState(user?.showLocation);
-  const {update} = useUpdateUser();
-  const {mutate: deleteUser, isPending: isDeletingUser} = invitedOnlyBackendApi.useMutation('delete', '/users/{id}', {
+  const { update } = useUpdateUser();
+  const { mutate: deleteUser, isPending: isDeletingUser } = invitedOnlyBackendApi.useMutation('delete', '/users/{id}', {
     onSuccess: () => {
       logout();
     },
@@ -51,14 +51,14 @@ const AccountSetting: FC = () => {
               </S.PhoneNumberContainer>
             </S.PhoneContainer>
             <S.EmailLabel>Email</S.EmailLabel>
-            <S.EmailInput value={userEmail} onChangeText={() => {}} />
+            <S.EmailInput value={userEmail} onChangeText={() => { }} />
           </S.ContactSection>
           <S.LocationSection>
             <S.LocationHeader>
               <S.LocationTitle>Share location</S.LocationTitle>
               <S.StyledSwitch
                 testID="my-events-switch"
-                trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
+                trackColor={{ false: 'rgba(29, 29, 29, 1)', true: whiteColor }}
                 thumbColor={showLocation ? blackColor : whiteColor}
                 value={showLocation}
                 onValueChange={() => {
@@ -90,7 +90,7 @@ const AccountSetting: FC = () => {
         <Button
           title="Save Changes"
           onPress={() => {
-            update({showLocation: showLocation});
+            update({ showLocation: showLocation });
           }}
         />
       </S.InnerContainer>
@@ -113,7 +113,7 @@ const AccountSetting: FC = () => {
         title="Are You Sure You Want to Delete Your Account?"
         description="You can register a new account. Your events and purchases will not be restored"
       />
-      <ModalConfirmPhone isVisible={false} onClose={() => {}} verificationId={''} />
+      <ModalConfirmPhone isVisible={false} onClose={() => { }} verificationId={''} />
     </S.Container>
   );
 };

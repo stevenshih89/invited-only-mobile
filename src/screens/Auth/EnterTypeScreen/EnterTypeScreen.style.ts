@@ -10,16 +10,14 @@ const { height } = Dimensions.get('window');
 
 export const MainContainer = styled.View`
   display: flex;
-  gap: 12px;
+  height: ${height * 1}px;
 
 `;
 
 export const BackgroundImage = styled.ImageBackground`
   display: flex;
   position: fixed;
-  justify-content: center;
-  align-items: center;
-  height: ${height * 0.65}px;
+  height: ${height * 0.80}px;
   width: 100%;
 `;
 
@@ -32,7 +30,7 @@ export const ButtonsContainer = styled.View`
 
 export const EnterButton = styled.TouchableOpacity`
   background-color: ${whiteColor};
-  border-radius: 18px;
+  border-radius: 28px;
   height: ${screenHeight / 14}px;
   width: ${screenWidth / 1.1}px;
   flex-direction: row;

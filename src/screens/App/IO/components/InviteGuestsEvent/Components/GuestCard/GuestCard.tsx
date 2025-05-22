@@ -1,8 +1,9 @@
-import { components } from '@invited-only/invited-only-api';
-import { useCardGesture } from '../../hooks/useCardGesture';
+import {components} from '@invited-only/invited-only-api';
+import moment from 'moment';
+import {useCardGesture} from '../../hooks/useCardGesture';
 import * as S from './GuestCard.style';
 import Card from 'screens/App/Components/Card/Card';
-import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
+import {CardActionsButtons} from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
 
 interface Props {
   isTopCard: boolean;
@@ -14,9 +15,8 @@ interface Props {
   topIndex: number;
 }
 
-export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex }: Props) => {
-
-  const { gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite } =
+export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex}: Props) => {
+  const {gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite} =
     useCardGesture({
       onSwipeLeft: () => {
         onReject();
@@ -50,10 +50,7 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
 
   const calculateAge = (birthday: string | undefined) => {
     if (!birthday) return '';
-    const birthDate = new Date(birthday);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    return age;
+    return moment().diff(moment(birthday, 'MM.DD.YYYY'), 'years');
   };
   return (
     <Card
@@ -73,7 +70,10 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
         <S.CardContent>
           <S.CardNameAndAge>
             <S.StyledCheckStar />
-            <S.CardName>{guest.name}{guest.showAge && ','}</S.CardName>
+            <S.CardName>
+              {guest.name}
+              {guest.showAge && ','}
+            </S.CardName>
             {guest.showAge && <S.CardGuestAge>{calculateAge(guest.birthday)}</S.CardGuestAge>}
           </S.CardNameAndAge>
           <CardActionsButtons disabled={false} onReject={onClickReject} onSuperInvite={onClickSuperLike} onInvite={onClickInvite} />

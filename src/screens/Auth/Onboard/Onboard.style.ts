@@ -1,22 +1,25 @@
-import {Dimensions} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { Dimensions } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
-import {Satoshi400, Satoshi700} from 'constants/fonts';
-import {lightGray19Color, whiteColor, backgroundGradientColors} from 'constants/colors';
+import { Satoshi400, Satoshi700 } from 'constants/fonts';
+import { lightGray19Color, whiteColor, backgroundGradientColors } from 'constants/colors';
+import { screenHeight, screenWidth } from 'constants/common';
 
 export const OnBoardingTextTitle = styled.Text`
   color: white;
   text-align: center;
   word-spacing: 120px;
-  width: 300px;
+  width: ${screenWidth * 0.8}px;
   font-family: ${Satoshi700};
   font-size: ${RFValue(22, 812)}px;
 `;
 
 export const BgCardImage = styled.Image`
-  width: 400px;
-  height: 414px;
+  width: ${screenWidth * 1}px;
+  margin-left: ${screenWidth * 0.05}px;
+  height: ${screenHeight * 0.5}px;
+
   opacity: 0.7;
 `;
 
@@ -24,15 +27,15 @@ export const OnBoardingTopViewContainer = styled.View`
   gap: 20px;
   display: flex;
   justify-content: center;
-  width: 400px;
-  height: 800px;
+  width: ${screenWidth * 1}px;
+  height: ${screenHeight * 0.85}px;
   align-items: center;
 `;
 
 export const BackgroundDottedLineLeft = styled.Image`
   position: absolute;
-  width: 300px;
-  height: 220px;
+  width: ${screenWidth * 0.8}px;
+  height: ${screenHeight * 0.25}px;
   top: 50px;
   background-color: transparent;
 `;
@@ -91,8 +94,8 @@ export const SignInText = styled.Text`
 // Root gradient background
 export const RootGradient = styled(LinearGradient).attrs({
   colors: backgroundGradientColors,
-  start: {x: 0, y: 1},
-  end: {x: 0, y: 0},
+  start: { x: 0, y: 1 },
+  end: { x: 0, y: 0 },
 })`
   flex: 1;
 `;

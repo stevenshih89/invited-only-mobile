@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {useSharedValue, useAnimatedStyle, withTiming, Easing} from 'react-native-reanimated';
+import React, { useState, useEffect } from 'react';
+import { useSharedValue, useAnimatedStyle, withTiming, Easing } from 'react-native-reanimated';
 import * as S from './EnterTypeWordsAnimation.style';
 
 const EnterTypeWordsAnimation = () => {
@@ -12,7 +12,7 @@ const EnterTypeWordsAnimation = () => {
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{translateY: translateY.value}],
+      transform: [{ translateY: translateY.value }],
       opacity: opacity.value,
     };
   });
@@ -27,10 +27,10 @@ const EnterTypeWordsAnimation = () => {
         duration: 300,
         easing: Easing.out(Easing.cubic),
       });
-      opacity.value = withTiming(1, {duration: 300});
+      opacity.value = withTiming(1, { duration: 300 });
 
       setTimeout(() => {
-        opacity.value = withTiming(0, {duration: 300});
+        opacity.value = withTiming(0, { duration: 300 });
 
         // Move to next word after fade out
         setTimeout(() => {

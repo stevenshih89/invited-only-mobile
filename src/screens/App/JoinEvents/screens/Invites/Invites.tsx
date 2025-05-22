@@ -6,6 +6,7 @@ import * as S from './Invites.style';
 import useGetInvites from './hooks/useGetInvites';
 import { whiteColor } from 'constants/colors';
 import JoinedEventsEmptyFallback from 'screens/App/MyEvents/Components/JoinedEventsEmptyFallback/JoinedEventsEmptyFallback';
+import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 
 
 const Invites: FC = () => {
@@ -35,6 +36,8 @@ const Invites: FC = () => {
           )}
         />
       }
+      <ModalLockedAccount />
+
     </S.Container>
   );
 };

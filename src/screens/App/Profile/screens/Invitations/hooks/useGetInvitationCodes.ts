@@ -6,7 +6,7 @@ const useGetInvitationCodes = () => {
     const { data, isLoading, error } = invitedOnlyBackendApi.useQuery('get', '/auth/get-invitation-codes', {
         params: {
             query: {
-                userId: 'system'
+                userId: userMetadata?.uid
             }
         }
     })

@@ -67,8 +67,6 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
           <S.SwipeDeleteText>Delete</S.SwipeDeleteText>
         </S.SwipeDeleteView>
         <Animated.View style={animatedStyle}>
-
-
           <TouchableOpacity activeOpacity={0.7} onPress={handlePress}>
             <S.Container>
               {user?.photos?.[0] && (
