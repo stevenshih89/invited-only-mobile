@@ -1,14 +1,15 @@
 import * as S from './SuccessfullySubmitted.style';
 import CheckIcon from 'assets/images/icons/check-star-white.svg';
-import { useAppNavigation } from 'hooks/useAppNavigation';
+import {joinEventsPath} from 'constants/pathLocations';
+import {useAppNavigation} from 'hooks/useAppNavigation';
 import useUser from 'hooks/user/useUser';
 
 const SuccessfullySubmitted = () => {
-  const { user: userData } = useUser();
+  const {user: userData} = useUser();
   const navigation = useAppNavigation();
 
   const handleContinue = () => {
-    navigation.navigate('/bottom-tabs-stack');
+    navigation.navigate('/bottom-tabs-stack', {screen: joinEventsPath});
   };
 
   return (
@@ -16,7 +17,7 @@ const SuccessfullySubmitted = () => {
       <S.Title>You Got Access</S.Title>
       <S.Subtitle>Congratulations and welcome aboard!</S.Subtitle>
       <S.ImageContainer>
-        <S.UserImage testID="user-image" source={{ uri: userData?.photos?.[0]?.image || '' }} />
+        <S.UserImage testID="user-image" source={{uri: userData?.photos?.[0]?.image || ''}} />
         <S.BadgeContainer>
           <S.BadgeContent>
             <S.BadgeBlur blurType="dark" />

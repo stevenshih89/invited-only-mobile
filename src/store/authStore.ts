@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware'; // Import middleware
+import {create} from 'zustand';
+import {persist, createJSONStorage} from 'zustand/middleware'; // Import middleware
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import { components } from '@invited-only/invited-only-api';
+import {components} from '@invited-only/invited-only-api';
 
 export type OnBoardingStep =
   | '/onboard'
@@ -45,13 +45,15 @@ interface AuthState {
   refreshToken: string;
   isStorageReady: boolean;
   isDemoVideoWatched: boolean;
+  isWelcomeAboardModalShowed: boolean;
   setIsStorageReady: (isStorageReady: boolean) => void;
   setUserMetadata: (userMetadata: UserMetadata) => void;
-  setOnBoarding: (onBoarding: Partial<OnboardingState>) => void; // Allow partial updates
+  setOnBoarding: (onBoarding: Partial<OnboardingState>) => void;
   setUserPhoneNumber: (phoneNumber: string) => void;
   setAccessToken: (token: string) => void;
   setRefreshToken: (token: string) => void;
   setIsDemoVideoWatched: (isDemoVideoWatched: boolean) => void;
+  setIsWelcomeAboardModalShowed: (isShowed: boolean) => void;
   logout: () => void;
 }
 
@@ -62,7 +64,12 @@ const initialOnboardingState: OnboardingState = {
   registrationDetails: null,
 };
 
-const getInitialState = (set: (partial: AuthState | Partial<AuthState> | ((state: AuthState) => AuthState | Partial<AuthState>), replace?: boolean | undefined) => void): AuthState => ({
+const getInitialState = (
+  set: (
+    partial: AuthState | Partial<AuthState> | ((state: AuthState) => AuthState | Partial<AuthState>),
+    replace?: boolean | undefined,
+  ) => void,
+): AuthState => ({
   userMetadata: {
     uid: '',
     phoneNumber: '',
@@ -74,52 +81,65 @@ const getInitialState = (set: (partial: AuthState | Partial<AuthState> | ((state
   refreshToken: '',
   isStorageReady: false,
   isDemoVideoWatched: false,
-  setIsStorageReady: () => { },
-  setUserMetadata: (userMetadata) => set({ userMetadata: { ...userMetadata, uid: userMetadata.uid ?? '', phoneNumber: userMetadata.phoneNumber ?? '', firstLogin: userMetadata.firstLogin ?? false } }),
-  setOnBoarding: (onBoardingUpdate) =>
-    set((state) => ({ onBoarding: { ...state.onBoarding, ...onBoardingUpdate } })),
-  setUserPhoneNumber: (userPhoneNumber) => set({ userPhoneNumber }),
-  setAccessToken: (accessToken) => set({ accessToken: accessToken ?? '' }),
-  setRefreshToken: (refreshToken) => set({ refreshToken: refreshToken ?? '' }),
-  setIsDemoVideoWatched: (isDemoVideoWatched) => set({ isDemoVideoWatched: isDemoVideoWatched ?? false }),
-  logout: () => set((state) => ({
-    userMetadata: { ...getInitialState(set).userMetadata },
-    onBoarding: { ...initialOnboardingState },
-    accessToken: '',
-    refreshToken: '',
-    isStorageReady: state.isStorageReady
-  })),
+  isWelcomeAboardModalShowed: false,
+  setIsStorageReady: () => {},
+  setUserMetadata: userMetadata =>
+    set({
+      userMetadata: {
+        ...userMetadata,
+        uid: userMetadata.uid ?? '',
+        phoneNumber: userMetadata.phoneNumber ?? '',
+        firstLogin: userMetadata.firstLogin ?? false,
+      },
+    }),
+  setOnBoarding: onBoardingUpdate => set(state => ({onBoarding: {...state.onBoarding, ...onBoardingUpdate}})),
+  setUserPhoneNumber: userPhoneNumber => set({userPhoneNumber}),
+  setAccessToken: accessToken => set({accessToken: accessToken ?? ''}),
+  setRefreshToken: refreshToken => set({refreshToken: refreshToken ?? ''}),
+  setIsDemoVideoWatched: isDemoVideoWatched => set({isDemoVideoWatched: isDemoVideoWatched ?? false}),
+  setIsWelcomeAboardModalShowed: isWelcomeAboardModalShowed => set({isWelcomeAboardModalShowed: isWelcomeAboardModalShowed ?? false}),
+  logout: () =>
+    set(state => ({
+      userMetadata: {...getInitialState(set).userMetadata},
+      onBoarding: {...initialOnboardingState},
+      accessToken: '',
+      refreshToken: '',
+      isStorageReady: state.isStorageReady,
+      isWelcomeAboardModalShowed: false,
+    })),
 });
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    set => ({
       ...getInitialState(set),
     }),
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) => ({
+      partialize: state => ({
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
         userMetadata: state.userMetadata,
         userPhoneNumber: state.userPhoneNumber,
         onBoarding: state.onBoarding,
         isDemoVideoWatched: state.isDemoVideoWatched,
+        isWelcomeAboardModalShowed: state.isWelcomeAboardModalShowed,
       }),
       onRehydrateStorage: () => (state, error) => {
         if (error) {
           console.log('AuthStore: hydration error', error);
         } else {
           console.log('AuthStore: hydration finished. Current onboarding:', state?.onBoarding);
-          useAuthStore.setState({ isStorageReady: true });
+          useAuthStore.setState({isStorageReady: true});
         }
-      }
-    }
-  )
+      },
+    },
+  ),
 );
 
 export const selectIsAuthenticated = (state: AuthState): boolean => !!state.accessToken && !!state.refreshToken;
 export const selectIsStorageReady = (state: AuthState): boolean => state.isStorageReady;
 export const selectIsFirstLogin = (state: AuthState): boolean => state.userMetadata.firstLogin;
 export const selectIsDemoVideoWatched = (state: AuthState): boolean => state.isDemoVideoWatched;
+export const selectIsWelcomeAboardModalShowed = (state: AuthState): boolean => state.isWelcomeAboardModalShowed;

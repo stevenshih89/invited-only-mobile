@@ -18,8 +18,9 @@ const useUser = (): UseUserResponse => {
                 id: userMetadata?.uid,
             },
         }
-
-    },);
+    }, {
+        refetchInterval: 1000 * 10,
+    });
 
 
     return {

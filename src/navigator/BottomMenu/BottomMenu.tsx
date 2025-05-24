@@ -15,12 +15,14 @@ import MyEventsStackScreen from 'navigator/AppStackScreens/MyEventsStackScreen/M
 import JoinEventsStackScreen from 'navigator/AppStackScreens/JoinEventsStackScreen/JoinEventsStackScreen';
 
 import useMessaging from 'hooks/useMessaging';
+import { useAuthStore } from 'src/store/authStore';
 
 const BottomMenu: FC = (): JSX.Element => {
   const styles = useStyles();
   const Tab = createBottomTabNavigator();
   const { setupNotifications } = useMessaging();
-
+  const { onBoarding } = useAuthStore();
+  const initialRouteName = onBoarding?.registrationDetails?.gender === 'woman' ? joinEventsPath : IOPath;
   useEffect(() => {
     setupNotifications();
   }, []);
@@ -35,7 +37,7 @@ const BottomMenu: FC = (): JSX.Element => {
         tabBarIcon: ({ focused }: { focused: boolean }) => TabIcon(focused, route.name),
         tabBarLabel: ({ focused }: { focused: boolean }) => TabBarName(focused, route.name),
       })}
-      initialRouteName={IOPath}>
+      initialRouteName={initialRouteName}>
       <Tab.Screen name={myEventsPath} component={MyEventsStackScreen} />
       <Tab.Screen name={joinEventsPath} component={JoinEventsStackScreen} />
       <Tab.Screen name={IOPath} component={IOStackScreen} />

@@ -87,7 +87,7 @@ const EventCreatingStackScreen = ({ route }: { route: any }) => {
 };
 
 const AppStackScreen = () => {
-  const { userMetadata } = useAuthStore();
+  const { userMetadata, onBoarding } = useAuthStore();
   const { user, isLoading } = useUser();
   const navigation = useAppNavigation();
 

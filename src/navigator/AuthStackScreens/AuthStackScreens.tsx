@@ -1,4 +1,4 @@
-import { FC, JSX } from 'react';
+import { FC, JSX, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationIndependentTree } from '@react-navigation/native';
 
@@ -48,7 +48,7 @@ import ConfirmPhone from 'screens/Auth/ConfirmPhone/ConfirmPhone';
 
 const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
-  console.log('AuthStackScreens');
+
   return (
     <NavigationIndependentTree>
       <AuthStack.Navigator initialRouteName={onboardPath} screenOptions={{ headerShown: false, freezeOnBlur: true, unmountOnBlur: false }}>
