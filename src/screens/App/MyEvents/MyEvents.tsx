@@ -3,8 +3,8 @@ import * as S from './MyEvents.style';
 import MyEventsEmptyFallback from './Components/MyEventesEmptyFallback/MyEventesEmptyFallback';
 import EventList from './Components/EventList/EventList';
 import { useAuthStore } from 'src/store/authStore';
-import AppLoader from 'screens/App/AppLoader/AppLoader'; // Assuming location
-import DefaultBackground from 'components/DefaultBackground/DefaultBackground'; // Assuming location
+import AppLoader from 'screens/App/AppLoader/AppLoader';
+import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import invitedOnlyBackendApi from 'src/api/backend-api';
 
 const MyEvents = () => {
@@ -16,7 +16,6 @@ const MyEvents = () => {
       },
     },
   });
-
 
   if (isLoading) {
     return (

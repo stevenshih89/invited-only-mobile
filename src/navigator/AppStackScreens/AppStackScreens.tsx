@@ -24,6 +24,7 @@ import {
   notificationsStackPath,
   userProfilePreviewPath,
   eventProfilePreviewPath,
+  valuesAndGuidelinesPath,
 } from 'constants/pathLocations.ts';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Privacy from 'screens/Auth/Privacy/Privacy.tsx';
@@ -44,6 +45,7 @@ import HeaderBackButton from 'navigator/Components/HeaderBackButton/HeaderBackBu
 import { Satoshi400 } from 'constants/fonts';
 import UserProfilePreview from 'screens/App/UserProfilePreview/UserProfilePreview';
 import EventProfilePreview from 'screens/App/EventProfilePreview/EventProfilePreview';
+import WelcomeScreen from 'screens/Auth/WelcomeScreen/WelcomeScreen';
 
 const AppStack = createStackNavigator<RootStackParamList>();
 
@@ -124,6 +126,7 @@ const AppStackScreen = () => {
       <AppStack.Screen key={paymentPath} name={paymentPath} component={Payment} />
       <AppStack.Screen key={connectPath} name={connectPath} component={Connect} />
       <AppStack.Screen key={privacyPath} name={privacyPath} component={Privacy} />
+      <AppStack.Screen key={valuesAndGuidelinesPath} name={valuesAndGuidelinesPath} component={WelcomeScreen} />
       <AppStack.Screen key={invitationCodePath} name={invitationCodePath} component={InvitationCode} />
       <AppStack.Screen key={notificationsStackPath} name={notificationsStackPath} component={NotificationsStackScreen} />
       <AppStack.Screen key={chatWindowPath} name={chatWindowPath} component={ChatWindow} />

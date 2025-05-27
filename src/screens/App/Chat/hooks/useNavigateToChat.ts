@@ -1,7 +1,4 @@
 
-import { useEffect, useState } from "react";
-import { components } from "@invited-only/invited-only-api";
-import useGetChats from "../EventChats/hooks/useGetAllChats";
 import { useAppNavigation } from "hooks/useAppNavigation";
 import useGetUserById from "hooks/useGetUserById";
 

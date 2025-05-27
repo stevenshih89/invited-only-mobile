@@ -4,6 +4,8 @@ export type RootStackParamList = {
   '/bottom-tabs-stack'?: {
     screen?: string;
   };
+  '/welcome-screen'?: undefined;
+  '/values-and-guidelines'?: undefined;
   '/my-events'?: {
     screen?: string;
   };

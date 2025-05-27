@@ -1,15 +1,19 @@
-import React, {FC} from 'react';
-import {Linking} from 'react-native';
+import React, { FC } from 'react';
+import { Linking } from 'react-native';
 import * as S from './HelpAndSecurity.style';
 import IOLogo from 'assets/images/icons/io.svg';
 import ChevronRight from 'assets/images/icons/arrow-right-s-line.svg';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 
 const HelpAndSecurity: FC = () => {
+  const navigation = useAppNavigation();
   const handleSupportPress = () => {
     Linking.openURL('mailto:Support@invitedonly.com');
   };
 
-  const handleGuidelinesPress = () => {};
+  const handleGuidelinesPress = () => {
+    navigation.navigate('/values-and-guidelines');
+  };
 
   return (
     <S.Container>

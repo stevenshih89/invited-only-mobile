@@ -23,6 +23,7 @@ import {
   eulaPath,
   onBoardingDemoPath,
   enterTypePath,
+  welcomeScreenPath,
 } from 'constants/pathLocations';
 import Onboard from 'screens/Auth/Onboard/Onboard';
 import SignUp from 'screens/Auth/SignUp/SignUp';
@@ -45,6 +46,7 @@ import Eula from 'screens/Auth/EulaScreen/EulaScreen';
 import EnterTypeScreen from 'screens/Auth/EnterTypeScreen/EnterTypeScreen';
 import DemoVideo from 'screens/Auth/DemoVide/DemoVideo';
 import ConfirmPhone from 'screens/Auth/ConfirmPhone/ConfirmPhone';
+import WelcomeScreen from 'screens/Auth/WelcomeScreen/WelcomeScreen';
 
 const AuthStackScreens: FC = (): JSX.Element => {
   const AuthStack = createStackNavigator();
@@ -69,6 +71,7 @@ const AuthStackScreens: FC = (): JSX.Element => {
         <AuthStack.Screen key={pendingScreenPath} name={pendingScreenPath} component={PendingScreen} />
         <AuthStack.Screen key={accountRejectedPath} name={accountRejectedPath} component={AccountRejected} />
         <AuthStack.Screen key={codeVerifiedPath} name={codeVerifiedPath} component={CodeVerified} />
+        <AuthStack.Screen key={welcomeScreenPath} name={welcomeScreenPath} component={WelcomeScreen} />
         <AuthStack.Screen key={verifyFirstStepPath} name={verifyFirstStepPath} component={VerifyFirstStep} />
         <AuthStack.Screen key={photoVerifiedPath} name={photoVerifiedPath} component={PhotoVerified} />
         <AuthStack.Screen key={summaryInfoPath} name={summaryInfoPath} component={SummaryInfo} />

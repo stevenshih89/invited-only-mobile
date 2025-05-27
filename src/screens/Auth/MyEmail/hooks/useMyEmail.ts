@@ -45,7 +45,7 @@ export const useMyEmail = () => {
       },
       isOnboardingCompleted: false,
     });
-    navigation.navigate('/verify-first-step');
+    navigation.navigate('/welcome-screen');
   };
 
   return { email, isValidEmail, handleEmailChange, handleNext, navigation };

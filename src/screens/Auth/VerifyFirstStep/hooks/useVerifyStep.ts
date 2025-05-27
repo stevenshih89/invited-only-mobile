@@ -1,11 +1,11 @@
-import {useState} from 'react';
-import {Alert, Platform} from 'react-native';
+import { useState } from 'react';
+import { Alert, Platform } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {useCameraPermission} from 'hooks/useCameraPermission';
-import {useAuthStore} from 'src/store/authStore';
-import {invitationCodePath, photoVerifiedPath} from 'constants/pathLocations';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { useCameraPermission } from 'hooks/useCameraPermission';
+import { useAuthStore } from 'src/store/authStore';
+import { invitationCodePath, photoVerifiedPath } from 'constants/pathLocations';
 import MaleExampleSelfie from 'assets/images/auth/example-selfie.png';
 import FemaleExampleSelfie from 'assets/images/auth/female-selfie-example.png';
 
@@ -13,12 +13,12 @@ export const useVerifyStep = () => {
   const navigation = useAppNavigation();
   const [imageUri, setImageUri] = useState<string | undefined>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const {requestCameraPermission} = useCameraPermission();
-  const {onBoarding, setOnBoarding, userMetadata: user} = useAuthStore();
+  const { requestCameraPermission } = useCameraPermission();
+  const { onBoarding, setOnBoarding, userMetadata: user } = useAuthStore();
+
   const selfieSource = onBoarding.registrationDetails?.gender === 'man' ? MaleExampleSelfie : FemaleExampleSelfie;
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
-    console.log('imagePath', imagePath);
     if (imagePath) {
       if (imagePath.includes('https://')) {
         return imagePath;
@@ -75,7 +75,7 @@ export const useVerifyStep = () => {
       }
       setIsLoading(true);
       // @ts-ignore
-      navigation.navigate(invitationCodePath, {cameFromSummary: true} as never);
+      navigation.navigate(invitationCodePath, { cameFromSummary: true } as never);
     } catch (error) {
       console.error('Error skipped verify photo screen:', error);
     } finally {
@@ -84,16 +84,16 @@ export const useVerifyStep = () => {
   };
 
   const handleNext = async () => {
-    console.log('imageUri', onBoarding);
-
+    console.log('imageUri', imageUri);
+    console.log('user', user.uid);
     try {
       if (!imageUri || !user?.uid) {
-        console.log('user', user);
+        console.log('returning', user?.uid);
+
         return;
       }
       setIsLoading(true);
       const imageUser = await uploadImage(imageUri, user?.uid);
-      console.log('imageUser', imageUser);
 
       setOnBoarding({
         ...onBoarding,

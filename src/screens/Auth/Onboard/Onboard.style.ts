@@ -126,26 +126,34 @@ export const BottomContainer = styled.View`
   align-items: center;
   padding-horizontal: 24px;
   width: 100%;
+  margin-bottom: 10px;
 `;
 
 // Wrapper for button and GetAccessContainer
 export const ButtonWrapper = styled.View`
-  margin-bottom: ${Dimensions.get('window').height / 30}px;
-  margin-top: 45px;
   width: 100%;
+  gap: 10px;
 `;
 
 // Terms row containers
 export const TermsContainer = styled.View`
-  flex-direction: row;
   align-items: center;
-  flex-wrap: wrap;
-  margin-horizontal: 40px;
   justify-content: center;
+  margin-horizontal: 24px;
+  margin-bottom: 16px;
 `;
 
-export const TermsInner = styled.View`
-  flex-direction: row;
-  margin-left: 12px;
-  justify-content: center;
+export const TermsText = styled.Text`
+  font-family: ${Satoshi400};
+  font-size: ${RFValue(14, 932)}px;
+  color: ${lightGray19Color};
+  text-align: center;
+  line-height: 20px;
+`;
+
+export const TermsLink = styled.Text`
+  font-family: ${Satoshi700};
+  font-size: ${RFValue(14, 932)}px;
+  color: ${whiteColor};
+  text-decoration: underline;
 `;

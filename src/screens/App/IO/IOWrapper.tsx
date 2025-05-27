@@ -34,7 +34,6 @@ const IOWrapper = () => {
     );
   }
 
-
   if (events.length === 0) {
     return (
       <S.Container>

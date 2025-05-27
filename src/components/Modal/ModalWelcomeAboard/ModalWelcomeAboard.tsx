@@ -40,7 +40,7 @@ const ModalWelcomeAboard: FC = () => {
                   alignItems: 'center',
                 }}>
                 <Image source={WelcomeAboard} style={{ flex: 1, marginLeft: -20 }} resizeMode="contain" />
-              </View>
+              </View >
               <View
                 style={{
                   gap: 16,
@@ -98,7 +98,7 @@ const ModalWelcomeAboard: FC = () => {
                       }}>
                       Find Connections
                     </Text>
-                  </View>
+                  </View >
                   <Text
                     style={{
                       fontFamily: Satoshi400,
@@ -108,9 +108,9 @@ const ModalWelcomeAboard: FC = () => {
                     }}>
                     Meet people by joining tables or events
                   </Text>
-                </View>
-              </View>
-            </View>
+                </View >
+              </View >
+            </View >
             <Button
               buttonStyle={{
                 width: '100%',
@@ -120,9 +120,9 @@ const ModalWelcomeAboard: FC = () => {
               onPress={handleCloseModal}
               title="Start Explore"
             />
-          </S.ContentWrapper>
-        </S.ModalWrapper>
-      </S.Container>
+          </S.ContentWrapper >
+        </S.ModalWrapper >
+      </S.Container >
     );
   }
 

@@ -1,9 +1,10 @@
-import {components} from '@invited-only/invited-only-api';
+import { components } from '@invited-only/invited-only-api';
 import moment from 'moment';
-import {useCardGesture} from '../../hooks/useCardGesture';
+import { useCardGesture } from '../../hooks/useCardGesture';
 import * as S from './GuestCard.style';
 import Card from 'screens/App/Components/Card/Card';
-import {CardActionsButtons} from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
+import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
+import ModalLockedEvent from 'components/Modal/ModalLockedEvent/ModalLockedEvent';
 
 interface Props {
   isTopCard: boolean;
@@ -15,8 +16,8 @@ interface Props {
   topIndex: number;
 }
 
-export const GuestCard = ({isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex}: Props) => {
-  const {gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite} =
+export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex }: Props) => {
+  const { gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite } =
     useCardGesture({
       onSwipeLeft: () => {
         onReject();

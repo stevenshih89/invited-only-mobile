@@ -7,7 +7,7 @@ import { Satoshi500 } from "constants/fonts";
 import Invite from 'src/assets/images/icons/Invite.svg';
 
 
-export const Container = styled.View`
+export const Container = styled.TouchableOpacity`
   display: flex;
   align-items: center;
   justify-content: center;

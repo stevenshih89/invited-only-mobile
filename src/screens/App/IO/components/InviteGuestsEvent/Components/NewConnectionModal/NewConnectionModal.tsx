@@ -13,7 +13,7 @@ import useNavigateToChat from 'screens/App/Chat/hooks/useNavigateToChat';
 interface NewConnectionModalProps {
     visible: boolean;
     onClose: () => void;
-    cardData: components['schemas']['User'] | components['schemas']['EventData'] | undefined;
+    cardData: components['schemas']['User'] | components['schemas']['EventData'] | undefined | null;
     isEvent: boolean;
     eventId: string;
 }

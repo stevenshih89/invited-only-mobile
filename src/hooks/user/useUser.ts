@@ -10,9 +10,9 @@ interface UseUserResponse {
 }
 
 const useUser = (): UseUserResponse => {
-    const { userMetadata } = useAuthStore();
+    const { userMetadata, logout, onBoarding } = useAuthStore();
 
-    const { data, isLoading, error } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
+    const { data, isLoading, error, status } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
         params: {
             path: {
                 id: userMetadata?.uid,
@@ -21,6 +21,13 @@ const useUser = (): UseUserResponse => {
     }, {
         refetchInterval: 1000 * 10,
     });
+
+    if (status === 'error' && onBoarding.isOnboardingCompleted && userMetadata.uid) {
+        if (error.error.statusCode === 404) {
+            logout();
+        }
+    }
+
 
 
     return {

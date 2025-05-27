@@ -5,6 +5,11 @@ import { components } from '@invited-only/invited-only-api';
 import * as S from './EventDatePicker.styled';
 import { formatDate, parseStringToDate } from 'helpers/genericDateFormater';
 
+const formatTime = (date: Date) => {
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+};
 
 export const getDateString = (date: Date) => {
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -61,7 +66,7 @@ const EventDatePicker = () => {
           date={parseStringToDate(values.date) || new Date()}
           mode="time"
           onConfirm={hour => {
-            setFieldValue('hour', `${hour.getHours()}:${hour.getMinutes()}`);
+            setFieldValue('hour', formatTime(hour));
             setShowTimePicker(false);
           }}
         />

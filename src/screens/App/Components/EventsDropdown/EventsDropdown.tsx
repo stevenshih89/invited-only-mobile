@@ -29,7 +29,12 @@ export const EventsDropdown = ({ events, onEventSelect, selectedEvent, onDropdow
   });
 
   const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
+    if (events.length > 1) {
+      setDropdownVisible(!dropdownVisible);
+    }
+    if (onDropdownChange) {
+      onDropdownChange();
+    }
   };
 
   const handleEventSelect = (event: components['schemas']['EventData']) => {
@@ -37,15 +42,13 @@ export const EventsDropdown = ({ events, onEventSelect, selectedEvent, onDropdow
     setDropdownVisible(false);
     if (onDropdownChange) {
       onDropdownChange();
-    };
+    }
   };
-
-  const selectedIndex = sortedEvents.findIndex(event => event.uid === selectedEvent?.uid);
 
   return (
     <S.DropdownContainer>
-      <S.DropdownButton onPress={toggleDropdown}>
-        <S.DropdownIcon>{dropdownVisible ? <ArrowUp /> : <ArrowDown />}</S.DropdownIcon>
+      <S.DropdownButton onPress={toggleDropdown} disabled={false}>
+        <S.DropdownIcon>{events.length > 1 && (dropdownVisible ? <ArrowUp /> : <ArrowDown />)}</S.DropdownIcon>
         <S.DropDownAvatar source={{ uri: selectedEvent.photos?.[0]?.image }} />
         <S.DropdownText numberOfLines={1}>{selectedEvent ? selectedEvent.name : 'Select Event'}</S.DropdownText>
         {selectedEvent && selectedEvent.uid !== 'joined-events' && (
@@ -55,11 +58,11 @@ export const EventsDropdown = ({ events, onEventSelect, selectedEvent, onDropdow
         )}
       </S.DropdownButton>
 
-      {dropdownVisible && (
+      {dropdownVisible && events.length > 1 && (
         <S.DropdownMenu>
           {sortedEvents.map((event, index) => (
             <S.DropdownItem key={index} onPress={() => handleEventSelect(event)}>
-              <S.DropDownAvatar source={{ uri: event.photos?.[0]?.image }} />
+              {event.photos?.[0]?.image && <S.DropDownAvatar source={{ uri: event.photos?.[0]?.image }} />}
               <S.DropdownItemText>{event.name}</S.DropdownItemText>
             </S.DropdownItem>
           ))}

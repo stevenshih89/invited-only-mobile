@@ -1,21 +1,20 @@
-import {Text, View, SafeAreaView, Dimensions} from 'react-native';
+import { Text, View, SafeAreaView } from 'react-native';
 import Modal from 'react-native-modal';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {FC, useEffect} from 'react';
-import Animated, {useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay} from 'react-native-reanimated';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { FC, useEffect } from 'react';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay } from 'react-native-reanimated';
 import Flash from 'assets/images/icons/flash-filled.svg';
-import {Outfit500, Satoshi700Italic} from 'constants/fonts';
-import {screenHeight} from 'constants/common';
-import {blackColor, whiteColor} from 'constants/colors';
+import { Outfit500, Satoshi700Italic } from 'constants/fonts';
+import { screenHeight } from 'constants/common';
+import { blackColor, whiteColor } from 'constants/colors';
 
-const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: string}> = ({isVisibleMatch, nameEvent, imageEvent}) => {
+const SuperInvite: FC<{ isVisibleMatch: boolean; nameEvent: string; imageEvent: string }> = ({ isVisibleMatch, nameEvent, imageEvent }) => {
   const opacityWrapper = useSharedValue(0);
   const imagePosition = useSharedValue(-200);
   const textSize = useSharedValue(0);
   const textOpacity = useSharedValue(0);
   const figurePositin = useSharedValue(-screenHeight * 0.34 - 100);
   const buttonPosition = useSharedValue(-1000);
-  const widthScreen = Dimensions.get('screen').width;
 
   const animatedOpacityWrapper = () => {
     opacityWrapper.value = withTiming(1, {
@@ -91,7 +90,7 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
   }));
 
   const leftImageStyle = useAnimatedStyle(() => ({
-    transform: [{translateX: imagePosition.value}],
+    transform: [{ translateX: imagePosition.value }],
   }));
 
   return (
@@ -105,8 +104,8 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
         backdropTransitionInTiming={1000}
         animationIn={'fadeIn'}
         animationInTiming={1}>
-        <SafeAreaView style={{flex: 1}}>
-          <Animated.View style={[{flex: 1, justifyContent: 'space-between'}, opacityWrapperStyle]}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Animated.View style={[{ flex: 1, justifyContent: 'space-between' }, opacityWrapperStyle]}>
             <View>
               <Animated.View
                 style={[
@@ -135,31 +134,31 @@ const SuperInvite: FC<{isVisibleMatch: boolean; nameEvent: string; imageEvent: s
             </View>
             <Animated.View
               style={[
-                {flexDirection: 'column', marginTop: screenHeight / 20, paddingHorizontal: 20, alignItems: 'center', width: '100%'},
+                { flexDirection: 'column', marginTop: screenHeight / 20, paddingHorizontal: 20, alignItems: 'center', width: '100%' },
                 opacityWrapperStyle,
               ]}>
-              <View style={{marginTop: -50, flexWrap: 'wrap', flexDirection: 'row', alignSelf: 'flex-end'}}>
+              <View style={{ marginTop: -50, flexWrap: 'wrap', flexDirection: 'row', alignSelf: 'flex-end' }}>
                 <Text
                   style={{
-                      color: whiteColor,
-                      fontFamily: Outfit500,
-                      fontSize: nameEvent?.length > 10 ? RFValue(36, 812) : RFValue(42, 812),
-                      letterSpacing: -5,
-                      lineHeight: 55,
-                    }}>
+                    color: whiteColor,
+                    fontFamily: Outfit500,
+                    fontSize: nameEvent?.length > 10 ? RFValue(36, 812) : RFValue(42, 812),
+                    letterSpacing: -5,
+                    lineHeight: 55,
+                  }}>
                   {nameEvent}
                 </Text>
-                <Text style={{color: whiteColor, position: 'absolute', right: 0, bottom: -10, fontSize: RFValue(13, 812)}}>Event</Text>
+                <Text style={{ color: whiteColor, position: 'absolute', right: 0, bottom: -10, fontSize: RFValue(13, 812) }}>Event</Text>
               </View>
               <View>
-                <Animated.Image source={{uri: imageEvent}} style={[{width: 215, height: 215, borderRadius: 215}, leftImageStyle]} />
+                <Animated.Image source={{ uri: imageEvent }} style={[{ width: 215, height: 215, borderRadius: 215 }, leftImageStyle]} />
               </View>
-              <View style={{marginTop: 25}}>
+              <View style={{ marginTop: 25 }}>
                 <Flash width={70} height={70} />
               </View>
-              <Text style={{fontSize: RFValue(35, 812), color: whiteColor, fontFamily: Satoshi700Italic}}>Super Join</Text>
+              <Text style={{ fontSize: RFValue(35, 812), color: whiteColor, fontFamily: Satoshi700Italic }}>Super Join</Text>
             </Animated.View>
-            <View style={{alignItems: 'flex-end'}}>
+            <View style={{ alignItems: 'flex-end' }}>
               <Animated.View
                 style={[
                   {

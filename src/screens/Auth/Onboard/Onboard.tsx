@@ -3,9 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TouchableOpacity } from 'react-native';
 import * as S from './Onboard.style';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
-import WelcomeBcgCards from 'assets/images/auth/welcom-screen-cards.png';
-import BgDottedLineLeft from 'assets/images/auth/background-dotted-line-left.png';
-import BgDottedLineRight from 'assets/images/auth/background-dotted-right.png';
+import WelcomeBcgCards from 'assets/images/auth/welcome-screen-cards.png';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import Button from 'components/Button/Button';
 import { openLink } from 'helpers/links';
@@ -29,8 +27,6 @@ const Onboard = (): JSX.Element => {
     <S.RootGradient>
       <S.SafeArea>
         <S.Overlay>
-          <S.BackgroundDottedLineLeft source={BgDottedLineLeft} />
-          <S.BackgroundDottedLineRight source={BgDottedLineRight} />
           <S.OnBoardingTopViewContainer>
             <S.OnBoardingTextTitle>HOST OR JOIN VIP TABLES AND EXCLUSIVE EVENTS</S.OnBoardingTextTitle>
             <S.BgCardImage testID="bg-card-image" source={WelcomeBcgCards} />
@@ -50,16 +46,16 @@ const Onboard = (): JSX.Element => {
             </S.GetAccessContainer>
           </S.ButtonWrapper>
           <S.TermsContainer>
-            <S.AcceptPolicyTop>By signing up or logging, I accept the IO</S.AcceptPolicyTop>
-            <S.TermsInner>
-              <S.AcceptPolicyMid onPress={() => openLink('https://www.invitedonly.app/terms-of-service-eula')}>
+            <S.TermsText>
+              By signing up or logging in, I accept the IO{' '}
+              <S.TermsLink onPress={() => openLink('https://www.invitedonly.app/terms-of-service-eula')}>
                 Terms of Service / EULA
-              </S.AcceptPolicyMid>
-              <S.AcceptPolicyTop> and </S.AcceptPolicyTop>
-              <S.AcceptPolicyBottom onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
+              </S.TermsLink>
+              {' '}and{' '}
+              <S.TermsLink onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
                 Privacy Policy
-              </S.AcceptPolicyBottom>
-            </S.TermsInner>
+              </S.TermsLink>
+            </S.TermsText>
           </S.TermsContainer>
         </S.BottomContainer>
       </S.SafeArea>

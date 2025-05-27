@@ -4,20 +4,24 @@ import MyEvents from './MyEvents'; // Your existing list component
 import JoinedEventsScreen from './Components/JoinedEventsScreen/JoinedEventsScreen'; // The placeholder
 import EventsHeader from './Components/EventsHeader/EventsHeader';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
+import { useAuthStore } from 'src/store/authStore';
 
 const TabNavigator = createMaterialTopTabNavigator();
 
 const Events = () => {
+  const { onBoarding } = useAuthStore.getState();
+  const initialTab = onBoarding?.registrationDetails?.gender === 'woman' ? 'Joined Events' : 'My Events';
 
   return (
     <S.ScreenContainer>
       <EventsHeader />
-      <TabNavigator.Navigator screenOptions={{
+      <TabNavigator.Navigator initialRouteName={initialTab} screenOptions={{
         tabBarIndicatorStyle: {
           backgroundColor: 'white',
           marginBottom: 10,
         },
         tabBarActiveTintColor: 'white',
+
         tabBarInactiveTintColor: 'gray',
         tabBarStyle: {
           backgroundColor: 'black',

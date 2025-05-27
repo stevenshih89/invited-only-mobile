@@ -41,7 +41,6 @@ const EventListItemHostContent = ({ event, isReview, requestCount }: EventListIt
                 <S.ManageButton
                     onPress={() => navigate('/events/manage-event', { event: event })}
                     activeOpacity={0.7}
-                    disabled={!isReview}
                 >
                     <ManageEventIcon />
                 </S.ManageButton>

@@ -1,8 +1,8 @@
-import {createStackNavigator} from '@react-navigation/stack';
-import {StyleSheet} from 'react-native';
-import {FC} from 'react';
-import {blackColor} from 'constants/colors';
-import {manageEventPath, myEventsPath} from 'constants/pathLocations';
+import { createStackNavigator } from '@react-navigation/stack';
+import { StyleSheet } from 'react-native';
+import { FC } from 'react';
+import { blackColor } from 'constants/colors';
+import { manageEventPath, myEventsPath } from 'constants/pathLocations';
 import ManageEvent from 'screens/App/MyEvents/Components/ManageEvent/ManageEvent';
 import Events from 'screens/App/MyEvents/Events';
 import Header from 'components/Header/Header.tsx';
@@ -10,6 +10,7 @@ import Header from 'components/Header/Header.tsx';
 const MyEventsStack = createStackNavigator();
 
 export const MyEventsStackScreen: FC = () => {
+
   return (
     <MyEventsStack.Navigator
       initialRouteName={myEventsPath}

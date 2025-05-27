@@ -1,6 +1,6 @@
-import React, {FC, useState, useCallback} from 'react';
-import {View} from 'react-native';
-import {components} from 'src/api/v1';
+import React, { FC, useState, useCallback } from 'react';
+import { View } from 'react-native';
+import { components } from 'src/api/v1';
 import * as S from './ModalSelectInterests.style';
 import SearchIcon from 'assets/images/icons/search.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
@@ -69,7 +69,7 @@ interface ModalSelectInterestsProps {
   setModalInterests: (value: boolean) => void;
   availableInterests: Interest[];
   formikFieldName: string;
-  formikValues: {[key: string]: any};
+  formikValues: { [key: string]: any };
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
 }
 
@@ -88,7 +88,6 @@ const ModalSelectInterests: FC<ModalSelectInterestsProps> = ({
       ? availableInterests?.filter(interest => interest.title?.toLowerCase().includes(searchQuery.toLowerCase()))
       : availableInterests;
 
-  console.log('filteredInterests', filteredInterests);
   const handleSelectInterest = useCallback(
     (id: number) => {
       const currentSelectedInterests = (formikValues[formikFieldName] as Interest[]) || [];
@@ -97,7 +96,7 @@ const ModalSelectInterests: FC<ModalSelectInterestsProps> = ({
       if (currentSelectedInterests.flatMap(interest => interest.id).includes(id)) {
         newSelectedInterests = currentSelectedInterests.filter(selectedInterest => selectedInterest.id !== id);
       } else {
-        newSelectedInterests = [...currentSelectedInterests, {id}];
+        newSelectedInterests = [...currentSelectedInterests, { id }];
       }
 
       setFieldValue(formikFieldName, newSelectedInterests);
@@ -106,7 +105,7 @@ const ModalSelectInterests: FC<ModalSelectInterestsProps> = ({
   );
 
   const renderInterestItem = useCallback(
-    ({item}: {item: Interest}) => {
+    ({ item }: { item: Interest }) => {
       const isSelected = ((formikValues[formikFieldName] as Interest[]) || []).some(interest => interest.id === item.id);
       const imageSource = getInterestImageSource(item.id);
 
@@ -118,7 +117,7 @@ const ModalSelectInterests: FC<ModalSelectInterestsProps> = ({
         <S.InterestItem activeOpacity={0.7} onPress={() => handleSelectInterest(item.id)}>
           <S.InterestImage source={imageSource} resizeMode="cover">
             <S.InterestOverlay />
-            <View style={{flex: 1, justifyContent: 'flex-end', padding: 8}}>
+            <View style={{ flex: 1, justifyContent: 'flex-end', padding: 8 }}>
               <S.InterestTitle>{item.title}</S.InterestTitle>
             </View>
             <S.SelectionIndicator isSelected={isSelected}>{isSelected && <CheckIcon width={14} height={14} />}</S.SelectionIndicator>
@@ -140,7 +139,7 @@ const ModalSelectInterests: FC<ModalSelectInterestsProps> = ({
       onSwipeComplete={handleCloseModal}
       swipeDirection={['down']}
       propagateSwipe
-      style={{margin: 0}}
+      style={{ margin: 0 }}
       avoidKeyboard>
       <S.Wrapper>
         <S.WhiteLine />
@@ -160,7 +159,7 @@ const ModalSelectInterests: FC<ModalSelectInterestsProps> = ({
             keyExtractor={(item: Interest) => item.id.toString()}
             numColumns={2}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{paddingBottom: 100}}
+            contentContainerStyle={{ paddingBottom: 100 }}
           />
         </S.ListContainer>
 

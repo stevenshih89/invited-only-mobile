@@ -11,7 +11,7 @@ import { screenHeight, screenWidth } from 'constants/common';
 const VerifySecondStep: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
-  const { imageUri, handleNext, handleSkip, isLoading, openCamera, selfieSource, setImageUri, gender } = useVerifyStep();
+  const { imageUri, handleNext, isLoading, openCamera, selfieSource, setImageUri } = useVerifyStep();
 
   return (
     <S.Background>

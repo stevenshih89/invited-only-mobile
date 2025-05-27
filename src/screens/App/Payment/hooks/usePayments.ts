@@ -183,24 +183,33 @@ const usePayments = () => {
   const getButtonTitle = () => {
     const { duration, durationName, fullPrice, identifier } = activePayment;
 
-    if (subscription?.subscriptionId === identifier && subscription?.renewalSubscriptionId === identifier || subscription?.subscriptionId === identifier && !subscription?.renewalSubscriptionId) {
+    if (subscription?.uid === identifier && subscription?.renewalSubscriptionId === identifier || subscription?.uid === identifier && !subscription?.renewalSubscriptionId) {
       return 'Current Plan';
     }
 
     if (subscription?.renewalSubscriptionId && subscription?.renewalSubscriptionId === identifier) {
       return 'Current Renewal Preference';
     }
-    if (subscription?.subscriptionId === identifier && subscription?.renewalSubscriptionId !== identifier) {
+    if (subscription?.uid === identifier && subscription?.renewalSubscriptionId !== identifier) {
       return 'Change Renewal Preference To Current Plan';
     }
-
-
 
     const formattedPrice = fullPrice;
     return `Get ${duration} ${durationName} for ${formattedPrice}`;
   };
 
-  const isButtonDisabled = subscription?.renewalSubscriptionId ? subscription?.renewalSubscriptionId === activePayment.identifier : subscription?.subscriptionId === activePayment.identifier;
+  const isButtonDisabled = () => {
+
+    if (subscription?.renewalSubscriptionId) {
+      return subscription.renewalSubscriptionId === activePayment.identifier;
+    }
+
+    if (subscription?.uid === activePayment.identifier) {
+      return true;
+    }
+    return false;
+  };
+
   const buttonTitle = getButtonTitle();
 
   useEffect(() => {
@@ -258,7 +267,7 @@ const usePayments = () => {
     subscription,
     loaderVisible,
     successfulPay,
-    isButtonDisabled,
+    isButtonDisabled: isButtonDisabled(),
     buttonTitle,
     restorePurchases,
     getOfferings,

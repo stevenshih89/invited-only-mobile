@@ -15,6 +15,9 @@ const initialAuthContext: FirebaseCollectionsResponse = {
   report: '',
   unfinishedRegistrationUsers: '',
   userInfo: '',
+  attendees: '',
+  connectionRequests: '',
+  userPhoneUids: '',
 };
 
 export const FirebaseCollectionsContext = createContext<FirebaseCollectionsResponse>(initialAuthContext);

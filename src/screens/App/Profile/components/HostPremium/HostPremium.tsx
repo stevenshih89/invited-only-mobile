@@ -4,7 +4,6 @@ import RocketIcon from 'assets/images/icons/rocket-white.svg';
 import IOGradient from 'assets/images/icons/io-gradient.svg';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { paymentPath } from 'constants/pathLocations';
-import { useAuthStore } from 'src/store/authStore';
 
 interface HostPremiumCardProps {
   subscriptionData?: components['schemas']['Subscription'];
@@ -12,8 +11,6 @@ interface HostPremiumCardProps {
 
 const HostPremiumCard = ({ subscriptionData }: HostPremiumCardProps) => {
   const isActiveSubscription = subscriptionData?.status === 'active';
-
-
 
   const navigation = useAppNavigation();
 

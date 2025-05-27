@@ -10,7 +10,8 @@ const useEventsDetails = () => {
             },
         },
     }, {
-        refetchInterval: 5000
+        refetchInterval: 5000,
+        refetchOnMount: true
     });
 
     return { events, isLoading };

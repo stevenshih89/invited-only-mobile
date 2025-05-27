@@ -19,7 +19,14 @@ const useGetSubscriptions = () => {
         queryClient.setQueryData(['get', '/subscription/get/{userId}', { params: { path: { userId: userMetadata?.uid } } }], (old: any) => {
             return {
                 ...old,
-                ...subscriptionData
+                ...subscriptionData,
+                status: 'active'
+            }
+        })
+        queryClient.setQueryData(['get', '/users/{id}', { params: { path: { id: userMetadata?.uid } } }], (old: components['schemas']['User']) => {
+            return {
+                ...old,
+                accountPremium: true,
             }
         })
     }

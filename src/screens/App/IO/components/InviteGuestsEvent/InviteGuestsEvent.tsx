@@ -1,13 +1,13 @@
-import React, {useCallback, useRef} from 'react';
-import {ScrollView, View} from 'react-native';
-import {components} from '@invited-only/invited-only-api';
+import React, { useCallback, useRef } from 'react';
+import { ScrollView, View } from 'react-native';
+import { components } from '@invited-only/invited-only-api';
 import BottomSheetModal from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetModal/BottomSheetModal';
 import * as S from './InviteGuestsEvent.styled';
 import GuestBasicInfoCard from './Components/GuestBasicInfoCard/GuestBasicInfoCard';
 import GuestBioCard from './Components/GuestBioCard/GuestBioCard';
-import {GuestCard} from './Components/GuestCard/GuestCard';
+import { GuestCard } from './Components/GuestCard/GuestCard';
 import GuestLanguagesCard from './Components/GuestLanguagesCard/GuestLanguagesCard';
-import {NewConnectionModal} from './Components/NewConnectionModal/NewConnectionModal';
+import { NewConnectionModal } from './Components/NewConnectionModal/NewConnectionModal';
 
 import useNewConnectionModal from './hooks/useNewConnectionModal';
 import GuestPhotosList from './Components/GuestPhotosList/GuestPhotosList';
@@ -15,7 +15,8 @@ import GuestActionButtons from './Components/GuestActionButtons/GuestActionButto
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import useSwipeCardAction from 'screens/App/Components/Card/hooks/useSwipeCardAction';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
-import {useAuthStore} from 'src/store/authStore';
+import { useAuthStore } from 'src/store/authStore';
+import ModalLockedEvent from 'components/Modal/ModalLockedEvent/ModalLockedEvent';
 
 type GuestUser = components['schemas']['User'];
 
@@ -40,18 +41,18 @@ const InviteGuestsEvent = ({
 }: InviteGuestsEventProps) => {
   const hasCards = cardsToShow.length > 0;
   const currentCard: GuestUser | undefined = hasCards ? cardsToShow[cardsToShow.length - 1] : undefined;
-  const {userMetadata} = useAuthStore.getState();
+  const { userMetadata } = useAuthStore.getState();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const handleBlockAndReport = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
-  const {createEventAttendee, swipeDataRes} = useSwipeCardAction();
-  const {isModalVisible, closeModal, matchedCard} = useNewConnectionModal({swipeDataRes, allCards, isEvent: false});
+  const { createEventAttendee, swipeDataRes } = useSwipeCardAction();
+  const { isModalVisible, closeModal, matchedCard } = useNewConnectionModal({ swipeDataRes, allCards, isEvent: false });
   const scrollRef = useRef<ScrollView>(null);
 
   const scrollToTop = () => {
     return new Promise<void>(resolve => {
-      scrollRef.current?.scrollTo({y: 0, animated: true});
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
       setTimeout(resolve, 700);
     });
   };
@@ -127,16 +128,16 @@ const InviteGuestsEvent = ({
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
+      {selectedEvent && <ModalLockedEvent event={selectedEvent} />}
       <ScrollView ref={scrollRef}>
         <S.Container>
           <S.CardContainer>{renderCards()}</S.CardContainer>
-
           {!isLoading && currentCard && (
             <>
               <GuestBasicInfoCard
                 homeAddress={currentCard?.homeAddress || ''}
-                work={currentCard?.work || ({title: '', description: ''} as components['schemas']['Work'])}
+                work={currentCard?.work || ({ title: '', description: '' } as components['schemas']['Work'])}
                 gender={currentCard?.gender || 'other'}
                 listOfInterestsImages={currentCard?.interests || []}
               />

@@ -25,7 +25,7 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
     eventId: notification.eventId || '',
     hostId: notification.hostId || '',
     guestId: notification.guestId || '',
-    asGuest: true,
+    asGuest: isJoinedEvents ? true : false,
   });
   const { data: user } = useGetUserById(notification.guestId || '');
   const { data: event } = useGetEvent(notification.eventId || '');

@@ -18,7 +18,7 @@ import useUser from 'hooks/user/useUser';
 
 const Profile: FC = () => {
   const { userAge, acceptModalVisible, setAcceptModalVisible, changeAccountTypeModalVisible, setChangeAccountModalVisible } = useProfile();
-  const { data: subscriptionData } = useGetSubscriptions();
+  const { data: subscriptionData, isLoading: isLoadingSubscription } = useGetSubscriptions();
   const { user, isLoading } = useUser();
 
   const { openLogoutModal, isVisibleLogoutModal, setIsVisibleLogoutModal } = useSettings();
@@ -43,17 +43,17 @@ const Profile: FC = () => {
           <ProfileImage userData={user} />
           <S.NameContainer>
             <S.NameAgeContainer>
-              <S.NameText>{`${user?.name}${user?.date ? ',' : ''}`}</S.NameText>
-              <S.AgeText>{` ${`${userAge}`}`}</S.AgeText>
-              {user?.accountConfirmed && <S.CheckStarWhite />}
+              <S.NameText>{`${user?.name} ${user?.date && userAge ? ',' : ''}`}</S.NameText>
+              {userAge ? <S.AgeText>{` ${`${userAge}`}`}</S.AgeText> : null}
+              {user?.accountConfirmed ? <S.CheckStarWhite /> : null}
             </S.NameAgeContainer>
             <S.AccountTypeContainer>
               <S.AccountTypeWrapper>
-                <S.AccountTypeText>{user?.accountType === 'guest' ? 'Guest' : 'Host'}</S.AccountTypeText>
+                <S.AccountTypeText>{subscriptionData?.status === 'active' ? 'Host' : 'Guest'}</S.AccountTypeText>
               </S.AccountTypeWrapper>
             </S.AccountTypeContainer>
           </S.NameContainer>
-          <HostPremium subscriptionData={subscriptionData} />
+          {!isLoadingSubscription && <HostPremium subscriptionData={subscriptionData} />}
           <SuperInviteBlock />
           <TabsList />
           <S.LogoutButton onPress={openLogoutModal}>

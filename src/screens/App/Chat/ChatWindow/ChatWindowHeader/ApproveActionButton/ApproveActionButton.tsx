@@ -13,11 +13,13 @@ interface ApproveActionButtonProps extends TouchableOpacityProps {
 }
 
 export const ApproveActionButton: React.FC<ApproveActionButtonProps> = ({ chat, isJoinedEvent, updateConnectionStatusData, ...rest }) => {
+    console.log('isJoinedEvent', isJoinedEvent);
     const { mutate: approveChat } = invitedOnlyBackendApi.useMutation('patch', '/eventAttendees', {
         onSuccess: (response) => {
-            updateConnectionStatusData({ hostAction: isJoinedEvent ? 'none' : 'confirm', guestAction: isJoinedEvent ? 'confirm' : 'none' });
+            // updateConnectionStatusData({ hostAction: isJoinedEvent ? 'none' : 'confirm', guestAction: isJoinedEvent ? 'confirm' : 'none' });
         },
         onError: (error) => {
+
             console.error('Error approving chat', error);
         }
     });

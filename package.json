@@ -31,7 +31,8 @@
     "bugsnag:upload-rn-android": "bugsnag-cli upload react-native-android",
     "bugsnag:upload-dsym": "bugsnag-cli upload dsym ios/",
     "bugsnag:upload-rn-ios": "bugsnag-cli upload react-native-ios",
-    "bugsnag:upload": "bugsnag-cli upload android-ndk android/ && bugsnag-cli upload android-proguard android/ && bugsnag-cli upload react-native-android && bugsnag-cli upload dsym ios/ && bugsnag-cli upload react-native-ios"
+    "bugsnag:upload": "bugsnag-cli upload android-ndk android/ && bugsnag-cli upload android-proguard android/ && bugsnag-cli upload react-native-android && bugsnag-cli upload dsym ios/ && bugsnag-cli upload react-native-ios",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@amplitude/analytics-react-native": "^1.4.13",

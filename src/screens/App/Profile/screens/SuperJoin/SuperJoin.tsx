@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FlatList } from 'react-native';
+import usePurchaseSuperInvites from '../SuperInvite/hooks/usePurchaseSuperInvites';
 import * as S from './SuperJoin.style';
 import SuperJoinCard from 'assets/images/app/super-join-card.png';
 import CheckCircleWhiteIcon from 'assets/images/icons/check-circle-white.svg';
@@ -28,6 +29,8 @@ const SuperJoin: React.FC = () => {
   const selectedOption = options.find(o => o.joins === selected)!;
   const total = (selectedOption.price * selectedOption.joins).toFixed(2);
   const { goBack } = useAppNavigation();
+  const { purchaseSuperInvites } = usePurchaseSuperInvites();
+
 
   return (
     <S.Container>
@@ -75,7 +78,7 @@ const SuperJoin: React.FC = () => {
           />
         </S.OptionList>
         <S.Footer>
-          <Button title={`Get ${selectedOption.joins} Super Joins for $${total}`} />
+          <Button onPress={() => purchaseSuperInvites(selectedOption.joins)} title={`Get ${selectedOption.joins} Super Joins for $${total}`} />
         </S.Footer>
       </S.Content>
     </S.Container>

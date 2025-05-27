@@ -1,15 +1,23 @@
 import FastImage from 'react-native-fast-image';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
-import {whiteColor} from 'constants/colors';
-import {screenHeight} from 'constants/common';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import { blackColor, whiteColor } from 'constants/colors';
+import { screenHeight } from 'constants/common';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
 
+
+export const FallbackContainer = styled.View`
+  flex: 1;
+  background-color: ${blackColor};
+  align-items: center;
+  justify-content: center;
+`;
 
 export const Container = styled.View`
   display: flex;
-  margin-top: ${screenHeight / 20}px;
+  justify-content: center;
   align-items: center;
+  margin-bottom: ${screenHeight / 20}px;
   width: 100%;
   gap: 10px;
   height: 100%;

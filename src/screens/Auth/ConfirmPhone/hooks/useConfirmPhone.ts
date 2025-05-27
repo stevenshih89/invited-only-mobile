@@ -81,6 +81,7 @@ export const useConfirmPhone = (route: {
               setAccessToken(data.accessToken);
               setRefreshToken(data.refreshToken);
               setupNotifications();
+
               if (userData.uid && userData.phoneNumber) {
                 setUserMetadata({
                   uid: userData.uid,

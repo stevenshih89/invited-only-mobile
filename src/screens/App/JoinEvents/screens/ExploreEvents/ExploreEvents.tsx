@@ -144,14 +144,18 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events, hasNextPage, isLoading,
             <S.BlockText>Block and Report</S.BlockText>
           </S.BlockAndReportButton>
         </S.BlockAndReportContainer>
-        <ModalReport ref={bottomSheetModalRef} uidSender={userMetadata?.uid || ''} uid={currentCard?.hostId || ''} />
-        <NewConnectionModal
-          cardData={matchedCard}
-          visible={isModalVisible}
-          onClose={closeModal}
-          isEvent={true}
-          eventId={currentCard?.uid || ''}
-        />
+        <ModalReport ref={bottomSheetModalRef} uidSender={userMetadata?.uid || ''} uid={currentCard?.hostId || ''} onSubmit={() => {
+          handleSwipeLeft();
+          createEventAttendee({
+            body: {
+              guestId: userMetadata?.uid || '',
+              hostId: currentCard?.hostId || '',
+              eventId: currentCard?.uid || '',
+              guestSwipe: 'left',
+            },
+          });
+        }} />
+
       </S.BottomWrapper>
     </ScrollView>
   );

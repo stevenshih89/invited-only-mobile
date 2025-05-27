@@ -136,9 +136,7 @@ export const useAddPhotos = () => {
     try {
       for (const i of photos) {
         if (i?.image) {
-          console.log('uploading image', i.image);
           const img = await uploadImage(i.image, onBoarding?.registrationDetails?.uid || '');
-          console.log('img', img);
           photosList.push({ id: i?.id + 1, image: img });
         }
       }

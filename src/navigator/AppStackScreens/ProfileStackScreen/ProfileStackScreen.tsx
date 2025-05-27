@@ -1,10 +1,10 @@
-import {createStackNavigator} from '@react-navigation/stack';
-import {StyleSheet} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { createStackNavigator } from '@react-navigation/stack';
+import { StyleSheet } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
 import HeaderBackButton from '../../Components/HeaderBackButton/HeaderBackButton';
 import HeaderRightProfileEditing from './Components/HeaderRightProfileEditing/HeaderRightProfileEditing';
-import {blackColor, whiteColor} from 'constants/colors';
-import {Satoshi400} from 'constants/fonts';
+import { blackColor, whiteColor } from 'constants/colors';
+import { Satoshi400 } from 'constants/fonts';
 import {
   accountSettingPath,
   faqPath,
@@ -29,6 +29,7 @@ import ProfileEditing from 'screens/App/Profile/screens/ProfileEditing/ProfileEd
 import NotificationSetting from 'screens/App/Profile/screens/NotificationSetting/NotificationSetting';
 import SuperJoin from 'screens/App/Profile/screens/SuperJoin/SuperJoin';
 import SuperInvite from 'screens/App/Profile/screens/SuperInvite/SuperInvite';
+import Payment from 'screens/App/Payment/Payment';
 
 export const ProfileStackScreen = () => {
   const ProfileStack = createStackNavigator();
@@ -73,10 +74,9 @@ export const ProfileStackScreen = () => {
       <ProfileStack.Screen
         key={myPlanPath}
         name={myPlanPath}
-        component={MyPlan}
+        component={Payment}
         options={{
-          ...defaultOptions,
-          headerTitle: 'My Plan',
+          headerShown: false,
         }}
       />
       <ProfileStack.Screen

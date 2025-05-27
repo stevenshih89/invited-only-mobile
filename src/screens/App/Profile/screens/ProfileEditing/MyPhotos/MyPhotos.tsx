@@ -57,7 +57,6 @@ const MyPhotos: FC<MyPhotosProps> = ({ images, setImages }) => {
 
   const renderPhoto = (image: components['schemas']['UserPhoto'], index: number, isMain: boolean = false) => {
     const imageRefs = [viewRef1, viewRef2, viewRef3, viewRef4, viewRef5, viewRef6];
-    console.log('image', image);
     const offsetsX = [offsetX1, offsetX2, offsetX3, offsetX4, offsetX5, offsetX6];
     const offsetsY = [offsetY1, offsetY2, offsetY3, offsetY4, offsetY5, offsetY6];
     const animatedStyles = [animatedStyles1, animatedStyles2, animatedStyles3, animatedStyles4, animatedStyles5, animatedStyles6];

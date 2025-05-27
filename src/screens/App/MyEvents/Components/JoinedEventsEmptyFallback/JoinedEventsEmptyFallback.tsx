@@ -5,7 +5,7 @@ import MyEventsFallbackImage from 'src/assets/images/app/joined-events-empty-fal
 
 const JoinedEventsEmptyFallback = () => {
   return (
-    <DefaultBackground>
+    <S.FallbackContainer>
       <S.Container>
         <S.EmptyFallbackImage resizeMode="contain" source={MyEventsFallbackImage} />
         <S.FallbackTextContainer>
@@ -18,7 +18,7 @@ const JoinedEventsEmptyFallback = () => {
         </S.FallbackTextContainer>
       </S.Container>
       <ModalLockedAccount />
-    </DefaultBackground>
+    </S.FallbackContainer>
   );
 };
 

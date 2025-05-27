@@ -1,9 +1,9 @@
-import {StyleProp, TextStyle, ViewStyle} from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {isValidPhoneNumber, parsePhoneNumber, type PhoneNumber} from 'libphonenumber-js';
+import { StyleProp, TextStyle, ViewStyle } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { isValidPhoneNumber, parsePhoneNumber, type PhoneNumber } from 'libphonenumber-js';
 import PhoneInput from 'react-native-phone-number-input';
 import * as S from './InputPhoneView.style';
-import {errorColor, lightGray2Color, transparentGray60Color, transparentWhite30Color, whiteColor} from 'constants/colors';
+import { errorColor, lightGray2Color, transparentGray60Color, transparentWhite30Color, whiteColor } from 'constants/colors';
 import ArrowDown from 'assets/images/icons/arrow-down.svg';
 
 interface IInputPhoneViewProps {
@@ -24,6 +24,8 @@ interface IInputPhoneViewProps {
   onPressFocus?: () => void;
   setIsValid?: (valid: boolean) => void;
 }
+
+const PhoneInputComponent = PhoneInput as unknown as React.ComponentType<any>;
 
 export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
   const DEFAULT_COUNTRY = 'AE';
@@ -100,7 +102,7 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
     <S.Container style={props.containerStyle}>
       <S.TouchableContainer activeOpacity={1} onPress={onPress}>
         <S.TextContainerStyle>
-          <PhoneInput
+          <PhoneInputComponent
             ref={phoneRef}
             autoFocus
             defaultCode={getDefaultCountryCode() as any}
@@ -115,9 +117,10 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
               },
             ]}
             onChangeFormattedText={handleOnChangeFormattedText}
-            disableArrowIcon={props.arrowDisabled}
             renderDropdownImage={<ArrowDown />}
             withDarkTheme
+            layout="first"
+            showDropdown={true}
             textInputProps={{
               editable: !props.textDisabled,
               onFocus: handleOnFocus,
@@ -131,16 +134,27 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
                 backgroundColor: lightGray2Color,
                 paddingTop: 0,
                 paddingRight: 0,
+                paddingLeft: 0,
                 borderColor: !phoneValid && phoneNumber.length > 0 && !props.validationDisabled ? errorColor : 'transparent',
                 borderWidth: 1,
                 borderStyle: 'solid',
                 height: 58,
                 borderRadius: 10,
+                flexDirection: 'row',
+                alignItems: 'center',
               },
             ]}
             textContainerStyle={[
               props.textContainer,
-              {backgroundColor: lightGray2Color, flex: 1, borderRadius: 10, paddingVertical: 0, paddingLeft: 0, padding: 0},
+              {
+                backgroundColor: lightGray2Color,
+                flex: 1,
+                borderRadius: 10,
+                paddingVertical: 0,
+                paddingLeft: 0,
+                marginLeft: 0,
+                height: '100%',
+              },
             ]}
             textInputStyle={[
               props.textStyle,
@@ -166,7 +180,6 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
                 },
               },
             }}
-            flagButtonStyle={props.flagButtonStyle}
           />
         </S.TextContainerStyle>
       </S.TouchableContainer>

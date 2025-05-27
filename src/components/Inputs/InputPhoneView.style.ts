@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
-import {errorColor, lightGray2Color, whiteColor} from 'constants/colors';
-import {Satoshi400} from 'constants/fonts';
+import { errorColor, lightGray2Color, whiteColor } from 'constants/colors';
+import { Satoshi400 } from 'constants/fonts';
 
 export const Container = styled.View`
   margin-bottom: 16px;

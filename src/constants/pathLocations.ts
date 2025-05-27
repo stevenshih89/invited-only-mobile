@@ -1,4 +1,4 @@
-import {RootStackParamList} from 'typescript/types';
+import { RootStackParamList } from 'typescript/types';
 // Stacks paths
 const bottomTabsStackPath = '/bottom-tabs-stack';
 const notificationsStackPath = '/notifications-stack';
@@ -29,9 +29,11 @@ const findConnectionsPath: keyof RootStackParamList = '/find-connections';
 const myConnectionsPath: keyof RootStackParamList = '/my-connections';
 const connectSocialMediaPath: keyof RootStackParamList = '/connect-social-media';
 const privacyPath: keyof RootStackParamList = '/privacy';
+const valuesAndGuidelinesPath: keyof RootStackParamList = '/values-and-guidelines';
 const pendingScreenPath: keyof RootStackParamList = '/pending-screen';
 const accountRejectedPath: keyof RootStackParamList = '/account-rejected';
 const codeVerifiedPath: keyof RootStackParamList = '/code-verified';
+const welcomeScreenPath: keyof RootStackParamList = '/welcome-screen';
 const verifyFirstStepPath: keyof RootStackParamList = '/verify-first-step';
 const verifySecondStepPath: keyof RootStackParamList = '/verify-second-step';
 const invitationCodePath: keyof RootStackParamList = '/invitation-code';
@@ -168,4 +170,6 @@ export {
   superJoinPath,
   userProfilePreviewPath,
   eventProfilePreviewPath,
+  welcomeScreenPath,
+  valuesAndGuidelinesPath,
 };

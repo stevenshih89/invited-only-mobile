@@ -30,13 +30,14 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost,
   const insets = useSafeAreaInsets();
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { connectionStatus, isLoading, updateConnectionStatusData } = useConnectionRealtimeStatus({ chat });
+
   const { mutate: updateChatSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen');
   const { invitationStatus } = useInvitationStatus(connectionStatus);
+  console.log('invitationStatus', invitationStatus);
+
   const toggleDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);
   };
-  console.log('invitationStatus', connectionStatus);
-
 
   const renderActionButtonForHost = () => {
     if (invitationStatus === 'attendingComplete') {

@@ -1,13 +1,13 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {BlurView} from '@react-native-community/blur';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
-import {whiteColor} from 'constants/colors';
-import {Satoshi500} from 'constants/fonts';
-import {screenWidth} from 'constants/common';
+import { whiteColor } from 'constants/colors';
+import { Satoshi500 } from 'constants/fonts';
+import { screenWidth } from 'constants/common';
 
-export const Wrapper = styled.View`
+export const Wrapper = styled.TouchableOpacity`
   position: relative;
   width: 100%;
   height: 100%;
@@ -23,7 +23,7 @@ export const BackgroundImage = styled(FastImage)`
   border-radius: 20px;
 `;
 
-export const Content = styled.TouchableOpacity.attrs({activeOpacity: 0.8})`
+export const Content = styled.TouchableOpacity.attrs({ activeOpacity: 0.8 })`
   width: 100%;
   height: 100%;
   padding-top: 12px;
@@ -40,17 +40,17 @@ export const BadgeRow = styled.View`
   flex-direction: row;
   align-items: center;
   gap: 6px;
-  margin-top: ${({isSuperInvite}: {isSuperInvite: boolean}) => (isSuperInvite ? 4 : 0)}px;
+  margin-top: ${({ isSuperInvite }: { isSuperInvite: boolean }) => (isSuperInvite ? 4 : 0)}px;
 `;
 
-export const TouchableBadgeRow = styled.TouchableOpacity.attrs({activeOpacity: 0.8})`
+export const TouchableBadgeRow = styled.TouchableOpacity.attrs({ activeOpacity: 0.8 })`
   background-color: rgba(255, 255, 255, 0.2);
   padding: 6px;
   border-radius: 100px;
   flex-direction: row;
   align-items: center;
   gap: 6px;
-  margin-top: ${({isSuperInvite}: {isSuperInvite: boolean}) => (isSuperInvite ? 4 : 0)}px;
+  margin-top: ${({ isSuperInvite }: { isSuperInvite: boolean }) => (isSuperInvite ? 4 : 0)}px;
 `;
 
 export const BlurOverlay = styled(BlurView)`
@@ -108,7 +108,7 @@ export const ActionsRow = styled.View`
   margin-top: 10px;
 `;
 
-export const IconButton = styled.TouchableOpacity.attrs({activeOpacity: 0.8})`
+export const IconButton = styled.TouchableOpacity.attrs({ activeOpacity: 0.8 })`
   background-color: rgba(255, 255, 255, 0.08);
   padding: 8px;
   border-radius: 100px;

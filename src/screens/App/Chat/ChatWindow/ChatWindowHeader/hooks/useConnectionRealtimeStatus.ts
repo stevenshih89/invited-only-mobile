@@ -24,27 +24,28 @@ const useConnectionRealtimeStatus = ({ chat }: ConnectionStatus) => {
 
         }
     }, { refetchInterval: 1000, enabled: !!chat?.id && !!chat?.hostId && !!chat?.guestId && !!chat?.eventId })
+
     useFirestoreSubscriptionConnectionStatus({
         collectionName: attendees || '',
         queryKey: ['get', '/eventAttendees/host/{hostId}', { params: { path: { hostId: userMetadata?.uid || '' } } }],
         docId: chat?.id || ''
     })
-    console.log(connectionStatuses);
 
     const updateConnectionStatusData = ({ hostAction = 'none', guestAction = 'none' }: { hostAction: 'confirm' | 'reject' | 'none', guestAction: 'confirm' | 'reject' | 'none' }) => queryClient.setQueryData(['get', '/eventAttendees/host/{hostId}', { params: { path: { hostId: chat?.hostId || '' } } }], (oldData: components['schemas']['ConnectionRequest'][]) => {
-        const newData: components['schemas']['ConnectionRequest'][] = [];
-        oldData.forEach((connectionStatus: components['schemas']['ConnectionRequest']) => {
-            if (connectionStatus?.id === chat?.id) {
-                if (hostAction === 'confirm') {
-                    newData.push({ ...connectionStatus, hostConfirm: true });
+        queryClient.setQueryData(['get', '/eventAttendees/host/{hostId}', { params: { path: { hostId: userMetadata?.uid || '' } } }], (oldData: components['schemas']['ConnectionRequest'][]) => {
+            const newData: components['schemas']['ConnectionRequest'][] = [];
+            oldData.forEach((connectionStatus: components['schemas']['ConnectionRequest']) => {
+                if (connectionStatus?.id === chat?.id) {
+                    if (hostAction === 'confirm') {
+                        newData.push({ ...connectionStatus, hostConfirm: true });
+                    }
+                    if (guestAction === 'confirm') {
+                        newData.push({ ...connectionStatus, guestConfirm: true });
+                    }
                 }
-                if (guestAction === 'confirm') {
-                    newData.push({ ...connectionStatus, hostConfirm: true });
-                }
-            }
-            newData.push(connectionStatus);
+            })
+            return newData;
         })
-        return newData;
     })
 
     return {

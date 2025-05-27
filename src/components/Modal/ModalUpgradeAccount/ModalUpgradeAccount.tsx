@@ -25,6 +25,11 @@ const ModalUpgradeAccount: FC = () => {
   }
 
 
+  if (isLoadingSubscription) {
+    return null;
+  }
+
+
   if (user?.uid && user?.accountReviewed && user?.accountConfirmed && !isActiveSubscription) {
     return (
       <S.Container>

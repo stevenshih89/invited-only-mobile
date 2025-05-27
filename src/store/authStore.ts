@@ -1,7 +1,7 @@
-import {create} from 'zustand';
-import {persist, createJSONStorage} from 'zustand/middleware'; // Import middleware
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware'; // Import middleware
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import {components} from '@invited-only/invited-only-api';
+import { components } from '@invited-only/invited-only-api';
 
 export type OnBoardingStep =
   | '/onboard'
@@ -82,7 +82,7 @@ const getInitialState = (
   isStorageReady: false,
   isDemoVideoWatched: false,
   isWelcomeAboardModalShowed: false,
-  setIsStorageReady: () => {},
+  setIsStorageReady: () => { },
   setUserMetadata: userMetadata =>
     set({
       userMetadata: {
@@ -92,16 +92,16 @@ const getInitialState = (
         firstLogin: userMetadata.firstLogin ?? false,
       },
     }),
-  setOnBoarding: onBoardingUpdate => set(state => ({onBoarding: {...state.onBoarding, ...onBoardingUpdate}})),
-  setUserPhoneNumber: userPhoneNumber => set({userPhoneNumber}),
-  setAccessToken: accessToken => set({accessToken: accessToken ?? ''}),
-  setRefreshToken: refreshToken => set({refreshToken: refreshToken ?? ''}),
-  setIsDemoVideoWatched: isDemoVideoWatched => set({isDemoVideoWatched: isDemoVideoWatched ?? false}),
-  setIsWelcomeAboardModalShowed: isWelcomeAboardModalShowed => set({isWelcomeAboardModalShowed: isWelcomeAboardModalShowed ?? false}),
+  setOnBoarding: onBoardingUpdate => set(state => ({ onBoarding: { ...state.onBoarding, ...onBoardingUpdate } })),
+  setUserPhoneNumber: userPhoneNumber => set({ userPhoneNumber }),
+  setAccessToken: accessToken => set({ accessToken: accessToken ?? '' }),
+  setRefreshToken: refreshToken => set({ refreshToken: refreshToken ?? '' }),
+  setIsDemoVideoWatched: isDemoVideoWatched => set({ isDemoVideoWatched: isDemoVideoWatched ?? false }),
+  setIsWelcomeAboardModalShowed: isWelcomeAboardModalShowed => set({ isWelcomeAboardModalShowed: isWelcomeAboardModalShowed ?? false }),
   logout: () =>
     set(state => ({
-      userMetadata: {...getInitialState(set).userMetadata},
-      onBoarding: {...initialOnboardingState},
+      userMetadata: { ...getInitialState(set).userMetadata },
+      onBoarding: { ...initialOnboardingState },
       accessToken: '',
       refreshToken: '',
       isStorageReady: state.isStorageReady,
@@ -128,10 +128,9 @@ export const useAuthStore = create<AuthState>()(
       }),
       onRehydrateStorage: () => (state, error) => {
         if (error) {
-          console.log('AuthStore: hydration error', error);
+          console.error('AuthStore: hydration error', error);
         } else {
-          console.log('AuthStore: hydration finished. Current onboarding:', state?.onBoarding);
-          useAuthStore.setState({isStorageReady: true});
+          useAuthStore.setState({ isStorageReady: true });
         }
       },
     },

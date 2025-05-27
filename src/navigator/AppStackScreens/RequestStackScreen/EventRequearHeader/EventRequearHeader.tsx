@@ -1,5 +1,5 @@
 import React from 'react';
-import { GestureResponderEvent } from 'react-native';
+import { GestureResponderEvent, View } from 'react-native';
 // Example icon set
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,9 +21,11 @@ const EventRequearHeader: React.FC<EventRequearHeaderProps> = ({ title, onBackPr
 
       <S.TitleText>{title}</S.TitleText>
 
-      <S.RightActionContainer onPress={onRightActionPress}>
+
+      <View /> {/* TODO: Add invite all button */}
+      {/* <S.RightActionContainer onPress={onRightActionPress}>
         <S.InviteAllText>Invite All</S.InviteAllText>
-      </S.RightActionContainer>
+      </S.RightActionContainer> */}
     </S.HeaderContainer>
   );
 };
