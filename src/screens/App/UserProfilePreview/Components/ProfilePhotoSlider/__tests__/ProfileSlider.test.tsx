@@ -10,9 +10,9 @@ describe('ProfilePhotoSlider', () => {
   const mockProps = {
     photos: ['photo1.jpg', 'photo2.jpg', 'photo3.jpg'],
     userName: 'John',
-    userAge: '25',
-    isConfirmed: true,
     userBirthday: '2000-01-01',
+    isConfirmed: true,
+    isShowAge: true,
   };
 
   it('renders correctly', () => {

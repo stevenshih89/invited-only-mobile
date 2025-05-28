@@ -1,7 +1,7 @@
-import { FC, useState, useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
-import { useFormikContext } from 'formik';
-import { components } from 'src/api/v1';
+import {FC, useState, useMemo} from 'react';
+import {TouchableOpacity, View} from 'react-native';
+import {useFormikContext} from 'formik';
+import {components} from 'src/api/v1';
 import * as S from './MyInterests.style';
 import ModalSelectInterests from './ModalSelectInterests/ModalSelectInterests';
 import ArrowRight from 'assets/images/icons/arrow-right-s-line.svg';
@@ -19,17 +19,17 @@ interface MyInterestsProps {
   loading: boolean;
 }
 
-const MyInterests: FC<MyInterestsProps> = ({ availableInterests, loading }) => {
+const MyInterests: FC<MyInterestsProps> = ({availableInterests, loading}) => {
   const [isVisibleInterestsModal, setIsVisibleInterestsModal] = useState(false);
-  const { values, setFieldValue } = useFormikContext<MyInterestsFormikValues>();
+  const {values, setFieldValue} = useFormikContext<MyInterestsFormikValues>();
 
   const selectedInterests = useMemo(() => {
     const selectedInterests = values.interests || [];
     const availableInterestsMap = new Map(availableInterests?.map(interest => [interest.id, interest]));
     return selectedInterests?.length > 0
       ? selectedInterests
-        .map((interest: Interest) => availableInterestsMap.get(interest.id))
-        .filter((interest: Interest | undefined): interest is Interest => interest !== undefined)
+          .map((interest: Interest) => availableInterestsMap.get(interest.id))
+          .filter((interest: Interest | undefined): interest is Interest => interest !== undefined)
       : [];
   }, [values.interests, availableInterests]);
 
@@ -49,9 +49,9 @@ const MyInterests: FC<MyInterestsProps> = ({ availableInterests, loading }) => {
       <S.Title>Interests</S.Title>
       <TouchableOpacity
         testID="open-interests-modal"
-        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+        style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}
         onPress={() => setIsVisibleInterestsModal(true)}>
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
           <S.InterestsContainer>
             <InterestImageSmallList interests={visibleInterests} />
             {hiddenInterestsCount > 0 && (
@@ -63,7 +63,6 @@ const MyInterests: FC<MyInterestsProps> = ({ availableInterests, loading }) => {
         </View>
         <ArrowRight />
       </TouchableOpacity>
-
       <ModalSelectInterests
         modalInterests={isVisibleInterestsModal}
         setModalInterests={setIsVisibleInterestsModal}

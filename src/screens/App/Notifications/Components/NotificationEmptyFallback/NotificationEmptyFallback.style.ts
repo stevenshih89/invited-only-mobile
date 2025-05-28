@@ -1,8 +1,7 @@
-import styled from "styled-components/native";
-import { blackColor, grayColor, whiteColor } from "constants/colors";
-import { screenWidth } from "constants/common";
-import { Satoshi500, Satoshi400 } from "constants/fonts";
-
+import styled from 'styled-components/native';
+import {blackColor, grayColor, whiteColor} from 'constants/colors';
+import {screenWidth} from 'constants/common';
+import {Satoshi500, Satoshi400} from 'constants/fonts';
 
 export const Container = styled.View`
   flex: 1;
@@ -32,5 +31,5 @@ export const SubtitleText = styled.Text`
   font-size: 16px;
   color: ${grayColor};
   text-align: center;
-  margin-bottom: 30px;
-`; 
+  margin-bottom: 40px;
+`;

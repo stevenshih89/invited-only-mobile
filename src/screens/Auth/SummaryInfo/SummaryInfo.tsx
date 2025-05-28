@@ -1,32 +1,33 @@
-
 import * as S from './SummaryInfo.style';
 
 import useCreateUser from './hooks/useCreateUser';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Button from 'components/Button/Button';
-import { calculateAge } from 'helpers/calculateAge';
+import {calculateAge} from 'helpers/calculateAge';
 import CheckIcon from 'assets/images/icons/check-star-white.svg';
-import { useAuthStore } from 'src/store/authStore';
+import {useAuthStore} from 'src/store/authStore';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 
 const SummaryInfo = () => {
-  const { onBoarding } = useAuthStore();
+  const {onBoarding} = useAuthStore();
 
   const imageUser = onBoarding.registrationDetails?.verificationPhoto;
   const name: string = onBoarding.registrationDetails?.name || '';
   const birthday = onBoarding.registrationDetails?.birthday || '';
 
-  const { handleCreateUser, isPending } = useCreateUser();
+  const {handleCreateUser, isPending} = useCreateUser();
 
   if (isPending) {
-    return <S.Container><AppLoader /></S.Container>
+    return (
+      <S.Container>
+        <AppLoader />
+      </S.Container>
+    );
   }
-
 
   const handleNext = () => {
     handleCreateUser();
   };
-
 
   return (
     <S.Background>
@@ -36,7 +37,7 @@ const SummaryInfo = () => {
             <LogoPrimary2 />
           </S.LogoWrapper>
 
-          <S.PhotoWrapper source={{ uri: imageUser }}>
+          <S.PhotoWrapper source={{uri: imageUser}}>
             <S.BadgeContainer>
               <S.BadgeContent>
                 <S.BadgeBlur blurType="dark" />

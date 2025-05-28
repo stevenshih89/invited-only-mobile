@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import {RFValue} from 'react-native-responsive-fontsize';
 import {whiteColor} from 'constants/colors';
 import {Satoshi500, Satoshi700} from 'constants/fonts';
 import CheckedIcon from 'src/assets/images/icons/checked-interest-icon.svg';
@@ -39,6 +40,7 @@ export const InterestText = styled.Text`
 
 export const WhiteTextInfo = styled.Text`
   font-family: ${Satoshi500};
+  font-size: ${RFValue(16, 932)}px;
   color: ${whiteColor};
 `;
 
@@ -84,8 +86,8 @@ export const RoundedTextViewContainer = styled.View`
   border-radius: 20px;
   padding-top: 5px;
   padding-bottom: 5px;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 5px;
+  padding-right: 8px;
   flex-direction: row;
   background-color: #1c1c1c;
   margin-top: 2px;
@@ -102,4 +104,5 @@ export const InterestImageRoundSmall = styled.Image`
   width: 35px;
   height: 35px;
   border-radius: 20px;
+  margin-right: 5px;
 `;

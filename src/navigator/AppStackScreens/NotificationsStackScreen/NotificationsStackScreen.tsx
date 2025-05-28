@@ -1,38 +1,54 @@
 import React from 'react';
-import { createStackNavigator, StackNavigationOptions } from '@react-navigation/stack';
-import { blackColor, whiteColor } from 'constants/colors';
+import {createStackNavigator} from '@react-navigation/stack';
+import {StyleSheet} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {blackColor, whiteColor} from 'constants/colors';
 import Notifications from 'screens/App/Notifications/Notifications';
+import {Satoshi400} from 'constants/fonts';
+import HeaderBackButton from 'navigator/Components/HeaderBackButton/HeaderBackButton';
 
 const NotificationStack = createStackNavigator();
 
-const NotificationsStackScreen = ({ route }: { route: any }) => {
-    const stackNavigationOptions: StackNavigationOptions = {
-        cardStyle: {
-            backgroundColor: blackColor,
-        },
-        headerStyle: {
-            backgroundColor: blackColor,
-        },
-        headerTitle: 'Notifications',
-        headerTitleStyle: {
-            color: whiteColor,
-        },
-        headerBackTitleStyle: {
-            color: whiteColor,
-        },
-        headerTintColor: whiteColor,
-    };
-
-    return (
-        <NotificationStack.Navigator screenOptions={stackNavigationOptions}>
-            <NotificationStack.Screen
-                key="tempNotificationsScreen"
-                name="tempNotificationsScreen"
-                component={Notifications}
-                initialParams={{ initialTab: route.params.initialTab }}
-            />
-        </NotificationStack.Navigator>
-    );
+const NotificationsStackScreen = ({route}: {route: any}) => {
+  const defaultOptions = {
+    headerStyle: styles.headerStyle,
+    headerTitleStyle: styles.headerTitleStyle,
+    headerBackTitleVisible: false,
+    headerShown: true,
+    headerBackImage: () => <HeaderBackButton />,
+  };
+  return (
+    <NotificationStack.Navigator>
+      <NotificationStack.Screen
+        key="tempNotificationsScreen"
+        name="tempNotificationsScreen"
+        component={Notifications}
+        initialParams={{initialTab: route.params.initialTab}}
+        options={{
+          ...defaultOptions,
+          headerTitle: 'Notifications',
+        }}
+      />
+    </NotificationStack.Navigator>
+  );
 };
 
-export default NotificationsStackScreen; 
+const styles = StyleSheet.create({
+  headerStyle: {
+    backgroundColor: blackColor,
+    borderBottomColor: 'transparent',
+    borderBottomWidth: 0,
+    shadowColor: 'transparent',
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    },
+  },
+  headerTitleStyle: {
+    color: whiteColor,
+    fontFamily: Satoshi400,
+    fontSize: RFValue(24, 812),
+  },
+});
+
+export default NotificationsStackScreen;

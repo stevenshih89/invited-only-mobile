@@ -106,6 +106,7 @@ const ProfileEditing: FC = (): ReactElement => {
 
                   <MyInterests availableInterests={AvailableInterests} loading={false} />
                   <MyLanguagesKnow
+                    selectedLanguages={user?.languages}
                     languages={values.languages}
                     setLanguages={value => {
                       setFieldValue('languages', value);

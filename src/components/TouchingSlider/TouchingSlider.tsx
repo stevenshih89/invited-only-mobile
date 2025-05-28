@@ -207,7 +207,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
         headers: {Authorization: 'someAuthToken'},
         priority: FastImage.priority.normal,
       }}
-      resizeMode={FastImage.resizeMode.cover}>
+      resizeMode={'cover'}>
       {(!isProfile || isPreview) && (
         <LinearGradient
           colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']}

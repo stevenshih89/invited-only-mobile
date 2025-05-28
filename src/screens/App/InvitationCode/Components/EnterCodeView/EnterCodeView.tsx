@@ -1,6 +1,6 @@
-import { Cursor } from 'react-native-confirmation-code-field';
-import { FC, RefObject } from 'react';
-import { TextInput } from 'react-native';
+import {Cursor} from 'react-native-confirmation-code-field';
+import {FC, RefObject} from 'react';
+import {TextInput} from 'react-native';
 import * as S from './EnterCodeView.style';
 
 interface EnterCodeViewProps {
@@ -41,13 +41,13 @@ const EnterCodeView: FC<EnterCodeViewProps> = ({
           cellCount={cellCount}
           keyboardAppearance="dark"
           textContentType="oneTimeCode"
-          renderCell={({ index, symbol, isFocused }: { index: number; symbol: string; isFocused: boolean }) => {
+          renderCell={({index, symbol, isFocused}: {index: number; symbol: string; isFocused: boolean}) => {
             if (isIncorrectCode) {
               return (
                 <S.GradientCell
                   gradientProps={{
-                    start: { x: 0, y: 0 },
-                    end: { x: 1, y: 1 },
+                    start: {x: 0, y: 0},
+                    end: {x: 1, y: 1},
                     colors: errorColorsList,
                   }}
                   key={index}>
@@ -62,8 +62,8 @@ const EnterCodeView: FC<EnterCodeViewProps> = ({
               return (
                 <S.GradientCell
                   gradientProps={{
-                    start: { x: 0, y: 0 },
-                    end: { x: 1, y: 1 },
+                    start: {x: 0, y: 0},
+                    end: {x: 1, y: 1},
                     colors: focusedColorsList,
                   }}
                   key={index}>
@@ -84,7 +84,7 @@ const EnterCodeView: FC<EnterCodeViewProps> = ({
           </S.ErrorContainer>
         )}
       </S.CodeContainer>
-      <S.StyledButton title="Get Access" onPress={handleSubmit} disabled={code.length !== 4} />
+      <S.StyledButton testID="get-access-button" title="Get Access" onPress={handleSubmit} disabled={code.length !== 4} />
     </S.Container>
   );
 };

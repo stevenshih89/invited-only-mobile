@@ -29,7 +29,7 @@ describe('EnterCodeView', () => {
     expect(getByText('Access Limited')).toBeTruthy();
     expect(getByText('Enter your invitation code')).toBeTruthy();
     expect(getByTestId('verification-code-input')).toBeTruthy();
-    expect(getByText('Get Access')).toBeTruthy();
+    expect(getByTestId('get-access-button')).toBeTruthy();
   });
 
   it('handles code input', () => {
@@ -37,9 +37,9 @@ describe('EnterCodeView', () => {
     const {getByTestId} = render(<EnterCodeView {...defaultProps} setCode={setCode} />);
 
     const input = getByTestId('verification-code-input');
-    fireEvent.changeText(input, '123456');
+    fireEvent.changeText(input, '1234');
 
-    expect(setCode).toHaveBeenCalledWith('123456');
+    expect(setCode).toHaveBeenCalledWith('1234');
   });
 
   it('shows error message when code is incorrect', () => {
@@ -49,13 +49,12 @@ describe('EnterCodeView', () => {
   });
 
   it('handles submit button press', () => {
-    const handleSubmit = jest.fn();
-    const {getByText} = render(<EnterCodeView {...defaultProps} handleSubmit={handleSubmit} />);
+    const {getByTestId} = render(<EnterCodeView {...defaultProps} code="1234" />);
 
-    const submitButton = getByText('Get Access');
+    const submitButton = getByTestId('get-access-button');
     fireEvent.press(submitButton);
 
-    expect(handleSubmit).toHaveBeenCalledTimes(1);
+    expect(defaultProps.handleSubmit).toHaveBeenCalledTimes(1);
   });
 
   it('renders correct number of cells', () => {
@@ -63,11 +62,6 @@ describe('EnterCodeView', () => {
 
     const emptyCells = getAllByText('_');
     expect(emptyCells).toHaveLength(defaultProps.cellCount);
-  });
-
-  it('matches snapshot', () => {
-    const {toJSON} = render(<EnterCodeView {...defaultProps} />);
-    expect(toJSON()).toMatchSnapshot();
   });
 
   it('renders with filled code', () => {

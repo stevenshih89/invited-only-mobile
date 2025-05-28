@@ -1,16 +1,16 @@
-import { FC } from 'react';
+import {FC} from 'react';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-import { View } from 'react-native';
-import { components } from 'src/api/v1';
+import {View} from 'react-native';
+import {components} from '@invited-only/invited-only-api';
 import * as S from './Languages.style';
 
 interface LanguagesProps {
   languages: components['schemas']['Language'][];
 }
 
-const Languages: FC<LanguagesProps> = ({ languages }) => {
+const Languages: FC<LanguagesProps> = ({languages}) => {
   return (
-    <View style={{ marginTop: 20 }}>
+    <View>
       {!!languages?.length && (
         <S.StyledRadialGradient
           colors={['rgba(26, 26, 26, 0.40)', 'rgba(0, 0, 0, 0.00)', 'rgba(255, 255, 255, 0.07)']}

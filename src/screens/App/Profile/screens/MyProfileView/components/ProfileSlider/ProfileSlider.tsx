@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, {FC, useState} from 'react';
 import FastImage from 'react-native-fast-image';
 import * as S from './ProfileSlider.style';
 import CheckIcon from 'assets/images/icons/check-star-white.svg';
@@ -10,7 +10,7 @@ interface ProfileSliderProps {
   isConfirmed: boolean;
 }
 
-const ProfileSlider: FC<ProfileSliderProps> = ({ photos, userName, userAge, isConfirmed }) => {
+const ProfileSlider: FC<ProfileSliderProps> = ({photos, userName, userAge, isConfirmed}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handlePrevious = () => {
@@ -39,15 +39,21 @@ const ProfileSlider: FC<ProfileSliderProps> = ({ photos, userName, userAge, isCo
           }}
           resizeMode={'cover'}
         />
-        <S.LeftTouchArea testID="left-touch-area" onPress={handlePrevious} />
-        <S.RightTouchArea testID="right-touch-area" onPress={handleNext} />
+        {photos.length > 1 && (
+          <>
+            <S.LeftTouchArea testID="left-touch-area" onPress={handlePrevious} />
+            <S.RightTouchArea testID="right-touch-area" onPress={handleNext} />
+          </>
+        )}
         <S.GradientOverlay colors={['transparent', 'rgba(0, 0, 0, 0.9)']} locations={[0, 1]} pointerEvents="none" />
         <S.ContentContainer>
-          <S.DotsContainer>
-            {photos.map((_, index) => (
-              <S.Dot testID="slider-dot" key={index} isActive={index === currentIndex} />
-            ))}
-          </S.DotsContainer>
+          {photos.length > 1 && (
+            <S.DotsContainer>
+              {photos.map((_, index) => (
+                <S.Dot testID="slider-dot" key={index} isActive={index === currentIndex} />
+              ))}
+            </S.DotsContainer>
+          )}
           <S.UserInfoContainer>
             {isConfirmed && (
               <CheckIcon
