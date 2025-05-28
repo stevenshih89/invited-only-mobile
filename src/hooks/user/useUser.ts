@@ -22,13 +22,13 @@ const useUser = (): UseUserResponse => {
         refetchInterval: 1000 * 10,
     });
 
+    const resError = error as { error: { statusCode: number } } | null;
+
     if (status === 'error' && onBoarding.isOnboardingCompleted && userMetadata.uid) {
-        if (error.error.statusCode === 404) {
+        if (resError?.error.statusCode === 404) {
             logout();
         }
     }
-
-
 
     return {
         user: data,
