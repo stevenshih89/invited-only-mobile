@@ -1,12 +1,14 @@
-import React, { JSX, useEffect } from 'react';
+import React, {JSX, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TouchableOpacity } from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import * as S from './Onboard.style';
 import LogoPrimary from 'assets/images/auth/logo-primary.svg';
 import WelcomeBcgCards from 'assets/images/auth/welcome-screen-cards.png';
-import { useAppNavigation } from 'hooks/useAppNavigation';
+import {useAppNavigation} from 'hooks/useAppNavigation';
 import Button from 'components/Button/Button';
-import { openLink } from 'helpers/links';
+import {openLink} from 'helpers/links';
+import {screenHeight} from 'constants/common';
 
 const Onboard = (): JSX.Element => {
   const navigation = useAppNavigation();
@@ -29,7 +31,24 @@ const Onboard = (): JSX.Element => {
         <S.Overlay>
           <S.OnBoardingTopViewContainer>
             <S.OnBoardingTextTitle>HOST OR JOIN VIP TABLES AND EXCLUSIVE EVENTS</S.OnBoardingTextTitle>
-            <S.BgCardImage testID="bg-card-image" source={WelcomeBcgCards} />
+            <View
+              style={{
+                width: '100%',
+                height: screenHeight / 2,
+              }}>
+              <S.BgCardImage testID="bg-card-image" source={WelcomeBcgCards} resizeMode="contain" />
+              <LinearGradient
+                colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.9)']}
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: screenHeight / 4,
+                  zIndex: 1,
+                }}
+              />
+            </View>
           </S.OnBoardingTopViewContainer>
         </S.Overlay>
         <S.LogoContainer>
@@ -50,11 +69,8 @@ const Onboard = (): JSX.Element => {
               By signing up or logging in, I accept the IO{' '}
               <S.TermsLink onPress={() => openLink('https://www.invitedonly.app/terms-of-service-eula')}>
                 Terms of Service / EULA
-              </S.TermsLink>
-              {' '}and{' '}
-              <S.TermsLink onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>
-                Privacy Policy
-              </S.TermsLink>
+              </S.TermsLink>{' '}
+              and <S.TermsLink onPress={() => openLink('https://www.invitedonly.app/privacy-policy')}>Privacy Policy</S.TermsLink>
             </S.TermsText>
           </S.TermsContainer>
         </S.BottomContainer>

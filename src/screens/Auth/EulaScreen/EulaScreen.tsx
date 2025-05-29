@@ -58,6 +58,7 @@ const Eula = () => {
             <Button
               title="Accept"
               variant="default"
+              disabled={!endReached}
               buttonStyle={{
                 flex: 1,
               }}

@@ -3,7 +3,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
-import {lightGray19Color, whiteColor, backgroundGradientColors} from 'constants/colors';
+import {lightGray19Color, whiteColor} from 'constants/colors';
 import {screenHeight, screenWidth} from 'constants/common';
 
 export const OnBoardingTextTitle = styled.Text`
@@ -17,8 +17,7 @@ export const OnBoardingTextTitle = styled.Text`
 `;
 
 export const BgCardImage = styled.Image`
-  width: ${screenWidth * 1}px;
-  margin-left: ${screenWidth * 0.05}px;
+  width: 100%;
   height: ${screenHeight * 0.5}px;
 `;
 
@@ -90,11 +89,10 @@ export const SignInText = styled.Text`
   font-size: ${RFValue(14, 932)}px;
 `;
 
-// Root gradient background
 export const RootGradient = styled(LinearGradient).attrs({
-  colors: backgroundGradientColors,
-  start: {x: 0, y: 1},
-  end: {x: 0, y: 0},
+  colors: ['#0F0F0F', '#000000'],
+  start: {x: 0, y: 0},
+  end: {x: 0, y: 1},
 })`
   flex: 1;
 `;
