@@ -1,15 +1,15 @@
 import createFetchClient, { Middleware } from 'openapi-fetch';
 import createClient from 'openapi-react-query';
-// eslint-disable-next-line import/no-unresolved
-import { BACKEND_BASE_64_AUTH, BACKEND_BASE_URL } from '@env';
+import remoteConfig from '@react-native-firebase/remote-config';
 import { paths } from '@invited-only/invited-only-api';
+import { BACKEND_BASE_64_AUTH, BACKEND_BASE_URL, CODE_VERSION } from '@env';
 
+let fetchClient: ReturnType<typeof createFetchClient<paths>> | null = null;
+let invitedOnlyBackendApi: ReturnType<typeof createClient<paths>> | null = null;
 
 const myMiddleware: Middleware = {
   onError: (error: any) => {
-    if (error.message.includes('Aborted')) {
-      return;
-    }
+    if (error.message.includes('Aborted')) return;
     // eslint-disable-next-line no-console
     console.error('error while fetching', error);
   },
@@ -21,10 +21,33 @@ const myMiddleware: Middleware = {
   },
 };
 
-const fetchClient = createFetchClient<paths>({
-  baseUrl: BACKEND_BASE_URL,
-});
+export const initializeApiClient = async () => {
+  try {
+
+    await remoteConfig().fetch(0);
+    await remoteConfig().activate();
+
+    const backendUrlObj = JSON.parse(remoteConfig().getString('BackendPath'));
+    const backendUrl = backendUrlObj[CODE_VERSION];
+
+    if (!backendUrl) {
+      console.warn('No backend URL from Remote Config, using default');
+      return invitedOnlyBackendApi;
+    }
+
+    fetchClient = createFetchClient<paths>({ baseUrl: backendUrl });
+    fetchClient.use(myMiddleware);
+    invitedOnlyBackendApi = createClient<paths>(fetchClient);
+
+    return invitedOnlyBackendApi;
+  } catch (error) {
+    console.error('Failed to fetch Remote Config:', error);
+    return invitedOnlyBackendApi;
+  }
+};
+
+fetchClient = createFetchClient<paths>({ baseUrl: BACKEND_BASE_URL });
 fetchClient.use(myMiddleware);
-const invitedOnlyBackendApi = createClient(fetchClient);
+invitedOnlyBackendApi = createClient<paths>(fetchClient);
 
 export default invitedOnlyBackendApi;

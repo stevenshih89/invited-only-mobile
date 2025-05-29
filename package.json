@@ -62,6 +62,7 @@
     "@react-native-firebase/firestore": "^21.13.0",
     "@react-native-firebase/functions": "^21.13.0",
     "@react-native-firebase/messaging": "^21.13.0",
+    "@react-native-firebase/remote-config": "^22.2.0",
     "@react-native-firebase/storage": "^21.13.0",
     "@react-native-masked-view/masked-view": "^0.3.2",
     "@react-native-picker/picker": "^2.6.1",

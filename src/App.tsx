@@ -15,6 +15,8 @@ import { blackColor } from 'constants/colors';
 
 import Main from 'src';
 import { RN_UXCAM_API_KEY, IO_PUBLICK_RC_IOS, AMPLITUDE_API_KEY } from '@env';
+import useRemoteConfig from 'src/hooks/useRemoteConfig';
+import AppLoader from 'screens/App/AppLoader/AppLoader';
 
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
@@ -34,7 +36,7 @@ amplitude.init(AMPLITUDE_API_KEY);
 
 const App: FC = (): JSX.Element => {
   const iosPurchaseKey = IO_PUBLICK_RC_IOS || '';
-
+  const { isApiReady } = useRemoteConfig();
 
   const initializeTracking = async () => {
     const start = new Date().getTime();
@@ -54,6 +56,10 @@ const App: FC = (): JSX.Element => {
       Purchases.configure({ apiKey: iosPurchaseKey, });
     }
   }, []);
+
+  if (!isApiReady) {
+    return <AppLoader />;
+  }
 
 
   return (

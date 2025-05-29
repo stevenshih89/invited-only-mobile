@@ -6,8 +6,8 @@ import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet
 import HostButton from '../JoinEvents/Components/EventCard/Components/HostButton/HostButton';
 import EventInfo from '../JoinEvents/Components/EventCard/Components/EventInfo/EventInfo';
 import * as S from './EventProfilePreview.style';
-import ProfilePhotosList from './Components/ProfilePhotosList/EventPhotoslist';
 import EventSlider from './Components/EventPhotoSlider/EventSlider';
+import ProfilePhotosList from 'src/screens/App/UserProfilePreview/Components/ProfilePhotosList/ProfilePhotoslist.tsx';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { blackColor } from 'constants/colors';
 import { RootStackParamList } from 'typescript/types';

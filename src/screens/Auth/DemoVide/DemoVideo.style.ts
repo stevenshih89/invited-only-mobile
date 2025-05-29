@@ -24,7 +24,7 @@ export const ProgressBarContainer = styled.View`
 
 export const ProgressBar = styled.View<{ width: string }>`
   height: 100%;
-  width: ${props => props.width};
+  width: ${(props: { width: any; }) => props.width};
   background-color: ${whiteColor};
   border-radius: 2px;
 `;

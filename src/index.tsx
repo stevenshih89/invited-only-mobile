@@ -17,11 +17,9 @@ import AppLoader from 'screens/App/AppLoader/AppLoader';
 import { blackColor } from 'constants/colors';
 
 const FirebaseCollectionsLoader = ({ children }: { children: React.ReactNode }) => {
-  const { data: firebaseCollectionNames, isLoading } = invitedOnlyBackendApi.useQuery('get', '/config/firebase/collections') as { data: FirebaseCollectionsResponse | undefined, isLoading: boolean };
+  const { data: firebaseCollectionNames, isLoading } = invitedOnlyBackendApi?.useQuery('get', '/config/firebase/collections') as { data: FirebaseCollectionsResponse | undefined, isLoading: boolean };
   const { isStorageReady } = useAuthStore();
 
-  console.log('what is changing', isStorageReady);
-  console.log('firebase collection names', firebaseCollectionNames);
   if (isLoading || !isStorageReady) {
     return <AppLoader />;
   }
