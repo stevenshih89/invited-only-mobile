@@ -1,8 +1,9 @@
+import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
-import { SafeAreaView, TouchableOpacity, View } from 'react-native';
-import { transparentWhite30Color, blackColor, whiteColor } from 'constants/colors';
-import { screenHeight, screenWidth } from 'constants/common';
-import { Satoshi400 } from 'constants/fonts';
+import {SafeAreaView, TouchableOpacity} from 'react-native';
+import {transparentWhite30Color, blackColor, whiteColor} from 'constants/colors';
+import {screenHeight, screenWidth} from 'constants/common';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 
 export const Container = styled.View`
   flex: 1;
@@ -20,13 +21,12 @@ export const HeaderRow = styled.View`
   align-items: center;
   justify-content: space-between;
   padding-horizontal: 24px;
-  padding-top: 20px;
   z-index: 2;
 `;
 
 export const BackButton = styled(TouchableOpacity).attrs({
-    activeOpacity: 0.7,
-    hitSlop: { top: 20, bottom: 20, left: 20, right: 20 },
+  activeOpacity: 0.7,
+  hitSlop: {top: 20, bottom: 20, left: 20, right: 20},
 })`
   width: 40px;
   height: 40px;
@@ -40,32 +40,18 @@ export const Spacer = styled.View`
   width: 40px;
 `;
 
-export const WelcomeImage = styled.Image`
-  width: ${screenWidth * 1}px;
-  height: ${screenHeight * 0.25}px;
-  align-self: center;
-  justify-content: center;
-  border-radius: 10px;
-  bottom: 0;
-  z-index: 0;
-`;
-
 export const BenefitsContainer = styled.View`
-  position: absolute;
   width: ${screenWidth}px;
-  height: ${screenHeight * 0.65}px;
-  left: 0;
-  bottom: 0;
-  background-color: #0C0C0C;
-  padding: 24px;
+  flex: 1;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 24px;
 `;
 
 export const BenefitsTitle = styled.Text`
-  font-family: 'Satoshi';
+  font-family: ${Satoshi500};
   font-style: normal;
-  font-weight: 500;
-  font-size: 32px;
-  line-height: 120%;
+  font-size: ${RFValue(32, 932)}px;
   letter-spacing: -0.019em;
   color: ${whiteColor};
   margin-bottom: 12px;
@@ -111,26 +97,23 @@ export const BenefitContent = styled.View`
 `;
 
 export const BenefitTitle = styled.Text`
-  font-family: 'Satoshi';
+  font-family: ${Satoshi500};
   font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 120%;
+  font-size: ${RFValue(16, 932)}px;
   color: ${whiteColor};
 `;
 
 export const BenefitDescription = styled.Text`
-  font-family: 'Satoshi';
+  font-family: ${Satoshi400};
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: ${RFValue(14, 932)}px;
   color: ${whiteColor};
   opacity: 0.64;
 `;
 
 export const ButtonContainer = styled(TouchableOpacity).attrs({
-    activeOpacity: 0.7,
+  activeOpacity: 0.7,
 })`
   background-color: ${whiteColor};
   border-radius: 30px;
@@ -148,4 +131,23 @@ export const ButtonText = styled.Text`
   font-size: 16px;
   line-height: 120%;
   color: ${blackColor};
+`;
+
+export const BenefitIconContainer = styled.View`
+  background-color: #0f0f0f;
+  border-radius: 14px;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+`;
+
+export const WelcomeImageContainer = styled.View`
+  width: 100%;
+  height: ${screenHeight / 4}px;
+`;
+
+export const WelcomeImage = styled.Image`
+  width: 100%;
+  height: 100%;
 `;

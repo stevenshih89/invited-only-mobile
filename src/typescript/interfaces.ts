@@ -1,3 +1,4 @@
+import React from 'react';
 import {KeyboardType, StyleProp, TextStyle, ViewStyle} from 'react-native';
 
 export interface ButtonProps {
@@ -19,7 +20,7 @@ export interface InputProps {
   placeholder?: string;
   isError?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
-  inputStyle?: StyleProp<ViewStyle>;
+  inputStyle?: StyleProp<TextStyle>;
   labelStyle?: TextStyle;
   containerInnerStyle?: StyleProp<ViewStyle>;
   onChange: (val: string) => void;

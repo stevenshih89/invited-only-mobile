@@ -1,16 +1,17 @@
-import React, { useCallback } from 'react';
-import { ActivityIndicator } from 'react-native';
+import React, {useCallback} from 'react';
+import {ActivityIndicator} from 'react-native';
 
 import * as S from './EulaScreen.style';
-import { useEulaData } from './hooks/useEulaData';
-import { whiteColor } from 'constants/colors';
+import {useEulaData} from './hooks/useEulaData';
+import {whiteColor} from 'constants/colors';
 import BackButton from 'src/sharedComponents/BackButton/BackButton';
+import Button from 'components/Button/Button';
 
 const Eula = () => {
-  const { dataEula, loading, endReached, onEndReached, navigation } = useEulaData();
+  const {dataEula, loading, endReached, onEndReached, navigation} = useEulaData();
 
   const renderItem = useCallback(
-    (item: { id: number; title: string; description: string }) => (
+    (item: {id: number; title: string; description: string}) => (
       <S.ItemContainer isLast={item.id === dataEula.length - 1}>
         {item.title && <S.ItemTitle>{item.title}</S.ItemTitle>}
         <S.ItemDescription>{item.description}</S.ItemDescription>
@@ -41,17 +42,27 @@ const Eula = () => {
           </S.HeaderRow>
           <S.EulaList
             data={dataEula}
-            keyExtractor={(item: { id: number }) => item.id.toString()}
-            renderItem={({ item }: { item: { id: number; title: string; description: string } }) => renderItem(item)}
+            keyExtractor={(item: {id: number}) => item.id.toString()}
+            renderItem={({item}: {item: {id: number; title: string; description: string}}) => renderItem(item)}
             onEndReached={onEndReached}
           />
           <S.ButtonRow>
-            <S.DenyButton onPress={() => navigation.goBack()}>
-              <S.DenyText>Deny</S.DenyText>
-            </S.DenyButton>
-            <S.AcceptButton enabled={endReached} onPress={() => endReached && navigation.navigate('/choose-enter-type')}>
-              <S.AcceptText>Accept</S.AcceptText>
-            </S.AcceptButton>
+            <Button
+              title="Deny"
+              variant="gray"
+              buttonStyle={{
+                flex: 1,
+              }}
+              onPress={() => navigation.goBack()}
+            />
+            <Button
+              title="Accept"
+              variant="default"
+              buttonStyle={{
+                flex: 1,
+              }}
+              onPress={() => endReached && navigation.navigate('/choose-enter-type')}
+            />
           </S.ButtonRow>
         </S.Container>
       </S.SafeArea>

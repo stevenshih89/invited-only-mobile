@@ -1,6 +1,7 @@
-import React, { FC, JSX } from 'react';
-import { Keyboard } from 'react-native';
+import React, {FC, JSX} from 'react';
+import {Keyboard} from 'react-native';
 
+import {RFValue} from 'react-native-responsive-fontsize';
 import {
   GradientBackground,
   AvoidingContainer,
@@ -15,17 +16,15 @@ import {
   InputContainer,
   ContinueButtonContainer,
 } from './MyEmail.style';
-import { useMyEmail } from './hooks/useMyEmail';
+import {useMyEmail} from './hooks/useMyEmail';
 import Input from 'components/Inputs/Input';
 import AuthProgress from 'components/AuthProgress';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import Button from 'components/Button/Button';
 import BackButton from 'src/sharedComponents/BackButton/BackButton';
 
-
 const MyEmail: FC = (): JSX.Element => {
-  const { email, isValidEmail, handleEmailChange, handleNext, navigation } = useMyEmail();
-
+  const {email, isValidEmail, handleEmailChange, handleNext, navigation} = useMyEmail();
 
   return (
     <GradientBackground>
@@ -46,10 +45,24 @@ const MyEmail: FC = (): JSX.Element => {
                 <InputContainer>
                   <Input
                     testID="input-email"
-                    value={email}
-                    onChange={handleEmailChange}
+                    containerStyle={{
+                      borderColor: 'rgba(239, 85, 85, 1)',
+                      borderWidth: !isValidEmail ? 1 : 0,
+                      borderRadius: 100,
+                      height: 56,
+                    }}
+                    inputStyle={{
+                      fontSize: RFValue(16, 932),
+                    }}
+                    containerInnerStyle={{
+                      height: '100%',
+                      paddingLeft: 16,
+                      backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                    }}
                     isError={!isValidEmail}
                     errorText="Incorrect email"
+                    value={email}
+                    onChange={handleEmailChange}
                     placeholder="Enter your email"
                   />
                 </InputContainer>

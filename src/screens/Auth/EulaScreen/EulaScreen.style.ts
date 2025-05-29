@@ -1,18 +1,16 @@
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
-import { SafeAreaView, View, FlatList, TouchableOpacity, Text } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { backgroundGradientColors, transparentWhite16Color, whiteColor, black1Color, lightGray16Color, backgroundColor } from 'constants/colors';
-import { screenHeight } from 'constants/common';
-import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
+import {SafeAreaView, View, FlatList, TouchableOpacity, Text} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {backgroundGradientColors, transparentWhite16Color, whiteColor, black1Color, lightGray16Color} from 'constants/colors';
+import {screenHeight} from 'constants/common';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 
 // Title
 export const EulaTitle = styled.Text`
   font-family: ${Satoshi500};
   font-size: ${RFValue(20, 812)}px;
   color: ${whiteColor};
-
-
 `;
 export const EulaTitleContainer = styled.View`
   display: flex;
@@ -24,8 +22,8 @@ export const EulaTitleContainer = styled.View`
 // Gradient background
 export const RootGradient = styled(LinearGradient).attrs({
   colors: backgroundGradientColors,
-  start: { x: 0, y: 1 },
-  end: { x: 0, y: 0 },
+  start: {x: 0, y: 1},
+  end: {x: 0, y: 0},
 })`
   flex: 1;
 `;
@@ -42,11 +40,13 @@ export const Container = styled(View)`
 `;
 
 // Header row
-export const HeaderRow = styled(View) <{ withBorder: boolean }>`
+export const HeaderRow = styled(View)<{withBorder: boolean}>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  ${({ withBorder }: { withBorder: boolean }) => withBorder && `
+  ${({withBorder}: {withBorder: boolean}) =>
+    withBorder &&
+    `
     border-bottom-width: 0px;
   `}
   margin-bottom: 30px;
@@ -71,14 +71,15 @@ export const EulaList = styled(FlatList).attrs({
   onEndReachedThreshold: 0.1,
 })`
   flex: 1;
-  
 `;
 
 // Item in list
-export const ItemContainer = styled(View) <{ isLast: boolean }>`
+export const ItemContainer = styled(View)<{isLast: boolean}>`
   border-bottom-width: 1px;
   border-bottom-color: ${transparentWhite16Color};
-  ${({ isLast }: { isLast: boolean }) => isLast && `
+  ${({isLast}: {isLast: boolean}) =>
+    isLast &&
+    `
     border-bottom-width: 0px;
   `}
 `;
@@ -109,6 +110,7 @@ export const LoaderContainer = styled(View)`
 export const ButtonRow = styled(View)`
   flex-direction: row;
   margin-top: 24px;
+  gap: 12px;
 `;
 
 export const DenyButton = styled(TouchableOpacity)`
@@ -123,9 +125,9 @@ export const DenyText = styled(Text)`
   font-size: ${RFValue(20, 932)}px;
 `;
 
-export const AcceptButton = styled(TouchableOpacity) <{ enabled: boolean }>`
+export const AcceptButton = styled(TouchableOpacity)<{enabled: boolean}>`
   flex: 1.7;
-  background-color: ${(props: { enabled: boolean }) => (props.enabled ? whiteColor : lightGray16Color)};
+  background-color: ${(props: {enabled: boolean}) => (props.enabled ? whiteColor : lightGray16Color)};
   border-radius: 18px;
   height: ${screenHeight / 14}px;
   flex-direction: row;

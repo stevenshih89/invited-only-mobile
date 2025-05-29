@@ -35,6 +35,7 @@ export const BadgeBlur = styled(BlurView)`
 
 export const BadgeText = styled.Text`
   color: ${whiteColor};
+  font-family: ${Satoshi500};
   font-size: ${RFValue(20, 932)}px;
 `;
 
@@ -115,7 +116,7 @@ export const NameOverlay = styled(View)`
 
 export const MessageWrapper = styled(View)`
   margin-vertical: auto;
-  gap: 8px;
+  gap: 16px;
 `;
 
 export const MessageTitle = styled.Text`
@@ -129,10 +130,8 @@ export const MessageSubtitle = styled.Text`
   font-size: ${RFValue(18, 932)}px;
   color: ${whiteColor};
   opacity: 0.8;
-  margin-top: 8px;
 `;
 
 export const ButtonWrapper = styled(View)`
   margin-top: auto;
-  margin-bottom: 32px;
 `;

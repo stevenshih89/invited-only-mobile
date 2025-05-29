@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { errorColor, lightGray2Color, whiteColor } from 'constants/colors';
-import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {lightGray2Color, whiteColor} from 'constants/colors';
+import {Satoshi400} from 'constants/fonts';
 
 export const Container = styled.View`
   width: 100%;
@@ -19,7 +19,7 @@ export const TitleText = styled.Text`
   margin-bottom: 12px;
   color: ${whiteColor};
   font-family: ${Satoshi400};
-  font-size: ${RFValue(18, 812)}px;
+  font-size: ${RFValue(18, 932)}px;
 `;
 
 export const WrapperInputIcon = styled.View`
@@ -35,17 +35,18 @@ export const InputField = styled.TextInput`
   padding-left: 12px;
   padding-top: 8px;
   padding-bottom: 0;
-  font-size: ${RFValue(18, 812)}px;
+  font-size: ${RFValue(18, 932)}px;
 `;
 
 export const ErrorText = styled.Text`
-  font-size: ${RFValue(14, 812)}px;
-  font-family: ${Satoshi500};
-  color: ${errorColor};
+  font-size: ${RFValue(14, 932)}px;
+  font-family: ${Satoshi400};
+  color: rgba(239, 85, 85, 1);
 `;
 
 export const WrapperErrorText = styled.View`
-  margin-top: 2px;
+  padding-left: 16px;
+  margin-top: 4px;
   margin-bottom: 4px;
   flex-direction: row;
   align-items: center;

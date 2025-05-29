@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
-import { errorColor, lightGray2Color, whiteColor } from 'constants/colors';
-import { Satoshi400 } from 'constants/fonts';
+import {errorColor, lightGray2Color, whiteColor} from 'constants/colors';
+import {Satoshi400} from 'constants/fonts';
 
 export const Container = styled.View`
   margin-bottom: 16px;
@@ -38,7 +38,7 @@ export const CodeTextStyle = styled.Text`
 
 export const TextContainerStyle = styled.View`
   flex: 1;
-  border-radius: 10px;
+  border-radius: 100px;
   padding-vertical: 0;
   padding-left: 0;
   padding: 0;

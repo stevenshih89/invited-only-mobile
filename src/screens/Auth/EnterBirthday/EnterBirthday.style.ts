@@ -1,11 +1,12 @@
 import styled from 'styled-components/native';
-import { RFValue } from 'react-native-responsive-fontsize';
+import {RFValue} from 'react-native-responsive-fontsize';
 import MaskInput from 'react-native-mask-input';
 import LinearGradient from 'react-native-linear-gradient';
 
-import { screenHeight } from 'constants/common';
-import { lightGray2Color, transparentWhite30Color, whiteColor } from 'constants/colors';
-import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
+import {Text, View, TextInput} from 'react-native';
+import {screenHeight} from 'constants/common';
+import {transparentWhite30Color, whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
 
 export const GradientBackground = styled(LinearGradient).attrs({
   // Set default gradient props if needed, or pass them in the component
@@ -76,19 +77,15 @@ export const DateInputRow = styled.View`
   height: 64px;
 `;
 
-interface DateInputContainerProps {
-  marginRight?: number;
-  marginHorizontal?: number;
-  marginLeft?: number;
-}
-
-export const DateInputContainer = styled.View<DateInputContainerProps>`
-  flex: 1;
-  margin-right: ${({ marginRight }: DateInputContainerProps) => marginRight || 0}px;
-  margin-left: ${({ marginLeft }: DateInputContainerProps) => marginLeft || 0}px;
-  margin-horizontal: ${({ marginHorizontal }: DateInputContainerProps) => marginHorizontal || 0}px;
+export const DateInputContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 100px;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.04);
 `;
-
 export const InputLabel = styled.Text`
   color: ${whiteColor};
   font-family: ${Satoshi700};
@@ -96,15 +93,11 @@ export const InputLabel = styled.Text`
 `;
 
 export const StyledMaskInput = styled(MaskInput)`
-  height: 64;
-  flex: 1;
+  font-family: ${Satoshi400};
+  font-size: ${RFValue(18, 932)}px;
   color: ${whiteColor};
-  border-radius: 10px;
-  background-color: ${lightGray2Color};
-  /* Adjust height/flex based on usage in component */
-  height: 64px;
-  padding-horizontal: 20px;
-  margin-top: 12px;
+  border-radius: 100px;
+  flex: 1;
 `;
 
 export const ShowAgeContainer = styled.View`
@@ -122,7 +115,8 @@ export const ShowAgeText = styled.Text`
 `;
 
 export const BottomContent = styled.View`
-  padding-bottom: ${screenHeight / 22}px; /* Adjust as needed */
+  padding-bottom: ${screenHeight / 40}px;
+  gap: 16px;
   width: 100%;
 `;
 
@@ -135,4 +129,46 @@ export const SkipButtonText = styled.Text`
   color: ${whiteColor};
   font-family: ${Satoshi700};
   font-size: ${RFValue(16, 932)}px;
+`;
+
+export const ErrorText = styled.Text`
+  color: #ff3b30;
+  font-size: 14px;
+  margin-top: 8px;
+`;
+export const HalfFieldContainer = styled(View)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+  width: 100%;
+`;
+export const FieldLabel = styled(Text)`
+  font-family: ${Satoshi500};
+  font-style: normal;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  color: #ffffff;
+`;
+
+export const Input = styled.TouchableOpacity`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px;
+  gap: 10px;
+  width: 100%;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 99px;
+`;
+
+export const StyledTextInput = styled(TextInput)`
+  color: #ffffff;
+  width: 100%;
+  font-family: ${Satoshi500};
+  font-size: 18px;
 `;

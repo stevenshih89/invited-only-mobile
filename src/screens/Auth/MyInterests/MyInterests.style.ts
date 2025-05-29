@@ -45,7 +45,7 @@ export const Wrapper = styled(View)`
   justify-content: space-between;
   padding-bottom: 0px;
   padding-horizontal: 24px;
-  padding-top: ${screenHeight / 29}px;
+  padding-top: 16px;
 `;
 
 export const Header = styled(View)`
@@ -81,7 +81,7 @@ export const Title = styled(Text)`
   color: ${whiteColor};
   font-family: ${Satoshi500};
   font-size: ${RFValue(32, 932)}px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 `;
 
 export const Subtitle = styled(Text)`

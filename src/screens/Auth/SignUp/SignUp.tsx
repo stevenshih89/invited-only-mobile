@@ -1,27 +1,29 @@
-import React, { FC, useState, useContext, JSX } from 'react';
-import { Keyboard, KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
+import React, {FC, useState, useContext, JSX} from 'react';
+import {Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback, View} from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
 import LinearGradient from 'react-native-linear-gradient';
-import { InputPhoneView } from '../../../components/Inputs/InputPhoneView';
+import {InputPhoneView} from '../../../components/Inputs/InputPhoneView';
 import * as S from './SignUp.styles';
-import { isIos } from 'constants/common';
-import { backgroundGradientColors } from 'constants/colors';
+import {isIos} from 'constants/common';
+import {backgroundGradientColors} from 'constants/colors';
 import Button from 'components/Button/Button';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import { showToast } from 'helpers/showToast.ts';
-import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {showToast} from 'helpers/showToast.ts';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import invitedOnlyBackendApi from 'src/api/backend-api';
+import AuthProgress from 'components/AuthProgress';
+import BackButton from 'src/sharedComponents/BackButton/BackButton';
 
 const SignUp: FC = (): JSX.Element => {
   const [mobilePhone, setMobilePhone] = useState<string>('');
 
   const [isValidPhone, setIsValidPhone] = useState<boolean>(false);
   const [isDisabledValidation, setIsDisabledValidation] = useState<boolean>(true);
-  const { mutate: sendPhoneNumber, isPending: isLoading } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
+  const {mutate: sendPhoneNumber, isPending: isLoading} = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
   const navigation = useAppNavigation();
-  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
 
   async function signUpWithPhoneNumber() {
     try {
@@ -44,7 +46,6 @@ const SignUp: FC = (): JSX.Element => {
         mobilePhone: phone,
         isLogin: false,
       });
-
     } catch (e: any) {
       logErrorToSentry(e);
       showToast('inviteMatch', `${e?.message.split(']')[1] || 'Error processing request'}`);
@@ -59,15 +60,21 @@ const SignUp: FC = (): JSX.Element => {
   };
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} style={{ flex: 1 }}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1, paddingBottom: 0 }}>
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
+      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{ flex: 1, paddingBottom: 0 }}>
+          <S.SafeArea>
             <S.Container>
               <S.ContentContainer>
-                <S.LogoContainer>
-                  <S.LogoImage />
-                </S.LogoContainer>
+                <S.TopRow>
+                  <BackButton onPress={() => navigation.goBack()} />
+                  <S.LogoContainer>
+                    <S.LogoImage />
+                  </S.LogoContainer>
+                  <View>
+                    <AuthProgress startPercentage={0} endPercentage={10} animationDuration={1000} />
+                  </View>
+                </S.TopRow>
                 <S.HeaderContainer>
                   <S.Title>Your phone</S.Title>
                   <S.Subtitle>We protect our community by ensuring the authenticity of everyone in IO.</S.Subtitle>
@@ -87,7 +94,7 @@ const SignUp: FC = (): JSX.Element => {
                 <Button disabled={!isValidPhone && isLoading} loading={isLoading} onPress={handleSignUp} title="Continue" />
               </S.ButtonContainer>
             </S.Container>
-          </SafeAreaView>
+          </S.SafeArea>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </LinearGradient>

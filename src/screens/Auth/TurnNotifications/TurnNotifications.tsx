@@ -1,23 +1,21 @@
-import React, { useState } from 'react';
-import { Keyboard } from 'react-native';
-import { Switch } from '@ant-design/react-native';
+import React, {useState} from 'react';
+import {Keyboard} from 'react-native';
 import * as S from './TurnNotifications.style';
-import { grayColor, toggleColor } from 'constants/colors';
+import {blackColor, whiteColor} from 'constants/colors';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 
 import Button from 'components/Button/Button';
 import AuthProgress from 'components/AuthProgress';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import { useAuthStore } from 'src/store/authStore';
-import { addPhotosPath } from 'constants/pathLocations';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {useAuthStore} from 'src/store/authStore';
 import useMessaging from 'hooks/useMessaging';
 import BackButton from 'src/sharedComponents/BackButton/BackButton';
 
 const TurnNotifications = () => {
   const [notifications, setNotifications] = useState<boolean>(true);
-  const { onBoarding, setOnBoarding } = useAuthStore();
+  const {onBoarding, setOnBoarding} = useAuthStore();
   const navigation = useAppNavigation();
-  const { setupNotifications } = useMessaging();
+  const {setupNotifications} = useMessaging();
 
   const handleNext = async () => {
     setOnBoarding({
@@ -59,17 +57,21 @@ const TurnNotifications = () => {
             </S.Row>
             <S.TitleWrapper>
               <S.Title>Confirm access</S.Title>
-              <S.Subtitle>You’ll need to enable notifications in order to use Invited Only. </S.Subtitle>
+              <S.Subtitle>{`You’ll need to enable notifications in order to use Invited Only.`}</S.Subtitle>
             </S.TitleWrapper>
             <S.ToggleRow>
               <S.ToggleLabel>Notifications</S.ToggleLabel>
-              <Switch trackColor={{ false: grayColor, true: toggleColor }} checked={notifications} onChange={handleNotificationsChange} />
+              <S.StyledSwitch
+                testID="requests-switch"
+                trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
+                thumbColor={notifications ? blackColor : whiteColor}
+                value={notifications}
+                onValueChange={handleNotificationsChange}
+              />
             </S.ToggleRow>
             <S.ButtonContainer>
               <Button onPress={handleNext} title="Continue" />
-              <S.SkipButton onPress={() => navigation.navigate(addPhotosPath as never)}>
-                <S.SkipText>Skip</S.SkipText>
-              </S.SkipButton>
+              <Button onPress={handleNext} title="Skip" variant="gray" />
             </S.ButtonContainer>
           </S.Wrapper>
         </S.SafeArea>

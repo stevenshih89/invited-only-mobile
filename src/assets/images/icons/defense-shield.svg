@@ -1,0 +1,11 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Defense-Shield-Ability--Streamline-Ultimate" opacity="0.5" clip-path="url(#clip0_2627_55860)">
+<path id="Vector" d="M10.5075 19.0025C10.1832 19.1298 9.82198 19.1298 9.49365 19.0025C4.29315 16.9954 0.861724 11.996 0.853516 6.41792V2.30923C0.853516 1.53348 1.48562 0.901367 2.26138 0.901367H17.7397C18.5155 0.901367 19.1476 1.53348 19.1476 2.30923V6.41792C19.1435 11.9919 15.708 16.9913 10.5075 18.9984V19.0025Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M10.3023 14.8135C10.1084 14.8869 9.89252 14.8869 9.69627 14.8135C6.58743 13.6556 4.53616 10.7719 4.53125 7.5542V5.18418C4.53125 4.73669 4.90912 4.37207 5.37286 4.37207H14.6257C15.0894 4.37207 15.4674 4.73669 15.4674 5.18418V7.5542C15.4649 10.7695 13.4111 13.6533 10.3023 14.811V14.8135Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<defs>
+<clipPath id="clip0_2627_55860">
+<rect width="20" height="20" fill="white"/>
+</clipPath>
+</defs>
+</svg>

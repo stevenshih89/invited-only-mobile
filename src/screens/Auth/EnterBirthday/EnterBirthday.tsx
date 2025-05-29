@@ -1,81 +1,46 @@
-import { FC, JSX, useState } from 'react';
-import { Keyboard, TouchableWithoutFeedback } from 'react-native';
-import { Switch } from '@ant-design/react-native';
+import {FC, JSX, useState} from 'react';
+import {Keyboard, TouchableWithoutFeedback} from 'react-native';
+import {Switch} from '@ant-design/react-native';
+import DatePicker from 'react-native-date-picker';
 import * as S from './EnterBirthday.style';
-import { isIos } from 'constants/common';
+import {isIos} from 'constants/common';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import { backgroundGradientColors, grayColor, toggleColor, whiteColor } from 'constants/colors';
+import {backgroundGradientColors, grayColor, toggleColor, whiteColor} from 'constants/colors';
 import Button from 'components/Button/Button';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import CalendarIcon from 'assets/images/icons/calendar-new.svg';
 import AuthProgress from 'components/AuthProgress';
 
-import { useAuthStore } from 'src/store/authStore';
+import {useAuthStore} from 'src/store/authStore';
 import BackButton from 'src/sharedComponents/BackButton/BackButton';
 
 const EnterBirthday: FC = (): JSX.Element => {
-  const [month, setMonth] = useState<string>('');
-  const [day, setDay] = useState<string>('');
-  const [year, setYear] = useState<string>('');
   const [showAge, setShowAge] = useState<boolean>(false);
-  const { onBoarding, setOnBoarding } = useAuthStore();
+  const {onBoarding, setOnBoarding} = useAuthStore();
+  const [date, setDate] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleShowAge = (value: boolean): void => {
     setShowAge(value);
   };
-  const handleMonthChange = (input: string): void => {
-    const numericInput = input.replace(/[^0-9]/g, '');
-    const trimmedInput = numericInput.slice(0, 2);
-    const monthInt = parseInt(trimmedInput, 10);
 
-    if (trimmedInput.length === 2 && (monthInt < 1 || monthInt > 12)) {
-      return;
-    }
-    setMonth(trimmedInput);
-  };
+  const getDateString = (date: Date) => {
+    if (!date) return '';
 
-  const checkMonth = () => {
-    if (month.length === 1 && Number(month) >= 1 && Number(month) <= 9) {
-      setMonth(`0${month}`);
-    }
-  };
+    const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+    const adjustedDate = new Date(date.getTime() + userTimezoneOffset);
 
-  const checkDay = () => {
-    if (day.length === 1 && Number(day) >= 1 && Number(day) <= 9) {
-      setDay(`0${day}`);
-    }
-  };
-
-  const handleDayChange = (input: string): void => {
-    const numericInput = input.replace(/[^0-9]/g, '');
-    const trimmedInput = numericInput.slice(0, 2);
-    const dayInt = parseInt(trimmedInput, 10);
-
-    if (trimmedInput.length === 2 && (dayInt < 1 || dayInt > 31)) {
-      return;
-    }
-
-    setDay(trimmedInput);
-  };
-
-  const handleYearChange = (input: string) => {
-    const numericInput = input.replace(/[^0-9]/g, '');
-    const trimmedInput = numericInput.slice(0, 4);
-    const currentYear = new Date().getFullYear();
-    const yearInt = parseInt(trimmedInput, 10);
-
-    if (trimmedInput.length === 4 && (yearInt < 1900 || yearInt > currentYear)) {
-      return;
-    }
-
-    setYear(trimmedInput);
+    const month = String(adjustedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(adjustedDate.getDate()).padStart(2, '0');
+    const year = String(adjustedDate.getFullYear());
+    return `${month}/${day}/${year}`;
   };
 
   const handleNext = () => {
-    if (!day || !month || !year) {
-      return;
-    }
+    if (!date) return;
+
+    const formattedDate = getDateString(date);
+    const [month, day, year] = formattedDate.split('/');
 
     setOnBoarding({
       ...onBoarding,
@@ -105,7 +70,7 @@ const EnterBirthday: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
   return (
-    <S.GradientBackground colors={backgroundGradientColors} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }}>
+    <S.GradientBackground colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}}>
       <S.KeyboardAvoidingWrapper behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <S.InnerWrapper>
@@ -120,50 +85,38 @@ const EnterBirthday: FC = (): JSX.Element => {
                   <S.TitleText>Your birthday</S.TitleText>
                   <S.SubtitleText>Add your birthday. You can change it later (optional)</S.SubtitleText>
                 </S.TitleContainer>
-                <S.DateInputRow>
-                  <S.DateInputContainer marginRight={6}>
-                    <S.InputLabel>Month</S.InputLabel>
-                    <S.StyledMaskInput
-                      keyboardAppearance="dark"
-                      value={month}
-                      keyboardType="number-pad"
-                      onBlur={checkMonth}
-                      onChangeText={handleMonthChange}
-                      placeholder="MM"
-                      placeholderTextColor={whiteColor}
-                      mask={[/\d/, /\d/]}
+                <S.HalfFieldContainer>
+                  <S.Input onPress={() => setShowDatePicker(true)}>
+                    <CalendarIcon />
+                    <S.StyledTextInput
+                      placeholder="MM/DD/YYYY"
+                      placeholderTextColor="#767676"
+                      value={date ? getDateString(date || new Date()) : ''}
+                      editable={false}
+                      pointerEvents="none"
                     />
-                  </S.DateInputContainer>
-                  <S.DateInputContainer marginHorizontal={6}>
-                    <S.InputLabel>Day</S.InputLabel>
-                    <S.StyledMaskInput
-                      keyboardAppearance="dark"
-                      value={day}
-                      keyboardType="number-pad"
-                      onBlur={checkDay}
-                      onChangeText={handleDayChange}
-                      placeholder="DD"
-                      placeholderTextColor={whiteColor}
-                      mask={[/\d/, /\d/]}
-                    />
-                  </S.DateInputContainer>
-                  <S.DateInputContainer marginLeft={6}>
-                    <S.InputLabel>Year</S.InputLabel>
-                    <S.StyledMaskInput
-                      keyboardAppearance="dark"
-                      value={year}
-                      keyboardType="number-pad"
-                      onChangeText={handleYearChange}
-                      placeholder="YYYY"
-                      placeholderTextColor={whiteColor}
-                      mask={[/\d/, /\d/, /\d/, /\d/]}
-                    />
-                  </S.DateInputContainer>
-                </S.DateInputRow>
+                  </S.Input>
+                  <DatePicker
+                    open={showDatePicker}
+                    onCancel={() => {
+                      setShowDatePicker(false);
+                    }}
+                    modal
+                    theme="dark"
+                    minimumDate={new Date(1900, 0, 1)}
+                    maximumDate={new Date()}
+                    date={date || new Date()}
+                    mode="date"
+                    onConfirm={date => {
+                      setDate(date);
+                      setShowDatePicker(false);
+                    }}
+                  />
+                </S.HalfFieldContainer>
                 <S.ShowAgeContainer>
                   <S.ShowAgeText>Show my age on my profile</S.ShowAgeText>
                   <Switch
-                    trackColor={{ false: grayColor, true: toggleColor }}
+                    trackColor={{false: grayColor, true: toggleColor}}
                     thumbTintColor={whiteColor}
                     checked={showAge}
                     onChange={handleShowAge}
@@ -171,14 +124,8 @@ const EnterBirthday: FC = (): JSX.Element => {
                 </S.ShowAgeContainer>
               </S.TopContent>
               <S.BottomContent>
-                <Button
-                  title="Next"
-                  disabled={!day || !month || !year || year.length < 4 || month.length < 2 || day.length < 2}
-                  onPress={handleNext}
-                />
-                <S.SkipButton onPress={handleSkip}>
-                  <S.SkipButtonText>Skip</S.SkipButtonText>
-                </S.SkipButton>
+                <Button title="Next" onPress={handleNext} />
+                <Button title="Skip" variant="gray" onPress={handleSkip} />
               </S.BottomContent>
             </S.ContentContainer>
           </S.InnerWrapper>

@@ -1,18 +1,19 @@
-import { Dimensions } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
+import {Dimensions} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
-import { Satoshi400, Satoshi700 } from 'constants/fonts';
-import { lightGray19Color, whiteColor, backgroundGradientColors } from 'constants/colors';
-import { screenHeight, screenWidth } from 'constants/common';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import {lightGray19Color, whiteColor, backgroundGradientColors} from 'constants/colors';
+import {screenHeight, screenWidth} from 'constants/common';
 
 export const OnBoardingTextTitle = styled.Text`
   color: white;
   text-align: center;
   letter-spacing: -0.5px;
-  width: ${screenWidth * 0.7}px;
+  margin-left: 24px;
+  margin-right: 24px;
   font-family: ${Satoshi700};
-  font-size: ${RFValue(22, 812)}px;
+  font-size: ${RFValue(28, 932)}px;
 `;
 
 export const BgCardImage = styled.Image`
@@ -92,8 +93,8 @@ export const SignInText = styled.Text`
 // Root gradient background
 export const RootGradient = styled(LinearGradient).attrs({
   colors: backgroundGradientColors,
-  start: { x: 0, y: 1 },
-  end: { x: 0, y: 0 },
+  start: {x: 0, y: 1},
+  end: {x: 0, y: 0},
 })`
   flex: 1;
 `;
@@ -124,7 +125,6 @@ export const BottomContainer = styled.View`
   align-items: center;
   padding-horizontal: 24px;
   width: 100%;
-  margin-bottom: 10px;
 `;
 
 // Wrapper for button and GetAccessContainer
@@ -143,15 +143,15 @@ export const TermsContainer = styled.View`
 
 export const TermsText = styled.Text`
   font-family: ${Satoshi400};
-  font-size: ${RFValue(14, 932)}px;
+  font-size: ${RFValue(12, 932)}px;
   color: ${lightGray19Color};
   text-align: center;
   line-height: 20px;
 `;
 
 export const TermsLink = styled.Text`
-  font-family: ${Satoshi700};
-  font-size: ${RFValue(14, 932)}px;
+  font-family: ${Satoshi500};
+  font-size: ${RFValue(12, 932)}px;
   color: ${whiteColor};
   text-decoration: underline;
 `;

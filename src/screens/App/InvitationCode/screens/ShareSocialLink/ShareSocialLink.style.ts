@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { GradientBorderView } from '@good-react-native/gradient-border';
-import { blackColor, whiteColor } from 'constants/colors';
-import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {GradientBorderView} from '@good-react-native/gradient-border';
+import {blackColor, whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 
 interface SocialButtonProps {
   isSelected?: boolean;
@@ -14,7 +14,9 @@ export const SafeArea = styled.SafeAreaView`
 export const Container = styled.View`
   flex: 1;
   background-color: ${blackColor};
-  padding: 24px;
+  padding-top: 24px;
+  padding-left: 24px;
+  padding-right: 24px;
   justify-content: space-between;
 `;
 
@@ -49,7 +51,7 @@ export const SocialButton = styled.TouchableOpacity<SocialButtonProps>`
   flex: 1;
   height: 56px;
   border-radius: 28px;
-  background-color: ${({ isSelected }: SocialButtonProps) => (isSelected ? '#333333' : '#1E1E1E')};
+  background-color: ${({isSelected}: SocialButtonProps) => (isSelected ? '#333333' : '#1E1E1E')};
   align-items: center;
   justify-content: center;
 `;
@@ -62,7 +64,7 @@ export const Input = styled.TextInput`
   padding: 0 16px;
   color: ${whiteColor};
   font-family: ${Satoshi400};
-  font-size: ${RFValue(16, 932)}px;
+  font-size: ${RFValue(18, 932)}px;
 `;
 
 export const HelpButton = styled.TouchableOpacity`
@@ -81,7 +83,7 @@ export const HelpText = styled.Text`
 export const GradientCell = styled(GradientBorderView)`
   border-width: 1px;
   border-radius: 100px;
-  background-color: ${({ backgroundColor }: { backgroundColor: string }) => backgroundColor};
+  background-color: ${({backgroundColor}: {backgroundColor: string}) => backgroundColor};
   height: 56px;
   flex: 1;
   align-items: center;

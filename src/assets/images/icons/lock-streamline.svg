@@ -1,0 +1,13 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Lock-8--Streamline-Ultimate" opacity="0.5" clip-path="url(#clip0_2627_55876)">
+<path id="Vector" d="M16.875 16.875C16.875 17.538 16.6116 18.1739 16.1428 18.6428C15.6739 19.1116 15.038 19.375 14.375 19.375H4.375C3.71196 19.375 3.07607 19.1116 2.60723 18.6428C2.13839 18.1739 1.875 17.538 1.875 16.875V9.375C1.875 8.71196 2.13839 8.07607 2.60723 7.60723C3.07607 7.13839 3.71196 6.875 4.375 6.875H14.375C15.038 6.875 15.6739 7.13839 16.1428 7.60723C16.6116 8.07607 16.875 8.71196 16.875 9.375" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M5.625 6.875V4.375C5.625 3.38044 6.02009 2.42661 6.72335 1.72335C7.42661 1.02009 8.38044 0.625 9.375 0.625C10.3696 0.625 11.3234 1.02009 12.0266 1.72335C12.7299 2.42661 13.125 3.38044 13.125 4.375V6.875" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_3" d="M13.125 11.875H18.125" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_4" d="M13.125 14.375H18.125" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<defs>
+<clipPath id="clip0_2627_55876">
+<rect width="20" height="20" fill="white"/>
+</clipPath>
+</defs>
+</svg>

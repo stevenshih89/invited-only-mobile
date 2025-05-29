@@ -1,23 +1,26 @@
 import styled from 'styled-components/native';
-import { KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback, View, TouchableOpacity, ImageBackground, Text } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import { RFValue } from 'react-native-responsive-fontsize';
 import {
-  backgroundGradientColors,
-  black1Color,
-  blackColor,
-  errorColor,
-  lightGray2Color,
-  transparentWhite30Color,
-  whiteColor,
-} from 'constants/colors';
-import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
-import { isIos, screenHeight } from 'constants/common';
+  KeyboardAvoidingView,
+  SafeAreaView,
+  TouchableWithoutFeedback,
+  View,
+  TouchableOpacity,
+  ImageBackground,
+  Text,
+  ViewProps,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {BlurView} from '@react-native-community/blur';
+import Animated from 'react-native-reanimated';
+import {backgroundGradientColors, black1Color, errorColor, whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import {isIos, screenHeight} from 'constants/common';
 
 export const GradientBackground = styled(LinearGradient).attrs({
   colors: backgroundGradientColors,
-  start: { x: 0, y: 1 },
-  end: { x: 0, y: 0 },
+  start: {x: 0, y: 1},
+  end: {x: 0, y: 0},
 })`
   flex: 1;
 `;
@@ -43,7 +46,7 @@ export const Wrapper = styled(View)`
   justify-content: space-between;
   padding-bottom: 0px;
   padding-horizontal: 24px;
-  padding-top: ${screenHeight / 29}px;
+  padding-top: 16px;
 `;
 
 export const Header = styled(View)`
@@ -57,8 +60,6 @@ export const TopRow = styled(View)`
   justify-content: space-between;
 `;
 
-
-
 export const TitleContainer = styled(View)`
   width: 100%;
   margin-bottom: ${screenHeight / 28}px;
@@ -68,8 +69,8 @@ export const TitleContainer = styled(View)`
 export const Title = styled(Text)`
   color: ${whiteColor};
   font-family: ${Satoshi500};
-  font-size: ${RFValue(48, 932)}px;
-  margin-bottom: 18px;
+  font-size: ${RFValue(32, 932)}px;
+  margin-bottom: 16px;
 `;
 
 export const Subtitle = styled(Text)`
@@ -121,7 +122,7 @@ export const PhotoBackground = styled(ImageBackground).attrs({
 
 export const CloseButton = styled(TouchableOpacity).attrs({
   activeOpacity: 0.7,
-  hitSlop: { left: 15, bottom: 10 },
+  hitSlop: {left: 15, bottom: 10},
 })`
   width: 26px;
   height: 26px;
@@ -138,9 +139,9 @@ export const AddPhotoButtonMain = styled(TouchableOpacity).attrs({
   activeOpacity: 0.7,
 })`
   flex: 1;
-  background-color: ${lightGray2Color};
+  background-color: rgba(255, 255, 255, 0.04);
   border-radius: 10px;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding-bottom: 10px;
 `;
@@ -149,30 +150,97 @@ export const AddPhotoButtonSmall = styled(TouchableOpacity).attrs({
   activeOpacity: 0.7,
 })`
   flex: 1;
-  background-color: ${lightGray2Color};
+  background-color: rgba(255, 255, 255, 0.04);
   border-radius: 10px;
   justify-content: center;
   align-items: center;
   padding-bottom: 10px;
 `;
 
-export const LabelContainer = styled(View)`
-  background-color: ${blackColor};
+export const ContinueButtonContainer = styled(View)`
+  margin-bottom: 4px;
+`;
+
+export const PhotoContainer = styled(Animated.View)`
+  width: 48%;
+  aspect-ratio: 7/8;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+export const ImageContainer = styled.View`
+  position: relative;
+  flex: 1;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+export const StyledImageBackground = styled(ImageBackground)`
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+`;
+
+export const ButtonsContainer = styled.View<ViewProps>`
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
+export const ButtonWrapper = styled.View<{backgroundColor?: string}>`
+  position: relative;
+  width: 26px;
+  height: 26px;
+  margin-right: 10px;
+  margin-top: 10px;
+  background-color: ${({backgroundColor}: {backgroundColor?: string}) => backgroundColor || '#232323'};
+  border-radius: 100px;
+`;
+
+export const ButtonBlur = styled(BlurView)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px;
+  overflow: hidden;
+`;
+
+export const Button = styled(TouchableOpacity)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+`;
+
+export const LabelContainer = styled.View`
+  background-color: rgba(35, 35, 35, 0.5);
   border-radius: 42px;
-  padding-horizontal: 10px;
+  padding-horizontal: 16px;
   align-self: center;
   justify-content: center;
   align-items: center;
-  padding-vertical: 5px;
-  margin-bottom: 10px;
+  padding-vertical: 2px;
+  position: absolute;
+  bottom: 6px;
+  overflow: hidden;
 `;
 
-export const LabelText = styled(Text)`
+export const LabelBlur = styled(BlurView)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`;
+
+export const LabelText = styled.Text`
   font-family: ${Satoshi700};
-  font-size: ${RFValue(12, 932)}px;
+  font-size: ${RFValue(14, 932)}px;
   color: ${whiteColor};
-`;
-
-export const ContinueButtonContainer = styled(View)`
-  margin-bottom: 4px;
 `;

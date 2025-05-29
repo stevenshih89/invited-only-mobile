@@ -59,7 +59,7 @@ export const InviteButton = styled.TouchableOpacity`
 `;
 
 export const InviteTitle = styled.Text`
-  font-family: ${Satoshi500};
+  font-family: ${Satoshi400};
   font-size: ${RFValue(14, 932)}px;
   color: ${whiteColor};
 `;
@@ -73,8 +73,10 @@ export const InviteLink = styled.Text`
 `;
 
 export const Description = styled.Text`
+  margin-left: 24px;
+  margin-right: 24px;
   font-family: ${Satoshi400};
-  font-size: ${RFValue(14, 932)}px;
+  font-size: ${RFValue(12, 932)}px;
   color: rgba(130, 130, 130, 1);
   text-align: center;
 `;

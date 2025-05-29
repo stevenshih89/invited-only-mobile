@@ -1,30 +1,30 @@
-import { FC, useRef } from 'react';
-import { ActivityIndicator } from 'react-native';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import {FC, useRef} from 'react';
+import {ActivityIndicator} from 'react-native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 
-import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import HostButton from '../JoinEvents/Components/EventCard/Components/HostButton/HostButton';
 import EventInfo from '../JoinEvents/Components/EventCard/Components/EventInfo/EventInfo';
 import * as S from './EventProfilePreview.style';
 import EventSlider from './Components/EventPhotoSlider/EventSlider';
-import ProfilePhotosList from 'src/screens/App/UserProfilePreview/Components/ProfilePhotosList/ProfilePhotoslist.tsx';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import { blackColor } from 'constants/colors';
-import { RootStackParamList } from 'typescript/types';
+import EventPhotosList from './Components/EventPhotosList/EventPhotosList';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {blackColor} from 'constants/colors';
+import {RootStackParamList} from 'typescript/types';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
-import { useAuthStore } from 'src/store/authStore';
+import {useAuthStore} from 'src/store/authStore';
 
 const EventProfilePreview: FC = () => {
   const route = useRoute<RouteProp<RootStackParamList, '/event-profile-preview'>>();
-  const { event } = route.params;
+  const {event} = route.params;
   const ref = useRef<BottomSheetModal>(null);
-  const { userMetadata } = useAuthStore();
+  const {userMetadata} = useAuthStore();
   const navigation = useAppNavigation();
 
   if (!event) {
     return (
       <S.ProfileContainer>
-        <ActivityIndicator style={{ flex: 1, backgroundColor: blackColor }} />
+        <ActivityIndicator style={{flex: 1, backgroundColor: blackColor}} />
       </S.ProfileContainer>
     );
   }
@@ -39,7 +39,7 @@ const EventProfilePreview: FC = () => {
                 <EventSlider event={event} />
                 <HostButton hostName={event?.hostName || ''} hostImage={event?.hostImage || ''} hostId={event?.hostId || ''} />
                 <EventInfo event={event} />
-                <ProfilePhotosList photosList={event.photos?.map(photo => photo.image || '') || []} />
+                <EventPhotosList photosList={event.photos?.map(photo => photo.image || '') || []} />
               </S.ProfileContainer>
             </S.ContentContainer>
             <S.BlockAndReportContainer>
@@ -49,8 +49,15 @@ const EventProfilePreview: FC = () => {
             </S.BlockAndReportContainer>
           </S.ScrollContainer>
         </S.MainContainer>
-        <ModalReport ref={ref} uidSender={userMetadata?.uid || ''} uid={event?.hostId || ''} handleAutoSwipeLeft={() => { }} onSubmit={() => { navigation.goBack() }} />
-
+        <ModalReport
+          ref={ref}
+          uidSender={userMetadata?.uid || ''}
+          uid={event?.hostId || ''}
+          handleAutoSwipeLeft={() => {}}
+          onSubmit={() => {
+            navigation.goBack();
+          }}
+        />
       </S.SafeAreaContainer>
     </BottomSheetModalProvider>
   );
