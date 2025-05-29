@@ -1,27 +1,20 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as S from './ModalStartInviting.style';
 import ThreeGirls from 'assets/images/app/three-girls.png';
+import { selectIsStartInvitingModalShowed, useAuthStore } from 'src/store/authStore';
 
 const ModalStartInviting: FC = () => {
-  const [isShowed, setIsShowed] = useState(true);
+  const isStartInvitingModalShowed = useAuthStore(selectIsStartInvitingModalShowed);
 
-  const getIsShowedValue = async () => {
-    const isShowedValue = await AsyncStorage.getItem('isShowedStartInviting');
-    setIsShowed(isShowedValue ? JSON.parse(isShowedValue) : false);
-  };
-
-  useEffect(() => {
-    getIsShowedValue();
-  }, []);
+  const { setIsStartInvitingModalShowed } = useAuthStore();
 
   const handleStartInviting = () => {
-    setIsShowed(true);
-    AsyncStorage.setItem('isShowedStartInviting', JSON.stringify(true));
+    setIsStartInvitingModalShowed(true);
   };
 
-  if (isShowed) {
+  if (isStartInvitingModalShowed) {
     return null;
   }
 

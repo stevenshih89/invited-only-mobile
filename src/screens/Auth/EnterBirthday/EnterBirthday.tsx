@@ -12,6 +12,7 @@ import { useAppNavigation } from 'hooks/useAppNavigation';
 import AuthProgress from 'components/AuthProgress';
 
 import { useAuthStore } from 'src/store/authStore';
+import BackButton from 'src/sharedComponents/BackButton/BackButton';
 
 const EnterBirthday: FC = (): JSX.Element => {
   const [month, setMonth] = useState<string>('');
@@ -111,12 +112,7 @@ const EnterBirthday: FC = (): JSX.Element => {
             <S.ContentContainer>
               <S.TopContent>
                 <S.HeaderContainer>
-                  <S.BackButton
-                    onPress={() => navigation.goBack()}
-                    activeOpacity={0.7}
-                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
-                    <ArrowLeft />
-                  </S.BackButton>
+                  <BackButton onPress={() => navigation.goBack()} />
                   <LogoPrimary2 />
                   <AuthProgress startPercentage={40} endPercentage={50} animationDuration={1000} />
                 </S.HeaderContainer>

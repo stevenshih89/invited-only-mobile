@@ -9,8 +9,8 @@ import { screenHeight, screenWidth } from 'constants/common';
 export const OnBoardingTextTitle = styled.Text`
   color: white;
   text-align: center;
-  word-spacing: 120px;
-  width: ${screenWidth * 0.8}px;
+  letter-spacing: -0.5px;
+  width: ${screenWidth * 0.7}px;
   font-family: ${Satoshi700};
   font-size: ${RFValue(22, 812)}px;
 `;
@@ -19,8 +19,6 @@ export const BgCardImage = styled.Image`
   width: ${screenWidth * 1}px;
   margin-left: ${screenWidth * 0.05}px;
   height: ${screenHeight * 0.5}px;
-
-  opacity: 0.7;
 `;
 
 export const OnBoardingTopViewContainer = styled.View`
@@ -116,7 +114,7 @@ export const Overlay = styled.View`
 
 // Logo container
 export const LogoContainer = styled.View`
-  margin-top: ${Dimensions.get('window').height / 2.5}px;
+  margin-top: ${Dimensions.get('window').height / 2.7}px;
   align-items: center;
 `;
 

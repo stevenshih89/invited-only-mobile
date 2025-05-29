@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {errorColor, lightGray2Color, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { errorColor, lightGray2Color, whiteColor } from 'constants/colors';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
 
 export const Container = styled.View`
   width: 100%;
@@ -54,7 +54,7 @@ export const WrapperErrorText = styled.View`
 export const InputTouchableWrappper = styled.TouchableOpacity`
   width: 100%;
   height: 56px;
-  border-radius: 10px;
+  border-radius: 50px;
   border-width: 0;
   background-color: ${lightGray2Color};
   flex-direction: row;

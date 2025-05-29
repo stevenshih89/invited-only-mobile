@@ -46,6 +46,7 @@ interface AuthState {
   isStorageReady: boolean;
   isDemoVideoWatched: boolean;
   isWelcomeAboardModalShowed: boolean;
+  isStartInvitingModalShowed: boolean;
   setIsStorageReady: (isStorageReady: boolean) => void;
   setUserMetadata: (userMetadata: UserMetadata) => void;
   setOnBoarding: (onBoarding: Partial<OnboardingState>) => void;
@@ -54,6 +55,7 @@ interface AuthState {
   setRefreshToken: (token: string) => void;
   setIsDemoVideoWatched: (isDemoVideoWatched: boolean) => void;
   setIsWelcomeAboardModalShowed: (isShowed: boolean) => void;
+  setIsStartInvitingModalShowed: (isShowed: boolean) => void;
   logout: () => void;
 }
 
@@ -82,6 +84,7 @@ const getInitialState = (
   isStorageReady: false,
   isDemoVideoWatched: false,
   isWelcomeAboardModalShowed: false,
+  isStartInvitingModalShowed: false,
   setIsStorageReady: () => { },
   setUserMetadata: userMetadata =>
     set({
@@ -98,6 +101,7 @@ const getInitialState = (
   setRefreshToken: refreshToken => set({ refreshToken: refreshToken ?? '' }),
   setIsDemoVideoWatched: isDemoVideoWatched => set({ isDemoVideoWatched: isDemoVideoWatched ?? false }),
   setIsWelcomeAboardModalShowed: isWelcomeAboardModalShowed => set({ isWelcomeAboardModalShowed: isWelcomeAboardModalShowed ?? false }),
+  setIsStartInvitingModalShowed: isStartInvitingModalShowed => set({ isStartInvitingModalShowed: isStartInvitingModalShowed ?? false }),
   logout: () =>
     set(state => ({
       userMetadata: { ...getInitialState(set).userMetadata },
@@ -125,6 +129,7 @@ export const useAuthStore = create<AuthState>()(
         onBoarding: state.onBoarding,
         isDemoVideoWatched: state.isDemoVideoWatched,
         isWelcomeAboardModalShowed: state.isWelcomeAboardModalShowed,
+        isStartInvitingModalShowed: state.isStartInvitingModalShowed,
       }),
       onRehydrateStorage: () => (state, error) => {
         if (error) {
@@ -142,3 +147,4 @@ export const selectIsStorageReady = (state: AuthState): boolean => state.isStora
 export const selectIsFirstLogin = (state: AuthState): boolean => state.userMetadata.firstLogin;
 export const selectIsDemoVideoWatched = (state: AuthState): boolean => state.isDemoVideoWatched;
 export const selectIsWelcomeAboardModalShowed = (state: AuthState): boolean => state.isWelcomeAboardModalShowed;
+export const selectIsStartInvitingModalShowed = (state: AuthState): boolean => state.isStartInvitingModalShowed;

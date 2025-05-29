@@ -9,7 +9,6 @@ import {
   Wrapper,
   Header,
   TopRow,
-  BackButton,
   TitleContainer,
   Title,
   Subtitle,
@@ -20,8 +19,9 @@ import { useMyEmail } from './hooks/useMyEmail';
 import Input from 'components/Inputs/Input';
 import AuthProgress from 'components/AuthProgress';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Button from 'components/Button/Button';
+import BackButton from 'src/sharedComponents/BackButton/BackButton';
+
 
 const MyEmail: FC = (): JSX.Element => {
   const { email, isValidEmail, handleEmailChange, handleNext, navigation } = useMyEmail();
@@ -35,15 +35,13 @@ const MyEmail: FC = (): JSX.Element => {
             <Wrapper>
               <Header>
                 <TopRow>
-                  <BackButton onPress={() => navigation.goBack()}>
-                    <ArrowLeft />
-                  </BackButton>
+                  <BackButton onPress={() => navigation.goBack()} />
                   <LogoPrimary2 />
                   <AuthProgress startPercentage={80} endPercentage={90} animationDuration={1000} />
                 </TopRow>
                 <TitleContainer>
                   <Title>Your email</Title>
-                  <Subtitle>{"Don't lose access to your account, verify your email"}</Subtitle>
+                  <Subtitle>{"Don't lose access to your account, add your email."}</Subtitle>
                 </TitleContainer>
                 <InputContainer>
                   <Input

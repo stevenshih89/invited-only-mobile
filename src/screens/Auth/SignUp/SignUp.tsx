@@ -74,6 +74,7 @@ const SignUp: FC = (): JSX.Element => {
                 </S.HeaderContainer>
                 <S.InputContainer>
                   <InputPhoneView
+                    placeholder="Enter your phone number"
                     testID="phone-input"
                     value={mobilePhone}
                     setIsValid={setIsValidPhone}

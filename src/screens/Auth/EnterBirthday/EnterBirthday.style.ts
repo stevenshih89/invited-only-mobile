@@ -54,7 +54,7 @@ export const BackButton = styled.TouchableOpacity`
 export const TitleContainer = styled.View`
   width: 100%;
   margin-bottom: ${screenHeight / 26}px;
-  margin-top: ${screenHeight / 11.5}px;
+  margin-top: ${screenHeight / 20}px;
 `;
 
 export const TitleText = styled.Text`

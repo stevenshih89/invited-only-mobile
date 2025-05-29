@@ -18,7 +18,7 @@ const IOWrapper = () => {
   const { events, isLoading } = useEventsDetails();
 
   const { user, isLoading: isLoadingUser } = useUser();
-  const isLocked = user?.uid && !user?.accountReviewed
+  const isLocked = user?.uid && !user?.accountPremium
 
   const { data: highRankUsers, isLoading: isLoadingHighRankUsers } = useGetHighRankUsers({ isLocked });
 
@@ -33,6 +33,7 @@ const IOWrapper = () => {
       </DefaultBackground>
     );
   }
+
 
   if (events.length === 0) {
     return (

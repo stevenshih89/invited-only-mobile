@@ -9,7 +9,7 @@ import {
   Wrapper,
   Header,
   TopRow,
-  BackButton,
+
   TitleContainer,
   Title,
   Subtitle,
@@ -24,9 +24,10 @@ import AuthProgress from 'components/AuthProgress';
 import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
 import { isName } from 'helpers/regExpValidators';
+import BackButton from 'src/sharedComponents/BackButton/BackButton';
 
 const EnterName: FC = (): JSX.Element => {
-  const { onBoarding, setOnBoarding, userMetadata } = useAuthStore();
+  const { onBoarding, setOnBoarding } = useAuthStore();
 
   const [errorInputName, setErrorInputName] = useState<boolean>(false);
   const [name, setName] = useState<string>(onBoarding.registrationDetails?.name || '');
@@ -48,7 +49,6 @@ const EnterName: FC = (): JSX.Element => {
     if (!name) {
       return;
     }
-    console.log('name', name, onBoarding);
     setOnBoarding({
       ...onBoarding,
       onboardingStep: '/turn-notifications',
@@ -65,9 +65,7 @@ const EnterName: FC = (): JSX.Element => {
             <Wrapper>
               <Header>
                 <TopRow>
-                  <BackButton onPress={() => navigation.goBack()}>
-                    <ArrowLeft />
-                  </BackButton>
+                  <BackButton onPress={() => navigation.goBack()} />
                   <LogoPrimary2 />
                   <AuthProgress startPercentage={10} endPercentage={20} animationDuration={1000} />
                 </TopRow>
@@ -82,7 +80,7 @@ const EnterName: FC = (): JSX.Element => {
                     errorText="The name must be up to 14 characters long and contain no special characters."
                     value={name}
                     onChange={handleNameChange}
-                    placeholder="Enter your name"
+                    placeholder="Enter your first name"
                   />
                 </InputContainer>
               </Header>

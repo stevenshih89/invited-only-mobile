@@ -2,21 +2,21 @@ import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView, View, FlatList, TouchableOpacity, Text } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { backgroundGradientColors, transparentWhite16Color, whiteColor, black1Color, lightGray16Color } from 'constants/colors';
+import { backgroundGradientColors, transparentWhite16Color, whiteColor, black1Color, lightGray16Color, backgroundColor } from 'constants/colors';
 import { screenHeight } from 'constants/common';
 import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
 
 // Title
 export const EulaTitle = styled.Text`
   font-family: ${Satoshi500};
-  font-size: ${RFValue(20, 990)}px;
+  font-size: ${RFValue(20, 812)}px;
   color: ${whiteColor};
-  text-align: center;
-  margin-bottom: 14px;
+
+
 `;
 export const EulaTitleContainer = styled.View`
   display: flex;
-  width: 60%;
+  width: 80%;
   justify-content: center;
   align-items: center;
 `;
@@ -42,15 +42,23 @@ export const Container = styled(View)`
 `;
 
 // Header row
-export const HeaderRow = styled(View)`
+export const HeaderRow = styled(View) <{ withBorder: boolean }>`
   flex-direction: row;
   justify-content: space-between;
-  border-bottom-width: 1px;
-  border-bottom-color: ${transparentWhite16Color};
+  align-items: center;
+  ${({ withBorder }: { withBorder: boolean }) => withBorder && `
+    border-bottom-width: 0px;
+  `}
+  margin-bottom: 30px;
 `;
 
 export const BackButton = styled(TouchableOpacity)`
-  margin-top: 10px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border-radius: 100px;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
 `;
 
 export const Spacer = styled(View)`
@@ -63,12 +71,16 @@ export const EulaList = styled(FlatList).attrs({
   onEndReachedThreshold: 0.1,
 })`
   flex: 1;
+  
 `;
 
 // Item in list
-export const ItemContainer = styled(View)`
+export const ItemContainer = styled(View) <{ isLast: boolean }>`
   border-bottom-width: 1px;
   border-bottom-color: ${transparentWhite16Color};
+  ${({ isLast }: { isLast: boolean }) => isLast && `
+    border-bottom-width: 0px;
+  `}
 `;
 
 export const ItemTitle = styled(Text)`

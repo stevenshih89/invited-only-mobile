@@ -107,7 +107,7 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
             autoFocus
             defaultCode={getDefaultCountryCode() as any}
             defaultValue={getDefaultPhoneNumber()}
-            placeholder={props.placeholder ? props.placeholder : 'Phone Number'}
+            placeholder={props.placeholder ? props.placeholder : 'Enter your phone number'}
             codeTextStyle={[
               props.codeTextStyle,
               {
@@ -139,7 +139,7 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
                 borderWidth: 1,
                 borderStyle: 'solid',
                 height: 58,
-                borderRadius: 10,
+                borderRadius: 50,
                 flexDirection: 'row',
                 alignItems: 'center',
               },
@@ -149,7 +149,7 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
               {
                 backgroundColor: lightGray2Color,
                 flex: 1,
-                borderRadius: 10,
+                borderRadius: 50,
                 paddingVertical: 0,
                 paddingLeft: 0,
                 marginLeft: 0,
@@ -163,6 +163,7 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
                 fontWeight: '400',
                 fontSize: 16,
                 paddingVertical: 0,
+                borderRadius: 50,
               },
             ]}
             countryPickerProps={{
@@ -176,7 +177,7 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
                   fontSize: 18,
                   backgroundColor: transparentGray60Color,
                   padding: 16,
-                  borderRadius: 10,
+                  borderRadius: 50,
                 },
               },
             }}

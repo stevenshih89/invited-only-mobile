@@ -13,7 +13,7 @@ import { useAppNavigation } from 'hooks/useAppNavigation';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import { backgroundGradientColors } from 'constants/colors';
 import CloseIcon from 'assets/images/icons/close.svg';
-import ModalStartInviting from 'components/Modal/ModalStartInviting/ModalStartInviting';
+
 
 
 const Payment: FC = (): JSX.Element => {
@@ -88,7 +88,6 @@ const Payment: FC = (): JSX.Element => {
           </S.ButtonContainer>
         </ScrollView>
       </S.SafeContainer>
-      <ModalStartInviting />
     </S.GradientContainer>
   );
 };

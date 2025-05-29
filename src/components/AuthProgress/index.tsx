@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react';
-import {View} from 'react-native';
-import Svg, {Circle, Text as SvgText} from 'react-native-svg';
-import Animated, {useSharedValue, useAnimatedProps, withTiming, Easing} from 'react-native-reanimated';
-import {grayScale700, lightGray2Color, whiteColor} from 'constants/colors';
+import React, { useEffect } from 'react';
+import { View } from 'react-native';
+import Svg, { Circle, Text as SvgText } from 'react-native-svg';
+import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing } from 'react-native-reanimated';
+import { grayScale700, lightGray2Color, whiteColor } from 'constants/colors';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -34,7 +34,7 @@ const AuthProgress = ({
   }, [endPercentage]);
 
   return (
-    <View style={{alignItems: 'center', justifyContent: 'center', backgroundColor: lightGray2Color, borderRadius: 40}}>
+    <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: lightGray2Color, borderRadius: 40 }}>
       <Svg height={(radius + borderWidth) * 2} width={(radius + borderWidth) * 2}>
         <Circle stroke={trackColor} fill="none" cx={radius + borderWidth} cy={radius + borderWidth} r={radius} strokeWidth={borderWidth} />
 

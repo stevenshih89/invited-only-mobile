@@ -1,15 +1,15 @@
 import styled from 'styled-components/native';
-import {KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback, View, TouchableOpacity, Text} from 'react-native';
+import { KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback, View, TouchableOpacity, Text } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {isIos, screenHeight} from 'constants/common';
-import {backgroundGradientColors, transparentWhite30Color, whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { isIos, screenHeight } from 'constants/common';
+import { backgroundGradientColors, transparentWhite30Color, whiteColor } from 'constants/colors';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
 
 export const GradientBackground = styled(LinearGradient).attrs({
   colors: backgroundGradientColors,
-  start: {x: 0, y: 1},
-  end: {x: 0, y: 0},
+  start: { x: 0, y: 1 },
+  end: { x: 0, y: 0 },
 })`
   flex: 1;
 `;
@@ -50,7 +50,7 @@ export const TopRow = styled(View)`
 
 export const BackButton = styled(TouchableOpacity).attrs({
   activeOpacity: 0.7,
-  hitSlop: {top: 20, bottom: 20, left: 20, right: 20},
+  hitSlop: { top: 20, bottom: 20, left: 20, right: 20 },
 })`
   border-radius: 50px;
   width: 40px;
@@ -63,7 +63,7 @@ export const BackButton = styled(TouchableOpacity).attrs({
 export const TitleContainer = styled(View)`
   width: 100%;
   margin-bottom: ${screenHeight / 30}px;
-  margin-top: ${screenHeight / 11.5}px;
+  margin-top: ${screenHeight / 20}px;
 `;
 
 export const Title = styled(Text)`

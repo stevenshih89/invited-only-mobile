@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight} from 'constants/common';
-import {whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { screenHeight } from 'constants/common';
+import { whiteColor } from 'constants/colors';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
 import LogoPrimary from 'assets/images/auth/logo-primary-2.svg';
 
 export const Container = styled.View`
@@ -38,7 +38,7 @@ export const Title = styled.Text`
 export const Subtitle = styled.Text`
   color: ${whiteColor};
   font-family: ${Satoshi400};
-  font-size: ${RFValue(16, 932)}px;
+  font-size: ${RFValue(20, 932)}px;
 `;
 
 export const InputContainer = styled.View`

@@ -13,13 +13,14 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
 import { useConfirmPhone } from './hooks/useConfirmPhone';
 import { isIos, screenHeight } from 'constants/common';
-import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
-import { backgroundGradientColors, gray1Color, lightGray2Color, transparentWhite30Color, whiteColor } from 'constants/colors';
+import { backgroundGradientColors, gray1Color, lightGray2Color, whiteColor } from 'constants/colors';
 import Button from 'components/Button/Button';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import { useAppNavigation } from 'hooks/useAppNavigation';
+import BackButton from 'src/sharedComponents/BackButton/BackButton';
+import AuthProgress from 'components/AuthProgress';
 
 interface ConfirmPhoneProps {
   route: {
@@ -52,31 +53,21 @@ const ConfirmPhone = ({ route }: ConfirmPhoneProps) => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <SafeAreaView style={{ flex: 1 }}>
             <View style={{ flex: 1, justifyContent: 'space-between' }}>
-              <View style={{ alignItems: 'center', paddingHorizontal: 24 }}>
+              <View style={{ alignItems: 'center', paddingHorizontal: 20 }}>
                 <View
                   style={{
+
+                    marginTop: screenHeight / 29,
                     flexDirection: 'row',
                     width: '100%',
+
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    marginTop: screenHeight / 29,
+
                   }}>
-                  <TouchableOpacity
-                    testID="back-button"
-                    onPress={() => navigation.goBack()}
-                    activeOpacity={0.7}
-                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                    style={{
-                      borderRadius: 50,
-                      width: 40,
-                      height: 40,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: transparentWhite30Color,
-                    }}>
-                    <ArrowLeft />
-                  </TouchableOpacity>
+                  <BackButton onPress={() => navigation.goBack()} />
                   <LogoPrimary2 />
+                  <AuthProgress startPercentage={0} endPercentage={10} animationDuration={1000} />
                   <View />
                 </View>
                 <View
@@ -89,7 +80,7 @@ const ConfirmPhone = ({ route }: ConfirmPhoneProps) => {
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi500,
-                      fontSize: RFValue(48, 932),
+                      fontSize: RFValue(40, 932),
                       marginBottom: 18,
                     }}>
                     Phone number verification
@@ -101,7 +92,7 @@ const ConfirmPhone = ({ route }: ConfirmPhoneProps) => {
                       fontSize: RFValue(18, 932),
                       opacity: 0.8,
                     }}>
-                    Please enter the verification code sent to your mobile{' '}
+                    Please enter the verification code sent to {' '}
                     <Text
                       style={{
                         color: whiteColor,
@@ -109,7 +100,7 @@ const ConfirmPhone = ({ route }: ConfirmPhoneProps) => {
                         fontSize: RFValue(18, 932),
                         opacity: 0.8,
                       }}>
-                      {mobilePhone?.slice(-3)}
+                      {mobilePhone}
                     </Text>
                   </Text>
                 </View>

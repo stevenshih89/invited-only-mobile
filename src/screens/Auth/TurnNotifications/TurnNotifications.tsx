@@ -4,13 +4,14 @@ import { Switch } from '@ant-design/react-native';
 import * as S from './TurnNotifications.style';
 import { grayColor, toggleColor } from 'constants/colors';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import ArrowLeft from 'assets/images/icons/arrow-left.svg';
+
 import Button from 'components/Button/Button';
 import AuthProgress from 'components/AuthProgress';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { useAuthStore } from 'src/store/authStore';
 import { addPhotosPath } from 'constants/pathLocations';
 import useMessaging from 'hooks/useMessaging';
+import BackButton from 'src/sharedComponents/BackButton/BackButton';
 
 const TurnNotifications = () => {
   const [notifications, setNotifications] = useState<boolean>(true);
@@ -52,15 +53,13 @@ const TurnNotifications = () => {
         <S.SafeArea>
           <S.Wrapper>
             <S.Row>
-              <S.BackButton onPress={() => navigation.goBack()}>
-                <ArrowLeft />
-              </S.BackButton>
+              <BackButton onPress={() => navigation.goBack()} />
               <LogoPrimary2 />
               <AuthProgress startPercentage={20} endPercentage={30} animationDuration={1000} />
             </S.Row>
             <S.TitleWrapper>
               <S.Title>Confirm access</S.Title>
-              <S.Subtitle>To use Invited Only, please enable your notifications.</S.Subtitle>
+              <S.Subtitle>You’ll need to enable notifications in order to use Invited Only. </S.Subtitle>
             </S.TitleWrapper>
             <S.ToggleRow>
               <S.ToggleLabel>Notifications</S.ToggleLabel>

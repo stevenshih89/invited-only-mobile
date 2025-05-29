@@ -1,6 +1,6 @@
-import {FC, JSX} from 'react';
-import {Keyboard, View} from 'react-native';
-import {useAddPhotos} from './hooks/useAddPhotos';
+import { FC, JSX } from 'react';
+import { Keyboard, View } from 'react-native';
+import { useAddPhotos } from './hooks/useAddPhotos';
 import {
   GradientBackground,
   AvoidingContainer,
@@ -9,7 +9,6 @@ import {
   Wrapper,
   Header,
   TopRow,
-  BackButton,
   TitleContainer,
   Title,
   Subtitle,
@@ -27,17 +26,18 @@ import {
   LabelText,
   ContinueButtonContainer,
 } from './AddPhotos.style';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 import Button from 'components/Button/Button';
 import AuthProgress from 'components/AuthProgress';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Close from 'assets/images/icons/close.svg';
 import Plus from 'assets/images/icons/plus.svg';
+import BackButton from 'src/sharedComponents/BackButton/BackButton';
 
 const AddPhotos: FC = (): JSX.Element => {
   const navigation = useAppNavigation();
-  const {photos, isLoading, handleNext, deleteImage, openLibrary} = useAddPhotos();
+  const { photos, isLoading, handleNext, deleteImage, openLibrary } = useAddPhotos();
 
   return (
     <GradientBackground>
@@ -47,21 +47,19 @@ const AddPhotos: FC = (): JSX.Element => {
             <Wrapper>
               <Header>
                 <TopRow>
-                  <BackButton onPress={() => navigation.goBack()}>
-                    <ArrowLeft />
-                  </BackButton>
+                  <BackButton onPress={() => navigation.goBack()} />
                   <LogoPrimary2 />
                   <AuthProgress startPercentage={30} endPercentage={40} animationDuration={1000} />
                 </TopRow>
                 <TitleContainer>
-                  <Title>My photos</Title>
+                  <Title>Your photos</Title>
                   <Subtitle>Add your first photos. You can change these and add more later.</Subtitle>
                 </TitleContainer>
                 <PhotosRow>
                   <MainPhotoContainer>
                     {photos[0].image ? (
                       <ImageWrapper>
-                        <PhotoBackground source={{uri: photos[0].image}}>
+                        <PhotoBackground source={{ uri: photos[0].image }}>
                           <CloseButton onPress={() => deleteImage(photos[0].id)}>
                             <Close />
                           </CloseButton>
@@ -84,7 +82,7 @@ const AddPhotos: FC = (): JSX.Element => {
                     <SmallPhotoTop>
                       {photos[1].image ? (
                         <ImageWrapper>
-                          <PhotoBackground source={{uri: photos[1].image}}>
+                          <PhotoBackground source={{ uri: photos[1].image }}>
                             <CloseButton onPress={() => deleteImage(photos[1].id)}>
                               <Close />
                             </CloseButton>
@@ -99,7 +97,7 @@ const AddPhotos: FC = (): JSX.Element => {
                     <SmallPhotoBottom>
                       {photos[2].image ? (
                         <ImageWrapper>
-                          <PhotoBackground source={{uri: photos[2].image}}>
+                          <PhotoBackground source={{ uri: photos[2].image }}>
                             <CloseButton onPress={() => deleteImage(photos[2].id)}>
                               <Close />
                             </CloseButton>

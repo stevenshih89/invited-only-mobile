@@ -103,7 +103,7 @@ const MyPhotos: FC<MyPhotosProps> = ({ images, setImages }) => {
       center={[220, -386]}
       radius={400}>
       <ModalReplacePhoto isVisible={visibleModalReplace} onClose={() => setVisibleModalReplace(false)} replaceImage={replaceImage} />
-      <S.Title>My photos</S.Title>
+      <S.Title>Your photos</S.Title>
       <S.PhotosGrid>
         <S.Row>
           {renderPhoto(mainImage, 0, true)}

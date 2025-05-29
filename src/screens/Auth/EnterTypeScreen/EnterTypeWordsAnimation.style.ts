@@ -6,12 +6,11 @@ import { screenHeight, screenWidth } from 'constants/common';
 
 export const Container = styled.View`
   width: ${screenWidth}px;
-
   position: absolute;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  bottom: ${screenHeight * 0.1}px;
+  bottom: ${screenHeight * 0.02}px;
 
 `;
 

@@ -14,6 +14,7 @@ import useEventAttendes from './hooks/useEventAttendes';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import ModalUpgradeAccount from 'components/Modal/ModalUpgradeAccount/ModalUpgradeAccount';
+import ModalStartInviting from 'components/Modal/ModalStartInviting/ModalStartInviting';
 
 type GuestUser = components['schemas']['User'];
 
@@ -95,6 +96,7 @@ const IO = ({ events }: Props) => {
             <Tab.Screen name="/io/requests">{() => <EventRequests eventId={selectedEvent?.uid || ''} />}</Tab.Screen>
           </Tab.Navigator>
         </S.IoContainer>
+        <ModalStartInviting />
         <ModalUpgradeAccount />
         {isGuestsLoading || isFetchingNextPage || (!hasCards && guests.length > 0) ? null : <ModalLockedAccount />}
       </DefaultBackground>
