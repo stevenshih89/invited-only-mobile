@@ -32,9 +32,66 @@ const ShareSocialLink = () => {
     {id: 'other', icon: TwitterIcon},
   ];
 
+  const validateSocialLink = (link: string, network: SocialNetwork): boolean => {
+    const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+    if (!urlPattern.test(link)) {
+      return false;
+    }
+
+    const instagramPattern = /^(https?:\/\/)?(www\.)?instagram\.com\/[\w.-]+\/?$/;
+    const facebookPattern = /^(https?:\/\/)?(www\.)?facebook\.com\/[\w.-]+\/?$/;
+    const linkedinPattern = /^(https?:\/\/)?(www\.)?linkedin\.com\/(in|company)\/[\w.-]+\/?$/;
+
+    switch (network) {
+      case 'instagram':
+        if (!instagramPattern.test(link)) {
+          return false;
+        }
+        break;
+      case 'facebook':
+        if (!facebookPattern.test(link)) {
+          return false;
+        }
+        break;
+      case 'linkedin':
+        if (!linkedinPattern.test(link)) {
+          return false;
+        }
+        break;
+      case 'tiktok':
+        break;
+      case 'other':
+        break;
+    }
+
+    return true;
+  };
+
   const handleSkip = () => {
     Keyboard.dismiss();
     navigation.navigate(bottomTabsStackPath);
+  };
+
+  const handleSubmit = () => {
+    Keyboard.dismiss();
+    if (!selectedNetwork || !profileLink) {
+      return;
+    }
+
+    if (!validateSocialLink(profileLink, selectedNetwork)) {
+      return;
+    }
+
+    update({socialLinks: [{[selectedNetwork]: profileLink}]}).finally(() => {
+      navigation.navigate(bottomTabsStackPath);
+    });
+  };
+
+  const handleNetworkSelect = (network: SocialNetwork) => {
+    setSelectedNetwork(network);
+    if (profileLink) {
+      validateSocialLink(profileLink, network);
+    }
   };
 
   if (isPending) {
@@ -57,7 +114,6 @@ const ShareSocialLink = () => {
             <S.SocialButtonsContainer>
               {socialNetworks.map(network => {
                 const Icon = network.icon;
-
                 const isSelected = selectedNetwork === network.id;
                 return (
                   <TouchableOpacity
@@ -65,7 +121,7 @@ const ShareSocialLink = () => {
                       flex: 1,
                       height: 56,
                     }}
-                    onPress={() => setSelectedNetwork(network.id as SocialNetwork)}
+                    onPress={() => handleNetworkSelect(network.id as SocialNetwork)}
                     activeOpacity={0.8}
                     key={network.id}
                     testID={`social-button-${network.id}`}>
@@ -89,10 +145,12 @@ const ShareSocialLink = () => {
               placeholder="Paste link here"
               placeholderTextColor="rgba(255, 255, 255, 0.4)"
               value={profileLink}
-              onChangeText={setProfileLink}
+              onChangeText={(text: string) => {
+                setProfileLink(text);
+              }}
+              autoCapitalize="none"
               testID="profile-link-input"
             />
-
             <S.HelpButton testID="help-button" onPress={() => setIsModalVisible(true)}>
               <S.HelpText>How to get your profile link?</S.HelpText>
               <InfoIcon width={16} height={16} />
@@ -101,14 +159,9 @@ const ShareSocialLink = () => {
           <S.ButtonsContainer>
             <Button
               title="Submit Request"
-              disabled={!profileLink}
+              disabled={!profileLink || !selectedNetwork || !validateSocialLink(profileLink, selectedNetwork)}
               variant="default"
-              onPress={() => {
-                Keyboard.dismiss();
-                update({socialLinks: [{instagram: profileLink}]}).finally(() => {
-                  navigation.navigate(bottomTabsStackPath);
-                });
-              }}
+              onPress={handleSubmit}
             />
             <Button title="Skip" variant="gray" onPress={handleSkip} />
           </S.ButtonsContainer>

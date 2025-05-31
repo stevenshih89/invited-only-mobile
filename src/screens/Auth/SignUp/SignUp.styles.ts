@@ -24,8 +24,8 @@ export const LogoContainer = styled.View`
 export const LogoImage = styled(LogoPrimary)``;
 
 export const HeaderContainer = styled.View`
-  margin-bottom: ${screenHeight / 30}px;
-  margin-top: ${screenHeight / 12}px;
+  margin-bottom: ${screenHeight / 40}px;
+  margin-top: ${screenHeight / 30}px;
 `;
 
 export const Title = styled.Text`

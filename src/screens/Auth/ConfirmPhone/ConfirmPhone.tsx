@@ -42,7 +42,7 @@ const ConfirmPhone = ({route}: ConfirmPhoneProps) => {
 
   const navigation = useAppNavigation();
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 0}} end={{x: 0, y: 1}} style={{flex: 1}}>
       <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1}}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <SafeAreaView style={{flex: 1}}>
@@ -70,15 +70,15 @@ const ConfirmPhone = ({route}: ConfirmPhoneProps) => {
                 <View
                   style={{
                     width: '100%',
-                    marginBottom: screenHeight / 30,
-                    marginTop: screenHeight / 12,
+                    marginBottom: screenHeight / 40,
+                    marginTop: screenHeight / 30,
                   }}>
                   <Text
                     style={{
                       color: whiteColor,
                       fontFamily: Satoshi500,
                       fontSize: RFValue(32, 932),
-                      marginBottom: 18,
+                      marginBottom: 16,
                     }}>
                     Phone number verification
                   </Text>
