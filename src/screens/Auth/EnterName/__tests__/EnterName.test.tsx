@@ -1,12 +1,12 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import {render, fireEvent, waitFor} from '@testing-library/react-native';
 import EnterName from '../EnterName';
-import { mockedNavigateFunction } from 'jest/mocks/appNavigation.mock';
-import { AuthContext } from 'contexts/AuthContext';
+import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
+import {AuthContext} from 'contexts/AuthContext';
 
 describe('EnterName Component', () => {
   it('renders correctly', () => {
-    const { getByText } = render(
+    const {getByText} = render(
       <AuthContext.Provider
         value={{
           onBoarding: [],
@@ -21,7 +21,7 @@ describe('EnterName Component', () => {
   });
 
   it('allows user to enter a name and shows error for invalid input', () => {
-    const { getByPlaceholderText, getByText } = render(
+    const {getByTestId, getByText} = render(
       <AuthContext.Provider
         value={{
           onBoarding: [],
@@ -32,7 +32,7 @@ describe('EnterName Component', () => {
         <EnterName />
       </AuthContext.Provider>,
     );
-    const nameInput = getByPlaceholderText('Enter your name');
+    const nameInput = getByTestId('name-input');
 
     fireEvent.changeText(nameInput, 'John');
     expect(nameInput.props.value).toBe('John');
@@ -42,7 +42,7 @@ describe('EnterName Component', () => {
   });
 
   it('handles next button press correctly', async () => {
-    const { getByPlaceholderText, getByTestId } = render(
+    const {getByTestId} = render(
       <AuthContext.Provider
         value={{
           onBoarding: [],
@@ -53,7 +53,7 @@ describe('EnterName Component', () => {
         <EnterName />
       </AuthContext.Provider>,
     );
-    const nameInput = getByPlaceholderText('Enter your name');
+    const nameInput = getByTestId('name-input');
     const nextButton = getByTestId('continue-button');
 
     fireEvent.changeText(nameInput, 'John');

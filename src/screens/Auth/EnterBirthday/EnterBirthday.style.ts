@@ -29,7 +29,7 @@ export const ContentContainer = styled.View`
   justify-content: space-between;
   padding-bottom: 0;
   padding-horizontal: 24px;
-  padding-top: ${screenHeight / 29}px;
+  padding-top: 16px;
 `;
 
 export const TopContent = styled.View`
@@ -54,21 +54,25 @@ export const BackButton = styled.TouchableOpacity`
 
 export const TitleContainer = styled.View`
   width: 100%;
-  margin-bottom: ${screenHeight / 26}px;
-  margin-top: ${screenHeight / 20}px;
+  margin-bottom: ${screenHeight / 40}px;
+  margin-top: ${screenHeight / 30}px;
 `;
 
 export const TitleText = styled.Text`
   color: ${whiteColor};
   font-family: ${Satoshi500};
-  font-size: ${RFValue(48, 932)}px;
+  font-size: ${RFValue(32, 932)}px;
   margin-bottom: 18px;
+  line-height: ${RFValue(48, 932)}px;
 `;
 
 export const SubtitleText = styled.Text`
   color: ${whiteColor};
   font-family: ${Satoshi400};
   font-size: ${RFValue(18, 932)}px;
+  line-height: ${RFValue(27, 932)}px;
+  letter-spacing: -0.3px;
+  opacity: 0.8;
 `;
 
 export const DateInputRow = styled.View`

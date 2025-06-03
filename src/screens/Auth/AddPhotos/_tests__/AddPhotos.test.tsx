@@ -26,6 +26,6 @@ describe('AddPhotos Component', () => {
   });
   it('renders correctly', () => {
     const {getByText} = renderComponent();
-    expect(getByText('My photos')).toBeTruthy();
+    expect(getByText('Your photos')).toBeTruthy();
   });
 });

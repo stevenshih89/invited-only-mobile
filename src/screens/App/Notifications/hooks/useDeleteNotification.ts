@@ -1,45 +1,57 @@
-import { components } from "@invited-only/invited-only-api";
-import { useQueryClient } from "@tanstack/react-query";
-import { showToast } from "helpers/showToast";
-import invitedOnlyBackendApi from "src/api/backend-api";
-import { useAuthStore } from "src/store/authStore";
-
+import {components} from '@invited-only/invited-only-api';
+import {useQueryClient} from '@tanstack/react-query';
+import {showToast} from 'helpers/showToast';
+import invitedOnlyBackendApi from 'src/api/backend-api';
+import {useAuthStore} from 'src/store/authStore';
 
 const useDeleteNotification = () => {
-    const { mutate: deleteNotification, isPending: isDeletingNotification } = invitedOnlyBackendApi.useMutation('delete', '/notifications/{id}')
-    const queryClient = useQueryClient();
-    const { userMetadata } = useAuthStore();
-    const handleDeleteNotification = (notificationId: string, shouldShowToast: boolean = true) => {
-        deleteNotification({ params: { path: { id: notificationId } } }, {
-            onSuccess: () => {
-                const removeNotification = (notificationId: string) => {
-                    queryClient.setQueryData(['get', '/notifications/user/{userId}', {
-                        params: {
-                            path: {
-                                userId: userMetadata?.uid
-                            },
-                        },
-                    }], (oldData: components['schemas']['Notification'][]) => {
-                        return oldData?.filter((item) => item.id !== notificationId)
-                    })
-                }
-                removeNotification(notificationId)
-                if (shouldShowToast) {
-                    showToast('success', 'Notification deleted successfully', 'Notification deleted');
-                }
-            },
-            onError: (error: any) => {
-                if (shouldShowToast) {
-                    showToast('warning', 'Notification deletion failed', error.message);
-                }
-            }
-        })
-    }
+  const {mutate: deleteNotification, isPending: isDeletingNotification} = invitedOnlyBackendApi!.useMutation(
+    'delete',
+    '/notifications/{id}',
+  );
+  const queryClient = useQueryClient();
+  const {userMetadata} = useAuthStore();
+  const handleDeleteNotification = (notificationId: string, shouldShowToast: boolean = true) => {
+    deleteNotification(
+      {params: {path: {id: notificationId}}},
+      {
+        onSuccess: () => {
+          const removeNotification = (notificationId: string) => {
+            queryClient.setQueryData(
+              [
+                'get',
+                '/notifications/user/{userId}',
+                {
+                  params: {
+                    path: {
+                      userId: userMetadata?.uid,
+                    },
+                  },
+                },
+              ],
+              (oldData: components['schemas']['Notification'][]) => {
+                return oldData?.filter(item => item.id !== notificationId);
+              },
+            );
+          };
+          removeNotification(notificationId);
+          if (shouldShowToast) {
+            showToast('success', 'Notification deleted successfully', 'Notification deleted');
+          }
+        },
+        onError: (error: any) => {
+          if (shouldShowToast) {
+            showToast('warning', 'Notification deletion failed', error.message);
+          }
+        },
+      },
+    );
+  };
 
-    return {
-        handleDeleteNotification,
-        isDeletingNotification
-    }
-}
+  return {
+    handleDeleteNotification,
+    isDeletingNotification,
+  };
+};
 
 export default useDeleteNotification;

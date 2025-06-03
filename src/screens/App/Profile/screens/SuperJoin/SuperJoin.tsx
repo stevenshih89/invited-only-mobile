@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { FlatList } from 'react-native';
+import React, {useState} from 'react';
+import {FlatList} from 'react-native';
 import usePurchaseSuperInvites from '../SuperInvite/hooks/usePurchaseSuperInvites';
 import * as S from './SuperJoin.style';
 import SuperJoinCard from 'assets/images/app/super-join-card.png';
 import CheckCircleWhiteIcon from 'assets/images/icons/check-circle-white.svg';
 import CheckEmptyIcon from 'assets/images/icons/check-empty.svg';
 import CloseIcon from 'assets/images/icons/close.svg';
-import { lightGray16Color } from 'constants/colors';
+import {lightGray16Color} from 'constants/colors';
 import Button from 'components/Button/Button';
-import { useAppNavigation } from 'hooks/useAppNavigation';
+import {useAppNavigation} from 'hooks/useAppNavigation';
 
 interface Option {
   joins: number;
@@ -21,25 +21,25 @@ const SuperJoin: React.FC = () => {
   const [selected, setSelected] = useState<number>(15);
 
   const options: Option[] = [
-    { joins: 5, price: 5.18, save: 4 },
-    { joins: 15, price: 3.06, save: 43 },
-    { joins: 30, price: 2.67, save: 51, popular: true },
+    {joins: 5, price: 5.18, save: 4},
+    {joins: 15, price: 3.06, save: 43},
+    {joins: 30, price: 2.67, save: 51, popular: true},
   ];
 
   const selectedOption = options.find(o => o.joins === selected)!;
   const total = (selectedOption.price * selectedOption.joins).toFixed(2);
-  const { goBack } = useAppNavigation();
-  const { purchaseSuperInvites } = usePurchaseSuperInvites();
-
+  const {goBack} = useAppNavigation();
+  const {purchaseSuperInvites} = usePurchaseSuperInvites();
 
   return (
     <S.Container>
       <S.Content>
         <S.Header>
           <S.Title>Super Joins</S.Title>
-          <S.CloseButton onPress={() => {
-            goBack();
-          }}>
+          <S.CloseButton
+            onPress={() => {
+              goBack();
+            }}>
             <CloseIcon width={20} height={20} fill={lightGray16Color} />
           </S.CloseButton>
         </S.Header>
@@ -49,7 +49,7 @@ const SuperJoin: React.FC = () => {
             data={options}
             scrollEnabled={false}
             ItemSeparatorComponent={() => <S.Separator />}
-            renderItem={({ item }) => {
+            renderItem={({item}) => {
               const isSelected = item.joins === selected;
               return (
                 <S.OptionItem selected={isSelected} onPress={() => setSelected(item.joins)} key={item.joins}>
@@ -78,7 +78,11 @@ const SuperJoin: React.FC = () => {
           />
         </S.OptionList>
         <S.Footer>
-          <Button onPress={() => purchaseSuperInvites(selectedOption.joins)} title={`Get ${selectedOption.joins} Super Joins for $${total}`} />
+          <Button
+            testID="super-join-button"
+            onPress={() => purchaseSuperInvites(selectedOption.joins)}
+            title={`Get ${selectedOption.joins} Super Joins for $${total}`}
+          />
         </S.Footer>
       </S.Content>
     </S.Container>

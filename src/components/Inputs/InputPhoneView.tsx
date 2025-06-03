@@ -104,6 +104,7 @@ export const InputPhoneView: React.FC<IInputPhoneViewProps> = props => {
         <S.TextContainerStyle>
           <PhoneInputComponent
             ref={phoneRef}
+            testID={props.testID}
             autoFocus
             defaultCode={getDefaultCountryCode() as any}
             defaultValue={getDefaultPhoneNumber()}

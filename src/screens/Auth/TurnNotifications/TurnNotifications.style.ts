@@ -3,7 +3,7 @@ import {KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback, View, Touc
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Switch} from '@rneui/themed';
 import {isIos, screenHeight} from 'constants/common';
-import {black1Color, transparentWhite30Color} from 'constants/colors';
+import {transparentWhite30Color} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 // Container respecting keyboard and background
 export const AvoidingContainer = styled(KeyboardAvoidingView).attrs({
@@ -12,7 +12,6 @@ export const AvoidingContainer = styled(KeyboardAvoidingView).attrs({
 })`
   flex: 1;
   padding-bottom: 0px;
-  background-color: ${black1Color};
 `;
 
 // Dismiss keyboard area
@@ -30,7 +29,7 @@ export const Wrapper = styled(View)`
   justify-content: space-between;
   padding-bottom: 0px;
   padding-horizontal: 20px;
-  padding-top: ${screenHeight / 29}px;
+  padding-top: 16px;
 `;
 
 // Row for back button, logo, progress
@@ -56,8 +55,8 @@ export const BackButton = styled(TouchableOpacity).attrs({
 
 // Title wrapper
 export const TitleWrapper = styled(View)`
-  margin-bottom: ${screenHeight / 30}px;
-  margin-top: ${screenHeight / 20}px;
+  margin-bottom: ${screenHeight / 40}px;
+  margin-top: ${screenHeight / 30}px;
 `;
 
 export const Title = styled(Text)`
@@ -65,12 +64,15 @@ export const Title = styled(Text)`
   font-size: ${RFValue(32, 932)}px;
   font-family: ${Satoshi500};
   margin-bottom: 16px;
+  line-height: ${RFValue(48, 932)}px;
 `;
 
 export const Subtitle = styled(Text)`
   color: white;
   font-size: ${RFValue(18, 932)}px;
   font-family: ${Satoshi400};
+  line-height: ${RFValue(27, 932)}px;
+  letter-spacing: -0.3px;
   opacity: 0.8;
 `;
 

@@ -1,5 +1,4 @@
-import FastImage from 'react-native-fast-image';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import * as S from './CardImage.style';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 
@@ -13,7 +12,7 @@ interface Props {
   imageIndex: number;
 }
 
-const CardImage = ({ imageSource, isTopCard, imageIndex }: Props) => {
+const CardImage = ({imageSource, isTopCard, imageIndex}: Props) => {
   const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
   const [imageErrorUris, setImageErrorUris] = useState<string[]>([]);
   const [retryCount, setRetryCount] = useState<Record<string, number>>({});
@@ -36,7 +35,7 @@ const CardImage = ({ imageSource, isTopCard, imageIndex }: Props) => {
       // Increment retry count
       setRetryCount(prev => ({
         ...prev,
-        [imageSource]: currentRetries + 1
+        [imageSource]: currentRetries + 1,
       }));
 
       // Retry after delay
@@ -87,11 +86,11 @@ const CardImage = ({ imageSource, isTopCard, imageIndex }: Props) => {
           onLoad={handleLoad}
           onError={handleError}
           isTop={isTopCard}
-          resizeMode={FastImage.resizeMode.cover}
+          resizeMode={'cover'}
           source={{
             uri: imageSource || 'https://demofree.sirv.com/nope-not-here.jpg',
-            priority: FastImage.priority.high,
-            cache: FastImage.cacheControl.immutable
+            priority: 'high',
+            cache: 'immutable',
           }}
         />
       )}

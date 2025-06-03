@@ -16,7 +16,7 @@ const CreateEventButton = ({buttonStyle}: {buttonStyle?: StyleProp<ViewStyle>}) 
       <S.CreateEventButtonContainer
         style={buttonStyle}
         onPress={() => {
-          navigate(navigationPath);
+          navigate(navigationPath as never);
         }}>
         <CreateEventIcon />
         <S.CreateEventButtonText>Create New</S.CreateEventButtonText>

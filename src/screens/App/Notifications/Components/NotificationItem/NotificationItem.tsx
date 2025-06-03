@@ -1,8 +1,8 @@
 import React from 'react';
-import { ActivityIndicator, TouchableOpacity } from 'react-native';
-import { formatDistance } from 'date-fns';
-import { components } from '@invited-only/invited-only-api';
-import { GestureDetector } from 'react-native-gesture-handler';
+import {ActivityIndicator, TouchableOpacity} from 'react-native';
+import {formatDistance} from 'date-fns';
+import {components} from '@invited-only/invited-only-api';
+import {GestureDetector} from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import * as S from './NotificationItem.style';
 import useSwipeToDelete from './hooks/useSwipeToDelete';
@@ -11,7 +11,7 @@ import useHostConnectionActions from 'hooks/connections/useHostConnectionActions
 import useGuestConnectionActions from 'hooks/connections/useGuestConnectionActions';
 import useNavigateToChat from 'screens/App/Chat/hooks/useNavigateToChat';
 import useGetEvent from 'screens/App/Chat/EventChats/hooks/useGetEvent';
-import { whiteColor } from 'constants/colors';
+import {whiteColor} from 'constants/colors';
 
 interface NotificationItemProps {
   notification: components['schemas']['Notification'];
@@ -20,18 +20,18 @@ interface NotificationItemProps {
   handleDeleteNotification: (notificationId: string, shouldShowToast?: boolean) => void;
 }
 
-const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteNotification }: NotificationItemProps) => {
-  const { navigateToChat } = useNavigateToChat({
+const NotificationItem = ({notification, onPress, isJoinedEvents, handleDeleteNotification}: NotificationItemProps) => {
+  const {navigateToChat} = useNavigateToChat({
     eventId: notification.eventId || '',
     hostId: notification.hostId || '',
     guestId: notification.guestId || '',
     asGuest: isJoinedEvents ? true : false,
   });
-  const { data: user } = useGetUserById(notification.guestId || '');
-  const { data: event } = useGetEvent(notification.eventId || '');
+  const {data: user} = useGetUserById(notification.guestId || '');
+  const {data: event} = useGetEvent(notification.eventId || '');
 
   const notificationType = notification.type;
-  const { handleHostConfirmEvent, handleHostRejectEvent, isUpdatingEventAttendee } = useHostConnectionActions({
+  const {handleHostConfirmEvent, handleHostRejectEvent, isUpdatingEventAttendee} = useHostConnectionActions({
     hostId: notification.hostId || '',
     guestId: notification.guestId || '',
     eventId: notification.eventId || '',
@@ -39,7 +39,7 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
       handleDeleteNotification(notification.id || '', false);
     },
   });
-  const { handleGuestConfirmEvent, isUpdatingEventAttendee: isUpdatingEventAttendeeGuest } = useGuestConnectionActions({
+  const {handleGuestConfirmEvent, isUpdatingEventAttendee: isUpdatingEventAttendeeGuest} = useGuestConnectionActions({
     hostId: notification.hostId || '',
     guestId: notification.guestId || '',
     eventId: notification.eventId || '',
@@ -48,7 +48,7 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
     },
   });
 
-  const { panGesture, animatedStyle } = useSwipeToDelete({
+  const {panGesture, animatedStyle} = useSwipeToDelete({
     onDelete: handleDeleteNotification,
     itemId: notification.id || '',
   });
@@ -58,7 +58,7 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
       onPress(notification);
     }
   };
-  const timeAgo = notification.createdAt ? formatDistance(new Date(notification.createdAt), new Date(), { addSuffix: true }) : '';
+  const timeAgo = notification.createdAt ? formatDistance(new Date(notification.createdAt), new Date(), {addSuffix: true}) : '';
   const isLoading = isUpdatingEventAttendee || isUpdatingEventAttendeeGuest;
   return (
     <GestureDetector gesture={panGesture}>
@@ -67,12 +67,12 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
           <S.SwipeDeleteText>Delete</S.SwipeDeleteText>
         </S.SwipeDeleteView>
         <Animated.View style={animatedStyle}>
-          <TouchableOpacity activeOpacity={0.7} onPress={handlePress}>
+          <TouchableOpacity activeOpacity={1} onPress={handlePress} style={{backgroundColor: 'transparent'}}>
             <S.Container>
               {user?.photos?.[0] && (
                 <S.NarrowLeftContainer>
                   <S.AvatarContainer>
-                    <S.AvatarImage source={{ uri: isJoinedEvents ? event?.photos?.[0].image : user.photos?.[0].image }} />
+                    <S.AvatarImage source={{uri: isJoinedEvents ? event?.photos?.[0].image : user.photos?.[0].image}} />
                   </S.AvatarContainer>
                 </S.NarrowLeftContainer>
               )}
@@ -92,9 +92,7 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
                       <S.ActionButtonPrimary
                         disabled={isLoading}
                         onPress={!isJoinedEvents ? handleHostConfirmEvent : handleGuestConfirmEvent}>
-                        <S.ActionButtonTextPrimary>
-                          {!isJoinedEvents ? 'Invite' : 'Approve'}
-                        </S.ActionButtonTextPrimary>
+                        <S.ActionButtonTextPrimary>{!isJoinedEvents ? 'Invite' : 'Approve'}</S.ActionButtonTextPrimary>
                       </S.ActionButtonPrimary>
                       <S.ActionButtonSecondary
                         disabled={isLoading}
@@ -102,12 +100,10 @@ const NotificationItem = ({ notification, onPress, isJoinedEvents, handleDeleteN
                           !isJoinedEvents
                             ? handleHostRejectEvent
                             : () => {
-                              navigateToChat();
-                            }
+                                navigateToChat();
+                              }
                         }>
-                        <S.ActionButtonTextSecondary>
-                          {!isJoinedEvents ? 'Reject' : 'Chat'}
-                        </S.ActionButtonTextSecondary>
+                        <S.ActionButtonTextSecondary>{!isJoinedEvents ? 'Reject' : 'Chat'}</S.ActionButtonTextSecondary>
                       </S.ActionButtonSecondary>
                     </S.ActionButtonContainer>
                   )

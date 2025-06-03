@@ -74,6 +74,7 @@ const EnterName: FC = (): JSX.Element => {
                 </TitleContainer>
                 <InputContainer>
                   <Input
+                    testID="name-input"
                     containerStyle={{
                       height: 56,
                     }}

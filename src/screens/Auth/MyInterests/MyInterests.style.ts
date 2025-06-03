@@ -74,7 +74,7 @@ export const BackButton = styled(TouchableOpacity).attrs({
 export const TitleContainer = styled(View)`
   width: 100%;
   margin-bottom: ${screenHeight / 40}px;
-  margin-top: ${screenHeight / 50}px;
+  margin-top: ${screenHeight / 30}px;
 `;
 
 export const Title = styled(Text)`
@@ -82,12 +82,15 @@ export const Title = styled(Text)`
   font-family: ${Satoshi500};
   font-size: ${RFValue(32, 932)}px;
   margin-bottom: 16px;
+  line-height: ${RFValue(48, 932)}px;
 `;
 
 export const Subtitle = styled(Text)`
   color: ${whiteColor};
   font-family: ${Satoshi400};
   font-size: ${RFValue(18, 932)}px;
+  line-height: ${RFValue(27, 932)}px;
+  letter-spacing: -0.3px;
   opacity: 0.8;
 `;
 

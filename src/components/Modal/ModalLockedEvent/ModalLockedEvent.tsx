@@ -1,14 +1,12 @@
-import React, { FC } from 'react';
+import React, {FC} from 'react';
 
-import { components } from '@invited-only/invited-only-api';
+import {components} from '@invited-only/invited-only-api';
 import * as S from './ModalLockedEvent.style';
 import LockIcon from 'assets/images/icons/key-rounded.svg';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import { invitationCodePath } from 'constants/pathLocations';
-import Button from 'components/Button/Button';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {invitationCodePath} from 'constants/pathLocations';
 
-
-const ModalLockedEvent: FC<{ event: components['schemas']['EventData'] }> = ({ event }) => {
+const ModalLockedEvent: FC<{event: components['schemas']['EventData']}> = ({event}) => {
   const navigation = useAppNavigation();
 
   const handleInviteCodePress = () => {
@@ -31,7 +29,9 @@ const ModalLockedEvent: FC<{ event: components['schemas']['EventData'] }> = ({ e
             </S.LockBadge>
           </S.LockBadgeContainer>
           <S.Title>Event Under Review</S.Title>
-          <S.Description>Thank you for your patience. Your event is being reviewed. We&apos;ll notify you once it&apos;s approved.</S.Description>
+          <S.Description>
+            Thank you for your patience. Your event is being reviewed. We&apos;ll notify you once it&apos;s approved.
+          </S.Description>
         </S.ContentWrapper>
       </S.ModalWrapper>
     </S.Container>

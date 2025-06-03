@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import {Keyboard} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import * as S from './TurnNotifications.style';
-import {blackColor, whiteColor} from 'constants/colors';
+import {backgroundGradientColors, blackColor, whiteColor} from 'constants/colors';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 
 import Button from 'components/Button/Button';
@@ -46,37 +47,39 @@ const TurnNotifications = () => {
   };
 
   return (
-    <S.AvoidingContainer>
-      <S.TouchableDismiss onPress={Keyboard.dismiss}>
-        <S.SafeArea>
-          <S.Wrapper>
-            <S.Row>
-              <BackButton onPress={() => navigation.goBack()} />
-              <LogoPrimary2 />
-              <AuthProgress startPercentage={20} endPercentage={30} animationDuration={1000} />
-            </S.Row>
-            <S.TitleWrapper>
-              <S.Title>Confirm access</S.Title>
-              <S.Subtitle>{`You’ll need to enable notifications in order to use Invited Only.`}</S.Subtitle>
-            </S.TitleWrapper>
-            <S.ToggleRow>
-              <S.ToggleLabel>Notifications</S.ToggleLabel>
-              <S.StyledSwitch
-                testID="requests-switch"
-                trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
-                thumbColor={notifications ? blackColor : whiteColor}
-                value={notifications}
-                onValueChange={handleNotificationsChange}
-              />
-            </S.ToggleRow>
-            <S.ButtonContainer>
-              <Button onPress={handleNext} title="Continue" />
-              <Button onPress={handleNext} title="Skip" variant="gray" />
-            </S.ButtonContainer>
-          </S.Wrapper>
-        </S.SafeArea>
-      </S.TouchableDismiss>
-    </S.AvoidingContainer>
+    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
+      <S.AvoidingContainer>
+        <S.TouchableDismiss onPress={Keyboard.dismiss}>
+          <S.SafeArea>
+            <S.Wrapper>
+              <S.Row>
+                <BackButton onPress={() => navigation.goBack()} />
+                <LogoPrimary2 />
+                <AuthProgress startPercentage={20} endPercentage={30} animationDuration={1000} />
+              </S.Row>
+              <S.TitleWrapper>
+                <S.Title>Confirm access</S.Title>
+                <S.Subtitle>{`You’ll need to enable notifications in order to use Invited Only.`}</S.Subtitle>
+              </S.TitleWrapper>
+              <S.ToggleRow>
+                <S.ToggleLabel>Notifications</S.ToggleLabel>
+                <S.StyledSwitch
+                  testID="requests-switch"
+                  trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
+                  thumbColor={notifications ? blackColor : whiteColor}
+                  value={notifications}
+                  onValueChange={handleNotificationsChange}
+                />
+              </S.ToggleRow>
+              <S.ButtonContainer>
+                <Button onPress={handleNext} title="Continue" />
+                <Button onPress={handleNext} title="Skip" variant="gray" />
+              </S.ButtonContainer>
+            </S.Wrapper>
+          </S.SafeArea>
+        </S.TouchableDismiss>
+      </S.AvoidingContainer>
+    </LinearGradient>
   );
 };
 

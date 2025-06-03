@@ -30,9 +30,9 @@ import './mocks/backhandle.mock';
 import './mocks/backendApi.mock';
 import './mocks/imageCropPicker.mock';
 import './mocks/useMessaging.mock';
-
-
-
+import './mocks/reactNativeFastImage.mock';
+import './mocks/firebase.remoteConfig.mock';
+import './mocks/amplitude.analytics.mock';
 
 // --- Global Jest Settings ---
 jest.useFakeTimers();

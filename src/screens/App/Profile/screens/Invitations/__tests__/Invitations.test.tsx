@@ -10,7 +10,7 @@ jest.mock('hooks/useInvitations', () => ({
   }),
 }));
 
-jest.mock('./hooks/useGetInvitationCodes', () => ({
+jest.mock('../hooks/useGetInvitationCodes', () => ({
   __esModule: true,
   default: () => ({
     data: ['ABC123', 'DEF456'],
@@ -55,7 +55,7 @@ describe('Invitations Component', () => {
   });
 
   it('shows loading indicator when loading', () => {
-    jest.spyOn(require('./hooks/useGetInvitationCodes'), 'default').mockImplementationOnce(() => ({
+    jest.spyOn(require('../hooks/useGetInvitationCodes'), 'default').mockImplementationOnce(() => ({
       data: null,
       isLoading: true,
       error: null,

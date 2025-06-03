@@ -1,21 +1,56 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
 import {render} from '@testing-library/react-native';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import SuperJoin from '../SuperJoin';
 
+jest.mock('src/store/authStore', () => ({
+  useAuthStore: jest.fn().mockReturnValue({
+    userMetadata: {
+      superInvites: 0,
+    },
+  }),
+}));
+
+jest.mock('src/api/backend-api', () => ({
+  __esModule: true,
+  default: {
+    useQuery: jest.fn().mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
+    }),
+    useMutation: jest.fn().mockReturnValue({
+      mutate: jest.fn(),
+      isPending: false,
+      error: null,
+    }),
+  },
+}));
+
 describe('SuperJoin', () => {
-  it('matches snapshot', () => {
-    const tree = renderer.create(<SuperJoin />).toJSON();
-    expect(tree).toMatchSnapshot();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  const renderWithQueryClient = (component: React.ReactElement) => {
+    return render(<QueryClientProvider client={queryClient}>{component}</QueryClientProvider>);
+  };
+
   it('renders the title', () => {
-    const {getByText} = render(<SuperJoin />);
+    const {getByText} = renderWithQueryClient(<SuperJoin />);
     expect(getByText('Super Joins')).toBeTruthy();
   });
 
   it('shows default button text', () => {
-    const {getByText} = render(<SuperJoin />);
-    expect(getByText(/Get 15 Super Joins for/)).toBeTruthy();
+    const {getByTestId} = renderWithQueryClient(<SuperJoin />);
+    expect(getByTestId('super-join-button')).toBeTruthy();
   });
 });

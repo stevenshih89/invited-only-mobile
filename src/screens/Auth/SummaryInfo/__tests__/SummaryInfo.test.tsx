@@ -5,6 +5,30 @@ import SummaryInfo from '../SummaryInfo';
 import {mockedNavigateFunction} from 'jest/mocks/appNavigation.mock';
 import {AuthContext} from 'contexts/AuthContext';
 
+jest.mock('src/api/backend-api', () => ({
+  __esModule: true,
+  default: {
+    useQuery: jest.fn().mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
+    }),
+    useMutation: jest.fn().mockReturnValue({
+      mutate: jest.fn(),
+      isPending: false,
+      error: null,
+    }),
+  },
+}));
+
+jest.mock('src/store/authStore', () => ({
+  useAuthStore: jest.fn().mockReturnValue({
+    onBoarding: {
+      registrationDetails: {name: 'John', accountType: 'guest', photos: [{id: 0, image: 'https://example.com/photo.jpg'}]},
+    },
+  }),
+}));
+
 describe('SummaryInfo Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -17,7 +41,9 @@ describe('SummaryInfo Component', () => {
       <NavigationContainer>
         <AuthContext.Provider
           value={{
-            onBoarding: [{name: 'John Doe'}, {accountType: 'guest'}, {photos: [{id: 0, image: 'https://example.com/photo.jpg'}]}],
+            onBoarding: {
+              registrationDetails: [{name: 'John'}, {accountType: 'guest'}, {photos: [{id: 0, image: 'https://example.com/photo.jpg'}]}],
+            },
             setOnBoarding: jest.fn(),
             setUser: jest.fn(),
             user: {},
@@ -26,7 +52,7 @@ describe('SummaryInfo Component', () => {
         </AuthContext.Provider>
       </NavigationContainer>,
     );
-    expect(getByText('John Doe')).toBeTruthy();
+    expect(getByText('John')).toBeTruthy();
   });
 
   it('navigates to /invitation-code on Continue button press', async () => {

@@ -65,7 +65,7 @@ describe('SignUp Component', () => {
 
   it('handles phone number input', () => {
     const {getByPlaceholderText} = renderComponent();
-    const phoneInput = getByPlaceholderText('Phone Number');
+    const phoneInput = getByPlaceholderText('Enter your phone number');
     fireEvent.changeText(phoneInput, '+1234567890');
     expect(phoneInput.props.value).toBe('+1234567890');
   });
