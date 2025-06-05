@@ -16,6 +16,8 @@ export const StepsWrapper = styled.View`
   position: relative;
   align-items: center;
   width: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
 `;
 
 export const ProgressLine = styled.View`

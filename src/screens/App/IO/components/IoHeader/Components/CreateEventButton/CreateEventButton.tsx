@@ -9,7 +9,7 @@ import {paymentPath} from 'constants/pathLocations';
 const CreateEventButton = ({buttonStyle}: {buttonStyle?: StyleProp<ViewStyle>}) => {
   const {navigate} = useAppNavigation();
   const {data: subscriptionData} = useGetSubscriptions();
-  const navigationPath = subscriptionData?.status === 'active' ? '/event-creating-stack' : paymentPath;
+  const navigationPath = true ? '/event-creating-stack' : paymentPath;
 
   return (
     <View>

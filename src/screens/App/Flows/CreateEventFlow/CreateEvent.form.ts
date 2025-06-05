@@ -1,7 +1,8 @@
 import * as Yup from 'yup';
-import { FormikErrors } from 'formik';
-import { components } from '@invited-only/invited-only-api';
-import { showToast } from 'helpers/showToast';
+import {FormikErrors} from 'formik';
+import {components} from '@invited-only/invited-only-api';
+import {CREATE_EVENT_FLOW_ROUTES} from './navigation/CreateEventFlowNavigator';
+import {showToast} from 'helpers/showToast';
 
 // Define step-specific schema
 
@@ -37,13 +38,19 @@ export const placeStepSchema = Yup.object<Partial<components['schemas']['EventDa
 });
 
 export const photoStepSchema = Yup.object<Partial<components['schemas']['EventData']>>().shape({
-  photos: Yup.array().of(Yup.object().shape({
-    image: Yup.string().required('Main photo is required'),
-  })).required('Main photo is required'),
+  photos: Yup.array()
+    .of(
+      Yup.object().shape({
+        image: Yup.string().required('Main photo is required'),
+      }),
+    )
+    .required('Main photo is required'),
 });
 
-export const validationSchema = Yup.object<Partial<components['schemas']['EventData']>>().concat(guestStepSchema).concat(placeStepSchema).concat(photoStepSchema);
-
+export const validationSchema = Yup.object<Partial<components['schemas']['EventData']>>()
+  .concat(guestStepSchema)
+  .concat(placeStepSchema)
+  .concat(photoStepSchema);
 
 export const handleNextStep = async ({
   currentStep,
@@ -52,34 +59,34 @@ export const handleNextStep = async ({
   values,
   nextStep,
 }: {
-  currentStep: number;
+  currentStep: string;
   validateForm: (values?: any) => Promise<FormikErrors<Partial<components['schemas']['EventData']>>>;
   submitForm: any;
   values: Partial<components['schemas']['EventData']>;
   nextStep: () => void;
 }) => {
-  if (currentStep === 3) {
+  if (currentStep === CREATE_EVENT_FLOW_ROUTES.PREVIEW_EVENT) {
     const errors = await validateForm();
     if (Object.keys(errors).length === 0) {
       submitForm();
     } else {
       showToast('cancel', 'Please fix all errors before creating the event');
     }
-  } else if (currentStep === 1) {
+  } else if (currentStep === CREATE_EVENT_FLOW_ROUTES.GUEST_INVITATION) {
     // Validate guest step
     try {
-      await guestStepSchema.validate(values, { abortEarly: false });
+      await guestStepSchema.validate(values, {abortEarly: false});
       nextStep();
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
         showToast('cancel', error.errors[0]);
       }
     }
-  } else if (currentStep === 2) {
+  } else if (currentStep === CREATE_EVENT_FLOW_ROUTES.EVENT_PLACE) {
     // Validate place step
     try {
-      await placeStepSchema.validate(values, { abortEarly: false });
-      await photoStepSchema.validate(values, { abortEarly: false });
+      await placeStepSchema.validate(values, {abortEarly: false});
+      await photoStepSchema.validate(values, {abortEarly: false});
       nextStep();
     } catch (error) {
       if (error instanceof Yup.ValidationError) {

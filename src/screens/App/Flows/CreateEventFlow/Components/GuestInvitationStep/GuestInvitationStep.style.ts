@@ -3,10 +3,14 @@ import {Dimensions} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
 // Colors and Fonts (assuming you're importing them)
-import {black60Color, black3Color, whiteColor, lightGray5Color, lightGray9Color, lightRedColor} from 'constants/colors';
+import {black60Color, black3Color, whiteColor, lightGray5Color, lightGray9Color, lightRedColor, blackColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+
+export const Wrapper = styled.View`
+  flex: 1;
+`;
 
 // Containers
 export const Container = styled.View`
@@ -162,4 +166,43 @@ export const ButtonPressOtherFriends = styled.TouchableOpacity`
   justify-content: center;
   width: 92px;
   height: 41px;
+`;
+
+export const ButtonsContainer = styled.View`
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 12px;
+`;
+
+export const ContinueButton = styled.TouchableOpacity`
+  flex: 2;
+  justify-content: center;
+  align-items: center;
+  background-color: ${whiteColor};
+  border-radius: 100px;
+  height: 48px;
+  margin-right: 12px;
+  margin-left: 12px;
+`;
+
+export const ContinueButtonText = styled.Text`
+  color: ${blackColor};
+  font-family: ${Satoshi500};
+`;
+
+export const CancelButton = styled.TouchableOpacity`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 100px;
+  height: 48px;
+`;
+
+export const CancelButtonText = styled.Text`
+  color: ${whiteColor};
+  font-family: ${Satoshi500};
 `;

@@ -1,14 +1,16 @@
 import styled from 'styled-components/native';
-import { Text, View, TouchableOpacity, TextInput, Dimensions } from 'react-native';
+import {Text, View, TouchableOpacity, TextInput, Dimensions} from 'react-native';
 
-import { ScrollView } from 'react-native-gesture-handler';
-import { lightRedColor } from 'constants/colors';
+import {ScrollView} from 'react-native-gesture-handler';
+import {blackColor, lightRedColor, whiteColor} from 'constants/colors';
+import {Satoshi500} from 'constants/fonts';
 
-const { height } = Dimensions.get('window');
+const {height} = Dimensions.get('window');
 
 export const Container = styled.View`
   display: flex;
   width: 100%;
+  height: 100%;
 `;
 
 export const ScrollContainer = styled(ScrollView)`
@@ -184,4 +186,44 @@ export const ErrorText = styled.Text`
   font-size: 12px;
   color: ${lightRedColor};
   margin-top: 4px;
+`;
+
+export const ButtonsContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-left: 12px;
+  padding-right: 12px;
+`;
+
+export const ContinueButton = styled.TouchableOpacity`
+  flex: 2;
+  justify-content: center;
+  align-items: center;
+  background-color: ${whiteColor};
+  border-radius: 100px;
+  height: 48px;
+  margin-right: 12px;
+  margin-left: 12px;
+`;
+
+export const ContinueButtonText = styled.Text`
+  color: ${blackColor};
+  font-family: ${Satoshi500};
+`;
+
+export const CancelButton = styled.TouchableOpacity`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 100px;
+  height: 48px;
+`;
+
+export const CancelButtonText = styled.Text`
+  color: ${whiteColor};
+  font-family: ${Satoshi500};
 `;

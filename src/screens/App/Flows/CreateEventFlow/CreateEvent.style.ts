@@ -7,23 +7,23 @@ export const Container = styled.View`
   justify-content: space-between;
   display: flex;
   height: 100%;
-  padding-left: 10px;
-  padding-right: 10px;
 `;
 
 export const StepsContainer = styled.View`
   width: 100%;
+  height: 100%;
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  flex-direction: column;
   margin-vertical: 24px;
 `;
 
 export const ButtonsContainer = styled.View`
+  position: absolute;
+  bottom: 0;
   display: flex;
   flex-direction: row;
   width: 100%;
-  gap: 12px; /* optional spacing between buttons */
+  gap: 12px;
 `;
 
 export const ContinueButton = styled.TouchableOpacity`
@@ -33,6 +33,8 @@ export const ContinueButton = styled.TouchableOpacity`
   background-color: ${whiteColor};
   border-radius: 100px;
   height: 48px;
+  margin-right: 12px;
+  margin-left: 12px;
 `;
 
 export const ContinueButtonText = styled.Text`
