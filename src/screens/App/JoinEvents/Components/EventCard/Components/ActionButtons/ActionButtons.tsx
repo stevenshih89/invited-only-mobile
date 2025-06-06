@@ -12,13 +12,13 @@ interface ActionButtonsProps {
 
 const ActionButtons: FC<ActionButtonsProps> = ({onReject, onSuperInvite, onInvite}) => (
   <S.Container>
-    <S.Button hitSlop={3} onPress={onReject}>
+    <S.Button testID="reject-button" hitSlop={3} onPress={onReject}>
       <RejectIcon height={24} />
     </S.Button>
-    <S.Button hitSlop={3} onPress={onSuperInvite}>
+    <S.Button testID="super-invite-button" hitSlop={3} onPress={onSuperInvite}>
       <SuperInviteIcon height={24} />
     </S.Button>
-    <S.Button hitSlop={3} onPress={onInvite}>
+    <S.Button testID="invite-button" hitSlop={3} onPress={onInvite}>
       <InviteIcon height={20} />
     </S.Button>
   </S.Container>

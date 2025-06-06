@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { ViewStyle } from 'react-native'; // Import ViewStyle for type safety
+import {ViewStyle} from 'react-native'; // Import ViewStyle for type safety
 
 export const IoContainer = styled.View`
   display: flex;
@@ -16,5 +16,3 @@ export const tabNavigatorStyle: ViewStyle = {
   width: '100%',
   marginHorizontal: 50,
 };
-
-

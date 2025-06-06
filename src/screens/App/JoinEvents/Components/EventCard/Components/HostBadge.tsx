@@ -6,16 +6,16 @@ interface Props {
   withGuestCount?: boolean;
 }
 
-const HostBadge = ({ imageUrl, totalGuests, withGuestCount = true }: Props) => {
+const HostBadge = ({imageUrl, totalGuests, withGuestCount = true}: Props) => {
   return (
-    <S.HostBadgeContainer>
-      <S.HostBadge>
-        <S.HostInfoRow>
-          <S.HostImage source={{ uri: imageUrl }} />
-          <S.HostName>Host</S.HostName>
+    <S.HostBadgeContainer testID="host-badge-container">
+      <S.HostBadge testID="host-badge">
+        <S.HostInfoRow testID="host-info-row">
+          <S.HostImage testID="host-image" source={{uri: imageUrl}} />
+          <S.HostName testID="host-name">Host</S.HostName>
           {withGuestCount && (
-            <S.GuestCountBadge>
-              <S.GuestCountText>{totalGuests}</S.GuestCountText>
+            <S.GuestCountBadge testID="guest-count-badge">
+              <S.GuestCountText testID="guest-count-text">{totalGuests}</S.GuestCountText>
             </S.GuestCountBadge>
           )}
         </S.HostInfoRow>

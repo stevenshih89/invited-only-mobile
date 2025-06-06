@@ -6,7 +6,7 @@ import FastImage from 'react-native-fast-image';
 import {components} from '@invited-only/invited-only-api';
 import * as S from './EventPlaceStep.style';
 import ModalAddPhoto from './AddPhotoMoald/ModalAddPhoto';
-import useAddModalPhotos from './AddPhotoMoald/useAddPhotoModal';
+import useAddModalPhotos from './AddPhotoMoald/hooks/useAddPhotoModal';
 import EventDatePicker from './EventDatePicker/EventDatePicker';
 
 interface EventPlaceStepProps {

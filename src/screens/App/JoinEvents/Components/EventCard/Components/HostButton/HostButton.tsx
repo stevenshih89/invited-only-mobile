@@ -13,7 +13,7 @@ const HostButton = ({hostName, hostImage, hostId}: {hostName: string; hostImage:
   };
 
   return (
-    <S.ButtonWrapper onPress={navigateToProfile}>
+    <S.ButtonWrapper testID="host-button" onPress={navigateToProfile}>
       <S.StyledRadialGradient
         colors={['rgba(26, 26, 26, 0.40)', 'rgba(0, 0, 0, 0.00)', 'rgba(255, 255, 255, 0.07)']}
         stops={[0, 0.695, 1]}
@@ -21,7 +21,7 @@ const HostButton = ({hostName, hostImage, hostId}: {hostName: string; hostImage:
         radius={400}>
         <S.Row>
           <S.InnerRow>
-            <S.ProfileImage source={{uri: hostImage}} />
+            <S.ProfileImage testID="host-profile-image" source={{uri: hostImage}} />
             <S.InfoWrapper>
               <S.HostName>{hostName}</S.HostName>
               <S.HostRole>Host</S.HostRole>

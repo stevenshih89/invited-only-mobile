@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import DatePicker from 'react-native-date-picker';
-import { useFormikContext } from 'formik';
-import { components } from '@invited-only/invited-only-api';
+import {useFormikContext} from 'formik';
+import {components} from '@invited-only/invited-only-api';
 import * as S from './EventDatePicker.styled';
-import { formatDate, parseStringToDate } from 'helpers/genericDateFormater';
+import {parseStringToDate} from 'helpers/genericDateFormater';
 
 const formatTime = (date: Date) => {
   const hours = String(date.getHours()).padStart(2, '0');
@@ -21,7 +21,7 @@ export const getDateString = (date: Date) => {
 const EventDatePicker = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const { errors, values, touched, setFieldValue } = useFormikContext<Partial<components['schemas']['EventData']>>();
+  const {errors, values, touched, setFieldValue} = useFormikContext<Partial<components['schemas']['EventData']>>();
   return (
     <S.RowContainer>
       <S.HalfFieldContainer>
@@ -45,7 +45,6 @@ const EventDatePicker = () => {
           modal
           date={parseStringToDate(values.date) || new Date()}
           mode="date"
-
           onConfirm={date => {
             setFieldValue('date', date);
             setShowDatePicker(false);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {Text} from 'react-native';
 import * as S from './GuestCard.styled';
 import Card from './Card';

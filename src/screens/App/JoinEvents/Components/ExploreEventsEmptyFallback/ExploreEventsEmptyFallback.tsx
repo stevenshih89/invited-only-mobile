@@ -5,14 +5,14 @@ import MyEventsFallbackImage from 'src/assets/images/app/joined-events-empty-fal
 const ExploreEventsEmptyFallback = () => {
   return (
     <DefaultBackground>
-      <S.Container>
-        <S.EmptyFallbackImage resizeMode="contain" source={MyEventsFallbackImage} />
-        <S.FallbackTextContainer>
+      <S.Container testID="empty-state-container">
+        <S.EmptyFallbackImage testID="empty-state-image" resizeMode="contain" source={MyEventsFallbackImage} />
+        <S.FallbackTextContainer testID="empty-state-text-container">
           <S.TextContainer>
-            <S.FallbackTitleText>{`Build Your Profile,\nGet More Invites`}</S.FallbackTitleText>
+            <S.FallbackTitleText testID="empty-state-title">{`Build Your Profile,\nGet More Invites`}</S.FallbackTitleText>
           </S.TextContainer>
           <S.TextContainer>
-            <S.FallbackInstructorTex>Add details to attract invites!</S.FallbackInstructorTex>
+            <S.FallbackInstructorTex testID="empty-state-description">Add details to attract invites!</S.FallbackInstructorTex>
           </S.TextContainer>
         </S.FallbackTextContainer>
       </S.Container>

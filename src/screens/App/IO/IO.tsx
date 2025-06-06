@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
-import { components } from '@invited-only/invited-only-api';
-import { ParamListBase, RouteProp } from '@react-navigation/native';
-import { createMaterialTopTabNavigator, MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import React, {useState} from 'react';
+import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
+import {components} from '@invited-only/invited-only-api';
+import {ParamListBase, RouteProp} from '@react-navigation/native';
+import {createMaterialTopTabNavigator, MaterialTopTabBarProps} from '@react-navigation/material-top-tabs';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import EventRequests from '../MyEvents/Components/EventRequests/EventRequests';
 import usePersistentCardSwipe from './hooks/usePersistentCardSwipe';
-import { useEventGuests } from './hooks/useEventGuests';
+import {useEventGuests} from './hooks/useEventGuests';
 import IoHeader from './components/IoHeader/IoHeader';
 import InviteGuestsEvent from './components/InviteGuestsEvent/InviteGuestsEvent';
 import * as S from './IO.style';
@@ -22,7 +22,7 @@ interface Props {
   events: components['schemas']['EventData'][];
 }
 
-const IO = ({ events }: Props) => {
+const IO = ({events}: Props) => {
   const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
 
   type IoTabs = {
@@ -32,8 +32,8 @@ const IO = ({ events }: Props) => {
 
   const Tab = createMaterialTopTabNavigator<IoTabs>();
 
-  const { guests, isLoading: isGuestsLoading, isFetchingNextPage, hasNextPage, fetchNextPage, status } = useEventGuests(selectedEvent?.uid);
-  const { attendingGuests } = useEventAttendes(selectedEvent?.uid);
+  const {guests, isLoading: isGuestsLoading, isFetchingNextPage, hasNextPage, fetchNextPage, status} = useEventGuests(selectedEvent?.uid);
+  const {attendingGuests} = useEventAttendes(selectedEvent?.uid);
   const {
     cards: currentEventCards,
     hasCards,
@@ -77,9 +77,8 @@ const IO = ({ events }: Props) => {
             initialRouteName="/io/invite"
             tabBar={props => <CustomTabBar {...props} />}
             screenOptions={{
-              swipeEnabled: false
-            }}
-          >
+              swipeEnabled: false,
+            }}>
             <Tab.Screen name="/io/invite">
               {() => (
                 <InviteGuestsEvent

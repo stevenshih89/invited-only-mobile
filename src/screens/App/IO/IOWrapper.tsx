@@ -1,7 +1,4 @@
-
-import { Text } from 'react-native';
 import AppLoader from '../AppLoader/AppLoader';
-import Card from '../Components/Card/Card';
 import IO from './IO';
 import EmptyStateView from './components/EmptyStateView/EmptyStateView';
 import useEventsDetails from './hooks/useEventsDetails';
@@ -14,15 +11,12 @@ import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedA
 import ModalUpgradeAccount from 'components/Modal/ModalUpgradeAccount/ModalUpgradeAccount';
 
 const IOWrapper = () => {
+  const {events, isLoading} = useEventsDetails();
 
-  const { events, isLoading } = useEventsDetails();
+  const {user, isLoading: isLoadingUser} = useUser();
+  const isLocked = user?.uid && !user?.accountPremium;
 
-  const { user, isLoading: isLoadingUser } = useUser();
-  const isLocked = user?.uid && !user?.accountPremium
-
-  const { data: highRankUsers, isLoading: isLoadingHighRankUsers } = useGetHighRankUsers({ isLocked });
-
-
+  const {data: highRankUsers, isLoading: isLoadingHighRankUsers} = useGetHighRankUsers({isLocked});
 
   if (isLoading || !events || isLoadingUser || isLoadingHighRankUsers) {
     return (
@@ -34,24 +28,25 @@ const IOWrapper = () => {
     );
   }
 
-
   if (events.length === 0) {
     return (
       <S.Container>
         <ModalLockedAccount />
         <ModalUpgradeAccount />
         {!isLocked && <EmptyStateView />}
-        {isLocked && <S.CardContainer>
-          <InviteGuestsEvent
-            selectedEvent={events[0]}
-            cardsToShow={highRankUsers || []}
-            isLoading={false}
-            onSwipeLeft={() => { }}
-            onSwipeRight={() => { }}
-            onSuperInvite={() => { }}
-            allCards={highRankUsers || []}
-          />
-        </S.CardContainer>}
+        {isLocked && (
+          <S.CardContainer>
+            <InviteGuestsEvent
+              selectedEvent={events[0]}
+              cardsToShow={highRankUsers || []}
+              isLoading={false}
+              onSwipeLeft={() => {}}
+              onSwipeRight={() => {}}
+              onSuperInvite={() => {}}
+              allCards={highRankUsers || []}
+            />
+          </S.CardContainer>
+        )}
       </S.Container>
     );
   }
@@ -59,4 +54,3 @@ const IOWrapper = () => {
   return <IO events={events} />;
 };
 export default IOWrapper;
-

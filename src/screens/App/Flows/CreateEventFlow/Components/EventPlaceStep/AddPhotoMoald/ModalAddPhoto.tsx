@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import {FC} from 'react';
 import Modal from 'react-native-modal';
 import * as S from './ModalAddPhoto.styles';
 import PlusIcon from 'assets/images/icons/plus.svg';
@@ -13,9 +13,10 @@ interface ModalAddProps {
   addPlaceholderPhoto: () => void;
 }
 
-const ModalAddPhoto: FC<ModalAddProps> = ({ isVisible, onClose, openLibrary, openCamera, addPlaceholderPhoto }) => {
+const ModalAddPhoto: FC<ModalAddProps> = ({isVisible, onClose, openLibrary, openCamera, addPlaceholderPhoto}) => {
   return (
     <Modal
+      testID="modal-backdrop"
       isVisible={isVisible}
       onBackdropPress={onClose}
       onSwipeComplete={onClose}
