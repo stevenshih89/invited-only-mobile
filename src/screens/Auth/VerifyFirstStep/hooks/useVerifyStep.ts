@@ -46,8 +46,8 @@ export const useVerifyStep = () => {
       }
 
       const image = await ImagePicker.openCamera({
-        width: 300,
-        height: 400,
+        width: 600,
+        height: 800,
         cropping: true,
         mediaType: 'photo',
         includeBase64: false,
@@ -84,11 +84,10 @@ export const useVerifyStep = () => {
   };
 
   const handleNext = async () => {
-    console.log('imageUri', imageUri);
-    console.log('user', user.uid);
+
+
     try {
       if (!imageUri || !user?.uid) {
-        console.log('returning', user?.uid);
 
         return;
       }

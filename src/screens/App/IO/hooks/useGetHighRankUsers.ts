@@ -1,4 +1,6 @@
+
 import invitedOnlyBackendApi from "src/api/backend-api";
+import { useAuthStore } from "src/store/authStore";
 
 interface UseGetHighRankUsersProps {
     isLocked: boolean | "" | undefined;
@@ -6,7 +8,14 @@ interface UseGetHighRankUsersProps {
 
 const useGetHighRankUsers = ({ isLocked }: UseGetHighRankUsersProps) => {
 
-    const { data, isLoading, error } = invitedOnlyBackendApi.useQuery('get', '/users/highest-rank', {
+    const { userMetadata } = useAuthStore();
+
+    const { data, isLoading, error } = invitedOnlyBackendApi.useQuery('get', '/users/highest-rank/{userId}', {
+        params: {
+            path: {
+                userId: userMetadata?.uid
+            }
+        },
         enabled: isLocked
     });
 

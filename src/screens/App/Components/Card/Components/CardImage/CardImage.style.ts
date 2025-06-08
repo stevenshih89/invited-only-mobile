@@ -14,7 +14,7 @@ export const CardImage = styled(FastImage) <{ isTop: boolean }>`
   border-radius: 20px;
   bottom: 0;
   right: 0;
-  height: 95%;
+  height: 98%;
 
   opacity: ${({ isTop }: { isTop: boolean }) => (isTop ? 1 : 0.8)};
 `;
@@ -23,7 +23,7 @@ export const NoImage = styled.View`
   border-radius: 20px;
   bottom: 0;
   right: 0;
-  height: 95%;
+  height: 98%;
   width: 100%;
   background-color: ${blackColor};
   z-index: 5;

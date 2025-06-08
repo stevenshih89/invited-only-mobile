@@ -9,13 +9,12 @@ export const Container = styled.View`
   justify-content: center;
   align-items: center;
   gap: 10px;
+
 `;
 export const CardContainer = styled.View`
   height: ${screenHeight * 0.7};
-  width: 95%;
-  position: relative;
+  border-radius: 20px;
   align-items: center;
-  justify-content: bottom;
 `;
 
 export const NoCardsText = styled.Text`

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import messaging from "@react-native-firebase/messaging";
 // eslint-disable-next-line react-native/split-platform-components
 import { PermissionsAndroid, Platform } from "react-native";
-import { useNavigationState } from "@react-navigation/native";
+
 
 import useUser from "./user/useUser";
 import invitedOnlyBackendApi from "src/api/backend-api";
@@ -16,7 +16,7 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
 });
 
 const useMessaging = () => {
-    const { mutate: sendToken } = invitedOnlyBackendApi.useMutation('post', '/auth/messaging/token')
+    const { mutate: sendToken } = invitedOnlyBackendApi?.useMutation('post', '/auth/messaging/token') ?? { mutate: async () => { } }
     const { user } = useUser()
     const { isChatScreen } = useNavigationStore()
 

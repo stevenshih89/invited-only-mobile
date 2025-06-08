@@ -1,10 +1,14 @@
 import { components } from '@invited-only/invited-only-api';
 import moment from 'moment';
+
 import { useCardGesture } from '../../hooks/useCardGesture';
 import * as S from './GuestCard.style';
 import Card from 'screens/App/Components/Card/Card';
 import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
-import ModalLockedEvent from 'components/Modal/ModalLockedEvent/ModalLockedEvent';
+import useUser from 'hooks/user/useUser';
+
+
+
 
 interface Props {
   isTopCard: boolean;
@@ -17,6 +21,9 @@ interface Props {
 }
 
 export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex }: Props) => {
+  const { user } = useUser();
+  const isLocked = user?.uid && !user?.accountPremium;
+
   const { gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite } =
     useCardGesture({
       onSwipeLeft: () => {
@@ -55,6 +62,7 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
   };
   return (
     <Card
+      showDots={!isLocked}
       distanceFromTop={topIndex - index}
       uid={guest.uid || ''}
       backgroundUrls={guest.photos?.filter(photo => photo.image !== '' && photo.image !== null && photo.image !== undefined) || []}
@@ -67,7 +75,8 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
       animatedStyle={animatedStyle}
       likeOpacityStyle={likeOpacityStyle}
       nopeOpacityStyle={nopeOpacityStyle}>
-      {isTopCard && (
+
+      {!isLocked && isTopCard && (
         <S.CardContent>
           <S.CardNameAndAge>
             <S.StyledCheckStar />

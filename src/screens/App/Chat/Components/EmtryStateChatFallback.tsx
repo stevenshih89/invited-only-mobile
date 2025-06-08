@@ -9,9 +9,9 @@ interface EmptyStateChatFallbackProps {
 export const EmptyStateChatFallback = ({ emptyType }: EmptyStateChatFallbackProps) => {
   return (
     <S.Container>
-      <S.EmptyStateTitle>{emptyType === 'no-chats' ? 'No chats' : 'No events'}</S.EmptyStateTitle>
+      <S.EmptyStateTitle>{emptyType === 'no-chats' ? 'No Active Chats' : 'No events'}</S.EmptyStateTitle>
       <S.EmptyStateDescription>
-        {emptyType === 'no-chats' ? 'Chats for your events and connections will be here! Start inviting guests to your events.' : 'Events for your connections will be here! Just create an event to start.'}
+        {emptyType === 'no-chats' ? 'Your chats with hosts and guests will be shown here once they begin' : 'Events for your connections will be here! Just create an event to start.'}
       </S.EmptyStateDescription>
       {emptyType !== 'no-chats' ? <CreateEventButton /> : null}
     </S.Container>

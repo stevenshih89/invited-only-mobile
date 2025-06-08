@@ -4,8 +4,8 @@ import Config from 'react-native-config';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 // eslint-disable-next-line import/no-unresolved
-import { BACKEND_BASE_64_AUTH, BACKEND_BASE_URL } from '@env';
 import AppSettingsKeys from '../keys/appSettingsKeys';
+import { BACKEND_BASE_64_AUTH, BACKEND_BASE_URL } from '@env';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import { useAuthStore } from 'src/store/authStore.ts';
 

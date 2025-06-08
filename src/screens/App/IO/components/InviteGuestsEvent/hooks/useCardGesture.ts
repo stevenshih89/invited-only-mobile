@@ -25,7 +25,7 @@ export const useCardGesture = ({ onSwipeLeft, onSwipeRight, topIndex, enabled, i
   const offsetRotation = distanceFromTop * 0.2;
 
   const initialTranslateX = isTopCard ? 0 : sign * offsetX;
-  const initialTranslateY = isTopCard ? 0 : -offsetY - 6;
+  const initialTranslateY = isTopCard ? 0 : -offsetY - 2;
   const initialRotationValue = isTopCard ? 0 : sign * offsetRotation;
 
   const translateX = useSharedValue(initialTranslateX);

@@ -1,14 +1,14 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {blackColor, grayColor, whiteColor} from 'constants/colors';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { blackColor, grayColor, whiteColor } from 'constants/colors';
 
 export const HeaderContainer = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
   background-color: ${blackColor};
-  border-bottom-width: 1px;
   border-bottom-color: ${grayColor}20;
+  padding-bottom: 10px;
 `;
 
 export const DropdownContainer = styled.View`

@@ -37,16 +37,6 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events, hasNextPage, isLoading,
     eventId: '1',
   });
 
-
-  console.log('currentEventCards', currentEventCards.map((card) => {
-    return {
-      eventId: card.uid,
-      hostId: card.hostId,
-    }
-  }));
-
-
-
   const hasCards = currentEventCards.length > 0;
   const currentCard = hasCards ? currentEventCards[currentEventCards.length - 1] : undefined;
 

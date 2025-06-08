@@ -8,11 +8,9 @@ import { blackColor, lightGreenColor, lightRedColor } from 'constants/colors';
 export const Card = styled.View<{ index: number; distanceFromTheTop: number }>`
   position: absolute;
   display: flex;
-
   rotate: ${(props: { distanceFromTheTop: number }) => `rotate(${props.distanceFromTheTop * 0.2}deg)`};
-  width: ${({ distanceFromTheTop }: { distanceFromTheTop: number }) => `${105 - distanceFromTheTop * 5}%`};
-  height: ${({ distanceFromTheTop }: { distanceFromTheTop: number }) => `${100 - distanceFromTheTop * 5}%`};
-  height: 100%;
+  width: ${({ distanceFromTheTop }: { distanceFromTheTop: number }) => `${100 - distanceFromTheTop * 5}%`};
+  height: ${({ distanceFromTheTop }: { distanceFromTheTop: number }) => `${95 - distanceFromTheTop * 5}%`};
   z-index: ${({ index }: { index: number }) => index};
   border-radius: 20px;
   shadow-color: #000;
@@ -22,6 +20,7 @@ export const Card = styled.View<{ index: number; distanceFromTheTop: number }>`
   shadow-radius: 15px;
   /* Android Elevation: higher index => bigger shadow */
   elevation: ${({ distanceFromTheTop }: { distanceFromTheTop: number }) => distanceFromTheTop * 2};
+
 `;
 
 export const CardOverlay = styled.View`

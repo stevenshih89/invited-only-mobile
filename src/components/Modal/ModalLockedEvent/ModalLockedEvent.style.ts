@@ -1,7 +1,6 @@
 import styled from 'styled-components/native';
 import { BlurView } from '@react-native-community/blur';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { screenHeight } from 'constants/common';
 import { whiteColor } from 'constants/colors';
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
 
@@ -11,19 +10,19 @@ export const Container = styled.View`
   top: 0;
   left: 0;
   right: 0;
-  z-index: 5;
+  z-index: 2;
+
 `;
 
 export const ModalWrapper = styled.View`
   margin-top: auto;
-  margin-bottom: ${screenHeight / 10}px;
-  width: 110%;
+
+  width: 100%;
   border-radius: 20px;
   align-items: center;
   justify-content: center;
   align-self: center;
   position: relative;
-  padding-horizontal: 24px;
 `;
 
 export const ContentWrapper = styled.View`

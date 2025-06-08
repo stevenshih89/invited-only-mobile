@@ -10,8 +10,10 @@ export const Container = styled.View`
 
 export const WrapperHeader = styled.View`
   flex-direction: row;
+  align-items: center;
   justify-content: space-between;
   width: 100%;
+
 `;
 
 export const HeaderRight = styled.View`

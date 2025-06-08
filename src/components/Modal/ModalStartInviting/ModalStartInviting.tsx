@@ -1,5 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { FC } from 'react';
 
 import * as S from './ModalStartInviting.style';
 import ThreeGirls from 'assets/images/app/three-girls.png';

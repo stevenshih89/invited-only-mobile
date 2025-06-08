@@ -1,10 +1,10 @@
+import { ViewStyle } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 import { blackColor, whiteColor } from 'constants/colors';
 import { screenHeight } from 'constants/common';
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
-
 
 export const FallbackContainer = styled.View`
   flex: 1;
@@ -17,15 +17,27 @@ export const Container = styled.View`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: ${screenHeight / 20}px;
+  height: 100%;
   width: 100%;
   gap: 10px;
-  height: 100%;
 `;
+
 export const EmptyFallbackImage = styled(FastImage)`
-  width: 250px;
-  aspect-ratio: 1;
+  width: 200px;
+  height: 300px;
+  margin-bottom: 10px;
 `;
+
+export const FlatListWrapper = styled.FlatList`
+  justify-content: center;
+  align-items: center;
+`;
+
+export const columnWrapperStyle: ViewStyle = {
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: 2
+};
 
 export const FallbackTextContainer = styled.View`
   display: flex;

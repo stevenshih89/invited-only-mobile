@@ -33,8 +33,8 @@ const useAddModalPhotos = () => {
   const handleOpenCamera = async () => {
     try {
       const image = await ImagePicker.openCamera({
-        width: 300,
-        height: 400,
+        width: 600,
+        height: 800,
         cropping: true,
         mediaType: 'photo',
       });
@@ -54,8 +54,8 @@ const useAddModalPhotos = () => {
   const handleOpenLibrary = async () => {
     try {
       const image = await ImagePicker.openPicker({
-        width: 300,
-        height: 400,
+        width: 600,
+        height: 800,
         cropping: true,
         mediaType: 'photo',
         multiple: false,
@@ -75,7 +75,6 @@ const useAddModalPhotos = () => {
 
   const handleAddPlaceholderPhoto = () => {
     if (currentPhotoIndex !== null) {
-      // Use a placeholder image URL or local asset
       const placeholderUri = 'https://via.placeholder.com/300';
       handlePhotoAdded(currentPhotoIndex, placeholderUri);
 

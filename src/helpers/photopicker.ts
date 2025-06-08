@@ -1,7 +1,7 @@
-import {PERMISSIONS, request} from 'react-native-permissions';
-import {Alert} from 'react-native';
-import ImagePicker, {Image} from 'react-native-image-crop-picker';
-import {isIos} from 'constants/common.ts';
+import { PERMISSIONS, request } from 'react-native-permissions';
+import { Alert } from 'react-native';
+import ImagePicker, { Image } from 'react-native-image-crop-picker';
+import { isIos } from 'constants/common.ts';
 
 export const openCamera = async (cameraType?: 'front' | 'back', onDidCancel?: () => void): Promise<Image | undefined | null> => {
   if (isIos) {
@@ -10,8 +10,8 @@ export const openCamera = async (cameraType?: 'front' | 'back', onDidCancel?: ()
     if (cameraPermission === 'granted') {
       try {
         const image = await ImagePicker.openCamera({
-          width: 300,
-          height: 400,
+          width: 600,
+          height: 800,
           cropping: true,
           includeBase64: false,
           mediaType: 'photo',

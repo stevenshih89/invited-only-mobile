@@ -24,7 +24,9 @@ const useStyles = () =>
       borderTopLeftRadius: 33,
       borderTopRightRadius: 33,
       borderTopWidth: 0,
-      position: 'absolute',
+      marginBottom: 20,
+      marginTop: 10,
+      paddingTop: 10,
       shadowOffset: {
         height: 0,
         width: 0,

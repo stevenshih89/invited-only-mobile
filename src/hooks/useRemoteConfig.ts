@@ -5,6 +5,7 @@ const useRemoteConfig = () => {
     const [isApiReady, setIsApiReady] = useState(false);
     useEffect(() => {
         const init = async () => {
+            console.log('initializing api client');
             await initializeApiClient();
             setIsApiReady(true);
         };

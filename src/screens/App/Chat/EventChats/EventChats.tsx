@@ -9,6 +9,7 @@ import AppLoader from "screens/App/AppLoader/AppLoader";
 import useGetUserById from "hooks/useGetUserById";
 import { useAuthStore } from "src/store/authStore";
 import useEventAttendes from "screens/App/IO/hooks/useEventAttendes";
+import useUser from "hooks/user/useUser";
 
 interface EventChatsProps {
     events: components['schemas']['EventData'][];
@@ -21,10 +22,10 @@ const EventChats = ({ events }: EventChatsProps) => {
     const { userMetadata } = useAuthStore.getState();
     const { data: user } = useGetUserById(userMetadata.uid);
     const { attendingGuests } = useEventAttendes(selectedEvent.uid);
-
+    const isLocked = user?.uid && !user?.accountReviewed;
     return (
         <S.Container>
-            <EventsDropdown events={events} onEventSelect={setSelectedEvent} selectedEvent={selectedEvent} attendingGuestsCount={attendingGuests?.length ?? 0} />
+            {!isLocked && <EventsDropdown events={events} onEventSelect={setSelectedEvent} selectedEvent={selectedEvent} attendingGuestsCount={attendingGuests?.length ?? 0} />}
             {selectedEvent.uid !== 'joined-events' && <ChatItem chat={{
                 eventId: `support-${userMetadata.uid}`,
                 hostId: 'support-agent',

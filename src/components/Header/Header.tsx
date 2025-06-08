@@ -49,7 +49,7 @@ const Header: FC<HeaderTypeProps> = ({ badge, logoType, showHeaderTop = true }) 
             </S.ProfileButton>
             {badge && (
               <S.NotificationButton onPress={() => navigation.navigate('/notifications-stack', { initialTab: initialTab })} activeOpacity={0.7}>
-                <NotificationBellIcon width={32} height={32} />
+                <NotificationBellIcon width={22} height={22} />
                 {count && count > 0 ? (
                   <Badge
                     value={count ? count : 0}

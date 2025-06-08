@@ -28,6 +28,7 @@ interface InviteGuestsEventProps {
   onSwipeRight: () => void;
   onSuperInvite: () => void;
   allCards: GuestUser[];
+  isLockedProfile: boolean;
 }
 
 const InviteGuestsEvent = ({
@@ -38,6 +39,7 @@ const InviteGuestsEvent = ({
   onSwipeRight,
   onSuperInvite,
   allCards,
+  isLockedProfile,
 }: InviteGuestsEventProps) => {
   const hasCards = cardsToShow.length > 0;
   const currentCard: GuestUser | undefined = hasCards ? cardsToShow[cardsToShow.length - 1] : undefined;
@@ -126,13 +128,15 @@ const InviteGuestsEvent = ({
       />
     ));
   };
-
   return (
-    <View style={{ flex: 1 }}>
+    <View>
       {selectedEvent && <ModalLockedEvent event={selectedEvent} />}
-      <ScrollView ref={scrollRef}>
+      <ScrollView ref={scrollRef} scrollEnabled={!isLockedProfile}>
         <S.Container>
-          <S.CardContainer>{renderCards()}</S.CardContainer>
+          <S.CardContainer>
+            {renderCards()}
+
+          </S.CardContainer>
           {!isLoading && currentCard && (
             <>
               <GuestBasicInfoCard
@@ -141,6 +145,7 @@ const InviteGuestsEvent = ({
                 gender={currentCard?.gender || 'other'}
                 listOfInterestsImages={currentCard?.interests || []}
               />
+
               <GuestBioCard bio={currentCard?.bio || ''} />
               <GuestLanguagesCard languages={currentCard?.languages || []} />
               <GuestPhotosList photosList={currentCard?.photos || []} />

@@ -24,7 +24,6 @@ const JoinEventsWrapper = (): ReactElement => {
     </DefaultBackground>;
   }
 
-
   return <JoinEvents events={events} hasNextPage={hasNextPage} fetchNextPage={fetchNextPage} isLoading={isLoading} />;
 };
 

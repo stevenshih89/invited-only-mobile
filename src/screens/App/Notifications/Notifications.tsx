@@ -49,7 +49,7 @@ const Notifications = () => {
   }, []);
 
   if (!allNotificationsList || allNotificationsList.length === 0) {
-    return <NotificationEmptyFallback isJoinedEvents={false} />;
+    return <NotificationEmptyFallback />;
   }
 
   return (

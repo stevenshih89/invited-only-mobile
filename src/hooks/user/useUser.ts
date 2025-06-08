@@ -1,4 +1,3 @@
-
 import { components } from "@invited-only/invited-only-api";
 import { useAuthStore } from "src/store/authStore";
 import invitedOnlyBackendApi from "src/api/backend-api";
@@ -11,6 +10,10 @@ interface UseUserResponse {
 
 const useUser = (): UseUserResponse => {
     const { userMetadata, logout, onBoarding } = useAuthStore();
+
+    if (!invitedOnlyBackendApi) {
+        return { user: undefined, isLoading: false, error: null };
+    }
 
     const { data, isLoading, error, status } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
         params: {

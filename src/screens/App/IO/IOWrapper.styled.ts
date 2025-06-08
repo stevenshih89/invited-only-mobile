@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
-import {screenHeight} from 'constants/common';
+import { screenHeight } from 'constants/common';
 
 export const CardContainer = styled.View`
-  height: 85%;
+  height: 95%;
   justify-content: center;
   align-items: center;
 `;

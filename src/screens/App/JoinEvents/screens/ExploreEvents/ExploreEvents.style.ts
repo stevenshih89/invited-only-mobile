@@ -1,9 +1,8 @@
 import styled from 'styled-components/native';
-import {ScrollView} from 'react-native-gesture-handler';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight} from 'constants/common';
-import {whiteColor} from 'constants/colors';
-import {Satoshi500} from 'constants/fonts';
+import { ScrollView } from 'react-native-gesture-handler';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { whiteColor } from 'constants/colors';
+import { Satoshi500 } from 'constants/fonts';
 
 export const EventCardContainer = styled.View`
   align-items: center;
@@ -16,7 +15,7 @@ export const Container = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  height: ${screenHeight * 0.7}px;
+  height: 95%;
 `;
 
 export const EventsScrollViewContainer = styled(ScrollView)``;

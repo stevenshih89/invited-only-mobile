@@ -1,17 +1,11 @@
-import React, {FC} from 'react';
+import React, { FC } from 'react';
 
-import {components} from '@invited-only/invited-only-api';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './ModalLockedEvent.style';
 import LockIcon from 'assets/images/icons/key-rounded.svg';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {invitationCodePath} from 'constants/pathLocations';
 
-const ModalLockedEvent: FC<{event: components['schemas']['EventData']}> = ({event}) => {
-  const navigation = useAppNavigation();
 
-  const handleInviteCodePress = () => {
-    navigation.navigate(invitationCodePath as never);
-  };
+const ModalLockedEvent: FC<{ event: components['schemas']['EventData'] }> = ({ event }) => {
 
   if (event?.eventReviewed || event?.eventReviewed === undefined) {
     return null;

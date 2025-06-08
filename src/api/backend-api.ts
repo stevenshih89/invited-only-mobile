@@ -29,7 +29,6 @@ export const initializeApiClient = async () => {
 
     const backendUrlObj = JSON.parse(remoteConfig().getString('BackendPath'));
     const backendUrl = backendUrlObj[CODE_VERSION];
-
     if (!backendUrl) {
       console.warn('No backend URL from Remote Config, using default');
       return invitedOnlyBackendApi;

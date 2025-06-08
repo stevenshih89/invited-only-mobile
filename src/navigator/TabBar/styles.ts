@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
-import {Text, View} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Satoshi500} from 'constants/fonts';
-import {screenHeight} from 'constants/common';
+import { Text, View } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { Satoshi500 } from 'constants/fonts';
+import { screenHeight } from 'constants/common';
 
 export const Label = styled(Text)`
   font-size: ${RFValue(8, 812)}px;
@@ -11,7 +11,7 @@ export const Label = styled(Text)`
 
 export const IconWrapper = styled(View)`
   height: 100%;
-  width: 28px;
+  width: 40px;
   padding-top: 8px;
   justify-content: center;
   align-items: center;

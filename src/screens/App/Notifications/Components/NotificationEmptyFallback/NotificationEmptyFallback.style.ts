@@ -1,12 +1,13 @@
 import styled from 'styled-components/native';
-import {blackColor, grayColor, whiteColor} from 'constants/colors';
-import {screenWidth} from 'constants/common';
-import {Satoshi500, Satoshi400} from 'constants/fonts';
+import { blackColor, grayColor, whiteColor } from 'constants/colors';
+import { screenWidth } from 'constants/common';
+import { Satoshi500, Satoshi400 } from 'constants/fonts';
 
 export const Container = styled.View`
   flex: 1;
-
   background-color: ${blackColor};
+  justify-content: center;
+  align-items: center;
   padding: ${screenWidth * 0.07}px;
 `;
 

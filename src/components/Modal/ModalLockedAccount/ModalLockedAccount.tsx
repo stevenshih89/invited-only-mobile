@@ -32,7 +32,7 @@ const ModalLockedAccount: FC = () => {
             </S.LockBadge>
           </S.LockBadgeContainer>
           <S.Title>Profile is Under Review</S.Title>
-          <S.Description>{`You'll be able to invite soon`}</S.Description>
+          <S.Description>{`You are on the waiting list`}</S.Description>
           <Button
             buttonStyle={{
               width: '100%',

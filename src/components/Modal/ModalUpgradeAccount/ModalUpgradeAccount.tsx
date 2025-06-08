@@ -17,15 +17,13 @@ const ModalUpgradeAccount: FC = () => {
 
 
   const { user } = useUser();
-
   const isActiveSubscription = subscriptionData?.status === 'active';
 
   if (isLoadingSubscription) {
     return null;
   }
 
-
-  if (isLoadingSubscription) {
+  if (isActiveSubscription) {
     return null;
   }
 

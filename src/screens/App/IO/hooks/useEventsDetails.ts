@@ -14,6 +14,7 @@ const useEventsDetails = () => {
         refetchOnMount: true
     });
 
+
     return { events, isLoading };
 };
 export default useEventsDetails;
