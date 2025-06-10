@@ -16,8 +16,7 @@ export const StyledModal = styled(Modal).attrs({
 
 export const Container = styled.View`
   background-color: #111;
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
+  border-radius: 24px;
   padding: 16px;
 `;
 

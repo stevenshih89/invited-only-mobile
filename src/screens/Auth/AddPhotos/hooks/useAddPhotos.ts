@@ -101,8 +101,8 @@ export const useAddPhotos = () => {
 
     try {
       const image = await ImagePicker.openPicker({
-        width: 300,
-        height: 400,
+        width: 800,
+        height: 900,
         cropping: true,
         multiple: false,
         mediaType: 'photo',

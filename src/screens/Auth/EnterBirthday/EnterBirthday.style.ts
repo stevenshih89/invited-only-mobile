@@ -2,7 +2,7 @@ import styled from 'styled-components/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 import MaskInput from 'react-native-mask-input';
 import LinearGradient from 'react-native-linear-gradient';
-
+import {Switch} from '@rneui/themed';
 import {Text, View, TextInput} from 'react-native';
 import {screenHeight} from 'constants/common';
 import {transparentWhite30Color, whiteColor} from 'constants/colors';
@@ -109,7 +109,7 @@ export const ShowAgeContainer = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-top: ${screenHeight / 26}px;
+  margin-top: ${screenHeight / 40}px;
 `;
 
 export const ShowAgeText = styled.Text`
@@ -175,4 +175,8 @@ export const StyledTextInput = styled(TextInput)`
   width: 100%;
   font-family: ${Satoshi500};
   font-size: 18px;
+`;
+
+export const StyledSwitch = styled(Switch)`
+  transform: scale(0.7);
 `;

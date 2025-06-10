@@ -9,8 +9,6 @@ import {
   SmallPhotoBottom,
   AddPhotoButtonMain,
   AddPhotoButtonSmall,
-  LabelContainer,
-  LabelText,
 } from './AddPhotos.style';
 import * as S from './AddPhotos.style';
 import Close from 'assets/images/icons/close.svg';
@@ -53,6 +51,9 @@ const AddPhotos: FC = (): JSX.Element => {
                     </S.Button>
                   </S.ButtonWrapper>
                 </S.ButtonsContainer>
+                <S.LabelContainer>
+                  <S.LabelText>Main</S.LabelText>
+                </S.LabelContainer>
               </S.StyledImageBackground>
             </S.ImageContainer>
           ) : (
@@ -83,6 +84,9 @@ const AddPhotos: FC = (): JSX.Element => {
                       </S.Button>
                     </S.ButtonWrapper>
                   </S.ButtonsContainer>
+                  <S.LabelContainer>
+                    <S.LabelText>2</S.LabelText>
+                  </S.LabelContainer>
                 </S.StyledImageBackground>
               </S.ImageContainer>
             ) : (
@@ -112,14 +116,17 @@ const AddPhotos: FC = (): JSX.Element => {
                       </S.Button>
                     </S.ButtonWrapper>
                   </S.ButtonsContainer>
+                  <S.LabelContainer>
+                    <S.LabelText>3</S.LabelText>
+                  </S.LabelContainer>
                 </S.StyledImageBackground>
               </S.ImageContainer>
             ) : (
               <AddPhotoButtonSmall testID="add-photo-button-2" onPress={() => openLibrary(photos[2].id)}>
                 <Plus />
-                <LabelContainer>
-                  <LabelText>3</LabelText>
-                </LabelContainer>
+                <S.LabelContainer>
+                  <S.LabelText>3</S.LabelText>
+                </S.LabelContainer>
               </AddPhotoButtonSmall>
             )}
           </SmallPhotoBottom>

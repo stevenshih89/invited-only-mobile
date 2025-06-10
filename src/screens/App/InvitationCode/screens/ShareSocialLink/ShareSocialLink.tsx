@@ -19,7 +19,6 @@ import BackButton from 'src/sharedComponents/BackButton/BackButton';
 type SocialNetwork = 'instagram' | 'tiktok' | 'facebook' | 'linkedin' | 'other';
 
 const ShareSocialLink = () => {
-  const [selectedNetwork, setSelectedNetwork] = useState<SocialNetwork | null>(null);
   const [profileLink, setProfileLink] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigation = useAppNavigation();
@@ -31,6 +30,7 @@ const ShareSocialLink = () => {
     {id: 'linkedin', icon: LinkedInIcon},
     {id: 'other', icon: TwitterIcon},
   ];
+  const [selectedNetwork, setSelectedNetwork] = useState<SocialNetwork | null>(socialNetworks[0].id as SocialNetwork);
 
   const validateSocialLink = (link: string, network: SocialNetwork): boolean => {
     const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;

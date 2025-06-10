@@ -18,6 +18,7 @@ export const Header = styled.View`
   justify-content: center;
   align-items: center;
   flex-direction: row;
+  margin-top: 16px;
 `;
 
 export const EmptySpace = styled.View`

@@ -103,6 +103,7 @@ export const BoldText = styled(Text)`
 export const ListContainer = styled(View)`
   width: 100%;
   height: ${screenHeight / 1.8}px;
+  position: relative;
 `;
 
 export const InterestsList = styled(FlatList).attrs({
@@ -223,6 +224,7 @@ export const SelectionIndicator = styled.View<{isSelected: boolean}>`
 export const InterestItem = styled.TouchableOpacity.attrs({
   activeOpacity: 0.7,
 })`
+  position: relative;
   width: 48%;
   margin-horizontal: 1%;
   margin-bottom: 16px;
@@ -258,15 +260,16 @@ export const InterestTitleWrapper = styled.View`
   flex: 1;
   justify-content: flex-end;
   padding: 8px;
-  z-index: 1;
+  z-index: 100;
 `;
 
 export const ItemGradient = styled(LinearGradient)`
-  position: 'absolute';
+  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  top: '75%';
+  top: 75%;
+  z-index: 10;
 `;
 
 export const ListGradient = styled(LinearGradient)`
@@ -274,5 +277,5 @@ export const ListGradient = styled(LinearGradient)`
   bottom: 0;
   left: 0;
   right: 0;
-  top: '95%';
+  top: 95%;
 `;

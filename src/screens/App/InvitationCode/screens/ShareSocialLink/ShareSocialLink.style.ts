@@ -3,6 +3,7 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import {GradientBorderView} from '@good-react-native/gradient-border';
 import {blackColor, whiteColor} from 'constants/colors';
 import {Satoshi400, Satoshi500} from 'constants/fonts';
+import {screenHeight} from 'constants/common';
 
 interface SocialButtonProps {
   isSelected?: boolean;
@@ -22,14 +23,13 @@ export const Container = styled.View`
 
 export const UpperContent = styled.View`
   flex: 1;
-  gap: 8px;
 `;
 
 export const Title = styled.Text`
   font-family: ${Satoshi500};
   font-size: ${RFValue(32, 932)}px;
   color: ${whiteColor};
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 `;
 
 export const Description = styled.Text`
@@ -37,14 +37,14 @@ export const Description = styled.Text`
   font-size: ${RFValue(16, 932)}px;
   color: ${whiteColor};
   opacity: 0.8;
-  margin-bottom: 32px;
+  margin-bottom: ${screenHeight / 24}px;
 `;
 
 export const SocialButtonsContainer = styled.View`
   display: flex;
   flex-direction: row;
   gap: 12px;
-  margin-bottom: 32px;
+  margin-bottom: ${screenHeight / 40}px;
 `;
 
 export const SocialButton = styled.TouchableOpacity<SocialButtonProps>`
@@ -60,7 +60,7 @@ export const Input = styled.TextInput`
   width: 100%;
   height: 56px;
   background-color: rgba(255, 255, 255, 0.04);
-  border-radius: 16px;
+  border-radius: 100px;
   padding: 0 16px;
   color: ${whiteColor};
   font-family: ${Satoshi400};

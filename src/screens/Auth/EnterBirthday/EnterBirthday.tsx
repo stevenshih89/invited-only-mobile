@@ -1,9 +1,8 @@
 import {FC, JSX, useState} from 'react';
-import {Switch} from '@ant-design/react-native';
 import DatePicker from 'react-native-date-picker';
 import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
 import * as S from './EnterBirthday.style';
-import {grayColor, toggleColor, whiteColor} from 'constants/colors';
+import {blackColor, whiteColor} from 'constants/colors';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import CalendarIcon from 'assets/images/icons/calendar-new.svg';
 
@@ -104,8 +103,14 @@ const EnterBirthday: FC = (): JSX.Element => {
         />
       </S.HalfFieldContainer>
       <S.ShowAgeContainer>
-        <S.ShowAgeText>Show my age on my profile</S.ShowAgeText>
-        <Switch trackColor={{false: grayColor, true: toggleColor}} thumbTintColor={whiteColor} checked={showAge} onChange={handleShowAge} />
+        <S.ShowAgeText>Show my age on my profile</S.ShowAgeText>{' '}
+        <S.StyledSwitch
+          testID="requests-switch"
+          trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
+          thumbColor={showAge ? blackColor : whiteColor}
+          value={showAge}
+          onValueChange={handleShowAge}
+        />
       </S.ShowAgeContainer>
     </CommonAuthLayout>
   );
