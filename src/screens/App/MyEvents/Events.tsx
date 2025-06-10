@@ -5,32 +5,40 @@ import JoinedEventsScreen from './Components/JoinedEventsScreen/JoinedEventsScre
 import EventsHeader from './Components/EventsHeader/EventsHeader';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import { useAuthStore } from 'src/store/authStore';
+import useUser from 'hooks/user/useUser';
+import NewEventsScreen from './NewEventsScreen';
 
 const TabNavigator = createMaterialTopTabNavigator();
 
 const Events = () => {
   const { onBoarding } = useAuthStore.getState();
   const initialTab = onBoarding?.registrationDetails?.gender === 'woman' ? 'Joined Events' : 'My Events';
+  const { user } = useUser();
+  const isLocked = !user?.accountReviewed;
 
   return (
     <S.ScreenContainer>
       <EventsHeader />
-      <TabNavigator.Navigator initialRouteName={initialTab} screenOptions={{
-        tabBarIndicatorStyle: {
-          backgroundColor: 'white',
-          marginBottom: 10,
-        },
-        tabBarActiveTintColor: 'white',
+      {isLocked ? <NewEventsScreen /> : (
+        <TabNavigator.Navigator initialRouteName={initialTab} screenOptions={{
+          tabBarIndicatorStyle: {
+            backgroundColor: 'white',
+            marginBottom: 10,
+          },
+          tabBarActiveTintColor: 'white',
 
-        tabBarInactiveTintColor: 'gray',
-        tabBarStyle: {
-          backgroundColor: 'black',
-        },
-      }}>
-        <TabNavigator.Screen name="My Events" component={MyEvents} />
-        <TabNavigator.Screen name="Joined Events" component={JoinedEventsScreen} />
-      </TabNavigator.Navigator>
+          tabBarInactiveTintColor: 'gray',
+          tabBarStyle: {
+            backgroundColor: 'black',
+          },
+        }}>
+
+          <TabNavigator.Screen name="My Events" component={MyEvents} />
+          <TabNavigator.Screen name="Joined Events" component={JoinedEventsScreen} />
+        </TabNavigator.Navigator>
+      )}
       <ModalLockedAccount />
+
     </S.ScreenContainer>
   );
 };

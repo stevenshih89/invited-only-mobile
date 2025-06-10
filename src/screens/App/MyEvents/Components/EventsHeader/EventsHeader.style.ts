@@ -13,7 +13,7 @@ export const Container = styled(View)`
 `;
 export const EventsHeaderTitle = styled(Text)`
   font-family: ${Satoshi500};
-  font-size: 20px;
+  font-size: 32px;
   color: ${whiteColor};
 `;
 export const EventsHeaderSubtitle = styled(Text)`

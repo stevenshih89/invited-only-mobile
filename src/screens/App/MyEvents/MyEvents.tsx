@@ -9,6 +9,7 @@ import invitedOnlyBackendApi from 'src/api/backend-api';
 
 const MyEvents = () => {
   const { userMetadata } = useAuthStore.getState();
+
   const { data: events, isLoading } = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
     params: {
       path: {

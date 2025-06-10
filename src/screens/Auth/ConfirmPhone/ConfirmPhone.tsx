@@ -1,12 +1,13 @@
-import {Text, TouchableOpacity, View} from 'react-native';
-import {Cursor} from 'react-native-confirmation-code-field';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { Cursor } from 'react-native-confirmation-code-field';
+import { RFValue } from 'react-native-responsive-fontsize';
 import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
-import {useConfirmPhone} from './hooks/useConfirmPhone';
+import { useConfirmPhone } from './hooks/useConfirmPhone';
 import * as S from './ConfirmPhone.style';
-import {screenHeight} from 'constants/common';
-import {Satoshi400, Satoshi700} from 'constants/fonts';
-import {whiteColor} from 'constants/colors';
+import { screenHeight } from 'constants/common';
+import { Satoshi400, Satoshi700 } from 'constants/fonts';
+import { whiteColor } from 'constants/colors';
+import useRemoteConfig from 'hooks/useRemoteConfig';
 
 interface ConfirmPhoneProps {
   route: {
@@ -17,7 +18,7 @@ interface ConfirmPhoneProps {
   };
 }
 
-const ConfirmPhone = ({route}: ConfirmPhoneProps) => {
+const ConfirmPhone = ({ route }: ConfirmPhoneProps) => {
   const {
     mobilePhone,
     code,
@@ -34,16 +35,15 @@ const ConfirmPhone = ({route}: ConfirmPhoneProps) => {
   } = useConfirmPhone(route);
   const focusedColorsList = ['rgba(26, 26, 26, 0.3)', 'rgba(255, 255, 255, 0.6)', 'rgba(255, 255, 255, 0)'];
 
-  console.log(screenHeight);
 
   return (
     <CommonAuthLayout
       title="Phone number verification"
       subtitle={`Please enter the verification code sent to your mobile ${mobilePhone?.slice(-4)}`}
       continueButtonTitle="Verify"
-      continueButtonDisabled={code.length < 6}
+      continueButtonDisabled={code.length < CELL_COUNT}
       continueButtonLoading={isLoadingVerifyOtp || isLoadingSendOtp}
-      onContinuePress={() => handleConfirmPhoneNumber()}
+      onContinuePress={() => handleConfirmPhoneNumber(code)}
       startPercentage={0}
       endPercentage={10}>
       <View
@@ -57,17 +57,22 @@ const ConfirmPhone = ({route}: ConfirmPhoneProps) => {
           ref={ref}
           {...props}
           value={code}
-          onChangeText={setCode}
+          onChangeText={(text: string) => {
+            setCode(text);
+            if (text.length === CELL_COUNT) {
+              handleConfirmPhoneNumber(text);
+            }
+          }}
           cellCount={CELL_COUNT}
           keyboardAppearance="dark"
           textContentType="oneTimeCode"
-          renderCell={({index, symbol, isFocused}: {index: number; symbol: string; isFocused: boolean}) => {
+          renderCell={({ index, symbol, isFocused }: { index: number; symbol: string; isFocused: boolean }) => {
             if (isFocused) {
               return (
                 <S.GradientCell
                   gradientProps={{
-                    start: {x: 0, y: 0},
-                    end: {x: 1, y: 1},
+                    start: { x: 0, y: 0 },
+                    end: { x: 1, y: 1 },
                     colors: focusedColorsList,
                   }}
                   key={index}>
@@ -99,7 +104,7 @@ const ConfirmPhone = ({route}: ConfirmPhoneProps) => {
           Didn&apos;t receive the code?{' '}
         </Text>
         {!resendTimer ? (
-          <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{bottom: 10, right: 20}}>
+          <TouchableOpacity activeOpacity={0.7} onPress={signInWithPhoneNumber} hitSlop={{ bottom: 10, right: 20 }}>
             <Text
               style={{
                 color: whiteColor,

@@ -23,10 +23,6 @@ const myMiddleware: Middleware = {
 
 export const initializeApiClient = async () => {
   try {
-
-    await remoteConfig().fetch(0);
-    await remoteConfig().activate();
-
     const backendUrlObj = JSON.parse(remoteConfig().getString('BackendPath'));
     const backendUrl = backendUrlObj[CODE_VERSION];
     if (!backendUrl) {

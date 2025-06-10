@@ -36,7 +36,7 @@ amplitude.init(AMPLITUDE_API_KEY);
 
 const App: FC = (): JSX.Element => {
   const iosPurchaseKey = IO_PUBLICK_RC_IOS || '';
-  console.log('using remote config');
+
   const { isApiReady } = useRemoteConfig();
 
   const initializeTracking = async () => {
