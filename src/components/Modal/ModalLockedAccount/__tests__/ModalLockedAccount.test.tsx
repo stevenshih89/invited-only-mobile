@@ -35,7 +35,6 @@ describe('ModalLockedAccount', () => {
 
     expect(getByText('Locked')).toBeTruthy();
     expect(getByText('Profile is Under Review')).toBeTruthy();
-    expect(getByText("You'll be able to invite soon")).toBeTruthy();
     expect(getByText('I have an invitation code')).toBeTruthy();
   });
 

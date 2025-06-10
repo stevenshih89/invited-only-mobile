@@ -1,20 +1,14 @@
 import React, {FC, useState, useContext, JSX} from 'react';
-import {Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback, View} from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
-import LinearGradient from 'react-native-linear-gradient';
 import {InputPhoneView} from '../../../components/Inputs/InputPhoneView';
+import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
 import * as S from './SignUp.styles';
-import {isIos} from 'constants/common';
-import {backgroundGradientColors} from 'constants/colors';
-import Button from 'components/Button/Button';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {showToast} from 'helpers/showToast.ts';
 import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import invitedOnlyBackendApi from 'src/api/backend-api';
-import AuthProgress from 'components/AuthProgress';
-import BackButton from 'src/sharedComponents/BackButton/BackButton';
 
 const SignUp: FC = (): JSX.Element => {
   const [mobilePhone, setMobilePhone] = useState<string>('');
@@ -60,44 +54,26 @@ const SignUp: FC = (): JSX.Element => {
   };
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 1}} end={{x: 0, y: 0}} style={{flex: 1}}>
-      <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1, paddingBottom: 0}}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <S.SafeArea>
-            <S.Container>
-              <S.ContentContainer>
-                <S.TopRow>
-                  <BackButton onPress={() => navigation.goBack()} />
-                  <S.LogoContainer>
-                    <S.LogoImage />
-                  </S.LogoContainer>
-                  <View>
-                    <AuthProgress startPercentage={0} endPercentage={10} animationDuration={1000} />
-                  </View>
-                </S.TopRow>
-                <S.HeaderContainer>
-                  <S.Title>Your phone</S.Title>
-                  <S.Subtitle>We protect our community by ensuring the authenticity of everyone in IO.</S.Subtitle>
-                </S.HeaderContainer>
-                <S.InputContainer>
-                  <InputPhoneView
-                    placeholder="Enter your phone number"
-                    testID="phone-input"
-                    value={mobilePhone}
-                    setIsValid={setIsValidPhone}
-                    validationDisabled={isDisabledValidation}
-                    onChangeFormattedText={val => setMobilePhone(val)}
-                  />
-                </S.InputContainer>
-              </S.ContentContainer>
-              <S.ButtonContainer>
-                <Button disabled={!isValidPhone && isLoading} loading={isLoading} onPress={handleSignUp} title="Continue" />
-              </S.ButtonContainer>
-            </S.Container>
-          </S.SafeArea>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+    <CommonAuthLayout
+      title="Your phone"
+      subtitle="We protect our community by ensuring the authenticity of everyone in IO."
+      startPercentage={0}
+      endPercentage={10}
+      continueButtonTitle="Continue"
+      continueButtonDisabled={!isValidPhone && isLoading}
+      onContinuePress={handleSignUp}
+      continueButtonTestID="continue-button">
+      <S.InputContainer>
+        <InputPhoneView
+          placeholder="Enter your phone number"
+          testID="phone-input"
+          value={mobilePhone}
+          setIsValid={setIsValidPhone}
+          validationDisabled={isDisabledValidation}
+          onChangeFormattedText={val => setMobilePhone(val)}
+        />
+      </S.InputContainer>
+    </CommonAuthLayout>
   );
 };
 

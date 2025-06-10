@@ -1,6 +1,6 @@
 import Video from 'react-native-video';
 import styled from 'styled-components/native';
-import { whiteColor } from 'constants/colors';
+import {whiteColor} from 'constants/colors';
 
 export const DemoVideo = styled(Video)`
   position: absolute;
@@ -8,12 +8,11 @@ export const DemoVideo = styled(Video)`
   left: 0;
   bottom: 0;
   right: 0;
-  object-fit: cover; /* Ensures the video fills the screen without distortion */
 `;
 
 export const ProgressBarContainer = styled.View`
   position: absolute;
-  top: 60px;
+  top: 55px;
   left: 20px;
   right: 20px;
   height: 4px;
@@ -22,9 +21,9 @@ export const ProgressBarContainer = styled.View`
   overflow: hidden;
 `;
 
-export const ProgressBar = styled.View<{ width: string }>`
+export const ProgressBar = styled.View<{width: string}>`
   height: 100%;
-  width: ${(props: { width: any; }) => props.width};
+  width: ${(props: {width: any}) => props.width};
   background-color: ${whiteColor};
   border-radius: 2px;
 `;

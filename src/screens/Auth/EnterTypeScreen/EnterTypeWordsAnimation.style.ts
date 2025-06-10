@@ -10,7 +10,7 @@ export const Container = styled.View`
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  bottom: ${screenHeight * 0.1}px;
+  bottom: ${screenHeight * 0.04}px;
 `;
 
 export const AnimatedText = styled(Animated.Text)`

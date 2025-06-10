@@ -90,7 +90,7 @@ export const NameText = styled.Text`
 export const AgeText = styled.Text`
   margin-left: 6px;
   font-family: ${Satoshi500};
-  font-size: ${RFValue(16, 932)}px;
+  font-size: ${RFValue(24, 932)}px;
   color: ${whiteColor};
   opacity: 0.6;
 `;
@@ -109,6 +109,8 @@ export const GradientOverlay = styled(LinearGradient).attrs({
 
 export const NameOverlay = styled(View)`
   margin-top: auto;
+  flex-direction: row;
+  align-items: center;
   align-self: center;
   margin-bottom: 12px;
   z-index: 1;

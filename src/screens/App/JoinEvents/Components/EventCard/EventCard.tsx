@@ -1,14 +1,11 @@
-import { components } from '@invited-only/invited-only-api';
+import {components} from '@invited-only/invited-only-api';
 import * as S from './EventCard.style';
 import HostBadge from './Components/HostBadge';
 import Card from 'screens/App/Components/Card/Card';
 
-import { useCardGesture } from 'screens/App/IO/components/InviteGuestsEvent/hooks/useCardGesture';
-import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
+import {useCardGesture} from 'screens/App/IO/components/InviteGuestsEvent/hooks/useCardGesture';
+import {CardActionsButtons} from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
 import CardsNameAndDate from 'screens/App/Components/Card/Components/CardsNameAndDate/CardsNameAndDate';
-
-
-
 
 interface Props {
   onReject: () => void;
@@ -20,9 +17,8 @@ interface Props {
   topIndex: number;
 }
 
-const EventCard = ({ onInvite, onReject, isTopCard, event, index, topIndex }: Props) => {
-
-  const { gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite } =
+const EventCard = ({onInvite, onReject, isTopCard, event, index, topIndex}: Props) => {
+  const {gestureHandler, animatedStyle, likeOpacityStyle, nopeOpacityStyle, animateInvite, animateReject, animateSuperInvite} =
     useCardGesture({
       onSwipeLeft: () => {
         onReject();

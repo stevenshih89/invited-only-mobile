@@ -1,18 +1,19 @@
-import { useState } from 'react';
-import { Alert, Platform } from 'react-native';
-import { check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS } from 'react-native-permissions';
+import {useState} from 'react';
+import {Alert, Platform} from 'react-native';
+import {check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS} from 'react-native-permissions';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
-import { components } from '@invited-only/invited-only-api';
-import { useAuthStore } from 'src/store/authStore';
-import { showToast } from 'helpers/showToast';
-import { isIos } from 'constants/common';
-import { useAppNavigation } from 'hooks/useAppNavigation';
+import {components} from '@invited-only/invited-only-api';
+import {useAuthStore} from 'src/store/authStore';
+import {showToast} from 'helpers/showToast';
+import {isIos} from 'constants/common';
+import {useAppNavigation} from 'hooks/useAppNavigation';
 
 export const useAddPhotos = () => {
   const navigation = useAppNavigation();
-
-  const [photos, setImages] = useState<{ image: null | string; id: number }[]>([
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
+  const [photos, setImages] = useState<{image: null | string; id: number}[]>([
     {
       id: 0,
       image: null,
@@ -39,7 +40,18 @@ export const useAddPhotos = () => {
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  const { onBoarding, setOnBoarding } = useAuthStore();
+  const {onBoarding, setOnBoarding} = useAuthStore();
+
+  const handleOpenModal = (imageId: number) => {
+    setIsModalVisible(true);
+    setSelectedImageId(imageId);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setSelectedImageId(null);
+  };
+
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
     const result = await check(permission);
     switch (result) {
@@ -98,7 +110,7 @@ export const useAddPhotos = () => {
 
       const newImages = photos.map(img => {
         if (img.id === imageId) {
-          return { ...img, image: image.path };
+          return {...img, image: image.path};
         }
         return img;
       });
@@ -108,17 +120,21 @@ export const useAddPhotos = () => {
     }
   };
 
-  const deleteImage = (imageId: number): void => {
+  const deleteImage = (imageId: number | null): void => {
+    if (imageId === null) {
+      return;
+    }
     const newImages = photos.map(img => {
       if (img.id === imageId) {
-        return { ...img, image: null };
+        return {...img, image: null};
       }
       return img;
     });
     setImages(newImages);
+    handleCloseModal();
   };
 
-  function hasPhoto(array: { image: null | string; id: number }[]) {
+  function hasPhoto(array: {image: null | string; id: number}[]) {
     for (let i = 0; i < array.length; i++) {
       if (array[i].image !== null) {
         return true;
@@ -137,7 +153,7 @@ export const useAddPhotos = () => {
       for (const i of photos) {
         if (i?.image) {
           const img = await uploadImage(i.image, onBoarding?.registrationDetails?.uid || '');
-          photosList.push({ id: i?.id + 1, image: img });
+          photosList.push({id: i?.id + 1, image: img});
         }
       }
       setOnBoarding({
@@ -167,5 +183,9 @@ export const useAddPhotos = () => {
     handleNext,
     deleteImage,
     openLibrary,
+    isModalVisible,
+    selectedImageId,
+    handleOpenModal,
+    handleCloseModal,
   };
 };

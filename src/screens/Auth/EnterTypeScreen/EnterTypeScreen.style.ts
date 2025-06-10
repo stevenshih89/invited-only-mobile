@@ -16,13 +16,13 @@ export const MainContainer = styled.View`
 export const BackgroundImage = styled.ImageBackground`
   display: flex;
   position: fixed;
-  height: ${height * 0.8}px;
+  height: ${height * 0.75}px;
   width: 100%;
 `;
 
 export const ButtonsContainer = styled.View`
   margin-top: auto;
-  margin-bottom: ${screenHeight / 12}px;
+  margin-bottom: ${screenHeight / 13}px;
   display: flex;
   justify-content: center;
   align-items: center;

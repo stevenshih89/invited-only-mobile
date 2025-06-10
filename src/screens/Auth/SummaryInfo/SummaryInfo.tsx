@@ -36,7 +36,6 @@ const SummaryInfo = () => {
           <S.LogoWrapper>
             <LogoPrimary2 />
           </S.LogoWrapper>
-
           <S.PhotoWrapper source={{uri: imageUser}}>
             <S.BadgeContainer>
               <S.BadgeContent>
@@ -45,20 +44,16 @@ const SummaryInfo = () => {
                 <CheckIcon />
               </S.BadgeContent>
             </S.BadgeContainer>
-
             <S.NameOverlay>
               <S.NameText>{`${name}${birthday ? ',' : ''}`}</S.NameText>
               <S.AgeText>{calculateAge(birthday)}</S.AgeText>
             </S.NameOverlay>
-
             <S.GradientOverlay />
           </S.PhotoWrapper>
-
           <S.MessageWrapper>
             <S.MessageTitle>Congratulations!</S.MessageTitle>
             <S.MessageSubtitle>Your photo has been successfully verified.</S.MessageSubtitle>
           </S.MessageWrapper>
-
           <S.ButtonWrapper>
             <Button title="Continue" onPress={handleNext} />
           </S.ButtonWrapper>

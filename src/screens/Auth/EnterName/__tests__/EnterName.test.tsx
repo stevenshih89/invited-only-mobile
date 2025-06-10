@@ -17,7 +17,7 @@ describe('EnterName Component', () => {
         <EnterName />
       </AuthContext.Provider>,
     );
-    expect(getByText('It will be shown on your profile.')).toBeTruthy();
+    expect(getByText("What's your first name?")).toBeTruthy();
   });
 
   it('allows user to enter a name and shows error for invalid input', () => {

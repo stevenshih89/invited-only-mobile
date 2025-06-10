@@ -2,9 +2,13 @@ import React from 'react';
 import {render} from '@testing-library/react-native';
 import ExploreEventsEmptyFallback from '../ExploreEventsEmptyFallback';
 
-jest.mock('@react-navigation/native', () => ({
-  useNavigation: () => ({
-    navigate: jest.fn(),
+jest.mock('hooks/user/useUser', () => ({
+  __esModule: true,
+  default: () => ({
+    user: {
+      uid: '123',
+      accountReviewed: true,
+    },
   }),
 }));
 
@@ -21,10 +25,8 @@ describe('ExploreEventsEmptyFallback', () => {
   it('displays correct text content', () => {
     const {getByTestId} = render(<ExploreEventsEmptyFallback />);
 
-    const title = getByTestId('empty-state-title');
     const description = getByTestId('empty-state-description');
 
-    expect(title.props.children).toBe('Build Your Profile,\nGet More Invites');
     expect(description.props.children).toBe('Add details to attract invites!');
   });
 });

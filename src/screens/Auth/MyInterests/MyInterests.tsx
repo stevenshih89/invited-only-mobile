@@ -1,11 +1,8 @@
 import React, {FC, JSX, useCallback} from 'react';
-import {Keyboard} from 'react-native';
+import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
 import {InterestState, useMyInterests} from './hooks/useMyInterests';
 import * as S from './MyInterests.style';
-import AuthProgress from 'components/AuthProgress';
-import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
 import CheckIcon from 'assets/images/icons/Check-black.svg';
-import BackButton from 'src/sharedComponents/BackButton/BackButton';
 
 const MyInterests: FC = (): JSX.Element => {
   const {listOfInterests, handleSelectInterest, handleNext, navigation} = useMyInterests();
@@ -30,41 +27,29 @@ const MyInterests: FC = (): JSX.Element => {
   );
 
   return (
-    <S.GradientBackground>
-      <S.AvoidingContainer>
-        <S.TouchableDismiss onPress={Keyboard.dismiss}>
-          <S.SafeArea>
-            <S.Wrapper>
-              <S.Header>
-                <S.TopRow>
-                  <BackButton onPress={() => navigation.goBack()} />
-                  <LogoPrimary2 />
-                  <AuthProgress startPercentage={70} endPercentage={80} animationDuration={1000} />
-                </S.TopRow>
-                <S.TitleContainer>
-                  <S.Title testID="interests-title">Your event types</S.Title>
-                  <S.Subtitle>Select at least 3 event types you love.</S.Subtitle>
-                </S.TitleContainer>
-                <S.ListContainer>
-                  <S.InterestsList
-                    numColumns={2}
-                    showsVerticalScrollIndicator={false}
-                    data={listOfInterests}
-                    keyExtractor={({id}: {id: number}) => id.toString()}
-                    renderItem={renderItem}
-                  />
-                  <S.ListGradient colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']} />
-                </S.ListContainer>
-              </S.Header>
-              <S.ButtonsContainer>
-                <S.ContinueButton disabled={listOfInterests.filter(i => i.isSelected).length < 3} onPress={handleNext} title={`Continue`} />
-                <S.SkipButton onPress={handleNext} title="Skip" />
-              </S.ButtonsContainer>
-            </S.Wrapper>
-          </S.SafeArea>
-        </S.TouchableDismiss>
-      </S.AvoidingContainer>
-    </S.GradientBackground>
+    <CommonAuthLayout
+      title="Your event types"
+      subtitle="Select at least 3 event types you love."
+      startPercentage={70}
+      endPercentage={80}
+      continueButtonTitle="Continue"
+      continueButtonDisabled={listOfInterests.filter(i => i.isSelected).length < 3}
+      onContinuePress={handleNext}
+      continueButtonTestID="continue-button"
+      skipButtonTitle="Skip"
+      onSkipPress={handleNext}
+      skipButtonTestID="skip-button">
+      <S.ListContainer>
+        <S.InterestsList
+          numColumns={2}
+          showsVerticalScrollIndicator={false}
+          data={listOfInterests}
+          keyExtractor={({id}: {id: number}) => id.toString()}
+          renderItem={renderItem}
+        />
+        <S.ListGradient colors={['rgba(0, 0, 0, 0.00)', 'rgba(0, 0, 0, 0.80)']} />
+      </S.ListContainer>
+    </CommonAuthLayout>
   );
 };
 

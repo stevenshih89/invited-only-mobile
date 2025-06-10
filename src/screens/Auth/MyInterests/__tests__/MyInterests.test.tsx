@@ -9,11 +9,6 @@ describe('MyInterests', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('renders the title', () => {
-    const {getByTestId} = render(<MyInterests />);
-    expect(getByTestId('interests-title')).toBeTruthy();
-  });
-
   it('renders at least one interest item', () => {
     const {getByTestId} = render(<MyInterests />);
     expect(getByTestId('interest-item-0')).toBeTruthy();

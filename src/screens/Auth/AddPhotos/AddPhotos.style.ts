@@ -181,7 +181,7 @@ export const ImageContainer = styled.View`
 
 export const StyledImageBackground = styled(ImageBackground)`
   width: 100%;
-  height: 100%;
+  height: 100.3%;
   justify-content: space-between;
 `;
 

@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
-import { blackColor, grayColor } from 'constants/colors';
-import { Satoshi500 } from 'constants/fonts';
+import {blackColor, grayColor} from 'constants/colors';
+import {Satoshi500} from 'constants/fonts';
 
 export const HeaderContainer = styled.View`
   display: flex;

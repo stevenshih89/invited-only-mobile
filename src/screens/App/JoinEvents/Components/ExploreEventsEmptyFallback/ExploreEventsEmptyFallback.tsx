@@ -5,12 +5,14 @@ import MyEventsFallbackImage from 'src/assets/images/app/joined-events-empty-fal
 import EventCardLocked from 'src/assets/images/app/empty-card-fallback-event.png';
 
 const ExploreEventsEmptyFallback = () => {
-  const { user } = useUser();
+  const {user} = useUser();
   const isLocked = user?.uid && !user?.accountReviewed;
 
   return (
     <DefaultBackground>
-      {isLocked ? <S.LockedContainer source={EventCardLocked} resizeMode="contain" /> :
+      {isLocked ? (
+        <S.LockedContainer source={EventCardLocked} resizeMode="contain" />
+      ) : (
         <S.Container testID="empty-state-container">
           <S.EmptyFallbackImage testID="empty-state-image" resizeMode="contain" source={MyEventsFallbackImage} />
           <S.FallbackTextContainer testID="empty-state-text-container">
@@ -22,7 +24,7 @@ const ExploreEventsEmptyFallback = () => {
             </S.TextContainer>
           </S.FallbackTextContainer>
         </S.Container>
-      }
+      )}
     </DefaultBackground>
   );
 };

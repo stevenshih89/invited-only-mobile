@@ -1,28 +1,11 @@
 import React, {FC, JSX, useState} from 'react';
-import {Keyboard} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {
-  GradientBackground,
-  AvoidingContainer,
-  TouchableDismiss,
-  SafeArea,
-  Wrapper,
-  Header,
-  TopRow,
-  TitleContainer,
-  Title,
-  Subtitle,
-  InputContainer,
-  ContinueButtonContainer,
-} from './EnterName.style';
+import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
+import {InputContainer} from './EnterName.style';
 import {useAuthStore} from 'src/store/authStore';
 import {useAppNavigation} from 'hooks/useAppNavigation';
-import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import AuthProgress from 'components/AuthProgress';
-import Button from 'components/Button/Button';
 import Input from 'components/Inputs/Input';
 import {isName} from 'helpers/regExpValidators';
-import BackButton from 'src/sharedComponents/BackButton/BackButton';
 
 const EnterName: FC = (): JSX.Element => {
   const {onBoarding, setOnBoarding} = useAuthStore();
@@ -56,59 +39,38 @@ const EnterName: FC = (): JSX.Element => {
   };
 
   return (
-    <GradientBackground>
-      <AvoidingContainer>
-        <TouchableDismiss onPress={Keyboard.dismiss}>
-          <SafeArea>
-            <Wrapper>
-              <Header>
-                <TopRow>
-                  <BackButton onPress={() => navigation.goBack()} />
-                  <LogoPrimary2 />
-                  <AuthProgress startPercentage={10} endPercentage={20} animationDuration={1000} />
-                </TopRow>
-                <TitleContainer>
-                  <Title>{"What's your first name?"}</Title>
-                  <Subtitle>{"You won't be able to change this later."}</Subtitle>
-                  <Subtitle>It will be shown on your profile.</Subtitle>
-                </TitleContainer>
-                <InputContainer>
-                  <Input
-                    testID="name-input"
-                    containerStyle={{
-                      height: 56,
-                    }}
-                    inputStyle={{
-                      fontSize: RFValue(16, 932),
-                    }}
-                    containerInnerStyle={{
-                      height: '100%',
-                      paddingLeft: 16,
-                      backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                    }}
-                    isError={errorInputName}
-                    errorText="The name must be up to 14 characters long and contain no special characters."
-                    value={name}
-                    onChange={handleNameChange}
-                    placeholder="Enter your first name"
-                  />
-                </InputContainer>
-              </Header>
-              <ContinueButtonContainer>
-                <Button
-                  testID="continue-button"
-                  id="continue-button"
-                  buttonStyle={{height: RFValue(64, 932)}}
-                  disabled={name.length < 3 || errorInputName}
-                  onPress={handleNext}
-                  title="Continue"
-                />
-              </ContinueButtonContainer>
-            </Wrapper>
-          </SafeArea>
-        </TouchableDismiss>
-      </AvoidingContainer>
-    </GradientBackground>
+    <CommonAuthLayout
+      title="What's your first name?"
+      subtitle={`You won't be able to change this later.\nIt will be shown on your profile.`}
+      startPercentage={10}
+      endPercentage={20}
+      continueButtonTitle="Continue"
+      continueButtonDisabled={name.length < 3 || errorInputName}
+      onContinuePress={handleNext}
+      continueButtonTestID="continue-button"
+      skipButtonTestID="skip-button">
+      <InputContainer>
+        <Input
+          testID="name-input"
+          containerStyle={{
+            height: 56,
+          }}
+          inputStyle={{
+            fontSize: RFValue(16, 932),
+          }}
+          containerInnerStyle={{
+            height: '100%',
+            paddingLeft: 16,
+            backgroundColor: 'rgba(255, 255, 255, 0.04)',
+          }}
+          isError={errorInputName}
+          errorText="The name must be up to 14 characters long and contain no special characters."
+          value={name}
+          onChange={handleNameChange}
+          placeholder="Enter your first name"
+        />
+      </InputContainer>
+    </CommonAuthLayout>
   );
 };
 
