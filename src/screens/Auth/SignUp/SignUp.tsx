@@ -39,7 +39,7 @@ const SignUp: FC = (): JSX.Element => {
       if (!mobilePhone) {
         return;
       }
-      const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
+      const phone = `${selectedCountry.dialCode}${mobilePhone}`.trim().replace(/\s/g, '');
 
       const userNumber = await firestore().collection(apiUserInfoCollection).where('phoneNumber', '==', mobilePhone).get();
       if (!userNumber.empty) {

@@ -59,10 +59,9 @@ export const Input = styled.TextInput`
   font-size: ${RFValue(16, 812)}px;
   color: ${whiteColor};
   text-align: left;
-  
   height: 50px;
   opacity: ${(props: { isDisabled: any; }) => props.isDisabled ? 0.5 : 1};
-  padding-horizontal: 16px;
+  padding-horizontal: 12px;
 `;
 
 export const ButtonContainer = styled.View`

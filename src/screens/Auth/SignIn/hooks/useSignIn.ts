@@ -9,10 +9,10 @@ import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import { Country } from 'src/sharedComponents/CountryCodePicker/types';
 
 export const useSignIn = () => {
+  const [selectedCountry, setSelectedCountry] = useState<Country>({ name: 'United Arab Emirates', code: 'AE', dialCode: '+971' });
   const [mobilePhone, setMobilePhone] = useState<string>('');
   const [isValidPhone, setIsValidPhone] = useState<boolean>(false);
   const [isDisabledValidation, setIsDisabledValidation] = useState<boolean>(true);
-  const [selectedCountry, setSelectedCountry] = useState<Country>({ name: 'United Arab Emirates', code: 'AE', dialCode: '+971' });
 
   const navigation = useAppNavigation();
   const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);

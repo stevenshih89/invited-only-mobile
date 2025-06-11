@@ -17,7 +17,7 @@ export const Button = styled.TouchableOpacity<{ hasError?: boolean; isDisabled?:
   flex-direction: row;
   height: 50px;
   opacity: ${(props: { isDisabled: any; }) => props.isDisabled ? 0.5 : 1};
-  padding-horizontal: 16px;
+  padding-horizontal: 12px;
 `;
 
 export const Flag = styled.Text`
