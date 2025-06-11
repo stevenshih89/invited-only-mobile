@@ -54,6 +54,7 @@ const EventCreatingStack = createStackNavigator();
 const screenOptions = {
   cardOverlayEnabled: true,
   cardStyle: { backgroundColor: blackColor },
+  gestureEnabled: false,
 } as StackNavigationOptions;
 
 export const DeleteModalContext = React.createContext<[boolean, React.Dispatch<React.SetStateAction<boolean>>] | undefined>(undefined);
@@ -89,7 +90,7 @@ const EventCreatingStackScreen = ({ route }: { route: any }) => {
 };
 
 const AppStackScreen = () => {
-  const { userMetadata, onBoarding } = useAuthStore();
+  const { userMetadata } = useAuthStore();
   const { user, isLoading } = useUser();
   const navigation = useAppNavigation();
 

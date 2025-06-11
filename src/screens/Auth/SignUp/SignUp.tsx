@@ -1,23 +1,38 @@
-import React, {FC, useState, useContext, JSX} from 'react';
+import React, { FC, useState, useContext, JSX, useEffect } from 'react';
 
 import firestore from '@react-native-firebase/firestore';
-import {InputPhoneView} from '../../../components/Inputs/InputPhoneView';
+import { InputPhoneView } from '../../../components/Inputs/InputPhoneView';
 import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
 import * as S from './SignUp.styles';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {showToast} from 'helpers/showToast.ts';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { showToast } from 'helpers/showToast.ts';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import invitedOnlyBackendApi from 'src/api/backend-api';
+import CountryCodePicker from 'src/sharedComponents/CountryCodePicker/CountryCodePicker';
+import { Country } from 'src/sharedComponents/CountryCodePicker/types';
+
+
 
 const SignUp: FC = (): JSX.Element => {
+  const [selectedCountry, setSelectedCountry] = useState<Country>({ name: 'United Arab Emirates', code: 'AE', dialCode: '+971' });
   const [mobilePhone, setMobilePhone] = useState<string>('');
 
   const [isValidPhone, setIsValidPhone] = useState<boolean>(false);
   const [isDisabledValidation, setIsDisabledValidation] = useState<boolean>(true);
-  const {mutate: sendPhoneNumber, isPending: isLoading} = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
+  const { mutate: sendPhoneNumber, isPending: isLoading } = invitedOnlyBackendApi?.useMutation('post', '/auth/send-otp') || {};
   const navigation = useAppNavigation();
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
+
+  useEffect(() => {
+    // Remove any non-digit characters for validation
+    const cleanPhone = mobilePhone.replace(/\D/g, '');
+
+    // Basic validation: at least 7 digits for a valid phone number
+    // You can adjust this based on your requirements
+    const isValid = cleanPhone.length >= 7 && cleanPhone.length <= 15;
+    setIsValidPhone(isValid);
+  }, [mobilePhone]);
 
   async function signUpWithPhoneNumber() {
     try {
@@ -60,19 +75,28 @@ const SignUp: FC = (): JSX.Element => {
       startPercentage={0}
       endPercentage={10}
       continueButtonTitle="Continue"
-      continueButtonDisabled={!isValidPhone && isLoading}
+      continueButtonDisabled={!isValidPhone || isLoading}
       onContinuePress={handleSignUp}
       continueButtonTestID="continue-button">
-      <S.InputContainer>
-        <InputPhoneView
-          placeholder="Enter your phone number"
-          testID="phone-input"
-          value={mobilePhone}
-          setIsValid={setIsValidPhone}
-          validationDisabled={isDisabledValidation}
-          onChangeFormattedText={val => setMobilePhone(val)}
+      <S.Container>
+        <CountryCodePicker
+          onSelect={(country) => {
+            setSelectedCountry(country);
+          }}
+          selectedCountry={selectedCountry}
+          disabled={isLoading}
         />
-      </S.InputContainer>
+        <S.InputContainer>
+          <S.Input
+            keyboardType="numeric"
+            placeholder="Enter your phone number"
+            placeholderTextColor="rgba(118, 118, 118, 1)"
+            value={mobilePhone}
+            onChangeText={setMobilePhone}
+            maxLength={15}
+          />
+        </S.InputContainer>
+      </S.Container>
     </CommonAuthLayout>
   );
 };

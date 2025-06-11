@@ -1,12 +1,14 @@
-import {showToast} from 'helpers/showToast';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { AppEventsLogger } from 'react-native-fbsdk-next';
+import * as amplitude from '@amplitude/analytics-react-native';
+import { showToast } from 'helpers/showToast';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 import invitedOnlyBackendApi from 'src/api/backend-api';
-import {useAuthStore} from 'src/store/authStore';
+import { useAuthStore } from 'src/store/authStore';
 
 const useCreateUser = () => {
-  const {userMetadata: user, onBoarding, setOnBoarding} = useAuthStore();
+  const { userMetadata: user, onBoarding, setOnBoarding } = useAuthStore();
   const navigation = useAppNavigation();
-  const {mutateAsync: createUser, isPending} = invitedOnlyBackendApi!.useMutation('post', '/users');
+  const { mutateAsync: createUser, isPending } = invitedOnlyBackendApi!.useMutation('post', '/users');
 
   const handleCreateUser = async () => {
     try {
@@ -22,6 +24,8 @@ const useCreateUser = () => {
         ...onBoarding,
         isOnboardingCompleted: true,
       });
+      AppEventsLogger.logEvent('User Registered', { gender: onBoarding.registrationDetails?.gender || 'unknown' });
+      amplitude.track('User Registered', { gender: onBoarding.registrationDetails?.gender || 'unknown' });
     } catch (error) {
       showToast('warning', 'Failed to create new user, Please try again later or contact support', 'Fail');
       navigation.navigate('/enter-name');
@@ -29,7 +33,7 @@ const useCreateUser = () => {
     }
   };
 
-  return {handleCreateUser, isPending};
+  return { handleCreateUser, isPending };
 };
 
 export default useCreateUser;

@@ -1,15 +1,16 @@
 import styled from 'styled-components/native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {screenHeight} from 'constants/common';
-import {whiteColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { screenHeight } from 'constants/common';
+import { whiteColor } from 'constants/colors';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
 import LogoPrimary from 'assets/images/auth/logo-primary-2.svg';
 
 export const Container = styled.View`
-  padding-top: 16px;
-  flex: 1;
-  justify-content: space-between;
-  padding-bottom: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding-vertical: 16px;
+  width: 100%;
 `;
 
 export const ContentContainer = styled.View`
@@ -43,7 +44,24 @@ export const Subtitle = styled.Text`
 `;
 
 export const InputContainer = styled.View`
-  width: 100%;
+  flex: 1;
+  height: 50px;
+`;
+
+export const Input = styled.TextInput.attrs({
+  placeholderTextColor: 'rgba(118, 118, 118, 1)',
+})`
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 99px;
+  border-width: 0.5px;
+  font-family: ${Satoshi400};
+  font-size: ${RFValue(16, 812)}px;
+  color: ${whiteColor};
+  text-align: left;
+  height: 50px;
+  opacity: ${(props: { isDisabled: any; }) => props.isDisabled ? 0.5 : 1};
+  padding-horizontal: 16px;
 `;
 
 export const ButtonContainer = styled.View`

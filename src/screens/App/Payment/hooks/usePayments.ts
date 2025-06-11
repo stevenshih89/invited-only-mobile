@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Purchases, { PurchasesPackage } from 'react-native-purchases';
 import * as amplitude from '@amplitude/analytics-react-native';
 import getSymbolFromCurrency from 'currency-symbol-map';
+import { AppEventsLogger } from 'react-native-fbsdk-next';
 import useGetSubscriptions from './useGetSubscriptions';
 import { getActiveSubscription, getSubscriptions } from 'src/api.deprecated/purchase';
 import { showToast } from 'helpers/showToast';
@@ -97,6 +98,8 @@ const usePayments = () => {
 
   const pay = async (pack: PurchasesPackage) => {
     setLoaderVisible(true);
+    AppEventsLogger.logPurchase(pack.product.price, pack.product.currencyCode);
+
     try {
       const targetSubscription = pack.product.identifier
       const { customerInfo } = await Purchases.purchasePackage(pack);

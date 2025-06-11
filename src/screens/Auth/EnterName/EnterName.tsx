@@ -1,39 +1,51 @@
-import React, {FC, JSX, useState} from 'react';
-import {RFValue} from 'react-native-responsive-fontsize';
+import React, { FC, JSX, useState } from 'react';
+import { RFValue } from 'react-native-responsive-fontsize';
 import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
-import {InputContainer} from './EnterName.style';
-import {useAuthStore} from 'src/store/authStore';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { InputContainer } from './EnterName.style';
+import { useAuthStore } from 'src/store/authStore';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 import Input from 'components/Inputs/Input';
-import {isName} from 'helpers/regExpValidators';
+import { isName } from 'helpers/regExpValidators';
 
 const EnterName: FC = (): JSX.Element => {
-  const {onBoarding, setOnBoarding} = useAuthStore();
+  const { onBoarding, setOnBoarding } = useAuthStore();
 
   const [errorInputName, setErrorInputName] = useState<boolean>(false);
   const [name, setName] = useState<string>(onBoarding.registrationDetails?.name || '');
 
+  const validateName = (value: string): boolean => {
+
+    if (!value || value.length > 14) {
+      return false;
+    }
+
+
+    if (!isName(value)) {
+      return false;
+    }
+
+    // Allow names with 3 or more characters if they're valid
+    return value.length >= 3;
+  };
+
   const handleNameChange = (value: string) => {
     const formattedValue = value.charAt(0).toUpperCase() + value.slice(1);
+    const isValid = validateName(value);
 
-    if ((!isName(value) && name.length > 2) || value.length > 14) {
-      setErrorInputName(true);
-    } else {
-      setErrorInputName(false);
-    }
+    setErrorInputName(!isValid);
     setName(formattedValue);
   };
 
   const navigation = useAppNavigation();
 
   const handleNext = async () => {
-    if (!name) {
+    if (!name || !validateName(name)) {
       return;
     }
     setOnBoarding({
       ...onBoarding,
       onboardingStep: '/turn-notifications',
-      registrationDetails: {...onBoarding.registrationDetails, name: name},
+      registrationDetails: { ...onBoarding.registrationDetails, name: name },
     });
     navigation.navigate('/turn-notifications');
   };
@@ -45,7 +57,7 @@ const EnterName: FC = (): JSX.Element => {
       startPercentage={10}
       endPercentage={20}
       continueButtonTitle="Continue"
-      continueButtonDisabled={name.length < 3 || errorInputName}
+      continueButtonDisabled={!validateName(name)}
       onContinuePress={handleNext}
       continueButtonTestID="continue-button"
       skipButtonTestID="skip-button">
@@ -64,7 +76,9 @@ const EnterName: FC = (): JSX.Element => {
             backgroundColor: 'rgba(255, 255, 255, 0.04)',
           }}
           isError={errorInputName}
-          errorText="The name must be up to 14 characters long and contain no special characters."
+          errorText={name.length > 14
+            ? "The name must be up to 14 characters long."
+            : "The name must contain only letters and be at least 3 characters long."}
           value={name}
           onChange={handleNameChange}
           placeholder="Enter your first name"
