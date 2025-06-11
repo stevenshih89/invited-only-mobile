@@ -62,7 +62,7 @@
 	<key>FacebookDisplayName</key>
 	<string>Invited Only</string>
 	<key>CFBundleVersion</key>
-	<string>5</string>
+	<string>7</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
