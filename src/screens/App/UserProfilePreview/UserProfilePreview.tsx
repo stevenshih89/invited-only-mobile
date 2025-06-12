@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, use, useCallback, useRef } from 'react';
+import { Dispatch, FC, SetStateAction, useCallback, useContext, useRef } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { RouteProp, useRoute } from '@react-navigation/native';
@@ -11,9 +11,9 @@ import ProfilePhotosList from './Components/ProfilePhotosList/ProfilePhotoslist'
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import ModalUserProfile from 'components/Modal/ModalUserProfile/ModalUserProfile.tsx';
 import { blackColor } from 'constants/colors';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
 import { RootStackParamList } from 'typescript/types';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 interface UserProfilePreviewProps {
   isModalVisible?: boolean;
@@ -22,7 +22,7 @@ interface UserProfilePreviewProps {
 
 const UserProfilePreview: FC<UserProfilePreviewProps> = ({ isModalVisible, setModalVisible }) => {
   const { userMetadata } = useAuthStore();
-
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
   const route = useRoute<RouteProp<RootStackParamList, '/user-profile-preview'>>();
   const { userUid } = route.params;
 

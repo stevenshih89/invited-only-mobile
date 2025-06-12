@@ -1,9 +1,12 @@
-import invitedOnlyBackendApi from 'src/api/backend-api';
-import {useAuthStore} from 'src/store/authStore';
+import { useContext } from "react";
+import { useAuthStore } from 'src/store/authStore';
+import { BackendApiContext } from "contexts/BackendApiContex";
+
 
 const useGetNotifications = () => {
-  const {userMetadata} = useAuthStore();
-  const {mutate: markAllAsRead} = invitedOnlyBackendApi!.useMutation('post', '/notifications/markAllAsRead');
+  const { userMetadata } = useAuthStore();
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
+  const { mutate: markAllAsRead } = invitedOnlyBackendApi.useMutation('post', '/notifications/markAllAsRead');
 
   const markAllAsReadHandler = () => {
     markAllAsRead({
@@ -13,7 +16,7 @@ const useGetNotifications = () => {
     });
   };
 
-  const {data, isLoading, isError, refetch} = invitedOnlyBackendApi!.useQuery(
+  const { data, isLoading, isError, refetch } = invitedOnlyBackendApi.useQuery(
     'get',
     '/notifications/user/{userId}',
     {

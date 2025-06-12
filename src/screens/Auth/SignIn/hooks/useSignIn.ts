@@ -2,11 +2,11 @@ import { useContext, useState } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
 import { showToast } from 'helpers/showToast';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
 import { Country } from 'src/sharedComponents/CountryCodePicker/types';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 export const useSignIn = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country>({ name: 'United Arab Emirates', code: 'AE', dialCode: '+971' });
@@ -15,6 +15,7 @@ export const useSignIn = () => {
   const [isDisabledValidation, setIsDisabledValidation] = useState<boolean>(true);
 
   const navigation = useAppNavigation();
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
   const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const { mutate: sendOtp, isPending: isSendingOtp } = invitedOnlyBackendApi?.useMutation('post', '/auth/send-otp') || {};
   const { setUserMetadata } = useAuthStore();

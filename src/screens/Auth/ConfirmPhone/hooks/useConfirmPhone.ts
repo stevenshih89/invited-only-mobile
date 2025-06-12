@@ -7,11 +7,11 @@ import { components } from '@invited-only/invited-only-api';
 import * as amplitude from '@amplitude/analytics-react-native';
 import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
 import { useAuthStore } from 'src/store/authStore';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import { showToast } from 'helpers/showToast';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import useMessaging from 'hooks/useMessaging';
 import useRemoteConfig from 'hooks/useRemoteConfig';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 export const useConfirmPhone = (route: {
   params: {
@@ -19,6 +19,7 @@ export const useConfirmPhone = (route: {
     isLogin?: boolean;
   };
 }) => {
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
   const navigation = useAppNavigation();
   const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const mobilePhone = route?.params?.mobilePhone;
@@ -35,8 +36,8 @@ export const useConfirmPhone = (route: {
   const ref: RefObject<TextInput> = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
   const { setupNotifications } = useMessaging();
   const { setOnBoarding, setAccessToken, setRefreshToken, setUserMetadata } = useAuthStore();
-  const { mutate: verifyOtp, isPending: isLoadingVerifyOtp } = invitedOnlyBackendApi!.useMutation('post', '/auth/verify-otp');
-  const { mutate: sendOtp, isPending: isLoadingSendOtp } = invitedOnlyBackendApi!.useMutation('post', '/auth/send-otp');
+  const { mutate: verifyOtp, isPending: isLoadingVerifyOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/verify-otp');
+  const { mutate: sendOtp, isPending: isLoadingSendOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;

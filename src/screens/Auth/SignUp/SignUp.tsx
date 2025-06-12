@@ -1,16 +1,15 @@
 import React, { FC, useState, useContext, JSX, useEffect } from 'react';
 
 import firestore from '@react-native-firebase/firestore';
-import { InputPhoneView } from '../../../components/Inputs/InputPhoneView';
 import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
 import * as S from './SignUp.styles';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { showToast } from 'helpers/showToast.ts';
 import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
 import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import CountryCodePicker from 'src/sharedComponents/CountryCodePicker/CountryCodePicker';
 import { Country } from 'src/sharedComponents/CountryCodePicker/types';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 
 
@@ -20,7 +19,8 @@ const SignUp: FC = (): JSX.Element => {
 
   const [isValidPhone, setIsValidPhone] = useState<boolean>(false);
   const [isDisabledValidation, setIsDisabledValidation] = useState<boolean>(true);
-  const { mutate: sendPhoneNumber, isPending: isLoading } = invitedOnlyBackendApi?.useMutation('post', '/auth/send-otp') || {};
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
+  const { mutate: sendPhoneNumber, isPending: isLoading } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp') || {};
   const navigation = useAppNavigation();
   const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
 

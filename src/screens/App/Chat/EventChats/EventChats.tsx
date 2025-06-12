@@ -9,7 +9,7 @@ import AppLoader from "screens/App/AppLoader/AppLoader";
 import useGetUserById from "hooks/useGetUserById";
 import { useAuthStore } from "src/store/authStore";
 import useEventAttendes from "screens/App/IO/hooks/useEventAttendes";
-import useUser from "hooks/user/useUser";
+
 
 interface EventChatsProps {
     events: components['schemas']['EventData'][];

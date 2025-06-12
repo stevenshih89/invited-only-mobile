@@ -4,9 +4,6 @@ import remoteConfig from '@react-native-firebase/remote-config';
 import { paths } from '@invited-only/invited-only-api';
 import { BACKEND_BASE_64_AUTH, BACKEND_BASE_URL, CODE_VERSION } from '@env';
 
-let fetchClient: ReturnType<typeof createFetchClient<paths>> | null = null;
-let invitedOnlyBackendApi: ReturnType<typeof createClient<paths>> | null = null;
-
 const myMiddleware: Middleware = {
   onError: (error: any) => {
     if (error.message.includes('Aborted')) return;
@@ -27,22 +24,16 @@ export const initializeApiClient = async () => {
     const backendUrl = backendUrlObj[CODE_VERSION];
     if (!backendUrl) {
       console.warn('No backend URL from Remote Config, using default');
-      return invitedOnlyBackendApi;
+      return createClient<paths>(createFetchClient<paths>({ baseUrl: BACKEND_BASE_URL }));
     }
 
-    fetchClient = createFetchClient<paths>({ baseUrl: backendUrl });
+    const fetchClient = createFetchClient<paths>({ baseUrl: backendUrl });
     fetchClient.use(myMiddleware);
-    invitedOnlyBackendApi = createClient<paths>(fetchClient);
-
-    return invitedOnlyBackendApi;
+    return createClient<paths>(fetchClient);
   } catch (error) {
     console.error('Failed to fetch Remote Config:', error);
-    return invitedOnlyBackendApi;
+    return createClient<paths>(createFetchClient<paths>({ baseUrl: BACKEND_BASE_URL }));
   }
 };
 
-fetchClient = createFetchClient<paths>({ baseUrl: BACKEND_BASE_URL });
-fetchClient.use(myMiddleware);
-invitedOnlyBackendApi = createClient<paths>(fetchClient);
-
-export default invitedOnlyBackendApi;
+export default initializeApiClient;

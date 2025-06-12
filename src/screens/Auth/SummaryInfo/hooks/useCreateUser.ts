@@ -1,14 +1,16 @@
+import { useContext } from 'react';
 import { AppEventsLogger } from 'react-native-fbsdk-next';
 import * as amplitude from '@amplitude/analytics-react-native';
 import { showToast } from 'helpers/showToast';
 import { useAppNavigation } from 'hooks/useAppNavigation';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 const useCreateUser = () => {
   const { userMetadata: user, onBoarding, setOnBoarding } = useAuthStore();
   const navigation = useAppNavigation();
-  const { mutateAsync: createUser, isPending } = invitedOnlyBackendApi!.useMutation('post', '/users');
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
+  const { mutateAsync: createUser, isPending } = invitedOnlyBackendApi.useMutation('post', '/users');
 
   const handleCreateUser = async () => {
     try {

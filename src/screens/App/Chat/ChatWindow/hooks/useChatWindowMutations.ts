@@ -1,8 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ScrollView } from "react-native";
 import { components } from "@invited-only/invited-only-api";
-import invitedOnlyBackendApi from "src/api/backend-api";
+import { BackendApiContext } from "contexts/BackendApiContex";
 
 
 interface UseChatWindowMutationsProps {
@@ -15,7 +15,7 @@ const useChatWindowMutations = ({ chatId, userId, sendMessage }: UseChatWindowMu
     const [newMessage, setNewMessage] = useState('');
     const scrollViewRef = useRef<ScrollView>(null);
     const queryClient = useQueryClient();
-
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const { mutate: markChatAsSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen')
 
     useEffect(() => {

@@ -1,5 +1,6 @@
+import { useContext } from 'react';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 import { showToast } from "helpers/showToast";
-import invitedOnlyBackendApi from "src/api/backend-api";
 
 interface UseHostConnectionActionsProps {
     hostId: string;
@@ -9,6 +10,7 @@ interface UseHostConnectionActionsProps {
 }
 
 const useHostConnectionActions = ({ hostId, guestId, eventId, onSuccess }: UseHostConnectionActionsProps) => {
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
 
     const { mutate: updateEventAttendee, isPending: isUpdatingEventAttendee } = invitedOnlyBackendApi.useMutation('patch', '/eventAttendees')
 

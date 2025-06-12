@@ -1,15 +1,16 @@
+import { useContext, useState, RefObject } from 'react';
 import { operations } from '@invited-only/invited-only-api';
-import { RefObject, useState } from 'react';
 import { TextInput } from 'react-native';
 import { useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
-import { showToast } from 'helpers/showToast';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import { BackendApiContext } from 'contexts/BackendApiContex';
+
 import useUser from 'hooks/user/useUser';
 
 type InvitationCodeResponse = operations['getAccessToken']['responses']['200']['content']['application/json'];
 
-export const useInvitationCode = () => {
+const useInvitationCode = () => {
   const { user } = useUser();
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
   const { mutate: getAccess, isPending: isGettingAccess } = invitedOnlyBackendApi.useMutation('post', '/auth/get-access');
   const [isSuccessfullySubmitted, setIsSuccessfullySubmitted] = useState(false);
   const [code, setCode] = useState('');
@@ -56,3 +57,5 @@ export const useInvitationCode = () => {
     handleSubmit,
   };
 };
+
+export default useInvitationCode;

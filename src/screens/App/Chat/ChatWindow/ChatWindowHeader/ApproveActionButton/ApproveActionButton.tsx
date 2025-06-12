@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { TouchableOpacityProps } from 'react-native';
 import { components } from '@invited-only/invited-only-api';
 import * as S from './ApproveActionButton.style';
 import CheckmarkIcon from 'src/assets/images/icons/check.svg';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 
 interface ApproveActionButtonProps extends TouchableOpacityProps {
@@ -13,7 +13,7 @@ interface ApproveActionButtonProps extends TouchableOpacityProps {
 }
 
 export const ApproveActionButton: React.FC<ApproveActionButtonProps> = ({ chat, isJoinedEvent, updateConnectionStatusData, ...rest }) => {
-    console.log('isJoinedEvent', isJoinedEvent);
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const { mutate: approveChat } = invitedOnlyBackendApi.useMutation('patch', '/eventAttendees', {
         onSuccess: (response) => {
             // updateConnectionStatusData({ hostAction: isJoinedEvent ? 'none' : 'confirm', guestAction: isJoinedEvent ? 'confirm' : 'none' });

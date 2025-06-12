@@ -1,6 +1,8 @@
-import invitedOnlyBackendApi from "src/api/backend-api";
+import { useContext } from "react";
+import { BackendApiContext } from "contexts/BackendApiContex";
 
 const useEventAttendes = (eventId: string) => {
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const { data: attendees, isLoading } = invitedOnlyBackendApi.useQuery('get', '/eventAttendees/{eventId}', {
         params: {
             path: { eventId: eventId },

@@ -1,9 +1,11 @@
+import { useContext } from 'react';
 import { components } from '@invited-only/invited-only-api';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 type GuestUser = components['schemas']['User'];
 
 export const useEventGuests = (eventId: string | undefined) => {
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
   const { data, fetchNextPage, hasNextPage, isLoading, isFetching, isFetchingNextPage, error, status } =
     invitedOnlyBackendApi.useInfiniteQuery(
       'get',

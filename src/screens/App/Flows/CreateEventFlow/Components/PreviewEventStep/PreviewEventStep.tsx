@@ -1,15 +1,15 @@
-import {View} from 'react-native';
-import {useFormikContext} from 'formik';
+import { View } from 'react-native';
+import { useFormikContext } from 'formik';
 
-import {components} from '@invited-only/invited-only-api';
-import {FC} from 'react';
+import { components } from '@invited-only/invited-only-api';
+import { FC, useContext } from 'react';
 import * as S from './PreviewEventStep.style';
 import Card from 'screens/App/Components/Card/Card';
 import HostBadge from 'screens/App/JoinEvents/Components/EventCard/Components/HostBadge';
-import {CardActionsButtons} from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
+import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
 import CardsNameAndDate from 'screens/App/Components/Card/Components/CardsNameAndDate/CardsNameAndDate';
-import {useAuthStore} from 'src/store/authStore';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import { useAuthStore } from 'src/store/authStore';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 interface PreviewEventStepProps {
   handleNextStep: () => void;
@@ -17,11 +17,11 @@ interface PreviewEventStepProps {
   isEditing: boolean;
 }
 
-const PreviewEventStep: FC<PreviewEventStepProps> = ({handleNextStep, handleBackStep, isEditing}) => {
-  const {values} = useFormikContext<Partial<components['schemas']['EventData']>>();
-
-  const {userMetadata} = useAuthStore();
-  const {data: user} = invitedOnlyBackendApi!.useQuery('get', '/users/{id}', {
+const PreviewEventStep: FC<PreviewEventStepProps> = ({ handleNextStep, handleBackStep, isEditing }) => {
+  const { values } = useFormikContext<Partial<components['schemas']['EventData']>>();
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
+  const { userMetadata } = useAuthStore();
+  const { data: user } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
     enabled: !!userMetadata.uid,
     params: {
       path: {

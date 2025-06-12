@@ -1,10 +1,11 @@
-
+import { useContext } from 'react';
 import { components } from "@invited-only/invited-only-api";
 import { useQueryClient } from "@tanstack/react-query";
-import invitedOnlyBackendApi from "src/api/backend-api";
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 export const useGetEventRequests = (eventId: string) => {
     const queryClient = useQueryClient();
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const { data: rawData, isLoading, error } = invitedOnlyBackendApi.useQuery('get', '/eventAttendees/{eventId}', {
         params: {
             path: {

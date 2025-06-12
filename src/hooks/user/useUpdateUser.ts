@@ -1,11 +1,12 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useContext } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Platform } from "react-native";
 import storage from '@react-native-firebase/storage';
 import { components } from "@invited-only/invited-only-api";
 import { logErrorToSentry } from "helpers/logErrorsToSentry";
 import { showToast, UseToastType } from "helpers/showToast";
-import invitedOnlyBackendApi from "src/api/backend-api"
 import { useAuthStore } from "src/store/authStore";
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 
 type User = components['schemas']['User'];
@@ -41,6 +42,7 @@ const uploadImage = async (imagePath: string | null | undefined, userId: string)
 const useUpdateUser = () => {
     const { userMetadata } = useAuthStore();
     const queryClient = useQueryClient();
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const { mutate: updateUser, isPending } = invitedOnlyBackendApi.useMutation('patch', '/users/{id}', {
         onSuccess: (user) => {
             console.log('User updated successfully', user);

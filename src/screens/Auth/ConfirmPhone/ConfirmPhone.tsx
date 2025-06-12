@@ -7,7 +7,6 @@ import * as S from './ConfirmPhone.style';
 import { screenHeight } from 'constants/common';
 import { Satoshi400, Satoshi700 } from 'constants/fonts';
 import { whiteColor } from 'constants/colors';
-import useRemoteConfig from 'hooks/useRemoteConfig';
 
 interface ConfirmPhoneProps {
   route: {

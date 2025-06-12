@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Purchases, { PurchasesPackage } from 'react-native-purchases';
 import * as amplitude from '@amplitude/analytics-react-native';
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -6,8 +6,8 @@ import { AppEventsLogger } from 'react-native-fbsdk-next';
 import useGetSubscriptions from './useGetSubscriptions';
 import { getActiveSubscription, getSubscriptions } from 'src/api.deprecated/purchase';
 import { showToast } from 'helpers/showToast';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 export interface PlanListItem {
   id: number;
@@ -22,7 +22,7 @@ export interface PlanListItem {
 }
 
 const usePayments = () => {
-
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
   useEffect(() => {
     amplitude.track('Payment Screen Opened');
   }, []);

@@ -8,7 +8,7 @@ import AppLoader from 'screens/App/AppLoader/AppLoader';
 
 const JoinedEventsScreen = () => {
   const { data, isLoading } = useGetJoinedEvents();
-
+  console.log('data', data);
   if (isLoading) {
     return <AppLoader />;
   }

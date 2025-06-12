@@ -1,14 +1,14 @@
 
 import { ActivityIndicator, TouchableOpacity, Text } from 'react-native';
 import { formatDistance } from 'date-fns';
-import React, { StrictMode } from 'react';
+import React, { useContext, StrictMode } from 'react';
 import { components } from '@invited-only/invited-only-api';
 import useGetEvent from '../hooks/useGetEvent';
 import * as S from './ChatItem.style';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 
 import { useAuthStore } from 'src/store/authStore';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 interface ChatItemProps {
     chat: components['schemas']['Chat'];
@@ -20,6 +20,7 @@ export const ChatItem = ({ chat, isJoinedEvent, isSupportChat }: ChatItemProps) 
     const navigation = useAppNavigation();
     const { data: event, isLoading: isEventLoading } = useGetEvent(chat?.eventId || '');
     const { userMetadata } = useAuthStore.getState();
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const { mutate: updateChatSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen')
     const userLastSeen = chat.userLastSeen?.some((user) => user.userId === userMetadata.uid);
 

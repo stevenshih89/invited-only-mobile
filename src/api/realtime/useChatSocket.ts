@@ -1,8 +1,8 @@
 import { io, Socket } from 'socket.io-client';
-// eslint-disable-next-line import/no-unresolved
-import { APP_ENV, SOCKET_URL } from '@env';
+
 import { ClientToServerEvents, components, MessagePayload, ServerToClientEvents } from '@invited-only/invited-only-api';
 import { useCallback, useEffect, useState } from 'react';
+import { APP_ENV, SOCKET_URL } from '@env';
 
 import { useAuthStore } from 'src/store/authStore';
 import useUser from 'hooks/user/useUser';
@@ -38,6 +38,7 @@ export const useChatSocket = (chatId: string, updateChatMessages: (props: Update
         setSocket(newSocket);
 
         const handleConnect = () => {
+            console.log('handleConnect', chatId);
             newSocket.emit('joinChatRoom', chatId);
         };
 

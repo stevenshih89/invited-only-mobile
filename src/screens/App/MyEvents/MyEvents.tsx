@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import * as S from './MyEvents.style';
 import MyEventsEmptyFallback from './Components/MyEventesEmptyFallback/MyEventesEmptyFallback';
 import EventList from './Components/EventList/EventList';
 import { useAuthStore } from 'src/store/authStore';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 const MyEvents = () => {
   const { userMetadata } = useAuthStore.getState();
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
 
   const { data: events, isLoading } = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
     params: {

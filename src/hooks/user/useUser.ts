@@ -1,6 +1,7 @@
 import { components } from "@invited-only/invited-only-api";
+import { useContext } from "react";
 import { useAuthStore } from "src/store/authStore";
-import invitedOnlyBackendApi from "src/api/backend-api";
+import { BackendApiContext } from "contexts/BackendApiContex";
 
 interface UseUserResponse {
     user: components['schemas']['User'] | undefined;
@@ -9,13 +10,14 @@ interface UseUserResponse {
 }
 
 const useUser = (): UseUserResponse => {
+    const backendApi = useContext(BackendApiContext);
     const { userMetadata, logout, onBoarding } = useAuthStore();
 
-    if (!invitedOnlyBackendApi) {
+    if (!backendApi) {
         return { user: undefined, isLoading: false, error: null };
     }
 
-    const { data, isLoading, error, status } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
+    const { data, isLoading, error, status } = backendApi.useQuery('get', '/users/{id}', {
         params: {
             path: {
                 id: userMetadata?.uid,

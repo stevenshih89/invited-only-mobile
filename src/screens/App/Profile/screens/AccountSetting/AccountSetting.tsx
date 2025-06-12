@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import React, { useContext, FC, useState } from 'react';
 import { Switch } from '@rneui/themed';
 import ModalConfirmPhone from '../Settings/ModalConfirmPhone';
 import * as S from './AccountSetting.style';
@@ -7,17 +7,18 @@ import TrashIcon from 'assets/images/icons/trash-solid.svg';
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
 import Button from 'components/Button/Button';
 import { blackColor, whiteColor } from 'constants/colors';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
 import useUser from 'hooks/user/useUser';
 import useUpdateUser from 'hooks/user/useUpdateUser';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 const AccountSetting: FC = () => {
   const { logout } = useAuthStore();
   const { user } = useUser();
   const [showLocation, setShowLocation] = useState(user?.showLocation);
   const { update } = useUpdateUser();
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
   const { mutate: deleteUser, isPending: isDeletingUser } = invitedOnlyBackendApi.useMutation('delete', '/users/{id}', {
     onSuccess: () => {
       logout();

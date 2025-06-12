@@ -1,6 +1,6 @@
-
+import { useContext } from 'react';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 import { showToast } from "helpers/showToast";
-import invitedOnlyBackendApi from "src/api/backend-api";
 
 interface GuestJoinedEventActionsProps {
     eventId: string;
@@ -9,6 +9,7 @@ interface GuestJoinedEventActionsProps {
 }
 
 const useGuestJoinedEventActions = ({ eventId, guestId, hostId }: GuestJoinedEventActionsProps) => {
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const { mutate: cancelInvitation } = invitedOnlyBackendApi.useMutation('patch', '/eventAttendees')
 
 

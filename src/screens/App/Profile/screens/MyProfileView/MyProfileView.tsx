@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from 'react';
+import React, { Dispatch, FC, SetStateAction, useContext } from 'react';
 import { ActivityIndicator } from 'react-native';
 import moment from 'moment';
 import ProfileSlider from './components/ProfileSlider/ProfileSlider';
@@ -12,8 +12,8 @@ import ModalUserProfile from 'components/Modal/ModalUserProfile/ModalUserProfile
 import Man from 'assets/images/app/man-rectangle.png';
 import { blackColor } from 'constants/colors';
 import FemaleGenderIcon from 'src/assets/images/icons/female-gender.svg';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 interface MyProfileViewProps {
   isModalVisible?: boolean;
@@ -22,6 +22,7 @@ interface MyProfileViewProps {
 
 const MyProfileView: FC<MyProfileViewProps> = ({ isModalVisible, setModalVisible }) => {
   const { userMetadata } = useAuthStore();
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
   const { data: userInfo, isLoading } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
     params: {
       path: {

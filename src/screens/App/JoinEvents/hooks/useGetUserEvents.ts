@@ -1,6 +1,7 @@
 import { components } from "@invited-only/invited-only-api";
-import invitedOnlyBackendApi from "src/api/backend-api";
+import { useContext } from "react";
 import { useAuthStore } from "src/store/authStore";
+import { BackendApiContext } from "contexts/BackendApiContex";
 
 // Define the response type
 type EventsResponse = {
@@ -10,7 +11,7 @@ type EventsResponse = {
 
 const useGetUserEvents = () => {
     const { userMetadata } = useAuthStore.getState();
-
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const {
         data: eventsResponse,
         isLoading,

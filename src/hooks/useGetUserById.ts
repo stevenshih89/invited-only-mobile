@@ -1,7 +1,10 @@
-import invitedOnlyBackendApi from "src/api/backend-api";
+import { useContext } from "react";
+import { BackendApiContext } from "contexts/BackendApiContex";
+
 
 const useGetUserById = (userId: string) => {
-    const { data, isLoading, isError } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
+    const backendApi = useContext(BackendApiContext);
+    const { data, isLoading, isError } = backendApi.useQuery('get', '/users/{id}', {
         params: {
             path: {
                 id: userId

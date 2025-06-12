@@ -1,7 +1,8 @@
 import { components } from "@invited-only/invited-only-api";
+import { useContext } from "react";
 import { showToast } from "helpers/showToast";
 import { useAppNavigation } from "hooks/useAppNavigation";
-import invitedOnlyBackendApi from "src/api/backend-api";
+import { BackendApiContext } from "contexts/BackendApiContex";
 
 interface UseChatGuestConnectionActionsProps {
     eventId: string;
@@ -12,7 +13,7 @@ interface UseChatGuestConnectionActionsProps {
 
 const useChatGuestConnectionActions = ({ eventId, guestId, hostId }: UseChatGuestConnectionActionsProps) => {
     const { goBack } = useAppNavigation();
-
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const { mutate: updateChat } = invitedOnlyBackendApi.useMutation('patch', '/eventAttendees', {
         onSuccess: (response) => {
             console.log('response', response);

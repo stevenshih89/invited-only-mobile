@@ -1,12 +1,14 @@
 import { useQueryClient } from "@tanstack/react-query";
 
 import { components } from "@invited-only/invited-only-api";
-import invitedOnlyBackendApi from "src/api/backend-api";
+import { useContext } from "react";
+import { BackendApiContext } from "contexts/BackendApiContex";
 import { useAuthStore } from "src/store/authStore";
 
 const useGetSubscriptions = () => {
     const queryClient = useQueryClient();
     const { userMetadata } = useAuthStore();
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const { data, isLoading, error } = invitedOnlyBackendApi.useQuery('get', '/subscription/get/{userId}', {
         params: {
             path: {

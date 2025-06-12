@@ -1,8 +1,9 @@
-import { useCallback } from "react";
-import invitedOnlyBackendApi from "src/api/backend-api";
+import { useCallback, useContext } from "react";
 import { useAuthStore } from "src/store/authStore";
+import { BackendApiContext } from "contexts/BackendApiContex";
 
 const useRefreshToken = () => {
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const { mutateAsync, isPending } = invitedOnlyBackendApi.useMutation('post', '/auth/refresh');
     const { userMetadata, refreshToken: refreshTokenFromStore, setAccessToken, setRefreshToken } = useAuthStore();
 

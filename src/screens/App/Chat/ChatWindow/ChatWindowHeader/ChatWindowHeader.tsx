@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { components } from '@invited-only/invited-only-api';
@@ -16,6 +16,7 @@ import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
 import { useInvitationStatus } from 'hooks/useInvitationStatus';
 import IOImage from 'src/assets/images/app/IO.png'
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 interface ChatWindowHeaderProps {
   chat: components['schemas']['Chat'];
@@ -30,10 +31,9 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost,
   const insets = useSafeAreaInsets();
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { connectionStatus, isLoading, updateConnectionStatusData } = useConnectionRealtimeStatus({ chat });
-
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
   const { mutate: updateChatSeen } = invitedOnlyBackendApi.useMutation('patch', '/chat/{chatId}/seen');
   const { invitationStatus } = useInvitationStatus(connectionStatus);
-  console.log('invitationStatus', invitationStatus);
 
   const toggleDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);

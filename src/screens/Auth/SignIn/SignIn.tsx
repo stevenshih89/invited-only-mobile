@@ -1,10 +1,10 @@
-import React, { FC, JSX, useState, useEffect } from 'react';
+import React, { FC, JSX, useEffect } from 'react';
 import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
 import * as S from './SignIn.styles';
 import { useSignIn } from './hooks/useSignIn';
 import Loader from 'components/Modal/ModalLoader/Loader';
 import CountryCodePicker from 'src/sharedComponents/CountryCodePicker/CountryCodePicker';
-import { Country } from 'src/sharedComponents/CountryCodePicker/types';
+
 
 const SignIn: FC = (): JSX.Element => {
 

@@ -1,19 +1,21 @@
-import {components} from '@invited-only/invited-only-api';
-import {useQueryClient} from '@tanstack/react-query';
-import {showToast} from 'helpers/showToast';
-import invitedOnlyBackendApi from 'src/api/backend-api';
-import {useAuthStore} from 'src/store/authStore';
+import { components } from '@invited-only/invited-only-api';
+import { useQueryClient } from '@tanstack/react-query';
+import { useContext } from 'react';
+import { showToast } from 'helpers/showToast';
+import { BackendApiContext } from 'contexts/BackendApiContex';
+import { useAuthStore } from 'src/store/authStore';
 
 const useDeleteNotification = () => {
-  const {mutate: deleteNotification, isPending: isDeletingNotification} = invitedOnlyBackendApi!.useMutation(
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
+  const { mutate: deleteNotification, isPending: isDeletingNotification } = invitedOnlyBackendApi.useMutation(
     'delete',
     '/notifications/{id}',
   );
   const queryClient = useQueryClient();
-  const {userMetadata} = useAuthStore();
+  const { userMetadata } = useAuthStore();
   const handleDeleteNotification = (notificationId: string, shouldShowToast: boolean = true) => {
     deleteNotification(
-      {params: {path: {id: notificationId}}},
+      { params: { path: { id: notificationId } } },
       {
         onSuccess: () => {
           const removeNotification = (notificationId: string) => {

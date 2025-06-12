@@ -1,6 +1,7 @@
+import { useContext } from 'react';
 import { components } from '@invited-only/invited-only-api';
 import { showToast } from 'helpers/showToast';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 interface UseReportProps {
   uidSender?: string;
@@ -10,6 +11,7 @@ interface UseReportProps {
 }
 
 export const useReport = ({ uidSender, uid, setModalReport }: UseReportProps) => {
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
   const { mutate: blockUser, isPending: isBlockUserPending } = invitedOnlyBackendApi.useMutation('post', '/report/block-user');
 
   const handleSendReport = async (typeReport: components['schemas']['BlockUserPayload']['reason']): Promise<void> => {

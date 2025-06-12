@@ -1,6 +1,6 @@
 import React from 'react';
-import {render, fireEvent} from '@testing-library/react-native';
-import {ManageEventGuestInfo} from '../ManageEventGuestInfo';
+import { render, fireEvent } from '@testing-library/react-native';
+import { ManageEventGuestInfo } from '../ManageEventGuestInfo';
 
 jest.mock('src/api/backend-api', () => ({
   __esModule: true,
@@ -17,7 +17,7 @@ jest.mock('hooks/connections/useHostConnectionActions', () => ({
   }),
 }));
 
-const invitedOnlyBackendApi = require('src/api/backend-api').default;
+const invitedOnlyBackendApi = require('contexts/BackendApiContex').default;
 
 describe('ManageEventGuestInfo', () => {
   const baseProps = {
@@ -38,18 +38,18 @@ describe('ManageEventGuestInfo', () => {
   it('renders user name', () => {
     invitedOnlyBackendApi.useQuery.mockReturnValue({
       isLoading: false,
-      data: {name: 'Kristin', photos: [{image: 'img'}]},
+      data: { name: 'Kristin', photos: [{ image: 'img' }] },
     });
-    const {getByText} = render(<ManageEventGuestInfo {...baseProps} />);
+    const { getByText } = render(<ManageEventGuestInfo {...baseProps} />);
     expect(getByText('Kristin')).toBeTruthy();
   });
 
   it('shows Approve button if title is New Connections', () => {
     invitedOnlyBackendApi.useQuery.mockReturnValue({
       isLoading: false,
-      data: {name: 'Kristin', photos: [{image: 'img'}]},
+      data: { name: 'Kristin', photos: [{ image: 'img' }] },
     });
-    const {getByText} = render(<ManageEventGuestInfo {...baseProps} />);
+    const { getByText } = render(<ManageEventGuestInfo {...baseProps} />);
     expect(getByText('Approve')).toBeTruthy();
   });
 
@@ -58,7 +58,7 @@ describe('ManageEventGuestInfo', () => {
       isLoading: true,
       data: null,
     });
-    const {getByTestId} = render(<ManageEventGuestInfo {...baseProps} />);
+    const { getByTestId } = render(<ManageEventGuestInfo {...baseProps} />);
     expect(getByTestId('loading-indicator')).toBeTruthy();
   });
 
@@ -70,10 +70,10 @@ describe('ManageEventGuestInfo', () => {
 
     invitedOnlyBackendApi.useQuery.mockReturnValue({
       isLoading: false,
-      data: {name: 'Kristin', photos: [{image: 'img'}]},
+      data: { name: 'Kristin', photos: [{ image: 'img' }] },
     });
 
-    const {getByText} = render(<ManageEventGuestInfo {...baseProps} />);
+    const { getByText } = render(<ManageEventGuestInfo {...baseProps} />);
     fireEvent.press(getByText('Approve'));
 
     expect(handleHostConfirmEvent).toHaveBeenCalled();

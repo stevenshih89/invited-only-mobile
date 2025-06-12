@@ -1,12 +1,13 @@
-import {ActivityIndicator, Keyboard, TouchableWithoutFeedback} from 'react-native';
+import { ActivityIndicator, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import * as S from './InvitationCode.style';
 import EnterCodeView from './Components/EnterCodeView/EnterCodeView';
 import SuccessfullySubmitted from './Components/SuccessfullySubmitted/SuccessfullySubmitted';
-import {useInvitationCode} from './hooks/useInvitationCode';
+
+import useInvitationCode from './hooks/useInvitationCode';
 import LogoIcon from 'assets/images/icons/logo.svg';
 import InvitationCodeBackground from 'assets/images/app/invitation-code-background.png';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {whiteColor} from 'constants/colors';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { whiteColor } from 'constants/colors';
 
 const InvitationCode = () => {
   const navigation = useAppNavigation();

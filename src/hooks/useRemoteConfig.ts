@@ -32,7 +32,6 @@ const useRemoteConfig = () => {
         init();
     }, []);
 
-    console.log('phoneVerificationCodeLength', phoneVerificationCodeLength);
     return {
         isApiReady,
         isLoading,

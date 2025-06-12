@@ -1,5 +1,6 @@
 import { components } from "@invited-only/invited-only-api";
-import invitedOnlyBackendApi from "src/api/backend-api";
+import { useContext } from "react";
+import { BackendApiContext } from "contexts/BackendApiContex";
 
 interface UseChatConnectionActionsProps {
     eventId: string;
@@ -9,7 +10,7 @@ interface UseChatConnectionActionsProps {
 
 
 const useChatHostConnectionActions = ({ eventId, guestId, hostId }: UseChatConnectionActionsProps) => {
-
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
 
     const { mutate: updateChat } = invitedOnlyBackendApi.useMutation('patch', '/eventAttendees', {
         onSuccess: (response) => {

@@ -6,7 +6,7 @@ import Purchases from 'react-native-purchases';
 import { NavigationContainer } from '@react-navigation/native';
 import RNUxcam from 'react-native-ux-cam';
 import { requestTrackingPermission } from 'react-native-tracking-transparency';
-import { Settings, AppEventsLogger } from 'react-native-fbsdk-next';
+import { Settings } from 'react-native-fbsdk-next';
 import * as amplitude from '@amplitude/analytics-react-native';
 
 

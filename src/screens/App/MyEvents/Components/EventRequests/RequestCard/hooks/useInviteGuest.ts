@@ -1,5 +1,5 @@
-
-import invitedOnlyBackendApi from "src/api/backend-api";
+import { useContext } from 'react';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 interface UseUpdateEventAttendeeProps {
     guestId: string;
@@ -8,6 +8,7 @@ interface UseUpdateEventAttendeeProps {
 }
 
 const useReqeustActions = (updateEventAttendee: (guestId: string, hostId: string, hostSwipe: string) => void) => {
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
 
     const { mutate: updateAttendens, isPending: isInvitePending } = invitedOnlyBackendApi.useMutation('post', '/eventAttendees/create')
     const handleInviteGuest = ({ guestId, eventId, hostId }: UseUpdateEventAttendeeProps) => {

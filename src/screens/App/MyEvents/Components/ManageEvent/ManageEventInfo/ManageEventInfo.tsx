@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { ActivityIndicator } from 'react-native';
 
 import * as S from './ManageEventInfo.style'; // Create style file later if needed
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 import { whiteColor } from 'constants/colors';
 // Define props if needed, e.g., to receive eventId or event details
@@ -11,6 +11,7 @@ interface ManageEventInfoProps {
 }
 
 export const ManageEventInfo: React.FC<ManageEventInfoProps> = ({ eventId }) => {
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const { data: event, isLoading } = invitedOnlyBackendApi.useQuery('get', '/events/{eventId}', {
         params: {
             path: { eventId: eventId },

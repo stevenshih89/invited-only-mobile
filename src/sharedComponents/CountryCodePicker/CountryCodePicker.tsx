@@ -68,8 +68,8 @@ const CountryCodePicker: React.FC<CountryCodePickerProps> = ({
         setSearchQuery('');
     };
 
-    const renderItem = ({ item }: { item: Country }) => (
-        <CountryItem onPress={() => handleSelectCountry(item)}>
+    const renderItem = ({ item, index }: { item: Country, index: number }) => (
+        <CountryItem onPress={() => handleSelectCountry(item)} key={`${item.code}-${item.name}-index-${index}`}>
             <CountryFlag>{getCountryFlag(item.code)}</CountryFlag>
             <CountryName>{item.name}</CountryName>
             <CountryDialCode>{item.dialCode}</CountryDialCode>
@@ -122,7 +122,7 @@ const CountryCodePicker: React.FC<CountryCodePickerProps> = ({
                         <CountryList
                             data={filteredCountries}
                             renderItem={renderItem}
-                            keyExtractor={(item: Country) => `${item.code}-${item.name}`}
+                            keyExtractor={(item: Country, index: number) => `${item.code}-${item.name}-index-${index}`}
                             keyboardShouldPersistTaps="handled"
                         />
                     </DropdownContainer>

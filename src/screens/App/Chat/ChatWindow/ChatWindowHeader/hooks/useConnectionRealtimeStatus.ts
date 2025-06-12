@@ -3,9 +3,9 @@ import { useContext } from "react";
 import { components } from "@invited-only/invited-only-api";
 import { useQueryClient } from "@tanstack/react-query";
 import { FirebaseCollectionsContext } from "contexts/FirebaseCollectionNamesContext";
-import invitedOnlyBackendApi from "src/api/backend-api";
 import useFirestoreSubscriptionConnectionStatus from "src/api/realtime/useFirestoreSubscriptionConnectionStatus";
 import { useAuthStore } from "src/store/authStore";
+import { BackendApiContext } from "contexts/BackendApiContex";
 
 interface ConnectionStatus {
     chat: components['schemas']['Chat'];
@@ -15,6 +15,7 @@ const useConnectionRealtimeStatus = ({ chat }: ConnectionStatus) => {
     const { userMetadata } = useAuthStore();
     const queryClient = useQueryClient();
     const { attendees } = useContext(FirebaseCollectionsContext);
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
 
     const { data: connectionStatuses, isLoading } = invitedOnlyBackendApi.useQuery('get', '/eventAttendees/host/{hostId}', {
         params: {

@@ -1,16 +1,14 @@
-import { useEffect, useState } from 'react';
-
-
+import { useEffect, useState, useContext } from 'react';
 import useMessaging from '../../../../../../hooks/useMessaging.ts';
-import invitedOnlyBackendApi from 'src/api/backend-api.ts';
 import { useAuthStore } from 'src/store/authStore';
 import useUser from 'hooks/user/useUser.ts';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 export const useNotificationSetting = () => {
   const { user } = useUser();
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
 
   const intialAllNotification: boolean = Object.values(user?.notificationSettings || {}).every(value => value === true);
-
 
   const [allNotification, setAllNotification] = useState(intialAllNotification);
   const [joinedEvent, setJoinedEvent] = useState(user?.notificationSettings?.joinedEvent);

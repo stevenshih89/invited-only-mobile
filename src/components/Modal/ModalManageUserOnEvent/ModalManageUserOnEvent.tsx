@@ -1,5 +1,5 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import React, { forwardRef, useMemo } from 'react';
+import React, { forwardRef, useContext, useMemo } from 'react';
 import { components } from '@invited-only/invited-only-api';
 import * as S from './ModalManageUserOnEvent.style';
 import { useButtonPropsByStatus } from './hooks/useButtonPropsByStatus';
@@ -12,11 +12,11 @@ import MessageIcon from 'assets/images/icons/message-minus-fill.svg';
 
 import Button from 'components/Button/Button';
 import { calculateAge } from 'helpers/calculateAge';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import useNavigateToChat from 'screens/App/Chat/hooks/useNavigateToChat';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { userProfilePreviewPath } from 'constants/pathLocations';
 import useHostConnectionActions from 'hooks/connections/useHostConnectionActions';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 interface ModalManageUserOnEventProps {
   onClose: () => void;
@@ -35,6 +35,7 @@ interface Option {
 
 const ModalManageUserOnEvent = forwardRef<BottomSheetModal, ModalManageUserOnEventProps>(
   ({ onClose, openBlockReportModal, request, openUnconnectedModal, openCancelInvitationModal }, ref) => {
+    const invitedOnlyBackendApi = useContext(BackendApiContext);
     const { data: userDetails } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
       params: {
         path: { id: request?.guestId || '' },
