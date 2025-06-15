@@ -1,10 +1,10 @@
-import { ViewStyle } from 'react-native';
+import {ViewStyle} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { RFValue } from 'react-native-responsive-fontsize';
+import {RFValue} from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
-import { blackColor, whiteColor } from 'constants/colors';
-import { screenHeight } from 'constants/common';
-import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import {blackColor, whiteColor} from 'constants/colors';
+import {screenHeight} from 'constants/common';
+import {Satoshi400, Satoshi500} from 'constants/fonts';
 
 export const FallbackContainer = styled.View`
   flex: 1;
@@ -24,7 +24,7 @@ export const Container = styled.View`
 
 export const EmptyFallbackImage = styled(FastImage)`
   width: 200px;
-  height: 300px;
+  height: 200px;
   margin-bottom: 10px;
 `;
 
@@ -36,7 +36,7 @@ export const FlatListWrapper = styled.FlatList`
 export const columnWrapperStyle: ViewStyle = {
   justifyContent: 'center',
   alignItems: 'center',
-  gap: 2
+  gap: 2,
 };
 
 export const FallbackTextContainer = styled.View`
@@ -58,11 +58,11 @@ export const FallbackTitleText = styled.Text`
   flex-direction: column;
   font-family: ${Satoshi500};
   align-items: center;
-
+  text-align: center;
   justify-content: center;
   gap: 8px;
   color: ${whiteColor};
-  font-size: ${RFValue(24, 932)};
+  font-size: ${RFValue(16, 932)};
 `;
 
 export const FallbackInstructorTex = styled.Text`
@@ -73,5 +73,5 @@ export const FallbackInstructorTex = styled.Text`
   gap: 8px;
   color: ${whiteColor};
   opacity: 0.7;
-  font-size: ${RFValue(16, 932)};
+  font-size: ${RFValue(12, 932)};
 `;

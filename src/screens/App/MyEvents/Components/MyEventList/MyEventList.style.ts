@@ -1,0 +1,119 @@
+import styled from 'styled-components/native';
+import {FlatList} from 'react-native';
+import {blackColor} from 'constants/colors';
+import Arrow from 'assets/images/icons/arrow-down.svg';
+
+// Add specific styles for the FlatList container if needed
+export const ListContainer = styled(FlatList)`
+  flex: 1;
+`;
+
+export const CardContainer = styled.View`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  gap: 8px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 20px;
+  border-width: 1px;
+  align-self: stretch;
+  padding-bottom: 6px;
+`;
+
+// This wraps the main content row (Label + Number Badge)
+export const ContentWrapper = styled.View`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+  width: 90%;
+  align-self: stretch;
+  flex-grow: 0;
+`;
+
+export const TitleRow = styled.TouchableOpacity`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  gap: 16px;
+  width: 100%;
+  align-self: stretch;
+`;
+
+export const LabelContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 8px;
+`;
+
+export const ArrowIconContainer = styled.View`
+  width: 16px;
+  height: 16px;
+  transform: rotate(90deg);
+  justify-content: center;
+  align-items: center;
+`;
+
+export const LabelText = styled.Text<{disabled: boolean}>`
+  font-family: 'Satoshi';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  text-align: center;
+  color: ${({disabled}: {disabled: boolean}) => (disabled ? '#808080' : '#FFFFFF')};
+  flex-grow: 0;
+`;
+
+export const InfoIconContainer = styled.View`
+  justify-content: center;
+  align-items: center;
+`;
+
+export const NumberBadge = styled.View`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  gap: 10px;
+  min-width: 26px;
+  height: 24px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border-radius: 38px;
+  flex-grow: 0;
+`;
+
+export const NumberText = styled.Text`
+  font-family: 'Satoshi';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  color: #ffffff;
+  flex-grow: 0;
+`;
+
+export const ScreenContainer = styled.View`
+  flex: 1;
+  background-color: ${blackColor};
+`;
+
+export const StyledArrow = styled(Arrow)<{isOpen: boolean}>`
+  width: 20px;
+  height: 20px;
+  transform: ${({isOpen}: {isOpen: boolean}) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
+`;
+
+export const DotsIconContainer = styled.TouchableOpacity`
+  width: 20px;
+  height: 20px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0; /* Prevent shrinking */
+`;

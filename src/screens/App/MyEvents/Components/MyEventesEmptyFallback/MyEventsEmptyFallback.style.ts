@@ -8,14 +8,13 @@ import {whiteColor} from 'constants/colors';
 
 export const Container = styled.View`
   display: flex;
-  margin-top: ${screenHeight / 20}px;
   align-items: center;
   width: 100%;
   gap: 10px;
-  height: 100%;
+  margin-bottom: 24px;
 `;
 export const EmptyFallbackImage = styled(FastImage)`
-  width: 250px;
+  width: 200px;
   aspect-ratio: 1;
 `;
 
@@ -42,7 +41,7 @@ export const FallbackTitleText = styled.Text`
   justify-content: center;
   gap: 8px;
   color: ${whiteColor};
-  font-size: ${RFValue(24, 932)};
+  font-size: ${RFValue(16, 932)};
 `;
 
 export const FallbackInstructorTex = styled.Text`
@@ -53,5 +52,5 @@ export const FallbackInstructorTex = styled.Text`
   gap: 8px;
   color: ${whiteColor};
   opacity: 0.7;
-  font-size: ${RFValue(16, 932)};
+  font-size: ${RFValue(12, 932)};
 `;
