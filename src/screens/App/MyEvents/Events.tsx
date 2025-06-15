@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {ScrollView} from 'react-native';
+import { useContext, useState } from 'react';
+import { ScrollView } from 'react-native';
 import AppLoader from '../AppLoader/AppLoader';
 import * as S from './Events.style';
 // Your existing list component
@@ -10,18 +10,19 @@ import MyEventList from './Components/MyEventList/MyEventList';
 import JoinedEventsList from './Components/JoinedEventsList/JoinedEventsList';
 import useGetJoinedEvents from './Components/JoinedEventsList/hooks/useGetJoinedEvents';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
-import {useAuthStore} from 'src/store/authStore';
+import { useAuthStore } from 'src/store/authStore';
 import useUser from 'hooks/user/useUser';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
 import ModalEventInfo from 'components/Modal/ModalEventInfo/ModalEventInfo';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 type EventInfoName = 'myEvents' | 'joinedEvents';
 
 const Events = () => {
-  const {user} = useUser();
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
+  const { user } = useUser();
   const isLocked = !user?.accountReviewed;
-  const {userMetadata} = useAuthStore.getState();
+  const { userMetadata } = useAuthStore.getState();
   const [isVisibleModalEventInfo, setIsVisibleModalEventInfo] = useState(false);
   const [selectedEventInfoName, setSelectedEventInfoName] = useState<EventInfoName | null>(null);
 
@@ -30,9 +31,9 @@ const Events = () => {
     JoinedEvents: false,
   });
 
-  const {data: joinedEvents, isLoading: isLoadingJoinedEvents} = useGetJoinedEvents();
+  const { data: joinedEvents, isLoading: isLoadingJoinedEvents } = useGetJoinedEvents();
 
-  const {data: myEvents, isLoading: isLoadingMyEvents} = invitedOnlyBackendApi!.useQuery('get', '/events/host/{hostId}', {
+  const { data: myEvents, isLoading: isLoadingMyEvents } = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
     params: {
       path: {
         hostId: userMetadata.uid || '',
@@ -45,7 +46,7 @@ const Events = () => {
     setIsVisibleModalEventInfo(true);
   };
 
-  const eventInfoData: Record<EventInfoName, {title: string; description: string}> = {
+  const eventInfoData: Record<EventInfoName, { title: string; description: string }> = {
     myEvents: {
       title: 'Your Events',
       description: `Events you’ve created or are hosting. Manage invitations, track guests, and stay in control of your table.`,
@@ -76,14 +77,14 @@ const Events = () => {
             paddingTop: 24,
           }}>
           <MyEventList
-            toggle={() => setIsOpen({...isOpen, MyEvents: !isOpen['MyEvents']})}
+            toggle={() => setIsOpen({ ...isOpen, MyEvents: !isOpen['MyEvents'] })}
             title="Your Events"
             events={myEvents || []}
             isOpen={isOpen['MyEvents']}
             onPressTooltip={() => handlePressTooltip('myEvents')}
           />
           <JoinedEventsList
-            toggle={() => setIsOpen({...isOpen, JoinedEvents: !isOpen['JoinedEvents']})}
+            toggle={() => setIsOpen({ ...isOpen, JoinedEvents: !isOpen['JoinedEvents'] })}
             title="Events You’re Invited To"
             events={joinedEvents || []}
             isOpen={isOpen['JoinedEvents']}

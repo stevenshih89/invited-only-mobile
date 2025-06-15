@@ -1,13 +1,13 @@
-import React from 'react';
-import {render, fireEvent} from '@testing-library/react-native';
-import {Formik} from 'formik';
-import {components} from '@invited-only/invited-only-api';
+import React, { useContext } from 'react';
+import { render, fireEvent } from '@testing-library/react-native';
+import { Formik } from 'formik';
+import { components } from '@invited-only/invited-only-api';
 import PreviewEventStep from '../PreviewEventStep';
-import {useAuthStore} from 'src/store/authStore';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import { useAuthStore } from 'src/store/authStore';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 jest.mock('src/store/authStore');
-jest.mock('src/api/backend-api', () => ({
+jest.mock('contexts/BackendApiContex', () => ({
   useQuery: jest.fn(),
 }));
 jest.mock('react-native-linear-gradient', () => 'LinearGradient');
@@ -29,9 +29,9 @@ describe('PreviewEventStep', () => {
     address: 'Test Address',
     meetingSpot: 'Test Meeting Spot',
     photos: [
-      {id: 1, image: 'https://example.com/photo1.jpg'},
-      {id: 2, image: 'https://example.com/photo2.jpg'},
-      {id: 3, image: 'https://example.com/photo3.jpg'},
+      { id: 1, image: 'https://example.com/photo1.jpg' },
+      { id: 2, image: 'https://example.com/photo2.jpg' },
+      { id: 3, image: 'https://example.com/photo3.jpg' },
     ],
     maleFriend: 2,
     femaleFriend: 3,
@@ -44,14 +44,14 @@ describe('PreviewEventStep', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseAuthStore.mockReturnValue({
-      userMetadata: {uid: 'test-uid'},
+      userMetadata: { uid: 'test-uid' },
     } as any);
     mockUseQuery.mockReturnValue({
       data: {
-        photos: [{image: 'https://example.com/user-photo.jpg'}],
+        photos: [{ image: 'https://example.com/user-photo.jpg' }],
       },
     });
-    (invitedOnlyBackendApi as any).useQuery = mockUseQuery;
+    (useContext(BackendApiContext) as any).useQuery = mockUseQuery;
   });
 
   const renderWithFormik = (initialValues = mockInitialValues, isEditing = false) => {
@@ -63,13 +63,13 @@ describe('PreviewEventStep', () => {
   };
 
   it('renders event preview correctly', () => {
-    const {getByText} = renderWithFormik();
+    const { getByText } = renderWithFormik();
 
     expect(getByText('Test Event')).toBeTruthy();
   });
 
   it('displays correct button text based on isEditing prop', () => {
-    const {getByText, rerender} = renderWithFormik();
+    const { getByText, rerender } = renderWithFormik();
 
     expect(getByText('Create Event')).toBeTruthy();
 
@@ -83,7 +83,7 @@ describe('PreviewEventStep', () => {
   });
 
   it('handles navigation buttons correctly', () => {
-    const {getByText} = renderWithFormik();
+    const { getByText } = renderWithFormik();
 
     fireEvent.press(getByText('Cancel'));
     expect(mockHandleBackStep).toHaveBeenCalled();
@@ -93,7 +93,7 @@ describe('PreviewEventStep', () => {
   });
 
   it('handles missing photos gracefully', () => {
-    const {getByText} = renderWithFormik({
+    const { getByText } = renderWithFormik({
       ...mockInitialValues,
       photos: [],
     });
@@ -108,7 +108,7 @@ describe('PreviewEventStep', () => {
       },
     });
 
-    const {getByText} = renderWithFormik();
+    const { getByText } = renderWithFormik();
 
     expect(getByText('Test Event')).toBeTruthy();
   });

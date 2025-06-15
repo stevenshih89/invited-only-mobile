@@ -1,14 +1,14 @@
-import React from 'react';
-import {TouchableOpacityProps} from 'react-native';
-import {components} from '@invited-only/invited-only-api';
+import React, { useContext } from 'react';
+import { TouchableOpacityProps } from 'react-native';
+import { components } from '@invited-only/invited-only-api';
 import * as S from './ApproveActionButton.style';
 import CheckmarkIcon from 'src/assets/images/icons/check.svg';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 interface ApproveActionButtonProps extends TouchableOpacityProps {
   event: components['schemas']['EventData'];
   isJoinedEvent: boolean;
-  updateConnectionStatusData: (data: {hostAction: 'confirm' | 'reject' | 'none'; guestAction: 'confirm' | 'reject' | 'none'}) => void;
+  updateConnectionStatusData: (data: { hostAction: 'confirm' | 'reject' | 'none'; guestAction: 'confirm' | 'reject' | 'none' }) => void;
   guestId: string;
 }
 
@@ -20,7 +20,8 @@ export const ApproveActionButton: React.FC<ApproveActionButtonProps> = ({
   ...rest
 }) => {
   console.log('isJoinedEvent', isJoinedEvent);
-  const {mutate: approveEvent} = invitedOnlyBackendApi!.useMutation('patch', '/eventAttendees', {
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
+  const { mutate: approveEvent } = invitedOnlyBackendApi.useMutation('patch', '/eventAttendees', {
     onSuccess: response => {
       // updateConnectionStatusData({ hostAction: isJoinedEvent ? 'none' : 'confirm', guestAction: isJoinedEvent ? 'confirm' : 'none' });
     },

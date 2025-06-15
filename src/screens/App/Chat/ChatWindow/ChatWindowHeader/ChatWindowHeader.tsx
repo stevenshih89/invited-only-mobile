@@ -12,7 +12,6 @@ import ConfirmedBadge from 'src/assets/images/icons/event-confirm-badge.svg';
 import DotsHorizontalIcon from 'assets/images/icons/dots-horizontal.svg';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { whiteColor } from 'constants/colors';
-import invitedOnlyBackendApi from 'src/api/backend-api';
 import { useAuthStore } from 'src/store/authStore';
 import { useInvitationStatus } from 'hooks/useInvitationStatus';
 import IOImage from 'src/assets/images/app/IO.png'

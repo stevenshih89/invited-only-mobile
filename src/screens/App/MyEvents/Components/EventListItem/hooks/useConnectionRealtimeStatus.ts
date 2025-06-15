@@ -1,10 +1,10 @@
-import {useContext} from 'react';
-import {components} from '@invited-only/invited-only-api';
-import {useQueryClient} from '@tanstack/react-query';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import { useContext } from 'react';
+import { components } from '@invited-only/invited-only-api';
+import { useQueryClient } from '@tanstack/react-query';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
 import useFirestoreSubscriptionConnectionStatus from 'src/api/realtime/useFirestoreSubscriptionConnectionStatus';
-import {useAuthStore} from 'src/store/authStore';
+import { useAuthStore } from 'src/store/authStore';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 interface ConnectionStatus {
   event: components['schemas']['EventData'];
@@ -12,12 +12,13 @@ interface ConnectionStatus {
   guestId: string;
 }
 
-const useConnectionRealtimeStatus = ({event, guestId}: ConnectionStatus) => {
-  const {userMetadata} = useAuthStore();
+const useConnectionRealtimeStatus = ({ event, guestId }: ConnectionStatus) => {
+  const { userMetadata } = useAuthStore();
   const queryClient = useQueryClient();
-  const {attendees} = useContext(FirebaseCollectionsContext);
+  const { attendees } = useContext(FirebaseCollectionsContext);
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
 
-  const {data: connectionStatuses, isLoading} = invitedOnlyBackendApi!.useQuery(
+  const { data: connectionStatuses, isLoading } = invitedOnlyBackendApi.useQuery(
     'get',
     '/eventAttendees/host/{hostId}',
     {
@@ -27,12 +28,12 @@ const useConnectionRealtimeStatus = ({event, guestId}: ConnectionStatus) => {
         },
       },
     },
-    {refetchInterval: 1000, enabled: !!event?.uid && !!event?.hostId && !!guestId && !!event?.uid},
+    { refetchInterval: 1000, enabled: !!event?.uid && !!event?.hostId && !!guestId && !!event?.uid },
   );
 
   useFirestoreSubscriptionConnectionStatus({
     collectionName: attendees || '',
-    queryKey: ['get', '/eventAttendees/host/{hostId}', {params: {path: {hostId: userMetadata?.uid || ''}}}],
+    queryKey: ['get', '/eventAttendees/host/{hostId}', { params: { path: { hostId: userMetadata?.uid || '' } } }],
     docId: event?.uid || '',
   });
 
@@ -44,19 +45,19 @@ const useConnectionRealtimeStatus = ({event, guestId}: ConnectionStatus) => {
     guestAction: 'confirm' | 'reject' | 'none';
   }) =>
     queryClient.setQueryData(
-      ['get', '/eventAttendees/host/{hostId}', {params: {path: {hostId: event?.hostId || ''}}}],
+      ['get', '/eventAttendees/host/{hostId}', { params: { path: { hostId: event?.hostId || '' } } }],
       (oldData: components['schemas']['ConnectionRequest'][]) => {
         queryClient.setQueryData(
-          ['get', '/eventAttendees/host/{hostId}', {params: {path: {hostId: userMetadata?.uid || ''}}}],
+          ['get', '/eventAttendees/host/{hostId}', { params: { path: { hostId: userMetadata?.uid || '' } } }],
           (oldData: components['schemas']['ConnectionRequest'][]) => {
             const newData: components['schemas']['ConnectionRequest'][] = [];
             oldData.forEach((connectionStatus: components['schemas']['ConnectionRequest']) => {
               if (connectionStatus?.id === event?.uid) {
                 if (hostAction === 'confirm') {
-                  newData.push({...connectionStatus, hostConfirm: true});
+                  newData.push({ ...connectionStatus, hostConfirm: true });
                 }
                 if (guestAction === 'confirm') {
-                  newData.push({...connectionStatus, guestConfirm: true});
+                  newData.push({ ...connectionStatus, guestConfirm: true });
                 }
               }
             });

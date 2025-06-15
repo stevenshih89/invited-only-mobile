@@ -1,9 +1,11 @@
+import { useContext } from 'react';
 import useUser from 'hooks/user/useUser';
-import invitedOnlyBackendApi from 'src/api/backend-api';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 const useGetJoinedEvents = () => {
-  const {user} = useUser();
-  const {data, isLoading, error} = invitedOnlyBackendApi!.useQuery(
+  const invitedOnlyBackendApi = useContext(BackendApiContext);
+  const { user } = useUser();
+  const { data, isLoading, error } = invitedOnlyBackendApi.useQuery(
     'get',
     '/events/joined-events/{guestId}',
     {
@@ -18,7 +20,7 @@ const useGetJoinedEvents = () => {
     },
   );
 
-  return {data, isLoading, error};
+  return { data, isLoading, error };
 };
 
 export default useGetJoinedEvents;
