@@ -28,7 +28,11 @@ const useConnectionRealtimeStatus = ({ event, guestId }: ConnectionStatus) => {
         },
       },
     },
-    { refetchInterval: 1000, enabled: !!event?.uid && !!event?.hostId && !!guestId && !!event?.uid },
+    {
+      refetchInterval: 1000,
+      enabled: !!event?.uid && !!event?.hostId && !!guestId && !!event?.uid,
+      staleTime: 2000,
+    },
   );
 
   useFirestoreSubscriptionConnectionStatus({
@@ -46,7 +50,7 @@ const useConnectionRealtimeStatus = ({ event, guestId }: ConnectionStatus) => {
   }) =>
     queryClient.setQueryData(
       ['get', '/eventAttendees/host/{hostId}', { params: { path: { hostId: event?.hostId || '' } } }],
-      (oldData: components['schemas']['ConnectionRequest'][]) => {
+      () => {
         queryClient.setQueryData(
           ['get', '/eventAttendees/host/{hostId}', { params: { path: { hostId: userMetadata?.uid || '' } } }],
           (oldData: components['schemas']['ConnectionRequest'][]) => {

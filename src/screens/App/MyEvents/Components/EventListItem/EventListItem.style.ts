@@ -1,10 +1,10 @@
 import styled from 'styled-components/native';
-import {View, Text, Image, ImageBackground} from 'react-native';
-import {BlurView} from '@react-native-community/blur';
-import {Satoshi400, Satoshi500} from 'src/constants/fonts';
-import {screenHeight} from 'constants/common';
-import Arrow from 'assets/images/icons/arrow-down.svg';
-import {whiteColor} from 'constants/colors';
+import { View, Text, Image, ImageBackground } from 'react-native';
+import { BlurView } from '@react-native-community/blur';
+import { Satoshi400, Satoshi500 } from 'src/constants/fonts';
+import { screenHeight } from 'constants/common';
+import Plus from 'assets/images/icons/plus.svg';
+import { whiteColor } from 'constants/colors';
 
 export const CardContainer = styled.View`
   display: flex;
@@ -160,10 +160,10 @@ export const HeaderCollapsedContainer = styled.View`
   width: 100%;
 `;
 
-export const StyledArrow = styled(Arrow)<{isOpen: boolean}>`
+export const StyledArrow = styled(Plus) <{ isOpen: boolean }>`
   width: 20px;
   height: 20px;
-  transform: ${({isOpen}: {isOpen: boolean}) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
+  transform: ${({ isOpen }: { isOpen: boolean }) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
 `;
 
 export const WaitingContainer = styled.View`

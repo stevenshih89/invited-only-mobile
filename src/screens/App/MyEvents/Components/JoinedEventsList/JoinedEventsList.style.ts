@@ -1,6 +1,6 @@
-import {FlatList} from 'react-native';
+import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
-import {blackColor} from 'constants/colors';
+import { blackColor } from 'constants/colors';
 import Arrow from 'assets/images/icons/arrow-down.svg';
 
 export const Container = styled.View`
@@ -28,7 +28,9 @@ export const CardContainer = styled.View`
   border-radius: 20px;
   border-width: 1px;
   align-self: stretch;
-  padding-bottom: 6px;
+  padding-bottom: 16px;
+  padding-top: 16px;
+  margin-bottom: 12px;
 `;
 
 // This wraps the main content row (Label + Number Badge)
@@ -68,14 +70,14 @@ export const ArrowIconContainer = styled.View`
   align-items: center;
 `;
 
-export const LabelText = styled.Text<{disabled: boolean}>`
+export const LabelText = styled.Text<{ disabled: boolean }>`
   font-family: 'Satoshi';
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
   line-height: 22px;
   text-align: center;
-  color: ${({disabled}: {disabled: boolean}) => (disabled ? '#808080' : '#FFFFFF')};
+  color: ${({ disabled }: { disabled: boolean }) => (disabled ? '#808080' : '#FFFFFF')};
   flex-grow: 0;
 `;
 
@@ -113,10 +115,10 @@ export const ScreenContainer = styled.View`
   background-color: ${blackColor};
 `;
 
-export const StyledArrow = styled(Arrow)<{isOpen: boolean}>`
+export const StyledArrow = styled(Arrow) <{ isOpen: boolean }>`
   width: 20px;
   height: 20px;
-  transform: ${({isOpen}: {isOpen: boolean}) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
+  transform: ${({ isOpen }: { isOpen: boolean }) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
 `;
 
 export const DotsIconContainer = styled.TouchableOpacity`

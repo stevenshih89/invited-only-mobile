@@ -72,6 +72,21 @@ const EventListItem: React.FC<EventListItemProps> = ({
     }
   };
 
+  const getInvitationStatusDescription = (invitationStatus: string | undefined) => {
+    if (!invitationStatus) {
+      return '';
+    }
+    if (invitationStatus === 'attendingComplete') {
+      return 'You are attending this event';
+    }
+    if (invitationStatus === 'guestApprovePendingForHost') {
+      return 'Host approval needed';
+    }
+    if (invitationStatus === 'connectionInitiated' || invitationStatus === 'hostApprovePendingForGuest') {
+      return 'Your confirmation needed';
+    }
+  };
+
   return (
     <S.CardContainer onPress={handlePress} activeOpacity={0.8}>
       <S.HeaderCollapsedContainer>
@@ -81,7 +96,7 @@ const EventListItem: React.FC<EventListItemProps> = ({
               <S.StyledArrow isOpen={isDropdownVisible} />
               <S.InvitationStatusTextContainer>
                 <S.InvitationStatusText>Invitation Status</S.InvitationStatusText>
-                <S.InvitationStatusDescription>Track status from invitation to approval</S.InvitationStatusDescription>
+                <S.InvitationStatusDescription>{getInvitationStatusDescription(invitationStatus)}</S.InvitationStatusDescription>
               </S.InvitationStatusTextContainer>
             </S.InvitationLeftContainer>
             <S.InvitationRightContainer>
