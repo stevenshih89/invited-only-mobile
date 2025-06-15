@@ -29,7 +29,7 @@ const FullEvent: FC<FullEventProps> = ({activeEvent, totalRequestsGuests, rightC
         setActualActiveEventData(getEventData);
       }
     } catch (error) {
-      showToast('inviteMatch', 'An issue occurred while fetching the event data. Please try again later.', 'Error');
+      showToast('basic', 'An issue occurred while fetching the event data. Please try again later.', 'Error');
       logErrorToSentry(error);
     }
   };

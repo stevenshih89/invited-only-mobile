@@ -1,6 +1,5 @@
-import React, { Dispatch, FC, SetStateAction, useContext } from 'react';
-import { ActivityIndicator } from 'react-native';
-import moment from 'moment';
+import React, {Dispatch, FC, SetStateAction, useContext} from 'react';
+import {ActivityIndicator} from 'react-native';
 import ProfileSlider from './components/ProfileSlider/ProfileSlider';
 import * as S from './MyProfileView.style';
 import Basics from './components/Basics/Basics';
@@ -10,20 +9,19 @@ import PhotosList from './components/PhotosList/Photoslist';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import ModalUserProfile from 'components/Modal/ModalUserProfile/ModalUserProfile.tsx';
 import Man from 'assets/images/app/man-rectangle.png';
-import { blackColor } from 'constants/colors';
-import FemaleGenderIcon from 'src/assets/images/icons/female-gender.svg';
-import { useAuthStore } from 'src/store/authStore';
-import { BackendApiContext } from 'contexts/BackendApiContex';
+import {blackColor} from 'constants/colors';
+import {useAuthStore} from 'src/store/authStore';
+import {BackendApiContext} from 'contexts/BackendApiContex';
 
 interface MyProfileViewProps {
   isModalVisible?: boolean;
   setModalVisible?: Dispatch<SetStateAction<boolean>>;
 }
 
-const MyProfileView: FC<MyProfileViewProps> = ({ isModalVisible, setModalVisible }) => {
-  const { userMetadata } = useAuthStore();
+const MyProfileView: FC<MyProfileViewProps> = ({isModalVisible, setModalVisible}) => {
+  const {userMetadata} = useAuthStore();
   const invitedOnlyBackendApi = useContext(BackendApiContext);
-  const { data: userInfo, isLoading } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
+  const {data: userInfo, isLoading} = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
     params: {
       path: {
         id: userMetadata.uid,
@@ -34,7 +32,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({ isModalVisible, setModalVisible
   if (isLoading || !userInfo) {
     return (
       <S.ProfileContainer>
-        <ActivityIndicator style={{ flex: 1, backgroundColor: blackColor }} />
+        <ActivityIndicator style={{flex: 1, backgroundColor: blackColor}} />
       </S.ProfileContainer>
     );
   }
@@ -54,7 +52,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({ isModalVisible, setModalVisible
 
   return (
     <S.SafeAreaContainer>
-      <ModalReport setModalReport={() => { }} uidSender={userInfo?.uid} uid={userInfo?.uid} />
+      <ModalReport setModalReport={() => {}} uidSender={userInfo?.uid} uid={userInfo?.uid} />
       <S.MainContainer>
         <S.ScrollContainer scrollEventThrottle={20} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
           <S.ContentContainer>
@@ -68,7 +66,7 @@ const MyProfileView: FC<MyProfileViewProps> = ({ isModalVisible, setModalVisible
               <Basics
                 location={userInfo?.location || ''}
                 homeAddress={userInfo?.homeAddress || ''}
-                work={{ title: userInfo?.work?.title || '' }}
+                work={{title: userInfo?.work?.title || ''}}
                 gender={userInfo?.gender || 'other'}
                 listOfInterestsImages={userInfo?.interests || []}
               />

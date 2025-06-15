@@ -48,7 +48,7 @@ export const getUsersForEvent = async ({
       return query.where('gender', '==', 'woman').get();
     }
   } catch (error) {
-    showToast('inviteMatch', 'An issue occurred while fetching the users for the event. Please try again later.', 'Error');
+    showToast('basic', 'An issue occurred while fetching the users for the event. Please try again later.', 'Error');
     logErrorToSentry(error);
   }
 };

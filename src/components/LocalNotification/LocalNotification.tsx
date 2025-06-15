@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {Text, Image} from 'react-native';
+import {Text, Image, View} from 'react-native';
 import Toast, {BaseToast, ToastConfig, ToastConfigParams} from 'react-native-toast-message';
 
 //import icons
@@ -16,9 +16,9 @@ import IOImage from 'assets/images/app/IO.png';
 
 //import images
 import IconBackground from 'assets/images/app/bcon-background.png';
-import {whiteColor, lightGray3Color} from 'constants/colors';
-import {Satoshi500, Satoshi700} from 'constants/fonts';
-import {INVITE_MATCH_STATUS} from 'constants/common';
+import {whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import {INVITE_MATCH_STATUS, screenHeight} from 'constants/common';
 import {useAppNavigation} from 'hooks/useAppNavigation';
 import {
   chatCorrespondencePath,
@@ -96,7 +96,7 @@ const LocalNotification = () => {
             },
           });
         } catch (error) {
-          showToast('inviteMatch', 'An issue occurred while creating the chat and retrieving event data. Please try again later.', 'Error');
+          showToast('basic', 'An issue occurred while creating the chat and retrieving event data. Please try again later.', 'Error');
           logErrorToSentry(error);
         }
         break;
@@ -109,15 +109,15 @@ const LocalNotification = () => {
       <BaseToast
         {...props}
         style={{
-          backgroundColor: lightGray3Color,
-          borderLeftColor: lightGray3Color,
+          backgroundColor: '#1c1c1c',
+          borderLeftColor: '#1c1c1c',
           alignSelf: 'center',
           marginRight: 0,
           height: 84,
           opacity: 0.94,
         }}
-        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}
-        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5}}
+        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 932)}}
+        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 932), marginTop: 5}}
         renderLeadingIcon={() => (
           <S.WrapperIcon>
             <Image source={IconBackground} />
@@ -130,15 +130,15 @@ const LocalNotification = () => {
       <BaseToast
         {...props}
         style={{
-          borderLeftColor: lightGray3Color,
-          backgroundColor: lightGray3Color,
+          borderLeftColor: '#1c1c1c',
+          backgroundColor: '#1c1c1c',
           alignSelf: 'center',
           marginRight: 0,
           height: 84,
           opacity: 0.94,
         }}
-        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}
-        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5}}
+        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 932)}}
+        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 932), marginTop: 5}}
         renderLeadingIcon={() => (
           <S.WrapperIcon>
             <Image source={IconBackground} />
@@ -152,15 +152,15 @@ const LocalNotification = () => {
         {...props}
         style={{
           borderWidth: 1,
-          borderLeftColor: lightGray3Color,
-          backgroundColor: lightGray3Color,
+          borderLeftColor: '#1c1c1c',
+          backgroundColor: '#1c1c1c',
           alignSelf: 'center',
           marginRight: 0,
           height: 84,
           opacity: 0.94,
         }}
-        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}
-        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5}}
+        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 932)}}
+        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 932), marginTop: 5}}
         renderLeadingIcon={() => (
           <S.WrapperIcon>
             <Image source={IconBackground} />
@@ -180,16 +180,56 @@ const LocalNotification = () => {
         )}
         style={{
           borderWidth: 1,
-          borderLeftColor: lightGray3Color,
-          backgroundColor: lightGray3Color,
+          borderLeftColor: '#1c1c1c',
+          backgroundColor: '#1c1c1c',
           alignSelf: 'center',
           marginRight: 0,
           height: 84,
           opacity: 0.94,
         }}
-        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}
-        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5}}
+        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 932)}}
+        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 932), marginTop: 5}}
       />
+    ),
+    basic: props => (
+      <View
+        style={{
+          marginHorizontal: 24,
+          flexDirection: 'row',
+          alignItems: 'center',
+          backgroundColor: '#1c1c1c',
+          borderRadius: 18,
+          paddingVertical: screenHeight / 60,
+          paddingLeft: screenHeight / 60,
+          paddingRight: 8,
+          gap: 16,
+        }}>
+        <S.InviteMatchImage source={IOImage} />
+        <View style={{flex: 1, justifyContent: 'center', gap: 4}}>
+          {props.text1 && (
+            <Text
+              style={{
+                color: whiteColor,
+                fontFamily: Satoshi500,
+                fontSize: RFValue(18, 932),
+                lineHeight: RFValue(21, 932),
+              }}>
+              {props.text1}
+            </Text>
+          )}
+          {props.text2 && (
+            <Text
+              style={{
+                color: whiteColor,
+                fontFamily: Satoshi400,
+                fontSize: RFValue(14, 932),
+                lineHeight: RFValue(21, 932),
+              }}>
+              {props.text2}
+            </Text>
+          )}
+        </View>
+      </View>
     ),
     warningGrey: props => (
       <BaseToast
@@ -202,15 +242,15 @@ const LocalNotification = () => {
         )}
         style={{
           borderWidth: 1,
-          borderLeftColor: lightGray3Color,
-          backgroundColor: lightGray3Color,
+          borderLeftColor: '#1c1c1c',
+          backgroundColor: '#1c1c1c',
           alignSelf: 'center',
           marginRight: 0,
           height: 84,
           opacity: 0.94,
         }}
-        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 812)}}
-        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 812), marginTop: 5}}
+        text1Style={{color: whiteColor, fontFamily: Satoshi700, fontSize: RFValue(16, 932)}}
+        text2Style={{color: whiteColor, fontFamily: Satoshi500, fontSize: RFValue(16, 932), marginTop: 5}}
       />
     ),
     customToast: ({text1, props}: ToastConfigParams<any>) => (
@@ -230,11 +270,6 @@ const LocalNotification = () => {
               <S.InviteMatchTextContainer>
                 <S.InviteMatchTextRow>
                   <S.InviteMatchText>{text1}</S.InviteMatchText>
-                  {props.status && (
-                    <S.InviteMatchStatusContainer>
-                      <S.InviteMatchStatusText>{props.status.toUpperCase()}</S.InviteMatchStatusText>
-                    </S.InviteMatchStatusContainer>
-                  )}
                 </S.InviteMatchTextRow>
                 <S.InviteMatchSubText>{text2}</S.InviteMatchSubText>
               </S.InviteMatchTextContainer>
@@ -242,6 +277,46 @@ const LocalNotification = () => {
           </S.InviteMatchInnerContainer>
         </S.InviteMatchContainer>
       </S.InviteMatchTouchableOpacity>
+    ),
+    withImage: ({text1, text2, props}) => (
+      <View
+        style={{
+          marginHorizontal: 24,
+          flexDirection: 'row',
+          alignItems: 'center',
+          backgroundColor: '#1c1c1c',
+          borderRadius: 18,
+          paddingVertical: screenHeight / 60,
+          paddingLeft: screenHeight / 60,
+          paddingRight: 8,
+          gap: 16,
+        }}>
+        {props.image ? <S.InviteMatchImage source={{uri: props.image}} /> : <S.InviteMatchImage source={IOImage} />}
+        <View style={{flex: 1, justifyContent: 'center', gap: 4}}>
+          {text1 && (
+            <Text
+              style={{
+                color: whiteColor,
+                fontFamily: Satoshi500,
+                fontSize: RFValue(18, 932),
+                lineHeight: RFValue(21, 932),
+              }}>
+              {text1}
+            </Text>
+          )}
+          {text2 && (
+            <Text
+              style={{
+                color: whiteColor,
+                fontFamily: Satoshi400,
+                fontSize: RFValue(14, 932),
+                lineHeight: RFValue(21, 932),
+              }}>
+              {text2}
+            </Text>
+          )}
+        </View>
+      </View>
     ),
   };
 

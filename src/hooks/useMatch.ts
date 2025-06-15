@@ -1,16 +1,16 @@
 import firestore from '@react-native-firebase/firestore';
-import { useContext } from 'react';
-import { useAppNavigation } from './useAppNavigation';
+import {useContext} from 'react';
+import {useAppNavigation} from './useAppNavigation';
 import useUser from 'src/hooks/user/useUser';
-import { chatCorrespondencePath, commonStackPath } from 'constants/pathLocations';
-import { showToast } from 'helpers/showToast';
-import { sendNotification } from 'helpers/fcmHelper';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { APPROVED_STATUS, INVITE_MATCH_STATUS } from 'constants/common';
-import { FirebaseCollectionsContext } from 'src/contexts/FirebaseCollectionNamesContext';
+import {chatCorrespondencePath, commonStackPath} from 'constants/pathLocations';
+import {showToast} from 'helpers/showToast';
+import {sendNotification} from 'helpers/fcmHelper';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {APPROVED_STATUS, INVITE_MATCH_STATUS} from 'constants/common';
+import {FirebaseCollectionsContext} from 'src/contexts/FirebaseCollectionNamesContext';
 
 export const useMatch = (onCloseMatch: () => void, matchData: any) => {
-  const { user: userHost, isLoading, error } = useUser();
+  const {user: userHost, isLoading, error} = useUser();
   const navigation = useAppNavigation();
   const {
     events: apiEventsCollection,
@@ -64,7 +64,7 @@ export const useMatch = (onCloseMatch: () => void, matchData: any) => {
             'Connection',
             'Connection'.toUpperCase(),
             userHost,
-            JSON.stringify({ path: 'chat', data: isEventHost ? chatDataGuest : chatDataHost }),
+            JSON.stringify({path: 'chat', data: isEventHost ? chatDataGuest : chatDataHost}),
           );
         }
       }
@@ -213,7 +213,7 @@ export const useMatch = (onCloseMatch: () => void, matchData: any) => {
       }
     } catch (e) {
       // console.log(e);
-      showToast('inviteMatch', 'There was an issue creating the chat. Please try again later.', 'Error');
+      showToast('basic', 'There was an issue creating the chat. Please try again later.', 'Error');
       logErrorToSentry(e);
     }
   };
@@ -239,7 +239,7 @@ export const useMatch = (onCloseMatch: () => void, matchData: any) => {
         const usersList = eventQuerySnapshot.data()?.usersList || [];
         const updatedUsersList = usersList.map((item: any) => {
           if (item.uid === matchData.uidGuest) {
-            return { ...item, status: APPROVED_STATUS };
+            return {...item, status: APPROVED_STATUS};
           }
           return item;
         });
@@ -253,10 +253,10 @@ export const useMatch = (onCloseMatch: () => void, matchData: any) => {
           await sendNotification(
             matchData.uidGuest,
             "You're in!",
-            "Your host approved your request.",
+            'Your host approved your request.',
             'request',
             'Request approved'.toUpperCase(),
-            user
+            user,
           );
         }
         onCloseMatch();

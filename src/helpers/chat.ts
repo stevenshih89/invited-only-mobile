@@ -1,11 +1,11 @@
 import firestore from '@react-native-firebase/firestore';
-import { showToast } from './showToast';
-import { logErrorToSentry } from './logErrorsToSentry';
-import { MatchData } from 'screens/App/IO/screens/Match/Match';
-import { INVITE_MATCH_STATUS } from 'constants/common';
+import {showToast} from './showToast';
+import {logErrorToSentry} from './logErrorsToSentry';
+import {MatchData} from 'screens/App/IO/screens/Match/Match';
+import {INVITE_MATCH_STATUS} from 'constants/common';
 
-export const handleCreateChat = async (matchedData: MatchData, collectionNames = { messages: 'messages', events: 'Events' }) => {
-  const { messages: apiMessagesCollection = 'messages', events: apiEventsCollection = 'Events' } = collectionNames;
+export const handleCreateChat = async (matchedData: MatchData, collectionNames = {messages: 'messages', events: 'Events'}) => {
+  const {messages: apiMessagesCollection = 'messages', events: apiEventsCollection = 'Events'} = collectionNames;
   const querySnapshot = await firestore().collection(apiEventsCollection).doc(matchedData.eventId).get();
   if (!querySnapshot.exists) {
     return;
@@ -27,7 +27,7 @@ export const handleCreateChat = async (matchedData: MatchData, collectionNames =
         uid: matchedData.uidGuest,
         hostUid: matchedData?.uidHost,
       };
-      const chatExist = prevChats.find((chat: { uid: string }) => chat.uid === matchedData.uidGuest);
+      const chatExist = prevChats.find((chat: {uid: string}) => chat.uid === matchedData.uidGuest);
       if (chatExist) {
         return;
       }
@@ -66,7 +66,7 @@ export const handleCreateChat = async (matchedData: MatchData, collectionNames =
     }
   } catch (e) {
     console.log('error create chat', e);
-    showToast('inviteMatch', 'An error occurred while creating the chat. Please try again later.', 'Error');
-    logErrorToSentry(e)
+    showToast('basic', 'An error occurred while creating the chat. Please try again later.', 'Error');
+    logErrorToSentry(e);
   }
 };

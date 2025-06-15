@@ -47,7 +47,7 @@ const ProfileEditing: FC = (): ReactElement => {
           ...values,
         };
         await update(updatePayload);
-        showToast('success', 'Profile updated successfully');
+        showToast('basic', '', 'Profile updated successfully');
       }}>
       {({setFieldValue, submitForm, values, dirty}) => {
         return (

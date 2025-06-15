@@ -173,7 +173,7 @@ export const useAddPhotos = () => {
     if (photosList.length) {
       navigation.navigate('/enter-birthday');
     } else {
-      showToast('inviteMatch', '', 'Failed to upload photos');
+      showToast('basic', '', 'Failed to upload photos');
     }
   };
 

@@ -1,13 +1,13 @@
-import { useContext, useEffect, useState } from 'react';
-import Purchases, { PurchasesPackage } from 'react-native-purchases';
+import {useContext, useEffect, useState} from 'react';
+import Purchases, {PurchasesPackage} from 'react-native-purchases';
 import * as amplitude from '@amplitude/analytics-react-native';
 import getSymbolFromCurrency from 'currency-symbol-map';
-import { AppEventsLogger } from 'react-native-fbsdk-next';
+import {AppEventsLogger} from 'react-native-fbsdk-next';
 import useGetSubscriptions from './useGetSubscriptions';
-import { getActiveSubscription, getSubscriptions } from 'src/api.deprecated/purchase';
-import { showToast } from 'helpers/showToast';
-import { useAuthStore } from 'src/store/authStore';
-import { BackendApiContext } from 'contexts/BackendApiContex';
+import {getActiveSubscription, getSubscriptions} from 'src/api.deprecated/purchase';
+import {showToast} from 'helpers/showToast';
+import {useAuthStore} from 'src/store/authStore';
+import {BackendApiContext} from 'contexts/BackendApiContex';
 
 export interface PlanListItem {
   id: number;
@@ -61,38 +61,56 @@ const usePayments = () => {
     },
   ]);
 
-  const { userMetadata } = useAuthStore();
+  const {userMetadata} = useAuthStore();
 
   const [activePayment, setActivePayment] = useState<PlanListItem>(plansList[0]);
   const [loaderVisible, setLoaderVisible] = useState(false);
   const [successfulPay, setSuccessfulPay] = useState(false);
 
-  const { mutate: createSubscription } = invitedOnlyBackendApi.useMutation('post', '/subscription/create');
-  const { data: subscription, updateSubscription: updateSubscriptionData } = useGetSubscriptions();
+  const {mutate: createSubscription} = invitedOnlyBackendApi.useMutation('post', '/subscription/create');
+  const {data: subscription, updateSubscription: updateSubscriptionData} = useGetSubscriptions();
   const activeExistingSubscription = subscription && subscription.status === 'active';
 
-
-  const updateUser = async (subscriptionId: string, expirationDate: string | null, type: string, targetSubscription: string | null = null, reveneuCartUserId: string | null = null) => {
+  const updateUser = async (
+    subscriptionId: string,
+    expirationDate: string | null,
+    type: string,
+    targetSubscription: string | null = null,
+    reveneuCartUserId: string | null = null,
+  ) => {
     if (!activeExistingSubscription) {
-      createSubscription({
-        body: {
-          subscriptionId,
-          revenueCartUserId: reveneuCartUserId ?? undefined,
-          userId: userMetadata?.uid,
-          expiresDate: expirationDate ?? undefined,
-          type,
-          renewalSubscriptionId: targetSubscription ?? undefined,
+      createSubscription(
+        {
+          body: {
+            subscriptionId,
+            revenueCartUserId: reveneuCartUserId ?? undefined,
+            userId: userMetadata?.uid,
+            expiresDate: expirationDate ?? undefined,
+            type,
+            renewalSubscriptionId: targetSubscription ?? undefined,
+          },
         },
-      }, {
-        onSuccess: () => {
-          updateSubscriptionData({ subscriptionId, type, renewalSubscriptionId: targetSubscription ?? undefined, revenueCartUserId: reveneuCartUserId ?? undefined });
+        {
+          onSuccess: () => {
+            updateSubscriptionData({
+              subscriptionId,
+              type,
+              renewalSubscriptionId: targetSubscription ?? undefined,
+              revenueCartUserId: reveneuCartUserId ?? undefined,
+            });
+          },
+          onError: error => {
+            console.error('error update user', error);
+          },
         },
-        onError: (error) => {
-          console.error('error update user', error);
-        },
-      });
+      );
     } else {
-      updateSubscriptionData({ subscriptionId, type, renewalSubscriptionId: targetSubscription ?? undefined, revenueCartUserId: reveneuCartUserId ?? undefined });
+      updateSubscriptionData({
+        subscriptionId,
+        type,
+        renewalSubscriptionId: targetSubscription ?? undefined,
+        revenueCartUserId: reveneuCartUserId ?? undefined,
+      });
     }
   };
 
@@ -101,8 +119,8 @@ const usePayments = () => {
     AppEventsLogger.logPurchase(pack.product.price, pack.product.currencyCode);
 
     try {
-      const targetSubscription = pack.product.identifier
-      const { customerInfo } = await Purchases.purchasePackage(pack);
+      const targetSubscription = pack.product.identifier;
+      const {customerInfo} = await Purchases.purchasePackage(pack);
       const activeSubscription = await getActiveSubscription();
       console.warn('activeSubscription', activeSubscription);
 
@@ -163,20 +181,20 @@ const usePayments = () => {
       if (purchaserInfo?.activeSubscriptions?.length > 0) {
         switch (purchaserInfo?.activeSubscriptions?.[0]) {
           case 'io_59_1w':
-            showToast('inviteMatch', 'Weekly subscription restored', 'Restore purchases', { status: 'success' });
+            showToast('basic', 'Weekly subscription restored', 'Restore purchases');
 
             break;
           case 'io_99_1m':
-            showToast('inviteMatch', 'Month subscription restored', 'Restore purchases', { status: 'success' });
+            showToast('basic', 'Month subscription restored', 'Restore purchases');
             break;
           case 'io_29_3m':
-            showToast('inviteMatch', 'Monthly subscription restored', 'Restore purchases', { status: 'success' });
+            showToast('basic', 'Monthly subscription restored', 'Restore purchases');
             break;
           default:
             break;
         }
       } else {
-        showToast('inviteMatch', 'Active subscription not found', 'Restore purchases', { status: 'fail' });
+        showToast('basic', 'Active subscription not found', 'Restore purchases');
       }
     } catch (e) {
       console.error('error restore purchases', e);
@@ -184,9 +202,12 @@ const usePayments = () => {
   };
 
   const getButtonTitle = () => {
-    const { duration, durationName, fullPrice, identifier } = activePayment;
+    const {duration, durationName, fullPrice, identifier} = activePayment;
 
-    if (subscription?.uid === identifier && subscription?.renewalSubscriptionId === identifier || subscription?.uid === identifier && !subscription?.renewalSubscriptionId) {
+    if (
+      (subscription?.uid === identifier && subscription?.renewalSubscriptionId === identifier) ||
+      (subscription?.uid === identifier && !subscription?.renewalSubscriptionId)
+    ) {
       return 'Current Plan';
     }
 
@@ -202,7 +223,6 @@ const usePayments = () => {
   };
 
   const isButtonDisabled = () => {
-
     if (subscription?.renewalSubscriptionId) {
       return subscription.renewalSubscriptionId === activePayment.identifier;
     }

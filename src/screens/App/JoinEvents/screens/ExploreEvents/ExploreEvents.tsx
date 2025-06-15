@@ -1,7 +1,7 @@
-import { ActivityIndicator, ScrollView } from 'react-native';
-import { FC, useCallback, useRef } from 'react';
-import { components } from '@invited-only/invited-only-api';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import {ActivityIndicator, ScrollView} from 'react-native';
+import {FC, useCallback, useRef} from 'react';
+import {components} from '@invited-only/invited-only-api';
+import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import HostButton from '../../Components/EventCard/Components/HostButton/HostButton';
 import PhotosList from '../../Components/EventCard/Components/PhotosList/PhotosList';
 import ActionButtons from '../../Components/EventCard/Components/ActionButtons/ActionButtons';
@@ -14,9 +14,9 @@ import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import useSwipeCardAction from 'screens/App/Components/Card/hooks/useSwipeCardAction';
 
 import NewConnectionModal from 'screens/App/IO/components/InviteGuestsEvent/Components/NewConnectionModal/NewConnectionModal';
-import { useAuthStore } from 'src/store/authStore';
+import {useAuthStore} from 'src/store/authStore';
 import useNewConnectionModal from 'screens/App/IO/components/InviteGuestsEvent/hooks/useNewConnectionModal';
-import { whiteColor } from 'constants/colors';
+import {whiteColor} from 'constants/colors';
 
 interface ExploreEventsProps {
   events: components['schemas']['EventData'][];
@@ -25,8 +25,8 @@ interface ExploreEventsProps {
   isLoading: boolean;
 }
 
-const ExploreEvents: FC<ExploreEventsProps> = ({ events, hasNextPage, isLoading, fetchNextPage }) => {
-  const { userMetadata } = useAuthStore();
+const ExploreEvents: FC<ExploreEventsProps> = ({events, hasNextPage, isLoading, fetchNextPage}) => {
+  const {userMetadata} = useAuthStore();
   const {
     cards: currentEventCards,
     handleSwipeLeft,
@@ -40,15 +40,14 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events, hasNextPage, isLoading,
   const hasCards = currentEventCards.length > 0;
   const currentCard = hasCards ? currentEventCards[currentEventCards.length - 1] : undefined;
 
-  const { createEventAttendee, swipeDataRes } = useSwipeCardAction();
+  const {createEventAttendee, swipeDataRes} = useSwipeCardAction();
 
-  const { isModalVisible, closeModal, matchedCard } = useNewConnectionModal({ swipeDataRes, allCards: events, isEvent: true });
+  const {isModalVisible, closeModal, matchedCard} = useNewConnectionModal({swipeDataRes, allCards: events, isEvent: true});
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const handleBlockAndReport = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
-
 
   if (isLoading || (hasNextPage && !currentEventCards.length)) {
     fetchNextPage();
@@ -58,7 +57,6 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events, hasNextPage, isLoading,
       </S.Container>
     );
   }
-
 
   if (!currentCard || !events.length) {
     return (
@@ -134,18 +132,23 @@ const ExploreEvents: FC<ExploreEventsProps> = ({ events, hasNextPage, isLoading,
             <S.BlockText>Block and Report</S.BlockText>
           </S.BlockAndReportButton>
         </S.BlockAndReportContainer>
-        <ModalReport ref={bottomSheetModalRef} uidSender={userMetadata?.uid || ''} uid={currentCard?.hostId || ''} onSubmit={() => {
-          handleSwipeLeft();
-          createEventAttendee({
-            body: {
-              guestId: userMetadata?.uid || '',
-              hostId: currentCard?.hostId || '',
-              eventId: currentCard?.uid || '',
-              guestSwipe: 'left',
-            },
-          });
-        }} />
-
+        <ModalReport
+          ref={bottomSheetModalRef}
+          uidSender={userMetadata?.uid || ''}
+          uid={currentCard?.hostId || ''}
+          userData={currentCard}
+          onSubmit={() => {
+            handleSwipeLeft();
+            createEventAttendee({
+              body: {
+                guestId: userMetadata?.uid || '',
+                hostId: currentCard?.hostId || '',
+                eventId: currentCard?.uid || '',
+                guestSwipe: 'left',
+              },
+            });
+          }}
+        />
       </S.BottomWrapper>
     </ScrollView>
   );

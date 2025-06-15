@@ -1,21 +1,21 @@
-import { components } from '@invited-only/invited-only-api';
-import { useQueryClient } from '@tanstack/react-query';
-import { useContext } from 'react';
-import { showToast } from 'helpers/showToast';
-import { BackendApiContext } from 'contexts/BackendApiContex';
-import { useAuthStore } from 'src/store/authStore';
+import {components} from '@invited-only/invited-only-api';
+import {useQueryClient} from '@tanstack/react-query';
+import {useContext} from 'react';
+import {showToast} from 'helpers/showToast';
+import {BackendApiContext} from 'contexts/BackendApiContex';
+import {useAuthStore} from 'src/store/authStore';
 
 const useDeleteNotification = () => {
   const invitedOnlyBackendApi = useContext(BackendApiContext);
-  const { mutate: deleteNotification, isPending: isDeletingNotification } = invitedOnlyBackendApi.useMutation(
+  const {mutate: deleteNotification, isPending: isDeletingNotification} = invitedOnlyBackendApi.useMutation(
     'delete',
     '/notifications/{id}',
   );
   const queryClient = useQueryClient();
-  const { userMetadata } = useAuthStore();
+  const {userMetadata} = useAuthStore();
   const handleDeleteNotification = (notificationId: string, shouldShowToast: boolean = true) => {
     deleteNotification(
-      { params: { path: { id: notificationId } } },
+      {params: {path: {id: notificationId}}},
       {
         onSuccess: () => {
           const removeNotification = (notificationId: string) => {
@@ -38,12 +38,12 @@ const useDeleteNotification = () => {
           };
           removeNotification(notificationId);
           if (shouldShowToast) {
-            showToast('success', 'Notification deleted successfully', 'Notification deleted');
+            showToast('basic', 'Notification deleted successfully', 'Notification deleted');
           }
         },
         onError: (error: any) => {
           if (shouldShowToast) {
-            showToast('warning', 'Notification deletion failed', error.message);
+            showToast('basic', 'Notification deletion failed', error.message);
           }
         },
       },

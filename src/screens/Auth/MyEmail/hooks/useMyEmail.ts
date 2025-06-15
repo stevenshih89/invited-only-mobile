@@ -1,21 +1,20 @@
-import { useContext, useState } from 'react';
+import {useContext, useState} from 'react';
 
 import firestore from '@react-native-firebase/firestore';
 
-import { useAuthStore } from 'src/store/authStore';
-import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
-import { isEmailValid } from 'helpers/regExpValidators';
-import { showToast } from 'helpers/showToast';
-import { useAppNavigation } from 'hooks/useAppNavigation';
+import {useAuthStore} from 'src/store/authStore';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
+import {isEmailValid} from 'helpers/regExpValidators';
+import {showToast} from 'helpers/showToast';
+import {useAppNavigation} from 'hooks/useAppNavigation';
 
 export const useMyEmail = () => {
-
-  const { onBoarding, setOnBoarding } = useAuthStore();
+  const {onBoarding, setOnBoarding} = useAuthStore();
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
   const [email, setEmail] = useState<string>(onBoarding.registrationDetails?.email || '');
   const navigation = useAppNavigation();
 
-  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
 
   const handleEmailChange = (value: string) => {
     const truncatedText = value.slice(0, 40);
@@ -33,7 +32,7 @@ export const useMyEmail = () => {
     }
     const userNumber = await firestore().collection(apiUserInfoCollection).where('email', '==', email).get();
     if (!userNumber.empty) {
-      showToast('inviteMatch', 'This Email is already exist', 'Fail');
+      showToast('basic', 'This Email is already exist', 'Fail');
       return;
     }
 
@@ -48,5 +47,5 @@ export const useMyEmail = () => {
     navigation.navigate('/welcome-screen');
   };
 
-  return { email, isValidEmail, handleEmailChange, handleNext, navigation };
+  return {email, isValidEmail, handleEmailChange, handleNext, navigation};
 };

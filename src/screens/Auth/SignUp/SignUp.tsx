@@ -1,28 +1,26 @@
-import React, { FC, useState, useContext, JSX, useEffect } from 'react';
+import React, {FC, useState, useContext, JSX, useEffect} from 'react';
 
 import firestore from '@react-native-firebase/firestore';
 import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
 import * as S from './SignUp.styles';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import { showToast } from 'helpers/showToast.ts';
-import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {showToast} from 'helpers/showToast.ts';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
 import CountryCodePicker from 'src/sharedComponents/CountryCodePicker/CountryCodePicker';
-import { Country } from 'src/sharedComponents/CountryCodePicker/types';
-import { BackendApiContext } from 'contexts/BackendApiContex';
-
-
+import {Country} from 'src/sharedComponents/CountryCodePicker/types';
+import {BackendApiContext} from 'contexts/BackendApiContex';
 
 const SignUp: FC = (): JSX.Element => {
-  const [selectedCountry, setSelectedCountry] = useState<Country>({ name: 'United Arab Emirates', code: 'AE', dialCode: '+971' });
+  const [selectedCountry, setSelectedCountry] = useState<Country>({name: 'United Arab Emirates', code: 'AE', dialCode: '+971'});
   const [mobilePhone, setMobilePhone] = useState<string>('');
 
   const [isValidPhone, setIsValidPhone] = useState<boolean>(false);
   const [isDisabledValidation, setIsDisabledValidation] = useState<boolean>(true);
   const invitedOnlyBackendApi = useContext(BackendApiContext);
-  const { mutate: sendPhoneNumber, isPending: isLoading } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp') || {};
+  const {mutate: sendPhoneNumber, isPending: isLoading} = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp') || {};
   const navigation = useAppNavigation();
-  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
+  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
 
   useEffect(() => {
     // Remove any non-digit characters for validation
@@ -43,7 +41,7 @@ const SignUp: FC = (): JSX.Element => {
 
       const userNumber = await firestore().collection(apiUserInfoCollection).where('phoneNumber', '==', mobilePhone).get();
       if (!userNumber.empty) {
-        showToast('inviteMatch', 'This phone number is already in use', 'Fail');
+        showToast('basic', 'This phone number is already in use', 'Fail');
         return;
       }
       await sendPhoneNumber({
@@ -57,7 +55,7 @@ const SignUp: FC = (): JSX.Element => {
       });
     } catch (e: any) {
       logErrorToSentry(e);
-      showToast('inviteMatch', `${e?.message.split(']')[1] || 'Error processing request'}`);
+      showToast('basic', `${e?.message.split(']')[1] || 'Error processing request'}`);
     }
   }
 
@@ -80,7 +78,7 @@ const SignUp: FC = (): JSX.Element => {
       continueButtonTestID="continue-button">
       <S.Container>
         <CountryCodePicker
-          onSelect={(country) => {
+          onSelect={country => {
             setSelectedCountry(country);
           }}
           selectedCountry={selectedCountry}

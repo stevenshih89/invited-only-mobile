@@ -1,16 +1,16 @@
-import React, { FC, RefObject, useContext, useEffect, useState } from 'react';
-import { View, Text, Image, ImageBackground, TouchableOpacity } from 'react-native';
+import React, {FC, RefObject, useContext, useEffect, useState} from 'react';
+import {View, Text, Image, ImageBackground, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
 import firestore from '@react-native-firebase/firestore';
 
 //import components
 import moment from 'moment/moment';
-import { RFValue } from 'react-native-responsive-fontsize';
+import {RFValue} from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import useStyles from 'components/Modal/ModalEventRemindes/styles.ts';
 import Button from 'components/Button/Button.tsx';
-import { showToast } from 'helpers/showToast.ts';
+import {showToast} from 'helpers/showToast.ts';
 
 //import icons
 import CalendarIcon from 'assets/images/icons/calendar.svg';
@@ -21,14 +21,14 @@ import CheckStarIcon from 'assets/images/icons/check-star-white.svg';
 import CalendarWhiteIcon from 'assets/images/icons/calendar-white.svg';
 import ArrowRightIcon from 'assets/images/icons/arrow-right.svg';
 import ClockIcon from 'assets/images/icons/clock-white.svg';
-import { black4Color, blackColor, lightGray18Color, lightGreenColor, transparent60Color, whiteColor } from 'constants/colors';
-import { Satoshi400, Satoshi500, Satoshi700 } from 'constants/fonts';
-import { calculateAge } from 'helpers/calculateAge';
-import { useAuthStore } from 'src/store/authStore.ts';
-import { getUsersListAccepted } from 'helpers/getUsersListAccepted';
+import {black4Color, blackColor, lightGray18Color, lightGreenColor, transparent60Color, whiteColor} from 'constants/colors';
+import {Satoshi400, Satoshi500, Satoshi700} from 'constants/fonts';
+import {calculateAge} from 'helpers/calculateAge';
+import {useAuthStore} from 'src/store/authStore.ts';
+import {getUsersListAccepted} from 'helpers/getUsersListAccepted';
 
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
 
 interface HostI {
   name: string;
@@ -100,11 +100,11 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
   const [isPremium, setIsPremium] = useState();
 
   const styles = useStyles();
-  const { userInfo: apiUserInfoCollection, events: apiEventsCollection } = useContext(FirebaseCollectionsContext);
+  const {userInfo: apiUserInfoCollection, events: apiEventsCollection} = useContext(FirebaseCollectionsContext);
 
   const getUserInfo = async () => {
     try {
-      const { userMetadata } = useAuthStore();
+      const {userMetadata} = useAuthStore();
       const userInfoDoc = await firestore().collection(apiUserInfoCollection).doc(userMetadata?.uid).get();
       setNameUser(userInfoDoc?.data()?.name);
       const age = calculateAge(userInfoDoc?.data()?.date);
@@ -113,7 +113,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
       setPhotoUser(photo);
       setIsPremium(userInfoDoc?.data()?.accountPremium);
     } catch (error) {
-      showToast('inviteMatch', 'An issue occurred while fetching user data. Please try again later', 'Error');
+      showToast('basic', 'An issue occurred while fetching user data. Please try again later', 'Error');
       logErrorToSentry(error);
     }
   };
@@ -137,7 +137,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
         <View style={styles.wrapperCancelEvent}>
           <View style={styles.whiteLine} />
           <View>
-            <Image resizeMode="contain" source={{ uri: image }} style={styles.eventImage} />
+            <Image resizeMode="contain" source={{uri: image}} style={styles.eventImage} />
           </View>
           <View style={styles.main}>
             <Text style={styles.textCity}>{city}</Text>
@@ -150,12 +150,12 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               <Text style={styles.textDate}>{date}</Text>
             </View>
           </View>
-          <View style={[styles.fdr, { alignItems: 'center' }]}>
+          <View style={[styles.fdr, {alignItems: 'center'}]}>
             <Text style={styles.textAreYouSure}>Are you on the way?</Text>
           </View>
           <Button
             onPress={() => {
-              showToast('inviteMatch', 'Go to my events!');
+              showToast('basic', 'Go to my events!');
               setChatModal(false);
               setEventStarting(false);
             }}
@@ -168,7 +168,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               setChatModal(false);
             }}
             title="Go to my event"
-            buttonStyle={{ width: '100%' }}
+            buttonStyle={{width: '100%'}}
           />
         </View>
       </Modal>
@@ -190,11 +190,11 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
         <View style={styles.wrapperOnTheWay}>
           <View style={styles.whiteLine} />
           <View>
-            <Image source={{ uri: image }} style={styles.userPhoto} />
+            <Image source={{uri: image}} style={styles.userPhoto} />
             {/*{online && <View style={styles.greenCircle} />}*/}
             <View style={styles.greenCircle} />
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
             <Text style={styles.title}>Alexa</Text>
             <FlashIcon width={19} height={19} />
           </View>
@@ -215,7 +215,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               setOnTheWayState(false);
             }}
             title="Close"
-            buttonStyle={{ width: '100%' }}
+            buttonStyle={{width: '100%'}}
           />
         </View>
       </Modal>
@@ -223,7 +223,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
   };
 
   const updateViewedNewData = async () => {
-    const { userMetadata } = useAuthStore();
+    const {userMetadata} = useAuthStore();
     const userUid = userMetadata?.uid;
     const userEvent = await firestore().collection(apiEventsCollection).doc(id).get();
     const dateNewViewed = userEvent.data()?.dateNewViewed;
@@ -239,7 +239,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             dateNewViewed: [...dateNewViewed, userUid],
           });
       } catch (error) {
-        showToast('inviteMatch', 'An issue occurred while updating the event data. Please try again later.', 'Error');
+        showToast('basic', 'An issue occurred while updating the event data. Please try again later.', 'Error');
         logErrorToSentry(error);
       }
     }
@@ -252,7 +252,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             hourNewViewed: [...hourNewViewed, userUid],
           });
       } catch (error) {
-        showToast('inviteMatch', 'An issue occurred while updating the event data. Please try again later.', 'Error');
+        showToast('basic', 'An issue occurred while updating the event data. Please try again later.', 'Error');
         logErrorToSentry(error);
         // console.log('error update hourNewViewed', error);
       }
@@ -266,7 +266,7 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
             nameNewViewed: [...nameNewViewed, userUid],
           });
       } catch (error) {
-        showToast('inviteMatch', 'An issue occurred while updating the event data. Please try again later.', 'Error');
+        showToast('basic', 'An issue occurred while updating the event data. Please try again later.', 'Error');
         logErrorToSentry(error);
       }
     }
@@ -293,9 +293,9 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
         swipeDirection={['down']}>
         <View style={styles.wrapper}>
           <View style={styles.whiteLine} />
-          <View style={{ width: '100%', backgroundColor: whiteColor, borderRadius: 30, padding: 9 }}>
-            <View style={{ width: '100%' }}>
-              <FastImage resizeMode="cover" source={{ uri: currentEvent?.photos?.[0]?.image }} style={styles.eventImage}>
+          <View style={{width: '100%', backgroundColor: whiteColor, borderRadius: 30, padding: 9}}>
+            <View style={{width: '100%'}}>
+              <FastImage resizeMode="cover" source={{uri: currentEvent?.photos?.[0]?.image}} style={styles.eventImage}>
                 <View
                   style={{
                     paddingHorizontal: 6,
@@ -353,8 +353,8 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                     paddingVertical: 7,
                     alignItems: 'center',
                   }}>
-                  <FastImage style={{ width: 40, height: 40, borderRadius: 40 }} source={{ uri: currentEvent?.photos[0]?.image }} />
-                  <View style={{ marginLeft: 10, alignItems: 'center' }}>
+                  <FastImage style={{width: 40, height: 40, borderRadius: 40}} source={{uri: currentEvent?.photos[0]?.image}} />
+                  <View style={{marginLeft: 10, alignItems: 'center'}}>
                     <Text
                       style={{
                         fontSize: currentEvent?.name.length > 10 ? RFValue(22, 812) : RFValue(26, 812),
@@ -419,8 +419,8 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
           <View>
             <ImageBackground
               resizeMode="cover"
-              source={{ uri: image }}
-              style={[styles.eventImage, { justifyContent: !uid ? 'flex-end' : 'space-between' }]}>
+              source={{uri: image}}
+              style={[styles.eventImage, {justifyContent: !uid ? 'flex-end' : 'space-between'}]}>
               {uid && (
                 <TouchableOpacity
                   style={{
@@ -433,10 +433,10 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                     paddingVertical: 10,
                     justifyContent: 'space-between',
                   }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Image style={{ height: 40, width: 40, borderRadius: 40 }} source={{ uri: photoUser }} />
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Image style={{height: 40, width: 40, borderRadius: 40}} source={{uri: photoUser}} />
                     <View>
-                      <View style={{ flexDirection: 'row' }}>
+                      <View style={{flexDirection: 'row'}}>
                         <View
                           style={{
                             backgroundColor: blackColor,
@@ -447,19 +447,19 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                             paddingHorizontal: 10,
                             paddingVertical: 2,
                           }}>
-                          <Text style={{ fontSize: RFValue(10, 812), color: whiteColor, fontFamily: Satoshi500 }}>Host</Text>
+                          <Text style={{fontSize: RFValue(10, 812), color: whiteColor, fontFamily: Satoshi500}}>Host</Text>
                         </View>
                         {false && (
                           <LinearGradient
                             colors={['#977B4A', '#E5D291', '#A28453']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={{ borderRadius: 4.5, paddingHorizontal: 10, paddingVertical: 2, marginLeft: 5 }}>
-                            <Text style={{ fontSize: RFValue(10, 812), color: blackColor, fontFamily: Satoshi500 }}>Premium</Text>
+                            start={{x: 0, y: 0}}
+                            end={{x: 1, y: 0}}
+                            style={{borderRadius: 4.5, paddingHorizontal: 10, paddingVertical: 2, marginLeft: 5}}>
+                            <Text style={{fontSize: RFValue(10, 812), color: blackColor, fontFamily: Satoshi500}}>Premium</Text>
                           </LinearGradient>
                         )}
                       </View>
-                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <Text
                           style={{
                             fontSize: RFValue(20, 812),
@@ -479,10 +479,10 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                 </TouchableOpacity>
               )}
               <View>
-                <View style={{ marginBottom: 12, flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{marginBottom: 12, flexDirection: 'row', alignItems: 'center'}}>
                   {activeState && (
-                    <View style={{ backgroundColor: lightGreenColor, borderRadius: 5, paddingVertical: 4, paddingHorizontal: 6 }}>
-                      <Text style={{ fontSize: RFValue(12, 812), fontFamily: Satoshi500, color: whiteColor }}>Active</Text>
+                    <View style={{backgroundColor: lightGreenColor, borderRadius: 5, paddingVertical: 4, paddingHorizontal: 6}}>
+                      <Text style={{fontSize: RFValue(12, 812), fontFamily: Satoshi500, color: whiteColor}}>Active</Text>
                     </View>
                   )}
                   <Text
@@ -518,29 +518,29 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
           </View>
 
           <Text style={styles.textAreYouSure}>{nameUser} has updated the event!</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
             {updateEvent === 'date' && (
-              <Text style={{ fontSize: RFValue(14, 812), fontFamily: Satoshi400, color: whiteColor }}>New event date: </Text>
+              <Text style={{fontSize: RFValue(14, 812), fontFamily: Satoshi400, color: whiteColor}}>New event date: </Text>
             )}
             {updateEvent === 'name' && (
-              <Text style={{ fontSize: RFValue(14, 812), fontFamily: Satoshi400, color: whiteColor }}>New event name: </Text>
+              <Text style={{fontSize: RFValue(14, 812), fontFamily: Satoshi400, color: whiteColor}}>New event name: </Text>
             )}
             {updateEvent === 'hour' && (
-              <Text style={{ fontSize: RFValue(14, 812), fontFamily: Satoshi400, color: whiteColor }}>New event hour: </Text>
+              <Text style={{fontSize: RFValue(14, 812), fontFamily: Satoshi400, color: whiteColor}}>New event hour: </Text>
             )}
             {updateEvent === 'date' && <CalendarWhiteIcon />}
             {updateEvent === 'hour' && <ClockIcon />}
-            {updateEvent === 'date' && <Text style={{ fontSize: RFValue(14, 812), fontFamily: Satoshi400, color: whiteColor }}> {date}</Text>}
+            {updateEvent === 'date' && <Text style={{fontSize: RFValue(14, 812), fontFamily: Satoshi400, color: whiteColor}}> {date}</Text>}
             {updateEvent === 'name' && (
-              <Text style={{ fontSize: RFValue(14, 812), fontFamily: Satoshi400, color: whiteColor }}> {placeName}</Text>
+              <Text style={{fontSize: RFValue(14, 812), fontFamily: Satoshi400, color: whiteColor}}> {placeName}</Text>
             )}
-            {updateEvent === 'hour' && <Text style={{ fontSize: RFValue(14, 812), fontFamily: Satoshi400, color: whiteColor }}> {hour}</Text>}
+            {updateEvent === 'hour' && <Text style={{fontSize: RFValue(14, 812), fontFamily: Satoshi400, color: whiteColor}}> {hour}</Text>}
           </View>
           <Button
             onPress={async () => {
               await handleAcceptInvitation();
               await handleGetEventsIJoining();
-              showToast('inviteMatch', `You confirmed ${placeName} event`);
+              showToast('basic', `You confirmed ${placeName} event`);
               await updateViewedNewData();
               checkUpdate();
             }}
@@ -552,8 +552,8 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
               await updateViewedNewData();
               checkUpdate();
             }}
-            style={{ marginVertical: 25 }}>
-            <Text style={{ color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi500 }}>Reject invitation</Text>
+            style={{marginVertical: 25}}>
+            <Text style={{color: whiteColor, fontSize: RFValue(18, 812), fontFamily: Satoshi500}}>Reject invitation</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -583,8 +583,8 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
           <View>
             <ImageBackground
               resizeMode="cover"
-              source={{ uri: image }}
-              style={[styles.eventImage, { justifyContent: !uid ? 'flex-end' : 'space-between' }]}>
+              source={{uri: image}}
+              style={[styles.eventImage, {justifyContent: !uid ? 'flex-end' : 'space-between'}]}>
               {uid && (
                 <TouchableOpacity
                   style={{
@@ -597,10 +597,10 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                     paddingVertical: 10,
                     justifyContent: 'space-between',
                   }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Image style={{ height: 40, width: 40, borderRadius: 40 }} source={{ uri: photoUser }} />
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Image style={{height: 40, width: 40, borderRadius: 40}} source={{uri: photoUser}} />
                     <View>
-                      <View style={{ flexDirection: 'row' }}>
+                      <View style={{flexDirection: 'row'}}>
                         <View
                           style={{
                             backgroundColor: blackColor,
@@ -611,19 +611,19 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                             paddingHorizontal: 10,
                             paddingVertical: 2,
                           }}>
-                          <Text style={{ fontSize: RFValue(10, 812), color: whiteColor, fontFamily: Satoshi500 }}>Host</Text>
+                          <Text style={{fontSize: RFValue(10, 812), color: whiteColor, fontFamily: Satoshi500}}>Host</Text>
                         </View>
                         {false && (
                           <LinearGradient
                             colors={['#977B4A', '#E5D291', '#A28453']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={{ borderRadius: 4.5, paddingHorizontal: 10, paddingVertical: 2, marginLeft: 5 }}>
-                            <Text style={{ fontSize: RFValue(10, 812), color: blackColor, fontFamily: Satoshi500 }}>Premium</Text>
+                            start={{x: 0, y: 0}}
+                            end={{x: 1, y: 0}}
+                            style={{borderRadius: 4.5, paddingHorizontal: 10, paddingVertical: 2, marginLeft: 5}}>
+                            <Text style={{fontSize: RFValue(10, 812), color: blackColor, fontFamily: Satoshi500}}>Premium</Text>
                           </LinearGradient>
                         )}
                       </View>
-                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <Text
                           style={{
                             fontSize: RFValue(20, 812),
@@ -643,10 +643,10 @@ const ModalEventRemindes: FC<ModalEventRemindeProps> = ({
                 </TouchableOpacity>
               )}
               <View>
-                <View style={{ marginBottom: 12, flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{marginBottom: 12, flexDirection: 'row', alignItems: 'center'}}>
                   {activeState && (
-                    <View style={{ backgroundColor: lightGreenColor, borderRadius: 5, paddingVertical: 4, paddingHorizontal: 6 }}>
-                      <Text style={{ fontSize: RFValue(12, 812), fontFamily: Satoshi500, color: whiteColor }}>Active</Text>
+                    <View style={{backgroundColor: lightGreenColor, borderRadius: 5, paddingVertical: 4, paddingHorizontal: 6}}>
+                      <Text style={{fontSize: RFValue(12, 812), fontFamily: Satoshi500, color: whiteColor}}>Active</Text>
                     </View>
                   )}
                   <Text

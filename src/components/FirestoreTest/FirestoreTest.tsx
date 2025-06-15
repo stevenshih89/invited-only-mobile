@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-import { RFValue } from 'react-native-responsive-fontsize';
-import { showToast } from 'helpers/showToast';
-import { whiteColor } from 'constants/colors';
-import { Satoshi500, Satoshi700 } from 'constants/fonts';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {showToast} from 'helpers/showToast';
+import {whiteColor} from 'constants/colors';
+import {Satoshi500, Satoshi700} from 'constants/fonts';
 
-import { AppSettingsQueries } from 'src/apiv2/queries/appSettingsQueries';
-import { useAuthStore } from 'src/store/authStore.ts';
+import {AppSettingsQueries} from 'src/apiv2/queries/appSettingsQueries';
+import {useAuthStore} from 'src/store/authStore.ts';
 
 const FirestoreTest: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -21,8 +21,8 @@ const FirestoreTest: React.FC = () => {
   const [fieldValue, setFieldValue] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  const { data: firebaseCollections } = AppSettingsQueries.useFirebaseCollectionNameQuery();
-  const { userMetadata } = useAuthStore();
+  const {data: firebaseCollections} = AppSettingsQueries.useFirebaseCollectionNameQuery();
+  const {userMetadata} = useAuthStore();
   console.log('current user is', userMetadata);
 
   const testConnection = async () => {
@@ -39,11 +39,11 @@ const FirestoreTest: React.FC = () => {
           testId: Math.random().toString(36).substring(7),
         });
       setResult('Firestore connection successful!');
-      showToast('inviteMatch', 'Firestore connection successful!', 'Success');
+      showToast('basic', 'Firestore connection successful!', 'Success');
     } catch (err: any) {
       console.error('Firestore connection test failed:', err);
       setError(`Connection error: ${err.message}`);
-      showToast('inviteMatch', `Connection error: ${err.message}`, 'Error');
+      showToast('basic', `Connection error: ${err.message}`, 'Error');
     } finally {
       setLoading(false);
     }
@@ -72,15 +72,15 @@ const FirestoreTest: React.FC = () => {
       if (docRef.exists) {
         const data = docRef.data();
         setResult(JSON.stringify(data, null, 2));
-        showToast('inviteMatch', 'Document read successfully', 'Success');
+        showToast('basic', 'Document read successfully', 'Success');
       } else {
         setResult('Document does not exist');
-        showToast('inviteMatch', 'Document does not exist', 'Warning');
+        showToast('basic', 'Document does not exist', 'Warning');
       }
     } catch (err: any) {
       console.error('Error reading document:', err);
       setError(`Read error: ${err.message}`);
-      showToast('inviteMatch', `Read error: ${err.message}`, 'Error');
+      showToast('basic', `Read error: ${err.message}`, 'Error');
     } finally {
       setReadLoading(false);
     }
@@ -120,11 +120,11 @@ const FirestoreTest: React.FC = () => {
           setResult(`Successfully updated document ${docId} in collection ${collection}`);
         });
 
-      showToast('inviteMatch', 'Document updated successfully', 'Success');
+      showToast('basic', 'Document updated successfully', 'Success');
     } catch (err: any) {
       console.error('Error writing document:', err);
       setError(`Write error: ${err.message}`);
-      showToast('inviteMatch', `Write error: ${err.message}`, 'Error');
+      showToast('basic', `Write error: ${err.message}`, 'Error');
     } finally {
       setWriteLoading(false);
     }

@@ -189,7 +189,7 @@ const TouchingSlider: FC<TouchingSliderProps> = ({
         setVisibleModalSuperJoin(false);
       }, 4000);
     } else {
-      showToast('inviteMatch', "You don't have Super Joins", 'Super Join');
+      showToast('basic', "You don't have Super Joins", 'Super Join');
     }
   };
 

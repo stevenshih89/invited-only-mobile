@@ -67,6 +67,6 @@ describe('ModalSelectLanguages Component', () => {
       fireEvent.press(getByText('Save Changes'));
     });
 
-    expect(showToast).toHaveBeenCalledWith('inviteMatch', 'An error occurred while updating the language. Please try again.', 'Error');
+    expect(showToast).toHaveBeenCalledWith('basic', 'An error occurred while updating the language. Please try again.', 'Error');
   });
 });

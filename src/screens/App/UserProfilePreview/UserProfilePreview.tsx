@@ -1,7 +1,7 @@
-import { Dispatch, FC, SetStateAction, useCallback, useContext, useRef } from 'react';
-import { ActivityIndicator } from 'react-native';
-import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import {Dispatch, FC, SetStateAction, useCallback, useContext, useRef} from 'react';
+import {ActivityIndicator} from 'react-native';
+import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import ProfileSlider from './Components/ProfilePhotoSlider/ProfilePhotoSlider';
 import * as S from './UserProfilePreview.style';
 import ProfileBasics from './Components/ProfileBasics/ProfileBasics';
@@ -10,24 +10,24 @@ import ProfileLanguages from './Components/ProfileLanguages/ProfileLanguages';
 import ProfilePhotosList from './Components/ProfilePhotosList/ProfilePhotoslist';
 import ModalReport from 'components/Modal/ModalReport/ModalReport';
 import ModalUserProfile from 'components/Modal/ModalUserProfile/ModalUserProfile.tsx';
-import { blackColor } from 'constants/colors';
-import { useAuthStore } from 'src/store/authStore';
-import { RootStackParamList } from 'typescript/types';
-import { BackendApiContext } from 'contexts/BackendApiContex';
+import {blackColor} from 'constants/colors';
+import {useAuthStore} from 'src/store/authStore';
+import {RootStackParamList} from 'typescript/types';
+import {BackendApiContext} from 'contexts/BackendApiContex';
 
 interface UserProfilePreviewProps {
   isModalVisible?: boolean;
   setModalVisible?: Dispatch<SetStateAction<boolean>>;
 }
 
-const UserProfilePreview: FC<UserProfilePreviewProps> = ({ isModalVisible, setModalVisible }) => {
-  const { userMetadata } = useAuthStore();
+const UserProfilePreview: FC<UserProfilePreviewProps> = ({isModalVisible, setModalVisible}) => {
+  const {userMetadata} = useAuthStore();
   const invitedOnlyBackendApi = useContext(BackendApiContext);
   const route = useRoute<RouteProp<RootStackParamList, '/user-profile-preview'>>();
-  const { userUid } = route.params;
+  const {userUid} = route.params;
 
   const modalReportRef = useRef<BottomSheetModal>(null);
-  const { data: userInfo, isLoading } = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
+  const {data: userInfo, isLoading} = invitedOnlyBackendApi.useQuery('get', '/users/{id}', {
     params: {
       path: {
         id: userUid,
@@ -42,7 +42,7 @@ const UserProfilePreview: FC<UserProfilePreviewProps> = ({ isModalVisible, setMo
   if (isLoading || !userInfo) {
     return (
       <S.ProfileContainer>
-        <ActivityIndicator style={{ flex: 1, backgroundColor: blackColor }} />
+        <ActivityIndicator style={{flex: 1, backgroundColor: blackColor}} />
       </S.ProfileContainer>
     );
   }
@@ -50,7 +50,7 @@ const UserProfilePreview: FC<UserProfilePreviewProps> = ({ isModalVisible, setMo
   return (
     <BottomSheetModalProvider>
       <S.SafeAreaContainer>
-        <ModalReport ref={modalReportRef} setModalReport={() => { }} uidSender={userMetadata?.uid} uid={userInfo?.uid} />
+        <ModalReport ref={modalReportRef} setModalReport={() => {}} userData={userInfo} uidSender={userMetadata?.uid} uid={userInfo?.uid} />
         <S.MainContainer>
           <S.ScrollContainer scrollEventThrottle={20} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
             <S.ContentContainer>
@@ -65,7 +65,7 @@ const UserProfilePreview: FC<UserProfilePreviewProps> = ({ isModalVisible, setMo
                 <ProfileBasics
                   location={userInfo?.location || ''}
                   homeAddress={userInfo?.homeAddress || ''}
-                  work={{ title: userInfo?.work?.title || '' }}
+                  work={{title: userInfo?.work?.title || ''}}
                   gender={userInfo?.gender || 'other'}
                   listOfInterestsImages={userInfo?.interests || []}
                 />
@@ -78,7 +78,12 @@ const UserProfilePreview: FC<UserProfilePreviewProps> = ({ isModalVisible, setMo
                   </S.BlockAndReportButton>
                 </S.BlockAndReportContainer>
               </S.ProfileContainer>
-              <ModalUserProfile title={userInfo?.name || ''} image={userInfo?.photos?.[0]?.image || ''} isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
+              <ModalUserProfile
+                title={userInfo?.name || ''}
+                image={userInfo?.photos?.[0]?.image || ''}
+                isModalVisible={isModalVisible}
+                setModalVisible={setModalVisible}
+              />
             </S.ContentContainer>
           </S.ScrollContainer>
         </S.MainContainer>

@@ -70,7 +70,7 @@ export const handleNextStep = async ({
     if (Object.keys(errors).length === 0) {
       submitForm();
     } else {
-      showToast('cancel', 'Please fix all errors before creating the event');
+      showToast('basic', 'Please fix all errors before creating the event');
     }
   } else if (currentStep === CREATE_EVENT_FLOW_ROUTES.GUEST_INVITATION) {
     // Validate guest step
@@ -79,7 +79,7 @@ export const handleNextStep = async ({
       nextStep();
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
-        showToast('cancel', error.errors[0]);
+        showToast('basic', '', error.errors[0]);
       }
     }
   } else if (currentStep === CREATE_EVENT_FLOW_ROUTES.EVENT_PLACE) {
@@ -90,7 +90,7 @@ export const handleNextStep = async ({
       nextStep();
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
-        showToast('cancel', error.errors[0]);
+        showToast('basic', '', error.errors[0]);
       }
     }
   }

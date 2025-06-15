@@ -18,16 +18,16 @@ const useUserChangeEmail = () => {
   const changeEmailFn = async (email: string) => {
     const _isValidEmail = isEmailValid(email);
     if (!email || !_isValidEmail) {
-      showToast('inviteMatch', 'Email is not valid', 'Error');
+      showToast('basic', 'Email is not valid', 'Error');
       return;
     }
     try {
       await firestore().collection(apiUserInfoCollection).doc(userMetadata?.uid).update({
         email,
       });
-      showToast('inviteMatch', 'Email has been changed', 'Success');
+      showToast('basic', 'Email has been changed', 'Success');
     } catch (error) {
-      showToast('inviteMatch', 'Failed to update email. Please try again.', 'Error');
+      showToast('basic', 'Failed to update email. Please try again.', 'Error');
       logErrorToSentry(error);
     }
   };
@@ -49,7 +49,7 @@ const useUserChangeLocation = () => {
         location: state,
       });
     } catch (e) {
-      showToast('inviteMatch', 'Failed to update location. Please try again.', 'Error');
+      showToast('basic', 'Failed to update location. Please try again.', 'Error');
       logErrorToSentry(e);
     }
   };
@@ -125,7 +125,7 @@ const useUserDeleteAccount = () => {
       }
       await messaging().deleteToken();
       await firestore().collection(apiUserInfoCollection).doc(userHost?.uid).delete();
-      showToast('inviteMatch', '', 'Your account has been deleted', {
+      showToast('basic', '', 'Your account has been deleted', {
         ownerPhoto: userHost?.photos[0].image,
         status: 'SUCCESSED',
       });
@@ -154,7 +154,7 @@ const useUserUpdateGender = () => {
         gender: gender,
       });
     } catch (e) {
-      showToast('inviteMatch', 'Failed to update your gender in the profile. Please try again.', 'Error');
+      showToast('basic', 'Failed to update your gender in the profile. Please try again.', 'Error');
       logErrorToSentry(e);
     }
   };
@@ -178,7 +178,7 @@ const useUserUpdateShowGenderInProfile = () => {
       });
       changeShowGenderState();
     } catch (e) {
-      showToast('inviteMatch', 'Failed to update your gender visibility in the profile. Please try again.', 'Error');
+      showToast('basic', 'Failed to update your gender visibility in the profile. Please try again.', 'Error');
       logErrorToSentry(e);
     }
   };

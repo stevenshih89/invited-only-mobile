@@ -1,16 +1,16 @@
-import { useRef, useState } from 'react';
-import { Alert, Animated } from 'react-native';
+import {useRef, useState} from 'react';
+import {Alert, Animated} from 'react-native';
 import Config from 'react-native-config';
-import { check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS } from 'react-native-permissions';
+import {check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS} from 'react-native-permissions';
 import firestore from '@react-native-firebase/firestore';
-import { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { Gesture } from 'react-native-gesture-handler';
+import {runOnJS, useAnimatedStyle, useSharedValue, withSpring} from 'react-native-reanimated';
+import {Gesture} from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-crop-picker';
-import { components } from 'src/api/v1';
+import {components} from 'src/api/v1';
 import useUser from 'src/hooks/user/useUser';
-import { logErrorToSentry } from 'helpers/logErrorsToSentry';
-import { showToast } from 'helpers/showToast';
-import { isIos } from 'constants/common';
+import {logErrorToSentry} from 'helpers/logErrorsToSentry';
+import {showToast} from 'helpers/showToast';
+import {isIos} from 'constants/common';
 
 // Define a type for the layout objects
 interface ImageLayout {
@@ -19,9 +19,9 @@ interface ImageLayout {
   y: number;
 }
 
-export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any }) => {
+export const useMyPhotos = ({images, setImages}: {images: any; setImages: any}) => {
   const apiUserInfoCollection = Config.API_USERINFO_COLLECTION || 'userInfo';
-  const { user: userHost } = useUser();
+  const {user: userHost} = useUser();
   const isConfirmed = userHost?.accountConfirmed;
   const [visibleModalReplace, setVisibleModalReplace] = useState(false);
   const makePermissionsRequest = async (permission: Permission): Promise<PermissionStatus> => {
@@ -59,7 +59,7 @@ export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any
         mediaType: 'photo',
       });
 
-      const newImages = [...images, { id: imageId, image: image.path }];
+      const newImages = [...images, {id: imageId, image: image.path}];
       setImages(newImages);
     } catch (error) {
       console.error('Error picking image:', error);
@@ -79,7 +79,7 @@ export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any
         const data = getDoc.data();
         const photos = data?.photos;
         if ((activeImage === 1 && !photos[selectImage - 1].image) || (selectImage === 1 && !photos[activeImage - 1].image)) {
-          showToast('inviteMatch', 'You cannot change the main image to an empty one', 'Error');
+          showToast('basic', 'You cannot change the main image to an empty one', 'Error');
           setVisibleModalReplace(false);
           setActiveImage(0);
           setSelectImage(0);
@@ -92,7 +92,7 @@ export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any
         setVisibleModalReplace(false);
         setActiveImage(0);
         setSelectImage(0);
-        showToast('inviteMatch', 'Image successfully replaced', 'Success');
+        showToast('basic', 'Image successfully replaced', 'Success');
       } catch (error) {
         logErrorToSentry(error);
         setVisibleModalReplace(false);
@@ -209,10 +209,10 @@ export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any
   const createAnimatedStyle = (offsetX: Animated.SharedValue<number>, offsetY: Animated.SharedValue<number>, id: number) =>
     useAnimatedStyle(() => ({
       transform: [
-        { translateX: offsetX.value },
-        { translateY: offsetY.value },
+        {translateX: offsetX.value},
+        {translateY: offsetY.value},
         {
-          scale: withSpring(activeImage === 0 || activeImage === id ? 1 : selectImage === id ? 1 : 0.8, { damping: 15, stiffness: 100 }),
+          scale: withSpring(activeImage === 0 || activeImage === id ? 1 : selectImage === id ? 1 : 0.8, {damping: 15, stiffness: 100}),
         },
       ],
     }));
@@ -231,7 +231,7 @@ export const useMyPhotos = ({ images, setImages }: { images: any; setImages: any
 
     if (ref && ref.current) {
       ref.current.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
-        setLayout(prev => [...prev, { imageId, x: pageX, y: pageY, width, height }]);
+        setLayout(prev => [...prev, {imageId, x: pageX, y: pageY, width, height}]);
       });
     }
   };

@@ -95,9 +95,9 @@ export const InviteMatchContainer = styled.View`
 `;
 
 export const InviteMatchInnerContainer = styled.View`
-  background-color: ${whiteColor};
+  background-color: #1c1c1c;
   padding: 16px;
-  border-radius: 10px;
+  border-radius: 18px;
   width: 100%;
 `;
 
@@ -124,13 +124,13 @@ export const InviteMatchTextRow = styled.View`
 `;
 
 export const InviteMatchText = styled.Text`
-  color: ${blackColor};
-  font-weight: bold;
-  font-size: ${RFValue(16, 812)}px;
+  color: ${whiteColor};
+  font-family: ${Satoshi500};
+  font-size: ${RFValue(18, 932)}px;
+  line-height: ${RFValue(21, 932)}px;
   flex: 1;
   flex-wrap: wrap;
   margin-right: 8px;
-  font-family: ${Satoshi400};
 `;
 
 export const InviteMatchStatusContainer = styled.View`
@@ -148,8 +148,9 @@ export const InviteMatchStatusText = styled.Text`
 `;
 
 export const InviteMatchSubText = styled.Text`
-  color: ${blackColor};
+  color: ${whiteColor};
   margin-top: 6px;
-  font-size: ${RFValue(16, 812)}px;
+  font-size: ${RFValue(14, 932)}px;
   font-family: ${Satoshi400};
+  line-height: ${RFValue(21, 932)}px;
 `;

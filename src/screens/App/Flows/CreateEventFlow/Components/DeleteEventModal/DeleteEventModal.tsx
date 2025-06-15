@@ -1,11 +1,11 @@
-import { useContext } from 'react';
+import {useContext} from 'react';
 import Modal from 'react-native-modal';
 import * as S from './DeleteEventModal.style';
 import Button from 'components/Button/Button';
 import CloseIcon from 'src/assets/images/icons/close-circle.svg';
-import { showToast } from 'helpers/showToast';
-import { useAppNavigation } from 'hooks/useAppNavigation';
-import { BackendApiContext } from 'contexts/BackendApiContex';
+import {showToast} from 'helpers/showToast';
+import {useAppNavigation} from 'hooks/useAppNavigation';
+import {BackendApiContext} from 'contexts/BackendApiContex';
 
 interface DeleteEventModalProps {
   isVisible: boolean;
@@ -13,17 +13,17 @@ interface DeleteEventModalProps {
   eventId: string;
 }
 
-const DeleteEventModal = ({ isVisible, onClose, eventId }: DeleteEventModalProps) => {
+const DeleteEventModal = ({isVisible, onClose, eventId}: DeleteEventModalProps) => {
   const navigation = useAppNavigation();
   const invitedOnlyBackendApi = useContext(BackendApiContext);
-  const { mutate: deleteEvent, isPending } = invitedOnlyBackendApi.useMutation('delete', '/events/{eventId}', {
+  const {mutate: deleteEvent, isPending} = invitedOnlyBackendApi.useMutation('delete', '/events/{eventId}', {
     onSuccess: () => {
       onClose();
-      navigation.navigate('/bottom-tabs-stack', { screen: '/my-events' });
-      showToast('success', 'Event deleted successfully', 'Event deleted');
+      navigation.navigate('/bottom-tabs-stack', {screen: '/my-events'});
+      showToast('basic', 'Event deleted successfully', 'Event deleted');
     },
     onError: () => {
-      showToast('warning', 'Error deleting event', 'Error');
+      showToast('basic', 'Error deleting event', 'Error');
     },
   });
 
@@ -42,7 +42,7 @@ const DeleteEventModal = ({ isVisible, onClose, eventId }: DeleteEventModalProps
         </S.CloseButton>
         <S.Description>Are you sure you want to delete this event?</S.Description>
         <S.ButtonContainer>
-          <Button title="Delete" onPress={() => deleteEvent({ params: { path: { eventId } } })} disabled={isPending} />
+          <Button title="Delete" onPress={() => deleteEvent({params: {path: {eventId}}})} disabled={isPending} />
         </S.ButtonContainer>
       </S.ModalContent>
     </Modal>

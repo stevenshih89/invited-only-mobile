@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
 import useUser from 'src/hooks/user/useUser';
-import { showToast } from 'helpers/showToast';
+import {showToast} from 'helpers/showToast';
 
 export const useInvitations = () => {
   const [numberCodes, setNumberCodes] = useState<number>();
 
-  const { user: userHost } = useUser();
+  const {user: userHost} = useUser();
 
   const inviteLink = userHost?.codeForInvitingOtherUsers;
 
   const handleCopy = (val: string) => {
     Clipboard.setString(val);
-    showToast('inviteMatch', '', 'Invite code copied!');
+    showToast('basic', '', 'Invite code copied!');
   };
 
   useEffect(() => {
