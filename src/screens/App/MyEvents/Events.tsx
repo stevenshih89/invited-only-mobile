@@ -8,7 +8,7 @@ import EventsHeader from './Components/EventsHeader/EventsHeader';
 import NewEventsScreen from './NewEventsScreen';
 import MyEventList from './Components/MyEventList/MyEventList';
 import JoinedEventsList from './Components/JoinedEventsList/JoinedEventsList';
-import useGetJoinedEvents from './Components/JoinedEventsList/hooks/useGetJoinedEvents';
+import useGetJoinedEvents from './Components/JoinedEventsScreen/hooks/useGetJoinedEvents';
 import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedAccount';
 import { useAuthStore } from 'src/store/authStore';
 import useUser from 'hooks/user/useUser';
@@ -32,6 +32,7 @@ const Events = () => {
   });
 
   const { data: joinedEvents, isLoading: isLoadingJoinedEvents } = useGetJoinedEvents();
+
 
   const { data: myEvents, isLoading: isLoadingMyEvents } = invitedOnlyBackendApi.useQuery('get', '/events/host/{hostId}', {
     params: {

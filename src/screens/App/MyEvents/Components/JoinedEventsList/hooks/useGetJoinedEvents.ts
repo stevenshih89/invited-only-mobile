@@ -7,7 +7,7 @@ const useGetJoinedEvents = () => {
   const { user } = useUser();
   const { data, isLoading, error } = invitedOnlyBackendApi.useQuery(
     'get',
-    '/events/joined-events/{guestId}',
+    '/events/invite-events/{guestId}',
     {
       params: {
         path: {

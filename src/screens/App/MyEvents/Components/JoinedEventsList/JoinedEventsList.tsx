@@ -1,11 +1,12 @@
 import React from 'react';
-import {components} from '@invited-only/invited-only-api';
-import {TouchableOpacity, View} from 'react-native';
+import { components } from '@invited-only/invited-only-api';
+import { TouchableOpacity, View } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import EventListItem from '../EventListItem/EventListItem';
 import JoinedEventsEmptyFallback from '../JoinedEventsEmptyFallback/JoinedEventsEmptyFallback';
+import useGetJoinedEvents from '../JoinedEventsScreen/hooks/useGetJoinedEvents';
 import * as S from './JoinedEventsList.style';
-import useGetJoinedEvents from './hooks/useGetJoinedEvents';
+
 import InfoIcon from 'assets/images/icons/info-circle.svg';
 
 interface JoinedEventsListProps {
@@ -16,8 +17,8 @@ interface JoinedEventsListProps {
   toggle: () => void;
 }
 
-const JoinedEventsList: React.FC<JoinedEventsListProps> = ({events, isOpen, onPressTooltip, title, toggle}) => {
-  const {data, isLoading} = useGetJoinedEvents();
+const JoinedEventsList: React.FC<JoinedEventsListProps> = ({ events, isOpen, onPressTooltip, title, toggle }) => {
+  const { data, isLoading } = useGetJoinedEvents();
 
   // if (isLoading) {
   //   return <AppLoader />;
@@ -27,7 +28,7 @@ const JoinedEventsList: React.FC<JoinedEventsListProps> = ({events, isOpen, onPr
   //   return;
   // }
 
-  const renderItem = ({item}: {item: components['schemas']['EventData']}) => {
+  const renderItem = ({ item }: { item: components['schemas']['EventData'] }) => {
     let statusString = 'Unknown';
     if (!item.eventReviewed) {
       statusString = 'Under Review';
@@ -38,7 +39,7 @@ const JoinedEventsList: React.FC<JoinedEventsListProps> = ({events, isOpen, onPr
     } else {
       statusString = 'Inactive';
     }
-    return <EventListItem event={item} imageUrl={item.photos?.[0]?.image} isHost={false} statusEvent={statusString} />;
+    return <EventListItem key={item.uid} event={item} imageUrl={item.photos?.[0]?.image} isHost={false} statusEvent={statusString} />;
   };
 
   return (
@@ -76,7 +77,7 @@ const JoinedEventsList: React.FC<JoinedEventsListProps> = ({events, isOpen, onPr
           style={{
             flex: 1,
           }}>
-          {data?.length ? <>{events?.map((event, index) => renderItem({item: event}))}</> : <JoinedEventsEmptyFallback />}
+          {data?.length ? <>{events?.map((event, index) => renderItem({ item: event }))}</> : <JoinedEventsEmptyFallback />}
         </View>
       </Collapsible>
     </>
